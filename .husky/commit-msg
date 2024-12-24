@@ -1,5 +1,0 @@
-#!/bin/bash
-
-SCRIPT_DIR=$( pwd )
-
-pnpm exec commitlint --config "$SCRIPT_DIR/config/commitlint/commitlint.config.js" --edit ""

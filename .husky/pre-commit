@@ -1,4 +1,0 @@
-#!/bin/bash
-
-pnpm run test:uncommitted
-pnpm exec lint-staged
