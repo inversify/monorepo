@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
     <channel>
         <title>InversifyJS Blog</title>
-        <link>https://inversify.io/inversify/blog</link>
+        <link>https://inversify.github.io/monorepo/blog</link>
         <description>InversifyJS Blog</description>
         <lastBuildDate>Tue, 24 Dec 2024 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
@@ -10,12 +10,12 @@
         <language>en</language>
         <item>
             <title><![CDATA[Welcome]]></title>
-            <link>https://inversify.io/inversify/blog/welcome</link>
-            <guid>https://inversify.io/inversify/blog/welcome</guid>
+            <link>https://inversify.github.io/monorepo/blog/welcome</link>
+            <guid>https://inversify.github.io/monorepo/blog/welcome</guid>
             <pubDate>Tue, 24 Dec 2024 00:00:00 GMT</pubDate>
             <description><![CDATA[Welcome to the new documentation pages! We are rebuilding our docs on top of Docusaurus to provide a better developer experience.]]></description>
             <content:encoded><![CDATA[<p>Welcome to the new documentation pages! We are rebuilding our docs on top of <a href="https://docusaurus.io/" target="_blank" rel="noopener noreferrer">Docusaurus</a> to provide a better developer experience.</p>
-<p><img decoding="async" loading="lazy" alt="Docusaurus Plushie" src="https://inversify.io/inversify/assets/images/docusaurus-plushie-banner-a60f7593abca1e3eef26a9afa244e4fb.jpeg" width="1500" height="500" class="img_Rek7"></p>
+<p><img decoding="async" loading="lazy" alt="Docusaurus Plushie" src="https://inversify.github.io/monorepo/assets/images/docusaurus-plushie-banner-a60f7593abca1e3eef26a9afa244e4fb.jpeg" width="1500" height="500" class="img_SXqp"></p>
 <p>This docs will include the latest released version of <code>inversify</code>. Major Pre releases will be documented as well so you can learn about them and discuss then in the prerelease discussion thread.</p>]]></content:encoded>
         </item>
     </channel>
