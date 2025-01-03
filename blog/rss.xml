@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
     <channel>
         <title>InversifyJS Blog</title>
-        <link>https://inversify.github.io/monorepo/blog</link>
+        <link>https://inversify.github.io/monorepo/blog/</link>
         <description>InversifyJS Blog</description>
         <lastBuildDate>Tue, 24 Dec 2024 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
@@ -10,8 +10,8 @@
         <language>en</language>
         <item>
             <title><![CDATA[Welcome]]></title>
-            <link>https://inversify.github.io/monorepo/blog/welcome</link>
-            <guid>https://inversify.github.io/monorepo/blog/welcome</guid>
+            <link>https://inversify.github.io/monorepo/blog/welcome/</link>
+            <guid>https://inversify.github.io/monorepo/blog/welcome/</guid>
             <pubDate>Tue, 24 Dec 2024 00:00:00 GMT</pubDate>
             <description><![CDATA[Welcome to the new documentation pages! We are rebuilding our docs on top of Docusaurus to provide a better developer experience.]]></description>
             <content:encoded><![CDATA[<p>Welcome to the new documentation pages! We are rebuilding our docs on top of <a href="https://docusaurus.io/" target="_blank" rel="noopener noreferrer">Docusaurus</a> to provide a better developer experience.</p>

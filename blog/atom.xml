@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="atom.xsl"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://inversify.github.io/monorepo/blog</id>
+    <id>https://inversify.github.io/monorepo/blog/</id>
     <title>InversifyJS Blog</title>
     <updated>2024-12-24T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://inversify.github.io/monorepo/blog"/>
+    <link rel="alternate" href="https://inversify.github.io/monorepo/blog/"/>
     <subtitle>InversifyJS Blog</subtitle>
     <icon>https://inversify.github.io/monorepo/img/favicon.ico</icon>
     <entry>
         <title type="html"><![CDATA[Welcome]]></title>
-        <id>https://inversify.github.io/monorepo/blog/welcome</id>
-        <link href="https://inversify.github.io/monorepo/blog/welcome"/>
+        <id>https://inversify.github.io/monorepo/blog/welcome/</id>
+        <link href="https://inversify.github.io/monorepo/blog/welcome/"/>
         <updated>2024-12-24T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[Welcome to the new documentation pages! We are rebuilding our docs on top of Docusaurus to provide a better developer experience.]]></summary>
         <content type="html"><![CDATA[<p>Welcome to the new documentation pages! We are rebuilding our docs on top of <a href="https://docusaurus.io/" target="_blank" rel="noopener noreferrer">Docusaurus</a> to provide a better developer experience.</p>
