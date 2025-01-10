@@ -1,5 +1,19 @@
 # @inversifyjs/reflect-metadata-utils
 
+## 1.0.0
+
+### Major Changes
+
+- a4276ba: Updated `updateReflectMetadata` to receive a default value builder.
+
+### Minor Changes
+
+- a4276ba: Added `setReflectMetadata`.
+
+### Patch Changes
+
+- 6b52b45: Updated rollup config to provide right source map file paths.
+
 ## 0.2.4
 
 ### Patch Changes

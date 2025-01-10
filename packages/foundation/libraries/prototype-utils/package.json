@@ -1,6 +1,6 @@
 {
   "name": "@inversifyjs/prototype-utils",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Prototype related utils",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",

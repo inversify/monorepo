@@ -1,5 +1,11 @@
 # @inversifyjs/strongly-typed
 
+## 1.2.3
+
+### Patch Changes
+
+- 6b52b45: Updated rollup config to provide right source map file paths.
+
 ## 1.2.2
 
 ### Patch Changes

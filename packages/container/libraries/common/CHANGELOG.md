@@ -1,5 +1,15 @@
 # @inversifyjs/common
 
+## 1.5.0
+
+### Minor Changes
+
+- 1ab083b: Added `isPromise`.
+
+### Patch Changes
+
+- 6b52b45: Updated rollup config to provide right source map file paths.
+
 ## 1.4.0
 
 ### Minor Changes

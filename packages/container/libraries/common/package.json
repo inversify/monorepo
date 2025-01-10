@@ -73,5 +73,5 @@
     "test:unit:js": "pnpm run test:js --selectProjects Unit"
   },
   "sideEffects": false,
-  "version": "1.4.0"
+  "version": "1.5.0"
 }

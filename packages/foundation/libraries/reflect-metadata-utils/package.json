@@ -1,6 +1,6 @@
 {
   "name": "@inversifyjs/reflect-metadata-utils",
-  "version": "0.2.4",
+  "version": "1.0.0",
   "description": "Reflect metadata utils",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
