@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "eslint": "9.20.1",
-    "prettier": "3.5.0",
+    "prettier": "3.5.1",
     "rimraf": "6.0.1",
     "rollup": "4.34.6",
     "ts-loader": "9.5.2",
