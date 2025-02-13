@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 const MS_PER_SCENARIO: number = 1000;
+const FIXED_DECIMALS: number = 3;
 
-import { Bench } from 'tinybench';
+import { Bench, Task } from 'tinybench';
 
 import { buildBenchmark } from '../benchmark/calculations/buildBenchmark';
 import { Inversify6GetComplexServiceInSingletonScope } from '../scenario/Inversify6/Inversify6GetComplexServiceInSingletonScope';
@@ -40,8 +41,7 @@ export async function run(): Promise<void> {
 
     await benchmark.run();
 
-    console.log(benchmark.name);
-    console.table(benchmark.table());
+    printResults(benchmark);
   }
 
   // Run get service in transient scope scenarios
@@ -61,8 +61,7 @@ export async function run(): Promise<void> {
 
     await benchmark.run();
 
-    console.log(benchmark.name);
-    console.table(benchmark.table());
+    printResults(benchmark);
   }
 
   // Run get complex service in singleton scope scenarios
@@ -82,8 +81,7 @@ export async function run(): Promise<void> {
 
     await benchmark.run();
 
-    console.log(benchmark.name);
-    console.table(benchmark.table());
+    printResults(benchmark);
   }
 
   // Run get complex service in transient scope scenarios
@@ -103,7 +101,48 @@ export async function run(): Promise<void> {
 
     await benchmark.run();
 
-    console.log(benchmark.name);
-    console.table(benchmark.table());
+    printResults(benchmark);
+  }
+}
+
+function printResults(benchmark: Bench): void {
+  console.log(benchmark.name);
+  console.table(benchmark.table());
+
+  const [
+    inversifyCurrentTask,
+    inversify6Task,
+    nestCoreTask,
+    tsyringeTask,
+  ]: Task[] = benchmark.tasks;
+
+  const inversifyCurrentMean: number | undefined =
+    inversifyCurrentTask?.result?.throughput.mean;
+  const inversify6Mean: number | undefined =
+    inversify6Task?.result?.throughput.mean;
+  const nestCoreMean: number | undefined =
+    nestCoreTask?.result?.throughput.mean;
+  const tsyringeMean: number | undefined =
+    tsyringeTask?.result?.throughput.mean;
+
+  if (
+    inversifyCurrentMean !== undefined &&
+    inversify6Mean !== undefined &&
+    nestCoreMean !== undefined &&
+    tsyringeMean !== undefined
+  ) {
+    const inversify6Speedup: number = inversifyCurrentMean / inversify6Mean;
+    const nestCoreSpeedup: number = inversifyCurrentMean / nestCoreMean;
+    const tsyringeSpeedup: number = inversifyCurrentMean / tsyringeMean;
+
+    console.log(
+      `Current inversify vs inversify 6 Speedup: ${inversify6Speedup.toFixed(FIXED_DECIMALS)}x`,
+    );
+    console.log(
+      `Current inversify vs NestJS Core Speedup: ${nestCoreSpeedup.toFixed(FIXED_DECIMALS)}x`,
+    );
+    console.log(
+      `Current inversify vs tsyringe Speedup: ${tsyringeSpeedup.toFixed(FIXED_DECIMALS)}x\n`,
+    );
   }
 }
