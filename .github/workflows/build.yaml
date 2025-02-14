@@ -52,8 +52,6 @@ jobs:
 
       - uses: ./.github/actions/setup
 
-      - run: echo "${{github.event.pull_request.head.repo.fork}}"
-
       - name: Compile source files
         run: pnpm run build
 
