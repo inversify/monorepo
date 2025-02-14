@@ -3,6 +3,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 on:
+  pull_request_target:
+    types:
+      - closed
+      - opened
+      - reopened
+      - synchronize
   pull_request:
     types:
       - closed
@@ -42,9 +48,6 @@ jobs:
     name: Run benchmarks
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: write  
     if: ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/container') }}
     steps:
       - name: Checkout
