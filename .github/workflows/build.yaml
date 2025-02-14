@@ -42,6 +42,9 @@ jobs:
     name: Run benchmarks
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write  
     if: ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/container') }}
     steps:
       - name: Checkout
