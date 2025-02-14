@@ -46,7 +46,7 @@ jobs:
     if: |
       ${{
         contains(needs.build.outputs.affectedPackages, '@inversifyjs/container')
-        && !github.event.pull_request.head.repo.fork
+        && github.event.pull_request.head.repo.fork != true
       }}
     steps:
       - name: Checkout
