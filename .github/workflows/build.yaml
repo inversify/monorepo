@@ -44,8 +44,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: |
-      ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/container') }}
-      and ${{ github.event.pull_request.head.repo.full_name == 'inversify/monorepo' }}
+      ${{
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/container')
+        && github.event.pull_request.head.repo.full_name == 'inversify/monorepo'
+      }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
