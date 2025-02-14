@@ -9,12 +9,6 @@ on:
       - opened
       - reopened
       - synchronize
-  pull_request:
-    types:
-      - closed
-      - opened
-      - reopened
-      - synchronize
 jobs:
   build:
     name: Build
