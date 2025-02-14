@@ -46,7 +46,7 @@ jobs:
     if: |
       ${{
         contains(needs.build.outputs.affectedPackages, '@inversifyjs/container')
-        && github.event.pull_request.head.repo.full_name == 'inversify/monorepo'
+        && !github.event.pull_request.head.repo.fork
       }}
     steps:
       - name: Checkout
