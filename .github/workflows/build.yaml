@@ -3,6 +3,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 on:
+  pull_request_target:
+    types:
+      - closed
+      - opened
+      - reopened
+      - synchronize
   pull_request:
     types:
       - closed
@@ -40,7 +46,6 @@ jobs:
 
   run-container-benchmarks:
     name: Run benchmarks
-    environment: CI
     needs: build
     runs-on: ubuntu-latest
     if: ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/container') }}
@@ -71,15 +76,9 @@ jobs:
               echo "$(pnpm exec container-benchmarks-run-esm)" >> $GITHUB_OUTPUT
               echo "$EOF" >> $GITHUB_OUTPUT
 
-      - uses: actions/create-github-app-token@v1
-        id: create_token
-        with:
-          app-id: ${{ vars.GH_APP_ID }}
-          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-
       - uses: actions/github-script@v7
         with:
-          github-token: ${{ steps.create_token.outputs.token }}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
