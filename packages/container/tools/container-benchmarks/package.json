@@ -19,7 +19,7 @@
     "tsyringe": "4.8.0"
   },
   "devDependencies": {
-    "@types/node": "^22.13.2",
+    "@types/node": "^22.13.4",
     "eslint": "9.20.1",
     "prettier": "3.5.1",
     "rimraf": "6.0.1",

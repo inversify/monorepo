@@ -6,7 +6,7 @@
   "description": "InversifyJs strong type definitions",
   "devDependencies": {
     "@jest/globals": "29.7.0",
-    "@types/node": "22.13.2",
+    "@types/node": "22.13.4",
     "eslint": "9.20.1",
     "jest": "29.7.0",
     "prettier": "3.5.1",

@@ -20,13 +20,13 @@
     "husky": "9.1.7",
     "knip": "5.44.1",
     "lint-staged": "15.4.3",
-    "turbo": "2.4.1"
+    "turbo": "2.4.2"
   },
   "homepage": "https://inversify.io",
   "keywords": [],
   "license": "MIT",
   "name": "root",
-  "packageManager": "pnpm@10.3.0",
+  "packageManager": "pnpm@10.4.0",
   "private": true,
   "repository": {
     "type": "git",
