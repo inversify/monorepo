@@ -43,7 +43,9 @@ jobs:
     environment: CI
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/container') }}
+    if: |
+      ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/container') }}
+      and ${{ github.event.pull_request.head.repo.full_name == 'inversify/monorepo' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -71,15 +73,9 @@ jobs:
               echo "$(pnpm exec container-benchmarks-run-esm)" >> $GITHUB_OUTPUT
               echo "$EOF" >> $GITHUB_OUTPUT
 
-      - uses: actions/create-github-app-token@v1
-        id: create_token
-        with:
-          app-id: ${{ vars.GH_APP_ID }}
-          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-
       - uses: actions/github-script@v7
         with:
-          github-token: ${{ steps.create_token.outputs.token }}
+          github-token: ${{ steps.GITHUB_TOKEN }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
