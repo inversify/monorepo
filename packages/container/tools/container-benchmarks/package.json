@@ -11,8 +11,8 @@
   "dependencies": {
     "@inversifyjs/container": "workspace:*",
     "@inversifyjs/core": "workspace:*",
-    "@nestjs/common": "11.0.9",
-    "@nestjs/core": "11.0.9",
+    "@nestjs/common": "11.0.10",
+    "@nestjs/core": "11.0.10",
     "inversify6": "npm:inversify@6.2.2",
     "rxjs": "7.8.1",
     "tinybench": "3.1.1",
