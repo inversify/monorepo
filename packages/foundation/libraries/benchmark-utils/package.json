@@ -20,7 +20,7 @@
     "node",
     "typescript"
   ],
-  "author": "Roberto Pintos López",
+  "author": "Adrián Martínez Jiménez",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/inversify/monorepo/issues"

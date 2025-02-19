@@ -5,6 +5,7 @@
     { "pattern": "./packages/docs/services/*" },
     { "pattern": "./packages/docs/tools/*" },
     { "pattern": "./packages/foundation/libraries/*" },
-    { "pattern": "./packages/foundation/tools/*" }
+    { "pattern": "./packages/foundation/tools/*" },
+    { "pattern": "./packages/http/tools/*" }
   ]
 }
