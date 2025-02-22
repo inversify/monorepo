@@ -18,14 +18,14 @@
     "fastify": "5.2.1",
     "inversify-express-utils": "6.4.10",
     "inversify6": "npm:inversify@6.2.2",
-    "rxjs": "7.8.1",
+    "rxjs": "7.8.2",
     "tinybench": "3.1.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.5",
     "eslint": "9.21.0",
-    "prettier": "3.5.1",
+    "prettier": "3.5.2",
     "rimraf": "6.0.1",
     "rollup": "4.34.8",
     "ts-loader": "9.5.2",
