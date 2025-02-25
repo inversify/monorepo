@@ -1,5 +1,6 @@
 import { InversifyHttpAdapter } from './http/adapter/InversifyHttpAdapter';
 import { ALL } from './http/decorators/All';
+import { applyMiddleware } from './http/decorators/ApplyMiddleware';
 import { body } from './http/decorators/Body';
 import { controller } from './http/decorators/Controller';
 import { cookies } from './http/decorators/Cookies';
@@ -89,6 +90,7 @@ export {
   PATCH,
   POST,
   PUT,
+  applyMiddleware,
   body,
   controller,
   cookies,

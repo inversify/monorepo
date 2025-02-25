@@ -5,14 +5,17 @@ import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapt
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
 import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
 import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
+import { controllerMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMiddlewareMetadataReflectKey';
 import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey';
 import { controllerMethodStatusCodeMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodStatusCodeMetadataReflectKey';
+import { controllerMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMiddlewareMetadataReflectKey';
 import { Controller } from '../models/Controller';
 import { ControllerFunction } from '../models/ControllerFunction';
 import { ControllerMetadata } from '../models/ControllerMetadata';
 import { ControllerMethodMetadata } from '../models/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../models/ControllerMethodParameterMetadata';
 import { ControllerResponse } from '../models/ControllerResponse';
+import { Middleware } from '../models/Middleware';
 import { RequestHandler } from '../models/RequestHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { RouterParams } from '../models/RouterParams';
@@ -57,13 +60,24 @@ export abstract class InversifyHttpAdapter<
         controllerMethodMetadataReflectKey,
       );
 
+      const controllerMiddlewareList: NewableFunction[] | undefined =
+        getReflectMetadata(
+          controllerMetadata.target,
+          controllerMiddlewareMetadataReflectKey,
+        );
+
       if (controllerMethodMetadataList !== undefined) {
         const routerParams: RouterParams<TRequest, TResponse, TNextFunction>[] =
           this.#buildRouterParams(
             controllerMetadata,
             controllerMethodMetadataList,
           );
-        this._buildRouter(controllerMetadata.path, routerParams);
+
+        this._buildRouter(
+          controllerMetadata.path,
+          routerParams,
+          this.#getMiddlewareHandlerFromMetadata(controllerMiddlewareList),
+        );
       }
     }
   }
@@ -90,6 +104,14 @@ export abstract class InversifyHttpAdapter<
           controllerMethodStatusCodeMetadataReflectKey,
         );
 
+        const controllerMethodMiddlewareList: NewableFunction[] | undefined =
+          getReflectMetadata(
+            controller[
+              controllerMethodMetadata.methodKey
+            ] as ControllerFunction,
+            controllerMethodMiddlewareMetadataReflectKey,
+          );
+
         return {
           handler: this.#buildHandler(
             controllerMethodMetadata,
@@ -98,6 +120,9 @@ export abstract class InversifyHttpAdapter<
             statusCode,
           ),
           methodKey: controllerMethodMetadata.methodKey,
+          middlewareList: this.#getMiddlewareHandlerFromMetadata(
+            controllerMethodMiddlewareList,
+          ),
           path: controllerMethodMetadata.path,
           requestMethodType: controllerMethodMetadata.requestMethodType,
         };
@@ -220,6 +245,26 @@ export abstract class InversifyHttpAdapter<
     }
   }
 
+  #getMiddlewareHandlerFromMetadata(
+    middlewareList: NewableFunction[] | undefined,
+  ): RequestHandler<TRequest, TResponse, TNextFunction>[] | undefined {
+    let requestHandlerList:
+      | RequestHandler<TRequest, TResponse, TNextFunction>[]
+      | undefined = undefined;
+
+    if (middlewareList !== undefined) {
+      requestHandlerList = middlewareList.map(
+        (newableFunction: NewableFunction) => {
+          const middleware: Middleware = this.#container.get(newableFunction);
+
+          return middleware.execute.bind(middleware);
+        },
+      );
+    }
+
+    return requestHandlerList;
+  }
+
   public abstract build(): unknown;
 
   protected abstract _getBody(
@@ -268,5 +313,8 @@ export abstract class InversifyHttpAdapter<
   protected abstract _buildRouter(
     path: string,
     routerParams: RouterParams<TRequest, TResponse, TNextFunction>[],
+    middlewareList:
+      | RequestHandler<TRequest, TResponse, TNextFunction>[]
+      | undefined,
   ): unknown;
 }
