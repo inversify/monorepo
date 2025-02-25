@@ -70,7 +70,8 @@ function insertParameterMetadata(
 
   while (
     i < parameterMetadataList.length &&
-    (parameterMetadataList[i]?.index ?? 0) < newParameterMetadata.index
+    (parameterMetadataList[i] as ControllerMethodParameterMetadata).index <
+      newParameterMetadata.index
   ) {
     i++;
   }
