@@ -1,6 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Container, type interfaces } from 'inversify';
+import type { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import type {
+  BindToFluentSyntax,
+  ContainerOptions,
+  IsBoundOptions,
+} from '@inversifyjs/container';
+import { Container } from '@inversifyjs/container';
+import type {
+  BindingActivation,
+  BindingDeactivation,
+  GetOptions,
+} from '@inversifyjs/core';
 
 type IfAny<T, TYes, TNo> = 0 extends 1 & T ? TYes : TNo;
 
@@ -8,7 +19,7 @@ type BindingMapProperty = string | symbol;
 export type BindingMap = Record<BindingMapProperty, any>;
 type MappedServiceIdentifier<T extends BindingMap> = IfAny<
   T,
-  interfaces.ServiceIdentifier,
+  ServiceIdentifier,
   keyof T
 >;
 type ContainerBinding<
@@ -16,7 +27,7 @@ type ContainerBinding<
   TKey extends MappedServiceIdentifier<TBindingMap> = any,
 > = TKey extends keyof TBindingMap
   ? TBindingMap[TKey]
-  : TKey extends interfaces.Newable<infer C>
+  : TKey extends Newable<infer C>
     ? C
     : // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       TKey extends Function
@@ -25,137 +36,53 @@ type ContainerBinding<
 
 type NeverPromise<T> = T extends Promise<any> ? never : T;
 
-type First<T extends any[]> = T extends [infer TFirst, ...any[]]
-  ? TFirst
-  : never;
-
-type AllButFirst<T extends any[]> = T extends [any, ...infer TRest]
-  ? TRest
-  : never;
-
-interface ContainerOverrides<
-  T extends BindingMap = any,
-  TAncestors extends BindingMap[] = any[],
-> {
-  parent: ContainerOverrides<First<TAncestors>, AllButFirst<TAncestors>> | null;
+interface ContainerOverrides<T extends BindingMap = any> {
   bind: Bind<T>;
   get: <
     TBound extends ContainerBinding<T, TKey>,
     TKey extends MappedServiceIdentifier<T> = any,
   >(
     serviceIdentifier: TKey,
-  ) => NeverPromise<TBound>;
-  getNamed: <
-    TBound extends ContainerBinding<T, TKey>,
-    TKey extends MappedServiceIdentifier<T> = any,
-  >(
-    serviceIdentifier: TKey,
-    named: PropertyKey,
-  ) => NeverPromise<TBound>;
-  getTagged: <
-    TBound extends ContainerBinding<T, TKey>,
-    TKey extends MappedServiceIdentifier<T> = any,
-  >(
-    serviceIdentifier: TKey,
-    key: PropertyKey,
-    value: unknown,
+    options?: GetOptions,
   ) => NeverPromise<TBound>;
   getAll: <
     TBound extends ContainerBinding<T, TKey>,
     TKey extends MappedServiceIdentifier<T> = any,
   >(
     serviceIdentifier: TKey,
-  ) => NeverPromise<TBound[]>;
-  getAllTagged: <
-    TBound extends ContainerBinding<T, TKey>,
-    TKey extends MappedServiceIdentifier<T> = any,
-  >(
-    serviceIdentifier: TKey,
-    key: PropertyKey,
-    value: unknown,
-  ) => NeverPromise<TBound[]>;
-  getAllNamed: <
-    TBound extends ContainerBinding<T, TKey>,
-    TKey extends MappedServiceIdentifier<T> = any,
-  >(
-    serviceIdentifier: TKey,
-    named: PropertyKey,
+    options?: GetOptions,
   ) => NeverPromise<TBound[]>;
   getAsync: <
     TBound extends ContainerBinding<T, TKey>,
     TKey extends MappedServiceIdentifier<T> = any,
   >(
     serviceIdentifier: TKey,
-  ) => Promise<Awaited<TBound>>;
-  getNamedAsync: <
-    TBound extends ContainerBinding<T, TKey>,
-    TKey extends MappedServiceIdentifier<T> = any,
-  >(
-    serviceIdentifier: TKey,
-    named: PropertyKey,
-  ) => Promise<Awaited<TBound>>;
-  getTaggedAsync: <
-    TBound extends ContainerBinding<T, TKey>,
-    TKey extends MappedServiceIdentifier<T> = any,
-  >(
-    serviceIdentifier: TKey,
-    key: PropertyKey,
-    value: unknown,
+    options?: GetOptions,
   ) => Promise<Awaited<TBound>>;
   getAllAsync: <
     TBound extends ContainerBinding<T, TKey>,
     TKey extends MappedServiceIdentifier<T> = any,
   >(
     serviceIdentifier: TKey,
-  ) => Promise<Awaited<TBound>[]>;
-  getAllTaggedAsync: <
-    TBound extends ContainerBinding<T, TKey>,
-    TKey extends MappedServiceIdentifier<T> = any,
-  >(
-    serviceIdentifier: TKey,
-    key: PropertyKey,
-    value: unknown,
-  ) => Promise<TBound[]>;
-  getAllNamedAsync: <
-    TBound extends ContainerBinding<T, TKey>,
-    TKey extends MappedServiceIdentifier<T> = any,
-  >(
-    serviceIdentifier: TKey,
-    named: PropertyKey,
+    options?: GetOptions,
   ) => Promise<Awaited<TBound>[]>;
   isBound: IsBound<T>;
-  isBoundNamed: (
-    serviceIdentifier: MappedServiceIdentifier<T>,
-    named: PropertyKey,
-  ) => boolean;
-  isBoundTagged: (
-    serviceIdentifier: MappedServiceIdentifier<T>,
-    key: PropertyKey,
-    value: unknown,
-  ) => boolean;
   isCurrentBound: IsBound<T>;
-  rebind: Rebind<T>;
-  rebindAsync: RebindAsync<T>;
   unbind: Unbind<T>;
-  unbindAsync: UnbindAsync<T>;
   onActivation<
     TBound extends ContainerBinding<T, TKey>,
     TKey extends MappedServiceIdentifier<T> = any,
   >(
     serviceIdentifier: TKey,
-    onActivation: interfaces.BindingActivation<TBound>,
+    onActivation: BindingActivation<TBound>,
   ): void;
   onDeactivation<
     TBound extends ContainerBinding<T, TKey>,
     TKey extends MappedServiceIdentifier<T> = any,
   >(
     serviceIdentifier: TKey,
-    onDeactivation: interfaces.BindingDeactivation<TBound>,
+    onDeactivation: BindingDeactivation<TBound>,
   ): void;
-  resolve<TBound>(constructorFunction: interfaces.Newable<TBound>): TBound;
-  createChild<TChild extends BindingMap = any>(
-    containerOptions?: interfaces.ContainerOptions,
-  ): TypedContainer<TChild & Omit<T, keyof TChild>, [T, ...TAncestors]>;
 }
 
 type Bind<T extends BindingMap = any> = <
@@ -163,16 +90,7 @@ type Bind<T extends BindingMap = any> = <
   TKey extends MappedServiceIdentifier<T> = any,
 >(
   serviceIdentifier: TKey,
-) => interfaces.BindingToSyntax<TBound>;
-
-type Rebind<T extends BindingMap = any> = Bind<T>;
-
-type RebindAsync<T extends BindingMap = any> = <
-  TBound extends ContainerBinding<T, TKey>,
-  TKey extends MappedServiceIdentifier<T> = any,
->(
-  serviceIdentifier: TKey,
-) => Promise<interfaces.BindingToSyntax<TBound>>;
+) => BindToFluentSyntax<TBound>;
 
 type Unbind<T extends BindingMap = any> = <
   TKey extends MappedServiceIdentifier<T>,
@@ -180,27 +98,21 @@ type Unbind<T extends BindingMap = any> = <
   serviceIdentifier: TKey,
 ) => void;
 
-type UnbindAsync<T extends BindingMap = any> = <
-  TKey extends MappedServiceIdentifier<T>,
->(
-  serviceIdentifier: TKey,
-) => Promise<void>;
-
 type IsBound<T extends BindingMap = any> = <
   TKey extends MappedServiceIdentifier<T>,
 >(
   serviceIdentifier: TKey,
+  options?: IsBoundOptions,
 ) => boolean;
 
-export type TypedContainer<
-  T extends BindingMap = any,
-  TAncestors extends BindingMap[] = any[],
-> = ContainerOverrides<T, TAncestors> &
-  Omit<interfaces.Container, keyof ContainerOverrides>;
+export type TypedContainer<T extends BindingMap = any> = ContainerOverrides<T> &
+  Omit<Container, keyof ContainerOverrides>;
 
 // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-unsafe-assignment
 export const TypedContainer: {
-  new <T extends BindingMap = any, TAncestors extends BindingMap[] = any[]>(
-    ...args: ConstructorParameters<typeof Container>
-  ): TypedContainer<T, TAncestors>;
+  new <T extends BindingMap = any>(
+    options?: Omit<ContainerOptions, 'parent'> & {
+      parent?: ContainerOptions['parent'] | TypedContainer<any>;
+    },
+  ): TypedContainer<T>;
 } = Container as any;
