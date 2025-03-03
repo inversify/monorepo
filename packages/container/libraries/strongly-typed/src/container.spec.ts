@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/typedef */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable vitest/expect-expect */
 import { beforeEach, describe, expect, it } from 'vitest';
 
@@ -126,7 +125,7 @@ describe('interfaces', () => {
             // @ts-expect-error :: num is never
             num.then;
             /* eslint-enable @typescript-eslint/no-unused-expressions */
-          }).toThrow('it has asynchronous dependencies');
+          }).toThrow('Unexpected asyncronous service');
 
           const n: Promise<number> = container.getAsync('asyncNumber');
 
@@ -140,7 +139,7 @@ describe('interfaces', () => {
 
           // @ts-expect-error :: unknown service identifier
           expect(() => container.get('unknown') as unknown).toThrow(
-            'No matching bindings',
+            'No bindings found',
           );
         });
 
@@ -158,47 +157,22 @@ describe('interfaces', () => {
         });
 
         it('defaults a child to have an `any` map', () => {
-          const child = container.createChild();
+          const child = new TypedContainer({ parent: container });
           child.bind('unknown').toConstantValue('unknown');
 
           expect(child.get('unknown')).toBe('unknown');
         });
 
-        it('automatically extends parent types', () => {
-          const child = container.createChild<{ childProp: string }>();
+        it('allows a TypedContainer parent', () => {
+          const child = new TypedContainer<{ childProp: string } & BindingMap>({
+            parent: container,
+          });
           child.bind('childProp').toConstantValue('child');
           // @ts-expect-error :: unknown key
           child.bind('unknown').toConstantValue('unknown');
 
           expect(child.get('childProp')).toBe('child');
           expect(child.get('foo')).toBeTruthy();
-        });
-
-        it('allows a child to rebind different types to its parent bindings', () => {
-          type OverridingChildMap = Omit<BindingMap, 'foo'> & { foo: string };
-          const child = container.createChild<OverridingChildMap>();
-          child.bind('foo').toConstantValue('foo');
-
-          expect(child.get('foo')).toBe('foo');
-        });
-
-        it('tracks the types of ancestors', () => {
-          type ChildMap = BindingMap & { lorem: string };
-          const child = container.createChild<ChildMap>();
-          child.bind('lorem').toConstantValue('lorem');
-          foo = child.parent!.get('foo');
-          // @ts-expect-error :: can't assign Bar to Foo
-          foo = child.parent!.get('bar');
-
-          type GrandchildMap = ChildMap & { ipsum: string };
-          const grandchild = child.createChild<GrandchildMap>();
-          const lorem: string = grandchild.parent!.get('lorem');
-          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-          lorem;
-
-          foo = grandchild.parent!.parent!.get('foo');
-          // @ts-expect-error :: can't assign Bar to Foo
-          foo = grandchild.parent!.parent!.get('bar');
         });
       });
 
