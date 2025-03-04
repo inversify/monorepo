@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
@@ -158,7 +166,7 @@ describe(resolvePostConstruct.name, () => {
     let bindingFixture: InstanceBinding<ActivatedTest>;
     let postConstructMethodNameFixture: string;
 
-    let postConstructMethodMock: jest.Mock<() => void | Promise<void>>;
+    let postConstructMethodMock: Mock<() => void | Promise<void>>;
 
     beforeAll(() => {
       bindingFixture = {
@@ -180,7 +188,7 @@ describe(resolvePostConstruct.name, () => {
       };
       postConstructMethodNameFixture = 'post-construct-name-fixture';
 
-      postConstructMethodMock = jest.fn();
+      postConstructMethodMock = vitest.fn();
 
       instanceFixture = {
         [postConstructMethodNameFixture]: postConstructMethodMock,
@@ -199,7 +207,7 @@ describe(resolvePostConstruct.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call post construct method', () => {
@@ -236,7 +244,7 @@ describe(resolvePostConstruct.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call post construct method', () => {
@@ -261,7 +269,7 @@ describe(resolvePostConstruct.name, () => {
       let result: unknown;
 
       beforeAll(async () => {
-        postConstructMethodMock.mockReturnValueOnce(Promise.resolve(undefined));
+        postConstructMethodMock.mockResolvedValueOnce(undefined);
 
         result = await resolvePostConstruct(
           instanceFixture,
@@ -271,7 +279,7 @@ describe(resolvePostConstruct.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call post construct method', () => {
@@ -310,7 +318,7 @@ describe(resolvePostConstruct.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call post construct method', () => {

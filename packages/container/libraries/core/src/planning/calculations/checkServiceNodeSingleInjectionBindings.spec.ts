@@ -1,8 +1,8 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('./checkPlanServiceRedirectionBindingNodeSingleInjectionBindings');
-jest.mock('./isPlanServiceRedirectionBindingNode');
-jest.mock('./throwErrorWhenUnexpectedBindingsAmountFound');
+vitest.mock('./checkPlanServiceRedirectionBindingNodeSingleInjectionBindings');
+vitest.mock('./isPlanServiceRedirectionBindingNode');
+vitest.mock('./throwErrorWhenUnexpectedBindingsAmountFound');
 
 import { BindingConstraints } from '../../binding/models/BindingConstraints';
 import { MetadataTag } from '../../metadata/models/MetadataTag';
@@ -50,7 +50,7 @@ describe(checkServiceNodeSingleInjectionBindings.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call throwErrorWhenUnexpectedBindingsAmountFound()', () => {
@@ -102,11 +102,9 @@ describe(checkServiceNodeSingleInjectionBindings.name, () => {
       let result: unknown;
 
       beforeAll(() => {
-        (
-          isPlanServiceRedirectionBindingNode as unknown as jest.Mock<
-            typeof isPlanServiceRedirectionBindingNode
-          >
-        ).mockReturnValueOnce(false);
+        vitest
+          .mocked(isPlanServiceRedirectionBindingNode)
+          .mockReturnValueOnce(false);
 
         result = checkServiceNodeSingleInjectionBindings(
           nodeFixture,
@@ -116,7 +114,7 @@ describe(checkServiceNodeSingleInjectionBindings.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should not call throwErrorWhenUnexpectedBindingsAmountFound()', () => {
@@ -134,11 +132,9 @@ describe(checkServiceNodeSingleInjectionBindings.name, () => {
       let result: unknown;
 
       beforeAll(() => {
-        (
-          isPlanServiceRedirectionBindingNode as unknown as jest.Mock<
-            typeof isPlanServiceRedirectionBindingNode
-          >
-        ).mockReturnValueOnce(true);
+        vitest
+          .mocked(isPlanServiceRedirectionBindingNode)
+          .mockReturnValueOnce(true);
 
         result = checkServiceNodeSingleInjectionBindings(
           nodeFixture,
@@ -148,7 +144,7 @@ describe(checkServiceNodeSingleInjectionBindings.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call checkPlanServiceRedirectionBindingNodeSingleInjectionBindings()', () => {

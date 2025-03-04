@@ -1,7 +1,15 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('./resolveBindingPreDestroy');
-jest.mock('./resolveBindingServiceDeactivations');
+vitest.mock('./resolveBindingPreDestroy');
+vitest.mock('./resolveBindingServiceDeactivations');
 
 import { Right } from '@inversifyjs/common';
 
@@ -29,16 +37,14 @@ type CachedSingletonScopedBinding<TResolved> = Binding &
 
 describe(resolveBindingDeactivations.name, () => {
   describe('having a binding with no deactivation', () => {
-    let paramsMock: jest.Mocked<DeactivationParams>;
+    let paramsMock: Mocked<DeactivationParams>;
     let bindingFixture: CachedSingletonScopedBinding<unknown>;
 
     beforeAll(() => {
       paramsMock = {
-        getBindings: jest.fn(),
-        getDeactivations: jest.fn(),
-      } as Partial<
-        jest.Mocked<DeactivationParams>
-      > as jest.Mocked<DeactivationParams>;
+        getBindings: vitest.fn(),
+        getDeactivations: vitest.fn(),
+      } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
       bindingFixture =
         ConstantValueBindingFixtures.withCacheWithIsRightTrueAndOnDeactivationUndefined as CachedSingletonScopedBinding<unknown>;
     });
@@ -51,7 +57,7 @@ describe(resolveBindingDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveBindingPreDestroy()', () => {
@@ -82,15 +88,15 @@ describe(resolveBindingDeactivations.name, () => {
       let result: unknown;
 
       beforeAll(() => {
-        (
-          resolveBindingPreDestroy as jest.Mock<typeof resolveBindingPreDestroy>
-        ).mockReturnValueOnce(Promise.resolve(undefined));
+        vitest
+          .mocked(resolveBindingPreDestroy)
+          .mockResolvedValueOnce(undefined);
 
         result = resolveBindingDeactivations(paramsMock, bindingFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveBindingPreDestroy()', () => {
@@ -119,16 +125,14 @@ describe(resolveBindingDeactivations.name, () => {
   });
 
   describe('having a binding with sync deactivation', () => {
-    let paramsMock: jest.Mocked<DeactivationParams>;
+    let paramsMock: Mocked<DeactivationParams>;
     let bindingFixture: CachedSingletonScopedBinding<unknown>;
 
     beforeAll(() => {
       paramsMock = {
-        getBindings: jest.fn(),
-        getDeactivations: jest.fn(),
-      } as Partial<
-        jest.Mocked<DeactivationParams>
-      > as jest.Mocked<DeactivationParams>;
+        getBindings: vitest.fn(),
+        getDeactivations: vitest.fn(),
+      } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
       bindingFixture =
         ConstantValueBindingFixtures.withCacheWithIsRightTrueAndOnDeactivationSync as CachedSingletonScopedBinding<unknown>;
     });
@@ -141,7 +145,7 @@ describe(resolveBindingDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveBindingPreDestroy()', () => {
@@ -170,16 +174,14 @@ describe(resolveBindingDeactivations.name, () => {
   });
 
   describe('having a binding async cached value and sync deactivation', () => {
-    let paramsMock: jest.Mocked<DeactivationParams>;
+    let paramsMock: Mocked<DeactivationParams>;
     let bindingFixture: CachedSingletonScopedBinding<unknown>;
 
     beforeAll(() => {
       paramsMock = {
-        getBindings: jest.fn(),
-        getDeactivations: jest.fn(),
-      } as Partial<
-        jest.Mocked<DeactivationParams>
-      > as jest.Mocked<DeactivationParams>;
+        getBindings: vitest.fn(),
+        getDeactivations: vitest.fn(),
+      } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
       bindingFixture =
         ConstantValueBindingFixtures.withCacheWithIsRightTrueAndAsyncValueAndOnDeactivationSync as CachedSingletonScopedBinding<unknown>;
     });
@@ -192,7 +194,7 @@ describe(resolveBindingDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveBindingPreDestroy()', () => {
@@ -221,16 +223,14 @@ describe(resolveBindingDeactivations.name, () => {
   });
 
   describe('having a binding with async deactivation', () => {
-    let paramsMock: jest.Mocked<DeactivationParams>;
+    let paramsMock: Mocked<DeactivationParams>;
     let bindingFixture: CachedSingletonScopedBinding<unknown>;
 
     beforeAll(() => {
       paramsMock = {
-        getBindings: jest.fn(),
-        getDeactivations: jest.fn(),
-      } as Partial<
-        jest.Mocked<DeactivationParams>
-      > as jest.Mocked<DeactivationParams>;
+        getBindings: vitest.fn(),
+        getDeactivations: vitest.fn(),
+      } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
       bindingFixture =
         ConstantValueBindingFixtures.withCacheWithIsRightTrueOnDeactivationAsync as CachedSingletonScopedBinding<unknown>;
     });
@@ -243,7 +243,7 @@ describe(resolveBindingDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveBindingServiceDeactivations()', () => {

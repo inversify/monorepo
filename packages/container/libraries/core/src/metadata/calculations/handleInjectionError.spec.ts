@@ -1,7 +1,7 @@
-import { beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('../../decorator/calculations/getDecoratorInfo');
-jest.mock('../../decorator/calculations/stringifyDecoratorInfo');
+vitest.mock('../../decorator/calculations/getDecoratorInfo');
+vitest.mock('../../decorator/calculations/stringifyDecoratorInfo');
 
 import { getDecoratorInfo } from '../../decorator/calculations/getDecoratorInfo';
 import { stringifyDecoratorInfo } from '../../decorator/calculations/stringifyDecoratorInfo';
@@ -43,13 +43,13 @@ describe(handleInjectionError.name, () => {
 
         decoratorInfoStringifiedFixture = 'decorator-info-stringified-fixture';
 
-        (
-          getDecoratorInfo as jest.Mock<typeof getDecoratorInfo>
-        ).mockReturnValueOnce(decoratorInfoFixture);
+        vitest
+          .mocked(getDecoratorInfo)
+          .mockReturnValueOnce(decoratorInfoFixture);
 
-        (
-          stringifyDecoratorInfo as jest.Mock<typeof stringifyDecoratorInfo>
-        ).mockReturnValueOnce(decoratorInfoStringifiedFixture);
+        vitest
+          .mocked(stringifyDecoratorInfo)
+          .mockReturnValueOnce(decoratorInfoStringifiedFixture);
 
         try {
           handleInjectionError(

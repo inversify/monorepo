@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { Newable } from '../models/Newable';
 import { ServiceIdentifier } from '../models/ServiceIdentifier';

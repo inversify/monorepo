@@ -1,11 +1,19 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-jest.mock('../actions/updateMaybeClassMetadataPreDestroy');
-jest.mock('../calculations/handleInjectionError');
+vitest.mock('../actions/updateMaybeClassMetadataPreDestroy');
+vitest.mock('../calculations/handleInjectionError');
 
 import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
 import { updateMaybeClassMetadataPreDestroy } from '../actions/updateMaybeClassMetadataPreDestroy';
@@ -26,20 +34,18 @@ describe(preDestroy.name, () => {
   });
 
   describe('when caled', () => {
-    let updateMaybeClassMetadataPostConstructorResult: jest.Mock<
+    let updateMaybeClassMetadataPostConstructorResult: Mock<
       (metadata: MaybeClassMetadata) => MaybeClassMetadata
     >;
 
     let result: unknown;
 
     beforeAll(() => {
-      updateMaybeClassMetadataPostConstructorResult = jest.fn();
+      updateMaybeClassMetadataPostConstructorResult = vitest.fn();
 
-      (
-        updateMaybeClassMetadataPreDestroy as jest.Mock<
-          typeof updateMaybeClassMetadataPreDestroy
-        >
-      ).mockReturnValueOnce(updateMaybeClassMetadataPostConstructorResult);
+      vitest
+        .mocked(updateMaybeClassMetadataPreDestroy)
+        .mockReturnValueOnce(updateMaybeClassMetadataPostConstructorResult);
 
       result = preDestroy()(
         targetFixture,
@@ -49,7 +55,7 @@ describe(preDestroy.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call updateMaybeClassMetadataPreDestroy()', () => {
@@ -77,7 +83,7 @@ describe(preDestroy.name, () => {
   describe('when caled, and updateOwnReflectMetadata throws an Error', () => {
     let errorFixture: Error;
 
-    let updateMaybeClassMetadataPostConstructorResult: jest.Mock<
+    let updateMaybeClassMetadataPostConstructorResult: Mock<
       (metadata: MaybeClassMetadata) => MaybeClassMetadata
     >;
 
@@ -86,17 +92,13 @@ describe(preDestroy.name, () => {
     beforeAll(() => {
       errorFixture = new Error('error-fixture');
 
-      updateMaybeClassMetadataPostConstructorResult = jest.fn();
+      updateMaybeClassMetadataPostConstructorResult = vitest.fn();
 
-      (
-        updateMaybeClassMetadataPreDestroy as jest.Mock<
-          typeof updateMaybeClassMetadataPreDestroy
-        >
-      ).mockReturnValueOnce(updateMaybeClassMetadataPostConstructorResult);
+      vitest
+        .mocked(updateMaybeClassMetadataPreDestroy)
+        .mockReturnValueOnce(updateMaybeClassMetadataPostConstructorResult);
 
-      (
-        updateOwnReflectMetadata as jest.Mock<typeof updateOwnReflectMetadata>
-      ).mockImplementation((): never => {
+      vitest.mocked(updateOwnReflectMetadata).mockImplementation((): never => {
         throw errorFixture;
       });
 
@@ -108,7 +110,7 @@ describe(preDestroy.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call updateMaybeClassMetadataPreDestroy()', () => {

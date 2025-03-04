@@ -1,9 +1,17 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { BindingConstraints, MetadataName } from '@inversifyjs/core';
 
-jest.mock('./isBindingConstraintsWithName');
-jest.mock('./isNoAncestorBindingConstraints');
+vitest.mock('./isBindingConstraintsWithName');
+vitest.mock('./isNoAncestorBindingConstraints');
 
 import { isBindingConstraintsWithName } from './isBindingConstraintsWithName';
 import { isNoAncestorBindingConstraints } from './isNoAncestorBindingConstraints';
@@ -17,36 +25,32 @@ describe(isNoAncestorBindingConstraintsWithName.name, () => {
   });
 
   describe('when called', () => {
-    let isBindingConstraintsWithNameResultMock: jest.Mock<
+    let isBindingConstraintsWithNameResultMock: Mock<
       (constraints: BindingConstraints) => boolean
     >;
-    let isNoAncestorBindingConstraintsResultMock: jest.Mock<
+    let isNoAncestorBindingConstraintsResultMock: Mock<
       (constraints: BindingConstraints) => boolean
     >;
 
     let result: unknown;
 
     beforeAll(() => {
-      isBindingConstraintsWithNameResultMock = jest.fn();
-      isNoAncestorBindingConstraintsResultMock = jest.fn();
+      isBindingConstraintsWithNameResultMock = vitest.fn();
+      isNoAncestorBindingConstraintsResultMock = vitest.fn();
 
-      (
-        isBindingConstraintsWithName as jest.Mock<
-          typeof isBindingConstraintsWithName
-        >
-      ).mockReturnValueOnce(isBindingConstraintsWithNameResultMock);
+      vitest
+        .mocked(isBindingConstraintsWithName)
+        .mockReturnValueOnce(isBindingConstraintsWithNameResultMock);
 
-      (
-        isNoAncestorBindingConstraints as jest.Mock<
-          typeof isNoAncestorBindingConstraints
-        >
-      ).mockReturnValueOnce(isNoAncestorBindingConstraintsResultMock);
+      vitest
+        .mocked(isNoAncestorBindingConstraints)
+        .mockReturnValueOnce(isNoAncestorBindingConstraintsResultMock);
 
       result = isNoAncestorBindingConstraintsWithName(nameFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isBindingConstraintsWithName()', () => {

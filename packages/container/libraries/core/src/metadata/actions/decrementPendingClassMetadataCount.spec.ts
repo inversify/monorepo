@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
@@ -39,7 +39,7 @@ describe(decrementPendingClassMetadataCount.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call updateOwnReflectMetadata', () => {
@@ -74,7 +74,7 @@ describe(decrementPendingClassMetadataCount.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should not call updateOwnReflectMetadata', () => {
@@ -105,7 +105,7 @@ describe(decrementPendingClassMetadataCount.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should not call updateOwnReflectMetadata', () => {

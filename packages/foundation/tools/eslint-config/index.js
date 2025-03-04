@@ -1,7 +1,7 @@
 // @ts-check
 
 import eslint from '@eslint/js';
-import jestPlugin from 'eslint-plugin-jest';
+import vitest from '@vitest/eslint-plugin';
 import tseslint from 'typescript-eslint';
 import eslintPrettierConfig from 'eslint-plugin-prettier/recommended';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
@@ -137,7 +137,7 @@ function buildBaseConfig() {
         'error',
         {
           groups: [
-            ['@jest/globals'],
+            ['vitest'],
             ['^\\u0000'],
             ['^node:'],
             ['^@?\\w'],
@@ -168,22 +168,39 @@ export default tseslint.config(
   },
   {
     ...baseRules,
-    extends: [
-      ...(baseRules.extends ?? []),
-      jestPlugin.configs['flat/recommended'],
-      jestPlugin.configs['flat/style'],
-    ],
+    extends: [...(baseRules.extends ?? [])],
     files: ['**/*.spec.{cjs,mts,ts,tsx}'],
     plugins: {
       ...(baseRules.plugins ?? {}),
-      jest: jestPlugin,
     },
     rules: {
       ...(baseRules.rules ?? {}),
       '@typescript-eslint/no-confusing-void-expression': 'off',
       '@typescript-eslint/unbound-method': 'off',
       '@typescript-eslint/no-magic-numbers': 'off',
-      'jest/valid-title': 'off',
+    },
+  },
+  {
+    files: ['**/*.spec.ts'],
+    plugins: {
+      vitest,
+    },
+    rules: {
+      ...vitest.configs.recommended.rules,
+      ...vitest.configs.all.rules,
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/no-magic-numbers': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      'vitest/consistent-test-filename': 'off',
+      'vitest/max-expects': 'off',
+      'vitest/no-hooks': 'off',
+      'vitest/prefer-expect-assertions': 'off',
+      'vitest/prefer-strict-equal': 'error',
+      'vitest/valid-title': 'off',
+      'vitest/prefer-lowercase-title': 'off',
+      'vitest/prefer-to-be-falsy': 'off',
+      'vitest/prefer-to-be-truthy': 'off',
     },
   },
   /** @type {import('typescript-eslint').ConfigWithExtends} */ (

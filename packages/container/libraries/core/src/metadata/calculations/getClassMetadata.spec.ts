@@ -1,16 +1,16 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('./getDefaultClassMetadata');
+vitest.mock('./getDefaultClassMetadata');
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { Newable } from '@inversifyjs/common';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-jest.mock('./getDefaultClassMetadata');
-jest.mock('./isPendingClassMetadata');
-jest.mock('./throwAtInvalidClassMetadata');
-jest.mock('./validateConstructorMetadataArray');
+vitest.mock('./getDefaultClassMetadata');
+vitest.mock('./isPendingClassMetadata');
+vitest.mock('./throwAtInvalidClassMetadata');
+vitest.mock('./validateConstructorMetadataArray');
 
 import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
 import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures';
@@ -38,21 +38,15 @@ describe(getClassMetadata.name, () => {
       errorFixture = new Error('error-fixture-message');
       metadataFixture = ClassMetadataFixtures.any;
 
-      (
-        getOwnReflectMetadata as jest.Mock<typeof getOwnReflectMetadata>
-      ).mockReturnValueOnce(metadataFixture);
+      vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce(metadataFixture);
 
-      (
-        isPendingClassMetadata as jest.Mock<typeof isPendingClassMetadata>
-      ).mockReturnValueOnce(true);
+      vitest.mocked(isPendingClassMetadata).mockReturnValueOnce(true);
 
-      (
-        throwAtInvalidClassMetadata as jest.Mock<
-          typeof throwAtInvalidClassMetadata
-        >
-      ).mockImplementationOnce((): never => {
-        throw errorFixture;
-      });
+      vitest
+        .mocked(throwAtInvalidClassMetadata)
+        .mockImplementationOnce((): never => {
+          throw errorFixture;
+        });
 
       try {
         getClassMetadata(typeFixture);
@@ -62,7 +56,7 @@ describe(getClassMetadata.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getOwnReflectMetadata()', () => {
@@ -106,19 +100,17 @@ describe(getClassMetadata.name, () => {
         scope: undefined,
       };
 
-      (
-        getDefaultClassMetadata as jest.Mock<typeof getDefaultClassMetadata>
-      ).mockReturnValueOnce(metadataFixture);
+      vitest
+        .mocked(getDefaultClassMetadata)
+        .mockReturnValueOnce(metadataFixture);
 
-      (
-        isPendingClassMetadata as jest.Mock<typeof isPendingClassMetadata>
-      ).mockReturnValueOnce(false);
+      vitest.mocked(isPendingClassMetadata).mockReturnValueOnce(false);
 
       result = getClassMetadata(typeFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getOwnReflectMetadata()', () => {

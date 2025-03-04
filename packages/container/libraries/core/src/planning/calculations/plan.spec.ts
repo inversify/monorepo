@@ -1,7 +1,15 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('./buildFilteredServiceBindings');
-jest.mock('./checkServiceNodeSingleInjectionBindings');
+vitest.mock('./buildFilteredServiceBindings');
+vitest.mock('./checkServiceNodeSingleInjectionBindings');
 
 import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
 
@@ -39,12 +47,12 @@ import { plan } from './plan';
 
 describe(plan.name, () => {
   describe('having PlanParams with name and tag root constraint', () => {
-    let planParamsMock: jest.Mocked<PlanParams>;
+    let planParamsMock: Mocked<PlanParams>;
 
     beforeAll(() => {
       planParamsMock = {
-        getBindings: jest.fn() as unknown,
-        getClassMetadata: jest.fn() as unknown,
+        getBindings: vitest.fn() as unknown,
+        getClassMetadata: vitest.fn() as unknown,
         rootConstraints: {
           isMultiple: true,
           name: 'name',
@@ -55,7 +63,7 @@ describe(plan.name, () => {
           },
         },
         servicesBranch: new Set(),
-      } as Partial<jest.Mocked<PlanParams>> as jest.Mocked<PlanParams>;
+      } as Partial<Mocked<PlanParams>> as Mocked<PlanParams>;
     });
 
     describe('when called, and params.getBindings() returns an array with a ConstantValueBinding', () => {
@@ -69,7 +77,7 @@ describe(plan.name, () => {
             value: Symbol(),
           },
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -79,17 +87,15 @@ describe(plan.name, () => {
           value: Symbol(),
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        ).mockReturnValueOnce([constantValueBinding]);
+        vitest
+          .mocked(buildFilteredServiceBindings)
+          .mockReturnValueOnce([constantValueBinding]);
 
         result = plan(planParamsMock);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
@@ -126,36 +132,32 @@ describe(plan.name, () => {
   });
 
   describe('having PlanParams with isMultiple true root constraint', () => {
-    let planParamsMock: jest.Mocked<PlanParams>;
+    let planParamsMock: Mocked<PlanParams>;
 
     beforeAll(() => {
       planParamsMock = {
-        getBindings: jest.fn() as unknown,
-        getClassMetadata: jest.fn() as unknown,
+        getBindings: vitest.fn() as unknown,
+        getClassMetadata: vitest.fn() as unknown,
         rootConstraints: {
           isMultiple: true,
           serviceIdentifier: 'service-id',
         },
         servicesBranch: new Set(),
-        setBinding: jest.fn() as unknown,
-      } as Partial<jest.Mocked<PlanParams>> as jest.Mocked<PlanParams>;
+        setBinding: vitest.fn() as unknown,
+      } as Partial<Mocked<PlanParams>> as Mocked<PlanParams>;
     });
 
     describe('when called, and params.getBindings() returns undefined', () => {
       let result: unknown;
 
       beforeAll(() => {
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        ).mockReturnValueOnce([]);
+        vitest.mocked(buildFilteredServiceBindings).mockReturnValueOnce([]);
 
         result = plan(planParamsMock);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
@@ -193,7 +195,7 @@ describe(plan.name, () => {
             value: Symbol(),
           },
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -203,17 +205,15 @@ describe(plan.name, () => {
           value: Symbol(),
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        ).mockReturnValueOnce([constantValueBinding]);
+        vitest
+          .mocked(buildFilteredServiceBindings)
+          .mockReturnValueOnce([constantValueBinding]);
 
         result = plan(planParamsMock);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
@@ -262,7 +262,7 @@ describe(plan.name, () => {
           },
           id: 1,
           implementationType: class {},
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -271,11 +271,9 @@ describe(plan.name, () => {
           type: bindingTypeValues.Instance,
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        ).mockReturnValueOnce([instanceBindingFixture]);
+        vitest
+          .mocked(buildFilteredServiceBindings)
+          .mockReturnValueOnce([instanceBindingFixture]);
 
         planParamsMock.getClassMetadata.mockReturnValueOnce(
           classMetadataFixture,
@@ -285,7 +283,7 @@ describe(plan.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
@@ -341,7 +339,7 @@ describe(plan.name, () => {
             value: Symbol(),
           },
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -381,7 +379,7 @@ describe(plan.name, () => {
           },
           id: 1,
           implementationType: class {},
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -390,11 +388,8 @@ describe(plan.name, () => {
           type: bindingTypeValues.Instance,
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        )
+        vitest
+          .mocked(buildFilteredServiceBindings)
           .mockReturnValueOnce([instanceBindingFixture])
           .mockReturnValueOnce([constantValueBinding])
           .mockReturnValueOnce([constantValueBinding]);
@@ -407,18 +402,16 @@ describe(plan.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
-        const expectedSublan: jest.Mocked<SubplanParams> = {
+        const expectedSublan: Mocked<SubplanParams> = {
           autobindOptions: planParamsMock.autobindOptions,
           getBindings: planParamsMock.getBindings,
           getClassMetadata: planParamsMock.getClassMetadata,
-          node: expect.any(
-            Object,
-          ) as unknown as jest.Mocked<PlanServiceNodeParent>,
-          servicesBranch: expect.any(Set) as unknown as jest.Mocked<
+          node: expect.any(Object) as unknown as Mocked<PlanServiceNodeParent>,
+          servicesBranch: expect.any(Set) as unknown as Mocked<
             Set<ServiceIdentifier>
           >,
           setBinding: planParamsMock.setBinding,
@@ -523,7 +516,7 @@ describe(plan.name, () => {
             value: Symbol(),
           },
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -565,7 +558,7 @@ describe(plan.name, () => {
           },
           id: 1,
           implementationType: class {},
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -574,11 +567,8 @@ describe(plan.name, () => {
           type: bindingTypeValues.Instance,
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        )
+        vitest
+          .mocked(buildFilteredServiceBindings)
           .mockReturnValueOnce([instanceBindingFixture])
           .mockReturnValueOnce([constantValueBinding])
           .mockReturnValueOnce([constantValueBinding]);
@@ -591,18 +581,16 @@ describe(plan.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
-        const expectedSublan: jest.Mocked<SubplanParams> = {
+        const expectedSublan: Mocked<SubplanParams> = {
           autobindOptions: planParamsMock.autobindOptions,
           getBindings: planParamsMock.getBindings,
           getClassMetadata: planParamsMock.getClassMetadata,
-          node: expect.any(
-            Object,
-          ) as unknown as jest.Mocked<PlanServiceNodeParent>,
-          servicesBranch: expect.any(Set) as unknown as jest.Mocked<
+          node: expect.any(Object) as unknown as Mocked<PlanServiceNodeParent>,
+          servicesBranch: expect.any(Set) as unknown as Mocked<
             Set<ServiceIdentifier>
           >,
           setBinding: planParamsMock.setBinding,
@@ -710,7 +698,7 @@ describe(plan.name, () => {
             value: Symbol(),
           },
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -750,7 +738,7 @@ describe(plan.name, () => {
           },
           id: 1,
           implementationType: class {},
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -759,11 +747,8 @@ describe(plan.name, () => {
           type: bindingTypeValues.Instance,
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        )
+        vitest
+          .mocked(buildFilteredServiceBindings)
           .mockReturnValueOnce([instanceBindingFixture])
           .mockReturnValueOnce([constantValueBinding])
           .mockReturnValueOnce([constantValueBinding]);
@@ -776,18 +761,16 @@ describe(plan.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
-        const expectedSublan: jest.Mocked<SubplanParams> = {
+        const expectedSublan: Mocked<SubplanParams> = {
           autobindOptions: planParamsMock.autobindOptions,
           getBindings: planParamsMock.getBindings,
           getClassMetadata: planParamsMock.getClassMetadata,
-          node: expect.any(
-            Object,
-          ) as unknown as jest.Mocked<PlanServiceNodeParent>,
-          servicesBranch: expect.any(Set) as unknown as jest.Mocked<
+          node: expect.any(Object) as unknown as Mocked<PlanServiceNodeParent>,
+          servicesBranch: expect.any(Set) as unknown as Mocked<
             Set<ServiceIdentifier>
           >,
           setBinding: planParamsMock.setBinding,
@@ -938,7 +921,7 @@ describe(plan.name, () => {
           },
           id: 1,
           implementationType: class {},
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -947,11 +930,9 @@ describe(plan.name, () => {
           type: bindingTypeValues.Instance,
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        ).mockReturnValueOnce([instanceBindingFixture]);
+        vitest
+          .mocked(buildFilteredServiceBindings)
+          .mockReturnValueOnce([instanceBindingFixture]);
 
         planParamsMock.getClassMetadata.mockReturnValueOnce(
           classMetadataFixture,
@@ -961,7 +942,7 @@ describe(plan.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
@@ -1002,9 +983,7 @@ describe(plan.name, () => {
     });
 
     describe('when called, and params.getBindings() returns an array with a single ResolvedValueBinding with empty metadata', () => {
-      let resolvedValueBindingFixture: jest.Mocked<
-        ResolvedValueBinding<unknown>
-      >;
+      let resolvedValueBindingFixture: Mocked<ResolvedValueBinding<unknown>>;
       let result: unknown;
 
       beforeAll(() => {
@@ -1013,9 +992,9 @@ describe(plan.name, () => {
             isRight: true,
             value: Symbol(),
           },
-          factory: jest.fn(),
+          factory: vitest.fn(),
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(),
           metadata: {
             arguments: [],
           },
@@ -1027,17 +1006,17 @@ describe(plan.name, () => {
           type: bindingTypeValues.ResolvedValue,
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        ).mockReturnValueOnce([resolvedValueBindingFixture]);
+        resolvedValueBindingFixture.isSatisfiedBy.mockReturnValueOnce(true);
+
+        vitest
+          .mocked(buildFilteredServiceBindings)
+          .mockReturnValueOnce([resolvedValueBindingFixture]);
 
         result = plan(planParamsMock);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
@@ -1089,7 +1068,7 @@ describe(plan.name, () => {
             value: Symbol(),
           },
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -1113,9 +1092,9 @@ describe(plan.name, () => {
             isRight: true,
             value: Symbol(),
           },
-          factory: jest.fn(),
+          factory: vitest.fn(),
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           metadata: resolvedValueMetadataFixture,
           moduleId: undefined,
           onActivation: undefined,
@@ -1125,11 +1104,8 @@ describe(plan.name, () => {
           type: bindingTypeValues.ResolvedValue,
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        )
+        vitest
+          .mocked(buildFilteredServiceBindings)
           .mockReturnValueOnce([resolvedValueBindingFixture])
           .mockReturnValueOnce([constantValueBinding]);
 
@@ -1137,18 +1113,16 @@ describe(plan.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
-        const expectedSublan: jest.Mocked<SubplanParams> = {
+        const expectedSublan: Mocked<SubplanParams> = {
           autobindOptions: planParamsMock.autobindOptions,
           getBindings: planParamsMock.getBindings,
           getClassMetadata: planParamsMock.getClassMetadata,
-          node: expect.any(
-            Object,
-          ) as unknown as jest.Mocked<PlanServiceNodeParent>,
-          servicesBranch: expect.any(Set) as unknown as jest.Mocked<
+          node: expect.any(Object) as unknown as Mocked<PlanServiceNodeParent>,
+          servicesBranch: expect.any(Set) as unknown as Mocked<
             Set<ServiceIdentifier>
           >,
           setBinding: planParamsMock.setBinding,
@@ -1224,7 +1198,7 @@ describe(plan.name, () => {
             value: Symbol(),
           },
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -1248,9 +1222,9 @@ describe(plan.name, () => {
             isRight: true,
             value: Symbol(),
           },
-          factory: jest.fn(),
+          factory: vitest.fn(),
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           metadata: resolvedValueMetadataFixture,
           moduleId: undefined,
           onActivation: undefined,
@@ -1260,11 +1234,8 @@ describe(plan.name, () => {
           type: bindingTypeValues.ResolvedValue,
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        )
+        vitest
+          .mocked(buildFilteredServiceBindings)
           .mockReturnValueOnce([resolvedValueBindingFixture])
           .mockReturnValueOnce([constantValueBinding]);
 
@@ -1272,18 +1243,16 @@ describe(plan.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
-        const expectedSublan: jest.Mocked<SubplanParams> = {
+        const expectedSublan: Mocked<SubplanParams> = {
           autobindOptions: planParamsMock.autobindOptions,
           getBindings: planParamsMock.getBindings,
           getClassMetadata: planParamsMock.getClassMetadata,
-          node: expect.any(
-            Object,
-          ) as unknown as jest.Mocked<PlanServiceNodeParent>,
-          servicesBranch: expect.any(Set) as unknown as jest.Mocked<
+          node: expect.any(Object) as unknown as Mocked<PlanServiceNodeParent>,
+          servicesBranch: expect.any(Set) as unknown as Mocked<
             Set<ServiceIdentifier>
           >,
           setBinding: planParamsMock.setBinding,
@@ -1360,7 +1329,7 @@ describe(plan.name, () => {
             value: Symbol(),
           },
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -1384,9 +1353,9 @@ describe(plan.name, () => {
             isRight: true,
             value: Symbol(),
           },
-          factory: jest.fn(),
+          factory: vitest.fn(),
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           metadata: resolvedValueMetadataFixture,
           moduleId: undefined,
           onActivation: undefined,
@@ -1396,11 +1365,8 @@ describe(plan.name, () => {
           type: bindingTypeValues.ResolvedValue,
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        )
+        vitest
+          .mocked(buildFilteredServiceBindings)
           .mockReturnValueOnce([resolvedValueBindingFixture])
           .mockReturnValueOnce([constantValueBinding]);
 
@@ -1408,18 +1374,16 @@ describe(plan.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
-        const expectedSublan: jest.Mocked<SubplanParams> = {
+        const expectedSublan: Mocked<SubplanParams> = {
           autobindOptions: planParamsMock.autobindOptions,
           getBindings: planParamsMock.getBindings,
           getClassMetadata: planParamsMock.getClassMetadata,
-          node: expect.any(
-            Object,
-          ) as unknown as jest.Mocked<PlanServiceNodeParent>,
-          servicesBranch: expect.any(Set) as unknown as jest.Mocked<
+          node: expect.any(Object) as unknown as Mocked<PlanServiceNodeParent>,
+          servicesBranch: expect.any(Set) as unknown as Mocked<
             Set<ServiceIdentifier>
           >,
           setBinding: planParamsMock.setBinding,
@@ -1486,18 +1450,15 @@ describe(plan.name, () => {
       beforeAll(() => {
         serviceRedirectionBinding = {
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
           targetServiceIdentifier: 'target-service-id',
           type: bindingTypeValues.ServiceRedirection,
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        )
+        vitest
+          .mocked(buildFilteredServiceBindings)
           .mockReturnValueOnce([serviceRedirectionBinding])
           .mockReturnValueOnce([]);
 
@@ -1505,7 +1466,7 @@ describe(plan.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
@@ -1566,7 +1527,7 @@ describe(plan.name, () => {
       beforeAll(() => {
         serviceRedirectionBinding = {
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
           targetServiceIdentifier: 'target-service-id',
@@ -1579,7 +1540,7 @@ describe(plan.name, () => {
             value: Symbol(),
           },
           id: 1,
-          isSatisfiedBy: jest.fn(() => true),
+          isSatisfiedBy: vitest.fn(() => true),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -1589,11 +1550,8 @@ describe(plan.name, () => {
           value: Symbol(),
         };
 
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        )
+        vitest
+          .mocked(buildFilteredServiceBindings)
           .mockReturnValueOnce([serviceRedirectionBinding])
           .mockReturnValueOnce([constantValueBinding]);
 
@@ -1601,7 +1559,7 @@ describe(plan.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {
@@ -1659,35 +1617,31 @@ describe(plan.name, () => {
   });
 
   describe('having PlanParams with isMultiple false root constraint', () => {
-    let planParamsMock: jest.Mocked<PlanParams>;
+    let planParamsMock: Mocked<PlanParams>;
 
     beforeAll(() => {
       planParamsMock = {
-        getBindings: jest.fn(),
-        getClassMetadata: jest.fn(),
+        getBindings: vitest.fn(),
+        getClassMetadata: vitest.fn(),
         rootConstraints: {
           isMultiple: false,
           serviceIdentifier: 'service-id',
         },
         servicesBranch: new Set(),
-      } as Partial<PlanParams> as jest.Mocked<PlanParams>;
+      } as Partial<PlanParams> as Mocked<PlanParams>;
     });
 
     describe('when called, and params.getBindings() returns undefined', () => {
       let result: unknown;
 
       beforeAll(() => {
-        (
-          buildFilteredServiceBindings as jest.Mock<
-            typeof buildFilteredServiceBindings
-          >
-        ).mockReturnValueOnce([]);
+        vitest.mocked(buildFilteredServiceBindings).mockReturnValueOnce([]);
 
         result = plan(planParamsMock);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildFilteredServiceBindings()', () => {

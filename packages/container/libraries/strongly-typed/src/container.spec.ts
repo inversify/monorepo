@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/typedef */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable jest/expect-expect */
-import { beforeEach, describe, expect, it } from '@jest/globals';
+/* eslint-disable vitest/expect-expect */
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata';
 
@@ -127,14 +127,17 @@ describe('interfaces', () => {
             num.then;
             /* eslint-enable @typescript-eslint/no-unused-expressions */
           }).toThrow('it has asynchronous dependencies');
+
           const n: Promise<number> = container.getAsync('asyncNumber');
-          expect(await n).toBe(1);
+
+          await expect(n).resolves.toBe(1);
         });
 
         it('enforces strict bindings', () => {
           foo = container.get('foo');
           // @ts-expect-error :: can't assign Bar to Foo
           foo = container.get('bar');
+
           // @ts-expect-error :: unknown service identifier
           expect(() => container.get('unknown') as unknown).toThrow(
             'No matching bindings',
@@ -157,6 +160,7 @@ describe('interfaces', () => {
         it('defaults a child to have an `any` map', () => {
           const child = container.createChild();
           child.bind('unknown').toConstantValue('unknown');
+
           expect(child.get('unknown')).toBe('unknown');
         });
 
@@ -165,6 +169,7 @@ describe('interfaces', () => {
           child.bind('childProp').toConstantValue('child');
           // @ts-expect-error :: unknown key
           child.bind('unknown').toConstantValue('unknown');
+
           expect(child.get('childProp')).toBe('child');
           expect(child.get('foo')).toBeTruthy();
         });
@@ -173,6 +178,7 @@ describe('interfaces', () => {
           type OverridingChildMap = Omit<BindingMap, 'foo'> & { foo: string };
           const child = container.createChild<OverridingChildMap>();
           child.bind('foo').toConstantValue('foo');
+
           expect(child.get('foo')).toBe('foo');
         });
 

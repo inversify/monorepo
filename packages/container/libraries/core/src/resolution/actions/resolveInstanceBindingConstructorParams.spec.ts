@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { InstanceBinding } from '../../binding/models/InstanceBinding';
 import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
@@ -8,7 +16,7 @@ import { resolveInstanceBindingConstructorParams } from './resolveInstanceBindin
 
 describe(resolveInstanceBindingConstructorParams.name, () => {
   describe('having InstanceBindingNode with constructor param with undefined value', () => {
-    let resolveServiceNodeMock: jest.Mock<
+    let resolveServiceNodeMock: Mock<
       (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
     >;
 
@@ -16,7 +24,7 @@ describe(resolveInstanceBindingConstructorParams.name, () => {
     let nodeFixture: InstanceBindingNode<InstanceBinding<unknown>>;
 
     beforeAll(() => {
-      resolveServiceNodeMock = jest.fn();
+      resolveServiceNodeMock = vitest.fn();
       paramsFixture = Symbol() as unknown as ResolutionParams;
       nodeFixture = {
         constructorParams: [undefined],
@@ -42,7 +50,7 @@ describe(resolveInstanceBindingConstructorParams.name, () => {
 
   describe('having InstanceBindingNode with constructor param with PlanServiceNode value', () => {
     let constructorParamFixture: PlanServiceNode;
-    let resolveServiceNodeMock: jest.Mock<
+    let resolveServiceNodeMock: Mock<
       (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
     >;
 
@@ -55,7 +63,7 @@ describe(resolveInstanceBindingConstructorParams.name, () => {
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
-      resolveServiceNodeMock = jest.fn();
+      resolveServiceNodeMock = vitest.fn();
       paramsFixture = Symbol() as unknown as ResolutionParams;
       nodeFixture = {
         constructorParams: [constructorParamFixture],
@@ -80,7 +88,7 @@ describe(resolveInstanceBindingConstructorParams.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveServiceNode()', () => {
@@ -104,9 +112,7 @@ describe(resolveInstanceBindingConstructorParams.name, () => {
       beforeAll(() => {
         resolvedValue = Symbol();
 
-        resolveServiceNodeMock.mockReturnValueOnce(
-          Promise.resolve(resolvedValue),
-        );
+        resolveServiceNodeMock.mockResolvedValueOnce(resolvedValue);
 
         result = resolveInstanceBindingConstructorParams(
           resolveServiceNodeMock,
@@ -114,7 +120,7 @@ describe(resolveInstanceBindingConstructorParams.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveServiceNode()', () => {

@@ -1,6 +1,15 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('./resolvePostConstruct');
+vitest.mock('./resolvePostConstruct');
 
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
@@ -15,7 +24,7 @@ import { resolveInstanceBindingNodeFromConstructorParams } from './resolveInstan
 import { resolvePostConstruct } from './resolvePostConstruct';
 
 describe(resolveInstanceBindingNodeFromConstructorParams.name, () => {
-  let setInstancePropertiesMock: jest.Mock<
+  let setInstancePropertiesMock: Mock<
     (
       params: ResolutionParams,
       instance: Record<string | symbol, unknown>,
@@ -25,10 +34,10 @@ describe(resolveInstanceBindingNodeFromConstructorParams.name, () => {
 
   let constructorValuesFixture: unknown[];
   let paramsFixture: ResolutionParams;
-  let nodeMock: jest.Mocked<InstanceBindingNode<InstanceBinding<unknown>>>;
+  let nodeMock: Mocked<InstanceBindingNode<InstanceBinding<unknown>>>;
 
   beforeAll(() => {
-    setInstancePropertiesMock = jest.fn();
+    setInstancePropertiesMock = vitest.fn();
 
     constructorValuesFixture = [Symbol()];
     paramsFixture = Symbol() as unknown as ResolutionParams;
@@ -39,8 +48,8 @@ describe(resolveInstanceBindingNodeFromConstructorParams.name, () => {
           value: undefined,
         },
         id: 1,
-        implementationType: jest.fn(),
-        isSatisfiedBy: jest.fn(),
+        implementationType: vitest.fn(),
+        isSatisfiedBy: vitest.fn(),
         moduleId: undefined,
         onActivation: undefined,
         onDeactivation: undefined,
@@ -54,21 +63,21 @@ describe(resolveInstanceBindingNodeFromConstructorParams.name, () => {
           postConstructMethodName: 'post-construct-method-name',
           preDestroyMethodName: undefined,
         },
-      } as Partial<jest.Mocked<ClassMetadata>> as jest.Mocked<ClassMetadata>,
+      } as Partial<Mocked<ClassMetadata>> as Mocked<ClassMetadata>,
       constructorParams: [],
-      parent: Symbol() as unknown as jest.Mocked<BindingNodeParent>,
-      propertyParams: new Map() as jest.Mocked<
+      parent: Symbol() as unknown as Mocked<BindingNodeParent>,
+      propertyParams: new Map() as Mocked<
         Map<string | symbol, PlanServiceNode>
       >,
     };
 
-    (
-      resolvePostConstruct as jest.Mock<typeof resolvePostConstruct>
-    ).mockImplementation(
-      <TActivated>(
-        instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,
-      ): Resolved<TActivated> => instance,
-    );
+    vitest
+      .mocked(resolvePostConstruct)
+      .mockImplementation(
+        <TActivated>(
+          instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,
+        ): Resolved<TActivated> => instance,
+      );
   });
 
   describe('when called, and setInstanceProperties() returns undefined', () => {
@@ -81,11 +90,13 @@ describe(resolveInstanceBindingNodeFromConstructorParams.name, () => {
       expectedResultProperty = Symbol();
       expectedResultValue = 'value-fixture';
 
-      nodeMock.binding.implementationType.mockImplementationOnce(function (
-        this: Record<string | symbol, unknown>,
-      ) {
-        this[expectedResultProperty] = expectedResultValue;
-      });
+      vitest
+        .mocked(nodeMock.binding.implementationType)
+        .mockImplementationOnce(function (
+          this: Record<string | symbol, unknown>,
+        ) {
+          this[expectedResultProperty] = expectedResultValue;
+        });
 
       setInstancePropertiesMock.mockReturnValueOnce(undefined);
 
@@ -95,7 +106,7 @@ describe(resolveInstanceBindingNodeFromConstructorParams.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call new node.binding.implementationType()', () => {
@@ -144,13 +155,15 @@ describe(resolveInstanceBindingNodeFromConstructorParams.name, () => {
       expectedResultProperty = Symbol();
       expectedResultValue = 'value-fixture';
 
-      nodeMock.binding.implementationType.mockImplementationOnce(function (
-        this: Record<string | symbol, unknown>,
-      ) {
-        this[expectedResultProperty] = expectedResultValue;
-      });
+      vitest
+        .mocked(nodeMock.binding.implementationType)
+        .mockImplementationOnce(function (
+          this: Record<string | symbol, unknown>,
+        ) {
+          this[expectedResultProperty] = expectedResultValue;
+        });
 
-      setInstancePropertiesMock.mockReturnValueOnce(Promise.resolve(undefined));
+      setInstancePropertiesMock.mockResolvedValueOnce(undefined);
 
       result = resolveInstanceBindingNodeFromConstructorParams(
         setInstancePropertiesMock,
@@ -158,7 +171,7 @@ describe(resolveInstanceBindingNodeFromConstructorParams.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call new node.binding.implementationType()', () => {

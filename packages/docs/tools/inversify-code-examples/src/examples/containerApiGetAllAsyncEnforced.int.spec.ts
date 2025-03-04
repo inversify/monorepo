@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 
 import {
   allWeapons,
@@ -9,7 +9,10 @@ import {
 
 describe('Container API (getAllAsync)', () => {
   it('should provide weapons', async () => {
-    expect(await allWeapons).toStrictEqual([new Katana(), new Shuriken()]);
-    expect(await notAllWeapons).toStrictEqual([new Katana()]);
+    await expect(allWeapons).resolves.toStrictEqual([
+      new Katana(),
+      new Shuriken(),
+    ]);
+    await expect(notAllWeapons).resolves.toStrictEqual([new Katana()]);
   });
 });

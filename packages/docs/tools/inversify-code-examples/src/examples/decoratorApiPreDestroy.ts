@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { MockInstance, vitest } from 'vitest';
 
 // Is-inversify-import-example
 import { Container, preDestroy } from 'inversify';
@@ -28,12 +28,11 @@ container.bind<Weapon>('Weapon').to(Katana).inSingletonScope();
 container.get('Weapon');
 
 // Exclude-from-example
-export const katanaDamageSpy: jest.SpiedGetter<number> = jest.spyOn<
-  Weapon,
+export const katanaDamageSpy: MockInstance = vitest.spyOn<Weapon, 'damage'>(
+  container.get<Weapon>('Weapon'),
   'damage',
-  number,
-  'get'
->(container.get<Weapon>('Weapon'), 'damage', 'get');
+  'get',
+);
 
 container.unbind('Weapon');
 // End-example

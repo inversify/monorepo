@@ -22,7 +22,7 @@ jobs:
 
       - name: Get affected packages
         id: get-affected-packages
-        run: echo "packages=$(pnpm exec foundation-get-affected-projects test:js:coverage)" >> $GITHUB_OUTPUT
+        run: echo "packages=$(pnpm exec foundation-get-affected-projects test:coverage)" >> $GITHUB_OUTPUT
 
   test-coverage-package:
     name: Test with coverage
@@ -42,7 +42,7 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Launch Unit Tests and generate coverage report
-        run: pnpm run test:js:coverage --filter ${{ matrix.package }}
+        run: pnpm run test:coverage --filter ${{ matrix.package }}
 
       - name: Upload coverage to Codecov (branch)
         uses: codecov/codecov-action@v5

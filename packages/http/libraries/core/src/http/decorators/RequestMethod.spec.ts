@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import {
   getReflectMetadata,
@@ -29,7 +29,7 @@ describe(requestMethod.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call getReflectMetadata', () => {
@@ -68,9 +68,7 @@ describe(requestMethod.name, () => {
         keyFixture = 'key-example';
         targetFixture = {};
 
-        (
-          getReflectMetadata as jest.Mock<typeof getReflectMetadata>
-        ).mockReturnValueOnce([]);
+        vitest.mocked(getReflectMetadata).mockReturnValueOnce([]);
 
         requestMethod(RequestMethodType.GET, pathFixture)(
           targetFixture,
@@ -80,7 +78,7 @@ describe(requestMethod.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call getReflectMetadata', () => {

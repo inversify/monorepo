@@ -1,6 +1,15 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('./resolveBindingServiceActivations');
+vitest.mock('./resolveBindingServiceActivations');
 
 import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures';
 import { ConstantValueBinding } from '../../binding/models/ConstantValueBinding';
@@ -11,17 +20,15 @@ import { resolveBindingServiceActivations } from './resolveBindingServiceActivat
 
 describe(resolveBindingActivations.name, () => {
   describe('having a binding with no activation', () => {
-    let paramsMock: jest.Mocked<ResolutionParams>;
+    let paramsMock: Mocked<ResolutionParams>;
     let bindingFixture: ConstantValueBinding<unknown>;
     let resolvedValueFixture: unknown;
 
     beforeAll(() => {
       paramsMock = {
-        getActivations: jest.fn(),
-        getBindings: jest.fn(),
-      } as Partial<
-        jest.Mocked<ResolutionParams>
-      > as jest.Mocked<ResolutionParams>;
+        getActivations: vitest.fn(),
+        getBindings: vitest.fn(),
+      } as Partial<Mocked<ResolutionParams>> as Mocked<ResolutionParams>;
       bindingFixture = ConstantValueBindingFixtures.withOnActivationUndefined;
       resolvedValueFixture = Symbol();
     });
@@ -33,11 +40,9 @@ describe(resolveBindingActivations.name, () => {
       beforeAll(() => {
         resolveBindingServiceActivationsResultFixture = Symbol();
 
-        (
-          resolveBindingServiceActivations as jest.Mock<
-            typeof resolveBindingServiceActivations
-          >
-        ).mockReturnValueOnce(resolveBindingServiceActivationsResultFixture);
+        vitest
+          .mocked(resolveBindingServiceActivations)
+          .mockReturnValueOnce(resolveBindingServiceActivationsResultFixture);
 
         result = resolveBindingActivations(
           paramsMock,
@@ -47,7 +52,7 @@ describe(resolveBindingActivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveBindingServiceActivations()', () => {
@@ -66,20 +71,18 @@ describe(resolveBindingActivations.name, () => {
   });
 
   describe('having a binding with activation', () => {
-    let onActivationMock: jest.Mock<(value: unknown) => unknown>;
-    let paramsMock: jest.Mocked<ResolutionParams>;
+    let onActivationMock: Mock<(value: unknown) => unknown>;
+    let paramsMock: Mocked<ResolutionParams>;
     let bindingFixture: ConstantValueBinding<unknown>;
     let resolvedValue: unknown;
 
     beforeAll(() => {
-      onActivationMock = jest.fn();
+      onActivationMock = vitest.fn();
       paramsMock = {
-        context: Symbol() as unknown as jest.Mocked<ResolutionContext>,
-        getActivations: jest.fn(),
-        getBindings: jest.fn(),
-      } as Partial<
-        jest.Mocked<ResolutionParams>
-      > as jest.Mocked<ResolutionParams>;
+        context: Symbol() as unknown as Mocked<ResolutionContext>,
+        getActivations: vitest.fn(),
+        getBindings: vitest.fn(),
+      } as Partial<Mocked<ResolutionParams>> as Mocked<ResolutionParams>;
       bindingFixture = {
         ...ConstantValueBindingFixtures.any,
         onActivation: onActivationMock,
@@ -98,11 +101,9 @@ describe(resolveBindingActivations.name, () => {
 
         onActivationMock.mockReturnValueOnce(onActivationResultFixture);
 
-        (
-          resolveBindingServiceActivations as jest.Mock<
-            typeof resolveBindingServiceActivations
-          >
-        ).mockReturnValueOnce(resolveBindingServiceActivationsResultFixture);
+        vitest
+          .mocked(resolveBindingServiceActivations)
+          .mockReturnValueOnce(resolveBindingServiceActivationsResultFixture);
 
         result = resolveBindingActivations(
           paramsMock,
@@ -112,7 +113,7 @@ describe(resolveBindingActivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call binding.onActivation()', () => {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-/* eslint-disable jest/expect-expect */
-import { describe, it } from '@jest/globals';
+/* eslint-disable vitest/expect-expect */
+import { describe, it } from 'vitest';
 
 import 'reflect-metadata';
 

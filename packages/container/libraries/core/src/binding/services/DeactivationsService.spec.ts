@@ -1,7 +1,15 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('../../common/calculations/chain');
-jest.mock('../../common/models/OneToManyMapStar');
+vitest.mock('../../common/calculations/chain');
+vitest.mock('../../common/models/OneToManyMapStar');
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 
@@ -14,7 +22,7 @@ import {
 } from './DeactivationsService';
 
 describe(DeactivationsService.name, () => {
-  let deactivationMapsMock: jest.Mocked<
+  let deactivationMapsMock: Mocked<
     OneToManyMapStar<BindingDeactivation, BindingDeactivationRelation>
   >;
 
@@ -32,7 +40,7 @@ describe(DeactivationsService.name, () => {
       serviceId: {
         isOptional: false,
       },
-    }) as jest.Mocked<
+    }) as Mocked<
       OneToManyMapStar<BindingDeactivation, BindingDeactivationRelation>
     >;
 
@@ -63,7 +71,7 @@ describe(DeactivationsService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call deactivationMaps.add()', () => {
@@ -91,7 +99,7 @@ describe(DeactivationsService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call deactivationMaps.clone', () => {
@@ -124,15 +132,13 @@ describe(DeactivationsService.name, () => {
           .mockReturnValueOnce([bindingDeactivationFixture])
           .mockReturnValueOnce(undefined);
 
-        (chain as jest.Mock<typeof chain>).mockReturnValueOnce([
-          bindingDeactivationFixture,
-        ]);
+        vitest.mocked(chain).mockReturnValueOnce([bindingDeactivationFixture]);
 
         result = deactivationsService.get(serviceIdFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call deactivationMaps.get()', () => {
@@ -171,7 +177,8 @@ describe(DeactivationsService.name, () => {
           .mockReturnValueOnce([bindingDeactivationFixture])
           .mockReturnValueOnce([bindingDeactivationFixture]);
 
-        (chain as jest.Mock<typeof chain>)
+        vitest
+          .mocked(chain)
           .mockReturnValueOnce([bindingDeactivationFixture])
           .mockReturnValueOnce([
             bindingDeactivationFixture,
@@ -182,7 +189,7 @@ describe(DeactivationsService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call deactivationMaps.get()', () => {
@@ -233,7 +240,7 @@ describe(DeactivationsService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call deactivationMaps.removeByRelation()', () => {
@@ -265,7 +272,7 @@ describe(DeactivationsService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call deactivationMaps.removeByRelation()', () => {

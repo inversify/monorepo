@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { beforeAll, describe, expect, it, Mocked, vitest } from 'vitest';
 
 import { PlanResult } from '../models/PlanResult';
 import {
@@ -246,14 +246,14 @@ describe(PlanResultCacheService.name, () => {
 
     describe('when called with subscribers', () => {
       let planService: PlanResultCacheService;
-      let subscriberMock: jest.Mocked<PlanResultCacheService>;
+      let subscriberMock: Mocked<PlanResultCacheService>;
 
       beforeAll(() => {
         planService = new PlanResultCacheService();
         subscriberMock = {
-          clearCache: jest.fn(),
+          clearCache: vitest.fn(),
           // ...other mocked methods...
-        } as unknown as jest.Mocked<PlanResultCacheService>;
+        } as unknown as Mocked<PlanResultCacheService>;
 
         planService.subscribe(subscriberMock);
         planService.clearCache();

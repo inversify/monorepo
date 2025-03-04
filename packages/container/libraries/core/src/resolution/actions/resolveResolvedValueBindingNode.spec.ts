@@ -1,4 +1,13 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  Mocked,
+  vitest,
+} from 'vitest';
 
 import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
 import { ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode';
@@ -6,7 +15,7 @@ import { ResolutionParams } from '../models/ResolutionParams';
 import { resolveResolvedValueBindingNode } from './resolveResolvedValueBindingNode';
 
 describe(resolveResolvedValueBindingNode.name, () => {
-  let resolveResolvedValueBindingParamsMock: jest.Mock<
+  let resolveResolvedValueBindingParamsMock: Mock<
     (
       params: ResolutionParams,
       node: ResolvedValueBindingNode,
@@ -14,21 +23,21 @@ describe(resolveResolvedValueBindingNode.name, () => {
   >;
 
   let paramsFixture: ResolutionParams;
-  let nodeMock: jest.Mocked<ResolvedValueBindingNode>;
+  let nodeMock: Mocked<ResolvedValueBindingNode>;
 
   beforeAll(() => {
-    resolveResolvedValueBindingParamsMock = jest.fn();
+    resolveResolvedValueBindingParamsMock = vitest.fn();
 
     paramsFixture = Symbol() as unknown as ResolutionParams;
     nodeMock = {
       binding: {
-        factory: jest.fn(),
-      } as Partial<jest.Mocked<ResolvedValueBinding<unknown>>> as jest.Mocked<
+        factory: vitest.fn(),
+      } as Partial<Mocked<ResolvedValueBinding<unknown>>> as Mocked<
         ResolvedValueBinding<unknown>
       >,
     } as Partial<
-      jest.Mocked<ResolvedValueBindingNode>
-    > as jest.Mocked<ResolvedValueBindingNode>;
+      Mocked<ResolvedValueBindingNode>
+    > as Mocked<ResolvedValueBindingNode>;
   });
 
   describe('when called, and resolveResolvedValueBindingParams() returns an array', () => {
@@ -45,7 +54,9 @@ describe(resolveResolvedValueBindingNode.name, () => {
         constructorResolvedValues,
       );
 
-      nodeMock.binding.factory.mockReturnValueOnce(instanceResolvedValue);
+      vitest
+        .mocked(nodeMock.binding.factory)
+        .mockReturnValueOnce(instanceResolvedValue);
 
       result = resolveResolvedValueBindingNode(
         resolveResolvedValueBindingParamsMock,
@@ -53,7 +64,7 @@ describe(resolveResolvedValueBindingNode.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call resolveResolvedValueBindingParams()', () => {
@@ -86,11 +97,13 @@ describe(resolveResolvedValueBindingNode.name, () => {
       constructorResolvedValues = [Symbol()];
       instanceResolvedValue = Symbol();
 
-      resolveResolvedValueBindingParamsMock.mockReturnValue(
-        Promise.resolve(constructorResolvedValues),
+      resolveResolvedValueBindingParamsMock.mockResolvedValue(
+        constructorResolvedValues,
       );
 
-      nodeMock.binding.factory.mockResolvedValueOnce(instanceResolvedValue);
+      vitest
+        .mocked(nodeMock.binding.factory)
+        .mockResolvedValueOnce(instanceResolvedValue);
 
       result = await resolveResolvedValueBindingNode(
         resolveResolvedValueBindingParamsMock,
@@ -98,7 +111,7 @@ describe(resolveResolvedValueBindingNode.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call resolveResolvedValueBindingParams()', () => {

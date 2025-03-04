@@ -1,11 +1,19 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-jest.mock('../actions/updateMaybeClassMetadataPostConstructor');
-jest.mock('../calculations/handleInjectionError');
+vitest.mock('../actions/updateMaybeClassMetadataPostConstructor');
+vitest.mock('../calculations/handleInjectionError');
 
 import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
 import { updateMaybeClassMetadataPostConstructor } from '../actions/updateMaybeClassMetadataPostConstructor';
@@ -25,21 +33,19 @@ describe(postConstruct.name, () => {
     descriptorFixture = {};
   });
 
-  describe('when caled', () => {
-    let updateMaybeClassMetadataPostConstructorResult: jest.Mock<
+  describe('when called', () => {
+    let updateMaybeClassMetadataPostConstructorResult: Mock<
       (metadata: MaybeClassMetadata) => MaybeClassMetadata
     >;
 
     let result: unknown;
 
     beforeAll(() => {
-      updateMaybeClassMetadataPostConstructorResult = jest.fn();
+      updateMaybeClassMetadataPostConstructorResult = vitest.fn();
 
-      (
-        updateMaybeClassMetadataPostConstructor as jest.Mock<
-          typeof updateMaybeClassMetadataPostConstructor
-        >
-      ).mockReturnValueOnce(updateMaybeClassMetadataPostConstructorResult);
+      vitest
+        .mocked(updateMaybeClassMetadataPostConstructor)
+        .mockReturnValueOnce(updateMaybeClassMetadataPostConstructorResult);
 
       result = postConstruct()(
         targetFixture,
@@ -49,7 +55,7 @@ describe(postConstruct.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call updateMaybeClassMetadataPostConstructor()', () => {
@@ -77,7 +83,7 @@ describe(postConstruct.name, () => {
   describe('when caled, and updateOwnReflectMetadata throws an Error', () => {
     let errorFixture: Error;
 
-    let updateMaybeClassMetadataPostConstructorResult: jest.Mock<
+    let updateMaybeClassMetadataPostConstructorResult: Mock<
       (metadata: MaybeClassMetadata) => MaybeClassMetadata
     >;
 
@@ -86,17 +92,13 @@ describe(postConstruct.name, () => {
     beforeAll(() => {
       errorFixture = new Error('error-fixture');
 
-      updateMaybeClassMetadataPostConstructorResult = jest.fn();
+      updateMaybeClassMetadataPostConstructorResult = vitest.fn();
 
-      (
-        updateMaybeClassMetadataPostConstructor as jest.Mock<
-          typeof updateMaybeClassMetadataPostConstructor
-        >
-      ).mockReturnValueOnce(updateMaybeClassMetadataPostConstructorResult);
+      vitest
+        .mocked(updateMaybeClassMetadataPostConstructor)
+        .mockReturnValueOnce(updateMaybeClassMetadataPostConstructorResult);
 
-      (
-        updateOwnReflectMetadata as jest.Mock<typeof updateOwnReflectMetadata>
-      ).mockImplementation((): never => {
+      vitest.mocked(updateOwnReflectMetadata).mockImplementation((): never => {
         throw errorFixture;
       });
 
@@ -108,7 +110,7 @@ describe(postConstruct.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call updateMaybeClassMetadataPostConstructor()', () => {

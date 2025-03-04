@@ -1,20 +1,27 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  Mocked,
+  vitest,
+} from 'vitest';
 
 import { BindingConstraints } from '@inversifyjs/core';
 
 import { isAnyAncestorBindingConstraints } from './isAnyAncestorBindingConstraints';
 
 describe(isAnyAncestorBindingConstraints.name, () => {
-  let conditionMock: jest.Mock<(constraints: BindingConstraints) => boolean>;
-  let constraintsMock: jest.Mocked<BindingConstraints>;
+  let conditionMock: Mock<(constraints: BindingConstraints) => boolean>;
+  let constraintsMock: Mocked<BindingConstraints>;
 
   beforeAll(() => {
-    conditionMock = jest.fn();
+    conditionMock = vitest.fn();
     constraintsMock = {
-      getAncestor: jest.fn(),
-    } as Partial<
-      jest.Mocked<BindingConstraints>
-    > as jest.Mocked<BindingConstraints>;
+      getAncestor: vitest.fn(),
+    } as Partial<Mocked<BindingConstraints>> as Mocked<BindingConstraints>;
   });
 
   describe('when called, and constraints.getAncestor() returns undefined', () => {
@@ -27,7 +34,7 @@ describe(isAnyAncestorBindingConstraints.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call constraints.getAncestor()', () => {
@@ -58,7 +65,7 @@ describe(isAnyAncestorBindingConstraints.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call constraints.getAncestor()', () => {
@@ -89,7 +96,7 @@ describe(isAnyAncestorBindingConstraints.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call constraints.getAncestor()', () => {

@@ -1,7 +1,7 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('./assertMetadataFromTypescriptIfManaged');
-jest.mock('./buildDefaultUnmanagedMetadata');
+vitest.mock('./assertMetadataFromTypescriptIfManaged');
+vitest.mock('./buildDefaultUnmanagedMetadata');
 
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
@@ -62,7 +62,7 @@ describe(buildUnmanagedMetadataFromMaybeManagedMetadata.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should call assertMetadataFromTypescriptIfManaged()', () => {
@@ -112,11 +112,9 @@ describe(buildUnmanagedMetadataFromMaybeManagedMetadata.name, () => {
           kind: ClassElementMetadataKind.unmanaged,
         };
 
-        (
-          buildDefaultUnmanagedMetadata as jest.Mock<
-            typeof buildDefaultUnmanagedMetadata
-          >
-        ).mockReturnValueOnce(unmanagedClassElementMetadataFixture);
+        vitest
+          .mocked(buildDefaultUnmanagedMetadata)
+          .mockReturnValueOnce(unmanagedClassElementMetadataFixture);
 
         result = buildUnmanagedMetadataFromMaybeManagedMetadata(
           maybeManagedClassElementMetadata,
@@ -124,7 +122,7 @@ describe(buildUnmanagedMetadataFromMaybeManagedMetadata.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call assertMetadataFromTypescriptIfManaged()', () => {

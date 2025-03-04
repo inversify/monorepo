@@ -1,15 +1,23 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { LazyServiceIdentifier } from './LazyServiceIdentifier';
 import { ServiceIdentifier } from './ServiceIdentifier';
 
 describe(LazyServiceIdentifier.name, () => {
-  let buildServiceIdMock: jest.Mock<() => ServiceIdentifier<unknown>>;
+  let buildServiceIdMock: Mock<() => ServiceIdentifier<unknown>>;
 
   let lazyServiceIdentifier: LazyServiceIdentifier;
 
   beforeAll(() => {
-    buildServiceIdMock = jest.fn();
+    buildServiceIdMock = vitest.fn();
 
     lazyServiceIdentifier = new LazyServiceIdentifier(buildServiceIdMock);
   });
@@ -113,7 +121,7 @@ describe(LazyServiceIdentifier.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildServiceId()', () => {

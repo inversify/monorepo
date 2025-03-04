@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata';
 
@@ -476,6 +476,7 @@ describe(injectFrom.name, () => {
             ]),
             scope: undefined,
           };
+
           expect(result).toStrictEqual(expectedClassMetadata);
         });
       });

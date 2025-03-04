@@ -1,8 +1,8 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
 
-jest.mock('./assertMetadataFromTypescriptIfManaged');
+vitest.mock('./assertMetadataFromTypescriptIfManaged');
 
 import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
 import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
@@ -40,7 +40,7 @@ describe(buildManagedMetadataFromMaybeManagedMetadata.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call assertMetadataFromTypescriptIfManaged()', () => {

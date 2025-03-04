@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
 import { PlanServiceNode } from '../../planning/models/PlanServiceNode';
@@ -9,7 +17,7 @@ import { resolveResolvedValueBindingParams } from './resolveResolvedValueBinding
 describe(resolveResolvedValueBindingParams.name, () => {
   describe('having ResolvedValueBindingNode with constructor param with PlanServiceNode value', () => {
     let paramNodeFixture: PlanServiceNode;
-    let resolveServiceNodeMock: jest.Mock<
+    let resolveServiceNodeMock: Mock<
       (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
     >;
 
@@ -22,7 +30,7 @@ describe(resolveResolvedValueBindingParams.name, () => {
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
-      resolveServiceNodeMock = jest.fn();
+      resolveServiceNodeMock = vitest.fn();
       paramsFixture = Symbol() as unknown as ResolutionParams;
       nodeFixture = {
         params: [paramNodeFixture],
@@ -48,7 +56,7 @@ describe(resolveResolvedValueBindingParams.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveServiceNode()', () => {
@@ -72,9 +80,7 @@ describe(resolveResolvedValueBindingParams.name, () => {
       beforeAll(() => {
         resolvedValue = Symbol();
 
-        resolveServiceNodeMock.mockReturnValueOnce(
-          Promise.resolve(resolvedValue),
-        );
+        resolveServiceNodeMock.mockResolvedValueOnce(resolvedValue);
 
         result = resolveResolvedValueBindingParams(resolveServiceNodeMock)(
           paramsFixture,
@@ -83,7 +89,7 @@ describe(resolveResolvedValueBindingParams.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveServiceNode()', () => {

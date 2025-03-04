@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
 import { ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode';

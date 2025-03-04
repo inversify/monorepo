@@ -1,9 +1,17 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
-jest.mock(
+vitest.mock(
   '../calculations/buildMaybeClassElementMetadataFromMaybeClassElementMetadata',
 );
-jest.mock('./injectBase');
+vitest.mock('./injectBase');
 
 import { incrementPendingClassMetadataCount } from '../actions/incrementPendingClassMetadataCount';
 import { buildMaybeClassElementMetadataFromMaybeClassElementMetadata } from '../calculations/buildMaybeClassElementMetadataFromMaybeClassElementMetadata';
@@ -26,7 +34,7 @@ describe(tagged.name, () => {
     let decoratorFixture: MethodDecorator &
       ParameterDecorator &
       PropertyDecorator;
-    let updateMetadataMock: jest.Mock<
+    let updateMetadataMock: Mock<
       (
         classElementMetadata: MaybeClassElementMetadata | undefined,
       ) => ManagedClassElementMetadata | MaybeManagedClassElementMetadata
@@ -38,21 +46,27 @@ describe(tagged.name, () => {
       decoratorFixture = Symbol() as unknown as MethodDecorator &
         ParameterDecorator &
         PropertyDecorator;
-      updateMetadataMock = jest.fn();
+      updateMetadataMock = vitest.fn();
 
-      (
-        buildMaybeClassElementMetadataFromMaybeClassElementMetadata as jest.Mock<
-          typeof buildMaybeClassElementMetadataFromMaybeClassElementMetadata
-        >
-      ).mockReturnValueOnce(updateMetadataMock);
+      vitest
+        .mocked(buildMaybeClassElementMetadataFromMaybeClassElementMetadata)
+        .mockReturnValueOnce(updateMetadataMock);
 
-      (injectBase as jest.Mock).mockReturnValueOnce(decoratorFixture);
+      vitest
+        .mocked(injectBase)
+        .mockReturnValueOnce(
+          decoratorFixture as <T>(
+            target: object,
+            propertyKey: string | symbol | undefined,
+            parameterIndexOrDescriptor?: number | TypedPropertyDescriptor<T>,
+          ) => void,
+        );
 
       result = tagged(keyFixture, valueFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call buildMaybeClassElementMetadataFromMaybeClassElementMetadata()', () => {

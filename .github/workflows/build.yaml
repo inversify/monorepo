@@ -27,7 +27,7 @@ jobs:
 
       - name: Get affected packages
         id: get-affected-packages
-        run: echo "packages=$(pnpm exec foundation-get-affected-project-chunks test:js origin/${{github.base_ref}} 4)" >> $GITHUB_OUTPUT
+        run: echo "packages=$(pnpm exec foundation-get-affected-project-chunks test origin/${{github.base_ref}} 4)" >> $GITHUB_OUTPUT
 
       - name: Compile source files
         run: pnpm run build
@@ -107,10 +107,10 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Launch Unit Tests
-        run: pnpm run test:unit:js --filter ${{ join(matrix.packages, ' --filter ') }}
+        run: pnpm run test:unit --filter ${{ join(matrix.packages, ' --filter ') }}
 
       - name: Launch Integration Tests
-        run: pnpm run test:integration:js --filter ${{ join(matrix.packages, ' --filter ') }}
+        run: pnpm run test:integration --filter ${{ join(matrix.packages, ' --filter ') }}
 
   test-e2e:
     name: Run E2E tests.

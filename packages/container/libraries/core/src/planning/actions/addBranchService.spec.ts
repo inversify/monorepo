@@ -1,6 +1,6 @@
-import { beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/common');
+vitest.mock('@inversifyjs/common');
 
 import {
   ServiceIdentifier,
@@ -65,11 +65,8 @@ describe(addBranchService.name, () => {
       beforeAll(() => {
         stringifiedServiceIdentifier = 'stringified-service-id';
 
-        (
-          stringifyServiceIdentifier as jest.Mock<
-            typeof stringifyServiceIdentifier
-          >
-        )
+        vitest
+          .mocked(stringifyServiceIdentifier)
           .mockReturnValueOnce(stringifiedServiceIdentifier)
           .mockReturnValueOnce(stringifiedServiceIdentifier);
 

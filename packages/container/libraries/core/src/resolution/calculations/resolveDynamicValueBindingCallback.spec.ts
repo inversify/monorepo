@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { beforeAll, describe, expect, it, Mocked, vitest } from 'vitest';
 
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
@@ -9,7 +9,7 @@ import { resolveDynamicValueBindingCallback } from './resolveDynamicValueBinding
 describe(resolveDynamicValueBindingCallback.name, () => {
   let resolutionParamsFixture: ResolutionParams;
 
-  let dynamicValueBindingMock: jest.Mocked<DynamicValueBinding<unknown>>;
+  let dynamicValueBindingMock: Mocked<DynamicValueBinding<unknown>>;
 
   beforeAll(() => {
     resolutionParamsFixture = {
@@ -22,14 +22,14 @@ describe(resolveDynamicValueBindingCallback.name, () => {
         value: undefined,
       },
       id: 1,
-      isSatisfiedBy: jest.fn(),
+      isSatisfiedBy: vitest.fn(),
       moduleId: undefined,
       onActivation: undefined,
       onDeactivation: undefined,
       scope: bindingScopeValues.Singleton,
       serviceIdentifier: 'service-id',
       type: bindingTypeValues.DynamicValue,
-      value: jest.fn(),
+      value: vitest.fn(),
     };
   });
 

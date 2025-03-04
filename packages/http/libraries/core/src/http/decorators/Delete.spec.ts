@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('./RequestMethod');
+vitest.mock('./RequestMethod');
 
 import { RequestMethodType } from '../models/RequestMethodType';
 import { DELETE } from './Delete';
@@ -16,15 +16,13 @@ describe(DELETE.name, () => {
       pathFixture = undefined;
       methodDecoratorFixture = {} as MethodDecorator;
 
-      (requestMethod as jest.Mocked<typeof requestMethod>).mockReturnValueOnce(
-        methodDecoratorFixture,
-      );
+      vitest.mocked(requestMethod).mockReturnValueOnce(methodDecoratorFixture);
 
       result = DELETE(pathFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call requestMethod', () => {

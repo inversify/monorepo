@@ -1,6 +1,14 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('./resolveBindingDeactivations');
+vitest.mock('./resolveBindingDeactivations');
 
 import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures';
 import { Binding } from '../../binding/models/Binding';
@@ -9,16 +17,14 @@ import { resolveBindingDeactivations } from './resolveBindingDeactivations';
 import { resolveBindingsDeactivations } from './resolveBindingsDeactivations';
 
 describe(resolveBindingsDeactivations.name, () => {
-  let paramsMock: jest.Mocked<DeactivationParams>;
+  let paramsMock: Mocked<DeactivationParams>;
 
   beforeAll(() => {
     paramsMock = {
-      getBindings: jest.fn() as unknown,
-      getClassMetadata: jest.fn(),
-      getDeactivations: jest.fn(),
-    } as Partial<
-      jest.Mocked<DeactivationParams>
-    > as jest.Mocked<DeactivationParams>;
+      getBindings: vitest.fn() as unknown,
+      getClassMetadata: vitest.fn(),
+      getDeactivations: vitest.fn(),
+    } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
   });
 
   describe('having undefined bindings', () => {
@@ -30,7 +36,7 @@ describe(resolveBindingsDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should return undefined', () => {
@@ -56,7 +62,7 @@ describe(resolveBindingsDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should return undefined', () => {
@@ -82,7 +88,7 @@ describe(resolveBindingsDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveBindingDeactivations()', () => {
@@ -102,17 +108,15 @@ describe(resolveBindingsDeactivations.name, () => {
       let result: unknown;
 
       beforeAll(() => {
-        (
-          resolveBindingDeactivations as jest.Mock<
-            typeof resolveBindingDeactivations
-          >
-        ).mockReturnValueOnce(Promise.resolve(undefined));
+        vitest
+          .mocked(resolveBindingDeactivations)
+          .mockResolvedValueOnce(undefined);
 
         result = resolveBindingsDeactivations(paramsMock, bindingsFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveBindingDeactivations()', () => {

@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
 import { Newable } from '@inversifyjs/common';
 
@@ -18,13 +26,13 @@ import {
 
 describe(buildFilteredServiceBindings.name, () => {
   describe('having no options', () => {
-    let paramsMock: jest.Mocked<BasePlanParams>;
+    let paramsMock: Mocked<BasePlanParams>;
     let bindingConstraintsFixture: BindingConstraints;
 
     beforeAll(() => {
       paramsMock = {
-        getBindings: jest.fn(),
-      } as Partial<jest.Mocked<BasePlanParams>> as jest.Mocked<BasePlanParams>;
+        getBindings: vitest.fn(),
+      } as Partial<Mocked<BasePlanParams>> as Mocked<BasePlanParams>;
       bindingConstraintsFixture = {
         getAncestor: () => undefined,
         name: 'name',
@@ -44,7 +52,7 @@ describe(buildFilteredServiceBindings.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getBinding()', () => {
@@ -90,7 +98,7 @@ describe(buildFilteredServiceBindings.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getBinding()', () => {
@@ -108,7 +116,7 @@ describe(buildFilteredServiceBindings.name, () => {
 
   describe('having options with autobindOptions and bindingConstraints with Function serviceIdentifier', () => {
     let bindingScopeFixture: BindingScope;
-    let paramsMock: jest.Mocked<BasePlanParams>;
+    let paramsMock: Mocked<BasePlanParams>;
     let bindingConstraintsFixture: BindingConstraints;
     let optionsFixture: BuildFilteredServiceBindingsOptions;
 
@@ -118,9 +126,9 @@ describe(buildFilteredServiceBindings.name, () => {
         autobindOptions: {
           scope: bindingScopeFixture,
         },
-        getBindings: jest.fn(),
-        setBinding: jest.fn(),
-      } as Partial<jest.Mocked<BasePlanParams>> as jest.Mocked<BasePlanParams>;
+        getBindings: vitest.fn(),
+        setBinding: vitest.fn(),
+      } as Partial<Mocked<BasePlanParams>> as Mocked<BasePlanParams>;
       bindingConstraintsFixture = {
         getAncestor: () => undefined,
         name: 'name',
@@ -142,7 +150,7 @@ describe(buildFilteredServiceBindings.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getBinding()', () => {
@@ -198,14 +206,14 @@ describe(buildFilteredServiceBindings.name, () => {
   });
 
   describe('having options with customServiceIdentifier', () => {
-    let paramsMock: jest.Mocked<BasePlanParams>;
+    let paramsMock: Mocked<BasePlanParams>;
     let bindingConstraintsFixture: BindingConstraints;
     let optionsFixture: BuildFilteredServiceBindingsOptions;
 
     beforeAll(() => {
       paramsMock = {
-        getBindings: jest.fn(),
-      } as Partial<jest.Mocked<BasePlanParams>> as jest.Mocked<BasePlanParams>;
+        getBindings: vitest.fn(),
+      } as Partial<Mocked<BasePlanParams>> as Mocked<BasePlanParams>;
       bindingConstraintsFixture = {
         getAncestor: () => undefined,
         name: 'name',
@@ -229,7 +237,7 @@ describe(buildFilteredServiceBindings.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getBinding()', () => {

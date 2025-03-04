@@ -1,4 +1,13 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  Mocked,
+  vitest,
+} from 'vitest';
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 
@@ -8,17 +17,15 @@ import { resolveBindingServiceDeactivations } from './resolveBindingServiceDeact
 
 describe(resolveBindingServiceDeactivations.name, () => {
   describe('having a non promise value', () => {
-    let paramsMock: jest.Mocked<DeactivationParams>;
+    let paramsMock: Mocked<DeactivationParams>;
     let serviceIdentifierFixture: ServiceIdentifier;
     let valueFixture: unknown;
 
     beforeAll(() => {
       paramsMock = {
-        getBindings: jest.fn(),
-        getDeactivations: jest.fn(),
-      } as Partial<
-        jest.Mocked<DeactivationParams>
-      > as jest.Mocked<DeactivationParams>;
+        getBindings: vitest.fn(),
+        getDeactivations: vitest.fn(),
+      } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
       serviceIdentifierFixture = 'service-id';
       valueFixture = Symbol();
     });
@@ -35,7 +42,7 @@ describe(resolveBindingServiceDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {
@@ -51,12 +58,12 @@ describe(resolveBindingServiceDeactivations.name, () => {
     });
 
     describe('when called, and params.getActivations() returns sync activations', () => {
-      let deactivationMock: jest.Mock<BindingDeactivation>;
+      let deactivationMock: Mock<BindingDeactivation>;
 
       let result: unknown;
 
       beforeAll(() => {
-        deactivationMock = jest.fn();
+        deactivationMock = vitest.fn();
         deactivationMock.mockReturnValueOnce(undefined);
 
         paramsMock.getDeactivations.mockReturnValueOnce([deactivationMock]);
@@ -69,7 +76,7 @@ describe(resolveBindingServiceDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {
@@ -90,13 +97,13 @@ describe(resolveBindingServiceDeactivations.name, () => {
     });
 
     describe('when called, and params.getActivations() returns async activations', () => {
-      let deactivationMock: jest.Mock<BindingDeactivation>;
+      let deactivationMock: Mock<BindingDeactivation>;
 
       let result: unknown;
 
       beforeAll(async () => {
-        deactivationMock = jest.fn();
-        deactivationMock.mockReturnValueOnce(Promise.resolve(undefined));
+        deactivationMock = vitest.fn();
+        deactivationMock.mockResolvedValueOnce(undefined);
 
         paramsMock.getDeactivations.mockReturnValueOnce([deactivationMock]);
 
@@ -108,7 +115,7 @@ describe(resolveBindingServiceDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {
@@ -130,17 +137,15 @@ describe(resolveBindingServiceDeactivations.name, () => {
   });
 
   describe('having a promise value', () => {
-    let paramsMock: jest.Mocked<DeactivationParams>;
+    let paramsMock: Mocked<DeactivationParams>;
     let serviceIdentifierFixture: ServiceIdentifier;
     let valueFixture: unknown;
 
     beforeAll(() => {
       paramsMock = {
-        getBindings: jest.fn(),
-        getDeactivations: jest.fn(),
-      } as Partial<
-        jest.Mocked<DeactivationParams>
-      > as jest.Mocked<DeactivationParams>;
+        getBindings: vitest.fn(),
+        getDeactivations: vitest.fn(),
+      } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
       serviceIdentifierFixture = 'service-id';
       valueFixture = Symbol();
     });
@@ -157,7 +162,7 @@ describe(resolveBindingServiceDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {
@@ -173,12 +178,12 @@ describe(resolveBindingServiceDeactivations.name, () => {
     });
 
     describe('when called, and params.getActivations() returns sync activations', () => {
-      let deactivationMock: jest.Mock<BindingDeactivation>;
+      let deactivationMock: Mock<BindingDeactivation>;
 
       let result: unknown;
 
       beforeAll(async () => {
-        deactivationMock = jest.fn();
+        deactivationMock = vitest.fn();
         deactivationMock.mockReturnValueOnce(undefined);
 
         paramsMock.getDeactivations.mockReturnValueOnce([deactivationMock]);
@@ -191,7 +196,7 @@ describe(resolveBindingServiceDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {
@@ -212,13 +217,13 @@ describe(resolveBindingServiceDeactivations.name, () => {
     });
 
     describe('when called, and params.getActivations() returns async activations', () => {
-      let deactivationMock: jest.Mock<BindingDeactivation>;
+      let deactivationMock: Mock<BindingDeactivation>;
 
       let result: unknown;
 
       beforeAll(async () => {
-        deactivationMock = jest.fn();
-        deactivationMock.mockReturnValueOnce(Promise.resolve(undefined));
+        deactivationMock = vitest.fn();
+        deactivationMock.mockResolvedValueOnce(undefined);
 
         paramsMock.getDeactivations.mockReturnValueOnce([deactivationMock]);
 
@@ -230,7 +235,7 @@ describe(resolveBindingServiceDeactivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {

@@ -1,11 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/common');
+vitest.mock('@inversifyjs/common');
 
 import { stringifyServiceIdentifier } from '@inversifyjs/common';
 
-jest.mock('../../binding/calculations/stringifyBinding');
-jest.mock('./isPlanServiceRedirectionBindingNode');
+vitest.mock('../../binding/calculations/stringifyBinding');
+vitest.mock('./isPlanServiceRedirectionBindingNode');
 
 import { stringifyBinding } from '../../binding/calculations/stringifyBinding';
 import { BindingConstraints } from '../../binding/models/BindingConstraints';
@@ -54,17 +54,12 @@ describe(throwErrorWhenUnexpectedBindingsAmountFound.name, () => {
       beforeAll(() => {
         stringifiedServiceIdentifier = 'stringified-service-id';
 
-        (
-          isPlanServiceRedirectionBindingNode as unknown as jest.Mock<
-            typeof isPlanServiceRedirectionBindingNode
-          >
-        ).mockReturnValueOnce(false);
+        vitest
+          .mocked(isPlanServiceRedirectionBindingNode)
+          .mockReturnValueOnce(false);
 
-        (
-          stringifyServiceIdentifier as jest.Mock<
-            typeof stringifyServiceIdentifier
-          >
-        )
+        vitest
+          .mocked(stringifyServiceIdentifier)
           .mockReturnValueOnce(stringifiedServiceIdentifier)
           .mockReturnValueOnce(stringifiedServiceIdentifier)
           .mockReturnValueOnce(stringifiedServiceIdentifier);
@@ -82,7 +77,7 @@ describe(throwErrorWhenUnexpectedBindingsAmountFound.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should throw InversifyCoreError', () => {
@@ -161,11 +156,9 @@ Binding constraints:
       let result: unknown;
 
       beforeAll(() => {
-        (
-          isPlanServiceRedirectionBindingNode as unknown as jest.Mock<
-            typeof isPlanServiceRedirectionBindingNode
-          >
-        ).mockReturnValueOnce(false);
+        vitest
+          .mocked(isPlanServiceRedirectionBindingNode)
+          .mockReturnValueOnce(false);
 
         result = throwErrorWhenUnexpectedBindingsAmountFound(
           bindingsFixture,
@@ -176,7 +169,7 @@ Binding constraints:
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should return undefined', () => {
@@ -231,17 +224,12 @@ Binding constraints:
         stringifiedServiceIdentifier = 'stringified-service-id';
         stringifiedTargetServiceIdentifier = 'stringified-target-service-id';
 
-        (
-          isPlanServiceRedirectionBindingNode as unknown as jest.Mock<
-            typeof isPlanServiceRedirectionBindingNode
-          >
-        ).mockReturnValueOnce(true);
+        vitest
+          .mocked(isPlanServiceRedirectionBindingNode)
+          .mockReturnValueOnce(true);
 
-        (
-          stringifyServiceIdentifier as jest.Mock<
-            typeof stringifyServiceIdentifier
-          >
-        )
+        vitest
+          .mocked(stringifyServiceIdentifier)
           .mockReturnValueOnce(stringifiedTargetServiceIdentifier)
           .mockReturnValueOnce(stringifiedServiceIdentifier)
           .mockReturnValueOnce(stringifiedServiceIdentifier);
@@ -259,7 +247,7 @@ Binding constraints:
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should throw InversifyCoreError', () => {
@@ -318,17 +306,12 @@ Binding constraints:
       beforeAll(() => {
         stringifiedServiceIdentifier = 'stringified-service-id';
 
-        (
-          isPlanServiceRedirectionBindingNode as unknown as jest.Mock<
-            typeof isPlanServiceRedirectionBindingNode
-          >
-        ).mockReturnValueOnce(false);
+        vitest
+          .mocked(isPlanServiceRedirectionBindingNode)
+          .mockReturnValueOnce(false);
 
-        (
-          stringifyServiceIdentifier as jest.Mock<
-            typeof stringifyServiceIdentifier
-          >
-        )
+        vitest
+          .mocked(stringifyServiceIdentifier)
           .mockReturnValueOnce(stringifiedServiceIdentifier)
           .mockReturnValueOnce(stringifiedServiceIdentifier)
           .mockReturnValueOnce(stringifiedServiceIdentifier);
@@ -346,7 +329,7 @@ Binding constraints:
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should throw InversifyCoreError', () => {
@@ -401,11 +384,9 @@ Binding constraints:
       let result: unknown;
 
       beforeAll(() => {
-        (
-          isPlanServiceRedirectionBindingNode as unknown as jest.Mock<
-            typeof isPlanServiceRedirectionBindingNode
-          >
-        ).mockReturnValueOnce(false);
+        vitest
+          .mocked(isPlanServiceRedirectionBindingNode)
+          .mockReturnValueOnce(false);
 
         result = throwErrorWhenUnexpectedBindingsAmountFound(
           bindingsFixture,
@@ -416,7 +397,7 @@ Binding constraints:
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should return undefined', () => {
@@ -520,22 +501,18 @@ Binding constraints:
 
         stringifiedBindingFixture = 'stringified-binding';
 
-        (
-          isPlanServiceRedirectionBindingNode as unknown as jest.Mock<
-            typeof isPlanServiceRedirectionBindingNode
-          >
-        ).mockReturnValueOnce(true);
+        vitest
+          .mocked(isPlanServiceRedirectionBindingNode)
+          .mockReturnValueOnce(true);
 
-        (
-          stringifyServiceIdentifier as jest.Mock<
-            typeof stringifyServiceIdentifier
-          >
-        )
+        vitest
+          .mocked(stringifyServiceIdentifier)
           .mockReturnValueOnce(stringifiedTargetServiceIdentifierFixture)
           .mockReturnValueOnce(stringifiedServiceIdentifierFixture)
           .mockReturnValueOnce(stringifiedServiceIdentifierFixture);
 
-        (stringifyBinding as jest.Mock<typeof stringifyBinding>)
+        vitest
+          .mocked(stringifyBinding)
           .mockReturnValueOnce(stringifiedBindingFixture)
           .mockReturnValueOnce(stringifiedBindingFixture);
 
@@ -552,7 +529,7 @@ Binding constraints:
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should throw InversifyCoreError', () => {

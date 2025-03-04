@@ -1,4 +1,13 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  Mocked,
+  vitest,
+} from 'vitest';
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 
@@ -9,17 +18,15 @@ import { resolveBindingServiceActivations } from './resolveBindingServiceActivat
 
 describe(resolveBindingServiceActivations.name, () => {
   describe('having a non promise value', () => {
-    let paramsMock: jest.Mocked<ResolutionParams>;
+    let paramsMock: Mocked<ResolutionParams>;
     let serviceIdentifierFixture: ServiceIdentifier;
     let valueFixture: unknown;
 
     beforeAll(() => {
       paramsMock = {
-        context: Symbol() as unknown as jest.Mocked<ResolutionContext>,
-        getActivations: jest.fn(),
-      } as Partial<
-        jest.Mocked<ResolutionParams>
-      > as jest.Mocked<ResolutionParams>;
+        context: Symbol() as unknown as Mocked<ResolutionContext>,
+        getActivations: vitest.fn(),
+      } as Partial<Mocked<ResolutionParams>> as Mocked<ResolutionParams>;
       serviceIdentifierFixture = 'service-id';
       valueFixture = Symbol();
     });
@@ -36,7 +43,7 @@ describe(resolveBindingServiceActivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {
@@ -52,7 +59,7 @@ describe(resolveBindingServiceActivations.name, () => {
     });
 
     describe('when called, and params.getActivations() returns sync activations', () => {
-      let activationMock: jest.Mock<BindingActivation>;
+      let activationMock: Mock<BindingActivation>;
       let activationResult: unknown;
 
       let result: unknown;
@@ -60,7 +67,7 @@ describe(resolveBindingServiceActivations.name, () => {
       beforeAll(() => {
         activationResult = Symbol('activation-result');
 
-        activationMock = jest.fn().mockReturnValueOnce(activationResult);
+        activationMock = vitest.fn().mockReturnValueOnce(activationResult);
 
         paramsMock.getActivations.mockReturnValueOnce([activationMock]);
 
@@ -72,7 +79,7 @@ describe(resolveBindingServiceActivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {
@@ -96,7 +103,7 @@ describe(resolveBindingServiceActivations.name, () => {
     });
 
     describe('when called, and params.getActivations() returns async activations', () => {
-      let activationMock: jest.Mock<BindingActivation>;
+      let activationMock: Mock<BindingActivation>;
       let activationResult: unknown;
 
       let result: unknown;
@@ -104,9 +111,7 @@ describe(resolveBindingServiceActivations.name, () => {
       beforeAll(async () => {
         activationResult = Symbol('activation-result');
 
-        activationMock = jest
-          .fn()
-          .mockReturnValueOnce(Promise.resolve(activationResult));
+        activationMock = vitest.fn().mockResolvedValueOnce(activationResult);
 
         paramsMock.getActivations.mockReturnValueOnce([activationMock]);
 
@@ -118,7 +123,7 @@ describe(resolveBindingServiceActivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {
@@ -143,16 +148,14 @@ describe(resolveBindingServiceActivations.name, () => {
   });
 
   describe('having a promise value', () => {
-    let paramsMock: jest.Mocked<ResolutionParams>;
+    let paramsMock: Mocked<ResolutionParams>;
     let serviceIdentifierFixture: ServiceIdentifier;
     let valueFixture: unknown;
 
     beforeAll(() => {
       paramsMock = {
-        getActivations: jest.fn(),
-      } as Partial<
-        jest.Mocked<ResolutionParams>
-      > as jest.Mocked<ResolutionParams>;
+        getActivations: vitest.fn(),
+      } as Partial<Mocked<ResolutionParams>> as Mocked<ResolutionParams>;
       serviceIdentifierFixture = 'service-id';
       valueFixture = Symbol();
     });
@@ -169,7 +172,7 @@ describe(resolveBindingServiceActivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {
@@ -185,7 +188,7 @@ describe(resolveBindingServiceActivations.name, () => {
     });
 
     describe('when called, and params.getActivations() returns sync activations', () => {
-      let activationMock: jest.Mock<BindingActivation>;
+      let activationMock: Mock<BindingActivation>;
       let activationResult: unknown;
 
       let result: unknown;
@@ -193,7 +196,7 @@ describe(resolveBindingServiceActivations.name, () => {
       beforeAll(async () => {
         activationResult = Symbol('activation-result');
 
-        activationMock = jest.fn().mockReturnValueOnce(activationResult);
+        activationMock = vitest.fn().mockReturnValueOnce(activationResult);
 
         paramsMock.getActivations.mockReturnValueOnce([activationMock]);
 
@@ -205,7 +208,7 @@ describe(resolveBindingServiceActivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {
@@ -229,7 +232,7 @@ describe(resolveBindingServiceActivations.name, () => {
     });
 
     describe('when called, and params.getActivations() returns async activations', () => {
-      let activationMock: jest.Mock<BindingActivation>;
+      let activationMock: Mock<BindingActivation>;
       let activationResult: unknown;
 
       let result: unknown;
@@ -237,9 +240,7 @@ describe(resolveBindingServiceActivations.name, () => {
       beforeAll(async () => {
         activationResult = Symbol('activation-result');
 
-        activationMock = jest
-          .fn()
-          .mockReturnValueOnce(Promise.resolve(activationResult));
+        activationMock = vitest.fn().mockResolvedValueOnce(activationResult);
 
         paramsMock.getActivations.mockReturnValueOnce([activationMock]);
 
@@ -251,7 +252,7 @@ describe(resolveBindingServiceActivations.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getActivations', () => {

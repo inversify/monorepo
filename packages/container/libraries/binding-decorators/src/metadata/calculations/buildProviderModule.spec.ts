@@ -1,6 +1,14 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { getReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { ContainerModuleLoadOptions } from 'inversify';
@@ -14,7 +22,7 @@ describe(buildProviderModule.name, () => {
 
   beforeAll(() => {
     optionsFixture = {
-      bind: jest.fn(),
+      bind: vitest.fn(),
     } as Partial<ContainerModuleLoadOptions> as ContainerModuleLoadOptions;
   });
 
@@ -22,15 +30,13 @@ describe(buildProviderModule.name, () => {
     let result: unknown;
 
     beforeAll(async () => {
-      (
-        getReflectMetadata as jest.Mock<typeof getReflectMetadata>
-      ).mockReturnValueOnce(undefined);
+      vitest.mocked(getReflectMetadata).mockReturnValueOnce(undefined);
 
       result = await buildProviderModule().load(optionsFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getReflectMetadata()', () => {
@@ -49,23 +55,23 @@ describe(buildProviderModule.name, () => {
   describe('when called, and getReflectMetadata() returns a map with metadata', () => {
     let result: unknown;
 
-    let bindingMetadataMock: jest.Mocked<BindingMetadata<unknown>>;
+    let bindingMetadataMock: Mocked<BindingMetadata<unknown>>;
 
     beforeAll(async () => {
       bindingMetadataMock = {
-        action: jest.fn(),
+        action: vitest.fn(),
         serviceIdentifier: Symbol.for('serviceIdentifier'),
       };
 
-      (
-        getReflectMetadata as jest.Mock<typeof getReflectMetadata>
-      ).mockReturnValueOnce(new Map([[Object, [bindingMetadataMock]]]));
+      vitest
+        .mocked(getReflectMetadata)
+        .mockReturnValueOnce(new Map([[Object, [bindingMetadataMock]]]));
 
       result = await buildProviderModule().load(optionsFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getReflectMetadata()', () => {

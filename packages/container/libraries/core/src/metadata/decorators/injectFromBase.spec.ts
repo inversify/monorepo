@@ -1,11 +1,19 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
-jest.mock('@inversifyjs/prototype-utils');
+vitest.mock('@inversifyjs/prototype-utils');
 
 import { Newable } from '@inversifyjs/common';
 import { getBaseType } from '@inversifyjs/prototype-utils';
 
-jest.mock('./injectFrom');
+vitest.mock('./injectFrom');
 
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
@@ -27,7 +35,7 @@ describe(injectFromBase.name, () => {
 
     let baseTypefixture: Newable;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    let injectFromResultMock: jest.Mock<(target: Function) => void>;
+    let injectFromResultMock: Mock<(target: Function) => void>;
 
     let result: unknown;
 
@@ -37,21 +45,17 @@ describe(injectFromBase.name, () => {
         extendProperties: true,
       };
       baseTypefixture = class Base {};
-      injectFromResultMock = jest.fn().mockReturnValueOnce(undefined);
+      injectFromResultMock = vitest.fn().mockReturnValueOnce(undefined);
 
-      (getBaseType as jest.Mock<typeof getBaseType>).mockReturnValueOnce(
-        baseTypefixture,
-      );
+      vitest.mocked(getBaseType).mockReturnValueOnce(baseTypefixture);
 
-      (injectFrom as jest.Mock<typeof injectFrom>).mockReturnValueOnce(
-        injectFromResultMock,
-      );
+      vitest.mocked(injectFrom).mockReturnValueOnce(injectFromResultMock);
 
       result = injectFromBase(injectFromBaseOptionsFixture)(targetFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getBaseType()', () => {
@@ -88,9 +92,7 @@ describe(injectFromBase.name, () => {
         extendProperties: true,
       };
 
-      (getBaseType as jest.Mock<typeof getBaseType>).mockReturnValueOnce(
-        undefined,
-      );
+      vitest.mocked(getBaseType).mockReturnValueOnce(undefined);
 
       try {
         injectFromBase(injectFromBaseOptionsFixture)(targetFixture);
@@ -100,7 +102,7 @@ describe(injectFromBase.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getBaseType()', () => {

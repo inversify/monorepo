@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { MaybeClassMetadataFixtures } from '../fixtures/MaybeClassMetadataFixtures';
 import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
@@ -8,7 +16,7 @@ import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
 import { updateMaybeClassMetadataConstructorArgument } from './updateMaybeClassMetadataConstructorArgument';
 
 describe(updateMaybeClassMetadataConstructorArgument.name, () => {
-  let updateMetadataMock: jest.Mock<
+  let updateMetadataMock: Mock<
     (
       classMetadata: MaybeClassElementMetadata | undefined,
     ) => MaybeClassElementMetadata
@@ -18,7 +26,7 @@ describe(updateMaybeClassMetadataConstructorArgument.name, () => {
   let indexFixture: number;
 
   beforeAll(() => {
-    updateMetadataMock = jest.fn();
+    updateMetadataMock = vitest.fn();
 
     classMetadataFixture = MaybeClassMetadataFixtures.any;
 
@@ -50,7 +58,7 @@ describe(updateMaybeClassMetadataConstructorArgument.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call updateMetadata()', () => {

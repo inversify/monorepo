@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import {
   getOwnReflectMetadata,
@@ -15,15 +15,13 @@ describe(getBindingId.name, () => {
     let result: unknown;
 
     beforeAll(() => {
-      (
-        getOwnReflectMetadata as jest.Mock<typeof getOwnReflectMetadata>
-      ).mockReturnValueOnce(0);
+      vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce(0);
 
       result = getBindingId();
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getOwnReflectMetadata()', () => {
@@ -53,15 +51,15 @@ describe(getBindingId.name, () => {
     let result: unknown;
 
     beforeAll(() => {
-      (
-        getOwnReflectMetadata as jest.Mock<typeof getOwnReflectMetadata>
-      ).mockReturnValueOnce(Number.MAX_SAFE_INTEGER);
+      vitest
+        .mocked(getOwnReflectMetadata)
+        .mockReturnValueOnce(Number.MAX_SAFE_INTEGER);
 
       result = getBindingId();
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getOwnReflectMetadata()', () => {

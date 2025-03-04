@@ -1,8 +1,16 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import 'reflect-metadata';
 
-jest.mock('./getOwnReflectMetadata');
+vitest.mock('./getOwnReflectMetadata');
 
 import { getOwnReflectMetadata } from './getOwnReflectMetadata';
 import { updateOwnReflectMetadata } from './updateOwnReflectMetadata';
@@ -12,23 +20,21 @@ describe(updateOwnReflectMetadata.name, () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let targetFixture: Function;
     let metadataKeyFixture: unknown;
-    let buildDefaultValueMock: jest.Mock<() => unknown>;
+    let buildDefaultValueMock: Mock<() => unknown>;
     let defaultValueFixture: unknown;
-    let callbackMock: jest.Mock<(value: unknown) => unknown>;
+    let callbackMock: Mock<(value: unknown) => unknown>;
     let reflectMetadata: unknown;
 
     beforeAll(() => {
       targetFixture = class {};
       defaultValueFixture = 'default-value';
       metadataKeyFixture = 'sample-key';
-      buildDefaultValueMock = jest.fn(() => defaultValueFixture);
-      callbackMock = jest
+      buildDefaultValueMock = vitest.fn(() => defaultValueFixture);
+      callbackMock = vitest
         .fn<(value: unknown) => unknown>()
         .mockImplementationOnce((value: unknown) => value);
 
-      (
-        getOwnReflectMetadata as jest.Mock<typeof getOwnReflectMetadata>
-      ).mockReturnValueOnce(undefined);
+      vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce(undefined);
 
       updateOwnReflectMetadata(
         targetFixture,
@@ -44,7 +50,7 @@ describe(updateOwnReflectMetadata.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getOwnReflectMetadata()', () => {
@@ -75,22 +81,20 @@ describe(updateOwnReflectMetadata.name, () => {
     let targetFixture: Function;
     let metadataFixture: unknown;
     let metadataKeyFixture: unknown;
-    let buildDefaultValueMock: jest.Mock<() => unknown>;
-    let callbackMock: jest.Mock<(value: unknown) => unknown>;
+    let buildDefaultValueMock: Mock<() => unknown>;
+    let callbackMock: Mock<(value: unknown) => unknown>;
     let reflectMetadata: unknown;
 
     beforeAll(() => {
       targetFixture = class {};
       metadataFixture = 'metadata';
       metadataKeyFixture = 'sample-key';
-      buildDefaultValueMock = jest.fn();
-      callbackMock = jest
+      buildDefaultValueMock = vitest.fn();
+      callbackMock = vitest
         .fn<(value: unknown) => unknown>()
         .mockImplementationOnce((value: unknown) => value);
 
-      (
-        getOwnReflectMetadata as jest.Mock<typeof getOwnReflectMetadata>
-      ).mockReturnValueOnce(metadataFixture);
+      vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce(metadataFixture);
 
       updateOwnReflectMetadata(
         targetFixture,
@@ -106,7 +110,7 @@ describe(updateOwnReflectMetadata.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getOwnReflectMetadata()', () => {

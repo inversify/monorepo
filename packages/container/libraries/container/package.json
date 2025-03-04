@@ -10,20 +10,19 @@
     "@inversifyjs/reflect-metadata-utils": "workspace:*"
   },
   "devDependencies": {
-    "@jest/globals": "29.7.0",
     "@stryker-mutator/core": "8.7.1",
-    "@stryker-mutator/jest-runner": "8.7.1",
+    "@stryker-mutator/vitest-runner": "8.7.1",
     "@stryker-mutator/typescript-checker": "8.7.1",
     "@types/node": "22.13.8",
+    "@vitest/coverage-v8": "3.0.7",
     "eslint": "9.21.0",
-    "jest": "29.7.0",
     "prettier": "3.5.3",
     "rimraf": "6.0.1",
     "rollup": "4.34.9",
     "ts-loader": "9.5.2",
-    "ts-jest": "29.2.6",
     "tslib": "2.8.1",
-    "typescript": "5.8.2"
+    "typescript": "5.8.2",
+    "vitest": "3.0.5"
   },
   "peerDependencies": {
     "reflect-metadata": "~0.2.2"
@@ -68,13 +67,12 @@
     "format": "prettier --write ./src",
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean",
-    "test": "jest --config=jest.config.mjs --runInBand",
-    "test:integration:js": "pnpm run test:js --selectProjects Integration",
-    "test:js": "jest --config=jest.js.config.mjs --runInBand",
-    "test:js:coverage": "pnpm run test:unit:js --coverage",
+    "test": "vitest run",
+    "test:integration": "pnpm run test --project Integration",
+    "test:coverage": "pnpm run test:unit --coverage",
     "test:mutation": "stryker run",
-    "test:uncommitted": "pnpm run test --changedSince=HEAD",
-    "test:unit:js": "pnpm run test:js --selectProjects Unit"
+    "test:uncommitted": "pnpm run test --changed=HEAD",
+    "test:unit": "pnpm run test --project Unit"
   },
   "version": "1.5.3"
 }

@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 import { BindingConstraints } from '@inversifyjs/core';

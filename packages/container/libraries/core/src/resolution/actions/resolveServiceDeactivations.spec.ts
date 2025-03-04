@@ -1,23 +1,29 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 
-jest.mock('./resolveBindingsDeactivations');
+vitest.mock('./resolveBindingsDeactivations');
 
 import { DeactivationParams } from '../models/DeactivationParams';
 import { resolveBindingsDeactivations } from './resolveBindingsDeactivations';
 import { resolveServiceDeactivations } from './resolveServiceDeactivations';
 
 describe(resolveServiceDeactivations.name, () => {
-  let paramsMock: jest.Mocked<DeactivationParams>;
+  let paramsMock: Mocked<DeactivationParams>;
   let serviceIdentifierFixture: ServiceIdentifier;
 
   beforeAll(() => {
     paramsMock = {
-      getBindings: jest.fn() as unknown,
-    } as Partial<
-      jest.Mocked<DeactivationParams>
-    > as jest.Mocked<DeactivationParams>;
+      getBindings: vitest.fn() as unknown,
+    } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
     serviceIdentifierFixture = 'service-id';
   });
 
@@ -32,7 +38,7 @@ describe(resolveServiceDeactivations.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call params.getBindings()', () => {

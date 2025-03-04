@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import {
   getReflectMetadata,
@@ -40,7 +40,7 @@ describe(requestParam.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should throw an InversifyHttpAdapterError', () => {
@@ -62,7 +62,7 @@ describe(requestParam.name, () => {
       beforeAll(() => {
         keyFixture = 'keyFixture';
         targetFixture = {
-          [keyFixture]: jest.fn(),
+          [keyFixture]: vitest.fn(),
         };
         indexFixture = 0;
         parameterTypeFixture = RequestMethodParameterType.QUERY;
@@ -75,7 +75,7 @@ describe(requestParam.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call getReflectMetadata', () => {
@@ -111,14 +111,12 @@ describe(requestParam.name, () => {
       beforeAll(() => {
         keyFixture = 'keyFixture';
         targetFixture = {
-          [keyFixture]: jest.fn(),
+          [keyFixture]: vitest.fn(),
         };
         indexFixture = 1;
         parameterTypeFixture = RequestMethodParameterType.QUERY;
 
-        (
-          getReflectMetadata as jest.Mock<typeof getReflectMetadata>
-        ).mockReturnValueOnce([
+        vitest.mocked(getReflectMetadata).mockReturnValueOnce([
           {
             index: 0,
             parameterName: 'parameterNameFixture',
@@ -134,7 +132,7 @@ describe(requestParam.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call getReflectMetadata', () => {

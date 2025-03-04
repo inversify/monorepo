@@ -1,9 +1,17 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
-jest.mock('./buildClassElementMetadataFromMaybeClassElementMetadata', () => ({
-  buildClassElementMetadataFromMaybeClassElementMetadata: jest
+vitest.mock('./buildClassElementMetadataFromMaybeClassElementMetadata', () => ({
+  buildClassElementMetadataFromMaybeClassElementMetadata: vitest
     .fn()
-    .mockReturnValue(jest.fn()),
+    .mockReturnValue(vitest.fn()),
 }));
 
 import { ClassElementMetadata } from '../models/ClassElementMetadata';
@@ -12,26 +20,24 @@ import { buildUnmanagedMetadataFromMaybeClassElementMetadata } from './buildUnma
 
 describe(buildUnmanagedMetadataFromMaybeClassElementMetadata.name, () => {
   describe('when called', () => {
-    let buildClassMetadataMock: jest.Mock<
+    let buildClassMetadataMock: Mock<
       (metadata: MaybeClassElementMetadata | undefined) => ClassElementMetadata
     >;
 
     let result: unknown;
 
     beforeAll(() => {
-      buildClassMetadataMock = jest.fn();
+      buildClassMetadataMock = vitest.fn();
 
-      (
-        buildUnmanagedMetadataFromMaybeClassElementMetadata as jest.Mock<
-          typeof buildUnmanagedMetadataFromMaybeClassElementMetadata
-        >
-      ).mockReturnValueOnce(buildClassMetadataMock);
+      vitest
+        .mocked(buildUnmanagedMetadataFromMaybeClassElementMetadata)
+        .mockReturnValueOnce(buildClassMetadataMock);
 
       result = buildUnmanagedMetadataFromMaybeClassElementMetadata();
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should return expected function', () => {

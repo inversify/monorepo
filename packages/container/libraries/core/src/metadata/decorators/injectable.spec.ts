@@ -1,11 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-jest.mock('../actions/setIsInjectableFlag');
-jest.mock('../actions/updateClassMetadataWithTypescriptParameterTypes');
+vitest.mock('../actions/setIsInjectableFlag');
+vitest.mock('../actions/updateClassMetadataWithTypescriptParameterTypes');
 
 import {
   BindingScope,
@@ -32,7 +32,7 @@ describe(injectable.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call updateClassMetadataWithTypescriptParameterTypes()', () => {
@@ -76,11 +76,7 @@ describe(injectable.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
-      });
-
-      afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call setIsInjectableFlag()', () => {

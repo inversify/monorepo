@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { ClassMetadata } from '../models/ClassMetadata';
 import { getDefaultClassMetadata } from './getDefaultClassMetadata';

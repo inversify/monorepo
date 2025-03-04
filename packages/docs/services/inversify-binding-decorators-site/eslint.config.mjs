@@ -146,7 +146,7 @@ function buildBaseConfig() {
         'error',
         {
           groups: [
-            ['@jest/globals'],
+            ['vitest'],
             ['^\\u0000'],
             ['^node:'],
             ['^@?\\w'],

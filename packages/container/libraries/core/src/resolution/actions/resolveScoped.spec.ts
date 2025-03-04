@@ -1,7 +1,16 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('./cacheResolvedValue');
-jest.mock('./resolveBindingActivations');
+vitest.mock('./cacheResolvedValue');
+vitest.mock('./resolveBindingActivations');
 
 import { Right } from '@inversifyjs/common';
 
@@ -20,34 +29,30 @@ import { resolveBindingActivations } from './resolveBindingActivations';
 import { resolveScoped } from './resolveScoped';
 
 describe(resolveScoped.name, () => {
-  let getBindingMock: jest.Mock<
+  let getBindingMock: Mock<
     (arg: unknown) => ScopedBinding<BindingType, BindingScope, unknown>
   >;
 
-  let paramsMock: jest.Mocked<ResolutionParams>;
+  let paramsMock: Mocked<ResolutionParams>;
   let argFixture: unknown;
-  let resolveMock: jest.Mock<
-    (params: ResolutionParams, arg: unknown) => unknown
-  >;
+  let resolveMock: Mock<(params: ResolutionParams, arg: unknown) => unknown>;
 
   beforeAll(() => {
-    getBindingMock = jest.fn();
+    getBindingMock = vitest.fn();
 
     paramsMock = {
       requestScopeCache: {
-        get: jest.fn(),
-        has: jest.fn(),
-        set: jest.fn() as unknown,
-      } as Partial<jest.Mocked<Map<number, unknown>>> as jest.Mocked<
+        get: vitest.fn(),
+        has: vitest.fn(),
+        set: vitest.fn() as unknown,
+      } as Partial<Mocked<Map<number, unknown>>> as Mocked<
         Map<number, unknown>
       >,
-    } as Partial<
-      jest.Mocked<ResolutionParams>
-    > as jest.Mocked<ResolutionParams>;
+    } as Partial<Mocked<ResolutionParams>> as Mocked<ResolutionParams>;
 
     argFixture = Symbol();
 
-    resolveMock = jest.fn();
+    resolveMock = vitest.fn();
   });
 
   describe('when called, and getBinding() returns singleton scoped binding with cache', () => {
@@ -84,7 +89,7 @@ describe(resolveScoped.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getBinding()', () => {
@@ -131,13 +136,13 @@ describe(resolveScoped.name, () => {
       getBindingMock.mockReturnValueOnce(bindingFixture);
 
       resolveMock.mockReturnValueOnce(resolveResult);
-      (
-        resolveBindingActivations as jest.Mock<typeof resolveBindingActivations>
-      ).mockReturnValueOnce(activatedResolveResult);
+      vitest
+        .mocked(resolveBindingActivations)
+        .mockReturnValueOnce(activatedResolveResult);
 
-      (
-        cacheResolvedValue as jest.Mock<typeof cacheResolvedValue>
-      ).mockReturnValueOnce(activatedResolveResult);
+      vitest
+        .mocked(cacheResolvedValue)
+        .mockReturnValueOnce(activatedResolveResult);
 
       result = resolveScoped(getBindingMock, resolveMock)(
         paramsMock,
@@ -146,7 +151,7 @@ describe(resolveScoped.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getBinding()', () => {
@@ -212,8 +217,10 @@ describe(resolveScoped.name, () => {
 
       getBindingMock.mockReturnValueOnce(bindingFixture);
 
-      paramsMock.requestScopeCache.has.mockReturnValueOnce(true);
-      paramsMock.requestScopeCache.get.mockReturnValueOnce(resolveResult);
+      vitest.mocked(paramsMock.requestScopeCache.has).mockReturnValueOnce(true);
+      vitest
+        .mocked(paramsMock.requestScopeCache.get)
+        .mockReturnValueOnce(resolveResult);
 
       result = resolveScoped(getBindingMock, resolveMock)(
         paramsMock,
@@ -222,7 +229,7 @@ describe(resolveScoped.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getBinding()', () => {
@@ -283,11 +290,13 @@ describe(resolveScoped.name, () => {
       getBindingMock.mockReturnValueOnce(bindingFixture);
 
       resolveMock.mockReturnValueOnce(resolveResult);
-      (
-        resolveBindingActivations as jest.Mock<typeof resolveBindingActivations>
-      ).mockReturnValueOnce(activatedResolveResult);
+      vitest
+        .mocked(resolveBindingActivations)
+        .mockReturnValueOnce(activatedResolveResult);
 
-      paramsMock.requestScopeCache.has.mockReturnValueOnce(false);
+      vitest
+        .mocked(paramsMock.requestScopeCache.has)
+        .mockReturnValueOnce(false);
 
       result = resolveScoped(getBindingMock, resolveMock)(
         paramsMock,
@@ -296,7 +305,7 @@ describe(resolveScoped.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getBinding()', () => {
@@ -372,9 +381,9 @@ describe(resolveScoped.name, () => {
       getBindingMock.mockReturnValueOnce(bindingFixture);
 
       resolveMock.mockReturnValueOnce(resolveResult);
-      (
-        resolveBindingActivations as jest.Mock<typeof resolveBindingActivations>
-      ).mockReturnValueOnce(activatedResolveResult);
+      vitest
+        .mocked(resolveBindingActivations)
+        .mockReturnValueOnce(activatedResolveResult);
 
       result = resolveScoped(getBindingMock, resolveMock)(
         paramsMock,
@@ -383,7 +392,7 @@ describe(resolveScoped.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getBinding()', () => {

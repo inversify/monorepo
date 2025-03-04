@@ -1,9 +1,19 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 
-jest.mock('../calculations/buildManagedMetadataFromMaybeClassElementMetadata');
-jest.mock('./injectBase');
+vitest.mock(
+  '../calculations/buildManagedMetadataFromMaybeClassElementMetadata',
+);
+vitest.mock('./injectBase');
 
 import { decrementPendingClassMetadataCount } from '../actions/decrementPendingClassMetadataCount';
 import { buildManagedMetadataFromMaybeClassElementMetadata } from '../calculations/buildManagedMetadataFromMaybeClassElementMetadata';
@@ -24,7 +34,7 @@ describe(inject.name, () => {
     let decoratorFixture: MethodDecorator &
       ParameterDecorator &
       PropertyDecorator;
-    let updateMetadataMock: jest.Mock<
+    let updateMetadataMock: Mock<
       (
         classElementMetadata: MaybeClassElementMetadata | undefined,
       ) => ClassElementMetadata
@@ -36,21 +46,27 @@ describe(inject.name, () => {
       decoratorFixture = Symbol() as unknown as MethodDecorator &
         ParameterDecorator &
         PropertyDecorator;
-      updateMetadataMock = jest.fn();
+      updateMetadataMock = vitest.fn();
 
-      (
-        buildManagedMetadataFromMaybeClassElementMetadata as jest.Mock<
-          typeof buildManagedMetadataFromMaybeClassElementMetadata
-        >
-      ).mockReturnValueOnce(updateMetadataMock);
+      vitest
+        .mocked(buildManagedMetadataFromMaybeClassElementMetadata)
+        .mockReturnValueOnce(updateMetadataMock);
 
-      (injectBase as jest.Mock).mockReturnValueOnce(decoratorFixture);
+      vitest
+        .mocked(injectBase)
+        .mockReturnValueOnce(
+          decoratorFixture as <T>(
+            target: object,
+            propertyKey: string | symbol | undefined,
+            parameterIndexOrDescriptor?: number | TypedPropertyDescriptor<T>,
+          ) => void,
+        );
 
       result = inject(serviceIdentifierFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call buildManagedMetadataFromMaybeClassElementMetadata()', () => {

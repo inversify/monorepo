@@ -1,9 +1,12 @@
 packages:
-  - "packages/container/libraries/*"
-  - "packages/container/tools/*"
-  - "packages/docs/services/*"
-  - "packages/docs/tools/*"
-  - "packages/foundation/libraries/*"
-  - "packages/foundation/tools/*"
-  - "packages/http/libraries/*"
-  - "packages/http/tools/*"
+  - packages/container/libraries/*
+  - packages/container/tools/*
+  - packages/docs/services/*
+  - packages/docs/tools/*
+  - packages/foundation/libraries/*
+  - packages/foundation/tools/*
+  - packages/http/libraries/*
+  - packages/http/tools/*
+
+onlyBuiltDependencies:
+  - '@swc/core'

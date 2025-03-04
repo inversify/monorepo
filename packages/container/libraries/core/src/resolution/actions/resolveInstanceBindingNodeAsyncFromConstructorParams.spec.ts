@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { InstanceBinding } from '../../binding/models/InstanceBinding';
 import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
@@ -6,7 +14,7 @@ import { ResolutionParams } from '../models/ResolutionParams';
 import { resolveInstanceBindingNodeAsyncFromConstructorParams } from './resolveInstanceBindingNodeAsyncFromConstructorParams';
 
 describe(resolveInstanceBindingNodeAsyncFromConstructorParams.name, () => {
-  let resolveInstanceBindingNodeFromConstructorParamsMock: jest.Mock<
+  let resolveInstanceBindingNodeFromConstructorParamsMock: Mock<
     (
       constructorValues: unknown[],
       params: ResolutionParams,
@@ -29,7 +37,7 @@ describe(resolveInstanceBindingNodeAsyncFromConstructorParams.name, () => {
       InstanceBinding<unknown>
     >;
 
-    resolveInstanceBindingNodeFromConstructorParamsMock = jest.fn();
+    resolveInstanceBindingNodeFromConstructorParamsMock = vitest.fn();
   });
 
   describe('when called', () => {
@@ -50,7 +58,7 @@ describe(resolveInstanceBindingNodeAsyncFromConstructorParams.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call resolveInstanceBindingNodeFromConstructorParams()', () => {

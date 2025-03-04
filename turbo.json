@@ -46,7 +46,7 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["src/**/*.{cts,mts,ts}"]
     },
-    "@inversifyjs/foundation-jest-config#format": {
+    "@inversifyjs/foundation-vitest-config#format": {
       "inputs": ["lib/**/*.{cjs,mjs,js}"],
       "outputs": ["lib/**/*.{cjs,mjs,js}"]
     },
@@ -59,6 +59,7 @@
       "inputs": ["src/**/*.{cts,mts,ts}"]
     },
     "test": {
+      "dependsOn": ["^build"],
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": []
     },
@@ -73,18 +74,13 @@
       "cache": false,
       "dependsOn": ["build"]
     },
-    "test:integration:js": {
-      "dependsOn": ["build"],
+    "test:integration": {
+      "dependsOn": ["^build"],
       "inputs": ["{dist,lib}/**/*.{cjs,mjs,js}"],
       "outputs": []
     },
-    "test:js": {
-      "dependsOn": ["build"],
-      "inputs": ["{dist,lib}/**/*.{cjs,mjs,js}"],
-      "outputs": []
-    },
-    "test:js:coverage": {
-      "dependsOn": ["build"],
+    "test:coverage": {
+      "dependsOn": ["^build"],
       "inputs": ["{dist,lib}/**/*.{cjs,mjs,js}"],
       "outputs": ["coverage/**"]
     },
@@ -97,8 +93,8 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": []
     },
-    "test:unit:js": {
-      "dependsOn": ["build"],
+    "test:unit": {
+      "dependsOn": ["^build"],
       "inputs": ["{dist,lib}/**/*.{cjs,mjs,js}"],
       "outputs": []
     }

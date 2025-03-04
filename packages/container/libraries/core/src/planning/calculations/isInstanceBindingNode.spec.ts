@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { bindingTypeValues } from '../../binding/models/BindingType';
 import { InstanceBindingNode } from '../models/InstanceBindingNode';

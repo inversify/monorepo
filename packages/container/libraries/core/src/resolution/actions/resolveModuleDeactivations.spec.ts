@@ -1,21 +1,27 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('./resolveBindingsDeactivations');
+vitest.mock('./resolveBindingsDeactivations');
 
 import { DeactivationParams } from '../models/DeactivationParams';
 import { resolveBindingsDeactivations } from './resolveBindingsDeactivations';
 import { resolveModuleDeactivations } from './resolveModuleDeactivations';
 
 describe(resolveModuleDeactivations.name, () => {
-  let paramsMock: jest.Mocked<DeactivationParams>;
+  let paramsMock: Mocked<DeactivationParams>;
   let moduleIdFixture: number;
 
   beforeAll(() => {
     paramsMock = {
-      getBindingsFromModule: jest.fn() as unknown,
-    } as Partial<
-      jest.Mocked<DeactivationParams>
-    > as jest.Mocked<DeactivationParams>;
+      getBindingsFromModule: vitest.fn() as unknown,
+    } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
     moduleIdFixture = 2;
   });
 
@@ -27,7 +33,7 @@ describe(resolveModuleDeactivations.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call params.getBindingsFromModule()', () => {

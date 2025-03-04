@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata';
 
@@ -38,6 +38,7 @@ describe(Container.name, () => {
         it('should provide an arsenal with two guns', () => {
           expect(arsenal).toBeInstanceOf(Arsenal);
           expect(arsenal.guns).toHaveLength(1);
+
           arsenal.guns.forEach((gun: Gun) => expect(gun).toBeInstanceOf(Gun));
         });
       });
@@ -131,6 +132,7 @@ Binding constraints:
         it('should provide an arsenal with one gun', () => {
           expect(arsenal).toBeInstanceOf(Arsenal);
           expect(arsenal.guns).toHaveLength(2);
+
           arsenal.guns.forEach((gun: Gun) => expect(gun).toBeInstanceOf(Gun));
         });
       });
@@ -195,6 +197,7 @@ Binding constraints:
         it('should provide an arsenal with one gun', () => {
           expect(arsenal).toBeInstanceOf(Arsenal);
           expect(arsenal.guns).toHaveLength(1);
+
           arsenal.guns.forEach((gun: Gun) => expect(gun).toBeInstanceOf(Gun));
         });
       });

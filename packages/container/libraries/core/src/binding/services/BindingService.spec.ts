@@ -1,6 +1,14 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('../../common/models/OneToManyMapStar');
+vitest.mock('../../common/models/OneToManyMapStar');
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 
@@ -10,7 +18,7 @@ import { Binding } from '../models/Binding';
 import { BindingRelation, BindingService } from './BindingService';
 
 describe(BindingService.name, () => {
-  let bindingMapsMock: jest.Mocked<
+  let bindingMapsMock: Mocked<
     OneToManyMapStar<Binding<unknown>, BindingRelation>
   >;
 
@@ -25,7 +33,7 @@ describe(BindingService.name, () => {
       serviceId: {
         isOptional: false,
       },
-    }) as jest.Mocked<OneToManyMapStar<Binding<unknown>, BindingRelation>>;
+    }) as Mocked<OneToManyMapStar<Binding<unknown>, BindingRelation>>;
 
     parentBindingService = BindingService.build(undefined);
 
@@ -43,7 +51,7 @@ describe(BindingService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call activationMaps.clone()', () => {
@@ -80,7 +88,7 @@ describe(BindingService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call bindingMaps.get()', () => {
@@ -116,7 +124,7 @@ describe(BindingService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call bindingMaps.get()', () => {
@@ -154,7 +162,7 @@ describe(BindingService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call bindingMaps.get() with the correct parameters', () => {
@@ -194,7 +202,7 @@ describe(BindingService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call bindingMaps.get()', () => {
@@ -230,7 +238,7 @@ describe(BindingService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call bindingMaps.get()', () => {
@@ -262,7 +270,7 @@ describe(BindingService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should return the non-parent bound services', () => {
@@ -291,7 +299,7 @@ describe(BindingService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call bindingMaps.removeByRelation()', () => {
@@ -323,7 +331,7 @@ describe(BindingService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call bindingMaps.removeByRelation()', () => {
@@ -356,7 +364,7 @@ describe(BindingService.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should call bindingMaps.add()', () => {
@@ -392,7 +400,7 @@ describe(BindingService.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should call bindingMaps.add()', () => {

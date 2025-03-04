@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import 'reflect-metadata';
 
@@ -6,13 +14,13 @@ import { decorate } from './decorate';
 
 describe(decorate.name, () => {
   describe('having ClassDecorator decorator', () => {
-    let classDecoratorMock: jest.Mock<ClassDecorator> & ClassDecorator;
+    let classDecoratorMock: Mock<ClassDecorator> & ClassDecorator;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let targetFixture: Function;
 
     beforeAll(() => {
-      classDecoratorMock =
-        jest.fn<ClassDecorator>() as jest.Mock<ClassDecorator> & ClassDecorator;
+      classDecoratorMock = vitest.fn<ClassDecorator>() as Mock<ClassDecorator> &
+        ClassDecorator;
       targetFixture = class {};
     });
 
@@ -24,7 +32,7 @@ describe(decorate.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call decorator', () => {
@@ -39,13 +47,13 @@ describe(decorate.name, () => {
   });
 
   describe('having ClassDecorator[] decorators', () => {
-    let classDecoratorMock: jest.Mock<ClassDecorator> & ClassDecorator;
+    let classDecoratorMock: Mock<ClassDecorator> & ClassDecorator;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let targetFixture: Function;
 
     beforeAll(() => {
-      classDecoratorMock =
-        jest.fn<ClassDecorator>() as jest.Mock<ClassDecorator> & ClassDecorator;
+      classDecoratorMock = vitest.fn<ClassDecorator>() as Mock<ClassDecorator> &
+        ClassDecorator;
       targetFixture = class {};
     });
 
@@ -57,7 +65,7 @@ describe(decorate.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call decorator', () => {
@@ -72,15 +80,14 @@ describe(decorate.name, () => {
   });
 
   describe('having ParameterDecorator[] decorators', () => {
-    let parameterDecoratorMock: jest.Mock<ParameterDecorator> &
-      ParameterDecorator;
+    let parameterDecoratorMock: Mock<ParameterDecorator> & ParameterDecorator;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let targetFixture: Function;
     let parameterIndexFixture: number;
 
     beforeAll(() => {
       parameterDecoratorMock =
-        jest.fn<ParameterDecorator>() as jest.Mock<ParameterDecorator> &
+        vitest.fn<ParameterDecorator>() as Mock<ParameterDecorator> &
           ParameterDecorator;
       targetFixture = class {};
       parameterIndexFixture = 1;
@@ -98,7 +105,7 @@ describe(decorate.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call decorator', () => {
@@ -117,15 +124,14 @@ describe(decorate.name, () => {
   });
 
   describe('having MethodDecorator[] decorators', () => {
-    let methodDecoratorMock: jest.Mock<MethodDecorator> & MethodDecorator;
+    let methodDecoratorMock: Mock<MethodDecorator> & MethodDecorator;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let targetFixture: Function;
     let propertyFixture: string | symbol;
 
     beforeAll(() => {
       methodDecoratorMock =
-        jest.fn<MethodDecorator>() as jest.Mock<MethodDecorator> &
-          MethodDecorator;
+        vitest.fn<MethodDecorator>() as Mock<MethodDecorator> & MethodDecorator;
       targetFixture = class {};
       propertyFixture = Symbol();
     });
@@ -142,7 +148,7 @@ describe(decorate.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call decorator', () => {

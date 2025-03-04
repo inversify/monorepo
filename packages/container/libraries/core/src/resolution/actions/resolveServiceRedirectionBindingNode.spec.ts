@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { beforeAll, describe, expect, it, Mock, vitest } from 'vitest';
 
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
@@ -12,7 +12,7 @@ import { resolveServiceRedirectionBindingNode } from './resolveServiceRedirectio
 
 describe(resolveServiceRedirectionBindingNode.name, () => {
   describe('having PlanServiceRedirectionBindingNode with PlanServiceRedirectionBindingNode redirection with binding node redirection', () => {
-    let resolveBindingNodeMock: jest.Mock<
+    let resolveBindingNodeMock: Mock<
       (
         params: ResolutionParams,
         planBindingNode: PlanServiceNodeParent | LeafBindingNode,
@@ -24,7 +24,7 @@ describe(resolveServiceRedirectionBindingNode.name, () => {
     let bindingNodeFixture: PlanBindingNode;
 
     beforeAll(() => {
-      resolveBindingNodeMock = jest.fn();
+      resolveBindingNodeMock = vitest.fn();
       paramsFixture = Symbol() as unknown as ResolutionParams;
       nodeFixture = {
         binding: {

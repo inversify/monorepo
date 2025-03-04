@@ -13,9 +13,9 @@ lib/esm/**/*.d.ts.map
 
 .lintstagedrc.json
 eslint.config.mjs
-jest.config.mjs
-jest.config.stryker.mjs
-jest.js.config.mjs
+vitest.config.mjs
+vitest.config.stryker.mjs
+vitest.workspace.mjs
 prettier.config.mjs
 rollup.config.mjs
 stryker.config.mjs

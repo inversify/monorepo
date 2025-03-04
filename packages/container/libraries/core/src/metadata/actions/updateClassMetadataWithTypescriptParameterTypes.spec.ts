@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { Newable } from '@inversifyjs/common';
 import {
@@ -26,7 +26,7 @@ describe(updateClassMetadataWithTypescriptParameterTypes.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getOwnReflectMetadata()', () => {
@@ -54,15 +54,15 @@ describe(updateClassMetadataWithTypescriptParameterTypes.name, () => {
 
       newableListFixture = [];
 
-      (
-        getOwnReflectMetadata as jest.Mock<typeof getOwnReflectMetadata>
-      ).mockReturnValueOnce(newableListFixture);
+      vitest
+        .mocked(getOwnReflectMetadata)
+        .mockReturnValueOnce(newableListFixture);
 
       result = updateClassMetadataWithTypescriptParameterTypes(targetFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getOwnReflectMetadata()', () => {

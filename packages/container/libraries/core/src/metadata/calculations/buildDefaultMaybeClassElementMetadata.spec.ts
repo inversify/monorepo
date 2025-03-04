@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind';
 import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';

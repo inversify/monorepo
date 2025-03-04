@@ -1,9 +1,17 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { BindingConstraints } from '@inversifyjs/core';
 
-jest.mock('./isBindingConstraintsWithServiceId');
-jest.mock('./isNotParentBindingConstraints');
+vitest.mock('./isBindingConstraintsWithServiceId');
+vitest.mock('./isNotParentBindingConstraints');
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 
@@ -19,36 +27,32 @@ describe(isNotParentBindingConstraintsWithServiceId.name, () => {
   });
 
   describe('when called', () => {
-    let isBindingConstraintsWithNameResultMock: jest.Mock<
+    let isBindingConstraintsWithNameResultMock: Mock<
       (constraints: BindingConstraints) => boolean
     >;
-    let isNotParentBindingConstraintsResultMock: jest.Mock<
+    let isNotParentBindingConstraintsResultMock: Mock<
       (constraints: BindingConstraints) => boolean
     >;
 
     let result: unknown;
 
     beforeAll(() => {
-      isBindingConstraintsWithNameResultMock = jest.fn();
-      isNotParentBindingConstraintsResultMock = jest.fn();
+      isBindingConstraintsWithNameResultMock = vitest.fn();
+      isNotParentBindingConstraintsResultMock = vitest.fn();
 
-      (
-        isBindingConstraintsWithServiceId as jest.Mock<
-          typeof isBindingConstraintsWithServiceId
-        >
-      ).mockReturnValueOnce(isBindingConstraintsWithNameResultMock);
+      vitest
+        .mocked(isBindingConstraintsWithServiceId)
+        .mockReturnValueOnce(isBindingConstraintsWithNameResultMock);
 
-      (
-        isNotParentBindingConstraints as jest.Mock<
-          typeof isNotParentBindingConstraints
-        >
-      ).mockReturnValueOnce(isNotParentBindingConstraintsResultMock);
+      vitest
+        .mocked(isNotParentBindingConstraints)
+        .mockReturnValueOnce(isNotParentBindingConstraintsResultMock);
 
       result = isNotParentBindingConstraintsWithServiceId(serviceIdFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isBindingConstraintsWithServiceId()', () => {

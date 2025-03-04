@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 
 import {
   Katana,
@@ -9,7 +9,7 @@ import {
 
 describe('Container API (getNamed)', () => {
   it('should provide Katana weapon', async () => {
-    expect(await katana).toBeInstanceOf(Katana);
-    expect(await shuriken).toBeInstanceOf(Shuriken);
+    await expect(katana).resolves.toBeInstanceOf(Katana);
+    await expect(shuriken).resolves.toBeInstanceOf(Shuriken);
   });
 });

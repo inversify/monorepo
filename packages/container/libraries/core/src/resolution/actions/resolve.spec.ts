@@ -1,42 +1,56 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
-jest.mock('./resolveConstantValueBinding');
-jest.mock('./resolveDynamicValueBinding');
-jest.mock('./resolveFactoryBinding');
-jest.mock('./resolveInstanceBindingConstructorParams', () => ({
-  resolveInstanceBindingConstructorParams: jest.fn().mockReturnValue(jest.fn()),
-}));
-jest.mock('./resolveInstanceBindingNode', () => ({
-  resolveInstanceBindingNode: jest.fn().mockReturnValue(jest.fn()),
-}));
-jest.mock('./resolveInstanceBindingNodeAsyncFromConstructorParams', () => ({
-  resolveInstanceBindingNodeAsyncFromConstructorParams: jest
+vitest.mock('./resolveConstantValueBinding');
+vitest.mock('./resolveDynamicValueBinding');
+vitest.mock('./resolveFactoryBinding');
+vitest.mock('./resolveInstanceBindingConstructorParams', () => ({
+  resolveInstanceBindingConstructorParams: vitest
     .fn()
-    .mockReturnValue(jest.fn()),
+    .mockReturnValue(vitest.fn()),
 }));
-jest.mock('./resolveInstanceBindingNodeFromConstructorParams', () => ({
-  resolveInstanceBindingNodeFromConstructorParams: jest
+vitest.mock('./resolveInstanceBindingNode', () => ({
+  resolveInstanceBindingNode: vitest.fn().mockReturnValue(vitest.fn()),
+}));
+vitest.mock('./resolveInstanceBindingNodeAsyncFromConstructorParams', () => ({
+  resolveInstanceBindingNodeAsyncFromConstructorParams: vitest
     .fn()
-    .mockReturnValue(jest.fn()),
+    .mockReturnValue(vitest.fn()),
 }));
-jest.mock('./resolveProviderBinding');
-jest.mock('./resolveScopedInstanceBindingNode', () => ({
-  resolveScopedInstanceBindingNode: jest.fn().mockReturnValue(jest.fn()),
+vitest.mock('./resolveInstanceBindingNodeFromConstructorParams', () => ({
+  resolveInstanceBindingNodeFromConstructorParams: vitest
+    .fn()
+    .mockReturnValue(vitest.fn()),
 }));
-jest.mock('./resolveScopedResolvedValueBindingNode', () => ({
-  resolveScopedResolvedValueBindingNode: jest.fn().mockReturnValue(jest.fn()),
+vitest.mock('./resolveProviderBinding');
+vitest.mock('./resolveScopedInstanceBindingNode', () => ({
+  resolveScopedInstanceBindingNode: vitest.fn().mockReturnValue(vitest.fn()),
 }));
-jest.mock('./resolveServiceRedirectionBindingNode', () => ({
-  resolveServiceRedirectionBindingNode: jest.fn().mockReturnValue(jest.fn()),
+vitest.mock('./resolveScopedResolvedValueBindingNode', () => ({
+  resolveScopedResolvedValueBindingNode: vitest
+    .fn()
+    .mockReturnValue(vitest.fn()),
 }));
-jest.mock('./resolveResolvedValueBindingParams', () => ({
-  resolveResolvedValueBindingParams: jest.fn().mockReturnValue(jest.fn()),
+vitest.mock('./resolveServiceRedirectionBindingNode', () => ({
+  resolveServiceRedirectionBindingNode: vitest
+    .fn()
+    .mockReturnValue(vitest.fn()),
 }));
-jest.mock('./resolveResolvedValueBindingNode', () => ({
-  resolveResolvedValueBindingNode: jest.fn().mockReturnValue(jest.fn()),
+vitest.mock('./resolveResolvedValueBindingParams', () => ({
+  resolveResolvedValueBindingParams: vitest.fn().mockReturnValue(vitest.fn()),
 }));
-jest.mock('./setInstanceProperties', () => ({
-  setInstanceProperties: jest.fn().mockReturnValue(jest.fn()),
+vitest.mock('./resolveResolvedValueBindingNode', () => ({
+  resolveResolvedValueBindingNode: vitest.fn().mockReturnValue(vitest.fn()),
+}));
+vitest.mock('./setInstanceProperties', () => ({
+  setInstanceProperties: vitest.fn().mockReturnValue(vitest.fn()),
 }));
 
 import { bindingScopeValues } from '../../binding/models/BindingScope';
@@ -70,38 +84,40 @@ import { resolveScopedResolvedValueBindingNode } from './resolveScopedResolvedVa
 import { resolveServiceRedirectionBindingNode } from './resolveServiceRedirectionBindingNode';
 
 describe(resolve.name, () => {
-  let resolveScopedInstanceBindingNodeMock: jest.Mock<
+  let resolveScopedInstanceBindingNodeMock: Mock<
     ReturnType<typeof resolveScopedInstanceBindingNode>
   >;
-  let resolveScopedResolvedValueBindingNodeMock: jest.Mock<
+  let resolveScopedResolvedValueBindingNodeMock: Mock<
     ReturnType<typeof resolveScopedResolvedValueBindingNode>
   >;
-  let resolveServiceRedirectionBindingNodeMock: jest.Mock<
+  let resolveServiceRedirectionBindingNodeMock: Mock<
     ReturnType<typeof resolveServiceRedirectionBindingNode>
   >;
 
   beforeAll(() => {
-    resolveScopedInstanceBindingNodeMock = resolveScopedInstanceBindingNode(
-      jest.fn<
-        (
-          params: ResolutionParams,
-          node: InstanceBindingNode,
-        ) => unknown[] | Promise<unknown[]>
-      >(),
-    ) as jest.Mock<ReturnType<typeof resolveScopedInstanceBindingNode>>;
-    resolveScopedResolvedValueBindingNodeMock =
+    resolveScopedInstanceBindingNodeMock = vitest.mocked(
+      resolveScopedInstanceBindingNode(
+        vitest.fn<
+          (
+            params: ResolutionParams,
+            node: InstanceBindingNode,
+          ) => Promise<unknown>
+        >(),
+      ),
+    );
+    resolveScopedResolvedValueBindingNodeMock = vitest.mocked(
       resolveScopedResolvedValueBindingNode(
-        jest.fn<
+        vitest.fn<
           (
             params: ResolutionParams,
             node: ResolvedValueBindingNode,
-          ) => unknown[] | Promise<unknown[]>
+          ) => Promise<unknown>
         >(),
-      ) as jest.Mock<ReturnType<typeof resolveScopedResolvedValueBindingNode>>;
-    resolveServiceRedirectionBindingNodeMock =
-      resolveServiceRedirectionBindingNode(jest.fn()) as jest.Mock<
-        ReturnType<typeof resolveServiceRedirectionBindingNode>
-      >;
+      ),
+    );
+    resolveServiceRedirectionBindingNodeMock = vitest.mocked(
+      resolveServiceRedirectionBindingNode(vitest.fn()),
+    );
   });
 
   describe('having ResolutionParams with plan tree with root with no bindings', () => {
@@ -215,17 +231,15 @@ describe(resolve.name, () => {
       beforeAll(() => {
         resolveValue = Symbol();
 
-        (
-          resolveConstantValueBinding as jest.Mock<
-            typeof resolveConstantValueBinding
-          >
-        ).mockReturnValueOnce(resolveValue);
+        vitest
+          .mocked(resolveConstantValueBinding)
+          .mockReturnValueOnce(resolveValue);
 
         result = resolve(resolutionParamsFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveConstantValueBinding()', () => {
@@ -293,17 +307,15 @@ describe(resolve.name, () => {
       beforeAll(() => {
         resolveValue = Symbol();
 
-        (
-          resolveConstantValueBinding as jest.Mock<
-            typeof resolveConstantValueBinding
-          >
-        ).mockReturnValueOnce(resolveValue);
+        vitest
+          .mocked(resolveConstantValueBinding)
+          .mockReturnValueOnce(resolveValue);
 
         result = resolve(resolutionParamsFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveConstantValueBinding()', () => {
@@ -327,17 +339,15 @@ describe(resolve.name, () => {
       beforeAll(async () => {
         resolveValue = Symbol();
 
-        (
-          resolveConstantValueBinding as jest.Mock<
-            typeof resolveConstantValueBinding
-          >
-        ).mockReturnValueOnce(Promise.resolve(resolveValue));
+        vitest
+          .mocked(resolveConstantValueBinding)
+          .mockResolvedValueOnce(resolveValue);
 
         result = await resolve(resolutionParamsFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveConstantValueBinding()', () => {
@@ -405,17 +415,15 @@ describe(resolve.name, () => {
       beforeAll(() => {
         resolveValue = Symbol();
 
-        (
-          resolveDynamicValueBinding as jest.Mock<
-            typeof resolveDynamicValueBinding
-          >
-        ).mockReturnValueOnce(resolveValue);
+        vitest
+          .mocked(resolveDynamicValueBinding)
+          .mockReturnValueOnce(resolveValue);
 
         result = resolve(resolutionParamsFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveDynamicValueBinding()', () => {
@@ -483,15 +491,13 @@ describe(resolve.name, () => {
       beforeAll(() => {
         resolveValue = () => Symbol();
 
-        (
-          resolveFactoryBinding as jest.Mock<typeof resolveFactoryBinding>
-        ).mockReturnValueOnce(resolveValue);
+        vitest.mocked(resolveFactoryBinding).mockReturnValueOnce(resolveValue);
 
         result = resolve(resolutionParamsFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveFactoryBinding()', () => {
@@ -562,17 +568,15 @@ describe(resolve.name, () => {
       beforeAll(() => {
         resolveValue = Symbol();
 
-        (
-          resolveScopedInstanceBindingNodeMock as jest.Mock<
-            typeof resolveScopedInstanceBindingNodeMock
-          >
-        ).mockReturnValueOnce(resolveValue);
+        vitest
+          .mocked(resolveScopedInstanceBindingNodeMock)
+          .mockReturnValueOnce(resolveValue);
 
         result = resolve(resolutionParamsFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveInstanceBindingNode()', () => {
@@ -605,7 +609,7 @@ describe(resolve.name, () => {
           isRight: true,
           value: Symbol(),
         },
-        factory: jest.fn(),
+        factory: vitest.fn(),
         id: 1,
         isSatisfiedBy: () => true,
         metadata: { arguments: [] },
@@ -642,17 +646,15 @@ describe(resolve.name, () => {
       beforeAll(() => {
         resolveValue = Symbol();
 
-        (
-          resolveScopedResolvedValueBindingNodeMock as jest.Mock<
-            typeof resolveScopedResolvedValueBindingNodeMock
-          >
-        ).mockReturnValueOnce(resolveValue);
+        vitest
+          .mocked(resolveScopedResolvedValueBindingNodeMock)
+          .mockReturnValueOnce(resolveValue);
 
         result = resolve(resolutionParamsFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveResolvedValueBindingNode()', () => {
@@ -722,15 +724,13 @@ describe(resolve.name, () => {
       beforeAll(() => {
         resolveValue = async () => Symbol();
 
-        (
-          resolveProviderBinding as jest.Mock<typeof resolveProviderBinding>
-        ).mockReturnValueOnce(resolveValue);
+        vitest.mocked(resolveProviderBinding).mockReturnValueOnce(resolveValue);
 
         result = resolve(resolutionParamsFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveProviderBinding()', () => {
@@ -801,7 +801,7 @@ describe(resolve.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveServiceRedirectionBindingNode()', () => {
@@ -833,7 +833,7 @@ describe(resolve.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveServiceRedirectionBindingNode()', () => {
@@ -915,7 +915,7 @@ describe(resolve.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolveServiceRedirectionBindingNode()', () => {

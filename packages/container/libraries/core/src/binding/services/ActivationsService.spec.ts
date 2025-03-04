@@ -1,10 +1,18 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('../../common/models/OneToManyMapStar');
+vitest.mock('../../common/models/OneToManyMapStar');
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 
-jest.mock('../../common/calculations/chain');
+vitest.mock('../../common/calculations/chain');
 
 import { chain } from '../../common/calculations/chain';
 import { OneToManyMapStar } from '../../common/models/OneToManyMapStar';
@@ -15,7 +23,7 @@ import {
 } from './ActivationsService';
 
 describe(ActivationsService.name, () => {
-  let activationMapsMock: jest.Mocked<
+  let activationMapsMock: Mocked<
     OneToManyMapStar<BindingActivation, BindingActivationRelation>
   >;
 
@@ -33,7 +41,7 @@ describe(ActivationsService.name, () => {
       serviceId: {
         isOptional: false,
       },
-    }) as jest.Mocked<
+    }) as Mocked<
       OneToManyMapStar<BindingActivation, BindingActivationRelation>
     >;
 
@@ -62,7 +70,7 @@ describe(ActivationsService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call activationMaps.add()', () => {
@@ -90,7 +98,7 @@ describe(ActivationsService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call activationMaps.clone', () => {
@@ -123,15 +131,13 @@ describe(ActivationsService.name, () => {
           .mockReturnValueOnce([bindingActivationFixture])
           .mockReturnValueOnce(undefined);
 
-        (chain as jest.Mock<typeof chain>).mockReturnValueOnce([
-          bindingActivationFixture,
-        ]);
+        vitest.mocked(chain).mockReturnValueOnce([bindingActivationFixture]);
 
         result = activationsService.get(serviceIdFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call activationMaps.get()', () => {
@@ -170,7 +176,8 @@ describe(ActivationsService.name, () => {
           .mockReturnValueOnce([bindingActivationFixture])
           .mockReturnValueOnce([bindingActivationFixture]);
 
-        (chain as jest.Mock<typeof chain>)
+        vitest
+          .mocked(chain)
           .mockReturnValueOnce([bindingActivationFixture])
           .mockReturnValueOnce([
             bindingActivationFixture,
@@ -181,7 +188,7 @@ describe(ActivationsService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call activationMaps.get()', () => {
@@ -232,7 +239,7 @@ describe(ActivationsService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call activationMaps.removeByRelation()', () => {
@@ -264,7 +271,7 @@ describe(ActivationsService.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call activationMaps.removeByRelation()', () => {

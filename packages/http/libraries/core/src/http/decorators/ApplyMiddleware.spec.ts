@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import {
   getReflectMetadata,
@@ -25,7 +25,7 @@ describe(applyMiddleware.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call getReflectMetadata', () => {
@@ -58,9 +58,7 @@ describe(applyMiddleware.name, () => {
           value: 'value-descriptor-example',
         } as PropertyDescriptor;
 
-        (
-          getReflectMetadata as jest.Mock<typeof getReflectMetadata>
-        ).mockReturnValueOnce([]);
+        vitest.mocked(getReflectMetadata).mockReturnValueOnce([]);
 
         applyMiddleware(middlewareFixture)({}, 'key', descriptorFixture);
       });

@@ -21,7 +21,7 @@ const defaultWorkspaceProjectConfig: WorkspaceProjectConfig & {
   ],
   project: [
     "**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}!",
-    "!jest.config.stryker.mjs",
+    "!vitest.config.stryker.mjs",
     "!**/__mocks__",
   ],
 };

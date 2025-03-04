@@ -1,18 +1,26 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import 'reflect-metadata';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
-jest.mock('../actions/updateMaybeClassMetadataConstructorArgument', () => ({
-  updateMaybeClassMetadataConstructorArgument: jest.fn(),
+vitest.mock('../actions/updateMaybeClassMetadataConstructorArgument', () => ({
+  updateMaybeClassMetadataConstructorArgument: vitest.fn(),
 }));
 
-jest.mock('../actions/updateMaybeClassMetadataProperty', () => ({
-  updateMaybeClassMetadataProperty: jest.fn(),
+vitest.mock('../actions/updateMaybeClassMetadataProperty', () => ({
+  updateMaybeClassMetadataProperty: vitest.fn(),
 }));
 
-jest.mock('../calculations/handleInjectionError');
+vitest.mock('../calculations/handleInjectionError');
 
 import { Newable } from '@inversifyjs/common';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
@@ -29,54 +37,52 @@ import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
 import { injectBase } from './injectBase';
 
 describe(injectBase.name, () => {
-  let updateMetadataMock: jest.Mock<
+  let updateMetadataMock: Mock<
     (
       metadata: MaybeClassElementMetadata | undefined,
     ) => MaybeClassElementMetadata
   >;
-  let updatePendingClassMetadataCountMock: jest.Mock<
+  let updatePendingClassMetadataCountMock: Mock<
     (
       target: object,
     ) => (metadata: MaybeClassElementMetadata | undefined) => void
   >;
 
   beforeAll(() => {
-    (
-      handleInjectionError as jest.Mock<typeof handleInjectionError>
-    ).mockImplementation(
-      (
-        _target: unknown,
-        _propertyKey: unknown,
-        _indexOrTypedDescriptor: unknown,
-        error: unknown,
-      ) => {
-        throw error;
-      },
-    );
+    vitest
+      .mocked(handleInjectionError)
+      .mockImplementation(
+        (
+          _target: unknown,
+          _propertyKey: unknown,
+          _indexOrTypedDescriptor: unknown,
+          error: unknown,
+        ) => {
+          throw error;
+        },
+      );
 
     updateMetadataMock =
-      jest.fn<
+      vitest.fn<
         (
           metadata: MaybeClassElementMetadata | undefined,
         ) => MaybeClassElementMetadata
       >();
-    updatePendingClassMetadataCountMock = jest.fn();
+    updatePendingClassMetadataCountMock = vitest.fn();
   });
 
   describe('when called, as property decorator', () => {
     let targetFixture: Newable;
-    let updateMaybeClassMetadataPropertyResult: jest.Mock<
+    let updateMaybeClassMetadataPropertyResult: Mock<
       (classMetadata: MaybeClassMetadata) => MaybeClassMetadata
     >;
 
     beforeAll(() => {
-      updateMaybeClassMetadataPropertyResult = jest.fn();
+      updateMaybeClassMetadataPropertyResult = vitest.fn();
 
-      (
-        updateMaybeClassMetadataProperty as jest.Mock<
-          typeof updateMaybeClassMetadataProperty
-        >
-      ).mockReturnValueOnce(updateMaybeClassMetadataPropertyResult);
+      vitest
+        .mocked(updateMaybeClassMetadataProperty)
+        .mockReturnValueOnce(updateMaybeClassMetadataPropertyResult);
 
       class TargetFixture {
         @injectBase(updateMetadataMock, updatePendingClassMetadataCountMock)
@@ -87,7 +93,7 @@ describe(injectBase.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call updateOwnReflectMetadata()', () => {
@@ -103,18 +109,18 @@ describe(injectBase.name, () => {
 
   describe('when called, as constructor parameter decorator', () => {
     let targetFixture: Newable;
-    let updateMaybeClassMetadataConstructorArgumentsResult: jest.Mock<
+    let updateMaybeClassMetadataConstructorArgumentsResult: Mock<
       (classMetadata: MaybeClassMetadata) => MaybeClassMetadata
     >;
 
     beforeAll(() => {
-      updateMaybeClassMetadataConstructorArgumentsResult = jest.fn();
+      updateMaybeClassMetadataConstructorArgumentsResult = vitest.fn();
 
-      (
-        updateMaybeClassMetadataConstructorArgument as jest.Mock<
-          typeof updateMaybeClassMetadataConstructorArgument
-        >
-      ).mockReturnValueOnce(updateMaybeClassMetadataConstructorArgumentsResult);
+      vitest
+        .mocked(updateMaybeClassMetadataConstructorArgument)
+        .mockReturnValueOnce(
+          updateMaybeClassMetadataConstructorArgumentsResult,
+        );
 
       class TargetFixture {
         constructor(
@@ -127,7 +133,7 @@ describe(injectBase.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call updateOwnReflectMetadata()', () => {
@@ -161,7 +167,7 @@ describe(injectBase.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should throw an error', () => {
@@ -180,18 +186,16 @@ Found @inject decorator at method "doSomethingWithFoo" at class "TargetFixture"`
 
   describe('when called, as method decorator', () => {
     let targetFixture: Newable;
-    let updateMaybeClassMetadataPropertyResult: jest.Mock<
+    let updateMaybeClassMetadataPropertyResult: Mock<
       (classMetadata: MaybeClassMetadata) => MaybeClassMetadata
     >;
 
     beforeAll(() => {
-      updateMaybeClassMetadataPropertyResult = jest.fn();
+      updateMaybeClassMetadataPropertyResult = vitest.fn();
 
-      (
-        updateMaybeClassMetadataProperty as jest.Mock<
-          typeof updateMaybeClassMetadataProperty
-        >
-      ).mockReturnValueOnce(updateMaybeClassMetadataPropertyResult);
+      vitest
+        .mocked(updateMaybeClassMetadataProperty)
+        .mockReturnValueOnce(updateMaybeClassMetadataPropertyResult);
 
       class TargetFixture {
         @injectBase(updateMetadataMock, updatePendingClassMetadataCountMock)
@@ -204,7 +208,7 @@ Found @inject decorator at method "doSomethingWithFoo" at class "TargetFixture"`
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call updateOwnReflectMetadata()', () => {
@@ -236,7 +240,7 @@ Found @inject decorator at method "doSomethingWithFoo" at class "TargetFixture"`
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should throw an error', () => {

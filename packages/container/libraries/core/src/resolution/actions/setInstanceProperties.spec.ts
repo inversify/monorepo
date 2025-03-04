@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
@@ -13,7 +21,7 @@ describe(setInstanceProperties.name, () => {
   describe('having node with properties and no metadata', () => {
     let propertyKeyFixture: string | symbol;
 
-    let resolveServiceNodeMock: jest.Mock<
+    let resolveServiceNodeMock: Mock<
       (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
     >;
 
@@ -23,7 +31,7 @@ describe(setInstanceProperties.name, () => {
 
     beforeAll(() => {
       propertyKeyFixture = Symbol();
-      resolveServiceNodeMock = jest.fn();
+      resolveServiceNodeMock = vitest.fn();
 
       paramsFixture = Symbol() as unknown as ResolutionParams;
       instanceFixture = {};
@@ -69,7 +77,7 @@ describe(setInstanceProperties.name, () => {
   describe('having node with properties and matching unmanaged metadata', () => {
     let propertyKeyFixture: string | symbol;
 
-    let resolveServiceNodeMock: jest.Mock<
+    let resolveServiceNodeMock: Mock<
       (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
     >;
 
@@ -79,7 +87,7 @@ describe(setInstanceProperties.name, () => {
 
     beforeAll(() => {
       propertyKeyFixture = Symbol();
-      resolveServiceNodeMock = jest.fn();
+      resolveServiceNodeMock = vitest.fn();
 
       paramsFixture = Symbol() as unknown as ResolutionParams;
       instanceFixture = {};
@@ -115,7 +123,7 @@ describe(setInstanceProperties.name, () => {
   describe('having node with properties with bindings and matching managed metadata', () => {
     let propertyKeyFixture: string | symbol;
 
-    let resolveServiceNodeMock: jest.Mock<
+    let resolveServiceNodeMock: Mock<
       (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
     >;
 
@@ -125,7 +133,7 @@ describe(setInstanceProperties.name, () => {
 
     beforeAll(() => {
       propertyKeyFixture = Symbol();
-      resolveServiceNodeMock = jest.fn();
+      resolveServiceNodeMock = vitest.fn();
 
       paramsFixture = Symbol() as unknown as ResolutionParams;
 
@@ -176,7 +184,7 @@ describe(setInstanceProperties.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should set instance property', () => {
@@ -200,9 +208,7 @@ describe(setInstanceProperties.name, () => {
 
         resolvedPropertyValue = Symbol();
 
-        resolveServiceNodeMock.mockReturnValueOnce(
-          Promise.resolve(resolvedPropertyValue),
-        );
+        resolveServiceNodeMock.mockResolvedValueOnce(resolvedPropertyValue);
 
         result = setInstanceProperties(resolveServiceNodeMock)(
           paramsFixture,
@@ -214,7 +220,7 @@ describe(setInstanceProperties.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should set instance property', () => {

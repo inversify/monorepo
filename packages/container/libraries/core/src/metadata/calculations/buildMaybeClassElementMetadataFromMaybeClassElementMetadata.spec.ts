@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { beforeAll, describe, expect, it, Mock, vitest } from 'vitest';
 
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
@@ -13,7 +13,7 @@ describe(
   () => {
     describe('having unmanaged metadata', () => {
       let metadataFixture: UnmanagedClassElementMetadata;
-      let updateMetadataMock: jest.Mock<
+      let updateMetadataMock: Mock<
         (
           metadata:
             | ManagedClassElementMetadata
@@ -25,7 +25,7 @@ describe(
         metadataFixture = {
           kind: ClassElementMetadataKind.unmanaged,
         };
-        updateMetadataMock = jest.fn();
+        updateMetadataMock = vitest.fn();
       });
 
       describe('when called', () => {
@@ -58,7 +58,7 @@ describe(
 
     describe('having non unmanaged metadata', () => {
       let metadataFixture: ManagedClassElementMetadata;
-      let updateMetadataMock: jest.Mock<
+      let updateMetadataMock: Mock<
         (
           metadata:
             | ManagedClassElementMetadata
@@ -74,7 +74,7 @@ describe(
           tags: new Map([['foo', 'bar']]),
           value: 'service-identifier',
         };
-        updateMetadataMock = jest.fn();
+        updateMetadataMock = vitest.fn();
       });
 
       describe('when called', () => {

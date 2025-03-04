@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('./RequestParam');
+vitest.mock('./RequestParam');
 
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { request } from './Request';
@@ -14,15 +14,15 @@ describe(request.name, () => {
     beforeAll(() => {
       parameterDecoratorFixture = {} as ParameterDecorator;
 
-      (requestParam as jest.Mocked<typeof requestParam>).mockReturnValueOnce(
-        parameterDecoratorFixture,
-      );
+      vitest
+        .mocked(requestParam)
+        .mockReturnValueOnce(parameterDecoratorFixture);
 
       result = request();
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call requestParam', () => {

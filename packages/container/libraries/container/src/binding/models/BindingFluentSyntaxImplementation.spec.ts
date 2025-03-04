@@ -1,27 +1,36 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('@inversifyjs/core');
+vitest.mock('@inversifyjs/core');
 
-jest.mock('../actions/getBindingId');
-jest.mock('../calculations/isAnyAncestorBindingConstraints');
-jest.mock('../calculations/isAnyAncestorBindingConstraintsWithName');
-jest.mock('../calculations/isAnyAncestorBindingConstraintsWithServiceId');
-jest.mock('../calculations/isAnyAncestorBindingConstraintsWithTag');
-jest.mock('../calculations/isBindingConstraintsWithName');
-jest.mock('../calculations/isBindingConstraintsWithTag');
-jest.mock('../calculations/isNoAncestorBindingConstraints');
-jest.mock('../calculations/isNoAncestorBindingConstraintsWithTag');
-jest.mock('../calculations/isNoAncestorBindingConstraintsWithServiceId');
-jest.mock('../calculations/isNoAncestorBindingConstraintsWithName');
-jest.mock('../calculations/isNotParentBindingConstraints');
-jest.mock('../calculations/isNotParentBindingConstraintsWithName');
-jest.mock('../calculations/isNotParentBindingConstraintsWithServiceId');
-jest.mock('../calculations/isNotParentBindingConstraintsWithTag');
-jest.mock('../calculations/isParentBindingConstraints');
-jest.mock('../calculations/isParentBindingConstraintsWithName');
-jest.mock('../calculations/isParentBindingConstraintsWithServiceId');
-jest.mock('../calculations/isParentBindingConstraintsWithTag');
-jest.mock('../calculations/isResolvedValueMetadataInjectOptions');
+vitest.mock('../actions/getBindingId');
+vitest.mock('../calculations/isAnyAncestorBindingConstraints');
+vitest.mock('../calculations/isAnyAncestorBindingConstraintsWithName');
+vitest.mock('../calculations/isAnyAncestorBindingConstraintsWithServiceId');
+vitest.mock('../calculations/isAnyAncestorBindingConstraintsWithTag');
+vitest.mock('../calculations/isBindingConstraintsWithName');
+vitest.mock('../calculations/isBindingConstraintsWithTag');
+vitest.mock('../calculations/isNoAncestorBindingConstraints');
+vitest.mock('../calculations/isNoAncestorBindingConstraintsWithTag');
+vitest.mock('../calculations/isNoAncestorBindingConstraintsWithServiceId');
+vitest.mock('../calculations/isNoAncestorBindingConstraintsWithName');
+vitest.mock('../calculations/isNotParentBindingConstraints');
+vitest.mock('../calculations/isNotParentBindingConstraintsWithName');
+vitest.mock('../calculations/isNotParentBindingConstraintsWithServiceId');
+vitest.mock('../calculations/isNotParentBindingConstraintsWithTag');
+vitest.mock('../calculations/isParentBindingConstraints');
+vitest.mock('../calculations/isParentBindingConstraintsWithName');
+vitest.mock('../calculations/isParentBindingConstraintsWithServiceId');
+vitest.mock('../calculations/isParentBindingConstraintsWithTag');
+vitest.mock('../calculations/isResolvedValueMetadataInjectOptions');
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 import {
@@ -86,18 +95,16 @@ import {
 } from './ResolvedValueInjectOptions';
 
 describe(BindInFluentSyntaxImplementation.name, () => {
-  let bindingMock: jest.Mocked<
-    ScopedBinding<BindingType, BindingScope, unknown>
-  >;
+  let bindingMock: Mocked<ScopedBinding<BindingType, BindingScope, unknown>>;
 
-  let bindingMockSetScopeMock: jest.Mock<(value: BindingScope) => void>;
+  let bindingMockSetScopeMock: Mock<(value: BindingScope) => void>;
 
   let bindInFluentSyntaxImplementation: BindInFluentSyntaxImplementation<unknown>;
 
   beforeAll(() => {
     let bindingScope: BindingScope = bindingScopeValues.Singleton;
 
-    bindingMockSetScopeMock = jest.fn();
+    bindingMockSetScopeMock = vitest.fn();
 
     bindingMock = {
       get scope(): BindingScope {
@@ -109,8 +116,8 @@ describe(BindInFluentSyntaxImplementation.name, () => {
         bindingScope = value;
       },
     } as Partial<
-      jest.Mocked<ScopedBinding<BindingType, BindingScope, unknown>>
-    > as jest.Mocked<ScopedBinding<BindingType, BindingScope, unknown>>;
+      Mocked<ScopedBinding<BindingType, BindingScope, unknown>>
+    > as Mocked<ScopedBinding<BindingType, BindingScope, unknown>>;
 
     bindInFluentSyntaxImplementation = new BindInFluentSyntaxImplementation(
       bindingMock,
@@ -164,7 +171,7 @@ describe(BindInFluentSyntaxImplementation.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should set binding scope', () => {
@@ -187,7 +194,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
   let factoryBuilderFixture: (context: ResolutionContext) => Factory<unknown>;
   let providerBuilderFixture: (context: ResolutionContext) => Provider<unknown>;
 
-  let callbackMock: jest.Mock<(binding: Binding) => void>;
+  let callbackMock: Mock<(binding: Binding) => void>;
   let containerModuleIdFixture: number;
   let defaultScopeFixture: BindingScope;
   let serviceIdentifierFixture: ServiceIdentifier;
@@ -203,11 +210,9 @@ describe(BindToFluentSyntaxImplementation.name, () => {
     providerBuilderFixture = () => async () =>
       Symbol.for('value-from-provider');
 
-    (getBindingId as jest.Mock<typeof getBindingId>).mockReturnValue(
-      bindingIdFixture,
-    );
+    vitest.mocked(getBindingId).mockReturnValue(bindingIdFixture);
 
-    callbackMock = jest.fn();
+    callbackMock = vitest.fn();
     containerModuleIdFixture = 1;
     defaultScopeFixture = bindingScopeValues.Singleton;
     serviceIdentifierFixture = 'service-id';
@@ -359,7 +364,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should call getBindingId', () => {
@@ -416,7 +421,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should call getBindingId', () => {
@@ -476,11 +481,9 @@ describe(BindToFluentSyntaxImplementation.name, () => {
             type: bindingTypeValues.ResolvedValue,
           };
 
-          (
-            isResolvedValueMetadataInjectOptions as unknown as jest.Mock<
-              typeof isResolvedValueMetadataInjectOptions
-            >
-          ).mockReturnValueOnce(false);
+          vitest
+            .mocked(isResolvedValueMetadataInjectOptions)
+            .mockReturnValueOnce(false);
 
           result = bindToFluentSyntaxImplementation.toResolvedValue(
             factoryFixture,
@@ -489,7 +492,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should call isResolvedValueMetadataInjectOptions()', () => {
@@ -556,11 +559,9 @@ describe(BindToFluentSyntaxImplementation.name, () => {
             type: bindingTypeValues.ResolvedValue,
           };
 
-          (
-            isResolvedValueMetadataInjectOptions as unknown as jest.Mock<
-              typeof isResolvedValueMetadataInjectOptions
-            >
-          ).mockReturnValueOnce(true);
+          vitest
+            .mocked(isResolvedValueMetadataInjectOptions)
+            .mockReturnValueOnce(true);
 
           result = bindToFluentSyntaxImplementation.toResolvedValue(
             factoryFixture,
@@ -569,7 +570,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should call isResolvedValueMetadataInjectOptions()', () => {
@@ -647,11 +648,9 @@ describe(BindToFluentSyntaxImplementation.name, () => {
             type: bindingTypeValues.ResolvedValue,
           };
 
-          (
-            isResolvedValueMetadataInjectOptions as unknown as jest.Mock<
-              typeof isResolvedValueMetadataInjectOptions
-            >
-          ).mockReturnValueOnce(true);
+          vitest
+            .mocked(isResolvedValueMetadataInjectOptions)
+            .mockReturnValueOnce(true);
 
           result = bindToFluentSyntaxImplementation.toResolvedValue(
             factoryFixture,
@@ -660,7 +659,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should call isResolvedValueMetadataInjectOptions()', () => {
@@ -689,7 +688,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
 
   describe('.toSelf', () => {
     describe('having a non function service identifier', () => {
-      let callbackMock: jest.Mock<(binding: Binding) => void>;
+      let callbackMock: Mock<(binding: Binding) => void>;
       let containerModuleIdFixture: number;
       let defaultScopeFixture: BindingScope;
       let serviceIdentifierFixture: ServiceIdentifier;
@@ -697,7 +696,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
       let bindToFluentSyntaxImplementation: BindToFluentSyntaxImplementation<unknown>;
 
       beforeAll(() => {
-        callbackMock = jest.fn();
+        callbackMock = vitest.fn();
         containerModuleIdFixture = 1;
         defaultScopeFixture = bindingScopeValues.Singleton;
         serviceIdentifierFixture = 'service-id';
@@ -722,7 +721,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should trow an Error', () => {
@@ -742,7 +741,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
     describe('having a function service identifier', () => {
       class Foo {}
 
-      let callbackMock: jest.Mock<(binding: Binding) => void>;
+      let callbackMock: Mock<(binding: Binding) => void>;
       let containerModuleIdFixture: number;
       let defaultScopeFixture: BindingScope;
       let serviceIdentifierFixture: ServiceIdentifier;
@@ -750,7 +749,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
       let bindToFluentSyntaxImplementation: BindToFluentSyntaxImplementation<unknown>;
 
       beforeAll(() => {
-        callbackMock = jest.fn();
+        callbackMock = vitest.fn();
         containerModuleIdFixture = 1;
         defaultScopeFixture = bindingScopeValues.Singleton;
         serviceIdentifierFixture = Foo;
@@ -767,15 +766,15 @@ describe(BindToFluentSyntaxImplementation.name, () => {
         let result: unknown;
 
         beforeAll(() => {
-          (
-            getClassMetadata as jest.Mock<typeof getClassMetadata>
-          ).mockReturnValueOnce(ClassMetadataFixtures.withScopeUndefined);
+          vitest
+            .mocked(getClassMetadata)
+            .mockReturnValueOnce(ClassMetadataFixtures.withScopeUndefined);
 
           result = bindToFluentSyntaxImplementation.toSelf();
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should call getClassMetadata()', () => {
@@ -821,15 +820,15 @@ describe(BindToFluentSyntaxImplementation.name, () => {
         beforeAll(() => {
           classMetadataFixture = ClassMetadataFixtures.withScopeRequest;
 
-          (
-            getClassMetadata as jest.Mock<typeof getClassMetadata>
-          ).mockReturnValueOnce(classMetadataFixture);
+          vitest
+            .mocked(getClassMetadata)
+            .mockReturnValueOnce(classMetadataFixture);
 
           result = bindToFluentSyntaxImplementation.toSelf();
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should call getClassMetadata()', () => {
@@ -883,7 +882,7 @@ describe(BindToFluentSyntaxImplementation.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call callback()', () => {
@@ -911,18 +910,18 @@ describe(BindToFluentSyntaxImplementation.name, () => {
 
 describe(BindOnFluentSyntaxImplementation.name, () => {
   let bindingFixture: Writable<ConstantValueBinding<unknown>>;
-  let bindingActivationSetterMock: jest.Mock<
+  let bindingActivationSetterMock: Mock<
     (value: BindingActivation | undefined) => undefined
   >;
-  let bindingDeactivationSetterMock: jest.Mock<
+  let bindingDeactivationSetterMock: Mock<
     (value: BindingDeactivation | undefined) => undefined
   >;
 
   let bindOnFluentSyntaxImplementation: BindOnFluentSyntaxImplementation<unknown>;
 
   beforeAll(() => {
-    bindingActivationSetterMock = jest.fn();
-    bindingDeactivationSetterMock = jest.fn();
+    bindingActivationSetterMock = vitest.fn();
+    bindingDeactivationSetterMock = vitest.fn();
 
     bindingFixture = {
       cache: {
@@ -1013,14 +1012,14 @@ describe(BindOnFluentSyntaxImplementation.name, () => {
 describe(BindWhenFluentSyntaxImplementation.name, () => {
   let bindingFixture: ConstantValueBinding<unknown>;
 
-  let isSatisfiedBySetterMock: jest.Mock<
+  let isSatisfiedBySetterMock: Mock<
     (value: (metadata: BindingConstraints) => boolean) => void
   >;
 
   let bindWhenFluentSyntaxImplementation: BindWhenFluentSyntaxImplementation<unknown>;
 
   beforeAll(() => {
-    isSatisfiedBySetterMock = jest.fn();
+    isSatisfiedBySetterMock = vitest.fn();
 
     bindingFixture = {
       cache: {
@@ -1060,7 +1059,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should set constraint', () => {
@@ -1086,7 +1085,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isAnyAncestorBindingConstraints', () => {
@@ -1114,7 +1113,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isAnyAncestorBindingConstraintsWithServiceId', () => {
@@ -1144,7 +1143,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isAnyAncestorBindingConstraintsWithName', () => {
@@ -1176,7 +1175,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isAnyAncestorBindingConstraintsWithTag', () => {
@@ -1200,7 +1199,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should set constraint', () => {
@@ -1227,7 +1226,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isBindingConstraintsWithName', () => {
@@ -1252,7 +1251,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isParentBindingConstraints', () => {
@@ -1280,7 +1279,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isParentBindingConstraintsWithServiceId', () => {
@@ -1307,7 +1306,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isParentBindingConstraintsWithName', () => {
@@ -1339,7 +1338,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isParentBindingConstraintsWithTag', () => {
@@ -1372,7 +1371,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isBindingConstraintsWithTag', () => {
@@ -1401,7 +1400,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isNotParentBindingConstraintsWithServiceId', () => {
@@ -1431,7 +1430,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isNotParentBindingConstraintsWithName', () => {
@@ -1463,7 +1462,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isNotParentBindingConstraintsWithTag', () => {
@@ -1492,7 +1491,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isNotParentBindingConstraints', () => {
@@ -1520,7 +1519,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isNoAncestorBindingConstraints', () => {
@@ -1548,7 +1547,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isNoAncestorBindingConstraintsWithServiceId', () => {
@@ -1578,7 +1577,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isNoAncestorBindingConstraintsWithName', () => {
@@ -1610,7 +1609,7 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call isNoAncestorBindingConstraintsWithTag', () => {
@@ -1629,18 +1628,18 @@ describe(BindWhenFluentSyntaxImplementation.name, () => {
 
 describe(BindWhenOnFluentSyntaxImplementation.name, () => {
   let bindingFixture: Writable<ConstantValueBinding<unknown>>;
-  let bindingActivationSetterMock: jest.Mock<
+  let bindingActivationSetterMock: Mock<
     (value: BindingActivation | undefined) => undefined
   >;
-  let bindingDeactivationSetterMock: jest.Mock<
+  let bindingDeactivationSetterMock: Mock<
     (value: BindingDeactivation | undefined) => undefined
   >;
 
   let bindWhenOnFluentSyntaxImplementation: BindWhenOnFluentSyntaxImplementation<unknown>;
 
   beforeAll(() => {
-    bindingActivationSetterMock = jest.fn();
-    bindingDeactivationSetterMock = jest.fn();
+    bindingActivationSetterMock = vitest.fn();
+    bindingDeactivationSetterMock = vitest.fn();
 
     bindingFixture = {
       cache: {
@@ -1730,18 +1729,16 @@ describe(BindWhenOnFluentSyntaxImplementation.name, () => {
 });
 
 describe(BindInWhenOnFluentSyntaxImplementation.name, () => {
-  let bindingMock: jest.Mocked<
-    ScopedBinding<BindingType, BindingScope, unknown>
-  >;
+  let bindingMock: Mocked<ScopedBinding<BindingType, BindingScope, unknown>>;
 
-  let bindingMockSetScopeMock: jest.Mock<(value: BindingScope) => void>;
+  let bindingMockSetScopeMock: Mock<(value: BindingScope) => void>;
 
   let bindInWhenOnFluentSyntaxImplementation: BindInWhenOnFluentSyntaxImplementation<unknown>;
 
   beforeAll(() => {
     let bindingScope: BindingScope = bindingScopeValues.Singleton;
 
-    bindingMockSetScopeMock = jest.fn();
+    bindingMockSetScopeMock = vitest.fn();
 
     bindingMock = {
       get scope(): BindingScope {
@@ -1753,8 +1750,8 @@ describe(BindInWhenOnFluentSyntaxImplementation.name, () => {
         bindingScope = value;
       },
     } as Partial<
-      jest.Mocked<ScopedBinding<BindingType, BindingScope, unknown>>
-    > as jest.Mocked<ScopedBinding<BindingType, BindingScope, unknown>>;
+      Mocked<ScopedBinding<BindingType, BindingScope, unknown>>
+    > as Mocked<ScopedBinding<BindingType, BindingScope, unknown>>;
 
     bindInWhenOnFluentSyntaxImplementation =
       new BindInWhenOnFluentSyntaxImplementation(bindingMock);
@@ -1807,7 +1804,7 @@ describe(BindInWhenOnFluentSyntaxImplementation.name, () => {
         });
 
         afterAll(() => {
-          jest.clearAllMocks();
+          vitest.clearAllMocks();
         });
 
         it('should set binding scope', () => {

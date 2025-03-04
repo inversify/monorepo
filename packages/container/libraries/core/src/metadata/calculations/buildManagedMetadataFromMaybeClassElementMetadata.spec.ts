@@ -1,11 +1,19 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
 
-jest.mock('./buildClassElementMetadataFromMaybeClassElementMetadata', () => ({
-  buildClassElementMetadataFromMaybeClassElementMetadata: jest
+vitest.mock('./buildClassElementMetadataFromMaybeClassElementMetadata', () => ({
+  buildClassElementMetadataFromMaybeClassElementMetadata: vitest
     .fn()
-    .mockReturnValue(jest.fn()),
+    .mockReturnValue(vitest.fn()),
 }));
 
 import { ClassElementMetadata } from '../models/ClassElementMetadata';
@@ -25,20 +33,18 @@ describe(buildManagedMetadataFromMaybeClassElementMetadata.name, () => {
   });
 
   describe('when called', () => {
-    let buildClassMetadataMock: jest.Mock<
+    let buildClassMetadataMock: Mock<
       (metadata: MaybeClassElementMetadata | undefined) => ClassElementMetadata
     >;
 
     let result: unknown;
 
     beforeAll(() => {
-      buildClassMetadataMock = jest.fn();
+      buildClassMetadataMock = vitest.fn();
 
-      (
-        buildManagedMetadataFromMaybeClassElementMetadata as jest.Mock<
-          typeof buildManagedMetadataFromMaybeClassElementMetadata
-        >
-      ).mockReturnValueOnce(buildClassMetadataMock);
+      vitest
+        .mocked(buildManagedMetadataFromMaybeClassElementMetadata)
+        .mockReturnValueOnce(buildClassMetadataMock);
 
       result = buildManagedMetadataFromMaybeClassElementMetadata(
         kindFixture,
@@ -47,7 +53,7 @@ describe(buildManagedMetadataFromMaybeClassElementMetadata.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should return expected function', () => {

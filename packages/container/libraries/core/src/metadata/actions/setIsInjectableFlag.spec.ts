@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import {
   getOwnReflectMetadata,
@@ -24,13 +24,13 @@ describe('setIsInjectableFlag', () => {
     let result: unknown;
 
     beforeAll(() => {
-      (getOwnReflectMetadata as jest.Mock).mockReturnValueOnce(undefined);
+      vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce(undefined);
 
       result = setIsInjectableFlag(targetFixture);
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getOwnReflectMetadata', () => {
@@ -59,7 +59,7 @@ describe('setIsInjectableFlag', () => {
     let result: unknown;
 
     beforeAll(() => {
-      (getOwnReflectMetadata as jest.Mock).mockReturnValueOnce(true);
+      vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce(true);
 
       try {
         setIsInjectableFlag(targetFixture);
@@ -69,7 +69,7 @@ describe('setIsInjectableFlag', () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should throw an InversifyCoreError', () => {

@@ -1,15 +1,15 @@
-import { jest } from '@jest/globals';
+import { Mock, vitest } from 'vitest';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const addMock: jest.Mock<any> = jest.fn();
+const addMock: Mock<any> = vitest.fn();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const cloneMock: jest.Mock<any> = jest.fn();
+const cloneMock: Mock<any> = vitest.fn();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getMock: jest.Mock<any> = jest.fn();
+const getMock: Mock<any> = vitest.fn();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getAllKeysMock: jest.Mock<any> = jest.fn();
+const getAllKeysMock: Mock<any> = vitest.fn();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const removeByRelationMock: jest.Mock<any> = jest.fn();
+const removeByRelationMock: Mock<any> = vitest.fn();
 
 export class OneToManyMapStar<TModel, TRelation extends object> {
   public readonly add: (model: TModel, relation: TRelation) => void;

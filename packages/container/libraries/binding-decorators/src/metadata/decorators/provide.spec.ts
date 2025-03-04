@@ -1,7 +1,15 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vitest,
+} from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
-jest.mock('../actions/updateMetadataMap');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('../actions/updateMetadataMap');
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
@@ -19,7 +27,7 @@ import { provide } from './provide';
 describe(provide.name, () => {
   describe('having no service identifier', () => {
     let bindInWhenOnFluentSyntaxFixture: BindInWhenOnFluentSyntax<unknown>;
-    let bindToFluentSyntaxMock: jest.Mocked<BindToFluentSyntax<unknown>>;
+    let bindToFluentSyntaxMock: Mocked<BindToFluentSyntax<unknown>>;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let targetFixture: Function;
     let updateMetadataMapResultFixture: (
@@ -30,8 +38,8 @@ describe(provide.name, () => {
       bindInWhenOnFluentSyntaxFixture =
         Symbol() as unknown as BindInWhenOnFluentSyntax<unknown>;
       bindToFluentSyntaxMock = {
-        to: jest.fn(),
-      } as Partial<jest.Mocked<BindToFluentSyntax<unknown>>> as jest.Mocked<
+        to: vitest.fn(),
+      } as Partial<Mocked<BindToFluentSyntax<unknown>>> as Mocked<
         BindToFluentSyntax<unknown>
       >;
       targetFixture = class {};
@@ -48,15 +56,15 @@ describe(provide.name, () => {
           bindInWhenOnFluentSyntaxFixture,
         );
 
-        (
-          updateMetadataMap as jest.Mock<typeof updateMetadataMap>
-        ).mockReturnValueOnce(updateMetadataMapResultFixture);
+        vitest
+          .mocked(updateMetadataMap)
+          .mockReturnValueOnce(updateMetadataMapResultFixture);
 
         result = provide()(targetFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call updateMetadataMap()', () => {
@@ -85,7 +93,7 @@ describe(provide.name, () => {
 
   describe('having service identifier', () => {
     let bindInWhenOnFluentSyntaxFixture: BindInWhenOnFluentSyntax<unknown>;
-    let bindToFluentSyntaxMock: jest.Mocked<BindToFluentSyntax<unknown>>;
+    let bindToFluentSyntaxMock: Mocked<BindToFluentSyntax<unknown>>;
     let serviceIdentifierFixture: ServiceIdentifier;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let targetFixture: Function;
@@ -97,8 +105,8 @@ describe(provide.name, () => {
       bindInWhenOnFluentSyntaxFixture =
         Symbol() as unknown as BindInWhenOnFluentSyntax<unknown>;
       bindToFluentSyntaxMock = {
-        to: jest.fn(),
-      } as Partial<jest.Mocked<BindToFluentSyntax<unknown>>> as jest.Mocked<
+        to: vitest.fn(),
+      } as Partial<Mocked<BindToFluentSyntax<unknown>>> as Mocked<
         BindToFluentSyntax<unknown>
       >;
       serviceIdentifierFixture = Symbol.for('serviceIdentifier');
@@ -116,15 +124,15 @@ describe(provide.name, () => {
           bindInWhenOnFluentSyntaxFixture,
         );
 
-        (
-          updateMetadataMap as jest.Mock<typeof updateMetadataMap>
-        ).mockReturnValueOnce(updateMetadataMapResultFixture);
+        vitest
+          .mocked(updateMetadataMap)
+          .mockReturnValueOnce(updateMetadataMapResultFixture);
 
         result = provide(serviceIdentifierFixture)(targetFixture);
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call updateMetadataMap()', () => {

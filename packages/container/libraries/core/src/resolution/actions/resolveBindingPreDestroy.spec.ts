@@ -1,4 +1,13 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  Mocked,
+  vitest,
+} from 'vitest';
 
 import { Right } from '@inversifyjs/common';
 
@@ -28,15 +37,13 @@ type CachedSingletonScopedBinding<TResolved> = Binding &
 
 describe(resolveBindingPreDestroy.name, () => {
   describe('having a binding with non instace type', () => {
-    let paramsMock: jest.Mocked<DeactivationParams>;
+    let paramsMock: Mocked<DeactivationParams>;
     let bindingFixture: CachedSingletonScopedBinding<unknown>;
 
     beforeAll(() => {
       paramsMock = {
-        getClassMetadata: jest.fn(),
-      } as Partial<
-        jest.Mocked<DeactivationParams>
-      > as jest.Mocked<DeactivationParams>;
+        getClassMetadata: vitest.fn(),
+      } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
       bindingFixture =
         ConstantValueBindingFixtures.withCacheWithIsRightTrue as CachedSingletonScopedBinding<unknown>;
     });
@@ -49,7 +56,7 @@ describe(resolveBindingPreDestroy.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should return undefined', () => {
@@ -59,16 +66,14 @@ describe(resolveBindingPreDestroy.name, () => {
   });
 
   describe('having a binding with instace type and sync cache with no preDestroy method', () => {
-    let paramsMock: jest.Mocked<DeactivationParams>;
+    let paramsMock: Mocked<DeactivationParams>;
     let bindingFixture: CachedSingletonScopedBinding<unknown> &
       InstanceBinding<unknown>;
 
     beforeAll(() => {
       paramsMock = {
-        getClassMetadata: jest.fn(),
-      } as Partial<
-        jest.Mocked<DeactivationParams>
-      > as jest.Mocked<DeactivationParams>;
+        getClassMetadata: vitest.fn(),
+      } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
       bindingFixture =
         InstanceBindingFixtures.withCacheIsRightAndScopeSingleton as CachedSingletonScopedBinding<unknown> &
           InstanceBinding<unknown>;
@@ -88,7 +93,7 @@ describe(resolveBindingPreDestroy.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getClassMetadata()', () => {
@@ -117,7 +122,7 @@ describe(resolveBindingPreDestroy.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getClassMetadata()', () => {
@@ -134,16 +139,14 @@ describe(resolveBindingPreDestroy.name, () => {
   });
 
   describe('having a binding with instace type and async cache with no preDestroy method', () => {
-    let paramsMock: jest.Mocked<DeactivationParams>;
+    let paramsMock: Mocked<DeactivationParams>;
     let bindingFixture: CachedSingletonScopedBinding<unknown> &
       InstanceBinding<unknown>;
 
     beforeAll(() => {
       paramsMock = {
-        getClassMetadata: jest.fn(),
-      } as Partial<
-        jest.Mocked<DeactivationParams>
-      > as jest.Mocked<DeactivationParams>;
+        getClassMetadata: vitest.fn(),
+      } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
       bindingFixture =
         InstanceBindingFixtures.withCacheIsRightAndAsyncValueAndScopeSingleton as CachedSingletonScopedBinding<unknown> &
           InstanceBinding<unknown>;
@@ -163,7 +166,7 @@ describe(resolveBindingPreDestroy.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getClassMetadata()', () => {
@@ -180,21 +183,19 @@ describe(resolveBindingPreDestroy.name, () => {
   });
 
   describe('having a binding with instace type and sync cache with preDestroy method', () => {
-    let paramsMock: jest.Mocked<DeactivationParams>;
+    let paramsMock: Mocked<DeactivationParams>;
     let bindingFixture: CachedSingletonScopedBinding<unknown> &
       InstanceBinding<unknown>;
     let preDestroyMethodNameFixture: string;
-    let preDestroyMock: jest.Mock<(value: unknown) => void | Promise<void>>;
+    let preDestroyMock: Mock<(value: unknown) => void | Promise<void>>;
 
     beforeAll(() => {
       paramsMock = {
-        getClassMetadata: jest.fn(),
-      } as Partial<
-        jest.Mocked<DeactivationParams>
-      > as jest.Mocked<DeactivationParams>;
+        getClassMetadata: vitest.fn(),
+      } as Partial<Mocked<DeactivationParams>> as Mocked<DeactivationParams>;
 
       preDestroyMethodNameFixture = 'preDestroy';
-      preDestroyMock = jest.fn();
+      preDestroyMock = vitest.fn();
 
       bindingFixture =
         InstanceBindingFixtures.withCacheIsRightAndScopeSingleton as CachedSingletonScopedBinding<unknown> &
@@ -233,7 +234,7 @@ describe(resolveBindingPreDestroy.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call params.getClassMetadata()', () => {

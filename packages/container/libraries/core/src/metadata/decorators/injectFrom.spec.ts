@@ -1,11 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { Newable } from '@inversifyjs/common';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-jest.mock('../calculations/getClassMetadata');
+vitest.mock('../calculations/getClassMetadata');
 
 import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
 import { getClassMetadata } from '../calculations/getClassMetadata';
@@ -24,9 +24,9 @@ describe(injectFrom.name, () => {
         type: class {},
       };
 
-      (
-        getClassMetadata as jest.Mock<typeof getClassMetadata>
-      ).mockReturnValueOnce(ClassMetadataFixtures.any);
+      vitest
+        .mocked(getClassMetadata)
+        .mockReturnValueOnce(ClassMetadataFixtures.any);
 
       typeFixture = class {};
 
@@ -34,7 +34,7 @@ describe(injectFrom.name, () => {
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call getClassMetadata()', () => {

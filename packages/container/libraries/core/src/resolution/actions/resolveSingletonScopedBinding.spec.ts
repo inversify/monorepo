@@ -1,7 +1,15 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
-jest.mock('./cacheResolvedValue');
-jest.mock('./resolveBindingActivations');
+vitest.mock('./cacheResolvedValue');
+vitest.mock('./resolveBindingActivations');
 
 import { Right } from '@inversifyjs/common';
 
@@ -25,7 +33,7 @@ describe(resolveSingletonScopedBinding.name, () => {
       unknown
     >;
 
-    let resolveMock: jest.Mock<
+    let resolveMock: Mock<
       (
         params: ResolutionParams,
         binding: ScopedBinding<
@@ -53,7 +61,7 @@ describe(resolveSingletonScopedBinding.name, () => {
         type: bindingTypeValues.ConstantValue,
       };
 
-      resolveMock = jest.fn();
+      resolveMock = vitest.fn();
     });
 
     describe('when called', () => {
@@ -67,7 +75,7 @@ describe(resolveSingletonScopedBinding.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should return cached value', () => {
@@ -84,7 +92,7 @@ describe(resolveSingletonScopedBinding.name, () => {
       unknown
     >;
 
-    let resolveMock: jest.Mock<
+    let resolveMock: Mock<
       (
         params: ResolutionParams,
         binding: ScopedBinding<
@@ -112,7 +120,7 @@ describe(resolveSingletonScopedBinding.name, () => {
         type: bindingTypeValues.ConstantValue,
       };
 
-      resolveMock = jest.fn();
+      resolveMock = vitest.fn();
     });
 
     describe('when called', () => {
@@ -126,15 +134,13 @@ describe(resolveSingletonScopedBinding.name, () => {
         activatedResolveResult = Symbol();
 
         resolveMock.mockReturnValueOnce(resolveResult);
-        (
-          resolveBindingActivations as jest.Mock<
-            typeof resolveBindingActivations
-          >
-        ).mockReturnValueOnce(activatedResolveResult);
+        vitest
+          .mocked(resolveBindingActivations)
+          .mockReturnValueOnce(activatedResolveResult);
 
-        (
-          cacheResolvedValue as jest.Mock<typeof cacheResolvedValue>
-        ).mockReturnValueOnce(activatedResolveResult);
+        vitest
+          .mocked(cacheResolvedValue)
+          .mockReturnValueOnce(activatedResolveResult);
 
         result = resolveSingletonScopedBinding(resolveMock)(
           resolutionParamsFixture,
@@ -143,7 +149,7 @@ describe(resolveSingletonScopedBinding.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call resolve()', () => {

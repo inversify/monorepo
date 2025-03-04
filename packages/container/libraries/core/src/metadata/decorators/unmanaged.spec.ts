@@ -1,9 +1,17 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
-jest.mock(
+vitest.mock(
   '../calculations/buildUnmanagedMetadataFromMaybeClassElementMetadata',
 );
-jest.mock('./injectBase');
+vitest.mock('./injectBase');
 
 import { decrementPendingClassMetadataCount } from '../actions/decrementPendingClassMetadataCount';
 import { buildUnmanagedMetadataFromMaybeClassElementMetadata } from '../calculations/buildUnmanagedMetadataFromMaybeClassElementMetadata';
@@ -17,7 +25,7 @@ describe(unmanaged.name, () => {
     let decoratorFixture: MethodDecorator &
       ParameterDecorator &
       PropertyDecorator;
-    let updateMetadataMock: jest.Mock<
+    let updateMetadataMock: Mock<
       (
         classElementMetadata: MaybeClassElementMetadata | undefined,
       ) => ClassElementMetadata
@@ -29,21 +37,27 @@ describe(unmanaged.name, () => {
       decoratorFixture = Symbol() as unknown as MethodDecorator &
         ParameterDecorator &
         PropertyDecorator;
-      updateMetadataMock = jest.fn();
+      updateMetadataMock = vitest.fn();
 
-      (
-        buildUnmanagedMetadataFromMaybeClassElementMetadata as jest.Mock<
-          typeof buildUnmanagedMetadataFromMaybeClassElementMetadata
-        >
-      ).mockReturnValueOnce(updateMetadataMock);
+      vitest
+        .mocked(buildUnmanagedMetadataFromMaybeClassElementMetadata)
+        .mockReturnValueOnce(updateMetadataMock);
 
-      (injectBase as jest.Mock).mockReturnValueOnce(decoratorFixture);
+      vitest
+        .mocked(injectBase)
+        .mockReturnValueOnce(
+          decoratorFixture as <T>(
+            target: object,
+            propertyKey: string | symbol | undefined,
+            parameterIndexOrDescriptor?: number | TypedPropertyDescriptor<T>,
+          ) => void,
+        );
 
       result = unmanaged();
     });
 
     afterAll(() => {
-      jest.clearAllMocks();
+      vitest.clearAllMocks();
     });
 
     it('should call buildUnmanagedMetadataFromMaybeClassElementMetadata()', () => {

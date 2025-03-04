@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { beforeAll, describe, expect, it, Mocked, vitest } from 'vitest';
 
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
@@ -10,7 +10,7 @@ import { resolveFactoryBindingCallback } from './resolveFactoryBindingCallback';
 describe(resolveFactoryBindingCallback.name, () => {
   let resolutionParamsFixture: ResolutionParams;
 
-  let factoryValueBindingMock: jest.Mocked<FactoryBinding<Factory<unknown>>>;
+  let factoryValueBindingMock: Mocked<FactoryBinding<Factory<unknown>>>;
 
   beforeAll(() => {
     resolutionParamsFixture = {
@@ -22,9 +22,9 @@ describe(resolveFactoryBindingCallback.name, () => {
         isRight: false,
         value: undefined,
       },
-      factory: jest.fn(),
+      factory: vitest.fn(),
       id: 1,
-      isSatisfiedBy: jest.fn(),
+      isSatisfiedBy: vitest.fn(),
       moduleId: undefined,
       onActivation: undefined,
       onDeactivation: undefined,

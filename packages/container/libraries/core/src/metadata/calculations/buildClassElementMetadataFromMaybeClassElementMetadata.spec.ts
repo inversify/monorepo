@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
@@ -12,10 +20,10 @@ import { buildClassElementMetadataFromMaybeClassElementMetadata } from './buildC
 
 describe(buildClassElementMetadataFromMaybeClassElementMetadata.name, () => {
   describe('having undefined metadatada', () => {
-    let buildDefaultMetadataMock: jest.Mock<
+    let buildDefaultMetadataMock: Mock<
       (...params: unknown[]) => ClassElementMetadata
     >;
-    let buildMetadataFromMaybeManagedMetadataMock: jest.Mock<
+    let buildMetadataFromMaybeManagedMetadataMock: Mock<
       (
         metadata:
           | MaybeManagedClassElementMetadata
@@ -26,8 +34,8 @@ describe(buildClassElementMetadataFromMaybeClassElementMetadata.name, () => {
     let metadataFixture: undefined;
 
     beforeAll(() => {
-      buildDefaultMetadataMock = jest.fn();
-      buildMetadataFromMaybeManagedMetadataMock = jest.fn();
+      buildDefaultMetadataMock = vitest.fn();
+      buildMetadataFromMaybeManagedMetadataMock = vitest.fn();
       metadataFixture = undefined;
     });
 
@@ -55,7 +63,7 @@ describe(buildClassElementMetadataFromMaybeClassElementMetadata.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildDefaultMetadata()', () => {
@@ -70,10 +78,10 @@ describe(buildClassElementMetadataFromMaybeClassElementMetadata.name, () => {
   });
 
   describe('having unknown metadatada kind', () => {
-    let buildDefaultMetadataMock: jest.Mock<
+    let buildDefaultMetadataMock: Mock<
       (...params: unknown[]) => ClassElementMetadata
     >;
-    let buildMetadataFromMaybeManagedMetadataMock: jest.Mock<
+    let buildMetadataFromMaybeManagedMetadataMock: Mock<
       (
         metadata:
           | MaybeManagedClassElementMetadata
@@ -84,8 +92,8 @@ describe(buildClassElementMetadataFromMaybeClassElementMetadata.name, () => {
     let metadataFixture: MaybeManagedClassElementMetadata;
 
     beforeAll(() => {
-      buildDefaultMetadataMock = jest.fn();
-      buildMetadataFromMaybeManagedMetadataMock = jest.fn();
+      buildDefaultMetadataMock = vitest.fn();
+      buildMetadataFromMaybeManagedMetadataMock = vitest.fn();
       metadataFixture = {
         kind: MaybeClassElementMetadataKind.unknown,
         name: undefined,
@@ -118,7 +126,7 @@ describe(buildClassElementMetadataFromMaybeClassElementMetadata.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call buildMetadataFromMaybeManagedMetadata()', () => {
@@ -138,10 +146,10 @@ describe(buildClassElementMetadataFromMaybeClassElementMetadata.name, () => {
   });
 
   describe('having non unknown metadatada kind', () => {
-    let buildDefaultMetadataMock: jest.Mock<
+    let buildDefaultMetadataMock: Mock<
       (...params: unknown[]) => ClassElementMetadata
     >;
-    let buildMetadataFromMaybeManagedMetadataMock: jest.Mock<
+    let buildMetadataFromMaybeManagedMetadataMock: Mock<
       (
         metadata:
           | MaybeManagedClassElementMetadata
@@ -152,8 +160,8 @@ describe(buildClassElementMetadataFromMaybeClassElementMetadata.name, () => {
     let metadataFixture: UnmanagedClassElementMetadata;
 
     beforeAll(() => {
-      buildDefaultMetadataMock = jest.fn();
-      buildMetadataFromMaybeManagedMetadataMock = jest.fn();
+      buildDefaultMetadataMock = vitest.fn();
+      buildMetadataFromMaybeManagedMetadataMock = vitest.fn();
       metadataFixture = {
         kind: ClassElementMetadataKind.unmanaged,
       };
@@ -187,7 +195,7 @@ describe(buildClassElementMetadataFromMaybeClassElementMetadata.name, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should throw an Error', () => {

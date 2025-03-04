@@ -1,13 +1,13 @@
-import { beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { beforeAll, describe, expect, it, Mock, vitest } from 'vitest';
 
-jest.mock('@inversifyjs/reflect-metadata-utils');
-jest.mock('inversify');
+vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('inversify');
 
 import {
   getReflectMetadata,
   setReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { BindingScope, injectable } from 'inversify';
+import { injectable } from 'inversify';
 
 import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
 import { ControllerOptions } from '../models/ControllerOptions';
@@ -18,17 +18,17 @@ describe(controller.name, () => {
     describe('when called', () => {
       let pathFixture: string;
       let targetFixture: NewableFunction;
-      let classDecoratorMock: jest.Mock<ClassDecorator>;
+      let classDecoratorMock: Mock<ClassDecorator>;
 
       beforeAll(() => {
         pathFixture = '/api';
         targetFixture = class TestController {};
 
-        classDecoratorMock = jest.fn();
+        classDecoratorMock = vitest.fn();
 
-        (injectable as jest.Mock<typeof injectable>).mockReturnValueOnce(
-          classDecoratorMock as ClassDecorator,
-        );
+        vitest
+          .mocked(injectable)
+          .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
         controller(pathFixture)(targetFixture);
       });
@@ -67,7 +67,7 @@ describe(controller.name, () => {
     describe('when called and scope is undefined', () => {
       let optionsFixture: { controllerName: string; path: string };
       let targetFixture: NewableFunction;
-      let classDecoratorMock: jest.Mock<ClassDecorator>;
+      let classDecoratorMock: Mock<ClassDecorator>;
 
       beforeAll(() => {
         optionsFixture = {
@@ -76,11 +76,11 @@ describe(controller.name, () => {
         };
         targetFixture = class TestController {};
 
-        classDecoratorMock = jest.fn();
+        classDecoratorMock = vitest.fn();
 
-        (injectable as jest.Mock<typeof injectable>).mockReturnValueOnce(
-          classDecoratorMock as ClassDecorator,
-        );
+        vitest
+          .mocked(injectable)
+          .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
         controller(optionsFixture)(targetFixture);
       });
@@ -103,7 +103,7 @@ describe(controller.name, () => {
     describe('when called and scope is defined', () => {
       let optionsFixture: ControllerOptions;
       let targetFixture: NewableFunction;
-      let classDecoratorMock: jest.Mock<ClassDecorator>;
+      let classDecoratorMock: Mock<ClassDecorator>;
 
       beforeAll(() => {
         optionsFixture = {
@@ -113,11 +113,11 @@ describe(controller.name, () => {
         };
         targetFixture = class TestController {};
 
-        classDecoratorMock = jest.fn();
+        classDecoratorMock = vitest.fn();
 
-        (injectable as jest.Mock<typeof injectable>).mockReturnValueOnce(
-          classDecoratorMock as ClassDecorator,
-        );
+        vitest
+          .mocked(injectable)
+          .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
         controller(optionsFixture)(targetFixture);
       });
