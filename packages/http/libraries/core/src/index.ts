@@ -18,6 +18,7 @@ import { query } from './http/decorators/Query';
 import { request } from './http/decorators/Request';
 import { response } from './http/decorators/Response';
 import { statusCode } from './http/decorators/StatusCode';
+import { HttpAdapterOptions } from './http/models/HttpAdapterOptions';
 import { Middleware } from './http/models/Middleware';
 import { RequestHandler } from './http/models/RequestHandler';
 import { RouterParams } from './http/models/RouterParams';
@@ -84,6 +85,7 @@ export {
   HttpResponse,
   HttpStatusCode,
   InversifyHttpAdapter,
+  HttpAdapterOptions,
   ALL,
   GET,
   DELETE,
