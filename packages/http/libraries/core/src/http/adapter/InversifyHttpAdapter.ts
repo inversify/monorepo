@@ -15,6 +15,7 @@ import { ControllerMetadata } from '../models/ControllerMetadata';
 import { ControllerMethodMetadata } from '../models/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../models/ControllerMethodParameterMetadata';
 import { ControllerResponse } from '../models/ControllerResponse';
+import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
 import { Middleware } from '../models/Middleware';
 import { RequestHandler } from '../models/RequestHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
@@ -29,9 +30,14 @@ export abstract class InversifyHttpAdapter<
   TNextFunction extends (err?: unknown) => void,
 > {
   readonly #container: Container;
+  readonly #httpAdapterOptions: HttpAdapterOptions;
 
-  constructor(container: Container) {
+  constructor(
+    container: Container,
+    httpAdapterOptions: HttpAdapterOptions = { logger: true },
+  ) {
     this.#container = container;
+    this.#httpAdapterOptions = httpAdapterOptions;
   }
 
   protected _buildServer(): void {
@@ -78,6 +84,17 @@ export abstract class InversifyHttpAdapter<
           routerParams,
           this.#getMiddlewareHandlerFromMetadata(controllerMiddlewareList),
         );
+
+        if (
+          this.#httpAdapterOptions.logger === undefined ||
+          this.#httpAdapterOptions.logger
+        ) {
+          this.#printController(
+            controllerMetadata.target.name,
+            controllerMetadata.path,
+            controllerMethodMetadataList,
+          );
+        }
       }
     }
   }
@@ -277,6 +294,20 @@ export abstract class InversifyHttpAdapter<
     }
 
     return requestHandlerList;
+  }
+
+  #printController(
+    controllerName: string,
+    path: string,
+    controllerMethodMetadataList: ControllerMethodMetadata[],
+  ): void {
+    console.log(`${controllerName} {${path}}:`);
+
+    for (const controllerMethodMetadata of controllerMethodMetadataList) {
+      console.log(
+        `.${controllerMethodMetadata.methodKey as string}() mapped {${controllerMethodMetadata.path}, ${controllerMethodMetadata.requestMethodType}}`,
+      );
+    }
   }
 
   public abstract build(): unknown;
