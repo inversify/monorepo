@@ -5,17 +5,17 @@
   },
   "description": "InversifyJs strong type definitions",
   "devDependencies": {
-    "@types/node": "22.13.9",
-    "@vitest/coverage-v8": "3.0.7",
-    "eslint": "9.21.0",
+    "@types/node": "22.13.10",
+    "@vitest/coverage-v8": "3.0.8",
+    "eslint": "9.22.0",
     "prettier": "3.5.3",
     "reflect-metadata": "0.2.2",
     "rimraf": "6.0.1",
-    "rollup": "4.34.9",
+    "rollup": "4.35.0",
     "ts-loader": "9.5.2",
     "tslib": "2.8.1",
     "typescript": "5.8.2",
-    "vitest": "3.0.7"
+    "vitest": "3.0.8"
   },
   "devEngines": {
     "node": "^22.10.2",
