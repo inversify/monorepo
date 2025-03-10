@@ -5,7 +5,8 @@
   },
   "description": "InversifyJs http core package",
   "dependencies": {
-    "@inversifyjs/reflect-metadata-utils": "workspace:*"
+    "@inversifyjs/reflect-metadata-utils": "workspace:*",
+    "@inversifyjs/logger": "workspace:*"
   },
   "devDependencies": {
     "@stryker-mutator/core": "8.7.1",
