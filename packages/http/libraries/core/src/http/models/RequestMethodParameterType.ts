@@ -7,4 +7,5 @@ export enum RequestMethodParameterType {
   HEADERS = 'headers',
   COOKIES = 'cookies',
   NEXT = 'next',
+  USER = 'user',
 }

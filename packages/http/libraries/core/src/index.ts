@@ -18,9 +18,13 @@ import { query } from './http/decorators/Query';
 import { request } from './http/decorators/Request';
 import { response } from './http/decorators/Response';
 import { statusCode } from './http/decorators/StatusCode';
+import { useGuard } from './http/decorators/UseGuard';
+import { AuthGuard } from './http/guard/AuthGuard';
+import { Guard } from './http/guard/Guard';
 import { Middleware } from './http/models/Middleware';
 import { RequestHandler } from './http/models/RequestHandler';
 import { RouterParams } from './http/models/RouterParams';
+import { UserRequest } from './http/models/UserRequest';
 import { BadGatewayHttpResponse } from './http/responses/error/BadGatewayHttpResponse';
 import { BadRequestHttpResponse } from './http/responses/error/BadRequestHttpResponse';
 import { ConflictHttpResponse } from './http/responses/error/ConflictHttpResponse';
@@ -51,7 +55,7 @@ import { OkHttpResponse } from './http/responses/success/OkHttpResponse';
 import { PartialContentHttpResponse } from './http/responses/success/PartialContentHttpResponse';
 import { ResetContentHttpResponse } from './http/responses/success/ResetContentHttpResponse';
 
-export type { RequestHandler, RouterParams, Middleware };
+export type { RequestHandler, RouterParams, Middleware, UserRequest };
 
 export {
   BadRequestHttpResponse,
@@ -84,6 +88,8 @@ export {
   HttpResponse,
   HttpStatusCode,
   InversifyHttpAdapter,
+  Guard,
+  AuthGuard,
   ALL,
   GET,
   DELETE,
@@ -103,4 +109,5 @@ export {
   request,
   response,
   statusCode,
+  useGuard,
 };

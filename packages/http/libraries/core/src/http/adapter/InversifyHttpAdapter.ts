@@ -3,7 +3,9 @@ import { Container } from 'inversify';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
+import { controllerGuardMetadataReflectKey } from '../../reflectMetadata/data/controllerGuardMetadataReflectKey';
 import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
+import { controllerMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodGuardMetadataReflectKey';
 import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
 import { controllerMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMiddlewareMetadataReflectKey';
 import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey';
@@ -19,19 +21,36 @@ import { Middleware } from '../models/Middleware';
 import { RequestHandler } from '../models/RequestHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { RouterParams } from '../models/RouterParams';
+import { UserRequest } from '../models/UserRequest';
 import { InternalServerErrorHttpResponse } from '../responses/error/InternalServerErrorHttpResponse';
 import { HttpResponse } from '../responses/HttpResponse';
 import { HttpStatusCode } from '../responses/HttpStatusCode';
+import { HttpAdapter } from './HttpAdapter';
+
+export const inversifyHttpAdapterSymbol: symbol = Symbol(
+  'InversifyHttpAdapter',
+);
 
 export abstract class InversifyHttpAdapter<
-  TRequest,
+  TRequest extends UserRequest,
   TResponse,
   TNextFunction extends (err?: unknown) => void,
-> {
+> implements HttpAdapter<TRequest, TResponse>
+{
   readonly #container: Container;
 
   constructor(container: Container) {
     this.#container = container;
+
+    this.#container.bind(inversifyHttpAdapterSymbol).toConstantValue(this);
+  }
+
+  public replyHttpResponse(
+    request: TRequest,
+    response: TResponse,
+    httpResponse: HttpResponse,
+  ): unknown {
+    return this.#reply(request, response, httpResponse);
   }
 
   protected _buildServer(): void {
@@ -60,6 +79,12 @@ export abstract class InversifyHttpAdapter<
         controllerMethodMetadataReflectKey,
       );
 
+      const controllerGuardList: NewableFunction[] | undefined =
+        getReflectMetadata(
+          controllerMetadata.target,
+          controllerGuardMetadataReflectKey,
+        );
+
       const controllerMiddlewareList: NewableFunction[] | undefined =
         getReflectMetadata(
           controllerMetadata.target,
@@ -76,6 +101,7 @@ export abstract class InversifyHttpAdapter<
         this._buildRouter(
           controllerMetadata.path,
           routerParams,
+          this.#getMiddlewareHandlerFromMetadata(controllerGuardList),
           this.#getMiddlewareHandlerFromMetadata(controllerMiddlewareList),
         );
       }
@@ -116,6 +142,14 @@ export abstract class InversifyHttpAdapter<
           controllerMethodStatusCodeMetadataReflectKey,
         );
 
+        const controllerMethodGuardList: NewableFunction[] | undefined =
+          getReflectMetadata(
+            controller[
+              controllerMethodMetadata.methodKey
+            ] as ControllerFunction,
+            controllerMethodGuardMetadataReflectKey,
+          );
+
         const controllerMethodMiddlewareList: NewableFunction[] | undefined =
           getReflectMetadata(
             controller[
@@ -125,6 +159,9 @@ export abstract class InversifyHttpAdapter<
           );
 
         routerParams.push({
+          guardList: this.#getMiddlewareHandlerFromMetadata(
+            controllerMethodGuardList,
+          ),
           handler: this.#buildHandler(
             controllerMethodMetadata,
             parameterMetadataList ?? [],
@@ -223,6 +260,9 @@ export abstract class InversifyHttpAdapter<
           }
           case RequestMethodParameterType.NEXT: {
             return next;
+          }
+          case RequestMethodParameterType.USER: {
+            return request.user;
           }
         }
       },
@@ -327,6 +367,7 @@ export abstract class InversifyHttpAdapter<
   protected abstract _buildRouter(
     path: string,
     routerParams: RouterParams<TRequest, TResponse, TNextFunction>[],
+    guardList: RequestHandler<TRequest, TResponse, TNextFunction>[] | undefined,
     middlewareList:
       | RequestHandler<TRequest, TResponse, TNextFunction>[]
       | undefined,
