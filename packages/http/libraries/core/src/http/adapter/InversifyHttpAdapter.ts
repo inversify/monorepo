@@ -26,7 +26,7 @@ export abstract class InversifyHttpAdapter<
 > {
   readonly #container: Container;
   readonly #httpAdapterOptions: InternalHttpAdapterOptions;
-  readonly #logger: Logger;
+  #logger: Logger;
   readonly #routerExplorer: RouterExplorer;
 
   constructor(container: Container, httpAdapterOptions?: HttpAdapterOptions) {
@@ -44,9 +44,19 @@ export abstract class InversifyHttpAdapter<
   #parseHttpAdapterOptions(
     httpAdapterOptions?: HttpAdapterOptions,
   ): InternalHttpAdapterOptions {
-    return {
-      logger: httpAdapterOptions?.logger ?? true,
+    const internalHttpAdapterOptions: InternalHttpAdapterOptions = {
+      logger: true,
     };
+
+    if (httpAdapterOptions?.logger !== undefined) {
+      if (typeof httpAdapterOptions.logger === 'boolean') {
+        internalHttpAdapterOptions.logger = httpAdapterOptions.logger;
+      } else {
+        this.#logger = httpAdapterOptions.logger;
+      }
+    }
+
+    return internalHttpAdapterOptions;
   }
 
   async #registerControllers(): Promise<void> {
