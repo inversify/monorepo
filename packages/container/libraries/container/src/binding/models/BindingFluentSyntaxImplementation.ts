@@ -60,6 +60,7 @@ import {
   BindToFluentSyntax,
   BindWhenFluentSyntax,
   BindWhenOnFluentSyntax,
+  MapToResolvedValueInjectOptions,
 } from './BindingFluentSyntax';
 import {
   ResolvedValueInjectOptions,
@@ -194,10 +195,9 @@ export class BindToFluentSyntaxImplementation<T>
     return new BindInWhenOnFluentSyntaxImplementation(binding);
   }
 
-  public toResolvedValue(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    factory: (...args: any[]) => T,
-    injectOptions?: ResolvedValueInjectOptions<T>[],
+  public toResolvedValue<TArgs extends unknown[]>(
+    factory: (...args: TArgs) => T,
+    injectOptions?: MapToResolvedValueInjectOptions<TArgs>,
   ): BindInWhenOnFluentSyntax<T> {
     const binding: ResolvedValueBinding<T> = {
       cache: {
@@ -293,12 +293,12 @@ export class BindToFluentSyntaxImplementation<T>
   }
 
   #buildResolvedValueMetadata(
-    options: ResolvedValueInjectOptions<T>[] | undefined,
+    options: ResolvedValueInjectOptions<unknown>[] | undefined,
   ): ResolvedValueMetadata {
     const resolvedValueMetadata: ResolvedValueMetadata = {
       arguments: (options ?? []).map(
         (
-          injectOption: ResolvedValueInjectOptions<T>,
+          injectOption: ResolvedValueInjectOptions<unknown>,
         ): ResolvedValueElementMetadata => {
           if (isResolvedValueMetadataInjectOptions(injectOption)) {
             return {

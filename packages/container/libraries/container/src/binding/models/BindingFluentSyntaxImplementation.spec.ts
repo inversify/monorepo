@@ -518,6 +518,88 @@ describe(BindToFluentSyntaxImplementation.name, () => {
       });
     });
 
+    describe('having typed service identifier inject options deduce factory signature', () => {
+      const uniqueMethodId: unique symbol = Symbol('UniqueMethodId');
+      interface UniqueServiceType {
+        [uniqueMethodId]: () => unknown;
+      }
+      let injectOptions: ResolvedValueInjectOptions<UniqueServiceType>;
+
+      beforeAll(() => {
+        injectOptions = 'service-id';
+      });
+
+      describe('when called', () => {
+        let expectedBinding: Binding;
+        let result: unknown;
+
+        beforeAll(() => {
+          expectedBinding = {
+            cache: {
+              isRight: false,
+              value: undefined,
+            },
+            factory: expect.any(Function),
+            id: bindingIdFixture,
+            isSatisfiedBy: BindingConstraintUtils.always,
+            metadata: {
+              arguments: [
+                {
+                  kind: expect.any(Number) as unknown as number,
+                  name: undefined,
+                  optional: false,
+                  tags: new Map(),
+                  value: 'service-id',
+                },
+              ],
+            },
+            moduleId: containerModuleIdFixture,
+            onActivation: undefined,
+            onDeactivation: undefined,
+            scope: defaultScopeFixture,
+            serviceIdentifier: serviceIdentifierFixture,
+            type: bindingTypeValues.ResolvedValue,
+          };
+
+          vitest
+            .mocked(isResolvedValueMetadataInjectOptions)
+            .mockReturnValueOnce(false);
+
+          result = bindToFluentSyntaxImplementation.toResolvedValue(
+            // we want to test that the factory signature is deduced from the service type
+            // eslint-disable-next-line @typescript-eslint/typedef
+            (serviceDependency) => serviceDependency[uniqueMethodId](),
+            [injectOptions],
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call isResolvedValueMetadataInjectOptions()', () => {
+          expect(isResolvedValueMetadataInjectOptions).toHaveBeenCalledTimes(1);
+          expect(isResolvedValueMetadataInjectOptions).toHaveBeenCalledWith(
+            injectOptions,
+          );
+        });
+
+        it('should call getBindingId', () => {
+          expect(getBindingId).toHaveBeenCalledTimes(1);
+          expect(getBindingId).toHaveBeenCalledWith();
+        });
+
+        it('should call callback', () => {
+          expect(callbackMock).toHaveBeenCalledTimes(1);
+          expect(callbackMock).toHaveBeenCalledWith(expectedBinding);
+        });
+
+        it('should return expected result', () => {
+          expect(result).toBeInstanceOf(BindInWhenOnFluentSyntaxImplementation);
+        });
+      });
+    });
+
     describe('having inject options with service identifier and no optional metadata', () => {
       let factoryFixture: (arg: unknown) => unknown;
       let injectOptions: ResolvedValueInjectOptions<unknown>;

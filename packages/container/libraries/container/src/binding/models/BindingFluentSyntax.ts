@@ -30,13 +30,15 @@ export interface BindToFluentSyntax<T> {
       ? (context: ResolutionContext) => T
       : never,
   ): BindWhenOnFluentSyntax<T>;
-  toResolvedValue(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    factory: (...args: any[]) => T,
-    injectOptions?: ResolvedValueInjectOptions<T>[],
+  toResolvedValue<TArgs extends unknown[]>(
+    factory: (...args: TArgs) => T,
+    injectOptions?: MapToResolvedValueInjectOptions<TArgs>,
   ): BindInWhenOnFluentSyntax<T>;
   toService(service: ServiceIdentifier<T>): void;
 }
+export type MapToResolvedValueInjectOptions<TArgs extends unknown[]> = {
+  [K in keyof TArgs]: ResolvedValueInjectOptions<TArgs[K]>;
+};
 
 export interface BindInFluentSyntax<T> {
   inSingletonScope(): BindWhenOnFluentSyntax<T>;
