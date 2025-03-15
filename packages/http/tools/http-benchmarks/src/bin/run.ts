@@ -8,6 +8,7 @@ import {
 } from '@inversifyjs/benchmark-utils';
 import { Bench } from 'tinybench';
 
+import { CurrentInversifyExpressBasicGetScenario } from '../scenario/currentInversifyExpress/CurrentInversifyExpressBasicGetScenario';
 import { ExpressBasicGetScenario } from '../scenario/express/ExpressBasicGetScenario';
 import { FastifyBasicGetScenario } from '../scenario/fastify/FastifyBasicGetScenario';
 import { NestJsExpressBasicGetScenario } from '../scenario/nestJSExpress/NestJsExpressBasicGetScenario';
@@ -23,6 +24,7 @@ export async function run(): Promise<void> {
         time: MS_PER_SCENARIO,
       },
       scenarios: [
+        new CurrentInversifyExpressBasicGetScenario(),
         new ExpressBasicGetScenario(),
         new FastifyBasicGetScenario(),
         new NestJsExpressBasicGetScenario(),

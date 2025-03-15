@@ -1,6 +1,6 @@
 export enum Platform {
   inversify6Express = 'inversify6Express',
-  inversifyCurrentExpress = 'inversifyCurrentExpress',
+  currentInversifyExpress = 'currentInversifyExpress',
   express = 'express',
   fastify = 'fastify',
   nestJsExpress = 'NestJSExpress',
