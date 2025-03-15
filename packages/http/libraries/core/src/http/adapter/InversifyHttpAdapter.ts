@@ -133,7 +133,8 @@ export abstract class InversifyHttpAdapter<
         ]?.(...handlerParams);
 
         return this.#reply(req, res, value, statusCode);
-      } catch (_error: unknown) {
+      } catch (error: unknown) {
+        this.#logger.error((error as Error).stack ?? (error as Error).message);
         return this.#reply(req, res, new InternalServerErrorHttpResponse());
       }
     };
