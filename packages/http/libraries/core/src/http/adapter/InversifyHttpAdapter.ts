@@ -23,6 +23,7 @@ export abstract class InversifyHttpAdapter<
   TRequest,
   TResponse,
   TNextFunction extends (err?: unknown) => void,
+  TContext,
 > {
   readonly #container: Container;
   readonly #httpAdapterOptions: InternalHttpAdapterOptions;
@@ -37,8 +38,12 @@ export abstract class InversifyHttpAdapter<
       this.#parseHttpAdapterOptions(httpAdapterOptions);
   }
 
-  protected async _buildServer(): Promise<void> {
-    await this.#registerControllers();
+  public async build(): Promise<unknown> {
+    const context: TContext = this._buildContext();
+
+    await this.#registerControllers(context);
+
+    return this._buildResult(context);
   }
 
   #buildLogger(httpAdapterOptions: HttpAdapterOptions | undefined): Logger {
@@ -68,12 +73,13 @@ export abstract class InversifyHttpAdapter<
     return internalHttpAdapterOptions;
   }
 
-  async #registerControllers(): Promise<void> {
+  async #registerControllers(context: TContext): Promise<void> {
     const routerExplorerControllerMetadataList: RouterExplorerControllerMetadata[] =
       await this.#routerExplorer.getMetadataList();
 
     for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
       await this._buildRouter(
+        context,
         routerExplorerControllerMetadata.path,
         await this.#buildHandlers(
           routerExplorerControllerMetadata.target,
@@ -309,7 +315,9 @@ export abstract class InversifyHttpAdapter<
     }
   }
 
-  public abstract build(): Promise<unknown>;
+  protected abstract _buildContext(): TContext;
+
+  protected abstract _buildResult(context: TContext): unknown;
 
   protected abstract _getBody(
     request: TRequest,
@@ -355,6 +363,7 @@ export abstract class InversifyHttpAdapter<
   ): void;
 
   protected abstract _buildRouter(
+    context: TContext,
     path: string,
     routerParams: RouterParams<TRequest, TResponse, TNextFunction>[],
     guardList: RequestHandler<TRequest, TResponse, TNextFunction>[] | undefined,
