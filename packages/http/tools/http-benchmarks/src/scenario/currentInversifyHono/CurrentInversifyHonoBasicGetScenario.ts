@@ -1,10 +1,11 @@
-import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
+import { serve } from '@hono/node-server';
+import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
 import { Container } from 'inversify';
 
 import { AppController } from '../currentInversify/AppController';
-import { CurrentInversifyExpressBaseScenario } from './CurrentInversifyExpressBaseScenario';
+import { CurrentInversifyHonoBaseScenario } from './CurrentInversifyHonoBaseScenario';
 
-export class CurrentInversifyExpressBasicGetScenario extends CurrentInversifyExpressBaseScenario {
+export class CurrentInversifyHonoBasicGetScenario extends CurrentInversifyHonoBaseScenario {
   public override async execute(): Promise<void> {
     try {
       await fetch(`http://localhost:${String(this._port)}`);
@@ -18,7 +19,7 @@ export class CurrentInversifyExpressBasicGetScenario extends CurrentInversifyExp
 
     container.bind(AppController).toSelf();
 
-    const server: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
+    const server: InversifyHonoHttpAdapter = new InversifyHonoHttpAdapter(
       container,
       {
         logger: false,
@@ -27,6 +28,9 @@ export class CurrentInversifyExpressBasicGetScenario extends CurrentInversifyExp
 
     this._app = await server.build();
 
-    this._server = this._app.listen(this._port);
+    this._server = serve({
+      fetch: this._app.fetch,
+      port: this._port,
+    });
   }
 }
