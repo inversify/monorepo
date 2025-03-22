@@ -1,0 +1,48 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJs http E2E tests package",
+  "dependencies": {
+    "@cucumber/cucumber": "11.2.0",
+    "@inversifyjs/http-express": "workspace:*",
+    "@types/express": "^4.17.21",
+    "express": "^4.21.2",
+    "inversify": "7.2.0"
+  },
+  "devDependencies": {
+    "eslint": "9.22.0",
+    "prettier": "3.5.3",
+    "rimraf": "6.0.1",
+    "rollup": "4.35.0",
+    "ts-loader": "9.5.2",
+    "ts-node": "10.9.2",
+    "tslib": "2.8.1",
+    "typescript": "5.8.2"
+  },
+  "homepage": "https://inversify.io",
+  "devEngines": {
+    "node": "^22.10.2",
+    "pnpm": "^9.12.1"
+  },
+  "license": "MIT",
+  "name": "@inversifyjs/http-e2e-tests",
+  "private": "true",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "build": "pnpm run build:cjs && pnpm run build:esm",
+    "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
+    "build:esm": "rollup -c ./rollup.config.mjs && pnpm exec foundation-ts-package-esm ./lib/esm",
+    "build:clean": "rimraf lib",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src",
+    "prebuild": "pnpm run build:clean",
+    "test:e2e": "cucumber-js --config=config/cucumber.ts.config.mjs --profile=serial",
+    "test:e2e:cjs": "cucumber-js --config=config/cucumber.cjs.config.mjs --profile=serial",
+    "test:e2e:esm": "cucumber-js --config=config/cucumber.esm.config.mjs --profile=serial"
+  }
+}

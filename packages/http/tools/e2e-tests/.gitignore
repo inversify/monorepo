@@ -1,0 +1,13 @@
+# Typescript compiled files
+/lib/**
+
+/tsconfig.cjs.tsbuildinfo
+
+# node modules
+/node_modules/
+
+# Turborepo files
+.turbo/
+
+# env file
+.env
