@@ -5,6 +5,7 @@ import {
   RequestHandler,
   RouterParams,
 } from '@inversifyjs/http-core';
+import cors from 'cors';
 import express, {
   Application,
   NextFunction,
@@ -138,6 +139,10 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
 
   #buildDefaultExpressApp(customApp?: Application): Application {
     const app: Application = customApp ?? express();
+
+    if (this.httpAdapterOptions.cors) {
+      app.use(cors(this.corsOptions));
+    }
 
     app.use(express.json());
 
