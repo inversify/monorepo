@@ -1,4 +1,5 @@
 import { ConsoleLogger, Logger } from '@inversifyjs/logger';
+import { CorsOptions } from 'cors';
 import { Container } from 'inversify';
 
 import { buildRouterExplorerControllerMetadataList } from '../../routerExplorer/calculations/buildRouterExplorerControllerMetadataList';
@@ -27,15 +28,16 @@ export abstract class InversifyHttpAdapter<
   TResponse,
   TNextFunction extends (err?: unknown) => void,
 > {
+  protected readonly corsOptions: CorsOptions;
+  protected readonly httpAdapterOptions: InternalHttpAdapterOptions;
   readonly #container: Container;
-  readonly #httpAdapterOptions: InternalHttpAdapterOptions;
   readonly #logger: Logger;
 
   constructor(container: Container, httpAdapterOptions?: HttpAdapterOptions) {
     this.#container = container;
     this.#logger = this.#buildLogger(httpAdapterOptions);
-    this.#httpAdapterOptions =
-      this.#parseHttpAdapterOptions(httpAdapterOptions);
+    this.corsOptions = this.#buildCorsOptions(httpAdapterOptions);
+    this.httpAdapterOptions = this.#parseHttpAdapterOptions(httpAdapterOptions);
   }
 
   protected async _buildServer(): Promise<void> {
@@ -53,16 +55,43 @@ export abstract class InversifyHttpAdapter<
     return httpAdapterOptions.logger;
   }
 
+  #buildCorsOptions(
+    httpAdapterOptions: HttpAdapterOptions | undefined,
+  ): CorsOptions {
+    if (
+      httpAdapterOptions?.cors === undefined ||
+      typeof httpAdapterOptions.cors === 'boolean'
+    ) {
+      return {
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        optionsSuccessStatus: 204,
+        origin: '*',
+        preflightContinue: false,
+      };
+    }
+
+    return httpAdapterOptions.cors;
+  }
+
   #parseHttpAdapterOptions(
-    httpAdapterOptions?: HttpAdapterOptions,
+    httpAdapterOptions: HttpAdapterOptions | undefined,
   ): InternalHttpAdapterOptions {
     const internalHttpAdapterOptions: InternalHttpAdapterOptions = {
+      cors: false,
       logger: true,
     };
 
     if (httpAdapterOptions?.logger !== undefined) {
       if (typeof httpAdapterOptions.logger === 'boolean') {
         internalHttpAdapterOptions.logger = httpAdapterOptions.logger;
+      }
+    }
+
+    if (httpAdapterOptions?.cors !== undefined) {
+      if (typeof httpAdapterOptions.cors === 'boolean') {
+        internalHttpAdapterOptions.cors = httpAdapterOptions.cors;
+      } else {
+        internalHttpAdapterOptions.cors = true;
       }
     }
 
@@ -91,7 +120,7 @@ export abstract class InversifyHttpAdapter<
         ),
       });
 
-      if (this.#httpAdapterOptions.logger) {
+      if (this.httpAdapterOptions.logger) {
         this.#printController(
           routerExplorerControllerMetadata.target.name,
           routerExplorerControllerMetadata.path,
