@@ -1,20 +1,12 @@
-import { NestFactory } from '@nestjs/core';
+import { BaseK6Scenario } from '../k6/BaseK6Scenario';
+import { Platform } from '../models/Platform';
 
-import { BasicGetAppModule } from '../nestJS/BasicGetAppModule';
-import { NestJsExpressBaseScenario } from './NestJsExpressBaseScenario';
-
-export class NestJsExpressBasicGetScenario extends NestJsExpressBaseScenario {
-  public override async execute(): Promise<void> {
-    try {
-      await fetch(`http://localhost:${String(this._port)}`);
-    } catch {
-      void 0;
-    }
-  }
-
-  public override async setUp(): Promise<void> {
-    this._app = await NestFactory.create(BasicGetAppModule, { logger: false });
-
-    await this._app.listen(this._port);
+export class NestJsExpressBasicGetScenario extends BaseK6Scenario {
+  constructor() {
+    super(
+      Platform.nestJsExpress,
+      'BasicGetScenario.ts',
+      'nestJSExpress/setUpNestJsExpressBasicGetScenario.js',
+    );
   }
 }

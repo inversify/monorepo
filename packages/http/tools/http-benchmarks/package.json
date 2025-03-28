@@ -15,11 +15,11 @@
     "express": "4.21.2",
     "fastify": "5.2.2",
     "inversify": "7.2.0",
-    "rxjs": "7.8.2",
-    "tinybench": "4.0.1"
+    "rxjs": "7.8.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/k6": "^1.0.1",
     "@types/node": "^22.13.13",
     "eslint": "9.23.0",
     "prettier": "3.5.3",
@@ -52,11 +52,11 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "benchmarks:run:cjs": "./bin/run-cjs.cjs",
-    "benchmarks:run:esm": "./bin/run-esm.mjs",
+    "benchmarks:run:cjs": "BUILD_TARGET=cjs ./bin/run-cjs.cjs",
+    "benchmarks:run:esm": "BUILD_TARGET=esm ./bin/run-esm.mjs",
     "build": "pnpm run build:cjs && pnpm run build:esm",
     "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
-    "build:esm": "rollup -c ./rollup.config.mjs && pnpm exec foundation-ts-package-esm ./lib/esm",
+    "build:esm": "tsc --build tsconfig.esm.json && pnpm exec foundation-ts-package-esm ./lib/esm",
     "build:clean": "rimraf lib",
     "format": "prettier --write ./src",
     "lint": "eslint ./src",

@@ -1,39 +1,40 @@
 #!/usr/bin/env node
 
-const MS_PER_SCENARIO: number = 1000;
+import { Scenario } from '@inversifyjs/benchmark-utils';
 
-import {
-  buildBenchmark,
-  printBenchmarkResults,
-} from '@inversifyjs/benchmark-utils';
-import { Bench } from 'tinybench';
-
+import { executeHttpBenchmark } from '../benchmark/calculations/executeHttpBenchmark';
+import { printHttpBenchmarkResults } from '../benchmark/calculations/printHttpBenchmarkResults';
+import { K6Summary } from '../k6/model/K6Summary';
 import { CurrentInversifyExpressBasicGetScenario } from '../scenario/currentInversifyExpress/CurrentInversifyExpressBasicGetScenario';
 import { ExpressBasicGetScenario } from '../scenario/express/ExpressBasicGetScenario';
 import { FastifyBasicGetScenario } from '../scenario/fastify/FastifyBasicGetScenario';
+import { Platform } from '../scenario/models/Platform';
 import { NestJsExpressBasicGetScenario } from '../scenario/nestJSExpress/NestJsExpressBasicGetScenario';
 import { NestJsFastifyBasicGetScenario } from '../scenario/nestJSFastify/NestJsFastifyBasicGetScenario';
 
 export async function run(): Promise<void> {
-  // Run basic get request scenarios
+  // Run express basic get request scenarios
   {
-    const benchmark: Bench = buildBenchmark({
-      benchOptions: {
-        name: 'Basic Get Request',
+    const scenarioList: Scenario<Platform, K6Summary>[] = [
+      new CurrentInversifyExpressBasicGetScenario(),
+      new ExpressBasicGetScenario(),
+      new NestJsExpressBasicGetScenario(),
+    ];
 
-        time: MS_PER_SCENARIO,
-      },
-      scenarios: [
-        new CurrentInversifyExpressBasicGetScenario(),
-        new ExpressBasicGetScenario(),
-        new FastifyBasicGetScenario(),
-        new NestJsExpressBasicGetScenario(),
-        new NestJsFastifyBasicGetScenario(),
-      ],
-    });
+    const summaryList: K6Summary[] = await executeHttpBenchmark(scenarioList);
 
-    await benchmark.run();
+    printHttpBenchmarkResults('Express Basic Get Request', summaryList);
+  }
 
-    printBenchmarkResults(benchmark);
+  // Run fastify basic get request scenarios
+  {
+    const scenarioList: Scenario<Platform, K6Summary>[] = [
+      new FastifyBasicGetScenario(),
+      new NestJsFastifyBasicGetScenario(),
+    ];
+
+    const summaryList: K6Summary[] = await executeHttpBenchmark(scenarioList);
+
+    printHttpBenchmarkResults('Fastify Basic Get Request', summaryList);
   }
 }

@@ -88,6 +88,29 @@ export default {
       ],
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
+    "packages/http/tools/http-benchmarks": {
+      entry: defaultWorkspaceProjectConfig.entry,
+      ignoreDependencies: [
+        "@inversifyjs/http-core",
+        "@inversifyjs/http-express",
+        "@nestjs/common",
+        "@nestjs/core",
+        "@nestjs/platform-express",
+        "@nestjs/platform-fastify",
+        "@types/express",
+        "@types/k6",
+        "express",
+        "fastify",
+        "inversify",
+        "rxjs"
+      ],
+      ignore: [
+        "src/scenario/*/setUp*.ts",
+        "src/k6/scenario/*.ts",
+        "src/scenario/nestJS/**/*.ts",
+      ],
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/logger": defaultWorkspaceProjectConfig,
   },
 } satisfies KnipConfig;

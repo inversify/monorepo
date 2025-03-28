@@ -1,24 +1,12 @@
-import { NestFactory } from '@nestjs/core';
-import { FastifyAdapter } from '@nestjs/platform-fastify';
+import { BaseK6Scenario } from '../k6/BaseK6Scenario';
+import { Platform } from '../models/Platform';
 
-import { BasicGetAppModule } from '../nestJS/BasicGetAppModule';
-import { NestJsFastifyBaseScenario } from './NestJsFastifyBaseScenario';
-
-export class NestJsFastifyBasicGetScenario extends NestJsFastifyBaseScenario {
-  public override async execute(): Promise<void> {
-    try {
-      await fetch(`http://localhost:${String(this._port)}`);
-    } catch {
-      void 0;
-    }
-  }
-
-  public override async setUp(): Promise<void> {
-    this._app = await NestFactory.create(
-      BasicGetAppModule,
-      new FastifyAdapter({ logger: false }),
+export class NestJsFastifyBasicGetScenario extends BaseK6Scenario {
+  constructor() {
+    super(
+      Platform.nestJsFastify,
+      'BasicGetScenario.ts',
+      'nestJSFastify/setUpNestJsFastifyBasicGetScenario.js',
     );
-
-    await this._app.listen(this._port, '0.0.0.0');
   }
 }
