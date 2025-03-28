@@ -1,21 +1,20 @@
+import { ServerType } from '@hono/node-server';
 import { Scenario } from '@inversifyjs/benchmark-utils';
-import { Application } from 'express';
-import { Server } from 'http';
+import { Hono } from 'hono';
 
 import { Platform } from '../models/Platform';
 
-export abstract class CurrentInversifyExpressBaseScenario
-  implements Scenario<Platform>
-{
+export abstract class HonoBaseScenario implements Scenario<Platform> {
   public readonly platform: Platform;
 
-  protected _app!: Application;
-  protected _server!: Server;
+  protected readonly _app: Hono;
+  protected _server!: ServerType;
   protected readonly _port: number;
 
   constructor() {
-    this.platform = Platform.currentInversifyExpress;
-    this._port = 3004;
+    this.platform = Platform.hono;
+    this._app = new Hono();
+    this._port = 3005;
   }
 
   public async tearDown(): Promise<void> {

@@ -6,10 +6,13 @@
   "description": "InversifyJs http E2E tests package",
   "dependencies": {
     "@cucumber/cucumber": "11.2.0",
+    "@hono/node-server": "1.14.0",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
+    "@inversifyjs/http-hono": "workspace:*",
     "@types/express": "^4.17.21",
     "express": "^4.21.2",
+    "hono": "^4.7.2",
     "inversify": "7.2.0"
   },
   "devDependencies": {

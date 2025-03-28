@@ -2,8 +2,11 @@ import http from 'node:http';
 import { AddressInfo } from 'node:net';
 
 import { Given } from '@cucumber/cucumber';
+import { serve, ServerType } from '@hono/node-server';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
+import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
 import express from 'express';
+import { Hono } from 'hono';
 import { Container } from 'inversify';
 
 import { defaultAlias } from '../../common/models/defaultAlias';
@@ -58,6 +61,51 @@ async function buildExpressServer(container: Container): Promise<Server> {
   );
 }
 
+async function buildHonoServer(container: Container): Promise<Server> {
+  const adapter: InversifyHonoHttpAdapter = new InversifyHonoHttpAdapter(
+    container,
+    { logger: true },
+  );
+
+  const application: Hono = await adapter.build();
+
+  return new Promise<Server>(
+    (resolve: (value: Server | PromiseLike<Server>) => void) => {
+      const httpServer: ServerType = serve(
+        {
+          fetch: application.fetch,
+          hostname: '0.0.0.0',
+          port: 0,
+        },
+        (info: AddressInfo) => {
+          const server: Server = {
+            host: info.address,
+            port: info.port,
+            shutdown: async (): Promise<void> => {
+              await new Promise<void>(
+                (
+                  resolve: (value: void | PromiseLike<void>) => void,
+                  reject: (reason?: unknown) => void,
+                ) => {
+                  httpServer.close((error: Error | undefined) => {
+                    if (error !== undefined) {
+                      reject(error);
+                    } else {
+                      resolve();
+                    }
+                  });
+                },
+              );
+            },
+          };
+
+          resolve(server);
+        },
+      );
+    },
+  );
+}
+
 async function givenServer(
   this: InversifyHttpWorld,
   serverKind: ServerKind,
@@ -71,11 +119,17 @@ async function givenServer(
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
   switch (serverKind) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     case ServerKind.express: {
       const server: Server = await buildExpressServer(container);
 
       setServer.bind(this)(parsedServerAlias, server);
+      break;
+    }
+    case ServerKind.hono: {
+      const server: Server = await buildHonoServer(container);
+
+      setServer.bind(this)(parsedServerAlias, server);
+      break;
     }
   }
 }
