@@ -136,7 +136,13 @@ jobs:
     name: Run http E2E tests.
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-core') || contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express') }}
+    if: >-
+      (
+        ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-e2e-tests') }} ||
+        ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-core') }} ||
+        ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express') }} ||
+        ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-fastify') }}
+      )
     steps:
 
       - name: Checkout
