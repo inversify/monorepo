@@ -33,6 +33,7 @@ import { isBindingIdentifier } from '../../binding/calculations/isBindingIdentif
 import { BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax';
 import { BindToFluentSyntaxImplementation } from '../../binding/models/BindingFluentSyntaxImplementation';
 import { BindingIdentifier } from '../../binding/models/BindingIdentifier';
+import { getFirstIterableResult } from '../../common/calculations/getFirstIterableResult';
 import { InversifyContainerError } from '../../error/models/InversifyContainerError';
 import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
 import { Snapshot } from '../../snapshot/models/Snapshot';
@@ -291,11 +292,7 @@ export class Container {
   public async unbind(
     identifier: BindingIdentifier | ServiceIdentifier,
   ): Promise<void> {
-    if (isBindingIdentifier(identifier)) {
-      await this.#unbindBindingIdentifier(identifier);
-    } else {
-      await this.#unbindServiceIdentifier(identifier);
-    }
+    await this.#unbind(identifier);
   }
 
   public async unbindAll(): Promise<void> {
@@ -311,7 +308,7 @@ export class Container {
     );
 
     /*
-     * Removing service related objects here so unload is deterministic.
+     * Removing service related objects here so unbindAll is deterministic.
      *
      * Removing service related objects as soon as resolveModuleDeactivations takes
      * effect leads to module deactivations not triggering previously deleted
@@ -325,6 +322,14 @@ export class Container {
     }
 
     this.#planResultCacheService.clearCache();
+  }
+
+  public unbindSync(identifier: BindingIdentifier | ServiceIdentifier): void {
+    const result: void | Promise<void> = this.#unbind(identifier);
+
+    if (result !== undefined) {
+      this.#throwUnexpectedAsyncUnbindOperation(identifier);
+    }
   }
 
   public async unload(...modules: ContainerModule[]): Promise<void> {
@@ -569,20 +574,87 @@ export class Container {
     this.#planResultCacheService.clearCache();
   }
 
-  async #unbindBindingIdentifier(identifier: BindingIdentifier): Promise<void> {
+  #throwUnexpectedAsyncUnbindOperation(
+    identifier: BindingIdentifier | ServiceIdentifier,
+  ): never {
+    let errorMessage: string;
+
+    if (isBindingIdentifier(identifier)) {
+      const bindingsById: Iterable<Binding<unknown>> | undefined =
+        this.#bindingService.getById(identifier.id);
+
+      const bindingServiceIdentifier: ServiceIdentifier | undefined =
+        getFirstIterableResult(bindingsById)?.serviceIdentifier;
+
+      if (bindingServiceIdentifier === undefined) {
+        errorMessage =
+          'Unexpected asyncronous deactivation when unbinding binding identifier. Consider using Container.unbind() instead.';
+      } else {
+        errorMessage = `Unexpected asyncronous deactivation when unbinding "${stringifyServiceIdentifier(bindingServiceIdentifier)}" binding. Consider using Container.unbind() instead.`;
+      }
+    } else {
+      errorMessage = `Unexpected asyncronous deactivation when unbinding "${stringifyServiceIdentifier(identifier)}" service. Consider using Container.unbind() instead.`;
+    }
+
+    throw new InversifyContainerError(
+      InversifyContainerErrorKind.invalidOperation,
+      errorMessage,
+    );
+  }
+
+  #unbind(
+    identifier: BindingIdentifier | ServiceIdentifier,
+  ): void | Promise<void> {
+    if (isBindingIdentifier(identifier)) {
+      return this.#unbindBindingIdentifier(identifier);
+    }
+
+    return this.#unbindServiceIdentifier(identifier);
+  }
+
+  #unbindBindingIdentifier(
+    identifier: BindingIdentifier,
+  ): void | Promise<void> {
     const bindings: Iterable<Binding<unknown>> | undefined =
       this.#bindingService.getById(identifier.id);
 
-    await resolveBindingsDeactivations(this.#deactivationParams, bindings);
+    const result: void | Promise<void> = resolveBindingsDeactivations(
+      this.#deactivationParams,
+      bindings,
+    );
 
+    if (result === undefined) {
+      this.#clearAfterUnbindBindingIdentifier(identifier);
+    } else {
+      return result.then((): void => {
+        this.#clearAfterUnbindBindingIdentifier(identifier);
+      });
+    }
+  }
+
+  #clearAfterUnbindBindingIdentifier(identifier: BindingIdentifier): void {
     this.#bindingService.removeById(identifier.id);
-
     this.#planResultCacheService.clearCache();
   }
 
-  async #unbindServiceIdentifier(identifier: ServiceIdentifier): Promise<void> {
-    await resolveServiceDeactivations(this.#deactivationParams, identifier);
+  #unbindServiceIdentifier(
+    identifier: ServiceIdentifier,
+  ): void | Promise<void> {
+    const result: void | Promise<void> = resolveServiceDeactivations(
+      this.#deactivationParams,
+      identifier,
+    );
 
+    if (result === undefined) {
+      this.#clearAfterUnbindServiceIdentifier(identifier);
+    } else {
+      return result.then((): void => {
+        this.#clearAfterUnbindServiceIdentifier(identifier);
+      });
+    }
+  }
+
+  #clearAfterUnbindServiceIdentifier(identifier: ServiceIdentifier): void {
     this.#activationService.removeAllByServiceId(identifier);
     this.#bindingService.removeAllByServiceId(identifier);
     this.#deactivationService.removeAllByServiceId(identifier);
