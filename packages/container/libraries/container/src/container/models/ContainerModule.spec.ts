@@ -7,11 +7,15 @@ import { ContainerModule, ContainerModuleLoadOptions } from './ContainerModule';
 
 describe(ContainerModule.name, () => {
   let containerModuleIdfixture: number;
-  let loadMock: Mock<(options: ContainerModuleLoadOptions) => Promise<void>>;
+  let asyncLoadMock: Mock<
+    (options: ContainerModuleLoadOptions) => Promise<void>
+  >;
+  let syncLoadMock: Mock<(options: ContainerModuleLoadOptions) => void>;
 
   beforeAll(() => {
     containerModuleIdfixture = 1;
-    loadMock = vitest.fn();
+    asyncLoadMock = vitest.fn().mockResolvedValue(undefined);
+    syncLoadMock = vitest.fn();
 
     vitest
       .mocked(getContainerModuleId)
@@ -23,7 +27,7 @@ describe(ContainerModule.name, () => {
       let result: unknown;
 
       beforeAll(() => {
-        result = new ContainerModule(loadMock).id;
+        result = new ContainerModule(asyncLoadMock).id;
       });
 
       it('should return expected value', () => {
@@ -33,20 +37,38 @@ describe(ContainerModule.name, () => {
   });
 
   describe('.load', () => {
-    describe('when called', () => {
+    describe('when called with async load function', () => {
       let optionsFixture: ContainerModuleLoadOptions;
-
       let result: unknown;
 
       beforeAll(async () => {
         optionsFixture = Symbol() as unknown as ContainerModuleLoadOptions;
-
-        result = await new ContainerModule(loadMock).load(optionsFixture);
+        result = await new ContainerModule(asyncLoadMock).load(optionsFixture);
       });
 
       it('should call load()', () => {
-        expect(loadMock).toHaveBeenCalledTimes(1);
-        expect(loadMock).toHaveBeenCalledWith(optionsFixture);
+        expect(asyncLoadMock).toHaveBeenCalledTimes(1);
+        expect(asyncLoadMock).toHaveBeenCalledWith(optionsFixture);
+      });
+
+      it('should return expected value', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+
+    describe('when called with sync load function', () => {
+      let optionsFixture: ContainerModuleLoadOptions;
+      let result: unknown;
+
+      beforeAll(() => {
+        vitest.clearAllMocks();
+        optionsFixture = Symbol() as unknown as ContainerModuleLoadOptions;
+        result = new ContainerModule(syncLoadMock).load(optionsFixture);
+      });
+
+      it('should call load()', () => {
+        expect(syncLoadMock).toHaveBeenCalledTimes(1);
+        expect(syncLoadMock).toHaveBeenCalledWith(optionsFixture);
       });
 
       it('should return expected value', () => {

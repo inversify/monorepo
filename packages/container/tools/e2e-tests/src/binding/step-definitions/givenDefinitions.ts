@@ -206,6 +206,13 @@ Given<InversifyWorld>(
 );
 
 Given<InversifyWorld>(
+  'a service {string} binding {string} to constant value',
+  function (serviceId: string, bindingAlias: string): void {
+    givenBindingToConstantValue.bind(this)(serviceId, bindingAlias);
+  },
+);
+
+Given<InversifyWorld>(
   'a service {string} binding to dynamic value in {bindingScope} scope',
   function (serviceId: string, scope: BindingScope): void {
     givenBindingToDynamicValue.bind(this)(serviceId, scope);

@@ -45,7 +45,7 @@ export class ContainerModule {
     return this.#id;
   }
 
-  public async load(options: ContainerModuleLoadOptions): Promise<void> {
-    await this.#load(options);
+  public load(options: ContainerModuleLoadOptions): void | Promise<void> {
+    return this.#load(options);
   }
 }

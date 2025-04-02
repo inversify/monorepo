@@ -55,3 +55,11 @@ When<InversifyWorld>(
     );
   },
 );
+
+When<InversifyWorld>('container takes a snapshot', function (): void {
+  getContainerOrFail.bind(this)(defaultAlias).snapshot();
+});
+
+When<InversifyWorld>('container restores the last snapshot', function (): void {
+  getContainerOrFail.bind(this)(defaultAlias).restore();
+});

@@ -238,12 +238,20 @@ export class Container {
   }
 
   public async load(...modules: ContainerModule[]): Promise<void> {
-    await Promise.all(
-      modules.map(
-        async (module: ContainerModule): Promise<void> =>
-          module.load(this.#buildContainerModuleLoadOptions(module.id)),
-      ),
-    );
+    await Promise.all(this.#load(...modules));
+  }
+
+  public loadSync(...modules: ContainerModule[]): void {
+    const results: (void | Promise<void>)[] = this.#load(...modules);
+
+    for (const result of results) {
+      if (result !== undefined) {
+        throw new InversifyContainerError(
+          InversifyContainerErrorKind.invalidOperation,
+          'Unexpected asyncronous module load. Consider using Container.load() instead.',
+        );
+      }
+    }
   }
 
   public onActivation<T>(
@@ -349,11 +357,7 @@ export class Container {
   }
 
   public async unload(...modules: ContainerModule[]): Promise<void> {
-    await Promise.all(
-      modules.map((module: ContainerModule): void | Promise<void> =>
-        resolveModuleDeactivations(this.#deactivationParams, module.id),
-      ),
-    );
+    await Promise.all(this.#unload(...modules));
 
     /*
      * Removing module related objects here so unload is deterministic.
@@ -363,13 +367,30 @@ export class Container {
      * introducing non determinism depending in the order in which modules are
      * deactivated.
      */
-    for (const module of modules) {
-      this.#activationService.removeAllByModuleId(module.id);
-      this.#bindingService.removeAllByModuleId(module.id);
-      this.#deactivationService.removeAllByModuleId(module.id);
+    this.#clearAfterUnloadModules(modules);
+  }
+
+  public unloadSync(...modules: ContainerModule[]): void {
+    const results: (void | Promise<void>)[] = this.#unload(...modules);
+
+    for (const result of results) {
+      if (result !== undefined) {
+        throw new InversifyContainerError(
+          InversifyContainerErrorKind.invalidOperation,
+          'Unexpected asyncronous module unload. Consider using Container.unload() instead.',
+        );
+      }
     }
 
-    this.#planResultCacheService.clearCache();
+    /*
+     * Removing module related objects here so unload is deterministic.
+     *
+     * Removing modules as soon as resolveModuleDeactivations takes effect leads to
+     * module deactivations not triggering previously deleted deactivations,
+     * introducing non determinism depending in the order in which modules are
+     * deactivated.
+     */
+    this.#clearAfterUnloadModules(modules);
   }
 
   #buildContainerModuleLoadOptions(
@@ -571,6 +592,18 @@ export class Container {
     return false;
   }
 
+  #load(...modules: ContainerModule[]): (void | Promise<void>)[] {
+    return modules.map((module: ContainerModule): void | Promise<void> =>
+      module.load(this.#buildContainerModuleLoadOptions(module.id)),
+    );
+  }
+
+  #unload(...modules: ContainerModule[]): (void | Promise<void>)[] {
+    return modules.map((module: ContainerModule): void | Promise<void> =>
+      resolveModuleDeactivations(this.#deactivationParams, module.id),
+    );
+  }
+
   #resetComputedProperties(): void {
     this.#planResultCacheService.clearCache();
 
@@ -653,6 +686,16 @@ export class Container {
 
   #clearAfterUnbindBindingIdentifier(identifier: BindingIdentifier): void {
     this.#bindingService.removeById(identifier.id);
+    this.#planResultCacheService.clearCache();
+  }
+
+  #clearAfterUnloadModules(modules: ContainerModule[]): void {
+    for (const module of modules) {
+      this.#activationService.removeAllByModuleId(module.id);
+      this.#bindingService.removeAllByModuleId(module.id);
+      this.#deactivationService.removeAllByModuleId(module.id);
+    }
+
     this.#planResultCacheService.clearCache();
   }
 

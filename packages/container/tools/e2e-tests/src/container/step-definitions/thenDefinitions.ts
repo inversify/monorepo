@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 
 import { Then } from '@cucumber/cucumber';
+import { Container } from '@inversifyjs/container';
 
 import { defaultAlias } from '../../common/models/defaultAlias';
 import { InversifyWorld } from '../../common/models/InversifyWorld';
@@ -10,6 +11,7 @@ import { Bow } from '../../warrior/models/Bow';
 import { DualWieldSwordsman } from '../../warrior/models/DualWieldSwordsman';
 import { Sword } from '../../warrior/models/Sword';
 import { getContainerGetRequestOrFail } from '../calculations/getContainerGetRequestOrFail';
+import { getContainerOrFail } from '../calculations/getContainerOrFail';
 
 function getValues(this: InversifyWorld, valueAliases: string[]): unknown[] {
   return valueAliases.map((valueAlias: string): unknown =>
@@ -117,6 +119,34 @@ Then<InversifyWorld>(
   'dual wield swordsman swords are equal',
   function (): void {
     thenDualWieldSworsdmanSwordsAreEqual.bind(this)();
+  },
+);
+
+Then<InversifyWorld>(
+  'the container has service {string} bound',
+  function (serviceId: string): void {
+    const container: Container = getContainerOrFail.bind(this)(defaultAlias);
+    const isBound: boolean = container.isBound(serviceId);
+
+    if (!isBound) {
+      throw new Error(
+        `Expected service ${serviceId} to be bound, but it was not.`,
+      );
+    }
+  },
+);
+
+Then<InversifyWorld>(
+  'the container does not have service {string} bound',
+  function (serviceId: string): void {
+    const container: Container = getContainerOrFail.bind(this)(defaultAlias);
+    const isBound: boolean = container.isBound(serviceId);
+
+    if (isBound) {
+      throw new Error(
+        `Expected service ${serviceId} not to be bound, but it was.`,
+      );
+    }
   },
 );
 

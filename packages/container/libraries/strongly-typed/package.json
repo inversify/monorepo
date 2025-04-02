@@ -5,7 +5,7 @@
   },
   "description": "InversifyJs strong type definitions",
   "devDependencies": {
-    "@types/node": "22.13.17",
+    "@types/node": "22.14.0",
     "@vitest/coverage-v8": "3.1.1",
     "eslint": "9.23.0",
     "prettier": "3.5.3",
