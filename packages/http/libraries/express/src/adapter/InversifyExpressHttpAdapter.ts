@@ -1,4 +1,4 @@
-import { Stream } from 'node:stream';
+import { Readable } from 'node:stream';
 
 import {
   HttpAdapterOptions,
@@ -99,9 +99,9 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
   protected _replyStream(
     _request: Request,
     response: Response,
-    value: Stream,
+    value: ReadableStream,
   ): unknown {
-    return value.pipe(response);
+    return Readable.fromWeb(value).pipe(response);
   }
 
   protected _setStatus(
