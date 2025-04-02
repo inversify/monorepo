@@ -181,7 +181,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.spec.ts'],
+    files: ['**/*.spec.ts', '**/*.spec-d.ts'],
     plugins: {
       vitest,
     },
@@ -193,6 +193,12 @@ export default tseslint.config(
       '@typescript-eslint/no-magic-numbers': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       'vitest/consistent-test-filename': 'off',
+      'vitest/expect-expect': [
+        'error',
+        {
+          assertFunctionNames: ['assertType', 'expect', 'expectTypeOf'],
+        },
+      ],
       'vitest/max-expects': 'off',
       'vitest/max-nested-describe': 'off',
       'vitest/no-hooks': 'off',

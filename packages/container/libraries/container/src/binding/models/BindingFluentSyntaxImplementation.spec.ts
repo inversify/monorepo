@@ -417,10 +417,10 @@ describe(BindToFluentSyntaxImplementation.name, () => {
 
   describe('.toResolvedValue', () => {
     describe('having no inject options', () => {
-      let factoryFixture: (arg: unknown) => unknown;
+      let factoryFixture: () => unknown;
 
       beforeAll(() => {
-        factoryFixture = (arg: unknown) => arg;
+        factoryFixture = () => Symbol();
       });
 
       describe('when called', () => {
@@ -628,11 +628,13 @@ describe(BindToFluentSyntaxImplementation.name, () => {
     });
 
     describe('having inject options with service identifier and optional metadata', () => {
-      let factoryFixture: (arg: unknown) => unknown;
-      let injectOptions: ResolvedValueMetadataInjectOptions<unknown>;
+      let factoryFixture: (arg: unknown[] | undefined) => unknown;
+      let injectOptions: ResolvedValueMetadataInjectOptions<
+        unknown[] | undefined
+      >;
 
       beforeAll(() => {
-        factoryFixture = (arg: unknown) => arg;
+        factoryFixture = (arg: unknown[] | undefined) => arg;
         injectOptions = {
           isMultiple: true,
           name: 'name',

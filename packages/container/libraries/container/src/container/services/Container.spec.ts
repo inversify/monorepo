@@ -1671,6 +1671,12 @@ describe(Container.name, () => {
             serviceIdentifier: ServiceIdentifier<T>,
             activation: BindingDeactivation<T>,
           ) => void,
+          rebind: expect.any(Function) as unknown as <T>(
+            serviceIdentifier: ServiceIdentifier<T>,
+          ) => Promise<BindToFluentSyntax<T>>,
+          rebindSync: expect.any(Function) as unknown as <T>(
+            serviceIdentifier: ServiceIdentifier<T>,
+          ) => BindToFluentSyntax<T>,
           unbind: expect.any(Function) as unknown as (
             serviceIdentifier: BindingIdentifier | ServiceIdentifier,
           ) => Promise<void>,

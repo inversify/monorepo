@@ -5,9 +5,9 @@
   },
   "description": "Common vitest config for inversify monorepo packages",
   "dependencies": {
-    "@swc/core": "^1.11.13",
+    "@swc/core": "^1.11.16",
     "unplugin-swc": "^1.5.1",
-    "vitest": "^3.0.9"
+    "vitest": "^3.1.1"
   },
   "devDependencies": {
     "prettier": "3.5.3"

@@ -12,7 +12,7 @@ import {
 } from '@inversifyjs/core';
 
 import { BindingIdentifier } from './BindingIdentifier';
-import { ResolvedValueInjectOptions } from './ResolvedValueInjectOptions';
+import { MapToResolvedValueInjectOptions } from './MapToResolvedValueInjectOptions';
 
 export interface BoundServiceSyntax {
   getIdentifier(): BindingIdentifier;
@@ -35,10 +35,11 @@ export interface BindToFluentSyntax<T> {
       ? (context: ResolutionContext) => T
       : never,
   ): BindWhenOnFluentSyntax<T>;
-  toResolvedValue(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    factory: (...args: any[]) => T,
-    injectOptions?: ResolvedValueInjectOptions<T>[],
+  toResolvedValue(factory: () => T): BindInWhenOnFluentSyntax<T>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  toResolvedValue<TArgs extends unknown[] = any[]>(
+    factory: (...args: TArgs) => T,
+    injectOptions: MapToResolvedValueInjectOptions<TArgs>,
   ): BindInWhenOnFluentSyntax<T>;
   toService(service: ServiceIdentifier<T>): void;
 }

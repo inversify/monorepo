@@ -12,6 +12,7 @@ const defaultWorkspaceProjectConfig: WorkspaceProjectConfig & {
   entry: [
     "{index,cli,main}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
     "src/{index,cli,main}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
+    "**/?(*.)+(spec|spec-d).[jt]s?(x)",
   ],
   ignoreDependencies: ["ts-loader", "tslib"],
   project: [

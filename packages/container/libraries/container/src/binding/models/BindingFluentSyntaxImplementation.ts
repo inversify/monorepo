@@ -63,7 +63,10 @@ import {
   BindWhenOnFluentSyntax,
 } from './BindingFluentSyntax';
 import { BindingIdentifier } from './BindingIdentifier';
+import { MapToResolvedValueInjectOptions } from './MapToResolvedValueInjectOptions';
 import {
+  MultipleResolvedValueMetadataInjectOptions,
+  OptionalResolvedValueMetadataInjectOptions,
   ResolvedValueInjectOptions,
   ResolvedValueMetadataInjectTagOptions,
 } from './ResolvedValueInjectOptions';
@@ -200,10 +203,14 @@ export class BindToFluentSyntaxImplementation<T>
     return new BindInWhenOnFluentSyntaxImplementation(binding);
   }
 
-  public toResolvedValue(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    factory: (...args: any[]) => T,
-    injectOptions?: ResolvedValueInjectOptions<T>[],
+  public toResolvedValue(factory: () => T): BindInWhenOnFluentSyntax<T>;
+  public toResolvedValue<TArgs extends unknown[]>(
+    factory: (...args: TArgs) => T,
+    injectOptions: MapToResolvedValueInjectOptions<TArgs>,
+  ): BindInWhenOnFluentSyntax<T>;
+  public toResolvedValue<TArgs extends unknown[]>(
+    factory: (...args: TArgs) => T,
+    injectOptions?: MapToResolvedValueInjectOptions<TArgs>,
   ): BindInWhenOnFluentSyntax<T> {
     const binding: ResolvedValueBinding<T> = {
       cache: {
@@ -299,21 +306,30 @@ export class BindToFluentSyntaxImplementation<T>
   }
 
   #buildResolvedValueMetadata(
-    options: ResolvedValueInjectOptions<T>[] | undefined,
+    options: ResolvedValueInjectOptions<unknown>[] | undefined,
   ): ResolvedValueMetadata {
     const resolvedValueMetadata: ResolvedValueMetadata = {
       arguments: (options ?? []).map(
         (
-          injectOption: ResolvedValueInjectOptions<T>,
+          injectOption: ResolvedValueInjectOptions<unknown>,
         ): ResolvedValueElementMetadata => {
           if (isResolvedValueMetadataInjectOptions(injectOption)) {
             return {
               kind:
-                injectOption.isMultiple === true
+                (
+                  injectOption as Partial<
+                    MultipleResolvedValueMetadataInjectOptions<unknown>
+                  >
+                ).isMultiple === true
                   ? ResolvedValueElementMetadataKind.multipleInjection
                   : ResolvedValueElementMetadataKind.singleInjection,
               name: injectOption.name,
-              optional: injectOption.optional ?? false,
+              optional:
+                (
+                  injectOption as Partial<
+                    OptionalResolvedValueMetadataInjectOptions<unknown>
+                  >
+                ).optional ?? false,
               tags: new Map<MetadataTag, unknown>(
                 (injectOption.tags ?? []).map(
                   (tag: ResolvedValueMetadataInjectTagOptions) => [

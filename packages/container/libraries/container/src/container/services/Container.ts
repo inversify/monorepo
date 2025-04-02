@@ -407,6 +407,8 @@ export class Container {
           serviceId: serviceIdentifier,
         });
       },
+      rebind: this.rebind.bind(this),
+      rebindSync: this.rebindSync.bind(this),
       unbind: this.unbind.bind(this),
       unbindSync: this.unbindSync.bind(this),
     };
