@@ -50,7 +50,7 @@
   "name": "@inversifyjs/http-express",
   "peerDependencies": {
     "express": "^4.21.2",
-    "inversify": "^7.3.0"
+    "inversify": "^7.4.0"
   },
   "private": true,
   "repository": {
