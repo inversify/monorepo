@@ -23,6 +23,11 @@ The query decorator allows extracting query parameters from URL
           | "express"   | "PATCH"    |
           | "express"   | "POST"     |
           | "express"   | "PUT"      |
+          | "fastify"   | "DELETE"   |
+          | "fastify"   | "GET"      |
+          | "fastify"   | "PATCH"    |
+          | "fastify"   | "POST"     |
+          | "fastify"   | "PUT"      |
 
       Scenario: URL query parameters are correctly extracted with query decorator with parameter name
 
@@ -41,3 +46,8 @@ The query decorator allows extracting query parameters from URL
           | "express"   | "PATCH"    |
           | "express"   | "POST"     |
           | "express"   | "PUT"      |
+          | "fastify"   | "DELETE"   |
+          | "fastify"   | "GET"      |
+          | "fastify"   | "PATCH"    |
+          | "fastify"   | "POST"     |
+          | "fastify"   | "PUT"      |

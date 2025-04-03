@@ -9,6 +9,7 @@
     "@inversifyjs/benchmark-utils": "workspace:*",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
+    "@inversifyjs/http-fastify": "workspace:*",
     "@inversifyjs/http-hono": "workspace:*",
     "@nestjs/common": "11.0.13",
     "@nestjs/core": "11.0.13",

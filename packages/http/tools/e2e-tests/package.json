@@ -9,9 +9,11 @@
     "@hono/node-server": "1.14.0",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
+    "@inversifyjs/http-fastify": "workspace:*",
     "@inversifyjs/http-hono": "workspace:*",
     "@types/express": "^4.17.21",
     "express": "^4.21.2",
+    "fastify": "^5.2.1",
     "hono": "^4.7.5",
     "inversify": "7.5.0"
   },
