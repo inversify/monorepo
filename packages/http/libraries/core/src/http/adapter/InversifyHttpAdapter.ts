@@ -1,4 +1,4 @@
-import { Stream } from 'node:stream';
+import { Readable } from 'node:stream';
 
 import { ConsoleLogger, Logger } from '@inversifyjs/logger';
 import { Container } from 'inversify';
@@ -240,7 +240,7 @@ export abstract class InversifyHttpAdapter<
     value: ControllerResponse,
     statusCode?: HttpStatusCode,
   ): TResult {
-    let body: object | string | number | boolean | Stream | undefined =
+    let body: object | string | number | boolean | Readable | undefined =
       undefined;
     let httpStatusCode: HttpStatusCode | undefined = statusCode;
 
@@ -258,7 +258,7 @@ export abstract class InversifyHttpAdapter<
     if (typeof body === 'string') {
       return this._replyText(request, response, body);
     } else if (body === undefined || typeof body === 'object') {
-      if (body instanceof Stream) {
+      if (body instanceof Readable) {
         return this._replyStream(request, response, body);
       } else {
         return this._replyJson(request, response, body);
@@ -387,7 +387,7 @@ export abstract class InversifyHttpAdapter<
   protected abstract _replyStream(
     request: TRequest,
     response: TResponse,
-    value: Stream,
+    value: Readable,
   ): TResult;
 
   protected abstract _setStatus(
