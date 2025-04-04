@@ -1,4 +1,4 @@
-import { Stream } from 'node:stream';
+import { Readable, Stream } from 'node:stream';
 
 import {
   HttpAdapterOptions,
@@ -146,7 +146,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     value: Stream,
   ): Response {
     return stream(response, async (stream: StreamingApi): Promise<void> => {
-      await stream.pipe(value as unknown as ReadableStream);
+      await stream.pipe(Readable.toWeb(value));
     });
   }
 
