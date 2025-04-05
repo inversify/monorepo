@@ -94,7 +94,16 @@ jobs:
     environment: CI
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ ( contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-core') || contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express') || contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-hono') ) && github.event.pull_request.head.repo.fork != true }}
+    if: >-
+      ${{ 
+        ( 
+          contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-core') ||
+          contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express') ||
+          contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express-v4') ||
+          contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-hono') ||
+          contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-benchmarks')
+        ) && github.event.pull_request.head.repo.fork != true
+      }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -180,11 +189,13 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: >-
-      (
-        ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-core')}} ||
-        ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express')}} ||
-        ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-hono')}}
-      )
+      ${{
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-core') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express-v4') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-hono') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-e2e-tests')
+      }}
     steps:
 
       - name: Checkout
