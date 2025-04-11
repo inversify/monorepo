@@ -74,8 +74,11 @@ export abstract class InversifyHttpAdapter<
   }
 
   async #registerControllers(): Promise<void> {
-    const routerExplorerControllerMetadataList: RouterExplorerControllerMetadata[] =
-      await buildRouterExplorerControllerMetadataList(this.#container);
+    const routerExplorerControllerMetadataList: RouterExplorerControllerMetadata<
+      TRequest,
+      TResponse,
+      unknown
+    >[] = await buildRouterExplorerControllerMetadataList(this.#container);
 
     for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
       await this._buildRouter({
@@ -107,14 +110,22 @@ export abstract class InversifyHttpAdapter<
 
   async #buildHandlers(
     target: NewableFunction,
-    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata[],
+    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse,
+      unknown
+    >[],
   ): Promise<RouteParams<TRequest, TResponse, TNextFunction, TResult>[]> {
     const controller: Controller = await this.#container.getAsync(target);
 
     return Promise.all(
       routerExplorerControllerMethodMetadata.map(
         async (
-          routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata,
+          routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+            TRequest,
+            TResponse,
+            unknown
+          >,
         ) => ({
           guardList: await this.#getGuardHandlerFromMetadata(
             routerExplorerControllerMethodMetadata.guardList,
@@ -147,7 +158,7 @@ export abstract class InversifyHttpAdapter<
     controller: Controller,
     controllerMethodKey: string | symbol,
     controllerMethodParameterMetadataList: (
-      | ControllerMethodParameterMetadata
+      | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
       | undefined
     )[],
     headerMetadataList: [string, string][],
@@ -187,7 +198,7 @@ export abstract class InversifyHttpAdapter<
 
   async #buildHandlerParams(
     controllerMethodParameterMetadataList: (
-      | ControllerMethodParameterMetadata
+      | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
       | undefined
     )[],
     request: TRequest,
@@ -198,7 +209,7 @@ export abstract class InversifyHttpAdapter<
       controllerMethodParameterMetadataList.map(
         async (
           controllerMethodParameterMetadata:
-            | ControllerMethodParameterMetadata
+            | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
             | undefined,
         ) => {
           if (controllerMethodParameterMetadata === undefined) {
@@ -240,6 +251,12 @@ export abstract class InversifyHttpAdapter<
                 request,
                 response,
                 controllerMethodParameterMetadata.parameterName,
+              );
+            }
+            case RequestMethodParameterType.CUSTOM: {
+              return controllerMethodParameterMetadata.customParameterDecoratorHandler?.(
+                request,
+                response,
               );
             }
             case RequestMethodParameterType.NEXT: {
@@ -350,7 +367,11 @@ export abstract class InversifyHttpAdapter<
   #printController(
     controllerName: string,
     path: string,
-    routerExplorerControllerMethodMetadataList: RouterExplorerControllerMethodMetadata[],
+    routerExplorerControllerMethodMetadataList: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse,
+      unknown
+    >[],
   ): void {
     this.#logger.info(`${controllerName} {${path}}:`);
 

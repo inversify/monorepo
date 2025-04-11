@@ -1,4 +1,5 @@
 import { InversifyHttpAdapter } from './http/adapter/InversifyHttpAdapter';
+import { createCustomParameterDecorator } from './http/calculations/createCustomParameterDecorator';
 import { ALL } from './http/decorators/All';
 import { applyMiddleware } from './http/decorators/ApplyMiddleware';
 import { body } from './http/decorators/Body';
@@ -65,6 +66,7 @@ export type {
 };
 
 export {
+  createCustomParameterDecorator,
   BadRequestHttpResponse,
   ConflictHttpResponse,
   CreatedHttpResponse,

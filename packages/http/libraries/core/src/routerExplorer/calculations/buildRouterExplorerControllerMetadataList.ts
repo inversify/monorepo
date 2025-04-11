@@ -7,9 +7,13 @@ import { RouterExplorerControllerMetadata } from '../model/RouterExplorerControl
 import { buildRouterExplorerControllerMetadata } from './buildRouterExplorerControllerMetadata';
 import { exploreControllers } from './exploreControllers';
 
-export async function buildRouterExplorerControllerMetadataList(
+export async function buildRouterExplorerControllerMetadataList<
+  TRequest,
+  TResponse,
+  TResult,
+>(
   container: Container,
-): Promise<RouterExplorerControllerMetadata[]> {
+): Promise<RouterExplorerControllerMetadata<TRequest, TResponse, TResult>[]> {
   const controllerMetadataList: ControllerMetadata[] | undefined =
     exploreControllers();
 
