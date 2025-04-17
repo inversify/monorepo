@@ -166,11 +166,9 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       ${{
-        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-core') ||
-        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express') ||
-        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express-v4') ||
-        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-hono') ||
-        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-e2e-tests')
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/core') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/container') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/container-e2e-tests')
       }}
     steps:
 
@@ -192,11 +190,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: >-
-      (
-        ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-core')}} ||
-        ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express')}} ||
-        ${{ contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-hono')}}
-      )
+      ${{
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-core') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-express-v4') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-fastify') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-hono') ||
+        contains(needs.build.outputs.affectedPackages, '@inversifyjs/http-e2e-tests')
+      }}
     steps:
 
       - name: Checkout
