@@ -9,6 +9,7 @@ import { DELETE } from './http/decorators/Delete';
 import { GET } from './http/decorators/Get';
 import { HEAD } from './http/decorators/Head';
 import { headers } from './http/decorators/Headers';
+import { next } from './http/decorators/Next';
 import { OPTIONS } from './http/decorators/Options';
 import { params } from './http/decorators/Params';
 import { PATCH } from './http/decorators/Patch';
@@ -112,6 +113,7 @@ export {
   controller,
   cookies,
   headers,
+  next,
   params,
   query,
   request,
