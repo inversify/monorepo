@@ -205,67 +205,79 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     next: TNextFunction,
   ): Promise<unknown[]> {
-    return Promise.all(
-      controllerMethodParameterMetadataList.map(
-        async (
-          controllerMethodParameterMetadata:
-            | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
-            | undefined,
-        ) => {
-          if (controllerMethodParameterMetadata === undefined) {
-            return undefined;
-          }
+    const handlerParams: unknown[] = [];
 
-          switch (controllerMethodParameterMetadata.parameterType) {
-            case RequestMethodParameterType.BODY:
-              return this._getBody(
+    for (const controllerMethodParameterMetadata of controllerMethodParameterMetadataList) {
+      if (controllerMethodParameterMetadata === undefined) {
+        handlerParams.push(undefined);
+      } else if (
+        controllerMethodParameterMetadata.parameterType ===
+        RequestMethodParameterType.BODY
+      ) {
+        handlerParams.push(
+          await this._getBody(
+            request,
+            controllerMethodParameterMetadata.parameterName,
+          ),
+        );
+      } else {
+        switch (controllerMethodParameterMetadata.parameterType) {
+          case RequestMethodParameterType.PARAMS:
+            handlerParams.push(
+              this._getParams(
                 request,
                 controllerMethodParameterMetadata.parameterName,
-              );
-            case RequestMethodParameterType.REQUEST: {
-              return request;
-            }
-            case RequestMethodParameterType.RESPONSE: {
-              return response;
-            }
-            case RequestMethodParameterType.PARAMS: {
-              return this._getParams(
+              ),
+            );
+            break;
+          case RequestMethodParameterType.QUERY:
+            handlerParams.push(
+              this._getQuery(
                 request,
                 controllerMethodParameterMetadata.parameterName,
-              );
-            }
-            case RequestMethodParameterType.QUERY: {
-              return this._getQuery(
+              ),
+            );
+            break;
+          case RequestMethodParameterType.HEADERS:
+            handlerParams.push(
+              this._getHeaders(
                 request,
                 controllerMethodParameterMetadata.parameterName,
-              );
-            }
-            case RequestMethodParameterType.HEADERS: {
-              return this._getHeaders(
-                request,
-                controllerMethodParameterMetadata.parameterName,
-              );
-            }
-            case RequestMethodParameterType.COOKIES: {
-              return this._getCookies(
+              ),
+            );
+            break;
+          case RequestMethodParameterType.COOKIES:
+            handlerParams.push(
+              this._getCookies(
                 request,
                 response,
                 controllerMethodParameterMetadata.parameterName,
-              );
-            }
-            case RequestMethodParameterType.CUSTOM: {
-              return controllerMethodParameterMetadata.customParameterDecoratorHandler?.(
+              ),
+            );
+            break;
+          case RequestMethodParameterType.NEXT:
+            handlerParams.push(next);
+            break;
+          case RequestMethodParameterType.REQUEST:
+            handlerParams.push(request);
+            break;
+          case RequestMethodParameterType.RESPONSE:
+            handlerParams.push(response);
+            break;
+          case RequestMethodParameterType.CUSTOM: {
+            handlerParams.push(
+              controllerMethodParameterMetadata.customParameterDecoratorHandler?.(
                 request,
                 response,
-              );
-            }
-            case RequestMethodParameterType.NEXT: {
-              return next;
-            }
+              ),
+            );
+            break;
           }
-        },
-      ),
-    );
+        }
+      }
+    }
+
+    return handlerParams;
   }
 
   #setHeaders(
