@@ -1,5 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { Newable } from 'inversify';
+
 import { Middleware } from '../middleware/model/Middleware';
 import { MiddlewarePhase } from '../middleware/model/MiddlewarePhase';
 import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
@@ -12,40 +14,38 @@ class TestMiddleware implements Middleware {
 }
 
 describe(isApplyMiddlewareOptions.name, () => {
-  describe('having a value that is ApplyMiddlewareOptions', () => {
-    describe('when called', () => {
-      let valueFixture: ApplyMiddlewareOptions;
-      let result: boolean;
+  describe.each([
+    [undefined, false],
+    [null, false],
+    [{}, false],
+    [{ middleware: 'not a function' }, false],
+    [{ middleware: () => {} }, false],
+    [{ middleware: TestMiddleware, phase: 2 }, false],
+    [{ middleware: TestMiddleware, phase: MiddlewarePhase.PreHandler }, true],
+  ])(
+    'having a value %s',
+    (
+      valueFixture:
+        | undefined
+        | null
+        | object
+        | { middleware: string }
+        | { middleware: () => void }
+        | { middleware: Newable<Middleware>; phase: number }
+        | ApplyMiddlewareOptions,
+      expectedResult: boolean,
+    ) => {
+      describe('when called', () => {
+        let result: boolean;
 
-      beforeAll(() => {
-        valueFixture = {
-          middleware: TestMiddleware,
-          phase: MiddlewarePhase.PreHandler,
-        };
+        beforeAll(() => {
+          result = isApplyMiddlewareOptions(valueFixture);
+        });
 
-        result = isApplyMiddlewareOptions(valueFixture);
+        it(`should return ${String(expectedResult)}`, () => {
+          expect(result).toBe(expectedResult);
+        });
       });
-
-      it('should return true', () => {
-        expect(result).toBe(true);
-      });
-    });
-  });
-
-  describe('having a value that is not ApplyMiddlewareOptions', () => {
-    describe('when called', () => {
-      let valueFixture: unknown;
-      let result: boolean;
-
-      beforeAll(() => {
-        valueFixture = {};
-
-        result = isApplyMiddlewareOptions(valueFixture);
-      });
-
-      it('should return false', () => {
-        expect(result).toBe(false);
-      });
-    });
-  });
+    },
+  );
 });

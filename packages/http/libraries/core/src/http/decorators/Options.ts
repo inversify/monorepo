@@ -1,5 +1,5 @@
+import { requestMethod } from '../calculations/requestMethod';
 import { RequestMethodType } from '../models/RequestMethodType';
-import { requestMethod } from './RequestMethod';
 
 export const OPTIONS: (path?: string) => MethodDecorator = (
   path?: string,

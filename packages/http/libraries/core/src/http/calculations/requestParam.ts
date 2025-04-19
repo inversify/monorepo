@@ -13,8 +13,7 @@ import { ControllerFunction } from '../models/ControllerFunction';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 
 export function requestParam(
-  parameterType: RequestMethodParameterType,
-  parameterName?: string,
+  controllerMethodParameterMetadata: ControllerMethodParameterMetadata,
 ): ParameterDecorator {
   return (
     target: object,
@@ -40,12 +39,6 @@ export function requestParam(
       controllerMethodParameterMetadataReflectKey,
     );
 
-    const controllerMethodParameterMetadata: ControllerMethodParameterMetadata =
-      {
-        parameterName,
-        parameterType,
-      };
-
     if (parameterMetadataList === undefined) {
       parameterMetadataList = [];
     }
@@ -59,8 +52,10 @@ export function requestParam(
     );
 
     if (
-      parameterType === RequestMethodParameterType.NEXT ||
-      parameterType === RequestMethodParameterType.RESPONSE
+      controllerMethodParameterMetadata.parameterType ===
+        RequestMethodParameterType.NEXT ||
+      controllerMethodParameterMetadata.parameterType ===
+        RequestMethodParameterType.RESPONSE
     ) {
       setReflectMetadata(
         controllerFunction,

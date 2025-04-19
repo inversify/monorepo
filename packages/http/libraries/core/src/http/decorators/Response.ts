@@ -1,6 +1,14 @@
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { requestParam } from './RequestParam';
+import { Newable } from 'inversify';
 
-export function response(): ParameterDecorator {
-  return requestParam(RequestMethodParameterType.RESPONSE);
+import { buildRequestParameterDecorator } from '../calculations/buildRequestParameterDecorator';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
+import { Pipe } from '../pipe/model/Pipe';
+
+export function response(
+  ...parameterPipeList: (Newable<Pipe> | Pipe)[]
+): ParameterDecorator {
+  return buildRequestParameterDecorator(
+    RequestMethodParameterType.RESPONSE,
+    parameterPipeList,
+  );
 }

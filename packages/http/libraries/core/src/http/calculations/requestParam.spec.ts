@@ -13,7 +13,7 @@ import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetada
 import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { requestParam } from './RequestParam';
+import { requestParam } from './requestParam';
 
 describe(requestParam.name, () => {
   describe('having a parameterType RESPONSE or NEXT', () => {
@@ -21,7 +21,7 @@ describe(requestParam.name, () => {
       let targetFixture: { [key: string | symbol]: unknown };
       let keyFixture: string;
       let indexFixture: number;
-      let parameterTypeFixture: RequestMethodParameterType;
+      let controllerMethodParameterMetadataFixture: ControllerMethodParameterMetadata;
 
       beforeAll(() => {
         keyFixture = 'keyFixture';
@@ -29,9 +29,12 @@ describe(requestParam.name, () => {
           [keyFixture]: vitest.fn(),
         };
         indexFixture = 0;
-        parameterTypeFixture = RequestMethodParameterType.RESPONSE;
+        controllerMethodParameterMetadataFixture = {
+          parameterType: RequestMethodParameterType.RESPONSE,
+          pipeList: [],
+        };
 
-        requestParam(parameterTypeFixture)(
+        requestParam(controllerMethodParameterMetadataFixture)(
           targetFixture,
           keyFixture,
           indexFixture,
@@ -47,12 +50,7 @@ describe(requestParam.name, () => {
         expect(setReflectMetadata).toHaveBeenCalledWith(
           targetFixture[keyFixture],
           controllerMethodParameterMetadataReflectKey,
-          [
-            {
-              parameterName: undefined,
-              parameterType: parameterTypeFixture,
-            },
-          ],
+          [controllerMethodParameterMetadataFixture],
         );
         expect(setReflectMetadata).toHaveBeenCalledWith(
           targetFixture[keyFixture],
@@ -68,17 +66,20 @@ describe(requestParam.name, () => {
       let targetFixture: object;
       let keyFixture: undefined;
       let indexFixture: number;
-      let parameterTypeFixture: RequestMethodParameterType;
+      let controllerMethodParameterMetadataFixture: ControllerMethodParameterMetadata;
       let result: unknown;
 
       beforeAll(() => {
         targetFixture = {};
         keyFixture = undefined;
         indexFixture = 0;
-        parameterTypeFixture = RequestMethodParameterType.QUERY;
+        controllerMethodParameterMetadataFixture = {
+          parameterType: RequestMethodParameterType.QUERY,
+          pipeList: [],
+        };
 
         try {
-          result = requestParam(parameterTypeFixture)(
+          result = requestParam(controllerMethodParameterMetadataFixture)(
             targetFixture,
             keyFixture,
             indexFixture,
@@ -106,7 +107,7 @@ describe(requestParam.name, () => {
       let targetFixture: { [key: string | symbol]: unknown };
       let keyFixture: string;
       let indexFixture: number;
-      let parameterTypeFixture: RequestMethodParameterType;
+      let controllerMethodParameterMetadataFixture: ControllerMethodParameterMetadata;
 
       beforeAll(() => {
         keyFixture = 'keyFixture';
@@ -114,9 +115,12 @@ describe(requestParam.name, () => {
           [keyFixture]: vitest.fn(),
         };
         indexFixture = 2;
-        parameterTypeFixture = RequestMethodParameterType.QUERY;
+        controllerMethodParameterMetadataFixture = {
+          parameterType: RequestMethodParameterType.QUERY,
+          pipeList: [],
+        };
 
-        requestParam(parameterTypeFixture)(
+        requestParam(controllerMethodParameterMetadataFixture)(
           targetFixture,
           keyFixture,
           indexFixture,
@@ -140,10 +144,8 @@ describe(requestParam.name, () => {
           | ControllerMethodParameterMetadata
           | undefined
         )[] = [];
-        expectedControllerMethodParameterMetadata[indexFixture] = {
-          parameterName: undefined,
-          parameterType: parameterTypeFixture,
-        };
+        expectedControllerMethodParameterMetadata[indexFixture] =
+          controllerMethodParameterMetadataFixture;
 
         expect(setReflectMetadata).toHaveBeenCalledTimes(1);
         expect(setReflectMetadata).toHaveBeenCalledWith(
@@ -158,7 +160,7 @@ describe(requestParam.name, () => {
       let targetFixture: { [key: string | symbol]: unknown };
       let keyFixture: string;
       let indexFixture: number;
-      let parameterTypeFixture: RequestMethodParameterType;
+      let controllerMethodParameterMetadataFixture: ControllerMethodParameterMetadata;
 
       beforeAll(() => {
         keyFixture = 'keyFixture';
@@ -166,16 +168,20 @@ describe(requestParam.name, () => {
           [keyFixture]: vitest.fn(),
         };
         indexFixture = 2;
-        parameterTypeFixture = RequestMethodParameterType.QUERY;
+        controllerMethodParameterMetadataFixture = {
+          parameterType: RequestMethodParameterType.QUERY,
+          pipeList: [],
+        };
 
         vitest.mocked(getReflectMetadata).mockReturnValueOnce([
           {
             parameterName: 'parameterNameFixture',
             parameterType: RequestMethodParameterType.BODY,
+            pipeList: [],
           },
         ]);
 
-        requestParam(parameterTypeFixture)(
+        requestParam(controllerMethodParameterMetadataFixture)(
           targetFixture,
           keyFixture,
           indexFixture,
@@ -201,12 +207,11 @@ describe(requestParam.name, () => {
           {
             parameterName: 'parameterNameFixture',
             parameterType: RequestMethodParameterType.BODY,
+            pipeList: [],
           },
         ];
-        expectedControllerMethodParameterMetadata[indexFixture] = {
-          parameterName: undefined,
-          parameterType: parameterTypeFixture,
-        };
+        expectedControllerMethodParameterMetadata[indexFixture] =
+          controllerMethodParameterMetadataFixture;
 
         expect(setReflectMetadata).toHaveBeenCalledWith(
           targetFixture[keyFixture],

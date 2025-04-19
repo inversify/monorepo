@@ -9,7 +9,7 @@ import {
 
 import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
 import { RequestMethodType } from '../models/RequestMethodType';
-import { requestMethod } from './RequestMethod';
+import { requestMethod } from './requestMethod';
 
 describe(requestMethod.name, () => {
   describe('having a undefined path', () => {

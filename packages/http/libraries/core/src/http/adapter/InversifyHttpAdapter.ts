@@ -1,8 +1,10 @@
 import { Readable } from 'node:stream';
 
 import { ConsoleLogger, Logger } from '@inversifyjs/logger';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
+import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
+import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
 import { buildRouterExplorerControllerMetadataList } from '../../routerExplorer/calculations/buildRouterExplorerControllerMetadataList';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
@@ -18,10 +20,13 @@ import { RequestHandler } from '../models/RequestHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { RouteParams } from '../models/RouteParams';
 import { RouterParams } from '../models/RouterParams';
+import { Pipe } from '../pipe/model/Pipe';
+import { BadRequestHttpResponse } from '../responses/error/BadRequestHttpResponse';
 import { ForbiddenHttpResponse } from '../responses/error/ForbiddenHttpResponse';
 import { InternalServerErrorHttpResponse } from '../responses/error/InternalServerErrorHttpResponse';
 import { HttpResponse } from '../responses/HttpResponse';
 import { HttpStatusCode } from '../responses/HttpStatusCode';
+import { isPipe } from '../typeguard/isPipe';
 
 const DEFAULT_ERROR_MESSAGE: string = 'An unexpected error occurred';
 
@@ -34,11 +39,17 @@ export abstract class InversifyHttpAdapter<
   protected readonly httpAdapterOptions: InternalHttpAdapterOptions;
   readonly #container: Container;
   readonly #logger: Logger;
+  readonly #globalPipeList: (Newable<Pipe> | Pipe)[];
 
   constructor(container: Container, httpAdapterOptions?: HttpAdapterOptions) {
     this.#container = container;
     this.#logger = this.#buildLogger(httpAdapterOptions);
     this.httpAdapterOptions = this.#parseHttpAdapterOptions(httpAdapterOptions);
+    this.#globalPipeList = [];
+  }
+
+  public useGlobalPipe(...pipeList: (Newable<Pipe> | Pipe)[]): void {
+    this.#globalPipeList.push(...pipeList);
   }
 
   protected async _buildServer(): Promise<void> {
@@ -191,7 +202,17 @@ export abstract class InversifyHttpAdapter<
         }
       } catch (error: unknown) {
         this.#printError(error);
-        return this.#reply(req, res, new InternalServerErrorHttpResponse());
+
+        if (
+          InversifyHttpAdapterError.isErrorOfKind(
+            error,
+            InversifyHttpAdapterErrorKind.pipeError,
+          )
+        ) {
+          return this.#reply(req, res, new BadRequestHttpResponse());
+        } else {
+          return this.#reply(req, res, new InternalServerErrorHttpResponse());
+        }
       }
     };
   }
@@ -216,56 +237,102 @@ export abstract class InversifyHttpAdapter<
             return undefined;
           }
 
+          let result: unknown = undefined;
+
           switch (controllerMethodParameterMetadata.parameterType) {
             case RequestMethodParameterType.BODY:
-              return this._getBody(
+              result = this._getBody(
                 request,
                 controllerMethodParameterMetadata.parameterName,
               );
+              break;
             case RequestMethodParameterType.REQUEST: {
-              return request;
+              result = request;
+              break;
             }
             case RequestMethodParameterType.RESPONSE: {
-              return response;
+              result = response;
+              break;
             }
             case RequestMethodParameterType.PARAMS: {
-              return this._getParams(
+              result = this._getParams(
                 request,
                 controllerMethodParameterMetadata.parameterName,
               );
+              break;
             }
             case RequestMethodParameterType.QUERY: {
-              return this._getQuery(
+              result = this._getQuery(
                 request,
                 controllerMethodParameterMetadata.parameterName,
               );
+              break;
             }
             case RequestMethodParameterType.HEADERS: {
-              return this._getHeaders(
+              result = this._getHeaders(
                 request,
                 controllerMethodParameterMetadata.parameterName,
               );
+              break;
             }
             case RequestMethodParameterType.COOKIES: {
-              return this._getCookies(
+              result = this._getCookies(
                 request,
                 response,
                 controllerMethodParameterMetadata.parameterName,
               );
+              break;
             }
             case RequestMethodParameterType.CUSTOM: {
-              return controllerMethodParameterMetadata.customParameterDecoratorHandler?.(
-                request,
-                response,
-              );
+              result =
+                controllerMethodParameterMetadata.customParameterDecoratorHandler?.(
+                  request,
+                  response,
+                );
+              break;
             }
             case RequestMethodParameterType.NEXT: {
-              return next;
+              result = next;
+              break;
             }
           }
+
+          if (controllerMethodParameterMetadata.pipeList.length > 0) {
+            result = await this.#applyPipeList(result, [
+              ...this.#globalPipeList,
+              ...controllerMethodParameterMetadata.pipeList,
+            ]);
+          }
+
+          return result;
         },
       ),
     );
+  }
+
+  async #applyPipeList(
+    value: unknown,
+    pipeList: (Newable<Pipe> | Pipe)[],
+  ): Promise<unknown> {
+    let result: unknown = value;
+
+    for (const pipeOrNewable of pipeList) {
+      const pipe: Pipe = isPipe(pipeOrNewable)
+        ? pipeOrNewable
+        : await this.#container.getAsync(pipeOrNewable);
+
+      try {
+        result = await pipe.execute(result);
+      } catch (error: unknown) {
+        throw new InversifyHttpAdapterError(
+          InversifyHttpAdapterErrorKind.pipeError,
+          'Pipe error',
+          { cause: error },
+        );
+      }
+    }
+
+    return result;
   }
 
   #setHeaders(
