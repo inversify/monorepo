@@ -380,7 +380,7 @@ export abstract class InversifyHttpAdapter<
           InversifyHttpAdapterErrorKind.pipeError,
           'Pipe error',
           { cause: error },
-          { response: pipe.getHttpResponse?.() },
+          { response: pipe.getHttpResponse?.(error) },
         );
       }
     }
