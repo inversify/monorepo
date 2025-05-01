@@ -17,7 +17,7 @@
     "@inversifyjs/foundation-typescript-config": "workspace:*",
     "@inversifyjs/foundation-vitest-config": "workspace:*",
     "husky": "9.1.7",
-    "knip": "5.51.0",
+    "knip": "5.51.1",
     "lint-staged": "15.5.1",
     "turbo": "2.5.2"
   },
