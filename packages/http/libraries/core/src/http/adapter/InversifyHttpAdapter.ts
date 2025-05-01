@@ -5,12 +5,15 @@ import { Container, Newable } from 'inversify';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
+import { buildMiddlewareOptionsFromApplyMiddlewareOptions } from '../../routerExplorer/calculations/buildMiddlewareOptionsFromApplyMiddlewareOptions';
 import { buildRouterExplorerControllerMetadataList } from '../../routerExplorer/calculations/buildRouterExplorerControllerMetadataList';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
+import { MiddlewareOptions } from '../../routerExplorer/model/MiddlewareOptions';
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
 import { Guard } from '../guard/model/Guard';
 import { Middleware } from '../middleware/model/Middleware';
+import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
 import { Controller } from '../models/Controller';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
@@ -34,14 +37,36 @@ const DEFAULT_ERROR_MESSAGE: string = 'An unexpected error occurred';
 export abstract class InversifyHttpAdapter<
   TRequest,
   TResponse,
-  TNextFunction extends (err?: unknown) => Promise<void> | void,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  TNextFunction extends (err?: any) => Promise<void> | void,
   TResult,
 > {
   protected readonly httpAdapterOptions: InternalHttpAdapterOptions;
+  protected readonly globalHandlers: {
+    preHandlerMiddlewareList: MiddlewareHandler<
+      TRequest,
+      TResponse,
+      TNextFunction,
+      TResult
+    >[];
+    postHandlerMiddlewareList: MiddlewareHandler<
+      TRequest,
+      TResponse,
+      TNextFunction,
+      TResult
+    >[];
+    guardList: MiddlewareHandler<
+      TRequest,
+      TResponse,
+      TNextFunction,
+      TResult | undefined
+    >[];
+  };
   readonly #awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>;
   readonly #container: Container;
   readonly #logger: Logger;
   readonly #globalPipeList: (Newable<Pipe> | Pipe)[];
+  #isBuilt: boolean;
 
   constructor(
     container: Container,
@@ -57,6 +82,65 @@ export abstract class InversifyHttpAdapter<
     this.#logger = this.#buildLogger(httpAdapterOptions);
     this.httpAdapterOptions = this.#parseHttpAdapterOptions(httpAdapterOptions);
     this.#globalPipeList = [];
+    this.#isBuilt = false;
+    this.globalHandlers = {
+      guardList: [],
+      postHandlerMiddlewareList: [],
+      preHandlerMiddlewareList: [],
+    };
+  }
+
+  public async applyGlobalMiddleware(
+    ...middlewareList: (Newable<Middleware> | ApplyMiddlewareOptions)[]
+  ): Promise<void> {
+    if (this.#isBuilt) {
+      throw new InversifyHttpAdapterError(
+        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
+        'Cannot apply global middleware after the server has been built',
+      );
+    }
+
+    const middlewareOptions: MiddlewareOptions =
+      buildMiddlewareOptionsFromApplyMiddlewareOptions(middlewareList);
+
+    const [preHandlerMiddlewareList, postHandlerMiddlewareList]: [
+      MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>[],
+      MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>[],
+    ] = await Promise.all([
+      this.#getMiddlewareHandlerFromMetadata(
+        middlewareOptions.preHandlerMiddlewareList,
+      ),
+      this.#getMiddlewareHandlerFromMetadata(
+        middlewareOptions.postHandlerMiddlewareList,
+      ),
+    ]);
+
+    this.globalHandlers.preHandlerMiddlewareList.push(
+      ...preHandlerMiddlewareList,
+    );
+    this.globalHandlers.postHandlerMiddlewareList.push(
+      ...postHandlerMiddlewareList,
+    );
+  }
+
+  public async applyGlobalGuards(
+    ...guardList: Newable<Guard<TRequest>>[]
+  ): Promise<void> {
+    if (this.#isBuilt) {
+      throw new InversifyHttpAdapterError(
+        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
+        'Cannot apply global guard after the server has been built',
+      );
+    }
+
+    const guardHandlerList: MiddlewareHandler<
+      TRequest,
+      TResponse,
+      TNextFunction,
+      TResult | undefined
+    >[] = await this.#getGuardHandlerFromMetadata(guardList);
+
+    this.globalHandlers.guardList.push(...guardHandlerList);
   }
 
   public useGlobalPipe(...pipeList: (Newable<Pipe> | Pipe)[]): void {
@@ -65,6 +149,8 @@ export abstract class InversifyHttpAdapter<
 
   protected async _buildServer(): Promise<void> {
     await this.#registerControllers();
+
+    this.#isBuilt = true;
   }
 
   async #appendHandlerParam(

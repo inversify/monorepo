@@ -51,23 +51,32 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
       Response,
       NextFunction,
       void
-    >[] = [...routerParams.guardList, ...routerParams.preHandlerMiddlewareList];
+    >[] = [
+      ...this.globalHandlers.guardList,
+      ...routerParams.guardList,
+      ...this.globalHandlers.preHandlerMiddlewareList,
+      ...routerParams.preHandlerMiddlewareList,
+    ];
 
     if (orderedMiddlewareList.length > 0) {
       router.use(orderedMiddlewareList);
     }
 
     for (const routeParams of routerParams.routeParamsList) {
-      const orderedPreHandlerMiddlewareList:
-        | MiddlewareHandler<Request, Response, NextFunction, void>[]
-        | undefined = [
-        ...routeParams.guardList,
-        ...routeParams.preHandlerMiddlewareList,
-      ];
+      const orderedPreHandlerMiddlewareList: MiddlewareHandler<
+        Request,
+        Response,
+        NextFunction,
+        void
+      >[] = [...routeParams.guardList, ...routeParams.preHandlerMiddlewareList];
 
-      const orderedPostHandlerMiddlewareList:
-        | MiddlewareHandler<Request, Response, NextFunction, void>[]
-        | undefined = [
+      const orderedPostHandlerMiddlewareList: MiddlewareHandler<
+        Request,
+        Response,
+        NextFunction,
+        void
+      >[] = [
+        ...this.globalHandlers.postHandlerMiddlewareList,
         ...routerParams.postHandlerMiddlewareList,
         ...routeParams.postHandlerMiddlewareList,
       ];

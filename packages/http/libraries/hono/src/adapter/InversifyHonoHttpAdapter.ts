@@ -57,8 +57,17 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     const router: Hono = new Hono();
 
     const routerHonoMiddlewareList: HonoMiddlewareHandler[] = [
-      ...this.#buildHonoMiddlewareList(routerParams.guardList),
-      ...this.#buildHonoMiddlewareList(routerParams.preHandlerMiddlewareList),
+      ...this.#buildHonoPreHandlerMiddlewareList(this.globalHandlers.guardList),
+      ...this.#buildHonoPreHandlerMiddlewareList(routerParams.guardList),
+      ...this.#buildHonoPreHandlerMiddlewareList(
+        this.globalHandlers.preHandlerMiddlewareList,
+      ),
+      ...this.#buildHonoPreHandlerMiddlewareList(
+        routerParams.preHandlerMiddlewareList,
+      ),
+      ...this.#buildHonoPostHandlerMiddlewareList(
+        this.globalHandlers.postHandlerMiddlewareList,
+      ),
       ...this.#buildHonoPostHandlerMiddlewareList(
         routerParams.postHandlerMiddlewareList,
       ),
@@ -70,8 +79,10 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
 
     for (const routeParams of routerParams.routeParamsList) {
       const routeHonoMiddlewareList: HonoMiddlewareHandler[] = [
-        ...this.#buildHonoMiddlewareList(routeParams.guardList),
-        ...this.#buildHonoMiddlewareList(routeParams.preHandlerMiddlewareList),
+        ...this.#buildHonoPreHandlerMiddlewareList(routeParams.guardList),
+        ...this.#buildHonoPreHandlerMiddlewareList(
+          routeParams.preHandlerMiddlewareList,
+        ),
         ...this.#buildHonoPostHandlerMiddlewareList(
           routeParams.postHandlerMiddlewareList,
         ),
@@ -187,7 +198,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
       handler(ctx.req as HonoRequest, ctx, next);
   }
 
-  #buildHonoMiddlewareList(
+  #buildHonoPreHandlerMiddlewareList(
     handlers: MiddlewareHandler<
       HonoRequest,
       Context,
