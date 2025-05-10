@@ -1,11 +1,10 @@
-import {
-  getReflectMetadata,
-  setReflectMetadata,
-} from '@inversifyjs/reflect-metadata-utils';
+import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
 import { ControllerMethodMetadata } from '../../routerExplorer/model/ControllerMethodMetadata';
 import { RequestMethodType } from '../models/RequestMethodType';
+import { buildArrayMetadataWithElement } from './buildArrayMetadataWithElement';
+import { buildDefaultArrayMetadata } from './buildDefaultArrayMetadata';
 
 export function requestMethod(
   requestMethodType: RequestMethodType,
@@ -18,22 +17,11 @@ export function requestMethod(
       requestMethodType,
     };
 
-    let controllerMethodMetadataList: ControllerMethodMetadata[] | undefined =
-      getReflectMetadata(
-        target.constructor,
-        controllerMethodMetadataReflectKey,
-      );
-
-    if (controllerMethodMetadataList !== undefined) {
-      controllerMethodMetadataList.push(controllerMethodMetadata);
-    } else {
-      controllerMethodMetadataList = [controllerMethodMetadata];
-    }
-
-    setReflectMetadata(
+    updateOwnReflectMetadata(
       target.constructor,
       controllerMethodMetadataReflectKey,
-      controllerMethodMetadataList,
+      buildDefaultArrayMetadata,
+      buildArrayMetadataWithElement(controllerMethodMetadata),
     );
   };
 }

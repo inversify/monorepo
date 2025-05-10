@@ -36,7 +36,7 @@ describe(buildRouterExplorerControllerMetadataList.name, () => {
         .mockReturnValueOnce(controllerMetadataListFixture);
 
       try {
-        result = await buildRouterExplorerControllerMetadataList(containerMock);
+        result = buildRouterExplorerControllerMetadataList(containerMock);
       } catch (error) {
         result = error;
       }
@@ -93,9 +93,9 @@ describe(buildRouterExplorerControllerMetadataList.name, () => {
 
       vitest
         .mocked(buildRouterExplorerControllerMetadata)
-        .mockResolvedValueOnce(routerExplorerControllerMetadataFixture);
+        .mockReturnValueOnce(routerExplorerControllerMetadataFixture);
 
-      result = await buildRouterExplorerControllerMetadataList(containerMock);
+      result = buildRouterExplorerControllerMetadataList(containerMock);
     });
 
     afterAll(() => {
@@ -117,7 +117,6 @@ describe(buildRouterExplorerControllerMetadataList.name, () => {
     it('should call buildRouterExplorerControllerMetadata', () => {
       expect(buildRouterExplorerControllerMetadata).toHaveBeenCalledTimes(1);
       expect(buildRouterExplorerControllerMetadata).toHaveBeenCalledWith(
-        containerMock,
         controllerMetadataFixture,
       );
     });

@@ -2,13 +2,13 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
-import { getReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMiddlewareMetadataReflectKey';
 import { exploreControllerMiddlewareList } from './exploreControllerMiddlewareList';
 
 describe(exploreControllerMiddlewareList.name, () => {
-  describe('when called and getReflectMetadata returns undefined', () => {
+  describe('when called and getOwnReflectMetadata returns undefined', () => {
     let targetFixture: NewableFunction;
     let result: unknown;
 
@@ -22,9 +22,9 @@ describe(exploreControllerMiddlewareList.name, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getReflectMetadata', () => {
-      expect(getReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getReflectMetadata).toHaveBeenCalledWith(
+    it('should call getOwnReflectMetadata', () => {
+      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
+      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         targetFixture,
         controllerMiddlewareMetadataReflectKey,
       );
@@ -35,7 +35,7 @@ describe(exploreControllerMiddlewareList.name, () => {
     });
   });
 
-  describe('when called and getReflectMetadata returns an array', () => {
+  describe('when called and getOwnReflectMetadata returns an array', () => {
     let targetFixture: NewableFunction;
     let middlewareFixtures: NewableFunction[];
     let result: unknown;
@@ -44,7 +44,9 @@ describe(exploreControllerMiddlewareList.name, () => {
       targetFixture = class Test {};
       middlewareFixtures = [];
 
-      vitest.mocked(getReflectMetadata).mockReturnValueOnce(middlewareFixtures);
+      vitest
+        .mocked(getOwnReflectMetadata)
+        .mockReturnValueOnce(middlewareFixtures);
 
       result = exploreControllerMiddlewareList(targetFixture);
     });
@@ -53,9 +55,9 @@ describe(exploreControllerMiddlewareList.name, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getReflectMetadata', () => {
-      expect(getReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getReflectMetadata).toHaveBeenCalledWith(
+    it('should call getOwnReflectMetadata', () => {
+      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
+      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         targetFixture,
         controllerMiddlewareMetadataReflectKey,
       );

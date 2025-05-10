@@ -1,6 +1,6 @@
 import {
-  getReflectMetadata,
   setReflectMetadata,
+  updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
@@ -8,9 +8,9 @@ import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpA
 import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey';
 import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { Controller } from '../models/Controller';
-import { ControllerFunction } from '../models/ControllerFunction';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
+import { buildArrayMetadataWithIndex } from './buildArrayMetadataWithIndex';
+import { buildDefaultArrayMetadata } from './buildDefaultArrayMetadata';
 
 export function requestParam(
   controllerMethodParameterMetadata: ControllerMethodParameterMetadata,
@@ -20,35 +20,18 @@ export function requestParam(
     key: string | symbol | undefined,
     index: number,
   ): void => {
-    let controllerFunction: ControllerFunction | undefined = undefined;
-
-    if (key !== undefined) {
-      controllerFunction = (target as Controller)[key];
-    }
-
-    if (controllerFunction === undefined) {
+    if (key === undefined) {
       throw new InversifyHttpAdapterError(
         InversifyHttpAdapterErrorKind.requestParamIncorrectUse,
       );
     }
 
-    let parameterMetadataList:
-      | (ControllerMethodParameterMetadata | undefined)[]
-      | undefined = getReflectMetadata(
-      controllerFunction,
+    updateOwnReflectMetadata(
+      target.constructor,
       controllerMethodParameterMetadataReflectKey,
-    );
-
-    if (parameterMetadataList === undefined) {
-      parameterMetadataList = [];
-    }
-
-    parameterMetadataList[index] = controllerMethodParameterMetadata;
-
-    setReflectMetadata(
-      controllerFunction,
-      controllerMethodParameterMetadataReflectKey,
-      parameterMetadataList,
+      buildDefaultArrayMetadata,
+      buildArrayMetadataWithIndex(controllerMethodParameterMetadata, index),
+      key,
     );
 
     if (
@@ -58,9 +41,10 @@ export function requestParam(
         RequestMethodParameterType.RESPONSE
     ) {
       setReflectMetadata(
-        controllerFunction,
+        target.constructor,
         controllerMethodUseNativeHandlerMetadataReflectKey,
         true,
+        key,
       );
     }
   };

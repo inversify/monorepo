@@ -200,8 +200,8 @@ export abstract class InversifyHttpAdapter<
     const routerExplorerControllerMetadataList: RouterExplorerControllerMetadata<
       TRequest,
       TResponse,
-      unknown
-    >[] = await buildRouterExplorerControllerMetadataList(this.#container);
+      TResult
+    >[] = buildRouterExplorerControllerMetadataList(this.#container);
 
     for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
       await this._buildRouter({

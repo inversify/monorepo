@@ -1,11 +1,10 @@
-import {
-  getReflectMetadata,
-  setReflectMetadata,
-} from '@inversifyjs/reflect-metadata-utils';
+import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { BindingScope, injectable } from 'inversify';
 
 import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
 import { ControllerMetadata } from '../../routerExplorer/model/ControllerMetadata';
+import { buildArrayMetadataWithElement } from '../calculations/buildArrayMetadataWithElement';
+import { buildDefaultArrayMetadata } from '../calculations/buildDefaultArrayMetadata';
 import { ControllerOptions } from '../models/ControllerOptions';
 
 export function controller(
@@ -30,19 +29,11 @@ export function controller(
 
     injectable(scope)(target);
 
-    let controllerMetadataList: ControllerMetadata[] | undefined =
-      getReflectMetadata(Reflect, controllerMetadataReflectKey);
-
-    if (controllerMetadataList !== undefined) {
-      controllerMetadataList.push(controllerMetadata);
-    } else {
-      controllerMetadataList = [controllerMetadata];
-    }
-
-    setReflectMetadata(
+    updateOwnReflectMetadata(
       Reflect,
       controllerMetadataReflectKey,
-      controllerMetadataList,
+      buildDefaultArrayMetadata,
+      buildArrayMetadataWithElement(controllerMetadata),
     );
   };
 }

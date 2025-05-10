@@ -1,15 +1,17 @@
-import { getReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { ControllerFunction } from '../../http/models/ControllerFunction';
+import { ApplyMiddlewareOptions } from '../../http/models/ApplyMiddlewareOptions';
 import { controllerMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMiddlewareMetadataReflectKey';
 
 export function exploreControllerMethodMiddlewareList(
-  controllerMethod: ControllerFunction,
-): NewableFunction[] {
+  controllerConstructor: NewableFunction,
+  methodKey: string | symbol,
+): (NewableFunction | ApplyMiddlewareOptions)[] {
   return (
-    getReflectMetadata(
-      controllerMethod,
+    getOwnReflectMetadata(
+      controllerConstructor,
       controllerMethodMiddlewareMetadataReflectKey,
+      methodKey,
     ) ?? []
   );
 }
