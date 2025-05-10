@@ -18,7 +18,7 @@
     "@inversifyjs/foundation-vitest-config": "workspace:*",
     "husky": "9.1.7",
     "knip": "5.55.1",
-    "lint-staged": "15.5.2",
+    "lint-staged": "16.0.0",
     "turbo": "2.5.3"
   },
   "homepage": "https://inversify.io",
