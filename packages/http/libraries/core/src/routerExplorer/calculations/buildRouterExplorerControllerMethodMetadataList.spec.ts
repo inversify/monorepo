@@ -2,7 +2,6 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('./buildRouterExplorerControllerMethodMetadata');
 
-import { Controller } from '../../http/models/Controller';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
 import { buildRouterExplorerControllerMethodMetadata } from './buildRouterExplorerControllerMethodMetadata';
@@ -10,14 +9,14 @@ import { buildRouterExplorerControllerMethodMetadataList } from './buildRouterEx
 
 describe(buildRouterExplorerControllerMethodMetadataList.name, () => {
   describe('when called', () => {
-    let controllerFixture: Controller;
+    let controllerFixture: NewableFunction;
     let controllerMethodMetadataFixture: ControllerMethodMetadata;
     let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
     let routerExplorerControllerMethodMetadataFixture: RouterExplorerControllerMethodMetadata;
     let result: unknown;
 
     beforeAll(() => {
-      controllerFixture = {} as Controller;
+      controllerFixture = class Test {};
       controllerMethodMetadataFixture = {} as ControllerMethodMetadata;
       controllerMethodMetadataListFixture = [controllerMethodMetadataFixture];
       routerExplorerControllerMethodMetadataFixture =

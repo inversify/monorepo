@@ -1,15 +1,23 @@
-import { beforeAll, describe, expect, it, Mock, vitest } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('inversify');
+vitest.mock('../calculations/buildArrayMetadataWithElement');
 
-import {
-  getReflectMetadata,
-  setReflectMetadata,
-} from '@inversifyjs/reflect-metadata-utils';
+import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { injectable } from 'inversify';
 
 import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
+import { buildArrayMetadataWithElement } from '../calculations/buildArrayMetadataWithElement';
+import { buildDefaultArrayMetadata } from '../calculations/buildDefaultArrayMetadata';
 import { ControllerOptions } from '../models/ControllerOptions';
 import { controller } from './Controller';
 
@@ -19,12 +27,19 @@ describe(controller.name, () => {
       let pathFixture: string;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
+      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
         pathFixture = '/api';
         targetFixture = class TestController {};
+        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
+          arrayMetadata;
 
         classDecoratorMock = vitest.fn();
+
+        vitest
+          .mocked(buildArrayMetadataWithElement)
+          .mockReturnValueOnce(callbackFixture);
 
         vitest
           .mocked(injectable)
@@ -33,11 +48,8 @@ describe(controller.name, () => {
         controller(pathFixture)(targetFixture);
       });
 
-      it('should get existing metadata', () => {
-        expect(getReflectMetadata).toHaveBeenCalledWith(
-          Reflect,
-          controllerMetadataReflectKey,
-        );
+      afterAll(() => {
+        vitest.clearAllMocks();
       });
 
       it('should call injectable', () => {
@@ -48,16 +60,20 @@ describe(controller.name, () => {
         expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
       });
 
+      it('should call buildArrayMetadataWithElement', () => {
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith({
+          path: pathFixture,
+          target: targetFixture,
+        });
+      });
+
       it('should set metadata with controller path', () => {
-        expect(setReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           Reflect,
           controllerMetadataReflectKey,
-          [
-            {
-              path: pathFixture,
-              target: targetFixture,
-            },
-          ],
+          buildDefaultArrayMetadata,
+          callbackFixture,
         );
       });
     });
@@ -68,6 +84,7 @@ describe(controller.name, () => {
       let optionsFixture: { controllerName: string; path: string };
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
+      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
         optionsFixture = {
@@ -75,6 +92,12 @@ describe(controller.name, () => {
           path: '/api',
         };
         targetFixture = class TestController {};
+        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
+          arrayMetadata;
+
+        vitest
+          .mocked(buildArrayMetadataWithElement)
+          .mockReturnValueOnce(callbackFixture);
 
         classDecoratorMock = vitest.fn();
 
@@ -85,16 +108,24 @@ describe(controller.name, () => {
         controller(optionsFixture)(targetFixture);
       });
 
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call buildArrayMetadataWithElement', () => {
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith({
+          path: optionsFixture.path,
+          target: targetFixture,
+        });
+      });
+
       it('should set metadata with controller options', () => {
-        expect(setReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           Reflect,
           controllerMetadataReflectKey,
-          [
-            {
-              path: optionsFixture.path,
-              target: targetFixture,
-            },
-          ],
+          buildDefaultArrayMetadata,
+          callbackFixture,
         );
       });
     });
@@ -103,6 +134,7 @@ describe(controller.name, () => {
       let optionsFixture: ControllerOptions;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
+      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
         optionsFixture = {
@@ -110,6 +142,12 @@ describe(controller.name, () => {
           scope: 'Singleton',
         };
         targetFixture = class TestController {};
+        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
+          arrayMetadata;
+
+        vitest
+          .mocked(buildArrayMetadataWithElement)
+          .mockReturnValueOnce(callbackFixture);
 
         classDecoratorMock = vitest.fn();
 
@@ -118,6 +156,10 @@ describe(controller.name, () => {
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
         controller(optionsFixture)(targetFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
       });
 
       it('should call injectable', () => {
@@ -128,16 +170,20 @@ describe(controller.name, () => {
         expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
       });
 
+      it('should call buildArrayMetadataWithElement', () => {
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith({
+          path: optionsFixture.path,
+          target: targetFixture,
+        });
+      });
+
       it('should set metadata with controller options', () => {
-        expect(setReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           Reflect,
           controllerMetadataReflectKey,
-          [
-            {
-              path: optionsFixture.path,
-              target: targetFixture,
-            },
-          ],
+          buildDefaultArrayMetadata,
+          callbackFixture,
         );
       });
     });
