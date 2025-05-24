@@ -34,7 +34,9 @@
   "scripts": {
     "benchmarks:container:cjs": "pnpm run --filter \"@inversifyjs/container-benchmarks\" benchmarks:run:cjs",
     "benchmarks:container:esm": "pnpm run --filter \"@inversifyjs/container-benchmarks\" benchmarks:run:esm",
-    "benchmarks:http:cjs": "pnpm run --filter \"@inversifyjs/http-benchmarks\" benchmarks:run:cjs",
+    "benchmarks:http:cjs:low": "pnpm run --filter \"@inversifyjs/http-benchmarks\" benchmarks:run:cjs:low",
+    "benchmarks:http:cjs:medium": "pnpm run --filter \"@inversifyjs/http-benchmarks\" benchmarks:run:cjs:medium",
+    "benchmarks:http:cjs:high": "pnpm run --filter \"@inversifyjs/http-benchmarks\" benchmarks:run:cjs:high",
     "build": "turbo run build",
     "commit": "commit",
     "deploy:binding-decorators:pages": "pnpm run --filter \"@inversifyjs/inversify-binding-decorators-docs-site\" deploy",

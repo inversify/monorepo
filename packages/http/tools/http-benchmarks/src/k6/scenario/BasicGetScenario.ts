@@ -10,7 +10,7 @@ export const options: Options = {
   stages: [
     {
       duration: '10s',
-      target: 1024,
+      target: Number(__ENV['VUS']),
     },
   ],
   thresholds: {

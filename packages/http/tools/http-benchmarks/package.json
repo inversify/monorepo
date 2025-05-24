@@ -59,7 +59,9 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "benchmarks:run:cjs": "BUILD_TARGET=cjs ./bin/run-cjs.cjs",
+    "benchmarks:run:cjs:low": "BUILD_TARGET=cjs VUS=16 ./bin/run-cjs.cjs",
+    "benchmarks:run:cjs:medium": "BUILD_TARGET=cjs VUS=128 ./bin/run-cjs.cjs",
+    "benchmarks:run:cjs:high": "BUILD_TARGET=cjs VUS=1024 ./bin/run-cjs.cjs",
     "build": "pnpm run build:cjs",
     "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
     "build:clean": "rimraf lib",

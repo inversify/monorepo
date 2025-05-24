@@ -1,5 +1,5 @@
 name: build
-concurrency: 
+concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 on:
@@ -18,7 +18,6 @@ jobs:
       testAffectedPackages: ${{ steps.get-test-affected-packages.outputs.packages }}
     if: "!(github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == false)"
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -63,18 +62,18 @@ jobs:
       - name: Run benchmarks (CommonJS)
         id: run-cjs-benchmarks
         run: |
-              EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-              echo "result<<$EOF" >> $GITHUB_OUTPUT
-              echo "$(pnpm run benchmarks:container:cjs)" >> $GITHUB_OUTPUT
-              echo "$EOF" >> $GITHUB_OUTPUT
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "result<<$EOF" >> $GITHUB_OUTPUT
+          echo "$(pnpm run benchmarks:container:cjs)" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Run benchmarks (ESM)
         id: run-esm-benchmarks
         run: |
-              EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-              echo "result<<$EOF" >> $GITHUB_OUTPUT
-              echo "$(pnpm run benchmarks:container:esm)" >> $GITHUB_OUTPUT
-              echo "$EOF" >> $GITHUB_OUTPUT
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "result<<$EOF" >> $GITHUB_OUTPUT
+          echo "$(pnpm run benchmarks:container:esm)" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - uses: actions/github-script@v7
         with:
@@ -122,10 +121,10 @@ jobs:
       - name: Run benchmarks (CommonJS)
         id: run-cjs-benchmarks
         run: |
-              EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-              echo "result<<$EOF" >> $GITHUB_OUTPUT
-              echo "$(pnpm run benchmarks:http:cjs)" >> $GITHUB_OUTPUT
-              echo "$EOF" >> $GITHUB_OUTPUT
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "result<<$EOF" >> $GITHUB_OUTPUT
+          echo "$(pnpm run benchmarks:http:cjs:low)" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - uses: actions/github-script@v7
         with:
@@ -151,7 +150,6 @@ jobs:
       matrix:
         packages: ${{fromJSON(needs.build.outputs.testAffectedPackages)}}
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -174,7 +172,6 @@ jobs:
         contains(needs.build.outputs.buildAffectedPackages, '@inversifyjs/container-e2e-tests')
       }}
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -197,7 +194,6 @@ jobs:
         ${{ contains(needs.build.outputs.buildAffectedPackages, '@inversifyjs/http-e2e-tests')}}
       )
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
