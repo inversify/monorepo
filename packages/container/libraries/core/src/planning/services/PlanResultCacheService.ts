@@ -26,6 +26,16 @@ export interface GetPlanOptions {
   tag: GetPlanOptionsTagConstraint | undefined;
 }
 
+const MIN_REFS_FOR_REALLOCATION: number = 8;
+const MIN_DEAD_REFS_FOR_REALLOCATION_PERCENTAGE: number = 0.5;
+function shouldReallocate(liveRefCount: number, refCount: number): boolean {
+  return (
+    refCount > MIN_REFS_FOR_REALLOCATION &&
+    refCount - liveRefCount >
+      refCount * MIN_DEAD_REFS_FOR_REALLOCATION_PERCENTAGE
+  );
+}
+
 /**
  * Service to cache plans.
  *
@@ -54,7 +64,7 @@ export class PlanResultCacheService {
     Map<MetadataName, Map<MetadataTag, Map<unknown, PlanResult>>>
   >[];
 
-  readonly #subscribers: PlanResultCacheService[];
+  #subscribers: WeakRef<PlanResultCacheService>[];
 
   constructor() {
     this.#serviceIdToValuePlanMap = this.#buildInitializedMapArray();
@@ -70,8 +80,18 @@ export class PlanResultCacheService {
       map.clear();
     }
 
-    for (const subscriber of this.#subscribers) {
-      subscriber.clearCache();
+    let liveRefCount: number = 0;
+    for (const subscriberRef of this.#subscribers) {
+      const subscriber: PlanResultCacheService | undefined =
+        subscriberRef.deref();
+      if (subscriber) {
+        subscriber.clearCache();
+        ++liveRefCount;
+      }
+    }
+
+    if (shouldReallocate(liveRefCount, this.#subscribers.length)) {
+      this.#compactSubscribersArray(liveRefCount);
     }
   }
 
@@ -156,7 +176,7 @@ export class PlanResultCacheService {
   }
 
   public subscribe(subscriber: PlanResultCacheService): void {
-    this.#subscribers.push(subscriber);
+    this.#subscribers.push(new WeakRef(subscriber));
   }
 
   #buildInitializedMapArray<TKey, TValue>(): Map<TKey, TValue>[] {
@@ -215,5 +235,19 @@ export class PlanResultCacheService {
         return GetPlanBooleanOptionsMask.singleMandatory;
       }
     }
+  }
+
+  #compactSubscribersArray(liveRefCount: number): void {
+    const newSubscribers: WeakRef<PlanResultCacheService>[] = new Array<
+      WeakRef<PlanResultCacheService>
+    >(liveRefCount);
+    let i: number = 0;
+    for (const ref of this.#subscribers) {
+      if (ref.deref()) {
+        newSubscribers[i] = ref;
+        ++i;
+      }
+    }
+    this.#subscribers = newSubscribers;
   }
 }
