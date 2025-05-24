@@ -165,9 +165,7 @@ describe(Container, () => {
       .mocked(ServiceResolutionManager)
       .mockReturnValue(serviceResolutionManagerMock);
 
-    vitest.mocked(SnapshotManager).mockImplementation((): SnapshotManager => {
-      return snapshotManagerMock;
-    });
+    vitest.mocked(SnapshotManager).mockReturnValue(snapshotManagerMock);
   });
 
   describe('.constructor', () => {
@@ -251,6 +249,60 @@ describe(Container, () => {
             deactivationServiceMock,
             planResultCacheServiceMock,
           );
+        });
+      });
+    });
+  });
+
+  describe('.dispose', () => {
+    describe('having a parent container', () => {
+      let parentContainerFixture: Container;
+      let parentServiceReferenceManagerMock: Mocked<ServiceReferenceManager>;
+      let parentPlanResultCacheServiceMock: Mocked<PlanResultCacheService>;
+
+      beforeAll(() => {
+        parentPlanResultCacheServiceMock = {
+          subscribe: vitest.fn(),
+          unsubscribe: vitest.fn(),
+        } as Partial<
+          Mocked<PlanResultCacheService>
+        > as Mocked<PlanResultCacheService>;
+        parentServiceReferenceManagerMock = {
+          planResultCacheService: parentPlanResultCacheServiceMock,
+        } as Partial<
+          Mocked<ServiceReferenceManager>
+        > as Mocked<ServiceReferenceManager>;
+
+        vitest
+          .mocked(PlanResultCacheService)
+          .mockReturnValueOnce(parentPlanResultCacheServiceMock);
+        vitest
+          .mocked(ServiceReferenceManager)
+          .mockReturnValueOnce(parentServiceReferenceManagerMock);
+
+        parentContainerFixture = new Container();
+      });
+
+      describe('when called', () => {
+        beforeAll(() => {
+          const child: Container = new Container({
+            parent: parentContainerFixture,
+          });
+
+          child.dispose();
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call parent planResultCacheService.unsubscribe()', () => {
+          expect(
+            parentPlanResultCacheServiceMock.unsubscribe,
+          ).toHaveBeenCalledTimes(1);
+          expect(
+            parentPlanResultCacheServiceMock.unsubscribe,
+          ).toHaveBeenCalledWith(planResultCacheServiceMock);
         });
       });
     });

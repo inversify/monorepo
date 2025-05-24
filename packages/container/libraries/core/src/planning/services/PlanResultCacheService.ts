@@ -54,7 +54,7 @@ export class PlanResultCacheService {
     Map<MetadataName, Map<MetadataTag, Map<unknown, PlanResult>>>
   >[];
 
-  readonly #subscribers: PlanResultCacheService[];
+  readonly #subscribers: Set<PlanResultCacheService>;
 
   constructor() {
     this.#serviceIdToValuePlanMap = this.#buildInitializedMapArray();
@@ -62,7 +62,7 @@ export class PlanResultCacheService {
     this.#namedTaggedServiceIdToValuePlanMap = this.#buildInitializedMapArray();
     this.#taggedServiceIdToValuePlanMap = this.#buildInitializedMapArray();
 
-    this.#subscribers = [];
+    this.#subscribers = new Set();
   }
 
   public clearCache(): void {
@@ -156,7 +156,11 @@ export class PlanResultCacheService {
   }
 
   public subscribe(subscriber: PlanResultCacheService): void {
-    this.#subscribers.push(subscriber);
+    this.#subscribers.add(subscriber);
+  }
+
+  public unsubscribe(subscriber: PlanResultCacheService): void {
+    this.#subscribers.delete(subscriber);
   }
 
   #buildInitializedMapArray<TKey, TValue>(): Map<TKey, TValue>[] {

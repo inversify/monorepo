@@ -264,5 +264,25 @@ describe(PlanResultCacheService.name, () => {
         expect(subscriberMock.clearCache).toHaveBeenCalledWith();
       });
     });
+
+    describe('when called with unsubscribed subscribers', () => {
+      let planService: PlanResultCacheService;
+      let subscriberMock: Mocked<PlanResultCacheService>;
+
+      beforeAll(() => {
+        planService = new PlanResultCacheService();
+        subscriberMock = {
+          clearCache: vitest.fn(),
+        } as unknown as Mocked<PlanResultCacheService>;
+
+        planService.subscribe(subscriberMock);
+        planService.unsubscribe(subscriberMock);
+        planService.clearCache();
+      });
+
+      it('should not call subscriber.clearCache()', () => {
+        expect(subscriberMock.clearCache).not.toHaveBeenCalled();
+      });
+    });
   });
 });

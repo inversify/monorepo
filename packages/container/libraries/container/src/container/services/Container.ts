@@ -29,6 +29,7 @@ import { SnapshotManager } from './SnapshotManager';
 const DEFAULT_DEFAULT_SCOPE: BindingScope = bindingScopeValues.Transient;
 
 export class Container {
+  readonly #parent: Container | undefined;
   readonly #bindingManager: BindingManager;
   readonly #containerModuleManager: ContainerModuleManager;
   readonly #pluginManager: PluginManager;
@@ -37,6 +38,7 @@ export class Container {
   readonly #snapshotManager: SnapshotManager;
 
   constructor(options?: ContainerOptions) {
+    this.#parent = options?.parent;
     this.#serviceReferenceManager = this.#buildServiceReferenceManager(options);
 
     const autobind: boolean = options?.autobind ?? false;
@@ -70,6 +72,14 @@ export class Container {
     );
 
     this.#snapshotManager = new SnapshotManager(this.#serviceReferenceManager);
+  }
+
+  public dispose(): void {
+    if (this.#parent) {
+      this.#parent.#serviceReferenceManager.planResultCacheService.unsubscribe(
+        this.#serviceReferenceManager.planResultCacheService,
+      );
+    }
   }
 
   public bind<T>(
