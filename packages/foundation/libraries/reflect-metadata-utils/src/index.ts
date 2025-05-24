@@ -5,8 +5,8 @@ import { updateOwnReflectMetadata } from './reflectMetadata/utils/updateOwnRefle
 import { updateReflectMetadata } from './reflectMetadata/utils/updateReflectMetadata';
 
 export {
-  getReflectMetadata,
   getOwnReflectMetadata,
+  getReflectMetadata,
   setReflectMetadata,
   updateOwnReflectMetadata,
   updateReflectMetadata,

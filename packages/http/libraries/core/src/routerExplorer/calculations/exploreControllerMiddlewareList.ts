@@ -1,11 +1,14 @@
-import { getReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMiddlewareMetadataReflectKey';
 
 export function exploreControllerMiddlewareList(
-  controller: NewableFunction,
+  controllerConstructor: NewableFunction,
 ): NewableFunction[] {
   return (
-    getReflectMetadata(controller, controllerMiddlewareMetadataReflectKey) ?? []
+    getOwnReflectMetadata(
+      controllerConstructor,
+      controllerMiddlewareMetadataReflectKey,
+    ) ?? []
   );
 }

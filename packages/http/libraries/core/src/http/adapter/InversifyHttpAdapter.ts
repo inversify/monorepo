@@ -200,8 +200,8 @@ export abstract class InversifyHttpAdapter<
     const routerExplorerControllerMetadataList: RouterExplorerControllerMetadata<
       TRequest,
       TResponse,
-      unknown
-    >[] = await buildRouterExplorerControllerMetadataList(this.#container);
+      TResult
+    >[] = buildRouterExplorerControllerMetadataList(this.#container);
 
     for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
       await this._buildRouter({
@@ -252,11 +252,7 @@ export abstract class InversifyHttpAdapter<
         ),
         handler: this.#buildHandler(
           target,
-          routerExplorerControllerMethodMetadata.methodKey,
-          routerExplorerControllerMethodMetadata.parameterMetadataList,
-          routerExplorerControllerMethodMetadata.headerMetadataList,
-          routerExplorerControllerMethodMetadata.statusCode,
-          routerExplorerControllerMethodMetadata.useNativeHandler,
+          routerExplorerControllerMethodMetadata,
         ),
         path: routerExplorerControllerMethodMetadata.path,
         postHandlerMiddlewareList: this.#getMiddlewareHandlerFromMetadata(
@@ -273,15 +269,41 @@ export abstract class InversifyHttpAdapter<
 
   #buildHandler(
     targetClass: NewableFunction,
-    controllerMethodKey: string | symbol,
-    controllerMethodParameterMetadataList: (
-      | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
-      | undefined
-    )[],
-    headerMetadataList: [string, string][],
-    statusCode: HttpStatusCode | undefined,
-    useNativeHandler: boolean,
+    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse,
+      unknown
+    >,
   ): RequestHandler<TRequest, TResponse, TNextFunction, TResult> {
+    const buildHandlerParams: (
+      request: TRequest,
+      response: TResponse,
+      next: TNextFunction,
+    ) => Promise<unknown[]> = this.#buildHandlerParams(
+      targetClass,
+      routerExplorerControllerMethodMetadata.methodKey,
+      routerExplorerControllerMethodMetadata.parameterMetadataList,
+    );
+
+    let reply: (
+      req: TRequest,
+      res: TResponse,
+      value: ControllerResponse,
+    ) => TResult;
+
+    if (routerExplorerControllerMethodMetadata.useNativeHandler) {
+      reply = (_req: TRequest, _res: TResponse, value: ControllerResponse) =>
+        value as TResult;
+    } else {
+      reply = (req: TRequest, res: TResponse, value: ControllerResponse) =>
+        this.#reply(
+          req,
+          res,
+          value,
+          routerExplorerControllerMethodMetadata.statusCode,
+        );
+    }
+
     return async (
       req: TRequest,
       res: TResponse,
@@ -291,26 +313,23 @@ export abstract class InversifyHttpAdapter<
         const controller: Controller =
           await this.#container.getAsync(targetClass);
 
-        const handlerParams: unknown[] = await this.#buildHandlerParams(
-          targetClass,
-          controllerMethodKey,
-          controllerMethodParameterMetadataList,
+        const handlerParams: unknown[] = await buildHandlerParams(
           req,
           res,
           next,
         );
 
-        this.#setHeaders(req, res, headerMetadataList);
+        this.#setHeaders(
+          req,
+          res,
+          routerExplorerControllerMethodMetadata.headerMetadataList,
+        );
 
-        const value: ControllerResponse | TResult = await controller[
-          controllerMethodKey
+        const value: ControllerResponse = await controller[
+          routerExplorerControllerMethodMetadata.methodKey
         ]?.(...handlerParams);
 
-        if (useNativeHandler) {
-          return value as TResult;
-        } else {
-          return this.#reply(req, res, value, statusCode);
-        }
+        return reply(req, res, value);
       } catch (error: unknown) {
         this.#printError(error);
 
@@ -332,98 +351,133 @@ export abstract class InversifyHttpAdapter<
     };
   }
 
-  async #buildHandlerParams(
+  #buildHandlerParams(
     targetClass: NewableFunction,
     controllerMethodKey: string | symbol,
     controllerMethodParameterMetadataList: (
       | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
       | undefined
     )[],
+  ): (
     request: TRequest,
     response: TResponse,
     next: TNextFunction,
-  ): Promise<unknown[]> {
-    const params: unknown[] = new Array(
-      controllerMethodParameterMetadataList.length,
+  ) => Promise<unknown[]> {
+    const paramBuilders: (
+      | ((
+          request: TRequest,
+          response: TResponse,
+          next: TNextFunction,
+        ) => unknown)
+      | undefined
+    )[] = controllerMethodParameterMetadataList.map(
+      (
+        controllerMethodParameterMetadata:
+          | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
+          | undefined,
+      ) => {
+        if (controllerMethodParameterMetadata === undefined) {
+          return undefined;
+        }
+
+        switch (controllerMethodParameterMetadata.parameterType) {
+          case RequestMethodParameterType.BODY:
+            return (request: TRequest): unknown =>
+              this._getBody(
+                request,
+                controllerMethodParameterMetadata.parameterName,
+              );
+          case RequestMethodParameterType.COOKIES:
+            return (request: TRequest, response: TResponse): unknown =>
+              this._getCookies(
+                request,
+                response,
+                controllerMethodParameterMetadata.parameterName,
+              );
+          case RequestMethodParameterType.CUSTOM:
+            return (request: TRequest, response: TResponse): unknown =>
+              controllerMethodParameterMetadata.customParameterDecoratorHandler?.(
+                request,
+                response,
+              );
+          case RequestMethodParameterType.HEADERS:
+            return (request: TRequest): unknown =>
+              this._getHeaders(
+                request,
+                controllerMethodParameterMetadata.parameterName,
+              );
+          case RequestMethodParameterType.NEXT:
+            return (
+              _request: TRequest,
+              _response: TResponse,
+              next: TNextFunction,
+            ): unknown => next;
+          case RequestMethodParameterType.PARAMS:
+            return (request: TRequest): unknown =>
+              this._getParams(
+                request,
+                controllerMethodParameterMetadata.parameterName,
+              );
+          case RequestMethodParameterType.QUERY:
+            return (request: TRequest): unknown =>
+              this._getQuery(
+                request,
+                controllerMethodParameterMetadata.parameterName,
+              );
+          case RequestMethodParameterType.REQUEST:
+            return (request: TRequest): unknown => request;
+          case RequestMethodParameterType.RESPONSE:
+            return (_request: TRequest, response: TResponse): unknown =>
+              response;
+        }
+      },
     );
 
-    await Promise.all(
-      controllerMethodParameterMetadataList.map(
-        async (
-          controllerMethodParameterMetadata:
-            | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
-            | undefined,
-          index: number,
-        ): Promise<void> => {
-          if (controllerMethodParameterMetadata !== undefined) {
-            let param: unknown;
+    return async (
+      request: TRequest,
+      response: TResponse,
+      next: TNextFunction,
+    ): Promise<unknown[]> => {
+      const params: unknown[] = new Array(
+        controllerMethodParameterMetadataList.length,
+      );
 
-            switch (controllerMethodParameterMetadata.parameterType) {
-              case RequestMethodParameterType.BODY:
-                param = this._getBody(
-                  request,
-                  controllerMethodParameterMetadata.parameterName,
-                );
-                break;
-              case RequestMethodParameterType.REQUEST: {
-                param = request;
-                break;
-              }
-              case RequestMethodParameterType.RESPONSE: {
-                param = response;
-                break;
-              }
-              case RequestMethodParameterType.PARAMS: {
-                param = this._getParams(
-                  request,
-                  controllerMethodParameterMetadata.parameterName,
-                );
-                break;
-              }
-              case RequestMethodParameterType.QUERY: {
-                param = this._getQuery(
-                  request,
-                  controllerMethodParameterMetadata.parameterName,
-                );
-                break;
-              }
-              case RequestMethodParameterType.HEADERS: {
-                param = this._getHeaders(
-                  request,
-                  controllerMethodParameterMetadata.parameterName,
-                );
-                break;
-              }
-              case RequestMethodParameterType.COOKIES: {
-                param = this._getCookies(
-                  request,
-                  response,
-                  controllerMethodParameterMetadata.parameterName,
-                );
-                break;
-              }
-              case RequestMethodParameterType.CUSTOM: {
-                param =
-                  controllerMethodParameterMetadata.customParameterDecoratorHandler?.(
-                    request,
-                    response,
-                  );
-                break;
-              }
-              case RequestMethodParameterType.NEXT: {
-                param = next;
-                break;
-              }
-            }
+      await Promise.all(
+        (
+          paramBuilders as ((
+            request: TRequest,
+            response: TResponse,
+            next: TNextFunction,
+          ) => unknown)[]
+        ).map(
+          async (
+            paramBuilder: (
+              request: TRequest,
+              response: TResponse,
+              next: TNextFunction,
+            ) => unknown,
+            index: number,
+          ): Promise<void> => {
+            const controllerMethodParameterMetadata: ControllerMethodParameterMetadata<
+              TRequest,
+              TResponse,
+              unknown
+            > = controllerMethodParameterMetadataList[
+              index
+            ] as ControllerMethodParameterMetadata<
+              TRequest,
+              TResponse,
+              unknown
+            >;
 
             await this.#appendHandlerParam(
               params,
               index,
-              param,
+              paramBuilder(request, response, next),
               controllerMethodParameterMetadata.parameterType,
             );
 
-            return this.#applyPipeList(
+            await this.#applyPipeList(
               params,
               [
                 ...this.#globalPipeList,
@@ -437,12 +491,12 @@ export abstract class InversifyHttpAdapter<
                 targetClass,
               },
             );
-          }
-        },
-      ),
-    );
+          },
+        ),
+      );
 
-    return params;
+      return params;
+    };
   }
 
   async #applyPipeList(

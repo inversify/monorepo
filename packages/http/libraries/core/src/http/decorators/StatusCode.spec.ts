@@ -10,14 +10,22 @@ import { statusCode } from './StatusCode';
 
 describe(statusCode.name, () => {
   describe('when called', () => {
+    let controllerFixture: NewableFunction;
+    let controllerMethodKeyFixture: string | symbol;
     let descriptorFixture: PropertyDescriptor;
 
     beforeAll(() => {
+      controllerFixture = class Test {};
+      controllerMethodKeyFixture = 'testMethod';
       descriptorFixture = {
         value: 'value-descriptor-example',
       } as PropertyDescriptor;
 
-      statusCode(HttpStatusCode.OK)({} as object, 'key', descriptorFixture);
+      statusCode(HttpStatusCode.OK)(
+        controllerFixture,
+        controllerMethodKeyFixture,
+        descriptorFixture,
+      );
     });
 
     afterAll(() => {
@@ -27,9 +35,10 @@ describe(statusCode.name, () => {
     it('should call setReflectMetadata', () => {
       expect(setReflectMetadata).toHaveBeenCalledTimes(1);
       expect(setReflectMetadata).toHaveBeenCalledWith(
-        descriptorFixture.value,
+        controllerFixture.constructor,
         controllerMethodStatusCodeMetadataReflectKey,
         HttpStatusCode.OK,
+        controllerMethodKeyFixture,
       );
     });
   });

@@ -1,6 +1,3 @@
-import { Container } from 'inversify';
-
-import { Controller } from '../../http/models/Controller';
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { MiddlewareOptions } from '../model/MiddlewareOptions';
@@ -11,10 +8,13 @@ import { exploreControllerGuardList } from './exploreControllerGuardList';
 import { exploreControllerMethodMetadataList } from './exploreControllerMethodMetadataList';
 import { exploreControllerMiddlewareList } from './exploreControllerMiddlewareList';
 
-export async function buildRouterExplorerControllerMetadata(
-  container: Container,
+export function buildRouterExplorerControllerMetadata<
+  TRequest,
+  TResponse,
+  TResult,
+>(
   controllerMetadata: ControllerMetadata,
-): Promise<RouterExplorerControllerMetadata> {
+): RouterExplorerControllerMetadata<TRequest, TResponse, TResult> {
   const controllerMethodMetadataList: ControllerMethodMetadata[] =
     exploreControllerMethodMetadataList(controllerMetadata.target);
 
@@ -25,17 +25,13 @@ export async function buildRouterExplorerControllerMetadata(
   const controllerMiddlewareList: NewableFunction[] =
     exploreControllerMiddlewareList(controllerMetadata.target);
 
-  const controller: Controller = await container.getAsync(
-    controllerMetadata.target,
-  );
-
   const middlewareOptions: MiddlewareOptions =
     buildMiddlewareOptionsFromApplyMiddlewareOptions(controllerMiddlewareList);
 
   return {
     controllerMethodMetadataList:
       buildRouterExplorerControllerMethodMetadataList(
-        controller,
+        controllerMetadata.target,
         controllerMethodMetadataList,
       ),
     guardList: controllerGuardList,

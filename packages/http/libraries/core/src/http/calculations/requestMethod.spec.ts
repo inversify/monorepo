@@ -1,25 +1,32 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('./buildArrayMetadataWithElement');
 
-import {
-  getReflectMetadata,
-  setReflectMetadata,
-} from '@inversifyjs/reflect-metadata-utils';
+import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
 import { RequestMethodType } from '../models/RequestMethodType';
+import { buildArrayMetadataWithElement } from './buildArrayMetadataWithElement';
+import { buildDefaultArrayMetadata } from './buildDefaultArrayMetadata';
 import { requestMethod } from './requestMethod';
 
 describe(requestMethod.name, () => {
-  describe('having a undefined path', () => {
+  describe('having a path undefined', () => {
     describe('when called', () => {
       let targetFixture: object;
+      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
       let keyFixture: string;
 
       beforeAll(() => {
         keyFixture = 'key-example';
+        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
+          arrayMetadata;
         targetFixture = {};
+
+        vitest
+          .mocked(buildArrayMetadataWithElement)
+          .mockReturnValueOnce(callbackFixture);
 
         requestMethod(RequestMethodType.GET)(
           targetFixture,
@@ -32,43 +39,44 @@ describe(requestMethod.name, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call getReflectMetadata', () => {
-        expect(getReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getReflectMetadata).toHaveBeenCalledWith(
-          targetFixture.constructor,
-          controllerMethodMetadataReflectKey,
-        );
+      it('should call buildArrayMetadataWithElement', () => {
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith({
+          methodKey: keyFixture,
+          path: '/',
+          requestMethodType: RequestMethodType.GET,
+        });
       });
 
-      it('should call setReflectMetadata', () => {
-        expect(setReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(setReflectMetadata).toHaveBeenCalledWith(
+      it('should call updateOwnReflectMetadata', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
+        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture.constructor,
           controllerMethodMetadataReflectKey,
-          [
-            {
-              methodKey: keyFixture,
-              path: '/',
-              requestMethodType: RequestMethodType.GET,
-            },
-          ],
+          buildDefaultArrayMetadata,
+          callbackFixture,
         );
       });
     });
   });
 
-  describe('having a defined path', () => {
-    describe('when called and getReflectMetadata returns metadata', () => {
-      let pathFixture: string;
+  describe('having a path defined', () => {
+    describe('when called', () => {
       let targetFixture: object;
+      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
+      let pathFixture: string;
       let keyFixture: string;
 
       beforeAll(() => {
-        pathFixture = 'path-example';
         keyFixture = 'key-example';
+        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
+          arrayMetadata;
+        pathFixture = '/example';
         targetFixture = {};
 
-        vitest.mocked(getReflectMetadata).mockReturnValueOnce([]);
+        vitest
+          .mocked(buildArrayMetadataWithElement)
+          .mockReturnValueOnce(callbackFixture);
 
         requestMethod(RequestMethodType.GET, pathFixture)(
           targetFixture,
@@ -81,26 +89,22 @@ describe(requestMethod.name, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call getReflectMetadata', () => {
-        expect(getReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getReflectMetadata).toHaveBeenCalledWith(
-          targetFixture.constructor,
-          controllerMethodMetadataReflectKey,
-        );
+      it('should call buildArrayMetadataWithElement', () => {
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith({
+          methodKey: keyFixture,
+          path: pathFixture,
+          requestMethodType: RequestMethodType.GET,
+        });
       });
 
-      it('should call setReflectMetadata', () => {
-        expect(setReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(setReflectMetadata).toHaveBeenCalledWith(
+      it('should call updateOwnReflectMetadata', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
+        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture.constructor,
           controllerMethodMetadataReflectKey,
-          [
-            {
-              methodKey: keyFixture,
-              path: pathFixture,
-              requestMethodType: RequestMethodType.GET,
-            },
-          ],
+          buildDefaultArrayMetadata,
+          callbackFixture,
         );
       });
     });
