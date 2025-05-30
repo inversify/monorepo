@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, Mocked, vitest } from 'vitest';
+import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('./exploreControllerMethodMetadataList');
 vitest.mock('./exploreControllerGuardList');
@@ -6,9 +6,6 @@ vitest.mock('./exploreControllerMiddlewareList');
 vitest.mock('./buildMiddlewareOptionsFromApplyMiddlewareOptions');
 vitest.mock('./buildRouterExplorerControllerMethodMetadataList');
 
-import { Container } from 'inversify';
-
-import { Controller } from '../../http/models/Controller';
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { MiddlewareOptions } from '../model/MiddlewareOptions';
@@ -22,20 +19,15 @@ import { exploreControllerMiddlewareList } from './exploreControllerMiddlewareLi
 
 describe(buildRouterExplorerControllerMetadata.name, () => {
   describe('when called', () => {
-    let containerMock: Mocked<Container>;
     let controllerMetadataFixture: ControllerMetadata;
     let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
     let controllerGuardListFixture: NewableFunction[];
     let controllerMiddlewareListFixture: NewableFunction[];
-    let controllerFixture: Controller;
     let middlewareOptionsFixture: MiddlewareOptions;
     let routerExplorerControllerMethodMetadataListFixture: RouterExplorerControllerMethodMetadata[];
     let result: unknown;
 
-    beforeAll(async () => {
-      containerMock = {
-        getAsync: vitest.fn(),
-      } as Partial<Mocked<Container>> as Mocked<Container>;
+    beforeAll(() => {
       controllerMetadataFixture = {
         path: '/test',
         target: class TestController {},
@@ -43,7 +35,6 @@ describe(buildRouterExplorerControllerMetadata.name, () => {
       controllerMethodMetadataListFixture = [];
       controllerGuardListFixture = [];
       controllerMiddlewareListFixture = [];
-      controllerFixture = {} as Controller;
       middlewareOptionsFixture = {
         postHandlerMiddlewareList: [],
         preHandlerMiddlewareList: [],
@@ -66,16 +57,11 @@ describe(buildRouterExplorerControllerMetadata.name, () => {
         .mocked(buildMiddlewareOptionsFromApplyMiddlewareOptions)
         .mockReturnValueOnce(middlewareOptionsFixture);
 
-      containerMock.getAsync.mockResolvedValueOnce(controllerFixture);
-
       vitest
         .mocked(buildRouterExplorerControllerMethodMetadataList)
         .mockReturnValueOnce(routerExplorerControllerMethodMetadataListFixture);
 
-      result = await buildRouterExplorerControllerMetadata(
-        containerMock,
-        controllerMetadataFixture,
-      );
+      result = buildRouterExplorerControllerMetadata(controllerMetadataFixture);
     });
 
     it('should call exploreControllerMethodMetadataList', () => {
@@ -99,13 +85,6 @@ describe(buildRouterExplorerControllerMetadata.name, () => {
       );
     });
 
-    it('should call container.getAsync', () => {
-      expect(containerMock.getAsync).toHaveBeenCalledTimes(1);
-      expect(containerMock.getAsync).toHaveBeenCalledWith(
-        controllerMetadataFixture.target,
-      );
-    });
-
     it('should call buildMiddlewareOptionsFromApplyMiddlewareOptions', () => {
       expect(
         buildMiddlewareOptionsFromApplyMiddlewareOptions,
@@ -122,7 +101,7 @@ describe(buildRouterExplorerControllerMetadata.name, () => {
       expect(
         buildRouterExplorerControllerMethodMetadataList,
       ).toHaveBeenCalledWith(
-        controllerFixture,
+        controllerMetadataFixture.target,
         controllerMethodMetadataListFixture,
       );
     });

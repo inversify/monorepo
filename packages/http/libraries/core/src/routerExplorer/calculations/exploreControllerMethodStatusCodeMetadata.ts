@@ -1,14 +1,15 @@
-import { getReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { ControllerFunction } from '../../http/models/ControllerFunction';
 import { HttpStatusCode } from '../../http/responses/HttpStatusCode';
 import { controllerMethodStatusCodeMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodStatusCodeMetadataReflectKey';
 
 export function exploreControllerMethodStatusCodeMetadata(
-  controllerMethod: ControllerFunction,
+  controllerConstructor: NewableFunction,
+  methodKey: string | symbol,
 ): HttpStatusCode | undefined {
-  return getReflectMetadata(
-    controllerMethod,
+  return getOwnReflectMetadata(
+    controllerConstructor,
     controllerMethodStatusCodeMetadataReflectKey,
+    methodKey,
   );
 }

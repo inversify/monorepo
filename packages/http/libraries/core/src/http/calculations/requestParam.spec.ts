@@ -1,10 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('./buildArrayMetadataWithIndex');
 
 import {
-  getReflectMetadata,
   setReflectMetadata,
+  updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
@@ -13,21 +14,21 @@ import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetada
 import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
+import { buildArrayMetadataWithIndex } from './buildArrayMetadataWithIndex';
+import { buildDefaultArrayMetadata } from './buildDefaultArrayMetadata';
 import { requestParam } from './requestParam';
 
 describe(requestParam.name, () => {
   describe('having a parameterType RESPONSE or NEXT', () => {
     describe('when called', () => {
-      let targetFixture: { [key: string | symbol]: unknown };
+      let targetFixture: NewableFunction;
       let keyFixture: string;
       let indexFixture: number;
       let controllerMethodParameterMetadataFixture: ControllerMethodParameterMetadata;
 
       beforeAll(() => {
+        targetFixture = class Test {};
         keyFixture = 'keyFixture';
-        targetFixture = {
-          [keyFixture]: vitest.fn(),
-        };
         indexFixture = 0;
         controllerMethodParameterMetadataFixture = {
           parameterType: RequestMethodParameterType.RESPONSE,
@@ -46,16 +47,11 @@ describe(requestParam.name, () => {
       });
 
       it('should call setReflectMetadata', () => {
-        expect(setReflectMetadata).toHaveBeenCalledTimes(2);
         expect(setReflectMetadata).toHaveBeenCalledWith(
-          targetFixture[keyFixture],
-          controllerMethodParameterMetadataReflectKey,
-          [controllerMethodParameterMetadataFixture],
-        );
-        expect(setReflectMetadata).toHaveBeenCalledWith(
-          targetFixture[keyFixture],
+          targetFixture.constructor,
           controllerMethodUseNativeHandlerMetadataReflectKey,
           true,
+          keyFixture,
         );
       });
     });
@@ -63,14 +59,14 @@ describe(requestParam.name, () => {
 
   describe('having an undefined key', () => {
     describe('when called', () => {
-      let targetFixture: object;
+      let targetFixture: NewableFunction;
       let keyFixture: undefined;
       let indexFixture: number;
       let controllerMethodParameterMetadataFixture: ControllerMethodParameterMetadata;
       let result: unknown;
 
       beforeAll(() => {
-        targetFixture = {};
+        targetFixture = class Test {};
         keyFixture = undefined;
         indexFixture = 0;
         controllerMethodParameterMetadataFixture = {
@@ -103,22 +99,27 @@ describe(requestParam.name, () => {
   });
 
   describe('having a string key', () => {
-    describe('when called and no previous metadata exists', () => {
-      let targetFixture: { [key: string | symbol]: unknown };
+    describe('when called', () => {
+      let targetFixture: NewableFunction;
       let keyFixture: string;
       let indexFixture: number;
       let controllerMethodParameterMetadataFixture: ControllerMethodParameterMetadata;
+      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
+        targetFixture = class Test {};
         keyFixture = 'keyFixture';
-        targetFixture = {
-          [keyFixture]: vitest.fn(),
-        };
         indexFixture = 2;
         controllerMethodParameterMetadataFixture = {
           parameterType: RequestMethodParameterType.QUERY,
           pipeList: [],
         };
+        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
+          arrayMetadata;
+
+        vitest
+          .mocked(buildArrayMetadataWithIndex)
+          .mockReturnValueOnce(callbackFixture);
 
         requestParam(controllerMethodParameterMetadataFixture)(
           targetFixture,
@@ -131,92 +132,22 @@ describe(requestParam.name, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call getReflectMetadata', () => {
-        expect(getReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getReflectMetadata).toHaveBeenCalledWith(
-          targetFixture[keyFixture],
-          controllerMethodParameterMetadataReflectKey,
-        );
-      });
-
-      it('should call setReflectMetadata', () => {
-        const expectedControllerMethodParameterMetadata: (
-          | ControllerMethodParameterMetadata
-          | undefined
-        )[] = [];
-        expectedControllerMethodParameterMetadata[indexFixture] =
-          controllerMethodParameterMetadataFixture;
-
-        expect(setReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(setReflectMetadata).toHaveBeenCalledWith(
-          targetFixture[keyFixture],
-          controllerMethodParameterMetadataReflectKey,
-          expectedControllerMethodParameterMetadata,
-        );
-      });
-    });
-
-    describe('when called and previous metadata exists', () => {
-      let targetFixture: { [key: string | symbol]: unknown };
-      let keyFixture: string;
-      let indexFixture: number;
-      let controllerMethodParameterMetadataFixture: ControllerMethodParameterMetadata;
-
-      beforeAll(() => {
-        keyFixture = 'keyFixture';
-        targetFixture = {
-          [keyFixture]: vitest.fn(),
-        };
-        indexFixture = 2;
-        controllerMethodParameterMetadataFixture = {
-          parameterType: RequestMethodParameterType.QUERY,
-          pipeList: [],
-        };
-
-        vitest.mocked(getReflectMetadata).mockReturnValueOnce([
-          {
-            parameterName: 'parameterNameFixture',
-            parameterType: RequestMethodParameterType.BODY,
-            pipeList: [],
-          },
-        ]);
-
-        requestParam(controllerMethodParameterMetadataFixture)(
-          targetFixture,
-          keyFixture,
+      it('should call buildArrayMetadataWithIndex', () => {
+        expect(buildArrayMetadataWithIndex).toHaveBeenCalledTimes(1);
+        expect(buildArrayMetadataWithIndex).toHaveBeenCalledWith(
+          controllerMethodParameterMetadataFixture,
           indexFixture,
         );
       });
 
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should call getReflectMetadata', () => {
-        expect(getReflectMetadata).toHaveBeenCalledWith(
-          targetFixture[keyFixture],
+      it('should call updateOwnReflectMetadata', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
+        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+          targetFixture.constructor,
           controllerMethodParameterMetadataReflectKey,
-        );
-      });
-
-      it('should call setReflectMetadata', () => {
-        const expectedControllerMethodParameterMetadata: (
-          | ControllerMethodParameterMetadata
-          | undefined
-        )[] = [
-          {
-            parameterName: 'parameterNameFixture',
-            parameterType: RequestMethodParameterType.BODY,
-            pipeList: [],
-          },
-        ];
-        expectedControllerMethodParameterMetadata[indexFixture] =
-          controllerMethodParameterMetadataFixture;
-
-        expect(setReflectMetadata).toHaveBeenCalledWith(
-          targetFixture[keyFixture],
-          controllerMethodParameterMetadataReflectKey,
-          expectedControllerMethodParameterMetadata,
+          buildDefaultArrayMetadata,
+          callbackFixture,
+          keyFixture,
         );
       });
     });

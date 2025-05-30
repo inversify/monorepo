@@ -5,11 +5,13 @@ export function updateOwnReflectMetadata<TMetadata>(
   metadataKey: unknown,
   buildDefaultValue: () => TMetadata,
   callback: (metadata: TMetadata) => TMetadata,
+  propertyKey?: string | symbol,
 ): void {
   const metadata: TMetadata =
-    getOwnReflectMetadata(target, metadataKey) ?? buildDefaultValue();
+    getOwnReflectMetadata(target, metadataKey, propertyKey) ??
+    buildDefaultValue();
 
   const updatedMetadata: TMetadata = callback(metadata);
 
-  Reflect.defineMetadata(metadataKey, updatedMetadata, target);
+  Reflect.defineMetadata(metadataKey, updatedMetadata, target, propertyKey);
 }

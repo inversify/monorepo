@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Newable } from 'inversify';
 
 import { CustomParameterDecoratorHandler } from '../../http/models/CustomParameterDecoratorHandler';
@@ -5,9 +6,9 @@ import { RequestMethodParameterType } from '../../http/models/RequestMethodParam
 import { Pipe } from '../../http/pipe/model/Pipe';
 
 export interface ControllerMethodParameterMetadata<
-  TRequest = unknown,
-  TResponse = unknown,
-  TResult = unknown,
+  TRequest = any,
+  TResponse = any,
+  TResult = any,
 > {
   customParameterDecoratorHandler?:
     | CustomParameterDecoratorHandler<TRequest, TResponse, TResult>

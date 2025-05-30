@@ -58,6 +58,7 @@ describe(updateOwnReflectMetadata.name, () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         targetFixture,
         metadataKeyFixture,
+        undefined,
       );
     });
 
@@ -118,6 +119,7 @@ describe(updateOwnReflectMetadata.name, () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         targetFixture,
         metadataKeyFixture,
+        undefined,
       );
     });
 
