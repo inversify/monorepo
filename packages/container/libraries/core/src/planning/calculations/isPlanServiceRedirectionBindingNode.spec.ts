@@ -40,6 +40,7 @@ describe(isPlanServiceRedirectionBindingNode, () => {
     beforeAll(() => {
       planServiceNodeFixture = {
         bindings: [],
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };

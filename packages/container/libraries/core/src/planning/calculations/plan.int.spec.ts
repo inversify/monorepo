@@ -61,9 +61,11 @@ function buildLeafBindingPlanResult(
     | DynamicValueBinding<unknown>
     | FactoryBinding<Factory<unknown>>
     | ProviderBinding<Provider<unknown>>,
+  chained: boolean = false,
 ): PlanResult {
   const planServiceNode: PlanServiceNode = {
     bindings: [],
+    chained,
     parent: undefined,
     serviceIdentifier: binding.serviceIdentifier,
   };
@@ -98,9 +100,11 @@ function buildSimpleInstancePlanResult(
     ),
   ],
   instanceBinding: InstanceBinding<unknown>,
+  chained: boolean = false,
 ): PlanResult {
   const planServiceNode: PlanServiceNode = {
     bindings: [],
+    chained,
     parent: undefined,
     serviceIdentifier: instanceBinding.serviceIdentifier,
   };
@@ -115,6 +119,7 @@ function buildSimpleInstancePlanResult(
 
   const constructorParamServiceNode: PlanServiceNode = {
     bindings: [],
+    chained: false,
     parent: instanceBindingNode,
     serviceIdentifier: constructorParameterBinding.serviceIdentifier,
   };
@@ -138,6 +143,7 @@ function buildSimpleInstancePlanResult(
 
   const propertyServiceNode: PlanServiceNode = {
     bindings: [],
+    chained: false,
     parent: instanceBindingNode,
     serviceIdentifier: propertyKeyBinding.serviceIdentifier,
   };
@@ -167,9 +173,11 @@ function buildSimpleResolvedValuePlanResult(
     | FactoryBinding<Factory<unknown>>
     | ProviderBinding<Provider<unknown>>,
   resolvedValueBinding: ResolvedValueBinding<unknown>,
+  chained: boolean = false,
 ): PlanResult {
   const planServiceNode: PlanServiceNode = {
     bindings: [],
+    chained,
     parent: undefined,
     serviceIdentifier: resolvedValueBinding.serviceIdentifier,
   };
@@ -182,6 +190,7 @@ function buildSimpleResolvedValuePlanResult(
 
   const constructorParamServiceNode: PlanServiceNode = {
     bindings: [],
+    chained: false,
     parent: instanceBindingNode,
     serviceIdentifier: parameterBinding.serviceIdentifier,
   };
@@ -211,9 +220,11 @@ function buildServiceRedirectionToLeafBindingPlanResult(
     | FactoryBinding<Factory<unknown>>
     | ProviderBinding<Provider<unknown>>,
   serviceRedirectionBinding: ServiceRedirectionBinding<unknown>,
+  chained: boolean = false,
 ): PlanResult {
   const planServiceNode: PlanServiceNode = {
     bindings: [],
+    chained,
     parent: undefined,
     serviceIdentifier: serviceRedirectionBinding.serviceIdentifier,
   };

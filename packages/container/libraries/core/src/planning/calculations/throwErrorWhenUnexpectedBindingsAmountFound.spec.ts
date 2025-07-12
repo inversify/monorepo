@@ -32,6 +32,7 @@ describe(throwErrorWhenUnexpectedBindingsAmountFound, () => {
       isOptionalFixture = false;
       nodeFixture = {
         bindings: [],
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-identifier',
       };
@@ -112,6 +113,7 @@ Binding constraints:
     beforeAll(() => {
       const parentNode: PlanServiceNode = {
         bindings: [],
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'target-service-id',
       };
@@ -137,6 +139,7 @@ Binding constraints:
       isOptionalFixture = false;
       nodeFixture = {
         bindings: [],
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-identifier',
       };
@@ -198,6 +201,7 @@ Binding constraints:
         },
         parent: {
           bindings: [],
+          chained: false,
           parent: undefined,
           serviceIdentifier: 'service-id',
         },
@@ -284,6 +288,7 @@ Binding constraints:
       isOptionalFixture = false;
       nodeFixture = {
         bindings: [],
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-identifier',
       };
@@ -366,6 +371,7 @@ Binding constraints:
       isOptionalFixture = true;
       nodeFixture = {
         bindings: [],
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-identifier',
       };
@@ -415,6 +421,7 @@ Binding constraints:
     beforeAll(() => {
       const parentNode: PlanServiceNode = {
         bindings: [],
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'target-service-id',
       };
@@ -469,6 +476,7 @@ Binding constraints:
         },
         parent: {
           bindings: [],
+          chained: false,
           parent: undefined,
           serviceIdentifier: 'service-id',
         },

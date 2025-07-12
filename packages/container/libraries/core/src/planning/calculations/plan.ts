@@ -59,17 +59,20 @@ export function plan(params: PlanParams): PlanResult {
     const bindingConstraints: BindingConstraints =
       new BindingConstraintsImplementation(bindingConstraintsList.last);
 
+    const chained: boolean = params.rootConstraints.isMultiple
+      ? params.rootConstraints.chained
+      : false;
+
     const filteredServiceBindings: Binding<unknown>[] =
       buildFilteredServiceBindings(params, bindingConstraints, {
-        chained: params.rootConstraints.isMultiple
-          ? params.rootConstraints.chained
-          : false,
+        chained,
       });
 
     const serviceNodeBindings: PlanBindingNode[] = [];
 
     const serviceNode: PlanServiceNode = {
       bindings: serviceNodeBindings,
+      chained,
       parent: undefined,
       serviceIdentifier: params.rootConstraints.serviceIdentifier,
     };
@@ -175,6 +178,7 @@ function buildPlanServiceNodeFromClassElementMetadata(
 
   const serviceNode: PlanServiceNode = {
     bindings: serviceNodeBindings,
+    chained,
     parent: params.node,
     serviceIdentifier,
   };
@@ -239,6 +243,7 @@ function buildPlanServiceNodeFromResolvedValueElementMetadata(
 
   const serviceNode: PlanServiceNode = {
     bindings: serviceNodeBindings,
+    chained,
     parent: params.node,
     serviceIdentifier,
   };
@@ -376,14 +381,11 @@ function buildServiceRedirectionPlanBindingNode(
     new BindingConstraintsImplementation(bindingConstraintsList.last);
 
   /*
-   * We need to determine whether or not bindings are chained.
+   * TODO: We need to determine whether or not bindings are chained.
    * We can do that by checking the metadata in the ancestor nodes.
    *
    * Algorithm:
-   * 1. Traverse parent nodes until a PlanServiceNode is found.
-   * 2. If the parent node is a PlanServiceNode, check if it has a parent node.
-   *   2.1. If so, that node must have metadata with chained property.
-   *   2.2. If not, we need to check the root constraints for its chained property.
+   * Traverse parent nodes until a PlanServiceNode is found. Bindings are chained if the parent node is chained.
    */
 
   const filteredServiceBindings: Binding<unknown>[] =

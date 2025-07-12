@@ -159,6 +159,7 @@ describe(resolve, () => {
           tree: {
             root: {
               bindings: [],
+              chained: false,
               parent: undefined,
               serviceIdentifier: 'service-id',
             },
@@ -187,6 +188,7 @@ describe(resolve, () => {
     beforeAll(() => {
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -263,6 +265,7 @@ describe(resolve, () => {
     beforeAll(() => {
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -371,6 +374,7 @@ describe(resolve, () => {
     beforeAll(() => {
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -447,6 +451,7 @@ describe(resolve, () => {
     beforeAll(() => {
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -521,6 +526,7 @@ describe(resolve, () => {
     beforeAll(() => {
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -600,6 +606,7 @@ describe(resolve, () => {
     beforeAll(() => {
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -680,6 +687,7 @@ describe(resolve, () => {
     beforeAll(() => {
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -754,6 +762,7 @@ describe(resolve, () => {
     beforeAll(() => {
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -867,6 +876,7 @@ describe(resolve, () => {
     beforeAll(() => {
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };

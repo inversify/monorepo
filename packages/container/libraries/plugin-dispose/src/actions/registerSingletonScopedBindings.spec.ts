@@ -34,6 +34,7 @@ describe(registerSingletonScopedBindings, () => {
         tree: {
           root: {
             bindings: undefined,
+            chained: false,
             parent: undefined,
             serviceIdentifier: 'service-id',
           },
@@ -75,6 +76,7 @@ describe(registerSingletonScopedBindings, () => {
 
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -104,6 +106,7 @@ describe(registerSingletonScopedBindings, () => {
         tree: {
           root: {
             bindings: leafBindingNode,
+            chained: false,
             parent: undefined,
             serviceIdentifier: 'service-id',
           },
@@ -199,6 +202,7 @@ describe(registerSingletonScopedBindings, () => {
 
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -228,6 +232,7 @@ describe(registerSingletonScopedBindings, () => {
         tree: {
           root: {
             bindings: [leafBindingNode],
+            chained: false,
             parent: undefined,
             serviceIdentifier: 'service-id',
           },
@@ -286,6 +291,7 @@ describe(registerSingletonScopedBindings, () => {
 
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -333,6 +339,7 @@ describe(registerSingletonScopedBindings, () => {
 
       leafServiceNode = {
         bindings: leafBindingNode,
+        chained: false,
         parent: instanceBindingNode,
         serviceIdentifier: 'constant-value-service-id',
       };
@@ -346,6 +353,7 @@ describe(registerSingletonScopedBindings, () => {
         tree: {
           root: {
             bindings: instanceBindingNode,
+            chained: false,
             parent: undefined,
             serviceIdentifier: 'service-id',
           },
@@ -474,6 +482,7 @@ describe(registerSingletonScopedBindings, () => {
 
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -522,6 +531,7 @@ describe(registerSingletonScopedBindings, () => {
 
       leafServiceNode = {
         bindings: leafBindingNode,
+        chained: false,
         parent: resolvedValueBindingNode,
         serviceIdentifier: 'constant-value-service-id',
       };
@@ -535,6 +545,7 @@ describe(registerSingletonScopedBindings, () => {
         tree: {
           root: {
             bindings: resolvedValueBindingNode,
+            chained: false,
             parent: undefined,
             serviceIdentifier: 'service-id',
           },
@@ -650,6 +661,7 @@ describe(registerSingletonScopedBindings, () => {
 
       const serviceNode: PlanServiceNode = {
         bindings: undefined,
+        chained: false,
         parent: undefined,
         serviceIdentifier: 'service-id',
       };
@@ -695,6 +707,7 @@ describe(registerSingletonScopedBindings, () => {
         tree: {
           root: {
             bindings: planServiceRedirectionBindingNode,
+            chained: false,
             parent: undefined,
             serviceIdentifier: 'service-id',
           },

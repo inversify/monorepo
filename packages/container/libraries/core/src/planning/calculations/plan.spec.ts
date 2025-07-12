@@ -116,6 +116,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -182,6 +183,7 @@ describe(plan, () => {
           tree: {
             root: {
               bindings: [],
+              chained: false,
               parent: undefined,
               serviceIdentifier:
                 planParamsMock.rootConstraints.serviceIdentifier,
@@ -239,6 +241,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -310,6 +313,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -455,6 +459,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -477,6 +482,7 @@ describe(plan, () => {
 
         const constructorParamsPlanServiceNode: PlanServiceNode = {
           bindings: constructorParamsPlanServiceNodeBindings,
+          chained: false,
           parent: instanceBindingNode,
           serviceIdentifier:
             constructorArgumentMetadata.value as ServiceIdentifier,
@@ -491,6 +497,7 @@ describe(plan, () => {
 
         const propertyParamsPlanServiceNode: PlanServiceNode = {
           bindings: propertyParamsPlanServiceNodeBindings,
+          chained: false,
           parent: instanceBindingNode,
           serviceIdentifier: propertyMetadata.value as ServiceIdentifier,
         };
@@ -638,6 +645,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -660,6 +668,7 @@ describe(plan, () => {
 
         const constructorParamsPlanServiceNode: PlanServiceNode = {
           bindings: constructorParamsPlanServiceNodeBindings,
+          chained: false,
           parent: instanceBindingNode,
           serviceIdentifier: (
             constructorArgumentMetadata.value as LazyServiceIdentifier
@@ -675,6 +684,7 @@ describe(plan, () => {
 
         const propertyParamsPlanServiceNode: PlanServiceNode = {
           bindings: propertyParamsPlanServiceNodeBindings,
+          chained: false,
           parent: instanceBindingNode,
           serviceIdentifier: (
             propertyMetadata.value as LazyServiceIdentifier
@@ -818,6 +828,7 @@ describe(plan, () => {
       it('should call checkServiceNodeSingleInjectionBindings()', () => {
         const constructorParamsPlanServiceNode: PlanServiceNode = {
           bindings: expect.any(Object) as unknown as PlanBindingNode,
+          chained: false,
           parent: expect.any(Object) as unknown as PlanServiceNodeParent,
           serviceIdentifier:
             constructorArgumentMetadata.value as ServiceIdentifier,
@@ -825,6 +836,7 @@ describe(plan, () => {
 
         const propertyParamsPlanServiceNode: PlanServiceNode = {
           bindings: expect.any(Object) as unknown as PlanBindingNode,
+          chained: false,
           parent: expect.any(Object) as unknown as PlanServiceNodeParent,
           serviceIdentifier: propertyMetadata.value as ServiceIdentifier,
         };
@@ -853,6 +865,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -873,6 +886,7 @@ describe(plan, () => {
 
         const constructorParamsPlanServiceNode: PlanServiceNode = {
           bindings: undefined,
+          chained: false,
           parent: instanceBindingNode,
           serviceIdentifier:
             constructorArgumentMetadata.value as ServiceIdentifier,
@@ -887,6 +901,7 @@ describe(plan, () => {
 
         const propertyParamsPlanServiceNode: PlanServiceNode = {
           bindings: undefined,
+          chained: false,
           parent: instanceBindingNode,
           serviceIdentifier: propertyMetadata.value as ServiceIdentifier,
         };
@@ -982,6 +997,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -1057,6 +1073,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -1173,6 +1190,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -1193,6 +1211,7 @@ describe(plan, () => {
 
         const paramsPlanServiceNode: PlanServiceNode = {
           bindings: paramsPlanServiceNodeBindings,
+          chained: false,
           parent: resolvedValueBindingNode,
           serviceIdentifier:
             resolvedValueElementMetadataFixture.value as ServiceIdentifier,
@@ -1305,6 +1324,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -1325,6 +1345,7 @@ describe(plan, () => {
 
         const paramsPlanServiceNode: PlanServiceNode = {
           bindings: paramsPlanServiceNodeBindings,
+          chained: false,
           parent: resolvedValueBindingNode,
           serviceIdentifier: (
             resolvedValueElementMetadataFixture.value as LazyServiceIdentifier
@@ -1437,6 +1458,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -1455,6 +1477,7 @@ describe(plan, () => {
 
         const paramsPlanServiceNode: PlanServiceNode = {
           bindings: undefined,
+          chained: false,
           parent: resolvedValueBindingNode,
           serviceIdentifier:
             resolvedValueElementMetadataFixture.value as ServiceIdentifier,
@@ -1526,6 +1549,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -1621,6 +1645,7 @@ describe(plan, () => {
 
         const planServiceNode: PlanServiceNode = {
           bindings: planServiceNodeBindings,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -1693,6 +1718,7 @@ describe(plan, () => {
       it('should call checkServiceNodeSingleInjectionBindings()', () => {
         const expectedServiceNode: PlanServiceNode = {
           bindings: undefined,
+          chained: false,
           parent: undefined,
           serviceIdentifier: planParamsMock.rootConstraints.serviceIdentifier,
         };
@@ -1712,6 +1738,7 @@ describe(plan, () => {
           tree: {
             root: {
               bindings: undefined,
+              chained: false,
               parent: undefined,
               serviceIdentifier:
                 planParamsMock.rootConstraints.serviceIdentifier,
