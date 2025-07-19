@@ -5,13 +5,13 @@
   },
   "description": "InversifyJs E2E tests package",
   "dependencies": {
-    "@cucumber/cucumber": "12.0.0",
+    "@cucumber/cucumber": "12.1.0",
     "@inversifyjs/common": "workspace:*",
     "@inversifyjs/container": "workspace:*",
     "@inversifyjs/core": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "22.16.4",
+    "@types/node": "22.16.5",
     "eslint": "9.31.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",

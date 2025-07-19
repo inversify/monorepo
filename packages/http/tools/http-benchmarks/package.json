@@ -5,7 +5,7 @@
   },
   "description": "InversifyJs benchmarks package",
   "dependencies": {
-    "@hono/node-server": "1.16.0",
+    "@hono/node-server": "1.17.0",
     "@inversifyjs/benchmark-utils": "workspace:*",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
@@ -27,7 +27,7 @@
     "@types/express": "^5.0.3",
     "@types/express4": "npm:@types/express@4.17.23",
     "@types/k6": "^1.1.1",
-    "@types/node": "^22.16.4",
+    "@types/node": "^22.16.5",
     "eslint": "9.31.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
