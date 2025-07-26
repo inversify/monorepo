@@ -3,10 +3,12 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('../calculations/buildSetHeaderMetadata');
 
-import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import {
+  buildDefaultMapMetadata,
+  updateOwnReflectMetadata,
+} from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey';
-import { buildDefaultMapMetadata } from '../calculations/buildDefaultMapMetadata';
 import { buildSetHeaderMetadata } from '../calculations/buildSetHeaderMetadata';
 import { SetHeader } from './SetHeader';
 

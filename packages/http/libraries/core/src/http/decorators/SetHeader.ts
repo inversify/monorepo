@@ -1,7 +1,9 @@
-import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import {
+  buildDefaultMapMetadata,
+  updateOwnReflectMetadata,
+} from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey';
-import { buildDefaultMapMetadata } from '../calculations/buildDefaultMapMetadata';
 import { buildSetHeaderMetadata } from '../calculations/buildSetHeaderMetadata';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

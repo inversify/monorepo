@@ -1,10 +1,12 @@
-import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import {
+  buildArrayMetadataWithElement,
+  buildDefaultArrayMetadata,
+  updateOwnReflectMetadata,
+} from '@inversifyjs/reflect-metadata-utils';
 import { BindingScope, injectable } from 'inversify';
 
 import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
 import { ControllerMetadata } from '../../routerExplorer/model/ControllerMetadata';
-import { buildArrayMetadataWithElement } from '../calculations/buildArrayMetadataWithElement';
-import { buildDefaultArrayMetadata } from '../calculations/buildDefaultArrayMetadata';
 import { ControllerOptions } from '../models/ControllerOptions';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

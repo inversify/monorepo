@@ -1,10 +1,12 @@
-import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import {
+  buildArrayMetadataWithArray,
+  buildDefaultArrayMetadata,
+  updateOwnReflectMetadata,
+} from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
 import { controllerGuardMetadataReflectKey } from '../../reflectMetadata/data/controllerGuardMetadataReflectKey';
 import { controllerMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodGuardMetadataReflectKey';
-import { buildArrayMetadataWithArray } from '../calculations/buildArrayMetadataWithArray';
-import { buildDefaultArrayMetadata } from '../calculations/buildDefaultArrayMetadata';
 import { Guard } from '../guard/model/Guard';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

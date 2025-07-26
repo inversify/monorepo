@@ -1,9 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
-vitest.mock('./buildArrayMetadataWithIndex');
 
 import {
+  buildArrayMetadataWithIndex,
+  buildDefaultArrayMetadata,
   setReflectMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
@@ -14,8 +15,6 @@ import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetada
 import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { buildArrayMetadataWithIndex } from './buildArrayMetadataWithIndex';
-import { buildDefaultArrayMetadata } from './buildDefaultArrayMetadata';
 import { requestParam } from './requestParam';
 
 describe(requestParam, () => {

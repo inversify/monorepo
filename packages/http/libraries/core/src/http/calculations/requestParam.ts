@@ -1,4 +1,6 @@
 import {
+  buildArrayMetadataWithIndex,
+  buildDefaultArrayMetadata,
   setReflectMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
@@ -9,8 +11,6 @@ import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetada
 import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { buildArrayMetadataWithIndex } from './buildArrayMetadataWithIndex';
-import { buildDefaultArrayMetadata } from './buildDefaultArrayMetadata';
 
 export function requestParam(
   controllerMethodParameterMetadata: ControllerMethodParameterMetadata,

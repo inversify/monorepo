@@ -12,12 +12,14 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('inversify');
 vitest.mock('../calculations/buildArrayMetadataWithElement');
 
-import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import {
+  buildArrayMetadataWithElement,
+  buildDefaultArrayMetadata,
+  updateOwnReflectMetadata,
+} from '@inversifyjs/reflect-metadata-utils';
 import { injectable } from 'inversify';
 
 import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
-import { buildArrayMetadataWithElement } from '../calculations/buildArrayMetadataWithElement';
-import { buildDefaultArrayMetadata } from '../calculations/buildDefaultArrayMetadata';
 import { ControllerOptions } from '../models/ControllerOptions';
 import { Controller } from './Controller';
 
