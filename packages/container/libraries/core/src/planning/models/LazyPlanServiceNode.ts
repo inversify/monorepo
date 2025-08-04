@@ -12,10 +12,13 @@ export abstract class LazyPlanServiceNode implements PlanServiceNode {
   protected readonly _serviceIdentifier: ServiceIdentifier;
   protected _serviceNode: PlanServiceNode | undefined;
 
-  constructor(serviceNode: PlanServiceNode) {
+  constructor(
+    serviceNode: PlanServiceNode | undefined,
+    serviceIdentifier: ServiceIdentifier,
+  ) {
     this[isLazyPlanServiceNodeSymbol] = true;
-    this._serviceIdentifier = serviceNode.serviceIdentifier;
     this._serviceNode = serviceNode;
+    this._serviceIdentifier = serviceIdentifier;
   }
 
   public get bindings(): PlanBindingNode | PlanBindingNode[] | undefined {
@@ -51,6 +54,10 @@ export abstract class LazyPlanServiceNode implements PlanServiceNode {
 
   public invalidate(): void {
     this._serviceNode = undefined;
+  }
+
+  public isExpanded(): boolean {
+    return this._serviceNode !== undefined;
   }
 
   protected _getNode(): PlanServiceNode {
