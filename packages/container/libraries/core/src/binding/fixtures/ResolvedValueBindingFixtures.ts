@@ -1,3 +1,4 @@
+import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
 import { bindingScopeValues } from '../models/BindingScope';
 import { bindingTypeValues } from '../models/BindingType';
 import { ResolvedValueBinding } from '../models/ResolvedValueBinding';
@@ -21,6 +22,23 @@ export class ResolvedValueBindingFixtures {
       scope: bindingScopeValues.Singleton,
       serviceIdentifier: Symbol(),
       type: bindingTypeValues.ResolvedValue,
+    };
+  }
+
+  public static get withSingleInjectionMetadata(): ResolvedValueBinding<unknown> {
+    return {
+      ...ResolvedValueBindingFixtures.any,
+      metadata: {
+        arguments: [
+          {
+            kind: ResolvedValueElementMetadataKind.singleInjection,
+            name: undefined,
+            optional: false,
+            tags: new Map(),
+            value: Symbol(),
+          },
+        ],
+      },
     };
   }
 }
