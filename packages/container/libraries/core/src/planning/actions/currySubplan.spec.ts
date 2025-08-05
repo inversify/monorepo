@@ -464,6 +464,370 @@ describe(currySubplan, () => {
     });
   });
 
+  describe('having BasePlanParams with InstanceBindingNode with single injection property', () => {
+    let instanceBindingNodeFixture: InstanceBindingNode;
+
+    let subplanParamsMock: SubplanParams;
+
+    beforeAll(() => {
+      instanceBindingNodeFixture = {
+        binding: InstanceBindingFixtures.any,
+        classMetadata: ClassMetadataFixtures.withSingleInjectionProperty,
+        constructorParams: [],
+        propertyParams: new Map(),
+      };
+
+      subplanParamsMock = {
+        autobindOptions: undefined,
+        node: instanceBindingNodeFixture,
+        operations: {
+          getPlan: vitest.fn(),
+        } as Partial<PlanParamsOperations> as PlanParamsOperations,
+        servicesBranch: [],
+      };
+    });
+
+    describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns undefined', () => {
+      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        bindingConstraintsListFixture =
+          new SingleInmutableLinkedList<InternalBindingConstraints>({
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          });
+
+        vitest
+          .mocked(tryBuildGetPlanOptionsFromManagedClassElementMetadata)
+          .mockReturnValueOnce(undefined);
+
+        result = currySubplan(
+          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
+          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+        )(subplanParamsMock, bindingConstraintsListFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call tryBuildGetPlanOptionsFromManagedClassElementMetadata()', () => {
+        const [property]: [string | symbol] = [
+          ...instanceBindingNodeFixture.classMetadata.properties.keys(),
+        ] as [string | symbol];
+
+        expect(
+          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
+        ).toHaveBeenCalledWith(
+          instanceBindingNodeFixture.classMetadata.properties.get(property),
+        );
+      });
+
+      it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
+        const [property]: [string | symbol] = [
+          ...instanceBindingNodeFixture.classMetadata.properties.keys(),
+        ] as [string | symbol];
+
+        expect(
+          buildPlanServiceNodeFromClassElementMetadataMock,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          buildPlanServiceNodeFromClassElementMetadataMock,
+        ).toHaveBeenCalledWith(
+          subplanParamsMock,
+          bindingConstraintsListFixture,
+          instanceBindingNodeFixture.classMetadata.properties.get(property),
+        );
+      });
+
+      it('should call cacheNonRootPlanServiceNode()', () => {
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledTimes(1);
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledWith(
+          undefined,
+          subplanParamsMock.operations,
+          expect.any(LazyPlanServiceNode),
+        );
+      });
+
+      it('should return PlanBindingNode', () => {
+        expect(result).toBe(instanceBindingNodeFixture);
+      });
+    });
+
+    describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns undefined', () => {
+      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let getPlanOptionsFixture: GetPlanOptions;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        bindingConstraintsListFixture =
+          new SingleInmutableLinkedList<InternalBindingConstraints>({
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          });
+
+        getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
+
+        vitest
+          .mocked(tryBuildGetPlanOptionsFromManagedClassElementMetadata)
+          .mockReturnValueOnce(getPlanOptionsFixture);
+
+        result = currySubplan(
+          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
+          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+        )(subplanParamsMock, bindingConstraintsListFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call tryBuildGetPlanOptionsFromManagedClassElementMetadata()', () => {
+        const [property]: [string | symbol] = [
+          ...instanceBindingNodeFixture.classMetadata.properties.keys(),
+        ] as [string | symbol];
+
+        expect(
+          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
+        ).toHaveBeenCalledWith(
+          instanceBindingNodeFixture.classMetadata.properties.get(property),
+        );
+      });
+
+      it('should call operations.getPlan()', () => {
+        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledTimes(1);
+        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledWith(
+          getPlanOptionsFixture,
+        );
+      });
+
+      it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
+        const [property]: [string | symbol] = [
+          ...instanceBindingNodeFixture.classMetadata.properties.keys(),
+        ] as [string | symbol];
+
+        expect(
+          buildPlanServiceNodeFromClassElementMetadataMock,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          buildPlanServiceNodeFromClassElementMetadataMock,
+        ).toHaveBeenCalledWith(
+          subplanParamsMock,
+          bindingConstraintsListFixture,
+          instanceBindingNodeFixture.classMetadata.properties.get(property),
+        );
+      });
+
+      it('should call cacheNonRootPlanServiceNode()', () => {
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledTimes(1);
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledWith(
+          getPlanOptionsFixture,
+          subplanParamsMock.operations,
+          expect.any(LazyPlanServiceNode),
+        );
+      });
+
+      it('should return PlanBindingNode', () => {
+        expect(result).toBe(instanceBindingNodeFixture);
+      });
+    });
+
+    describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns context free plan', () => {
+      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let getPlanOptionsFixture: GetPlanOptions;
+      let planResultFixture: PlanResult;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        bindingConstraintsListFixture =
+          new SingleInmutableLinkedList<InternalBindingConstraints>({
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          });
+
+        getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
+
+        planResultFixture = {
+          tree: {
+            root: {
+              bindings: [],
+              isContextFree: true,
+              serviceIdentifier: Symbol(),
+            },
+          },
+        };
+
+        vitest
+          .mocked(tryBuildGetPlanOptionsFromManagedClassElementMetadata)
+          .mockReturnValueOnce(getPlanOptionsFixture);
+
+        vitest
+          .mocked(subplanParamsMock.operations.getPlan)
+          .mockReturnValueOnce(planResultFixture);
+
+        result = currySubplan(
+          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
+          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+        )(subplanParamsMock, bindingConstraintsListFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call tryBuildGetPlanOptionsFromManagedClassElementMetadata()', () => {
+        const [property]: [string | symbol] = [
+          ...instanceBindingNodeFixture.classMetadata.properties.keys(),
+        ] as [string | symbol];
+
+        expect(
+          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
+        ).toHaveBeenCalledWith(
+          instanceBindingNodeFixture.classMetadata.properties.get(property),
+        );
+      });
+
+      it('should call operations.getPlan()', () => {
+        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledTimes(1);
+        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledWith(
+          getPlanOptionsFixture,
+        );
+      });
+
+      it('should not call buildPlanServiceNodeFromClassElementMetadata()', () => {
+        expect(
+          buildPlanServiceNodeFromClassElementMetadataMock,
+        ).not.toHaveBeenCalled();
+      });
+
+      it('should not call cacheNonRootPlanServiceNode()', () => {
+        expect(cacheNonRootPlanServiceNode).not.toHaveBeenCalled();
+      });
+
+      it('should return PlanBindingNode', () => {
+        expect(result).toBe(instanceBindingNodeFixture);
+      });
+    });
+
+    describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns non context free plan', () => {
+      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let getPlanOptionsFixture: GetPlanOptions;
+      let planResultFixture: PlanResult;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        bindingConstraintsListFixture =
+          new SingleInmutableLinkedList<InternalBindingConstraints>({
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          });
+
+        getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
+
+        planResultFixture = {
+          tree: {
+            root: {
+              bindings: [],
+              isContextFree: false,
+              serviceIdentifier: Symbol(),
+            },
+          },
+        };
+
+        vitest
+          .mocked(tryBuildGetPlanOptionsFromManagedClassElementMetadata)
+          .mockReturnValueOnce(getPlanOptionsFixture);
+
+        vitest
+          .mocked(subplanParamsMock.operations.getPlan)
+          .mockReturnValueOnce(planResultFixture);
+
+        result = currySubplan(
+          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
+          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+        )(subplanParamsMock, bindingConstraintsListFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call tryBuildGetPlanOptionsFromManagedClassElementMetadata()', () => {
+        const [property]: [string | symbol] = [
+          ...instanceBindingNodeFixture.classMetadata.properties.keys(),
+        ] as [string | symbol];
+
+        expect(
+          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
+        ).toHaveBeenCalledWith(
+          instanceBindingNodeFixture.classMetadata.properties.get(property),
+        );
+      });
+
+      it('should call operations.getPlan()', () => {
+        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledTimes(1);
+        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledWith(
+          getPlanOptionsFixture,
+        );
+      });
+
+      it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
+        const [property]: [string | symbol] = [
+          ...instanceBindingNodeFixture.classMetadata.properties.keys(),
+        ] as [string | symbol];
+
+        expect(
+          buildPlanServiceNodeFromClassElementMetadataMock,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          buildPlanServiceNodeFromClassElementMetadataMock,
+        ).toHaveBeenCalledWith(
+          subplanParamsMock,
+          bindingConstraintsListFixture,
+          instanceBindingNodeFixture.classMetadata.properties.get(property),
+        );
+      });
+
+      it('should call cacheNonRootPlanServiceNode()', () => {
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledTimes(1);
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledWith(
+          getPlanOptionsFixture,
+          subplanParamsMock.operations,
+          expect.any(LazyPlanServiceNode),
+        );
+      });
+
+      it('should return PlanBindingNode', () => {
+        expect(result).toBe(instanceBindingNodeFixture);
+      });
+    });
+  });
+
   describe('having BasePlanParams with ResolvedValueBindingNode with single injection metadata binding', () => {
     let resolvedValueBindingNodeFixture: ResolvedValueBindingNode;
 

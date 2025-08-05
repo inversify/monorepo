@@ -46,6 +46,26 @@ export class ClassMetadataFixtures {
     return fixture;
   }
 
+  public static get withSingleInjectionProperty(): ClassMetadata {
+    const fixture: ClassMetadata = {
+      ...ClassMetadataFixtures.any,
+      properties: new Map([
+        [
+          Symbol(),
+          {
+            kind: ClassElementMetadataKind.singleInjection,
+            name: undefined,
+            optional: false,
+            tags: new Map(),
+            value: Symbol(),
+          },
+        ],
+      ]),
+    };
+
+    return fixture;
+  }
+
   public static get withNoPreDestroyMethodName(): ClassMetadata {
     const fixture: ClassMetadata = {
       constructorArguments: [],
