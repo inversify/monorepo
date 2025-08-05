@@ -91,7 +91,7 @@ describe(resolvePostConstruct, () => {
       it('should throw an InversifyCoreError', () => {
         const expectedErrorProperties: Partial<InversifyCoreError> = {
           kind: InversifyCoreErrorKind.resolution,
-          message: `Expecting a "${postConstructMethodNameFixture.toString()}" property when resolving "${bindingFixture.implementationType.name}" class @postConstruct decorated method, none found.`,
+          message: `Expecting a "${postConstructMethodNameFixture}" property when resolving "${bindingFixture.implementationType.name}" class @postConstruct decorated method, none found.`,
         };
 
         expect(result).toBeInstanceOf(InversifyCoreError);
@@ -150,7 +150,7 @@ describe(resolvePostConstruct, () => {
       it('should throw an InversifyCoreError', () => {
         const expectedErrorProperties: Partial<InversifyCoreError> = {
           kind: InversifyCoreErrorKind.resolution,
-          message: `Expecting a "${postConstructMethodNameFixture.toString()}" method when resolving "${bindingFixture.implementationType.name}" class @postConstruct decorated method, a non function property was found instead.`,
+          message: `Expecting a "${postConstructMethodNameFixture}" method when resolving "${bindingFixture.implementationType.name}" class @postConstruct decorated method, a non function property was found instead.`,
         };
 
         expect(result).toBeInstanceOf(InversifyCoreError);
@@ -255,7 +255,7 @@ describe(resolvePostConstruct, () => {
       it('should throw an InversifyCoreError', () => {
         const expectedErrorProperties: Partial<InversifyCoreError> = {
           kind: InversifyCoreErrorKind.resolution,
-          message: `Unexpected error found when calling "${postConstructMethodNameFixture.toString()}" @postConstruct decorated method on class "${bindingFixture.implementationType.name}"`,
+          message: `Unexpected error found when calling "${postConstructMethodNameFixture}" @postConstruct decorated method on class "${bindingFixture.implementationType.name}"`,
         };
 
         expect(result).toBeInstanceOf(InversifyCoreError);
@@ -329,7 +329,7 @@ describe(resolvePostConstruct, () => {
       it('should throw an InversifyCoreError', () => {
         const expectedErrorProperties: Partial<InversifyCoreError> = {
           kind: InversifyCoreErrorKind.resolution,
-          message: `Unexpected error found when calling "${postConstructMethodNameFixture.toString()}" @postConstruct decorated method on class "${bindingFixture.implementationType.name}"`,
+          message: `Unexpected error found when calling "${postConstructMethodNameFixture}" @postConstruct decorated method on class "${bindingFixture.implementationType.name}"`,
         };
 
         expect(result).toBeInstanceOf(InversifyCoreError);
