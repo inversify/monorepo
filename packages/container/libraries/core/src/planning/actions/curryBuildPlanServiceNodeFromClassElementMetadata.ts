@@ -1,3 +1,5 @@
+import { ServiceIdentifier } from '@inversifyjs/common';
+
 import { Binding } from '../../binding/models/Binding';
 import { BindingConstraints } from '../../binding/models/BindingConstraints';
 import {
@@ -5,16 +7,18 @@ import {
   InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation';
 import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
+import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
-import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
 import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings';
+import { getServiceFromMaybeLazyServiceIdentifier } from '../calculations/getServiceFromMaybeLazyServiceIdentifier';
 import { BasePlanParams } from '../models/BasePlanParams';
 import { BindingNodeParent } from '../models/BindingNodeParent';
 import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanParams } from '../models/PlanParams';
 import { PlanServiceNode } from '../models/PlanServiceNode';
+import { SubplanParams } from '../models/SubplanParams';
 
-export function curryBuildPlanServiceNode(
+export function curryBuildPlanServiceNodeFromClassElementMetadata(
   buildServiceNodeBindings: (
     params: BasePlanParams,
     bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
@@ -22,16 +26,33 @@ export function curryBuildPlanServiceNode(
     parentNode: BindingNodeParent,
     chainedBindings: boolean,
   ) => PlanBindingNode[],
-): (params: PlanParams) => PlanServiceNode {
-  return (params: PlanParams): PlanServiceNode => {
-    const bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints> =
-      buildPlanBindingConstraintsList(params);
+): (
+  params: SubplanParams,
+  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  elementMetadata: ManagedClassElementMetadata,
+) => PlanServiceNode {
+  return (
+    params: SubplanParams,
+    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    elementMetadata: ManagedClassElementMetadata,
+  ): PlanServiceNode => {
+    const serviceIdentifier: ServiceIdentifier =
+      getServiceFromMaybeLazyServiceIdentifier(elementMetadata.value);
+
+    const updatedBindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints> =
+      bindingConstraintsList.concat({
+        getAncestorsCalled: false,
+        name: elementMetadata.name,
+        serviceIdentifier,
+        tags: elementMetadata.tags,
+      });
 
     const bindingConstraints: BindingConstraints =
-      new BindingConstraintsImplementation(bindingConstraintsList.last);
+      new BindingConstraintsImplementation(updatedBindingConstraintsList.last);
 
     const chained: boolean =
-      params.rootConstraints.isMultiple && params.rootConstraints.chained;
+      elementMetadata.kind === ClassElementMetadataKind.multipleInjection &&
+      elementMetadata.chained;
 
     const filteredServiceBindings: Binding<unknown>[] =
       buildFilteredServiceBindings(params, bindingConstraints, {
@@ -43,13 +64,13 @@ export function curryBuildPlanServiceNode(
     const serviceNode: PlanServiceNode = {
       bindings: serviceNodeBindings,
       isContextFree: true,
-      serviceIdentifier: params.rootConstraints.serviceIdentifier,
+      serviceIdentifier,
     };
 
     serviceNodeBindings.push(
       ...buildServiceNodeBindings(
         params,
-        bindingConstraintsList,
+        updatedBindingConstraintsList,
         filteredServiceBindings,
         serviceNode,
         chained,
@@ -57,13 +78,13 @@ export function curryBuildPlanServiceNode(
     );
 
     serviceNode.isContextFree =
-      !bindingConstraintsList.last.elem.getAncestorsCalled;
+      !updatedBindingConstraintsList.last.elem.getAncestorsCalled;
 
-    if (!params.rootConstraints.isMultiple) {
+    if (elementMetadata.kind === ClassElementMetadataKind.singleInjection) {
       checkServiceNodeSingleInjectionBindings(
         serviceNode,
-        params.rootConstraints.isOptional ?? false,
-        bindingConstraintsList.last,
+        elementMetadata.optional,
+        updatedBindingConstraintsList.last,
       );
 
       const [planBindingNode]: PlanBindingNode[] = serviceNodeBindings;
