@@ -26,7 +26,7 @@ class LazyPlanServiceNodeMock extends LazyPlanServiceNode {
     serviceNode: PlanServiceNode,
     buildPlanServiceNodeMock: Mock<() => PlanServiceNode>,
   ) {
-    super(serviceNode);
+    super(serviceNode, serviceNode.serviceIdentifier);
 
     this.buildPlanServiceNodeMock = buildPlanServiceNodeMock;
   }

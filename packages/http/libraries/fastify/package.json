@@ -50,7 +50,7 @@
   "name": "@inversifyjs/http-fastify",
   "peerDependencies": {
     "fastify": "^5.4.0",
-    "inversify": "^7.6.1"
+    "inversify": "^7.7.0"
   },
   "private": true,
   "repository": {
