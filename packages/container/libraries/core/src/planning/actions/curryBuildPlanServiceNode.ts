@@ -30,9 +30,8 @@ export function curryBuildPlanServiceNode(
     const bindingConstraints: BindingConstraints =
       new BindingConstraintsImplementation(bindingConstraintsList.last);
 
-    const chained: boolean = params.rootConstraints.isMultiple
-      ? params.rootConstraints.chained
-      : false;
+    const chained: boolean =
+      params.rootConstraints.isMultiple && params.rootConstraints.chained;
 
     const filteredServiceBindings: Binding<unknown>[] =
       buildFilteredServiceBindings(params, bindingConstraints, {
