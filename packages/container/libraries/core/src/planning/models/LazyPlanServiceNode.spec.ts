@@ -8,6 +8,8 @@ import {
   vitest,
 } from 'vitest';
 
+import { ServiceIdentifier } from '@inversifyjs/common';
+
 import { LazyPlanServiceNode } from './LazyPlanServiceNode';
 import { PlanBindingNode } from './PlanBindingNode';
 import { PlanServiceNode } from './PlanServiceNode';
@@ -16,10 +18,11 @@ export class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
   readonly #buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
 
   constructor(
-    serviceNode: PlanServiceNode,
+    serviceNode: PlanServiceNode | undefined,
+    serviceIdentifier: ServiceIdentifier,
     buildPlanServiceNode: Mock<() => PlanServiceNode>,
   ) {
-    super(serviceNode);
+    super(serviceNode, serviceIdentifier);
 
     this.#buildPlanServiceNodeMock = buildPlanServiceNode;
   }
@@ -48,6 +51,7 @@ describe(LazyPlanServiceNode, () => {
         beforeAll(() => {
           lazyPlanServiceNode = new LazyPlanServiceNodeTest(
             Symbol() as unknown as PlanServiceNode,
+            Symbol(),
             buildPlanServiceNodeMock,
           );
           lazyPlanServiceNode.invalidate();
@@ -96,6 +100,7 @@ describe(LazyPlanServiceNode, () => {
 
           lazyPlanServiceNode = new LazyPlanServiceNodeTest(
             planServiceNodeFixture,
+            Symbol(),
             buildPlanServiceNodeMock,
           );
 
@@ -129,6 +134,7 @@ describe(LazyPlanServiceNode, () => {
         beforeAll(() => {
           lazyPlanServiceNode = new LazyPlanServiceNodeTest(
             Symbol() as unknown as PlanServiceNode,
+            Symbol(),
             buildPlanServiceNodeMock,
           );
           lazyPlanServiceNode.invalidate();
@@ -177,6 +183,7 @@ describe(LazyPlanServiceNode, () => {
 
           lazyPlanServiceNode = new LazyPlanServiceNodeTest(
             planServiceNodeFixture,
+            Symbol(),
             buildPlanServiceNodeMock,
           );
 
@@ -201,6 +208,7 @@ describe(LazyPlanServiceNode, () => {
   describe('.serviceIdentifier', () => {
     describe('when called', () => {
       let planServiceNodeFixture: PlanServiceNode;
+      let serviceIdentifierFixture: ServiceIdentifier;
       let lazyPlanServiceNode: LazyPlanServiceNode;
 
       let result: unknown;
@@ -211,9 +219,11 @@ describe(LazyPlanServiceNode, () => {
           isContextFree: true,
           serviceIdentifier: Symbol(),
         };
+        serviceIdentifierFixture = Symbol();
 
         lazyPlanServiceNode = new LazyPlanServiceNodeTest(
           planServiceNodeFixture,
+          serviceIdentifierFixture,
           buildPlanServiceNodeMock,
         );
 
@@ -229,7 +239,7 @@ describe(LazyPlanServiceNode, () => {
       });
 
       it('should return expected value', () => {
-        expect(result).toBe(planServiceNodeFixture.serviceIdentifier);
+        expect(result).toBe(serviceIdentifierFixture);
       });
     });
   });
