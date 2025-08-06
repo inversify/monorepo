@@ -34,7 +34,7 @@ class LazyRootPlanServiceNode extends LazyPlanServiceNode {
   }
 }
 
-const buildPlanServiceNodeFromClassElementMetadata: (
+export const buildPlanServiceNodeFromClassElementMetadata: (
   params: SubplanParams,
   bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
   elementMetadata: ManagedClassElementMetadata,
@@ -42,7 +42,7 @@ const buildPlanServiceNodeFromClassElementMetadata: (
   circularBuildServiceNodeBindings,
 );
 
-const buildPlanServiceNodeFromResolvedValueElementMetadata: (
+export const buildPlanServiceNodeFromResolvedValueElementMetadata: (
   params: SubplanParams,
   bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
   elementMetadata: ResolvedValueElementMetadata,

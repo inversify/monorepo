@@ -14,7 +14,7 @@ import { LazyPlanServiceNode } from './LazyPlanServiceNode';
 import { PlanBindingNode } from './PlanBindingNode';
 import { PlanServiceNode } from './PlanServiceNode';
 
-export class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
+class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
   readonly #buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
 
   constructor(
