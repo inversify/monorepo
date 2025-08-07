@@ -9,8 +9,10 @@ import {
   vitest,
 } from 'vitest';
 
+import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
+import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
 import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
 import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
 import { GetPlanOptions } from '../models/GetPlanOptions';
@@ -1264,6 +1266,12 @@ describe(PlanResultCacheService, () => {
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.setNonCachedServiceNode(
                 childLazyPlanServiceNodeFixture,
+                {
+                  bindingConstraintsList:
+                    Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+                  chainedBindings: false,
+                  optionalBindings: false,
+                },
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
               planResultCacheService.invalidateService(
@@ -1437,6 +1445,12 @@ describe(PlanResultCacheService, () => {
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.setNonCachedServiceNode(
                 childLazyPlanServiceNodeFixture,
+                {
+                  bindingConstraintsList:
+                    Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+                  chainedBindings: false,
+                  optionalBindings: false,
+                },
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
               planResultCacheService.invalidateService(
@@ -1615,6 +1629,12 @@ describe(PlanResultCacheService, () => {
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.setNonCachedServiceNode(
                 childLazyPlanServiceNodeFixture,
+                {
+                  bindingConstraintsList:
+                    Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+                  chainedBindings: false,
+                  optionalBindings: false,
+                },
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
               planResultCacheService.invalidateService(
@@ -1672,7 +1692,12 @@ describe(PlanResultCacheService, () => {
           );
 
           planResultCacheService = new PlanResultCacheService();
-          planResultCacheService.setNonCachedServiceNode(lazyPlanServiceNode);
+          planResultCacheService.setNonCachedServiceNode(lazyPlanServiceNode, {
+            bindingConstraintsList:
+              Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+            chainedBindings: false,
+            optionalBindings: false,
+          });
           planResultCacheService.invalidateService(
             lazyPlanServiceNode.serviceIdentifier,
           );
@@ -1715,7 +1740,12 @@ describe(PlanResultCacheService, () => {
 
           parentPlanResultCacheService.subscribe(planResultCacheService);
 
-          planResultCacheService.setNonCachedServiceNode(lazyPlanServiceNode);
+          planResultCacheService.setNonCachedServiceNode(lazyPlanServiceNode, {
+            bindingConstraintsList:
+              Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+            chainedBindings: false,
+            optionalBindings: false,
+          });
           parentPlanResultCacheService.invalidateService(
             lazyPlanServiceNode.serviceIdentifier,
           );

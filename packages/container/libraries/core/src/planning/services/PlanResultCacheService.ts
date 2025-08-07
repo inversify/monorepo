@@ -7,6 +7,7 @@ import { MetadataTag } from '../../metadata/models/MetadataTag';
 import { GetPlanOptions } from '../models/GetPlanOptions';
 import { InstanceBindingNode } from '../models/InstanceBindingNode';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
+import { NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext';
 import { PlanBindingNode } from '../models/PlanBindingNode';
 import { PlanResult } from '../models/PlanResult';
 import { PlanServiceNode } from '../models/PlanServiceNode';
@@ -30,9 +31,9 @@ const MAP_ARRAY_LENGTH: number = 0x8;
  * Ancestor binding constraints are the reason to avoid reusing plans from plan children nodes.
  */
 export class PlanResultCacheService {
-  readonly #serviceIdToNonCachedServiceNodeSetMap: Map<
+  readonly #serviceIdToNonCachedServiceNodeMapMap: Map<
     ServiceIdentifier,
-    Set<PlanServiceNode>
+    Map<PlanServiceNode, NonCachedServiceNodeContext>
   >;
 
   readonly #serviceIdToValuePlanMap: Map<ServiceIdentifier, PlanResult>[];
@@ -53,7 +54,7 @@ export class PlanResultCacheService {
   readonly #subscribers: WeakList<PlanResultCacheService>;
 
   constructor() {
-    this.#serviceIdToNonCachedServiceNodeSetMap = new Map();
+    this.#serviceIdToNonCachedServiceNodeMapMap = new Map();
     this.#serviceIdToValuePlanMap = this.#buildInitializedMapArray();
     this.#namedServiceIdToValuePlanMap = this.#buildInitializedMapArray();
     this.#namedTaggedServiceIdToValuePlanMap = this.#buildInitializedMapArray();
@@ -164,20 +165,26 @@ export class PlanResultCacheService {
     }
   }
 
-  public setNonCachedServiceNode(node: PlanServiceNode): void {
-    let nonCachedSet: Set<PlanServiceNode> | undefined =
-      this.#serviceIdToNonCachedServiceNodeSetMap.get(node.serviceIdentifier);
+  public setNonCachedServiceNode(
+    node: PlanServiceNode,
+    context: NonCachedServiceNodeContext,
+  ): void {
+    let nonCachedMap:
+      | Map<PlanServiceNode, NonCachedServiceNodeContext>
+      | undefined = this.#serviceIdToNonCachedServiceNodeMapMap.get(
+      node.serviceIdentifier,
+    );
 
-    if (nonCachedSet === undefined) {
-      nonCachedSet = new Set<PlanServiceNode>();
+    if (nonCachedMap === undefined) {
+      nonCachedMap = new Map();
 
-      this.#serviceIdToNonCachedServiceNodeSetMap.set(
+      this.#serviceIdToNonCachedServiceNodeMapMap.set(
         node.serviceIdentifier,
-        nonCachedSet,
+        nonCachedMap,
       );
     }
 
-    nonCachedSet.add(node);
+    nonCachedMap.set(node, context);
   }
 
   public subscribe(subscriber: PlanResultCacheService): void {
@@ -219,7 +226,7 @@ export class PlanResultCacheService {
 
   #getMaps(): Map<ServiceIdentifier, unknown>[] {
     return [
-      this.#serviceIdToNonCachedServiceNodeSetMap,
+      this.#serviceIdToNonCachedServiceNodeMapMap,
       ...this.#serviceIdToValuePlanMap,
       ...this.#namedServiceIdToValuePlanMap,
       ...this.#namedTaggedServiceIdToValuePlanMap,
@@ -323,19 +330,20 @@ export class PlanResultCacheService {
   }
 
   #invalidateNonCachePlanServiceNode(planServiceNode: PlanServiceNode): void {
-    const serviceNonCachedSet: Set<PlanServiceNode> | undefined =
-      this.#serviceIdToNonCachedServiceNodeSetMap.get(
-        planServiceNode.serviceIdentifier,
-      );
+    const serviceNonCachedMap:
+      | Map<PlanServiceNode, NonCachedServiceNodeContext>
+      | undefined = this.#serviceIdToNonCachedServiceNodeMapMap.get(
+      planServiceNode.serviceIdentifier,
+    );
 
     if (
-      serviceNonCachedSet === undefined ||
-      !serviceNonCachedSet.has(planServiceNode)
+      serviceNonCachedMap === undefined ||
+      !serviceNonCachedMap.has(planServiceNode)
     ) {
       return;
     }
 
-    serviceNonCachedSet.delete(planServiceNode);
+    serviceNonCachedMap.delete(planServiceNode);
 
     this.#invalidateNonCachePlanServiceNodeDescendents(planServiceNode);
   }
@@ -361,11 +369,13 @@ export class PlanResultCacheService {
   #invalidateNonCachedServiceNodeSetMap(
     serviceIdentifier: ServiceIdentifier,
   ): void {
-    const serviceNonCachedServiceNodeSet: Set<PlanServiceNode> | undefined =
-      this.#serviceIdToNonCachedServiceNodeSetMap.get(serviceIdentifier);
+    const serviceNonCachedServiceNodeMap:
+      | Map<PlanServiceNode, NonCachedServiceNodeContext>
+      | undefined =
+      this.#serviceIdToNonCachedServiceNodeMapMap.get(serviceIdentifier);
 
-    if (serviceNonCachedServiceNodeSet !== undefined) {
-      for (const serviceNode of serviceNonCachedServiceNodeSet) {
+    if (serviceNonCachedServiceNodeMap !== undefined) {
+      for (const serviceNode of serviceNonCachedServiceNodeMap.keys()) {
         if (LazyPlanServiceNode.is(serviceNode)) {
           this.#invalidateNonCachePlanServiceNodeDescendents(serviceNode);
 

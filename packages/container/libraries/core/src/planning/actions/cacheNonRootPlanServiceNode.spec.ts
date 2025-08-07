@@ -10,6 +10,7 @@ import {
 
 import { GetPlanOptionsFixtures } from '../fixtures/GetPlanOptionsFixtures';
 import { GetPlanOptions } from '../models/GetPlanOptions';
+import { NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext';
 import { PlanParamsOperations } from '../models/PlanParamsOperations';
 import { PlanServiceNode } from '../models/PlanServiceNode';
 import { cacheNonRootPlanServiceNode } from './cacheNonRootPlanServiceNode';
@@ -26,17 +27,22 @@ describe(cacheNonRootPlanServiceNode, () => {
 
   describe('having GetPlanOptions undefined', () => {
     let planServiceNodeFixture: PlanServiceNode;
+    let contextFixture: NonCachedServiceNodeContext;
+
+    beforeAll(() => {
+      planServiceNodeFixture = Symbol() as unknown as PlanServiceNode;
+      contextFixture = Symbol() as unknown as NonCachedServiceNodeContext;
+    });
 
     describe('when called', () => {
       let result: unknown;
 
       beforeAll(() => {
-        planServiceNodeFixture = Symbol() as unknown as PlanServiceNode;
-
         result = cacheNonRootPlanServiceNode(
           undefined,
           operationsMock,
           planServiceNodeFixture,
+          contextFixture,
         );
       });
 
@@ -48,6 +54,7 @@ describe(cacheNonRootPlanServiceNode, () => {
         expect(operationsMock.setNonCachedServiceNode).toHaveBeenCalledTimes(1);
         expect(operationsMock.setNonCachedServiceNode).toHaveBeenCalledWith(
           planServiceNodeFixture,
+          contextFixture,
         );
       });
 
@@ -60,23 +67,27 @@ describe(cacheNonRootPlanServiceNode, () => {
   describe('having PlanServiceNode with isContextFree false', () => {
     let getPlanOptionsFixture: GetPlanOptions;
     let planServiceNodeFixture: PlanServiceNode;
+    let contextFixture: NonCachedServiceNodeContext;
+
+    beforeAll(() => {
+      getPlanOptionsFixture = GetPlanOptionsFixtures.any;
+      planServiceNodeFixture = {
+        bindings: undefined,
+        isContextFree: false,
+        serviceIdentifier: Symbol(),
+      };
+      contextFixture = Symbol() as unknown as NonCachedServiceNodeContext;
+    });
 
     describe('when called', () => {
       let result: unknown;
 
       beforeAll(() => {
-        getPlanOptionsFixture = GetPlanOptionsFixtures.any;
-
-        planServiceNodeFixture = {
-          bindings: undefined,
-          isContextFree: false,
-          serviceIdentifier: Symbol(),
-        };
-
         result = cacheNonRootPlanServiceNode(
           getPlanOptionsFixture,
           operationsMock,
           planServiceNodeFixture,
+          contextFixture,
         );
       });
 
@@ -88,6 +99,7 @@ describe(cacheNonRootPlanServiceNode, () => {
         expect(operationsMock.setNonCachedServiceNode).toHaveBeenCalledTimes(1);
         expect(operationsMock.setNonCachedServiceNode).toHaveBeenCalledWith(
           planServiceNodeFixture,
+          contextFixture,
         );
       });
 
@@ -100,23 +112,27 @@ describe(cacheNonRootPlanServiceNode, () => {
   describe('having PlanServiceNode with isContextFree true', () => {
     let getPlanOptionsFixture: GetPlanOptions;
     let planServiceNodeFixture: PlanServiceNode;
+    let contextFixture: NonCachedServiceNodeContext;
+
+    beforeAll(() => {
+      getPlanOptionsFixture = GetPlanOptionsFixtures.any;
+      planServiceNodeFixture = {
+        bindings: undefined,
+        isContextFree: true,
+        serviceIdentifier: Symbol(),
+      };
+      contextFixture = Symbol() as unknown as NonCachedServiceNodeContext;
+    });
 
     describe('when called', () => {
       let result: unknown;
 
       beforeAll(() => {
-        getPlanOptionsFixture = GetPlanOptionsFixtures.any;
-
-        planServiceNodeFixture = {
-          bindings: undefined,
-          isContextFree: true,
-          serviceIdentifier: Symbol(),
-        };
-
         result = cacheNonRootPlanServiceNode(
           getPlanOptionsFixture,
           operationsMock,
           planServiceNodeFixture,
+          contextFixture,
         );
       });
 

@@ -5,6 +5,7 @@ import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMeta
 import { ClassMetadata } from '../../metadata/models/ClassMetadata';
 import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
 import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
+import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
 import { ResolvedValueMetadata } from '../../metadata/models/ResolvedValueMetadata';
 import { getServiceFromMaybeLazyServiceIdentifier } from '../calculations/getServiceFromMaybeLazyServiceIdentifier';
 import { isInstanceBindingNode } from '../calculations/isInstanceBindingNode';
@@ -337,6 +338,13 @@ function curryHandlePlanServiceNodeBuildFromClassElementMetadata(
       getPlanOptions,
       params.operations,
       lazyPlanServiceNode,
+      {
+        bindingConstraintsList,
+        chainedBindings:
+          elementMetadata.kind === ClassElementMetadataKind.multipleInjection &&
+          elementMetadata.chained,
+        optionalBindings: elementMetadata.optional,
+      },
     );
 
     return lazyPlanServiceNode;
@@ -396,6 +404,14 @@ function curryHandlePlanServiceNodeBuildFromResolvedValueElementMetadata(
       getPlanOptions,
       params.operations,
       lazyPlanServiceNode,
+      {
+        bindingConstraintsList,
+        chainedBindings:
+          elementMetadata.kind ===
+            ResolvedValueElementMetadataKind.multipleInjection &&
+          elementMetadata.chained,
+        optionalBindings: elementMetadata.optional,
+      },
     );
 
     return lazyPlanServiceNode;
