@@ -43,7 +43,7 @@ import { bindingTypeValues } from '../../binding/models/BindingType';
 import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeUpdateResult';
+import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeAddedResult';
 import { BasePlanParams } from '../models/BasePlanParams';
 import { BindingNodeParent } from '../models/BindingNodeParent';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
