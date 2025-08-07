@@ -19,7 +19,7 @@ import { InternalBindingConstraints } from '../../binding/models/BindingConstrai
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
 import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
-import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeAddedResult';
+import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
 import { PlanParams } from '../models/PlanParams';

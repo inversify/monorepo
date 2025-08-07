@@ -1,7 +1,7 @@
 import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
 import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
-import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeAddedResult';
+import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
 import { PlanParams } from '../models/PlanParams';

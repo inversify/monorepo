@@ -8,7 +8,7 @@ import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLi
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
-import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeAddedResult';
+import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
 import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
 import { BasePlanParams } from '../models/BasePlanParams';
 import { BindingNodeParent } from '../models/BindingNodeParent';
