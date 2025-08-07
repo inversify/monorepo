@@ -69,6 +69,7 @@ import { GetSingleServicePlanOptions } from './planning/models/GetSingleServiceP
 import { InstanceBindingNode } from './planning/models/InstanceBindingNode';
 import { LeafBindingNode } from './planning/models/LeafBindingNode';
 import { MultipleBindingPlanParamsConstraint } from './planning/models/MultipleBindingPlanParamsConstraint';
+import { NonCachedServiceNodeContext } from './planning/models/NonCachedServiceNodeContext';
 import { PlanBindingNode } from './planning/models/PlanBindingNode';
 import { PlanParams } from './planning/models/PlanParams';
 import { PlanParamsConstraint } from './planning/models/PlanParamsConstraint';
@@ -135,6 +136,7 @@ export type {
   MultiInjectOptions,
   MultipleInjectionManagedClassElementMetadata,
   MultipleInjectionResolvedValueElementMetadata,
+  NonCachedServiceNodeContext,
   OptionalGetAllOptions,
   OptionalGetOptions,
   PlanBindingNode,
