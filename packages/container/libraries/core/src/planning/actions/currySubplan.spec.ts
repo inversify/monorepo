@@ -209,6 +209,11 @@ describe(currySubplan, () => {
           undefined,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
+          {
+            bindingConstraintsList: bindingConstraintsListFixture,
+            chainedBindings: false,
+            optionalBindings: false,
+          },
         );
       });
 
@@ -285,6 +290,11 @@ describe(currySubplan, () => {
           getPlanOptionsFixture,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
+          {
+            bindingConstraintsList: bindingConstraintsListFixture,
+            chainedBindings: false,
+            optionalBindings: false,
+          },
         );
       });
 
@@ -455,6 +465,11 @@ describe(currySubplan, () => {
           getPlanOptionsFixture,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
+          {
+            bindingConstraintsList: bindingConstraintsListFixture,
+            chainedBindings: false,
+            optionalBindings: false,
+          },
         );
       });
 
@@ -553,6 +568,11 @@ describe(currySubplan, () => {
           undefined,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
+          {
+            bindingConstraintsList: bindingConstraintsListFixture,
+            chainedBindings: false,
+            optionalBindings: false,
+          },
         );
       });
 
@@ -637,6 +657,11 @@ describe(currySubplan, () => {
           getPlanOptionsFixture,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
+          {
+            bindingConstraintsList: bindingConstraintsListFixture,
+            chainedBindings: false,
+            optionalBindings: false,
+          },
         );
       });
 
@@ -819,6 +844,11 @@ describe(currySubplan, () => {
           getPlanOptionsFixture,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
+          {
+            bindingConstraintsList: bindingConstraintsListFixture,
+            chainedBindings: false,
+            optionalBindings: false,
+          },
         );
       });
 
@@ -907,6 +937,11 @@ describe(currySubplan, () => {
           undefined,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
+          {
+            bindingConstraintsList: bindingConstraintsListFixture,
+            chainedBindings: false,
+            optionalBindings: false,
+          },
         );
       });
 
