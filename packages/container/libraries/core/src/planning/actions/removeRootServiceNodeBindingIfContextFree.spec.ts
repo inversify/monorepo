@@ -10,7 +10,7 @@ import {
 } from 'vitest';
 
 vitest.mock('../calculations/buildPlanBindingConstraintsList');
-vitest.mock('./addServiceNodeBindingIfContextFree');
+vitest.mock('./removeServiceNodeBindingIfContextFree');
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 
@@ -19,14 +19,14 @@ import { InternalBindingConstraints } from '../../binding/models/BindingConstrai
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
 import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
-import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
+import { PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
 import { PlanParams } from '../models/PlanParams';
 import { PlanParamsOperations } from '../models/PlanParamsOperations';
 import { PlanServiceNode } from '../models/PlanServiceNode';
-import { addRootServiceNodeBindingIfContextFree } from './addRootServiceNodeBindingIfContextFree';
-import { addServiceNodeBindingIfContextFree } from './addServiceNodeBindingIfContextFree';
+import { removeRootServiceNodeBindingIfContextFree } from './removeRootServiceNodeBindingIfContextFree';
+import { removeServiceNodeBindingIfContextFree } from './removeServiceNodeBindingIfContextFree';
 
 class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
   readonly #buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
@@ -46,7 +46,7 @@ class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
   }
 }
 
-describe(addRootServiceNodeBindingIfContextFree, () => {
+describe(removeRootServiceNodeBindingIfContextFree, () => {
   describe('having a non expanded lazy service node', () => {
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
 
@@ -62,7 +62,7 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
       let result: unknown;
 
       beforeAll(() => {
-        result = addRootServiceNodeBindingIfContextFree(
+        result = removeRootServiceNodeBindingIfContextFree(
           Symbol() as unknown as PlanParams,
           lazyPlanServiceNodeFixture,
           Symbol() as unknown as Binding<unknown>,
@@ -74,9 +74,9 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
       });
 
       it('should return expected value', () => {
-        const expected: PlanServiceNodeBindingAddedResult = {
+        const expected: PlanServiceNodeBindingRemovedResult = {
+          bindingNodeRemoved: undefined,
           isContextFreeBinding: true,
-          shouldInvalidateServiceNode: false,
         };
 
         expect(result).toStrictEqual(expected);
@@ -132,7 +132,7 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
 
     describe('when called', () => {
       let buildPlanBindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
-      let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
+      let planServiceNodeBindingRemovedResultFixture: PlanServiceNodeBindingRemovedResult;
 
       let result: unknown;
 
@@ -142,9 +142,9 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
           previous: undefined,
         });
 
-        planServiceNodeBindingAddedResultFixture = {
+        planServiceNodeBindingRemovedResultFixture = {
+          bindingNodeRemoved: undefined,
           isContextFreeBinding: true,
-          shouldInvalidateServiceNode: false,
         };
 
         vitest
@@ -152,10 +152,10 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
           .mockReturnValueOnce(buildPlanBindingConstraintsListFixture);
 
         vitest
-          .mocked(addServiceNodeBindingIfContextFree)
-          .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+          .mocked(removeServiceNodeBindingIfContextFree)
+          .mockReturnValueOnce(planServiceNodeBindingRemovedResultFixture);
 
-        result = addRootServiceNodeBindingIfContextFree(
+        result = removeRootServiceNodeBindingIfContextFree(
           paramsFixture,
           lazyPlanServiceNodeFixture,
           bindingMock,
@@ -166,10 +166,9 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call addServiceNodeBindingIfContextFree()', () => {
-        expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledTimes(1);
-        expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledWith(
-          paramsFixture,
+      it('should call removeServiceNodeBindingIfContextFree()', () => {
+        expect(removeServiceNodeBindingIfContextFree).toHaveBeenCalledTimes(1);
+        expect(removeServiceNodeBindingIfContextFree).toHaveBeenCalledWith(
           lazyPlanServiceNodeFixture,
           bindingMock,
           buildPlanBindingConstraintsListFixture,
@@ -178,7 +177,9 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
       });
 
       it('should return expected value', () => {
-        expect(result).toStrictEqual(planServiceNodeBindingAddedResultFixture);
+        expect(result).toStrictEqual(
+          planServiceNodeBindingRemovedResultFixture,
+        );
       });
     });
   });

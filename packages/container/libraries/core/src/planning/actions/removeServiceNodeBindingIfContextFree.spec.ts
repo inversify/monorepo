@@ -9,28 +9,6 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./curryBuildServiceNodeBindings', () => {
-  const buildServiceNodeBindingsMock: Mock<
-    (
-      params: BasePlanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
-      serviceBindings: Binding<unknown>[],
-      parentNode: BindingNodeParent,
-      chainedBindings: boolean,
-    ) => PlanBindingNode[]
-  > = vitest.fn();
-
-  return {
-    curryBuildServiceNodeBindings: vitest
-      .fn()
-      .mockReturnValue(buildServiceNodeBindingsMock),
-  };
-});
-vitest.mock('./curryLazyBuildPlanServiceNodeFromClassElementMetadata');
-vitest.mock('./curryLazyBuildPlanServiceNodeFromResolvedValueElementMetadata');
-vitest.mock('./currySubplan');
-vitest.mock('./plan');
-
 import { ServiceIdentifier } from '@inversifyjs/common';
 
 import { Binding } from '../../binding/models/Binding';
@@ -43,14 +21,11 @@ import { bindingTypeValues } from '../../binding/models/BindingType';
 import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
-import { BasePlanParams } from '../models/BasePlanParams';
-import { BindingNodeParent } from '../models/BindingNodeParent';
+import { PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
 import { PlanBindingNode } from '../models/PlanBindingNode';
 import { PlanServiceNode } from '../models/PlanServiceNode';
-import { addServiceNodeBindingIfContextFree } from './addServiceNodeBindingIfContextFree';
-import { curryBuildServiceNodeBindings } from './curryBuildServiceNodeBindings';
+import { removeServiceNodeBindingIfContextFree } from './removeServiceNodeBindingIfContextFree';
 
 class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
   readonly #buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
@@ -70,23 +45,7 @@ class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
   }
 }
 
-describe(addServiceNodeBindingIfContextFree, () => {
-  let buildServiceNodeBindingsMock: Mock<
-    (
-      params: BasePlanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
-      serviceBindings: Binding<unknown>[],
-      parentNode: BindingNodeParent,
-      chainedBindings: boolean,
-    ) => PlanBindingNode[]
-  >;
-
-  beforeAll(() => {
-    buildServiceNodeBindingsMock = vitest.mocked(
-      curryBuildServiceNodeBindings(vitest.fn()),
-    );
-  });
-
+describe(removeServiceNodeBindingIfContextFree, () => {
   describe('having a non expanded lazy service node', () => {
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
 
@@ -102,8 +61,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
       let result: unknown;
 
       beforeAll(() => {
-        result = addServiceNodeBindingIfContextFree(
-          Symbol() as unknown as BasePlanParams,
+        result = removeServiceNodeBindingIfContextFree(
           lazyPlanServiceNodeFixture,
           Symbol() as unknown as Binding<unknown>,
           Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
@@ -116,9 +74,9 @@ describe(addServiceNodeBindingIfContextFree, () => {
       });
 
       it('should return expected value', () => {
-        const expected: PlanServiceNodeBindingAddedResult = {
+        const expected: PlanServiceNodeBindingRemovedResult = {
+          bindingNodeRemoved: undefined,
           isContextFreeBinding: true,
-          shouldInvalidateServiceNode: false,
         };
 
         expect(result).toStrictEqual(expected);
@@ -126,27 +84,15 @@ describe(addServiceNodeBindingIfContextFree, () => {
     });
   });
 
-  describe('having an expanded lazy service node with an array of bindings and bindingConstraintsList with elems with getAncestorsCalled false', () => {
-    let paramsFixture: BasePlanParams;
-    let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+  describe('having an expanded lazy service node with an array with a single binding and bindingConstraintsList with elems with getAncestorsCalled false', () => {
+    let serviceIdentifierFixture: ServiceIdentifier;
     let bindingMock: Mocked<Binding<unknown>>;
+    let planBindingNodeFixture: PlanBindingNode;
     let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
+    let optionalBindings: boolean;
 
     beforeAll(() => {
-      paramsFixture = Symbol() as unknown as BasePlanParams;
-
-      const serviceIdentifier: ServiceIdentifier = Symbol();
-
-      lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
-        {
-          bindings: [],
-          isContextFree: true,
-          serviceIdentifier: serviceIdentifier,
-        },
-        serviceIdentifier,
-        vitest.fn(),
-      );
+      serviceIdentifierFixture = Symbol();
 
       bindingMock = {
         cache: {
@@ -159,37 +105,52 @@ describe(addServiceNodeBindingIfContextFree, () => {
         onActivation: vitest.fn(),
         onDeactivation: vitest.fn(),
         scope: bindingScopeValues.Singleton,
-        serviceIdentifier,
+        serviceIdentifier: serviceIdentifierFixture,
         type: bindingTypeValues.ConstantValue,
         value: Symbol(),
       };
+
+      planBindingNodeFixture = {
+        binding: bindingMock,
+      } as PlanBindingNode;
 
       bindingConstraintsListFixture =
         new SingleInmutableLinkedList<InternalBindingConstraints>({
           elem: {
             getAncestorsCalled: false,
             name: undefined,
-            serviceIdentifier,
+            serviceIdentifier: serviceIdentifierFixture,
             tags: new Map(),
           },
           previous: undefined,
         });
 
-      chainedBindings = false;
+      optionalBindings = false;
     });
 
     describe('when called, and binding.isSatisfiedBy() returns false', () => {
+      let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+
       let result: unknown;
 
       beforeAll(() => {
+        lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
+          {
+            bindings: [planBindingNodeFixture],
+            isContextFree: true,
+            serviceIdentifier: serviceIdentifierFixture,
+          },
+          serviceIdentifierFixture,
+          vitest.fn(),
+        );
+
         bindingMock.isSatisfiedBy.mockReturnValueOnce(false);
 
-        result = addServiceNodeBindingIfContextFree(
-          paramsFixture,
+        result = removeServiceNodeBindingIfContextFree(
           lazyPlanServiceNodeFixture,
           bindingMock,
           bindingConstraintsListFixture,
-          chainedBindings,
+          optionalBindings,
         );
       });
 
@@ -207,36 +168,45 @@ describe(addServiceNodeBindingIfContextFree, () => {
       });
 
       it('should return expected value', () => {
-        const expected: PlanServiceNodeBindingAddedResult = {
+        const expected: PlanServiceNodeBindingRemovedResult = {
+          bindingNodeRemoved: undefined,
           isContextFreeBinding:
             !bindingConstraintsListFixture.last.elem.getAncestorsCalled,
-          shouldInvalidateServiceNode: false,
         };
 
         expect(result).toStrictEqual(expected);
+      });
+
+      it('should not remove binding from service node bindings', () => {
+        expect(lazyPlanServiceNodeFixture.bindings).toStrictEqual([
+          planBindingNodeFixture,
+        ]);
       });
     });
 
     describe('when called, and binding.isSatisfiedBy() returns true', () => {
-      let planBindingNodeFixture: PlanBindingNode;
+      let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
 
       let result: unknown;
 
       beforeAll(() => {
-        planBindingNodeFixture = Symbol() as unknown as PlanBindingNode;
+        lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
+          {
+            bindings: [planBindingNodeFixture],
+            isContextFree: true,
+            serviceIdentifier: serviceIdentifierFixture,
+          },
+          serviceIdentifierFixture,
+          vitest.fn(),
+        );
 
         bindingMock.isSatisfiedBy.mockReturnValueOnce(true);
 
-        buildServiceNodeBindingsMock.mockReturnValueOnce([
-          planBindingNodeFixture,
-        ]);
-
-        result = addServiceNodeBindingIfContextFree(
-          paramsFixture,
+        result = removeServiceNodeBindingIfContextFree(
           lazyPlanServiceNodeFixture,
           bindingMock,
           bindingConstraintsListFixture,
-          chainedBindings,
+          optionalBindings,
         );
       });
 
@@ -253,39 +223,29 @@ describe(addServiceNodeBindingIfContextFree, () => {
         );
       });
 
-      it('should call buildServiceNodeBindings()', () => {
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
-          paramsFixture,
-          bindingConstraintsListFixture,
-          [bindingMock],
-          lazyPlanServiceNodeFixture,
-          chainedBindings,
-        );
-      });
-
       it('should return expected value', () => {
-        const expected: PlanServiceNodeBindingAddedResult = {
+        const expected: PlanServiceNodeBindingRemovedResult = {
+          bindingNodeRemoved: planBindingNodeFixture,
           isContextFreeBinding:
             !bindingConstraintsListFixture.last.elem.getAncestorsCalled,
-          shouldInvalidateServiceNode: false,
         };
 
         expect(result).toStrictEqual(expected);
+      });
+
+      it('should remove binding from service node bindings', () => {
+        expect(lazyPlanServiceNodeFixture.bindings).toStrictEqual([]);
       });
     });
   });
 
   describe('having an expanded lazy service node with an array of bindings and bindingConstraintsList with elems with getAncestorsCalled true', () => {
-    let paramsFixture: BasePlanParams;
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
     let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
+    let optionalBindings: boolean;
 
     beforeAll(() => {
-      paramsFixture = Symbol() as unknown as BasePlanParams;
-
       const serviceIdentifier: ServiceIdentifier = Symbol();
 
       lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
@@ -325,7 +285,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           previous: undefined,
         });
 
-      chainedBindings = false;
+      optionalBindings = false;
     });
 
     describe('when called, and binding.isSatisfiedBy() returns true', () => {
@@ -334,12 +294,11 @@ describe(addServiceNodeBindingIfContextFree, () => {
       beforeAll(() => {
         bindingMock.isSatisfiedBy.mockReturnValueOnce(true);
 
-        result = addServiceNodeBindingIfContextFree(
-          paramsFixture,
+        result = removeServiceNodeBindingIfContextFree(
           lazyPlanServiceNodeFixture,
           bindingMock,
           bindingConstraintsListFixture,
-          chainedBindings,
+          optionalBindings,
         );
       });
 
@@ -357,10 +316,10 @@ describe(addServiceNodeBindingIfContextFree, () => {
       });
 
       it('should return expected value', () => {
-        const expected: PlanServiceNodeBindingAddedResult = {
+        const expected: PlanServiceNodeBindingRemovedResult = {
+          bindingNodeRemoved: undefined,
           isContextFreeBinding:
             !bindingConstraintsListFixture.last.elem.getAncestorsCalled,
-          shouldInvalidateServiceNode: false,
         };
 
         expect(result).toStrictEqual(expected);
@@ -368,297 +327,169 @@ describe(addServiceNodeBindingIfContextFree, () => {
     });
   });
 
-  describe('having an expanded lazy service node with undefined bindings and bindingConstraintsList with elems with getAncestorsCalled false', () => {
-    let paramsFixture: BasePlanParams;
-    let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+  describe('having an expanded lazy service node with a single binding and bindingConstraintsList with elems with getAncestorsCalled false', () => {
+    let serviceIdentifierFixture: ServiceIdentifier;
     let bindingMock: Mocked<Binding<unknown>>;
+    let planBindingNodeFixture: PlanBindingNode;
     let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
+    let optionalBindings: boolean;
 
     beforeAll(() => {
-      paramsFixture = Symbol() as unknown as BasePlanParams;
+      serviceIdentifierFixture = Symbol();
 
-      const serviceIdentifier: ServiceIdentifier = Symbol();
+      bindingMock = {
+        cache: {
+          isRight: false,
+          value: undefined,
+        },
+        id: 1,
+        isSatisfiedBy: vitest.fn(),
+        moduleId: undefined,
+        onActivation: vitest.fn(),
+        onDeactivation: vitest.fn(),
+        scope: bindingScopeValues.Singleton,
+        serviceIdentifier: serviceIdentifierFixture,
+        type: bindingTypeValues.ConstantValue,
+        value: Symbol(),
+      };
 
-      lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
-        {
-          bindings: undefined,
+      planBindingNodeFixture = {
+        binding: bindingMock,
+      } as PlanBindingNode;
+
+      bindingConstraintsListFixture =
+        new SingleInmutableLinkedList<InternalBindingConstraints>({
+          elem: {
+            getAncestorsCalled: false,
+            name: undefined,
+            serviceIdentifier: serviceIdentifierFixture,
+            tags: new Map(),
+          },
+          previous: undefined,
+        });
+
+      optionalBindings = false;
+    });
+
+    describe('when called, and binding.isSatisfiedBy() returns true', () => {
+      let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
+          {
+            bindings: planBindingNodeFixture,
+            isContextFree: true,
+            serviceIdentifier: serviceIdentifierFixture,
+          },
+          serviceIdentifierFixture,
+          vitest.fn(),
+        );
+
+        bindingMock.isSatisfiedBy.mockReturnValueOnce(true);
+
+        result = removeServiceNodeBindingIfContextFree(
+          lazyPlanServiceNodeFixture,
+          bindingMock,
+          bindingConstraintsListFixture,
+          optionalBindings,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call binding.isSatisfiedBy()', () => {
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+          new BindingConstraintsImplementation(
+            bindingConstraintsListFixture.last,
+          ),
+        );
+      });
+
+      it('should return expected value', () => {
+        const expected: PlanServiceNodeBindingRemovedResult = {
+          bindingNodeRemoved: planBindingNodeFixture,
+          isContextFreeBinding:
+            !bindingConstraintsListFixture.last.elem.getAncestorsCalled,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+
+      it('should remove binding from service node bindings', () => {
+        expect(lazyPlanServiceNodeFixture.isExpanded()).toBe(false);
+      });
+    });
+  });
+
+  describe('having a non lazy service node with a single binding and bindingConstraintsList with elems with getAncestorsCalled false', () => {
+    let serviceIdentifierFixture: ServiceIdentifier;
+    let bindingMock: Mocked<Binding<unknown>>;
+    let planBindingNodeFixture: PlanBindingNode;
+    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let optionalBindings: boolean;
+
+    beforeAll(() => {
+      serviceIdentifierFixture = Symbol();
+
+      bindingMock = {
+        cache: {
+          isRight: false,
+          value: undefined,
+        },
+        id: 1,
+        isSatisfiedBy: vitest.fn(),
+        moduleId: undefined,
+        onActivation: vitest.fn(),
+        onDeactivation: vitest.fn(),
+        scope: bindingScopeValues.Singleton,
+        serviceIdentifier: serviceIdentifierFixture,
+        type: bindingTypeValues.ConstantValue,
+        value: Symbol(),
+      };
+
+      planBindingNodeFixture = {
+        binding: bindingMock,
+      } as PlanBindingNode;
+
+      bindingConstraintsListFixture =
+        new SingleInmutableLinkedList<InternalBindingConstraints>({
+          elem: {
+            getAncestorsCalled: false,
+            name: undefined,
+            serviceIdentifier: serviceIdentifierFixture,
+            tags: new Map(),
+          },
+          previous: undefined,
+        });
+
+      optionalBindings = false;
+    });
+
+    describe('when called, and binding.isSatisfiedBy() returns true', () => {
+      let planServiceNodeFixture: PlanServiceNode;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        planServiceNodeFixture = {
+          bindings: planBindingNodeFixture,
           isContextFree: true,
-          serviceIdentifier: serviceIdentifier,
-        },
-        serviceIdentifier,
-        vitest.fn(),
-      );
-
-      bindingMock = {
-        cache: {
-          isRight: false,
-          value: undefined,
-        },
-        id: 1,
-        isSatisfiedBy: vitest.fn(),
-        moduleId: undefined,
-        onActivation: vitest.fn(),
-        onDeactivation: vitest.fn(),
-        scope: bindingScopeValues.Singleton,
-        serviceIdentifier,
-        type: bindingTypeValues.ConstantValue,
-        value: Symbol(),
-      };
-
-      bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier,
-            tags: new Map(),
-          },
-          previous: undefined,
-        });
-
-      chainedBindings = false;
-    });
-
-    describe('when called, and binding.isSatisfiedBy() returns true', () => {
-      let planBindingNodeFixture: PlanBindingNode;
-
-      let result: unknown;
-
-      beforeAll(() => {
-        planBindingNodeFixture = Symbol() as unknown as PlanBindingNode;
-
-        bindingMock.isSatisfiedBy.mockReturnValueOnce(true);
-
-        buildServiceNodeBindingsMock.mockReturnValueOnce([
-          planBindingNodeFixture,
-        ]);
-
-        result = addServiceNodeBindingIfContextFree(
-          paramsFixture,
-          lazyPlanServiceNodeFixture,
-          bindingMock,
-          bindingConstraintsListFixture,
-          chainedBindings,
-        );
-      });
-
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should call binding.isSatisfiedBy()', () => {
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
-          new BindingConstraintsImplementation(
-            bindingConstraintsListFixture.last,
-          ),
-        );
-      });
-
-      it('should call buildServiceNodeBindings()', () => {
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
-          paramsFixture,
-          bindingConstraintsListFixture,
-          [bindingMock],
-          lazyPlanServiceNodeFixture,
-          chainedBindings,
-        );
-      });
-
-      it('should return expected value', () => {
-        const expected: PlanServiceNodeBindingAddedResult = {
-          isContextFreeBinding:
-            !bindingConstraintsListFixture.last.elem.getAncestorsCalled,
-          shouldInvalidateServiceNode: false,
+          serviceIdentifier: serviceIdentifierFixture,
         };
 
-        expect(result).toStrictEqual(expected);
-      });
-    });
-  });
-
-  describe('having an expanded lazy service node with single binding and bindingConstraintsList with elems with getAncestorsCalled false', () => {
-    let paramsFixture: BasePlanParams;
-    let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
-    let bindingMock: Mocked<Binding<unknown>>;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
-
-    beforeAll(() => {
-      paramsFixture = Symbol() as unknown as BasePlanParams;
-
-      const serviceIdentifier: ServiceIdentifier = Symbol();
-
-      lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
-        {
-          bindings: Symbol() as unknown as PlanBindingNode,
-          isContextFree: true,
-          serviceIdentifier: serviceIdentifier,
-        },
-        serviceIdentifier,
-        vitest.fn(),
-      );
-
-      bindingMock = {
-        cache: {
-          isRight: false,
-          value: undefined,
-        },
-        id: 1,
-        isSatisfiedBy: vitest.fn(),
-        moduleId: undefined,
-        onActivation: vitest.fn(),
-        onDeactivation: vitest.fn(),
-        scope: bindingScopeValues.Singleton,
-        serviceIdentifier,
-        type: bindingTypeValues.ConstantValue,
-        value: Symbol(),
-      };
-
-      bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier,
-            tags: new Map(),
-          },
-          previous: undefined,
-        });
-
-      chainedBindings = false;
-    });
-
-    describe('when called, and binding.isSatisfiedBy() returns true', () => {
-      let planBindingNodeFixture: PlanBindingNode;
-
-      let result: unknown;
-
-      beforeAll(() => {
-        planBindingNodeFixture = Symbol() as unknown as PlanBindingNode;
-
         bindingMock.isSatisfiedBy.mockReturnValueOnce(true);
-
-        buildServiceNodeBindingsMock.mockReturnValueOnce([
-          planBindingNodeFixture,
-        ]);
-
-        result = addServiceNodeBindingIfContextFree(
-          paramsFixture,
-          lazyPlanServiceNodeFixture,
-          bindingMock,
-          bindingConstraintsListFixture,
-          chainedBindings,
-        );
-      });
-
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should call binding.isSatisfiedBy()', () => {
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
-          new BindingConstraintsImplementation(
-            bindingConstraintsListFixture.last,
-          ),
-        );
-      });
-
-      it('should call buildServiceNodeBindings()', () => {
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
-          paramsFixture,
-          bindingConstraintsListFixture,
-          [bindingMock],
-          lazyPlanServiceNodeFixture,
-          chainedBindings,
-        );
-      });
-
-      it('should return expected value', () => {
-        const expected: PlanServiceNodeBindingAddedResult = {
-          isContextFreeBinding:
-            !bindingConstraintsListFixture.last.elem.getAncestorsCalled,
-          shouldInvalidateServiceNode: true,
-        };
-
-        expect(result).toStrictEqual(expected);
-      });
-    });
-  });
-
-  describe('having a non lazy service node with single binding and bindingConstraintsList with elems with getAncestorsCalled false', () => {
-    let paramsFixture: BasePlanParams;
-    let planServiceNodeFixture: PlanServiceNode;
-    let bindingMock: Mocked<Binding<unknown>>;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
-
-    beforeAll(() => {
-      paramsFixture = Symbol() as unknown as BasePlanParams;
-
-      const serviceIdentifier: ServiceIdentifier = Symbol();
-
-      planServiceNodeFixture = {
-        bindings: Symbol() as unknown as PlanBindingNode,
-        isContextFree: true,
-        serviceIdentifier: serviceIdentifier,
-      };
-
-      bindingMock = {
-        cache: {
-          isRight: false,
-          value: undefined,
-        },
-        id: 1,
-        isSatisfiedBy: vitest.fn(),
-        moduleId: undefined,
-        onActivation: vitest.fn(),
-        onDeactivation: vitest.fn(),
-        scope: bindingScopeValues.Singleton,
-        serviceIdentifier,
-        type: bindingTypeValues.ConstantValue,
-        value: Symbol(),
-      };
-
-      bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier,
-            tags: new Map(),
-          },
-          previous: undefined,
-        });
-
-      chainedBindings = false;
-    });
-
-    describe('when called, and binding.isSatisfiedBy() returns true', () => {
-      let planBindingNodeFixture: PlanBindingNode;
-
-      let result: unknown;
-
-      beforeAll(() => {
-        planBindingNodeFixture = Symbol() as unknown as PlanBindingNode;
-
-        bindingMock.isSatisfiedBy.mockReturnValueOnce(true);
-
-        buildServiceNodeBindingsMock.mockReturnValueOnce([
-          planBindingNodeFixture,
-        ]);
 
         try {
-          addServiceNodeBindingIfContextFree(
-            paramsFixture,
+          removeServiceNodeBindingIfContextFree(
             planServiceNodeFixture,
             bindingMock,
             bindingConstraintsListFixture,
-            chainedBindings,
+            optionalBindings,
           );
         } catch (error: unknown) {
           result = error;
@@ -678,18 +509,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
         );
       });
 
-      it('should call buildServiceNodeBindings()', () => {
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
-          paramsFixture,
-          bindingConstraintsListFixture,
-          [bindingMock],
-          planServiceNodeFixture,
-          chainedBindings,
-        );
-      });
-
-      it('should return expected error', () => {
+      it('should throw expected error', () => {
         const expectedErrorProperties: Partial<InversifyCoreError> = {
           kind: InversifyCoreErrorKind.planning,
           message:
@@ -699,6 +519,105 @@ describe(addServiceNodeBindingIfContextFree, () => {
         expect(result).toStrictEqual(
           expect.objectContaining(expectedErrorProperties),
         );
+      });
+    });
+  });
+
+  describe('having an expanded lazy service node with a single binding and bindingConstraintsList with elems with getAncestorsCalled false and optional bindings', () => {
+    let serviceIdentifierFixture: ServiceIdentifier;
+    let bindingMock: Mocked<Binding<unknown>>;
+    let planBindingNodeFixture: PlanBindingNode;
+    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let optionalBindings: boolean;
+
+    beforeAll(() => {
+      serviceIdentifierFixture = Symbol();
+
+      bindingMock = {
+        cache: {
+          isRight: false,
+          value: undefined,
+        },
+        id: 1,
+        isSatisfiedBy: vitest.fn(),
+        moduleId: undefined,
+        onActivation: vitest.fn(),
+        onDeactivation: vitest.fn(),
+        scope: bindingScopeValues.Singleton,
+        serviceIdentifier: serviceIdentifierFixture,
+        type: bindingTypeValues.ConstantValue,
+        value: Symbol(),
+      };
+
+      planBindingNodeFixture = {
+        binding: bindingMock,
+      } as PlanBindingNode;
+
+      bindingConstraintsListFixture =
+        new SingleInmutableLinkedList<InternalBindingConstraints>({
+          elem: {
+            getAncestorsCalled: false,
+            name: undefined,
+            serviceIdentifier: serviceIdentifierFixture,
+            tags: new Map(),
+          },
+          previous: undefined,
+        });
+
+      optionalBindings = true;
+    });
+
+    describe('when called, and binding.isSatisfiedBy() returns true', () => {
+      let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
+          {
+            bindings: planBindingNodeFixture,
+            isContextFree: true,
+            serviceIdentifier: serviceIdentifierFixture,
+          },
+          serviceIdentifierFixture,
+          vitest.fn(),
+        );
+
+        bindingMock.isSatisfiedBy.mockReturnValueOnce(true);
+
+        result = removeServiceNodeBindingIfContextFree(
+          lazyPlanServiceNodeFixture,
+          bindingMock,
+          bindingConstraintsListFixture,
+          optionalBindings,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call binding.isSatisfiedBy()', () => {
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+          new BindingConstraintsImplementation(
+            bindingConstraintsListFixture.last,
+          ),
+        );
+      });
+
+      it('should return expected value', () => {
+        const expected: PlanServiceNodeBindingRemovedResult = {
+          bindingNodeRemoved: planBindingNodeFixture,
+          isContextFreeBinding:
+            !bindingConstraintsListFixture.last.elem.getAncestorsCalled,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+
+      it('should remove binding from service node bindings', () => {
+        expect(lazyPlanServiceNodeFixture.bindings).toBeUndefined();
       });
     });
   });
