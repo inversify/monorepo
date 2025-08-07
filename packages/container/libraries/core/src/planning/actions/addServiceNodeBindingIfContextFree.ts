@@ -90,6 +90,8 @@ function circularLazyBuildPlanServiceNodeFromResolvedValueElementMetadata(
  * @param params The plan parameters.
  * @param serviceNode The service node to attach the binding to.
  * @param binding The binding to attach.
+ * @param bindingConstraintsList The list of binding constraints.
+ * @param chainedBindings Whether the bindings are chained.
  * @returns True if the binding requires ancestor metadata, false otherwise.
  */
 export function addServiceNodeBindingIfContextFree(
