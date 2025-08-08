@@ -76,6 +76,7 @@ import { PlanParamsConstraint } from './planning/models/PlanParamsConstraint';
 import { PlanParamsOperations } from './planning/models/PlanParamsOperations';
 import { PlanParamsTagConstraint } from './planning/models/PlanParamsTagConstraint';
 import { PlanResult } from './planning/models/PlanResult';
+import { PlanResultCacheServiceInvalidationKind } from './planning/models/PlanResultCacheServiceInvalidationKind';
 import { PlanServiceNode } from './planning/models/PlanServiceNode';
 import { PlanServiceNodeParent } from './planning/models/PlanServiceNodeParent';
 import { PlanServiceRedirectionBindingNode } from './planning/models/PlanServiceRedirectionBindingNode';
@@ -193,5 +194,6 @@ export {
   tagged,
   unmanaged,
   MultipleBindingPlanParamsConstraint,
+  PlanResultCacheServiceInvalidationKind,
   SingleBindingPlanParamsConstraint,
 };
