@@ -1,4 +1,4 @@
-export enum PlanResultCacheServiceInvalidationKind {
+export enum CacheBindingInvalidationKind {
   bindingAdded = 'bindingAdded',
   bindingRemoved = 'bindingRemoved',
 }

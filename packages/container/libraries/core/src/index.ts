@@ -62,6 +62,8 @@ import { plan } from './planning/actions/plan';
 import { BaseBindingNode } from './planning/models/BaseBindingNode';
 import { BaseGetPlanOptions } from './planning/models/BaseGetPlanOptions';
 import { BasePlanParams } from './planning/models/BasePlanParams';
+import { CacheBindingInvalidation } from './planning/models/CacheBindingInvalidation';
+import { CacheBindingInvalidationKind } from './planning/models/CacheBindingInvalidationKind';
 import { GetMultipleServicePlanOptions } from './planning/models/GetMultipleServicePlanOptions';
 import { GetPlanOptions } from './planning/models/GetPlanOptions';
 import { GetPlanOptionsTagConstraint } from './planning/models/GetPlanOptionsTagConstraint';
@@ -76,7 +78,6 @@ import { PlanParamsConstraint } from './planning/models/PlanParamsConstraint';
 import { PlanParamsOperations } from './planning/models/PlanParamsOperations';
 import { PlanParamsTagConstraint } from './planning/models/PlanParamsTagConstraint';
 import { PlanResult } from './planning/models/PlanResult';
-import { PlanResultCacheServiceInvalidationKind } from './planning/models/PlanResultCacheServiceInvalidationKind';
 import { PlanServiceNode } from './planning/models/PlanServiceNode';
 import { PlanServiceNodeParent } from './planning/models/PlanServiceNodeParent';
 import { PlanServiceRedirectionBindingNode } from './planning/models/PlanServiceRedirectionBindingNode';
@@ -112,6 +113,7 @@ export type {
   BindingConstraints,
   BindingScope,
   BindingType,
+  CacheBindingInvalidation,
   ClassElementMetadata,
   ClassMetadata,
   ClassMetadataLifecycle,
@@ -171,6 +173,7 @@ export {
   bindingScopeValues,
   BindingService,
   bindingTypeValues,
+  CacheBindingInvalidationKind,
   ClassElementMetadataKind,
   DeactivationsService,
   decorate,
@@ -194,6 +197,5 @@ export {
   tagged,
   unmanaged,
   MultipleBindingPlanParamsConstraint,
-  PlanResultCacheServiceInvalidationKind,
   SingleBindingPlanParamsConstraint,
 };
