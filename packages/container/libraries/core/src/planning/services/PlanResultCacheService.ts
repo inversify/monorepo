@@ -4,11 +4,22 @@ import { bindingTypeValues } from '../../binding/models/BindingType';
 import { WeakList } from '../../common/models/WeakList';
 import { MetadataName } from '../../metadata/models/MetadataName';
 import { MetadataTag } from '../../metadata/models/MetadataTag';
+import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
+import { PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult';
+import { addRootServiceNodeBindingIfContextFree } from '../actions/addRootServiceNodeBindingIfContextFree';
+import { addServiceNodeBindingIfContextFree } from '../actions/addServiceNodeBindingIfContextFree';
+import { removeRootServiceNodeBindingIfContextFree } from '../actions/removeRootServiceNodeBindingIfContextFree';
+import { removeServiceNodeBindingIfContextFree } from '../actions/removeServiceNodeBindingIfContextFree';
+import { CacheBindingInvalidation } from '../models/CacheBindingInvalidation';
+import { CacheBindingInvalidationKind } from '../models/CacheBindingInvalidationKind';
 import { GetPlanOptions } from '../models/GetPlanOptions';
 import { InstanceBindingNode } from '../models/InstanceBindingNode';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
 import { NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext';
 import { PlanBindingNode } from '../models/PlanBindingNode';
+import { PlanParams } from '../models/PlanParams';
+import { PlanParamsConstraint } from '../models/PlanParamsConstraint';
+import { PlanParamsTagConstraint } from '../models/PlanParamsTagConstraint';
 import { PlanResult } from '../models/PlanResult';
 import { PlanServiceNode } from '../models/PlanServiceNode';
 import { PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode';
@@ -110,15 +121,17 @@ export class PlanResultCacheService {
     }
   }
 
-  public invalidateService(serviceIdentifier: ServiceIdentifier): void {
-    this.#invalidateServiceMap(serviceIdentifier);
-    this.#invalidateNamedServiceMap(serviceIdentifier);
-    this.#invalidateNamedTaggedServiceMap(serviceIdentifier);
-    this.#invalidateTaggedServiceMap(serviceIdentifier);
-    this.#invalidateNonCachedServiceNodeSetMap(serviceIdentifier);
+  public invalidateServiceBinding(
+    invalidation: CacheBindingInvalidation,
+  ): void {
+    this.#invalidateServiceMap(invalidation);
+    this.#invalidateNamedServiceMap(invalidation);
+    this.#invalidateNamedTaggedServiceMap(invalidation);
+    this.#invalidateTaggedServiceMap(invalidation);
+    this.#invalidateNonCachedServiceNodeSetMap(invalidation);
 
     for (const subscriber of this.#subscribers) {
-      subscriber.invalidateService(serviceIdentifier);
+      subscriber.invalidateServiceBinding(invalidation);
     }
   }
 
@@ -203,6 +216,54 @@ export class PlanResultCacheService {
     return mapArray;
   }
 
+  #buildUpdatePlanParams(
+    invalidation: CacheBindingInvalidation,
+    index: number,
+    name: MetadataName | undefined,
+    tag: PlanParamsTagConstraint | undefined,
+  ): PlanParams {
+    const isMultiple: boolean = (index & IS_MULTIPLE_MASK) !== 0;
+
+    let planParamsConstraint: PlanParamsConstraint;
+
+    if (isMultiple) {
+      const isChained: boolean =
+        (index & IS_MULTIPLE_MASK & CHAINED_MASK) !== 0;
+
+      planParamsConstraint = {
+        chained: isChained,
+        isMultiple,
+        serviceIdentifier: invalidation.binding.serviceIdentifier,
+      };
+    } else {
+      planParamsConstraint = {
+        isMultiple,
+        serviceIdentifier: invalidation.binding.serviceIdentifier,
+      };
+    }
+
+    const isOptional: boolean = (index & OPTIONAL_MASK) !== 0;
+
+    if (isOptional) {
+      planParamsConstraint.isOptional = true;
+    }
+
+    if (name !== undefined) {
+      planParamsConstraint.name = name;
+    }
+
+    if (tag !== undefined) {
+      planParamsConstraint.tag = tag;
+    }
+
+    return {
+      autobindOptions: undefined,
+      operations: invalidation.operations,
+      rootConstraints: planParamsConstraint,
+      servicesBranch: [],
+    };
+  }
+
   #getOrBuildMapValueFromMapMap<TKey, TValue extends Map<unknown, unknown>>(
     map: Map<TKey, TValue>,
     key: TKey,
@@ -246,42 +307,42 @@ export class PlanResultCacheService {
     }
   }
 
-  #invalidateNamedServiceMap(serviceIdentifier: ServiceIdentifier): void {
-    for (const map of this.#namedServiceIdToValuePlanMap) {
-      const servicePlans: Map<MetadataName, PlanResult> | undefined =
-        map.get(serviceIdentifier);
+  #invalidateNamedServiceMap(invalidation: CacheBindingInvalidation): void {
+    for (const [index, map] of this.#namedServiceIdToValuePlanMap.entries()) {
+      const servicePlans: Map<MetadataName, PlanResult> | undefined = map.get(
+        invalidation.binding.serviceIdentifier,
+      );
 
       if (servicePlans !== undefined) {
-        for (const servicePlan of servicePlans.values()) {
-          if (LazyPlanServiceNode.is(servicePlan.tree.root)) {
-            this.#invalidateNonCachePlanServiceNodeDescendents(
-              servicePlan.tree.root,
-            );
-
-            servicePlan.tree.root.invalidate();
-          }
+        for (const [name, servicePlan] of servicePlans.entries()) {
+          this.#updatePlan(invalidation, servicePlan, index, name, undefined);
         }
       }
     }
   }
 
-  #invalidateNamedTaggedServiceMap(serviceIdentifier: ServiceIdentifier): void {
-    for (const map of this.#namedTaggedServiceIdToValuePlanMap) {
+  #invalidateNamedTaggedServiceMap(
+    invalidation: CacheBindingInvalidation,
+  ): void {
+    for (const [
+      index,
+      map,
+    ] of this.#namedTaggedServiceIdToValuePlanMap.entries()) {
       const servicePlanMapMapMap:
         | Map<MetadataName, Map<MetadataTag, Map<unknown, PlanResult>>>
-        | undefined = map.get(serviceIdentifier);
+        | undefined = map.get(invalidation.binding.serviceIdentifier);
 
       if (servicePlanMapMapMap !== undefined) {
-        for (const servicePlanMapMap of servicePlanMapMapMap.values()) {
-          for (const servicePlanMap of servicePlanMapMap.values()) {
-            for (const servicePlan of servicePlanMap.values()) {
-              if (LazyPlanServiceNode.is(servicePlan.tree.root)) {
-                this.#invalidateNonCachePlanServiceNodeDescendents(
-                  servicePlan.tree.root,
-                );
-
-                servicePlan.tree.root.invalidate();
-              }
+        for (const [
+          name,
+          servicePlanMapMap,
+        ] of servicePlanMapMapMap.entries()) {
+          for (const [tag, servicePlanMap] of servicePlanMapMap.entries()) {
+            for (const [tagValue, servicePlan] of servicePlanMap.entries()) {
+              this.#updatePlan(invalidation, servicePlan, index, name, {
+                key: tag,
+                value: tagValue,
+              });
             }
           }
         }
@@ -351,6 +412,13 @@ export class PlanResultCacheService {
   #invalidateNonCachePlanServiceNodeDescendents(
     planServiceNode: PlanServiceNode,
   ): void {
+    if (
+      LazyPlanServiceNode.is(planServiceNode) &&
+      !planServiceNode.isExpanded()
+    ) {
+      return;
+    }
+
     if (planServiceNode.bindings === undefined) {
       return;
     }
@@ -367,59 +435,161 @@ export class PlanResultCacheService {
   }
 
   #invalidateNonCachedServiceNodeSetMap(
-    serviceIdentifier: ServiceIdentifier,
+    invalidation: CacheBindingInvalidation,
   ): void {
     const serviceNonCachedServiceNodeMap:
       | Map<PlanServiceNode, NonCachedServiceNodeContext>
-      | undefined =
-      this.#serviceIdToNonCachedServiceNodeMapMap.get(serviceIdentifier);
+      | undefined = this.#serviceIdToNonCachedServiceNodeMapMap.get(
+      invalidation.binding.serviceIdentifier,
+    );
 
     if (serviceNonCachedServiceNodeMap !== undefined) {
-      for (const serviceNode of serviceNonCachedServiceNodeMap.keys()) {
-        if (LazyPlanServiceNode.is(serviceNode)) {
-          this.#invalidateNonCachePlanServiceNodeDescendents(serviceNode);
-
-          serviceNode.invalidate();
-        }
-      }
-    }
-  }
-
-  #invalidateServiceMap(serviceIdentifier: ServiceIdentifier): void {
-    for (const map of this.#serviceIdToValuePlanMap) {
-      const servicePlan: PlanResult | undefined = map.get(serviceIdentifier);
-
-      if (
-        servicePlan !== undefined &&
-        LazyPlanServiceNode.is(servicePlan.tree.root)
-      ) {
-        this.#invalidateNonCachePlanServiceNodeDescendents(
-          servicePlan.tree.root,
-        );
-
-        servicePlan.tree.root.invalidate();
-      }
-    }
-  }
-
-  #invalidateTaggedServiceMap(serviceIdentifier: ServiceIdentifier): void {
-    for (const map of this.#taggedServiceIdToValuePlanMap) {
-      const servicePlanMapMap:
-        | Map<MetadataTag, Map<unknown, PlanResult>>
-        | undefined = map.get(serviceIdentifier);
-
-      if (servicePlanMapMap !== undefined) {
-        for (const servicePlanMap of servicePlanMapMap.values()) {
-          for (const servicePlan of servicePlanMap.values()) {
-            if (LazyPlanServiceNode.is(servicePlan.tree.root)) {
-              this.#invalidateNonCachePlanServiceNodeDescendents(
-                servicePlan.tree.root,
+      switch (invalidation.kind) {
+        case CacheBindingInvalidationKind.bindingAdded:
+          for (const [serviceNode, context] of serviceNonCachedServiceNodeMap) {
+            const result: PlanServiceNodeBindingAddedResult =
+              addServiceNodeBindingIfContextFree(
+                {
+                  autobindOptions: undefined,
+                  operations: invalidation.operations,
+                  servicesBranch: [],
+                },
+                serviceNode,
+                invalidation.binding,
+                context.bindingConstraintsList,
+                context.chainedBindings,
               );
 
-              servicePlan.tree.root.invalidate();
+            if (result.isContextFreeBinding) {
+              if (
+                result.shouldInvalidateServiceNode &&
+                LazyPlanServiceNode.is(serviceNode)
+              ) {
+                this.#invalidateNonCachePlanServiceNodeDescendents(serviceNode);
+
+                serviceNode.invalidate();
+              }
+            } else {
+              this.clearCache();
             }
           }
+          break;
+        case CacheBindingInvalidationKind.bindingRemoved:
+          for (const [serviceNode, context] of serviceNonCachedServiceNodeMap) {
+            const result: PlanServiceNodeBindingRemovedResult =
+              removeServiceNodeBindingIfContextFree(
+                serviceNode,
+                invalidation.binding,
+                context.bindingConstraintsList,
+                context.optionalBindings,
+              );
+
+            if (result.isContextFreeBinding) {
+              if (result.bindingNodeRemoved !== undefined) {
+                this.#invalidateNonCachePlanBindingNodeDescendents(
+                  result.bindingNodeRemoved,
+                );
+              }
+            } else {
+              this.clearCache();
+            }
+          }
+          break;
+      }
+    }
+  }
+
+  #invalidateServiceMap(invalidation: CacheBindingInvalidation): void {
+    for (const [index, map] of this.#serviceIdToValuePlanMap.entries()) {
+      const servicePlan: PlanResult | undefined = map.get(
+        invalidation.binding.serviceIdentifier,
+      );
+
+      this.#updatePlan(invalidation, servicePlan, index, undefined, undefined);
+    }
+  }
+
+  #invalidateTaggedServiceMap(invalidation: CacheBindingInvalidation): void {
+    for (const [index, map] of this.#taggedServiceIdToValuePlanMap.entries()) {
+      const servicePlanMapMap:
+        | Map<MetadataTag, Map<unknown, PlanResult>>
+        | undefined = map.get(invalidation.binding.serviceIdentifier);
+
+      if (servicePlanMapMap !== undefined) {
+        for (const [tag, servicePlanMap] of servicePlanMapMap.entries()) {
+          for (const [tagValue, servicePlan] of servicePlanMap.entries()) {
+            this.#updatePlan(invalidation, servicePlan, index, undefined, {
+              key: tag,
+              value: tagValue,
+            });
+          }
         }
+      }
+    }
+  }
+
+  #updatePlan(
+    invalidation: CacheBindingInvalidation,
+    servicePlan: PlanResult | undefined,
+    index: number,
+    name: MetadataName | undefined,
+    tag: PlanParamsTagConstraint | undefined,
+  ): void {
+    if (
+      servicePlan !== undefined &&
+      LazyPlanServiceNode.is(servicePlan.tree.root)
+    ) {
+      const planParams: PlanParams = this.#buildUpdatePlanParams(
+        invalidation,
+        index,
+        name,
+        tag,
+      );
+      switch (invalidation.kind) {
+        case CacheBindingInvalidationKind.bindingAdded:
+          {
+            const result: PlanServiceNodeBindingAddedResult =
+              addRootServiceNodeBindingIfContextFree(
+                planParams,
+                servicePlan.tree.root,
+                invalidation.binding,
+              );
+
+            if (result.isContextFreeBinding) {
+              if (result.shouldInvalidateServiceNode) {
+                this.#invalidateNonCachePlanServiceNodeDescendents(
+                  servicePlan.tree.root,
+                );
+
+                servicePlan.tree.root.invalidate();
+              }
+            } else {
+              this.clearCache();
+            }
+          }
+
+          break;
+        case CacheBindingInvalidationKind.bindingRemoved:
+          {
+            const result: PlanServiceNodeBindingRemovedResult =
+              removeRootServiceNodeBindingIfContextFree(
+                planParams,
+                servicePlan.tree.root,
+                invalidation.binding,
+              );
+
+            if (result.isContextFreeBinding) {
+              if (result.bindingNodeRemoved !== undefined) {
+                this.#invalidateNonCachePlanBindingNodeDescendents(
+                  result.bindingNodeRemoved,
+                );
+              }
+            } else {
+              this.clearCache();
+            }
+          }
+
+          break;
       }
     }
   }

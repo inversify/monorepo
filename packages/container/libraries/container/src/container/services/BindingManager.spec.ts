@@ -19,6 +19,7 @@ import {
   bindingScopeValues,
   BindingService,
   bindingTypeValues,
+  CacheBindingInvalidationKind,
   DeactivationParams,
   DeactivationsService,
   GetOptionsTagConstraint,
@@ -33,17 +34,25 @@ import {
   BindingIdentifier,
   bindingIdentifierSymbol,
 } from '../../binding/models/BindingIdentifier';
+import { CacheBindingInvalidation } from '../models/CacheBindingInvalidation';
 import { BindingManager } from './BindingManager';
+import { PlanResultCacheManager } from './PlanResultCacheManager';
 import { ServiceReferenceManager } from './ServiceReferenceManager';
 
 describe(BindingManager, () => {
   let deactivationParamsFixture: DeactivationParams;
   let defaultScopeFixture: BindingScope;
+  let planResultCacheManagerMock: Mocked<PlanResultCacheManager>;
   let serviceReferenceManagerMock: Mocked<ServiceReferenceManager>;
 
   beforeAll(() => {
     deactivationParamsFixture = Symbol() as unknown as DeactivationParams;
     defaultScopeFixture = bindingScopeValues.Transient;
+    planResultCacheManagerMock = {
+      invalidateService: vitest.fn(),
+    } as Partial<
+      Mocked<PlanResultCacheManager>
+    > as Mocked<PlanResultCacheManager>;
     serviceReferenceManagerMock = {
       activationService: {
         removeAllByServiceId: vitest.fn(),
@@ -63,7 +72,7 @@ describe(BindingManager, () => {
       > as Mocked<DeactivationsService>,
       planResultCacheService: {
         clearCache: vitest.fn(),
-        invalidateService: vitest.fn(),
+        invalidateServiceBinding: vitest.fn(),
       } as Partial<
         Mocked<PlanResultCacheService>
       > as Mocked<PlanResultCacheService>,
@@ -84,6 +93,7 @@ describe(BindingManager, () => {
         result = new BindingManager(
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).bind(serviceIdentifierFixture);
       });
@@ -127,6 +137,7 @@ describe(BindingManager, () => {
         result = new BindingManager(
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).isBound(serviceIdentifierFixture, {
           name: nameFixture,
@@ -183,6 +194,7 @@ describe(BindingManager, () => {
         result = new BindingManager(
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).isBound(serviceIdentifierFixture, {
           name: nameFixture,
@@ -255,6 +267,7 @@ describe(BindingManager, () => {
         result = new BindingManager(
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).isBound(serviceIdentifierFixture, {
           name: nameFixture,
@@ -322,6 +335,7 @@ describe(BindingManager, () => {
         result = new BindingManager(
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).isCurrentBound(serviceIdentifierFixture, {
           name: nameFixture,
@@ -378,6 +392,7 @@ describe(BindingManager, () => {
         result = new BindingManager(
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).isCurrentBound(serviceIdentifierFixture, {
           name: nameFixture,
@@ -450,6 +465,7 @@ describe(BindingManager, () => {
         result = new BindingManager(
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).isCurrentBound(serviceIdentifierFixture, {
           name: nameFixture,
@@ -494,16 +510,23 @@ describe(BindingManager, () => {
 
   describe('.rebind', () => {
     describe('when called', () => {
+      let bindingFixture: Binding<unknown>;
       let serviceIdentifierFixture: ServiceIdentifier;
 
       let result: unknown;
 
       beforeAll(async () => {
+        bindingFixture = Symbol() as unknown as Binding<unknown>;
         serviceIdentifierFixture = 'service-id';
+
+        vitest
+          .mocked(serviceReferenceManagerMock.bindingService)
+          .get.mockReturnValueOnce([bindingFixture]);
 
         result = await new BindingManager(
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).rebind(serviceIdentifierFixture);
       });
@@ -512,11 +535,20 @@ describe(BindingManager, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call resolveServiceDeactivations', () => {
-        expect(resolveServiceDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveServiceDeactivations).toHaveBeenCalledWith(
+      it('should call serviceReferenceManager.bindingService.get()', () => {
+        expect(
+          serviceReferenceManagerMock.bindingService.get,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          serviceReferenceManagerMock.bindingService.get,
+        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+      });
+
+      it('should call resolveBindingsDeactivations', () => {
+        expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
+        expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
           deactivationParamsFixture,
-          serviceIdentifierFixture,
+          [bindingFixture],
         );
       });
 
@@ -547,13 +579,18 @@ describe(BindingManager, () => {
         ).toHaveBeenCalledWith(serviceIdentifierFixture);
       });
 
-      it('should call planResultCacheService.invalidateService()', () => {
+      it('should call planResultCacheManager.invalidateService()', () => {
+        const invalidation: CacheBindingInvalidation = {
+          binding: bindingFixture,
+          kind: CacheBindingInvalidationKind.bindingRemoved,
+        };
+
         expect(
-          serviceReferenceManagerMock.planResultCacheService.invalidateService,
+          planResultCacheManagerMock.invalidateService,
         ).toHaveBeenCalledTimes(1);
         expect(
-          serviceReferenceManagerMock.planResultCacheService.invalidateService,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+          planResultCacheManagerMock.invalidateService,
+        ).toHaveBeenCalledWith(invalidation);
       });
 
       it('should return BindToFluentSyntax', () => {
@@ -574,16 +611,23 @@ describe(BindingManager, () => {
 
   describe('.rebindSync', () => {
     describe('when called', () => {
+      let bindingFixture: Binding<unknown>;
       let serviceIdentifierFixture: ServiceIdentifier;
 
       let result: unknown;
 
       beforeAll(async () => {
+        bindingFixture = Symbol() as unknown as Binding<unknown>;
         serviceIdentifierFixture = 'service-id';
+
+        vitest
+          .mocked(serviceReferenceManagerMock.bindingService)
+          .get.mockReturnValueOnce([bindingFixture]);
 
         result = new BindingManager(
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).rebindSync(serviceIdentifierFixture);
       });
@@ -592,11 +636,20 @@ describe(BindingManager, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call resolveServiceDeactivations', () => {
-        expect(resolveServiceDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveServiceDeactivations).toHaveBeenCalledWith(
+      it('should call serviceReferenceManager.bindingService.get()', () => {
+        expect(
+          serviceReferenceManagerMock.bindingService.get,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          serviceReferenceManagerMock.bindingService.get,
+        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+      });
+
+      it('should call resolveBindingsDeactivations', () => {
+        expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
+        expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
           deactivationParamsFixture,
-          serviceIdentifierFixture,
+          [bindingFixture],
         );
       });
 
@@ -627,13 +680,18 @@ describe(BindingManager, () => {
         ).toHaveBeenCalledWith(serviceIdentifierFixture);
       });
 
-      it('should call planResultCacheService.invalidateService()', () => {
+      it('should call serviceReferenceManager.invalidateService()', () => {
+        const invalidation: CacheBindingInvalidation = {
+          binding: bindingFixture,
+          kind: CacheBindingInvalidationKind.bindingRemoved,
+        };
+
         expect(
-          serviceReferenceManagerMock.planResultCacheService.invalidateService,
+          planResultCacheManagerMock.invalidateService,
         ).toHaveBeenCalledTimes(1);
         expect(
-          serviceReferenceManagerMock.planResultCacheService.invalidateService,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+          planResultCacheManagerMock.invalidateService,
+        ).toHaveBeenCalledWith(invalidation);
       });
 
       it('should return BindToFluentSyntax', () => {
@@ -661,12 +719,20 @@ describe(BindingManager, () => {
       });
 
       describe('when called', () => {
+        let bindingFixture: Binding<unknown>;
         let result: unknown;
 
         beforeAll(async () => {
+          bindingFixture = Symbol() as unknown as Binding<unknown>;
+
+          vitest
+            .mocked(serviceReferenceManagerMock.bindingService)
+            .get.mockReturnValueOnce([bindingFixture]);
+
           result = await new BindingManager(
             deactivationParamsFixture,
             defaultScopeFixture,
+            planResultCacheManagerMock,
             serviceReferenceManagerMock,
           ).unbind(serviceIdentifierFixture);
         });
@@ -675,11 +741,20 @@ describe(BindingManager, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call resolveServiceDeactivations()', () => {
-          expect(resolveServiceDeactivations).toHaveBeenCalledTimes(1);
-          expect(resolveServiceDeactivations).toHaveBeenCalledWith(
+        it('should call serviceReferenceManager.bindingService.get()', () => {
+          expect(
+            serviceReferenceManagerMock.bindingService.get,
+          ).toHaveBeenCalledTimes(1);
+          expect(
+            serviceReferenceManagerMock.bindingService.get,
+          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        });
+
+        it('should call resolveBindingsDeactivations', () => {
+          expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
+          expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
             deactivationParamsFixture,
-            serviceIdentifierFixture,
+            [bindingFixture],
           );
         });
 
@@ -712,15 +787,18 @@ describe(BindingManager, () => {
           ).toHaveBeenCalledWith(serviceIdentifierFixture);
         });
 
-        it('should call planResultCacheService.invalidateService()', () => {
+        it('should call serviceReferenceManager.invalidateService()', () => {
+          const invalidation: CacheBindingInvalidation = {
+            binding: bindingFixture,
+            kind: CacheBindingInvalidationKind.bindingRemoved,
+          };
+
           expect(
-            serviceReferenceManagerMock.planResultCacheService
-              .invalidateService,
+            planResultCacheManagerMock.invalidateService,
           ).toHaveBeenCalledTimes(1);
           expect(
-            serviceReferenceManagerMock.planResultCacheService
-              .invalidateService,
-          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+            planResultCacheManagerMock.invalidateService,
+          ).toHaveBeenCalledWith(invalidation);
         });
 
         it('should return undefined', () => {
@@ -729,16 +807,25 @@ describe(BindingManager, () => {
       });
 
       describe('when called, and resolveServiceDeactivations() returns Promise', () => {
+        let bindingFixture: Binding<unknown>;
+
         let result: unknown;
 
         beforeAll(async () => {
+          bindingFixture = Symbol() as unknown as Binding<unknown>;
+
           vitest
-            .mocked(resolveServiceDeactivations)
+            .mocked(serviceReferenceManagerMock.bindingService)
+            .get.mockReturnValueOnce([bindingFixture]);
+
+          vitest
+            .mocked(resolveBindingsDeactivations)
             .mockResolvedValueOnce(undefined);
 
           result = await new BindingManager(
             deactivationParamsFixture,
             defaultScopeFixture,
+            planResultCacheManagerMock,
             serviceReferenceManagerMock,
           ).unbind(serviceIdentifierFixture);
         });
@@ -747,11 +834,20 @@ describe(BindingManager, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call resolveServiceDeactivations()', () => {
-          expect(resolveServiceDeactivations).toHaveBeenCalledTimes(1);
-          expect(resolveServiceDeactivations).toHaveBeenCalledWith(
+        it('should call serviceReferenceManager.bindingService.get()', () => {
+          expect(
+            serviceReferenceManagerMock.bindingService.get,
+          ).toHaveBeenCalledTimes(1);
+          expect(
+            serviceReferenceManagerMock.bindingService.get,
+          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        });
+
+        it('should call resolveBindingsDeactivations', () => {
+          expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
+          expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
             deactivationParamsFixture,
-            serviceIdentifierFixture,
+            [bindingFixture],
           );
         });
 
@@ -784,15 +880,18 @@ describe(BindingManager, () => {
           ).toHaveBeenCalledWith(serviceIdentifierFixture);
         });
 
-        it('should call planResultCacheService.invalidateService()', () => {
+        it('should call serviceReferenceManager.invalidateService()', () => {
+          const invalidation: CacheBindingInvalidation = {
+            binding: bindingFixture,
+            kind: CacheBindingInvalidationKind.bindingRemoved,
+          };
+
           expect(
-            serviceReferenceManagerMock.planResultCacheService
-              .invalidateService,
+            planResultCacheManagerMock.invalidateService,
           ).toHaveBeenCalledTimes(1);
           expect(
-            serviceReferenceManagerMock.planResultCacheService
-              .invalidateService,
-          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+            planResultCacheManagerMock.invalidateService,
+          ).toHaveBeenCalledWith(invalidation);
         });
 
         it('should return undefined', () => {
@@ -812,7 +911,8 @@ describe(BindingManager, () => {
       });
 
       describe('when called', () => {
-        let bindingMock: Mocked<Binding>;
+        let bindingMock: Mocked<Binding<unknown>>;
+
         let result: unknown;
 
         beforeAll(async () => {
@@ -839,6 +939,7 @@ describe(BindingManager, () => {
           result = await new BindingManager(
             deactivationParamsFixture,
             defaultScopeFixture,
+            planResultCacheManagerMock,
             serviceReferenceManagerMock,
           ).unbind(bindingIdentifierFixture);
         });
@@ -873,15 +974,18 @@ describe(BindingManager, () => {
           ).toHaveBeenCalledWith(bindingIdentifierFixture.id);
         });
 
-        it('should call planResultCacheService.invalidateService()', () => {
+        it('should call serviceReferenceManager.invalidateService()', () => {
+          const invalidation: CacheBindingInvalidation = {
+            binding: bindingMock,
+            kind: CacheBindingInvalidationKind.bindingRemoved,
+          };
+
           expect(
-            serviceReferenceManagerMock.planResultCacheService
-              .invalidateService,
+            planResultCacheManagerMock.invalidateService,
           ).toHaveBeenCalledTimes(1);
           expect(
-            serviceReferenceManagerMock.planResultCacheService
-              .invalidateService,
-          ).toHaveBeenCalledWith(bindingMock.serviceIdentifier);
+            planResultCacheManagerMock.invalidateService,
+          ).toHaveBeenCalledWith(invalidation);
         });
 
         it('should return undefined', () => {
@@ -890,7 +994,7 @@ describe(BindingManager, () => {
       });
 
       describe('when called, and resolveBindingsDeactivations() returns a Promise', () => {
-        let bindingMock: Mocked<Binding>;
+        let bindingMock: Mocked<Binding<unknown>>;
         let result: unknown;
 
         beforeAll(async () => {
@@ -921,6 +1025,7 @@ describe(BindingManager, () => {
           result = await new BindingManager(
             deactivationParamsFixture,
             defaultScopeFixture,
+            planResultCacheManagerMock,
             serviceReferenceManagerMock,
           ).unbind(bindingIdentifierFixture);
         });
@@ -955,15 +1060,13 @@ describe(BindingManager, () => {
           ).toHaveBeenCalledWith(bindingIdentifierFixture.id);
         });
 
-        it('should call planResultCacheService.invalidateService()', () => {
+        it('should call serviceReferenceManager.bindingService.getById()', () => {
           expect(
-            serviceReferenceManagerMock.planResultCacheService
-              .invalidateService,
+            serviceReferenceManagerMock.bindingService.getById,
           ).toHaveBeenCalledTimes(1);
           expect(
-            serviceReferenceManagerMock.planResultCacheService
-              .invalidateService,
-          ).toHaveBeenCalledWith(bindingMock.serviceIdentifier);
+            serviceReferenceManagerMock.bindingService.getById,
+          ).toHaveBeenCalledWith(bindingIdentifierFixture.id);
         });
 
         it('should return undefined', () => {
@@ -987,6 +1090,7 @@ describe(BindingManager, () => {
         result = await new BindingManager(
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).unbindAll();
       });

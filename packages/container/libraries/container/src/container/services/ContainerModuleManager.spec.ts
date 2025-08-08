@@ -32,12 +32,14 @@ import {
 import { IsBoundOptions } from '../models/isBoundOptions';
 import { BindingManager } from './BindingManager';
 import { ContainerModuleManager } from './ContainerModuleManager';
+import { PlanResultCacheManager } from './PlanResultCacheManager';
 import { ServiceReferenceManager } from './ServiceReferenceManager';
 
 describe(ContainerModuleManager, () => {
   let bindingManagerMock: Mocked<BindingManager>;
   let deactivationParamsFixture: DeactivationParams;
   let defaultScopeFixture: BindingScope;
+  let planResultCacheManagerMock: Mocked<PlanResultCacheManager>;
   let serviceReferenceManagerMock: Mocked<ServiceReferenceManager>;
 
   beforeAll(() => {
@@ -53,6 +55,11 @@ describe(ContainerModuleManager, () => {
     } as Partial<Mocked<BindingManager>> as Mocked<BindingManager>;
     deactivationParamsFixture = Symbol() as unknown as DeactivationParams;
     defaultScopeFixture = bindingScopeValues.Singleton;
+    planResultCacheManagerMock = {
+      invalidateService: vitest.fn(),
+    } as Partial<
+      Mocked<PlanResultCacheManager>
+    > as Mocked<PlanResultCacheManager>;
     serviceReferenceManagerMock = {
       activationService: {} as Partial<
         Mocked<ActivationsService>
@@ -93,6 +100,7 @@ describe(ContainerModuleManager, () => {
           bindingManagerMock,
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).load(asyncContainerModuleMock);
       });
@@ -149,6 +157,7 @@ describe(ContainerModuleManager, () => {
           bindingManagerMock,
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).load(syncContainerModuleMock);
       });
@@ -220,6 +229,7 @@ describe(ContainerModuleManager, () => {
           bindingManagerMock,
           deactivationParamsFixture,
           defaultScopeFixture,
+          planResultCacheManagerMock,
           serviceReferenceManagerMock,
         ).loadSync(syncContainerModuleMock);
       });
@@ -277,6 +287,7 @@ describe(ContainerModuleManager, () => {
             bindingManagerMock,
             deactivationParamsFixture,
             defaultScopeFixture,
+            planResultCacheManagerMock,
             serviceReferenceManagerMock,
           ).loadSync(asyncContainerModuleMock);
         } catch (error: unknown) {
