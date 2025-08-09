@@ -4,11 +4,9 @@ import {
   stringifyServiceIdentifier,
 } from '@inversifyjs/common';
 import {
-  Binding,
   BindingActivation,
   BindingScope,
   GetAllOptions,
-  getClassMetadata,
   GetOptions,
   GetOptionsTagConstraint,
   GetPlanOptions,
@@ -17,7 +15,6 @@ import {
   plan,
   PlanParams,
   PlanParamsConstraint,
-  PlanParamsOperations,
   PlanResult,
   ResolutionContext,
   resolve,
@@ -25,6 +22,7 @@ import {
 
 import { InversifyContainerError } from '../../error/models/InversifyContainerError';
 import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
+import { PlanParamsOperationsManager } from './PlanParamsOperationsManager';
 import { ServiceReferenceManager } from './ServiceReferenceManager';
 
 export class ServiceResolutionManager {
@@ -38,14 +36,16 @@ export class ServiceResolutionManager {
     options: GetPlanOptions,
     result: PlanResult,
   ) => void)[];
-  readonly #planParamsOperations: PlanParamsOperations;
+  readonly #planParamsOperationsManager: PlanParamsOperationsManager;
   readonly #serviceReferenceManager: ServiceReferenceManager;
 
   constructor(
+    planParamsOperationsManager: PlanParamsOperationsManager,
     serviceReferenceManager: ServiceReferenceManager,
     autobind: boolean,
     defaultScope: BindingScope,
   ) {
+    this.#planParamsOperationsManager = planParamsOperationsManager;
     this.#serviceReferenceManager = serviceReferenceManager;
     this.#resolutionContext = this.#buildResolutionContext();
     this.#autobind = autobind;
@@ -59,28 +59,6 @@ export class ServiceResolutionManager {
         | undefined;
 
     this.#onPlanHandlers = [];
-
-    this.#planParamsOperations = {
-      getBindings: this.#serviceReferenceManager.bindingService.get.bind(
-        this.#serviceReferenceManager.bindingService,
-      ),
-      getBindingsChained:
-        this.#serviceReferenceManager.bindingService.getChained.bind(
-          this.#serviceReferenceManager.bindingService,
-        ),
-      getClassMetadata,
-      getPlan: this.#serviceReferenceManager.planResultCacheService.get.bind(
-        this.#serviceReferenceManager.planResultCacheService,
-      ),
-      setBinding: this.#setBinding.bind(this),
-      setNonCachedServiceNode:
-        this.#serviceReferenceManager.planResultCacheService.setNonCachedServiceNode.bind(
-          this.#serviceReferenceManager.planResultCacheService,
-        ),
-      setPlan: this.#serviceReferenceManager.planResultCacheService.set.bind(
-        this.#serviceReferenceManager.planResultCacheService,
-      ),
-    };
 
     this.#serviceReferenceManager.onReset(() => {
       this.#resetComputedProperties();
@@ -182,16 +160,6 @@ export class ServiceResolutionManager {
   }
 
   #resetComputedProperties(): void {
-    this.#planParamsOperations.getBindings =
-      this.#serviceReferenceManager.bindingService.get.bind(
-        this.#serviceReferenceManager.bindingService,
-      );
-    this.#planParamsOperations.getBindingsChained =
-      this.#serviceReferenceManager.bindingService.getChained.bind(
-        this.#serviceReferenceManager.bindingService,
-      );
-    this.#planParamsOperations.setBinding = this.#setBinding.bind(this);
-
     this.#resolutionContext = this.#buildResolutionContext();
   }
 
@@ -237,7 +205,7 @@ export class ServiceResolutionManager {
               scope: this.#defaultScope,
             }
           : undefined,
-      operations: this.#planParamsOperations,
+      operations: this.#planParamsOperationsManager.planParamsOperations,
       rootConstraints: this.#buildPlanParamsConstraints(
         serviceIdentifier,
         isMultiple,
@@ -346,12 +314,5 @@ export class ServiceResolutionManager {
       planParams.rootConstraints.chained =
         (options as Partial<GetAllOptions> | undefined)?.chained ?? false;
     }
-  }
-
-  #setBinding(binding: Binding): void {
-    this.#serviceReferenceManager.bindingService.set(binding);
-    this.#serviceReferenceManager.planResultCacheService.invalidateService(
-      binding.serviceIdentifier,
-    );
   }
 }

@@ -6,7 +6,6 @@ import {
   BindingScope,
   bindingScopeValues,
   BindingService,
-  DeactivationParams,
   DeactivationsService,
   GetAllOptions,
   GetOptions,
@@ -16,12 +15,14 @@ import {
 
 import { BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax';
 import { BindingIdentifier } from '../../binding/models/BindingIdentifier';
-import { buildDeactivationParams } from '../calculations/buildDeactivationParams';
 import { ContainerModule } from '../models/ContainerModule';
 import { ContainerOptions } from '../models/ContainerOptions';
 import { IsBoundOptions } from '../models/isBoundOptions';
 import { BindingManager } from './BindingManager';
 import { ContainerModuleManager } from './ContainerModuleManager';
+import { DeactivationParamsManager } from './DeactivationParamsManager';
+import { PlanParamsOperationsManager } from './PlanParamsOperationsManager';
+import { PlanResultCacheManager } from './PlanResultCacheManager';
 import { PluginManager } from './PluginManager';
 import { ServiceReferenceManager } from './ServiceReferenceManager';
 import { ServiceResolutionManager } from './ServiceResolutionManager';
@@ -44,22 +45,33 @@ export class Container {
     const defaultScope: BindingScope =
       options?.defaultScope ?? DEFAULT_DEFAULT_SCOPE;
 
-    const deactivationParams: DeactivationParams = buildDeactivationParams(
-      this.#serviceReferenceManager,
-    );
+    const planParamsOperationsManager: PlanParamsOperationsManager =
+      new PlanParamsOperationsManager(this.#serviceReferenceManager);
+
+    const planResultCacheManager: PlanResultCacheManager =
+      new PlanResultCacheManager(
+        planParamsOperationsManager,
+        this.#serviceReferenceManager,
+      );
+
+    const deactivationParamsManager: DeactivationParamsManager =
+      new DeactivationParamsManager(this.#serviceReferenceManager);
 
     this.#bindingManager = new BindingManager(
-      deactivationParams,
+      deactivationParamsManager.deactivationParams,
       defaultScope,
+      planResultCacheManager,
       this.#serviceReferenceManager,
     );
     this.#containerModuleManager = new ContainerModuleManager(
       this.#bindingManager,
-      deactivationParams,
+      deactivationParamsManager.deactivationParams,
       defaultScope,
+      planResultCacheManager,
       this.#serviceReferenceManager,
     );
     this.#serviceResolutionManager = new ServiceResolutionManager(
+      planParamsOperationsManager,
       this.#serviceReferenceManager,
       autobind,
       defaultScope,

@@ -4,6 +4,7 @@ import {
   BindingActivation,
   BindingDeactivation,
   BindingScope,
+  CacheBindingInvalidationKind,
   DeactivationParams,
   resolveModuleDeactivations,
 } from '@inversifyjs/core';
@@ -17,23 +18,27 @@ import {
   ContainerModuleLoadOptions,
 } from '../models/ContainerModule';
 import { BindingManager } from './BindingManager';
+import { PlanResultCacheManager } from './PlanResultCacheManager';
 import { ServiceReferenceManager } from './ServiceReferenceManager';
 
 export class ContainerModuleManager {
   readonly #bindingManager: BindingManager;
   readonly #deactivationParams: DeactivationParams;
   readonly #defaultScope: BindingScope;
+  readonly #planResultCacheManager: PlanResultCacheManager;
   readonly #serviceReferenceManager: ServiceReferenceManager;
 
   constructor(
     bindingManager: BindingManager,
     deactivationParams: DeactivationParams,
     defaultScope: BindingScope,
+    planResultCacheManager: PlanResultCacheManager,
     serviceReferenceManager: ServiceReferenceManager,
   ) {
     this.#bindingManager = bindingManager;
     this.#deactivationParams = deactivationParams;
     this.#defaultScope = defaultScope;
+    this.#planResultCacheManager = planResultCacheManager;
     this.#serviceReferenceManager = serviceReferenceManager;
   }
 
@@ -164,9 +169,10 @@ export class ContainerModuleManager {
   #setBinding(binding: Binding): void {
     this.#serviceReferenceManager.bindingService.set(binding);
 
-    this.#serviceReferenceManager.planResultCacheService.invalidateService(
-      binding.serviceIdentifier,
-    );
+    this.#planResultCacheManager.invalidateService({
+      binding: binding as Binding<unknown>,
+      kind: CacheBindingInvalidationKind.bindingAdded,
+    });
   }
 
   #unload(...modules: ContainerModule[]): (void | Promise<void>)[] {

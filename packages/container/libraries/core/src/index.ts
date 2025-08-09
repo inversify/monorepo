@@ -62,6 +62,8 @@ import { plan } from './planning/actions/plan';
 import { BaseBindingNode } from './planning/models/BaseBindingNode';
 import { BaseGetPlanOptions } from './planning/models/BaseGetPlanOptions';
 import { BasePlanParams } from './planning/models/BasePlanParams';
+import { CacheBindingInvalidation } from './planning/models/CacheBindingInvalidation';
+import { CacheBindingInvalidationKind } from './planning/models/CacheBindingInvalidationKind';
 import { GetMultipleServicePlanOptions } from './planning/models/GetMultipleServicePlanOptions';
 import { GetPlanOptions } from './planning/models/GetPlanOptions';
 import { GetPlanOptionsTagConstraint } from './planning/models/GetPlanOptionsTagConstraint';
@@ -111,6 +113,7 @@ export type {
   BindingConstraints,
   BindingScope,
   BindingType,
+  CacheBindingInvalidation,
   ClassElementMetadata,
   ClassMetadata,
   ClassMetadataLifecycle,
@@ -170,6 +173,7 @@ export {
   bindingScopeValues,
   BindingService,
   bindingTypeValues,
+  CacheBindingInvalidationKind,
   ClassElementMetadataKind,
   DeactivationsService,
   decorate,

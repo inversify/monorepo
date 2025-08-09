@@ -6,6 +6,7 @@ import {
   Binding,
   BindingConstraints,
   BindingScope,
+  CacheBindingInvalidationKind,
   DeactivationParams,
   resolveBindingsDeactivations,
   resolveServiceDeactivations,
@@ -19,20 +20,24 @@ import { getFirstIterableResult } from '../../common/calculations/getFirstIterab
 import { InversifyContainerError } from '../../error/models/InversifyContainerError';
 import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
 import { IsBoundOptions } from '../models/isBoundOptions';
+import { PlanResultCacheManager } from './PlanResultCacheManager';
 import { ServiceReferenceManager } from './ServiceReferenceManager';
 
 export class BindingManager {
   readonly #deactivationParams: DeactivationParams;
   readonly #defaultScope: BindingScope;
+  readonly #planResultCacheManager: PlanResultCacheManager;
   readonly #serviceReferenceManager: ServiceReferenceManager;
 
   constructor(
     deactivationParams: DeactivationParams,
     defaultScope: BindingScope,
+    planResultCacheManager: PlanResultCacheManager,
     serviceReferenceManager: ServiceReferenceManager,
   ) {
     this.#deactivationParams = deactivationParams;
     this.#defaultScope = defaultScope;
+    this.#planResultCacheManager = planResultCacheManager;
     this.#serviceReferenceManager = serviceReferenceManager;
   }
 
@@ -138,9 +143,10 @@ export class BindingManager {
 
   #setBinding(binding: Binding): void {
     this.#serviceReferenceManager.bindingService.set(binding);
-    this.#serviceReferenceManager.planResultCacheService.invalidateService(
-      binding.serviceIdentifier,
-    );
+    this.#planResultCacheManager.invalidateService({
+      binding: binding as Binding<unknown>,
+      kind: CacheBindingInvalidationKind.bindingAdded,
+    });
   }
 
   #throwUnexpectedAsyncUnbindOperation(
@@ -184,12 +190,14 @@ export class BindingManager {
   #unbindBindingIdentifier(
     identifier: BindingIdentifier,
   ): void | Promise<void> {
-    const bindings: Iterable<Binding<unknown>> | undefined =
+    const bindingsIterable: Iterable<Binding<unknown>> | undefined =
       this.#serviceReferenceManager.bindingService.getById(identifier.id);
+    const bindings: Binding<unknown>[] | undefined =
+      bindingsIterable === undefined ? undefined : [...bindingsIterable];
 
     const result: void | Promise<void> = resolveBindingsDeactivations(
       this.#deactivationParams,
-      bindings,
+      bindingsIterable,
     );
 
     if (result === undefined) {
@@ -209,9 +217,10 @@ export class BindingManager {
 
     if (bindings !== undefined) {
       for (const binding of bindings) {
-        this.#serviceReferenceManager.planResultCacheService.invalidateService(
-          binding.serviceIdentifier,
-        );
+        this.#planResultCacheManager.invalidateService({
+          binding,
+          kind: CacheBindingInvalidationKind.bindingRemoved,
+        });
       }
     }
   }
@@ -219,21 +228,30 @@ export class BindingManager {
   #unbindServiceIdentifier(
     identifier: ServiceIdentifier,
   ): void | Promise<void> {
-    const result: void | Promise<void> = resolveServiceDeactivations(
+    const bindingsIterable: Iterable<Binding<unknown>> | undefined =
+      this.#serviceReferenceManager.bindingService.get(identifier);
+
+    const bindings: Binding<unknown>[] | undefined =
+      bindingsIterable === undefined ? undefined : [...bindingsIterable];
+
+    const result: void | Promise<void> = resolveBindingsDeactivations(
       this.#deactivationParams,
-      identifier,
+      bindingsIterable,
     );
 
     if (result === undefined) {
-      this.#clearAfterUnbindServiceIdentifier(identifier);
+      this.#clearAfterUnbindServiceIdentifier(identifier, bindings);
     } else {
       return result.then((): void => {
-        this.#clearAfterUnbindServiceIdentifier(identifier);
+        this.#clearAfterUnbindServiceIdentifier(identifier, bindings);
       });
     }
   }
 
-  #clearAfterUnbindServiceIdentifier(identifier: ServiceIdentifier): void {
+  #clearAfterUnbindServiceIdentifier(
+    identifier: ServiceIdentifier,
+    bindings: Iterable<Binding<unknown>> | undefined,
+  ): void {
     this.#serviceReferenceManager.activationService.removeAllByServiceId(
       identifier,
     );
@@ -244,9 +262,14 @@ export class BindingManager {
       identifier,
     );
 
-    this.#serviceReferenceManager.planResultCacheService.invalidateService(
-      identifier,
-    );
+    if (bindings !== undefined) {
+      for (const binding of bindings) {
+        this.#planResultCacheManager.invalidateService({
+          binding,
+          kind: CacheBindingInvalidationKind.bindingRemoved,
+        });
+      }
+    }
   }
 
   #isAnyValidBinding(

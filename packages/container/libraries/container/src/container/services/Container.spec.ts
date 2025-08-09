@@ -28,9 +28,11 @@ import {
   PlanResultCacheService,
 } from '@inversifyjs/core';
 
-vitest.mock('../calculations/buildDeactivationParams');
 vitest.mock('./BindingManager');
 vitest.mock('./ContainerModuleManager');
+vitest.mock('./DeactivationParamsManager');
+vitest.mock('./PlanParamsOperationsManager');
+vitest.mock('./PlanResultCacheManager');
 vitest.mock('./PluginManager');
 vitest.mock('./ServiceReferenceManager');
 vitest.mock('./ServiceResolutionManager');
@@ -39,11 +41,13 @@ vitest.mock('./SnapshotManager');
 import { Plugin, PluginContext } from '@inversifyjs/plugin';
 
 import { BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax';
-import { buildDeactivationParams } from '../calculations/buildDeactivationParams';
 import { ContainerModule } from '../models/ContainerModule';
 import { BindingManager } from './BindingManager';
 import { Container } from './Container';
 import { ContainerModuleManager } from './ContainerModuleManager';
+import { DeactivationParamsManager } from './DeactivationParamsManager';
+import { PlanParamsOperationsManager } from './PlanParamsOperationsManager';
+import { PlanResultCacheManager } from './PlanResultCacheManager';
 import { PluginManager } from './PluginManager';
 import { ServiceReferenceManager } from './ServiceReferenceManager';
 import { ServiceResolutionManager } from './ServiceResolutionManager';
@@ -54,8 +58,10 @@ describe(Container, () => {
   let bindingManagerMock: Mocked<BindingManager>;
   let bindingServiceMock: Mocked<BindingService>;
   let containerModuleManagerMock: Mocked<ContainerModuleManager>;
-  let deactivationParamsFixture: DeactivationParams;
+  let deactivationParamsManagerMock: Mocked<DeactivationParamsManager>;
   let deactivationServiceMock: Mocked<DeactivationsService>;
+  let planParamsOperationsManagerMock: Mocked<PlanParamsOperationsManager>;
+  let planResultCacheManagerMock: Mocked<PlanResultCacheManager>;
   let planResultCacheServiceMock: Mocked<PlanResultCacheService>;
   let pluginManagerMock: Mocked<PluginManager>;
   let serviceReferenceManagerMock: Mocked<ServiceReferenceManager>;
@@ -93,13 +99,35 @@ describe(Container, () => {
     } as Partial<
       Mocked<ContainerModuleManager>
     > as Mocked<ContainerModuleManager>;
-    deactivationParamsFixture = Symbol() as unknown as DeactivationParams;
+    deactivationParamsManagerMock = {
+      deactivationParams: Symbol() as unknown as DeactivationParams,
+    } as Partial<
+      Mocked<DeactivationParamsManager>
+    > as Mocked<DeactivationParamsManager>;
     deactivationServiceMock = {
       add: vitest.fn(),
       clone: vitest.fn().mockReturnThis(),
       removeAllByModuleId: vitest.fn(),
       removeAllByServiceId: vitest.fn(),
     } as Partial<Mocked<DeactivationsService>> as Mocked<DeactivationsService>;
+    planParamsOperationsManagerMock = {
+      planParamsOperations: {
+        getBindings: vitest.fn(),
+        getBindingsChained: vitest.fn(),
+        getClassMetadata: vitest.fn(),
+        getPlan: vitest.fn(),
+        setBinding: vitest.fn(),
+        setNonCachedServiceNode: vitest.fn(),
+        setPlan: vitest.fn(),
+      },
+    } as Partial<
+      Mocked<PlanParamsOperationsManager>
+    > as Mocked<PlanParamsOperationsManager>;
+    planResultCacheManagerMock = {
+      invalidateService: vitest.fn(),
+    } as Partial<
+      Mocked<PlanResultCacheManager>
+    > as Mocked<PlanResultCacheManager>;
     planResultCacheServiceMock = {
       get: vitest.fn(),
       set: vitest.fn(),
@@ -114,6 +142,7 @@ describe(Container, () => {
       activationService: activationServiceMock,
       bindingService: bindingServiceMock,
       deactivationService: deactivationServiceMock,
+      onReset: vitest.fn(),
       planResultCacheService: planResultCacheServiceMock,
     } as Partial<
       Mocked<ServiceReferenceManager>
@@ -132,10 +161,6 @@ describe(Container, () => {
     } as Partial<Mocked<SnapshotManager>> as Mocked<SnapshotManager>;
 
     vitest
-      .mocked(buildDeactivationParams)
-      .mockReturnValue(deactivationParamsFixture);
-
-    vitest
       .mocked(ActivationsService.build)
       .mockReturnValue(activationServiceMock);
 
@@ -148,8 +173,20 @@ describe(Container, () => {
       .mockReturnValue(containerModuleManagerMock);
 
     vitest
+      .mocked(DeactivationParamsManager)
+      .mockReturnValue(deactivationParamsManagerMock);
+
+    vitest
       .mocked(DeactivationsService.build)
       .mockReturnValue(deactivationServiceMock);
+
+    vitest
+      .mocked(PlanParamsOperationsManager)
+      .mockReturnValue(planParamsOperationsManagerMock);
+
+    vitest
+      .mocked(PlanResultCacheManager)
+      .mockReturnValue(planResultCacheManagerMock);
 
     vitest
       .mocked(PlanResultCacheService)

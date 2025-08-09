@@ -14,22 +14,20 @@ vitest.mock('@inversifyjs/core');
 import { ServiceIdentifier } from '@inversifyjs/common';
 import {
   ActivationsService,
-  Binding,
   BindingActivation,
   BindingScope,
   bindingScopeValues,
   BindingService,
   DeactivationsService,
   GetAllOptions,
-  getClassMetadata,
   GetOptions,
   GetOptionsTagConstraint,
   GetPlanOptions,
   plan,
   PlanParams,
+  PlanParamsOperations,
   PlanResult,
   PlanResultCacheService,
-  PlanServiceNode,
   ResolutionContext,
   ResolutionParams,
   resolve,
@@ -37,17 +35,22 @@ import {
 
 import { InversifyContainerError } from '../../error/models/InversifyContainerError';
 import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
+import { PlanParamsOperationsManager } from './PlanParamsOperationsManager';
 import { ServiceReferenceManager } from './ServiceReferenceManager';
 import { ServiceResolutionManager } from './ServiceResolutionManager';
 
 describe(ServiceResolutionManager, () => {
   let autobindFixture: boolean;
   let defaultScopeFixture: BindingScope;
+  let planParamsOperationsManagerFixture: PlanParamsOperationsManager;
   let serviceReferenceManagerMock: Mocked<ServiceReferenceManager>;
 
   beforeAll(() => {
     autobindFixture = false;
     defaultScopeFixture = bindingScopeValues.Singleton;
+    planParamsOperationsManagerFixture = {
+      planParamsOperations: Symbol() as unknown as PlanParamsOperations,
+    } as Partial<PlanParamsOperationsManager> as PlanParamsOperationsManager;
     serviceReferenceManagerMock = {
       activationService: {} as Partial<
         Mocked<ActivationsService>
@@ -78,6 +81,7 @@ describe(ServiceResolutionManager, () => {
 
       beforeAll(() => {
         serviceResolutionManager = new ServiceResolutionManager(
+          planParamsOperationsManagerFixture,
           serviceReferenceManagerMock,
           autobindFixture,
           defaultScopeFixture,
@@ -143,30 +147,7 @@ describe(ServiceResolutionManager, () => {
         it('should call plan()', () => {
           const expectedPlanParams: PlanParams = {
             autobindOptions: undefined,
-            operations: {
-              getBindings: expect.any(Function) as unknown as <TInstance>(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Binding<TInstance>[] | undefined,
-              getBindingsChained: expect.any(Function) as unknown as <
-                TInstance,
-              >(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Generator<Binding<TInstance>>,
-              getClassMetadata,
-              getPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-              ) => PlanResult | undefined,
-              setBinding: expect.any(Function) as unknown as <TInstance>(
-                binding: Binding<TInstance>,
-              ) => void,
-              setNonCachedServiceNode: expect.any(Function) as unknown as (
-                node: PlanServiceNode,
-              ) => void,
-              setPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-                planResult: PlanResult,
-              ) => void,
-            },
+            operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
               isOptional: getOptionsFixture.optional as true,
@@ -268,30 +249,7 @@ describe(ServiceResolutionManager, () => {
         it('should call plan()', () => {
           const expectedPlanParams: PlanParams = {
             autobindOptions: undefined,
-            operations: {
-              getBindings: expect.any(Function) as unknown as <TInstance>(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Binding<TInstance>[] | undefined,
-              getBindingsChained: expect.any(Function) as unknown as <
-                TInstance,
-              >(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Generator<Binding<TInstance>>,
-              getClassMetadata,
-              getPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-              ) => PlanResult | undefined,
-              setBinding: expect.any(Function) as unknown as <TInstance>(
-                binding: Binding<TInstance>,
-              ) => void,
-              setNonCachedServiceNode: expect.any(Function) as unknown as (
-                node: PlanServiceNode,
-              ) => void,
-              setPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-                planResult: PlanResult,
-              ) => void,
-            },
+            operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
               isOptional: getOptionsFixture.optional as true,
@@ -401,30 +359,7 @@ describe(ServiceResolutionManager, () => {
         it('should call plan()', () => {
           const expectedPlanParams: PlanParams = {
             autobindOptions: undefined,
-            operations: {
-              getBindings: expect.any(Function) as unknown as <TInstance>(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Binding<TInstance>[] | undefined,
-              getBindingsChained: expect.any(Function) as unknown as <
-                TInstance,
-              >(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Generator<Binding<TInstance>>,
-              getClassMetadata,
-              getPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-              ) => PlanResult | undefined,
-              setBinding: expect.any(Function) as unknown as <TInstance>(
-                binding: Binding<TInstance>,
-              ) => void,
-              setNonCachedServiceNode: expect.any(Function) as unknown as (
-                node: PlanServiceNode,
-              ) => void,
-              setPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-                planResult: PlanResult,
-              ) => void,
-            },
+            operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
               isOptional: getOptionsFixture.optional as true,
@@ -487,6 +422,7 @@ describe(ServiceResolutionManager, () => {
       beforeAll(() => {
         defaultScopeFixture = bindingScopeValues.Singleton;
         serviceResolutionManager = new ServiceResolutionManager(
+          planParamsOperationsManagerFixture,
           serviceReferenceManagerMock,
           true,
           defaultScopeFixture,
@@ -554,30 +490,7 @@ describe(ServiceResolutionManager, () => {
             autobindOptions: {
               scope: defaultScopeFixture,
             },
-            operations: {
-              getBindings: expect.any(Function) as unknown as <TInstance>(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Binding<TInstance>[] | undefined,
-              getBindingsChained: expect.any(Function) as unknown as <
-                TInstance,
-              >(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Generator<Binding<TInstance>>,
-              getClassMetadata,
-              getPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-              ) => PlanResult | undefined,
-              setBinding: expect.any(Function) as unknown as <TInstance>(
-                binding: Binding<TInstance>,
-              ) => void,
-              setNonCachedServiceNode: expect.any(Function) as unknown as (
-                node: PlanServiceNode,
-              ) => void,
-              setPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-                planResult: PlanResult,
-              ) => void,
-            },
+            operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
               isOptional: getOptionsFixture.optional as true,
@@ -624,6 +537,7 @@ describe(ServiceResolutionManager, () => {
       beforeAll(() => {
         defaultScopeFixture = bindingScopeValues.Singleton;
         serviceResolutionManager = new ServiceResolutionManager(
+          planParamsOperationsManagerFixture,
           serviceReferenceManagerMock,
           false,
           defaultScopeFixture,
@@ -692,30 +606,7 @@ describe(ServiceResolutionManager, () => {
             autobindOptions: {
               scope: defaultScopeFixture,
             },
-            operations: {
-              getBindings: expect.any(Function) as unknown as <TInstance>(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Binding<TInstance>[] | undefined,
-              getBindingsChained: expect.any(Function) as unknown as <
-                TInstance,
-              >(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Generator<Binding<TInstance>>,
-              getClassMetadata,
-              getPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-              ) => PlanResult | undefined,
-              setBinding: expect.any(Function) as unknown as <TInstance>(
-                binding: Binding<TInstance>,
-              ) => void,
-              setNonCachedServiceNode: expect.any(Function) as unknown as (
-                node: PlanServiceNode,
-              ) => void,
-              setPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-                planResult: PlanResult,
-              ) => void,
-            },
+            operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
               isOptional: getOptionsFixture.optional as true,
@@ -771,6 +662,7 @@ describe(ServiceResolutionManager, () => {
       beforeAll(() => {
         defaultScopeFixture = bindingScopeValues.Singleton;
         serviceResolutionManager = new ServiceResolutionManager(
+          planParamsOperationsManagerFixture,
           serviceReferenceManagerMock,
           false,
           defaultScopeFixture,
@@ -879,6 +771,7 @@ describe(ServiceResolutionManager, () => {
           vitest.mocked(resolve).mockReturnValueOnce([resolvedValueFixture]);
 
           result = new ServiceResolutionManager(
+            planParamsOperationsManagerFixture,
             serviceReferenceManagerMock,
             autobindFixture,
             defaultScopeFixture,
@@ -910,30 +803,7 @@ describe(ServiceResolutionManager, () => {
         it('should call plan()', () => {
           const expectedPlanParams: PlanParams = {
             autobindOptions: undefined,
-            operations: {
-              getBindings: expect.any(Function) as unknown as <TInstance>(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Binding<TInstance>[] | undefined,
-              getBindingsChained: expect.any(Function) as unknown as <
-                TInstance,
-              >(
-                serviceIdentifier: ServiceIdentifier<TInstance>,
-              ) => Generator<Binding<TInstance>>,
-              getClassMetadata,
-              getPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-              ) => PlanResult | undefined,
-              setBinding: expect.any(Function) as unknown as <TInstance>(
-                binding: Binding<TInstance>,
-              ) => void,
-              setNonCachedServiceNode: expect.any(Function) as unknown as (
-                node: PlanServiceNode,
-              ) => void,
-              setPlan: expect.any(Function) as unknown as (
-                options: GetPlanOptions,
-                planResult: PlanResult,
-              ) => void,
-            },
+            operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               chained: true,
               isMultiple: true,
@@ -1001,6 +871,7 @@ describe(ServiceResolutionManager, () => {
         vitest.mocked(resolve).mockReturnValueOnce([resolvedValueFixture]);
 
         result = new ServiceResolutionManager(
+          planParamsOperationsManagerFixture,
           serviceReferenceManagerMock,
           autobindFixture,
           defaultScopeFixture,
@@ -1032,28 +903,7 @@ describe(ServiceResolutionManager, () => {
       it('should call plan()', () => {
         const expectedPlanParams: PlanParams = {
           autobindOptions: undefined,
-          operations: {
-            getBindings: expect.any(Function) as unknown as <TInstance>(
-              serviceIdentifier: ServiceIdentifier<TInstance>,
-            ) => Binding<TInstance>[] | undefined,
-            getBindingsChained: expect.any(Function) as unknown as <TInstance>(
-              serviceIdentifier: ServiceIdentifier<TInstance>,
-            ) => Generator<Binding<TInstance>>,
-            getClassMetadata,
-            getPlan: expect.any(Function) as unknown as (
-              options: GetPlanOptions,
-            ) => PlanResult | undefined,
-            setBinding: expect.any(Function) as unknown as <TInstance>(
-              binding: Binding<TInstance>,
-            ) => void,
-            setNonCachedServiceNode: expect.any(Function) as unknown as (
-              node: PlanServiceNode,
-            ) => void,
-            setPlan: expect.any(Function) as unknown as (
-              options: GetPlanOptions,
-              planResult: PlanResult,
-            ) => void,
-          },
+          operations: planParamsOperationsManagerFixture.planParamsOperations,
           rootConstraints: {
             chained: false,
             isMultiple: true,
@@ -1124,6 +974,7 @@ describe(ServiceResolutionManager, () => {
 
         try {
           new ServiceResolutionManager(
+            planParamsOperationsManagerFixture,
             serviceReferenceManagerMock,
             autobindFixture,
             defaultScopeFixture,
@@ -1158,28 +1009,7 @@ describe(ServiceResolutionManager, () => {
       it('should call plan()', () => {
         const expectedPlanParams: PlanParams = {
           autobindOptions: undefined,
-          operations: {
-            getBindings: expect.any(Function) as unknown as <TInstance>(
-              serviceIdentifier: ServiceIdentifier<TInstance>,
-            ) => Binding<TInstance>[] | undefined,
-            getBindingsChained: expect.any(Function) as unknown as <TInstance>(
-              serviceIdentifier: ServiceIdentifier<TInstance>,
-            ) => Generator<Binding<TInstance>>,
-            getClassMetadata,
-            getPlan: expect.any(Function) as unknown as (
-              options: GetPlanOptions,
-            ) => PlanResult | undefined,
-            setBinding: expect.any(Function) as unknown as <TInstance>(
-              binding: Binding<TInstance>,
-            ) => void,
-            setNonCachedServiceNode: expect.any(Function) as unknown as (
-              node: PlanServiceNode,
-            ) => void,
-            setPlan: expect.any(Function) as unknown as (
-              options: GetPlanOptions,
-              planResult: PlanResult,
-            ) => void,
-          },
+          operations: planParamsOperationsManagerFixture.planParamsOperations,
           rootConstraints: {
             chained: false,
             isMultiple: true,
@@ -1259,6 +1089,7 @@ describe(ServiceResolutionManager, () => {
         vitest.mocked(resolve).mockReturnValueOnce([resolvedValueFixture]);
 
         result = await new ServiceResolutionManager(
+          planParamsOperationsManagerFixture,
           serviceReferenceManagerMock,
           autobindFixture,
           defaultScopeFixture,
@@ -1290,28 +1121,7 @@ describe(ServiceResolutionManager, () => {
       it('should call plan()', () => {
         const expectedPlanParams: PlanParams = {
           autobindOptions: undefined,
-          operations: {
-            getBindings: expect.any(Function) as unknown as <TInstance>(
-              serviceIdentifier: ServiceIdentifier<TInstance>,
-            ) => Binding<TInstance>[] | undefined,
-            getBindingsChained: expect.any(Function) as unknown as <TInstance>(
-              serviceIdentifier: ServiceIdentifier<TInstance>,
-            ) => Generator<Binding<TInstance>>,
-            getClassMetadata,
-            getPlan: expect.any(Function) as unknown as (
-              options: GetPlanOptions,
-            ) => PlanResult | undefined,
-            setBinding: expect.any(Function) as unknown as <TInstance>(
-              binding: Binding<TInstance>,
-            ) => void,
-            setNonCachedServiceNode: expect.any(Function) as unknown as (
-              node: PlanServiceNode,
-            ) => void,
-            setPlan: expect.any(Function) as unknown as (
-              options: GetPlanOptions,
-              planResult: PlanResult,
-            ) => void,
-          },
+          operations: planParamsOperationsManagerFixture.planParamsOperations,
           rootConstraints: {
             chained: false,
             isMultiple: true,
@@ -1383,6 +1193,7 @@ describe(ServiceResolutionManager, () => {
         vitest.mocked(resolve).mockReturnValueOnce(resolvedValueFixture);
 
         result = await new ServiceResolutionManager(
+          planParamsOperationsManagerFixture,
           serviceReferenceManagerMock,
           autobindFixture,
           defaultScopeFixture,
@@ -1413,28 +1224,7 @@ describe(ServiceResolutionManager, () => {
       it('should call plan()', () => {
         const expectedPlanParams: PlanParams = {
           autobindOptions: undefined,
-          operations: {
-            getBindings: expect.any(Function) as unknown as <TInstance>(
-              serviceIdentifier: ServiceIdentifier<TInstance>,
-            ) => Binding<TInstance>[] | undefined,
-            getBindingsChained: expect.any(Function) as unknown as <TInstance>(
-              serviceIdentifier: ServiceIdentifier<TInstance>,
-            ) => Generator<Binding<TInstance>>,
-            getClassMetadata,
-            getPlan: expect.any(Function) as unknown as (
-              options: GetPlanOptions,
-            ) => PlanResult | undefined,
-            setBinding: expect.any(Function) as unknown as <TInstance>(
-              binding: Binding<TInstance>,
-            ) => void,
-            setNonCachedServiceNode: expect.any(Function) as unknown as (
-              node: PlanServiceNode,
-            ) => void,
-            setPlan: expect.any(Function) as unknown as (
-              options: GetPlanOptions,
-              planResult: PlanResult,
-            ) => void,
-          },
+          operations: planParamsOperationsManagerFixture.planParamsOperations,
           rootConstraints: {
             isMultiple: false,
             isOptional: getOptionsFixture.optional as true,

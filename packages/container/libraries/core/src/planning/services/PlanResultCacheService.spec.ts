@@ -9,14 +9,27 @@ import {
   vitest,
 } from 'vitest';
 
+vitest.mock('../actions/addRootServiceNodeBindingIfContextFree');
+vitest.mock('../actions/addServiceNodeBindingIfContextFree');
+
+import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
 import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
 import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
+import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
 import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
+import { addRootServiceNodeBindingIfContextFree } from '../actions/addRootServiceNodeBindingIfContextFree';
+import { addServiceNodeBindingIfContextFree } from '../actions/addServiceNodeBindingIfContextFree';
+import { BasePlanParams } from '../models/BasePlanParams';
+import { CacheBindingInvalidation } from '../models/CacheBindingInvalidation';
+import { CacheBindingInvalidationKind } from '../models/CacheBindingInvalidationKind';
 import { GetPlanOptions } from '../models/GetPlanOptions';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
+import { NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext';
+import { PlanParams } from '../models/PlanParams';
+import { PlanParamsOperations } from '../models/PlanParamsOperations';
 import { PlanResult } from '../models/PlanResult';
 import { PlanServiceNode } from '../models/PlanServiceNode';
 import { PlanResultCacheService } from './PlanResultCacheService';
@@ -40,6 +53,44 @@ class LazyPlanServiceNodeMock extends LazyPlanServiceNode {
   protected override _buildPlanServiceNode(): PlanServiceNode {
     return this.buildPlanServiceNodeMock();
   }
+}
+
+function buildExpectedPlanParamsFixture(
+  optionsFixture: GetPlanOptions,
+  planResultCacheServiceInvalidationFixture: CacheBindingInvalidation,
+): PlanParams {
+  const expectedPlanParamsFixture: PlanParams = optionsFixture.isMultiple
+    ? {
+        autobindOptions: undefined,
+        operations: planResultCacheServiceInvalidationFixture.operations,
+        rootConstraints: {
+          chained: optionsFixture.chained,
+          isMultiple: optionsFixture.isMultiple,
+          serviceIdentifier:
+            planResultCacheServiceInvalidationFixture.binding.serviceIdentifier,
+        },
+        servicesBranch: [],
+      }
+    : {
+        autobindOptions: undefined,
+        operations: planResultCacheServiceInvalidationFixture.operations,
+        rootConstraints: {
+          isMultiple: optionsFixture.isMultiple,
+          serviceIdentifier:
+            planResultCacheServiceInvalidationFixture.binding.serviceIdentifier,
+        },
+        servicesBranch: [],
+      };
+
+  if (optionsFixture.name !== undefined) {
+    expectedPlanParamsFixture.rootConstraints.name = optionsFixture.name;
+  }
+
+  if (optionsFixture.tag !== undefined) {
+    expectedPlanParamsFixture.rootConstraints.tag = optionsFixture.tag;
+  }
+
+  return expectedPlanParamsFixture;
 }
 
 const planOptionsAndStringDescriptionPairList: [string, GetPlanOptions][] = [
@@ -407,11 +458,12 @@ describe(PlanResultCacheService, () => {
           }),
         ],
       ])(
-        'having GetPlanOptions%s',
+        'having GetPlanOptions%s and PlanResultCacheServiceInvalidation with binding added kind',
         (_: string, getOptions: (planResult: PlanResult) => GetPlanOptions) => {
           let buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
           let planServiceNodeFixture: PlanServiceNode;
-          let lazyPlanServiceNode: LazyPlanServiceNode;
+          let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+          let planResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
 
           let planResultFixture: PlanResult;
 
@@ -424,30 +476,54 @@ describe(PlanResultCacheService, () => {
               isContextFree: true,
               serviceIdentifier: 'service-id',
             };
-            lazyPlanServiceNode = new LazyPlanServiceNodeMock(
+            lazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
               planServiceNodeFixture,
               buildPlanServiceNodeMock,
             );
+            planResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier: planServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
 
             planResultFixture = {
               tree: {
-                root: lazyPlanServiceNode,
+                root: lazyPlanServiceNodeFixture,
               },
             };
 
             optionsFixture = getOptions(planResultFixture);
           });
 
-          describe('when called .set(), and called .invalidateService()', () => {
+          describe('when called .set(), and called .invalidateService() and addRootServiceNodeBindingIfContextFree() returns result with shouldInvalidateServiceNode', () => {
+            let expectedPlanParamsFixture: PlanParams;
             let planResultCacheService: PlanResultCacheService;
+            let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
             let servicePlanResult: PlanResult | undefined;
 
             beforeAll(() => {
+              expectedPlanParamsFixture = buildExpectedPlanParamsFixture(
+                optionsFixture,
+                planResultCacheServiceInvalidationFixture,
+              );
+
+              planServiceNodeBindingAddedResultFixture = {
+                isContextFreeBinding: true,
+                shouldInvalidateServiceNode: true,
+              };
+
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.set(optionsFixture, planResultFixture);
-              planResultCacheService.invalidateService(
-                planResultFixture.tree.root.serviceIdentifier,
+
+              vitest
+                .mocked(addRootServiceNodeBindingIfContextFree)
+                .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+
+              planResultCacheService.invalidateServiceBinding(
+                planResultCacheServiceInvalidationFixture,
               );
 
               servicePlanResult = planResultCacheService.get(optionsFixture);
@@ -455,6 +531,19 @@ describe(PlanResultCacheService, () => {
 
             afterAll(() => {
               vitest.clearAllMocks();
+            });
+
+            it('should call addRootServiceNodeBindingIfContextFree()', () => {
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledTimes(1);
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledWith(
+                expectedPlanParamsFixture,
+                planResultFixture.tree.root,
+                planResultCacheServiceInvalidationFixture.binding,
+              );
             });
 
             it('should keep an invalidated PlanResult for the service', () => {
@@ -518,11 +607,12 @@ describe(PlanResultCacheService, () => {
           }),
         ],
       ])(
-        'having GetPlanOptions%s',
+        'having GetPlanOptions%s and PlanResultCacheServiceInvalidation with binding added kind',
         (_: string, getOptions: (planResult: PlanResult) => GetPlanOptions) => {
           let buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
           let planServiceNodeFixture: PlanServiceNode;
-          let lazyPlanServiceNode: LazyPlanServiceNode;
+          let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+          let planResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
 
           let planResultFixture: PlanResult;
 
@@ -535,30 +625,54 @@ describe(PlanResultCacheService, () => {
               isContextFree: true,
               serviceIdentifier: 'service-id',
             };
-            lazyPlanServiceNode = new LazyPlanServiceNodeMock(
+            lazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
               planServiceNodeFixture,
               buildPlanServiceNodeMock,
             );
+            planResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier: planServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
 
             planResultFixture = {
               tree: {
-                root: lazyPlanServiceNode,
+                root: lazyPlanServiceNodeFixture,
               },
             };
 
             optionsFixture = getOptions(planResultFixture);
           });
 
-          describe('when called .set(), and called .invalidateService()', () => {
+          describe('when called .set(), and called .invalidateService() and addRootServiceNodeBindingIfContextFree() returns result with shouldInvalidateServiceNode', () => {
+            let expectedPlanParamsFixture: PlanParams;
             let planResultCacheService: PlanResultCacheService;
+            let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
             let servicePlanResult: PlanResult | undefined;
 
             beforeAll(() => {
+              expectedPlanParamsFixture = buildExpectedPlanParamsFixture(
+                optionsFixture,
+                planResultCacheServiceInvalidationFixture,
+              );
+
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.set(optionsFixture, planResultFixture);
-              planResultCacheService.invalidateService(
-                planResultFixture.tree.root.serviceIdentifier,
+
+              planServiceNodeBindingAddedResultFixture = {
+                isContextFreeBinding: true,
+                shouldInvalidateServiceNode: true,
+              };
+
+              vitest
+                .mocked(addRootServiceNodeBindingIfContextFree)
+                .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+
+              planResultCacheService.invalidateServiceBinding(
+                planResultCacheServiceInvalidationFixture,
               );
 
               servicePlanResult = planResultCacheService.get(optionsFixture);
@@ -566,6 +680,19 @@ describe(PlanResultCacheService, () => {
 
             afterAll(() => {
               vitest.clearAllMocks();
+            });
+
+            it('should call addRootServiceNodeBindingIfContextFree()', () => {
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledTimes(1);
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledWith(
+                expectedPlanParamsFixture,
+                planResultFixture.tree.root,
+                planResultCacheServiceInvalidationFixture.binding,
+              );
             });
 
             it('should keep an invalidated PlanResult for the service', () => {
@@ -629,7 +756,7 @@ describe(PlanResultCacheService, () => {
           }),
         ],
       ])(
-        'having GetPlanOptions%s',
+        'having GetPlanOptions%s and PlanResultCacheServiceInvalidation with binding added kind',
         (_: string, getOptions: (planResult: PlanResult) => GetPlanOptions) => {
           let buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
           let childPlanServiceNodeFixture: PlanServiceNode;
@@ -637,6 +764,7 @@ describe(PlanResultCacheService, () => {
           let childLazyPlanServiceNodeFixture: LazyPlanServiceNode;
           let lazyPlanServiceNode: LazyPlanServiceNode;
           let optionsFixture: GetPlanOptions;
+          let planResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
 
           let childPlanResultFixture: PlanResult;
           let planResultFixture: PlanResult;
@@ -705,15 +833,30 @@ describe(PlanResultCacheService, () => {
             };
 
             optionsFixture = getOptions(planResultFixture);
+
+            planResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier: planServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
           });
 
-          describe('when called .set(), and called .invalidateService()', () => {
+          describe('when called .set(), and called .invalidateService() and addRootServiceNodeBindingIfContextFree() returns result with shouldInvalidateServiceNode', () => {
+            let expectedPlanParamsFixture: PlanParams;
             let planResultCacheService: PlanResultCacheService;
+            let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
             let childServicePlanResult: PlanResult | undefined;
             let servicePlanResult: PlanResult | undefined;
 
             beforeAll(() => {
+              expectedPlanParamsFixture = buildExpectedPlanParamsFixture(
+                optionsFixture,
+                planResultCacheServiceInvalidationFixture,
+              );
+
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.set(
                 {
@@ -724,8 +867,18 @@ describe(PlanResultCacheService, () => {
                 childPlanResultFixture,
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
-              planResultCacheService.invalidateService(
-                planResultFixture.tree.root.serviceIdentifier,
+
+              planServiceNodeBindingAddedResultFixture = {
+                isContextFreeBinding: true,
+                shouldInvalidateServiceNode: true,
+              };
+
+              vitest
+                .mocked(addRootServiceNodeBindingIfContextFree)
+                .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+
+              planResultCacheService.invalidateServiceBinding(
+                planResultCacheServiceInvalidationFixture,
               );
 
               childServicePlanResult = planResultCacheService.get({
@@ -738,6 +891,19 @@ describe(PlanResultCacheService, () => {
 
             afterAll(() => {
               vitest.clearAllMocks();
+            });
+
+            it('should call addRootServiceNodeBindingIfContextFree()', () => {
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledTimes(1);
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledWith(
+                expectedPlanParamsFixture,
+                planResultFixture.tree.root,
+                planResultCacheServiceInvalidationFixture.binding,
+              );
             });
 
             it('should keep an invalidated PlanResult for the service', () => {
@@ -809,7 +975,7 @@ describe(PlanResultCacheService, () => {
           }),
         ],
       ])(
-        'having GetPlanOptions%s',
+        'having GetPlanOptions%s and PlanResultCacheServiceInvalidation with binding added kind',
         (_: string, getOptions: (planResult: PlanResult) => GetPlanOptions) => {
           let buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
           let childPlanServiceNodeFixture: PlanServiceNode;
@@ -820,6 +986,7 @@ describe(PlanResultCacheService, () => {
 
           let childPlanResultFixture: PlanResult;
           let planResultFixture: PlanResult;
+          let planResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
 
           beforeAll(() => {
             buildPlanServiceNodeMock = vitest.fn();
@@ -887,15 +1054,30 @@ describe(PlanResultCacheService, () => {
             };
 
             optionsFixture = getOptions(planResultFixture);
+
+            planResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier: planServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
           });
 
-          describe('when called .set(), and called .invalidateService()', () => {
+          describe('when called .set(), and called .invalidateService() and addRootServiceNodeBindingIfContextFree() returns result with shouldInvalidateServiceNode', () => {
+            let expectedPlanParamsFixture: PlanParams;
             let planResultCacheService: PlanResultCacheService;
+            let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
             let childServicePlanResult: PlanResult | undefined;
             let servicePlanResult: PlanResult | undefined;
 
             beforeAll(() => {
+              expectedPlanParamsFixture = buildExpectedPlanParamsFixture(
+                optionsFixture,
+                planResultCacheServiceInvalidationFixture,
+              );
+
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.set(
                 {
@@ -906,8 +1088,18 @@ describe(PlanResultCacheService, () => {
                 childPlanResultFixture,
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
-              planResultCacheService.invalidateService(
-                planResultFixture.tree.root.serviceIdentifier,
+
+              planServiceNodeBindingAddedResultFixture = {
+                isContextFreeBinding: true,
+                shouldInvalidateServiceNode: true,
+              };
+
+              vitest
+                .mocked(addRootServiceNodeBindingIfContextFree)
+                .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+
+              planResultCacheService.invalidateServiceBinding(
+                planResultCacheServiceInvalidationFixture,
               );
 
               childServicePlanResult = planResultCacheService.get({
@@ -920,6 +1112,19 @@ describe(PlanResultCacheService, () => {
 
             afterAll(() => {
               vitest.clearAllMocks();
+            });
+
+            it('should call addRootServiceNodeBindingIfContextFree()', () => {
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledTimes(1);
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledWith(
+                expectedPlanParamsFixture,
+                planResultFixture.tree.root,
+                planResultCacheServiceInvalidationFixture.binding,
+              );
             });
 
             it('should keep an invalidated PlanResult for the service', () => {
@@ -991,7 +1196,7 @@ describe(PlanResultCacheService, () => {
           }),
         ],
       ])(
-        'having GetPlanOptions%s',
+        'having GetPlanOptions%s and PlanResultCacheServiceInvalidation with binding added kind',
         (_: string, getOptions: (planResult: PlanResult) => GetPlanOptions) => {
           let buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
           let childPlanServiceNodeFixture: PlanServiceNode;
@@ -999,6 +1204,7 @@ describe(PlanResultCacheService, () => {
           let childLazyPlanServiceNodeFixture: LazyPlanServiceNode;
           let lazyPlanServiceNode: LazyPlanServiceNode;
           let optionsFixture: GetPlanOptions;
+          let planResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
 
           let childPlanResultFixture: PlanResult;
           let planResultFixture: PlanResult;
@@ -1081,15 +1287,30 @@ describe(PlanResultCacheService, () => {
             };
 
             optionsFixture = getOptions(planResultFixture);
+
+            planResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier: planServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
           });
 
-          describe('when called .set(), and called .invalidateService()', () => {
+          describe('when called .set(), and called .invalidateService() and addRootServiceNodeBindingIfContextFree() returns result with shouldInvalidateServiceNode', () => {
+            let expectedPlanParamsFixture: PlanParams;
             let planResultCacheService: PlanResultCacheService;
+            let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
             let childServicePlanResult: PlanResult | undefined;
             let servicePlanResult: PlanResult | undefined;
 
             beforeAll(() => {
+              expectedPlanParamsFixture = buildExpectedPlanParamsFixture(
+                optionsFixture,
+                planResultCacheServiceInvalidationFixture,
+              );
+
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.set(
                 {
@@ -1100,8 +1321,18 @@ describe(PlanResultCacheService, () => {
                 childPlanResultFixture,
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
-              planResultCacheService.invalidateService(
-                planResultFixture.tree.root.serviceIdentifier,
+
+              planServiceNodeBindingAddedResultFixture = {
+                isContextFreeBinding: true,
+                shouldInvalidateServiceNode: true,
+              };
+
+              vitest
+                .mocked(addRootServiceNodeBindingIfContextFree)
+                .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+
+              planResultCacheService.invalidateServiceBinding(
+                planResultCacheServiceInvalidationFixture,
               );
 
               childServicePlanResult = planResultCacheService.get({
@@ -1114,6 +1345,19 @@ describe(PlanResultCacheService, () => {
 
             afterAll(() => {
               vitest.clearAllMocks();
+            });
+
+            it('should call addRootServiceNodeBindingIfContextFree()', () => {
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledTimes(1);
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledWith(
+                expectedPlanParamsFixture,
+                planResultFixture.tree.root,
+                planResultCacheServiceInvalidationFixture.binding,
+              );
             });
 
             it('should keep an invalidated PlanResult for the service', () => {
@@ -1185,13 +1429,15 @@ describe(PlanResultCacheService, () => {
           }),
         ],
       ])(
-        'having GetPlanOptions%s',
+        'having GetPlanOptions%s and PlanResultCacheServiceInvalidation with binding added kind',
         (_: string, getOptions: (planResult: PlanResult) => GetPlanOptions) => {
           let buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
           let childPlanServiceNodeFixture: PlanServiceNode;
           let planServiceNodeFixture: PlanServiceNode;
           let childLazyPlanServiceNodeFixture: LazyPlanServiceNode;
           let lazyPlanServiceNode: LazyPlanServiceNode;
+          let planResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
+          let childPlanResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
 
           let planResultFixture: PlanResult;
           let optionsFixture: GetPlanOptions;
@@ -1255,14 +1501,37 @@ describe(PlanResultCacheService, () => {
               },
             };
             optionsFixture = getOptions(planResultFixture);
+
+            planResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier: planServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
+            childPlanResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier:
+                  childPlanServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
           });
 
-          describe('when called .set(), and called .invalidateService()', () => {
+          describe('when called .set(), and called .invalidateService() and addRootServiceNodeBindingIfContextFree() returns result with shouldInvalidateServiceNode', () => {
+            let expectedPlanParamsFixture: PlanParams;
             let planResultCacheService: PlanResultCacheService;
+            let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
             let servicePlanResult: PlanResult | undefined;
 
             beforeAll(() => {
+              expectedPlanParamsFixture = buildExpectedPlanParamsFixture(
+                optionsFixture,
+                planResultCacheServiceInvalidationFixture,
+              );
+
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.setNonCachedServiceNode(
                 childLazyPlanServiceNodeFixture,
@@ -1274,19 +1543,42 @@ describe(PlanResultCacheService, () => {
                 },
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
-              planResultCacheService.invalidateService(
-                planResultFixture.tree.root.serviceIdentifier,
+
+              planServiceNodeBindingAddedResultFixture = {
+                isContextFreeBinding: true,
+                shouldInvalidateServiceNode: true,
+              };
+
+              vitest
+                .mocked(addRootServiceNodeBindingIfContextFree)
+                .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+
+              planResultCacheService.invalidateServiceBinding(
+                planResultCacheServiceInvalidationFixture,
               );
 
               servicePlanResult = planResultCacheService.get(optionsFixture);
 
-              planResultCacheService.invalidateService(
-                childPlanServiceNodeFixture.serviceIdentifier,
+              planResultCacheService.invalidateServiceBinding(
+                childPlanResultCacheServiceInvalidationFixture,
               );
             });
 
             afterAll(() => {
               vitest.clearAllMocks();
+            });
+
+            it('should call addRootServiceNodeBindingIfContextFree()', () => {
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledTimes(1);
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledWith(
+                expectedPlanParamsFixture,
+                planResultFixture.tree.root,
+                planResultCacheServiceInvalidationFixture.binding,
+              );
             });
 
             it('should keep an invalidated PlanResult for the service', () => {
@@ -1357,13 +1649,15 @@ describe(PlanResultCacheService, () => {
           }),
         ],
       ])(
-        'having GetPlanOptions%s',
+        'having GetPlanOptions%s and PlanResultCacheServiceInvalidation with binding added kind',
         (_: string, getOptions: (planResult: PlanResult) => GetPlanOptions) => {
           let buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
           let childPlanServiceNodeFixture: PlanServiceNode;
           let planServiceNodeFixture: PlanServiceNode;
           let childLazyPlanServiceNodeFixture: LazyPlanServiceNode;
           let lazyPlanServiceNode: LazyPlanServiceNode;
+          let planResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
+          let childPlanResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
 
           let planResultFixture: PlanResult;
           let optionsFixture: GetPlanOptions;
@@ -1434,14 +1728,37 @@ describe(PlanResultCacheService, () => {
               },
             };
             optionsFixture = getOptions(planResultFixture);
+
+            planResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier: planServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
+            childPlanResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier:
+                  childPlanServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
           });
 
-          describe('when called .set(), and called .invalidateService()', () => {
+          describe('when called .set(), and called .invalidateService() and addRootServiceNodeBindingIfContextFree() returns result with shouldInvalidateServiceNode', () => {
+            let expectedPlanParamsFixture: PlanParams;
             let planResultCacheService: PlanResultCacheService;
+            let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
             let servicePlanResult: PlanResult | undefined;
 
             beforeAll(() => {
+              expectedPlanParamsFixture = buildExpectedPlanParamsFixture(
+                optionsFixture,
+                planResultCacheServiceInvalidationFixture,
+              );
+
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.setNonCachedServiceNode(
                 childLazyPlanServiceNodeFixture,
@@ -1453,19 +1770,42 @@ describe(PlanResultCacheService, () => {
                 },
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
-              planResultCacheService.invalidateService(
-                planResultFixture.tree.root.serviceIdentifier,
+
+              planServiceNodeBindingAddedResultFixture = {
+                isContextFreeBinding: true,
+                shouldInvalidateServiceNode: true,
+              };
+
+              vitest
+                .mocked(addRootServiceNodeBindingIfContextFree)
+                .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+
+              planResultCacheService.invalidateServiceBinding(
+                planResultCacheServiceInvalidationFixture,
               );
 
               servicePlanResult = planResultCacheService.get(optionsFixture);
 
-              planResultCacheService.invalidateService(
-                childPlanServiceNodeFixture.serviceIdentifier,
+              planResultCacheService.invalidateServiceBinding(
+                childPlanResultCacheServiceInvalidationFixture,
               );
             });
 
             afterAll(() => {
               vitest.clearAllMocks();
+            });
+
+            it('should call addRootServiceNodeBindingIfContextFree()', () => {
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledTimes(1);
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledWith(
+                expectedPlanParamsFixture,
+                planResultFixture.tree.root,
+                planResultCacheServiceInvalidationFixture.binding,
+              );
             });
 
             it('should keep an invalidated PlanResult for the service', () => {
@@ -1536,13 +1876,15 @@ describe(PlanResultCacheService, () => {
           }),
         ],
       ])(
-        'having GetPlanOptions%s',
+        'having GetPlanOptions%s and PlanResultCacheServiceInvalidation with binding added kind',
         (_: string, getOptions: (planResult: PlanResult) => GetPlanOptions) => {
           let buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
           let childPlanServiceNodeFixture: PlanServiceNode;
           let planServiceNodeFixture: PlanServiceNode;
           let childLazyPlanServiceNodeFixture: LazyPlanServiceNode;
           let lazyPlanServiceNode: LazyPlanServiceNode;
+          let planResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
+          let childPlanResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
 
           let planResultFixture: PlanResult;
           let optionsFixture: GetPlanOptions;
@@ -1618,14 +1960,37 @@ describe(PlanResultCacheService, () => {
               },
             };
             optionsFixture = getOptions(planResultFixture);
+
+            planResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier: planServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
+            childPlanResultCacheServiceInvalidationFixture = {
+              binding: {
+                serviceIdentifier:
+                  childPlanServiceNodeFixture.serviceIdentifier,
+              } as unknown as Binding<unknown>,
+              kind: CacheBindingInvalidationKind.bindingAdded,
+              operations: Symbol() as unknown as PlanParamsOperations,
+            };
           });
 
-          describe('when called .set(), and called .invalidateService()', () => {
+          describe('when called .set(), and called .invalidateService() and addRootServiceNodeBindingIfContextFree() returns result with shouldInvalidateServiceNode', () => {
+            let expectedPlanParamsFixture: PlanParams;
             let planResultCacheService: PlanResultCacheService;
+            let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
             let servicePlanResult: PlanResult | undefined;
 
             beforeAll(() => {
+              expectedPlanParamsFixture = buildExpectedPlanParamsFixture(
+                optionsFixture,
+                planResultCacheServiceInvalidationFixture,
+              );
+
               planResultCacheService = new PlanResultCacheService();
               planResultCacheService.setNonCachedServiceNode(
                 childLazyPlanServiceNodeFixture,
@@ -1637,19 +2002,41 @@ describe(PlanResultCacheService, () => {
                 },
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
-              planResultCacheService.invalidateService(
-                planResultFixture.tree.root.serviceIdentifier,
-              );
 
+              planServiceNodeBindingAddedResultFixture = {
+                isContextFreeBinding: true,
+                shouldInvalidateServiceNode: true,
+              };
+
+              vitest
+                .mocked(addRootServiceNodeBindingIfContextFree)
+                .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+
+              planResultCacheService.invalidateServiceBinding(
+                planResultCacheServiceInvalidationFixture,
+              );
               servicePlanResult = planResultCacheService.get(optionsFixture);
 
-              planResultCacheService.invalidateService(
-                childPlanServiceNodeFixture.serviceIdentifier,
+              planResultCacheService.invalidateServiceBinding(
+                childPlanResultCacheServiceInvalidationFixture,
               );
             });
 
             afterAll(() => {
               vitest.clearAllMocks();
+            });
+
+            it('should call addRootServiceNodeBindingIfContextFree()', () => {
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledTimes(1);
+              expect(
+                addRootServiceNodeBindingIfContextFree,
+              ).toHaveBeenCalledWith(
+                expectedPlanParamsFixture,
+                planResultFixture.tree.root,
+                planResultCacheServiceInvalidationFixture.binding,
+              );
             });
 
             it('should keep an invalidated PlanResult for the service', () => {
@@ -1671,11 +2058,14 @@ describe(PlanResultCacheService, () => {
       );
     });
 
-    describe('having a non cached lazy service node', () => {
-      describe('when called .setNonCachedServiceNode(), and called .invalidateService()', () => {
+    describe('having a non cached lazy service node and PlanResultCacheServiceInvalidation with binding added kind', () => {
+      describe('when called .setNonCachedServiceNode(), and called .invalidateService() and addServiceNodeBindingIfContextFree() returns result with shouldInvalidateServiceNode', () => {
         let buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
         let planServiceNodeFixture: PlanServiceNode;
-        let lazyPlanServiceNode: LazyPlanServiceNode;
+        let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+        let planResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
+        let nonCachedServiceNodeContextFixture: NonCachedServiceNodeContext;
+        let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
         let planResultCacheService: PlanResultCacheService;
 
@@ -1686,20 +2076,43 @@ describe(PlanResultCacheService, () => {
             isContextFree: true,
             serviceIdentifier: 'service-id',
           };
-          lazyPlanServiceNode = new LazyPlanServiceNodeMock(
+          lazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
             planServiceNodeFixture,
             buildPlanServiceNodeMock,
           );
 
-          planResultCacheService = new PlanResultCacheService();
-          planResultCacheService.setNonCachedServiceNode(lazyPlanServiceNode, {
+          planResultCacheServiceInvalidationFixture = {
+            binding: {
+              serviceIdentifier: planServiceNodeFixture.serviceIdentifier,
+            } as unknown as Binding<unknown>,
+            kind: CacheBindingInvalidationKind.bindingAdded,
+            operations: Symbol() as unknown as PlanParamsOperations,
+          };
+
+          nonCachedServiceNodeContextFixture = {
             bindingConstraintsList:
               Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
             chainedBindings: false,
             optionalBindings: false,
-          });
-          planResultCacheService.invalidateService(
-            lazyPlanServiceNode.serviceIdentifier,
+          };
+
+          planServiceNodeBindingAddedResultFixture = {
+            isContextFreeBinding: true,
+            shouldInvalidateServiceNode: true,
+          };
+
+          planResultCacheService = new PlanResultCacheService();
+          planResultCacheService.setNonCachedServiceNode(
+            lazyPlanServiceNodeFixture,
+            nonCachedServiceNodeContextFixture,
+          );
+
+          vitest
+            .mocked(addServiceNodeBindingIfContextFree)
+            .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+
+          planResultCacheService.invalidateServiceBinding(
+            planResultCacheServiceInvalidationFixture,
           );
         });
 
@@ -1707,18 +2120,38 @@ describe(PlanResultCacheService, () => {
           vitest.clearAllMocks();
         });
 
+        it('should call addServiceNodeBindingIfContextFree()', () => {
+          const expectedBasePlanParams: BasePlanParams = {
+            autobindOptions: undefined,
+            operations: planResultCacheServiceInvalidationFixture.operations,
+            servicesBranch: [],
+          };
+
+          expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledTimes(1);
+          expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledWith(
+            expectedBasePlanParams,
+            lazyPlanServiceNodeFixture,
+            planResultCacheServiceInvalidationFixture.binding,
+            nonCachedServiceNodeContextFixture.bindingConstraintsList,
+            nonCachedServiceNodeContextFixture.chainedBindings,
+          );
+        });
+
         it('should invalidate the non cached lazy plan service node', () => {
           expect(
-            (lazyPlanServiceNode as LazyPlanServiceNodeMock)
+            (lazyPlanServiceNodeFixture as LazyPlanServiceNodeMock)
               .internalServiceNode,
           ).toBeUndefined();
         });
       });
 
-      describe('when called .setNonCachedServiceNode(), and called .invalidateService() in a parent service', () => {
+      describe('when called .setNonCachedServiceNode(), and called .invalidateService() in a parent service and addRootServiceNodeBindingIfContextFree() returns result with shouldInvalidateServiceNode', () => {
         let buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
         let planServiceNodeFixture: PlanServiceNode;
-        let lazyPlanServiceNode: LazyPlanServiceNode;
+        let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+        let planResultCacheServiceInvalidationFixture: CacheBindingInvalidation;
+        let nonCachedServiceNodeContextFixture: NonCachedServiceNodeContext;
+        let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
         let parentPlanResultCacheService: PlanResultCacheService;
         let planResultCacheService: PlanResultCacheService;
@@ -1730,24 +2163,48 @@ describe(PlanResultCacheService, () => {
             isContextFree: true,
             serviceIdentifier: 'service-id',
           };
-          lazyPlanServiceNode = new LazyPlanServiceNodeMock(
+          lazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
             planServiceNodeFixture,
             buildPlanServiceNodeMock,
           );
+
+          planResultCacheServiceInvalidationFixture = {
+            binding: {
+              serviceIdentifier: planServiceNodeFixture.serviceIdentifier,
+            } as unknown as Binding<unknown>,
+            kind: CacheBindingInvalidationKind.bindingAdded,
+            operations: Symbol() as unknown as PlanParamsOperations,
+          };
 
           parentPlanResultCacheService = new PlanResultCacheService();
           planResultCacheService = new PlanResultCacheService();
 
           parentPlanResultCacheService.subscribe(planResultCacheService);
 
-          planResultCacheService.setNonCachedServiceNode(lazyPlanServiceNode, {
+          planServiceNodeBindingAddedResultFixture = {
+            isContextFreeBinding: true,
+            shouldInvalidateServiceNode: true,
+          };
+
+          nonCachedServiceNodeContextFixture = {
             bindingConstraintsList:
               Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
             chainedBindings: false,
             optionalBindings: false,
-          });
-          parentPlanResultCacheService.invalidateService(
-            lazyPlanServiceNode.serviceIdentifier,
+          };
+
+          planResultCacheService = new PlanResultCacheService();
+          planResultCacheService.setNonCachedServiceNode(
+            lazyPlanServiceNodeFixture,
+            nonCachedServiceNodeContextFixture,
+          );
+
+          vitest
+            .mocked(addServiceNodeBindingIfContextFree)
+            .mockReturnValueOnce(planServiceNodeBindingAddedResultFixture);
+
+          planResultCacheService.invalidateServiceBinding(
+            planResultCacheServiceInvalidationFixture,
           );
         });
 
@@ -1755,9 +2212,26 @@ describe(PlanResultCacheService, () => {
           vitest.clearAllMocks();
         });
 
+        it('should call addServiceNodeBindingIfContextFree()', () => {
+          const expectedBasePlanParams: BasePlanParams = {
+            autobindOptions: undefined,
+            operations: planResultCacheServiceInvalidationFixture.operations,
+            servicesBranch: [],
+          };
+
+          expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledTimes(1);
+          expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledWith(
+            expectedBasePlanParams,
+            lazyPlanServiceNodeFixture,
+            planResultCacheServiceInvalidationFixture.binding,
+            nonCachedServiceNodeContextFixture.bindingConstraintsList,
+            nonCachedServiceNodeContextFixture.chainedBindings,
+          );
+        });
+
         it('should invalidate the non cached lazy plan service node', () => {
           expect(
-            (lazyPlanServiceNode as LazyPlanServiceNodeMock)
+            (lazyPlanServiceNodeFixture as LazyPlanServiceNodeMock)
               .internalServiceNode,
           ).toBeUndefined();
         });

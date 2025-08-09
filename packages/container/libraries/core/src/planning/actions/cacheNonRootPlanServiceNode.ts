@@ -1,4 +1,5 @@
 import { GetPlanOptions } from '../models/GetPlanOptions';
+import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
 import { NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext';
 import { PlanParamsOperations } from '../models/PlanParamsOperations';
 import { PlanResult } from '../models/PlanResult';
@@ -10,7 +11,12 @@ export function cacheNonRootPlanServiceNode(
   planServiceNode: PlanServiceNode,
   context: NonCachedServiceNodeContext,
 ): void {
-  if (getPlanOptions !== undefined && planServiceNode.isContextFree) {
+  if (
+    getPlanOptions !== undefined &&
+    ((LazyPlanServiceNode.is(planServiceNode) &&
+      !planServiceNode.isExpanded()) ||
+      planServiceNode.isContextFree)
+  ) {
     const planResult: PlanResult = {
       tree: {
         root: planServiceNode,
