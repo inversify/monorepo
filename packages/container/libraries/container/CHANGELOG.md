@@ -1,5 +1,15 @@
 # @inversifyjs/container
 
+## 1.12.2
+
+### Patch Changes
+
+- Updated dependencies [2392b15]
+- Updated dependencies [e30a884]
+- Updated dependencies [e30a884]
+  - @inversifyjs/core@7.0.0
+  - @inversifyjs/plugin@0.2.0
+
 ## 1.12.1
 
 ### Patch Changes

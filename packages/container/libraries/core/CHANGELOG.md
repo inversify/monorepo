@@ -1,5 +1,16 @@
 # @inversifyjs/core
 
+## 7.0.0
+
+### Major Changes
+
+- 2392b15: Removed `PlanResultCacheService.invalidateService` in favor of `invalidateServiceBinding`
+- e30a884: Updated `PlanParamsOperations` with context
+
+### Minor Changes
+
+- e30a884: Added `NonCachedServiceNodeContext`
+
 ## 6.0.1
 
 ### Patch Changes
