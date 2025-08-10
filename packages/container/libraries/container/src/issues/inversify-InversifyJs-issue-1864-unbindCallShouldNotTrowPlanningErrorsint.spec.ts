@@ -66,4 +66,25 @@ describe('inversify/InversifyJS#1864', () => {
 
     expect(foo).toStrictEqual(new Foo(['bar', new Bar('baz')]));
   });
+
+  it('Container non leaf circular bind request should not throw planning errors', () => {
+    class Foo {
+      constructor(@multiInject('bar') _bar: unknown[]) {}
+    }
+
+    class Circular {
+      constructor(@inject(Circular) _circular: Circular) {}
+    }
+
+    const container: Container = new Container();
+    container.bind(Foo).toSelf();
+    container.bind('bar').toConstantValue('bar');
+    container.bind(Circular).toSelf();
+
+    container.get(Foo);
+
+    expect(() => {
+      container.bind('bar').to(Circular);
+    }).not.toThrow();
+  });
 });

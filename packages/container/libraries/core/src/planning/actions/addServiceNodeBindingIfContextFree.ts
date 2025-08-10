@@ -5,6 +5,7 @@ import {
   InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation';
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
+import { isStackOverflowError } from '../../error/calculations/isStackOverflowError';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
@@ -122,14 +123,62 @@ export function addServiceNodeBindingIfContextFree(
     };
   }
 
-  const [serviceNodeBinding]: [PlanBindingNode] = buildServiceNodeBindings(
+  return addServiceNodeSatisfiedBindingIfContextFree(
     params,
-    bindingConstraintsList,
-    [binding],
     serviceNode,
+    binding,
+    bindingConstraintsList,
     chainedBindings,
-  ) as [PlanBindingNode];
+  );
+}
 
+function addServiceNodeSatisfiedBindingIfContextFree(
+  params: BasePlanParams,
+  serviceNode: PlanServiceNode,
+  binding: Binding<unknown>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
+  chainedBindings: boolean,
+): PlanServiceNodeBindingAddedResult {
+  let serviceNodeBinding: PlanBindingNode;
+
+  try {
+    [serviceNodeBinding] = buildServiceNodeBindings(
+      params,
+      bindingConstraintsList,
+      [binding],
+      serviceNode,
+      chainedBindings,
+    ) as [PlanBindingNode];
+  } catch (error: unknown) {
+    if (isStackOverflowError(error)) {
+      /**
+       * We could potentially detect if we managed to traverse at least one iteration of the circular dependency loop.
+       * If so, the binding is context free if and only if bindingConstraintsList.last.elem.getAncestorsCalled is false.
+       *
+       * Having said that, computing this does not solve an underlying issue with circular dependencies: further cache
+       * refreshes are likely to encounter the same issue again and again. Recovering from stack overflow errors constantly
+       * is not feasible, so we prefer to declare the binding as non context free, asking for a more aggressive cache
+       * invalidation strategy, which is likely to be a cache clear.
+       */
+      return {
+        isContextFreeBinding: false,
+        shouldInvalidateServiceNode: true,
+      };
+    }
+
+    throw error;
+  }
+
+  return addServiceNodeBindingNodeIfContextFree(
+    serviceNode,
+    serviceNodeBinding,
+  );
+}
+
+function addServiceNodeBindingNodeIfContextFree(
+  serviceNode: PlanServiceNode,
+  serviceNodeBinding: PlanBindingNode,
+): PlanServiceNodeBindingAddedResult {
   if (Array.isArray(serviceNode.bindings)) {
     serviceNode.bindings.push(serviceNodeBinding);
   } else {
