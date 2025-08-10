@@ -18,7 +18,7 @@ import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
@@ -131,13 +131,13 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
     });
 
     describe('when called', () => {
-      let buildPlanBindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let buildPlanBindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
       let result: unknown;
 
       beforeAll(() => {
-        buildPlanBindingConstraintsListFixture = new SingleInmutableLinkedList({
+        buildPlanBindingConstraintsListFixture = new SingleImmutableLinkedList({
           elem: Symbol() as unknown as InternalBindingConstraints,
           previous: undefined,
         });

@@ -19,9 +19,9 @@ import {
   InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation';
 import {
-  SingleInmutableLinkedList,
-  SingleInmutableLinkedListNode,
-} from '../../common/models/SingleInmutableLinkedList';
+  SingleImmutableLinkedList,
+  SingleImmutableLinkedListNode,
+} from '../../common/models/SingleImmutableLinkedList';
 import { MultipleInjectionManagedClassElementMetadataFixtures } from '../../metadata/fixtures/MultipleInjectionManagedClassElementMetadataFixtures';
 import { SingleInjectionManagedClassElementMetadataFixtures } from '../../metadata/fixtures/SingleInjectionManagedClassElementMetadataFixtures';
 import { MultipleInjectionManagedClassElementMetadata } from '../../metadata/models/MultipleInjectionManagedClassElementMetadata';
@@ -39,7 +39,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
   let buildServiceNodeBindingsMock: Mock<
     (
       params: BasePlanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       serviceBindings: Binding<unknown>[],
       parentNode: BindingNodeParent,
       chainedBindings: boolean,
@@ -52,12 +52,12 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
 
   describe('having multiple injection class element metadata', () => {
     let paramsFixture: SubplanParams;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
     let elementMetadataFixture: MultipleInjectionManagedClassElementMetadata;
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as SubplanParams;
-      bindingConstraintsListFixture = new SingleInmutableLinkedList({
+      bindingConstraintsListFixture = new SingleImmutableLinkedList({
         elem: Symbol() as unknown as InternalBindingConstraints,
         previous: undefined,
       });
@@ -111,7 +111,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
         expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
         expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
           paramsFixture,
-          new SingleInmutableLinkedList({
+          new SingleImmutableLinkedList({
             elem: {
               getAncestorsCalled: false,
               name: elementMetadataFixture.name,
@@ -140,12 +140,12 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
 
   describe('having single injection class element metadata', () => {
     let paramsFixture: SubplanParams;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
     let elementMetadataFixture: SingleInjectionManagedClassElementMetadata;
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as SubplanParams;
-      bindingConstraintsListFixture = new SingleInmutableLinkedList({
+      bindingConstraintsListFixture = new SingleImmutableLinkedList({
         elem: Symbol() as unknown as InternalBindingConstraints,
         previous: undefined,
       });
@@ -199,7 +199,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
         expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
         expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
           paramsFixture,
-          new SingleInmutableLinkedList({
+          new SingleImmutableLinkedList({
             elem: {
               getAncestorsCalled: false,
               name: elementMetadataFixture.name,
@@ -221,7 +221,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
           serviceIdentifier: elementMetadataFixture.value as ServiceIdentifier,
         };
 
-        const expectedBindingConstraintsListNode: SingleInmutableLinkedListNode<InternalBindingConstraints> =
+        const expectedBindingConstraintsListNode: SingleImmutableLinkedListNode<InternalBindingConstraints> =
           {
             elem: {
               getAncestorsCalled: false,

@@ -12,7 +12,7 @@ vitest.mock('./curryBuildPlanServiceNodeFromClassElementMetadata');
 
 import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { ClassElementMetadata } from '../../metadata/models/ClassElementMetadata';
@@ -29,7 +29,7 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
   let buildServiceNodeBindingsFixture: Mock<
     (
       params: BasePlanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       serviceBindings: Binding<unknown>[],
       parentNode: BindingNodeParent,
       chainedBindings: boolean,
@@ -37,7 +37,7 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
   >;
 
   let paramsFixture: SubplanParams;
-  let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+  let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
   let elementMetadataFixture: ManagedClassElementMetadata;
 
   beforeAll(() => {
@@ -45,7 +45,7 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
 
     paramsFixture = Symbol() as unknown as SubplanParams;
     bindingConstraintsListFixture =
-      Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>;
+      Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>;
     elementMetadataFixture = Symbol() as unknown as ManagedClassElementMetadata;
   });
 
@@ -53,7 +53,7 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
     let buildPlanServiceNodeFromClassElementMetadataMock: Mock<
       (
         params: SubplanParams,
-        bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+        bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
         elementMetadata: ClassElementMetadata,
       ) => PlanServiceNode
     >;
@@ -100,7 +100,7 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
     let buildPlanServiceNodeFromClassElementMetadataMock: Mock<
       (
         params: SubplanParams,
-        bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+        bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
         elementMetadata: ClassElementMetadata,
       ) => PlanServiceNode
     >;
@@ -153,7 +153,7 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
     let buildPlanServiceNodeFromClassElementMetadataMock: Mock<
       (
         params: SubplanParams,
-        bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+        bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
         elementMetadata: ClassElementMetadata,
       ) => PlanServiceNode
     >;

@@ -16,7 +16,7 @@ import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
 import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
 import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
@@ -1537,7 +1537,7 @@ describe(PlanResultCacheService, () => {
                 childLazyPlanServiceNodeFixture,
                 {
                   bindingConstraintsList:
-                    Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+                    Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
                   chainedBindings: false,
                   optionalBindings: false,
                 },
@@ -1764,7 +1764,7 @@ describe(PlanResultCacheService, () => {
                 childLazyPlanServiceNodeFixture,
                 {
                   bindingConstraintsList:
-                    Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+                    Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
                   chainedBindings: false,
                   optionalBindings: false,
                 },
@@ -1996,7 +1996,7 @@ describe(PlanResultCacheService, () => {
                 childLazyPlanServiceNodeFixture,
                 {
                   bindingConstraintsList:
-                    Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+                    Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
                   chainedBindings: false,
                   optionalBindings: false,
                 },
@@ -2091,7 +2091,7 @@ describe(PlanResultCacheService, () => {
 
           nonCachedServiceNodeContextFixture = {
             bindingConstraintsList:
-              Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+              Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
             chainedBindings: false,
             optionalBindings: false,
           };
@@ -2188,7 +2188,7 @@ describe(PlanResultCacheService, () => {
 
           nonCachedServiceNodeContextFixture = {
             bindingConstraintsList:
-              Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+              Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
             chainedBindings: false,
             optionalBindings: false,
           };

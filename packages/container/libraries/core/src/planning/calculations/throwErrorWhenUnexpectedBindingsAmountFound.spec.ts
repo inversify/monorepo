@@ -10,7 +10,7 @@ import { stringifyBinding } from '../../binding/calculations/stringifyBinding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
-import { SingleInmutableLinkedListNode } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { MetadataTag } from '../../metadata/models/MetadataTag';
@@ -21,7 +21,7 @@ describe(throwErrorWhenUnexpectedBindingsAmountFound, () => {
   describe('having undefined bindings and isOptional false', () => {
     let bindingsFixture: undefined;
     let isOptionalFixture: false;
-    let bindingConstraintsNodeFixture: SingleInmutableLinkedListNode<InternalBindingConstraints>;
+    let bindingConstraintsNodeFixture: SingleImmutableLinkedListNode<InternalBindingConstraints>;
 
     beforeAll(() => {
       bindingsFixture = undefined;
@@ -96,7 +96,7 @@ Binding constraints:
   describe('having bindings empty array and isOptional false', () => {
     let bindingsFixture: [];
     let isOptionalFixture: false;
-    let bindingConstraintsNodeFixture: SingleInmutableLinkedListNode<InternalBindingConstraints>;
+    let bindingConstraintsNodeFixture: SingleImmutableLinkedListNode<InternalBindingConstraints>;
 
     beforeAll(() => {
       bindingsFixture = [];
@@ -181,7 +181,7 @@ Binding constraints:
   describe('having bindings empty array and isOptional true', () => {
     let bindingsFixture: [];
     let isOptionalFixture: true;
-    let bindingConstraintsNodeFixture: SingleInmutableLinkedListNode<InternalBindingConstraints>;
+    let bindingConstraintsNodeFixture: SingleImmutableLinkedListNode<InternalBindingConstraints>;
 
     beforeAll(() => {
       bindingsFixture = [];
@@ -225,7 +225,7 @@ Binding constraints:
   describe('having multiple bindings', () => {
     let bindingsFixture: PlanBindingNode[];
     let isOptionalFixture: boolean;
-    let bindingConstraintsNodeFixture: SingleInmutableLinkedListNode<InternalBindingConstraints>;
+    let bindingConstraintsNodeFixture: SingleImmutableLinkedListNode<InternalBindingConstraints>;
 
     beforeAll(() => {
       bindingsFixture = [

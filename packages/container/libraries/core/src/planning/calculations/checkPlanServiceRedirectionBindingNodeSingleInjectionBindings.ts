@@ -1,7 +1,7 @@
 import { ServiceIdentifier } from '@inversifyjs/common';
 
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedListNode } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
 import { PlanBindingNode } from '../models/PlanBindingNode';
 import { PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode';
 import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode';
@@ -12,7 +12,7 @@ const SINGLE_INJECTION_BINDINGS: number = 1;
 export function checkPlanServiceRedirectionBindingNodeSingleInjectionBindings(
   serviceRedirectionBindingNode: PlanServiceRedirectionBindingNode,
   isOptional: boolean,
-  bindingConstraintNode: SingleInmutableLinkedListNode<InternalBindingConstraints>,
+  bindingConstraintNode: SingleImmutableLinkedListNode<InternalBindingConstraints>,
   serviceRedirections: readonly ServiceIdentifier[],
 ): void {
   if (

@@ -1,6 +1,6 @@
 import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
@@ -14,19 +14,19 @@ import { curryBuildPlanServiceNodeFromResolvedValueElementMetadata } from './cur
 export function curryLazyBuildPlanServiceNodeFromResolvedValueElementMetadata(
   buildServiceNodeBindings: (
     params: BasePlanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
     chainedBindings: boolean,
   ) => PlanBindingNode[],
 ): (
   params: SubplanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   elementMetadata: ResolvedValueElementMetadata,
 ) => PlanServiceNode | undefined {
   const buildPlanServiceNodeFromResolvedValueElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ) => PlanServiceNode | undefined =
     curryBuildPlanServiceNodeFromResolvedValueElementMetadata(
@@ -35,7 +35,7 @@ export function curryLazyBuildPlanServiceNodeFromResolvedValueElementMetadata(
 
   return (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ): PlanServiceNode | undefined => {
     try {

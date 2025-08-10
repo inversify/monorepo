@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { PlanParams } from '../models/PlanParams';
 import { PlanParamsTagConstraint } from '../models/PlanParamsTagConstraint';
 import { buildPlanBindingConstraintsList } from './buildPlanBindingConstraintsList';
@@ -30,7 +30,7 @@ describe(buildPlanBindingConstraintsList, () => {
 
       it('should return expected value', () => {
         const expected: Partial<
-          SingleInmutableLinkedList<InternalBindingConstraints>
+          SingleImmutableLinkedList<InternalBindingConstraints>
         > = {
           last: {
             elem: {
@@ -76,7 +76,7 @@ describe(buildPlanBindingConstraintsList, () => {
 
       it('should return expected value', () => {
         const expected: Partial<
-          SingleInmutableLinkedList<InternalBindingConstraints>
+          SingleImmutableLinkedList<InternalBindingConstraints>
         > = {
           last: {
             elem: {

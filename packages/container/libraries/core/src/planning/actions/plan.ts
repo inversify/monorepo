@@ -1,6 +1,6 @@
 import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
 import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
 import { buildGetPlanOptionsFromPlanParams } from '../calculations/buildGetPlanOptionsFromPlanParams';
@@ -36,7 +36,7 @@ class LazyRootPlanServiceNode extends LazyPlanServiceNode {
 
 export const buildPlanServiceNodeFromClassElementMetadata: (
   params: SubplanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   elementMetadata: ManagedClassElementMetadata,
 ) => PlanServiceNode = curryBuildPlanServiceNodeFromClassElementMetadata(
   circularBuildServiceNodeBindings,
@@ -44,7 +44,7 @@ export const buildPlanServiceNodeFromClassElementMetadata: (
 
 export const buildPlanServiceNodeFromResolvedValueElementMetadata: (
   params: SubplanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   elementMetadata: ResolvedValueElementMetadata,
 ) => PlanServiceNode =
   curryBuildPlanServiceNodeFromResolvedValueElementMetadata(
@@ -53,7 +53,7 @@ export const buildPlanServiceNodeFromResolvedValueElementMetadata: (
 
 const subplan: (
   params: SubplanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
 ) => PlanBindingNode = currySubplan(
   buildPlanServiceNodeFromClassElementMetadata,
   buildPlanServiceNodeFromResolvedValueElementMetadata,
@@ -63,7 +63,7 @@ const subplan: (
 
 const buildServiceNodeBindings: (
   params: BasePlanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   serviceBindings: Binding<unknown>[],
   parentNode: BindingNodeParent,
   chainedBindings: boolean,
@@ -71,7 +71,7 @@ const buildServiceNodeBindings: (
 
 function circularBuildServiceNodeBindings(
   params: BasePlanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   serviceBindings: Binding<unknown>[],
   parentNode: BindingNodeParent,
   chainedBindings: boolean,

@@ -10,7 +10,7 @@ import { bindingTypeValues } from '../../binding/models/BindingType';
 import { InstanceBinding } from '../../binding/models/InstanceBinding';
 import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
 import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { ClassMetadata } from '../../metadata/models/ClassMetadata';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
 import { isPlanServiceRedirectionBindingNode } from '../calculations/isPlanServiceRedirectionBindingNode';
@@ -25,11 +25,11 @@ import { SubplanParams } from '../models/SubplanParams';
 export function curryBuildServiceNodeBindings(
   subplan: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ) => PlanBindingNode,
 ): (
   params: BasePlanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   serviceBindings: Binding<unknown>[],
   parentNode: BindingNodeParent,
   chainedBindings: boolean,
@@ -37,23 +37,23 @@ export function curryBuildServiceNodeBindings(
   const buildInstancePlanBindingNode: (
     params: BasePlanParams,
     binding: InstanceBinding<unknown>,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ) => PlanBindingNode = curryBuildInstancePlanBindingNode(subplan);
   const buildResolvedValuePlanBindingNode: (
     params: BasePlanParams,
     binding: ResolvedValueBinding<unknown>,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ) => PlanBindingNode = curryBuildResolvedValuePlanBindingNode(subplan);
 
   const buildServiceNodeBindings: (
     params: BasePlanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
     chainedBindings: boolean,
   ) => PlanBindingNode[] = (
     params: BasePlanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
     chainedBindings: boolean,
@@ -116,7 +116,7 @@ export function curryBuildServiceNodeBindings(
 
   const buildServiceRedirectionPlanBindingNode: (
     params: BasePlanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     binding: ServiceRedirectionBinding<unknown>,
     chainedBindings: boolean,
   ) => PlanBindingNode = curryBuildServiceRedirectionPlanBindingNode(
@@ -129,17 +129,17 @@ export function curryBuildServiceNodeBindings(
 function curryBuildInstancePlanBindingNode(
   subplan: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ) => PlanBindingNode,
 ): (
   params: BasePlanParams,
   binding: InstanceBinding<unknown>,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
 ) => PlanBindingNode {
   return (
     params: BasePlanParams,
     binding: InstanceBinding<unknown>,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ): PlanBindingNode => {
     const classMetadata: ClassMetadata = params.operations.getClassMetadata(
       binding.implementationType,
@@ -166,17 +166,17 @@ function curryBuildInstancePlanBindingNode(
 function curryBuildResolvedValuePlanBindingNode(
   subplan: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ) => PlanBindingNode,
 ): (
   params: BasePlanParams,
   binding: ResolvedValueBinding<unknown>,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
 ) => PlanBindingNode {
   return (
     params: BasePlanParams,
     binding: ResolvedValueBinding<unknown>,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ): PlanBindingNode => {
     const childNode: ResolvedValueBindingNode = {
       binding: binding,
@@ -197,20 +197,20 @@ function curryBuildResolvedValuePlanBindingNode(
 function curryBuildServiceRedirectionPlanBindingNode(
   buildServiceNodeBindings: (
     params: BasePlanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
     chainedBindings: boolean,
   ) => PlanBindingNode[],
 ): (
   params: BasePlanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   binding: ServiceRedirectionBinding<unknown>,
   chainedBindings: boolean,
 ) => PlanBindingNode {
   return (
     params: BasePlanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     binding: ServiceRedirectionBinding<unknown>,
     chainedBindings: boolean,
   ): PlanBindingNode => {

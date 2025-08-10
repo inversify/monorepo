@@ -1,8 +1,8 @@
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 
 export interface NonCachedServiceNodeContext {
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>;
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>;
   chainedBindings: boolean;
   optionalBindings: boolean;
 }

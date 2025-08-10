@@ -7,7 +7,7 @@ vitest.mock('./throwErrorWhenUnexpectedBindingsAmountFound');
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
 import { bindingTypeValues } from '../../binding/models/BindingType';
 import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { SingleInmutableLinkedListNode } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
 import { MetadataTag } from '../../metadata/models/MetadataTag';
 import { PlanBindingNode } from '../models/PlanBindingNode';
 import { PlanServiceNode } from '../models/PlanServiceNode';
@@ -20,7 +20,7 @@ describe(checkServiceNodeSingleInjectionBindings, () => {
   describe('having a PlanServiceNode with no bindings', () => {
     let nodeFixture: PlanServiceNode;
     let isOptionalFixture: boolean;
-    let internalBindingConstraintsNodeFixture: SingleInmutableLinkedListNode<InternalBindingConstraints>;
+    let internalBindingConstraintsNodeFixture: SingleImmutableLinkedListNode<InternalBindingConstraints>;
 
     beforeAll(() => {
       nodeFixture = {
@@ -82,7 +82,7 @@ describe(checkServiceNodeSingleInjectionBindings, () => {
     let nodeFixtureBinding: PlanBindingNode;
     let nodeFixture: PlanServiceNode;
     let isOptionalFixture: boolean;
-    let internalBindingConstraintsNodeFixture: SingleInmutableLinkedListNode<InternalBindingConstraints>;
+    let internalBindingConstraintsNodeFixture: SingleImmutableLinkedListNode<InternalBindingConstraints>;
 
     beforeAll(() => {
       nodeFixtureBinding = {

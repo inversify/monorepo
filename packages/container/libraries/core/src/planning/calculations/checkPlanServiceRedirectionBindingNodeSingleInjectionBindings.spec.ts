@@ -7,7 +7,7 @@ import { InternalBindingConstraints } from '../../binding/models/BindingConstrai
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
 import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { SingleInmutableLinkedListNode } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
 import { MetadataTag } from '../../metadata/models/MetadataTag';
 import { PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode';
 import { checkPlanServiceRedirectionBindingNodeSingleInjectionBindings } from './checkPlanServiceRedirectionBindingNodeSingleInjectionBindings';
@@ -18,7 +18,7 @@ describe(checkPlanServiceRedirectionBindingNodeSingleInjectionBindings, () => {
   describe('having a PlanServiceRedirectionBindingNode with no redirections', () => {
     let planServiceRedirectionBindingNodeFixture: PlanServiceRedirectionBindingNode;
     let isOptionalFixture: boolean;
-    let internalBindingConstraintsNodeFixture: SingleInmutableLinkedListNode<InternalBindingConstraints>;
+    let internalBindingConstraintsNodeFixture: SingleImmutableLinkedListNode<InternalBindingConstraints>;
 
     beforeAll(() => {
       planServiceRedirectionBindingNodeFixture = {
@@ -80,7 +80,7 @@ describe(checkPlanServiceRedirectionBindingNodeSingleInjectionBindings, () => {
   describe('having a PlanServiceRedirectionBindingNode with a single redirection to a leaf node', () => {
     let planServiceRedirectionBindingNodeFixture: PlanServiceRedirectionBindingNode;
     let isOptionalFixture: boolean;
-    let internalBindingConstraintsNodeFixture: SingleInmutableLinkedListNode<InternalBindingConstraints>;
+    let internalBindingConstraintsNodeFixture: SingleImmutableLinkedListNode<InternalBindingConstraints>;
 
     beforeAll(() => {
       planServiceRedirectionBindingNodeFixture = {
@@ -157,7 +157,7 @@ describe(checkPlanServiceRedirectionBindingNodeSingleInjectionBindings, () => {
     let planServiceRedirectionBindingNodeRedirectionFixture: PlanServiceRedirectionBindingNode;
     let planServiceRedirectionBindingNodeFixture: PlanServiceRedirectionBindingNode;
     let isOptionalFixture: boolean;
-    let internalBindingConstraintsNodeFixture: SingleInmutableLinkedListNode<InternalBindingConstraints>;
+    let internalBindingConstraintsNodeFixture: SingleImmutableLinkedListNode<InternalBindingConstraints>;
 
     beforeAll(() => {
       planServiceRedirectionBindingNodeRedirectionFixture = {

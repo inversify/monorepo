@@ -6,7 +6,7 @@ import {
   BindingConstraintsImplementation,
   InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
 import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
@@ -21,25 +21,25 @@ import { SubplanParams } from '../models/SubplanParams';
 export function curryBuildPlanServiceNodeFromResolvedValueElementMetadata(
   buildServiceNodeBindings: (
     params: BasePlanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
     chainedBindings: boolean,
   ) => PlanBindingNode[],
 ): (
   params: SubplanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   elementMetadata: ResolvedValueElementMetadata,
 ) => PlanServiceNode {
   return (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ): PlanServiceNode => {
     const serviceIdentifier: ServiceIdentifier =
       getServiceFromMaybeLazyServiceIdentifier(elementMetadata.value);
 
-    const updatedBindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints> =
+    const updatedBindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints> =
       bindingConstraintsList.concat({
         getAncestorsCalled: false,
         name: elementMetadata.name,

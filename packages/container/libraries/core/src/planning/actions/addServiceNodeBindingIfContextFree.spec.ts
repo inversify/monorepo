@@ -13,7 +13,7 @@ vitest.mock('./curryBuildServiceNodeBindings', () => {
   const buildServiceNodeBindingsMock: Mock<
     (
       params: BasePlanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       serviceBindings: Binding<unknown>[],
       parentNode: BindingNodeParent,
       chainedBindings: boolean,
@@ -40,7 +40,7 @@ import {
 } from '../../binding/models/BindingConstraintsImplementation';
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
@@ -74,7 +74,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
   let buildServiceNodeBindingsMock: Mock<
     (
       params: BasePlanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       serviceBindings: Binding<unknown>[],
       parentNode: BindingNodeParent,
       chainedBindings: boolean,
@@ -106,7 +106,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           Symbol() as unknown as BasePlanParams,
           lazyPlanServiceNodeFixture,
           Symbol() as unknown as Binding<unknown>,
-          Symbol() as unknown as SingleInmutableLinkedList<InternalBindingConstraints>,
+          Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
           false,
         );
       });
@@ -130,7 +130,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
     let paramsFixture: BasePlanParams;
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
     let chainedBindings: boolean;
 
     beforeAll(() => {
@@ -165,7 +165,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
       };
 
       bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
+        new SingleImmutableLinkedList<InternalBindingConstraints>({
           elem: {
             getAncestorsCalled: false,
             name: undefined,
@@ -280,7 +280,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
     let paramsFixture: BasePlanParams;
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
     let chainedBindings: boolean;
 
     beforeAll(() => {
@@ -315,7 +315,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
       };
 
       bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
+        new SingleImmutableLinkedList<InternalBindingConstraints>({
           elem: {
             getAncestorsCalled: true,
             name: undefined,
@@ -372,7 +372,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
     let paramsFixture: BasePlanParams;
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
     let chainedBindings: boolean;
 
     beforeAll(() => {
@@ -407,7 +407,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
       };
 
       bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
+        new SingleImmutableLinkedList<InternalBindingConstraints>({
           elem: {
             getAncestorsCalled: false,
             name: undefined,
@@ -483,7 +483,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
     let paramsFixture: BasePlanParams;
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
     let chainedBindings: boolean;
 
     beforeAll(() => {
@@ -518,7 +518,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
       };
 
       bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
+        new SingleImmutableLinkedList<InternalBindingConstraints>({
           elem: {
             getAncestorsCalled: false,
             name: undefined,
@@ -594,7 +594,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
     let paramsFixture: BasePlanParams;
     let planServiceNodeFixture: PlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
     let chainedBindings: boolean;
 
     beforeAll(() => {
@@ -625,7 +625,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
       };
 
       bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
+        new SingleImmutableLinkedList<InternalBindingConstraints>({
           elem: {
             getAncestorsCalled: false,
             name: undefined,

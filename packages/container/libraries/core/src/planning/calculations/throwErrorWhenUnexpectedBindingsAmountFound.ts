@@ -5,7 +5,7 @@ import {
 
 import { stringifyBinding } from '../../binding/calculations/stringifyBinding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedListNode } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { MetadataTag } from '../../metadata/models/MetadataTag';
@@ -14,7 +14,7 @@ import { PlanBindingNode } from '../models/PlanBindingNode';
 export function throwErrorWhenUnexpectedBindingsAmountFound(
   bindingNodes: PlanBindingNode[] | PlanBindingNode | undefined,
   isOptional: boolean,
-  bindingConstraintNode: SingleInmutableLinkedListNode<InternalBindingConstraints>,
+  bindingConstraintNode: SingleImmutableLinkedListNode<InternalBindingConstraints>,
   serviceRedirections: readonly ServiceIdentifier[],
 ): void {
   const serviceIdentifier: ServiceIdentifier =
