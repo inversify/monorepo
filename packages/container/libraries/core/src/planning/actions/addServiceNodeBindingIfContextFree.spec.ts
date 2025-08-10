@@ -9,6 +9,7 @@ import {
   vitest,
 } from 'vitest';
 
+vitest.mock('../../error/calculations/isStackOverflowError');
 vitest.mock('./curryBuildServiceNodeBindings', () => {
   const buildServiceNodeBindingsMock: Mock<
     (
@@ -41,6 +42,7 @@ import {
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
+import { isStackOverflowError } from '../../error/calculations/isStackOverflowError';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
@@ -85,6 +87,199 @@ describe(addServiceNodeBindingIfContextFree, () => {
     buildServiceNodeBindingsMock = vitest.mocked(
       curryBuildServiceNodeBindings(vitest.fn()),
     );
+  });
+
+  describe('having an expanded lazy service node and bindingConstraintsList with elems with getAncestorsCalled false', () => {
+    let serviceIdentifierFixture: ServiceIdentifier;
+    let paramsFixture: BasePlanParams;
+
+    let bindingMock: Mocked<Binding<unknown>>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
+    let chainedBindings: boolean;
+
+    beforeAll(() => {
+      paramsFixture = Symbol() as unknown as BasePlanParams;
+
+      serviceIdentifierFixture = Symbol();
+
+      bindingMock = {
+        cache: {
+          isRight: false,
+          value: undefined,
+        },
+        id: 1,
+        isSatisfiedBy: vitest.fn(),
+        moduleId: undefined,
+        onActivation: vitest.fn(),
+        onDeactivation: vitest.fn(),
+        scope: bindingScopeValues.Singleton,
+        serviceIdentifier: serviceIdentifierFixture,
+        type: bindingTypeValues.ConstantValue,
+        value: Symbol(),
+      };
+
+      bindingConstraintsListFixture =
+        new SingleImmutableLinkedList<InternalBindingConstraints>({
+          elem: {
+            getAncestorsCalled: false,
+            name: undefined,
+            serviceIdentifier: serviceIdentifierFixture,
+            tags: new Map(),
+          },
+          previous: undefined,
+        });
+
+      chainedBindings = false;
+    });
+
+    describe('when called, and binding.isSatisfiedBy() returns true, and buildServiceNodeBindings throws an stack overflow error', () => {
+      let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
+          {
+            bindings: undefined,
+            isContextFree: true,
+            serviceIdentifier: serviceIdentifierFixture,
+          },
+          serviceIdentifierFixture,
+          vitest.fn(),
+        );
+
+        bindingMock.isSatisfiedBy.mockReturnValueOnce(true);
+
+        buildServiceNodeBindingsMock.mockImplementationOnce((): never => {
+          throw new Error('Stack overflow');
+        });
+
+        vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
+
+        result = addServiceNodeBindingIfContextFree(
+          paramsFixture,
+          lazyPlanServiceNodeFixture,
+          bindingMock,
+          bindingConstraintsListFixture,
+          chainedBindings,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call binding.isSatisfiedBy()', () => {
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+          new BindingConstraintsImplementation(
+            bindingConstraintsListFixture.last,
+          ),
+        );
+      });
+
+      it('should call buildServiceNodeBindings()', () => {
+        expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
+        expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
+          paramsFixture,
+          bindingConstraintsListFixture,
+          [bindingMock],
+          lazyPlanServiceNodeFixture,
+          chainedBindings,
+        );
+      });
+
+      it('should call isStackOverflowError()', () => {
+        expect(vitest.mocked(isStackOverflowError)).toHaveBeenCalledTimes(1);
+        expect(vitest.mocked(isStackOverflowError)).toHaveBeenCalledWith(
+          expect.any(Error),
+        );
+      });
+
+      it('should return expected value', () => {
+        const expected: PlanServiceNodeBindingAddedResult = {
+          isContextFreeBinding: false,
+          shouldInvalidateServiceNode: true,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+
+    describe('when called, and binding.isSatisfiedBy() returns true, and buildServiceNodeBindings throws a non stack overflow error', () => {
+      let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+      let errorFixture: Error;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
+          {
+            bindings: undefined,
+            isContextFree: true,
+            serviceIdentifier: serviceIdentifierFixture,
+          },
+          serviceIdentifierFixture,
+          vitest.fn(),
+        );
+        errorFixture = new Error('Non stack overflow');
+
+        bindingMock.isSatisfiedBy.mockReturnValueOnce(true);
+
+        buildServiceNodeBindingsMock.mockImplementationOnce((): never => {
+          throw errorFixture;
+        });
+
+        vitest.mocked(isStackOverflowError).mockReturnValueOnce(false);
+
+        try {
+          addServiceNodeBindingIfContextFree(
+            paramsFixture,
+            lazyPlanServiceNodeFixture,
+            bindingMock,
+            bindingConstraintsListFixture,
+            chainedBindings,
+          );
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call binding.isSatisfiedBy()', () => {
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+          new BindingConstraintsImplementation(
+            bindingConstraintsListFixture.last,
+          ),
+        );
+      });
+
+      it('should call buildServiceNodeBindings()', () => {
+        expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
+        expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
+          paramsFixture,
+          bindingConstraintsListFixture,
+          [bindingMock],
+          lazyPlanServiceNodeFixture,
+          chainedBindings,
+        );
+      });
+
+      it('should call isStackOverflowError()', () => {
+        expect(vitest.mocked(isStackOverflowError)).toHaveBeenCalledTimes(1);
+        expect(vitest.mocked(isStackOverflowError)).toHaveBeenCalledWith(
+          expect.any(Error),
+        );
+      });
+
+      it('should throw expected Error', () => {
+        expect(result).toBe(errorFixture);
+      });
+    });
   });
 
   describe('having a non expanded lazy service node', () => {
