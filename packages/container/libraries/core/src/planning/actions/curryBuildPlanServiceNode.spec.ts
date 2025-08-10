@@ -17,7 +17,7 @@ import {
   BindingConstraintsImplementation,
   InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
 import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings';
@@ -33,7 +33,7 @@ describe(curryBuildPlanServiceNode, () => {
   let buildServiceNodeBindingsMock: Mock<
     (
       params: BasePlanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       serviceBindings: Binding<unknown>[],
       parentNode: BindingNodeParent,
       chainedBindings: boolean,
@@ -61,7 +61,7 @@ describe(curryBuildPlanServiceNode, () => {
     });
 
     describe('when called', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let bindingsFixture: Binding<unknown>[];
       let planBindingNodesFixture: PlanBindingNode[];
 
@@ -69,7 +69,7 @@ describe(curryBuildPlanServiceNode, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });
@@ -163,7 +163,7 @@ describe(curryBuildPlanServiceNode, () => {
     });
 
     describe('when called', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let bindingsFixture: Binding<unknown>[];
       let planBindingNodeFixture: PlanBindingNode;
 
@@ -171,7 +171,7 @@ describe(curryBuildPlanServiceNode, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });

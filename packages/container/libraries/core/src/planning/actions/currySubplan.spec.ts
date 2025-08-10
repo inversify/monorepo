@@ -19,7 +19,7 @@ vitest.mock('./cacheNonRootPlanServiceNode');
 import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures';
 import { ResolvedValueBindingFixtures } from '../../binding/fixtures/ResolvedValueBindingFixtures';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures';
 import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
 import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
@@ -40,28 +40,28 @@ describe(currySubplan, () => {
   let buildLazyPlanServiceNodeNodeFromClassElementMetadataMock: Mock<
     (
       params: SubplanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       elementMetadata: ManagedClassElementMetadata,
     ) => PlanServiceNode
   >;
   let buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock: Mock<
     (
       params: SubplanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       elementMetadata: ResolvedValueElementMetadata,
     ) => PlanServiceNode
   >;
   let buildPlanServiceNodeFromClassElementMetadataMock: Mock<
     (
       params: SubplanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       elementMetadata: ManagedClassElementMetadata,
     ) => PlanServiceNode | undefined
   >;
   let buildPlanServiceNodeFromResolvedValueElementMetadataMock: Mock<
     (
       params: SubplanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       elementMetadata: ResolvedValueElementMetadata,
     ) => PlanServiceNode | undefined
   >;
@@ -98,13 +98,13 @@ describe(currySubplan, () => {
     });
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns undefined', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
 
       let result: unknown;
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });
@@ -152,13 +152,13 @@ describe(currySubplan, () => {
     });
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns undefined', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
 
       let result: unknown;
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });
@@ -223,14 +223,14 @@ describe(currySubplan, () => {
     });
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns undefined', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let getPlanOptionsFixture: GetPlanOptions;
 
       let result: unknown;
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });
@@ -304,7 +304,7 @@ describe(currySubplan, () => {
     });
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns context free plan', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let getPlanOptionsFixture: GetPlanOptions;
       let planResultFixture: PlanResult;
 
@@ -312,7 +312,7 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });
@@ -383,7 +383,7 @@ describe(currySubplan, () => {
     });
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns non context free plan', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let getPlanOptionsFixture: GetPlanOptions;
       let planResultFixture: PlanResult;
 
@@ -391,7 +391,7 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });
@@ -503,13 +503,13 @@ describe(currySubplan, () => {
     });
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns undefined', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
 
       let result: unknown;
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });
@@ -582,14 +582,14 @@ describe(currySubplan, () => {
     });
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns undefined', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let getPlanOptionsFixture: GetPlanOptions;
 
       let result: unknown;
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });
@@ -671,7 +671,7 @@ describe(currySubplan, () => {
     });
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns context free plan', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let getPlanOptionsFixture: GetPlanOptions;
       let planResultFixture: PlanResult;
 
@@ -679,7 +679,7 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });
@@ -754,7 +754,7 @@ describe(currySubplan, () => {
     });
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns non context free plan', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let getPlanOptionsFixture: GetPlanOptions;
       let planResultFixture: PlanResult;
 
@@ -762,7 +762,7 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });
@@ -880,13 +880,13 @@ describe(currySubplan, () => {
     });
 
     describe('when called, and tryBuildGetPlanOptionsFromResolvedValueElementMetadata() returns undefined', () => {
-      let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+      let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
 
       let result: unknown;
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleInmutableLinkedList<InternalBindingConstraints>({
+          new SingleImmutableLinkedList<InternalBindingConstraints>({
             elem: Symbol() as unknown as InternalBindingConstraints,
             previous: undefined,
           });

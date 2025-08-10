@@ -1,6 +1,6 @@
 import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
@@ -27,7 +27,7 @@ export function removeRootServiceNodeBindingIfContextFree(
     };
   }
 
-  const bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints> =
+  const bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints> =
     buildPlanBindingConstraintsList(params);
 
   return removeServiceNodeBindingIfContextFree(

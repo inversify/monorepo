@@ -1,5 +1,5 @@
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedListNode } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
 import { PlanBindingNode } from '../models/PlanBindingNode';
 import { PlanServiceNode } from '../models/PlanServiceNode';
 import { checkPlanServiceRedirectionBindingNodeSingleInjectionBindings } from './checkPlanServiceRedirectionBindingNodeSingleInjectionBindings';
@@ -11,7 +11,7 @@ const SINGLE_INJECTION_BINDINGS: number = 1;
 export function checkServiceNodeSingleInjectionBindings(
   serviceNode: PlanServiceNode,
   isOptional: boolean,
-  bindingConstraintNode: SingleInmutableLinkedListNode<InternalBindingConstraints>,
+  bindingConstraintNode: SingleImmutableLinkedListNode<InternalBindingConstraints>,
 ): void {
   if (Array.isArray(serviceNode.bindings)) {
     if (serviceNode.bindings.length === SINGLE_INJECTION_BINDINGS) {

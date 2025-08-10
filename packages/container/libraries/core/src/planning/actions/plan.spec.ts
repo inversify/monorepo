@@ -23,7 +23,7 @@ vitest.mock('./curryBuildPlanServiceNode', () => {
 
 import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { buildGetPlanOptionsFromPlanParams } from '../calculations/buildGetPlanOptionsFromPlanParams';
 import { BasePlanParams } from '../models/BasePlanParams';
 import { BindingNodeParent } from '../models/BindingNodeParent';
@@ -46,7 +46,7 @@ describe(plan, () => {
       curryBuildPlanServiceNode(
         Symbol() as unknown as (
           params: BasePlanParams,
-          bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+          bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
           serviceBindings: Binding<unknown>[],
           parentNode: BindingNodeParent,
           chainedBindings: boolean,

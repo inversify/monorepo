@@ -23,7 +23,7 @@ import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { InstanceBinding } from '../../binding/models/InstanceBinding';
 import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
 import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures';
 import { ClassMetadata } from '../../metadata/models/ClassMetadata';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
@@ -38,7 +38,7 @@ describe(curryBuildServiceNodeBindings, () => {
   let subplanMock: Mock<
     (
       params: SubplanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     ) => PlanBindingNode
   >;
 
@@ -49,7 +49,7 @@ describe(curryBuildServiceNodeBindings, () => {
   describe('having serviceBindings with InstanceBinding and PlanServiceNode parent node', () => {
     let basePlanParamsMock: Mocked<BasePlanParams>;
     let instanceBindingFixture: InstanceBinding<unknown>;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
     let parentNodeFixture: PlanServiceNode;
 
     beforeAll(() => {
@@ -66,7 +66,7 @@ describe(curryBuildServiceNodeBindings, () => {
       instanceBindingFixture = InstanceBindingFixtures.any;
 
       bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
+        new SingleImmutableLinkedList<InternalBindingConstraints>({
           elem: Symbol() as unknown as InternalBindingConstraints,
           previous: undefined,
         });
@@ -145,7 +145,7 @@ describe(curryBuildServiceNodeBindings, () => {
   describe('having serviceBindings with ResolvedValueBinding and PlanServiceNode parent node', () => {
     let basePlanParamsMock: Mocked<BasePlanParams>;
     let resolvedValueBindingFixture: ResolvedValueBinding<unknown>;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
     let parentNodeFixture: PlanServiceNode;
 
     beforeAll(() => {
@@ -162,7 +162,7 @@ describe(curryBuildServiceNodeBindings, () => {
       resolvedValueBindingFixture = ResolvedValueBindingFixtures.any;
 
       bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
+        new SingleImmutableLinkedList<InternalBindingConstraints>({
           elem: Symbol() as unknown as InternalBindingConstraints,
           previous: undefined,
         });
@@ -224,7 +224,7 @@ describe(curryBuildServiceNodeBindings, () => {
   describe('having serviceBindings with ServiceRedirectionBinding and PlanServiceNode parent node', () => {
     let basePlanParamsMock: Mocked<BasePlanParams>;
     let serviceRedirectionBindingFixture: ServiceRedirectionBinding<unknown>;
-    let bindingConstraintsListFixture: SingleInmutableLinkedList<InternalBindingConstraints>;
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
     let parentNodeFixture: PlanServiceNode;
 
     beforeAll(() => {
@@ -241,7 +241,7 @@ describe(curryBuildServiceNodeBindings, () => {
       serviceRedirectionBindingFixture = ServiceRedirectionBindingFixtures.any;
 
       bindingConstraintsListFixture =
-        new SingleInmutableLinkedList<InternalBindingConstraints>({
+        new SingleImmutableLinkedList<InternalBindingConstraints>({
           elem: Symbol() as unknown as InternalBindingConstraints,
           previous: undefined,
         });

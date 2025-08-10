@@ -4,7 +4,7 @@ import {
   BindingConstraintsImplementation,
   InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
 import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings';
@@ -17,14 +17,14 @@ import { PlanServiceNode } from '../models/PlanServiceNode';
 export function curryBuildPlanServiceNode(
   buildServiceNodeBindings: (
     params: BasePlanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
     chainedBindings: boolean,
   ) => PlanBindingNode[],
 ): (params: PlanParams) => PlanServiceNode {
   return (params: PlanParams): PlanServiceNode => {
-    const bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints> =
+    const bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints> =
       buildPlanBindingConstraintsList(params);
 
     const bindingConstraints: BindingConstraints =

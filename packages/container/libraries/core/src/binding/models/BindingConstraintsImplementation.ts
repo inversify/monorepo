@@ -1,6 +1,6 @@
 import { ServiceIdentifier } from '@inversifyjs/common';
 
-import { SingleInmutableLinkedListNode } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
 import { MetadataName } from '../../metadata/models/MetadataName';
 import { MetadataTag } from '../../metadata/models/MetadataTag';
 import { BindingConstraints } from './BindingConstraints';
@@ -13,9 +13,9 @@ export interface InternalBindingConstraints {
 }
 
 export class BindingConstraintsImplementation implements BindingConstraints {
-  readonly #node: SingleInmutableLinkedListNode<InternalBindingConstraints>;
+  readonly #node: SingleImmutableLinkedListNode<InternalBindingConstraints>;
 
-  constructor(node: SingleInmutableLinkedListNode<InternalBindingConstraints>) {
+  constructor(node: SingleImmutableLinkedListNode<InternalBindingConstraints>) {
     this.#node = node;
   }
 

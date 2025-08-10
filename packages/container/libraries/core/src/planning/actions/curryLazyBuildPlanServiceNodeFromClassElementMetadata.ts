@@ -1,6 +1,6 @@
 import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
@@ -14,19 +14,19 @@ import { curryBuildPlanServiceNodeFromClassElementMetadata } from './curryBuildP
 export function curryLazyBuildPlanServiceNodeFromClassElementMetadata(
   buildServiceNodeBindings: (
     params: BasePlanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
     chainedBindings: boolean,
   ) => PlanBindingNode[],
 ): (
   params: SubplanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   elementMetadata: ManagedClassElementMetadata,
 ) => PlanServiceNode | undefined {
   const buildPlanServiceNodeFromClassElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
   ) => PlanServiceNode = curryBuildPlanServiceNodeFromClassElementMetadata(
     buildServiceNodeBindings,
@@ -34,7 +34,7 @@ export function curryLazyBuildPlanServiceNodeFromClassElementMetadata(
 
   return (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
   ): PlanServiceNode | undefined => {
     try {

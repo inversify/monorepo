@@ -1,20 +1,20 @@
-export interface SingleInmutableLinkedListNode<T> {
+export interface SingleImmutableLinkedListNode<T> {
   elem: T;
-  previous: SingleInmutableLinkedListNode<T> | undefined;
+  previous: SingleImmutableLinkedListNode<T> | undefined;
 }
 
-export class SingleInmutableLinkedList<T> implements Iterable<T> {
-  constructor(public readonly last: SingleInmutableLinkedListNode<T>) {}
+export class SingleImmutableLinkedList<T> implements Iterable<T> {
+  constructor(public readonly last: SingleImmutableLinkedListNode<T>) {}
 
-  public concat(elem: T): SingleInmutableLinkedList<T> {
-    return new SingleInmutableLinkedList({
+  public concat(elem: T): SingleImmutableLinkedList<T> {
+    return new SingleImmutableLinkedList({
       elem,
       previous: this.last,
     });
   }
 
   public [Symbol.iterator](): Iterator<T> {
-    let node: SingleInmutableLinkedListNode<T> | undefined = this.last;
+    let node: SingleImmutableLinkedListNode<T> | undefined = this.last;
 
     return {
       next: (): IteratorResult<T> => {

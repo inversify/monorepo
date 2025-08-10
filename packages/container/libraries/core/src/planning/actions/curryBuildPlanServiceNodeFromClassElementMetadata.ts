@@ -6,7 +6,7 @@ import {
   BindingConstraintsImplementation,
   InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
 import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
@@ -21,25 +21,25 @@ import { SubplanParams } from '../models/SubplanParams';
 export function curryBuildPlanServiceNodeFromClassElementMetadata(
   buildServiceNodeBindings: (
     params: BasePlanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
     chainedBindings: boolean,
   ) => PlanBindingNode[],
 ): (
   params: SubplanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   elementMetadata: ManagedClassElementMetadata,
 ) => PlanServiceNode {
   return (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
   ): PlanServiceNode => {
     const serviceIdentifier: ServiceIdentifier =
       getServiceFromMaybeLazyServiceIdentifier(elementMetadata.value);
 
-    const updatedBindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints> =
+    const updatedBindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints> =
       bindingConstraintsList.concat({
         getAncestorsCalled: false,
         name: elementMetadata.name,

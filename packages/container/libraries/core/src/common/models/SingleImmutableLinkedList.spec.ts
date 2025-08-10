@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { SingleInmutableLinkedList } from './SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from './SingleImmutableLinkedList';
 
-describe(SingleInmutableLinkedList, () => {
-  let singleInmutableLinkedListFixture: SingleInmutableLinkedList<unknown>;
+describe(SingleImmutableLinkedList, () => {
+  let singleImmutableLinkedListFixture: SingleImmutableLinkedList<unknown>;
 
   beforeAll(() => {
-    singleInmutableLinkedListFixture = new SingleInmutableLinkedList({
+    singleImmutableLinkedListFixture = new SingleImmutableLinkedList({
       elem: Symbol(),
       previous: undefined,
     });
@@ -21,14 +21,14 @@ describe(SingleInmutableLinkedList, () => {
       beforeAll(() => {
         elementFixture = Symbol();
 
-        result = singleInmutableLinkedListFixture.concat(elementFixture);
+        result = singleImmutableLinkedListFixture.concat(elementFixture);
       });
 
       it('should return linked list', () => {
-        const expected: Partial<SingleInmutableLinkedList<unknown>> = {
+        const expected: Partial<SingleImmutableLinkedList<unknown>> = {
           last: {
             elem: elementFixture,
-            previous: singleInmutableLinkedListFixture.last,
+            previous: singleImmutableLinkedListFixture.last,
           },
         };
 
@@ -42,12 +42,12 @@ describe(SingleInmutableLinkedList, () => {
       let result: Iterable<unknown>;
 
       beforeAll(() => {
-        result = [...singleInmutableLinkedListFixture];
+        result = [...singleImmutableLinkedListFixture];
       });
 
       it('should return expected result', () => {
         expect(result).toStrictEqual([
-          singleInmutableLinkedListFixture.last.elem,
+          singleImmutableLinkedListFixture.last.elem,
         ]);
       });
     });

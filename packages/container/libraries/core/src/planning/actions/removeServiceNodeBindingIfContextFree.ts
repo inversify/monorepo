@@ -4,7 +4,7 @@ import {
   BindingConstraintsImplementation,
   InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult';
@@ -23,7 +23,7 @@ import { PlanServiceNode } from '../models/PlanServiceNode';
 export function removeServiceNodeBindingIfContextFree(
   serviceNode: PlanServiceNode,
   binding: Binding<unknown>,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   optionalBindings: boolean,
 ): PlanServiceNodeBindingRemovedResult {
   if (LazyPlanServiceNode.is(serviceNode) && !serviceNode.isExpanded()) {

@@ -1,5 +1,5 @@
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleInmutableLinkedList } from '../../common/models/SingleInmutableLinkedList';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
 import { ClassElementMetadata } from '../../metadata/models/ClassElementMetadata';
 import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
 import { ClassMetadata } from '../../metadata/models/ClassMetadata';
@@ -25,20 +25,20 @@ class LazyManagedClassMetadataPlanServiceNode extends LazyPlanServiceNode {
   readonly #params: SubplanParams;
   readonly #buildLazyPlanServiceNodeNodeFromClassElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
   ) => PlanServiceNode;
-  readonly #bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>;
+  readonly #bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>;
   readonly #elementMetadata: ManagedClassElementMetadata;
 
   constructor(
     params: SubplanParams,
     buildLazyPlanServiceNodeNodeFromClassElementMetadata: (
       params: SubplanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       elementMetadata: ManagedClassElementMetadata,
     ) => PlanServiceNode,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
     serviceNode: PlanServiceNode | undefined,
   ) {
@@ -67,20 +67,20 @@ class LazyResolvedValueMetadataPlanServiceNode extends LazyPlanServiceNode {
   readonly #params: SubplanParams;
   readonly #buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ) => PlanServiceNode;
-  readonly #bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>;
+  readonly #bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>;
   readonly #resolvedValueElementMetadata: ResolvedValueElementMetadata;
 
   constructor(
     params: SubplanParams,
     buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata: (
       params: SubplanParams,
-      bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       elementMetadata: ResolvedValueElementMetadata,
     ) => PlanServiceNode,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     resolvedValueElementMetadata: ResolvedValueElementMetadata,
     serviceNode: PlanServiceNode | undefined,
   ) {
@@ -110,32 +110,32 @@ class LazyResolvedValueMetadataPlanServiceNode extends LazyPlanServiceNode {
 export function currySubplan(
   buildLazyPlanServiceNodeNodeFromClassElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
   ) => PlanServiceNode,
   buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ) => PlanServiceNode,
   buildPlanServiceNodeFromClassElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
   ) => PlanServiceNode | undefined,
   buildPlanServiceNodeFromResolvedValueElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ) => PlanServiceNode | undefined,
 ): (
   params: SubplanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
 ) => PlanBindingNode {
   const subplanInstanceBindingNode: (
     params: SubplanParams,
     node: InstanceBindingNode,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ) => PlanBindingNode = currySubplanInstanceBindingNode(
     buildLazyPlanServiceNodeNodeFromClassElementMetadata,
     buildPlanServiceNodeFromClassElementMetadata,
@@ -144,7 +144,7 @@ export function currySubplan(
   const subplanResolvedValueBindingNode: (
     params: SubplanParams,
     node: ResolvedValueBindingNode,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ) => PlanBindingNode = currySubplanResolvedValueBindingNode(
     buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata,
     buildPlanServiceNodeFromResolvedValueElementMetadata,
@@ -152,7 +152,7 @@ export function currySubplan(
 
   return (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ): PlanBindingNode => {
     if (isInstanceBindingNode(params.node)) {
       return subplanInstanceBindingNode(
@@ -173,22 +173,22 @@ export function currySubplan(
 function currySubplanInstanceBindingNode(
   buildLazyPlanServiceNodeNodeFromClassElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
   ) => PlanServiceNode,
   buildPlanServiceNodeFromClassElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
   ) => PlanServiceNode | undefined,
 ): (
   params: SubplanParams,
   node: InstanceBindingNode,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
 ) => PlanBindingNode {
   const handlePlanServiceNodeBuildFromClassElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ClassElementMetadata,
   ) => PlanServiceNode | undefined =
     curryHandlePlanServiceNodeBuildFromClassElementMetadata(
@@ -199,7 +199,7 @@ function currySubplanInstanceBindingNode(
   return (
     params: SubplanParams,
     node: InstanceBindingNode,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ): PlanBindingNode => {
     const classMetadata: ClassMetadata = node.classMetadata;
 
@@ -235,22 +235,22 @@ function currySubplanInstanceBindingNode(
 function currySubplanResolvedValueBindingNode(
   buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ) => PlanServiceNode,
   buildPlanServiceNodeFromResolvedValueElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ) => PlanServiceNode | undefined,
 ): (
   params: SubplanParams,
   node: ResolvedValueBindingNode,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
 ) => PlanBindingNode {
   const handlePlanServiceNodeBuildFromResolvedValueElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ) => PlanServiceNode =
     curryHandlePlanServiceNodeBuildFromResolvedValueElementMetadata(
@@ -261,7 +261,7 @@ function currySubplanResolvedValueBindingNode(
   return (
     params: SubplanParams,
     node: ResolvedValueBindingNode,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ): PlanBindingNode => {
     const resolvedValueMetadata: ResolvedValueMetadata = node.binding.metadata;
 
@@ -284,22 +284,22 @@ function currySubplanResolvedValueBindingNode(
 function curryHandlePlanServiceNodeBuildFromClassElementMetadata(
   buildLazyPlanServiceNodeNodeFromClassElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
   ) => PlanServiceNode,
   buildPlanServiceNodeFromClassElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ManagedClassElementMetadata,
   ) => PlanServiceNode | undefined,
 ): (
   params: SubplanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   elementMetadata: ClassElementMetadata,
 ) => PlanServiceNode | undefined {
   return (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ClassElementMetadata,
   ): PlanServiceNode | undefined => {
     if (elementMetadata.kind === ClassElementMetadataKind.unmanaged) {
@@ -354,22 +354,22 @@ function curryHandlePlanServiceNodeBuildFromClassElementMetadata(
 function curryHandlePlanServiceNodeBuildFromResolvedValueElementMetadata(
   buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ) => PlanServiceNode,
   buildPlanServiceNodeFromResolvedValueElementMetadata: (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ) => PlanServiceNode | undefined,
 ): (
   params: SubplanParams,
-  bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   elementMetadata: ResolvedValueElementMetadata,
 ) => PlanServiceNode {
   return (
     params: SubplanParams,
-    bindingConstraintsList: SingleInmutableLinkedList<InternalBindingConstraints>,
+    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ): PlanServiceNode => {
     const getPlanOptions: GetPlanOptions | undefined =
