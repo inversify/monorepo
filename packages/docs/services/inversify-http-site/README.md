@@ -1,3 +1,3 @@
 # @inversifyjs/inversify-docs-site
 
-Inversify documentation site package.
+Inversify http documentation site package.
