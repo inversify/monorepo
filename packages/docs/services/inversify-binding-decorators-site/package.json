@@ -19,7 +19,7 @@
     "@docusaurus/module-type-aliases": "3.8.1",
     "@docusaurus/types": "3.8.1",
     "@eslint/js": "9.33.0",
-    "@types/react": "19.1.9",
+    "@types/react": "19.1.10",
     "eslint": "9.33.0",
     "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-simple-import-sort": "12.1.1",
