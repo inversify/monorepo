@@ -61,6 +61,12 @@ bind<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>
 
 Sets a new binding.
 
+:::info
+
+Unless specified otherwise, binding scopes are [transient](fundamentals/binding.mdx#transient) by default.
+
+:::
+
 ## get
 
 ```ts
