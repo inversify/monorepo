@@ -1,5 +1,6 @@
 /.turbo
 /coverage
+/docs
 /reports
 
 **/*.spec.js
