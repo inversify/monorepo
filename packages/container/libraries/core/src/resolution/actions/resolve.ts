@@ -5,6 +5,7 @@ import { InstanceBinding } from '../../binding/models/InstanceBinding';
 import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
+import { handleResolveError } from '../../planning/calculations/handleResolveError';
 import { isPlanServiceRedirectionBindingNode } from '../../planning/calculations/isPlanServiceRedirectionBindingNode';
 import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
 import { LeafBindingNode } from '../../planning/models/LeafBindingNode';
@@ -85,9 +86,13 @@ const resolveScopedResolvedValueBindingNode: <TActivated>(
 );
 
 export function resolve(params: ResolutionParams): unknown {
-  const serviceNode: PlanServiceNode = params.planResult.tree.root;
+  try {
+    const serviceNode: PlanServiceNode = params.planResult.tree.root;
 
-  return resolveServiceNode(params, serviceNode);
+    return resolveServiceNode(params, serviceNode);
+  } catch (error: unknown) {
+    handleResolveError(params, error);
+  }
 }
 
 function resolveBindingNode<TActivated>(
