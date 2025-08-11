@@ -1,0 +1,149 @@
+---
+sidebar_position: 1
+title: Decorator
+---
+import decoratorApiGetSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiGet.ts.txt';
+import decoratorApiPostSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPost.ts.txt';
+import decoratorApiPutSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPut.ts.txt';
+import decoratorApiDeleteSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiDelete.ts.txt';
+import decoratorApiPatchSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPatch.ts.txt';
+import decoratorApiOptionsSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiOptions.ts.txt';
+import decoratorApiHeadSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiHead.ts.txt';
+import decoratorApiAllSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiAll.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Decorators
+
+This section covers Inversify HTTP decorators used to provide related metadata.
+
+## Get
+
+Sets up a route for GET requests.
+
+```ts
+Get(path?: string): MethodDecorator
+```
+
+Parameters
+
+- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Get('/list')` maps to `GET <controllerPath>/list`. When omitted, the method is bound to the controller path itself.
+
+### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiGetSource}</CodeBlock>
+
+## Post
+
+Sets up a route for POST requests.
+
+```ts
+Post(path?: string): MethodDecorator
+```
+
+Parameters
+
+- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Post('/create')` maps to `POST <controllerPath>/create`.
+
+### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiPostSource}</CodeBlock>
+
+## Put
+
+Sets up a route for PUT requests.
+
+```ts
+Put(path?: string): MethodDecorator
+```
+
+Parameters
+
+- path (optional string): Route path mounted under the controller's base path. Defaults to '/'. Example: @Put('/update') maps to PUT &lt;controllerPath&gt;/update.
+
+Notes
+
+- Use @Body to read the request payload for PUT.
+
+### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiPutSource}</CodeBlock>
+
+## Delete
+
+Sets up a route for DELETE requests.
+
+```ts
+Delete(path?: string): MethodDecorator
+```
+
+Parameters
+
+- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Delete('/remove')` maps to `DELETE <controllerPath>/remove`.
+
+### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiDeleteSource}</CodeBlock>
+
+## Patch
+
+Sets up a route for PATCH requests.
+
+```ts
+Patch(path?: string): MethodDecorator
+```
+
+Parameters
+
+- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Patch('/partial')` maps to `PATCH <controllerPath>/partial`.
+
+### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiPatchSource}</CodeBlock>
+
+## Options
+
+Sets up a route for OPTIONS requests.
+
+```ts
+Options(path?: string): MethodDecorator
+```
+
+Parameters
+
+- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Options('/')` maps to `OPTIONS <controllerPath>`.
+
+### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiOptionsSource}</CodeBlock>
+
+## Head
+
+Sets up a route for HEAD requests.
+
+```ts
+Head(path?: string): MethodDecorator
+```
+
+Parameters
+
+- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Head('/')` maps to `HEAD <controllerPath>`.
+
+### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiHeadSource}</CodeBlock>
+
+## All
+
+Sets up a route for all HTTP methods.
+
+```ts
+All(path?: string): MethodDecorator
+```
+
+Parameters
+
+- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. It binds the method to all HTTP methods for the given path.
+
+### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiAllSource}</CodeBlock>
