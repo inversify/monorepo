@@ -107,6 +107,12 @@ bind<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): interfaces.BindingT
 
 Sets a new binding.
 
+:::info
+
+Unless specified otherwise, binding scopes are [transient](fundamentals/binding.mdx#transient) by default.
+
+:::
+
 ## createChild
 
 ```ts
