@@ -1,5 +1,12 @@
 # @inversifyjs/core
 
+## 7.0.1
+
+### Patch Changes
+
+- 9db671c: Updated `resolve` to handle circular dependencies
+- 95b2570: Updated `addServiceNodeBindingIfContextFree` to handle stack overflow errors
+
 ## 7.0.0
 
 ### Major Changes
