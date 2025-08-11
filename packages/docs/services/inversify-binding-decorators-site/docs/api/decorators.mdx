@@ -37,8 +37,9 @@ You can use the `@provide` decorator to provide a class service binding by passi
 ### Example: providing class service binding with a custom binding constraint
 
 You can use the `@provide` decorator to provide a class service binding with a custom binding constraint by passing the service identifier and a bind action as parameters.
+The bind action receives the fluent syntax to add additional configuration such as scopes and constraints.
 
-<CodeBlock language="ts">{apiDecoratorsProvideServiceBindingSource}</CodeBlock>
+<CodeBlock language="ts">{apiDecoratorsProvideServiceBindingWithBindActionSource}</CodeBlock>
 
 ### Example: providing multiple bindings
 
