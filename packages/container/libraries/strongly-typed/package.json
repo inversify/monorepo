@@ -43,7 +43,7 @@
   },
   "name": "@inversifyjs/strongly-typed",
   "peerDependencies": {
-    "inversify": "^7.7.0"
+    "inversify": "^7.7.1"
   },
   "publishConfig": {
     "access": "public"
