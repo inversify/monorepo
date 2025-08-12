@@ -17,7 +17,9 @@
   "updateInternalDependencies": "patch",
   "ignore": [
     "@inversifyjs/http-benchmarks",
+    "@inversifyjs/http-code-examples",
     "@inversifyjs/http-core",
+    "@inversifyjs/inversify-http-docs-site",
     "@inversifyjs/http-e2e-tests",
     "@inversifyjs/http-express",
     "@inversifyjs/http-express-v4",
