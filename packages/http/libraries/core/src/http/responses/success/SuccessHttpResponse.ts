@@ -1,4 +1,4 @@
-import { Stream } from 'stream';
+import { Stream } from 'node:stream';
 
 import { HttpResponse } from '../HttpResponse';
 import { HttpStatusCode } from '../HttpStatusCode';
