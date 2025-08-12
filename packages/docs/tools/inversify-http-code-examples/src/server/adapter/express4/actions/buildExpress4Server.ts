@@ -12,7 +12,10 @@ export async function buildExpress4Server(
 ): Promise<Server> {
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
     container,
-    { logger: true },
+    {
+      logger: true,
+      useCookies: true,
+    },
   );
 
   const application: express4.Application = await adapter.build();

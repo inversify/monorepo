@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
@@ -14,21 +14,30 @@ describe.each<[(container: Container) => Promise<Server>]>([
   [buildExpressServer],
   [buildFastifyServer],
   [buildHonoServer],
-])('Decorator API (Options)', () => {
-  it('should handle requests', async () => {
-    const container: Container = new Container();
-    container.bind(ContentController).toSelf().inSingletonScope();
+])(
+  'Decorator API (Options)',
+  (buildServer: (container: Container) => Promise<Server>) => {
+    let server: Server;
 
-    const server: Server = await buildExpressServer(container);
+    beforeAll(async () => {
+      const container: Container = new Container();
+      container.bind(ContentController).toSelf().inSingletonScope();
 
-    const response: Response = await fetch(
-      `http://${server.host}:${server.port.toString()}/content`,
-      { method: 'OPTIONS' },
-    );
+      server = await buildServer(container);
+    });
 
-    expect(response.status).toBeLessThan(300);
-    expect(response.status).toBeGreaterThanOrEqual(200);
+    afterAll(async () => {
+      await server.shutdown();
+    });
 
-    await server.shutdown();
-  });
-});
+    it('should handle requests', async () => {
+      const response: Response = await fetch(
+        `http://${server.host}:${server.port.toString()}/content`,
+        { method: 'OPTIONS' },
+      );
+
+      expect(response.status).toBeLessThan(300);
+      expect(response.status).toBeGreaterThanOrEqual(200);
+    });
+  },
+);

@@ -28,6 +28,7 @@ import { HttpAdapterOptions } from './http/models/HttpAdapterOptions';
 import { MiddlewareHandler } from './http/models/MiddlewareHandler';
 import { RequestHandler } from './http/models/RequestHandler';
 import { RequestMethodParameterType } from './http/models/RequestMethodParameterType';
+import { RequestMethodType } from './http/models/RequestMethodType';
 import { RequiredOptions } from './http/models/RequiredOptions';
 import { RouteParams } from './http/models/RouteParams';
 import { RouterParams } from './http/models/RouterParams';
@@ -121,6 +122,7 @@ export {
   Put,
   Query,
   Request,
+  RequestMethodType,
   RequestMethodParameterType,
   ResetContentHttpResponse,
   Response,

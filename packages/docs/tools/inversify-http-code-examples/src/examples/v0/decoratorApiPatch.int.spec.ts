@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
@@ -14,29 +14,43 @@ describe.each<[(container: Container) => Promise<Server>]>([
   [buildExpressServer],
   [buildFastifyServer],
   [buildHonoServer],
-])('Decorator API (Patch)', () => {
-  it('should handle requests', async () => {
-    const container: Container = new Container();
-    container.bind(ContentController).toSelf().inSingletonScope();
+])(
+  'Decorator API (Patch)',
+  (buildServer: (container: Container) => Promise<Server>) => {
+    let server: Server;
 
-    const server: Server = await buildExpressServer(container);
+    beforeAll(async () => {
+      const container: Container = new Container();
+      container.bind(ContentController).toSelf().inSingletonScope();
 
-    const response: Response = await fetch(
-      `http://${server.host}:${server.port.toString()}/content`,
-      {
-        body: JSON.stringify({ content: 'foo' }),
-        headers: { 'content-type': 'application/json' },
-        method: 'PATCH',
-      },
-    );
-    const responseBody: Content = (await response.json()) as Content;
+      server = await buildServer(container);
+    });
 
-    const expectedContent: Content = {
-      content: 'foo',
-    };
+    afterAll(async () => {
+      await server.shutdown();
+    });
 
-    expect(responseBody).toStrictEqual(expectedContent);
+    it('should handle requests', async () => {
+      const container: Container = new Container();
+      container.bind(ContentController).toSelf().inSingletonScope();
 
-    await server.shutdown();
-  });
-});
+      const server: Server = await buildExpressServer(container);
+
+      const response: Response = await fetch(
+        `http://${server.host}:${server.port.toString()}/content`,
+        {
+          body: JSON.stringify({ content: 'foo' }),
+          headers: { 'content-type': 'application/json' },
+          method: 'PATCH',
+        },
+      );
+      const responseBody: Content = (await response.json()) as Content;
+
+      const expectedContent: Content = {
+        content: 'foo',
+      };
+
+      expect(responseBody).toStrictEqual(expectedContent);
+    });
+  },
+);

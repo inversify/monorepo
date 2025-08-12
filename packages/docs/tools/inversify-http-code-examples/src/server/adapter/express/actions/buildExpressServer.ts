@@ -12,10 +12,14 @@ export async function buildExpressServer(
 ): Promise<Server> {
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
     container,
-    { logger: true },
+    {
+      logger: true,
+      useCookies: true,
+    },
   );
 
   const application: express.Application = await adapter.build();
+
   const httpServer: http.Server = http.createServer(
     application as RequestListener,
   );

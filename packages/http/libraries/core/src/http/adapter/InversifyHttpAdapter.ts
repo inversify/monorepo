@@ -632,7 +632,7 @@ export abstract class InversifyHttpAdapter<
 
     for (const controllerMethodMetadata of routerExplorerControllerMethodMetadataList) {
       this.#logger.info(
-        `.${controllerMethodMetadata.methodKey as string}() mapped {${controllerMethodMetadata.path}, ${controllerMethodMetadata.requestMethodType}}`,
+        `  - .${controllerMethodMetadata.methodKey as string}() mapped {${controllerMethodMetadata.path}, ${controllerMethodMetadata.requestMethodType}}`,
       );
     }
   }
