@@ -2,11 +2,11 @@ import { Readable } from 'node:stream';
 
 import cookie, { FastifyCookieOptions } from '@fastify/cookie';
 import {
-  HttpAdapterOptions,
   HttpStatusCode,
   InversifyHttpAdapter,
   MiddlewareHandler,
   RequestHandler,
+  RequestMethodType,
   RouterParams,
 } from '@inversifyjs/http-core';
 import {
@@ -16,6 +16,7 @@ import {
   FastifyReply,
   FastifyRequest,
   HookHandlerDoneFunction,
+  HTTPMethods,
   onResponseAsyncHookHandler,
   preHandlerAsyncHookHandler,
   RouteHandlerMethod,
@@ -35,7 +36,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
 
   constructor(
     container: Container,
-    httpAdapterOptions?: HttpAdapterOptions,
+    httpAdapterOptions?: FastifyHttpAdapterOptions,
     customApp?: FastifyInstance,
   ) {
     super(container, { logger: true, useCookies: false }, httpAdapterOptions);
@@ -192,7 +193,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
 
         fastifyInstance.route({
           handler: this.#buildFastifyHandler(routeParams.handler),
-          method: routeParams.requestMethodType,
+          method: this.#convertRequestMethodType(routeParams.requestMethodType),
           onResponse: this.#buildFastifyOnResponseAsyncMiddlewareList(
             routeParams.postHandlerMiddlewareList,
           ),
@@ -341,5 +342,15 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
         },
       );
     };
+  }
+
+  #convertRequestMethodType(
+    requestMethodType: RequestMethodType,
+  ): HTTPMethods | HTTPMethods[] {
+    return requestMethodType === RequestMethodType.All
+      ? Object.values(RequestMethodType).filter(
+          (method: RequestMethodType) => method !== RequestMethodType.All,
+        )
+      : requestMethodType;
   }
 }
