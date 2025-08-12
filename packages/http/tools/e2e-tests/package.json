@@ -15,7 +15,7 @@
     "express": "^5.1.0",
     "express4": "npm:express@4.21.2",
     "fastify": "^5.5.0",
-    "hono": "^4.9.0",
+    "hono": "^4.9.1",
     "inversify": "7.7.1"
   },
   "devDependencies": {
