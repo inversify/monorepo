@@ -16,7 +16,7 @@ export class ErrorHttpResponse extends Error implements HttpResponse {
     error: string,
     message?: string,
   ) {
-    super();
+    super(message);
 
     this.body = { error, message, statusCode };
     this[isErrorHttpResponseSymbol] = true;
