@@ -1,12 +1,12 @@
 import { Readable } from 'node:stream';
 
 import {
-  HttpAdapterOptions,
   HttpStatusCode,
   InversifyHttpAdapter,
   MiddlewareHandler,
   RouterParams,
 } from '@inversifyjs/http-core';
+import cookieParser from 'cookie-parser';
 import express, {
   Application,
   NextFunction,
@@ -30,13 +30,14 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
 
   constructor(
     container: Container,
-    httpAdapterOptions?: HttpAdapterOptions,
+    httpAdapterOptions?: ExpressHttpAdapterOptions,
     customApp?: Application,
   ) {
     super(
       container,
       {
         logger: true,
+        useCookies: false,
         useJson: true,
       },
       httpAdapterOptions,
@@ -174,13 +175,16 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     parameterName?: string,
   ): unknown {
     return parameterName !== undefined
-      ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        request.cookies[parameterName]
+      ? request.cookies[parameterName]
       : request.cookies;
   }
 
   #buildDefaultExpressApp(customApp?: Application): Application {
     const app: Application = customApp ?? express();
+
+    if (this.httpAdapterOptions.useCookies) {
+      app.use(cookieParser());
+    }
 
     if (this.httpAdapterOptions.useJson) {
       app.use(express.json());

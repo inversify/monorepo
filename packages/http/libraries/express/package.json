@@ -5,12 +5,14 @@
   },
   "description": "InversifyJs http express package",
   "dependencies": {
-    "@inversifyjs/http-core": "workspace:*"
+    "@inversifyjs/http-core": "workspace:*",
+    "cookie-parser": "^1.4.7"
   },
   "devDependencies": {
     "@stryker-mutator/core": "9.0.1",
     "@stryker-mutator/vitest-runner": "9.0.1",
     "@stryker-mutator/typescript-checker": "9.0.1",
+    "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.3",
     "@types/node": "22.17.1",
     "@vitest/coverage-v8": "3.2.4",

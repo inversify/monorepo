@@ -2,8 +2,7 @@ import http, { RequestListener } from 'node:http';
 import { AddressInfo } from 'node:net';
 
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
-import cookieParser from 'cookie-parser';
-import express, { Application } from 'express';
+import express from 'express';
 import { Container } from 'inversify';
 
 import { Server } from '../../../models/Server';
@@ -11,17 +10,12 @@ import { Server } from '../../../models/Server';
 export async function buildExpressServer(
   container: Container,
 ): Promise<Server> {
-  const app: Application = express();
-
-  app.use(express.json());
-  app.use(cookieParser());
-
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
     container,
     {
       logger: true,
+      useCookies: true,
     },
-    app,
   );
 
   const application: express.Application = await adapter.build();

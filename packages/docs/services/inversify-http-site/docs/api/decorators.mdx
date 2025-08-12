@@ -59,6 +59,12 @@ Parameters
 
 Reads HTTP cookies, or a specific cookie when a name is provided.
 
+:::warning
+
+Remember to enable `useCookies` option when using `express` or `fastify` adapters.
+
+:::
+
 ```ts
 Cookies(name?: string): ParameterDecorator
 ```
@@ -128,6 +134,13 @@ Parameters
 ### Head
 
 Sets up a route for HEAD requests.
+
+:::warning
+
+Since `hono@4`, HEAD routes are no longer allowed, use `@Get` routes instead.
+
+:::
+
 
 ```ts
 Head(path?: string): MethodDecorator
