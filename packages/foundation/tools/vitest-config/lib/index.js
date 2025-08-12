@@ -31,6 +31,17 @@ export const defaultConfig = defineConfig({
           name: 'Integration',
         },
       },
+      {
+        plugins: [
+          swc.vite({
+            tsconfigFile: 'tsconfig.esm.json',
+          }),
+        ],
+        test: {
+          include: ['src/**/*.spec-d.ts'],
+          name: 'Type',
+        },
+      },
     ],
     sequence: {
       hooks: 'parallel',
