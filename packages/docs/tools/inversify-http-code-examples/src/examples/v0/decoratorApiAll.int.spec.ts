@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
@@ -14,33 +14,42 @@ describe.each<[(container: Container) => Promise<Server>]>([
   [buildExpressServer],
   [buildFastifyServer],
   [buildHonoServer],
-])('Decorator API (All)', () => {
-  it('should handle requests', async () => {
-    const container: Container = new Container();
-    container.bind(ContentController).toSelf().inSingletonScope();
+])(
+  'Decorator API (All)',
+  (buildServer: (container: Container) => Promise<Server>) => {
+    let server: Server;
 
-    const server: Server = await buildExpressServer(container);
+    beforeAll(async () => {
+      const container: Container = new Container();
+      container.bind(ContentController).toSelf().inSingletonScope();
 
-    const methods: ReadonlyArray<string> = [
-      'GET',
-      'POST',
-      'PUT',
-      'DELETE',
-      'PATCH',
-      'OPTIONS',
-      'HEAD',
-    ];
+      server = await buildServer(container);
+    });
 
-    for (const method of methods) {
-      const response: Response = await fetch(
-        `http://${server.host}:${server.port.toString()}/content?content=foo`,
-        { method },
-      );
+    afterAll(async () => {
+      await server.shutdown();
+    });
 
-      expect(response.status).toBeLessThan(300);
-      expect(response.status).toBeGreaterThanOrEqual(200);
-    }
+    it('should handle requests', async () => {
+      const methods: ReadonlyArray<string> = [
+        'GET',
+        'POST',
+        'PUT',
+        'DELETE',
+        'PATCH',
+        'OPTIONS',
+        'HEAD',
+      ];
 
-    await server.shutdown();
-  });
-});
+      for (const method of methods) {
+        const response: Response = await fetch(
+          `http://${server.host}:${server.port.toString()}/content?content=foo`,
+          { method },
+        );
+
+        expect(response.status).toBeLessThan(300);
+        expect(response.status).toBeGreaterThanOrEqual(200);
+      }
+    });
+  },
+);

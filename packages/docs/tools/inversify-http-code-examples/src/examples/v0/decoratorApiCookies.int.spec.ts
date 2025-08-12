@@ -7,7 +7,7 @@ import { buildExpress4Server } from '../../server/adapter/express4/actions/build
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
 import { Server } from '../../server/models/Server';
-import { Content, ContentController } from './decoratorApiGet';
+import { CookiesController, CookiesResult } from './decoratorApiCookies';
 
 describe.each<[(container: Container) => Promise<Server>]>([
   [buildExpress4Server],
@@ -15,13 +15,13 @@ describe.each<[(container: Container) => Promise<Server>]>([
   [buildFastifyServer],
   [buildHonoServer],
 ])(
-  'Decorator API (Get)',
+  'Decorator API (Cookies)',
   (buildServer: (container: Container) => Promise<Server>) => {
     let server: Server;
 
     beforeAll(async () => {
       const container: Container = new Container();
-      container.bind(ContentController).toSelf().inSingletonScope();
+      container.bind(CookiesController).toSelf().inSingletonScope();
 
       server = await buildServer(container);
     });
@@ -30,17 +30,17 @@ describe.each<[(container: Container) => Promise<Server>]>([
       await server.shutdown();
     });
 
-    it('should handle requests', async () => {
+    it('should read a cookie', async () => {
       const response: Response = await fetch(
-        `http://${server.host}:${server.port.toString()}/content?content=foo`,
+        `http://${server.host}:${server.port.toString()}/cookies`,
+        {
+          headers: { cookie: 'sessionId=abc123' },
+        },
       );
-      const responseBody: Content = (await response.json()) as Content;
+      const responseBody: CookiesResult =
+        (await response.json()) as CookiesResult;
 
-      const expectedContent: Content = {
-        content: 'foo',
-      };
-
-      expect(responseBody).toStrictEqual(expectedContent);
+      expect(responseBody).toStrictEqual({ sessionId: 'abc123' });
     });
   },
 );
