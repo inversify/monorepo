@@ -4,6 +4,7 @@ export interface Content {
   content: string;
 }
 
+// Begin-example
 @Controller('/content')
 export class ContentController {
   @Post()

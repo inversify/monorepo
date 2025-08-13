@@ -4,12 +4,12 @@ import { controllerMethodStatusCodeMetadataReflectKey } from '../../reflectMetad
 import { HttpStatusCode } from '../responses/HttpStatusCode';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function StatusCode(StatusCode: HttpStatusCode): MethodDecorator {
+export function StatusCode(statusCode: HttpStatusCode): MethodDecorator {
   return (target: object, key: string | symbol): void => {
     setReflectMetadata(
       target.constructor,
       controllerMethodStatusCodeMetadataReflectKey,
-      StatusCode,
+      statusCode,
       key,
     );
   };
