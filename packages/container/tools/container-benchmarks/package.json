@@ -13,7 +13,7 @@
     "inversify6": "npm:inversify@6.2.2",
     "inversify7": "npm:inversify@7.7.1",
     "rxjs": "7.8.2",
-    "tinybench": "4.0.1",
+    "tinybench": "4.1.0",
     "tsyringe": "4.10.0"
   },
   "devDependencies": {
