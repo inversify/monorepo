@@ -4,6 +4,7 @@ export interface HeadersResult {
   agent: string | undefined;
 }
 
+// Begin-example
 @Controller('/headers')
 export class HeadersController {
   @Get()

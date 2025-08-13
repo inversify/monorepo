@@ -13,6 +13,8 @@ import decoratorApiOptionsSource from '@inversifyjs/http-code-examples/generated
 import decoratorApiPatchSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPatch.ts.txt';
 import decoratorApiPostSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPost.ts.txt';
 import decoratorApiPutSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPut.ts.txt';
+import decoratorApiSetHeaderSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiSetHeader.ts.txt';
+import decoratorApiStatusCodeSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiStatusCode.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 # Decorators
@@ -81,6 +83,39 @@ Parameters
 
 Inversify HTTP decorators can also be used to abstract HTTP response details, such as status codes and headers. This allows for more consistent and maintainable response handling across controllers.
 
+### SetHeader
+
+Sets a HTTP response header.
+
+```ts
+SetHeader(headerKey: string, value: string): MethodDecorator
+```
+
+Parameters
+
+- headerKey (string): Name of the header to be set.
+- value (string): Value of the header to be set.
+
+#### Example: Setting a response header
+
+<CodeBlock language="ts">{decoratorApiSetHeaderSource}</CodeBlock>
+
+### StatusCode
+
+Sets the HTTP response status code.
+
+```ts
+StatusCode(statusCode: HttpStatusCode): MethodDecorator
+```
+
+Parameters
+
+- headerKey (HttpStatusCode): Status code to be set.
+
+#### Example: Setting a response status code
+
+<CodeBlock language="ts">{decoratorApiStatusCodeSource}</CodeBlock>
+
 ## HTTP methods
 
 ### All
@@ -137,7 +172,7 @@ Sets up a route for HEAD requests.
 
 :::warning
 
-Since `hono@4`, HEAD routes are no longer allowed, use `@Get` routes instead.
+Since `hono@4`, HEAD routes are no longer allowed, use `@Get` routes instead if you rely on the Hono adapter.
 
 :::
 
