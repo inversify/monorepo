@@ -4,6 +4,7 @@ export interface CookiesResult {
   sessionId: string | undefined;
 }
 
+// Begin-example
 @Controller('/cookies')
 export class CookiesController {
   @Get()

@@ -6,6 +6,7 @@ import {
   StatusCode,
 } from '@inversifyjs/http-core';
 
+// Begin-example
 @Controller('/content')
 export class ContentController {
   @Head()

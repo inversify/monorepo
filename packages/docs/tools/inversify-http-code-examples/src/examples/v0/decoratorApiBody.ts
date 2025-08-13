@@ -8,6 +8,7 @@ export interface BodyResult {
   message: string;
 }
 
+// Begin-example
 @Controller('/messages')
 export class BodyController {
   @Post()
