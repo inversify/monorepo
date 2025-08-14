@@ -2,6 +2,7 @@
 sidebar_position: 6
 title: ServiceIdentifier
 ---
+import serviceIdentifierApiSource from '@inversifyjs/code-examples/generated/examples/v6/serviceIdentifierApi.ts.txt'
 import CodeBlock from '@theme/CodeBlock';
 
 # ServiceIdentifier
@@ -19,7 +20,7 @@ type ServiceIdentifier<TInstance = unknown> =
   | string
   | symbol
   | Newable<TInstance>
-  | Function;
+  | AbstractNewable<TInstance>;
 ```
 
 Where `Newable` is defined as:
@@ -39,33 +40,21 @@ type Newable<
 2. **Service Resolution**: Retrieving services from the container
 3. **Service Configuration**: Setting activation/deactivation handlers
 
-### Registration Examples
+### Examples
 
-```typescript
-// Using a class as a service identifier (most common)
-container.bind(UserService).toSelf();
-
-// Using a string as a service identifier
-container.bind("IUserService").to(UserService);
-
-// Using a symbol as a service identifier
-const userServiceId: interfaces.ServiceIdentifier<UserService> =
-  Symbol("UserService");
-
-container.bind(userServiceId).to(UserService);
-
-// Resolving with a class identifier
-const firstUserService = container.get(UserService);
-
-// Resolving with a string identifier
-const secondUserService = container.get("IUserService");
-
-// Resolving with a symbol identifier
-const thirdUserService = container.get(userServiceId);
-```
+<CodeBlock language="ts">{serviceIdentifierApiSource}</CodeBlock>
 
 :::info[Type Inference support]
 
-When using generics with `ServiceIdentifier<T>`, TypeScript can infer the resolved type. In the example above, `thirdUserService` is automatically typed as `UserService` because `userServiceId` was defined as `ServiceIdentifier<UserService>`.
+When using generics with `ServiceIdentifier<T>`, TypeScript can infer the resolved type. In the example above, `firstUserService` is automatically typed as `UserService` because `UserService` is inferred as `ServiceIdentifier<UserService>`.
+
+:::
+
+:::warning[Assignment reduced type]
+
+In TypeScript, when a variable annotated with a union is assigned, the actual initial type of that variable becomes "an assignment reduced type".
+
+In the example above, `userServiceId` is automatically reduced as `symbol` and therefore, `firstUserService` is typed as `unknown`.
+Using a casting prevents this reduction and maintains the original type. Consider `fourthUserService` as an example.
 
 :::
