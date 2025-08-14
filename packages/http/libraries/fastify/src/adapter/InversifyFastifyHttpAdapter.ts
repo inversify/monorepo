@@ -191,6 +191,9 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           ...routeParams.preHandlerMiddlewareList,
         ];
 
+        const normalizedUrl: string =
+          routeParams.path === '/' ? '' : routeParams.path;
+
         fastifyInstance.route({
           handler: this.#buildFastifyHandler(routeParams.handler),
           method: this.#convertRequestMethodType(routeParams.requestMethodType),
@@ -200,7 +203,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           preHandler: this.#buildFastifyPreHandlerAsyncMiddlewareList(
             orderedMiddlewareList,
           ),
-          url: routeParams.path,
+          url: normalizedUrl,
         });
       }
 

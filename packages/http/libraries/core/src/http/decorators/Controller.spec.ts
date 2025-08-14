@@ -11,6 +11,7 @@ import {
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('inversify');
 vitest.mock('../calculations/buildArrayMetadataWithElement');
+vitest.mock('../calculations/buildNormalizedPath');
 
 import {
   buildArrayMetadataWithElement,
@@ -20,6 +21,7 @@ import {
 import { injectable } from 'inversify';
 
 import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
+import { buildNormalizedPath } from '../calculations/buildNormalizedPath';
 import { ControllerOptions } from '../models/ControllerOptions';
 import { Controller } from './Controller';
 
@@ -39,6 +41,8 @@ describe(Controller, () => {
 
         classDecoratorMock = vitest.fn();
 
+        vitest.mocked(buildNormalizedPath).mockReturnValueOnce(pathFixture);
+
         vitest
           .mocked(buildArrayMetadataWithElement)
           .mockReturnValueOnce(callbackFixture);
@@ -52,6 +56,11 @@ describe(Controller, () => {
 
       afterAll(() => {
         vitest.clearAllMocks();
+      });
+
+      it('should call buildNormalizedPath()', () => {
+        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
+        expect(buildNormalizedPath).toHaveBeenCalledWith(pathFixture);
       });
 
       it('should call injectable', () => {
@@ -83,19 +92,22 @@ describe(Controller, () => {
 
   describe('having a ControllerOptions', () => {
     describe('when called and scope is undefined', () => {
-      let optionsFixture: { controllerName: string; path: string };
+      let optionsFixture: ControllerOptions;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
         optionsFixture = {
-          controllerName: 'TestController',
           path: '/api',
         };
         targetFixture = class TestController {};
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
+
+        vitest
+          .mocked(buildNormalizedPath)
+          .mockReturnValueOnce(optionsFixture.path as string);
 
         vitest
           .mocked(buildArrayMetadataWithElement)
@@ -112,6 +124,11 @@ describe(Controller, () => {
 
       afterAll(() => {
         vitest.clearAllMocks();
+      });
+
+      it('should call buildNormalizedPath()', () => {
+        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
+        expect(buildNormalizedPath).toHaveBeenCalledWith(optionsFixture.path);
       });
 
       it('should call buildArrayMetadataWithElement', () => {
@@ -148,6 +165,14 @@ describe(Controller, () => {
           arrayMetadata;
 
         vitest
+          .mocked(buildNormalizedPath)
+          .mockReturnValueOnce(optionsFixture.path as string);
+
+        vitest
+          .mocked(buildNormalizedPath)
+          .mockReturnValueOnce(optionsFixture.path as string);
+
+        vitest
           .mocked(buildArrayMetadataWithElement)
           .mockReturnValueOnce(callbackFixture);
 
@@ -162,6 +187,11 @@ describe(Controller, () => {
 
       afterAll(() => {
         vitest.clearAllMocks();
+      });
+
+      it('should call buildNormalizedPath()', () => {
+        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
+        expect(buildNormalizedPath).toHaveBeenCalledWith(optionsFixture.path);
       });
 
       it('should call injectable', () => {
