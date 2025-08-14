@@ -20,6 +20,7 @@ export function buildRouterExplorerControllerMetadataList<
   if (controllerMetadataList === undefined) {
     throw new InversifyHttpAdapterError(
       InversifyHttpAdapterErrorKind.noControllerFound,
+      'No controllers found. Please ensure that your controllers are properly registered in your container and are annotated with the @Controller() decorator.',
     );
   }
 

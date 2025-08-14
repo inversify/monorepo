@@ -9,8 +9,6 @@ export class NextHonoMiddleware
   public async execute(_request: HonoRequest, context: Context): Promise<void> {
     // https://hono.dev/docs/guides/middleware#modify-the-response-after-next
 
-    context.res = undefined;
-
     context.res = new Response(undefined, {
       status: 200,
     });
