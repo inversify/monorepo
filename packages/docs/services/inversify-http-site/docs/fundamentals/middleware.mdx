@@ -1,0 +1,43 @@
+---
+sidebar_position: 3
+title: Middleware
+---
+import middlewareApiExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/middlewareApiExpressSetHeader.ts.txt';
+import middlewareApiExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/middlewareApiExpress4SetHeader.ts.txt';
+import middlewareApiFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/middlewareApiFastifySetHeader.ts.txt';
+import middlewareApiHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/middlewareApiHonoSetHeader.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Middleware
+
+Middleware run before or after your controller method, depending on the phase you register them for. They receive the native request/response types of the adapter you use.
+
+Key points
+
+- Implement the `Middleware` interface: execute(request, response, next)
+- Use `ApplyMiddleware` decorator to attach middleware at class or method level
+
+## Adapter-specific examples
+
+Each adapter exposes its own request/response types. Here is the same middleware that sets a custom header for every adapter.
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{middlewareApiExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{middlewareApiExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{middlewareApiFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{middlewareApiHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+## Attaching middleware
+
+Use `ApplyMiddleware` decorator at the controller (applies to all routes) or method level (applies to one route).
