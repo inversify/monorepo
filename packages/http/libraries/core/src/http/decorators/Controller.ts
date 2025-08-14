@@ -7,6 +7,7 @@ import { BindingScope, injectable } from 'inversify';
 
 import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
 import { ControllerMetadata } from '../../routerExplorer/model/ControllerMetadata';
+import { buildNormalizedPath } from '../calculations/buildNormalizedPath';
 import { ControllerOptions } from '../models/ControllerOptions';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -23,9 +24,11 @@ export function Controller(
 
     if (pathOrOptions !== undefined) {
       if (typeof pathOrOptions === 'string') {
-        controllerMetadata.path = pathOrOptions;
+        controllerMetadata.path = buildNormalizedPath(pathOrOptions);
       } else {
-        controllerMetadata.path = pathOrOptions.path ?? '/';
+        controllerMetadata.path = buildNormalizedPath(
+          pathOrOptions.path ?? '/',
+        );
         scope = pathOrOptions.scope;
       }
     }

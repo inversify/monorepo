@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('./buildArrayMetadataWithElement');
+vitest.mock('./buildNormalizedPath');
 
 import {
   buildArrayMetadataWithElement,
@@ -11,6 +12,7 @@ import {
 
 import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
 import { RequestMethodType } from '../models/RequestMethodType';
+import { buildNormalizedPath } from './buildNormalizedPath';
 import { requestMethod } from './requestMethod';
 
 describe(requestMethod, () => {
@@ -19,12 +21,18 @@ describe(requestMethod, () => {
       let targetFixture: object;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
       let keyFixture: string;
+      let normalizedPathFixture: string;
 
       beforeAll(() => {
         keyFixture = 'key-example';
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
         targetFixture = {};
+        normalizedPathFixture = '/';
+
+        vitest
+          .mocked(buildNormalizedPath)
+          .mockReturnValueOnce(normalizedPathFixture);
 
         vitest
           .mocked(buildArrayMetadataWithElement)
@@ -41,11 +49,16 @@ describe(requestMethod, () => {
         vitest.clearAllMocks();
       });
 
+      it('should call buildNormalizedPath()', () => {
+        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
+        expect(buildNormalizedPath).toHaveBeenCalledWith('/');
+      });
+
       it('should call buildArrayMetadataWithElement', () => {
         expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithElement).toHaveBeenCalledWith({
           methodKey: keyFixture,
-          path: '/',
+          path: normalizedPathFixture,
           requestMethodType: RequestMethodType.Get,
         });
       });
@@ -68,6 +81,7 @@ describe(requestMethod, () => {
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
       let pathFixture: string;
       let keyFixture: string;
+      let normalizedPathFixture: string;
 
       beforeAll(() => {
         keyFixture = 'key-example';
@@ -75,6 +89,11 @@ describe(requestMethod, () => {
           arrayMetadata;
         pathFixture = '/example';
         targetFixture = {};
+        normalizedPathFixture = '/example';
+
+        vitest
+          .mocked(buildNormalizedPath)
+          .mockReturnValueOnce(normalizedPathFixture);
 
         vitest
           .mocked(buildArrayMetadataWithElement)
@@ -91,11 +110,16 @@ describe(requestMethod, () => {
         vitest.clearAllMocks();
       });
 
+      it('should call buildNormalizedPath()', () => {
+        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
+        expect(buildNormalizedPath).toHaveBeenCalledWith(pathFixture);
+      });
+
       it('should call buildArrayMetadataWithElement', () => {
         expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithElement).toHaveBeenCalledWith({
           methodKey: keyFixture,
-          path: pathFixture,
+          path: normalizedPathFixture,
           requestMethodType: RequestMethodType.Get,
         });
       });
