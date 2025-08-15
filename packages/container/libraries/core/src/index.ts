@@ -34,6 +34,7 @@ import { getClassMetadata } from './metadata/calculations/getClassMetadata';
 import { inject } from './metadata/decorators/inject';
 import { injectable } from './metadata/decorators/injectable';
 import { injectFromBase } from './metadata/decorators/injectFromBase';
+import { injectFromHierarchy } from './metadata/decorators/injectFromHierarchy';
 import { multiInject } from './metadata/decorators/multiInject';
 import { named } from './metadata/decorators/named';
 import { optional } from './metadata/decorators/optional';
@@ -46,6 +47,9 @@ import { ClassElementMetadata } from './metadata/models/ClassElementMetadata';
 import { ClassElementMetadataKind } from './metadata/models/ClassElementMetadataKind';
 import { ClassMetadata } from './metadata/models/ClassMetadata';
 import { ClassMetadataLifecycle } from './metadata/models/ClassMetadataLifecycle';
+import { InjectFromBaseOptions } from './metadata/models/InjectFromBaseOptions';
+import { InjectFromHierarchyOptions } from './metadata/models/InjectFromHierarchyOptions';
+import { InjectFromOptions } from './metadata/models/InjectFromOptions';
 import { ManagedClassElementMetadata } from './metadata/models/ManagedClassElementMetadata';
 import { MetadataName } from './metadata/models/MetadataName';
 import { MetadataTag } from './metadata/models/MetadataTag';
@@ -136,6 +140,9 @@ export type {
   ManagedClassElementMetadata,
   MetadataName,
   MetadataTag,
+  InjectFromBaseOptions,
+  InjectFromHierarchyOptions,
+  InjectFromOptions,
   MultiInjectOptions,
   MultipleInjectionManagedClassElementMetadata,
   MultipleInjectionResolvedValueElementMetadata,
@@ -182,6 +189,7 @@ export {
   inject,
   injectable,
   injectFromBase,
+  injectFromHierarchy,
   multiInject,
   named,
   optional,
