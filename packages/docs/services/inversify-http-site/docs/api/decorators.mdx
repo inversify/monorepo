@@ -27,7 +27,7 @@ This section covers Inversify HTTP decorators used to provide related metadata.
 
 Inversify HTTP decorators can be used to manage the lifecycle of HTTP requests, including middleware execution, request handling, and response generation. This allows for more modular and maintainable code.
 
-## ApplyMiddleware
+### ApplyMiddleware
 
 Attaches middleware to a controller class (applies to all its routes) or to a specific route method.
 
@@ -59,6 +59,24 @@ Notes
 #### Example: apply middleware to a single route
 
 <CodeBlock language="ts">{decoratorApiApplyMiddlewareRouteSource}</CodeBlock>
+
+### UseGuard
+
+Attaches one or more guards to a controller class or method. All guards must allow for the request to continue.
+
+```ts
+UseGuard(...guardList: Newable<Guard>[]): ClassDecorator & MethodDecorator
+```
+
+Parameters
+
+- guardList: One or more guard classes implementing `Guard<TRequest>`.
+
+Notes
+
+- Scope: Place on the controller class to affect all routes, or on a method to affect only that route.
+- Guard return values: `activate()` may return `true` (continue), `false` (reply with `403 Forbidden`), or a custom `HttpResponse` (replied as-is, e.g., `new ForbiddenHttpResponse('message')`).
+
 
 ## HTTP Request message abstraction
 
