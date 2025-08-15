@@ -26,7 +26,7 @@
     "url": "https://github.com/inversify/monorepo/issues"
   },
   "dependencies": {
-    "tinybench": "4.1.0"
+    "tinybench": "5.0.0"
   },
   "devDependencies": {
     "@types/node": "22.17.2",
