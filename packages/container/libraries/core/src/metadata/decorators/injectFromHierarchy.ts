@@ -12,8 +12,7 @@ export function injectFromHierarchy(
     const chain: Newable[] = [];
 
     let current: Newable | undefined = getBaseType(target as Newable);
-
-    while (current !== undefined) {
+    while (current !== undefined && current !== Object) {
       const ancestor: Newable = current;
       chain.push(ancestor);
       current = getBaseType(ancestor);
