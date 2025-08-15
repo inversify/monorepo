@@ -587,18 +587,19 @@ export abstract class InversifyHttpAdapter<
         const guard: Guard<TRequest> =
           await this.#container.getAsync(newableFunction);
 
-        const activate: boolean = await guard.activate(request);
+        const activateOrReponse: boolean | HttpResponse =
+          await guard.activate(request);
 
-        if (!activate) {
-          return this.#reply(
-            request,
-            response,
-            guard.getHttpResponse?.() ?? new ForbiddenHttpResponse(),
-          );
+        if (typeof activateOrReponse === 'boolean') {
+          if (activateOrReponse) {
+            await next();
+
+            return undefined;
+          } else {
+            return this.#reply(request, response, new ForbiddenHttpResponse());
+          }
         } else {
-          await next();
-
-          return undefined;
+          return this.#reply(request, response, activateOrReponse);
         }
       };
     });
