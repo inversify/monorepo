@@ -5,6 +5,8 @@ title: Decorator
 import decoratorApiInjectConstructorArgumentSource from '@inversifyjs/code-examples/generated/examples/v7/decoratorApiInjectConstructorArgument.ts.txt';
 import decoratorApiInjectFromBaseConstructorArgumentSource from '@inversifyjs/code-examples/generated/examples/v7/decoratorApiInjectFromBaseConstructorArguments.ts.txt';
 import decoratorApiInjectFromBasePropertiesSource from '@inversifyjs/code-examples/generated/examples/v7/decoratorApiInjectFromBaseProperties.ts.txt';
+import decoratorApiInjectFromHierarchyConstructorArgumentSource from '@inversifyjs/code-examples/generated/examples/v7/decoratorApiInjectFromHierarchyConstructorArguments.ts.txt';
+import decoratorApiInjectFromHierarchyPropertiesSource from '@inversifyjs/code-examples/generated/examples/v7/decoratorApiInjectFromHierarchyProperties.ts.txt';
 import decoratorApiInjectPropertySource from '@inversifyjs/code-examples/generated/examples/v7/decoratorApiInjectProperty.ts.txt';
 import decoratorApiMultiInjectPropertySource from '@inversifyjs/code-examples/generated/examples/v7/decoratorApiMultiInjectProperty.ts.txt';
 import decoratorApiNamedSource from '@inversifyjs/code-examples/generated/examples/v7/decoratorApiNamed.ts.txt';
@@ -133,6 +135,25 @@ The `injectFromBase` decorator accepts an optional `InjectFromBaseOptions` objec
 ### Example: decorating base class properties
 
 <CodeBlock language="ts">{decoratorApiInjectFromBasePropertiesSource}</CodeBlock>
+
+## injectFromHierarchy
+
+Decorator used to inject dependencies from the full class hierarchy (all ancestors). The injection is applied top-down (from the farthest ancestor to the closest base).
+
+### Parameters
+
+The `injectFromHierarchy` decorator accepts an optional `InjectFromHierarchyOptions` object with the following properties:
+
+- `extendConstructorArguments` (boolean, defaults to true): If true, constructor arguments from all ancestors will be injected.
+- `extendProperties` (boolean, defaults to true): If true, properties from all ancestors will be injected.
+
+### Example: decorating hierarchy constructor arguments
+
+<CodeBlock language="ts">{decoratorApiInjectFromHierarchyConstructorArgumentSource}</CodeBlock>
+
+### Example: decorating hierarchy properties
+
+<CodeBlock language="ts">{decoratorApiInjectFromHierarchyPropertiesSource}</CodeBlock>
 
 ## multiInject
 
