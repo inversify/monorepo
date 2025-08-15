@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Decorator
 ---
 import decoratorApiAllSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiAll.ts.txt';
+import decoratorApiApplyMiddlewareControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiApplyMiddlewareController.ts.txt';
+import decoratorApiApplyMiddlewareRouteSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiApplyMiddlewareRoute.ts.txt';
 import decoratorApiBodySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBody.ts.txt';
 import decoratorApiCookiesSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiCookies.ts.txt';
 import decoratorApiDeleteSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiDelete.ts.txt';
@@ -20,6 +22,43 @@ import CodeBlock from '@theme/CodeBlock';
 # Decorators
 
 This section covers Inversify HTTP decorators used to provide related metadata.
+
+## HTTP Request lifecycle
+
+Inversify HTTP decorators can be used to manage the lifecycle of HTTP requests, including middleware execution, request handling, and response generation. This allows for more modular and maintainable code.
+
+## ApplyMiddleware
+
+Attaches middleware to a controller class (applies to all its routes) or to a specific route method.
+
+```ts
+ApplyMiddleware(
+  ...middlewareList: (Newable<Middleware> | ApplyMiddlewareOptions)[],
+): ClassDecorator & MethodDecorator
+```
+
+Parameters
+
+- middlewareList
+  - `Newable<Middleware>`: One or more middleware classes. When passed directly, they run in the `PreHandler` phase.
+  - `ApplyMiddlewareOptions`: Object form to control the execution phase and group multiple middleware.
+    - phase (`MiddlewarePhase`): Either `PreHandler` or `PostHandler`.
+    - middleware (`Newable<Middleware>` | `Newable<Middleware>`[]): One or many middleware classes.
+
+Notes
+
+- Scope: Place the decorator on the controller class to affect all routes, or on a method to affect only that route.
+- Phase: When passing middleware classes directly (not the options object), they run in the `PreHandler` phase by default.
+- Order: Within the same phase, middleware execute in the order they are provided.
+- See also: [Middleware fundamentals](../../fundamentals/middleware) for adapter-specific request/response types and tips.
+
+#### Example: apply middleware to a controller (all routes)
+
+<CodeBlock language="ts">{decoratorApiApplyMiddlewareControllerSource}</CodeBlock>
+
+#### Example: apply middleware to a single route
+
+<CodeBlock language="ts">{decoratorApiApplyMiddlewareRouteSource}</CodeBlock>
 
 ## HTTP Request message abstraction
 
