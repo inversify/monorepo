@@ -1,29 +1,27 @@
 import { Stream } from 'node:stream';
 
-import { HttpResponse } from '../HttpResponse';
+import { isHttpResponse } from '../calculations/isHttpResponse';
+import {
+  HttpResponse,
+  isHttpResponse as isHttpResponseSymbol,
+} from '../HttpResponse';
 import { HttpStatusCode } from '../HttpStatusCode';
 
-const isSuccessHttpResponseSymbol: unique symbol = Symbol.for(
-  '@inversifyjs/http-core/SuccessHttpResponse',
-);
-
 export class SuccessHttpResponse implements HttpResponse {
-  public [isSuccessHttpResponseSymbol]: true;
+  public [isHttpResponseSymbol]: true;
 
   constructor(
     public readonly statusCode: HttpStatusCode,
     public readonly body?: object | string | number | boolean | Stream,
   ) {
-    this[isSuccessHttpResponseSymbol] = true;
+    this[isHttpResponseSymbol] = true;
   }
 
   public static is(value: unknown): value is SuccessHttpResponse {
     return (
-      typeof value === 'object' &&
-      value !== null &&
-      (value as Record<string | symbol, unknown>)[
-        isSuccessHttpResponseSymbol
-      ] === true
+      isHttpResponse(value) &&
+      value.statusCode >= HttpStatusCode.OK &&
+      value.statusCode < HttpStatusCode.AMBIGUOUS
     );
   }
 }

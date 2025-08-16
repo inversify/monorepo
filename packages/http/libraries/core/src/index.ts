@@ -33,6 +33,7 @@ import { RequiredOptions } from './http/models/RequiredOptions';
 import { RouteParams } from './http/models/RouteParams';
 import { RouterParams } from './http/models/RouterParams';
 import { Pipe } from './http/pipe/model/Pipe';
+import { isHttpResponse } from './http/responses/calculations/isHttpResponse';
 import { BadGatewayHttpResponse } from './http/responses/error/BadGatewayHttpResponse';
 import { BadRequestHttpResponse } from './http/responses/error/BadRequestHttpResponse';
 import { ConflictHttpResponse } from './http/responses/error/ConflictHttpResponse';
@@ -102,6 +103,7 @@ export {
   InsufficientStorageHttpResponse,
   InternalServerErrorHttpResponse,
   InversifyHttpAdapter,
+  isHttpResponse,
   LoopDetectedHttpResponse,
   MethodNotAllowedHttpResponse,
   MiddlewarePhase,

@@ -1,14 +1,16 @@
 import { Stream } from 'node:stream';
 
-import { HttpResponse } from '../HttpResponse';
+import { isHttpResponse } from '../calculations/isHttpResponse';
+import {
+  HttpResponse,
+  isHttpResponse as isHttpResponseSymbol,
+} from '../HttpResponse';
 import { HttpStatusCode } from '../HttpStatusCode';
 
-const isErrorHttpResponseSymbol: unique symbol = Symbol.for(
-  '@inversifyjs/http-core/ErrorHttpResponse',
-);
+const httpErrorStatusCodeUpperBound: number = 600;
 
 export class ErrorHttpResponse extends Error implements HttpResponse {
-  public readonly [isErrorHttpResponseSymbol]: true;
+  public readonly [isHttpResponseSymbol]: true;
   public readonly body?: object | string | number | boolean | Stream;
 
   constructor(
@@ -19,15 +21,14 @@ export class ErrorHttpResponse extends Error implements HttpResponse {
     super(message);
 
     this.body = { error, message, statusCode };
-    this[isErrorHttpResponseSymbol] = true;
+    this[isHttpResponseSymbol] = true;
   }
 
   public static is(value: unknown): value is ErrorHttpResponse {
     return (
-      typeof value === 'object' &&
-      value !== null &&
-      (value as Record<string | symbol, unknown>)[isErrorHttpResponseSymbol] ===
-        true
+      isHttpResponse(value) &&
+      value.statusCode >= HttpStatusCode.BAD_REQUEST &&
+      value.statusCode < (httpErrorStatusCodeUpperBound as HttpStatusCode)
     );
   }
 }
