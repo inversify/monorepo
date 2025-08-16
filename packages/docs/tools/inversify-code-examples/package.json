@@ -6,7 +6,7 @@
   "description": "InversifyJs docs code examples package",
   "dependencies": {
     "inversify": "6.2.2",
-    "inversify7": "npm:inversify@7.7.1"
+    "inversify7": "npm:inversify@7.8.1"
   },
   "devDependencies": {
     "@inversifyjs/code-examples-devkit": "workspace:*",

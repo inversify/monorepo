@@ -6,7 +6,7 @@
   "description": "InversifyJs binding decorators docs code examples package",
   "dependencies": {
     "@inversifyjs/binding-decorators": "workspace:*",
-    "inversify": "npm:inversify@7.7.1"
+    "inversify": "7.8.1"
   },
   "devDependencies": {
     "@inversifyjs/code-examples-devkit": "workspace:*",

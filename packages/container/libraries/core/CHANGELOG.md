@@ -1,5 +1,17 @@
 # @inversifyjs/core
 
+## 7.1.1
+
+### Patch Changes
+
+- 1cc1a4d: Fix `injectFromHierarchy` to ignore Object in prototype traversal, preventing missing metadata errors when extending undecorated Object.
+
+## 7.1.0
+
+### Minor Changes
+
+- 2f6e6e4: Added `injectFromHierachy`
+
 ## 7.0.1
 
 ### Patch Changes
