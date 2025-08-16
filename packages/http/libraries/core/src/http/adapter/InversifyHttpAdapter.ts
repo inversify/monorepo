@@ -329,7 +329,13 @@ export abstract class InversifyHttpAdapter<
       } catch (error: unknown) {
         this.#printError(error);
 
-        let response: HttpResponse = new InternalServerErrorHttpResponse();
+        let response: HttpResponse = new InternalServerErrorHttpResponse(
+          undefined,
+          undefined,
+          {
+            cause: error,
+          },
+        );
 
         if (ErrorHttpResponse.is(error)) {
           response = error;
