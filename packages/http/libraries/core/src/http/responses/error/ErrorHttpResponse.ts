@@ -15,8 +15,9 @@ export class ErrorHttpResponse extends Error implements HttpResponse {
     public readonly statusCode: HttpStatusCode,
     error: string,
     message?: string,
+    errorOptions?: ErrorOptions,
   ) {
-    super(message);
+    super(message, errorOptions);
 
     this.body = { error, message, statusCode };
     this[isErrorHttpResponseSymbol] = true;

@@ -504,11 +504,11 @@ export abstract class InversifyHttpAdapter<
   ): TResult {
     this.#printError(error);
 
-    let httpResponse: HttpResponse = new InternalServerErrorHttpResponse();
-
-    if (ErrorHttpResponse.is(error)) {
-      httpResponse = error;
-    }
+    const httpResponse: HttpResponse = ErrorHttpResponse.is(error)
+      ? error
+      : new InternalServerErrorHttpResponse(undefined, undefined, {
+          cause: error,
+        });
 
     return this.#reply(request, response, httpResponse);
   }
