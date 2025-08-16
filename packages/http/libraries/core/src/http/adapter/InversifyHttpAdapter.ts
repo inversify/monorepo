@@ -327,21 +327,7 @@ export abstract class InversifyHttpAdapter<
 
         return reply(req, res, value);
       } catch (error: unknown) {
-        this.#printError(error);
-
-        let response: HttpResponse = new InternalServerErrorHttpResponse(
-          undefined,
-          undefined,
-          {
-            cause: error,
-          },
-        );
-
-        if (ErrorHttpResponse.is(error)) {
-          response = error;
-        }
-
-        return this.#reply(req, res, response);
+        return this.#handleError(req, res, error);
       }
     };
   }
@@ -511,6 +497,22 @@ export abstract class InversifyHttpAdapter<
     }
   }
 
+  #handleError(
+    request: TRequest,
+    response: TResponse,
+    error: unknown,
+  ): TResult {
+    this.#printError(error);
+
+    const httpResponse: HttpResponse = ErrorHttpResponse.is(error)
+      ? error
+      : new InternalServerErrorHttpResponse(undefined, undefined, {
+          cause: error,
+        });
+
+    return this.#reply(request, response, httpResponse);
+  }
+
   #setHeaders(
     request: TRequest,
     response: TResponse,
@@ -590,21 +592,21 @@ export abstract class InversifyHttpAdapter<
         response: TResponse,
         next: TNextFunction,
       ): Promise<TResult | undefined> => {
-        const guard: Guard<TRequest> =
-          await this.#container.getAsync(newableFunction);
+        try {
+          const guard: Guard<TRequest> =
+            await this.#container.getAsync(newableFunction);
 
-        const activate: boolean = await guard.activate(request);
+          const isAllowed: boolean = await guard.activate(request);
 
-        if (!activate) {
-          return this.#reply(
-            request,
-            response,
-            guard.getHttpResponse?.() ?? new ForbiddenHttpResponse(),
-          );
-        } else {
-          await next();
+          if (isAllowed) {
+            await next();
 
-          return undefined;
+            return undefined;
+          }
+
+          return this.#reply(request, response, new ForbiddenHttpResponse());
+        } catch (error: unknown) {
+          return this.#handleError(request, response, error);
         }
       };
     });

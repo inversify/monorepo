@@ -1,0 +1,67 @@
+---
+sidebar_position: 1
+title: Guard
+---
+import guardApiExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpressAllow.ts.txt';
+import guardApiExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpress4Allow.ts.txt';
+import guardApiFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiFastifyAllow.ts.txt';
+import guardApiHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiHonoAllow.ts.txt';
+import guardApiExpressDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpressDeny.ts.txt';
+import guardApiExpress4DenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpress4Deny.ts.txt';
+import guardApiFastifyDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiFastifyDeny.ts.txt';
+import guardApiHonoDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiHonoDeny.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Guard
+
+Guards decide whether a request can continue. They run before middleware and handlers. If a guard returns `false`, the request is short-circuited with a `403 Forbidden` by default. A guard can also throw an `ErrorHttpResponse` (for example `ForbiddenHttpResponse`), which will be sent as-is.
+
+Key points
+
+- Implement the `Guard<TRequest>` interface: `activate(request) => boolean | Promise<boolean>` and optionally throw an `ErrorHttpResponse` to short-circuit
+- Returning `true` calls the next guard/handler; returning `false` replies with `403 Forbidden` by default; throwing an `ErrorHttpResponse` replies with that response
+- Attach guards with `UseGuard(GuardClass)` at class or method level
+
+## Adapter-specific examples
+
+Each adapter has its own request type. Below is a minimal “allow” guard for each adapter.
+
+<Tabs>
+	<TabItem value="express4" label="Express 4">
+		<CodeBlock language="ts">{guardApiExpress4Source}</CodeBlock>
+	</TabItem>
+	<TabItem value="express5" label="Express 5">
+		<CodeBlock language="ts">{guardApiExpressSource}</CodeBlock>
+	</TabItem>
+	<TabItem value="fastify" label="Fastify">
+		<CodeBlock language="ts">{guardApiFastifySource}</CodeBlock>
+	</TabItem>
+	<TabItem value="hono" label="Hono">
+		<CodeBlock language="ts">{guardApiHonoSource}</CodeBlock>
+	</TabItem>
+</Tabs>
+
+### Deny with a custom error response
+
+Below are minimal “deny” guards that throw a `ForbiddenHttpResponse` directly.
+
+<Tabs>
+	<TabItem value="express4-deny" label="Express 4">
+		<CodeBlock language="ts">{guardApiExpress4DenySource}</CodeBlock>
+	</TabItem>
+	<TabItem value="express5-deny" label="Express 5">
+		<CodeBlock language="ts">{guardApiExpressDenySource}</CodeBlock>
+	</TabItem>
+	<TabItem value="fastify-deny" label="Fastify">
+		<CodeBlock language="ts">{guardApiFastifyDenySource}</CodeBlock>
+	</TabItem>
+	<TabItem value="hono-deny" label="Hono">
+		<CodeBlock language="ts">{guardApiHonoDenySource}</CodeBlock>
+	</TabItem>
+</Tabs>
+
+## Attaching guard
+
+Use [UseGuard](../../api/decorators#useguard) decorator at the controller (applies to all routes) or method level (applies to one route).
