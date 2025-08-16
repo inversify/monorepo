@@ -16,12 +16,12 @@ import TabItem from '@theme/TabItem';
 
 # Guard
 
-Guards decide whether a request can continue. They run before middleware and handlers. If a guard returns `false`, the request is short-circuited with a `403 Forbidden` by default. A guard can also return an `HttpResponse` (for example `ForbiddenHttpResponse`), which will be sent as-is.
+Guards decide whether a request can continue. They run before middleware and handlers. If a guard returns `false`, the request is short-circuited with a `403 Forbidden` by default. A guard can also throw an `ErrorHttpResponse` (for example `ForbiddenHttpResponse`), which will be sent as-is.
 
 Key points
 
-- Implement the `Guard<TRequest>` interface: `activate(request) => boolean | HttpResponse | Promise<boolean | HttpResponse>`
-- Returning `true` calls the next guard/handler; returning `false` replies with `403 Forbidden` by default; returning an `HttpResponse` replies with that response
+- Implement the `Guard<TRequest>` interface: `activate(request) => boolean | Promise<boolean>` and optionally throw an `ErrorHttpResponse` to short-circuit
+- Returning `true` calls the next guard/handler; returning `false` replies with `403 Forbidden` by default; throwing an `ErrorHttpResponse` replies with that response
 - Attach guards with `UseGuard(GuardClass)` at class or method level
 
 ## Adapter-specific examples
@@ -43,9 +43,9 @@ Each adapter has its own request type. Below is a minimal “allow” guard for 
 	</TabItem>
 </Tabs>
 
-### Deny with a custom response
+### Deny with a custom error response
 
-Below are minimal “deny” guards that return a `ForbiddenHttpResponse` directly.
+Below are minimal “deny” guards that throw a `ForbiddenHttpResponse` directly.
 
 <Tabs>
 	<TabItem value="express4-deny" label="Express 4">

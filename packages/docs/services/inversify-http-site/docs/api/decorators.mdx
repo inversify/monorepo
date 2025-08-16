@@ -62,7 +62,7 @@ Notes
 
 ### UseGuard
 
-Attaches one or more guards to a controller class or method. All guards must allow for the request to continue.
+Attaches one or more [guards](../../fundamentals/guard) to a controller class or method. All guards must allow for the request to continue.
 
 ```ts
 UseGuard(...guardList: Newable<Guard>[]): ClassDecorator & MethodDecorator
@@ -75,7 +75,7 @@ Parameters
 Notes
 
 - Scope: Place on the controller class to affect all routes, or on a method to affect only that route.
-- Guard return values: `activate()` may return `true` (continue), `false` (reply with `403 Forbidden`), or a custom `HttpResponse` (replied as-is, e.g., `new ForbiddenHttpResponse('message')`).
+- Guard return values: `activate()` may return `true` (continue), `false` (reply with `403 Forbidden`), or throw an `ErrorHttpResponse` (replied as-is, e.g., `throw new ForbiddenHttpResponse('message')`).
 
 
 ## HTTP Request message abstraction

@@ -327,15 +327,7 @@ export abstract class InversifyHttpAdapter<
 
         return reply(req, res, value);
       } catch (error: unknown) {
-        this.#printError(error);
-
-        let response: HttpResponse = new InternalServerErrorHttpResponse();
-
-        if (ErrorHttpResponse.is(error)) {
-          response = error;
-        }
-
-        return this.#reply(req, res, response);
+        return this.#handleError(req, res, error);
       }
     };
   }
@@ -505,6 +497,22 @@ export abstract class InversifyHttpAdapter<
     }
   }
 
+  #handleError(
+    request: TRequest,
+    response: TResponse,
+    error: unknown,
+  ): TResult {
+    this.#printError(error);
+
+    let httpResponse: HttpResponse = new InternalServerErrorHttpResponse();
+
+    if (ErrorHttpResponse.is(error)) {
+      httpResponse = error;
+    }
+
+    return this.#reply(request, response, httpResponse);
+  }
+
   #setHeaders(
     request: TRequest,
     response: TResponse,
@@ -584,22 +592,21 @@ export abstract class InversifyHttpAdapter<
         response: TResponse,
         next: TNextFunction,
       ): Promise<TResult | undefined> => {
-        const guard: Guard<TRequest> =
-          await this.#container.getAsync(newableFunction);
+        try {
+          const guard: Guard<TRequest> =
+            await this.#container.getAsync(newableFunction);
 
-        const activateOrReponse: boolean | HttpResponse =
-          await guard.activate(request);
+          const isAllowed: boolean = await guard.activate(request);
 
-        if (typeof activateOrReponse === 'boolean') {
-          if (activateOrReponse) {
+          if (isAllowed) {
             await next();
 
             return undefined;
-          } else {
-            return this.#reply(request, response, new ForbiddenHttpResponse());
           }
-        } else {
-          return this.#reply(request, response, activateOrReponse);
+
+          return this.#reply(request, response, new ForbiddenHttpResponse());
+        } catch (error: unknown) {
+          return this.#handleError(request, response, error);
         }
       };
     });
