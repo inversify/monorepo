@@ -1,8 +1,8 @@
+// Begin-example
 import { Controller, Get } from '@inversifyjs/http-core';
 import { Context } from '@inversifyjs/http-hono';
 import { Context as HonoContext } from 'hono';
 
-// Begin-example
 @Controller('/message')
 export class ResponseHonoController {
   @Get()
