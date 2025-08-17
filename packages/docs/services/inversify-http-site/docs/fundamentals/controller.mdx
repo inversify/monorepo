@@ -1,0 +1,36 @@
+---
+sidebar_position: 1
+title: Controller
+---
+import controllerApiBasicsSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiBasics.ts.txt';
+import controllerApiRegisterSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiRegister.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Controller
+
+Controllers group request handlers for a feature area. A controller defines a base path and one or more route handlers using method decorators like `Get`, `Post`, etc.
+
+Key points
+
+- Annotate classes with `@Controller('/base')`
+- Add route handlers with decorators such as `@Get()`, `@Post()`, `@Put()`, ...
+- Controllers can have guards, middleware, and pipes at class or method level
+- Bind controllers to your Inversify container so the adapter can find them
+
+:::info[Controller and injectable decorators]
+  You do not need to add `@injectable()`; the `@Controller()` decorator already applies it for you
+:::
+
+## Basic example
+
+A minimal controller with one route:
+
+<CodeBlock language="ts">{controllerApiBasicsSource}</CodeBlock>
+
+## Registering a controller
+
+Controllers are discovered via reflect metadata but must also be registered in your container. Bind your controller class and choose a scope.
+
+<CodeBlock language="ts">{controllerApiRegisterSource}</CodeBlock>
+
+The adapter builds routes from controller metadata at runtime when you call `build()` on your chosen server adapter. See the controller example integration test for a full end‑to‑end setup.
