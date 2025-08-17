@@ -15,9 +15,19 @@ import decoratorApiOptionsSource from '@inversifyjs/http-code-examples/generated
 import decoratorApiPatchSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPatch.ts.txt';
 import decoratorApiPostSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPost.ts.txt';
 import decoratorApiPutSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPut.ts.txt';
+import decoratorApiRequestExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestExpress4.ts.txt';
+import decoratorApiRequestExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestExpress.ts.txt';
+import decoratorApiRequestFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestFastify.ts.txt';
+import decoratorApiRequestHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestHono.ts.txt';
+import decoratorApiResponseExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress4.ts.txt';
+import decoratorApiResponseExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress.ts.txt';
+import decoratorApiResponseFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseFastify.ts.txt';
+import decoratorApiResponseHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseHono.ts.txt';
 import decoratorApiSetHeaderSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiSetHeader.ts.txt';
 import decoratorApiStatusCodeSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiStatusCode.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Decorators
 
@@ -136,9 +146,75 @@ Parameters
 
 <CodeBlock language="ts">{decoratorApiCookiesSource}</CodeBlock>
 
+### Request
+
+Retrieves the native request object of the current adapter. Useful when you need full access to the underlying framework request.
+
+```ts
+Request(...pipeList: (Newable<Pipe> | Pipe)[]): ParameterDecorator
+```
+
+Notes
+
+- Type-safe: Type the parameter with the adapter's request type for intellisense and safety.
+- Pipes: You can attach pipes to the parameter if you need to transform or validate it.
+
+#### Example: accessing the native request per adapter
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{decoratorApiRequestExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{decoratorApiRequestExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{decoratorApiRequestFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{decoratorApiRequestHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
 ## HTTP Response message abstraction
 
 Inversify HTTP decorators can also be used to abstract HTTP response details, such as status codes and headers. This allows for more consistent and maintainable response handling across controllers.
+
+### Response
+
+Injects the native response object of the current adapter. Use it when you want to write directly to the underlying framework response.
+
+```ts
+Response(...pipeList: (Newable<Pipe> | Pipe)[]): ParameterDecorator
+```
+
+Notes
+
+- Type-safe: Type the parameter with the adapter's response type for intellisense and safety.
+- Return type: When you write to the native response, prefer a return type of `void`. For Hono, return the `Response` produced by the `Context`.
+- Hono: Prefer using `@Context()` from `@inversifyjs/http-hono` to access Hono's `Context` object.
+
+#### Example: sending a response per adapter
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{decoratorApiResponseExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{decoratorApiResponseExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{decoratorApiResponseFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+
+    :::info[Context decorator]
+      `@inversifyjs/http-hono` provides the `@Context()` decorator to access the `Context` object.
+    :::
+
+    <CodeBlock language="ts">{decoratorApiResponseHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
 
 ### SetHeader
 
