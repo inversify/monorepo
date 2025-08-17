@@ -18,7 +18,7 @@ import { RequestMethodParameterType } from '../models/RequestMethodParameterType
 import { requestParam } from './requestParam';
 
 describe(requestParam, () => {
-  describe('having a parameterType RESPONSE or NEXT', () => {
+  describe('having a parameterType Response or Next', () => {
     describe('when called', () => {
       let targetFixture: NewableFunction;
       let keyFixture: string;
