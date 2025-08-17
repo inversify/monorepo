@@ -15,9 +15,15 @@ import decoratorApiOptionsSource from '@inversifyjs/http-code-examples/generated
 import decoratorApiPatchSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPatch.ts.txt';
 import decoratorApiPostSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPost.ts.txt';
 import decoratorApiPutSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPut.ts.txt';
+import decoratorApiRequestExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestExpress4.ts.txt';
+import decoratorApiRequestExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestExpress.ts.txt';
+import decoratorApiRequestFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestFastify.ts.txt';
+import decoratorApiRequestHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestHono.ts.txt';
 import decoratorApiSetHeaderSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiSetHeader.ts.txt';
 import decoratorApiStatusCodeSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiStatusCode.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Decorators
 
@@ -135,6 +141,36 @@ Parameters
 #### Example: reading a session cookie
 
 <CodeBlock language="ts">{decoratorApiCookiesSource}</CodeBlock>
+
+### Request
+
+Retrieves the native request object of the current adapter (Express 4, Express 5, Fastify, or Hono). Useful when you need full access to the underlying framework request.
+
+```ts
+Request(...pipeList: (Newable<Pipe> | Pipe)[]): ParameterDecorator
+```
+
+Notes
+
+- Type-safe: Type the parameter with the adapter's request type for intellisense and safety.
+- Pipes: You can attach pipes to the parameter if you need to transform or validate it.
+
+#### Example: accessing the native request per adapter
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{decoratorApiRequestExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{decoratorApiRequestExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{decoratorApiRequestFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{decoratorApiRequestHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
 
 ## HTTP Response message abstraction
 
