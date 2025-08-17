@@ -5,7 +5,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  baseUrl: '/',
+  baseUrl: '/http/',
   deploymentBranch: 'master',
   favicon: 'img/favicon.ico',
   future: {
@@ -60,17 +60,9 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
-  projectName: 'inversify.github.io',
-  tagline:
-    'A powerful and lightweight inversion of control container for JavaScript & Node.js apps powered by TypeScript',
+  projectName: 'Inversify HTTP',
+  tagline: 'A powerful set of tools to create HTTP APIs on top of InversifyJS',
   themeConfig: {
-    algolia: {
-      apiKey: 'bba69c8b4ce0627641339d92e177cdc1',
-      appId: 'FJYVAGM6L7',
-      contextualSearch: true,
-      indexName: 'inversify',
-      insights: false,
-    },
     footer: {
       links: [
         {
@@ -127,17 +119,17 @@ const config: Config = {
         },
       ],
       logo: {
-        alt: 'InversifyJS',
+        alt: 'Inversify HTTP',
         src: 'img/logo.svg',
       },
-      title: 'InversifyJS',
+      title: 'Inversify HTTP',
     },
     prism: {
       darkTheme: prismThemes.dracula,
       theme: prismThemes.github,
     },
   } satisfies Preset.ThemeConfig,
-  title: 'InversifyJS',
+  title: 'Inversify HTTP',
   trailingSlash: true,
   url: 'https://inversify.github.io',
 };
