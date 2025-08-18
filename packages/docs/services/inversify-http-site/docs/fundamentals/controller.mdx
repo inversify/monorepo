@@ -8,17 +8,10 @@ import CodeBlock from '@theme/CodeBlock';
 
 # Controller
 
-Controllers group request handlers for a feature area. A controller defines a base path and one or more route handlers using method decorators like `Get`, `Post`, etc.
-
-Key points
-
-- Annotate classes with `@Controller('/base')`
-- Add route handlers with decorators such as `@Get()`, `@Post()`, `@Put()`, ...
-- Controllers can have guards, middleware, and pipes at class or method level
-- Bind controllers to your Inversify container so the adapter can find them
+Controllers are classes annotated with the `@Controller()` decorator. They group request handlers for a feature area. A controller defines a base path and one or more route handlers using [method decorators](../../api/decorators/#http-methods).
 
 :::info[Controller and injectable decorators]
-  You do not need to add `@injectable()`; the `@Controller()` decorator already applies it for you
+  You don't need to add `@injectable()`. The `@Controller()` decorator already applies it for you.
 :::
 
 ## Basic example
@@ -29,8 +22,8 @@ A minimal controller with one route:
 
 ## Registering a controller
 
-Controllers are discovered via reflect metadata but must also be registered in your container. Bind your controller class and choose a scope.
+Register controllers in your container. Bind your controller class and choose a scope.
 
 <CodeBlock language="ts">{controllerApiRegisterSource}</CodeBlock>
 
-The adapter builds routes from controller metadata at runtime when you call `build()` on your chosen server adapter. See the controller example integration test for a full end‑to‑end setup.
+When you call `build()` on your server adapter, it builds routes from controller metadata at runtime.

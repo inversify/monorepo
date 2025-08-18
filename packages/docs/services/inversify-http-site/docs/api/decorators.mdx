@@ -11,6 +11,9 @@ import decoratorApiDeleteSource from '@inversifyjs/http-code-examples/generated/
 import decoratorApiGetSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiGet.ts.txt';
 import decoratorApiHeadersSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiHeaders.ts.txt';
 import decoratorApiHeadSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiHead.ts.txt';
+import decoratorApiNextExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextExpress4.ts.txt';
+import decoratorApiNextExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextExpress.ts.txt';
+import decoratorApiNextHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextHono.ts.txt';
 import decoratorApiOptionsSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiOptions.ts.txt';
 import decoratorApiPatchSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPatch.ts.txt';
 import decoratorApiPostSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPost.ts.txt';
@@ -69,6 +72,28 @@ Notes
 #### Example: apply middleware to a single route
 
 <CodeBlock language="ts">{decoratorApiApplyMiddlewareRouteSource}</CodeBlock>
+
+### Next
+
+Injects the framework-specific next function into your controller method. Call it to continue a pipeline. For example, a middleware can run first (e.g., to set headers), then your controller can return the response.
+
+```ts
+Next(): ParameterDecorator
+```
+
+#### Example: calling next per adapter
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{decoratorApiNextExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{decoratorApiNextExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{decoratorApiNextHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
 
 ### UseGuard
 

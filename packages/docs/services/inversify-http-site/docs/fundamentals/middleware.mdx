@@ -12,16 +12,75 @@ import TabItem from '@theme/TabItem';
 
 # Middleware
 
-Middleware run before or after your controller method, depending on the phase you register them for. They receive the native request/response types of the adapter you use.
+Middleware run before or after your controller method, depending on the phase where you register them. They receive the native request/response types of the adapter you use.
 
-Key points
+```ts
+interface Middleware<
+  TRequest = any,
+  TResponse = any,
+  TNextFunction = any,
+  TResult = any,
+> {
+  execute(
+    request: TRequest,
+    response: TResponse,
+    next: TNextFunction,
+  ): Promise<TResult> | TResult;
+}
+```
 
-- Implement the `Middleware` interface: execute(request, response, next)
-- Use `ApplyMiddleware` decorator to attach middleware at class or method level
+Specific adapters use their own request/response types:
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+```ts
+type ExpressMiddleware = Middleware<
+  express.Request,
+  express.Response,
+  express.NextFunction,
+  void
+>;
+```
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+```ts
+type ExpressMiddleware = Middleware<
+  express.Request,
+  express.Response,
+  express.NextFunction,
+  void
+>;
+```
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+```ts
+type FastifyMiddleware = Middleware<
+  FastifyRequest,
+  FastifyReply,
+  HookHandlerDoneFunction,
+  void
+>;
+```
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+```ts
+type HonoMiddleware = Middleware<
+  HonoRequest,
+  Context,
+  Next,
+  Response | undefined
+>;
+```
+  </TabItem>
+</Tabs>
+
+## execute
+
+Handles the request and response objects. Use it to modify them or perform actions before passing control to the next middleware or the route handler.
 
 ## Adapter-specific examples
 
-Each adapter exposes its own request/response types. Here is the same middleware that sets a custom header for every adapter.
+Each adapter exposes its own request/response types. Here is the same middleware that sets a custom header for each adapter.
 
 <Tabs>
   <TabItem value="express4" label="Express 4">
@@ -40,4 +99,4 @@ Each adapter exposes its own request/response types. Here is the same middleware
 
 ## Attaching middleware
 
-Use [ApplyMiddleware](../../api/decorators#applymiddleware) decorator at the controller (applies to all routes) or method level (applies to one route).
+Use the [ApplyMiddleware](../../api/decorators#applymiddleware) decorator at the controller level (applies to all routes) or at the method level (applies to one route).
