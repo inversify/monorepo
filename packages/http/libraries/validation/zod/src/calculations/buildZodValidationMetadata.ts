@@ -5,11 +5,15 @@ export function buildZodValidationMetadata(
   index: number,
 ): (zodValidationMetadata: ZodType[][]) => ZodType[][] {
   return (zodValidationMetadata: ZodType[][]): ZodType[][] => {
-    let zodTypeList: ZodType[] = zodValidationMetadata[index] ?? [];
+    let zodTypeList: ZodType[] | undefined = zodValidationMetadata[index];
 
-    zodTypeList = [...zodTypeList, ...typeList];
+    if (zodTypeList === undefined) {
+      zodTypeList = [];
 
-    zodValidationMetadata[index] = zodTypeList;
+      zodValidationMetadata[index] = zodTypeList;
+    }
+
+    zodTypeList.push(...typeList);
 
     return zodValidationMetadata;
   };
