@@ -60,7 +60,7 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
-  projectName: 'Inversify HTTP',
+  projectName: 'http',
   tagline: 'A powerful set of tools to create HTTP APIs on top of InversifyJS',
   themeConfig: {
     footer: {
