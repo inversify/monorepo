@@ -33,6 +33,7 @@ import { RequiredOptions } from './http/models/RequiredOptions';
 import { RouteParams } from './http/models/RouteParams';
 import { RouterParams } from './http/models/RouterParams';
 import { Pipe } from './http/pipe/model/Pipe';
+import { PipeMetadata } from './http/pipe/model/PipeMetadata';
 import { BadGatewayHttpResponse } from './http/responses/error/BadGatewayHttpResponse';
 import { BadRequestHttpResponse } from './http/responses/error/BadRequestHttpResponse';
 import { ConflictHttpResponse } from './http/responses/error/ConflictHttpResponse';
@@ -69,6 +70,7 @@ export type {
   Middleware,
   MiddlewareHandler,
   Pipe,
+  PipeMetadata,
   RequestHandler,
   RequiredOptions,
   RouteParams,
