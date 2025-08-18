@@ -16,13 +16,19 @@ import TabItem from '@theme/TabItem';
 
 # Guard
 
-Guards decide whether a request can continue. They run before middleware and handlers. If a guard returns `false`, the request is short-circuited with a `403 Forbidden` by default. A guard can also throw an `ErrorHttpResponse` (for example `ForbiddenHttpResponse`), which will be sent as-is.
+Guards decide whether a request can continue. They run before middleware and handlers.
 
-Key points
+Guards must implement the `Guard<TRequest>` interface:
 
-- Implement the `Guard<TRequest>` interface: `activate(request) => boolean | Promise<boolean>` and optionally throw an `ErrorHttpResponse` to short-circuit
-- Returning `true` calls the next guard/handler; returning `false` replies with `403 Forbidden` by default; throwing an `ErrorHttpResponse` replies with that response
-- Attach guards with `UseGuard(GuardClass)` at class or method level
+```ts
+interface Guard<TRequest = any> {
+  activate(request: TRequest): Promise<boolean> | boolean;
+}
+```
+
+## activate
+
+Determines whether a request can continue. If `activate` returns `true`, the request proceeds to the next guard or handler. If it returns `false`, the request is short-circuited with a `403 Forbidden` by default. A guard can also throw an `ErrorHttpResponse` (for example, `ForbiddenHttpResponse`), which will be sent as-is.
 
 ## Adapter-specific examples
 
@@ -62,6 +68,6 @@ Below are minimal “deny” guards that throw a `ForbiddenHttpResponse` directl
 	</TabItem>
 </Tabs>
 
-## Attaching guard
+## Attaching guards
 
-Use [UseGuard](../../api/decorators#useguard) decorator at the controller (applies to all routes) or method level (applies to one route).
+Use the [UseGuard](../../api/decorators#useguard) decorator at the controller level (applies to all routes) or at the method level (applies to one route).

@@ -7,15 +7,19 @@ import CodeBlock from '@theme/CodeBlock';
 
 # Pipe
 
-Pipes transform or validate individual parameters. They run right after a parameter is extracted (e.g., from query, params, headers, cookies, or body). A pipe can return a new value to replace the parameter, or throw an `ErrorHttpResponse` to short-circuit the request.
+Pipes transform or validate individual parameters. They run immediately after a parameter is extracted from the request. A pipe can return a new value to replace the parameter, or throw an `ErrorHttpResponse` to stop processing.
 
-Key points
+```ts
+interface Pipe<TInput = unknown, TOutput = unknown> {
+  execute(input: TInput, metadata: PipeMetadata): Promise<TOutput> | TOutput;
+}
+```
 
-- Implement the `Pipe<TIn, TOut>` interface: `execute(input, metadata)` and return the transformed value
-- Throw an `ErrorHttpResponse` (e.g., `BadRequestHttpResponse`) to send an error immediately
-- Attach pipes directly in parameter decorators: `@Query('v', MyPipe)` or `@Params('id', new MyPipe())`
+## execute
 
-## Example: Parse number with validation
+Processes the input and returns the transformed value. If the input is invalid, throw an `ErrorHttpResponse` to end the request early.
+
+## Example: Parse a number with validation
 
 A simple pipe that parses the input into a number and rejects invalid values with a `400 Bad Request`.
 
@@ -23,9 +27,9 @@ A simple pipe that parses the input into a number and rejects invalid values wit
 
 ## Attaching pipes
 
-Use parameter decorators to attach pipes where needed: `Body`, `Params`, `Query`, `Headers`, `Cookies`, `Request`, and `Response` all accept pipes.
+Use parameter decorators to attach pipes where you need them. `Body`, `Params`, `Query`, `Headers`, `Cookies`, `Request`, and `Response` all accept pipes.
 
 - Named parameter: `@Params('id', ParseNumberPipe) id: number`
 - Whole object: `@Query(ParseNumberPipe) query: QueryObject`
 
-The adapter will apply global and parameter-level pipes in order before calling your controller method.
+The adapter applies global pipes first, then parameter-level pipes, before calling your controller method.
