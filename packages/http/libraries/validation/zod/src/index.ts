@@ -1,4 +1,4 @@
-import { ValidateZodSchema } from './decorator/ValidateZodSchema';
+import { ValidateZodType } from './decorator/ValidateZodType';
 import { ZodValidationPipe } from './pipe/ZodValidationPipe';
 
-export { ValidateZodSchema, ZodValidationPipe };
+export { ValidateZodType, ZodValidationPipe };

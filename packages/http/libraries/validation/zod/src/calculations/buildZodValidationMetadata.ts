@@ -1,15 +1,15 @@
-import { ZodSchema } from 'zod';
+import { ZodType } from 'zod';
 
 export function buildZodValidationMetadata(
-  schemaList: ZodSchema[],
+  typeList: ZodType[],
   index: number,
-): (zodValidationMetadata: ZodSchema[][]) => ZodSchema[][] {
-  return (zodValidationMetadata: ZodSchema[][]): ZodSchema[][] => {
-    let zodSchemaList: ZodSchema[] = zodValidationMetadata[index] ?? [];
+): (zodValidationMetadata: ZodType[][]) => ZodType[][] {
+  return (zodValidationMetadata: ZodType[][]): ZodType[][] => {
+    let zodTypeList: ZodType[] = zodValidationMetadata[index] ?? [];
 
-    zodSchemaList = [...zodSchemaList, ...schemaList];
+    zodTypeList = [...zodTypeList, ...typeList];
 
-    zodValidationMetadata[index] = zodSchemaList;
+    zodValidationMetadata[index] = zodTypeList;
 
     return zodValidationMetadata;
   };

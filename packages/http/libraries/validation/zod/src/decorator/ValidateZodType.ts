@@ -1,19 +1,19 @@
 import {
-  buildDefaultArrayMetadata,
+  buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { ZodSchema } from 'zod';
+import { ZodType } from 'zod';
+
 import { buildZodValidationMetadata } from '../calculations/buildZodValidationMetadata';
 import { zodValidationMetadataReflectKey } from '../reflectMetadata/data/zodValidationMetadataReflectKey';
 
-export function ValidateZodSchema(
-  ...schemaList: ZodSchema[]
-): ParameterDecorator {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export function ValidateZodType(...schemaList: ZodType[]): ParameterDecorator {
   return (target: object, key: string | symbol | undefined, index: number) => {
     updateOwnReflectMetadata(
       target.constructor,
       zodValidationMetadataReflectKey,
-      buildDefaultArrayMetadata,
+      buildEmptyArrayMetadata,
       buildZodValidationMetadata(schemaList, index),
       key,
     );

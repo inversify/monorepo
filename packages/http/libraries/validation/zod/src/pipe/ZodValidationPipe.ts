@@ -1,41 +1,51 @@
-import { HttpResponse, Pipe, PipeMetadata } from '@inversifyjs/http-core';
+import { Pipe, PipeMetadata } from '@inversifyjs/http-core';
+import { BadRequestHttpResponse } from '@inversifyjs/http-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { SafeParseReturnType, ZodSchema } from 'zod';
+import { ZodSafeParseResult, ZodType } from 'zod';
+
 import { zodValidationMetadataReflectKey } from '../reflectMetadata/data/zodValidationMetadataReflectKey';
 
 export class ZodValidationPipe implements Pipe {
-  constructor(private readonly schemaList: ZodSchema[]) {}
+  readonly #schemaList: ZodType[];
+
+  constructor(schemaList?: ZodType[]) {
+    this.#schemaList = schemaList ?? [];
+  }
 
   public execute(input: unknown, metadata: PipeMetadata): unknown {
-    let result: unknown = input;
-
-    const parameterSchemaList: ZodSchema[] =
-      getOwnReflectMetadata<ZodSchema[][]>(
+    const parameterSchemaList: ZodType[] =
+      getOwnReflectMetadata<ZodType[][]>(
         metadata.targetClass,
         zodValidationMetadataReflectKey,
         metadata.methodName,
       )?.[metadata.parameterIndex] ?? [];
 
-    const combinedSchemaList: ZodSchema[] = [
-      ...this.schemaList,
-      ...parameterSchemaList,
-    ];
+    return this.#applySchemaList(
+      this.#applySchemaList(input, this.#schemaList),
+      parameterSchemaList,
+    );
+  }
 
-    for (const schema of combinedSchemaList) {
-      const parsedResult: SafeParseReturnType<unknown, unknown> =
+  #applySchemaList(input: unknown, schemaList: ZodType[]): unknown {
+    let result: unknown = input;
+
+    for (const schema of schemaList) {
+      const parsedResult: ZodSafeParseResult<unknown> =
         schema.safeParse(result);
 
       if (!parsedResult.success) {
-        throw new Error();
+        throw new BadRequestHttpResponse(
+          parsedResult.error.message,
+          undefined,
+          {
+            cause: parsedResult.error,
+          },
+        );
       }
 
       result = parsedResult.data;
     }
 
     return result;
-  }
-
-  public getHttpResponse(): HttpResponse {
-      
   }
 }
