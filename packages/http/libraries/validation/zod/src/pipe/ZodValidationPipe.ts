@@ -6,10 +6,10 @@ import { ZodSafeParseResult, ZodType } from 'zod';
 import { zodValidationMetadataReflectKey } from '../reflectMetadata/data/zodValidationMetadataReflectKey';
 
 export class ZodValidationPipe implements Pipe {
-  readonly #schemaList: ZodType[];
+  readonly #typeList: ZodType[];
 
   constructor(typeList?: ZodType[]) {
-    this.#schemaList = typeList ?? [];
+    this.#typeList = typeList ?? [];
   }
 
   public execute(input: unknown, metadata: PipeMetadata): unknown {
@@ -21,7 +21,7 @@ export class ZodValidationPipe implements Pipe {
       )?.[metadata.parameterIndex] ?? [];
 
     return this.#applySchemaList(
-      this.#applySchemaList(input, this.#schemaList),
+      this.#applySchemaList(input, this.#typeList),
       parameterTypeList,
     );
   }
