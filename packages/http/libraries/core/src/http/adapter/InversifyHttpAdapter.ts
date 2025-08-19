@@ -25,12 +25,12 @@ import { RouteParams } from '../models/RouteParams';
 import { RouterParams } from '../models/RouterParams';
 import { Pipe } from '../pipe/model/Pipe';
 import { PipeMetadata } from '../pipe/model/PipeMetadata';
+import { isHttpResponse } from '../responses/calculations/isHttpResponse';
 import { ErrorHttpResponse } from '../responses/error/ErrorHttpResponse';
 import { ForbiddenHttpResponse } from '../responses/error/ForbiddenHttpResponse';
 import { InternalServerErrorHttpResponse } from '../responses/error/InternalServerErrorHttpResponse';
 import { HttpResponse } from '../responses/HttpResponse';
 import { HttpStatusCode } from '../responses/HttpStatusCode';
-import { SuccessHttpResponse } from '../responses/success/SuccessHttpResponse';
 import { isPipe } from '../typeguard/isPipe';
 
 const DEFAULT_ERROR_MESSAGE: string = 'An unexpected error occurred';
@@ -502,13 +502,17 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     error: unknown,
   ): TResult {
-    this.#printError(error);
+    let httpResponse: HttpResponse | undefined = undefined;
 
-    const httpResponse: HttpResponse = ErrorHttpResponse.is(error)
-      ? error
-      : new InternalServerErrorHttpResponse(undefined, undefined, {
-          cause: error,
-        });
+    if (ErrorHttpResponse.is(error)) {
+      httpResponse = error;
+    } else {
+      this.#printError(error);
+
+      httpResponse = new InternalServerErrorHttpResponse(undefined, undefined, {
+        cause: error,
+      });
+    }
 
     return this.#reply(request, response, httpResponse);
   }
@@ -533,7 +537,7 @@ export abstract class InversifyHttpAdapter<
       undefined;
     let httpStatusCode: HttpStatusCode | undefined = statusCode;
 
-    if (SuccessHttpResponse.is(value) || ErrorHttpResponse.is(value)) {
+    if (isHttpResponse(value)) {
       body = value.body;
       httpStatusCode = value.statusCode;
     } else {

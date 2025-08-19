@@ -1,14 +1,18 @@
 import { Stream } from 'node:stream';
 
-import { HttpResponse } from '../HttpResponse';
+import {
+  HttpResponse,
+  isHttpResponse as isHttpResponse,
+} from '../HttpResponse';
 import { HttpStatusCode } from '../HttpStatusCode';
 
-const isErrorHttpResponseSymbol: unique symbol = Symbol.for(
+const isErrorHttpResponse: unique symbol = Symbol.for(
   '@inversifyjs/http-core/ErrorHttpResponse',
 );
 
 export class ErrorHttpResponse extends Error implements HttpResponse {
-  public readonly [isErrorHttpResponseSymbol]: true;
+  public readonly [isHttpResponse]: true;
+  public readonly [isErrorHttpResponse]: true;
   public readonly body?: object | string | number | boolean | Stream;
 
   constructor(
@@ -20,15 +24,15 @@ export class ErrorHttpResponse extends Error implements HttpResponse {
     super(message, errorOptions);
 
     this.body = { error, message, statusCode };
-    this[isErrorHttpResponseSymbol] = true;
+    this[isErrorHttpResponse] = true;
+    this[isHttpResponse] = true;
   }
 
   public static is(value: unknown): value is ErrorHttpResponse {
     return (
       typeof value === 'object' &&
       value !== null &&
-      (value as Record<string | symbol, unknown>)[isErrorHttpResponseSymbol] ===
-        true
+      (value as Partial<ErrorHttpResponse>)[isErrorHttpResponse] === true
     );
   }
 }
