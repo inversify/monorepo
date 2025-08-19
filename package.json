@@ -5,7 +5,7 @@
   },
   "description": "A powerful and lightweight inversion of control container for JavaScript & Node.js apps powered by TypeScript",
   "devDependencies": {
-    "@changesets/cli": "2.29.5",
+    "@changesets/cli": "2.29.6",
     "@commitlint/cli": "19.8.1",
     "@commitlint/config-conventional": "19.8.1",
     "@commitlint/prompt-cli": "19.8.1",
@@ -40,6 +40,7 @@
     "build": "turbo run build",
     "commit": "commit",
     "deploy:binding-decorators:pages": "pnpm run --filter \"@inversifyjs/inversify-binding-decorators-docs-site\" deploy",
+    "deploy:http:pages": "pnpm run --filter \"@inversifyjs/inversify-http-docs-site\" deploy",
     "deploy:inversify:pages": "pnpm run --filter \"@inversifyjs/inversify-docs-site\" deploy",
     "format": "turbo run format",
     "lint": "turbo run lint",

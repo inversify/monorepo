@@ -37,6 +37,7 @@ import { isHttpResponse } from './http/responses/calculations/isHttpResponse';
 import { BadGatewayHttpResponse } from './http/responses/error/BadGatewayHttpResponse';
 import { BadRequestHttpResponse } from './http/responses/error/BadRequestHttpResponse';
 import { ConflictHttpResponse } from './http/responses/error/ConflictHttpResponse';
+import { ErrorHttpResponse } from './http/responses/error/ErrorHttpResponse';
 import { ForbiddenHttpResponse } from './http/responses/error/ForbiddenHttpResponse';
 import { GatewayTimeoutHttpResponse } from './http/responses/error/GatewayTimeoutHttpResponse';
 import { GoneHttpResponse } from './http/responses/error/GoneHttpResponse';
@@ -95,6 +96,7 @@ export {
   Get,
   GoneHttpResponse,
   Guard,
+  ErrorHttpResponse,
   Head,
   Headers,
   HttpResponse,
