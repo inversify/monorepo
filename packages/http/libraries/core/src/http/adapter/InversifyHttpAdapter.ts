@@ -502,13 +502,17 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     error: unknown,
   ): TResult {
-    this.#printError(error);
+    let httpResponse: HttpResponse | undefined = undefined;
 
-    const httpResponse: HttpResponse = ErrorHttpResponse.is(error)
-      ? error
-      : new InternalServerErrorHttpResponse(undefined, undefined, {
-          cause: error,
-        });
+    if (ErrorHttpResponse.is(error)) {
+      httpResponse = error;
+    } else {
+      this.#printError(error);
+
+      httpResponse = new InternalServerErrorHttpResponse(undefined, undefined, {
+        cause: error,
+      });
+    }
 
     return this.#reply(request, response, httpResponse);
   }
