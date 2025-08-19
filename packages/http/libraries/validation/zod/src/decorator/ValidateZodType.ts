@@ -8,13 +8,17 @@ import { buildZodValidationMetadata } from '../calculations/buildZodValidationMe
 import { zodValidationMetadataReflectKey } from '../reflectMetadata/data/zodValidationMetadataReflectKey';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function ValidateZodType(...schemaList: ZodType[]): ParameterDecorator {
-  return (target: object, key: string | symbol | undefined, index: number) => {
+export function ValidateZodType(...typesList: ZodType[]): ParameterDecorator {
+  return (
+    target: object,
+    key: string | symbol | undefined,
+    index: number,
+  ): void => {
     updateOwnReflectMetadata(
       target.constructor,
       zodValidationMetadataReflectKey,
       buildEmptyArrayMetadata,
-      buildZodValidationMetadata(schemaList, index),
+      buildZodValidationMetadata(typesList, index),
       key,
     );
   };
