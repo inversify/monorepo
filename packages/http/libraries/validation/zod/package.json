@@ -70,6 +70,7 @@
     "test": "vitest run",
     "test:integration": "pnpm run test --project Integration",
     "test:coverage": "pnpm run test:unit --coverage",
+    "test:mutation": "stryker run",
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },

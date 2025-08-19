@@ -78,8 +78,7 @@ export default {
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/http/libraries/*": defaultWorkspaceProjectConfig,
-    "packages/container/http/libraries/validation/*":
-      defaultWorkspaceProjectConfig,
+    "packages/http/libraries/validation/*": defaultWorkspaceProjectConfig,
     "packages/http/tools/e2e-tests": {
       entry: [
         "config/*.mjs",
