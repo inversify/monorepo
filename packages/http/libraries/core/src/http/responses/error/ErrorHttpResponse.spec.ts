@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { isHttpResponse as isHttpResponseSymbol } from '../HttpResponse';
+import { isHttpResponse } from '../HttpResponse';
 import { HttpStatusCode } from '../HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
@@ -45,14 +45,14 @@ describe(ErrorHttpResponse, () => {
         });
 
         it('should mark the instance as HttpResponse', () => {
-          expect(result[isHttpResponseSymbol]).toBe(true);
+          expect(result[isHttpResponse]).toBe(true);
         });
       });
     });
   });
 
   describe('.is', () => {
-    describe('having a non HttpResponse', () => {
+    describe('having a non Object', () => {
       let notAnHttpResponse: unknown;
 
       beforeAll(() => {
@@ -72,7 +72,47 @@ describe(ErrorHttpResponse, () => {
       });
     });
 
-    describe('having an ErrorHttpResponse with 4xx code', () => {
+    describe('having null', () => {
+      let notAnHttpResponse: unknown;
+
+      beforeAll(() => {
+        notAnHttpResponse = null;
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = ErrorHttpResponse.is(notAnHttpResponse);
+        });
+
+        it('should return false', () => {
+          expect(result).toBe(false);
+        });
+      });
+    });
+
+    describe('having a non HttpResponse object', () => {
+      let notAnHttpResponse: unknown;
+
+      beforeAll(() => {
+        notAnHttpResponse = {};
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = ErrorHttpResponse.is(notAnHttpResponse);
+        });
+
+        it('should return false', () => {
+          expect(result).toBe(false);
+        });
+      });
+    });
+
+    describe('having an ErrorHttpResponse', () => {
       let errorHttpResponse: ErrorHttpResponse;
 
       beforeAll(() => {
@@ -95,60 +135,6 @@ describe(ErrorHttpResponse, () => {
 
         it('should return true', () => {
           expect(result).toBe(true);
-        });
-      });
-    });
-
-    describe('having an ErrorHttpResponse with 5xx code', () => {
-      let errorHttpResponse: ErrorHttpResponse;
-
-      beforeAll(() => {
-        errorHttpResponse = new ErrorHttpResponse(
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
-          'Server Error',
-        );
-      });
-
-      describe('when called', () => {
-        let result: unknown;
-
-        beforeAll(() => {
-          result = ErrorHttpResponse.is(errorHttpResponse);
-        });
-
-        afterAll(() => {
-          vitest.clearAllMocks();
-        });
-
-        it('should return true', () => {
-          expect(result).toBe(true);
-        });
-      });
-    });
-
-    describe('having an ErrorHttpResponse with 600 boundary code', () => {
-      let errorHttpResponse: ErrorHttpResponse;
-
-      beforeAll(() => {
-        errorHttpResponse = new ErrorHttpResponse(
-          600 as HttpStatusCode,
-          'Out of range',
-        );
-      });
-
-      describe('when called', () => {
-        let result: unknown;
-
-        beforeAll(() => {
-          result = ErrorHttpResponse.is(errorHttpResponse);
-        });
-
-        afterAll(() => {
-          vitest.clearAllMocks();
-        });
-
-        it('should return false', () => {
-          expect(result).toBe(false);
         });
       });
     });

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { isHttpResponse as isHttpResponseSymbol } from '../HttpResponse';
+import { isHttpResponse } from '../HttpResponse';
 import { HttpStatusCode } from '../HttpStatusCode';
 import { SuccessHttpResponse } from './SuccessHttpResponse';
 
@@ -35,7 +35,7 @@ describe(SuccessHttpResponse, () => {
         });
 
         it('should mark the instance as HttpResponse', () => {
-          expect(result[isHttpResponseSymbol]).toBe(true);
+          expect(result[isHttpResponse]).toBe(true);
         });
       });
     });
@@ -67,14 +67,14 @@ describe(SuccessHttpResponse, () => {
         });
 
         it('should mark the instance as HttpResponse', () => {
-          expect(result[isHttpResponseSymbol]).toBe(true);
+          expect(result[isHttpResponse]).toBe(true);
         });
       });
     });
   });
 
   describe('.is', () => {
-    describe('having a non HttpResponse', () => {
+    describe('having a non object', () => {
       let notAnHttpResponse: unknown;
 
       beforeAll(() => {
@@ -94,7 +94,47 @@ describe(SuccessHttpResponse, () => {
       });
     });
 
-    describe('having a SuccessHttpResponse with status code in [200, 300)', () => {
+    describe('having null', () => {
+      let notAnHttpResponse: unknown;
+
+      beforeAll(() => {
+        notAnHttpResponse = null;
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = SuccessHttpResponse.is(notAnHttpResponse);
+        });
+
+        it('should return false', () => {
+          expect(result).toBe(false);
+        });
+      });
+    });
+
+    describe('having a non HttpResponse object', () => {
+      let notAnHttpResponse: unknown;
+
+      beforeAll(() => {
+        notAnHttpResponse = {};
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = SuccessHttpResponse.is(notAnHttpResponse);
+        });
+
+        it('should return false', () => {
+          expect(result).toBe(false);
+        });
+      });
+    });
+
+    describe('having a SuccessHttpResponse', () => {
       let successHttpResponse: SuccessHttpResponse;
 
       beforeAll(() => {
@@ -114,30 +154,6 @@ describe(SuccessHttpResponse, () => {
 
         it('should return true', () => {
           expect(result).toBe(true);
-        });
-      });
-    });
-
-    describe('having a SuccessHttpResponse with status code 300 (AMBIGUOUS)', () => {
-      let successHttpResponse: SuccessHttpResponse;
-
-      beforeAll(() => {
-        successHttpResponse = new SuccessHttpResponse(HttpStatusCode.AMBIGUOUS);
-      });
-
-      describe('when called', () => {
-        let result: unknown;
-
-        beforeAll(() => {
-          result = SuccessHttpResponse.is(successHttpResponse);
-        });
-
-        afterAll(() => {
-          vitest.clearAllMocks();
-        });
-
-        it('should return false', () => {
-          expect(result).toBe(false);
         });
       });
     });
