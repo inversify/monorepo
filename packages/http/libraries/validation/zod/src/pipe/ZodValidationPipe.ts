@@ -8,12 +8,12 @@ import { zodValidationMetadataReflectKey } from '../reflectMetadata/data/zodVali
 export class ZodValidationPipe implements Pipe {
   readonly #schemaList: ZodType[];
 
-  constructor(schemaList?: ZodType[]) {
-    this.#schemaList = schemaList ?? [];
+  constructor(typeList?: ZodType[]) {
+    this.#schemaList = typeList ?? [];
   }
 
   public execute(input: unknown, metadata: PipeMetadata): unknown {
-    const parameterSchemaList: ZodType[] =
+    const parameterTypeList: ZodType[] =
       getOwnReflectMetadata<ZodType[][]>(
         metadata.targetClass,
         zodValidationMetadataReflectKey,
@@ -22,16 +22,16 @@ export class ZodValidationPipe implements Pipe {
 
     return this.#applySchemaList(
       this.#applySchemaList(input, this.#schemaList),
-      parameterSchemaList,
+      parameterTypeList,
     );
   }
 
-  #applySchemaList(input: unknown, schemaList: ZodType[]): unknown {
+  #applySchemaList(input: unknown, typeList: ZodType[]): unknown {
     let result: unknown = input;
 
-    for (const schema of schemaList) {
+    for (const zodType of typeList) {
       const parsedResult: ZodSafeParseResult<unknown> =
-        schema.safeParse(result);
+        zodType.safeParse(result);
 
       if (!parsedResult.success) {
         throw new BadRequestHttpResponse(
