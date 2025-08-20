@@ -9,6 +9,12 @@ export function decorate(
   parameterIndex: number,
 ): void;
 export function decorate(
+  decorators: ParameterDecorator | ParameterDecorator[],
+  target: Function,
+  methodName: string | symbol,
+  parameterIndex: number,
+): void;
+export function decorate(
   decorators:
     | MethodDecorator
     | PropertyDecorator
@@ -29,6 +35,7 @@ export function decorate(
     | PropertyDecorator[],
   target: Function,
   parameterIndexOrProperty?: number | string | symbol,
+  parameterIndex?: number,
 ): void {
   const parsedDecorators:
     | ClassDecorator[]
@@ -59,9 +66,17 @@ export function decorate(
     return;
   }
 
-  Reflect.decorate(
-    parsedDecorators as MethodDecorator[] | PropertyDecorator[],
-    target.prototype as object,
-    parameterIndexOrProperty,
-  );
+  if (parameterIndex === undefined) {
+    Reflect.decorate(
+      parsedDecorators as MethodDecorator[] | PropertyDecorator[],
+      target.prototype as object,
+      parameterIndexOrProperty,
+    );
+
+    return;
+  }
+
+  for (const decorator of parsedDecorators as ParameterDecorator[]) {
+    decorator(target, parameterIndexOrProperty, parameterIndex);
+  }
 }
