@@ -79,7 +79,7 @@ describe(decorate, () => {
     });
   });
 
-  describe('having ParameterDecorator[] decorators', () => {
+  describe('having ParameterDecorator[] decorators targeting constructor', () => {
     let parameterDecoratorMock: Mock<ParameterDecorator> & ParameterDecorator;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let targetFixture: Function;
@@ -113,6 +113,53 @@ describe(decorate, () => {
         expect(parameterDecoratorMock).toHaveBeenCalledWith(
           targetFixture,
           undefined,
+          parameterIndexFixture,
+        );
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe('having ParameterDecorator[] decorators targeting method', () => {
+    let parameterDecoratorMock: Mock<ParameterDecorator> & ParameterDecorator;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    let targetFixture: Function;
+    let methodNameFixture: string | symbol;
+    let parameterIndexFixture: number;
+
+    beforeAll(() => {
+      parameterDecoratorMock =
+        vitest.fn<ParameterDecorator>() as Mock<ParameterDecorator> &
+          ParameterDecorator;
+      targetFixture = class {};
+      methodNameFixture = Symbol();
+      parameterIndexFixture = 1;
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = decorate(
+          [parameterDecoratorMock],
+          targetFixture,
+          methodNameFixture,
+          parameterIndexFixture,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call decorator', () => {
+        expect(parameterDecoratorMock).toHaveBeenCalledTimes(1);
+        expect(parameterDecoratorMock).toHaveBeenCalledWith(
+          targetFixture,
+          methodNameFixture,
           parameterIndexFixture,
         );
       });

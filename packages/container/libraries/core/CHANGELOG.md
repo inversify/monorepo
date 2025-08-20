@@ -1,5 +1,11 @@
 # @inversifyjs/core
 
+## 7.2.0
+
+### Minor Changes
+
+- 8a6722f: Updated `decorate` to allow method param decoration
+
 ## 7.1.1
 
 ### Patch Changes
