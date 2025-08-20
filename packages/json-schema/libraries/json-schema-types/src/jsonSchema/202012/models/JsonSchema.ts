@@ -1,6 +1,6 @@
 import { JsonValue } from '../../../json/models/JsonValue';
 
-export type NonEmptyArray<T> = [T, ...T[]];
+type NonEmptyArray<T> = [T, ...T[]];
 
 // https://json-schema.org/draft/2020-12/json-schema-core.html#name-boolean-json-schemas
 export type JsonSchemaBoolean = boolean;

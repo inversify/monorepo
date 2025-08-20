@@ -1,3 +1,1 @@
-import { JsonValue } from './json/models/JsonValue';
-
-export type { JsonValue };
+export type { JsonValue, JsonValueObject } from './json/models/JsonValue';
