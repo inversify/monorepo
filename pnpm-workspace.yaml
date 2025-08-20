@@ -8,7 +8,9 @@ packages:
   - packages/foundation/tools/*
   - packages/http/libraries/*
   - packages/http/tools/*
+  - packages/json-schema/libraries/*
   - packages/logger
+  - packages/open-api/libraries/*
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@swc/core'
