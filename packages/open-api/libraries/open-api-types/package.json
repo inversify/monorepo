@@ -1,0 +1,59 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJs OpenAPI types package",
+  "devDependencies": {
+    "@inversifyjs/json-schema-types": "workspace:*",
+    "eslint": "9.33.0",
+    "prettier": "3.6.2",
+    "rimraf": "6.0.1",
+    "rollup": "4.46.3",
+    "ts-loader": "9.5.2",
+    "tslib": "2.8.1",
+    "typescript": "5.9.2"
+  },
+  "homepage": "https://inversify.io",
+  "keywords": [
+    "dependency injection",
+    "dependency inversion",
+    "di",
+    "inversion of control container",
+    "ioc",
+    "javascript",
+    "node",
+    "typescript"
+  ],
+  "devEngines": {
+    "node": "^22.10.2",
+    "pnpm": "^10.13.1"
+  },
+  "license": "MIT",
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "exports": {
+    "./v3Dot1": {
+      "import": "./lib/esm/openApi/v3Dot1/index.js",
+      "require": "./lib/cjs/openApi/v3Dot1/index.js"
+    }
+  },
+  "name": "@inversifyjs/open-api-types",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "build": "pnpm run build:cjs && pnpm run build:esm",
+    "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
+    "build:esm": "rollup -c ./v3Dot1.rollup.config.mjs && pnpm exec foundation-ts-package-esm ./lib/esm",
+    "build:clean": "rimraf lib",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src",
+    "prebuild": "pnpm run build:clean"
+  },
+  "version": "0.1.0"
+}
