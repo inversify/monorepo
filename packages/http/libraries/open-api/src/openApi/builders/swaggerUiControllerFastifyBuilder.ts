@@ -18,9 +18,12 @@ import { SwaggerUiControllerOptions } from '../models/SwaggerUiControllerOptions
 
 export function swaggerUiControllerFastifyBuilder(
   options: SwaggerUiControllerOptions,
-): Newable<BaseSwaggerUiController<FastifyReply>> {
+): Newable<BaseSwaggerUiController<FastifyReply, void | Promise<void>>> {
   @Controller(options.apiPath)
-  class SwaggerUiFastifyController extends BaseSwaggerUiController<FastifyReply> {
+  class SwaggerUiFastifyController extends BaseSwaggerUiController<
+    FastifyReply,
+    void | Promise<void>
+  > {
     constructor() {
       super(options);
     }
@@ -48,7 +51,7 @@ export function swaggerUiControllerFastifyBuilder(
       @Response()
       response: FastifyReply,
     ): Promise<void> {
-      await super.getSwaggerUiResource(resource, response);
+      return super.getSwaggerUiResource(resource, response);
     }
 
     protected _sendFile(

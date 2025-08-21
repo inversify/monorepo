@@ -81,9 +81,9 @@ describe(swaggerUiControllerExpressBuilder, () => {
         );
       });
 
-      it('should return an "application/javascript" Content-Type header', () => {
+      it('should return an "text/javascript" Content-Type header', () => {
         expect(response.headers.get('Content-Type')).toStrictEqual(
-          expect.stringContaining('application/javascript'),
+          expect.stringContaining('text/javascript'),
         );
       });
 

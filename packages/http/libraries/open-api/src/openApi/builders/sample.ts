@@ -2425,7 +2425,7 @@ void (async () => {
 
   const container: Container = new Container();
 
-  const controller: Newable<BaseSwaggerUiController<express.Response>> =
+  const controller: Newable<BaseSwaggerUiController<express.Response, void>> =
     swaggerUiControllerExpressBuilder({
       apiPath: apiPathFixture,
       openApiObject: specFixture,

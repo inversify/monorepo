@@ -6,7 +6,7 @@ import { SwaggerUiControllerOptions } from '../models/SwaggerUiControllerOptions
 import { SwaggerUiInitOptions } from '../models/SwaggerUiInitOptions';
 import { SwaggerUiOptions } from '../models/SwaggerUiOptions';
 
-export abstract class BaseSwaggerUiController<TResponse> {
+export abstract class BaseSwaggerUiController<TResponse, TResult> {
   readonly #options: SwaggerUiControllerOptions;
   readonly #swaggerUiHtml: string;
   readonly #swaggerUiInitJs: string;
@@ -32,13 +32,10 @@ export abstract class BaseSwaggerUiController<TResponse> {
     return this.#swaggerUiInitJs;
   }
 
-  public async getSwaggerUiResource(
-    resource: string,
-    response: TResponse,
-  ): Promise<void> {
+  public getSwaggerUiResource(resource: string, response: TResponse): TResult {
     const rootPath: string = getAbsoluteFSPath();
 
-    await this._sendFile(response, rootPath, resource);
+    return this._sendFile(response, rootPath, resource);
   }
 
   #buildJsInitOptions(initOptions: SwaggerUiInitOptions): string {
@@ -146,5 +143,5 @@ export abstract class BaseSwaggerUiController<TResponse> {
     response: TResponse,
     rootPath: string,
     path: string,
-  ): void | Promise<void>;
+  ): TResult;
 }

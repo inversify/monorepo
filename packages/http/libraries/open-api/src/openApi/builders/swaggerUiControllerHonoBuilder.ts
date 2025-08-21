@@ -1,3 +1,7 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { Readable } from 'node:stream';
+
 import {
   Controller,
   Get,
@@ -6,19 +10,22 @@ import {
   SetHeader,
 } from '@inversifyjs/http-core';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
-import express from 'express';
+import { Context } from 'hono';
+import { stream } from 'hono/streaming';
+import { StreamingApi } from 'hono/utils/stream';
 import { Newable } from 'inversify';
+import mime from 'mime-types';
 
 import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
 import { SwaggerUiControllerOptions } from '../models/SwaggerUiControllerOptions';
 
-export function swaggerUiControllerExpressBuilder(
+export function swaggerUiControllerHonoBuilder(
   options: SwaggerUiControllerOptions,
-): Newable<BaseSwaggerUiController<express.Response, void>> {
+): Newable<BaseSwaggerUiController<Context, Response | undefined>> {
   @Controller(options.apiPath)
-  class SwaggerUiExpressController extends BaseSwaggerUiController<
-    express.Response,
-    void
+  class SwaggerUiHonoController extends BaseSwaggerUiController<
+    Context,
+    Response | undefined
   > {
     constructor() {
       super(options);
@@ -45,19 +52,31 @@ export function swaggerUiControllerExpressBuilder(
     public override getSwaggerUiResource(
       @Params('resource') resource: string,
       @Response()
-      response: express.Response,
-    ): void {
-      super.getSwaggerUiResource(resource, response);
+      context: Context,
+    ): Response | undefined {
+      return super.getSwaggerUiResource(resource, context);
     }
 
     protected _sendFile(
-      response: express.Response,
+      context: Context,
       rootPath: string,
-      path: string,
-    ): void {
-      response.sendFile(path, { root: rootPath });
+      filePath: string,
+    ): Response | undefined {
+      const mimeType: string | false = mime.lookup(filePath);
+
+      if (mimeType !== false) {
+        context.header('Content-Type', mimeType);
+      }
+
+      const fullPath: string = path.join(rootPath, filePath);
+
+      const fileStream: fs.ReadStream = fs.createReadStream(fullPath);
+
+      return stream(context, async (stream: StreamingApi): Promise<void> => {
+        await stream.pipe(Readable.toWeb(fileStream));
+      });
     }
   }
 
-  return SwaggerUiExpressController;
+  return SwaggerUiHonoController;
 }

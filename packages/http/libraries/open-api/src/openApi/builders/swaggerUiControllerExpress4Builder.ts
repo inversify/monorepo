@@ -14,9 +14,12 @@ import { SwaggerUiControllerOptions } from '../models/SwaggerUiControllerOptions
 
 export function swaggerUiControllerExpress4Builder(
   options: SwaggerUiControllerOptions,
-): Newable<BaseSwaggerUiController<express.Response>> {
+): Newable<BaseSwaggerUiController<express.Response, void>> {
   @Controller(options.apiPath)
-  class SwaggerUiExpressController extends BaseSwaggerUiController<express.Response> {
+  class SwaggerUiExpressController extends BaseSwaggerUiController<
+    express.Response,
+    void
+  > {
     constructor() {
       super(options);
     }
@@ -39,12 +42,12 @@ export function swaggerUiControllerExpress4Builder(
     }
 
     @Get('/resources/:resource')
-    public override async getSwaggerUiResource(
+    public override getSwaggerUiResource(
       @Params('resource') resource: string,
       @Response()
       response: express.Response,
-    ): Promise<void> {
-      await super.getSwaggerUiResource(resource, response);
+    ): void {
+      super.getSwaggerUiResource(resource, response);
     }
 
     protected _sendFile(
