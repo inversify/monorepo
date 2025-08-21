@@ -3,12 +3,7 @@
   "bugs": {
     "url": "https://github.com/inversify/monorepo/issues"
   },
-  "description": "InversifyJs http core package",
-  "dependencies": {
-    "@inversifyjs/framework-core": "workspace:*",
-    "@inversifyjs/reflect-metadata-utils": "workspace:*",
-    "@inversifyjs/logger": "workspace:*"
-  },
+  "description": "InversifyJs framework core package",
   "devDependencies": {
     "@stryker-mutator/core": "9.0.1",
     "@stryker-mutator/typescript-checker": "9.0.1",
@@ -48,11 +43,8 @@
       "require": "./lib/cjs/index.js"
     }
   },
-  "name": "@inversifyjs/http-core",
+  "name": "@inversifyjs/framework-core",
   "private": "true",
-  "peerDependencies": {
-    "inversify": "^7.8.1"
-  },
   "publishConfig": {
     "access": "public"
   },

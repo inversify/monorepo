@@ -1,3 +1,5 @@
+import { Pipe } from '@inversifyjs/framework-core';
+
 import { InversifyHttpAdapter } from './http/adapter/InversifyHttpAdapter';
 import { createCustomParameterDecorator } from './http/calculations/createCustomParameterDecorator';
 import { All } from './http/decorators/All';
@@ -32,7 +34,6 @@ import { RequestMethodType } from './http/models/RequestMethodType';
 import { RequiredOptions } from './http/models/RequiredOptions';
 import { RouteParams } from './http/models/RouteParams';
 import { RouterParams } from './http/models/RouterParams';
-import { Pipe } from './http/pipe/model/Pipe';
 import { isHttpResponse } from './http/responses/calculations/isHttpResponse';
 import { BadGatewayHttpResponse } from './http/responses/error/BadGatewayHttpResponse';
 import { BadRequestHttpResponse } from './http/responses/error/BadRequestHttpResponse';
@@ -91,12 +92,12 @@ export {
   createCustomParameterDecorator,
   CreatedHttpResponse,
   Delete,
+  ErrorHttpResponse,
   ForbiddenHttpResponse,
   GatewayTimeoutHttpResponse,
   Get,
   GoneHttpResponse,
   Guard,
-  ErrorHttpResponse,
   Head,
   Headers,
   HttpResponse,
@@ -126,8 +127,8 @@ export {
   Put,
   Query,
   Request,
-  RequestMethodType,
   RequestMethodParameterType,
+  RequestMethodType,
   ResetContentHttpResponse,
   Response,
   ServiceUnavailableHttpResponse,

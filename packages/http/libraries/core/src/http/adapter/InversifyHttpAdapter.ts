@@ -1,5 +1,6 @@
 import { Readable } from 'node:stream';
 
+import { isPipe, Pipe, PipeMetadata } from '@inversifyjs/framework-core';
 import { ConsoleLogger, Logger } from '@inversifyjs/logger';
 import { Container, Newable } from 'inversify';
 
@@ -23,15 +24,12 @@ import { RequestMethodParameterType } from '../models/RequestMethodParameterType
 import { RequiredOptions } from '../models/RequiredOptions';
 import { RouteParams } from '../models/RouteParams';
 import { RouterParams } from '../models/RouterParams';
-import { Pipe } from '../pipe/model/Pipe';
-import { PipeMetadata } from '../pipe/model/PipeMetadata';
 import { isHttpResponse } from '../responses/calculations/isHttpResponse';
 import { ErrorHttpResponse } from '../responses/error/ErrorHttpResponse';
 import { ForbiddenHttpResponse } from '../responses/error/ForbiddenHttpResponse';
 import { InternalServerErrorHttpResponse } from '../responses/error/InternalServerErrorHttpResponse';
 import { HttpResponse } from '../responses/HttpResponse';
 import { HttpStatusCode } from '../responses/HttpStatusCode';
-import { isPipe } from '../typeguard/isPipe';
 
 const DEFAULT_ERROR_MESSAGE: string = 'An unexpected error occurred';
 
@@ -467,8 +465,6 @@ export abstract class InversifyHttpAdapter<
               {
                 methodName: controllerMethodKey,
                 parameterIndex: index,
-                parameterMethodType:
-                  controllerMethodParameterMetadata.parameterType,
                 targetClass,
               },
             );
