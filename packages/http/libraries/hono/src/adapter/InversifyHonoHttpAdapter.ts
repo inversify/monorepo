@@ -148,7 +148,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     response: Context,
     value: string,
   ): Response {
-    return response.text(value);
+    return response.body(value);
   }
 
   protected _replyJson(
