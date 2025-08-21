@@ -20,6 +20,9 @@ const defaultWorkspaceProjectConfig: WorkspaceProjectConfig & {
     "!vitest.config.stryker.mjs",
     "!**/__mocks__",
   ],
+  rollup: {
+    entry: "*rollup.config.mjs",
+  },
 };
 
 export default {
@@ -103,6 +106,8 @@ export default {
       ],
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/json-schema/libraries/*": defaultWorkspaceProjectConfig,
     "packages/logger": defaultWorkspaceProjectConfig,
+    "packages/open-api/libraries/*": defaultWorkspaceProjectConfig,
   },
 } satisfies KnipConfig;

@@ -23,17 +23,17 @@ const packagePeerDependencies = Object.keys(
 );
 
 /**
- * @param { !string } input
- * @param { !string } output
+ * @param { !string } inputFile
+ * @param { !string } outputDir
+ * @param { ?string } declarationFile
  * @returns {!import("rollup").MergedRollupOptions[]}
  */
-function buildBundleConfig(inputFile, outputDir) {
+export function buildBundleConfig(inputFile, outputDir, declarationFile) {
   const filePath = path.parse(inputFile);
 
-  const declarationFilePath = path.join(
-    outputDir,
-    `${filePath.name}.d${filePath.ext}`,
-  );
+  const declarationFilePath =
+    declarationFile ??
+    path.join(outputDir, `${filePath.name}.d${filePath.ext}`);
 
   return [
     {

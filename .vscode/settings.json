@@ -8,6 +8,8 @@
     { "pattern": "./packages/foundation/libraries/*", "!cwd": false },
     { "pattern": "./packages/foundation/tools/*", "!cwd": false },
     { "pattern": "./packages/http/libraries/*", "!cwd": false },
-    { "pattern": "./packages/http/tools/*", "!cwd": false }
+    { "pattern": "./packages/http/tools/*", "!cwd": false },
+    { "pattern": "./packages/json-schema/libraries/*", "!cwd": false },
+    { "pattern": "./packages/open-api/libraries/*", "!cwd": false }
   ]
 }
