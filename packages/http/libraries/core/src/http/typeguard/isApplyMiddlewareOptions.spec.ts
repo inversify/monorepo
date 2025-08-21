@@ -1,9 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { Middleware, MiddlewarePhase } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
 
-import { Middleware } from '../middleware/model/Middleware';
-import { MiddlewarePhase } from '../middleware/model/MiddlewarePhase';
 import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
 import { isApplyMiddlewareOptions } from './isApplyMiddlewareOptions';
 

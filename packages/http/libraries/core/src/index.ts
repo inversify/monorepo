@@ -1,4 +1,9 @@
-import { Pipe } from '@inversifyjs/framework-core';
+import {
+  Guard,
+  Middleware,
+  MiddlewarePhase,
+  Pipe,
+} from '@inversifyjs/framework-core';
 
 import { InversifyHttpAdapter } from './http/adapter/InversifyHttpAdapter';
 import { createCustomParameterDecorator } from './http/calculations/createCustomParameterDecorator';
@@ -23,9 +28,6 @@ import { Response } from './http/decorators/Response';
 import { SetHeader } from './http/decorators/SetHeader';
 import { StatusCode } from './http/decorators/StatusCode';
 import { UseGuard } from './http/decorators/UseGuard';
-import { Guard } from './http/guard/model/Guard';
-import { Middleware } from './http/middleware/model/Middleware';
-import { MiddlewarePhase } from './http/middleware/model/MiddlewarePhase';
 import { HttpAdapterOptions } from './http/models/HttpAdapterOptions';
 import { MiddlewareHandler } from './http/models/MiddlewareHandler';
 import { RequestHandler } from './http/models/RequestHandler';
@@ -67,6 +69,7 @@ import { PartialContentHttpResponse } from './http/responses/success/PartialCont
 import { ResetContentHttpResponse } from './http/responses/success/ResetContentHttpResponse';
 
 export type {
+  Guard,
   HttpAdapterOptions,
   Middleware,
   MiddlewareHandler,
@@ -97,7 +100,6 @@ export {
   GatewayTimeoutHttpResponse,
   Get,
   GoneHttpResponse,
-  Guard,
   Head,
   Headers,
   HttpResponse,

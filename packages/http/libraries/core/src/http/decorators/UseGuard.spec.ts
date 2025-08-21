@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
+import { Guard } from '@inversifyjs/framework-core';
 import {
   buildArrayMetadataWithArray,
   buildEmptyArrayMetadata,
@@ -11,7 +12,6 @@ import { Newable } from 'inversify';
 
 import { controllerGuardMetadataReflectKey } from '../../reflectMetadata/data/controllerGuardMetadataReflectKey';
 import { controllerMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodGuardMetadataReflectKey';
-import { Guard } from '../guard/model/Guard';
 import { UseGuard } from './UseGuard';
 
 describe(UseGuard, () => {

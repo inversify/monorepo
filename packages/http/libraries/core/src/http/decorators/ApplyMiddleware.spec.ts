@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
+import { Middleware } from '@inversifyjs/framework-core';
 import {
   buildArrayMetadataWithArray,
   buildEmptyArrayMetadata,
@@ -11,7 +12,6 @@ import { Newable } from 'inversify';
 
 import { controllerMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMiddlewareMetadataReflectKey';
 import { controllerMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMiddlewareMetadataReflectKey';
-import { Middleware } from '../middleware/model/Middleware';
 import { ApplyMiddleware } from './ApplyMiddleware';
 
 describe(ApplyMiddleware, () => {

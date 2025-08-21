@@ -1,3 +1,4 @@
+import { Guard } from '@inversifyjs/framework-core';
 import {
   buildArrayMetadataWithArray,
   buildEmptyArrayMetadata,
@@ -7,7 +8,6 @@ import { Newable } from 'inversify';
 
 import { controllerGuardMetadataReflectKey } from '../../reflectMetadata/data/controllerGuardMetadataReflectKey';
 import { controllerMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodGuardMetadataReflectKey';
-import { Guard } from '../guard/model/Guard';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function UseGuard(

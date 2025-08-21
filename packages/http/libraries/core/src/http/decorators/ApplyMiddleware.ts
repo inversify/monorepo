@@ -1,3 +1,4 @@
+import { Middleware } from '@inversifyjs/framework-core';
 import {
   buildArrayMetadataWithArray,
   buildEmptyArrayMetadata,
@@ -7,7 +8,6 @@ import { Newable } from 'inversify';
 
 import { controllerMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMiddlewareMetadataReflectKey';
 import { controllerMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMiddlewareMetadataReflectKey';
-import { Middleware } from '../middleware/model/Middleware';
 import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

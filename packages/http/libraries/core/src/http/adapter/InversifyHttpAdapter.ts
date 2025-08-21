@@ -1,6 +1,12 @@
 import { Readable } from 'node:stream';
 
-import { isPipe, Pipe, PipeMetadata } from '@inversifyjs/framework-core';
+import {
+  Guard,
+  isPipe,
+  Middleware,
+  Pipe,
+  PipeMetadata,
+} from '@inversifyjs/framework-core';
 import { ConsoleLogger, Logger } from '@inversifyjs/logger';
 import { Container, Newable } from 'inversify';
 
@@ -12,8 +18,6 @@ import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/Co
 import { MiddlewareOptions } from '../../routerExplorer/model/MiddlewareOptions';
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
-import { Guard } from '../guard/model/Guard';
-import { Middleware } from '../middleware/model/Middleware';
 import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
 import { Controller } from '../models/Controller';
 import { ControllerResponse } from '../models/ControllerResponse';
@@ -518,8 +522,8 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     headerList: [string, string][],
   ): void {
-    for (const header of headerList) {
-      this._setHeader(request, response, header[0], header[1]);
+    for (const [key, value] of headerList) {
+      this._setHeader(request, response, key, value);
     }
   }
 

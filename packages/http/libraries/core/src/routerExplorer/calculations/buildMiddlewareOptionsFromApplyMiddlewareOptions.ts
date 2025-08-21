@@ -1,4 +1,5 @@
-import { MiddlewarePhase } from '../../http/middleware/model/MiddlewarePhase';
+import { MiddlewarePhase } from '@inversifyjs/framework-core';
+
 import { ApplyMiddlewareOptions } from '../../http/models/ApplyMiddlewareOptions';
 import { isApplyMiddlewareOptions } from '../../http/typeguard/isApplyMiddlewareOptions';
 import { MiddlewareOptions } from '../model/MiddlewareOptions';
