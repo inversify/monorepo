@@ -1,14 +1,15 @@
 import {
+  ApplyMiddleware,
   Guard,
   Middleware,
   MiddlewarePhase,
   Pipe,
+  UseGuard,
 } from '@inversifyjs/framework-core';
 
 import { InversifyHttpAdapter } from './http/adapter/InversifyHttpAdapter';
 import { createCustomParameterDecorator } from './http/calculations/createCustomParameterDecorator';
 import { All } from './http/decorators/All';
-import { ApplyMiddleware } from './http/decorators/ApplyMiddleware';
 import { Body } from './http/decorators/Body';
 import { Controller } from './http/decorators/Controller';
 import { Cookies } from './http/decorators/Cookies';
@@ -27,7 +28,6 @@ import { Request } from './http/decorators/Request';
 import { Response } from './http/decorators/Response';
 import { SetHeader } from './http/decorators/SetHeader';
 import { StatusCode } from './http/decorators/StatusCode';
-import { UseGuard } from './http/decorators/UseGuard';
 import { HttpAdapterOptions } from './http/models/HttpAdapterOptions';
 import { MiddlewareHandler } from './http/models/MiddlewareHandler';
 import { RequestHandler } from './http/models/RequestHandler';

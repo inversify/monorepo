@@ -1,5 +1,7 @@
-import { Middleware, MiddlewarePhase } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
+
+import { Middleware } from './Middleware';
+import { MiddlewarePhase } from './MiddlewarePhase';
 
 export interface ApplyMiddlewareOptions {
   phase: MiddlewarePhase;

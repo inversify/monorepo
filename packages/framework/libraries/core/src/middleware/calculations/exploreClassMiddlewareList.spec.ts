@@ -4,23 +4,18 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMiddlewareMetadataReflectKey';
-import { exploreControllerMethodMiddlewareList } from './exploreControllerMethodMiddlewareList';
+import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey';
+import { exploreClassMiddlewareList } from './exploreClassMiddlewareList';
 
-describe(exploreControllerMethodMiddlewareList, () => {
+describe(exploreClassMiddlewareList, () => {
   describe('when called and getOwnReflectMetadata returns undefined', () => {
-    let controllerFixture: NewableFunction;
-    let controllerMethodKeyFixture: string | symbol;
+    let targetFixture: NewableFunction;
     let result: unknown;
 
     beforeAll(() => {
-      controllerFixture = class Test {};
-      controllerMethodKeyFixture = 'testMethod';
+      targetFixture = class Test {};
 
-      result = exploreControllerMethodMiddlewareList(
-        controllerFixture,
-        controllerMethodKeyFixture,
-      );
+      result = exploreClassMiddlewareList(targetFixture);
     });
 
     afterAll(() => {
@@ -30,9 +25,8 @@ describe(exploreControllerMethodMiddlewareList, () => {
     it('should call getOwnReflectMetadata', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
-        controllerFixture,
-        controllerMethodMiddlewareMetadataReflectKey,
-        controllerMethodKeyFixture,
+        targetFixture,
+        classMiddlewareMetadataReflectKey,
       );
     });
 
@@ -42,24 +36,19 @@ describe(exploreControllerMethodMiddlewareList, () => {
   });
 
   describe('when called and getOwnReflectMetadata returns an array', () => {
-    let controllerFixture: NewableFunction;
-    let controllerMethodKeyFixture: string | symbol;
+    let targetFixture: NewableFunction;
     let middlewareFixtures: NewableFunction[];
     let result: unknown;
 
     beforeAll(() => {
-      controllerFixture = class Test {};
-      controllerMethodKeyFixture = 'testMethod';
+      targetFixture = class Test {};
       middlewareFixtures = [];
 
       vitest
         .mocked(getOwnReflectMetadata)
         .mockReturnValueOnce(middlewareFixtures);
 
-      result = exploreControllerMethodMiddlewareList(
-        controllerFixture,
-        controllerMethodKeyFixture,
-      );
+      result = exploreClassMiddlewareList(targetFixture);
     });
 
     afterAll(() => {
@@ -69,9 +58,8 @@ describe(exploreControllerMethodMiddlewareList, () => {
     it('should call getOwnReflectMetadata', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
-        controllerFixture,
-        controllerMethodMiddlewareMetadataReflectKey,
-        controllerMethodKeyFixture,
+        targetFixture,
+        classMiddlewareMetadataReflectKey,
       );
     });
 

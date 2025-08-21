@@ -1,9 +1,12 @@
 import { Readable } from 'node:stream';
 
 import {
+  ApplyMiddlewareOptions,
+  buildMiddlewareOptionsFromApplyMiddlewareOptions,
   Guard,
   isPipe,
   Middleware,
+  MiddlewareOptions,
   Pipe,
   PipeMetadata,
 } from '@inversifyjs/framework-core';
@@ -12,13 +15,10 @@ import { Container, Newable } from 'inversify';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
-import { buildMiddlewareOptionsFromApplyMiddlewareOptions } from '../../routerExplorer/calculations/buildMiddlewareOptionsFromApplyMiddlewareOptions';
 import { buildRouterExplorerControllerMetadataList } from '../../routerExplorer/calculations/buildRouterExplorerControllerMetadataList';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { MiddlewareOptions } from '../../routerExplorer/model/MiddlewareOptions';
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
-import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
 import { Controller } from '../models/Controller';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';

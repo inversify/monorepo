@@ -2,7 +2,6 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
-import { Middleware } from '@inversifyjs/framework-core';
 import {
   buildArrayMetadataWithArray,
   buildEmptyArrayMetadata,
@@ -10,28 +9,29 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { controllerMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMiddlewareMetadataReflectKey';
-import { controllerMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMiddlewareMetadataReflectKey';
-import { ApplyMiddleware } from './ApplyMiddleware';
+import { Guard } from '../guard/model/Guard';
+import { classGuardMetadataReflectKey } from '../reflectMetadata/data/classGuardMetadataReflectKey';
+import { classMethodGuardMetadataReflectKey } from '../reflectMetadata/data/classMethodGuardMetadataReflectKey';
+import { UseGuard } from './UseGuard';
 
-describe(ApplyMiddleware, () => {
+describe(UseGuard, () => {
   describe('having a ClassDecorator', () => {
     describe('when called', () => {
-      let middlewareFixture: Newable<Middleware>;
-      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
+      let middlewareFixture: Newable<Guard>;
       let targetFixture: NewableFunction;
+      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
-        middlewareFixture = {} as Newable<Middleware>;
+        middlewareFixture = {} as Newable<Guard>;
+        targetFixture = class TestController {};
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
-        targetFixture = class TestController {};
 
         vitest
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        ApplyMiddleware(middlewareFixture)(targetFixture);
+        UseGuard(middlewareFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -49,7 +49,7 @@ describe(ApplyMiddleware, () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture,
-          controllerMiddlewareMetadataReflectKey,
+          classGuardMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,
           undefined,
@@ -59,30 +59,30 @@ describe(ApplyMiddleware, () => {
   });
 
   describe('having a MethodDecorator', () => {
-    describe('when called and getOwnReflectMetadata returns a Middleware list', () => {
-      let controllerFixture: NewableFunction;
-      let controllerMethodKeyFixture: string | symbol;
-      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
+    describe('when called', () => {
+      let targetFixture: NewableFunction;
+      let methodKeyFixture: string | symbol;
+      let middlewareFixture: Newable<Guard>;
       let descriptorFixture: PropertyDescriptor;
-      let middlewareFixture: Newable<Middleware>;
+      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
-        controllerFixture = class Test {};
-        controllerMethodKeyFixture = 'testMethod';
-        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
-          arrayMetadata;
-        middlewareFixture = {} as Newable<Middleware>;
+        targetFixture = class TestController {};
+        methodKeyFixture = 'testMethod';
+        middlewareFixture = {} as Newable<Guard>;
         descriptorFixture = {
           value: 'value-descriptor-example',
         } as PropertyDescriptor;
+        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
+          arrayMetadata;
 
         vitest
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        ApplyMiddleware(middlewareFixture)(
-          controllerFixture,
-          controllerMethodKeyFixture,
+        UseGuard(middlewareFixture)(
+          targetFixture,
+          methodKeyFixture,
           descriptorFixture,
         );
       });
@@ -97,11 +97,11 @@ describe(ApplyMiddleware, () => {
       it('should call updateOwnReflectMetadata', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
-          controllerFixture.constructor,
-          controllerMethodMiddlewareMetadataReflectKey,
+          targetFixture.constructor,
+          classMethodGuardMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,
-          controllerMethodKeyFixture,
+          methodKeyFixture,
         );
       });
     });

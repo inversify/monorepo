@@ -1,8 +1,7 @@
-import { MiddlewarePhase } from '@inversifyjs/framework-core';
-
-import { ApplyMiddlewareOptions } from '../../http/models/ApplyMiddlewareOptions';
-import { isApplyMiddlewareOptions } from '../../http/typeguard/isApplyMiddlewareOptions';
+import { ApplyMiddlewareOptions } from '../model/ApplyMiddlewareOptions';
 import { MiddlewareOptions } from '../model/MiddlewareOptions';
+import { MiddlewarePhase } from '../model/MiddlewarePhase';
+import { isApplyMiddlewareOptions } from '../typeguard/isApplyMiddlewareOptions';
 
 export function buildMiddlewareOptionsFromApplyMiddlewareOptions(
   applyMiddlewareOptionsList: (NewableFunction | ApplyMiddlewareOptions)[],

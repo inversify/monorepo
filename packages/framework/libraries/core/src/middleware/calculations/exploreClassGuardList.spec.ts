@@ -4,18 +4,18 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/controllerMiddlewareMetadataReflectKey';
-import { exploreControllerMiddlewareList } from './exploreControllerMiddlewareList';
+import { classGuardMetadataReflectKey } from '../../reflectMetadata/data/classGuardMetadataReflectKey';
+import { exploreClassGuardList } from './exploreClassGuardList';
 
-describe(exploreControllerMiddlewareList, () => {
+describe(exploreClassGuardList, () => {
   describe('when called and getOwnReflectMetadata returns undefined', () => {
-    let targetFixture: NewableFunction;
+    let classFixture: NewableFunction;
     let result: unknown;
 
     beforeAll(() => {
-      targetFixture = class Test {};
+      classFixture = class Test {};
 
-      result = exploreControllerMiddlewareList(targetFixture);
+      result = exploreClassGuardList(classFixture);
     });
 
     afterAll(() => {
@@ -25,8 +25,8 @@ describe(exploreControllerMiddlewareList, () => {
     it('should call getOwnReflectMetadata', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
-        targetFixture,
-        controllerMiddlewareMetadataReflectKey,
+        classFixture,
+        classGuardMetadataReflectKey,
       );
     });
 
@@ -36,19 +36,19 @@ describe(exploreControllerMiddlewareList, () => {
   });
 
   describe('when called and getOwnReflectMetadata returns an array', () => {
-    let targetFixture: NewableFunction;
-    let middlewareFixtures: NewableFunction[];
+    let classFixture: NewableFunction;
+    let classGuardFixtures: NewableFunction[];
     let result: unknown;
 
     beforeAll(() => {
-      targetFixture = class Test {};
-      middlewareFixtures = [];
+      classFixture = class Test {};
+      classGuardFixtures = [];
 
       vitest
         .mocked(getOwnReflectMetadata)
-        .mockReturnValueOnce(middlewareFixtures);
+        .mockReturnValueOnce(classGuardFixtures);
 
-      result = exploreControllerMiddlewareList(targetFixture);
+      result = exploreClassGuardList(classFixture);
     });
 
     afterAll(() => {
@@ -58,13 +58,13 @@ describe(exploreControllerMiddlewareList, () => {
     it('should call getOwnReflectMetadata', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
-        targetFixture,
-        controllerMiddlewareMetadataReflectKey,
+        classFixture,
+        classGuardMetadataReflectKey,
       );
     });
 
     it('should return an array', () => {
-      expect(result).toBe(middlewareFixtures);
+      expect(result).toBe(classGuardFixtures);
     });
   });
 });
