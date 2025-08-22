@@ -2,10 +2,10 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('./requestParam');
 
+import { Pipe } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
 
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { Pipe } from '../pipe/model/Pipe';
 import { buildRequestParameterDecorator } from './buildRequestParameterDecorator';
 import { requestParam } from './requestParam';
 
