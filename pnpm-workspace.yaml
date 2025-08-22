@@ -6,6 +6,7 @@ packages:
   - packages/docs/tools/*
   - packages/foundation/libraries/*
   - packages/foundation/tools/*
+  - packages/framework/libraries/*
   - packages/http/libraries/*
   - packages/http/tools/*
   - packages/json-schema/libraries/*

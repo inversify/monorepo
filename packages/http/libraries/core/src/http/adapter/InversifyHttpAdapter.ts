@@ -1,19 +1,24 @@
 import { Readable } from 'node:stream';
 
+import {
+  ApplyMiddlewareOptions,
+  buildMiddlewareOptionsFromApplyMiddlewareOptions,
+  Guard,
+  isPipe,
+  Middleware,
+  MiddlewareOptions,
+  Pipe,
+  PipeMetadata,
+} from '@inversifyjs/framework-core';
 import { ConsoleLogger, Logger } from '@inversifyjs/logger';
 import { Container, Newable } from 'inversify';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
-import { buildMiddlewareOptionsFromApplyMiddlewareOptions } from '../../routerExplorer/calculations/buildMiddlewareOptionsFromApplyMiddlewareOptions';
 import { buildRouterExplorerControllerMetadataList } from '../../routerExplorer/calculations/buildRouterExplorerControllerMetadataList';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { MiddlewareOptions } from '../../routerExplorer/model/MiddlewareOptions';
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
-import { Guard } from '../guard/model/Guard';
-import { Middleware } from '../middleware/model/Middleware';
-import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
 import { Controller } from '../models/Controller';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
@@ -23,15 +28,12 @@ import { RequestMethodParameterType } from '../models/RequestMethodParameterType
 import { RequiredOptions } from '../models/RequiredOptions';
 import { RouteParams } from '../models/RouteParams';
 import { RouterParams } from '../models/RouterParams';
-import { Pipe } from '../pipe/model/Pipe';
-import { PipeMetadata } from '../pipe/model/PipeMetadata';
 import { isHttpResponse } from '../responses/calculations/isHttpResponse';
 import { ErrorHttpResponse } from '../responses/error/ErrorHttpResponse';
 import { ForbiddenHttpResponse } from '../responses/error/ForbiddenHttpResponse';
 import { InternalServerErrorHttpResponse } from '../responses/error/InternalServerErrorHttpResponse';
 import { HttpResponse } from '../responses/HttpResponse';
 import { HttpStatusCode } from '../responses/HttpStatusCode';
-import { isPipe } from '../typeguard/isPipe';
 
 const DEFAULT_ERROR_MESSAGE: string = 'An unexpected error occurred';
 
@@ -467,8 +469,6 @@ export abstract class InversifyHttpAdapter<
               {
                 methodName: controllerMethodKey,
                 parameterIndex: index,
-                parameterMethodType:
-                  controllerMethodParameterMetadata.parameterType,
                 targetClass,
               },
             );
@@ -522,8 +522,8 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     headerList: [string, string][],
   ): void {
-    for (const header of headerList) {
-      this._setHeader(request, response, header[0], header[1]);
+    for (const [key, value] of headerList) {
+      this._setHeader(request, response, key, value);
     }
   }
 

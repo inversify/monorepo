@@ -80,6 +80,7 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/framework/libraries/*": defaultWorkspaceProjectConfig,
     "packages/http/libraries/*": defaultWorkspaceProjectConfig,
     "packages/http/tools/e2e-tests": {
       entry: [

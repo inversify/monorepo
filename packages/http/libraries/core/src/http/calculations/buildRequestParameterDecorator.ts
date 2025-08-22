@@ -1,9 +1,9 @@
+import { Pipe } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
 
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { CustomParameterDecoratorHandler } from '../models/CustomParameterDecoratorHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { Pipe } from '../pipe/model/Pipe';
 import { requestParam } from './requestParam';
 
 export function buildRequestParameterDecorator(

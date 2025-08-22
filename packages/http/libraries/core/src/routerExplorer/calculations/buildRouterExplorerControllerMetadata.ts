@@ -1,12 +1,15 @@
+import {
+  buildMiddlewareOptionsFromApplyMiddlewareOptions,
+  exploreClassGuardList,
+  exploreClassMiddlewareList,
+  MiddlewareOptions,
+} from '@inversifyjs/framework-core';
+
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
-import { MiddlewareOptions } from '../model/MiddlewareOptions';
 import { RouterExplorerControllerMetadata } from '../model/RouterExplorerControllerMetadata';
-import { buildMiddlewareOptionsFromApplyMiddlewareOptions } from './buildMiddlewareOptionsFromApplyMiddlewareOptions';
 import { buildRouterExplorerControllerMethodMetadataList } from './buildRouterExplorerControllerMethodMetadataList';
-import { exploreControllerGuardList } from './exploreControllerGuardList';
 import { exploreControllerMethodMetadataList } from './exploreControllerMethodMetadataList';
-import { exploreControllerMiddlewareList } from './exploreControllerMiddlewareList';
 
 export function buildRouterExplorerControllerMetadata<
   TRequest,
@@ -18,12 +21,12 @@ export function buildRouterExplorerControllerMetadata<
   const controllerMethodMetadataList: ControllerMethodMetadata[] =
     exploreControllerMethodMetadataList(controllerMetadata.target);
 
-  const controllerGuardList: NewableFunction[] = exploreControllerGuardList(
+  const controllerGuardList: NewableFunction[] = exploreClassGuardList(
     controllerMetadata.target,
   );
 
   const controllerMiddlewareList: NewableFunction[] =
-    exploreControllerMiddlewareList(controllerMetadata.target);
+    exploreClassMiddlewareList(controllerMetadata.target);
 
   const middlewareOptions: MiddlewareOptions =
     buildMiddlewareOptionsFromApplyMiddlewareOptions(controllerMiddlewareList);

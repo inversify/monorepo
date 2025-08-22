@@ -1,13 +1,16 @@
-import { ApplyMiddlewareOptions } from '../../http/models/ApplyMiddlewareOptions';
+import {
+  ApplyMiddlewareOptions,
+  buildMiddlewareOptionsFromApplyMiddlewareOptions,
+  exploreClassMethodGuardList,
+  exploreClassMethodMiddlewareList,
+  MiddlewareOptions,
+} from '@inversifyjs/framework-core';
+
 import { HttpStatusCode } from '../../http/responses/HttpStatusCode';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
-import { MiddlewareOptions } from '../model/MiddlewareOptions';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
-import { buildMiddlewareOptionsFromApplyMiddlewareOptions } from './buildMiddlewareOptionsFromApplyMiddlewareOptions';
-import { exploreControllerMethodGuardList } from './exploreControllerMethodGuardList';
 import { exploreControllerMethodHeaderMetadataList } from './exploreControllerMethodHeaderMetadataList';
-import { exploreControllerMethodMiddlewareList } from './exploreControllerMethodMiddlewareList';
 import { exploreControllerMethodParameterMetadataList } from './exploreControllerMethodParameterMetadataList';
 import { exploreControllerMethodStatusCodeMetadata } from './exploreControllerMethodStatusCodeMetadata';
 import { exploreControllerMethodUseNativeHandlerMetadata } from './exploreControllerMethodUseNativeHandlerMetadata';
@@ -35,15 +38,12 @@ export function buildRouterExplorerControllerMethodMetadata<
     );
 
   const controllerMethodGuardList: NewableFunction[] =
-    exploreControllerMethodGuardList(
-      controller,
-      controllerMethodMetadata.methodKey,
-    );
+    exploreClassMethodGuardList(controller, controllerMethodMetadata.methodKey);
 
   const controllerMethodMiddlewareList: (
     | NewableFunction
     | ApplyMiddlewareOptions
-  )[] = exploreControllerMethodMiddlewareList(
+  )[] = exploreClassMethodMiddlewareList(
     controller,
     controllerMethodMetadata.methodKey,
   );
