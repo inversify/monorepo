@@ -1,12 +1,10 @@
 /* eslint-disable sort-keys */
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
-import express from 'express';
-import { Container, Newable } from 'inversify';
+import { Container } from 'inversify';
 
 import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
 import { Server } from '../../server/models/Server';
-import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
-import { swaggerUiControllerExpressBuilder } from './swaggerUiControllerExpressBuilder';
+import { SwaggerUiExpressProvider } from '../services/SwaggerUiExpressProvider';
 
 void (async () => {
   const apiPathFixture: string = '/api';
@@ -2425,13 +2423,17 @@ void (async () => {
 
   const container: Container = new Container();
 
-  const controller: Newable<BaseSwaggerUiController<express.Response, void>> =
-    swaggerUiControllerExpressBuilder({
-      apiPath: apiPathFixture,
+  const provider: SwaggerUiExpressProvider = new SwaggerUiExpressProvider({
+    api: {
       openApiObject: specFixture,
-    });
+      path: apiPathFixture,
+    },
+    ui: {
+      title: 'OneGame API docs',
+    },
+  });
 
-  container.bind(controller).toSelf().inSingletonScope();
+  provider.provide(container);
 
   const server: Server = await buildExpressServer(container);
 

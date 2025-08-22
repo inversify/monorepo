@@ -17,12 +17,12 @@ import { Newable } from 'inversify';
 import mime from 'mime-types';
 
 import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
-import { SwaggerUiControllerOptions } from '../models/SwaggerUiControllerOptions';
+import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 
-export function swaggerUiControllerHonoBuilder(
-  options: SwaggerUiControllerOptions,
+export function buildSwaggerUiHonoController(
+  options: SwaggerUiProviderOptions,
 ): Newable<BaseSwaggerUiController<Context, Response | undefined>> {
-  @Controller(options.apiPath)
+  @Controller(options.api.path)
   class SwaggerUiHonoController extends BaseSwaggerUiController<
     Context,
     Response | undefined

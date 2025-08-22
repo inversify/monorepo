@@ -2,26 +2,26 @@ import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { getAbsoluteFSPath } from 'swagger-ui-dist';
 
 import { htmlTemplateString, jsTemplateString } from '../data/constants';
-import { SwaggerUiControllerOptions } from '../models/SwaggerUiControllerOptions';
 import { SwaggerUiInitOptions } from '../models/SwaggerUiInitOptions';
 import { SwaggerUiOptions } from '../models/SwaggerUiOptions';
+import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 
 export abstract class BaseSwaggerUiController<TResponse, TResult> {
-  readonly #options: SwaggerUiControllerOptions;
+  readonly #options: SwaggerUiProviderOptions;
   readonly #swaggerUiHtml: string;
   readonly #swaggerUiInitJs: string;
 
-  constructor(options: SwaggerUiControllerOptions) {
+  constructor(options: SwaggerUiProviderOptions) {
     this.#options = options;
     this.#swaggerUiHtml = this.#buildSwaggerUiHtml(options);
     this.#swaggerUiInitJs = this.#buildSwaggerInitJs(
-      options.openApiObject,
+      options.api.openApiObject,
       options.ui?.swaggerUiOptions,
     );
   }
 
   public getOpenApiObject(): OpenApi3Dot1Object {
-    return this.#options.openApiObject;
+    return this.#options.api.openApiObject;
   }
 
   public getSwaggerUi(): string {
@@ -76,7 +76,7 @@ export abstract class BaseSwaggerUiController<TResponse, TResult> {
     return jsTemplateString.replace('<% swaggerOptions %>', jsInitOptions);
   }
 
-  #buildSwaggerUiHtml(options: SwaggerUiControllerOptions): string {
+  #buildSwaggerUiHtml(options: SwaggerUiProviderOptions): string {
     const explorerEnabled: boolean = options.ui?.explorerEnabled === true;
 
     const explorerCss: string = explorerEnabled
@@ -87,7 +87,7 @@ export abstract class BaseSwaggerUiController<TResponse, TResult> {
       .replace('<% customCss %>', options.ui?.customCss ?? '')
       .replace('<% explorerCss %>', explorerCss)
       .replace('<% favIconString %>', '')
-      .replace(/<% baseUrl %>/g, `${options.apiPath}/resources/`)
+      .replace(/<% baseUrl %>/g, `${options.api.path}/resources/`)
       .replace(
         '<% customJs %>',
         this.#toTags(

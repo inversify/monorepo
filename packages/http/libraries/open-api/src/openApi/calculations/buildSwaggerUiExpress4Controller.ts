@@ -10,12 +10,12 @@ import express from 'express4';
 import { Newable } from 'inversify';
 
 import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
-import { SwaggerUiControllerOptions } from '../models/SwaggerUiControllerOptions';
+import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 
-export function swaggerUiControllerExpress4Builder(
-  options: SwaggerUiControllerOptions,
+export function buildSwaggerUiExpress4Controller(
+  options: SwaggerUiProviderOptions,
 ): Newable<BaseSwaggerUiController<express.Response, void>> {
-  @Controller(options.apiPath)
+  @Controller(options.api.path)
   class SwaggerUiExpressController extends BaseSwaggerUiController<
     express.Response,
     void

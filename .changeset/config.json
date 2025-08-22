@@ -25,6 +25,7 @@
     "@inversifyjs/http-express-v4",
     "@inversifyjs/http-fastify",
     "@inversifyjs/http-hono",
+    "@inversifyjs/http-open-api",
     "@inversifyjs/logger"
   ]
 }

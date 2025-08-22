@@ -3,12 +3,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
+import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
 import { Server } from '../../server/models/Server';
-import { swaggerUiControllerExpressBuilder } from './swaggerUiControllerExpressBuilder';
+import { buildSwaggerUiHonoController } from './buildSwaggerUiHonoController';
 
-describe(swaggerUiControllerExpressBuilder, () => {
-  describe('having an express http server', () => {
+describe(buildSwaggerUiHonoController, () => {
+  describe('having an hono http server', () => {
     let apiPathFixture: string;
     let specFixture: OpenApi3Dot1Object;
 
@@ -25,14 +25,16 @@ describe(swaggerUiControllerExpressBuilder, () => {
       };
 
       const container: Container = new Container();
-      const controller: NewableFunction = swaggerUiControllerExpressBuilder({
-        apiPath: apiPathFixture,
-        openApiObject: specFixture,
+      const controller: NewableFunction = buildSwaggerUiHonoController({
+        api: {
+          openApiObject: specFixture,
+          path: apiPathFixture,
+        },
       });
 
       container.bind(controller).toSelf().inSingletonScope();
 
-      server = await buildExpressServer(container);
+      server = await buildHonoServer(container);
     });
 
     afterAll(async () => {

@@ -3,12 +3,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { Container } from 'inversify';
 
-import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
+import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
 import { Server } from '../../server/models/Server';
-import { swaggerUiControllerFastifyBuilder } from './swaggerUiControllerFastifyBuilder';
+import { buildSwaggerUiExpress4Controller } from './buildSwaggerUiExpress4Controller';
 
-describe(swaggerUiControllerFastifyBuilder, () => {
-  describe('having an fastify http server', () => {
+describe(buildSwaggerUiExpress4Controller, () => {
+  describe('having an express http server', () => {
     let apiPathFixture: string;
     let specFixture: OpenApi3Dot1Object;
 
@@ -25,14 +25,16 @@ describe(swaggerUiControllerFastifyBuilder, () => {
       };
 
       const container: Container = new Container();
-      const controller: NewableFunction = swaggerUiControllerFastifyBuilder({
-        apiPath: apiPathFixture,
-        openApiObject: specFixture,
+      const controller: NewableFunction = buildSwaggerUiExpress4Controller({
+        api: {
+          openApiObject: specFixture,
+          path: apiPathFixture,
+        },
       });
 
       container.bind(controller).toSelf().inSingletonScope();
 
-      server = await buildFastifyServer(container);
+      server = await buildExpressServer(container);
     });
 
     afterAll(async () => {

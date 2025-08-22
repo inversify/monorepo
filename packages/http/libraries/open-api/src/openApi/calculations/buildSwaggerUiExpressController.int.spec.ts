@@ -5,9 +5,9 @@ import { Container } from 'inversify';
 
 import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
 import { Server } from '../../server/models/Server';
-import { swaggerUiControllerExpress4Builder } from './swaggerUiControllerExpress4Builder';
+import { buildSwaggerUiExpressController } from './buildSwaggerUiExpressController';
 
-describe(swaggerUiControllerExpress4Builder, () => {
+describe(buildSwaggerUiExpressController, () => {
   describe('having an express http server', () => {
     let apiPathFixture: string;
     let specFixture: OpenApi3Dot1Object;
@@ -25,9 +25,11 @@ describe(swaggerUiControllerExpress4Builder, () => {
       };
 
       const container: Container = new Container();
-      const controller: NewableFunction = swaggerUiControllerExpress4Builder({
-        apiPath: apiPathFixture,
-        openApiObject: specFixture,
+      const controller: NewableFunction = buildSwaggerUiExpressController({
+        api: {
+          openApiObject: specFixture,
+          path: apiPathFixture,
+        },
       });
 
       container.bind(controller).toSelf().inSingletonScope();
