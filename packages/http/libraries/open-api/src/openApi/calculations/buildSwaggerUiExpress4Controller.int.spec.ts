@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
+import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server';
 import { Server } from '../../server/models/Server';
 import { buildSwaggerUiExpress4Controller } from './buildSwaggerUiExpress4Controller';
 
@@ -34,7 +34,7 @@ describe(buildSwaggerUiExpress4Controller, () => {
 
       container.bind(controller).toSelf().inSingletonScope();
 
-      server = await buildExpressServer(container);
+      server = await buildExpress4Server(container);
     });
 
     afterAll(async () => {
@@ -83,9 +83,9 @@ describe(buildSwaggerUiExpress4Controller, () => {
         );
       });
 
-      it('should return an "text/javascript" Content-Type header', () => {
+      it('should return an "application/javascript" Content-Type header', () => {
         expect(response.headers.get('Content-Type')).toStrictEqual(
-          expect.stringContaining('text/javascript'),
+          expect.stringContaining('application/javascript'),
         );
       });
 
