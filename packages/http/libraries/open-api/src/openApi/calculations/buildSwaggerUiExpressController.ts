@@ -1,4 +1,5 @@
 import {
+  buildNormalizedPath,
   Controller,
   Get,
   Params,
@@ -15,7 +16,7 @@ import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 export function buildSwaggerUiExpressController(
   options: SwaggerUiProviderOptions,
 ): Newable<BaseSwaggerUiController<express.Response, void>> {
-  @Controller(options.api.path)
+  @Controller(buildNormalizedPath(options.api.path))
   class SwaggerUiExpressController extends BaseSwaggerUiController<
     express.Response,
     void

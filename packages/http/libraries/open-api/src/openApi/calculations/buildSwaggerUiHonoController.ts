@@ -3,6 +3,7 @@ import path from 'node:path';
 import { Readable } from 'node:stream';
 
 import {
+  buildNormalizedPath,
   Controller,
   Get,
   Params,
@@ -22,7 +23,7 @@ import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 export function buildSwaggerUiHonoController(
   options: SwaggerUiProviderOptions,
 ): Newable<BaseSwaggerUiController<Context, Response | undefined>> {
-  @Controller(options.api.path)
+  @Controller(buildNormalizedPath(options.api.path))
   class SwaggerUiHonoController extends BaseSwaggerUiController<
     Context,
     Response | undefined

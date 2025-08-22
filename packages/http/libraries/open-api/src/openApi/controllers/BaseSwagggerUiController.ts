@@ -1,3 +1,4 @@
+import { buildNormalizedPath } from '@inversifyjs/http-core';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { getAbsoluteFSPath } from 'swagger-ui-dist';
 
@@ -7,11 +8,14 @@ import { SwaggerUiOptions } from '../models/SwaggerUiOptions';
 import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 
 export abstract class BaseSwaggerUiController<TResponse, TResult> {
+  protected _basePath: string;
+
   readonly #options: SwaggerUiProviderOptions;
   readonly #swaggerUiHtml: string;
   readonly #swaggerUiInitJs: string;
 
   constructor(options: SwaggerUiProviderOptions) {
+    this._basePath = buildNormalizedPath(options.api.path);
     this.#options = options;
     this.#swaggerUiHtml = this.#buildSwaggerUiHtml(options);
     this.#swaggerUiInitJs = this.#buildSwaggerInitJs(
@@ -87,7 +91,7 @@ export abstract class BaseSwaggerUiController<TResponse, TResult> {
       .replace('<% customCss %>', options.ui?.customCss ?? '')
       .replace('<% explorerCss %>', explorerCss)
       .replace('<% favIconString %>', '')
-      .replace(/<% baseUrl %>/g, `${options.api.path}/resources/`)
+      .replace(/<% baseUrl %>/g, `${this._basePath}/resources/`)
       .replace(
         '<% customJs %>',
         this.#toTags(

@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import {
+  buildNormalizedPath,
   Controller,
   Get,
   Params,
@@ -19,7 +20,7 @@ import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 export function buildSwaggerUiFastifyController(
   options: SwaggerUiProviderOptions,
 ): Newable<BaseSwaggerUiController<FastifyReply, void | Promise<void>>> {
-  @Controller(options.api.path)
+  @Controller(buildNormalizedPath(options.api.path))
   class SwaggerUiFastifyController extends BaseSwaggerUiController<
     FastifyReply,
     void | Promise<void>
