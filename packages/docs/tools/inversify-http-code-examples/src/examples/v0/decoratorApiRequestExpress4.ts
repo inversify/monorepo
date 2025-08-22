@@ -1,5 +1,5 @@
 import {
-  BadRequestHttpResponse,
+  BadRequestResponse,
   Controller,
   Get,
   Request,
@@ -20,9 +20,7 @@ export class RequestExpressController {
 
     if (Array.isArray(value)) {
       if (value.length !== 1) {
-        throw new BadRequestHttpResponse(
-          'Expected a single `x-test-header` value',
-        );
+        throw new BadRequestResponse('Expected a single `x-test-header` value');
       }
 
       [parsedValue] = value as [string];

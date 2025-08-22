@@ -1,4 +1,4 @@
-import { BadRequestHttpResponse, Pipe } from '@inversifyjs/http-core';
+import { BadRequestResponse, Pipe } from '@inversifyjs/http-core';
 
 // Begin-example
 export class ParseNumberPipe implements Pipe<unknown, number> {
@@ -6,7 +6,7 @@ export class ParseNumberPipe implements Pipe<unknown, number> {
     const parsed: number = Number(input);
 
     if (Number.isNaN(parsed)) {
-      throw new BadRequestHttpResponse('Invalid number');
+      throw new BadRequestResponse('Invalid number');
     }
 
     return parsed;

@@ -2,10 +2,10 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
+import { StatusCode as HttpStatusCode } from '@inversifyjs/framework-core';
 import { setReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMethodStatusCodeMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodStatusCodeMetadataReflectKey';
-import { HttpStatusCode } from '../responses/HttpStatusCode';
 import { StatusCode } from './StatusCode';
 
 describe(StatusCode, () => {

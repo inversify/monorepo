@@ -3,12 +3,18 @@ import { Readable } from 'node:stream';
 import {
   ApplyMiddlewareOptions,
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
+  ErrorResponse,
+  ForbiddenResponse,
   Guard,
+  InternalServerErrorResponse,
   isPipe,
+  isResponse,
   Middleware,
   MiddlewareOptions,
   Pipe,
   PipeMetadata,
+  Response,
+  StatusCode,
 } from '@inversifyjs/framework-core';
 import { ConsoleLogger, Logger } from '@inversifyjs/logger';
 import { Container, Newable } from 'inversify';
@@ -28,12 +34,6 @@ import { RequestMethodParameterType } from '../models/RequestMethodParameterType
 import { RequiredOptions } from '../models/RequiredOptions';
 import { RouteParams } from '../models/RouteParams';
 import { RouterParams } from '../models/RouterParams';
-import { isHttpResponse } from '../responses/calculations/isHttpResponse';
-import { ErrorHttpResponse } from '../responses/error/ErrorHttpResponse';
-import { ForbiddenHttpResponse } from '../responses/error/ForbiddenHttpResponse';
-import { InternalServerErrorHttpResponse } from '../responses/error/InternalServerErrorHttpResponse';
-import { HttpResponse } from '../responses/HttpResponse';
-import { HttpStatusCode } from '../responses/HttpStatusCode';
 
 const DEFAULT_ERROR_MESSAGE: string = 'An unexpected error occurred';
 
@@ -502,14 +502,14 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     error: unknown,
   ): TResult {
-    let httpResponse: HttpResponse | undefined = undefined;
+    let httpResponse: Response | undefined = undefined;
 
-    if (ErrorHttpResponse.is(error)) {
+    if (ErrorResponse.is(error)) {
       httpResponse = error;
     } else {
       this.#printError(error);
 
-      httpResponse = new InternalServerErrorHttpResponse(undefined, undefined, {
+      httpResponse = new InternalServerErrorResponse(undefined, undefined, {
         cause: error,
       });
     }
@@ -531,13 +531,13 @@ export abstract class InversifyHttpAdapter<
     request: TRequest,
     response: TResponse,
     value: ControllerResponse,
-    statusCode?: HttpStatusCode,
+    statusCode?: StatusCode,
   ): TResult {
     let body: object | string | number | boolean | Readable | undefined =
       undefined;
-    let httpStatusCode: HttpStatusCode | undefined = statusCode;
+    let httpStatusCode: StatusCode | undefined = statusCode;
 
-    if (isHttpResponse(value)) {
+    if (isResponse(value)) {
       body = value.body;
       httpStatusCode = value.statusCode;
     } else {
@@ -608,7 +608,7 @@ export abstract class InversifyHttpAdapter<
             return undefined;
           }
 
-          return this.#reply(request, response, new ForbiddenHttpResponse());
+          return this.#reply(request, response, new ForbiddenResponse());
         } catch (error: unknown) {
           return this.#handleError(request, response, error);
         }
@@ -693,7 +693,7 @@ export abstract class InversifyHttpAdapter<
   protected abstract _setStatus(
     request: TRequest,
     response: TResponse,
-    statusCode: HttpStatusCode,
+    statusCode: StatusCode,
   ): void;
 
   protected abstract _setHeader(

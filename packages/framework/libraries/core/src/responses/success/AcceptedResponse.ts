@@ -1,0 +1,8 @@
+import { StatusCode } from '../StatusCode';
+import { SuccessResponse } from './SuccessResponse';
+
+export class AcceptedResponse extends SuccessResponse {
+  constructor(body?: object | string | number | boolean) {
+    super(StatusCode.ACCEPTED, body);
+  }
+}

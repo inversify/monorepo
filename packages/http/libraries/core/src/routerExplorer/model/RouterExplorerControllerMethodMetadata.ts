@@ -1,5 +1,6 @@
+import { StatusCode } from '@inversifyjs/framework-core';
+
 import { RequestMethodType } from '../../http/models/RequestMethodType';
-import { HttpStatusCode } from '../../http/responses/HttpStatusCode';
 import { ControllerMethodParameterMetadata } from './ControllerMethodParameterMetadata';
 
 export interface RouterExplorerControllerMethodMetadata<
@@ -18,6 +19,6 @@ export interface RouterExplorerControllerMethodMetadata<
   postHandlerMiddlewareList: NewableFunction[];
   preHandlerMiddlewareList: NewableFunction[];
   requestMethodType: RequestMethodType;
-  statusCode: HttpStatusCode | undefined;
+  statusCode: StatusCode | undefined;
   useNativeHandler: boolean;
 }

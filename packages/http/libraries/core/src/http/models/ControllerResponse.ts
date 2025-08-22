@@ -1,9 +1,9 @@
 import { Readable } from 'node:stream';
 
-import { HttpResponse } from '../responses/HttpResponse';
+import { Response } from '@inversifyjs/framework-core';
 
 export type ControllerResponse =
-  | HttpResponse
+  | Response
   | object
   | string
   | number

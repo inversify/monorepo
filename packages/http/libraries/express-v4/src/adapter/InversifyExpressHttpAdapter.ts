@@ -175,8 +175,7 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     parameterName?: string,
   ): unknown {
     return parameterName !== undefined
-      ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        request.cookies[parameterName]
+      ? request.cookies[parameterName]
       : request.cookies;
   }
 

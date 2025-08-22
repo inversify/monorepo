@@ -4,9 +4,9 @@ import {
   exploreClassMethodGuardList,
   exploreClassMethodMiddlewareList,
   MiddlewareOptions,
+  StatusCode,
 } from '@inversifyjs/framework-core';
 
-import { HttpStatusCode } from '../../http/responses/HttpStatusCode';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
@@ -31,7 +31,7 @@ export function buildRouterExplorerControllerMethodMetadata<
     controllerMethodMetadata.methodKey,
   );
 
-  const controllerMethodStatusCode: HttpStatusCode | undefined =
+  const controllerMethodStatusCode: StatusCode | undefined =
     exploreControllerMethodStatusCodeMetadata(
       controller,
       controllerMethodMetadata.methodKey,
