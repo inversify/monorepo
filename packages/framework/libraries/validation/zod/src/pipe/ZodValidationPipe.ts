@@ -1,4 +1,4 @@
-import { Pipe, PipeMetadata } from '@inversifyjs/http-core';
+import { Pipe, PipeMetadata } from '@inversifyjs/framework-core';
 import { BadRequestHttpResponse } from '@inversifyjs/http-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { ZodSafeParseResult, ZodType } from 'zod';

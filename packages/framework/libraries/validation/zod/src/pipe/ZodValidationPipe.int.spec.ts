@@ -3,7 +3,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import http, { RequestListener } from 'node:http';
 import { AddressInfo } from 'node:net';
 
-import { Body, Controller, Pipe, Post } from '@inversifyjs/http-core';
+import { Pipe } from '@inversifyjs/framework-core';
+import { Body, Controller, Post } from '@inversifyjs/http-core';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import express from 'express';
 import { Container, Newable } from 'inversify';

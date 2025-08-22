@@ -5,10 +5,11 @@
   },
   "description": "InversifyJs http zod validation package",
   "dependencies": {
-    "@inversifyjs/http-core": "workspace:*",
+    "@inversifyjs/framework-core": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "workspace:*"
   },
   "devDependencies": {
+    "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@stryker-mutator/core": "9.0.1",
     "@stryker-mutator/typescript-checker": "9.0.1",
