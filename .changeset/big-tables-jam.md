@@ -1,5 +1,5 @@
 ---
-"@inversifyjs/http-zod": minor
+"@inversifyjs/zod-validation": minor
 ---
 
 Added `ZodValidationPipe`

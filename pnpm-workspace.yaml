@@ -8,7 +8,7 @@ packages:
   - packages/foundation/tools/*
   - packages/framework/libraries/*
   - packages/http/libraries/*
-  - packages/http/libraries/validation/*
+  - packages/framework/libraries/validation/*
   - packages/http/tools/*
   - packages/json-schema/libraries/*
   - packages/logger

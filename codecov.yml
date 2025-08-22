@@ -65,4 +65,4 @@ flags:
       - packages/foundation/libraries/reflect-metadata-utils
   '@inversifyjs/zod-validation':
     paths:
-      - packages/http/libraries/validation/zod
+      - packages/framework/libraries/validation/zod
