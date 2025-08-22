@@ -17,6 +17,9 @@ coverage:
       '@inversifyjs/http-core':
         flags:
           - '@inversifyjs/http-core'
+      '@inversifyjs/http-open-api':
+        flags:
+          - '@inversifyjs/http-open-api'
       '@inversifyjs/logger':
         flags:
           - '@inversifyjs/logger'
@@ -45,6 +48,9 @@ flags:
   '@inversifyjs/http-core':
     paths:
       - packages/http/libraries/core
+  '@inversifyjs/http-open-api':
+    paths:
+      - packages/http/libraries/open-api
   '@inversifyjs/logger':
     paths:
       - packages/logger
