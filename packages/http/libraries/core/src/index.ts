@@ -1,4 +1,5 @@
 import { InversifyHttpAdapter } from './http/adapter/InversifyHttpAdapter';
+import { buildNormalizedPath } from './http/calculations/buildNormalizedPath';
 import { createCustomParameterDecorator } from './http/calculations/createCustomParameterDecorator';
 import { All } from './http/decorators/All';
 import { ApplyMiddleware } from './http/decorators/ApplyMiddleware';
@@ -84,6 +85,7 @@ export {
   BadGatewayHttpResponse,
   BadRequestHttpResponse,
   Body,
+  buildNormalizedPath,
   ConflictHttpResponse,
   ContentDifferentHttpResponse,
   Controller,
