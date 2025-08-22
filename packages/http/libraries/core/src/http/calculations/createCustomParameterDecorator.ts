@@ -1,8 +1,8 @@
+import { Pipe } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
 
 import { CustomParameterDecoratorHandler } from '../models/CustomParameterDecoratorHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { Pipe } from '../pipe/model/Pipe';
 import { buildRequestParameterDecorator } from './buildRequestParameterDecorator';
 
 export function createCustomParameterDecorator<TRequest, TResponse, TResult>(

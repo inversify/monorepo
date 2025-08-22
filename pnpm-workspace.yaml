@@ -6,10 +6,13 @@ packages:
   - packages/docs/tools/*
   - packages/foundation/libraries/*
   - packages/foundation/tools/*
+  - packages/framework/libraries/*
   - packages/http/libraries/*
   - packages/http/libraries/validation/*
   - packages/http/tools/*
+  - packages/json-schema/libraries/*
   - packages/logger
+  - packages/open-api/libraries/*
 
 onlyBuiltDependencies:
   - '@nestjs/core'

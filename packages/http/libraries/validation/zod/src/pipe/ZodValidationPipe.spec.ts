@@ -10,10 +10,7 @@ import {
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
-import {
-  PipeMetadata,
-  RequestMethodParameterType,
-} from '@inversifyjs/http-core';
+import { PipeMetadata } from '@inversifyjs/http-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { ZodType } from 'zod';
 
@@ -44,7 +41,6 @@ describe(ZodValidationPipe, () => {
         metadataFixture = {
           methodName: 'methodName',
           parameterIndex: 0,
-          parameterMethodType: RequestMethodParameterType.Body,
           targetClass: class {},
         };
 

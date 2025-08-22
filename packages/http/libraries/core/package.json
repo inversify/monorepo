@@ -5,6 +5,7 @@
   },
   "description": "InversifyJs http core package",
   "dependencies": {
+    "@inversifyjs/framework-core": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "workspace:*",
     "@inversifyjs/logger": "workspace:*"
   },
@@ -17,7 +18,7 @@
     "eslint": "9.33.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
-    "rollup": "4.46.3",
+    "rollup": "4.47.1",
     "ts-loader": "9.5.2",
     "tslib": "2.8.1",
     "typescript": "5.9.2",
@@ -50,7 +51,7 @@
   "name": "@inversifyjs/http-core",
   "private": "true",
   "peerDependencies": {
-    "inversify": "^7.8.1"
+    "inversify": "^7.9.0"
   },
   "publishConfig": {
     "access": "public"

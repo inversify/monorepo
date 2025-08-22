@@ -1,21 +1,23 @@
 import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
+vitest.mock('@inversifyjs/framework-core');
+
 vitest.mock('./exploreControllerMethodMetadataList');
-vitest.mock('./exploreControllerGuardList');
-vitest.mock('./exploreControllerMiddlewareList');
-vitest.mock('./buildMiddlewareOptionsFromApplyMiddlewareOptions');
 vitest.mock('./buildRouterExplorerControllerMethodMetadataList');
+
+import {
+  buildMiddlewareOptionsFromApplyMiddlewareOptions,
+  exploreClassGuardList,
+  exploreClassMiddlewareList,
+  MiddlewareOptions,
+} from '@inversifyjs/framework-core';
 
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
-import { MiddlewareOptions } from '../model/MiddlewareOptions';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
-import { buildMiddlewareOptionsFromApplyMiddlewareOptions } from './buildMiddlewareOptionsFromApplyMiddlewareOptions';
 import { buildRouterExplorerControllerMetadata } from './buildRouterExplorerControllerMetadata';
 import { buildRouterExplorerControllerMethodMetadataList } from './buildRouterExplorerControllerMethodMetadataList';
-import { exploreControllerGuardList } from './exploreControllerGuardList';
 import { exploreControllerMethodMetadataList } from './exploreControllerMethodMetadataList';
-import { exploreControllerMiddlewareList } from './exploreControllerMiddlewareList';
 
 describe(buildRouterExplorerControllerMetadata, () => {
   describe('when called', () => {
@@ -46,11 +48,11 @@ describe(buildRouterExplorerControllerMetadata, () => {
         .mockReturnValueOnce(controllerMethodMetadataListFixture);
 
       vitest
-        .mocked(exploreControllerGuardList)
+        .mocked(exploreClassGuardList)
         .mockReturnValueOnce(controllerGuardListFixture);
 
       vitest
-        .mocked(exploreControllerMiddlewareList)
+        .mocked(exploreClassMiddlewareList)
         .mockReturnValueOnce(controllerMiddlewareListFixture);
 
       vitest
@@ -71,16 +73,16 @@ describe(buildRouterExplorerControllerMetadata, () => {
       );
     });
 
-    it('should call exploreControllerGuardList', () => {
-      expect(exploreControllerGuardList).toHaveBeenCalledTimes(1);
-      expect(exploreControllerGuardList).toHaveBeenCalledWith(
+    it('should call exploreClassGuardList', () => {
+      expect(exploreClassGuardList).toHaveBeenCalledTimes(1);
+      expect(exploreClassGuardList).toHaveBeenCalledWith(
         controllerMetadataFixture.target,
       );
     });
 
     it('should call exploreControllerMiddlewareList', () => {
-      expect(exploreControllerMiddlewareList).toHaveBeenCalledTimes(1);
-      expect(exploreControllerMiddlewareList).toHaveBeenCalledWith(
+      expect(exploreClassMiddlewareList).toHaveBeenCalledTimes(1);
+      expect(exploreClassMiddlewareList).toHaveBeenCalledWith(
         controllerMetadataFixture.target,
       );
     });

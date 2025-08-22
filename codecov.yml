@@ -45,6 +45,9 @@ flags:
   '@inversifyjs/core':
     paths:
       - packages/container/libraries/core/
+  '@inversifyjs/framework-core':
+    paths:
+      - packages/framework/libraries/core
   '@inversifyjs/http-core':
     paths:
       - packages/http/libraries/core

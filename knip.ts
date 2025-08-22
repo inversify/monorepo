@@ -20,6 +20,9 @@ const defaultWorkspaceProjectConfig: WorkspaceProjectConfig & {
     "!vitest.config.stryker.mjs",
     "!**/__mocks__",
   ],
+  rollup: {
+    entry: "*rollup.config.mjs",
+  },
 };
 
 export default {
@@ -77,6 +80,7 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/framework/libraries/*": defaultWorkspaceProjectConfig,
     "packages/http/libraries/*": defaultWorkspaceProjectConfig,
     "packages/http/libraries/validation/*": defaultWorkspaceProjectConfig,
     "packages/http/tools/e2e-tests": {
@@ -104,6 +108,8 @@ export default {
       ],
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/json-schema/libraries/*": defaultWorkspaceProjectConfig,
     "packages/logger": defaultWorkspaceProjectConfig,
+    "packages/open-api/libraries/*": defaultWorkspaceProjectConfig,
   },
 } satisfies KnipConfig;

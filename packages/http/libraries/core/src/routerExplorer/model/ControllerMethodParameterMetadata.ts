@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Pipe } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
 
 import { CustomParameterDecoratorHandler } from '../../http/models/CustomParameterDecoratorHandler';
 import { RequestMethodParameterType } from '../../http/models/RequestMethodParameterType';
-import { Pipe } from '../../http/pipe/model/Pipe';
 
 export interface ControllerMethodParameterMetadata<
   TRequest = any,
