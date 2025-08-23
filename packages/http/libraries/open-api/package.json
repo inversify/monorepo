@@ -1,0 +1,93 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJs HTTP OpenApi package",
+  "dependencies": {
+    "@inversifyjs/http-core": "workspace:*",
+    "@inversifyjs/open-api-types": "workspace:*",
+    "mime-types": "^3.0.1",
+    "swagger-ui-dist": "^5.27.1"
+  },
+  "devDependencies": {
+    "@hono/node-server": "^1.19.0",
+    "@inversifyjs/http-express": "workspace:*",
+    "@inversifyjs/http-express-v4": "workspace:*",
+    "@inversifyjs/http-fastify": "workspace:*",
+    "@inversifyjs/http-hono": "workspace:*",
+    "@stryker-mutator/core": "9.0.1",
+    "@stryker-mutator/typescript-checker": "9.0.1",
+    "@stryker-mutator/vitest-runner": "9.0.1",
+    "@types/express": "^5.0.3",
+    "@types/express4": "npm:@types/express@4.17.23",
+    "@types/mime-types": "^3.0.1",
+    "@types/node": "22.17.2",
+    "@types/swagger-ui-dist": "3.30.6",
+    "@vitest/coverage-v8": "3.2.4",
+    "eslint": "9.33.0",
+    "express": "^5.1.0",
+    "express4": "npm:express@4.21.2",
+    "fastify": "^5.5.0",
+    "hono": "^4.9.4",
+    "prettier": "3.6.2",
+    "rimraf": "6.0.1",
+    "rollup": "4.46.4",
+    "ts-loader": "9.5.2",
+    "tslib": "2.8.1",
+    "typescript": "5.9.2",
+    "vitest": "3.2.4"
+  },
+  "devEngines": {
+    "node": "^22.10.2",
+    "pnpm": "^10.13.1"
+  },
+  "homepage": "https://inversify.io",
+  "keywords": [
+    "dependency injection",
+    "dependency inversion",
+    "di",
+    "inversion of control container",
+    "ioc",
+    "javascript",
+    "node",
+    "typescript"
+  ],
+  "license": "MIT",
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "exports": {
+    ".": {
+      "import": "./lib/esm/index.js",
+      "require": "./lib/cjs/index.js"
+    }
+  },
+  "name": "@inversifyjs/http-open-api",
+  "private": "true",
+  "peerDependencies": {
+    "inversify": "^7.8.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "build": "pnpm run build:cjs && pnpm run build:esm",
+    "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
+    "build:esm": "rollup -c ./rollup.config.mjs && pnpm exec foundation-ts-package-esm ./lib/esm",
+    "build:clean": "rimraf lib",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src",
+    "prebuild": "pnpm run build:clean",
+    "test": "vitest run",
+    "test:integration": "pnpm run test --project Integration",
+    "test:coverage": "pnpm run test:unit --coverage",
+    "test:mutation": "stryker run",
+    "test:uncommitted": "pnpm run test --changed=HEAD",
+    "test:unit": "pnpm run test --project Unit"
+  },
+  "version": "1.0.0"
+}
