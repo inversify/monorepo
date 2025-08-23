@@ -8,7 +8,7 @@ import { Server } from '../../server/models/Server';
 import { buildSwaggerUiHonoController } from './buildSwaggerUiHonoController';
 
 describe(buildSwaggerUiHonoController, () => {
-  describe('having an hono http server', () => {
+  describe('having a hono http server', () => {
     let apiPathFixture: string;
     let specFixture: OpenApi3Dot1Object;
 
