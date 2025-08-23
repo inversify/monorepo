@@ -342,6 +342,7 @@ describe(SwaggerUiProvider, () => {
           methodToPathItemObjectMap: new Map([
             ['testMethod', operationObjectFixture],
           ]),
+          servers: undefined,
           summary: 'Test controller summary',
         };
 
@@ -445,6 +446,7 @@ describe(SwaggerUiProvider, () => {
           methodToPathItemObjectMap: new Map([
             ['testMethod', operationObjectFixture],
           ]),
+          servers: undefined,
           summary: undefined,
         };
 
@@ -525,6 +527,7 @@ describe(SwaggerUiProvider, () => {
       beforeAll(() => {
         controllerOpenApiMetadataFixture = {
           methodToPathItemObjectMap: new Map(),
+          servers: undefined,
           summary: undefined,
         };
 
@@ -611,6 +614,7 @@ describe(SwaggerUiProvider, () => {
             ['putMethod', operationObjectFixture2],
             ['allMethod', operationObjectFixture3],
           ]),
+          servers: undefined,
           summary: undefined,
         };
 
@@ -749,6 +753,7 @@ describe(SwaggerUiProvider, () => {
             ['method1', operationObjectFixture],
             ['method2', operationObjectFixture],
           ]),
+          servers: undefined,
           summary: undefined,
         };
 

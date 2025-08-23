@@ -2,23 +2,26 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('./buildOrGetOperationObject');
 
-import { OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
+import {
+  OpenApi3Dot1OperationObject,
+  OpenApi3Dot1ServerObject,
+} from '@inversifyjs/open-api-types/v3Dot1';
 
 import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
 import { buildOrGetOperationObject } from './buildOrGetOperationObject';
-import { updateControllerOpenApiMetadataSummary } from './updateControllerOpenApiMetadataSummary';
+import { updateControllerOpenApiMetadataServer } from './updateControllerOpenApiMetadataServer';
 
-describe(updateControllerOpenApiMetadataSummary, () => {
-  let summaryFixture: string;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  let targetFixture: Function;
+describe(updateControllerOpenApiMetadataServer, () => {
+  let serverFixture: OpenApi3Dot1ServerObject;
 
   beforeAll(() => {
-    summaryFixture = 'Test Summary';
-    targetFixture = function testController() {};
+    serverFixture = {
+      description: 'Test Server',
+      url: 'https://api.example.com',
+    };
   });
 
-  describe('having undefined key and metadata with undefined summary', () => {
+  describe('having undefined key and metadata with undefined servers', () => {
     describe('when called', () => {
       let metadataFixture: ControllerOpenApiMetadata;
 
@@ -31,9 +34,8 @@ describe(updateControllerOpenApiMetadataSummary, () => {
           summary: undefined,
         };
 
-        result = updateControllerOpenApiMetadataSummary(
-          summaryFixture,
-          targetFixture,
+        result = updateControllerOpenApiMetadataServer(
+          serverFixture,
           undefined,
         )(metadataFixture);
       });
@@ -42,8 +44,8 @@ describe(updateControllerOpenApiMetadataSummary, () => {
         vitest.clearAllMocks();
       });
 
-      it('should set metadata.summary', () => {
-        expect(metadataFixture.summary).toBe(summaryFixture);
+      it('should set metadata.servers', () => {
+        expect(metadataFixture.servers).toStrictEqual([serverFixture]);
       });
 
       it('should return metadata', () => {
@@ -52,46 +54,49 @@ describe(updateControllerOpenApiMetadataSummary, () => {
     });
   });
 
-  describe('having undefined key and metadata with summary', () => {
+  describe('having undefined key and metadata with servers', () => {
     describe('when called', () => {
+      let existingServerFixture: OpenApi3Dot1ServerObject;
       let metadataFixture: ControllerOpenApiMetadata;
 
       let result: unknown;
 
       beforeAll(() => {
-        metadataFixture = {
-          methodToPathItemObjectMap: new Map(),
-          servers: undefined,
-          summary: 'Existing Summary',
+        existingServerFixture = {
+          description: 'Existing Server',
+          url: 'https://existing.example.com',
         };
 
-        try {
-          updateControllerOpenApiMetadataSummary(
-            summaryFixture,
-            targetFixture,
-            undefined,
-          )(metadataFixture);
-        } catch (error: unknown) {
-          result = error;
-        }
+        metadataFixture = {
+          methodToPathItemObjectMap: new Map(),
+          servers: [existingServerFixture],
+          summary: undefined,
+        };
+
+        result = updateControllerOpenApiMetadataServer(
+          serverFixture,
+          undefined,
+        )(metadataFixture);
       });
 
       afterAll(() => {
         vitest.clearAllMocks();
       });
 
-      it('should throw an Error', () => {
-        expect(result).toBeInstanceOf(Error);
-        expect(result).toStrictEqual(
-          new Error(
-            `Cannot define ${targetFixture.name} summary more than once`,
-          ),
-        );
+      it('should add server to metadata.servers', () => {
+        expect(metadataFixture.servers).toStrictEqual([
+          existingServerFixture,
+          serverFixture,
+        ]);
+      });
+
+      it('should return metadata', () => {
+        expect(result).toBe(metadataFixture);
       });
     });
   });
 
-  describe('having a string key and metadata with operation object with undefined summary', () => {
+  describe('having a string key and metadata with operation object with undefined servers', () => {
     describe('when called', () => {
       let keyFixture: string;
       let metadataFixture: ControllerOpenApiMetadata;
@@ -113,9 +118,8 @@ describe(updateControllerOpenApiMetadataSummary, () => {
           .mocked(buildOrGetOperationObject)
           .mockReturnValueOnce(operationObjectFixture);
 
-        result = updateControllerOpenApiMetadataSummary(
-          summaryFixture,
-          targetFixture,
+        result = updateControllerOpenApiMetadataServer(
+          serverFixture,
           keyFixture,
         )(metadataFixture);
       });
@@ -132,8 +136,8 @@ describe(updateControllerOpenApiMetadataSummary, () => {
         );
       });
 
-      it('should set operationObject.summary', () => {
-        expect(operationObjectFixture.summary).toBe(summaryFixture);
+      it('should set operationObject.servers', () => {
+        expect(operationObjectFixture.servers).toStrictEqual([serverFixture]);
       });
 
       it('should return metadata', () => {
@@ -142,10 +146,11 @@ describe(updateControllerOpenApiMetadataSummary, () => {
     });
   });
 
-  describe('having a string key and metadata with operation object with summary', () => {
+  describe('having a string key and metadata with operation object with servers', () => {
     let keyFixture: string;
     let metadataFixture: ControllerOpenApiMetadata;
     let operationObjectFixture: OpenApi3Dot1OperationObject;
+    let existingServerFixture: OpenApi3Dot1ServerObject;
 
     beforeAll(() => {
       keyFixture = 'testMethod';
@@ -155,8 +160,13 @@ describe(updateControllerOpenApiMetadataSummary, () => {
         summary: undefined,
       };
 
+      existingServerFixture = {
+        description: 'Existing Operation Server',
+        url: 'https://existing-operation.example.com',
+      };
+
       operationObjectFixture = {
-        summary: 'Existing Operation Summary',
+        servers: [existingServerFixture],
       };
 
       vitest
@@ -165,18 +175,13 @@ describe(updateControllerOpenApiMetadataSummary, () => {
     });
 
     describe('when called', () => {
-      let thrownError: unknown;
+      let result: unknown;
 
       beforeAll(() => {
-        try {
-          updateControllerOpenApiMetadataSummary(
-            summaryFixture,
-            targetFixture,
-            keyFixture,
-          )(metadataFixture);
-        } catch (error: unknown) {
-          thrownError = error;
-        }
+        result = updateControllerOpenApiMetadataServer(
+          serverFixture,
+          keyFixture,
+        )(metadataFixture);
       });
 
       afterAll(() => {
@@ -191,12 +196,15 @@ describe(updateControllerOpenApiMetadataSummary, () => {
         );
       });
 
-      it('should throw an Error', () => {
-        expect(thrownError).toStrictEqual(
-          new Error(
-            `Cannot define ${targetFixture.name}.${keyFixture} summary more than once`,
-          ),
-        );
+      it('should add server to operationObject.servers', () => {
+        expect(operationObjectFixture.servers).toStrictEqual([
+          existingServerFixture,
+          serverFixture,
+        ]);
+      });
+
+      it('should return metadata', () => {
+        expect(result).toBe(metadataFixture);
       });
     });
   });
