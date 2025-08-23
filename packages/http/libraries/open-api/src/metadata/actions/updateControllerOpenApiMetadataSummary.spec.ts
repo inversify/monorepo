@@ -27,6 +27,7 @@ describe(updateControllerOpenApiMetadataSummary, () => {
       beforeAll(() => {
         metadataFixture = {
           methodToPathItemObjectMap: new Map(),
+          servers: undefined,
           summary: undefined,
         };
 
@@ -60,6 +61,7 @@ describe(updateControllerOpenApiMetadataSummary, () => {
       beforeAll(() => {
         metadataFixture = {
           methodToPathItemObjectMap: new Map(),
+          servers: undefined,
           summary: 'Existing Summary',
         };
 
@@ -101,6 +103,7 @@ describe(updateControllerOpenApiMetadataSummary, () => {
         keyFixture = 'testMethod';
         metadataFixture = {
           methodToPathItemObjectMap: new Map(),
+          servers: undefined,
           summary: undefined,
         };
 
@@ -148,6 +151,7 @@ describe(updateControllerOpenApiMetadataSummary, () => {
       keyFixture = 'testMethod';
       metadataFixture = {
         methodToPathItemObjectMap: new Map(),
+        servers: undefined,
         summary: undefined,
       };
 
