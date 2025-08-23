@@ -1,3 +1,4 @@
+export { Summary } from './metadata/decorators/Summary';
 export { SwaggerUiExpressProvider } from './openApi/services/SwaggerUiExpressProvider';
 export { SwaggerUiExpress4Provider } from './openApi/services/SwaggerUiExpress4Provider';
 export { SwaggerUiFastifyProvider } from './openApi/services/SwaggerUiFastifyProvider';
