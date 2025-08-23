@@ -68,8 +68,14 @@ import { NonAuthoritativeInformationHttpResponse } from './http/responses/succes
 import { OkHttpResponse } from './http/responses/success/OkHttpResponse';
 import { PartialContentHttpResponse } from './http/responses/success/PartialContentHttpResponse';
 import { ResetContentHttpResponse } from './http/responses/success/ResetContentHttpResponse';
+import { exploreControllerMethodMetadataList } from './routerExplorer/calculations/exploreControllerMethodMetadataList';
+import { exploreControllers } from './routerExplorer/calculations/exploreControllers';
+import { ControllerMetadata } from './routerExplorer/model/ControllerMetadata';
+import { ControllerMethodMetadata } from './routerExplorer/model/ControllerMethodMetadata';
 
 export type {
+  ControllerMetadata,
+  ControllerMethodMetadata,
   Guard,
   HttpAdapterOptions,
   Middleware,
@@ -101,6 +107,8 @@ export {
   ForbiddenHttpResponse,
   GatewayTimeoutHttpResponse,
   Get,
+  exploreControllers as getControllerMetadataList,
+  exploreControllerMethodMetadataList as getControllerMethodMetadataList,
   GoneHttpResponse,
   Head,
   Headers,

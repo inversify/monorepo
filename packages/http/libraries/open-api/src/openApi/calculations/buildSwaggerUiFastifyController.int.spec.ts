@@ -8,7 +8,7 @@ import { Server } from '../../server/models/Server';
 import { buildSwaggerUiFastifyController } from './buildSwaggerUiFastifyController';
 
 describe(buildSwaggerUiFastifyController, () => {
-  describe('having an fastify http server', () => {
+  describe('having a fastify http server', () => {
     let apiPathFixture: string;
     let specFixture: OpenApi3Dot1Object;
 

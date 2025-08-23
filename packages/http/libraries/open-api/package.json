@@ -6,7 +6,7 @@
   "description": "InversifyJs HTTP OpenApi package",
   "dependencies": {
     "@inversifyjs/http-core": "workspace:*",
-    "@inversifyjs/open-api-types": "workspace:*",
+    "@inversifyjs/reflect-metadata-utils": "workspace:*",
     "mime-types": "^3.0.1",
     "swagger-ui-dist": "^5.27.1"
   },
@@ -16,6 +16,8 @@
     "@inversifyjs/http-express-v4": "workspace:*",
     "@inversifyjs/http-fastify": "workspace:*",
     "@inversifyjs/http-hono": "workspace:*",
+    "@inversifyjs/json-schema-types": "workspace:*",
+    "@inversifyjs/open-api-types": "workspace:*",
     "@stryker-mutator/core": "9.0.1",
     "@stryker-mutator/typescript-checker": "9.0.1",
     "@stryker-mutator/vitest-runner": "9.0.1",
