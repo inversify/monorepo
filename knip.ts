@@ -81,6 +81,7 @@ export default {
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/framework/libraries/*": defaultWorkspaceProjectConfig,
+    "packages/framework/libraries/validation/*": defaultWorkspaceProjectConfig,
     "packages/http/libraries/*": defaultWorkspaceProjectConfig,
     "packages/http/tools/e2e-tests": {
       entry: [
