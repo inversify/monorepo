@@ -8,13 +8,13 @@ export { exploreClassMethodGuardList } from './middleware/calculations/exploreCl
 export { exploreClassMethodInterceptorList } from './middleware/calculations/exploreClassMethodInterceptorList';
 export { exploreClassMethodMiddlewareList } from './middleware/calculations/exploreClassMethodMiddlewareList';
 export { exploreClassMiddlewareList } from './middleware/calculations/exploreClassMiddlewareList';
-export { MiddlewarePhase } from './middleware/model/MiddlewarePhase';
+export { MiddlewarePhase } from './middleware/models/MiddlewarePhase';
 export { isPipe } from './pipe/typeguard/isPipe';
 
-export type { Guard } from './guard/model/Guard';
-export type { Interceptor } from './interceptor/model/Interceptor';
-export type { ApplyMiddlewareOptions } from './middleware/model/ApplyMiddlewareOptions';
-export type { Middleware } from './middleware/model/Middleware';
-export type { MiddlewareOptions } from './middleware/model/MiddlewareOptions';
-export type { Pipe } from './pipe/model/Pipe';
-export type { PipeMetadata } from './pipe/model/PipeMetadata';
+export type { Guard } from './guard/models/Guard';
+export type { Interceptor } from './interceptor/models/Interceptor';
+export type { ApplyMiddlewareOptions } from './middleware/models/ApplyMiddlewareOptions';
+export type { Middleware } from './middleware/models/Middleware';
+export type { MiddlewareOptions } from './middleware/models/MiddlewareOptions';
+export type { Pipe } from './pipe/models/Pipe';
+export type { PipeMetadata } from './pipe/models/PipeMetadata';

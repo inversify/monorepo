@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Pipe } from '../model/Pipe';
+import { Pipe } from '../models/Pipe';
 import { isPipe } from './isPipe';
 
 describe(isPipe, () => {

@@ -9,7 +9,7 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { Interceptor } from '../interceptor/model/Interceptor';
+import { Interceptor } from '../interceptor/models/Interceptor';
 import { classInterceptorMetadataReflectKey } from '../reflectMetadata/data/classInterceptorMetadataReflectKey';
 import { classMethodInterceptorMetadataReflectKey } from '../reflectMetadata/data/classMethodInterceptorMetadataReflectKey';
 import { UseInterceptor } from './UseInterceptor';

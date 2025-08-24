@@ -9,7 +9,7 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { Middleware } from '../middleware/model/Middleware';
+import { Middleware } from '../middleware/models/Middleware';
 import { classMethodMiddlewareMetadataReflectKey } from '../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey';
 import { classMiddlewareMetadataReflectKey } from '../reflectMetadata/data/classMiddlewareMetadataReflectKey';
 import { ApplyMiddleware } from './ApplyMiddleware';

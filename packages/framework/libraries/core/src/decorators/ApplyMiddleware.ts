@@ -5,8 +5,8 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { ApplyMiddlewareOptions } from '../middleware/model/ApplyMiddlewareOptions';
-import { Middleware } from '../middleware/model/Middleware';
+import { ApplyMiddlewareOptions } from '../middleware/models/ApplyMiddlewareOptions';
+import { Middleware } from '../middleware/models/Middleware';
 import { classMethodMiddlewareMetadataReflectKey } from '../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey';
 import { classMiddlewareMetadataReflectKey } from '../reflectMetadata/data/classMiddlewareMetadataReflectKey';
 

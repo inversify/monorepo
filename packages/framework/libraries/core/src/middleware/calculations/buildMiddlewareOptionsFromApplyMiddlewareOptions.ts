@@ -1,6 +1,6 @@
-import { ApplyMiddlewareOptions } from '../model/ApplyMiddlewareOptions';
-import { MiddlewareOptions } from '../model/MiddlewareOptions';
-import { MiddlewarePhase } from '../model/MiddlewarePhase';
+import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
+import { MiddlewareOptions } from '../models/MiddlewareOptions';
+import { MiddlewarePhase } from '../models/MiddlewarePhase';
 import { isApplyMiddlewareOptions } from '../typeguard/isApplyMiddlewareOptions';
 
 export function buildMiddlewareOptionsFromApplyMiddlewareOptions(
