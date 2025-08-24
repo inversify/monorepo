@@ -1,8 +1,9 @@
 import { Stream } from 'node:stream';
 
+import { isHttpResponse } from '../calculations/isHttpResponse';
 import {
   HttpResponse,
-  isHttpResponse as isHttpResponse,
+  isHttpResponse as isHttpResponseSymbol,
 } from '../HttpResponse';
 import { HttpStatusCode } from '../HttpStatusCode';
 
@@ -11,7 +12,7 @@ const isErrorHttpResponse: unique symbol = Symbol.for(
 );
 
 export class ErrorHttpResponse extends Error implements HttpResponse {
-  public readonly [isHttpResponse]: true;
+  public readonly [isHttpResponseSymbol]: true;
   public readonly [isErrorHttpResponse]: true;
   public readonly body?: object | string | number | boolean | Stream;
 
@@ -25,13 +26,12 @@ export class ErrorHttpResponse extends Error implements HttpResponse {
 
     this.body = { error, message, statusCode };
     this[isErrorHttpResponse] = true;
-    this[isHttpResponse] = true;
+    this[isHttpResponseSymbol] = true;
   }
 
   public static is(value: unknown): value is ErrorHttpResponse {
     return (
-      typeof value === 'object' &&
-      value !== null &&
+      isHttpResponse(value) &&
       (value as Partial<ErrorHttpResponse>)[isErrorHttpResponse] === true
     );
   }
