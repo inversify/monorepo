@@ -1,4 +1,4 @@
-import { ApplyMiddlewareOptions } from '../model/ApplyMiddlewareOptions';
+import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
 
 export function isApplyMiddlewareOptions(
   value: unknown,
