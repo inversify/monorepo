@@ -9,7 +9,7 @@ export type OpenApi3Dot1OperationArrayKeys = keyof FilteredByValueType<
   Array<unknown>
 >;
 
-export type OpenApi3Dot1OperationRecordKeys = keyof FilteredByValueType<
+type OpenApi3Dot1OperationRecordKeys = keyof FilteredByValueType<
   OpenApi3Dot1OperationObject,
   Record<string, unknown>
 >;
