@@ -2,9 +2,9 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { Newable } from 'inversify';
 
-import { ApplyMiddlewareOptions } from '../model/ApplyMiddlewareOptions';
-import { Middleware } from '../model/Middleware';
-import { MiddlewarePhase } from '../model/MiddlewarePhase';
+import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
+import { Middleware } from '../models/Middleware';
+import { MiddlewarePhase } from '../models/MiddlewarePhase';
 import { isApplyMiddlewareOptions } from './isApplyMiddlewareOptions';
 
 class TestMiddleware implements Middleware {

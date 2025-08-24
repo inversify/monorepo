@@ -2,10 +2,10 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { Newable } from 'inversify';
 
-import { ApplyMiddlewareOptions } from '../model/ApplyMiddlewareOptions';
-import { Middleware } from '../model/Middleware';
-import { MiddlewareOptions } from '../model/MiddlewareOptions';
-import { MiddlewarePhase } from '../model/MiddlewarePhase';
+import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
+import { Middleware } from '../models/Middleware';
+import { MiddlewareOptions } from '../models/MiddlewareOptions';
+import { MiddlewarePhase } from '../models/MiddlewarePhase';
 import { buildMiddlewareOptionsFromApplyMiddlewareOptions } from './buildMiddlewareOptionsFromApplyMiddlewareOptions';
 
 describe(buildMiddlewareOptionsFromApplyMiddlewareOptions, () => {
