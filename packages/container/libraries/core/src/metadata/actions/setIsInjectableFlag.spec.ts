@@ -63,7 +63,7 @@ describe(setIsInjectableFlag, () => {
 
       try {
         setIsInjectableFlag(targetFixture);
-      } catch (error) {
+      } catch (error: unknown) {
         result = error;
       }
     });

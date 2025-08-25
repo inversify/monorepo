@@ -102,7 +102,7 @@ describe(handleResolveError, () => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(false);
         try {
           handleResolveError(paramsFixture, errorFixture);
-        } catch (error) {
+        } catch (error: unknown) {
           result = error;
         }
       });
@@ -123,7 +123,7 @@ describe(handleResolveError, () => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
         try {
           handleResolveError(paramsFixture, errorFixture);
-        } catch (error) {
+        } catch (error: unknown) {
           result = error;
         }
       });
@@ -170,7 +170,7 @@ describe(handleResolveError, () => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
         try {
           handleResolveError(paramsFixture, errorFixture);
-        } catch (error) {
+        } catch (error: unknown) {
           result = error;
         }
       });
@@ -222,7 +222,7 @@ describe(handleResolveError, () => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
         try {
           handleResolveError(paramsFixture, errorFixture);
-        } catch (error) {
+        } catch (error: unknown) {
           result = error;
         }
       });
@@ -285,7 +285,7 @@ describe(handleResolveError, () => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
         try {
           handleResolveError(paramsFixture, errorFixture);
-        } catch (error) {
+        } catch (error: unknown) {
           result = error;
         }
       });
@@ -332,7 +332,7 @@ describe(handleResolveError, () => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
         try {
           handleResolveError(paramsFixture, errorFixture);
-        } catch (error) {
+        } catch (error: unknown) {
           result = error;
         }
       });

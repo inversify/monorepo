@@ -37,7 +37,7 @@ describe(buildRouterExplorerControllerMetadataList, () => {
 
       try {
         result = buildRouterExplorerControllerMetadataList(containerMock);
-      } catch (error) {
+      } catch (error: unknown) {
         result = error;
       }
     });
