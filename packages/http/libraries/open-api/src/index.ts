@@ -8,3 +8,4 @@ export { SwaggerUiHonoProvider } from './openApi/services/SwaggerUiHonoProvider'
 export type { SwaggerUiProviderOptions } from './openApi/models/SwaggerUiProviderOptions';
 export type { SwaggerUiProviderApiOptions } from './openApi/models/SwaggerUiProviderApiOptions';
 export type { SwaggerUiProviderUiOptions } from './openApi/models/SwaggerUiProviderUiOptions';
+export type { ToSchemaFunction } from './metadata/models/ToSchemaFunction';
