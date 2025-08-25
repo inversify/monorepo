@@ -11,11 +11,11 @@
     "@inversifyjs/core": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "22.17.2",
+    "@types/node": "22.18.0",
     "eslint": "9.34.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
-    "rollup": "4.48.0",
+    "rollup": "4.48.1",
     "ts-loader": "9.5.4",
     "ts-node": "10.9.2",
     "tslib": "2.8.1",
