@@ -6,6 +6,7 @@ export { SwaggerUiFastifyProvider } from './openApi/services/SwaggerUiFastifyPro
 export { SwaggerUiHonoProvider } from './openApi/services/SwaggerUiHonoProvider';
 
 export type { BuildOpenApiBlockFunction } from './metadata/models/BuildOpenApiBlockFunction';
+export type { SchemaDecoratorOptions } from './metadata/models/SchemaDecoratorOptions';
 export type { ToSchemaFunction } from './metadata/models/ToSchemaFunction';
 export type { SwaggerUiProviderOptions } from './openApi/models/SwaggerUiProviderOptions';
 export type { SwaggerUiProviderApiOptions } from './openApi/models/SwaggerUiProviderApiOptions';
