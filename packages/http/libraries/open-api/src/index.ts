@@ -1,4 +1,5 @@
 export { Schema } from './metadata/decorators/Schema';
+export { SchemaProperty } from './metadata/decorators/SchemaProperty';
 export { Server } from './metadata/decorators/Server';
 export { Summary } from './metadata/decorators/Summary';
 export { SwaggerUiExpressProvider } from './openApi/services/SwaggerUiExpressProvider';
