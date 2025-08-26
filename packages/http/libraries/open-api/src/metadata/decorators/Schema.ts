@@ -3,7 +3,8 @@ import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
 import { toSchema } from '../actions/toSchema';
-import { updateSchemaMetadata } from '../actions/updateSchemaMetadata';
+import { updateSchemaMetadataName } from '../actions/updateSchemaMetadataName';
+import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
 import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
@@ -17,14 +18,21 @@ export function Schema(
 ): ClassDecorator {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return (target: Function): void => {
+    updateOwnReflectMetadata(
+      target,
+      schemaOpenApiMetadataReflectKey,
+      buildDefaultSchemaMetadata,
+      updateSchemaMetadataName(options, target),
+    );
+
     const schemaResult: OpenApi3Dot1SchemaObject | undefined =
-      typeof schema === 'function' ? schema(toSchema(target, options)) : schema;
+      typeof schema === 'function' ? schema(toSchema(target)) : schema;
 
     updateOwnReflectMetadata(
       target,
       schemaOpenApiMetadataReflectKey,
       buildDefaultSchemaMetadata,
-      updateSchemaMetadata(schemaResult, options, target),
+      updateSchemaMetadataSchema(schemaResult, target),
     );
   };
 }

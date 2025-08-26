@@ -13,13 +13,15 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 vitest.mock('../actions/toSchema');
-vitest.mock('../actions/updateSchemaMetadata');
+vitest.mock('../actions/updateSchemaMetadataName');
+vitest.mock('../actions/updateSchemaMetadataSchema');
 
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
 import { toSchema } from '../actions/toSchema';
-import { updateSchemaMetadata } from '../actions/updateSchemaMetadata';
+import { updateSchemaMetadataName } from '../actions/updateSchemaMetadataName';
+import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
 import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
@@ -32,7 +34,10 @@ describe(Schema, () => {
     describe('when called', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       let targetTypeFixture: Function;
-      let updateSchemaMetadataResultMock: Mock<
+      let updateSchemaMetadataNameResultMock: Mock<
+        (metadata: SchemaMetadata) => SchemaMetadata
+      >;
+      let updateSchemaMetadataSchemaResultMock: Mock<
         (metadata: SchemaMetadata) => SchemaMetadata
       >;
 
@@ -41,11 +46,15 @@ describe(Schema, () => {
       beforeAll(() => {
         targetTypeFixture = function testClass() {};
 
-        updateSchemaMetadataResultMock = vitest.fn();
+        updateSchemaMetadataNameResultMock = vitest.fn();
+        updateSchemaMetadataSchemaResultMock = vitest.fn();
 
         vitest
-          .mocked(updateSchemaMetadata)
-          .mockReturnValueOnce(updateSchemaMetadataResultMock);
+          .mocked(updateSchemaMetadataName)
+          .mockReturnValueOnce(updateSchemaMetadataNameResultMock);
+        vitest
+          .mocked(updateSchemaMetadataSchema)
+          .mockReturnValueOnce(updateSchemaMetadataSchemaResultMock);
 
         result = Schema()(targetTypeFixture);
       });
@@ -54,22 +63,37 @@ describe(Schema, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call updateSchemaMetadata()', () => {
-        expect(updateSchemaMetadata).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadata).toHaveBeenCalledWith(
+      it('should call updateSchemaMetadataName()', () => {
+        expect(updateSchemaMetadataName).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataName).toHaveBeenCalledWith(
           undefined,
+          targetTypeFixture,
+        );
+      });
+
+      it('should call updateSchemaMetadata()', () => {
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledWith(
           undefined,
           targetTypeFixture,
         );
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(2);
+        expect(updateOwnReflectMetadata).toHaveBeenNthCalledWith(
+          1,
           targetTypeFixture,
           schemaOpenApiMetadataReflectKey,
           buildDefaultSchemaMetadata,
-          updateSchemaMetadataResultMock,
+          updateSchemaMetadataNameResultMock,
+        );
+        expect(updateOwnReflectMetadata).toHaveBeenNthCalledWith(
+          2,
+          targetTypeFixture,
+          schemaOpenApiMetadataReflectKey,
+          buildDefaultSchemaMetadata,
+          updateSchemaMetadataSchemaResultMock,
         );
       });
 
@@ -97,7 +121,10 @@ describe(Schema, () => {
     describe('when called', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       let targetTypeFixture: Function;
-      let updateSchemaMetadataResultMock: Mock<
+      let updateSchemaMetadataNameResultMock: Mock<
+        (metadata: SchemaMetadata) => SchemaMetadata
+      >;
+      let updateSchemaMetadataSchemaResultMock: Mock<
         (metadata: SchemaMetadata) => SchemaMetadata
       >;
 
@@ -106,11 +133,15 @@ describe(Schema, () => {
       beforeAll(() => {
         targetTypeFixture = function testClass() {};
 
-        updateSchemaMetadataResultMock = vitest.fn();
+        updateSchemaMetadataNameResultMock = vitest.fn();
+        updateSchemaMetadataSchemaResultMock = vitest.fn();
 
         vitest
-          .mocked(updateSchemaMetadata)
-          .mockReturnValueOnce(updateSchemaMetadataResultMock);
+          .mocked(updateSchemaMetadataName)
+          .mockReturnValueOnce(updateSchemaMetadataNameResultMock);
+        vitest
+          .mocked(updateSchemaMetadataSchema)
+          .mockReturnValueOnce(updateSchemaMetadataSchemaResultMock);
 
         result = Schema(schemaFixture)(targetTypeFixture);
       });
@@ -119,22 +150,37 @@ describe(Schema, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call updateSchemaMetadata()', () => {
-        expect(updateSchemaMetadata).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadata).toHaveBeenCalledWith(
-          schemaFixture,
+      it('should call updateSchemaMetadataName()', () => {
+        expect(updateSchemaMetadataName).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataName).toHaveBeenCalledWith(
           undefined,
           targetTypeFixture,
         );
       });
 
+      it('should call updateSchemaMetadata()', () => {
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledWith(
+          schemaFixture,
+          targetTypeFixture,
+        );
+      });
+
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(2);
+        expect(updateOwnReflectMetadata).toHaveBeenNthCalledWith(
+          1,
           targetTypeFixture,
           schemaOpenApiMetadataReflectKey,
           buildDefaultSchemaMetadata,
-          updateSchemaMetadataResultMock,
+          updateSchemaMetadataNameResultMock,
+        );
+        expect(updateOwnReflectMetadata).toHaveBeenNthCalledWith(
+          2,
+          targetTypeFixture,
+          schemaOpenApiMetadataReflectKey,
+          buildDefaultSchemaMetadata,
+          updateSchemaMetadataSchemaResultMock,
         );
       });
 
@@ -167,7 +213,10 @@ describe(Schema, () => {
     describe('when called', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       let targetTypeFixture: Function;
-      let updateSchemaMetadataResultMock: Mock<
+      let updateSchemaMetadataNameResultMock: Mock<
+        (metadata: SchemaMetadata) => SchemaMetadata
+      >;
+      let updateSchemaMetadataSchemaResultMock: Mock<
         (metadata: SchemaMetadata) => SchemaMetadata
       >;
 
@@ -176,11 +225,15 @@ describe(Schema, () => {
       beforeAll(() => {
         targetTypeFixture = function testClass() {};
 
-        updateSchemaMetadataResultMock = vitest.fn();
+        updateSchemaMetadataNameResultMock = vitest.fn();
+        updateSchemaMetadataSchemaResultMock = vitest.fn();
 
         vitest
-          .mocked(updateSchemaMetadata)
-          .mockReturnValueOnce(updateSchemaMetadataResultMock);
+          .mocked(updateSchemaMetadataName)
+          .mockReturnValueOnce(updateSchemaMetadataNameResultMock);
+        vitest
+          .mocked(updateSchemaMetadataSchema)
+          .mockReturnValueOnce(updateSchemaMetadataSchemaResultMock);
 
         result = Schema(schemaFixture, optionsFixture)(targetTypeFixture);
       });
@@ -189,22 +242,37 @@ describe(Schema, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call updateSchemaMetadata()', () => {
-        expect(updateSchemaMetadata).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadata).toHaveBeenCalledWith(
-          schemaFixture,
+      it('should call updateSchemaMetadataName()', () => {
+        expect(updateSchemaMetadataName).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataName).toHaveBeenCalledWith(
           optionsFixture,
           targetTypeFixture,
         );
       });
 
+      it('should call updateSchemaMetadata()', () => {
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledWith(
+          schemaFixture,
+          targetTypeFixture,
+        );
+      });
+
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(2);
+        expect(updateOwnReflectMetadata).toHaveBeenNthCalledWith(
+          1,
           targetTypeFixture,
           schemaOpenApiMetadataReflectKey,
           buildDefaultSchemaMetadata,
-          updateSchemaMetadataResultMock,
+          updateSchemaMetadataNameResultMock,
+        );
+        expect(updateOwnReflectMetadata).toHaveBeenNthCalledWith(
+          2,
+          targetTypeFixture,
+          schemaOpenApiMetadataReflectKey,
+          buildDefaultSchemaMetadata,
+          updateSchemaMetadataSchemaResultMock,
         );
       });
 
@@ -241,7 +309,10 @@ describe(Schema, () => {
     describe('when called', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       let targetTypeFixture: Function;
-      let updateSchemaMetadataResultMock: Mock<
+      let updateSchemaMetadataNameResultMock: Mock<
+        (metadata: SchemaMetadata) => SchemaMetadata
+      >;
+      let updateSchemaMetadataSchemaResultMock: Mock<
         (metadata: SchemaMetadata) => SchemaMetadata
       >;
 
@@ -250,11 +321,15 @@ describe(Schema, () => {
       beforeAll(() => {
         targetTypeFixture = function testClass() {};
 
-        updateSchemaMetadataResultMock = vitest.fn();
+        updateSchemaMetadataNameResultMock = vitest.fn();
+        updateSchemaMetadataSchemaResultMock = vitest.fn();
 
         vitest
-          .mocked(updateSchemaMetadata)
-          .mockReturnValueOnce(updateSchemaMetadataResultMock);
+          .mocked(updateSchemaMetadataName)
+          .mockReturnValueOnce(updateSchemaMetadataNameResultMock);
+        vitest
+          .mocked(updateSchemaMetadataSchema)
+          .mockReturnValueOnce(updateSchemaMetadataSchemaResultMock);
 
         result = Schema(buildFunctionFixture)(targetTypeFixture);
       });
@@ -263,9 +338,17 @@ describe(Schema, () => {
         vitest.clearAllMocks();
       });
 
+      it('should call updateSchemaMetadataName()', () => {
+        expect(updateSchemaMetadataName).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataName).toHaveBeenCalledWith(
+          undefined,
+          targetTypeFixture,
+        );
+      });
+
       it('should call toSchema()', () => {
         expect(toSchema).toHaveBeenCalledTimes(1);
-        expect(toSchema).toHaveBeenCalledWith(targetTypeFixture, undefined);
+        expect(toSchema).toHaveBeenCalledWith(targetTypeFixture);
       });
 
       it('should call build function with toSchema result', () => {
@@ -274,21 +357,28 @@ describe(Schema, () => {
       });
 
       it('should call updateSchemaMetadata()', () => {
-        expect(updateSchemaMetadata).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadata).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledWith(
           builtSchemaFixture,
-          undefined,
           targetTypeFixture,
         );
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(2);
+        expect(updateOwnReflectMetadata).toHaveBeenNthCalledWith(
+          1,
           targetTypeFixture,
           schemaOpenApiMetadataReflectKey,
           buildDefaultSchemaMetadata,
-          updateSchemaMetadataResultMock,
+          updateSchemaMetadataNameResultMock,
+        );
+        expect(updateOwnReflectMetadata).toHaveBeenNthCalledWith(
+          2,
+          targetTypeFixture,
+          schemaOpenApiMetadataReflectKey,
+          buildDefaultSchemaMetadata,
+          updateSchemaMetadataSchemaResultMock,
         );
       });
 
@@ -330,7 +420,10 @@ describe(Schema, () => {
     describe('when called', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       let targetTypeFixture: Function;
-      let updateSchemaMetadataResultMock: Mock<
+      let updateSchemaMetadataNameResultMock: Mock<
+        (metadata: SchemaMetadata) => SchemaMetadata
+      >;
+      let updateSchemaMetadataSchemaResultMock: Mock<
         (metadata: SchemaMetadata) => SchemaMetadata
       >;
 
@@ -339,11 +432,15 @@ describe(Schema, () => {
       beforeAll(() => {
         targetTypeFixture = function testClass() {};
 
-        updateSchemaMetadataResultMock = vitest.fn();
+        updateSchemaMetadataNameResultMock = vitest.fn();
+        updateSchemaMetadataSchemaResultMock = vitest.fn();
 
         vitest
-          .mocked(updateSchemaMetadata)
-          .mockReturnValueOnce(updateSchemaMetadataResultMock);
+          .mocked(updateSchemaMetadataName)
+          .mockReturnValueOnce(updateSchemaMetadataNameResultMock);
+        vitest
+          .mocked(updateSchemaMetadataSchema)
+          .mockReturnValueOnce(updateSchemaMetadataSchemaResultMock);
 
         result = Schema(
           buildFunctionFixture,
@@ -355,12 +452,17 @@ describe(Schema, () => {
         vitest.clearAllMocks();
       });
 
+      it('should call updateSchemaMetadataName()', () => {
+        expect(updateSchemaMetadataName).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataName).toHaveBeenCalledWith(
+          optionsFixture,
+          targetTypeFixture,
+        );
+      });
+
       it('should call toSchema()', () => {
         expect(toSchema).toHaveBeenCalledTimes(1);
-        expect(toSchema).toHaveBeenCalledWith(
-          targetTypeFixture,
-          optionsFixture,
-        );
+        expect(toSchema).toHaveBeenCalledWith(targetTypeFixture);
       });
 
       it('should call build function with toSchema result', () => {
@@ -369,21 +471,28 @@ describe(Schema, () => {
       });
 
       it('should call updateSchemaMetadata()', () => {
-        expect(updateSchemaMetadata).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadata).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledWith(
           builtSchemaFixture,
-          optionsFixture,
           targetTypeFixture,
         );
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(2);
+        expect(updateOwnReflectMetadata).toHaveBeenNthCalledWith(
+          1,
           targetTypeFixture,
           schemaOpenApiMetadataReflectKey,
           buildDefaultSchemaMetadata,
-          updateSchemaMetadataResultMock,
+          updateSchemaMetadataNameResultMock,
+        );
+        expect(updateOwnReflectMetadata).toHaveBeenNthCalledWith(
+          2,
+          targetTypeFixture,
+          schemaOpenApiMetadataReflectKey,
+          buildDefaultSchemaMetadata,
+          updateSchemaMetadataSchemaResultMock,
         );
       });
 

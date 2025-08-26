@@ -1,32 +1,34 @@
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
-import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import {
+  getOwnReflectMetadata,
+  updateOwnReflectMetadata,
+} from '@inversifyjs/reflect-metadata-utils';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
-import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
 import { SchemaMetadata } from '../models/SchemaMetadata';
 import { ToSchemaFunction } from '../models/ToSchemaFunction';
+import { updateSchemaMetadataReferences } from './updateSchemaMetadataReferences';
 
 export function toSchema(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   target: Function,
-  options: SchemaDecoratorOptions | undefined,
 ): ToSchemaFunction {
   return (
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     type: Function,
   ): OpenApi3Dot1SchemaObject => {
-    const name: string = options?.name ?? type.name;
+    const name: string =
+      getOwnReflectMetadata<SchemaMetadata>(
+        type,
+        schemaOpenApiMetadataReflectKey,
+      )?.name ?? type.name;
 
     updateOwnReflectMetadata(
       target,
       schemaOpenApiMetadataReflectKey,
       buildDefaultSchemaMetadata,
-      (metadata: SchemaMetadata): SchemaMetadata => {
-        metadata.references.set(name, type);
-
-        return metadata;
-      },
+      updateSchemaMetadataReferences(name, type),
     );
 
     return {

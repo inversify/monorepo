@@ -1,24 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
-
 import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
 import { SchemaMetadata } from '../models/SchemaMetadata';
-import { updateSchemaMetadata } from './updateSchemaMetadata';
+import { updateSchemaMetadataName } from './updateSchemaMetadataName';
 
-describe(updateSchemaMetadata, () => {
-  let schemaFixture: OpenApi3Dot1SchemaObject;
+describe(updateSchemaMetadataName, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   let targetFixture: Function;
 
   beforeAll(() => {
-    schemaFixture = {
-      properties: {
-        id: { type: 'string' },
-      },
-      type: 'object',
-    };
-
     targetFixture = function testClass() {};
     Object.defineProperty(targetFixture, 'name', { value: 'TestClass' });
   });
@@ -40,8 +30,7 @@ describe(updateSchemaMetadata, () => {
 
         optionsFixture = undefined;
 
-        result = updateSchemaMetadata(
-          schemaFixture,
+        result = updateSchemaMetadataName(
           optionsFixture,
           targetFixture,
         )(metadataFixture);
@@ -49,10 +38,6 @@ describe(updateSchemaMetadata, () => {
 
       afterAll(() => {
         vitest.clearAllMocks();
-      });
-
-      it('should set metadata.schema', () => {
-        expect(metadataFixture.schema).toBe(schemaFixture);
       });
 
       it('should not change metadata.name', () => {
@@ -85,8 +70,7 @@ describe(updateSchemaMetadata, () => {
 
         optionsFixture = undefined;
 
-        result = updateSchemaMetadata(
-          schemaFixture,
+        result = updateSchemaMetadataName(
           optionsFixture,
           targetFixture,
         )(metadataFixture);
@@ -94,10 +78,6 @@ describe(updateSchemaMetadata, () => {
 
       afterAll(() => {
         vitest.clearAllMocks();
-      });
-
-      it('should set metadata.schema', () => {
-        expect(metadataFixture.schema).toBe(schemaFixture);
       });
 
       it('should not change metadata.name', () => {
@@ -132,8 +112,7 @@ describe(updateSchemaMetadata, () => {
           name: nameFixture,
         };
 
-        result = updateSchemaMetadata(
-          schemaFixture,
+        result = updateSchemaMetadataName(
           optionsFixture,
           targetFixture,
         )(metadataFixture);
@@ -141,10 +120,6 @@ describe(updateSchemaMetadata, () => {
 
       afterAll(() => {
         vitest.clearAllMocks();
-      });
-
-      it('should set metadata.schema', () => {
-        expect(metadataFixture.schema).toBe(schemaFixture);
       });
 
       it('should set metadata.name', () => {
@@ -182,94 +157,11 @@ describe(updateSchemaMetadata, () => {
 
       it('should throw an Error', () => {
         expect(() =>
-          updateSchemaMetadata(
-            schemaFixture,
+          updateSchemaMetadataName(
             optionsFixture,
             targetFixture,
           )(metadataFixture),
         ).toThrow('Cannot redefine "TestClass" schema name');
-      });
-    });
-  });
-
-  describe('having undefined schema', () => {
-    describe('when called', () => {
-      let metadataFixture: SchemaMetadata;
-      let optionsFixture: SchemaDecoratorOptions | undefined;
-      let undefinedSchemaFixture: OpenApi3Dot1SchemaObject | undefined;
-
-      let result: unknown;
-
-      beforeAll(() => {
-        metadataFixture = {
-          name: undefined,
-          properties: new Map(),
-          references: new Map(),
-          schema: schemaFixture,
-        };
-
-        optionsFixture = undefined;
-        undefinedSchemaFixture = undefined;
-
-        result = updateSchemaMetadata(
-          undefinedSchemaFixture,
-          optionsFixture,
-          targetFixture,
-        )(metadataFixture);
-      });
-
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should set metadata.schema to undefined', () => {
-        expect(metadataFixture.schema).toBeUndefined();
-      });
-
-      it('should return metadata', () => {
-        expect(result).toBe(metadataFixture);
-      });
-    });
-  });
-
-  describe('having options without name property and metadata with undefined name', () => {
-    describe('when called', () => {
-      let metadataFixture: SchemaMetadata;
-      let optionsFixture: SchemaDecoratorOptions;
-
-      let result: unknown;
-
-      beforeAll(() => {
-        metadataFixture = {
-          name: undefined,
-          properties: new Map(),
-          references: new Map(),
-          schema: undefined,
-        };
-
-        optionsFixture = {};
-
-        result = updateSchemaMetadata(
-          schemaFixture,
-          optionsFixture,
-          targetFixture,
-        )(metadataFixture);
-      });
-
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should set metadata.schema', () => {
-        expect(metadataFixture.schema).toBe(schemaFixture);
-      });
-
-      it('should not change metadata.name', () => {
-        expect(metadataFixture.name).toBeUndefined();
-      });
-
-      it('should return metadata', () => {
-        expect(result).toBe(metadataFixture);
       });
     });
   });
