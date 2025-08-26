@@ -1,19 +1,14 @@
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
-import {
-  getOwnReflectMetadata,
-  updateOwnReflectMetadata,
-} from '@inversifyjs/reflect-metadata-utils';
+import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
 import { SchemaMetadata } from '../models/SchemaMetadata';
 import { ToSchemaFunction } from '../models/ToSchemaFunction';
-import { updateSchemaMetadataReferences } from './updateSchemaMetadataReferences';
 
 export function toSchema(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  target: Function,
+  updateMetadataReferences: (name: string, type: Function) => void,
 ): ToSchemaFunction {
   return (
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -25,12 +20,7 @@ export function toSchema(
         schemaOpenApiMetadataReflectKey,
       )?.name ?? type.name;
 
-    updateOwnReflectMetadata(
-      target,
-      schemaOpenApiMetadataReflectKey,
-      buildDefaultSchemaMetadata,
-      updateSchemaMetadataReferences(name, type),
-    );
+    updateMetadataReferences(name, type);
 
     return {
       $ref: `#/components/schemas/${escapeJsonPointerFragments(name)}`,

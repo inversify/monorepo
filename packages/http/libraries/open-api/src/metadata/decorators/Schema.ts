@@ -2,7 +2,7 @@ import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { toSchema } from '../actions/toSchema';
+import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext';
 import { updateSchemaMetadataName } from '../actions/updateSchemaMetadataName';
 import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
@@ -26,7 +26,9 @@ export function Schema(
     );
 
     const schemaResult: OpenApi3Dot1SchemaObject | undefined =
-      typeof schema === 'function' ? schema(toSchema(target)) : schema;
+      typeof schema === 'function'
+        ? schema(toSchemaInSchemaMetadataContext(target))
+        : schema;
 
     updateOwnReflectMetadata(
       target,

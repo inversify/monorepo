@@ -12,13 +12,13 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('../actions/toSchema');
+vitest.mock('../actions/toSchemaInSchemaMetadataContext');
 vitest.mock('../actions/updateSchemaMetadataProperty');
 
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { toSchema } from '../actions/toSchema';
+import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext';
 import { updateSchemaMetadataProperty } from '../actions/updateSchemaMetadataProperty';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
@@ -158,7 +158,9 @@ describe(SchemaProperty, () => {
         .fn()
         .mockReturnValueOnce(builtSchemaFixture);
 
-      vitest.mocked(toSchema).mockReturnValueOnce(toSchemaFunctionMock);
+      vitest
+        .mocked(toSchemaInSchemaMetadataContext)
+        .mockReturnValueOnce(toSchemaFunctionMock);
     });
 
     describe('when called', () => {
@@ -191,8 +193,10 @@ describe(SchemaProperty, () => {
       });
 
       it('should call toSchema()', () => {
-        expect(toSchema).toHaveBeenCalledTimes(1);
-        expect(toSchema).toHaveBeenCalledWith(targetObjectFixture.constructor);
+        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledTimes(1);
+        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledWith(
+          targetObjectFixture.constructor,
+        );
       });
 
       it('should call build function with toSchema result', () => {

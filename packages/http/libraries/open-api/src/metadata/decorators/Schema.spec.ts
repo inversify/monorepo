@@ -12,14 +12,14 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('../actions/toSchema');
+vitest.mock('../actions/toSchemaInSchemaMetadataContext');
 vitest.mock('../actions/updateSchemaMetadataName');
 vitest.mock('../actions/updateSchemaMetadataSchema');
 
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { toSchema } from '../actions/toSchema';
+import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext';
 import { updateSchemaMetadataName } from '../actions/updateSchemaMetadataName';
 import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
@@ -303,7 +303,9 @@ describe(Schema, () => {
         .fn()
         .mockReturnValueOnce(builtSchemaFixture);
 
-      vitest.mocked(toSchema).mockReturnValueOnce(toSchemaFunctionMock);
+      vitest
+        .mocked(toSchemaInSchemaMetadataContext)
+        .mockReturnValueOnce(toSchemaFunctionMock);
     });
 
     describe('when called', () => {
@@ -347,8 +349,10 @@ describe(Schema, () => {
       });
 
       it('should call toSchema()', () => {
-        expect(toSchema).toHaveBeenCalledTimes(1);
-        expect(toSchema).toHaveBeenCalledWith(targetTypeFixture);
+        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledTimes(1);
+        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledWith(
+          targetTypeFixture,
+        );
       });
 
       it('should call build function with toSchema result', () => {
@@ -414,7 +418,9 @@ describe(Schema, () => {
         .fn()
         .mockReturnValueOnce(builtSchemaFixture);
 
-      vitest.mocked(toSchema).mockReturnValueOnce(toSchemaFunctionMock);
+      vitest
+        .mocked(toSchemaInSchemaMetadataContext)
+        .mockReturnValueOnce(toSchemaFunctionMock);
     });
 
     describe('when called', () => {
@@ -461,8 +467,10 @@ describe(Schema, () => {
       });
 
       it('should call toSchema()', () => {
-        expect(toSchema).toHaveBeenCalledTimes(1);
-        expect(toSchema).toHaveBeenCalledWith(targetTypeFixture);
+        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledTimes(1);
+        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledWith(
+          targetTypeFixture,
+        );
       });
 
       it('should call build function with toSchema result', () => {
