@@ -243,10 +243,12 @@ describe(Container, () => {
           expect(BindingService.build).toHaveBeenNthCalledWith(
             1,
             expect.any(Function),
+            undefined,
           );
           expect(BindingService.build).toHaveBeenNthCalledWith(
             2,
             expect.any(Function),
+            undefined,
           );
         });
 

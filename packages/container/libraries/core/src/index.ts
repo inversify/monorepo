@@ -66,6 +66,7 @@ import { plan } from './planning/actions/plan';
 import { BaseBindingNode } from './planning/models/BaseBindingNode';
 import { BaseGetPlanOptions } from './planning/models/BaseGetPlanOptions';
 import { BasePlanParams } from './planning/models/BasePlanParams';
+import { BasePlanParamsAutobindOptions } from './planning/models/BasePlanParamsAutobindOptions';
 import { CacheBindingInvalidation } from './planning/models/CacheBindingInvalidation';
 import { CacheBindingInvalidationKind } from './planning/models/CacheBindingInvalidationKind';
 import { GetMultipleServicePlanOptions } from './planning/models/GetMultipleServicePlanOptions';
@@ -109,6 +110,7 @@ export type {
   BaseGetPlanOptions,
   BaseManagedClassElementMetadata,
   BasePlanParams,
+  BasePlanParamsAutobindOptions,
   Binding,
   BindingActivation,
   BindingActivationRelation,

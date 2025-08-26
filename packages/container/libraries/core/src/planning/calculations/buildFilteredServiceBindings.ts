@@ -46,7 +46,9 @@ export function buildFilteredServiceBindings(
 
     params.operations.setBinding(binding);
 
-    filteredBindings.push(binding);
+    if (binding.isSatisfiedBy(bindingConstraints)) {
+      filteredBindings.push(binding);
+    }
   }
 
   return filteredBindings;

@@ -1,6 +1,7 @@
 import { Newable, ServiceIdentifier } from '@inversifyjs/common';
 import {
   ActivationsService,
+  BasePlanParamsAutobindOptions,
   BindingActivation,
   BindingDeactivation,
   BindingScope,
@@ -233,10 +234,18 @@ export class Container {
   #buildServiceReferenceManager(
     options?: ContainerOptions,
   ): ServiceReferenceManager {
+    const autobind: boolean = options?.autobind ?? false;
+    const defaultScope: BindingScope =
+      options?.defaultScope ?? DEFAULT_DEFAULT_SCOPE;
+
+    const autobindOptions: BasePlanParamsAutobindOptions | undefined = autobind
+      ? { scope: defaultScope }
+      : undefined;
+
     if (options?.parent === undefined) {
       return new ServiceReferenceManager(
         ActivationsService.build(() => undefined),
-        BindingService.build(() => undefined),
+        BindingService.build(() => undefined, autobindOptions),
         DeactivationsService.build(() => undefined),
         new PlanResultCacheService(),
       );
@@ -257,6 +266,7 @@ export class Container {
       ),
       BindingService.build(
         () => parent.#serviceReferenceManager.bindingService,
+        autobindOptions,
       ),
       DeactivationsService.build(
         () => parent.#serviceReferenceManager.deactivationService,
