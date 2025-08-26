@@ -1,7 +1,7 @@
 import { Newable, ServiceIdentifier } from '@inversifyjs/common';
 import {
   ActivationsService,
-  BasePlanParamsAutobindOptions,
+  AutobindOptions,
   BindingActivation,
   BindingDeactivation,
   BindingScope,
@@ -238,7 +238,7 @@ export class Container {
     const defaultScope: BindingScope =
       options?.defaultScope ?? DEFAULT_DEFAULT_SCOPE;
 
-    const autobindOptions: BasePlanParamsAutobindOptions | undefined = autobind
+    const autobindOptions: AutobindOptions | undefined = autobind
       ? { scope: defaultScope }
       : undefined;
 
