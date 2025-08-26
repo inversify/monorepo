@@ -5,14 +5,10 @@ import {
   OneToManyMapStar,
   OneToManyMapStartSpec,
 } from '../../common/models/OneToManyMapStar';
-import { getClassMetadata } from '../../metadata/calculations/getClassMetadata';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
 import { BasePlanParamsAutobindOptions } from '../../planning/models/BasePlanParamsAutobindOptions';
-import { getBindingId } from '../actions/getBindingId';
+import { buildInstanceBinding } from '../calculations/buildInstanceBinding';
 import { cloneBinding } from '../calculations/cloneBinding';
 import { Binding } from '../models/Binding';
-import { BindingScope } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
 import { InstanceBinding } from '../models/InstanceBinding';
 
 enum BindingRelationKind {
@@ -102,7 +98,6 @@ export class BindingService implements Cloneable<BindingService> {
       return parentBindings;
     }
 
-    // Try to autobind if no bindings found in current or parent containers
     return this.#tryAutobind<TResolved>(serviceIdentifier);
   }
 
@@ -120,7 +115,6 @@ export class BindingService implements Cloneable<BindingService> {
     if (parent !== undefined) {
       yield* parent.getChained<TResolved>(serviceIdentifier);
     } else if (currentBindings === undefined) {
-      // If we're at the root and no bindings were found, try to autobind
       const autobindBindings: Iterable<Binding<TResolved>> | undefined =
         this.#tryAutobind<TResolved>(serviceIdentifier);
       if (autobindBindings !== undefined) {
@@ -216,7 +210,7 @@ export class BindingService implements Cloneable<BindingService> {
       return undefined;
     }
 
-    const binding: InstanceBinding<unknown> = this.#buildInstanceBinding(
+    const binding: InstanceBinding<unknown> = buildInstanceBinding(
       this.#autobindOptions,
       serviceIdentifier as Newable,
     );
@@ -224,29 +218,5 @@ export class BindingService implements Cloneable<BindingService> {
     this.set(binding);
 
     return [binding] as Iterable<Binding<TResolved>>;
-  }
-
-  #buildInstanceBinding(
-    autobindOptions: BasePlanParamsAutobindOptions,
-    serviceIdentifier: Newable,
-  ): InstanceBinding<unknown> {
-    const classMetadata: ClassMetadata = getClassMetadata(serviceIdentifier);
-    const scope: BindingScope = classMetadata.scope ?? autobindOptions.scope;
-
-    return {
-      cache: {
-        isRight: false,
-        value: undefined,
-      },
-      id: getBindingId(),
-      implementationType: serviceIdentifier,
-      isSatisfiedBy: () => true,
-      moduleId: undefined,
-      onActivation: undefined,
-      onDeactivation: undefined,
-      scope,
-      serviceIdentifier,
-      type: bindingTypeValues.Instance,
-    };
   }
 }
