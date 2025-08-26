@@ -60,7 +60,8 @@ describe('Parent container autobind with child non-autobind', () => {
       });
 
       it('should return the correct value', () => {
-        expect((result as TestService[])[0].getValue()).toBe('test-value');
+        const services = result as TestService[];
+        expect(services[0]?.getValue()).toBe('test-value');
       });
     });
 
