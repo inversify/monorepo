@@ -1,3 +1,4 @@
+import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 import {
   getOwnReflectMetadata,
@@ -32,8 +33,7 @@ export function toSchema(
     );
 
     return {
-      // TODO: Escape name in a way it's a valid JSON Pointer
-      $ref: `#/components/schemas/${name}`,
+      $ref: `#/components/schemas/${escapeJsonPointerFragments(name)}`,
     };
   };
 }

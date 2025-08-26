@@ -1,22 +1,19 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { SchemaMetadata } from '../models/SchemaMetadata';
+import { SchemaReferencesMetadata } from '../models/SchemaReferencesMetadata';
 import { updateSchemaMetadataReferences } from './updateSchemaMetadataReferences';
 
 describe(updateSchemaMetadataReferences, () => {
   let nameFixture: string;
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   let typeFixture: Function;
-  let metadataFixture: SchemaMetadata;
+  let metadataFixture: SchemaReferencesMetadata;
 
   beforeAll(() => {
     nameFixture = 'TestType';
     typeFixture = class TestType {};
     metadataFixture = {
-      name: nameFixture,
-      properties: new Map(),
       references: new Map(),
-      schema: undefined,
     };
   });
 
@@ -31,8 +28,7 @@ describe(updateSchemaMetadataReferences, () => {
     });
 
     it('should update expected result', () => {
-      const expected: SchemaMetadata = {
-        ...metadataFixture,
+      const expected: SchemaReferencesMetadata = {
         references: new Map([[nameFixture, typeFixture]]),
       };
 

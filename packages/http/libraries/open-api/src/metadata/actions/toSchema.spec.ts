@@ -8,10 +8,12 @@ import {
   vitest,
 } from 'vitest';
 
+vitest.mock('@inversifyjs/json-schema-pointer');
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('../calculations/buildDefaultSchemaMetadata');
 vitest.mock('./updateSchemaMetadataReferences');
 
+import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import {
   getOwnReflectMetadata,
   updateOwnReflectMetadata,
@@ -26,6 +28,7 @@ import { updateSchemaMetadataReferences } from './updateSchemaMetadataReferences
 describe(toSchema, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   let targetFixture: Function;
+  let escapeJsonPointerFragmentsMock: Mock;
   let getOwnReflectMetadataMock: Mock;
   let updateOwnReflectMetadataMock: Mock;
   let buildDefaultSchemaMetadataMock: Mock;
@@ -33,6 +36,7 @@ describe(toSchema, () => {
 
   beforeAll(() => {
     targetFixture = class TestTarget {};
+    escapeJsonPointerFragmentsMock = vitest.mocked(escapeJsonPointerFragments);
     getOwnReflectMetadataMock = vitest.mocked(getOwnReflectMetadata);
     updateOwnReflectMetadataMock = vitest.mocked(updateOwnReflectMetadata);
     buildDefaultSchemaMetadataMock = vitest.mocked(buildDefaultSchemaMetadata);
@@ -45,17 +49,20 @@ describe(toSchema, () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let typeFixture: Function;
     let mockUpdateFunction: Mock;
+    let escapedNameFixture: string;
 
     let result: unknown;
 
     beforeAll(() => {
       typeFixture = class TestType {};
       mockUpdateFunction = vitest.fn();
+      escapedNameFixture = 'TestType';
 
       getOwnReflectMetadataMock.mockReturnValueOnce(undefined);
       updateSchemaMetadataReferencesMock.mockReturnValueOnce(
         mockUpdateFunction,
       );
+      escapeJsonPointerFragmentsMock.mockReturnValueOnce(escapedNameFixture);
 
       result = toSchema(targetFixture)(typeFixture);
     });
@@ -90,9 +97,16 @@ describe(toSchema, () => {
       );
     });
 
-    it('should return an OpenApi3Dot1SchemaObject with $ref using type.name', () => {
+    it('should call escapeJsonPointerFragments()', () => {
+      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledTimes(1);
+      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledWith(
+        typeFixture.name,
+      );
+    });
+
+    it('should return an OpenApi3Dot1SchemaObject with $ref using escaped type.name', () => {
       expect(result).toStrictEqual({
-        $ref: `#/components/schemas/${typeFixture.name}`,
+        $ref: `#/components/schemas/${escapedNameFixture}`,
       });
     });
   });
@@ -102,12 +116,14 @@ describe(toSchema, () => {
     let typeFixture: Function;
     let metadataWithUndefinedName: SchemaMetadata;
     let mockUpdateFunction: Mock;
+    let escapedNameFixture: string;
 
     let result: unknown;
 
     beforeAll(() => {
       typeFixture = class TestType {};
       mockUpdateFunction = vitest.fn();
+      escapedNameFixture = 'TestType';
       metadataWithUndefinedName = {
         name: undefined,
         properties: new Map(),
@@ -119,6 +135,7 @@ describe(toSchema, () => {
       updateSchemaMetadataReferencesMock.mockReturnValueOnce(
         mockUpdateFunction,
       );
+      escapeJsonPointerFragmentsMock.mockReturnValueOnce(escapedNameFixture);
 
       result = toSchema(targetFixture)(typeFixture);
     });
@@ -153,9 +170,16 @@ describe(toSchema, () => {
       );
     });
 
-    it('should return an OpenApi3Dot1SchemaObject with $ref using type.name', () => {
+    it('should call escapeJsonPointerFragments()', () => {
+      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledTimes(1);
+      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledWith(
+        typeFixture.name,
+      );
+    });
+
+    it('should return an OpenApi3Dot1SchemaObject with $ref using escaped type.name', () => {
       expect(result).toStrictEqual({
-        $ref: `#/components/schemas/${typeFixture.name}`,
+        $ref: `#/components/schemas/${escapedNameFixture}`,
       });
     });
   });
@@ -166,6 +190,7 @@ describe(toSchema, () => {
     let metadataWithName: SchemaMetadata;
     let nameFixture: string;
     let mockUpdateFunction: Mock;
+    let escapedNameFixture: string;
 
     let result: unknown;
 
@@ -173,6 +198,7 @@ describe(toSchema, () => {
       typeFixture = class TestType {};
       nameFixture = 'CustomSchemaName';
       mockUpdateFunction = vitest.fn();
+      escapedNameFixture = 'CustomSchemaName';
       metadataWithName = {
         name: nameFixture,
         properties: new Map(),
@@ -184,6 +210,7 @@ describe(toSchema, () => {
       updateSchemaMetadataReferencesMock.mockReturnValueOnce(
         mockUpdateFunction,
       );
+      escapeJsonPointerFragmentsMock.mockReturnValueOnce(escapedNameFixture);
 
       result = toSchema(targetFixture)(typeFixture);
     });
@@ -218,9 +245,14 @@ describe(toSchema, () => {
       );
     });
 
-    it('should return an OpenApi3Dot1SchemaObject with $ref using metadata.name', () => {
+    it('should call escapeJsonPointerFragments()', () => {
+      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledTimes(1);
+      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledWith(nameFixture);
+    });
+
+    it('should return an OpenApi3Dot1SchemaObject with $ref using escaped metadata.name', () => {
       expect(result).toStrictEqual({
-        $ref: `#/components/schemas/${nameFixture}`,
+        $ref: `#/components/schemas/${escapedNameFixture}`,
       });
     });
   });

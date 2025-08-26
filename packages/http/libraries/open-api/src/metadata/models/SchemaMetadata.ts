@@ -1,8 +1,9 @@
 import { ReferencedSchemaMetadata } from './ReferencedSchemaMetadata';
+import { SchemaReferencesMetadata } from './SchemaReferencesMetadata';
 
-export interface SchemaMetadata extends ReferencedSchemaMetadata {
+export interface SchemaMetadata
+  extends ReferencedSchemaMetadata,
+    SchemaReferencesMetadata {
   name: string | undefined;
   properties: Map<string, ReferencedSchemaMetadata>;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  references: Map<string, Function>;
 }
