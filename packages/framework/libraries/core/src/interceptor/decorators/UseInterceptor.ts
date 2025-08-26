@@ -5,14 +5,13 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { ApplyMiddlewareOptions } from '../middleware/models/ApplyMiddlewareOptions';
-import { Middleware } from '../middleware/models/Middleware';
-import { classMethodMiddlewareMetadataReflectKey } from '../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey';
-import { classMiddlewareMetadataReflectKey } from '../reflectMetadata/data/classMiddlewareMetadataReflectKey';
+import { classInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classInterceptorMetadataReflectKey';
+import { classMethodInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classMethodInterceptorMetadataReflectKey';
+import { Interceptor } from '../models/Interceptor';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function ApplyMiddleware(
-  ...middlewareList: (Newable<Middleware> | ApplyMiddlewareOptions)[]
+export function UseInterceptor(
+  ...interceptorList: Newable<Interceptor>[]
 ): ClassDecorator & MethodDecorator {
   return (target: object, key?: string | symbol): void => {
     let classTarget: object;
@@ -20,17 +19,17 @@ export function ApplyMiddleware(
 
     if (key === undefined) {
       classTarget = target;
-      metadataKey = classMiddlewareMetadataReflectKey;
+      metadataKey = classInterceptorMetadataReflectKey;
     } else {
       classTarget = target.constructor;
-      metadataKey = classMethodMiddlewareMetadataReflectKey;
+      metadataKey = classMethodInterceptorMetadataReflectKey;
     }
 
     updateOwnReflectMetadata(
       classTarget,
       metadataKey,
       buildEmptyArrayMetadata,
-      buildArrayMetadataWithArray(middlewareList),
+      buildArrayMetadataWithArray(interceptorList),
       key,
     );
   };

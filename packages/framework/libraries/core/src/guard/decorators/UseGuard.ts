@@ -5,13 +5,13 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { Interceptor } from '../interceptor/models/Interceptor';
-import { classInterceptorMetadataReflectKey } from '../reflectMetadata/data/classInterceptorMetadataReflectKey';
-import { classMethodInterceptorMetadataReflectKey } from '../reflectMetadata/data/classMethodInterceptorMetadataReflectKey';
+import { classGuardMetadataReflectKey } from '../../reflectMetadata/data/classGuardMetadataReflectKey';
+import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/classMethodGuardMetadataReflectKey';
+import { Guard } from '../models/Guard';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function UseInterceptor(
-  ...interceptorList: Newable<Interceptor>[]
+export function UseGuard(
+  ...guardList: Newable<Guard>[]
 ): ClassDecorator & MethodDecorator {
   return (target: object, key?: string | symbol): void => {
     let classTarget: object;
@@ -19,17 +19,17 @@ export function UseInterceptor(
 
     if (key === undefined) {
       classTarget = target;
-      metadataKey = classInterceptorMetadataReflectKey;
+      metadataKey = classGuardMetadataReflectKey;
     } else {
       classTarget = target.constructor;
-      metadataKey = classMethodInterceptorMetadataReflectKey;
+      metadataKey = classMethodGuardMetadataReflectKey;
     }
 
     updateOwnReflectMetadata(
       classTarget,
       metadataKey,
       buildEmptyArrayMetadata,
-      buildArrayMetadataWithArray(interceptorList),
+      buildArrayMetadataWithArray(guardList),
       key,
     );
   };

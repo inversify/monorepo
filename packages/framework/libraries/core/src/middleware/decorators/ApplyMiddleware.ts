@@ -5,13 +5,14 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { Guard } from '../guard/models/Guard';
-import { classGuardMetadataReflectKey } from '../reflectMetadata/data/classGuardMetadataReflectKey';
-import { classMethodGuardMetadataReflectKey } from '../reflectMetadata/data/classMethodGuardMetadataReflectKey';
+import { classMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey';
+import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey';
+import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
+import { Middleware } from '../models/Middleware';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function UseGuard(
-  ...guardList: Newable<Guard>[]
+export function ApplyMiddleware(
+  ...middlewareList: (Newable<Middleware> | ApplyMiddlewareOptions)[]
 ): ClassDecorator & MethodDecorator {
   return (target: object, key?: string | symbol): void => {
     let classTarget: object;
@@ -19,17 +20,17 @@ export function UseGuard(
 
     if (key === undefined) {
       classTarget = target;
-      metadataKey = classGuardMetadataReflectKey;
+      metadataKey = classMiddlewareMetadataReflectKey;
     } else {
       classTarget = target.constructor;
-      metadataKey = classMethodGuardMetadataReflectKey;
+      metadataKey = classMethodMiddlewareMetadataReflectKey;
     }
 
     updateOwnReflectMetadata(
       classTarget,
       metadataKey,
       buildEmptyArrayMetadata,
-      buildArrayMetadataWithArray(guardList),
+      buildArrayMetadataWithArray(middlewareList),
       key,
     );
   };

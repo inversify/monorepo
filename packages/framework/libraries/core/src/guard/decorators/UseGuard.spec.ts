@@ -9,9 +9,9 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { Guard } from '../guard/models/Guard';
-import { classGuardMetadataReflectKey } from '../reflectMetadata/data/classGuardMetadataReflectKey';
-import { classMethodGuardMetadataReflectKey } from '../reflectMetadata/data/classMethodGuardMetadataReflectKey';
+import { classGuardMetadataReflectKey } from '../../reflectMetadata/data/classGuardMetadataReflectKey';
+import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/classMethodGuardMetadataReflectKey';
+import { Guard } from '../models/Guard';
 import { UseGuard } from './UseGuard';
 
 describe(UseGuard, () => {

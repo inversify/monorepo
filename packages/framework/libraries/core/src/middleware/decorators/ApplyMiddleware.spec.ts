@@ -9,29 +9,29 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { Interceptor } from '../interceptor/models/Interceptor';
-import { classInterceptorMetadataReflectKey } from '../reflectMetadata/data/classInterceptorMetadataReflectKey';
-import { classMethodInterceptorMetadataReflectKey } from '../reflectMetadata/data/classMethodInterceptorMetadataReflectKey';
-import { UseInterceptor } from './UseInterceptor';
+import { classMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey';
+import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey';
+import { Middleware } from '../models/Middleware';
+import { ApplyMiddleware } from './ApplyMiddleware';
 
-describe(UseInterceptor, () => {
+describe(ApplyMiddleware, () => {
   describe('having a ClassDecorator', () => {
     describe('when called', () => {
-      let middlewareFixture: Newable<Interceptor>;
-      let targetFixture: NewableFunction;
+      let middlewareFixture: Newable<Middleware>;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
+      let targetFixture: NewableFunction;
 
       beforeAll(() => {
-        middlewareFixture = {} as Newable<Interceptor>;
-        targetFixture = class TestController {};
+        middlewareFixture = {} as Newable<Middleware>;
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
+        targetFixture = class TestController {};
 
         vitest
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseInterceptor(middlewareFixture)(targetFixture);
+        ApplyMiddleware(middlewareFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -49,7 +49,7 @@ describe(UseInterceptor, () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture,
-          classInterceptorMetadataReflectKey,
+          classMiddlewareMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,
           undefined,
@@ -59,30 +59,30 @@ describe(UseInterceptor, () => {
   });
 
   describe('having a MethodDecorator', () => {
-    describe('when called', () => {
-      let targetFixture: NewableFunction;
-      let methodKeyFixture: string | symbol;
-      let middlewareFixture: Newable<Interceptor>;
-      let descriptorFixture: PropertyDescriptor;
+    describe('when called and getOwnReflectMetadata returns a Middleware list', () => {
+      let controllerFixture: NewableFunction;
+      let controllerMethodKeyFixture: string | symbol;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
+      let descriptorFixture: PropertyDescriptor;
+      let middlewareFixture: Newable<Middleware>;
 
       beforeAll(() => {
-        targetFixture = class TestController {};
-        methodKeyFixture = 'testMethod';
-        middlewareFixture = {} as Newable<Interceptor>;
+        controllerFixture = class Test {};
+        controllerMethodKeyFixture = 'testMethod';
+        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
+          arrayMetadata;
+        middlewareFixture = {} as Newable<Middleware>;
         descriptorFixture = {
           value: 'value-descriptor-example',
         } as PropertyDescriptor;
-        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
-          arrayMetadata;
 
         vitest
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseInterceptor(middlewareFixture)(
-          targetFixture,
-          methodKeyFixture,
+        ApplyMiddleware(middlewareFixture)(
+          controllerFixture,
+          controllerMethodKeyFixture,
           descriptorFixture,
         );
       });
@@ -97,11 +97,11 @@ describe(UseInterceptor, () => {
       it('should call updateOwnReflectMetadata', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
-          targetFixture.constructor,
-          classMethodInterceptorMetadataReflectKey,
+          controllerFixture.constructor,
+          classMethodMiddlewareMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,
-          methodKeyFixture,
+          controllerMethodKeyFixture,
         );
       });
     });
