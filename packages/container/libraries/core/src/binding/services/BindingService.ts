@@ -94,7 +94,12 @@ export class BindingService implements Cloneable<BindingService> {
       return bindings;
     }
 
-    return this.#tryAutobind<TResolved>(serviceIdentifier);
+    const autoBoundBinding: Binding<TResolved> | undefined =
+      this.#tryAutobind<TResolved>(serviceIdentifier);
+
+    return autoBoundBinding === undefined
+      ? autoBoundBinding
+      : [autoBoundBinding];
   }
 
   public *getChained<TResolved>(
@@ -111,10 +116,11 @@ export class BindingService implements Cloneable<BindingService> {
 
     if (parent === undefined) {
       if (currentBindings === undefined) {
-        const autobindBindings: Iterable<Binding<TResolved>> | undefined =
+        const autobindBindings: Binding<TResolved> | undefined =
           this.#tryAutobind<TResolved>(serviceIdentifier);
+
         if (autobindBindings !== undefined) {
-          yield* autobindBindings;
+          yield autobindBindings;
         }
       }
     } else {
@@ -201,7 +207,7 @@ export class BindingService implements Cloneable<BindingService> {
 
   #tryAutobind<TResolved>(
     serviceIdentifier: ServiceIdentifier,
-  ): Iterable<Binding<TResolved>> | undefined {
+  ): Binding<TResolved> | undefined {
     if (
       this.#autobindOptions === undefined ||
       typeof serviceIdentifier !== 'function'
@@ -216,6 +222,6 @@ export class BindingService implements Cloneable<BindingService> {
 
     this.set(binding);
 
-    return [binding];
+    return binding;
   }
 }
