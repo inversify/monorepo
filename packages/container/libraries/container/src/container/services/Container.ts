@@ -40,11 +40,15 @@ export class Container {
   readonly #snapshotManager: SnapshotManager;
 
   constructor(options?: ContainerOptions) {
-    this.#serviceReferenceManager = this.#buildServiceReferenceManager(options);
-
     const autobind: boolean = options?.autobind ?? false;
     const defaultScope: BindingScope =
       options?.defaultScope ?? DEFAULT_DEFAULT_SCOPE;
+
+    this.#serviceReferenceManager = this.#buildServiceReferenceManager(
+      options,
+      autobind,
+      defaultScope,
+    );
 
     const planParamsOperationsManager: PlanParamsOperationsManager =
       new PlanParamsOperationsManager(this.#serviceReferenceManager);
@@ -231,16 +235,24 @@ export class Container {
     this.#containerModuleManager.unloadSync(...modules);
   }
 
-  #buildServiceReferenceManager(
-    options?: ContainerOptions,
-  ): ServiceReferenceManager {
-    const autobind: boolean = options?.autobind ?? false;
-    const defaultScope: BindingScope =
-      options?.defaultScope ?? DEFAULT_DEFAULT_SCOPE;
+  #buildAutobindOptions(
+    autobind: boolean,
+    defaultScope: BindingScope,
+  ): AutobindOptions | undefined {
+    if (autobind) {
+      return { scope: defaultScope };
+    }
 
-    const autobindOptions: AutobindOptions | undefined = autobind
-      ? { scope: defaultScope }
-      : undefined;
+    return undefined;
+  }
+
+  #buildServiceReferenceManager(
+    options: ContainerOptions | undefined,
+    autobind: boolean,
+    defaultScope: BindingScope,
+  ): ServiceReferenceManager {
+    const autobindOptions: AutobindOptions | undefined =
+      this.#buildAutobindOptions(autobind, defaultScope);
 
     if (options?.parent === undefined) {
       return new ServiceReferenceManager(
