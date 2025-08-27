@@ -1,5 +1,15 @@
 # @inversifyjs/container
 
+## 1.12.7
+
+### Patch Changes
+
+- 67db8bd: Updated `Container` to trigger autobind options on autobound parent container related binding requests
+- Updated dependencies [67db8bd]
+- Updated dependencies [07abb74]
+  - @inversifyjs/core@8.0.0
+  - @inversifyjs/plugin@0.2.0
+
 ## 1.12.6
 
 ### Patch Changes
