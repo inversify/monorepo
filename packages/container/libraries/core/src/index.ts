@@ -1,4 +1,5 @@
 import { getBindingId } from './binding/actions/getBindingId';
+import { AutobindOptions } from './binding/models/AutobindOptions';
 import { BaseBinding } from './binding/models/BaseBinding';
 import { Binding } from './binding/models/Binding';
 import { BindingActivation } from './binding/models/BindingActivation';
@@ -109,6 +110,7 @@ export type {
   BaseGetPlanOptions,
   BaseManagedClassElementMetadata,
   BasePlanParams,
+  AutobindOptions,
   Binding,
   BindingActivation,
   BindingActivationRelation,

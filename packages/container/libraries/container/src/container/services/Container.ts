@@ -1,6 +1,7 @@
 import { Newable, ServiceIdentifier } from '@inversifyjs/common';
 import {
   ActivationsService,
+  AutobindOptions,
   BindingActivation,
   BindingDeactivation,
   BindingScope,
@@ -39,11 +40,15 @@ export class Container {
   readonly #snapshotManager: SnapshotManager;
 
   constructor(options?: ContainerOptions) {
-    this.#serviceReferenceManager = this.#buildServiceReferenceManager(options);
-
     const autobind: boolean = options?.autobind ?? false;
     const defaultScope: BindingScope =
       options?.defaultScope ?? DEFAULT_DEFAULT_SCOPE;
+
+    this.#serviceReferenceManager = this.#buildServiceReferenceManager(
+      options,
+      autobind,
+      defaultScope,
+    );
 
     const planParamsOperationsManager: PlanParamsOperationsManager =
       new PlanParamsOperationsManager(this.#serviceReferenceManager);
@@ -230,13 +235,29 @@ export class Container {
     this.#containerModuleManager.unloadSync(...modules);
   }
 
+  #buildAutobindOptions(
+    autobind: boolean,
+    defaultScope: BindingScope,
+  ): AutobindOptions | undefined {
+    if (autobind) {
+      return { scope: defaultScope };
+    }
+
+    return undefined;
+  }
+
   #buildServiceReferenceManager(
-    options?: ContainerOptions,
+    options: ContainerOptions | undefined,
+    autobind: boolean,
+    defaultScope: BindingScope,
   ): ServiceReferenceManager {
+    const autobindOptions: AutobindOptions | undefined =
+      this.#buildAutobindOptions(autobind, defaultScope);
+
     if (options?.parent === undefined) {
       return new ServiceReferenceManager(
         ActivationsService.build(() => undefined),
-        BindingService.build(() => undefined),
+        BindingService.build(() => undefined, autobindOptions),
         DeactivationsService.build(() => undefined),
         new PlanResultCacheService(),
       );
@@ -257,6 +278,7 @@ export class Container {
       ),
       BindingService.build(
         () => parent.#serviceReferenceManager.bindingService,
+        autobindOptions,
       ),
       DeactivationsService.build(
         () => parent.#serviceReferenceManager.deactivationService,
