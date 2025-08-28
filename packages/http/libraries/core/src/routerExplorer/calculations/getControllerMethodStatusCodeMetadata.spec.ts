@@ -4,28 +4,22 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey';
-import { exploreControllerMethodHeaderMetadataList } from './exploreControllerMethodHeaderMetadataList';
+import { controllerMethodStatusCodeMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodStatusCodeMetadataReflectKey';
+import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata';
 
-describe(exploreControllerMethodHeaderMetadataList, () => {
+describe(getControllerMethodStatusCodeMetadata, () => {
   describe('when called', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodKeyFixture: string | symbol;
-    let headerListFixture: [string, string][];
-    let headerMetadataFixture: Map<string, string>;
+    let statusCodeMetadataFixture: undefined;
     let result: unknown;
 
     beforeAll(() => {
       controllerFixture = class Test {};
       controllerMethodKeyFixture = 'testMethod';
-      headerListFixture = [['key-example', 'value-example']];
-      headerMetadataFixture = new Map<string, string>(headerListFixture);
+      statusCodeMetadataFixture = undefined;
 
-      vitest
-        .mocked(getOwnReflectMetadata)
-        .mockReturnValue(headerMetadataFixture);
-
-      result = exploreControllerMethodHeaderMetadataList(
+      result = getControllerMethodStatusCodeMetadata(
         controllerFixture,
         controllerMethodKeyFixture,
       );
@@ -39,13 +33,13 @@ describe(exploreControllerMethodHeaderMetadataList, () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         controllerFixture,
-        controllerMethodHeaderMetadataReflectKey,
+        controllerMethodStatusCodeMetadataReflectKey,
         controllerMethodKeyFixture,
       );
     });
 
-    it('should return a [string, string]', () => {
-      expect(result).toStrictEqual(headerListFixture);
+    it('should return the controller metadata', () => {
+      expect(result).toBe(statusCodeMetadataFixture);
     });
   });
 });

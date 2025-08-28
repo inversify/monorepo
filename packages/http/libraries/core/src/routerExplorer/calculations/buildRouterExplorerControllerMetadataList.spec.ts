@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./exploreControllers');
+vitest.mock('./getControllers');
 vitest.mock('./buildRouterExplorerControllerMetadata');
 
 import { Container } from 'inversify';
@@ -19,7 +19,7 @@ import { ControllerMetadata } from '../model/ControllerMetadata';
 import { RouterExplorerControllerMetadata } from '../model/RouterExplorerControllerMetadata';
 import { buildRouterExplorerControllerMetadata } from './buildRouterExplorerControllerMetadata';
 import { buildRouterExplorerControllerMetadataList } from './buildRouterExplorerControllerMetadataList';
-import { exploreControllers } from './exploreControllers';
+import { getControllers } from './getControllers';
 
 describe(buildRouterExplorerControllerMetadataList, () => {
   describe('when called and exploreControllers returns undefined', () => {
@@ -32,7 +32,7 @@ describe(buildRouterExplorerControllerMetadataList, () => {
       controllerMetadataListFixture = undefined;
 
       vitest
-        .mocked(exploreControllers)
+        .mocked(getControllers)
         .mockReturnValueOnce(controllerMetadataListFixture);
 
       try {
@@ -47,8 +47,8 @@ describe(buildRouterExplorerControllerMetadataList, () => {
     });
 
     it('should call exploreControllers', () => {
-      expect(exploreControllers).toHaveBeenCalledTimes(1);
-      expect(exploreControllers).toHaveBeenCalledWith();
+      expect(getControllers).toHaveBeenCalledTimes(1);
+      expect(getControllers).toHaveBeenCalledWith();
     });
 
     it('should throw an InversifyHttpAdapterError with the correct kind', () => {
@@ -86,7 +86,7 @@ describe(buildRouterExplorerControllerMetadataList, () => {
       };
 
       vitest
-        .mocked(exploreControllers)
+        .mocked(getControllers)
         .mockReturnValueOnce(controllerMetadataListFixture);
 
       containerMock.isBound.mockReturnValueOnce(true);
@@ -103,8 +103,8 @@ describe(buildRouterExplorerControllerMetadataList, () => {
     });
 
     it('should call exploreControllers', () => {
-      expect(exploreControllers).toHaveBeenCalledTimes(1);
-      expect(exploreControllers).toHaveBeenCalledWith();
+      expect(getControllers).toHaveBeenCalledTimes(1);
+      expect(getControllers).toHaveBeenCalledWith();
     });
 
     it('should call isBound', () => {

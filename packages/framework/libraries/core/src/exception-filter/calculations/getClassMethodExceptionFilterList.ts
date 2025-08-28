@@ -1,15 +1,15 @@
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/classMethodGuardMetadataReflectKey';
+import { classMethodExceptionFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodExceptionFilterMetadataReflectKey';
 
-export function exploreClassMethodGuardList(
+export function getClassMethodExceptionFilterList(
   classConstructor: NewableFunction,
   methodKey: string | symbol,
 ): NewableFunction[] {
   return (
     getOwnReflectMetadata(
       classConstructor,
-      classMethodGuardMetadataReflectKey,
+      classMethodExceptionFilterMetadataReflectKey,
       methodKey,
     ) ?? []
   );

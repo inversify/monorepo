@@ -4,18 +4,19 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classExceptionFilterMetadataReflectKey } from '../../reflectMetadata/data/classExceptionFilterMetadataReflectKey';
-import { exploreClassExceptionFilterList } from './exploreClassExceptionFilterList';
+import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
+import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
+import { getControllerMethodMetadataList } from './getControllerMethodMetadataList';
 
-describe(exploreClassExceptionFilterList, () => {
+describe(getControllerMethodMetadataList, () => {
   describe('when called and getOwnReflectMetadata returns undefined', () => {
-    let classFixture: NewableFunction;
+    let controllerFixture: NewableFunction;
     let result: unknown;
 
     beforeAll(() => {
-      classFixture = class Test {};
+      controllerFixture = class Test {};
 
-      result = exploreClassExceptionFilterList(classFixture);
+      result = getControllerMethodMetadataList(controllerFixture);
     });
 
     afterAll(() => {
@@ -25,8 +26,8 @@ describe(exploreClassExceptionFilterList, () => {
     it('should call getOwnReflectMetadata', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
-        classFixture,
-        classExceptionFilterMetadataReflectKey,
+        controllerFixture,
+        controllerMethodMetadataReflectKey,
       );
     });
 
@@ -36,19 +37,19 @@ describe(exploreClassExceptionFilterList, () => {
   });
 
   describe('when called and getOwnReflectMetadata returns an array', () => {
-    let classFixture: NewableFunction;
-    let classExceptionFilterFixtures: NewableFunction[];
+    let controllerFixture: NewableFunction;
+    let controllerMethodMetadataFixtures: ControllerMethodMetadata[];
     let result: unknown;
 
     beforeAll(() => {
-      classFixture = class Test {};
-      classExceptionFilterFixtures = [];
+      controllerFixture = class Test {};
+      controllerMethodMetadataFixtures = [];
 
       vitest
         .mocked(getOwnReflectMetadata)
-        .mockReturnValueOnce(classExceptionFilterFixtures);
+        .mockReturnValueOnce(controllerMethodMetadataFixtures);
 
-      result = exploreClassExceptionFilterList(classFixture);
+      result = getControllerMethodMetadataList(controllerFixture);
     });
 
     afterAll(() => {
@@ -57,14 +58,10 @@ describe(exploreClassExceptionFilterList, () => {
 
     it('should call getOwnReflectMetadata', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
-        classFixture,
-        classExceptionFilterMetadataReflectKey,
-      );
     });
 
     it('should return an array', () => {
-      expect(result).toBe(classExceptionFilterFixtures);
+      expect(result).toBe(controllerMethodMetadataFixtures);
     });
   });
 });

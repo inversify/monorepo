@@ -2,7 +2,7 @@ import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey';
 
-export function exploreClassMiddlewareList(
+export function getClassMiddlewareList(
   classConstructor: NewableFunction,
 ): NewableFunction[] {
   return (

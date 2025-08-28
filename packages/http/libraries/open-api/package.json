@@ -67,7 +67,7 @@
   "name": "@inversifyjs/http-open-api",
   "private": "true",
   "peerDependencies": {
-    "inversify": "^7.8.1"
+    "inversify": "^7.9.1"
   },
   "publishConfig": {
     "access": "public"

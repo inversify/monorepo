@@ -2,7 +2,7 @@ import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { classExceptionFilterMetadataReflectKey } from '../../reflectMetadata/data/classExceptionFilterMetadataReflectKey';
 
-export function exploreClassExceptionFilterList(
+export function getClassExceptionFilterList(
   classConstructor: NewableFunction,
 ): NewableFunction[] {
   return (

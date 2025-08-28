@@ -6,14 +6,14 @@ import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
 import { catchExceptionMetadataReflectKey } from '../../reflectMetadata/data/catchExceptionMetadataReflectKey';
-import { exploreCatchExceptionMap } from './exploreCatchExceptionMap';
+import { getCatchExceptionMap } from './getCatchExceptionMap';
 
-describe(exploreCatchExceptionMap, () => {
+describe(getCatchExceptionMap, () => {
   describe('when called and getOwnReflectMetadata returns undefined', () => {
     let result: unknown;
 
     beforeAll(() => {
-      result = exploreCatchExceptionMap();
+      result = getCatchExceptionMap();
     });
 
     afterAll(() => {
@@ -44,7 +44,7 @@ describe(exploreCatchExceptionMap, () => {
         .mocked(getOwnReflectMetadata)
         .mockReturnValueOnce(catchExceptionMapFixture);
 
-      result = exploreCatchExceptionMap();
+      result = getCatchExceptionMap();
     });
 
     afterAll(() => {

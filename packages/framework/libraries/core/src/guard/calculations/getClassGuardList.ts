@@ -2,7 +2,7 @@ import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { classGuardMetadataReflectKey } from '../../reflectMetadata/data/classGuardMetadataReflectKey';
 
-export function exploreClassGuardList(
+export function getClassGuardList(
   classConstructor: NewableFunction,
 ): NewableFunction[] {
   return (

@@ -2,15 +2,15 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/framework-core');
 
-vitest.mock('./exploreControllerMethodParameterMetadataList');
-vitest.mock('./exploreControllerMethodStatusCodeMetadata');
-vitest.mock('./exploreControllerMethodHeaderMetadataList');
-vitest.mock('./exploreControllerMethodUseNativeHandlerMetadata');
+vitest.mock('./getControllerMethodParameterMetadataList');
+vitest.mock('./getControllerMethodStatusCodeMetadata');
+vitest.mock('./getControllerMethodHeaderMetadataList');
+vitest.mock('./getControllerMethodUseNativeHandlerMetadata');
 
 import {
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
-  exploreClassMethodGuardList,
-  exploreClassMethodMiddlewareList,
+  getClassMethodGuardList,
+  getClassMethodMiddlewareList,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
 
@@ -18,10 +18,10 @@ import { RequestMethodType } from '../../http/models/RequestMethodType';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
 import { buildRouterExplorerControllerMethodMetadata } from './buildRouterExplorerControllerMethodMetadata';
-import { exploreControllerMethodHeaderMetadataList } from './exploreControllerMethodHeaderMetadataList';
-import { exploreControllerMethodParameterMetadataList } from './exploreControllerMethodParameterMetadataList';
-import { exploreControllerMethodStatusCodeMetadata } from './exploreControllerMethodStatusCodeMetadata';
-import { exploreControllerMethodUseNativeHandlerMetadata } from './exploreControllerMethodUseNativeHandlerMetadata';
+import { getControllerMethodHeaderMetadataList } from './getControllerMethodHeaderMetadataList';
+import { getControllerMethodParameterMetadataList } from './getControllerMethodParameterMetadataList';
+import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata';
+import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata';
 
 describe(buildRouterExplorerControllerMethodMetadata, () => {
   describe('when called', () => {
@@ -58,19 +58,19 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       useNativeHandlerFixture = false;
 
       vitest
-        .mocked(exploreControllerMethodParameterMetadataList)
+        .mocked(getControllerMethodParameterMetadataList)
         .mockReturnValue(controllerMethodParameterMetadataListFixture);
 
       vitest
-        .mocked(exploreControllerMethodStatusCodeMetadata)
+        .mocked(getControllerMethodStatusCodeMetadata)
         .mockReturnValue(controllerMethodStatusCodeMetadataFixture);
 
       vitest
-        .mocked(exploreClassMethodGuardList)
+        .mocked(getClassMethodGuardList)
         .mockReturnValue(controllerMethodGuardListFixture);
 
       vitest
-        .mocked(exploreClassMethodMiddlewareList)
+        .mocked(getClassMethodMiddlewareList)
         .mockReturnValue(controllerMethodMiddlewareListFixture);
 
       vitest
@@ -78,11 +78,11 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         .mockReturnValue(middlewareOptionsFixture);
 
       vitest
-        .mocked(exploreControllerMethodHeaderMetadataList)
+        .mocked(getControllerMethodHeaderMetadataList)
         .mockReturnValueOnce(headerMetadataListFixture);
 
       vitest
-        .mocked(exploreControllerMethodUseNativeHandlerMetadata)
+        .mocked(getControllerMethodUseNativeHandlerMetadata)
         .mockReturnValue(useNativeHandlerFixture);
 
       result = buildRouterExplorerControllerMethodMetadata(
@@ -95,37 +95,33 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call exploreControllerMethodParameterMetadataList', () => {
-      expect(
-        exploreControllerMethodParameterMetadataList,
-      ).toHaveBeenCalledTimes(1);
-      expect(exploreControllerMethodParameterMetadataList).toHaveBeenCalledWith(
+    it('should call getControllerMethodParameterMetadataList', () => {
+      expect(getControllerMethodParameterMetadataList).toHaveBeenCalledTimes(1);
+      expect(getControllerMethodParameterMetadataList).toHaveBeenCalledWith(
         controllerFixture,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
-    it('should call exploreControllerMethodStatusCodeMetadata', () => {
-      expect(exploreControllerMethodStatusCodeMetadata).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(exploreControllerMethodStatusCodeMetadata).toHaveBeenCalledWith(
+    it('should call getControllerMethodStatusCodeMetadata', () => {
+      expect(getControllerMethodStatusCodeMetadata).toHaveBeenCalledTimes(1);
+      expect(getControllerMethodStatusCodeMetadata).toHaveBeenCalledWith(
         controllerFixture,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
-    it('should call exploreClassMethodGuardList', () => {
-      expect(exploreClassMethodGuardList).toHaveBeenCalledTimes(1);
-      expect(exploreClassMethodGuardList).toHaveBeenCalledWith(
+    it('should call getClassMethodGuardList', () => {
+      expect(getClassMethodGuardList).toHaveBeenCalledTimes(1);
+      expect(getClassMethodGuardList).toHaveBeenCalledWith(
         controllerFixture,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
-    it('should call exploreClassMethodMiddlewareList', () => {
-      expect(exploreClassMethodMiddlewareList).toHaveBeenCalledTimes(1);
-      expect(exploreClassMethodMiddlewareList).toHaveBeenCalledWith(
+    it('should call getClassMethodMiddlewareList', () => {
+      expect(getClassMethodMiddlewareList).toHaveBeenCalledTimes(1);
+      expect(getClassMethodMiddlewareList).toHaveBeenCalledWith(
         controllerFixture,
         controllerMethodMetadataFixture.methodKey,
       );
@@ -140,23 +136,19 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       ).toHaveBeenCalledWith(controllerMethodMiddlewareListFixture);
     });
 
-    it('should call exploreControllerMethodHeaderMetadataList', () => {
-      expect(exploreControllerMethodHeaderMetadataList).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(exploreControllerMethodHeaderMetadataList).toHaveBeenCalledWith(
+    it('should call getControllerMethodHeaderMetadataList', () => {
+      expect(getControllerMethodHeaderMetadataList).toHaveBeenCalledTimes(1);
+      expect(getControllerMethodHeaderMetadataList).toHaveBeenCalledWith(
         controllerFixture,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
-    it('should call exploreControllerMethodUseNativeHandlerMetadata', () => {
-      expect(
-        exploreControllerMethodUseNativeHandlerMetadata,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        exploreControllerMethodUseNativeHandlerMetadata,
-      ).toHaveBeenCalledWith(
+    it('should call getControllerMethodUseNativeHandlerMetadata', () => {
+      expect(getControllerMethodUseNativeHandlerMetadata).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(getControllerMethodUseNativeHandlerMetadata).toHaveBeenCalledWith(
         controllerFixture,
         controllerMethodMetadataFixture.methodKey,
       );

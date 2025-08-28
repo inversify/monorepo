@@ -4,18 +4,23 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classInterceptorMetadataReflectKey';
-import { exploreClassInterceptorList } from './exploreClassInterceptorList';
+import { classMethodExceptionFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodExceptionFilterMetadataReflectKey';
+import { getClassMethodExceptionFilterList } from './getClassMethodExceptionFilterList';
 
-describe(exploreClassInterceptorList, () => {
+describe(getClassMethodExceptionFilterList, () => {
   describe('when called and getOwnReflectMetadata returns undefined', () => {
     let classFixture: NewableFunction;
+    let classMethodKeyFixture: string | symbol;
     let result: unknown;
 
     beforeAll(() => {
       classFixture = class Test {};
+      classMethodKeyFixture = 'testMethod';
 
-      result = exploreClassInterceptorList(classFixture);
+      result = getClassMethodExceptionFilterList(
+        classFixture,
+        classMethodKeyFixture,
+      );
     });
 
     afterAll(() => {
@@ -26,7 +31,8 @@ describe(exploreClassInterceptorList, () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,
-        classInterceptorMetadataReflectKey,
+        classMethodExceptionFilterMetadataReflectKey,
+        classMethodKeyFixture,
       );
     });
 
@@ -37,18 +43,23 @@ describe(exploreClassInterceptorList, () => {
 
   describe('when called and getOwnReflectMetadata returns an array', () => {
     let classFixture: NewableFunction;
-    let classInterceptorFixtures: NewableFunction[];
+    let classMethodKeyFixture: string | symbol;
+    let classMethodExceptionFilterFixtures: NewableFunction[];
     let result: unknown;
 
     beforeAll(() => {
       classFixture = class Test {};
-      classInterceptorFixtures = [];
+      classMethodKeyFixture = 'testMethod';
+      classMethodExceptionFilterFixtures = [];
 
       vitest
         .mocked(getOwnReflectMetadata)
-        .mockReturnValueOnce(classInterceptorFixtures);
+        .mockReturnValueOnce(classMethodExceptionFilterFixtures);
 
-      result = exploreClassInterceptorList(classFixture);
+      result = getClassMethodExceptionFilterList(
+        classFixture,
+        classMethodKeyFixture,
+      );
     });
 
     afterAll(() => {
@@ -59,12 +70,13 @@ describe(exploreClassInterceptorList, () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,
-        classInterceptorMetadataReflectKey,
+        classMethodExceptionFilterMetadataReflectKey,
+        classMethodKeyFixture,
       );
     });
 
     it('should return an array', () => {
-      expect(result).toBe(classInterceptorFixtures);
+      expect(result).toBe(classMethodExceptionFilterFixtures);
     });
   });
 });

@@ -2,7 +2,7 @@ import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey';
 
-export function exploreControllerMethodHeaderMetadataList(
+export function getControllerMethodHeaderMetadataList(
   controller: NewableFunction,
   methodKey: string | symbol,
 ): [string, string][] {
