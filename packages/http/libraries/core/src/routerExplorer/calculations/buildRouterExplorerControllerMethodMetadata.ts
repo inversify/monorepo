@@ -1,8 +1,8 @@
 import {
   ApplyMiddlewareOptions,
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
-  exploreClassMethodGuardList,
-  exploreClassMethodMiddlewareList,
+  getClassMethodGuardList,
+  getClassMethodMiddlewareList,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
 
@@ -10,10 +10,10 @@ import { HttpStatusCode } from '../../http/responses/HttpStatusCode';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
-import { exploreControllerMethodHeaderMetadataList } from './exploreControllerMethodHeaderMetadataList';
-import { exploreControllerMethodParameterMetadataList } from './exploreControllerMethodParameterMetadataList';
-import { exploreControllerMethodStatusCodeMetadata } from './exploreControllerMethodStatusCodeMetadata';
-import { exploreControllerMethodUseNativeHandlerMetadata } from './exploreControllerMethodUseNativeHandlerMetadata';
+import { getControllerMethodHeaderMetadataList } from './getControllerMethodHeaderMetadataList';
+import { getControllerMethodParameterMetadataList } from './getControllerMethodParameterMetadataList';
+import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata';
+import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata';
 
 export function buildRouterExplorerControllerMethodMetadata<
   TRequest,
@@ -26,24 +26,26 @@ export function buildRouterExplorerControllerMethodMetadata<
   const controllerMethodParameterMetadataList: (
     | ControllerMethodParameterMetadata
     | undefined
-  )[] = exploreControllerMethodParameterMetadataList(
+  )[] = getControllerMethodParameterMetadataList(
     controller,
     controllerMethodMetadata.methodKey,
   );
 
   const controllerMethodStatusCode: HttpStatusCode | undefined =
-    exploreControllerMethodStatusCodeMetadata(
+    getControllerMethodStatusCodeMetadata(
       controller,
       controllerMethodMetadata.methodKey,
     );
 
-  const controllerMethodGuardList: NewableFunction[] =
-    exploreClassMethodGuardList(controller, controllerMethodMetadata.methodKey);
+  const controllerMethodGuardList: NewableFunction[] = getClassMethodGuardList(
+    controller,
+    controllerMethodMetadata.methodKey,
+  );
 
   const controllerMethodMiddlewareList: (
     | NewableFunction
     | ApplyMiddlewareOptions
-  )[] = exploreClassMethodMiddlewareList(
+  )[] = getClassMethodMiddlewareList(
     controller,
     controllerMethodMetadata.methodKey,
   );
@@ -54,16 +56,15 @@ export function buildRouterExplorerControllerMethodMetadata<
     );
 
   const headerMetadataList: [string, string][] =
-    exploreControllerMethodHeaderMetadataList(
+    getControllerMethodHeaderMetadataList(
       controller,
       controllerMethodMetadata.methodKey,
     );
 
-  const useNativeHandler: boolean =
-    exploreControllerMethodUseNativeHandlerMetadata(
-      controller,
-      controllerMethodMetadata.methodKey,
-    );
+  const useNativeHandler: boolean = getControllerMethodUseNativeHandlerMetadata(
+    controller,
+    controllerMethodMetadata.methodKey,
+  );
 
   return {
     guardList: controllerMethodGuardList,
