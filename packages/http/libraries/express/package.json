@@ -19,7 +19,7 @@
     "eslint": "9.34.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
-    "rollup": "4.48.1",
+    "rollup": "4.49.0",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.2",
@@ -52,7 +52,7 @@
   "name": "@inversifyjs/http-express",
   "peerDependencies": {
     "express": "^5.1.0",
-    "inversify": "^7.9.0"
+    "inversify": "^7.9.1"
   },
   "private": true,
   "repository": {

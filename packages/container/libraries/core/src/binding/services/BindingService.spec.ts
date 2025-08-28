@@ -8,13 +8,18 @@ import {
   vitest,
 } from 'vitest';
 
+vitest.mock('../calculations/buildInstanceBinding');
 vitest.mock('../../common/models/OneToManyMapStar');
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { Newable, ServiceIdentifier } from '@inversifyjs/common';
 
 import { OneToManyMapStar } from '../../common/models/OneToManyMapStar';
+import { buildInstanceBinding } from '../calculations/buildInstanceBinding';
 import { ConstantValueBindingFixtures } from '../fixtures/ConstantValueBindingFixtures';
+import { AutobindOptions } from '../models/AutobindOptions';
 import { Binding } from '../models/Binding';
+import { bindingScopeValues } from '../models/BindingScope';
+import { InstanceBinding } from '../models/InstanceBinding';
 import { BindingRelation, BindingService } from './BindingService';
 
 describe(BindingService, () => {
@@ -40,7 +45,9 @@ describe(BindingService, () => {
 
     parentBindingService = BindingService.build(() => undefined);
 
-    bindingService = BindingService.build(() => parentBindingService);
+    bindingService = BindingService.build(() => parentBindingService, {
+      scope: bindingScopeValues.Singleton,
+    });
   });
 
   describe('.clone', () => {
@@ -69,77 +76,142 @@ describe(BindingService, () => {
   });
 
   describe('.get', () => {
-    let serviceIdFixture: ServiceIdentifier;
-
-    beforeAll(() => {
-      serviceIdFixture = 'service-identifier';
-    });
-
-    describe('when called, and bindingMaps.get() returns undefined and parent bindingMaps.get() returns Iterable', () => {
-      let bindingFixture: Binding<unknown>;
-
-      let result: unknown;
+    describe('having a non function service identifier', () => {
+      let serviceIdFixture: ServiceIdentifier;
 
       beforeAll(() => {
-        bindingFixture = Symbol() as unknown as Binding<unknown>;
-
-        bindingMapsMock.get
-          .mockReturnValueOnce(undefined)
-          .mockReturnValueOnce([bindingFixture]);
-
-        result = bindingService.get(serviceIdFixture);
+        serviceIdFixture = 'service-identifier';
       });
 
-      afterAll(() => {
-        vitest.clearAllMocks();
+      describe('when called, and bindingMaps.get() returns undefined and parent bindingMaps.get() returns Iterable', () => {
+        let bindingFixture: Binding<unknown>;
+
+        let result: unknown;
+
+        beforeAll(() => {
+          bindingFixture = Symbol() as unknown as Binding<unknown>;
+
+          bindingMapsMock.get
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([bindingFixture]);
+
+          result = bindingService.get(serviceIdFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call bindingMaps.get()', () => {
+          expect(bindingMapsMock.get).toHaveBeenCalledTimes(2);
+          expect(bindingMapsMock.get).toHaveBeenNthCalledWith(
+            1,
+            'serviceId',
+            serviceIdFixture,
+          );
+          expect(bindingMapsMock.get).toHaveBeenNthCalledWith(
+            2,
+            'serviceId',
+            serviceIdFixture,
+          );
+        });
+
+        it('should return Binding[]', () => {
+          expect(result).toStrictEqual([bindingFixture]);
+        });
       });
 
-      it('should call bindingMaps.get()', () => {
-        expect(bindingMapsMock.get).toHaveBeenCalledTimes(2);
-        expect(bindingMapsMock.get).toHaveBeenNthCalledWith(
-          1,
-          'serviceId',
-          serviceIdFixture,
-        );
-        expect(bindingMapsMock.get).toHaveBeenNthCalledWith(
-          2,
-          'serviceId',
-          serviceIdFixture,
-        );
-      });
+      describe('when called, and bindingMaps.get() returns Iterable', () => {
+        let bindingFixture: Binding<unknown>;
 
-      it('should return Binding[]', () => {
-        expect(result).toStrictEqual([bindingFixture]);
+        let result: unknown;
+
+        beforeAll(() => {
+          bindingFixture = Symbol() as unknown as Binding<unknown>;
+
+          bindingMapsMock.get.mockReturnValueOnce([bindingFixture]);
+
+          result = bindingService.get(serviceIdFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call bindingMaps.get()', () => {
+          expect(bindingMapsMock.get).toHaveBeenCalledTimes(1);
+          expect(bindingMapsMock.get).toHaveBeenCalledWith(
+            'serviceId',
+            serviceIdFixture,
+          );
+        });
+
+        it('should return BindingActivation[]', () => {
+          expect(result).toStrictEqual([bindingFixture]);
+        });
       });
     });
 
-    describe('when called, and bindingMaps.get() returns Iterable', () => {
-      let bindingFixture: Binding<unknown>;
-
-      let result: unknown;
+    describe('having a function service identifier', () => {
+      let serviceIdFixture: Newable;
 
       beforeAll(() => {
-        bindingFixture = Symbol() as unknown as Binding<unknown>;
-
-        bindingMapsMock.get.mockReturnValueOnce([bindingFixture]);
-
-        result = bindingService.get(serviceIdFixture);
+        serviceIdFixture = class Foo {};
       });
 
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
+      describe('when called, and bindingMaps.get() returns undefined and parent bindingMaps.get() returns undefined', () => {
+        let instanceBindingFixture: InstanceBinding<unknown>;
 
-      it('should call bindingMaps.get()', () => {
-        expect(bindingMapsMock.get).toHaveBeenCalledTimes(1);
-        expect(bindingMapsMock.get).toHaveBeenCalledWith(
-          'serviceId',
-          serviceIdFixture,
-        );
-      });
+        let result: unknown;
 
-      it('should return BindingActivation[]', () => {
-        expect(result).toStrictEqual([bindingFixture]);
+        beforeAll(() => {
+          instanceBindingFixture =
+            Symbol() as unknown as InstanceBinding<unknown>;
+
+          bindingMapsMock.get
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined);
+
+          vitest
+            .mocked(buildInstanceBinding)
+            .mockReturnValueOnce(instanceBindingFixture);
+
+          result = bindingService.get(serviceIdFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call bindingMaps.get()', () => {
+          expect(bindingMapsMock.get).toHaveBeenCalledTimes(2);
+          expect(bindingMapsMock.get).toHaveBeenNthCalledWith(
+            1,
+            'serviceId',
+            serviceIdFixture,
+          );
+          expect(bindingMapsMock.get).toHaveBeenNthCalledWith(
+            2,
+            'serviceId',
+            serviceIdFixture,
+          );
+        });
+
+        it('should call buildInstanceBinding()', () => {
+          const expectedAutobindingOptions: AutobindOptions = {
+            scope: bindingScopeValues.Singleton,
+          };
+
+          expect(buildInstanceBinding).toHaveBeenCalledTimes(1);
+          expect(buildInstanceBinding).toHaveBeenCalledWith(
+            expectedAutobindingOptions,
+            serviceIdFixture,
+          );
+        });
+
+        it('should return Binding[]', () => {
+          expect(result).toStrictEqual([instanceBindingFixture]);
+        });
       });
     });
   });

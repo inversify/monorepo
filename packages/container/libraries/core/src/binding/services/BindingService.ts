@@ -1,12 +1,15 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { Newable, ServiceIdentifier } from '@inversifyjs/common';
 
 import { Cloneable } from '../../common/models/Cloneable';
 import {
   OneToManyMapStar,
   OneToManyMapStartSpec,
 } from '../../common/models/OneToManyMapStar';
+import { buildInstanceBinding } from '../calculations/buildInstanceBinding';
 import { cloneBinding } from '../calculations/cloneBinding';
+import { AutobindOptions } from '../models/AutobindOptions';
 import { Binding } from '../models/Binding';
+import { InstanceBinding } from '../models/InstanceBinding';
 
 enum BindingRelationKind {
   id = 'id',
@@ -36,11 +39,13 @@ export class OneToManyBindingMapStar extends OneToManyMapStar<
 }
 
 export class BindingService implements Cloneable<BindingService> {
+  readonly #autobindOptions: AutobindOptions | undefined;
   readonly #bindingMaps: OneToManyBindingMapStar;
   readonly #getParent: () => BindingService | undefined;
 
   private constructor(
     getParent: () => BindingService | undefined,
+    autobindOptions?: AutobindOptions,
     bindingMaps?: OneToManyBindingMapStar,
   ) {
     this.#bindingMaps =
@@ -58,17 +63,20 @@ export class BindingService implements Cloneable<BindingService> {
       });
 
     this.#getParent = getParent;
+    this.#autobindOptions = autobindOptions;
   }
 
   public static build(
     getParent: () => BindingService | undefined,
+    autobindOptions?: AutobindOptions,
   ): BindingService {
-    return new BindingService(getParent);
+    return new BindingService(getParent, autobindOptions);
   }
 
   public clone(): BindingService {
     const clone: BindingService = new BindingService(
       this.#getParent,
+      this.#autobindOptions,
       this.#bindingMaps.clone(),
     );
 
@@ -78,10 +86,20 @@ export class BindingService implements Cloneable<BindingService> {
   public get<TResolved>(
     serviceIdentifier: ServiceIdentifier,
   ): Iterable<Binding<TResolved>> | undefined {
-    return (
+    const bindings: Iterable<Binding<TResolved>> | undefined =
       this.getNonParentBindings(serviceIdentifier) ??
-      this.#getParent()?.get(serviceIdentifier)
-    );
+      this.#getParent()?.get(serviceIdentifier);
+
+    if (bindings !== undefined) {
+      return bindings;
+    }
+
+    const autoBoundBinding: Binding<TResolved> | undefined =
+      this.#tryAutobind<TResolved>(serviceIdentifier);
+
+    return autoBoundBinding === undefined
+      ? autoBoundBinding
+      : [autoBoundBinding];
   }
 
   public *getChained<TResolved>(
@@ -89,13 +107,23 @@ export class BindingService implements Cloneable<BindingService> {
   ): Generator<Binding<TResolved>, void, unknown> {
     const currentBindings: Iterable<Binding<TResolved>> | undefined =
       this.getNonParentBindings<TResolved>(serviceIdentifier);
+
     if (currentBindings !== undefined) {
       yield* currentBindings;
     }
 
     const parent: BindingService | undefined = this.#getParent();
 
-    if (parent !== undefined) {
+    if (parent === undefined) {
+      if (currentBindings === undefined) {
+        const autobindBindings: Binding<TResolved> | undefined =
+          this.#tryAutobind<TResolved>(serviceIdentifier);
+
+        if (autobindBindings !== undefined) {
+          yield autobindBindings;
+        }
+      }
+    } else {
       yield* parent.getChained<TResolved>(serviceIdentifier);
     }
   }
@@ -175,5 +203,25 @@ export class BindingService implements Cloneable<BindingService> {
     }
 
     this.#bindingMaps.add(binding as Binding<unknown>, relation);
+  }
+
+  #tryAutobind<TResolved>(
+    serviceIdentifier: ServiceIdentifier,
+  ): Binding<TResolved> | undefined {
+    if (
+      this.#autobindOptions === undefined ||
+      typeof serviceIdentifier !== 'function'
+    ) {
+      return undefined;
+    }
+
+    const binding: InstanceBinding<TResolved> = buildInstanceBinding(
+      this.#autobindOptions,
+      serviceIdentifier as Newable,
+    );
+
+    this.set(binding);
+
+    return binding;
   }
 }

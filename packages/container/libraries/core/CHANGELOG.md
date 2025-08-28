@@ -1,5 +1,12 @@
 # @inversifyjs/core
 
+## 8.0.0
+
+### Major Changes
+
+- 67db8bd: Updated `BindingService` with autobind options
+- 07abb74: Renamed `BasePlanParamsAutobindOptions` to `AutobindOptions`
+
 ## 7.2.0
 
 ### Minor Changes
