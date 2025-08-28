@@ -2,6 +2,7 @@ export { Deprecated } from './metadata/decorators/Deprecated';
 export { Description } from './metadata/decorators/Description';
 export { ExternalDocs } from './metadata/decorators/ExternalDocs';
 export { OperationId } from './metadata/decorators/OperationId';
+export { Response } from './metadata/decorators/Response';
 export { Schema } from './metadata/decorators/Schema';
 export { SchemaProperty } from './metadata/decorators/SchemaProperty';
 export { Security } from './metadata/decorators/Security';
