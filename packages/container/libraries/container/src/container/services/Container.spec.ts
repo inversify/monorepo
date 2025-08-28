@@ -16,10 +16,13 @@ vitest.mock('../../common/calculations/getFirstIterableResult');
 import { Newable, ServiceIdentifier } from '@inversifyjs/common';
 import {
   ActivationsService,
+  AutobindOptions,
   BindingActivation,
   BindingActivationRelation,
   BindingDeactivation,
   BindingDeactivationRelation,
+  BindingScope,
+  bindingScopeValues,
   BindingService,
   DeactivationParams,
   DeactivationsService,
@@ -243,10 +246,12 @@ describe(Container, () => {
           expect(BindingService.build).toHaveBeenNthCalledWith(
             1,
             expect.any(Function),
+            undefined,
           );
           expect(BindingService.build).toHaveBeenNthCalledWith(
             2,
             expect.any(Function),
+            undefined,
           );
         });
 
@@ -286,6 +291,72 @@ describe(Container, () => {
           );
           expect(ServiceReferenceManager).toHaveBeenNthCalledWith(
             2,
+            activationServiceMock,
+            bindingServiceMock,
+            deactivationServiceMock,
+            planResultCacheServiceMock,
+          );
+        });
+      });
+    });
+
+    describe('having autobind and default scope options', () => {
+      let defaultScopeFixture: BindingScope;
+
+      beforeAll(() => {
+        defaultScopeFixture = bindingScopeValues.Singleton;
+      });
+
+      describe('when called', () => {
+        beforeAll(() => {
+          new Container({
+            autobind: true,
+            defaultScope: defaultScopeFixture,
+          });
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call new ActivationsService.build()', () => {
+          expect(ActivationsService.build).toHaveBeenCalledTimes(1);
+          expect(ActivationsService.build).toHaveBeenCalledWith(
+            expect.any(Function),
+          );
+        });
+
+        it('should call BindingService.build', () => {
+          const expectedAutobindOptions: AutobindOptions = {
+            scope: defaultScopeFixture,
+          };
+
+          expect(BindingService.build).toHaveBeenCalledTimes(1);
+          expect(BindingService.build).toHaveBeenCalledWith(
+            expect.any(Function),
+            expectedAutobindOptions,
+          );
+        });
+
+        it('should call DeactivationsService.build()', () => {
+          expect(DeactivationsService.build).toHaveBeenCalledTimes(1);
+          expect(DeactivationsService.build).toHaveBeenCalledWith(
+            expect.any(Function),
+          );
+        });
+
+        it('should call PlanResultCacheService()', () => {
+          expect(PlanResultCacheService).toHaveBeenCalledTimes(1);
+          expect(PlanResultCacheService).toHaveBeenCalledWith();
+        });
+
+        it('should not call planResultCacheService.subscribe()', () => {
+          expect(planResultCacheServiceMock.subscribe).not.toHaveBeenCalled();
+        });
+
+        it('should call ServiceReferenceManager()', () => {
+          expect(ServiceReferenceManager).toHaveBeenCalledTimes(1);
+          expect(ServiceReferenceManager).toHaveBeenCalledWith(
             activationServiceMock,
             bindingServiceMock,
             deactivationServiceMock,

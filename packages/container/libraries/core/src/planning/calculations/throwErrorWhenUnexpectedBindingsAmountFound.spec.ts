@@ -61,7 +61,7 @@ describe(throwErrorWhenUnexpectedBindingsAmountFound, () => {
             bindingConstraintsNodeFixture,
             [],
           );
-        } catch (error) {
+        } catch (error: unknown) {
           result = error;
         }
       });
