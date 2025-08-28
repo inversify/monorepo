@@ -10,7 +10,6 @@ import {
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('inversify');
-vitest.mock('../calculations/buildArrayMetadataWithElement');
 vitest.mock('../calculations/buildNormalizedPath');
 
 import {
