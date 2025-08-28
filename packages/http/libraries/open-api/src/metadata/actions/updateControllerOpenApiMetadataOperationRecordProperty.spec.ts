@@ -51,7 +51,7 @@ describe(updateControllerOpenApiMetadataOperationRecordProperty, () => {
             },
           ],
         ]),
-        references: new Map(),
+        references: new Set(),
         servers: undefined,
         summary: undefined,
       };
@@ -128,7 +128,7 @@ describe(updateControllerOpenApiMetadataOperationRecordProperty, () => {
             },
           ],
         ]),
-        references: new Map(),
+        references: new Set(),
         servers: undefined,
         summary: undefined,
       };
@@ -203,7 +203,7 @@ describe(updateControllerOpenApiMetadataOperationRecordProperty, () => {
 
       metadataFixture = {
         methodToPathItemObjectMap: new Map(),
-        references: new Map(),
+        references: new Set(),
         servers: undefined,
         summary: undefined,
       };

@@ -24,7 +24,7 @@ describe(buildOrGetOperationObject, () => {
       beforeAll(() => {
         controllerOpenApiMetadataFixture = {
           methodToPathItemObjectMap: new Map(),
-          references: new Map(),
+          references: new Set(),
           servers: undefined,
           summary: undefined,
         };
@@ -64,7 +64,7 @@ describe(buildOrGetOperationObject, () => {
           methodToPathItemObjectMap: new Map([
             [pathFixture, pathItemObjectFixture],
           ]),
-          references: new Map(),
+          references: new Set(),
           servers: undefined,
           summary: undefined,
         };

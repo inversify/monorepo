@@ -71,7 +71,6 @@ describe(toSchema, () => {
         it('should call updateMetadataReferences()', () => {
           expect(updateMetadataReferencesMock).toHaveBeenCalledTimes(1);
           expect(updateMetadataReferencesMock).toHaveBeenCalledWith(
-            typeFixture.name,
             typeFixture,
           );
         });
@@ -104,7 +103,7 @@ describe(toSchema, () => {
           metadataWithUndefinedName = {
             name: undefined,
             properties: new Map(),
-            references: new Map(),
+            references: new Set(),
             schema: undefined,
           };
 
@@ -133,7 +132,6 @@ describe(toSchema, () => {
         it('should call updateMetadataReferences()', () => {
           expect(updateMetadataReferencesMock).toHaveBeenCalledTimes(1);
           expect(updateMetadataReferencesMock).toHaveBeenCalledWith(
-            typeFixture.name,
             typeFixture,
           );
         });
@@ -168,7 +166,7 @@ describe(toSchema, () => {
           metadataWithName = {
             name: nameFixture,
             properties: new Map(),
-            references: new Map(),
+            references: new Set(),
             schema: undefined,
           };
 
@@ -195,7 +193,6 @@ describe(toSchema, () => {
         it('should call updateMetadataReferences()', () => {
           expect(updateMetadataReferencesMock).toHaveBeenCalledTimes(1);
           expect(updateMetadataReferencesMock).toHaveBeenCalledWith(
-            nameFixture,
             typeFixture,
           );
         });

@@ -8,7 +8,7 @@ import { ToSchemaFunction } from '../models/ToSchemaFunction';
 
 export function toSchema(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  updateMetadataReferences: (name: string, type: Function) => void,
+  updateMetadataReferences: (type: Function) => void,
 ): ToSchemaFunction {
   return (
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -20,7 +20,7 @@ export function toSchema(
         schemaOpenApiMetadataReflectKey,
       )?.name ?? type.name;
 
-    updateMetadataReferences(name, type);
+    updateMetadataReferences(type);
 
     return {
       $ref: `#/components/schemas/${escapeJsonPointerFragments(name)}`,

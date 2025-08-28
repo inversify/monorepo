@@ -4,16 +4,14 @@ import { SchemaReferencesMetadata } from '../models/SchemaReferencesMetadata';
 import { updateSchemaMetadataReferences } from './updateSchemaMetadataReferences';
 
 describe(updateSchemaMetadataReferences, () => {
-  let nameFixture: string;
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   let typeFixture: Function;
   let metadataFixture: SchemaReferencesMetadata;
 
   beforeAll(() => {
-    nameFixture = 'TestType';
     typeFixture = class TestType {};
     metadataFixture = {
-      references: new Map(),
+      references: new Set(),
     };
   });
 
@@ -21,15 +19,12 @@ describe(updateSchemaMetadataReferences, () => {
     let result: unknown;
 
     beforeAll(() => {
-      result = updateSchemaMetadataReferences(
-        nameFixture,
-        typeFixture,
-      )(metadataFixture);
+      result = updateSchemaMetadataReferences(typeFixture)(metadataFixture);
     });
 
     it('should update expected result', () => {
       const expected: SchemaReferencesMetadata = {
-        references: new Map([[nameFixture, typeFixture]]),
+        references: new Set([typeFixture]),
       };
 
       expect(result).toStrictEqual(expected);

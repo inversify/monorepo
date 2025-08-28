@@ -15,7 +15,7 @@ describe(buildDefaultSchemaMetadata, () => {
       const expected: SchemaMetadata = {
         name: undefined,
         properties: new Map(),
-        references: new Map(),
+        references: new Set(),
         schema: undefined,
       };
 

@@ -14,7 +14,7 @@ describe(buildDefaultControllerOpenApiMetadata, () => {
     it('should return the expected result', () => {
       const expected: ControllerOpenApiMetadata = {
         methodToPathItemObjectMap: new Map(),
-        references: new Map(),
+        references: new Set(),
         servers: undefined,
         summary: undefined,
       };

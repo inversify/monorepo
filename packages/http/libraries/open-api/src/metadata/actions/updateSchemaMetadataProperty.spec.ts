@@ -21,7 +21,7 @@ describe(updateSchemaMetadataProperty, () => {
         metadataFixture = {
           name: undefined,
           properties: new Map(),
-          references: new Map(),
+          references: new Set(),
           schema: undefined,
         };
 
@@ -68,7 +68,7 @@ describe(updateSchemaMetadataProperty, () => {
         metadataFixture = {
           name: undefined,
           properties: new Map(),
-          references: new Map(),
+          references: new Set(),
           schema: undefined,
         };
 
@@ -125,7 +125,7 @@ describe(updateSchemaMetadataProperty, () => {
           properties: new Map([
             [existingPropertyKeyFixture, { schema: existingSchemaFixture }],
           ]),
-          references: new Map(),
+          references: new Set(),
           schema: undefined,
         };
 
@@ -191,7 +191,7 @@ describe(updateSchemaMetadataProperty, () => {
           properties: new Map([
             [propertyKeyFixture, { schema: existingSchemaFixture }],
           ]),
-          references: new Map(),
+          references: new Set(),
           schema: undefined,
         };
 

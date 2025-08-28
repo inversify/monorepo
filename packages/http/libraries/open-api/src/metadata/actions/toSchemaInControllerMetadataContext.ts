@@ -11,12 +11,12 @@ export function toSchemaInControllerOpenApiMetadataContext(
   target: Function,
 ): ToSchemaFunction {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  return toSchema((name: string, type: Function): void => {
+  return toSchema((type: Function): void => {
     updateOwnReflectMetadata(
       target,
       controllerOpenApiMetadataReflectKey,
       buildDefaultControllerOpenApiMetadata,
-      updateSchemaMetadataReferences(name, type),
+      updateSchemaMetadataReferences(type),
     );
   });
 }
