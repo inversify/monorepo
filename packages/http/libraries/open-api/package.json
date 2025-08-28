@@ -8,7 +8,7 @@
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "workspace:*",
     "mime-types": "^3.0.1",
-    "swagger-ui-dist": "^5.27.1"
+    "swagger-ui-dist": "^5.28.0"
   },
   "devDependencies": {
     "@hono/node-server": "^1.19.0",
