@@ -6,7 +6,7 @@ import { ResolutionParams } from '../models/ResolutionParams';
 import { Resolved } from '../models/Resolved';
 import { resolveSingletonScopedBinding } from './resolveSingletonScopedBinding';
 
-export const resolveProviderBinding: <TActivated extends Provider<unknown>>(
+export const resolveProviderBinding: <TActivated extends Provider<unknown>>( // eslint-disable-line @typescript-eslint/no-deprecated
   params: ResolutionParams,
   binding: ProviderBinding<TActivated>,
 ) => Resolved<TActivated> = resolveSingletonScopedBinding<

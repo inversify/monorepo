@@ -29,8 +29,13 @@ export interface BindToFluentSyntax<T> {
       ? (context: ResolutionContext) => T
       : never,
   ): BindWhenOnFluentSyntax<T>;
+  /**
+   * @deprecated Use `toFactory()` instead. Providers will be removed in v8.
+   * Providers exist for historical reasons from v5 when async dependencies weren't supported.
+   * Factories are more flexible and can handle both sync and async operations.
+   */
   toProvider(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-deprecated
     provider: T extends Provider<unknown, any>
       ? (context: ResolutionContext) => T
       : never,

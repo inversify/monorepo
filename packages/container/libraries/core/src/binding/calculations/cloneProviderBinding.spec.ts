@@ -12,7 +12,7 @@ import { cloneBindingCache } from './cloneBindingCache';
 import { cloneProviderBinding } from './cloneProviderBinding';
 
 describe(cloneProviderBinding, () => {
-  let providerBindingFixture: ProviderBinding<Provider<unknown>>;
+  let providerBindingFixture: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
 
   beforeAll(() => {
     providerBindingFixture = {
@@ -60,6 +60,7 @@ describe(cloneProviderBinding, () => {
     });
 
     it('should return a ProviderBinding', () => {
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       const expected: ProviderBinding<Provider<unknown>> = {
         cache: cacheFixture,
         id: providerBindingFixture.id,

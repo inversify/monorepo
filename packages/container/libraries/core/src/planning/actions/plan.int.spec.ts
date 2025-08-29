@@ -61,7 +61,7 @@ function buildLeafBindingPlanResult(
     | ConstantValueBinding<unknown>
     | DynamicValueBinding<unknown>
     | FactoryBinding<Factory<unknown>>
-    | ProviderBinding<Provider<unknown>>,
+    | ProviderBinding<Provider<unknown>>, // eslint-disable-line @typescript-eslint/no-deprecated
 ): PlanResult {
   const planServiceNode: PlanServiceNode = {
     bindings: [],
@@ -87,13 +87,14 @@ function buildSimpleInstancePlanResult(
     | ConstantValueBinding<unknown>
     | DynamicValueBinding<unknown>
     | FactoryBinding<Factory<unknown>>
-    | ProviderBinding<Provider<unknown>>,
+    | ProviderBinding<Provider<unknown>>, // eslint-disable-line @typescript-eslint/no-deprecated
   propertyKeyBindingPair: [
     string | symbol,
     (
       | ConstantValueBinding<unknown>
       | DynamicValueBinding<unknown>
       | FactoryBinding<Factory<unknown>>
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       | ProviderBinding<Provider<unknown>>
     ),
   ],
@@ -132,6 +133,7 @@ function buildSimpleInstancePlanResult(
       | ConstantValueBinding<unknown>
       | DynamicValueBinding<unknown>
       | FactoryBinding<Factory<unknown>>
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       | ProviderBinding<Provider<unknown>>
     ),
   ] = propertyKeyBindingPair;
@@ -167,7 +169,7 @@ function buildSimpleResolvedValuePlanResult(
     | ConstantValueBinding<unknown>
     | DynamicValueBinding<unknown>
     | FactoryBinding<Factory<unknown>>
-    | ProviderBinding<Provider<unknown>>,
+    | ProviderBinding<Provider<unknown>>, // eslint-disable-line @typescript-eslint/no-deprecated
   resolvedValueBinding: ResolvedValueBinding<unknown>,
 ): PlanResult {
   const planServiceNode: PlanServiceNode = {
@@ -211,7 +213,7 @@ function buildServiceRedirectionToLeafBindingPlanResult(
     | ConstantValueBinding<unknown>
     | DynamicValueBinding<unknown>
     | FactoryBinding<Factory<unknown>>
-    | ProviderBinding<Provider<unknown>>,
+    | ProviderBinding<Provider<unknown>>, // eslint-disable-line @typescript-eslint/no-deprecated
   serviceRedirectionBinding: ServiceRedirectionBinding<unknown>,
 ): PlanResult {
   const planServiceNode: PlanServiceNode = {
@@ -246,7 +248,7 @@ describe(plan, () => {
   let dynamicValueBinding: DynamicValueBinding<unknown>;
   let factoryBinding: FactoryBinding<Factory<unknown>>;
   let instanceBinding: InstanceBinding<unknown>;
-  let providerBinding: ProviderBinding<Provider<unknown>>;
+  let providerBinding: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
   let resolvedValueBinding: ResolvedValueBinding<unknown>;
   let serviceRedirectionBinding: ServiceRedirectionBinding<unknown>;
   let serviceRedirectionToNonExistentBinding: ServiceRedirectionBinding<unknown>;
