@@ -5,7 +5,7 @@ import { cloneBindingCache } from './cloneBindingCache';
 /**
  * Clones a ProviderBinding
  */
-export function cloneProviderBinding<TProvider extends Provider<unknown>>(
+export function cloneProviderBinding<TProvider extends Provider<unknown>>( // eslint-disable-line @typescript-eslint/no-deprecated
   binding: ProviderBinding<TProvider>,
 ): ProviderBinding<TProvider> {
   return {
