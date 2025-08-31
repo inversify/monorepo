@@ -6,9 +6,9 @@ packages:
   - packages/docs/tools/*
   - packages/foundation/libraries/*
   - packages/foundation/tools/*
-  - packages/framework/libraries/*
-  - packages/framework/libraries/http/libraries/*
-  - packages/framework/libraries/http/tools/*
+  - packages/framework/*
+  - packages/framework/http/libraries/*
+  - packages/framework/http/tools/*
   - packages/json-schema/libraries/*
   - packages/logger
   - packages/open-api/libraries/*
