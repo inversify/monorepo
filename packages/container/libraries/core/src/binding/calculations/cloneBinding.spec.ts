@@ -236,8 +236,8 @@ describe(cloneBinding, () => {
   });
 
   describe('having a ProviderBinding', () => {
-    let bindingFixture: ProviderBinding<Provider<unknown>>;
-    let clonedBindingFixture: ProviderBinding<Provider<unknown>>;
+    let bindingFixture: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
+    let clonedBindingFixture: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
     let result: unknown;
 
     beforeAll(() => {

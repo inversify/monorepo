@@ -668,7 +668,7 @@ describe(resolve, () => {
 
   describe('having ResolutionParams with plan tree with root with provider value binding', () => {
     let resolutionParamsFixture: ResolutionParams;
-    let bindingFixture: ProviderBinding<Provider<unknown>>;
+    let bindingFixture: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
 
     beforeAll(() => {
       const serviceNode: PlanServiceNode = {
@@ -709,7 +709,7 @@ describe(resolve, () => {
     });
 
     describe('when called', () => {
-      let resolveValue: Provider<unknown>;
+      let resolveValue: Provider<unknown>; // eslint-disable-line @typescript-eslint/no-deprecated
 
       let result: unknown;
 

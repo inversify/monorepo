@@ -230,7 +230,7 @@ describe(BindToFluentSyntaxImplementation, () => {
 
   let dynamicValueBuilderfixture: DynamicValueBuilder<unknown>;
   let factoryBuilderFixture: (context: ResolutionContext) => Factory<unknown>;
-  let providerBuilderFixture: (context: ResolutionContext) => Provider<unknown>;
+  let providerBuilderFixture: (context: ResolutionContext) => Provider<unknown>; // eslint-disable-line @typescript-eslint/no-deprecated
 
   let callbackMock: Mock<(binding: Binding) => void>;
   let containerModuleIdFixture: number;
@@ -359,10 +359,10 @@ describe(BindToFluentSyntaxImplementation, () => {
       '.toProvider()',
       (
         bindToFluentSyntaxImplementation: BindToFluentSyntaxImplementation<
-          Provider<unknown>
+          Provider<unknown> // eslint-disable-line @typescript-eslint/no-deprecated
         >,
       ): unknown =>
-        bindToFluentSyntaxImplementation.toProvider(providerBuilderFixture),
+        bindToFluentSyntaxImplementation.toProvider(providerBuilderFixture), // eslint-disable-line @typescript-eslint/no-deprecated
       (): Binding => ({
         cache: {
           isRight: false,

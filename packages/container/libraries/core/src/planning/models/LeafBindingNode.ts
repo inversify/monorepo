@@ -11,5 +11,5 @@ export type LeafBindingNode<TActivated = any> = BaseBindingNode<
   | ConstantValueBinding<TActivated>
   | DynamicValueBinding<TActivated>
   | (TActivated extends Factory<unknown> ? FactoryBinding<TActivated> : never)
-  | (TActivated extends Provider<unknown> ? ProviderBinding<TActivated> : never)
+  | (TActivated extends Provider<unknown> ? ProviderBinding<TActivated> : never) // eslint-disable-line @typescript-eslint/no-deprecated
 >;
