@@ -7,8 +7,8 @@ packages:
   - packages/foundation/libraries/*
   - packages/foundation/tools/*
   - packages/framework/libraries/*
-  - packages/http/libraries/*
-  - packages/http/tools/*
+  - packages/framework/libraries/http/libraries/*
+  - packages/framework/libraries/http/tools/*
   - packages/json-schema/libraries/*
   - packages/logger
   - packages/open-api/libraries/*
