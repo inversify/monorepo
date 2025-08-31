@@ -10,6 +10,7 @@ import {
   OpenApi3Dot1Object,
   OpenApi3Dot1OperationObject,
   OpenApi3Dot1PathItemObject,
+  OpenApi3Dot1SchemaObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { Container, Newable } from 'inversify';
@@ -18,6 +19,7 @@ import { FilteredByValueType } from '../../common/models/FilteredByValueType';
 import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from '../../metadata/actions/mergeOpenApiPathItemObjectIntoOpenApiPaths';
 import { ControllerOpenApiMetadata } from '../../metadata/models/ControllerOpenApiMetadata';
 import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
+import { mergeOpenApiTypeSchema } from '../actions/mergeOpenApiTypeSchema';
 import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
 import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 
@@ -68,11 +70,17 @@ export abstract class SwaggerUiProvider<TResponse, TResult> {
       throw new Error('Cannot provide docs more than once');
     }
 
+    const metadataTuple: MetadataTuple[] =
+      this.#getMetadataTupleList(container);
+
     this.#buildOpenApiObjectFromPathItemTupleList(
       this.#options.api.openApiObject,
-      this.#buildOpenApiPathItemTupleList(
-        this.#getMetadataTupleList(container),
-      ),
+      this.#buildOpenApiPathItemTupleList(metadataTuple),
+    );
+
+    this.#buildOpenApiReferencedSchemasFromMetadataTupleList(
+      this.#options.api.openApiObject,
+      metadataTuple,
     );
 
     const controllerType: Newable<BaseSwaggerUiController<TResponse, TResult>> =
@@ -86,7 +94,7 @@ export abstract class SwaggerUiProvider<TResponse, TResult> {
   #buildOpenApiObjectFromPathItemTupleList(
     object: OpenApi3Dot1Object,
     pathItemTupleList: [string, OpenApi3Dot1PathItemObject][],
-  ): OpenApi3Dot1Object {
+  ): void {
     let openApi3Dot1Object: OpenApi3Dot1Object = object;
 
     for (const [path, pathItemObject] of pathItemTupleList) {
@@ -96,8 +104,6 @@ export abstract class SwaggerUiProvider<TResponse, TResult> {
         pathItemObject,
       );
     }
-
-    return openApi3Dot1Object;
   }
 
   #buildOpenApiPathItemTupleList(
@@ -126,6 +132,32 @@ export abstract class SwaggerUiProvider<TResponse, TResult> {
     }
 
     return [...pathToPathItemObjectMap.entries()];
+  }
+
+  #buildOpenApiReferencedSchemasFromMetadataTupleList(
+    object: OpenApi3Dot1Object,
+    metadataTupleList: MetadataTuple[],
+  ): void {
+    let objectSchemas: Record<string, OpenApi3Dot1SchemaObject> | undefined =
+      object.components?.schemas;
+
+    if (objectSchemas === undefined) {
+      objectSchemas = {};
+
+      if (object.components === undefined) {
+        object.components = {};
+      }
+
+      object.components.schemas = objectSchemas;
+    }
+
+    for (const [, controllerOpenApiMetadata] of metadataTupleList) {
+      if (controllerOpenApiMetadata !== undefined) {
+        for (const type of controllerOpenApiMetadata.references) {
+          mergeOpenApiTypeSchema(objectSchemas, type);
+        }
+      }
+    }
   }
 
   #buildOrGetPathItemObject(
