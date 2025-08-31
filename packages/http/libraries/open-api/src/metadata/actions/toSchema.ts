@@ -1,8 +1,10 @@
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
+import { JsonSchema } from '@inversifyjs/json-schema-types/2020-12';
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
+import { tryBuildSchemaFromWellKnownType } from '../calculations/tryBuildSchemaFromWellKnownType';
 import { SchemaMetadata } from '../models/SchemaMetadata';
 import { ToSchemaFunction } from '../models/ToSchemaFunction';
 
@@ -20,10 +22,17 @@ export function toSchema(
         schemaOpenApiMetadataReflectKey,
       )?.name ?? type.name;
 
-    updateMetadataReferences(type);
+    const schemaFromWellKnownType: JsonSchema | undefined =
+      tryBuildSchemaFromWellKnownType(type);
 
-    return {
-      $ref: `#/components/schemas/${escapeJsonPointerFragments(name)}`,
-    };
+    if (schemaFromWellKnownType === undefined) {
+      updateMetadataReferences(type);
+
+      return {
+        $ref: `#/components/schemas/${escapeJsonPointerFragments(name)}`,
+      };
+    }
+
+    return schemaFromWellKnownType;
   };
 }
