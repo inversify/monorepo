@@ -14,6 +14,7 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock(
   '../../metadata/actions/mergeOpenApiPathItemObjectIntoOpenApiPaths',
 );
+vitest.mock('../actions/mergeOpenApiTypeSchema');
 
 import {
   buildNormalizedPath,
@@ -34,6 +35,7 @@ import { BindToFluentSyntax, Container, Newable } from 'inversify';
 import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from '../../metadata/actions/mergeOpenApiPathItemObjectIntoOpenApiPaths';
 import { ControllerOpenApiMetadata } from '../../metadata/models/ControllerOpenApiMetadata';
 import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
+import { mergeOpenApiTypeSchema } from '../actions/mergeOpenApiTypeSchema';
 import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
 import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 import { SwaggerUiProviderUiOptions } from '../models/SwaggerUiProviderUiOptions';
@@ -61,7 +63,7 @@ describe(SwaggerUiProvider, () => {
   beforeAll(() => {
     optionsFixture = {
       api: {
-        openApiObject: Symbol() as unknown as OpenApi3Dot1Object,
+        openApiObject: {} as OpenApi3Dot1Object,
         path: '/path/fixture',
       },
       ui: Symbol() as unknown as SwaggerUiProviderUiOptions,
@@ -126,6 +128,10 @@ describe(SwaggerUiProvider, () => {
       it('should return the expected result', () => {
         expect(result).toBeUndefined();
       });
+
+      it('should not call mergeOpenApiTypeSchema()', () => {
+        expect(mergeOpenApiTypeSchema).not.toHaveBeenCalled();
+      });
     });
 
     describe('when called twice, and getControllerMetadataList() returns undefined', () => {
@@ -177,6 +183,10 @@ describe(SwaggerUiProvider, () => {
 
         expect(result).toBeInstanceOf(Error);
         expect(result).toMatchObject(expectedErrorProperties);
+      });
+
+      it('should not call mergeOpenApiTypeSchema()', () => {
+        expect(mergeOpenApiTypeSchema).not.toHaveBeenCalled();
       });
     });
 
@@ -254,6 +264,10 @@ describe(SwaggerUiProvider, () => {
       it('should return the expected result', () => {
         expect(result).toBeUndefined();
       });
+
+      it('should not call mergeOpenApiTypeSchema()', () => {
+        expect(mergeOpenApiTypeSchema).not.toHaveBeenCalled();
+      });
     });
 
     describe('when called, and getControllerMetadataList() returns filtered controller metadata (unbound controller)', () => {
@@ -321,6 +335,10 @@ describe(SwaggerUiProvider, () => {
       it('should return the expected result', () => {
         expect(result).toBeUndefined();
       });
+
+      it('should not call mergeOpenApiTypeSchema()', () => {
+        expect(mergeOpenApiTypeSchema).not.toHaveBeenCalled();
+      });
     });
 
     describe('when called, and getOwnReflectMetadata() returns openapi metadata and getControllerMethodMetadataList() returns method metadata with operations', () => {
@@ -342,6 +360,7 @@ describe(SwaggerUiProvider, () => {
           methodToPathItemObjectMap: new Map([
             ['testMethod', operationObjectFixture],
           ]),
+          references: new Set(),
           servers: undefined,
           summary: 'Test controller summary',
         };
@@ -427,6 +446,10 @@ describe(SwaggerUiProvider, () => {
       it('should return the expected result', () => {
         expect(result).toBeUndefined();
       });
+
+      it('should call mergeOpenApiTypeSchema() for each reference', () => {
+        expect(mergeOpenApiTypeSchema).toHaveBeenCalledTimes(0);
+      });
     });
 
     describe('when called, and getOwnReflectMetadata() returns openapi metadata without summary', () => {
@@ -446,6 +469,7 @@ describe(SwaggerUiProvider, () => {
           methodToPathItemObjectMap: new Map([
             ['testMethod', operationObjectFixture],
           ]),
+          references: new Set(),
           servers: undefined,
           summary: undefined,
         };
@@ -515,6 +539,10 @@ describe(SwaggerUiProvider, () => {
 
         expect(pathItemObject).not.toHaveProperty('summary');
       });
+
+      it('should call mergeOpenApiTypeSchema() for each reference', () => {
+        expect(mergeOpenApiTypeSchema).toHaveBeenCalledTimes(0);
+      });
     });
 
     describe('when called, and getControllerMethodMetadataList() returns metadata with no operations', () => {
@@ -527,6 +555,7 @@ describe(SwaggerUiProvider, () => {
       beforeAll(() => {
         controllerOpenApiMetadataFixture = {
           methodToPathItemObjectMap: new Map(),
+          references: new Set(),
           servers: undefined,
           summary: undefined,
         };
@@ -584,6 +613,10 @@ describe(SwaggerUiProvider, () => {
           mergeOpenApiPathItemObjectIntoOpenApiPaths,
         ).not.toHaveBeenCalled();
       });
+
+      it('should call mergeOpenApiTypeSchema() for each reference', () => {
+        expect(mergeOpenApiTypeSchema).toHaveBeenCalledTimes(0);
+      });
     });
 
     describe('when called, and getControllerMethodMetadataList() returns multiple metadata with HTTP verbs', () => {
@@ -614,6 +647,7 @@ describe(SwaggerUiProvider, () => {
             ['putMethod', operationObjectFixture2],
             ['allMethod', operationObjectFixture3],
           ]),
+          references: new Set(),
           servers: undefined,
           summary: undefined,
         };
@@ -731,6 +765,10 @@ describe(SwaggerUiProvider, () => {
           }),
         );
       });
+
+      it('should call mergeOpenApiTypeSchema() for each reference', () => {
+        expect(mergeOpenApiTypeSchema).toHaveBeenCalledTimes(0);
+      });
     });
 
     describe('when called, and there is a duplicated operation at the same path and method', () => {
@@ -753,6 +791,7 @@ describe(SwaggerUiProvider, () => {
             ['method1', operationObjectFixture],
             ['method2', operationObjectFixture],
           ]),
+          references: new Set(),
           servers: undefined,
           summary: undefined,
         };
@@ -814,6 +853,137 @@ describe(SwaggerUiProvider, () => {
 
         expect(result).toBeInstanceOf(Error);
         expect(result).toMatchObject(expectedErrorProperties);
+      });
+    });
+
+    describe('when called, and controllerOpenApiMetadata has references', () => {
+      let controllerMetadataListFixture: ControllerMetadata[];
+      let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
+      let controllerOpenApiMetadataFixture: ControllerOpenApiMetadata;
+      let typeFixture1: NewableFunction;
+      let typeFixture2: NewableFunction;
+
+      let swaggerUiProvider: SwaggerUiProviderMock;
+
+      beforeAll(() => {
+        typeFixture1 = Symbol() as unknown as NewableFunction;
+        typeFixture2 = Symbol() as unknown as NewableFunction;
+
+        controllerOpenApiMetadataFixture = {
+          methodToPathItemObjectMap: new Map(),
+          references: new Set([typeFixture1, typeFixture2]),
+          servers: undefined,
+          summary: undefined,
+        };
+
+        controllerMethodMetadataListFixture = [];
+
+        controllerMetadataListFixture = [
+          {
+            path: '/api',
+            target: Symbol() as unknown as NewableFunction,
+          },
+        ];
+
+        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+
+        buildControllerTypeMock.mockReturnValueOnce(controllerTypeFixture);
+
+        vitest
+          .mocked(getControllerMetadataList)
+          .mockReturnValueOnce(controllerMetadataListFixture);
+        vitest
+          .mocked(getControllerMethodMetadataList)
+          .mockReturnValueOnce(controllerMethodMetadataListFixture);
+        vitest
+          .mocked(getOwnReflectMetadata)
+          .mockReturnValueOnce(controllerOpenApiMetadataFixture);
+
+        containerMock.isBound.mockReturnValueOnce(true);
+        containerMock.bind.mockReturnValueOnce(bindToFluentSyntaxMock);
+
+        swaggerUiProvider.provide(containerMock);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call mergeOpenApiTypeSchema()', () => {
+        expect(mergeOpenApiTypeSchema).toHaveBeenCalledTimes(2);
+        expect(mergeOpenApiTypeSchema).toHaveBeenNthCalledWith(
+          1,
+          optionsFixture.api.openApiObject.components?.schemas ?? {},
+          typeFixture1,
+        );
+        expect(mergeOpenApiTypeSchema).toHaveBeenNthCalledWith(
+          2,
+          optionsFixture.api.openApiObject.components?.schemas ?? {},
+          typeFixture2,
+        );
+      });
+
+      it('should call container.bind()', () => {
+        expect(containerMock.bind).toHaveBeenCalledTimes(1);
+        expect(containerMock.bind).toHaveBeenCalledWith(controllerTypeFixture);
+      });
+
+      it('should call bindToFluentSyntax.toSelf()', () => {
+        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledTimes(1);
+        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledWith();
+      });
+    });
+
+    describe('when called, and controllerOpenApiMetadata has no references', () => {
+      let controllerMetadataListFixture: ControllerMetadata[];
+      let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
+      let controllerOpenApiMetadataFixture: ControllerOpenApiMetadata;
+
+      let swaggerUiProvider: SwaggerUiProviderMock;
+
+      beforeAll(() => {
+        controllerOpenApiMetadataFixture = {
+          methodToPathItemObjectMap: new Map(),
+          references: new Set(),
+          servers: undefined,
+          summary: undefined,
+        };
+
+        controllerMethodMetadataListFixture = [];
+
+        controllerMetadataListFixture = [
+          {
+            path: '/api',
+            target: Symbol() as unknown as NewableFunction,
+          },
+        ];
+
+        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+
+        buildControllerTypeMock.mockReturnValueOnce(controllerTypeFixture);
+
+        vitest
+          .mocked(getControllerMetadataList)
+          .mockReturnValueOnce(controllerMetadataListFixture);
+        vitest
+          .mocked(getControllerMethodMetadataList)
+          .mockReturnValueOnce(controllerMethodMetadataListFixture);
+        vitest
+          .mocked(getOwnReflectMetadata)
+          .mockReturnValueOnce(controllerOpenApiMetadataFixture);
+
+        containerMock.isBound.mockReturnValueOnce(true);
+        containerMock.bind.mockReturnValueOnce(bindToFluentSyntaxMock);
+
+        swaggerUiProvider.provide(containerMock);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should not call mergeOpenApiTypeSchema()', () => {
+        expect(mergeOpenApiTypeSchema).not.toHaveBeenCalled();
       });
     });
   });
