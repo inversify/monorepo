@@ -1,7 +1,9 @@
 export { OasDeprecated } from './metadata/decorators/OasDeprecated';
-export { Description } from './metadata/decorators/OasDescription';
+export { OasDescription } from './metadata/decorators/OasDescription';
 export { OasExternalDocs } from './metadata/decorators/OasExternalDocs';
 export { OasOperationId } from './metadata/decorators/OasOperationId';
+export { OasParameter } from './metadata/decorators/OasParameter';
+export { OasRequestBody } from './metadata/decorators/OasRequestBody';
 export { OasResponse } from './metadata/decorators/OasResponse';
 export { OasSchema } from './metadata/decorators/OasSchema';
 export { OasSchemaProperty } from './metadata/decorators/OasSchemaProperty';
