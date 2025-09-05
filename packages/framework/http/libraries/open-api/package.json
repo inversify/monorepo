@@ -28,7 +28,7 @@
     "@types/node": "22.18.1",
     "@types/swagger-ui-dist": "3.30.6",
     "@vitest/coverage-v8": "3.2.4",
-    "eslint": "9.34.0",
+    "eslint": "9.35.0",
     "express": "^5.1.0",
     "express4": "npm:express@4.21.2",
     "fastify": "^5.6.0",
