@@ -11,11 +11,9 @@ runs:
         node-version: 22.19.0
         package-manager-cache: false
 
-    - uses: pnpm/action-setup@v3
+    - uses: pnpm/action-setup@v4
       name: Install pnpm
-      id: pnpm-install
       with:
-        version: 10.15.1
         run_install: false
 
     - name: Get pnpm store directory
