@@ -25,9 +25,15 @@ export function mergeOpenApiTypeSchema(
     Record<string, JsonSchema>,
   ] = initializeJsonSchema(schemaMetadata);
 
+  const requiredProperties: string[] = [];
+
   schemasObject[schemaName] = jsonSchema;
 
   for (const [propertyKey, propertySchema] of schemaMetadata.properties) {
+    if (propertySchema.required) {
+      requiredProperties.push(propertyKey);
+    }
+
     if (propertySchema.schema === undefined) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       const typescriptDesignType: Function | undefined = getOwnReflectMetadata(
@@ -65,6 +71,10 @@ export function mergeOpenApiTypeSchema(
     } else {
       jsonSchemaProperties[propertyKey] = propertySchema.schema;
     }
+  }
+
+  if (requiredProperties.length > 0 && typeof jsonSchema === 'object') {
+    jsonSchema.required = requiredProperties;
   }
 }
 

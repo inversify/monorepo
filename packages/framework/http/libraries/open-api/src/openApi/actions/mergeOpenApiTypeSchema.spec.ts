@@ -375,6 +375,79 @@ describe(mergeOpenApiTypeSchema, () => {
         });
       });
 
+      describe('when called, and getSchemaMetadata() returns SchemaMetadata with no schema and required property', () => {
+        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let propertySchemaFixture: JsonSchema;
+        let schemaMetadataFixture: SchemaMetadata;
+
+        beforeAll(() => {
+          schemasObjectFixture = {};
+
+          propertySchemaFixture = {
+            type: 'string',
+          };
+
+          schemaMetadataFixture = {
+            name: 'TypeWithRequiredProperty',
+            properties: new Map([
+              [
+                'requiredProperty',
+                {
+                  required: true,
+                  schema: propertySchemaFixture,
+                },
+              ],
+              [
+                'optionalProperty',
+                {
+                  required: false,
+                  schema: propertySchemaFixture,
+                },
+              ],
+            ]),
+            references: new Set(),
+            schema: undefined,
+          };
+
+          getSchemaMetadataMock.mockReturnValueOnce(schemaMetadataFixture);
+
+          mergeOpenApiTypeSchema(schemasObjectFixture, typeFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getSchemaMetadata()', () => {
+          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+        });
+
+        it('should add schema to schemasObject with required properties array', () => {
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+            TypeWithRequiredProperty: {
+              properties: {
+                optionalProperty: propertySchemaFixture,
+                requiredProperty: propertySchemaFixture,
+              },
+              required: ['requiredProperty'],
+              type: 'object',
+              unevaluatedProperties: false,
+            },
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
+        });
+
+        it('should not call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadataMock).not.toHaveBeenCalled();
+        });
+
+        it('should not call tryBuildSchemaFromWellKnownType()', () => {
+          expect(tryBuildSchemaFromWellKnownTypeMock).not.toHaveBeenCalled();
+        });
+      });
+
       describe('when called and getSchemaMetadata() returns SchemaMetadata with properties with undefined schemas and getOwnReflectMetadata() returns undefined', () => {
         let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
         let schemaMetadataFixture: SchemaMetadata;
