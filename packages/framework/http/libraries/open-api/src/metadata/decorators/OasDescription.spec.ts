@@ -18,9 +18,9 @@ import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/
 import { updateControllerOpenApiMetadataOperationProperty } from '../actions/updateControllerOpenApiMetadataOperationProperty';
 import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
 import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { Description } from './OasDescription';
+import { OasDescription } from './OasDescription';
 
-describe(Description, () => {
+describe(OasDescription, () => {
   describe('having a prototype target, key and type descriptor', () => {
     let contentFixture: string;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -50,7 +50,7 @@ describe(Description, () => {
             updateControllerOpenApiMetadataOperationPropertyResultMock,
           );
 
-        result = Description(contentFixture)(
+        result = OasDescription(contentFixture)(
           targetTypeFixture.prototype as object,
           keyFixture,
           Symbol() as unknown as TypedPropertyDescriptor<unknown>,
