@@ -9,6 +9,7 @@ runs:
       uses: actions/setup-node@v5
       with:
         node-version: 22.19.0
+        package-manager-cache: false
 
     - uses: pnpm/action-setup@v3
       name: Install pnpm
