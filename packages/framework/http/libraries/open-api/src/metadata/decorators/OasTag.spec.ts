@@ -12,43 +12,45 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('../actions/updateControllerOpenApiMetadataOperationProperty');
+vitest.mock('../actions/updateControllerOpenApiMetadataOperationArrayProperty');
 
 import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
-import { updateControllerOpenApiMetadataOperationProperty } from '../actions/updateControllerOpenApiMetadataOperationProperty';
+import { updateControllerOpenApiMetadataOperationArrayProperty } from '../actions/updateControllerOpenApiMetadataOperationArrayProperty';
 import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
 import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { Deprecated } from './Deprecated';
+import { OasTag } from './OasTag';
 
-describe(Deprecated, () => {
+describe(OasTag, () => {
   describe('having a prototype target, key and type descriptor', () => {
+    let contentFixture: string;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let targetTypeFixture: Function;
     let keyFixture: string | symbol;
 
     beforeAll(() => {
+      contentFixture = 'Test tag';
       targetTypeFixture = function test() {};
       keyFixture = 'testKey';
     });
 
     describe('when called', () => {
-      let updateControllerOpenApiMetadataOperationPropertyResultMock: Mock<
+      let updateControllerOpenApiMetadataOperationArrayPropertyResultMock: Mock<
         (metadata: ControllerOpenApiMetadata) => ControllerOpenApiMetadata
       >;
 
       let result: unknown;
 
       beforeAll(() => {
-        updateControllerOpenApiMetadataOperationPropertyResultMock =
+        updateControllerOpenApiMetadataOperationArrayPropertyResultMock =
           vitest.fn();
 
         vitest
-          .mocked(updateControllerOpenApiMetadataOperationProperty)
+          .mocked(updateControllerOpenApiMetadataOperationArrayProperty)
           .mockReturnValueOnce(
-            updateControllerOpenApiMetadataOperationPropertyResultMock,
+            updateControllerOpenApiMetadataOperationArrayPropertyResultMock,
           );
 
-        result = Deprecated()(
+        result = OasTag(contentFixture)(
           targetTypeFixture.prototype as object,
           keyFixture,
           Symbol() as unknown as TypedPropertyDescriptor<unknown>,
@@ -59,18 +61,13 @@ describe(Deprecated, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call updateControllerOpenApiMetadataOperationProperty()', () => {
+      it('should call updateControllerOpenApiMetadataOperationArrayProperty()', () => {
         expect(
-          updateControllerOpenApiMetadataOperationProperty,
+          updateControllerOpenApiMetadataOperationArrayProperty,
         ).toHaveBeenCalledTimes(1);
         expect(
-          updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledWith(
-          true,
-          targetTypeFixture,
-          keyFixture,
-          'deprecated',
-        );
+          updateControllerOpenApiMetadataOperationArrayProperty,
+        ).toHaveBeenCalledWith(contentFixture, keyFixture, 'tags');
       });
 
       it('should call updateOwnReflectMetadata()', () => {
@@ -79,7 +76,7 @@ describe(Deprecated, () => {
           targetTypeFixture,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,
-          updateControllerOpenApiMetadataOperationPropertyResultMock,
+          updateControllerOpenApiMetadataOperationArrayPropertyResultMock,
         );
       });
 

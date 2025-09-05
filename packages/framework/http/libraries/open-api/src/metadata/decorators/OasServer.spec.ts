@@ -20,9 +20,9 @@ import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/
 import { updateControllerOpenApiMetadataServer } from '../actions/updateControllerOpenApiMetadataServer';
 import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
 import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { Server } from './Server';
+import { OasServer } from './OasServer';
 
-describe(Server, () => {
+describe(OasServer, () => {
   let serverFixture: OpenApi3Dot1ServerObject;
 
   beforeAll(() => {
@@ -59,7 +59,7 @@ describe(Server, () => {
           .mocked(updateControllerOpenApiMetadataServer)
           .mockReturnValueOnce(updateControllerOpenApiMetadataServerResultMock);
 
-        result = Server(serverFixture)(targetTypeFixture);
+        result = OasServer(serverFixture)(targetTypeFixture);
       });
 
       afterAll(() => {
@@ -114,7 +114,7 @@ describe(Server, () => {
           .mocked(updateControllerOpenApiMetadataServer)
           .mockReturnValueOnce(updateControllerOpenApiMetadataServerResultMock);
 
-        result = Server(serverFixture)(
+        result = OasServer(serverFixture)(
           targetTypeFixture.prototype as object,
           keyFixture,
           Symbol() as unknown as TypedPropertyDescriptor<unknown>,

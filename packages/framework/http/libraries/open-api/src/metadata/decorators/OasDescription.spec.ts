@@ -18,7 +18,7 @@ import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/
 import { updateControllerOpenApiMetadataOperationProperty } from '../actions/updateControllerOpenApiMetadataOperationProperty';
 import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
 import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { Description } from './Description';
+import { Description } from './OasDescription';
 
 describe(Description, () => {
   describe('having a prototype target, key and type descriptor', () => {

@@ -2,4 +2,4 @@
 "@inversifyjs/http-open-api": minor
 ---
 
-Added `Tag` decorator
+Added `OasTag` decorator

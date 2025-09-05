@@ -5,7 +5,7 @@ import { updateControllerOpenApiMetadataOperationProperty } from '../actions/upd
 import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function OperationId(content: string): MethodDecorator {
+export function OasOperationId(content: string): MethodDecorator {
   return (target: object, key: string | symbol): void => {
     updateOwnReflectMetadata(
       target.constructor,

@@ -27,9 +27,9 @@ import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
 import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
 import { SchemaMetadata } from '../models/SchemaMetadata';
 import { ToSchemaFunction } from '../models/ToSchemaFunction';
-import { Schema } from './Schema';
+import { OasSchema } from './OasSchema';
 
-describe(Schema, () => {
+describe(OasSchema, () => {
   describe('having no schema parameter', () => {
     describe('when called', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -56,7 +56,7 @@ describe(Schema, () => {
           .mocked(updateSchemaMetadataSchema)
           .mockReturnValueOnce(updateSchemaMetadataSchemaResultMock);
 
-        result = Schema()(targetTypeFixture);
+        result = OasSchema()(targetTypeFixture);
       });
 
       afterAll(() => {
@@ -143,7 +143,7 @@ describe(Schema, () => {
           .mocked(updateSchemaMetadataSchema)
           .mockReturnValueOnce(updateSchemaMetadataSchemaResultMock);
 
-        result = Schema(schemaFixture)(targetTypeFixture);
+        result = OasSchema(schemaFixture)(targetTypeFixture);
       });
 
       afterAll(() => {
@@ -235,7 +235,7 @@ describe(Schema, () => {
           .mocked(updateSchemaMetadataSchema)
           .mockReturnValueOnce(updateSchemaMetadataSchemaResultMock);
 
-        result = Schema(schemaFixture, optionsFixture)(targetTypeFixture);
+        result = OasSchema(schemaFixture, optionsFixture)(targetTypeFixture);
       });
 
       afterAll(() => {
@@ -333,7 +333,7 @@ describe(Schema, () => {
           .mocked(updateSchemaMetadataSchema)
           .mockReturnValueOnce(updateSchemaMetadataSchemaResultMock);
 
-        result = Schema(buildFunctionFixture)(targetTypeFixture);
+        result = OasSchema(buildFunctionFixture)(targetTypeFixture);
       });
 
       afterAll(() => {
@@ -448,7 +448,7 @@ describe(Schema, () => {
           .mocked(updateSchemaMetadataSchema)
           .mockReturnValueOnce(updateSchemaMetadataSchemaResultMock);
 
-        result = Schema(
+        result = OasSchema(
           buildFunctionFixture,
           optionsFixture,
         )(targetTypeFixture);

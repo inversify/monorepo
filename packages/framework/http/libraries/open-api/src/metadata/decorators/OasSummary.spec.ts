@@ -18,9 +18,9 @@ import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/
 import { updateControllerOpenApiMetadataSummary } from '../actions/updateControllerOpenApiMetadataSummary';
 import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
 import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { Summary } from './Summary';
+import { OasSummary } from './OasSummary';
 
-describe(Summary, () => {
+describe(OasSummary, () => {
   let summaryFixture: string;
 
   beforeAll(() => {
@@ -51,7 +51,7 @@ describe(Summary, () => {
             updateControllerOpenApiMetadataSummaryResultMock,
           );
 
-        result = Summary(summaryFixture)(targetTypeFixture);
+        result = OasSummary(summaryFixture)(targetTypeFixture);
       });
 
       afterAll(() => {
@@ -109,7 +109,7 @@ describe(Summary, () => {
             updateControllerOpenApiMetadataSummaryResultMock,
           );
 
-        result = Summary(summaryFixture)(
+        result = OasSummary(summaryFixture)(
           targetTypeFixture.prototype as object,
           keyFixture,
           Symbol() as unknown as TypedPropertyDescriptor<unknown>,
