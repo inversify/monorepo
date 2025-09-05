@@ -20,13 +20,10 @@ export function mergeOpenApiTypeSchema(
     return;
   }
 
-  const jsonSchemaProperties: Record<string, JsonSchema> = {};
-
-  const jsonSchema: JsonSchema = {
-    additionalProperties: false,
-    properties: jsonSchemaProperties,
-    type: 'object',
-  };
+  const [jsonSchema, jsonSchemaProperties]: [
+    JsonSchema,
+    Record<string, JsonSchema>,
+  ] = initializeJsonSchema(schemaMetadata);
 
   schemasObject[schemaName] = jsonSchema;
 
@@ -69,4 +66,33 @@ export function mergeOpenApiTypeSchema(
       jsonSchemaProperties[propertyKey] = propertySchema.schema;
     }
   }
+}
+
+function initializeJsonSchema(
+  schemaMetadata: SchemaMetadata,
+): [JsonSchema, Record<string, JsonSchema>] {
+  const jsonSchemaProperties: Record<string, JsonSchema> = {};
+
+  let jsonSchema: JsonSchema;
+
+  if (schemaMetadata.schema === undefined) {
+    jsonSchema = {
+      properties: jsonSchemaProperties,
+      type: 'object',
+      unevaluatedProperties: false,
+    };
+  } else {
+    if (schemaMetadata.properties.size === 0) {
+      jsonSchema = schemaMetadata.schema;
+    } else {
+      jsonSchema = {
+        allOf: [schemaMetadata.schema],
+        properties: jsonSchemaProperties,
+        type: 'object',
+        unevaluatedProperties: false,
+      };
+    }
+  }
+
+  return [jsonSchema, jsonSchemaProperties];
 }
