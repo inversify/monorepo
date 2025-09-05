@@ -7,14 +7,14 @@ import { updateSchemaMetadataFromOptions } from '../actions/updateSchemaMetadata
 import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
-import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
+import { OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function OasSchema(
   schema?:
     | OpenApi3Dot1SchemaObject
     | BuildOpenApiBlockFunction<OpenApi3Dot1SchemaObject>,
-  options?: SchemaDecoratorOptions,
+  options?: OasSchemaDecoratorOptions,
 ): ClassDecorator {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return (target: Function): void => {

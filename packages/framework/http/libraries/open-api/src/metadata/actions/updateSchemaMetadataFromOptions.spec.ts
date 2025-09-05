@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
+import { OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions';
 import { SchemaMetadata } from '../models/SchemaMetadata';
 import { updateSchemaMetadataFromOptions } from './updateSchemaMetadataFromOptions';
 
@@ -16,7 +16,7 @@ describe(updateSchemaMetadataFromOptions, () => {
   describe('having undefined options and metadata with undefined name', () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
-      let optionsFixture: SchemaDecoratorOptions | undefined;
+      let optionsFixture: OasSchemaDecoratorOptions | undefined;
 
       let result: unknown;
 
@@ -54,7 +54,7 @@ describe(updateSchemaMetadataFromOptions, () => {
   describe('having undefined options and metadata with existing name', () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
-      let optionsFixture: SchemaDecoratorOptions | undefined;
+      let optionsFixture: OasSchemaDecoratorOptions | undefined;
       let existingNameFixture: string;
 
       let result: unknown;
@@ -95,7 +95,7 @@ describe(updateSchemaMetadataFromOptions, () => {
   describe('having options with name and metadata with undefined name', () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
-      let optionsFixture: SchemaDecoratorOptions;
+      let optionsFixture: OasSchemaDecoratorOptions;
       let nameFixture: string;
 
       let result: unknown;
@@ -138,7 +138,7 @@ describe(updateSchemaMetadataFromOptions, () => {
   describe('having options with name and metadata with existing name', () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
-      let optionsFixture: SchemaDecoratorOptions;
+      let optionsFixture: OasSchemaDecoratorOptions;
       let nameFixture: string;
       let existingNameFixture: string;
 
@@ -173,8 +173,8 @@ describe(updateSchemaMetadataFromOptions, () => {
   describe('having options with customAttributes and metadata with undefined customAttributes', () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
-      let optionsFixture: SchemaDecoratorOptions;
-      let customAttributesFixture: SchemaDecoratorOptions['customAttributes'];
+      let optionsFixture: OasSchemaDecoratorOptions;
+      let customAttributesFixture: OasSchemaDecoratorOptions['customAttributes'];
 
       let result: unknown;
 
@@ -221,9 +221,9 @@ describe(updateSchemaMetadataFromOptions, () => {
   describe('having options with customAttributes and metadata with existing customAttributes', () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
-      let optionsFixture: SchemaDecoratorOptions;
-      let customAttributesFixture: SchemaDecoratorOptions['customAttributes'];
-      let existingCustomAttributesFixture: SchemaDecoratorOptions['customAttributes'];
+      let optionsFixture: OasSchemaDecoratorOptions;
+      let customAttributesFixture: OasSchemaDecoratorOptions['customAttributes'];
+      let existingCustomAttributesFixture: OasSchemaDecoratorOptions['customAttributes'];
 
       let result: unknown;
 
@@ -278,9 +278,9 @@ describe(updateSchemaMetadataFromOptions, () => {
   describe('having options with customAttributes and metadata with existing customAttributes that have overlapping keys', () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
-      let optionsFixture: SchemaDecoratorOptions;
-      let customAttributesFixture: SchemaDecoratorOptions['customAttributes'];
-      let existingCustomAttributesFixture: SchemaDecoratorOptions['customAttributes'];
+      let optionsFixture: OasSchemaDecoratorOptions;
+      let customAttributesFixture: OasSchemaDecoratorOptions['customAttributes'];
+      let existingCustomAttributesFixture: OasSchemaDecoratorOptions['customAttributes'];
 
       let result: unknown;
 
@@ -334,9 +334,9 @@ describe(updateSchemaMetadataFromOptions, () => {
   describe('having options with both name and customAttributes', () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
-      let optionsFixture: SchemaDecoratorOptions;
+      let optionsFixture: OasSchemaDecoratorOptions;
       let nameFixture: string;
-      let customAttributesFixture: SchemaDecoratorOptions['customAttributes'];
+      let customAttributesFixture: OasSchemaDecoratorOptions['customAttributes'];
 
       let result: unknown;
 

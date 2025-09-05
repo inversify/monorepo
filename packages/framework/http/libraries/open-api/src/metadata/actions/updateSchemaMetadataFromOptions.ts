@@ -1,8 +1,8 @@
-import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
+import { OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions';
 import { SchemaMetadata } from '../models/SchemaMetadata';
 
 export function updateSchemaMetadataFromOptions(
-  options: SchemaDecoratorOptions | undefined,
+  options: OasSchemaDecoratorOptions | undefined,
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   target: Function,
 ): (metadata: SchemaMetadata) => SchemaMetadata {

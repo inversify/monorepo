@@ -24,7 +24,7 @@ import { updateSchemaMetadataFromOptions } from '../actions/updateSchemaMetadata
 import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
-import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
+import { OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions';
 import { SchemaMetadata } from '../models/SchemaMetadata';
 import { ToSchemaFunction } from '../models/ToSchemaFunction';
 import { OasSchema } from './OasSchema';
@@ -192,7 +192,7 @@ describe(OasSchema, () => {
 
   describe('having a schema object parameter and options', () => {
     let schemaFixture: OpenApi3Dot1SchemaObject;
-    let optionsFixture: SchemaDecoratorOptions;
+    let optionsFixture: OasSchemaDecoratorOptions;
 
     beforeAll(() => {
       schemaFixture = {
@@ -394,7 +394,7 @@ describe(OasSchema, () => {
 
   describe('having a build function parameter and options', () => {
     let buildFunctionFixture: BuildOpenApiBlockFunction<OpenApi3Dot1SchemaObject>;
-    let optionsFixture: SchemaDecoratorOptions;
+    let optionsFixture: OasSchemaDecoratorOptions;
     let toSchemaFunctionMock: Mock<ToSchemaFunction>;
     let builtSchemaFixture: OpenApi3Dot1SchemaObject;
 
