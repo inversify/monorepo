@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
 import { SchemaMetadata } from '../models/SchemaMetadata';
+import { SchemaPropertyMetadata } from '../models/SchemaPropertyMetadata';
 import { updateSchemaMetadataProperty } from './updateSchemaMetadataProperty';
 
 describe(updateSchemaMetadataProperty, () => {
@@ -10,15 +11,18 @@ describe(updateSchemaMetadataProperty, () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
       let propertyKeyFixture: string;
+      let requiredFixture: boolean;
       let schemaFixture: OpenApi3Dot1SchemaObject | undefined;
 
       let result: unknown;
 
       beforeAll(() => {
         propertyKeyFixture = 'testProperty';
+        requiredFixture = true;
         schemaFixture = undefined;
 
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map(),
           references: new Set(),
@@ -27,6 +31,7 @@ describe(updateSchemaMetadataProperty, () => {
 
         result = updateSchemaMetadataProperty(
           propertyKeyFixture,
+          requiredFixture,
           schemaFixture,
         )(metadataFixture);
       });
@@ -36,12 +41,15 @@ describe(updateSchemaMetadataProperty, () => {
       });
 
       it('should set property in metadata.properties', () => {
+        const expected: SchemaPropertyMetadata = {
+          required: requiredFixture,
+          schema: schemaFixture,
+        };
+
         expect(metadataFixture.properties.has(propertyKeyFixture)).toBe(true);
         expect(
           metadataFixture.properties.get(propertyKeyFixture),
-        ).toStrictEqual({
-          schema: schemaFixture,
-        });
+        ).toStrictEqual(expected);
       });
 
       it('should return metadata', () => {
@@ -54,18 +62,21 @@ describe(updateSchemaMetadataProperty, () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
       let propertyKeyFixture: string;
+      let requiredFixture: boolean;
       let schemaFixture: OpenApi3Dot1SchemaObject;
 
       let result: unknown;
 
       beforeAll(() => {
         propertyKeyFixture = 'testProperty';
+        requiredFixture = true;
         schemaFixture = {
           description: 'Test property',
           type: 'string',
         };
 
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map(),
           references: new Set(),
@@ -74,6 +85,7 @@ describe(updateSchemaMetadataProperty, () => {
 
         result = updateSchemaMetadataProperty(
           propertyKeyFixture,
+          requiredFixture,
           schemaFixture,
         )(metadataFixture);
       });
@@ -83,12 +95,15 @@ describe(updateSchemaMetadataProperty, () => {
       });
 
       it('should set property in metadata.properties', () => {
+        const expected: SchemaPropertyMetadata = {
+          required: requiredFixture,
+          schema: schemaFixture,
+        };
+
         expect(metadataFixture.properties.has(propertyKeyFixture)).toBe(true);
         expect(
           metadataFixture.properties.get(propertyKeyFixture),
-        ).toStrictEqual({
-          schema: schemaFixture,
-        });
+        ).toStrictEqual(expected);
       });
 
       it('should return metadata', () => {
@@ -101,6 +116,7 @@ describe(updateSchemaMetadataProperty, () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
       let propertyKeyFixture: string;
+      let requiredFixture: boolean;
       let schemaFixture: OpenApi3Dot1SchemaObject;
       let existingPropertyKeyFixture: string;
       let existingSchemaFixture: OpenApi3Dot1SchemaObject;
@@ -109,6 +125,7 @@ describe(updateSchemaMetadataProperty, () => {
 
       beforeAll(() => {
         propertyKeyFixture = 'newProperty';
+        requiredFixture = true;
         schemaFixture = {
           description: 'New property',
           type: 'number',
@@ -121,9 +138,13 @@ describe(updateSchemaMetadataProperty, () => {
         };
 
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map([
-            [existingPropertyKeyFixture, { schema: existingSchemaFixture }],
+            [
+              existingPropertyKeyFixture,
+              { required: requiredFixture, schema: existingSchemaFixture },
+            ],
           ]),
           references: new Set(),
           schema: undefined,
@@ -131,6 +152,7 @@ describe(updateSchemaMetadataProperty, () => {
 
         result = updateSchemaMetadataProperty(
           propertyKeyFixture,
+          requiredFixture,
           schemaFixture,
         )(metadataFixture);
       });
@@ -140,23 +162,29 @@ describe(updateSchemaMetadataProperty, () => {
       });
 
       it('should set new property in metadata.properties', () => {
+        const expected: SchemaPropertyMetadata = {
+          required: requiredFixture,
+          schema: schemaFixture,
+        };
+
         expect(metadataFixture.properties.has(propertyKeyFixture)).toBe(true);
         expect(
           metadataFixture.properties.get(propertyKeyFixture),
-        ).toStrictEqual({
-          schema: schemaFixture,
-        });
+        ).toStrictEqual(expected);
       });
 
       it('should preserve existing properties', () => {
+        const expected: SchemaPropertyMetadata = {
+          required: requiredFixture,
+          schema: existingSchemaFixture,
+        };
+
         expect(metadataFixture.properties.has(existingPropertyKeyFixture)).toBe(
           true,
         );
         expect(
           metadataFixture.properties.get(existingPropertyKeyFixture),
-        ).toStrictEqual({
-          schema: existingSchemaFixture,
-        });
+        ).toStrictEqual(expected);
       });
 
       it('should return metadata', () => {
@@ -169,6 +197,7 @@ describe(updateSchemaMetadataProperty, () => {
     describe('when called', () => {
       let metadataFixture: SchemaMetadata;
       let propertyKeyFixture: string;
+      let requiredFixture: boolean;
       let schemaFixture: OpenApi3Dot1SchemaObject;
       let existingSchemaFixture: OpenApi3Dot1SchemaObject;
 
@@ -176,6 +205,7 @@ describe(updateSchemaMetadataProperty, () => {
 
       beforeAll(() => {
         propertyKeyFixture = 'testProperty';
+        requiredFixture = false;
         schemaFixture = {
           description: 'Updated property',
           type: 'number',
@@ -187,9 +217,13 @@ describe(updateSchemaMetadataProperty, () => {
         };
 
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map([
-            [propertyKeyFixture, { schema: existingSchemaFixture }],
+            [
+              propertyKeyFixture,
+              { required: requiredFixture, schema: existingSchemaFixture },
+            ],
           ]),
           references: new Set(),
           schema: undefined,
@@ -197,6 +231,7 @@ describe(updateSchemaMetadataProperty, () => {
 
         result = updateSchemaMetadataProperty(
           propertyKeyFixture,
+          requiredFixture,
           schemaFixture,
         )(metadataFixture);
       });
@@ -206,12 +241,15 @@ describe(updateSchemaMetadataProperty, () => {
       });
 
       it('should update property in metadata.properties', () => {
+        const expected: SchemaPropertyMetadata = {
+          required: requiredFixture,
+          schema: schemaFixture,
+        };
+
         expect(metadataFixture.properties.has(propertyKeyFixture)).toBe(true);
         expect(
           metadataFixture.properties.get(propertyKeyFixture),
-        ).toStrictEqual({
-          schema: schemaFixture,
-        });
+        ).toStrictEqual(expected);
       });
 
       it('should return metadata', () => {

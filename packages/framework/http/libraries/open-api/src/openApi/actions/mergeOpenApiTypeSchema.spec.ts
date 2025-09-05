@@ -64,6 +64,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'Type',
             properties: new Map(),
             references: new Set(),
@@ -107,6 +108,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'NewType',
             properties: new Map(),
             references: new Set(),
@@ -128,9 +130,8 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should modify schemasObject', () => {
-          expect(schemasObjectFixture).toStrictEqual({
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
             NewType: {
-              additionalProperties: false,
               properties: {},
               type: 'object',
             },
@@ -138,7 +139,9 @@ describe(mergeOpenApiTypeSchema, () => {
               properties: {},
               type: 'object',
             },
-          });
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
         });
       });
 
@@ -155,6 +158,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: undefined,
             properties: new Map(),
             references: new Set(),
@@ -185,6 +189,187 @@ describe(mergeOpenApiTypeSchema, () => {
         });
       });
 
+      describe('when called, and getSchemaMetadata() returns SchemaMetadata with no schema nor properties and customAttributes', () => {
+        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let customAttributesFixture: OpenApi3Dot1SchemaObject;
+        let schemaMetadataFixture: SchemaMetadata;
+
+        beforeAll(() => {
+          schemasObjectFixture = {};
+
+          customAttributesFixture = {
+            description: 'A custom type with attributes',
+            example: 'custom-example',
+          };
+
+          schemaMetadataFixture = {
+            customAttributes: customAttributesFixture,
+            name: 'TypeWithCustomAttributes',
+            properties: new Map(),
+            references: new Set(),
+            schema: undefined,
+          };
+
+          getSchemaMetadataMock.mockReturnValueOnce(schemaMetadataFixture);
+
+          mergeOpenApiTypeSchema(schemasObjectFixture, typeFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getSchemaMetadata()', () => {
+          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+        });
+
+        it('should add schema to schemasObject with merged customAttributes', () => {
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+            TypeWithCustomAttributes: {
+              description: 'A custom type with attributes',
+              example: 'custom-example',
+              properties: {},
+              type: 'object',
+            },
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
+        });
+
+        it('should not call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadataMock).not.toHaveBeenCalled();
+        });
+
+        it('should not call tryBuildSchemaFromWellKnownType()', () => {
+          expect(tryBuildSchemaFromWellKnownTypeMock).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('when called, and getSchemaMetadata() returns SchemaMetadata with schema and no properties', () => {
+        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemaFixture: JsonSchema;
+        let schemaMetadataFixture: SchemaMetadata;
+
+        beforeAll(() => {
+          schemasObjectFixture = {};
+
+          schemaFixture = {
+            pattern: '^[A-Z][a-z]*$',
+            type: 'string',
+          };
+
+          schemaMetadataFixture = {
+            customAttributes: undefined,
+            name: 'TypeWithSchemaOnly',
+            properties: new Map(),
+            references: new Set(),
+            schema: schemaFixture,
+          };
+
+          getSchemaMetadataMock.mockReturnValueOnce(schemaMetadataFixture);
+
+          mergeOpenApiTypeSchema(schemasObjectFixture, typeFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getSchemaMetadata()', () => {
+          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+        });
+
+        it('should add schema to schemasObject using the schema directly', () => {
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+            TypeWithSchemaOnly: schemaFixture,
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
+        });
+
+        it('should not call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadataMock).not.toHaveBeenCalled();
+        });
+
+        it('should not call tryBuildSchemaFromWellKnownType()', () => {
+          expect(tryBuildSchemaFromWellKnownTypeMock).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('when called, and getSchemaMetadata() returns SchemaMetadata with schema and properties', () => {
+        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemaFixture: JsonSchema;
+        let propertySchemaFixture: JsonSchema;
+        let schemaMetadataFixture: SchemaMetadata;
+
+        beforeAll(() => {
+          schemasObjectFixture = {};
+
+          schemaFixture = {
+            required: ['id'],
+            type: 'object',
+          };
+
+          propertySchemaFixture = {
+            minLength: 1,
+            type: 'string',
+          };
+
+          schemaMetadataFixture = {
+            customAttributes: undefined,
+            name: 'TypeWithSchemaAndProperties',
+            properties: new Map([
+              [
+                'name',
+                {
+                  required: false,
+                  schema: propertySchemaFixture,
+                },
+              ],
+            ]),
+            references: new Set(),
+            schema: schemaFixture,
+          };
+
+          getSchemaMetadataMock.mockReturnValueOnce(schemaMetadataFixture);
+
+          mergeOpenApiTypeSchema(schemasObjectFixture, typeFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getSchemaMetadata()', () => {
+          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+        });
+
+        it('should add schema to schemasObject with allOf structure', () => {
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+            TypeWithSchemaAndProperties: {
+              allOf: [schemaFixture],
+              properties: {
+                name: propertySchemaFixture,
+              },
+              type: 'object',
+            },
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
+        });
+
+        it('should not call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadataMock).not.toHaveBeenCalled();
+        });
+
+        it('should not call tryBuildSchemaFromWellKnownType()', () => {
+          expect(tryBuildSchemaFromWellKnownTypeMock).not.toHaveBeenCalled();
+        });
+      });
+
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with defined name and properties', () => {
         let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
         let propertySchemaFixture: JsonSchema;
@@ -199,11 +384,13 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithDefinedSchemas',
             properties: new Map([
               [
                 'stringProperty',
                 {
+                  required: false,
                   schema: propertySchemaFixture,
                 },
               ],
@@ -227,15 +414,89 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with defined property schemas', () => {
-          expect(schemasObjectFixture).toStrictEqual({
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
             TypeWithDefinedSchemas: {
-              additionalProperties: false,
               properties: {
                 stringProperty: propertySchemaFixture,
               },
               type: 'object',
             },
-          });
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
+        });
+
+        it('should not call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadataMock).not.toHaveBeenCalled();
+        });
+
+        it('should not call tryBuildSchemaFromWellKnownType()', () => {
+          expect(tryBuildSchemaFromWellKnownTypeMock).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('when called, and getSchemaMetadata() returns SchemaMetadata with no schema and required property', () => {
+        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let propertySchemaFixture: JsonSchema;
+        let schemaMetadataFixture: SchemaMetadata;
+
+        beforeAll(() => {
+          schemasObjectFixture = {};
+
+          propertySchemaFixture = {
+            type: 'string',
+          };
+
+          schemaMetadataFixture = {
+            customAttributes: undefined,
+            name: 'TypeWithRequiredProperty',
+            properties: new Map([
+              [
+                'requiredProperty',
+                {
+                  required: true,
+                  schema: propertySchemaFixture,
+                },
+              ],
+              [
+                'optionalProperty',
+                {
+                  required: false,
+                  schema: propertySchemaFixture,
+                },
+              ],
+            ]),
+            references: new Set(),
+            schema: undefined,
+          };
+
+          getSchemaMetadataMock.mockReturnValueOnce(schemaMetadataFixture);
+
+          mergeOpenApiTypeSchema(schemasObjectFixture, typeFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getSchemaMetadata()', () => {
+          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+        });
+
+        it('should add schema to schemasObject with required properties array', () => {
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+            TypeWithRequiredProperty: {
+              properties: {
+                optionalProperty: propertySchemaFixture,
+                requiredProperty: propertySchemaFixture,
+              },
+              required: ['requiredProperty'],
+              type: 'object',
+            },
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
         });
 
         it('should not call getOwnReflectMetadata()', () => {
@@ -257,11 +518,13 @@ describe(mergeOpenApiTypeSchema, () => {
           schemasObjectFixture = {};
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithUndefinedDesignType',
             properties: new Map([
               [
                 'unknownProperty',
                 {
+                  required: false,
                   schema: undefined,
                 },
               ],
@@ -321,11 +584,13 @@ describe(mergeOpenApiTypeSchema, () => {
           schemasObjectFixture = {};
           propertyTypeFixture = String;
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithWellKnownProperties',
             properties: new Map([
               [
                 'stringProperty',
                 {
+                  required: false,
                   schema: undefined,
                 },
               ],
@@ -372,15 +637,16 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with well-known type schema', () => {
-          expect(schemasObjectFixture).toStrictEqual({
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
             TypeWithWellKnownProperties: {
-              additionalProperties: false,
               properties: {
                 stringProperty: wellKnownSchemaFixture,
               },
               type: 'object',
             },
-          });
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
         });
 
         it('should not call escapeJsonPointerFragments()', () => {
@@ -402,11 +668,13 @@ describe(mergeOpenApiTypeSchema, () => {
           escapedPropertySchemaNameFixture = 'CustomPropertyType';
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithCustomProperties',
             properties: new Map([
               [
                 'customProperty',
                 {
+                  required: false,
                   schema: undefined,
                 },
               ],
@@ -416,6 +684,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           propertySchemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'CustomPropertyType',
             properties: new Map(),
             references: new Set(),
@@ -476,14 +745,12 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with property reference', () => {
-          expect(schemasObjectFixture).toStrictEqual({
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
             CustomPropertyType: {
-              additionalProperties: false,
               properties: {},
               type: 'object',
             },
             TypeWithCustomProperties: {
-              additionalProperties: false,
               properties: {
                 customProperty: {
                   $ref: '#/components/schemas/CustomPropertyType',
@@ -491,7 +758,9 @@ describe(mergeOpenApiTypeSchema, () => {
               },
               type: 'object',
             },
-          });
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
         });
       });
 
@@ -509,11 +778,13 @@ describe(mergeOpenApiTypeSchema, () => {
           escapedPropertySchemaNameFixture = 'CustomPropertyType';
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithUnnamedProperties',
             properties: new Map([
               [
                 'customProperty',
                 {
+                  required: false,
                   schema: undefined,
                 },
               ],
@@ -523,6 +794,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           propertySchemaMetadataFixture = {
+            customAttributes: undefined,
             name: undefined,
             properties: new Map(),
             references: new Set(),
@@ -583,14 +855,12 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with property reference using propertyType.name', () => {
-          expect(schemasObjectFixture).toStrictEqual({
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
             CustomPropertyType: {
-              additionalProperties: false,
               properties: {},
               type: 'object',
             },
             TypeWithUnnamedProperties: {
-              additionalProperties: false,
               properties: {
                 customProperty: {
                   $ref: '#/components/schemas/CustomPropertyType',
@@ -598,7 +868,9 @@ describe(mergeOpenApiTypeSchema, () => {
               },
               type: 'object',
             },
-          });
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
         });
       });
     });

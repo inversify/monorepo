@@ -1,8 +1,8 @@
-import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
+import { OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions';
 import { SchemaMetadata } from '../models/SchemaMetadata';
 
-export function updateSchemaMetadataName(
-  options: SchemaDecoratorOptions | undefined,
+export function updateSchemaMetadataFromOptions(
+  options: OasSchemaDecoratorOptions | undefined,
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   target: Function,
 ): (metadata: SchemaMetadata) => SchemaMetadata {
@@ -13,6 +13,14 @@ export function updateSchemaMetadataName(
       }
 
       metadata.name = options.name;
+    }
+
+    if (options?.customAttributes !== undefined) {
+      if (metadata.customAttributes === undefined) {
+        metadata.customAttributes = {};
+      }
+
+      Object.assign(metadata.customAttributes, options.customAttributes);
     }
 
     return metadata;

@@ -11,14 +11,14 @@ export { OasSecurity } from './metadata/decorators/OasSecurity';
 export { OasServer } from './metadata/decorators/OasServer';
 export { OasSummary } from './metadata/decorators/OasSummary';
 export { OasTag } from './metadata/decorators/OasTag';
-export { SwaggerUiExpressProvider } from './openApi/services/SwaggerUiExpressProvider';
 export { SwaggerUiExpress4Provider } from './openApi/services/SwaggerUiExpress4Provider';
+export { SwaggerUiExpressProvider } from './openApi/services/SwaggerUiExpressProvider';
 export { SwaggerUiFastifyProvider } from './openApi/services/SwaggerUiFastifyProvider';
 export { SwaggerUiHonoProvider } from './openApi/services/SwaggerUiHonoProvider';
 
 export type { BuildOpenApiBlockFunction } from './metadata/models/BuildOpenApiBlockFunction';
-export type { SchemaDecoratorOptions } from './metadata/models/SchemaDecoratorOptions';
-export type { ToSchemaFunction } from './metadata/models/ToSchemaFunction';
-export type { SwaggerUiProviderOptions } from './openApi/models/SwaggerUiProviderOptions';
+export type { OasSchemaDecoratorOptions } from './metadata/models/OasSchemaDecoratorOptions';
 export type { SwaggerUiProviderApiOptions } from './openApi/models/SwaggerUiProviderApiOptions';
+export type { SwaggerUiProviderOptions } from './openApi/models/SwaggerUiProviderOptions';
 export type { SwaggerUiProviderUiOptions } from './openApi/models/SwaggerUiProviderUiOptions';
+export type { ToSchemaFunction } from './metadata/models/ToSchemaFunction';
