@@ -47,13 +47,13 @@ flags:
       - packages/container/libraries/core/
   '@inversifyjs/framework-core':
     paths:
-      - packages/framework/libraries/core
+      - packages/framework/core
   '@inversifyjs/http-core':
     paths:
-      - packages/http/libraries/core
+      - packages/framework/http/libraries/core
   '@inversifyjs/http-open-api':
     paths:
-      - packages/http/libraries/open-api
+      - packages/framework/http/libraries/open-api
   '@inversifyjs/logger':
     paths:
       - packages/logger

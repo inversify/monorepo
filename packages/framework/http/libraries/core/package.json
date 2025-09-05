@@ -3,23 +3,22 @@
   "bugs": {
     "url": "https://github.com/inversify/monorepo/issues"
   },
-  "description": "InversifyJs http express4 package",
+  "description": "InversifyJs http core package",
   "dependencies": {
-    "@inversifyjs/http-core": "workspace:*",
-    "cookie-parser": "^1.4.7"
+    "@inversifyjs/framework-core": "workspace:*",
+    "@inversifyjs/reflect-metadata-utils": "workspace:*",
+    "@inversifyjs/logger": "workspace:*"
   },
   "devDependencies": {
-    "@stryker-mutator/core": "9.0.1",
-    "@stryker-mutator/vitest-runner": "9.0.1",
-    "@stryker-mutator/typescript-checker": "9.0.1",
-    "@types/cookie-parser": "^1.4.9",
-    "@types/express": "^4.17.23",
-    "@types/node": "22.18.0",
+    "@stryker-mutator/core": "9.1.1",
+    "@stryker-mutator/typescript-checker": "9.1.1",
+    "@stryker-mutator/vitest-runner": "9.1.1",
+    "@types/node": "22.18.1",
     "@vitest/coverage-v8": "3.2.4",
     "eslint": "9.34.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
-    "rollup": "4.49.0",
+    "rollup": "4.50.0",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.2",
@@ -49,12 +48,14 @@
       "require": "./lib/cjs/index.js"
     }
   },
-  "name": "@inversifyjs/http-express-v4",
+  "name": "@inversifyjs/http-core",
+  "private": "true",
   "peerDependencies": {
-    "express": "^4.21.2",
     "inversify": "^7.9.1"
   },
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"
@@ -64,12 +65,13 @@
     "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
     "build:esm": "rollup -c ./rollup.config.mjs && pnpm exec foundation-ts-package-esm ./lib/esm",
     "build:clean": "rimraf lib",
-    "format": "prettier --write ./src/**/*.ts",
+    "format": "prettier --write ./src",
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean",
     "test": "vitest run",
     "test:integration": "pnpm run test --project Integration",
     "test:coverage": "pnpm run test:unit --coverage",
+    "test:mutation": "stryker run",
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
