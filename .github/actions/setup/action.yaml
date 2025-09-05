@@ -8,13 +8,13 @@ runs:
     - name: Install Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 22.18.0
+        node-version: 22.19.0
 
     - uses: pnpm/action-setup@v3
       name: Install pnpm
       id: pnpm-install
       with:
-        version: 10.15.0
+        version: 10.15.1
         run_install: false
 
     - name: Get pnpm store directory
