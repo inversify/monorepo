@@ -2,4 +2,4 @@
 "@inversifyjs/http-open-api": minor
 ---
 
-Added `ExternalDocs` decorator
+Added `OasExternalDocs` decorator

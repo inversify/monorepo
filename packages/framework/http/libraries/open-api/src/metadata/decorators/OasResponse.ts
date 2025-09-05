@@ -9,7 +9,7 @@ import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefa
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function Response(
+export function OasResponse(
   code: HttpStatusCode,
   response:
     | OpenApi3Dot1ResponseObject

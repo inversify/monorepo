@@ -2,4 +2,4 @@
 "@inversifyjs/http-open-api": minor
 ---
 
-Added `Security` decorator
+Added `OasSecurity` decorator

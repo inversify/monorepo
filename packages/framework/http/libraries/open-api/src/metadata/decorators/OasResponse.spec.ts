@@ -27,9 +27,9 @@ import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefa
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
 import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
 import { ToSchemaFunction } from '../models/ToSchemaFunction';
-import { Response } from './Response';
+import { OasResponse } from './OasResponse';
 
-describe(Response, () => {
+describe(OasResponse, () => {
   describe('having a response object parameter', () => {
     let codeFixture: HttpStatusCode;
     let responseFixture: OpenApi3Dot1ResponseObject;
@@ -75,7 +75,7 @@ describe(Response, () => {
             updateControllerOpenApiMetadataOperationRecordPropertyResultMock,
           );
 
-        result = Response(codeFixture, responseFixture)(
+        result = OasResponse(codeFixture, responseFixture)(
           targetFixture,
           keyFixture,
           Symbol() as unknown as TypedPropertyDescriptor<unknown>,
@@ -174,7 +174,7 @@ describe(Response, () => {
             updateControllerOpenApiMetadataOperationRecordPropertyResultMock,
           );
 
-        result = Response(codeFixture, buildFunctionFixture)(
+        result = OasResponse(codeFixture, buildFunctionFixture)(
           targetFixture,
           keyFixture,
           Symbol() as unknown as TypedPropertyDescriptor<unknown>,

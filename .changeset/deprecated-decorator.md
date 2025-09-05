@@ -2,4 +2,4 @@
 "@inversifyjs/http-open-api": minor
 ---
 
-Added `Deprecated` decorator
+Added `OasDeprecated` decorator

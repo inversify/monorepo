@@ -3,38 +3,34 @@ import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
 import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext';
-import { updateSchemaMetadataName } from '../actions/updateSchemaMetadataName';
-import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema';
+import { updateSchemaMetadataProperty } from '../actions/updateSchemaMetadataProperty';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
-import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
+import { SchemaMetadata } from '../models/SchemaMetadata';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function Schema(
+export function OasSchemaProperty(
   schema?:
     | OpenApi3Dot1SchemaObject
     | BuildOpenApiBlockFunction<OpenApi3Dot1SchemaObject>,
-  options?: SchemaDecoratorOptions,
-): ClassDecorator {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  return (target: Function): void => {
-    updateOwnReflectMetadata(
-      target,
-      schemaOpenApiMetadataReflectKey,
-      buildDefaultSchemaMetadata,
-      updateSchemaMetadataName(options, target),
-    );
+): PropertyDecorator {
+  return (target: object, propertyKey: string | symbol): void => {
+    if (typeof propertyKey === 'symbol') {
+      throw new Error(
+        `Cannot apply SchemaProperty decorator to "${target.constructor.name}.${propertyKey.toString()}" symbol property`,
+      );
+    }
 
     const schemaResult: OpenApi3Dot1SchemaObject | undefined =
       typeof schema === 'function'
-        ? schema(toSchemaInSchemaMetadataContext(target))
+        ? schema(toSchemaInSchemaMetadataContext(target.constructor))
         : schema;
 
-    updateOwnReflectMetadata(
-      target,
+    updateOwnReflectMetadata<SchemaMetadata>(
+      target.constructor,
       schemaOpenApiMetadataReflectKey,
       buildDefaultSchemaMetadata,
-      updateSchemaMetadataSchema(schemaResult, target),
+      updateSchemaMetadataProperty(propertyKey, schemaResult),
     );
   };
 }

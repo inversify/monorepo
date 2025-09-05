@@ -24,9 +24,9 @@ import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMe
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
 import { SchemaMetadata } from '../models/SchemaMetadata';
 import { ToSchemaFunction } from '../models/ToSchemaFunction';
-import { SchemaProperty } from './SchemaProperty';
+import { OasSchemaProperty } from './OasSchemaProperty';
 
-describe(SchemaProperty, () => {
+describe(OasSchemaProperty, () => {
   describe('having no schema parameter', () => {
     describe('when called', () => {
       let targetObjectFixture: object;
@@ -47,7 +47,7 @@ describe(SchemaProperty, () => {
           .mocked(updateSchemaMetadataProperty)
           .mockReturnValueOnce(updateSchemaMetadataPropertyResultMock);
 
-        result = SchemaProperty()(targetObjectFixture, propertyKeyFixture);
+        result = OasSchemaProperty()(targetObjectFixture, propertyKeyFixture);
       });
 
       afterAll(() => {
@@ -107,7 +107,7 @@ describe(SchemaProperty, () => {
           .mocked(updateSchemaMetadataProperty)
           .mockReturnValueOnce(updateSchemaMetadataPropertyResultMock);
 
-        result = SchemaProperty(schemaFixture)(
+        result = OasSchemaProperty(schemaFixture)(
           targetObjectFixture,
           propertyKeyFixture,
         );
@@ -182,7 +182,7 @@ describe(SchemaProperty, () => {
           .mocked(updateSchemaMetadataProperty)
           .mockReturnValueOnce(updateSchemaMetadataPropertyResultMock);
 
-        result = SchemaProperty(buildFunctionFixture)(
+        result = OasSchemaProperty(buildFunctionFixture)(
           targetObjectFixture,
           propertyKeyFixture,
         );
@@ -244,7 +244,7 @@ describe(SchemaProperty, () => {
 
       it('should throw an error', () => {
         expect(() => {
-          SchemaProperty()(targetObjectFixture, symbolPropertyKeyFixture);
+          OasSchemaProperty()(targetObjectFixture, symbolPropertyKeyFixture);
         }).toThrow(
           'Cannot apply SchemaProperty decorator to "TestClass.Symbol(testSymbol)" symbol property',
         );

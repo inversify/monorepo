@@ -20,9 +20,9 @@ import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/
 import { updateControllerOpenApiMetadataOperationArrayProperty } from '../actions/updateControllerOpenApiMetadataOperationArrayProperty';
 import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
 import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { Security } from './Security';
+import { OasSecurity } from './OasSecurity';
 
-describe(Security, () => {
+describe(OasSecurity, () => {
   describe('having a prototype target, key and type descriptor', () => {
     let contentFixture: OpenApi3Dot1SecurityRequirementObject;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -54,7 +54,7 @@ describe(Security, () => {
             updateControllerOpenApiMetadataOperationArrayPropertyResultMock,
           );
 
-        result = Security(contentFixture)(
+        result = OasSecurity(contentFixture)(
           targetTypeFixture.prototype as object,
           keyFixture,
           Symbol() as unknown as TypedPropertyDescriptor<unknown>,

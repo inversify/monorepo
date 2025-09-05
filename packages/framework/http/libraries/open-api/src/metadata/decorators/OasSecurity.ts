@@ -1,3 +1,4 @@
+import { OpenApi3Dot1SecurityRequirementObject } from '@inversifyjs/open-api-types/v3Dot1';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
@@ -5,7 +6,9 @@ import { updateControllerOpenApiMetadataOperationArrayProperty } from '../action
 import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function Tag(content: string): MethodDecorator {
+export function OasSecurity(
+  content: OpenApi3Dot1SecurityRequirementObject,
+): MethodDecorator {
   return (target: object, key: string | symbol): void => {
     updateOwnReflectMetadata(
       target.constructor,
@@ -14,7 +17,7 @@ export function Tag(content: string): MethodDecorator {
       updateControllerOpenApiMetadataOperationArrayProperty(
         content,
         key,
-        'tags',
+        'security',
       ),
     );
   };
