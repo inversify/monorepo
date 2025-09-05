@@ -1,5 +1,8 @@
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
-import { JsonSchema } from '@inversifyjs/json-schema-types/2020-12';
+import {
+  JsonSchema,
+  JsonSchemaObject,
+} from '@inversifyjs/json-schema-types/2020-12';
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
@@ -86,23 +89,41 @@ function initializeJsonSchema(
   let jsonSchema: JsonSchema;
 
   if (schemaMetadata.schema === undefined) {
-    jsonSchema = {
-      properties: jsonSchemaProperties,
-      type: 'object',
-      unevaluatedProperties: false,
-    };
+    jsonSchema = initializeJsonSchemaPropertiesObject(
+      schemaMetadata,
+      jsonSchemaProperties,
+    );
   } else {
     if (schemaMetadata.properties.size === 0) {
       jsonSchema = schemaMetadata.schema;
     } else {
-      jsonSchema = {
-        allOf: [schemaMetadata.schema],
-        properties: jsonSchemaProperties,
-        type: 'object',
-        unevaluatedProperties: false,
-      };
+      jsonSchema = initializeJsonSchemaPropertiesObject(
+        schemaMetadata,
+        jsonSchemaProperties,
+      );
+
+      jsonSchema.allOf = [schemaMetadata.schema];
     }
   }
 
   return [jsonSchema, jsonSchemaProperties];
+}
+
+function initializeJsonSchemaPropertiesObject(
+  schemaMetadata: SchemaMetadata,
+  jsonSchemaProperties: Record<string, JsonSchema>,
+): JsonSchemaObject {
+  const jsonSchemaObject: JsonSchema = {
+    properties: jsonSchemaProperties,
+    type: 'object',
+  };
+
+  if (typeof schemaMetadata.customAttributes === 'object') {
+    return {
+      ...schemaMetadata.customAttributes,
+      ...jsonSchemaObject,
+    };
+  } else {
+    return jsonSchemaObject;
+  }
 }

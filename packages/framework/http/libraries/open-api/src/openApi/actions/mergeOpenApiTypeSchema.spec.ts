@@ -134,7 +134,6 @@ describe(mergeOpenApiTypeSchema, () => {
             NewType: {
               properties: {},
               type: 'object',
-              unevaluatedProperties: false,
             },
             Type: {
               properties: {},
@@ -187,6 +186,63 @@ describe(mergeOpenApiTypeSchema, () => {
               type: 'object',
             },
           });
+        });
+      });
+
+      describe('when called, and getSchemaMetadata() returns SchemaMetadata with no schema nor properties and customAttributes', () => {
+        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let customAttributesFixture: OpenApi3Dot1SchemaObject;
+        let schemaMetadataFixture: SchemaMetadata;
+
+        beforeAll(() => {
+          schemasObjectFixture = {};
+
+          customAttributesFixture = {
+            description: 'A custom type with attributes',
+            example: 'custom-example',
+          };
+
+          schemaMetadataFixture = {
+            customAttributes: customAttributesFixture,
+            name: 'TypeWithCustomAttributes',
+            properties: new Map(),
+            references: new Set(),
+            schema: undefined,
+          };
+
+          getSchemaMetadataMock.mockReturnValueOnce(schemaMetadataFixture);
+
+          mergeOpenApiTypeSchema(schemasObjectFixture, typeFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getSchemaMetadata()', () => {
+          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
+          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+        });
+
+        it('should add schema to schemasObject with merged customAttributes', () => {
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+            TypeWithCustomAttributes: {
+              description: 'A custom type with attributes',
+              example: 'custom-example',
+              properties: {},
+              type: 'object',
+            },
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
+        });
+
+        it('should not call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadataMock).not.toHaveBeenCalled();
+        });
+
+        it('should not call tryBuildSchemaFromWellKnownType()', () => {
+          expect(tryBuildSchemaFromWellKnownTypeMock).not.toHaveBeenCalled();
         });
       });
 
@@ -299,7 +355,6 @@ describe(mergeOpenApiTypeSchema, () => {
                 name: propertySchemaFixture,
               },
               type: 'object',
-              unevaluatedProperties: false,
             },
           };
 
@@ -365,7 +420,6 @@ describe(mergeOpenApiTypeSchema, () => {
                 stringProperty: propertySchemaFixture,
               },
               type: 'object',
-              unevaluatedProperties: false,
             },
           };
 
@@ -439,7 +493,6 @@ describe(mergeOpenApiTypeSchema, () => {
               },
               required: ['requiredProperty'],
               type: 'object',
-              unevaluatedProperties: false,
             },
           };
 
@@ -590,7 +643,6 @@ describe(mergeOpenApiTypeSchema, () => {
                 stringProperty: wellKnownSchemaFixture,
               },
               type: 'object',
-              unevaluatedProperties: false,
             },
           };
 
@@ -697,7 +749,6 @@ describe(mergeOpenApiTypeSchema, () => {
             CustomPropertyType: {
               properties: {},
               type: 'object',
-              unevaluatedProperties: false,
             },
             TypeWithCustomProperties: {
               properties: {
@@ -706,7 +757,6 @@ describe(mergeOpenApiTypeSchema, () => {
                 },
               },
               type: 'object',
-              unevaluatedProperties: false,
             },
           };
 
@@ -809,7 +859,6 @@ describe(mergeOpenApiTypeSchema, () => {
             CustomPropertyType: {
               properties: {},
               type: 'object',
-              unevaluatedProperties: false,
             },
             TypeWithUnnamedProperties: {
               properties: {
@@ -818,7 +867,6 @@ describe(mergeOpenApiTypeSchema, () => {
                 },
               },
               type: 'object',
-              unevaluatedProperties: false,
             },
           };
 
