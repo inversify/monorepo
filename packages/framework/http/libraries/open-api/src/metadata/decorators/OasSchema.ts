@@ -3,7 +3,7 @@ import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
 import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext';
-import { updateSchemaMetadataName } from '../actions/updateSchemaMetadataName';
+import { updateSchemaMetadataFromOptions } from '../actions/updateSchemaMetadataFromOptions';
 import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
@@ -22,7 +22,7 @@ export function OasSchema(
       target,
       schemaOpenApiMetadataReflectKey,
       buildDefaultSchemaMetadata,
-      updateSchemaMetadataName(options, target),
+      updateSchemaMetadataFromOptions(options, target),
     );
 
     const schemaResult: OpenApi3Dot1SchemaObject | undefined =

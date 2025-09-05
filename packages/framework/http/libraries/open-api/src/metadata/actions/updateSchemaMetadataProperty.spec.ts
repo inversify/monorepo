@@ -22,6 +22,7 @@ describe(updateSchemaMetadataProperty, () => {
         schemaFixture = undefined;
 
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map(),
           references: new Set(),
@@ -75,6 +76,7 @@ describe(updateSchemaMetadataProperty, () => {
         };
 
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map(),
           references: new Set(),
@@ -136,6 +138,7 @@ describe(updateSchemaMetadataProperty, () => {
         };
 
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map([
             [
@@ -214,6 +217,7 @@ describe(updateSchemaMetadataProperty, () => {
         };
 
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map([
             [

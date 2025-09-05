@@ -30,6 +30,7 @@ describe(updateSchemaMetadataSchema, () => {
 
       beforeAll(() => {
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map(),
           references: new Set(),
@@ -67,6 +68,7 @@ describe(updateSchemaMetadataSchema, () => {
         };
 
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map(),
           references: new Set(),
@@ -94,6 +96,7 @@ describe(updateSchemaMetadataSchema, () => {
 
       beforeAll(() => {
         metadataFixture = {
+          customAttributes: undefined,
           name: undefined,
           properties: new Map(),
           references: new Set(),

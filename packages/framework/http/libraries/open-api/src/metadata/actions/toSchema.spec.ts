@@ -103,6 +103,7 @@ describe(toSchema, () => {
       typeFixture = class TestType {};
       escapedNameFixture = 'TestType';
       metadataWithUndefinedName = {
+        customAttributes: undefined,
         name: undefined,
         properties: new Map(),
         references: new Set(),
@@ -168,6 +169,7 @@ describe(toSchema, () => {
       nameFixture = 'CustomSchemaName';
       escapedNameFixture = 'CustomSchemaName';
       metadataWithName = {
+        customAttributes: undefined,
         name: nameFixture,
         properties: new Map(),
         references: new Set(),

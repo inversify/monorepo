@@ -13,6 +13,7 @@ describe(buildDefaultSchemaMetadata, () => {
 
     it('should return the expected result', () => {
       const expected: SchemaMetadata = {
+        customAttributes: undefined,
         name: undefined,
         properties: new Map(),
         references: new Set(),

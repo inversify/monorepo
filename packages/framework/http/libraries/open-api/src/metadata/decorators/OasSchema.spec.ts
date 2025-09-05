@@ -13,14 +13,14 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 vitest.mock('../actions/toSchemaInSchemaMetadataContext');
-vitest.mock('../actions/updateSchemaMetadataName');
+vitest.mock('../actions/updateSchemaMetadataFromOptions');
 vitest.mock('../actions/updateSchemaMetadataSchema');
 
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
 import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
 import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext';
-import { updateSchemaMetadataName } from '../actions/updateSchemaMetadataName';
+import { updateSchemaMetadataFromOptions } from '../actions/updateSchemaMetadataFromOptions';
 import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema';
 import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
@@ -50,7 +50,7 @@ describe(OasSchema, () => {
         updateSchemaMetadataSchemaResultMock = vitest.fn();
 
         vitest
-          .mocked(updateSchemaMetadataName)
+          .mocked(updateSchemaMetadataFromOptions)
           .mockReturnValueOnce(updateSchemaMetadataNameResultMock);
         vitest
           .mocked(updateSchemaMetadataSchema)
@@ -64,8 +64,8 @@ describe(OasSchema, () => {
       });
 
       it('should call updateSchemaMetadataName()', () => {
-        expect(updateSchemaMetadataName).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataName).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledWith(
           undefined,
           targetTypeFixture,
         );
@@ -137,7 +137,7 @@ describe(OasSchema, () => {
         updateSchemaMetadataSchemaResultMock = vitest.fn();
 
         vitest
-          .mocked(updateSchemaMetadataName)
+          .mocked(updateSchemaMetadataFromOptions)
           .mockReturnValueOnce(updateSchemaMetadataNameResultMock);
         vitest
           .mocked(updateSchemaMetadataSchema)
@@ -151,8 +151,8 @@ describe(OasSchema, () => {
       });
 
       it('should call updateSchemaMetadataName()', () => {
-        expect(updateSchemaMetadataName).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataName).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledWith(
           undefined,
           targetTypeFixture,
         );
@@ -229,7 +229,7 @@ describe(OasSchema, () => {
         updateSchemaMetadataSchemaResultMock = vitest.fn();
 
         vitest
-          .mocked(updateSchemaMetadataName)
+          .mocked(updateSchemaMetadataFromOptions)
           .mockReturnValueOnce(updateSchemaMetadataNameResultMock);
         vitest
           .mocked(updateSchemaMetadataSchema)
@@ -243,8 +243,8 @@ describe(OasSchema, () => {
       });
 
       it('should call updateSchemaMetadataName()', () => {
-        expect(updateSchemaMetadataName).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataName).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledWith(
           optionsFixture,
           targetTypeFixture,
         );
@@ -327,7 +327,7 @@ describe(OasSchema, () => {
         updateSchemaMetadataSchemaResultMock = vitest.fn();
 
         vitest
-          .mocked(updateSchemaMetadataName)
+          .mocked(updateSchemaMetadataFromOptions)
           .mockReturnValueOnce(updateSchemaMetadataNameResultMock);
         vitest
           .mocked(updateSchemaMetadataSchema)
@@ -341,8 +341,8 @@ describe(OasSchema, () => {
       });
 
       it('should call updateSchemaMetadataName()', () => {
-        expect(updateSchemaMetadataName).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataName).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledWith(
           undefined,
           targetTypeFixture,
         );
@@ -442,7 +442,7 @@ describe(OasSchema, () => {
         updateSchemaMetadataSchemaResultMock = vitest.fn();
 
         vitest
-          .mocked(updateSchemaMetadataName)
+          .mocked(updateSchemaMetadataFromOptions)
           .mockReturnValueOnce(updateSchemaMetadataNameResultMock);
         vitest
           .mocked(updateSchemaMetadataSchema)
@@ -459,8 +459,8 @@ describe(OasSchema, () => {
       });
 
       it('should call updateSchemaMetadataName()', () => {
-        expect(updateSchemaMetadataName).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataName).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledTimes(1);
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledWith(
           optionsFixture,
           targetTypeFixture,
         );

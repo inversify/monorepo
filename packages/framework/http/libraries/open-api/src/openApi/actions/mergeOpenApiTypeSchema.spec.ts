@@ -64,6 +64,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'Type',
             properties: new Map(),
             references: new Set(),
@@ -107,6 +108,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'NewType',
             properties: new Map(),
             references: new Set(),
@@ -157,6 +159,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: undefined,
             properties: new Map(),
             references: new Set(),
@@ -201,6 +204,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithSchemaOnly',
             properties: new Map(),
             references: new Set(),
@@ -258,6 +262,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithSchemaAndProperties',
             properties: new Map([
               [
@@ -324,6 +329,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithDefinedSchemas',
             properties: new Map([
               [
@@ -388,6 +394,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithRequiredProperty',
             properties: new Map([
               [
@@ -458,6 +465,7 @@ describe(mergeOpenApiTypeSchema, () => {
           schemasObjectFixture = {};
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithUndefinedDesignType',
             properties: new Map([
               [
@@ -523,6 +531,7 @@ describe(mergeOpenApiTypeSchema, () => {
           schemasObjectFixture = {};
           propertyTypeFixture = String;
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithWellKnownProperties',
             properties: new Map([
               [
@@ -607,6 +616,7 @@ describe(mergeOpenApiTypeSchema, () => {
           escapedPropertySchemaNameFixture = 'CustomPropertyType';
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithCustomProperties',
             properties: new Map([
               [
@@ -622,6 +632,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           propertySchemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'CustomPropertyType',
             properties: new Map(),
             references: new Set(),
@@ -717,6 +728,7 @@ describe(mergeOpenApiTypeSchema, () => {
           escapedPropertySchemaNameFixture = 'CustomPropertyType';
 
           schemaMetadataFixture = {
+            customAttributes: undefined,
             name: 'TypeWithUnnamedProperties',
             properties: new Map([
               [
@@ -732,6 +744,7 @@ describe(mergeOpenApiTypeSchema, () => {
           };
 
           propertySchemaMetadataFixture = {
+            customAttributes: undefined,
             name: undefined,
             properties: new Map(),
             references: new Set(),

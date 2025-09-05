@@ -26,6 +26,7 @@ describe(getSchemaMetadata, () => {
 
     beforeAll(() => {
       schemaMetadataFixture = {
+        customAttributes: undefined,
         name: 'TestSchema',
         properties: new Map(),
         references: new Set(),
@@ -68,6 +69,7 @@ describe(getSchemaMetadata, () => {
 
     beforeAll(() => {
       schemaMetadataFixture = {
+        customAttributes: undefined,
         name: 'TestSchema',
         properties: new Map(),
         references: new Set(),

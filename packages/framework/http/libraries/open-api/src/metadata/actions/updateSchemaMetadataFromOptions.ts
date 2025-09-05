@@ -1,7 +1,7 @@
 import { SchemaDecoratorOptions } from '../models/SchemaDecoratorOptions';
 import { SchemaMetadata } from '../models/SchemaMetadata';
 
-export function updateSchemaMetadataName(
+export function updateSchemaMetadataFromOptions(
   options: SchemaDecoratorOptions | undefined,
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   target: Function,
@@ -13,6 +13,14 @@ export function updateSchemaMetadataName(
       }
 
       metadata.name = options.name;
+    }
+
+    if (options?.customAttributes !== undefined) {
+      if (metadata.customAttributes === undefined) {
+        metadata.customAttributes = {};
+      }
+
+      Object.assign(metadata.customAttributes, options.customAttributes);
     }
 
     return metadata;
