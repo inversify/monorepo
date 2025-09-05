@@ -58,6 +58,7 @@ describe(OasSchemaProperty, () => {
         expect(updateSchemaMetadataProperty).toHaveBeenCalledTimes(1);
         expect(updateSchemaMetadataProperty).toHaveBeenCalledWith(
           propertyKeyFixture,
+          true,
           undefined,
         );
       });
@@ -121,6 +122,7 @@ describe(OasSchemaProperty, () => {
         expect(updateSchemaMetadataProperty).toHaveBeenCalledTimes(1);
         expect(updateSchemaMetadataProperty).toHaveBeenCalledWith(
           propertyKeyFixture,
+          true,
           schemaFixture,
         );
       });
@@ -208,6 +210,7 @@ describe(OasSchemaProperty, () => {
         expect(updateSchemaMetadataProperty).toHaveBeenCalledTimes(1);
         expect(updateSchemaMetadataProperty).toHaveBeenCalledWith(
           propertyKeyFixture,
+          true,
           builtSchemaFixture,
         );
       });

@@ -263,6 +263,7 @@ describe(mergeOpenApiTypeSchema, () => {
               [
                 'name',
                 {
+                  required: false,
                   schema: propertySchemaFixture,
                 },
               ],
@@ -328,6 +329,7 @@ describe(mergeOpenApiTypeSchema, () => {
               [
                 'stringProperty',
                 {
+                  required: false,
                   schema: propertySchemaFixture,
                 },
               ],
@@ -388,6 +390,7 @@ describe(mergeOpenApiTypeSchema, () => {
               [
                 'unknownProperty',
                 {
+                  required: false,
                   schema: undefined,
                 },
               ],
@@ -452,6 +455,7 @@ describe(mergeOpenApiTypeSchema, () => {
               [
                 'stringProperty',
                 {
+                  required: false,
                   schema: undefined,
                 },
               ],
@@ -535,6 +539,7 @@ describe(mergeOpenApiTypeSchema, () => {
               [
                 'customProperty',
                 {
+                  required: false,
                   schema: undefined,
                 },
               ],
@@ -644,6 +649,7 @@ describe(mergeOpenApiTypeSchema, () => {
               [
                 'customProperty',
                 {
+                  required: false,
                   schema: undefined,
                 },
               ],

@@ -30,7 +30,7 @@ export function OasSchemaProperty(
       target.constructor,
       schemaOpenApiMetadataReflectKey,
       buildDefaultSchemaMetadata,
-      updateSchemaMetadataProperty(propertyKey, schemaResult),
+      updateSchemaMetadataProperty(propertyKey, true, schemaResult),
     );
   };
 }
