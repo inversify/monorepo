@@ -5,7 +5,7 @@
   },
   "description": "InversifyJs benchmarks package",
   "dependencies": {
-    "@hono/node-server": "1.19.0",
+    "@hono/node-server": "1.19.1",
     "@inversifyjs/benchmark-utils": "workspace:*",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
@@ -18,8 +18,8 @@
     "@nestjs/platform-fastify": "11.1.6",
     "express": "5.1.0",
     "express4": "npm:express@4.21.2",
-    "fastify": "5.5.0",
-    "hono": "4.9.4",
+    "fastify": "5.6.0",
+    "hono": "4.9.6",
     "inversify": "7.9.1",
     "rxjs": "7.8.2"
   },
@@ -27,11 +27,11 @@
     "@types/express": "^5.0.3",
     "@types/express4": "npm:@types/express@4.17.23",
     "@types/k6": "^1.2.0",
-    "@types/node": "^22.18.0",
+    "@types/node": "^22.18.1",
     "eslint": "9.34.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
-    "rollup": "4.49.0",
+    "rollup": "4.50.0",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.2"
