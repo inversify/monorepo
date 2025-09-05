@@ -80,9 +80,9 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
-    "packages/framework/libraries/*": defaultWorkspaceProjectConfig,
-    "packages/http/libraries/*": defaultWorkspaceProjectConfig,
-    "packages/http/tools/e2e-tests": {
+    "packages/framework/*": defaultWorkspaceProjectConfig,
+    "packages/framework/http/libraries/*": defaultWorkspaceProjectConfig,
+    "packages/framework/http/tools/e2e-tests": {
       entry: [
         "config/*.mjs",
         "src/*/parameters/*.ts",
@@ -95,7 +95,7 @@ export default {
       ],
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
-    "packages/http/tools/http-benchmarks": {
+    "packages/framework/http/tools/http-benchmarks": {
       entry: [
         "src/bin/run.ts",
         "src/k6/scenario/*.ts",
