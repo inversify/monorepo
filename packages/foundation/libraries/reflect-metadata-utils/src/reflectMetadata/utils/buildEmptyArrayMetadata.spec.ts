@@ -4,7 +4,7 @@ import { buildEmptyArrayMetadata } from './buildEmptyArrayMetadata';
 
 describe(buildEmptyArrayMetadata, () => {
   describe('when called', () => {
-    let result: unknown[];
+    let result: unknown;
 
     beforeAll(() => {
       result = buildEmptyArrayMetadata();

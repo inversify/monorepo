@@ -7,7 +7,7 @@ describe(buildArrayMetadataWithIndex, () => {
     let newMetadata: number;
     let index: number;
     let arrayMetadata: number[];
-    let result: number[];
+    let result: unknown;
 
     beforeAll(() => {
       newMetadata = 1;
