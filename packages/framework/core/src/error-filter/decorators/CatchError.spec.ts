@@ -13,7 +13,7 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('inversify');
 
 import {
-  buildEmptyMapMetadata,
+  buildEmptySetMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 import { injectable, Newable } from 'inversify';
@@ -26,21 +26,21 @@ import { CatchError } from './CatchError';
 class TestError extends Error {}
 
 describe(CatchError, () => {
-  describe('having a path', () => {
+  describe('having an error type', () => {
     describe('when called', () => {
       let errorFixture: Newable<Error>;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
       let callbackFixture: (
-        mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
-      ) => Map<Newable<Error> | null, NewableFunction[]>;
+        setMetadata: Set<Newable<Error> | null>,
+      ) => Set<Newable<Error> | null>;
 
       beforeAll(() => {
         errorFixture = TestError;
         targetFixture = class TestCatchError {};
         callbackFixture = (
-          mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
-        ): Map<Newable<Error> | null, NewableFunction[]> => mapMetadata;
+          setMetadata: Set<Newable<Error> | null>,
+        ): Set<Newable<Error> | null> => setMetadata;
 
         classDecoratorMock = vitest.fn();
 
@@ -69,17 +69,14 @@ describe(CatchError, () => {
 
       it('should call buildCatchErrorMetadata', () => {
         expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
-        expect(buildCatchErrorMetadata).toHaveBeenCalledWith(
-          errorFixture,
-          targetFixture,
-        );
+        expect(buildCatchErrorMetadata).toHaveBeenCalledWith(errorFixture);
       });
 
       it('should set metadata with error filter', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
-          Reflect,
+          targetFixture,
           catchErrorMetadataReflectKey,
-          buildEmptyMapMetadata,
+          buildEmptySetMetadata,
           callbackFixture,
         );
       });
@@ -92,8 +89,8 @@ describe(CatchError, () => {
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
       let callbackFixture: (
-        mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
-      ) => Map<Newable<Error> | null, NewableFunction[]>;
+        setMetadata: Set<Newable<Error> | null>,
+      ) => Set<Newable<Error> | null>;
 
       beforeAll(() => {
         optionsFixture = {
@@ -101,8 +98,8 @@ describe(CatchError, () => {
         };
         targetFixture = class TestCatchError {};
         callbackFixture = (
-          mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
-        ): Map<Newable<Error> | null, NewableFunction[]> => mapMetadata;
+          setMetadata: Set<Newable<Error> | null>,
+        ): Set<Newable<Error> | null> => setMetadata;
 
         vitest
           .mocked(buildCatchErrorMetadata)
@@ -125,15 +122,14 @@ describe(CatchError, () => {
         expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
         expect(buildCatchErrorMetadata).toHaveBeenCalledWith(
           optionsFixture.error,
-          targetFixture,
         );
       });
 
       it('should set metadata with controller options', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
-          Reflect,
+          targetFixture,
           catchErrorMetadataReflectKey,
-          buildEmptyMapMetadata,
+          buildEmptySetMetadata,
           callbackFixture,
         );
       });
@@ -144,8 +140,8 @@ describe(CatchError, () => {
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
       let callbackFixture: (
-        mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
-      ) => Map<Newable<Error> | null, NewableFunction[]>;
+        setMetadata: Set<Newable<Error> | null>,
+      ) => Set<Newable<Error> | null>;
 
       beforeAll(() => {
         optionsFixture = {
@@ -154,8 +150,8 @@ describe(CatchError, () => {
         };
         targetFixture = class TestController {};
         callbackFixture = (
-          mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
-        ): Map<Newable<Error> | null, NewableFunction[]> => mapMetadata;
+          setMetadata: Set<Newable<Error> | null>,
+        ): Set<Newable<Error> | null> => setMetadata;
 
         vitest
           .mocked(buildCatchErrorMetadata)
@@ -186,15 +182,69 @@ describe(CatchError, () => {
         expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
         expect(buildCatchErrorMetadata).toHaveBeenCalledWith(
           optionsFixture.error,
-          targetFixture,
         );
       });
 
       it('should set metadata with controller options', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
-          Reflect,
+          targetFixture,
           catchErrorMetadataReflectKey,
-          buildEmptyMapMetadata,
+          buildEmptySetMetadata,
+          callbackFixture,
+        );
+      });
+    });
+  });
+
+  describe('having no parameters', () => {
+    describe('when called', () => {
+      let targetFixture: NewableFunction;
+      let classDecoratorMock: Mock<ClassDecorator>;
+      let callbackFixture: (
+        setMetadata: Set<Newable<Error> | null>,
+      ) => Set<Newable<Error> | null>;
+
+      beforeAll(() => {
+        targetFixture = class TestCatchError {};
+        callbackFixture = (
+          setMetadata: Set<Newable<Error> | null>,
+        ): Set<Newable<Error> | null> => setMetadata;
+
+        classDecoratorMock = vitest.fn();
+
+        vitest
+          .mocked(buildCatchErrorMetadata)
+          .mockReturnValueOnce(callbackFixture);
+
+        vitest
+          .mocked(injectable)
+          .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
+
+        CatchError()(targetFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call injectable', () => {
+        expect(injectable).toHaveBeenCalledWith(undefined);
+      });
+
+      it('should call ClassDecorator', () => {
+        expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
+      });
+
+      it('should call buildCatchErrorMetadata', () => {
+        expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
+        expect(buildCatchErrorMetadata).toHaveBeenCalledWith(null);
+      });
+
+      it('should set metadata with error filter', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+          targetFixture,
+          catchErrorMetadataReflectKey,
+          buildEmptySetMetadata,
           callbackFixture,
         );
       });

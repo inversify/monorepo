@@ -1,5 +1,5 @@
 import {
-  buildEmptyMapMetadata,
+  buildEmptySetMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 import { BindingScope, injectable, Newable } from 'inversify';
@@ -28,10 +28,10 @@ export function CatchError(
     injectable(scope)(target);
 
     updateOwnReflectMetadata(
-      Reflect,
+      target,
       catchErrorMetadataReflectKey,
-      buildEmptyMapMetadata,
-      buildCatchErrorMetadata(error, target),
+      buildEmptySetMetadata,
+      buildCatchErrorMetadata(error),
     );
   };
 }

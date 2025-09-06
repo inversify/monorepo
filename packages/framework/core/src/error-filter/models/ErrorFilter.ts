@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export interface ErrorFilter<TRequest = any, TResponse = any> {
+export interface ErrorFilter<
+  TError = unknown,
+  TRequest = any,
+  TResponse = any,
+> {
   catch(
-    error: unknown,
+    error: TError,
     request: TRequest,
     response: TResponse,
   ): void | Promise<void>;

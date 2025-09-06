@@ -5,7 +5,6 @@
   },
   "description": "InversifyJs framework core package",
   "dependencies": {
-    "@inversifyjs/prototype-utils": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "workspace:*"
   },
   "devDependencies": {
