@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../calculations/buildCatchExceptionMetadata');
+vitest.mock('../calculations/buildCatchErrorMetadata');
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('inversify');
 
@@ -18,41 +18,41 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { injectable, Newable } from 'inversify';
 
-import { catchExceptionMetadataReflectKey } from '../../reflectMetadata/data/catchExceptionMetadataReflectKey';
-import { buildCatchExceptionMetadata } from '../calculations/buildCatchExceptionMetadata';
-import { CatchExceptionOptions } from '../models/CatchExceptionOptions';
-import { CatchException } from './CatchException';
+import { catchErrorMetadataReflectKey } from '../../reflectMetadata/data/catchErrorMetadataReflectKey';
+import { buildCatchErrorMetadata } from '../calculations/buildCatchErrorMetadata';
+import { CatchErrorOptions } from '../models/CatchErrorOptions';
+import { CatchError } from './CatchError';
 
 class TestError extends Error {}
 
-describe(CatchException, () => {
+describe(CatchError, () => {
   describe('having a path', () => {
     describe('when called', () => {
       let errorFixture: Newable<Error>;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
       let callbackFixture: (
-        mapMetadata: Map<Newable<Error>, NewableFunction[]>,
-      ) => Map<Newable<Error>, NewableFunction[]>;
+        mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
+      ) => Map<Newable<Error> | null, NewableFunction[]>;
 
       beforeAll(() => {
         errorFixture = TestError;
-        targetFixture = class TestCatchException {};
+        targetFixture = class TestCatchError {};
         callbackFixture = (
-          mapMetadata: Map<Newable<Error>, NewableFunction[]>,
-        ): Map<Newable<Error>, NewableFunction[]> => mapMetadata;
+          mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
+        ): Map<Newable<Error> | null, NewableFunction[]> => mapMetadata;
 
         classDecoratorMock = vitest.fn();
 
         vitest
-          .mocked(buildCatchExceptionMetadata)
+          .mocked(buildCatchErrorMetadata)
           .mockReturnValueOnce(callbackFixture);
 
         vitest
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        CatchException(errorFixture)(targetFixture);
+        CatchError(errorFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -67,9 +67,9 @@ describe(CatchException, () => {
         expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
       });
 
-      it('should call buildCatchExceptionMetadata', () => {
-        expect(buildCatchExceptionMetadata).toHaveBeenCalledTimes(1);
-        expect(buildCatchExceptionMetadata).toHaveBeenCalledWith(
+      it('should call buildCatchErrorMetadata', () => {
+        expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
+        expect(buildCatchErrorMetadata).toHaveBeenCalledWith(
           errorFixture,
           targetFixture,
         );
@@ -78,7 +78,7 @@ describe(CatchException, () => {
       it('should set metadata with error filter', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           Reflect,
-          catchExceptionMetadataReflectKey,
+          catchErrorMetadataReflectKey,
           buildEmptyMapMetadata,
           callbackFixture,
         );
@@ -86,26 +86,26 @@ describe(CatchException, () => {
     });
   });
 
-  describe('having a CatchExceptionOptions', () => {
+  describe('having a CatchErrorOptions', () => {
     describe('when called and scope is undefined', () => {
-      let optionsFixture: CatchExceptionOptions;
+      let optionsFixture: CatchErrorOptions;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
       let callbackFixture: (
-        mapMetadata: Map<Newable<Error>, NewableFunction[]>,
-      ) => Map<Newable<Error>, NewableFunction[]>;
+        mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
+      ) => Map<Newable<Error> | null, NewableFunction[]>;
 
       beforeAll(() => {
         optionsFixture = {
           error: TestError,
         };
-        targetFixture = class TestCatchException {};
+        targetFixture = class TestCatchError {};
         callbackFixture = (
-          mapMetadata: Map<Newable<Error>, NewableFunction[]>,
-        ): Map<Newable<Error>, NewableFunction[]> => mapMetadata;
+          mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
+        ): Map<Newable<Error> | null, NewableFunction[]> => mapMetadata;
 
         vitest
-          .mocked(buildCatchExceptionMetadata)
+          .mocked(buildCatchErrorMetadata)
           .mockReturnValueOnce(callbackFixture);
 
         classDecoratorMock = vitest.fn();
@@ -114,16 +114,16 @@ describe(CatchException, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        CatchException(optionsFixture)(targetFixture);
+        CatchError(optionsFixture)(targetFixture);
       });
 
       afterAll(() => {
         vitest.clearAllMocks();
       });
 
-      it('should call buildCatchExceptionMetadata', () => {
-        expect(buildCatchExceptionMetadata).toHaveBeenCalledTimes(1);
-        expect(buildCatchExceptionMetadata).toHaveBeenCalledWith(
+      it('should call buildCatchErrorMetadata', () => {
+        expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
+        expect(buildCatchErrorMetadata).toHaveBeenCalledWith(
           optionsFixture.error,
           targetFixture,
         );
@@ -132,7 +132,7 @@ describe(CatchException, () => {
       it('should set metadata with controller options', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           Reflect,
-          catchExceptionMetadataReflectKey,
+          catchErrorMetadataReflectKey,
           buildEmptyMapMetadata,
           callbackFixture,
         );
@@ -140,12 +140,12 @@ describe(CatchException, () => {
     });
 
     describe('when called and scope is defined', () => {
-      let optionsFixture: CatchExceptionOptions;
+      let optionsFixture: CatchErrorOptions;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
       let callbackFixture: (
-        mapMetadata: Map<Newable<Error>, NewableFunction[]>,
-      ) => Map<Newable<Error>, NewableFunction[]>;
+        mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
+      ) => Map<Newable<Error> | null, NewableFunction[]>;
 
       beforeAll(() => {
         optionsFixture = {
@@ -154,11 +154,11 @@ describe(CatchException, () => {
         };
         targetFixture = class TestController {};
         callbackFixture = (
-          mapMetadata: Map<Newable<Error>, NewableFunction[]>,
-        ): Map<Newable<Error>, NewableFunction[]> => mapMetadata;
+          mapMetadata: Map<Newable<Error> | null, NewableFunction[]>,
+        ): Map<Newable<Error> | null, NewableFunction[]> => mapMetadata;
 
         vitest
-          .mocked(buildCatchExceptionMetadata)
+          .mocked(buildCatchErrorMetadata)
           .mockReturnValueOnce(callbackFixture);
 
         classDecoratorMock = vitest.fn();
@@ -167,7 +167,7 @@ describe(CatchException, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        CatchException(optionsFixture)(targetFixture);
+        CatchError(optionsFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -182,9 +182,9 @@ describe(CatchException, () => {
         expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
       });
 
-      it('should call buildCatchExceptionMetadata', () => {
-        expect(buildCatchExceptionMetadata).toHaveBeenCalledTimes(1);
-        expect(buildCatchExceptionMetadata).toHaveBeenCalledWith(
+      it('should call buildCatchErrorMetadata', () => {
+        expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
+        expect(buildCatchErrorMetadata).toHaveBeenCalledWith(
           optionsFixture.error,
           targetFixture,
         );
@@ -193,7 +193,7 @@ describe(CatchException, () => {
       it('should set metadata with controller options', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           Reflect,
-          catchExceptionMetadataReflectKey,
+          catchErrorMetadataReflectKey,
           buildEmptyMapMetadata,
           callbackFixture,
         );

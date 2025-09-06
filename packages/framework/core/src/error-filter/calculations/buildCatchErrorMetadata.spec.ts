@@ -2,38 +2,38 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 import { Newable } from 'inversify';
 
-import { buildCatchExceptionMetadata } from './buildCatchExceptionMetadata';
+import { buildCatchErrorMetadata } from './buildCatchErrorMetadata';
 
-describe(buildCatchExceptionMetadata, () => {
+describe(buildCatchErrorMetadata, () => {
   describe('when called and targetList is undefined', () => {
     let keyFixture: Newable<Error>;
     let valueFixture: NewableFunction;
-    let catchExceptionMetadataFixture: Map<Newable<Error>, NewableFunction[]>;
+    let catchErrorMetadataFixture: Map<Newable<Error>, NewableFunction[]>;
     let result: unknown;
 
     beforeAll(() => {
       keyFixture = Error;
       valueFixture = class Test {};
-      catchExceptionMetadataFixture = new Map();
+      catchErrorMetadataFixture = new Map();
 
-      result = buildCatchExceptionMetadata(
+      result = buildCatchErrorMetadata(
         keyFixture,
         valueFixture,
-      )(catchExceptionMetadataFixture);
+      )(catchErrorMetadataFixture);
     });
 
     afterAll(() => {
       vitest.clearAllMocks();
     });
 
-    it('should set the catch exception metadata', () => {
-      expect(catchExceptionMetadataFixture.get(keyFixture)).toStrictEqual([
+    it('should set the catch error metadata', () => {
+      expect(catchErrorMetadataFixture.get(keyFixture)).toStrictEqual([
         valueFixture,
       ]);
     });
 
-    it('should return the updated catch exception metadata', () => {
-      expect(result).toBe(catchExceptionMetadataFixture);
+    it('should return the updated catch error metadata', () => {
+      expect(result).toBe(catchErrorMetadataFixture);
     });
   });
 
@@ -41,36 +41,36 @@ describe(buildCatchExceptionMetadata, () => {
     let keyFixture: Newable<Error>;
     let valueFixture: NewableFunction;
     let anotherValueFixture: NewableFunction;
-    let catchExceptionMetadataFixture: Map<Newable<Error>, NewableFunction[]>;
+    let catchErrorMetadataFixture: Map<Newable<Error>, NewableFunction[]>;
     let result: unknown;
 
     beforeAll(() => {
       keyFixture = Error;
       valueFixture = class Test {};
       anotherValueFixture = class AnotherTest {};
-      catchExceptionMetadataFixture = new Map([
+      catchErrorMetadataFixture = new Map([
         [keyFixture, [anotherValueFixture]],
       ]);
 
-      result = buildCatchExceptionMetadata(
+      result = buildCatchErrorMetadata(
         keyFixture,
         valueFixture,
-      )(catchExceptionMetadataFixture);
+      )(catchErrorMetadataFixture);
     });
 
     afterAll(() => {
       vitest.clearAllMocks();
     });
 
-    it('should set the catch exception metadata', () => {
-      expect(catchExceptionMetadataFixture.get(keyFixture)).toStrictEqual([
+    it('should set the catch error metadata', () => {
+      expect(catchErrorMetadataFixture.get(keyFixture)).toStrictEqual([
         anotherValueFixture,
         valueFixture,
       ]);
     });
 
-    it('should return the updated catch exception metadata', () => {
-      expect(result).toBe(catchExceptionMetadataFixture);
+    it('should return the updated catch error metadata', () => {
+      expect(result).toBe(catchErrorMetadataFixture);
     });
   });
 });

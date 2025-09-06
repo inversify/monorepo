@@ -5,13 +5,13 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { classExceptionFilterMetadataReflectKey } from '../../reflectMetadata/data/classExceptionFilterMetadataReflectKey';
-import { classMethodExceptionFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodExceptionFilterMetadataReflectKey';
-import { ExceptionFilter } from '../models/ExceptionFilter';
+import { classErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classErrorFilterMetadataReflectKey';
+import { classMethodErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodErrorFilterMetadataReflectKey';
+import { ErrorFilter } from '../models/ErrorFilter';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function UseExceptionFilter(
-  ...interceptorList: Newable<ExceptionFilter>[]
+export function UseErrorFilter(
+  ...interceptorList: Newable<ErrorFilter>[]
 ): ClassDecorator & MethodDecorator {
   return (target: object, key?: string | symbol): void => {
     let classTarget: object;
@@ -19,10 +19,10 @@ export function UseExceptionFilter(
 
     if (key === undefined) {
       classTarget = target;
-      metadataKey = classExceptionFilterMetadataReflectKey;
+      metadataKey = classErrorFilterMetadataReflectKey;
     } else {
       classTarget = target.constructor;
-      metadataKey = classMethodExceptionFilterMetadataReflectKey;
+      metadataKey = classMethodErrorFilterMetadataReflectKey;
     }
 
     updateOwnReflectMetadata(

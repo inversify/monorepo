@@ -4,10 +4,10 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classExceptionFilterMetadataReflectKey } from '../../reflectMetadata/data/classExceptionFilterMetadataReflectKey';
-import { getClassExceptionFilterList } from './getClassExceptionFilterList';
+import { classErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classErrorFilterMetadataReflectKey';
+import { getClassErrorFilterList } from './getClassErrorFilterList';
 
-describe(getClassExceptionFilterList, () => {
+describe(getClassErrorFilterList, () => {
   describe('when called and getOwnReflectMetadata returns undefined', () => {
     let classFixture: NewableFunction;
     let result: unknown;
@@ -15,7 +15,7 @@ describe(getClassExceptionFilterList, () => {
     beforeAll(() => {
       classFixture = class Test {};
 
-      result = getClassExceptionFilterList(classFixture);
+      result = getClassErrorFilterList(classFixture);
     });
 
     afterAll(() => {
@@ -26,7 +26,7 @@ describe(getClassExceptionFilterList, () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,
-        classExceptionFilterMetadataReflectKey,
+        classErrorFilterMetadataReflectKey,
       );
     });
 
@@ -37,18 +37,18 @@ describe(getClassExceptionFilterList, () => {
 
   describe('when called and getOwnReflectMetadata returns an array', () => {
     let classFixture: NewableFunction;
-    let classExceptionFilterFixtures: NewableFunction[];
+    let classErrorFilterFixtures: NewableFunction[];
     let result: unknown;
 
     beforeAll(() => {
       classFixture = class Test {};
-      classExceptionFilterFixtures = [];
+      classErrorFilterFixtures = [];
 
       vitest
         .mocked(getOwnReflectMetadata)
-        .mockReturnValueOnce(classExceptionFilterFixtures);
+        .mockReturnValueOnce(classErrorFilterFixtures);
 
-      result = getClassExceptionFilterList(classFixture);
+      result = getClassErrorFilterList(classFixture);
     });
 
     afterAll(() => {
@@ -59,12 +59,12 @@ describe(getClassExceptionFilterList, () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,
-        classExceptionFilterMetadataReflectKey,
+        classErrorFilterMetadataReflectKey,
       );
     });
 
     it('should return an array', () => {
-      expect(result).toBe(classExceptionFilterFixtures);
+      expect(result).toBe(classErrorFilterFixtures);
     });
   });
 });
