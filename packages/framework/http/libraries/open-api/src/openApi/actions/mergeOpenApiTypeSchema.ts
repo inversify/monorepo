@@ -40,14 +40,15 @@ export function mergeOpenApiTypeSchema(
     if (propertySchema.schema === undefined) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       const typescriptDesignType: Function | undefined = getOwnReflectMetadata(
-        type,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        type.prototype,
         'design:type',
         propertyKey,
       );
 
       if (typescriptDesignType === undefined) {
         throw new Error(
-          `Unable to determine type for property "${type.name}.${propertyKey}"`,
+          `[@inversifyjs/http-open-api] Unable to determine type for property "${type.name}.${propertyKey}". Are you enabling "emitDecoratorMetadata" and "experimentalDecorators" TypeScript compiler options?`,
         );
       }
 

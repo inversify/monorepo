@@ -555,7 +555,7 @@ describe(mergeOpenApiTypeSchema, () => {
         it('should call getOwnReflectMetadata()', () => {
           expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
           expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
-            typeFixture,
+            typeFixture.prototype,
             'design:type',
             'unknownProperty',
           );
@@ -564,7 +564,7 @@ describe(mergeOpenApiTypeSchema, () => {
         it('should throw an Error', () => {
           expect(result).toBeInstanceOf(Error);
           expect((result as Error).message).toBe(
-            'Unable to determine type for property "Type.unknownProperty"',
+            '[@inversifyjs/http-open-api] Unable to determine type for property "Type.unknownProperty". Are you enabling "emitDecoratorMetadata" and "experimentalDecorators" TypeScript compiler options?',
           );
         });
 
@@ -623,7 +623,7 @@ describe(mergeOpenApiTypeSchema, () => {
         it('should call getOwnReflectMetadata()', () => {
           expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
           expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
-            typeFixture,
+            typeFixture.prototype,
             'design:type',
             'stringProperty',
           );
@@ -724,7 +724,7 @@ describe(mergeOpenApiTypeSchema, () => {
         it('should call getOwnReflectMetadata()', () => {
           expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
           expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
-            typeFixture,
+            typeFixture.prototype,
             'design:type',
             'customProperty',
           );
@@ -834,7 +834,7 @@ describe(mergeOpenApiTypeSchema, () => {
         it('should call getOwnReflectMetadata()', () => {
           expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
           expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
-            typeFixture,
+            typeFixture.prototype,
             'design:type',
             'customProperty',
           );
