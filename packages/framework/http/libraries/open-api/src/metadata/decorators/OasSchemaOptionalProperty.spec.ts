@@ -14,9 +14,9 @@ import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
 import { BaseOasSchemaProperty } from './BaseOasSchemaProperty';
-import { OasSchemaProperty } from './OasSchemaProperty';
+import { OasSchemaOptionalProperty } from './OasSchemaOptionalProperty';
 
-describe(OasSchemaProperty, () => {
+describe(OasSchemaOptionalProperty, () => {
   describe('when called', () => {
     let propertyDecoratorFixture: PropertyDecorator;
     let schemaFixture: OpenApi3Dot1SchemaObject | undefined;
@@ -44,7 +44,7 @@ describe(OasSchemaProperty, () => {
         .mocked(BaseOasSchemaProperty)
         .mockReturnValueOnce(buildPropertyDecoratorMock);
 
-      result = OasSchemaProperty(schemaFixture);
+      result = OasSchemaOptionalProperty(schemaFixture);
     });
 
     afterAll(() => {
@@ -53,7 +53,7 @@ describe(OasSchemaProperty, () => {
 
     it('should call BaseOasSchemaProperty()', () => {
       expect(BaseOasSchemaProperty).toHaveBeenCalledTimes(1);
-      expect(BaseOasSchemaProperty).toHaveBeenCalledWith(true);
+      expect(BaseOasSchemaProperty).toHaveBeenCalledWith(false);
     });
 
     it('should call the built property decorator function', () => {

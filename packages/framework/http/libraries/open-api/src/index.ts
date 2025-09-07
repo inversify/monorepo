@@ -7,6 +7,7 @@ export { OasRequestBody } from './metadata/decorators/OasRequestBody';
 export { OasResponse } from './metadata/decorators/OasResponse';
 export { OasSchema } from './metadata/decorators/OasSchema';
 export { OasSchemaProperty } from './metadata/decorators/OasSchemaProperty';
+export { OasSchemaOptionalProperty } from './metadata/decorators/OasSchemaOptionalProperty';
 export { OasSecurity } from './metadata/decorators/OasSecurity';
 export { OasServer } from './metadata/decorators/OasServer';
 export { OasSummary } from './metadata/decorators/OasSummary';
