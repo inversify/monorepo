@@ -17,9 +17,9 @@ export default {
   ],
   tempDirName: 'stryker-tmp',
   testRunner: 'vitest',
-  tsconfigFile: './tsconfig.json',
+  tsconfigFile: './tsconfig.esm.json',
   vitest: {
     configFile: './vitest.config.stryker.mjs',
-    dir: 'packages',
+    related: true,
   },
 };

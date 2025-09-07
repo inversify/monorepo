@@ -50,12 +50,20 @@ export const defaultConfig = defineConfig({
 });
 
 export const strykerConfig = defineConfig({
+  plugins: [
+    swc.vite({
+      tsconfigFile: 'tsconfig.esm.json',
+    }),
+  ],
   test: {
     exclude: ['src/**/*.int.spec.ts'],
     include: ['src/**/*.spec.ts'],
     coverage: {
-      all: true,
+      all: false,
     },
     passWithNoTests: true,
+    sequence: {
+      hooks: 'parallel',
+    },
   },
 });
