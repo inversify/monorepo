@@ -1,0 +1,65 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJs HTTP OpenAPI example package",
+  "dependencies": {
+    "@inversifyjs/http-core": "workspace:*",
+    "@inversifyjs/http-express": "workspace:*",
+    "@inversifyjs/http-open-api": "workspace:*",
+    "express": "^5.1.0",
+    "inversify": "^7.9.1",
+    "lmdb": "^3.4.2"
+  },
+  "devDependencies": {
+    "@inversifyjs/open-api-types": "workspace:*",
+    "@types/express": "^5.0.3",
+    "@types/node": "22.18.1",
+    "eslint": "9.35.0",
+    "prettier": "3.6.2",
+    "rimraf": "6.0.1",
+    "rollup": "4.50.0",
+    "ts-loader": "9.5.4",
+    "tslib": "2.8.1",
+    "typescript": "5.9.2"
+  },
+  "devEngines": {
+    "node": "^22.10.2",
+    "pnpm": "^10.13.1"
+  },
+  "homepage": "https://inversify.io",
+  "keywords": [
+    "dependency injection",
+    "dependency inversion",
+    "di",
+    "inversion of control container",
+    "ioc",
+    "javascript",
+    "node",
+    "typescript"
+  ],
+  "license": "MIT",
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "exports": {
+    ".": "./lib/esm/index.js"
+  },
+  "name": "@inversifyjs/http-openapi-example",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "build": "pnpm run build:esm",
+    "build:esm": "rollup -c ./rollup.config.mjs && pnpm exec foundation-ts-package-esm ./lib/esm",
+    "build:clean": "rimraf lib",
+    "format": "prettier --write ./src/**/*.ts",
+    "lint": "eslint ./src",
+    "prebuild": "pnpm run build:clean",
+    "serve": "node ./lib/esm/index.js"
+  },
+  "type": "module",
+  "version": "1.0.0"
+}
