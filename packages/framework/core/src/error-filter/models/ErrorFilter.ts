@@ -3,10 +3,11 @@ export interface ErrorFilter<
   TError = unknown,
   TRequest = any,
   TResponse = any,
+  TResult = any,
 > {
   catch(
     error: TError,
     request: TRequest,
     response: TResponse,
-  ): void | Promise<void>;
+  ): Promise<TResult> | TResult;
 }
