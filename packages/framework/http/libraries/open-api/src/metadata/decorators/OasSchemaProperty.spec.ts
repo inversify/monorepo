@@ -8,250 +8,61 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
-
-import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-
-vitest.mock('../actions/toSchemaInSchemaMetadataContext');
-vitest.mock('../actions/updateSchemaMetadataProperty');
+vitest.mock('./BaseOasSchemaProperty');
 
 import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext';
-import { updateSchemaMetadataProperty } from '../actions/updateSchemaMetadataProperty';
-import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
 import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
-import { SchemaMetadata } from '../models/SchemaMetadata';
-import { ToSchemaFunction } from '../models/ToSchemaFunction';
+import { BaseOasSchemaProperty } from './BaseOasSchemaProperty';
 import { OasSchemaProperty } from './OasSchemaProperty';
 
 describe(OasSchemaProperty, () => {
-  describe('having no schema parameter', () => {
-    describe('when called', () => {
-      let targetObjectFixture: object;
-      let propertyKeyFixture: string;
-      let updateSchemaMetadataPropertyResultMock: Mock<
-        (metadata: SchemaMetadata) => SchemaMetadata
-      >;
+  describe('when called', () => {
+    let propertyDecoratorFixture: PropertyDecorator;
+    let schemaFixture: OpenApi3Dot1SchemaObject | undefined;
+    let buildPropertyDecoratorMock: Mock<
+      (
+        schema?:
+          | OpenApi3Dot1SchemaObject
+          | BuildOpenApiBlockFunction<OpenApi3Dot1SchemaObject>,
+      ) => PropertyDecorator
+    >;
 
-      let result: unknown;
-
-      beforeAll(() => {
-        targetObjectFixture = {};
-        propertyKeyFixture = 'testProperty';
-
-        updateSchemaMetadataPropertyResultMock = vitest.fn();
-
-        vitest
-          .mocked(updateSchemaMetadataProperty)
-          .mockReturnValueOnce(updateSchemaMetadataPropertyResultMock);
-
-        result = OasSchemaProperty()(targetObjectFixture, propertyKeyFixture);
-      });
-
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should call updateSchemaMetadataProperty()', () => {
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledWith(
-          propertyKeyFixture,
-          true,
-          undefined,
-        );
-      });
-
-      it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
-          targetObjectFixture.constructor,
-          schemaOpenApiMetadataReflectKey,
-          buildDefaultSchemaMetadata,
-          updateSchemaMetadataPropertyResultMock,
-        );
-      });
-
-      it('should return undefined', () => {
-        expect(result).toBeUndefined();
-      });
-    });
-  });
-
-  describe('having a schema object parameter', () => {
-    let schemaFixture: OpenApi3Dot1SchemaObject;
+    let result: unknown;
 
     beforeAll(() => {
+      propertyDecoratorFixture = Symbol() as unknown as PropertyDecorator;
       schemaFixture = {
-        description: 'Test property schema',
         type: 'string',
       };
-    });
 
-    describe('when called', () => {
-      let targetObjectFixture: object;
-      let propertyKeyFixture: string;
-      let updateSchemaMetadataPropertyResultMock: Mock<
-        (metadata: SchemaMetadata) => SchemaMetadata
-      >;
-
-      let result: unknown;
-
-      beforeAll(() => {
-        targetObjectFixture = {};
-        propertyKeyFixture = 'testProperty';
-
-        updateSchemaMetadataPropertyResultMock = vitest.fn();
-
-        vitest
-          .mocked(updateSchemaMetadataProperty)
-          .mockReturnValueOnce(updateSchemaMetadataPropertyResultMock);
-
-        result = OasSchemaProperty(schemaFixture)(
-          targetObjectFixture,
-          propertyKeyFixture,
-        );
-      });
-
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should call updateSchemaMetadataProperty()', () => {
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledWith(
-          propertyKeyFixture,
-          true,
-          schemaFixture,
-        );
-      });
-
-      it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
-          targetObjectFixture.constructor,
-          schemaOpenApiMetadataReflectKey,
-          buildDefaultSchemaMetadata,
-          updateSchemaMetadataPropertyResultMock,
-        );
-      });
-
-      it('should return undefined', () => {
-        expect(result).toBeUndefined();
-      });
-    });
-  });
-
-  describe('having a build function parameter', () => {
-    let buildFunctionFixture: BuildOpenApiBlockFunction<OpenApi3Dot1SchemaObject>;
-    let toSchemaFunctionMock: Mock<ToSchemaFunction>;
-    let builtSchemaFixture: OpenApi3Dot1SchemaObject;
-
-    beforeAll(() => {
-      builtSchemaFixture = {
-        description: 'Built property schema',
-        type: 'number',
-      };
-
-      toSchemaFunctionMock = vitest.fn();
-
-      buildFunctionFixture = vitest
+      buildPropertyDecoratorMock = vitest
         .fn()
-        .mockReturnValueOnce(builtSchemaFixture);
+        .mockReturnValueOnce(propertyDecoratorFixture);
 
       vitest
-        .mocked(toSchemaInSchemaMetadataContext)
-        .mockReturnValueOnce(toSchemaFunctionMock);
+        .mocked(BaseOasSchemaProperty)
+        .mockReturnValueOnce(buildPropertyDecoratorMock);
+
+      result = OasSchemaProperty(schemaFixture);
     });
 
-    describe('when called', () => {
-      let targetObjectFixture: object;
-      let propertyKeyFixture: string;
-      let updateSchemaMetadataPropertyResultMock: Mock<
-        (metadata: SchemaMetadata) => SchemaMetadata
-      >;
-
-      let result: unknown;
-
-      beforeAll(() => {
-        targetObjectFixture = {};
-        propertyKeyFixture = 'testProperty';
-
-        updateSchemaMetadataPropertyResultMock = vitest.fn();
-
-        vitest
-          .mocked(updateSchemaMetadataProperty)
-          .mockReturnValueOnce(updateSchemaMetadataPropertyResultMock);
-
-        result = OasSchemaProperty(buildFunctionFixture)(
-          targetObjectFixture,
-          propertyKeyFixture,
-        );
-      });
-
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should call toSchema()', () => {
-        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledTimes(1);
-        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledWith(
-          targetObjectFixture.constructor,
-        );
-      });
-
-      it('should call build function with toSchema result', () => {
-        expect(buildFunctionFixture).toHaveBeenCalledTimes(1);
-        expect(buildFunctionFixture).toHaveBeenCalledWith(toSchemaFunctionMock);
-      });
-
-      it('should call updateSchemaMetadataProperty()', () => {
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledWith(
-          propertyKeyFixture,
-          true,
-          builtSchemaFixture,
-        );
-      });
-
-      it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
-          targetObjectFixture.constructor,
-          schemaOpenApiMetadataReflectKey,
-          buildDefaultSchemaMetadata,
-          updateSchemaMetadataPropertyResultMock,
-        );
-      });
-
-      it('should return undefined', () => {
-        expect(result).toBeUndefined();
-      });
+    afterAll(() => {
+      vitest.clearAllMocks();
     });
-  });
 
-  describe('having a symbol property key', () => {
-    describe('when called', () => {
-      let targetObjectFixture: object;
-      let symbolPropertyKeyFixture: symbol;
+    it('should call BaseOasSchemaProperty()', () => {
+      expect(BaseOasSchemaProperty).toHaveBeenCalledTimes(1);
+      expect(BaseOasSchemaProperty).toHaveBeenCalledWith(true);
+    });
 
-      beforeAll(() => {
-        targetObjectFixture = {
-          constructor: {
-            name: 'TestClass',
-          },
-        };
-        symbolPropertyKeyFixture = Symbol('testSymbol');
-      });
+    it('should call the built property decorator function', () => {
+      expect(buildPropertyDecoratorMock).toHaveBeenCalledTimes(1);
+      expect(buildPropertyDecoratorMock).toHaveBeenCalledWith(schemaFixture);
+    });
 
-      it('should throw an error', () => {
-        expect(() => {
-          OasSchemaProperty()(targetObjectFixture, symbolPropertyKeyFixture);
-        }).toThrow(
-          'Cannot apply SchemaProperty decorator to "TestClass.Symbol(testSymbol)" symbol property',
-        );
-      });
+    it('should return a property decorator', () => {
+      expect(result).toBe(propertyDecoratorFixture);
     });
   });
 });

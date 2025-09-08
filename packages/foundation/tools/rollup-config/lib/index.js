@@ -26,14 +26,32 @@ const packagePeerDependencies = Object.keys(
  * @param { !string } inputFile
  * @param { !string } outputDir
  * @param { ?string } declarationFile
+ * @param { ?boolean } terse
  * @returns {!import("rollup").MergedRollupOptions[]}
  */
-export function buildBundleConfig(inputFile, outputDir, declarationFile) {
+export function buildBundleConfig(
+  inputFile,
+  outputDir,
+  declarationFile,
+  terse,
+) {
   const filePath = path.parse(inputFile);
 
   const declarationFilePath =
     declarationFile ??
     path.join(outputDir, `${filePath.name}.d${filePath.ext}`);
+
+  const applyTerser = terse ?? true;
+
+  const plugins = [
+    typescript({
+      tsconfig: './tsconfig.esm.json',
+    }),
+  ];
+
+  if (applyTerser) {
+    plugins.push(terser());
+  }
 
   return [
     {
@@ -58,12 +76,7 @@ export function buildBundleConfig(inputFile, outputDir, declarationFile) {
           },
         },
       ],
-      plugins: [
-        typescript({
-          tsconfig: './tsconfig.esm.json',
-        }),
-        terser(),
-      ],
+      plugins,
     },
     {
       input: declarationFilePath,

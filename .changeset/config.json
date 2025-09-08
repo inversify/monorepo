@@ -26,6 +26,7 @@
     "@inversifyjs/http-fastify",
     "@inversifyjs/http-hono",
     "@inversifyjs/http-open-api",
+    "@inversifyjs/http-openapi-example",
     "@inversifyjs/logger"
   ]
 }
