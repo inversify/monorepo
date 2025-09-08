@@ -1,11 +1,19 @@
-import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import {
-  buildArrayMetadataWithArray,
-  buildEmptyArrayMetadata,
+  buildEmptySetMetadata,
   updateOwnReflectMetadata,
+  updateSetMetadataWithList,
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
@@ -15,94 +23,117 @@ import { ErrorFilter } from '../models/ErrorFilter';
 import { UseErrorFilter } from './UseErrorFilter';
 
 describe(UseErrorFilter, () => {
-  describe('having a ClassDecorator', () => {
+  describe('having a target', () => {
+    let middlewareFixture: Newable<ErrorFilter>;
+    let targetFixture: NewableFunction;
+
+    beforeAll(() => {
+      middlewareFixture = Symbol() as unknown as Newable<ErrorFilter>;
+      targetFixture = class TestController {};
+    });
+
     describe('when called', () => {
-      let middlewareFixture: Newable<ErrorFilter>;
-      let targetFixture: NewableFunction;
-      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
+      let updateSetMetadataWithListResultFixture: Mock<
+        (metadataSet: Set<unknown>) => Set<unknown>
+      >;
+
+      let result: unknown;
 
       beforeAll(() => {
-        middlewareFixture = {} as Newable<ErrorFilter>;
-        targetFixture = class TestController {};
-        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
-          arrayMetadata;
+        updateSetMetadataWithListResultFixture = vitest.fn();
 
         vitest
-          .mocked(buildArrayMetadataWithArray)
-          .mockReturnValueOnce(callbackFixture);
+          .mocked(updateSetMetadataWithList)
+          .mockReturnValueOnce(updateSetMetadataWithListResultFixture);
 
-        UseErrorFilter(middlewareFixture)(targetFixture);
+        result = UseErrorFilter(middlewareFixture)(targetFixture);
       });
 
       afterAll(() => {
         vitest.clearAllMocks();
       });
 
-      it('should call buildArrayMetadataWithArray', () => {
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
+      it('should call updateSetMetadataWithList()', () => {
+        expect(updateSetMetadataWithList).toHaveBeenCalledTimes(1);
+        expect(updateSetMetadataWithList).toHaveBeenCalledWith([
           middlewareFixture,
         ]);
       });
 
-      it('should call updateOwnReflectMetadata', () => {
+      it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture,
           classErrorFilterMetadataReflectKey,
-          buildEmptyArrayMetadata,
-          callbackFixture,
+          buildEmptySetMetadata,
+          updateSetMetadataWithListResultFixture,
           undefined,
         );
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
       });
     });
   });
 
-  describe('having a MethodDecorator', () => {
+  describe('having a target and a key', () => {
+    let middlewareFixture: Newable<ErrorFilter>;
+    let targetFixture: NewableFunction;
+    let methodKeyFixture: string | symbol;
+    let descriptorFixture: PropertyDescriptor;
+
+    beforeAll(() => {
+      middlewareFixture = Symbol() as unknown as Newable<ErrorFilter>;
+      targetFixture = class TestController {};
+      methodKeyFixture = 'testMethod';
+      descriptorFixture = {
+        value: 'value-descriptor-example',
+      } as PropertyDescriptor;
+    });
+
     describe('when called', () => {
-      let targetFixture: NewableFunction;
-      let methodKeyFixture: string | symbol;
-      let middlewareFixture: Newable<ErrorFilter>;
-      let descriptorFixture: PropertyDescriptor;
-      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
+      let updateSetMetadataWithListResultFixture: Mock<
+        (metadataSet: Set<unknown>) => Set<unknown>
+      >;
+
+      let result: unknown;
 
       beforeAll(() => {
-        targetFixture = class TestController {};
-        methodKeyFixture = 'testMethod';
-        middlewareFixture = {} as Newable<ErrorFilter>;
-        descriptorFixture = {
-          value: 'value-descriptor-example',
-        } as PropertyDescriptor;
-        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
-          arrayMetadata;
+        updateSetMetadataWithListResultFixture = vitest.fn();
 
         vitest
-          .mocked(buildArrayMetadataWithArray)
-          .mockReturnValueOnce(callbackFixture);
+          .mocked(updateSetMetadataWithList)
+          .mockReturnValueOnce(updateSetMetadataWithListResultFixture);
 
-        UseErrorFilter(middlewareFixture)(
-          targetFixture,
+        result = UseErrorFilter(middlewareFixture)(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          targetFixture.prototype,
           methodKeyFixture,
           descriptorFixture,
         );
       });
 
-      it('should call buildArrayMetadataWithArray', () => {
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
+      it('should call updateSetMetadataWithList()', () => {
+        expect(updateSetMetadataWithList).toHaveBeenCalledTimes(1);
+        expect(updateSetMetadataWithList).toHaveBeenCalledWith([
           middlewareFixture,
         ]);
       });
 
-      it('should call updateOwnReflectMetadata', () => {
+      it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
-          targetFixture.constructor,
+          targetFixture,
           classMethodErrorFilterMetadataReflectKey,
-          buildEmptyArrayMetadata,
-          callbackFixture,
+          buildEmptySetMetadata,
+          updateSetMetadataWithListResultFixture,
           methodKeyFixture,
         );
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
       });
     });
   });

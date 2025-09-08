@@ -3,12 +3,14 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { Newable } from 'inversify';
 
 import { classMethodErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodErrorFilterMetadataReflectKey';
-import { getClassMethodErrorFilterList } from './getClassMethodErrorFilterList';
+import { ErrorFilter } from '../models/ErrorFilter';
+import { getClassMethodErrorFilterMetadata } from './getClassMethodErrorFilterMetadata';
 
-describe(getClassMethodErrorFilterList, () => {
-  describe('when called and getOwnReflectMetadata returns undefined', () => {
+describe(getClassMethodErrorFilterMetadata, () => {
+  describe('when called and getOwnReflectMetadata() returns undefined', () => {
     let classFixture: NewableFunction;
     let classMethodKeyFixture: string | symbol;
     let result: unknown;
@@ -17,7 +19,7 @@ describe(getClassMethodErrorFilterList, () => {
       classFixture = class Test {};
       classMethodKeyFixture = 'testMethod';
 
-      result = getClassMethodErrorFilterList(
+      result = getClassMethodErrorFilterMetadata(
         classFixture,
         classMethodKeyFixture,
       );
@@ -27,7 +29,7 @@ describe(getClassMethodErrorFilterList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,
@@ -36,27 +38,29 @@ describe(getClassMethodErrorFilterList, () => {
       );
     });
 
-    it('should return an empty array', () => {
-      expect(result).toStrictEqual([]);
+    it('should return an empty Set', () => {
+      expect(result).toStrictEqual(new Set());
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns an array', () => {
+  describe('when called and getOwnReflectMetadata() returns a Set', () => {
     let classFixture: NewableFunction;
     let classMethodKeyFixture: string | symbol;
-    let classMethodErrorFilterFixtures: NewableFunction[];
+    let classMethodErrorFilterMetadataFixture: Set<Newable<ErrorFilter>>;
     let result: unknown;
 
     beforeAll(() => {
       classFixture = class Test {};
       classMethodKeyFixture = 'testMethod';
-      classMethodErrorFilterFixtures = [];
+      classMethodErrorFilterMetadataFixture = new Set([
+        Symbol() as unknown as Newable<ErrorFilter>,
+      ]);
 
       vitest
         .mocked(getOwnReflectMetadata)
-        .mockReturnValueOnce(classMethodErrorFilterFixtures);
+        .mockReturnValueOnce(classMethodErrorFilterMetadataFixture);
 
-      result = getClassMethodErrorFilterList(
+      result = getClassMethodErrorFilterMetadata(
         classFixture,
         classMethodKeyFixture,
       );
@@ -66,7 +70,7 @@ describe(getClassMethodErrorFilterList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,
@@ -75,8 +79,8 @@ describe(getClassMethodErrorFilterList, () => {
       );
     });
 
-    it('should return an array', () => {
-      expect(result).toBe(classMethodErrorFilterFixtures);
+    it('should return a Set<ErrorFilter>', () => {
+      expect(result).toBe(classMethodErrorFilterMetadataFixture);
     });
   });
 });
