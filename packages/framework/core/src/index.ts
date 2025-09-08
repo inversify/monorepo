@@ -1,4 +1,4 @@
-export { getCatchErrorMapMetadata } from './error-filter/calculations/getCatchErrorMapMetadata';
+export { getCatchErrorMetadata } from './error-filter/calculations/getCatchErrorMetadata';
 export { getClassErrorFilterList } from './error-filter/calculations/getClassErrorFilterList';
 export { getClassMethodErrorFilterList } from './error-filter/calculations/getClassMethodErrorFilterList';
 export { CatchError } from './error-filter/decorators/CatchError';

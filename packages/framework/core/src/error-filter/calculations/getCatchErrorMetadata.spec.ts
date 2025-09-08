@@ -6,14 +6,21 @@ import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
 import { catchErrorMetadataReflectKey } from '../../reflectMetadata/data/catchErrorMetadataReflectKey';
-import { getCatchErrorMapMetadata } from './getCatchErrorMapMetadata';
+import { getCatchErrorMetadata } from './getCatchErrorMetadata';
 
-describe(getCatchErrorMapMetadata, () => {
+describe(getCatchErrorMetadata, () => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  let targetFixture: Function;
+
+  beforeAll(() => {
+    targetFixture = class Foo {};
+  });
+
   describe('when called and getOwnReflectMetadata returns undefined', () => {
     let result: unknown;
 
     beforeAll(() => {
-      result = getCatchErrorMapMetadata();
+      result = getCatchErrorMetadata(targetFixture);
     });
 
     afterAll(() => {
@@ -23,28 +30,28 @@ describe(getCatchErrorMapMetadata, () => {
     it('should call getOwnReflectMetadata', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
-        Reflect,
+        targetFixture,
         catchErrorMetadataReflectKey,
       );
     });
 
-    it('should return an empty map', () => {
-      expect(result).toStrictEqual(new Map());
+    it('should return an empty set', () => {
+      expect(result).toStrictEqual(new Set());
     });
   });
 
   describe('when called and getOwnReflectMetadata returns a map', () => {
-    let catchErrorMapFixture: Map<Newable<Error>, NewableFunction[]>;
+    let catchErrorMetadataFixture: Set<Newable<Error> | null>;
     let result: unknown;
 
     beforeAll(() => {
-      catchErrorMapFixture = new Map();
+      catchErrorMetadataFixture = new Set();
 
       vitest
         .mocked(getOwnReflectMetadata)
-        .mockReturnValueOnce(catchErrorMapFixture);
+        .mockReturnValueOnce(catchErrorMetadataFixture);
 
-      result = getCatchErrorMapMetadata();
+      result = getCatchErrorMetadata(targetFixture);
     });
 
     afterAll(() => {
@@ -54,13 +61,13 @@ describe(getCatchErrorMapMetadata, () => {
     it('should call getOwnReflectMetadata', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
-        Reflect,
+        targetFixture,
         catchErrorMetadataReflectKey,
       );
     });
 
-    it('should return a map', () => {
-      expect(result).toBe(catchErrorMapFixture);
+    it('should return a set', () => {
+      expect(result).toBe(catchErrorMetadataFixture);
     });
   });
 });
