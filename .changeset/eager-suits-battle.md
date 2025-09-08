@@ -2,4 +2,4 @@
 "@inversifyjs/framework-core": minor
 ---
 
-Add CatchException decorator
+Add CatchError decorator

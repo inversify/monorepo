@@ -2,4 +2,4 @@
 "@inversifyjs/framework-core": minor
 ---
 
-Add UseExceptionFilter decorator
+Add UseErrorFilter decorator

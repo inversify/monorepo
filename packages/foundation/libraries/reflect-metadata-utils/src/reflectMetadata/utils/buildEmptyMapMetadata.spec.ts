@@ -4,7 +4,7 @@ import { buildEmptyMapMetadata } from './buildEmptyMapMetadata';
 
 describe(buildEmptyMapMetadata, () => {
   describe('when called', () => {
-    let result: Map<unknown, unknown>;
+    let result: unknown;
 
     beforeAll(() => {
       result = buildEmptyMapMetadata();

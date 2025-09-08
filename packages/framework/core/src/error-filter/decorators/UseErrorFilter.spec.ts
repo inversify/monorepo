@@ -9,20 +9,20 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { classExceptionFilterMetadataReflectKey } from '../../reflectMetadata/data/classExceptionFilterMetadataReflectKey';
-import { classMethodExceptionFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodExceptionFilterMetadataReflectKey';
-import { ExceptionFilter } from '../models/ExceptionFilter';
-import { UseExceptionFilter } from './UseExceptionFilter';
+import { classErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classErrorFilterMetadataReflectKey';
+import { classMethodErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodErrorFilterMetadataReflectKey';
+import { ErrorFilter } from '../models/ErrorFilter';
+import { UseErrorFilter } from './UseErrorFilter';
 
-describe(UseExceptionFilter, () => {
+describe(UseErrorFilter, () => {
   describe('having a ClassDecorator', () => {
     describe('when called', () => {
-      let middlewareFixture: Newable<ExceptionFilter>;
+      let middlewareFixture: Newable<ErrorFilter>;
       let targetFixture: NewableFunction;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
-        middlewareFixture = {} as Newable<ExceptionFilter>;
+        middlewareFixture = {} as Newable<ErrorFilter>;
         targetFixture = class TestController {};
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
@@ -31,7 +31,7 @@ describe(UseExceptionFilter, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseExceptionFilter(middlewareFixture)(targetFixture);
+        UseErrorFilter(middlewareFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -49,7 +49,7 @@ describe(UseExceptionFilter, () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture,
-          classExceptionFilterMetadataReflectKey,
+          classErrorFilterMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,
           undefined,
@@ -62,14 +62,14 @@ describe(UseExceptionFilter, () => {
     describe('when called', () => {
       let targetFixture: NewableFunction;
       let methodKeyFixture: string | symbol;
-      let middlewareFixture: Newable<ExceptionFilter>;
+      let middlewareFixture: Newable<ErrorFilter>;
       let descriptorFixture: PropertyDescriptor;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
         targetFixture = class TestController {};
         methodKeyFixture = 'testMethod';
-        middlewareFixture = {} as Newable<ExceptionFilter>;
+        middlewareFixture = {} as Newable<ErrorFilter>;
         descriptorFixture = {
           value: 'value-descriptor-example',
         } as PropertyDescriptor;
@@ -80,7 +80,7 @@ describe(UseExceptionFilter, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseExceptionFilter(middlewareFixture)(
+        UseErrorFilter(middlewareFixture)(
           targetFixture,
           methodKeyFixture,
           descriptorFixture,
@@ -98,7 +98,7 @@ describe(UseExceptionFilter, () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture.constructor,
-          classMethodExceptionFilterMetadataReflectKey,
+          classMethodErrorFilterMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,
           methodKeyFixture,

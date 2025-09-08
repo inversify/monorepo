@@ -5,15 +5,15 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
-import { catchExceptionMetadataReflectKey } from '../../reflectMetadata/data/catchExceptionMetadataReflectKey';
-import { getCatchExceptionMap } from './getCatchExceptionMap';
+import { catchErrorMetadataReflectKey } from '../../reflectMetadata/data/catchErrorMetadataReflectKey';
+import { getCatchErrorMapMetadata } from './getCatchErrorMapMetadata';
 
-describe(getCatchExceptionMap, () => {
+describe(getCatchErrorMapMetadata, () => {
   describe('when called and getOwnReflectMetadata returns undefined', () => {
     let result: unknown;
 
     beforeAll(() => {
-      result = getCatchExceptionMap();
+      result = getCatchErrorMapMetadata();
     });
 
     afterAll(() => {
@@ -24,7 +24,7 @@ describe(getCatchExceptionMap, () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         Reflect,
-        catchExceptionMetadataReflectKey,
+        catchErrorMetadataReflectKey,
       );
     });
 
@@ -34,17 +34,17 @@ describe(getCatchExceptionMap, () => {
   });
 
   describe('when called and getOwnReflectMetadata returns a map', () => {
-    let catchExceptionMapFixture: Map<Newable<Error>, NewableFunction[]>;
+    let catchErrorMapFixture: Map<Newable<Error>, NewableFunction[]>;
     let result: unknown;
 
     beforeAll(() => {
-      catchExceptionMapFixture = new Map();
+      catchErrorMapFixture = new Map();
 
       vitest
         .mocked(getOwnReflectMetadata)
-        .mockReturnValueOnce(catchExceptionMapFixture);
+        .mockReturnValueOnce(catchErrorMapFixture);
 
-      result = getCatchExceptionMap();
+      result = getCatchErrorMapMetadata();
     });
 
     afterAll(() => {
@@ -55,12 +55,12 @@ describe(getCatchExceptionMap, () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         Reflect,
-        catchExceptionMetadataReflectKey,
+        catchErrorMetadataReflectKey,
       );
     });
 
     it('should return a map', () => {
-      expect(result).toBe(catchExceptionMapFixture);
+      expect(result).toBe(catchErrorMapFixture);
     });
   });
 });

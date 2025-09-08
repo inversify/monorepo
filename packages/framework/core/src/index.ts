@@ -1,8 +1,8 @@
-export { getCatchExceptionMap } from './exception-filter/calculations/getCatchExceptionMap';
-export { getClassExceptionFilterList } from './exception-filter/calculations/getClassExceptionFilterList';
-export { getClassMethodExceptionFilterList } from './exception-filter/calculations/getClassMethodExceptionFilterList';
-export { CatchException } from './exception-filter/decorators/CatchException';
-export { UseExceptionFilter } from './exception-filter/decorators/UseExceptionFilter';
+export { getCatchErrorMapMetadata } from './error-filter/calculations/getCatchErrorMapMetadata';
+export { getClassErrorFilterList } from './error-filter/calculations/getClassErrorFilterList';
+export { getClassMethodErrorFilterList } from './error-filter/calculations/getClassMethodErrorFilterList';
+export { CatchError } from './error-filter/decorators/CatchError';
+export { UseErrorFilter } from './error-filter/decorators/UseErrorFilter';
 export { getClassGuardList } from './guard/calculations/getClassGuardList';
 export { getClassMethodGuardList } from './guard/calculations/getClassMethodGuardList';
 export { UseGuard } from './guard/decorators/UseGuard';
@@ -16,8 +16,8 @@ export { ApplyMiddleware } from './middleware/decorators/ApplyMiddleware';
 export { MiddlewarePhase } from './middleware/models/MiddlewarePhase';
 export { isPipe } from './pipe/typeguard/isPipe';
 
-export type { CatchExceptionOptions } from './exception-filter/models/CatchExceptionOptions';
-export type { ExceptionFilter } from './exception-filter/models/ExceptionFilter';
+export type { CatchErrorOptions } from './error-filter/models/CatchErrorOptions';
+export type { ErrorFilter } from './error-filter/models/ErrorFilter';
 export type { Guard } from './guard/models/Guard';
 export type { Interceptor } from './interceptor/models/Interceptor';
 export type { ApplyMiddlewareOptions } from './middleware/models/ApplyMiddlewareOptions';

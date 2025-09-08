@@ -1,6 +1,6 @@
 import { BindingScope, Newable } from 'inversify';
 
-export interface CatchExceptionOptions {
+export interface CatchErrorOptions {
   error?: Newable<Error>;
   scope?: BindingScope;
 }
