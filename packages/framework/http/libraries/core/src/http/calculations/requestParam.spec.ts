@@ -139,7 +139,7 @@ describe(requestParam, () => {
         );
       });
 
-      it('should call updateOwnReflectMetadata', () => {
+      it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture.constructor,

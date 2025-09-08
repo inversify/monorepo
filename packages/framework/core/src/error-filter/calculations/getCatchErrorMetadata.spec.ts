@@ -16,7 +16,7 @@ describe(getCatchErrorMetadata, () => {
     targetFixture = class Foo {};
   });
 
-  describe('when called and getOwnReflectMetadata returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     let result: unknown;
 
     beforeAll(() => {
@@ -27,7 +27,7 @@ describe(getCatchErrorMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         targetFixture,
@@ -40,7 +40,7 @@ describe(getCatchErrorMetadata, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns a map', () => {
+  describe('when called, and getOwnReflectMetadata() returns a map', () => {
     let catchErrorMetadataFixture: Set<Newable<Error> | null>;
     let result: unknown;
 
@@ -58,7 +58,7 @@ describe(getCatchErrorMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         targetFixture,

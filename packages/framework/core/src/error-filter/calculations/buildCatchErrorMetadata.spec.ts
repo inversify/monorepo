@@ -34,7 +34,7 @@ describe(buildCatchErrorMetadata, () => {
     });
   });
 
-  describe('when called and errorType is null', () => {
+  describe('when called, and errorType is null', () => {
     let errorTypeFixture: null;
     let catchErrorMetadataFixture: Set<Newable<Error> | null>;
     let result: unknown;
@@ -61,7 +61,7 @@ describe(buildCatchErrorMetadata, () => {
     });
   });
 
-  describe('when called and errorType is already in the set', () => {
+  describe('when called, and errorType is already in the set', () => {
     let errorTypeFixture: Newable<Error>;
     let catchErrorMetadataFixture: Set<Newable<Error> | null>;
 
@@ -86,7 +86,7 @@ describe(buildCatchErrorMetadata, () => {
     });
   });
 
-  describe('when called and null is already in the set', () => {
+  describe('when called, and null is already in the set', () => {
     let errorTypeFixture: null;
     let catchErrorMetadataFixture: Set<Newable<Error> | null>;
 

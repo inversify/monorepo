@@ -35,7 +35,7 @@ describe(getControllerMethodHeaderMetadataList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         controllerFixture,
@@ -44,7 +44,7 @@ describe(getControllerMethodHeaderMetadataList, () => {
       );
     });
 
-    it('should return a [string, string]', () => {
+    it('should return [string, string][]', () => {
       expect(result).toStrictEqual(headerListFixture);
     });
   });

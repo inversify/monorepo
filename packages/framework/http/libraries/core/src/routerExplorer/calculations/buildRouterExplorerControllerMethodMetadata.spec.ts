@@ -95,7 +95,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getControllerMethodParameterMetadataList', () => {
+    it('should call getControllerMethodParameterMetadataList()', () => {
       expect(getControllerMethodParameterMetadataList).toHaveBeenCalledTimes(1);
       expect(getControllerMethodParameterMetadataList).toHaveBeenCalledWith(
         controllerFixture,
@@ -103,7 +103,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       );
     });
 
-    it('should call getControllerMethodStatusCodeMetadata', () => {
+    it('should call getControllerMethodStatusCodeMetadata()', () => {
       expect(getControllerMethodStatusCodeMetadata).toHaveBeenCalledTimes(1);
       expect(getControllerMethodStatusCodeMetadata).toHaveBeenCalledWith(
         controllerFixture,
@@ -111,7 +111,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       );
     });
 
-    it('should call getClassMethodGuardList', () => {
+    it('should call getClassMethodGuardList()', () => {
       expect(getClassMethodGuardList).toHaveBeenCalledTimes(1);
       expect(getClassMethodGuardList).toHaveBeenCalledWith(
         controllerFixture,
@@ -119,7 +119,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       );
     });
 
-    it('should call getClassMethodMiddlewareList', () => {
+    it('should call getClassMethodMiddlewareList()', () => {
       expect(getClassMethodMiddlewareList).toHaveBeenCalledTimes(1);
       expect(getClassMethodMiddlewareList).toHaveBeenCalledWith(
         controllerFixture,
@@ -127,7 +127,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       );
     });
 
-    it('should call buildMiddlewareOptionsFromApplyMiddlewareOptions', () => {
+    it('should call buildMiddlewareOptionsFromApplyMiddlewareOptions()', () => {
       expect(
         buildMiddlewareOptionsFromApplyMiddlewareOptions,
       ).toHaveBeenCalledTimes(1);
@@ -136,7 +136,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       ).toHaveBeenCalledWith(controllerMethodMiddlewareListFixture);
     });
 
-    it('should call getControllerMethodHeaderMetadataList', () => {
+    it('should call getControllerMethodHeaderMetadataList()', () => {
       expect(getControllerMethodHeaderMetadataList).toHaveBeenCalledTimes(1);
       expect(getControllerMethodHeaderMetadataList).toHaveBeenCalledWith(
         controllerFixture,
@@ -144,7 +144,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       );
     });
 
-    it('should call getControllerMethodUseNativeHandlerMetadata', () => {
+    it('should call getControllerMethodUseNativeHandlerMetadata()', () => {
       expect(getControllerMethodUseNativeHandlerMetadata).toHaveBeenCalledTimes(
         1,
       );
@@ -154,7 +154,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       );
     });
 
-    it('should return a RouterExplorerControllerMethodMetadata', () => {
+    it('should return RouterExplorerControllerMethodMetadata', () => {
       expect(result).toStrictEqual({
         guardList: controllerMethodGuardListFixture,
         headerMetadataList: headerMetadataListFixture,

@@ -10,7 +10,7 @@ import { ErrorFilter } from '../models/ErrorFilter';
 import { getClassErrorFilterMetadata } from './getClassErrorFilterMetadata';
 
 describe(getClassErrorFilterMetadata, () => {
-  describe('when called and getOwnReflectMetadata() returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     let classFixture: NewableFunction;
     let result: unknown;
 
@@ -37,7 +37,7 @@ describe(getClassErrorFilterMetadata, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata() returns a Set', () => {
+  describe('when called, and getOwnReflectMetadata() returns a Set', () => {
     let classFixture: NewableFunction;
     let classErrorFilterMetadataFixture: Set<Newable<ErrorFilter>>;
     let result: unknown;

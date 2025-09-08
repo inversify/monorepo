@@ -30,7 +30,7 @@ describe(updateOwnReflectMetadata, () => {
       callbackMock = vitest.fn<(value: unknown) => unknown>();
     });
 
-    describe('when called, and getOwnReflectMetadata returns undefined', () => {
+    describe('when called, and getOwnReflectMetadata() returns undefined', () => {
       let defaultValueFixture: unknown;
       let reflectMetadata: unknown;
 
@@ -84,7 +84,7 @@ describe(updateOwnReflectMetadata, () => {
       });
     });
 
-    describe('when called, and getOwnReflectMetadata returns metadata', () => {
+    describe('when called, and getOwnReflectMetadata() returns metadata', () => {
       let metadataFixture: unknown;
       let reflectMetadata: unknown;
 
@@ -215,7 +215,7 @@ describe(updateOwnReflectMetadata, () => {
       });
     });
 
-    describe('when called, and getOwnReflectMetadata returns metadata', () => {
+    describe('when called, and getOwnReflectMetadata() returns metadata', () => {
       let metadataFixture: unknown;
       let reflectMetadata: unknown;
 

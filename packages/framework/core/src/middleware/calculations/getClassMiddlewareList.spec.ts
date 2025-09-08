@@ -8,7 +8,7 @@ import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/cl
 import { getClassMiddlewareList } from './getClassMiddlewareList';
 
 describe(getClassMiddlewareList, () => {
-  describe('when called and getOwnReflectMetadata returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     let targetFixture: NewableFunction;
     let result: unknown;
 
@@ -22,7 +22,7 @@ describe(getClassMiddlewareList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         targetFixture,
@@ -35,7 +35,7 @@ describe(getClassMiddlewareList, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns an array', () => {
+  describe('when called, and getOwnReflectMetadata() returns an array', () => {
     let targetFixture: NewableFunction;
     let middlewareFixtures: NewableFunction[];
     let result: unknown;
@@ -55,7 +55,7 @@ describe(getClassMiddlewareList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         targetFixture,

@@ -8,7 +8,7 @@ import { classMethodInterceptorMetadataReflectKey } from '../../reflectMetadata/
 import { getClassMethodInterceptorList } from './getClassMethodInterceptorList';
 
 describe(getClassMethodInterceptorList, () => {
-  describe('when called and getOwnReflectMetadata returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     let classFixture: NewableFunction;
     let classMethodKeyFixture: string | symbol;
     let result: unknown;
@@ -27,7 +27,7 @@ describe(getClassMethodInterceptorList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,
@@ -41,7 +41,7 @@ describe(getClassMethodInterceptorList, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns an array', () => {
+  describe('when called, and getOwnReflectMetadata() returns an array', () => {
     let classFixture: NewableFunction;
     let classMethodKeyFixture: string | symbol;
     let classMethodInterceptorFixtures: NewableFunction[];
@@ -66,7 +66,7 @@ describe(getClassMethodInterceptorList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,

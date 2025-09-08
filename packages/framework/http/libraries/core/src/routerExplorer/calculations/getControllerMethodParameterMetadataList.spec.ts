@@ -9,7 +9,7 @@ import { ControllerMethodParameterMetadata } from '../model/ControllerMethodPara
 import { getControllerMethodParameterMetadataList } from './getControllerMethodParameterMetadataList';
 
 describe(getControllerMethodParameterMetadataList, () => {
-  describe('when called and getOwnReflectMetadata returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodKeyFixture: string | symbol;
     let result: unknown;
@@ -28,7 +28,7 @@ describe(getControllerMethodParameterMetadataList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         controllerFixture,
@@ -42,7 +42,7 @@ describe(getControllerMethodParameterMetadataList, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns an array', () => {
+  describe('when called, and getOwnReflectMetadata() returns an array', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodKeyFixture: string | symbol;
     let parameterMetadataListFixture: ControllerMethodParameterMetadata[];
@@ -67,7 +67,7 @@ describe(getControllerMethodParameterMetadataList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         controllerFixture,

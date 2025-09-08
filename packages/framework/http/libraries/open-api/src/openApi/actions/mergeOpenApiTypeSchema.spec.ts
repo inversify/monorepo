@@ -508,7 +508,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
       });
 
-      describe('when called and getSchemaMetadata() returns SchemaMetadata with properties with undefined schemas and getOwnReflectMetadata() returns undefined', () => {
+      describe('when called, and getSchemaMetadata() returns SchemaMetadata with properties with undefined schemas and getOwnReflectMetadata() returns undefined', () => {
         let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
         let schemaMetadataFixture: SchemaMetadata;
 
@@ -573,7 +573,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
       });
 
-      describe('when called and getSchemaMetadataMock() returns SchemaMetadata with property with no schema and tryBuildSchemaFromWellKnownType() returns a schema', () => {
+      describe('when called, and getSchemaMetadataMock() returns SchemaMetadata with property with no schema and tryBuildSchemaFromWellKnownType() returns a schema', () => {
         let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         let propertyTypeFixture: Function;
@@ -654,7 +654,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
       });
 
-      describe('when called and getSchemaMetadata() returns SchemaMetadata with properties with no schema and tryBuildSchemaFromWellKnownType returns undefined', () => {
+      describe('when called, and getSchemaMetadata() returns SchemaMetadata with properties with no schema and tryBuildSchemaFromWellKnownType returns undefined', () => {
         let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         let propertyTypeFixture: Function;
@@ -764,7 +764,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
       });
 
-      describe('when called and getSchemaMetadata() returns SchemaMetadata with properties with no schema and later SchemaMetadata with no name and tryBuildSchemaFromWellKnownType returns undefined', () => {
+      describe('when called, and getSchemaMetadata() returns SchemaMetadata with properties with no schema and later SchemaMetadata with no name and tryBuildSchemaFromWellKnownType returns undefined', () => {
         let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         let propertyTypeFixture: Function;

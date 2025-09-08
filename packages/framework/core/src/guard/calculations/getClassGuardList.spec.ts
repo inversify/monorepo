@@ -8,7 +8,7 @@ import { classGuardMetadataReflectKey } from '../../reflectMetadata/data/classGu
 import { getClassGuardList } from './getClassGuardList';
 
 describe(getClassGuardList, () => {
-  describe('when called and getOwnReflectMetadata returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     let classFixture: NewableFunction;
     let result: unknown;
 
@@ -22,7 +22,7 @@ describe(getClassGuardList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,
@@ -35,7 +35,7 @@ describe(getClassGuardList, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns an array', () => {
+  describe('when called, and getOwnReflectMetadata() returns an array', () => {
     let classFixture: NewableFunction;
     let classGuardFixtures: NewableFunction[];
     let result: unknown;
@@ -55,7 +55,7 @@ describe(getClassGuardList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,

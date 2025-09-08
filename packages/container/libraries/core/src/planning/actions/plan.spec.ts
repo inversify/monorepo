@@ -67,7 +67,7 @@ describe(plan, () => {
     };
   });
 
-  describe('when called and params.operations.getPlan() returns PlanResult', () => {
+  describe('when called, and params.operations.getPlan() returns PlanResult', () => {
     let getPlanOptionsFixture: GetPlanOptions;
     let planResultFixture: PlanResult;
     let result: unknown;
@@ -110,7 +110,7 @@ describe(plan, () => {
     });
   });
 
-  describe('when called and params.operations.getPlan() returns undefined', () => {
+  describe('when called, and params.operations.getPlan() returns undefined', () => {
     let getPlanOptionsFixture: GetPlanOptions;
     let planServiceNodeFixture: PlanServiceNode;
     let result: unknown;

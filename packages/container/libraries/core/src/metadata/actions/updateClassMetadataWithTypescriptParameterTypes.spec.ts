@@ -14,7 +14,7 @@ import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata
 import { updateClassMetadataWithTypescriptParameterTypes } from './updateClassMetadataWithTypescriptParameterTypes';
 
 describe(updateClassMetadataWithTypescriptParameterTypes, () => {
-  describe('when called and getOwnReflectMetadata() returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     let targetFixture: object;
 
     let result: unknown;
@@ -42,7 +42,7 @@ describe(updateClassMetadataWithTypescriptParameterTypes, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata() returns Newable[]', () => {
+  describe('when called, and getOwnReflectMetadata() returns Newable[]', () => {
     let targetFixture: object;
 
     let newableListFixture: Newable[];
