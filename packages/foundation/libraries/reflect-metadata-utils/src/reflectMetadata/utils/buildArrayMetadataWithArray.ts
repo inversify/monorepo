@@ -1,5 +1,5 @@
 export function buildArrayMetadataWithArray<T>(
-  newArrayMetadata: T[],
+  newArrayMetadata: Iterable<T>,
 ): (arrayMetadata: T[]) => T[] {
   return (arrayMetadata: T[]): T[] => {
     arrayMetadata.push(...newArrayMetadata);
