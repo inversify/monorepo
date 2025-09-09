@@ -2,6 +2,7 @@
 sidebar_position: 1
 title: Getting started
 ---
+import gettingStartedCreateServerAndListenSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/gettingStartedCreateServerAndListen.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -84,6 +85,6 @@ Inversify HTTP works with several HTTP frameworks. Choose the adapter that best 
 
 After installing the packages, create a server to listen for incoming requests. Below is a basic example of setting up an Express server with Inversify HTTP.
 
-TODO: Add code example.
+<CodeBlock language="typescript">{gettingStartedCreateServerAndListenSource}</CodeBlock>
 
 The server is ready to receive requests, but there are no handlers yet. Add a Controller to handle incoming requests.
