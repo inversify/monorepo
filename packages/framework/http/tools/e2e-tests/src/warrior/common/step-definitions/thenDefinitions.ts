@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 
 import { Then } from '@cucumber/cucumber';
+import { HttpStatusCode } from '@inversifyjs/http-core';
 
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
 import { ResponseParameter } from '../../../http/models/ResponseParameter';
@@ -23,6 +24,48 @@ async function thenResponseStatusCodeIsOkIsh(
     })}`,
   );
 }
+
+async function thenResponseStatusCodeIs(
+  this: InversifyHttpWorld,
+  statusCode: number,
+  responseAlias?: string,
+): Promise<void> {
+  const parsedResponseAlias: string = responseAlias ?? 'default';
+
+  const responseParameter: ResponseParameter =
+    getServerResponseOrFail.bind(this)(parsedResponseAlias);
+
+  assert.strictEqual(
+    responseParameter.statusCode,
+    statusCode,
+    `Expected status code to be ${statusCode.toString()}, but got ${String(responseParameter.statusCode)}
+
+Response body:
+
+${JSON.stringify(responseParameter.body)}`,
+  );
+}
+
+Then<InversifyHttpWorld>(
+  'the response status code is FORBIDDEN',
+  async function (this: InversifyHttpWorld): Promise<void> {
+    await thenResponseStatusCodeIs.bind(this)(HttpStatusCode.FORBIDDEN);
+  },
+);
+
+Then<InversifyHttpWorld>(
+  'the response status code is NO_CONTENT',
+  async function (this: InversifyHttpWorld): Promise<void> {
+    await thenResponseStatusCodeIs.bind(this)(HttpStatusCode.NO_CONTENT);
+  },
+);
+
+Then<InversifyHttpWorld>(
+  'the response status code is NOT IMPLEMENTED',
+  async function (this: InversifyHttpWorld): Promise<void> {
+    await thenResponseStatusCodeIs.bind(this)(HttpStatusCode.NOT_IMPLEMENTED);
+  },
+);
 
 Then<InversifyHttpWorld>(
   'the response status code is Ok-ish',

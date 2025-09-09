@@ -3,6 +3,7 @@ import { Readable } from 'node:stream';
 import {
   ApplyMiddlewareOptions,
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
+  ErrorFilter,
   Guard,
   isPipe,
   Middleware,
@@ -11,6 +12,7 @@ import {
   PipeMetadata,
 } from '@inversifyjs/framework-core';
 import { ConsoleLogger, Logger } from '@inversifyjs/logger';
+import { getBaseType } from '@inversifyjs/prototype-utils';
 import { Container, Newable } from 'inversify';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
@@ -19,6 +21,7 @@ import { buildRouterExplorerControllerMetadataList } from '../../routerExplorer/
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
+import { setErrorFilterToErrorFilterMap } from '../actions/setErrorFilterToErrorFilterMap';
 import { Controller } from '../models/Controller';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
@@ -59,17 +62,16 @@ export abstract class InversifyHttpAdapter<
       TNextFunction,
       TResult
     >[];
-    guardList: MiddlewareHandler<
-      TRequest,
-      TResponse,
-      TNextFunction,
-      TResult | undefined
-    >[];
   };
   readonly #awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>;
   readonly #container: Container;
-  readonly #logger: Logger;
+  readonly #errorTypeToGlobalErrorFilterMap: Map<
+    Newable<Error> | null,
+    Newable<ErrorFilter>
+  >;
+  readonly #globalGuardList: Newable<Guard<TRequest>>[];
   readonly #globalPipeList: (Newable<Pipe> | Pipe)[];
+  readonly #logger: Logger;
   #isBuilt: boolean;
 
   constructor(
@@ -88,11 +90,12 @@ export abstract class InversifyHttpAdapter<
       defaultHttpAdapterOptions,
       httpAdapterOptions,
     );
-    this.#logger = this.#buildLogger(this.httpAdapterOptions);
+    this.#globalGuardList = [];
     this.#globalPipeList = [];
+    this.#errorTypeToGlobalErrorFilterMap = new Map();
+    this.#logger = this.#buildLogger(this.httpAdapterOptions);
     this.#isBuilt = false;
     this.globalHandlers = {
-      guardList: [],
       postHandlerMiddlewareList: [],
       preHandlerMiddlewareList: [],
     };
@@ -145,14 +148,13 @@ export abstract class InversifyHttpAdapter<
       );
     }
 
-    const guardHandlerList: MiddlewareHandler<
-      TRequest,
-      TResponse,
-      TNextFunction,
-      TResult | undefined
-    >[] = this.#getGuardHandlerFromMetadata(guardList);
+    this.#globalGuardList.push(...guardList);
+  }
 
-    this.globalHandlers.guardList.push(...guardHandlerList);
+  public useGlobalFilters(...errorFilterList: Newable<ErrorFilter>[]): void {
+    for (const errorFilter of errorFilterList) {
+      this.#setGlobalErrorFilter(errorFilter);
+    }
   }
 
   public useGlobalPipe(...pipeList: (Newable<Pipe> | Pipe)[]): void {
@@ -203,9 +205,6 @@ export abstract class InversifyHttpAdapter<
 
     for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
       await this._buildRouter({
-        guardList: this.#getGuardHandlerFromMetadata(
-          routerExplorerControllerMetadata.guardList,
-        ),
         path: routerExplorerControllerMetadata.path,
         postHandlerMiddlewareList: this.#getMiddlewareHandlerFromMetadata(
           routerExplorerControllerMetadata.postHandlerMiddlewareList,
@@ -245,9 +244,16 @@ export abstract class InversifyHttpAdapter<
           unknown
         >,
       ) => ({
-        guardList: this.#getGuardHandlerFromMetadata(
-          routerExplorerControllerMethodMetadata.guardList,
-        ),
+        guardList: [
+          ...this.#getGuardHandlerFromMetadata(
+            this.#globalGuardList,
+            routerExplorerControllerMethodMetadata,
+          ),
+          ...this.#getGuardHandlerFromMetadata(
+            routerExplorerControllerMethodMetadata.guardList,
+            routerExplorerControllerMethodMetadata,
+          ),
+        ],
         handler: this.#buildHandler(
           target,
           routerExplorerControllerMethodMetadata,
@@ -302,6 +308,14 @@ export abstract class InversifyHttpAdapter<
         );
     }
 
+    const handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult> = this.#buildHandleError(
+      routerExplorerControllerMethodMetadata,
+    );
+
     return async (
       req: TRequest,
       res: TResponse,
@@ -329,7 +343,7 @@ export abstract class InversifyHttpAdapter<
 
         return reply(req, res, value);
       } catch (error: unknown) {
-        return this.#handleError(req, res, error);
+        return handleError(req, res, error);
       }
     };
   }
@@ -497,24 +511,103 @@ export abstract class InversifyHttpAdapter<
     }
   }
 
-  #handleError(
+  async #getErrorFilterForError(
+    error: unknown,
+    errorToFilterMap: Map<Newable<Error> | null, Newable<ErrorFilter>>,
+  ): Promise<ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined> {
+    if (error instanceof Error) {
+      let currentErrorType: Newable<Error> =
+        error.constructor as Newable<Error>;
+
+      while (currentErrorType !== Error) {
+        const errorFilterType: Newable<ErrorFilter> | undefined =
+          errorToFilterMap.get(currentErrorType);
+
+        if (errorFilterType !== undefined) {
+          return this.#container.getAsync(errorFilterType);
+        }
+
+        currentErrorType = getBaseType(currentErrorType) as Newable<Error>;
+      }
+
+      const errorFilterType: Newable<ErrorFilter> | undefined =
+        errorToFilterMap.get(currentErrorType);
+
+      if (errorFilterType !== undefined) {
+        return this.#container.getAsync(errorFilterType);
+      }
+    }
+
+    const errorFilterType: Newable<ErrorFilter> | undefined =
+      errorToFilterMap.get(null);
+
+    if (errorFilterType !== undefined) {
+      return this.#container.getAsync(errorFilterType);
+    }
+
+    return undefined;
+  }
+
+  #buildHandleError(
+    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse,
+      unknown
+    >,
+  ): (
     request: TRequest,
     response: TResponse,
     error: unknown,
-  ): TResult {
-    let httpResponse: HttpResponse | undefined = undefined;
+  ) => Promise<TResult> {
+    const handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult> = async (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ): Promise<TResult> => {
+      const errorFilter:
+        | ErrorFilter<unknown, TRequest, TResponse, TResult>
+        | undefined =
+        (await this.#getErrorFilterForError(
+          error,
+          routerExplorerControllerMethodMetadata.errorTypeToErrorFilterMap,
+        )) ??
+        (await this.#getErrorFilterForError(
+          error,
+          this.#errorTypeToGlobalErrorFilterMap,
+        ));
 
-    if (ErrorHttpResponse.is(error)) {
-      httpResponse = error;
-    } else {
-      this.#printError(error);
+      if (errorFilter === undefined) {
+        let httpResponse: HttpResponse | undefined = undefined;
 
-      httpResponse = new InternalServerErrorHttpResponse(undefined, undefined, {
-        cause: error,
-      });
-    }
+        if (ErrorHttpResponse.is(error)) {
+          httpResponse = error;
+        } else {
+          this.#printError(error);
 
-    return this.#reply(request, response, httpResponse);
+          httpResponse = new InternalServerErrorHttpResponse(
+            undefined,
+            undefined,
+            {
+              cause: error,
+            },
+          );
+        }
+
+        return this.#reply(request, response, httpResponse);
+      }
+
+      try {
+        return await errorFilter.catch(error, request, response);
+      } catch (error: unknown) {
+        return handleError(request, response, error);
+      }
+    };
+
+    return handleError;
   }
 
   #setHeaders(
@@ -583,13 +676,25 @@ export abstract class InversifyHttpAdapter<
   }
 
   #getGuardHandlerFromMetadata(
-    guardList: NewableFunction[],
+    guardList: Newable<Guard<TRequest>>[],
+    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse
+    >,
   ): MiddlewareHandler<
     TRequest,
     TResponse,
     TNextFunction,
     TResult | undefined
   >[] {
+    const handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult> = this.#buildHandleError(
+      routerExplorerControllerMethodMetadata,
+    );
+
     return guardList.map((newableFunction: NewableFunction) => {
       return async (
         request: TRequest,
@@ -610,7 +715,7 @@ export abstract class InversifyHttpAdapter<
 
           return this.#reply(request, response, new ForbiddenHttpResponse());
         } catch (error: unknown) {
-          return this.#handleError(request, response, error);
+          return handleError(request, response, error);
         }
       };
     });
@@ -642,6 +747,13 @@ export abstract class InversifyHttpAdapter<
     }
 
     this.#logger.error(errorMessage);
+  }
+
+  #setGlobalErrorFilter(errorFilter: Newable<ErrorFilter>): void {
+    setErrorFilterToErrorFilterMap(
+      this.#errorTypeToGlobalErrorFilterMap,
+      errorFilter,
+    );
   }
 
   public abstract build(): Promise<unknown>;

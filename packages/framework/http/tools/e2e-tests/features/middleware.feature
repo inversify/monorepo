@@ -1,10 +1,11 @@
 Feature: middleware
-The m allows to continue or stop the request processing
+
+Middlewares allows to continue or stop the request lifecycle
 
   Background: Having a container
     Given a container
 
-  Rule: middleware allows to continue or stop the request processing
+  Rule: middleware allows to continue or stop the request lifecycle
 
     Scenario: middleware allows to continue request processing
       Given a warrior controller with SuccessfulMiddleware for <method> method and <server_kind> server
@@ -41,7 +42,7 @@ The m allows to continue or stop the request processing
         | "hono"      | "POST"    |
         | "hono"      | "PUT"     |
 
-    Scenario: middleware allows to stop request processing
+    Scenario: middleware allows to stop request lifecycle
       Given a warrior controller with UnsuccessfulMiddleware for <method> method and <server_kind> server
       And a <server_kind> server from container
       And a <method> warriors HTTP request

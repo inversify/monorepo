@@ -1,6 +1,5 @@
 import {
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
-  getClassGuardList,
   getClassMiddlewareList,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
@@ -21,10 +20,6 @@ export function buildRouterExplorerControllerMetadata<
   const controllerMethodMetadataList: ControllerMethodMetadata[] =
     getControllerMethodMetadataList(controllerMetadata.target);
 
-  const controllerGuardList: NewableFunction[] = getClassGuardList(
-    controllerMetadata.target,
-  );
-
   const controllerMiddlewareList: NewableFunction[] = getClassMiddlewareList(
     controllerMetadata.target,
   );
@@ -38,7 +33,6 @@ export function buildRouterExplorerControllerMetadata<
         controllerMetadata.target,
         controllerMethodMetadataList,
       ),
-    guardList: controllerGuardList,
     path: controllerMetadata.path,
     postHandlerMiddlewareList: middlewareOptions.postHandlerMiddlewareList,
     preHandlerMiddlewareList: middlewareOptions.preHandlerMiddlewareList,

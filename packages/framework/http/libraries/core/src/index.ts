@@ -1,9 +1,13 @@
 import {
   ApplyMiddleware,
+  CatchError,
+  CatchErrorOptions,
+  ErrorFilter,
   Guard,
   Middleware,
   MiddlewarePhase,
   Pipe,
+  UseErrorFilter,
   UseGuard,
 } from '@inversifyjs/framework-core';
 
@@ -74,8 +78,10 @@ import { ControllerMetadata } from './routerExplorer/model/ControllerMetadata';
 import { ControllerMethodMetadata } from './routerExplorer/model/ControllerMethodMetadata';
 
 export type {
+  CatchErrorOptions,
   ControllerMetadata,
   ControllerMethodMetadata,
+  ErrorFilter,
   Guard,
   HttpAdapterOptions,
   Middleware,
@@ -96,6 +102,7 @@ export {
   BadRequestHttpResponse,
   Body,
   buildNormalizedPath,
+  CatchError,
   ConflictHttpResponse,
   ContentDifferentHttpResponse,
   Controller,
@@ -147,5 +154,6 @@ export {
   SetHeader,
   StatusCode,
   UnauthorizedHttpResponse,
+  UseErrorFilter,
   UseGuard,
 };

@@ -7,13 +7,13 @@ vitest.mock('./buildRouterExplorerControllerMethodMetadataList');
 
 import {
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
-  getClassGuardList,
   getClassMiddlewareList,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
 
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
+import { RouterExplorerControllerMetadata } from '../model/RouterExplorerControllerMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
 import { buildRouterExplorerControllerMetadata } from './buildRouterExplorerControllerMetadata';
 import { buildRouterExplorerControllerMethodMetadataList } from './buildRouterExplorerControllerMethodMetadataList';
@@ -23,7 +23,6 @@ describe(buildRouterExplorerControllerMetadata, () => {
   describe('when called', () => {
     let controllerMetadataFixture: ControllerMetadata;
     let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
-    let controllerGuardListFixture: NewableFunction[];
     let controllerMiddlewareListFixture: NewableFunction[];
     let middlewareOptionsFixture: MiddlewareOptions;
     let routerExplorerControllerMethodMetadataListFixture: RouterExplorerControllerMethodMetadata[];
@@ -35,7 +34,6 @@ describe(buildRouterExplorerControllerMetadata, () => {
         target: class TestController {},
       };
       controllerMethodMetadataListFixture = [];
-      controllerGuardListFixture = [];
       controllerMiddlewareListFixture = [];
       middlewareOptionsFixture = {
         postHandlerMiddlewareList: [],
@@ -46,10 +44,6 @@ describe(buildRouterExplorerControllerMetadata, () => {
       vitest
         .mocked(getControllerMethodMetadataList)
         .mockReturnValueOnce(controllerMethodMetadataListFixture);
-
-      vitest
-        .mocked(getClassGuardList)
-        .mockReturnValueOnce(controllerGuardListFixture);
 
       vitest
         .mocked(getClassMiddlewareList)
@@ -69,13 +63,6 @@ describe(buildRouterExplorerControllerMetadata, () => {
     it('should call getControllerMethodMetadataList', () => {
       expect(getControllerMethodMetadataList).toHaveBeenCalledTimes(1);
       expect(getControllerMethodMetadataList).toHaveBeenCalledWith(
-        controllerMetadataFixture.target,
-      );
-    });
-
-    it('should call getClassGuardList', () => {
-      expect(getClassGuardList).toHaveBeenCalledTimes(1);
-      expect(getClassGuardList).toHaveBeenCalledWith(
         controllerMetadataFixture.target,
       );
     });
@@ -109,17 +96,18 @@ describe(buildRouterExplorerControllerMetadata, () => {
     });
 
     it('should return a RouterExplorerControllerMetadata', () => {
-      expect(result).toStrictEqual({
+      const expected: RouterExplorerControllerMetadata = {
         controllerMethodMetadataList:
           routerExplorerControllerMethodMetadataListFixture,
-        guardList: controllerGuardListFixture,
         path: controllerMetadataFixture.path,
         postHandlerMiddlewareList:
           middlewareOptionsFixture.postHandlerMiddlewareList,
         preHandlerMiddlewareList:
           middlewareOptionsFixture.preHandlerMiddlewareList,
         target: controllerMetadataFixture.target,
-      });
+      };
+
+      expect(result).toStrictEqual(expected);
     });
   });
 });
