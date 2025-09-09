@@ -66,14 +66,6 @@ export function buildBundleConfig(
           dir: outputDir,
           format: 'esm',
           sourcemap: true,
-          sourcemapPathTransform: (relativeSourcePath) => {
-            // Rollup seems to generate source maps pointing to the wrong directory. Ugly patch to fix it
-            if (relativeSourcePath.startsWith('../')) {
-              return relativeSourcePath.slice(3);
-            } else {
-              return relativeSourcePath;
-            }
-          },
         },
       ],
       plugins,
@@ -116,14 +108,6 @@ export function buildMultiBundleConfig(inputFiles, outputDir) {
           dir: outputDir,
           format: 'esm',
           sourcemap: true,
-          sourcemapPathTransform: (relativeSourcePath) => {
-            // Rollup seems to generate source maps pointing to the wrong directory. Ugly patch to fix it
-            if (relativeSourcePath.startsWith('../')) {
-              return relativeSourcePath.slice(3);
-            } else {
-              return relativeSourcePath;
-            }
-          },
         },
       ],
       plugins: [

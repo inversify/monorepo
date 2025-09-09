@@ -1,0 +1,75 @@
+:root {
+  --red: 0;
+  --green: 114;
+  --blue: 189;
+
+  --dark-factor: 0.9;
+  --red-dark: calc(var(--red) * var(--dark-factor));
+  --green-dark: calc(var(--green) * var(--dark-factor));
+  --blue-dark: calc(var(--blue) * var(--dark-factor));
+
+  --darker-factor: 0.85;
+  --red-darker: calc(var(--red) * var(--darker-factor));
+  --green-darker: calc(var(--green) * var(--darker-factor));
+  --blue-darker: calc(var(--blue) * var(--darker-factor));
+
+  --darkest-factor: 0.7;
+  --red-darkest: calc(var(--red) * var(--darkest-factor));
+  --green-darkest: calc(var(--green) * var(--darkest-factor));
+  --blue-darkest: calc(var(--blue) * var(--darkest-factor));
+
+  --light-factor: 1.05;
+  --red-light: calc(var(--red) * var(--light-factor));
+  --green-light: calc(var(--green) * var(--light-factor));
+  --blue-light: calc(var(--blue) * var(--light-factor));
+
+  --lighter-factor: 1.1;
+  --red-lighter: calc(var(--red) * var(--lighter-factor));
+  --green-lighter: calc(var(--green) * var(--lighter-factor));
+  --blue-lighter: calc(var(--blue) * var(--lighter-factor));
+
+  --lightest-factor: 1.15;
+  --red-lightest: calc(var(--red) * var(--lightest-factor));
+  --green-lightest: calc(var(--green) * var(--lightest-factor));
+  --blue-lightest: calc(var(--blue) * var(--lightest-factor));
+
+  --ifm-color-primary: rgb(var(--red), var(--green), var(--blue));
+  --ifm-color-primary-dark: rgb(
+    var(--red-dark),
+    var(--green-dark),
+    var(--blue-dark)
+  );
+  --ifm-color-primary-darker: rgb(
+    var(--red-darker),
+    var(--green-darker),
+    var(--blue-darker)
+  );
+  --ifm-color-primary-darkest: rgb(
+    var(--red-darkest),
+    var(--green-darkest),
+    var(--blue-darkest)
+  );
+  --ifm-color-primary-light: rgb(
+    var(--red-light),
+    var(--green-light),
+    var(--blue-light)
+  );
+  --ifm-color-primary-lighter: rgb(
+    var(--red-lighter),
+    var(--green-lighter),
+    var(--blue-lighter)
+  );
+  --ifm-color-primary-lightest: rgb(
+    var(--red-lightest),
+    var(--green-lightest),
+    var(--blue-lightest)
+  );
+  --ifm-code-font-size: 95%;
+
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}

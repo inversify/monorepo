@@ -1,0 +1,90 @@
+---
+sidebar_position: 1
+title: Getting started
+---
+import gettingStartedCreateServerAndListenSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/gettingStartedCreateServerAndListen.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting started
+
+## Install dependencies
+
+To get started with Inversify HTTP, first install the required packages.
+
+Begin by installing the `inversify` packages and `reflect-metadata`:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+  npm install inversify reflect-metadata @inversifyjs/http-core
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+  pnpm install inversify reflect-metadata @inversifyjs/http-core
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+  yarn add inversify reflect-metadata @inversifyjs/http-core
+```
+
+  </TabItem>
+</Tabs>
+
+:::warning
+
+Make sure to enable the [Experimental Decorators](https://www.typescriptlang.org/tsconfig/#experimentalDecorators) and [Emit Decorator Metadata](https://www.typescriptlang.org/tsconfig/#emitDecoratorMetadata) options in your `tsconfig.json`.
+
+:::
+
+## Choose an HTTP adapter
+
+Inversify HTTP works with several HTTP frameworks. Choose the adapter that best fits your needs:
+
+<Tabs>
+  <TabItem value="express-v4" label="Express v4">
+
+```bash
+  npm install @inversifyjs/http-express-v4
+```
+
+  </TabItem>
+  <TabItem value="express" label="Express">
+
+```bash
+  pnpm install @inversifyjs/http-express
+```
+
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+
+```bash
+  yarn add @inversifyjs/http-fastify
+```
+
+  </TabItem>
+
+  <TabItem value="hono" label="Hono">
+
+```bash
+  yarn add @inversifyjs/http-hono
+```
+
+  </TabItem>
+</Tabs>
+
+## Configure server
+
+After installing the packages, create a server to listen for incoming requests. Below is a basic example of setting up an Express server with Inversify HTTP.
+
+<CodeBlock language="typescript">{gettingStartedCreateServerAndListenSource}</CodeBlock>
+
+The server is ready to receive requests, but there are no handlers yet. Add a Controller to handle incoming requests.
