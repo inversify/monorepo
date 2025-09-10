@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { escapeJsonPointerFragments } from './escapeJsonPointerFragments';
 
-describe(escapeJsonPointerFragments.name, () => {
+describe(escapeJsonPointerFragments, () => {
   describe.each<[string[], string]>([
     [[], ''],
     [[''], ''],

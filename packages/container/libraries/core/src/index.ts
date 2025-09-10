@@ -161,6 +161,7 @@ export type {
   PlanServiceNodeParent,
   PlanServiceRedirectionBindingNode,
   PlanTree,
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   Provider,
   ProviderBinding,
   ResolutionContext,
