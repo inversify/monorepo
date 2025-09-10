@@ -3,6 +3,6 @@ export class NotImplementedOperationError extends Error {
     message: string = 'This operation is not implemented',
     options?: ErrorOptions,
   ) {
-    super(`[NotImplementedFeatureError]: ${message}`, options);
+    super(`[NotImplementedOperationError]: ${message}`, options);
   }
 }
