@@ -5,7 +5,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  baseUrl: '/http-open-api/',
+  baseUrl: '/http-openapi/',
   deploymentBranch: 'master',
   favicon: 'img/favicon.ico',
   future: {
@@ -60,7 +60,7 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
-  projectName: 'http',
+  projectName: 'http-openapi',
   tagline:
     'A powerful set of tools to create HTTP OpenAPI docs on top of InversifyJS',
   themeConfig: {
