@@ -268,7 +268,23 @@ OasSchema(
 Parameters
 
 - schema (optional): Schema specification or a function that builds it. See [Schema Reference Functions](#schema-reference-functions) for more information about using the `BuildOpenApiBlockFunction`.
-- options (optional): Additional options for schema generation.
+- options (optional): Additional options for schema generation. See [OasSchemaDecoratorOptions](#oasschemadecoratoroptions) for available options.
+
+#### OasSchemaDecoratorOptions
+
+The `OasSchemaDecoratorOptions` interface provides additional configuration options for the `@OasSchema` decorator:
+
+```ts
+interface OasSchemaDecoratorOptions {
+  customAttributes?: OpenApi3Dot1SchemaObject;
+  name?: string;
+}
+```
+
+Properties:
+
+- `customAttributes` (optional): Custom OpenAPI schema attributes to merge with the generated schema. This allows you to add or override specific schema properties.
+- `name` (optional): Custom name for the schema reference. If not provided, the class name will be used.
 
 #### Example: defining a schema class
 
@@ -330,5 +346,7 @@ When using decorators that accept a `BuildOpenApiBlockFunction`, you have access
   required: true,
 }))
 ```
+
+`MySchemaClass` should be properly decorated with `@OasSchema` and its properties with `@OasSchemaProperty` or `@OasSchemaOptionalProperty`.
 
 This approach provides type safety and automatic schema resolution for your OpenAPI documentation.
