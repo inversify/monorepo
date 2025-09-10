@@ -9,7 +9,6 @@
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-open-api": "workspace:*",
-    "@inversifyjs/json-schema-pointer": "workspace:*",
     "@inversifyjs/open-api-types": "workspace:*",
     "@types/express": "5.0.3",
     "@types/node": "22.18.1",
