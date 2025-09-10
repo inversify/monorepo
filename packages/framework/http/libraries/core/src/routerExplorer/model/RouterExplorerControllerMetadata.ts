@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { RouterExplorerControllerMethodMetadata } from './RouterExplorerControllerMethodMetadata';
 
 export interface RouterExplorerControllerMetadata<
@@ -6,14 +7,13 @@ export interface RouterExplorerControllerMetadata<
   TResponse = any,
   TResult = any,
 > {
-  controllerMethodMetadataList: RouterExplorerControllerMethodMetadata<
+  readonly controllerMethodMetadataList: RouterExplorerControllerMethodMetadata<
     TRequest,
     TResponse,
     TResult
   >[];
-  guardList: NewableFunction[];
-  path: string;
-  postHandlerMiddlewareList: NewableFunction[];
-  preHandlerMiddlewareList: NewableFunction[];
-  target: NewableFunction;
+  readonly path: string;
+  readonly postHandlerMiddlewareList: NewableFunction[];
+  readonly preHandlerMiddlewareList: NewableFunction[];
+  readonly target: NewableFunction;
 }

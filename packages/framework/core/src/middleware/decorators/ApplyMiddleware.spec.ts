@@ -38,14 +38,14 @@ describe(ApplyMiddleware, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call buildArrayMetadataWithArray', () => {
+      it('should call buildArrayMetadataWithArray()', () => {
         expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
           middlewareFixture,
         ]);
       });
 
-      it('should call updateOwnReflectMetadata', () => {
+      it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture,
@@ -59,7 +59,7 @@ describe(ApplyMiddleware, () => {
   });
 
   describe('having a MethodDecorator', () => {
-    describe('when called and getOwnReflectMetadata returns a Middleware list', () => {
+    describe('when called, and getOwnReflectMetadata() returns a Middleware list', () => {
       let controllerFixture: NewableFunction;
       let controllerMethodKeyFixture: string | symbol;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
@@ -87,14 +87,14 @@ describe(ApplyMiddleware, () => {
         );
       });
 
-      it('should call buildArrayMetadataWithArray', () => {
+      it('should call buildArrayMetadataWithArray()', () => {
         expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
           middlewareFixture,
         ]);
       });
 
-      it('should call updateOwnReflectMetadata', () => {
+      it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           controllerFixture.constructor,

@@ -9,7 +9,7 @@ import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { getControllerMethodMetadataList } from './getControllerMethodMetadataList';
 
 describe(getControllerMethodMetadataList, () => {
-  describe('when called and getOwnReflectMetadata returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     let controllerFixture: NewableFunction;
     let result: unknown;
 
@@ -23,7 +23,7 @@ describe(getControllerMethodMetadataList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         controllerFixture,
@@ -31,19 +31,21 @@ describe(getControllerMethodMetadataList, () => {
       );
     });
 
-    it('should return an empty array', () => {
+    it('should return ControllerMethodMetadata[]', () => {
       expect(result).toStrictEqual([]);
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns an array', () => {
+  describe('when called, and getOwnReflectMetadata() returns ControllerMethodMetadata[]', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodMetadataFixtures: ControllerMethodMetadata[];
     let result: unknown;
 
     beforeAll(() => {
       controllerFixture = class Test {};
-      controllerMethodMetadataFixtures = [];
+      controllerMethodMetadataFixtures = [
+        Symbol() as unknown as ControllerMethodMetadata,
+      ];
 
       vitest
         .mocked(getOwnReflectMetadata)
@@ -56,7 +58,7 @@ describe(getControllerMethodMetadataList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
     });
 

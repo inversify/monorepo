@@ -22,7 +22,7 @@ import { buildRouterExplorerControllerMetadataList } from './buildRouterExplorer
 import { getControllers } from './getControllers';
 
 describe(buildRouterExplorerControllerMetadataList, () => {
-  describe('when called and exploreControllers returns undefined', () => {
+  describe('when called, and exploreControllers returns undefined', () => {
     let containerMock: Mocked<Container>;
     let controllerMetadataListFixture: undefined;
     let result: unknown;
@@ -60,7 +60,7 @@ describe(buildRouterExplorerControllerMetadataList, () => {
     });
   });
 
-  describe('when called and exploreControllers returns a ControllerMetadata list', () => {
+  describe('when called, and exploreControllers returns a ControllerMetadata list', () => {
     let containerMock: Mocked<Container>;
     let controllerMetadataFixture: ControllerMetadata;
     let controllerMetadataListFixture: ControllerMetadata[];
@@ -78,7 +78,6 @@ describe(buildRouterExplorerControllerMetadataList, () => {
       controllerMetadataListFixture = [controllerMetadataFixture];
       routerExplorerControllerMetadataFixture = {
         controllerMethodMetadataList: [],
-        guardList: [],
         path: '',
         postHandlerMiddlewareList: [],
         preHandlerMiddlewareList: [],
@@ -102,26 +101,26 @@ describe(buildRouterExplorerControllerMetadataList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call exploreControllers', () => {
+    it('should call getControllers()', () => {
       expect(getControllers).toHaveBeenCalledTimes(1);
       expect(getControllers).toHaveBeenCalledWith();
     });
 
-    it('should call isBound', () => {
+    it('should call container.isBound()', () => {
       expect(containerMock.isBound).toHaveBeenCalledTimes(1);
       expect(containerMock.isBound).toHaveBeenCalledWith(
         controllerMetadataFixture.target,
       );
     });
 
-    it('should call buildRouterExplorerControllerMetadata', () => {
+    it('should call buildRouterExplorerControllerMetadata()', () => {
       expect(buildRouterExplorerControllerMetadata).toHaveBeenCalledTimes(1);
       expect(buildRouterExplorerControllerMetadata).toHaveBeenCalledWith(
         controllerMetadataFixture,
       );
     });
 
-    it('should return a RouterExplorerControllerMetadata list', () => {
+    it('should return RouterExplorerControllerMetadata[]', () => {
       expect(result).toStrictEqual([routerExplorerControllerMetadataFixture]);
     });
   });

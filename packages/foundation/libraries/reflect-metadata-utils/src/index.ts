@@ -9,6 +9,7 @@ import { getReflectMetadata } from './reflectMetadata/utils/getReflectMetadata';
 import { setReflectMetadata } from './reflectMetadata/utils/setReflectMetadata';
 import { updateOwnReflectMetadata } from './reflectMetadata/utils/updateOwnReflectMetadata';
 import { updateReflectMetadata } from './reflectMetadata/utils/updateReflectMetadata';
+import { updateSetMetadataWithList } from './reflectMetadata/utils/updateSetMetadataWithList';
 
 export {
   buildArrayMetadataWithArray,
@@ -22,4 +23,5 @@ export {
   setReflectMetadata,
   updateOwnReflectMetadata,
   updateReflectMetadata,
+  updateSetMetadataWithList,
 };

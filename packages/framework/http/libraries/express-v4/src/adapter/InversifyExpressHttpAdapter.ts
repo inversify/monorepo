@@ -63,8 +63,6 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
       NextFunction,
       void
     >[] = [
-      ...this.globalHandlers.guardList,
-      ...routerParams.guardList,
       ...this.globalHandlers.preHandlerMiddlewareList,
       ...routerParams.preHandlerMiddlewareList,
     ];
@@ -79,7 +77,7 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         Response,
         NextFunction,
         void
-      >[] = [...routeParams.guardList, ...routeParams.preHandlerMiddlewareList];
+      >[] = [...routeParams.preHandlerMiddlewareList, ...routeParams.guardList];
 
       const orderedPostHandlerMiddlewareList: MiddlewareHandler<
         Request,
@@ -87,9 +85,9 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         NextFunction,
         void
       >[] = [
-        ...this.globalHandlers.postHandlerMiddlewareList,
-        ...routerParams.postHandlerMiddlewareList,
         ...routeParams.postHandlerMiddlewareList,
+        ...routerParams.postHandlerMiddlewareList,
+        ...this.globalHandlers.postHandlerMiddlewareList,
       ];
 
       router[routeParams.requestMethodType](
@@ -175,8 +173,7 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     parameterName?: string,
   ): unknown {
     return parameterName !== undefined
-      ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        request.cookies[parameterName]
+      ? request.cookies[parameterName]
       : request.cookies;
   }
 

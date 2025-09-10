@@ -84,7 +84,7 @@ describe(CatchError, () => {
   });
 
   describe('having a CatchErrorOptions', () => {
-    describe('when called and scope is undefined', () => {
+    describe('when called, and scope is undefined', () => {
       let optionsFixture: CatchErrorOptions;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
@@ -135,7 +135,7 @@ describe(CatchError, () => {
       });
     });
 
-    describe('when called and scope is defined', () => {
+    describe('when called, and scope is defined', () => {
       let optionsFixture: CatchErrorOptions;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;

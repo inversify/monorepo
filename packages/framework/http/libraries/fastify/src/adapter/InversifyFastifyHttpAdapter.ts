@@ -147,8 +147,6 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
       void
     >[] = [
       ...this.globalHandlers.preHandlerMiddlewareList,
-      ...routerParams.guardList,
-      ...this.globalHandlers.preHandlerMiddlewareList,
       ...routerParams.preHandlerMiddlewareList,
     ];
 
@@ -158,8 +156,8 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
       (err?: Error) => void,
       void
     >[] = [
-      ...this.globalHandlers.postHandlerMiddlewareList,
       ...routerParams.postHandlerMiddlewareList,
+      ...this.globalHandlers.postHandlerMiddlewareList,
     ];
 
     const router: FastifyPluginCallback = (
@@ -187,8 +185,8 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           FastifyReply,
           (err?: Error) => void
         >[] = [
-          ...routeParams.guardList,
           ...routeParams.preHandlerMiddlewareList,
+          ...routeParams.guardList,
         ];
 
         const normalizedUrl: string =

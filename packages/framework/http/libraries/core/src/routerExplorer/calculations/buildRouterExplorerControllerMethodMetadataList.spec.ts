@@ -36,7 +36,7 @@ describe(buildRouterExplorerControllerMethodMetadataList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call buildRouterExplorerControllerMethodMetadata', () => {
+    it('should call buildRouterExplorerControllerMethodMetadata()', () => {
       expect(buildRouterExplorerControllerMethodMetadata).toHaveBeenCalledTimes(
         1,
       );
@@ -47,7 +47,7 @@ describe(buildRouterExplorerControllerMethodMetadataList, () => {
       );
     });
 
-    it('should return an array', () => {
+    it('should return RouterExplorerControllerMethodMetadata[]', () => {
       expect(result).toStrictEqual([
         routerExplorerControllerMethodMetadataFixture,
       ]);

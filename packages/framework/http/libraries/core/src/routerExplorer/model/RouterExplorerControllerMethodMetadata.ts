@@ -1,3 +1,6 @@
+import { ErrorFilter, Guard } from '@inversifyjs/framework-core';
+import { Newable } from 'inversify';
+
 import { RequestMethodType } from '../../http/models/RequestMethodType';
 import { HttpStatusCode } from '../../http/responses/HttpStatusCode';
 import { ControllerMethodParameterMetadata } from './ControllerMethodParameterMetadata';
@@ -7,17 +10,21 @@ export interface RouterExplorerControllerMethodMetadata<
   TResponse = unknown,
   TResult = unknown,
 > {
-  guardList: NewableFunction[];
-  headerMetadataList: [string, string][];
-  methodKey: string | symbol;
-  parameterMetadataList: (
+  readonly errorTypeToErrorFilterMap: Map<
+    Newable<Error> | null,
+    Newable<ErrorFilter>
+  >;
+  readonly guardList: Newable<Guard<TRequest>>[];
+  readonly headerMetadataList: [string, string][];
+  readonly methodKey: string | symbol;
+  readonly parameterMetadataList: (
     | ControllerMethodParameterMetadata<TRequest, TResponse, TResult>
     | undefined
   )[];
-  path: string;
-  postHandlerMiddlewareList: NewableFunction[];
-  preHandlerMiddlewareList: NewableFunction[];
-  requestMethodType: RequestMethodType;
-  statusCode: HttpStatusCode | undefined;
-  useNativeHandler: boolean;
+  readonly path: string;
+  readonly postHandlerMiddlewareList: NewableFunction[];
+  readonly preHandlerMiddlewareList: NewableFunction[];
+  readonly requestMethodType: RequestMethodType;
+  readonly statusCode: HttpStatusCode | undefined;
+  readonly useNativeHandler: boolean;
 }

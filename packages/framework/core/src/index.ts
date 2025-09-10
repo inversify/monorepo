@@ -1,6 +1,6 @@
-export { getCatchErrorMapMetadata } from './error-filter/calculations/getCatchErrorMapMetadata';
-export { getClassErrorFilterList } from './error-filter/calculations/getClassErrorFilterList';
-export { getClassMethodErrorFilterList } from './error-filter/calculations/getClassMethodErrorFilterList';
+export { getCatchErrorMetadata } from './error-filter/calculations/getCatchErrorMetadata';
+export { getClassErrorFilterMetadata } from './error-filter/calculations/getClassErrorFilterMetadata';
+export { getClassMethodErrorFilterMetadata } from './error-filter/calculations/getClassMethodErrorFilterMetadata';
 export { CatchError } from './error-filter/decorators/CatchError';
 export { UseErrorFilter } from './error-filter/decorators/UseErrorFilter';
 export { getClassGuardList } from './guard/calculations/getClassGuardList';

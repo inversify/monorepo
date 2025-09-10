@@ -7,6 +7,8 @@ export class NextHonoMiddleware
   implements Middleware<HonoRequest, Context, Next, void>
 {
   public async execute(_request: HonoRequest, context: Context): Promise<void> {
+    // DO NOT call next(), the adapter is already calling it
+
     // https://hono.dev/docs/guides/middleware#modify-the-response-after-next
 
     context.res = new Response(undefined, {

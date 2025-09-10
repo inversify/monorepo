@@ -35,7 +35,7 @@ describe(toSchema, () => {
     );
   });
 
-  describe('when called and getOwnReflectMetadata returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let typeFixture: Function;
     let escapedNameFixture: string;
@@ -91,7 +91,7 @@ describe(toSchema, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns metadata with undefined name', () => {
+  describe('when called, and getOwnReflectMetadata() returns metadata with undefined name', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let typeFixture: Function;
     let metadataWithUndefinedName: SchemaMetadata;
@@ -155,7 +155,7 @@ describe(toSchema, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns metadata with name', () => {
+  describe('when called, and getOwnReflectMetadata() returns metadata with name', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let typeFixture: Function;
     let metadataWithName: SchemaMetadata;
@@ -219,7 +219,7 @@ describe(toSchema, () => {
     });
   });
 
-  describe('when called and tryBuildSchemaFromWellKnownType returns a schema', () => {
+  describe('when called, and tryBuildSchemaFromWellKnownType returns a schema', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     let typeFixture: Function;
     let schemaFixture: unknown;

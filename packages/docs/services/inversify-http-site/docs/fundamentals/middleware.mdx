@@ -94,6 +94,12 @@ Each adapter exposes its own request/response types. Here is the same middleware
   </TabItem>
   <TabItem value="hono" label="Hono">
     <CodeBlock language="ts">{middlewareApiHonoSource}</CodeBlock>
+
+    :::danger[Implementing a post handler middleware in Hono]
+
+      If you are implementing a post handler middleware in Hono, the adapter already calls `next()` for you after the middleware execution. Do not call it again in your middleware implementation, or an Internal Server Error will occur.
+
+    :::
   </TabItem>
 </Tabs>
 

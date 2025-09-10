@@ -8,7 +8,7 @@ import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflec
 import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata';
 
 describe(getControllerMethodUseNativeHandlerMetadata, () => {
-  describe('when called and getOwnReflectMetadata returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodKeyFixture: string | symbol;
     let result: unknown;
@@ -27,7 +27,7 @@ describe(getControllerMethodUseNativeHandlerMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         controllerFixture,
@@ -41,7 +41,7 @@ describe(getControllerMethodUseNativeHandlerMetadata, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns a boolean', () => {
+  describe('when called, and getOwnReflectMetadata() returns a boolean', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodKeyFixture: string | symbol;
     let useNativeHandlerFixture: boolean;
@@ -66,7 +66,7 @@ describe(getControllerMethodUseNativeHandlerMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         controllerFixture,

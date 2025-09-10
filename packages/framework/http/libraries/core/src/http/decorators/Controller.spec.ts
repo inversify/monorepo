@@ -90,7 +90,7 @@ describe(Controller, () => {
   });
 
   describe('having a ControllerOptions', () => {
-    describe('when called and scope is undefined', () => {
+    describe('when called, and scope is undefined', () => {
       let optionsFixture: ControllerOptions;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;
@@ -148,7 +148,7 @@ describe(Controller, () => {
       });
     });
 
-    describe('when called and scope is defined', () => {
+    describe('when called, and scope is defined', () => {
       let optionsFixture: ControllerOptions;
       let targetFixture: NewableFunction;
       let classDecoratorMock: Mock<ClassDecorator>;

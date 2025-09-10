@@ -8,7 +8,7 @@ import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/c
 import { getClassMethodGuardList } from './getClassMethodGuardList';
 
 describe(getClassMethodGuardList, () => {
-  describe('when called and getOwnReflectMetadata returns undefined', () => {
+  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
     let classFixture: NewableFunction;
     let classMethodKeyFixture: string | symbol;
     let result: unknown;
@@ -24,7 +24,7 @@ describe(getClassMethodGuardList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,
@@ -38,7 +38,7 @@ describe(getClassMethodGuardList, () => {
     });
   });
 
-  describe('when called and getOwnReflectMetadata returns an array', () => {
+  describe('when called, and getOwnReflectMetadata() returns an array', () => {
     let classFixture: NewableFunction;
     let classMethodKeyFixture: string | symbol;
     let classMethodGuardFixtures: NewableFunction[];
@@ -60,7 +60,7 @@ describe(getClassMethodGuardList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata', () => {
+    it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(getOwnReflectMetadata).toHaveBeenCalledWith(
         classFixture,

@@ -1,7 +1,7 @@
 import {
-  buildArrayMetadataWithArray,
-  buildEmptyArrayMetadata,
+  buildEmptySetMetadata,
   updateOwnReflectMetadata,
+  updateSetMetadataWithList,
 } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
@@ -28,8 +28,8 @@ export function UseErrorFilter(
     updateOwnReflectMetadata(
       classTarget,
       metadataKey,
-      buildEmptyArrayMetadata,
-      buildArrayMetadataWithArray(interceptorList),
+      buildEmptySetMetadata,
+      updateSetMetadataWithList(interceptorList),
       key,
     );
   };

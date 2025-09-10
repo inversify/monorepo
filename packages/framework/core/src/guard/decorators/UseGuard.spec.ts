@@ -38,14 +38,14 @@ describe(UseGuard, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call buildArrayMetadataWithArray', () => {
+      it('should call buildArrayMetadataWithArray()', () => {
         expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
           middlewareFixture,
         ]);
       });
 
-      it('should call updateOwnReflectMetadata', () => {
+      it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture,
@@ -87,14 +87,14 @@ describe(UseGuard, () => {
         );
       });
 
-      it('should call buildArrayMetadataWithArray', () => {
+      it('should call buildArrayMetadataWithArray()', () => {
         expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
           middlewareFixture,
         ]);
       });
 
-      it('should call updateOwnReflectMetadata', () => {
+      it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           targetFixture.constructor,

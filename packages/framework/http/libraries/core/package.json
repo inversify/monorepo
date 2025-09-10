@@ -6,6 +6,7 @@
   "description": "InversifyJs http core package",
   "dependencies": {
     "@inversifyjs/framework-core": "workspace:*",
+    "@inversifyjs/prototype-utils": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "workspace:*",
     "@inversifyjs/logger": "workspace:*"
   },
