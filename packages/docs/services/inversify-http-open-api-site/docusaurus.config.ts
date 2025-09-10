@@ -60,7 +60,7 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
-  projectName: 'http',
+  projectName: 'http-openapi',
   tagline:
     'A powerful set of tools to create HTTP OpenAPI docs on top of InversifyJS',
   themeConfig: {
