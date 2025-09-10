@@ -4,7 +4,7 @@ import { JsonValue } from '@inversifyjs/json-schema-types';
 
 import { resolveJsonPointer } from './resolveJsonPointer';
 
-describe(resolveJsonPointer.name, () => {
+describe(resolveJsonPointer, () => {
   describe.each<[string, JsonValue, JsonValue | undefined]>([
     [
       '',

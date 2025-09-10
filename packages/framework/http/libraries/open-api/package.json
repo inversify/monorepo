@@ -9,10 +9,10 @@
     "@inversifyjs/json-schema-pointer": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "workspace:*",
     "mime-types": "^3.0.1",
-    "swagger-ui-dist": "^5.28.1"
+    "swagger-ui-dist": "^5.29.0"
   },
   "devDependencies": {
-    "@hono/node-server": "^1.19.1",
+    "@hono/node-server": "^1.19.2",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-express-v4": "workspace:*",
     "@inversifyjs/http-fastify": "workspace:*",
