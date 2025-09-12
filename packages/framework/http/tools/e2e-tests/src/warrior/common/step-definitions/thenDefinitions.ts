@@ -47,6 +47,13 @@ ${JSON.stringify(responseParameter.body)}`,
 }
 
 Then<InversifyHttpWorld>(
+  'the response status code is ACCEPTED',
+  async function (this: InversifyHttpWorld): Promise<void> {
+    await thenResponseStatusCodeIs.bind(this)(HttpStatusCode.ACCEPTED);
+  },
+);
+
+Then<InversifyHttpWorld>(
   'the response status code is FORBIDDEN',
   async function (this: InversifyHttpWorld): Promise<void> {
     await thenResponseStatusCodeIs.bind(this)(HttpStatusCode.FORBIDDEN);

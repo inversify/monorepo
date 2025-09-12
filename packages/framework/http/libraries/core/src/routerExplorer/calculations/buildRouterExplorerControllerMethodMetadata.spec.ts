@@ -12,9 +12,12 @@ import {
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
   ErrorFilter,
   getClassGuardList,
+  getClassInterceptorList,
   getClassMethodGuardList,
+  getClassMethodInterceptorList,
   getClassMethodMiddlewareList,
   Guard,
+  Interceptor,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
@@ -22,6 +25,7 @@ import { Newable } from 'inversify';
 import { RequestMethodType } from '../../http/models/RequestMethodType';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
+import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
 import { buildErrorTypeToErrorFilterMap } from './buildErrorTypeToErrorFilterMap';
 import { buildRouterExplorerControllerMethodMetadata } from './buildRouterExplorerControllerMethodMetadata';
 import { getControllerMethodHeaderMetadataList } from './getControllerMethodHeaderMetadataList';
@@ -40,7 +44,10 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     let controllerMethodStatusCodeMetadataFixture: undefined;
     let classGuardListFixture: Newable<Guard>[];
     let classMethodGuardListFixture: Newable<Guard>[];
-    let controllerMethodGuardListFixture: NewableFunction[];
+    let classInterceptorMetadataListFixture: Newable<Interceptor>[];
+    let classMethodInterceptorListFixture: Newable<Interceptor>[];
+    let controllerMethodGuardListFixture: Newable<Guard>[];
+    let controllerMethodInterceptorListFixture: Newable<Interceptor>[];
     let controllerMethodMiddlewareListFixture: NewableFunction[];
     let middlewareOptionsFixture: MiddlewareOptions;
     let headerMetadataListFixture: [string, string][];
@@ -66,6 +73,16 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         ...classGuardListFixture,
         ...classMethodGuardListFixture,
       ];
+      classInterceptorMetadataListFixture = [
+        Symbol() as unknown as Newable<Interceptor>,
+      ];
+      classMethodInterceptorListFixture = [
+        Symbol() as unknown as Newable<Interceptor>,
+      ];
+      controllerMethodInterceptorListFixture = [
+        ...classInterceptorMetadataListFixture,
+        ...classMethodInterceptorListFixture,
+      ];
       controllerMethodMiddlewareListFixture = [];
       middlewareOptionsFixture = {
         postHandlerMiddlewareList: [],
@@ -77,25 +94,35 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
 
       vitest
         .mocked(getControllerMethodParameterMetadataList)
-        .mockReturnValue(controllerMethodParameterMetadataListFixture);
+        .mockReturnValueOnce(controllerMethodParameterMetadataListFixture);
 
       vitest
         .mocked(getControllerMethodStatusCodeMetadata)
-        .mockReturnValue(controllerMethodStatusCodeMetadataFixture);
+        .mockReturnValueOnce(controllerMethodStatusCodeMetadataFixture);
 
-      vitest.mocked(getClassGuardList).mockReturnValue(classGuardListFixture);
+      vitest
+        .mocked(getClassGuardList)
+        .mockReturnValueOnce(classGuardListFixture);
 
       vitest
         .mocked(getClassMethodGuardList)
-        .mockReturnValue(classMethodGuardListFixture);
+        .mockReturnValueOnce(classMethodGuardListFixture);
+
+      vitest
+        .mocked(getClassInterceptorList)
+        .mockReturnValueOnce(classInterceptorMetadataListFixture);
+
+      vitest
+        .mocked(getClassMethodInterceptorList)
+        .mockReturnValueOnce(classMethodInterceptorListFixture);
 
       vitest
         .mocked(getClassMethodMiddlewareList)
-        .mockReturnValue(controllerMethodMiddlewareListFixture);
+        .mockReturnValueOnce(controllerMethodMiddlewareListFixture);
 
       vitest
         .mocked(buildMiddlewareOptionsFromApplyMiddlewareOptions)
-        .mockReturnValue(middlewareOptionsFixture);
+        .mockReturnValueOnce(middlewareOptionsFixture);
 
       vitest
         .mocked(getControllerMethodHeaderMetadataList)
@@ -103,11 +130,11 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
 
       vitest
         .mocked(getControllerMethodUseNativeHandlerMetadata)
-        .mockReturnValue(useNativeHandlerFixture);
+        .mockReturnValueOnce(useNativeHandlerFixture);
 
       vitest
         .mocked(buildErrorTypeToErrorFilterMap)
-        .mockReturnValue(errorTypeToErrorFilterMapFixture);
+        .mockReturnValueOnce(errorTypeToErrorFilterMapFixture);
 
       result = buildRouterExplorerControllerMethodMetadata(
         controllerFixture,
@@ -143,6 +170,19 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     it('should call getClassMethodGuardList()', () => {
       expect(getClassMethodGuardList).toHaveBeenCalledTimes(1);
       expect(getClassMethodGuardList).toHaveBeenCalledWith(
+        controllerFixture,
+        controllerMethodMetadataFixture.methodKey,
+      );
+    });
+
+    it('should call getClassInterceptorList()', () => {
+      expect(getClassInterceptorList).toHaveBeenCalledTimes(1);
+      expect(getClassInterceptorList).toHaveBeenCalledWith(controllerFixture);
+    });
+
+    it('should call getClassMethodInterceptorList()', () => {
+      expect(getClassMethodInterceptorList).toHaveBeenCalledTimes(1);
+      expect(getClassMethodInterceptorList).toHaveBeenCalledWith(
         controllerFixture,
         controllerMethodMetadataFixture.methodKey,
       );
@@ -192,10 +232,11 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     });
 
     it('should return RouterExplorerControllerMethodMetadata', () => {
-      expect(result).toStrictEqual({
+      const expected: RouterExplorerControllerMethodMetadata = {
         errorTypeToErrorFilterMap: errorTypeToErrorFilterMapFixture,
         guardList: controllerMethodGuardListFixture,
         headerMetadataList: headerMetadataListFixture,
+        interceptorList: controllerMethodInterceptorListFixture,
         methodKey: controllerMethodMetadataFixture.methodKey,
         parameterMetadataList: controllerMethodParameterMetadataListFixture,
         path: controllerMethodMetadataFixture.path,
@@ -206,7 +247,9 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         requestMethodType: controllerMethodMetadataFixture.requestMethodType,
         statusCode: controllerMethodStatusCodeMetadataFixture,
         useNativeHandler: useNativeHandlerFixture,
-      });
+      };
+
+      expect(result).toStrictEqual(expected);
     });
   });
 });

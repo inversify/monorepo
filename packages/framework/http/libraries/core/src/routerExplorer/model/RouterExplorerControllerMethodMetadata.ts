@@ -1,4 +1,4 @@
-import { ErrorFilter, Guard } from '@inversifyjs/framework-core';
+import { ErrorFilter, Guard, Interceptor } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
 
 import { RequestMethodType } from '../../http/models/RequestMethodType';
@@ -16,6 +16,7 @@ export interface RouterExplorerControllerMethodMetadata<
   >;
   readonly guardList: Newable<Guard<TRequest>>[];
   readonly headerMetadataList: [string, string][];
+  readonly interceptorList: Newable<Interceptor<TRequest>>[];
   readonly methodKey: string | symbol;
   readonly parameterMetadataList: (
     | ControllerMethodParameterMetadata<TRequest, TResponse, TResult>

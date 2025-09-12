@@ -5,6 +5,7 @@ import {
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
   ErrorFilter,
   Guard,
+  Interceptor,
   isPipe,
   Middleware,
   MiddlewareOptions,
@@ -22,7 +23,7 @@ import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/Co
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
 import { setErrorFilterToErrorFilterMap } from '../actions/setErrorFilterToErrorFilterMap';
-import { Controller } from '../models/Controller';
+import { buildInterceptedHandler } from '../calculations/buildInterceptedHandler';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
 import { MiddlewareHandler } from '../models/MiddlewareHandler';
@@ -50,6 +51,7 @@ export abstract class InversifyHttpAdapter<
 > {
   protected readonly httpAdapterOptions: RequiredOptions<TOptions>;
   protected readonly globalHandlers: {
+    interceptorList: Interceptor<TRequest, TResponse>[];
     preHandlerMiddlewareList: MiddlewareHandler<
       TRequest,
       TResponse,
@@ -96,6 +98,7 @@ export abstract class InversifyHttpAdapter<
     this.#logger = this.#buildLogger(this.httpAdapterOptions);
     this.#isBuilt = false;
     this.globalHandlers = {
+      interceptorList: [],
       postHandlerMiddlewareList: [],
       preHandlerMiddlewareList: [],
     };
@@ -140,6 +143,12 @@ export abstract class InversifyHttpAdapter<
     );
   }
 
+  public useGlobalFilters(...errorFilterList: Newable<ErrorFilter>[]): void {
+    for (const errorFilter of errorFilterList) {
+      this.#setGlobalErrorFilter(errorFilter);
+    }
+  }
+
   public applyGlobalGuards(...guardList: Newable<Guard<TRequest>>[]): void {
     if (this.#isBuilt) {
       throw new InversifyHttpAdapterError(
@@ -151,9 +160,18 @@ export abstract class InversifyHttpAdapter<
     this.#globalGuardList.push(...guardList);
   }
 
-  public useGlobalFilters(...errorFilterList: Newable<ErrorFilter>[]): void {
-    for (const errorFilter of errorFilterList) {
-      this.#setGlobalErrorFilter(errorFilter);
+  public useGlobalInterceptors(
+    ...interceptorList: Newable<Interceptor<TRequest, TResponse>>[]
+  ): void {
+    if (this.#isBuilt) {
+      throw new InversifyHttpAdapterError(
+        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
+        'Cannot apply global interceptor after the server has been built',
+      );
+    }
+
+    for (const interceptor of interceptorList) {
+      this.#setGlobalInterceptor(interceptor);
     }
   }
 
@@ -212,7 +230,7 @@ export abstract class InversifyHttpAdapter<
         preHandlerMiddlewareList: this.#getMiddlewareHandlerFromMetadata(
           routerExplorerControllerMetadata.preHandlerMiddlewareList,
         ),
-        routeParamsList: this.#buildHandlers(
+        routeParamsList: this.#builRouteParamdHandlerList(
           routerExplorerControllerMetadata.target,
           routerExplorerControllerMetadata.controllerMethodMetadataList,
         ),
@@ -228,7 +246,7 @@ export abstract class InversifyHttpAdapter<
     }
   }
 
-  #buildHandlers(
+  #builRouteParamdHandlerList(
     target: NewableFunction,
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
       TRequest,
@@ -316,36 +334,15 @@ export abstract class InversifyHttpAdapter<
       routerExplorerControllerMethodMetadata,
     );
 
-    return async (
-      req: TRequest,
-      res: TResponse,
-      next: TNextFunction,
-    ): Promise<TResult> => {
-      try {
-        const controller: Controller =
-          await this.#container.getAsync(targetClass);
-
-        const handlerParams: unknown[] = await buildHandlerParams(
-          req,
-          res,
-          next,
-        );
-
-        this.#setHeaders(
-          req,
-          res,
-          routerExplorerControllerMethodMetadata.headerMetadataList,
-        );
-
-        const value: ControllerResponse = await controller[
-          routerExplorerControllerMethodMetadata.methodKey
-        ]?.(...handlerParams);
-
-        return reply(req, res, value);
-      } catch (error: unknown) {
-        return handleError(req, res, error);
-      }
-    };
+    return buildInterceptedHandler(
+      targetClass,
+      routerExplorerControllerMethodMetadata,
+      this.#container,
+      buildHandlerParams,
+      handleError,
+      reply,
+      this.#setHeaders.bind(this),
+    );
   }
 
   #buildHandlerParams(
@@ -753,6 +750,14 @@ export abstract class InversifyHttpAdapter<
     setErrorFilterToErrorFilterMap(
       this.#errorTypeToGlobalErrorFilterMap,
       errorFilter,
+    );
+  }
+
+  #setGlobalInterceptor(
+    interceptor: Newable<Interceptor<TRequest, TResponse>>,
+  ): void {
+    this.globalHandlers.interceptorList.push(
+      this.#container.get<Interceptor<TRequest, TResponse>>(interceptor),
     );
   }
 
