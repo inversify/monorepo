@@ -6,7 +6,8 @@
   "description": "InversifyJs http zod validation package",
   "dependencies": {
     "@inversifyjs/framework-core": "workspace:*",
-    "@inversifyjs/reflect-metadata-utils": "workspace:*"
+    "@inversifyjs/reflect-metadata-utils": "workspace:*",
+    "@inversifyjs/validation-common": "workspace:*"
   },
   "devDependencies": {
     "@inversifyjs/http-core": "workspace:*",
@@ -52,8 +53,8 @@
   },
   "name": "@inversifyjs/zod-validation",
   "peerDependencies": {
-    "inversify": "^7.6.1",
-    "zod": "^4.0.17"
+    "inversify": "^7.9.1",
+    "zod": "^4.1.8"
   },
   "private": true,
   "repository": {
