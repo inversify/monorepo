@@ -32,6 +32,9 @@ coverage:
       '@inversifyjs/reflect-metadata-utils':
         flags:
           - '@inversifyjs/reflect-metadata-utils'
+      '@inversifyjs/zod-validation':
+        flags:
+          - '@inversifyjs/zod-validation'
 flags:
   '@inversifyjs/binding-decorators':
     paths:
@@ -66,3 +69,6 @@ flags:
   '@inversifyjs/reflect-metadata-utils':
     paths:
       - packages/foundation/libraries/reflect-metadata-utils
+  '@inversifyjs/zod-validation':
+    paths:
+      - packages/framework/validation/libraries/zod
