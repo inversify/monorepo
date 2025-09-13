@@ -7,6 +7,7 @@ import {
   Middleware,
   MiddlewarePhase,
   Pipe,
+  PipeMetadata,
   UseErrorFilter,
   UseGuard,
 } from '@inversifyjs/framework-core';
@@ -87,6 +88,7 @@ export type {
   Middleware,
   MiddlewareHandler,
   Pipe,
+  PipeMetadata,
   RequestHandler,
   RequiredOptions,
   RouteParams,
