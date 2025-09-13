@@ -12,7 +12,11 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { ZodType } from 'zod';
+import {
+  InversifyValidationError,
+  InversifyValidationErrorKind,
+} from '@inversifyjs/validation-common';
+import { ZodError, ZodType } from 'zod';
 
 import { zodValidationMetadataReflectKey } from '../reflectMetadata/data/zodValidationMetadataReflectKey';
 import { ZodValidationPipe } from './ZodValidationPipe';
@@ -90,6 +94,86 @@ describe(ZodValidationPipe, () => {
 
       it('should return expected value', () => {
         expect(result).toBe(inputFixture);
+      });
+    });
+
+    describe('when called, and zodType.safeParse() returns ZodSafeParseResult with success false', () => {
+      let typeMock: Mocked<ZodType>;
+      let zodValidationPipe: ZodValidationPipe;
+
+      let inputFixture: unknown;
+      let metadataFixture: PipeMetadata;
+      let zodErrorFixture: ZodError;
+
+      let parameterTypeMock: Mocked<ZodType>;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        typeMock = {
+          safeParse: vitest.fn(),
+        } as Partial<Mocked<ZodType>> as Mocked<ZodType>;
+
+        zodValidationPipe = new ZodValidationPipe([typeMock]);
+
+        inputFixture = Symbol();
+        metadataFixture = {
+          methodName: 'methodName',
+          parameterIndex: 0,
+          targetClass: class {},
+        };
+
+        zodErrorFixture = {
+          message: 'Validation failed',
+        } as ZodError;
+
+        parameterTypeMock = {
+          safeParse: vitest.fn(),
+        } as Partial<Mocked<ZodType>> as Mocked<ZodType>;
+
+        vitest
+          .mocked(getOwnReflectMetadata)
+          .mockReturnValueOnce([[parameterTypeMock]]);
+
+        typeMock.safeParse.mockReturnValueOnce({
+          error: zodErrorFixture,
+          success: false,
+        });
+
+        try {
+          zodValidationPipe.execute(inputFixture, metadataFixture);
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call getOwnReflectMetadata()', () => {
+        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
+        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+          metadataFixture.targetClass,
+          zodValidationMetadataReflectKey,
+          metadataFixture.methodName,
+        );
+      });
+
+      it('should call type.safeParse()', () => {
+        expect(typeMock.safeParse).toHaveBeenCalledTimes(1);
+        expect(typeMock.safeParse).toHaveBeenCalledWith(inputFixture);
+      });
+
+      it('should throw InversifyValidationError', () => {
+        expect(result).toBeInstanceOf(InversifyValidationError);
+        expect(result).toStrictEqual(
+          expect.objectContaining<Partial<InversifyValidationError>>({
+            cause: zodErrorFixture,
+            kind: InversifyValidationErrorKind.validationFailed,
+            message: zodErrorFixture.message,
+          }),
+        );
       });
     });
   });

@@ -3,9 +3,15 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import http, { RequestListener } from 'node:http';
 import { AddressInfo } from 'node:net';
 
-import { Pipe } from '@inversifyjs/framework-core';
-import { Body, Controller, Post } from '@inversifyjs/http-core';
+import { CatchError, ErrorFilter, Pipe } from '@inversifyjs/framework-core';
+import {
+  BadRequestHttpResponse,
+  Body,
+  Controller,
+  Post,
+} from '@inversifyjs/http-core';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
+import { InversifyValidationError } from '@inversifyjs/validation-common';
 import express from 'express';
 import { Container, Newable } from 'inversify';
 import zod from 'zod';
@@ -21,6 +27,7 @@ export interface Server {
 
 export async function buildExpressServer(
   container: Container,
+  errorFilterList: Newable<ErrorFilter>[],
   pipeList: (Newable<Pipe> | Pipe)[],
 ): Promise<Server> {
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
@@ -31,6 +38,7 @@ export async function buildExpressServer(
     },
   );
 
+  adapter.useGlobalFilters(...errorFilterList);
   adapter.useGlobalPipe(...pipeList);
 
   const application: express.Application = await adapter.build();
@@ -75,6 +83,15 @@ export async function buildExpressServer(
   );
 }
 
+@CatchError(InversifyValidationError)
+class ValidationErrorFilter implements ErrorFilter<InversifyValidationError> {
+  public catch(error: InversifyValidationError): never {
+    throw new BadRequestHttpResponse(error.message, undefined, {
+      cause: error,
+    });
+  }
+}
+
 describe(ZodValidationPipe, () => {
   describe('having a ZodValidationPipe in an HTTP server with validated endpoints', () => {
     interface Message {
@@ -100,9 +117,14 @@ describe(ZodValidationPipe, () => {
     beforeAll(async () => {
       const container: Container = new Container();
 
+      container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
       container.bind(MessageController).toSelf().inSingletonScope();
 
-      server = await buildExpressServer(container, [new ZodValidationPipe()]);
+      server = await buildExpressServer(
+        container,
+        [ValidationErrorFilter],
+        [new ZodValidationPipe()],
+      );
     });
 
     afterAll(async () => {

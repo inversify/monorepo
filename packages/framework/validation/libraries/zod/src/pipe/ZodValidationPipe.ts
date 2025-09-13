@@ -1,6 +1,9 @@
 import { Pipe, PipeMetadata } from '@inversifyjs/framework-core';
-import { BadRequestHttpResponse } from '@inversifyjs/http-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import {
+  InversifyValidationError,
+  InversifyValidationErrorKind,
+} from '@inversifyjs/validation-common';
 import { ZodSafeParseResult, ZodType } from 'zod';
 
 import { zodValidationMetadataReflectKey } from '../reflectMetadata/data/zodValidationMetadataReflectKey';
@@ -34,9 +37,9 @@ export class ZodValidationPipe implements Pipe {
         zodType.safeParse(result);
 
       if (!parsedResult.success) {
-        throw new BadRequestHttpResponse(
+        throw new InversifyValidationError(
+          InversifyValidationErrorKind.validationFailed,
           parsedResult.error.message,
-          undefined,
           {
             cause: parsedResult.error,
           },
