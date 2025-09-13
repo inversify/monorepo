@@ -88,7 +88,6 @@ export default {
     },
     "packages/framework/*": defaultWorkspaceProjectConfig,
     "packages/framework/http/libraries/*": defaultWorkspaceProjectConfig,
-    "packages/framework/libraries/validation/*": defaultWorkspaceProjectConfig,
     "packages/framework/http/tools/e2e-tests": {
       entry: [
         "config/*.mjs",
@@ -114,6 +113,7 @@ export default {
       ],
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/framework/validation/libraries/*": defaultWorkspaceProjectConfig,
     "packages/json-schema/libraries/*": defaultWorkspaceProjectConfig,
     "packages/logger": defaultWorkspaceProjectConfig,
     "packages/open-api/libraries/*": defaultWorkspaceProjectConfig,
