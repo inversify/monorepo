@@ -17,7 +17,7 @@ describe(incrementPendingClassMetadataCount, () => {
     typeFixture = class {};
   });
 
-  describe('with non undefined metadata', () => {
+  describe('having non undefined metadata', () => {
     let metadataFixture: MaybeClassElementMetadata;
 
     beforeAll(() => {
@@ -38,7 +38,7 @@ describe(incrementPendingClassMetadataCount, () => {
         vitest.clearAllMocks();
       });
 
-      it('should not call updateOwnReflectMetadata', () => {
+      it('should not call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).not.toHaveBeenCalled();
       });
 
@@ -48,7 +48,7 @@ describe(incrementPendingClassMetadataCount, () => {
     });
   });
 
-  describe('with undefined metadata', () => {
+  describe('having undefined metadata', () => {
     let metadataFixture: undefined;
 
     beforeAll(() => {
@@ -67,7 +67,7 @@ describe(incrementPendingClassMetadataCount, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call updateOwnReflectMetadata', () => {
+      it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
         expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
           typeFixture,

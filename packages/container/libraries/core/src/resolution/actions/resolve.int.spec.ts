@@ -78,7 +78,7 @@ describe(resolve, () => {
   let factoryBinding: FactoryBinding<Factory<unknown>>;
   let instanceBinding: InstanceBinding<unknown>;
   let priestInstanceBinding: InstanceBinding<Priest>;
-  let providerBinding: ProviderBinding<Provider<unknown>>;
+  let providerBinding: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
   let resolvedValueBinding: ResolvedValueBinding<unknown>;
   let serviceRedirectionBinding: ServiceRedirectionBinding<unknown>;
   let serviceRedirectionToNonExistentBinding: ServiceRedirectionBinding<unknown>;
@@ -191,7 +191,7 @@ describe(resolve, () => {
       type: bindingTypeValues.Instance,
     };
 
-    const provider: Provider<unknown> = async () => Symbol();
+    const provider: Provider<unknown> = async () => Symbol(); // eslint-disable-line @typescript-eslint/no-deprecated
 
     providerBinding = {
       cache: {

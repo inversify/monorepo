@@ -268,11 +268,17 @@ export class BindToFluentSyntaxImplementation<T>
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  /**
+   * @deprecated Use `toFactory()` instead. Providers will be removed in v8.
+   * Providers exist for historical reasons from v5 when async dependencies weren't supported.
+   * Factories are more flexible and can handle both sync and async operations.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-deprecated
   public toProvider<T extends Provider<unknown, any>>(
     this: BindToFluentSyntaxImplementation<T>,
     provider: (context: ResolutionContext) => T,
   ): BindWhenOnFluentSyntax<T> {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const binding: ProviderBinding<Provider<unknown>> = {
       cache: {
         isRight: false,

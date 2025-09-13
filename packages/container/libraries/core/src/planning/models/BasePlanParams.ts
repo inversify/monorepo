@@ -1,10 +1,10 @@
 import { ServiceIdentifier } from '@inversifyjs/common';
 
-import { BasePlanParamsAutobindOptions } from './BasePlanParamsAutobindOptions';
+import { AutobindOptions } from '../../binding/models/AutobindOptions';
 import { PlanParamsOperations } from './PlanParamsOperations';
 
 export interface BasePlanParams {
-  autobindOptions: BasePlanParamsAutobindOptions | undefined;
+  autobindOptions: AutobindOptions | undefined;
   operations: PlanParamsOperations;
   servicesBranch: ServiceIdentifier[];
 }

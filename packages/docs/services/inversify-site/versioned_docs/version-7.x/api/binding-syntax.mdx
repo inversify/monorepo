@@ -120,6 +120,14 @@ Binds a factory to the given service identifier. Whenever the service is resolve
 
 ### toProvider
 
+:::warning Deprecated
+
+`toProvider()` is deprecated and will be removed in v8. Use `toFactory()` instead.
+
+Providers exist for historical reasons from v5 when async dependencies weren't supported. In v6+, async dependencies are supported, making providers obsolete. Factories are more flexible and can handle both synchronous and asynchronous operations.
+
+:::
+
 ```ts
 toProvider(
   provider: T extends Provider<unknown, any>

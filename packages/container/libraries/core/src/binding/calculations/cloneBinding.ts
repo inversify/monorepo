@@ -35,7 +35,7 @@ export function cloneBinding<TActivated>(
       return cloneInstanceBinding(binding);
     case bindingTypeValues.Provider:
       return cloneProviderBinding(
-        binding as ProviderBinding<TActivated & Provider<unknown>>,
+        binding as ProviderBinding<TActivated & Provider<unknown>>, // eslint-disable-line @typescript-eslint/no-deprecated
       ) as Binding<TActivated>;
     case bindingTypeValues.ResolvedValue:
       return cloneResolvedValueBinding(binding);

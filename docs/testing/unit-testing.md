@@ -160,7 +160,7 @@ describe(Foo, () => {
 
 ### 4. The code flow scope
 
-Every code flow should be covered in a describe block. If, given an input, only one flow is allowed, then the describe name associated should be `when called`. If not, it should be `when called and [behavior]` where behavior is the dependencies behavior that leds to that code flow.
+Every code flow should be covered in a describe block. If, given an input, only one flow is allowed, then the describe name associated should be `when called`. If not, it should be `when called, and [behavior]` where behavior is the dependencies behavior that leds to that code flow.
 
 **Important note**: Sometimes several flows shares a common branch. Every flow must be tested but it's allowed to add describe blocks to test that common branch
 

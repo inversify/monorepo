@@ -32,6 +32,7 @@ export default {
   ignoreWorkspaces: [
     "packages/docs/services/inversify-binding-decorators-site",
     "packages/docs/services/inversify-http-site",
+    "packages/docs/services/inversify-http-open-api-site",
     "packages/docs/services/inversify-site",
   ],
   workspaces: {
@@ -73,6 +74,11 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/docs/tools/inversify-http-open-api-code-examples": {
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/foundation/libraries/*": defaultWorkspaceProjectConfig,
     "packages/foundation/tools/*": defaultWorkspaceProjectConfig,
     "packages/foundation/tools/prettier-config": {
@@ -80,10 +86,10 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
-    "packages/framework/libraries/*": defaultWorkspaceProjectConfig,
+    "packages/framework/*": defaultWorkspaceProjectConfig,
+    "packages/framework/http/libraries/*": defaultWorkspaceProjectConfig,
     "packages/framework/libraries/validation/*": defaultWorkspaceProjectConfig,
-    "packages/http/libraries/*": defaultWorkspaceProjectConfig,
-    "packages/http/tools/e2e-tests": {
+    "packages/framework/http/tools/e2e-tests": {
       entry: [
         "config/*.mjs",
         "src/*/parameters/*.ts",
@@ -96,7 +102,7 @@ export default {
       ],
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
-    "packages/http/tools/http-benchmarks": {
+    "packages/framework/http/tools/http-benchmarks": {
       entry: [
         "src/bin/run.ts",
         "src/k6/scenario/*.ts",

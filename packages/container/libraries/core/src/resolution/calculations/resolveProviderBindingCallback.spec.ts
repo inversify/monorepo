@@ -10,7 +10,7 @@ import { resolveProviderBindingCallback } from './resolveProviderBindingCallback
 describe(resolveProviderBindingCallback, () => {
   let resolutionParamsFixture: ResolutionParams;
 
-  let providerBindingMock: Mocked<ProviderBinding<Provider<unknown>>>;
+  let providerBindingMock: Mocked<ProviderBinding<Provider<unknown>>>; // eslint-disable-line @typescript-eslint/no-deprecated
 
   beforeAll(() => {
     resolutionParamsFixture = {
@@ -35,7 +35,7 @@ describe(resolveProviderBindingCallback, () => {
   });
 
   describe('when called', () => {
-    let providerFixture: Provider<unknown>;
+    let providerFixture: Provider<unknown>; // eslint-disable-line @typescript-eslint/no-deprecated
 
     let result: unknown;
 

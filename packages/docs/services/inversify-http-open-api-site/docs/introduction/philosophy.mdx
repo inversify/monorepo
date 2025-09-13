@@ -1,0 +1,185 @@
+---
+sidebar_position: 2
+title: Philosophy
+---
+
+# Design Philosophy
+
+The InversifyJS OpenAPI HTTP library is built on several core principles that prioritize OpenAPI 3.1 specification compliance, class-based API contracts, and developer experience. This document outlines the design decisions and philosophies that guide the development of this library.
+
+## Core Principles
+
+### 1. OpenAPI 3.1 First Design
+
+**OpenAPI 3.1 is great, and our library must reflect that excellence.**
+
+The library is designed with OpenAPI 3.1 specification as the primary consideration. Rather than creating our own abstraction layer, we strive to provide contracts that are as close as possible to the OpenAPI 3.1 specification itself.
+
+#### Key Design Decisions:
+
+- **Direct Spec Mapping**: All decorators and types directly correspond to OpenAPI 3.1 specification elements
+- **JSON Schema Integration**: Full support for JSON Schema 2020-12, which is the foundation of OpenAPI 3.1
+- **No Abstraction Overhead**: Minimal layers between developer code and the final OpenAPI specification
+- **Future-Proof**: Built to leverage OpenAPI 3.1 features like improved JSON Schema support and webhooks
+
+```typescript
+// Direct mapping to OpenAPI 3.1 specification
+@OasResponse(HttpStatusCode.Ok, {
+  description: 'Successful response',
+  content: {
+    'application/json': {
+      schema: { type: 'object', properties: { id: { type: 'string' } } }
+    }
+  }
+})
+```
+
+### 2. Class-Based API Contracts
+
+**Classes are a great way to represent API contracts.**
+
+We believe that TypeScript classes provide an excellent foundation for documenting and structuring APIs. Classes offer:
+
+- **Type Safety**: Compile-time checking and IntelliSense support
+- **Discoverability**: Clear structure that developers can explore
+- **Reusability**: Schema definitions that can be shared across multiple endpoints
+- **Validation**: Integration with runtime validation systems
+
+#### Design Implementation:
+
+```typescript
+@OasSchema()
+export class CreateUserRequest {
+  @OasSchemaProperty({ type: 'string', minLength: 1 })
+  name!: string;
+
+  @OasSchemaProperty({ type: 'string', format: 'email' })
+  email!: string;
+
+  @OasSchemaOptionalProperty({ type: 'number', minimum: 18 })
+  age?: number;
+}
+```
+
+### 3. Decorator-Driven Documentation
+
+**Metadata should live close to the code it describes.**
+
+Following the principle of locality, OpenAPI metadata is attached directly to the classes and methods it documents through TypeScript decorators. This approach:
+
+- **Reduces Drift**: Documentation stays synchronized with code changes
+- **Improves Maintainability**: Changes to endpoints automatically update documentation
+- **Enhances Developer Experience**: Documentation is written where the code is written
+
+### 4. Flexible Schema Building
+
+**Support both static and dynamic schema generation.**
+
+The library supports two approaches to schema definition:
+
+#### Static Schema Definition:
+```typescript
+@OasRequestBody({
+  content: {
+    'application/json': {
+      schema: { type: 'object', properties: { name: { type: 'string' } } }
+    }
+  }
+})
+```
+
+#### Dynamic Schema Building:
+```typescript
+@OasRequestBody((toSchema) => ({
+  content: {
+    'application/json': {
+      schema: toSchema(CreateUserRequest)
+    }
+  },
+  required: true
+}))
+```
+
+This flexibility allows developers to choose the approach that best fits their use case while maintaining type safety and schema reusability.
+
+## Architectural Decisions
+
+### Metadata Storage Strategy
+
+The library uses TypeScript's reflect-metadata system to store OpenAPI metadata directly on classes and methods. This approach provides:
+
+- **Performance**: Metadata access is fast and doesn't require external registries
+- **Isolation**: Each class/method manages its own metadata independently
+- **Flexibility**: Metadata can be built incrementally through multiple decorators
+
+### Schema Reference Resolution
+
+Class-based schemas are automatically resolved into OpenAPI references (`$ref`), promoting:
+
+- **Reusability**: Schemas defined once can be referenced multiple times
+- **Specification Size**: Reduced duplication in the final OpenAPI document
+- **Standards Compliance**: Follows OpenAPI best practices for component reuse
+
+### Well-Known Type Support
+
+The library automatically handles common JavaScript types. This reduces boilerplate while maintaining specification accuracy.
+
+## Framework Integration Philosophy
+
+### Universal Compatibility
+
+The library is designed to work with multiple HTTP frameworks (Express, Fastify, Hono) through:
+
+- **Framework-Agnostic Core**: Core functionality doesn't depend on specific HTTP frameworks
+- **Adapter Pattern**: Framework-specific implementations handle integration details
+- **Swagger UI Providers**: Dedicated providers for each supported framework
+
+### InversifyJS Integration
+
+As part of the InversifyJS ecosystem, the library follows dependency injection principles:
+
+- **Container-Based Setup**: OpenAPI documentation is configured through the IoC container
+- **Metadata Discovery**: Automatic discovery of controllers and their OpenAPI metadata
+- **Lifecycle Management**: Proper initialization and cleanup through container lifecycle
+
+## Inspiration and Acknowledgments
+
+### NestJS OpenAPI Module
+
+We acknowledge the excellent work done by the [NestJS OpenAPI module](https://docs.nestjs.com/openapi/introduction) team, which served as inspiration for many design decisions in this library. Key inspirations include:
+
+- **Decorator-Based Approach**: Using decorators for attaching OpenAPI metadata
+- **Class-Based Schemas**: Treating classes as first-class schema definitions
+- **Automatic Documentation Generation**: Building OpenAPI specifications from code metadata
+- **Framework Integration**: Seamless integration with HTTP frameworks
+
+However, our library differentiates itself by:
+
+- **InversifyJS Integration**: Deep integration with the InversifyJS dependency injection ecosystem
+- **Specification Fidelity**: Direct mapping to OpenAPI specification without abstraction layers
+
+## Developer Experience Goals
+
+### Minimal Learning Curve
+
+- **Familiar Patterns**: Developers familiar with decorators will feel at home
+- **TypeScript First**: Full type safety and IntelliSense support
+- **Clear Documentation**: Comprehensive examples and API documentation
+
+### Powerful Flexibility
+
+- **Progressive Enhancement**: Start simple, add complexity as needed
+- **Escape Hatches**: Direct access to OpenAPI specification when needed
+- **Customization Points**: Extensible design for custom requirements
+
+### Tooling Integration
+
+- **IDE Support**: Full TypeScript integration for autocompletion and error checking
+- **Build-Time Validation**: Catch specification errors during development
+- **Runtime Flexibility**: Dynamic schema building for complex scenarios
+
+## Conclusion
+
+The InversifyJS OpenAPI HTTP library represents a thoughtful balance between specification compliance, developer experience, and architectural flexibility. By prioritizing OpenAPI 3.1 as a first-class citizen and embracing class-based API contracts, we provide developers with powerful tools for building well-documented APIs while maintaining the flexibility to handle complex real-world scenarios.
+
+Our design philosophy ensures that the library grows with the OpenAPI specification while providing a stable, type-safe foundation for modern API development in the TypeScript ecosystem.

@@ -11,6 +11,8 @@
 # Test mutation report
 /reports
 
+/stryker-tmp
+
 # node modules
 /node_modules/
 
