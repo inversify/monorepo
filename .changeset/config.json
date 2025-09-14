@@ -17,12 +17,11 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
+    "@inversifyjs/framework-core",
     "@inversifyjs/http-benchmarks",
     "@inversifyjs/http-code-examples",
     "@inversifyjs/http-open-api-code-examples",
     "@inversifyjs/http-core",
-    "@inversifyjs/inversify-http-docs-site",
-    "@inversifyjs/inversify-http-open-api-docs-site",
     "@inversifyjs/http-e2e-tests",
     "@inversifyjs/http-express",
     "@inversifyjs/http-express-v4",
@@ -30,6 +29,8 @@
     "@inversifyjs/http-hono",
     "@inversifyjs/http-open-api",
     "@inversifyjs/http-openapi-example",
+    "@inversifyjs/inversify-http-docs-site",
+    "@inversifyjs/inversify-http-open-api-docs-site",
     "@inversifyjs/logger",
     "@inversifyjs/zod-validation"
   ]
