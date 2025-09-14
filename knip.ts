@@ -113,6 +113,7 @@ export default {
       ],
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/framework/validation/libraries/*": defaultWorkspaceProjectConfig,
     "packages/json-schema/libraries/*": defaultWorkspaceProjectConfig,
     "packages/logger": defaultWorkspaceProjectConfig,
     "packages/open-api/libraries/*": defaultWorkspaceProjectConfig,

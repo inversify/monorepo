@@ -9,9 +9,12 @@ packages:
   - packages/framework/*
   - packages/framework/http/libraries/*
   - packages/framework/http/tools/*
+  - packages/framework/validation/libraries/*
   - packages/json-schema/libraries/*
   - packages/logger
   - packages/open-api/libraries/*
+
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@swc/core'
+  - oxc-resolver

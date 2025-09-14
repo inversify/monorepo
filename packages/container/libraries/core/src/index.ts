@@ -49,7 +49,9 @@ import { ClassElementMetadataKind } from './metadata/models/ClassElementMetadata
 import { ClassMetadata } from './metadata/models/ClassMetadata';
 import { ClassMetadataLifecycle } from './metadata/models/ClassMetadataLifecycle';
 import { InjectFromBaseOptions } from './metadata/models/InjectFromBaseOptions';
+import { InjectFromBaseOptionsLifecycle } from './metadata/models/InjectFromBaseOptionsLifecycle';
 import { InjectFromHierarchyOptions } from './metadata/models/InjectFromHierarchyOptions';
+import { InjectFromHierarchyOptionsLifecycle } from './metadata/models/InjectFromHierarchyOptionsLifecycle';
 import { InjectFromOptions } from './metadata/models/InjectFromOptions';
 import { ManagedClassElementMetadata } from './metadata/models/ManagedClassElementMetadata';
 import { MetadataName } from './metadata/models/MetadataName';
@@ -136,14 +138,16 @@ export type {
   GetPlanOptions,
   GetPlanOptionsTagConstraint,
   GetSingleServicePlanOptions,
+  InjectFromBaseOptions,
+  InjectFromBaseOptionsLifecycle,
+  InjectFromHierarchyOptions,
+  InjectFromHierarchyOptionsLifecycle,
   InstanceBinding,
   InstanceBindingNode,
   LeafBindingNode,
   ManagedClassElementMetadata,
   MetadataName,
   MetadataTag,
-  InjectFromBaseOptions,
-  InjectFromHierarchyOptions,
   InjectFromOptions,
   MultiInjectOptions,
   MultipleInjectionManagedClassElementMetadata,

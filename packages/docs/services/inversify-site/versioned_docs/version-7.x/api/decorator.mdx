@@ -127,6 +127,9 @@ The `injectFromBase` decorator accepts an optional `InjectFromBaseOptions` objec
 
 - `extendConstructorArguments` (boolean, defaults to true): If true, constructor arguments from the base class will be injected.
 - `extendProperties` (boolean, defaults to true): If true, properties from the base class will be injected.
+- `lifecycle` (object, optional): Lifecycle options for extending lifecycle methods from the base class:
+  - `extendPostConstructMethods` (boolean, defaults to true): If true, post-construct methods from the base class will be extended.
+  - `extendPreDestroyMethods` (boolean, defaults to true): If true, pre-destroy methods from the base class will be extended.
 
 ### Example: decorating base class constructor arguments
 
@@ -146,6 +149,9 @@ The `injectFromHierarchy` decorator accepts an optional `InjectFromHierarchyOpti
 
 - `extendConstructorArguments` (boolean, defaults to true): If true, constructor arguments from all ancestors will be injected.
 - `extendProperties` (boolean, defaults to true): If true, properties from all ancestors will be injected.
+- `lifecycle` (object, optional): Lifecycle options for extending lifecycle methods from the hierarchy:
+  - `extendPostConstructMethods` (boolean, defaults to true): If true, post-construct methods from all ancestors will be extended.
+  - `extendPreDestroyMethods` (boolean, defaults to true): If true, pre-destroy methods from all ancestors will be extended.
 
 ### Example: decorating hierarchy constructor arguments
 

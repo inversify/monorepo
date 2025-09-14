@@ -224,7 +224,7 @@ describe(resolveBindingPreDestroy, () => {
           ...classMetadataFixture,
           lifecycle: {
             ...classMetadataFixture.lifecycle,
-            preDestroyMethodName: preDestroyMethodNameFixture,
+            preDestroyMethodNames: new Set([preDestroyMethodNameFixture]),
           },
         };
 

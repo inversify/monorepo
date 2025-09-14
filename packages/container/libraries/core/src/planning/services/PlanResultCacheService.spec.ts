@@ -1703,8 +1703,8 @@ describe(PlanResultCacheService, () => {
                       },
                     ],
                     lifecycle: {
-                      postConstructMethodName: undefined,
-                      preDestroyMethodName: undefined,
+                      postConstructMethodNames: new Set(),
+                      preDestroyMethodNames: new Set(),
                     },
                     properties: new Map(),
                     scope: bindingScopeValues.Singleton,
@@ -1922,8 +1922,8 @@ describe(PlanResultCacheService, () => {
                   classMetadata: {
                     constructorArguments: [],
                     lifecycle: {
-                      postConstructMethodName: undefined,
-                      preDestroyMethodName: undefined,
+                      postConstructMethodNames: new Set(),
+                      preDestroyMethodNames: new Set(),
                     },
                     properties: new Map([
                       [

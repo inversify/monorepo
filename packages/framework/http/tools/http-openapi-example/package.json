@@ -9,13 +9,13 @@
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-open-api": "workspace:*",
     "express": "^5.1.0",
-    "inversify": "^7.9.1",
+    "inversify": "^7.10.0",
     "lmdb": "^3.4.2"
   },
   "devDependencies": {
     "@inversifyjs/open-api-types": "workspace:*",
     "@types/express": "^5.0.3",
-    "@types/node": "22.18.1",
+    "@types/node": "22.18.3",
     "eslint": "9.35.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",

@@ -81,6 +81,61 @@ describe(injectFromBase, () => {
     });
   });
 
+  describe('when called with lifecycle options, and getBaseType returns Newable', () => {
+    let injectFromBaseOptionsFixture: InjectFromBaseOptions;
+
+    let baseTypefixture: Newable;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    let injectFromResultMock: Mock<(target: Function) => void>;
+
+    let result: unknown;
+
+    beforeAll(() => {
+      injectFromBaseOptionsFixture = {
+        extendConstructorArguments: false,
+        extendProperties: false,
+        lifecycle: {
+          extendPostConstructMethods: true,
+          extendPreDestroyMethods: false,
+        },
+      };
+      baseTypefixture = class Base {};
+      injectFromResultMock = vitest.fn().mockReturnValueOnce(undefined);
+
+      vitest.mocked(getBaseType).mockReturnValueOnce(baseTypefixture);
+
+      vitest.mocked(injectFrom).mockReturnValueOnce(injectFromResultMock);
+
+      result = injectFromBase(injectFromBaseOptionsFixture)(targetFixture);
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call getBaseType()', () => {
+      expect(getBaseType).toHaveBeenCalledTimes(1);
+      expect(getBaseType).toHaveBeenCalledWith(targetFixture);
+    });
+
+    it('should call injectFrom() with lifecycle options', () => {
+      const expected: InjectFromOptions = {
+        ...injectFromBaseOptionsFixture,
+        type: baseTypefixture,
+      };
+
+      expect(injectFrom).toHaveBeenCalledTimes(1);
+      expect(injectFrom).toHaveBeenCalledWith(expected);
+
+      expect(injectFromResultMock).toHaveBeenCalledTimes(1);
+      expect(injectFromResultMock).toHaveBeenCalledWith(targetFixture);
+    });
+
+    it('should return undefined', () => {
+      expect(result).toBeUndefined();
+    });
+  });
+
   describe('when called, and getBaseType returns undefined', () => {
     let injectFromBaseOptionsFixture: InjectFromBaseOptions;
 

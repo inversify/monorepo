@@ -1,12 +1,28 @@
 # @inversifyjs/container
 
+## 1.13.0
+
+### Minor Changes
+
+- 6b6db58: Updated `injectFromBase` to extend lifecycle metadata
+- 6b6db58: Added `InjectFromBaseOptionsLifecycle`
+- 6b6db58: Updated `injectFromHierarchy` to extend lifecycle metadata
+- 6b6db58: Added `InjectFromHierarchyOptionsLifecycle`
+
+### Patch Changes
+
+- 0f0fcdc: Deprecated `toProvider()` method. Use `toFactory()` instead. Providers will be removed in v8. Providers exist for historical reasons from v5 when async dependencies weren't supported. Factories are more flexible and can handle both sync and async operations.
+- Updated dependencies
+  - @inversifyjs/core@9.0.0
+  - @inversifyjs/reflect-metadata-utils@1.4.0
+  - @inversifyjs/plugin@0.2.0
+
 ## 1.12.7
 
 ### Patch Changes
 
 - 67db8bd: Updated `Container` to trigger autobind options on autobound parent container related binding requests
-- Updated dependencies [67db8bd]
-- Updated dependencies [07abb74]
+- Updated dependencies
   - @inversifyjs/core@8.0.0
   - @inversifyjs/plugin@0.2.0
 
@@ -14,7 +30,7 @@
 
 ### Patch Changes
 
-- Updated dependencies [8a6722f]
+- Updated dependencies
   - @inversifyjs/core@7.2.0
   - @inversifyjs/plugin@0.2.0
 
@@ -22,7 +38,7 @@
 
 ### Patch Changes
 
-- Updated dependencies [1cc1a4d]
+- Updated dependencies
   - @inversifyjs/core@7.1.1
   - @inversifyjs/plugin@0.2.0
 
@@ -30,7 +46,7 @@
 
 ### Patch Changes
 
-- Updated dependencies [2f6e6e4]
+- Updated dependencies
   - @inversifyjs/core@7.1.0
   - @inversifyjs/plugin@0.2.0
 

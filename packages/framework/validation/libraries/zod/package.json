@@ -1,0 +1,80 @@
+{
+  "author": "Adrián Martínez Jiménez",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJs http zod validation package",
+  "dependencies": {
+    "@inversifyjs/framework-core": "workspace:*",
+    "@inversifyjs/reflect-metadata-utils": "workspace:*",
+    "@inversifyjs/validation-common": "workspace:*"
+  },
+  "devDependencies": {
+    "@inversifyjs/http-core": "workspace:*",
+    "@inversifyjs/http-express": "workspace:*",
+    "@stryker-mutator/core": "9.1.1",
+    "@stryker-mutator/typescript-checker": "9.1.1",
+    "@stryker-mutator/vitest-runner": "9.1.1",
+    "@types/express": "5.0.3",
+    "@types/node": "22.18.3",
+    "@vitest/coverage-v8": "3.2.4",
+    "eslint": "9.35.0",
+    "prettier": "3.6.2",
+    "rimraf": "6.0.1",
+    "rollup": "4.50.1",
+    "ts-loader": "9.5.4",
+    "tslib": "2.8.1",
+    "typescript": "5.9.2",
+    "vitest": "3.2.4"
+  },
+  "devEngines": {
+    "node": "^22.10.2",
+    "pnpm": "^9.12.1"
+  },
+  "homepage": "https://inversify.io",
+  "keywords": [
+    "dependency injection",
+    "dependency inversion",
+    "di",
+    "inversion of control container",
+    "ioc",
+    "javascript",
+    "node",
+    "typescript"
+  ],
+  "license": "MIT",
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "exports": {
+    ".": {
+      "import": "./lib/esm/index.js",
+      "require": "./lib/cjs/index.js"
+    }
+  },
+  "name": "@inversifyjs/zod-validation",
+  "peerDependencies": {
+    "inversify": "^7.10.0",
+    "zod": "^4.1.8"
+  },
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "build": "pnpm run build:cjs && pnpm run build:esm",
+    "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
+    "build:esm": "rollup -c ./rollup.config.mjs && pnpm exec foundation-ts-package-esm ./lib/esm",
+    "build:clean": "rimraf lib",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src",
+    "prebuild": "pnpm run build:clean",
+    "test": "vitest run",
+    "test:integration": "pnpm run test --project Integration",
+    "test:coverage": "pnpm run test:unit --coverage",
+    "test:mutation": "stryker run",
+    "test:uncommitted": "pnpm run test --changed=HEAD",
+    "test:unit": "pnpm run test --project Unit"
+  },
+  "version": "1.0.0"
+}

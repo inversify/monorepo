@@ -14,7 +14,7 @@
     "@stryker-mutator/typescript-checker": "9.1.1",
     "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.3",
-    "@types/node": "22.18.1",
+    "@types/node": "22.18.3",
     "@vitest/coverage-v8": "3.2.4",
     "eslint": "9.35.0",
     "prettier": "3.6.2",
@@ -52,7 +52,7 @@
   "name": "@inversifyjs/http-express",
   "peerDependencies": {
     "express": "^5.1.0",
-    "inversify": "^7.9.1"
+    "inversify": "^7.10.0"
   },
   "private": true,
   "repository": {

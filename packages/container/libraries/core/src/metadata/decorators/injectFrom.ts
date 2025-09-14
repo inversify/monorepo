@@ -4,6 +4,7 @@ import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadat
 import { getClassMetadata } from '../calculations/getClassMetadata';
 import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
 import { getExtendedConstructorArguments } from '../calculations/getExtendedConstructorArguments';
+import { getExtendedLifecycle } from '../calculations/getExtendedLifecycle';
 import { getExtendedProperties } from '../calculations/getExtendedProperties';
 import { ClassMetadata } from '../models/ClassMetadata';
 import { InjectFromOptions } from '../models/InjectFromOptions';
@@ -36,7 +37,11 @@ function composeUpdateReflectMetadataCallback(
       baseTypeClassMetadata,
       typeMetadata,
     ),
-    lifecycle: typeMetadata.lifecycle,
+    lifecycle: getExtendedLifecycle(
+      options,
+      baseTypeClassMetadata,
+      typeMetadata,
+    ),
     properties: getExtendedProperties(
       options,
       baseTypeClassMetadata,

@@ -59,8 +59,8 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
       classMetadata: {
         constructorArguments: [],
         lifecycle: {
-          postConstructMethodName: 'post-construct-method-name',
-          preDestroyMethodName: undefined,
+          postConstructMethodNames: new Set(['post-construct-method-name']),
+          preDestroyMethodNames: new Set(),
         },
       } as Partial<Mocked<ClassMetadata>> as Mocked<ClassMetadata>,
       constructorParams: [],
@@ -128,7 +128,7 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
       expect(resolvePostConstruct).toHaveBeenCalledWith(
         expect.any(Object),
         nodeMock.binding,
-        nodeMock.classMetadata.lifecycle.postConstructMethodName,
+        'post-construct-method-name',
       );
     });
 
@@ -193,7 +193,7 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
       expect(resolvePostConstruct).toHaveBeenCalledWith(
         expect.any(Object),
         nodeMock.binding,
-        nodeMock.classMetadata.lifecycle.postConstructMethodName,
+        'post-construct-method-name',
       );
     });
 
