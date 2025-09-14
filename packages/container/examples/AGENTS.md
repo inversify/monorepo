@@ -38,16 +38,6 @@ pnpm run format
 pnpm run lint
 ```
 
-### File Structure
-```
-src/
-  index.ts        # Main example entry point
-  *.ts           # Supporting example files
-lib/             # Build output (CJS/ESM)
-package.json     # Dependencies and build config
-README.md        # Example documentation
-```
-
 ### Dependencies
 
 #### Workspace Dependencies

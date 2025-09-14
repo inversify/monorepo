@@ -29,16 +29,6 @@ pnpm run test  # Runs integration tests by default
 3. **Add integration tests** - ensure examples actually work
 4. **Document clearly** - examples serve as documentation
 
-#### File Structure
-```
-src/
-  examples/
-    v6/           # InversifyJS v6 examples
-    v7/           # InversifyJS v7 examples
-  scripts/        # Generation scripts
-generated/        # Auto-generated documentation files
-```
-
 #### Testing Examples
 - Use `.int.spec.ts` suffix for integration tests
 - Test the **outcome** of the example, not implementation details
