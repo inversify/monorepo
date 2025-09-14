@@ -51,7 +51,6 @@ Follow the [structured testing approach](../../../../docs/testing/unit-testing.m
 #### User Experience Focus
 - **Clear Error Messages**: Provide actionable error information
 - **Good Defaults**: Choose sensible defaults for common scenarios
-- **Documentation**: Include comprehensive JSDoc comments
 - **Examples**: Provide clear usage examples in documentation
 
 #### Plugin Integration
