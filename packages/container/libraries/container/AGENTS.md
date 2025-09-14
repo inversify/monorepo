@@ -93,17 +93,6 @@ pnpm run test:integration
 pnpm run test:coverage
 ```
 
-### Integration Points
-
-#### Dependencies
-- **@inversifyjs/common**: Shared utilities and types
-- **@inversifyjs/core**: Core planning and resolution algorithms
-- **@inversifyjs/plugin**: Plugin system integration
-- **@inversifyjs/reflect-metadata-utils**: Reflection metadata support
-
-#### Peer Dependencies
-- **reflect-metadata**: Required for decorator-based binding
-
 #### Consumers
 - **Applications**: End-user applications using InversifyJS
 - **@inversifyjs/plugin-dispose**: Disposal plugin

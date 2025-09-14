@@ -95,19 +95,6 @@ pnpm run test:integration
 pnpm run test:coverage
 ```
 
-### Integration Points
-
-#### Dependencies
-- **@inversifyjs/container**: Container implementation for integration
-- **@inversifyjs/plugin**: Plugin interface implementation
-
-#### Peer Dependencies
-- **inversify**: Main inversify package for integration
-
-#### Consumers
-- **Applications**: Applications that need automatic resource cleanup
-- **Framework Integrations**: Frameworks that provide resource management
-
 ### Common Development Tasks
 
 #### Adding New Disposal Patterns
@@ -131,54 +118,6 @@ pnpm run test:coverage
 3. **Batch Operations**: Optimize disposal of multiple resources
 4. **Reduce Overhead**: Minimize impact on non-disposable services
 5. **Benchmark Results**: Verify performance improvements
-
-### Important Patterns
-
-#### Disposal Lifecycle
-```typescript
-class DisposalTracker {
-  private disposables = new WeakMap<object, DisposalInfo>();
-  
-  track(instance: any, disposalMethod: () => void): void {
-    this.disposables.set(instance, {
-      dispose: disposalMethod,
-      disposed: false,
-      timestamp: Date.now()
-    });
-  }
-  
-  dispose(instance: any): void {
-    const info = this.disposables.get(instance);
-    if (info && !info.disposed) {
-      try {
-        info.dispose();
-        info.disposed = true;
-      } catch (error) {
-        this.handleDisposalError(error, instance);
-      }
-    }
-  }
-}
-```
-
-#### Error Resilient Disposal
-```typescript
-class ResilientDisposer {
-  async disposeAll(disposables: Disposable[]): Promise<void> {
-    const results = await Promise.allSettled(
-      disposables.map(d => this.safeDispose(d))
-    );
-    
-    const failures = results
-      .filter(r => r.status === 'rejected')
-      .map(r => (r as PromiseRejectedResult).reason);
-    
-    if (failures.length > 0) {
-      this.handleDisposalFailures(failures);
-    }
-  }
-}
-```
 
 ### Important Notes
 

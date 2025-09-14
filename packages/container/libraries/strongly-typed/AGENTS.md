@@ -101,16 +101,6 @@ pnpm run format
 pnpm run lint
 ```
 
-### Integration Points
-
-#### Peer Dependencies
-- **inversify**: Main inversify package for container integration
-
-#### Consumers
-- **Applications**: Applications that want stronger type safety
-- **Libraries**: Libraries built on InversifyJS that need type safety
-- **Framework Integrations**: Frameworks providing type-safe DI
-
 ### Strong Typing Examples
 
 #### Type-Safe Service Identifiers

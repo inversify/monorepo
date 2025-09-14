@@ -94,19 +94,6 @@ pnpm run test:integration
 pnpm run test:coverage
 ```
 
-### Integration Points
-
-#### Dependencies
-- **@inversifyjs/reflect-metadata-utils**: Reflection metadata utilities
-
-#### Peer Dependencies
-- **inversify**: The main container implementation
-- **reflect-metadata**: Required polyfill for metadata reflection
-
-#### Consumers
-- **Applications**: End-user applications using decorator-based DI
-- **Framework Integrations**: Frameworks providing InversifyJS integration
-
 ### Common Development Tasks
 
 #### Adding New Decorators

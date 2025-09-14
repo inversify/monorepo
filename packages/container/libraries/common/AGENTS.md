@@ -91,18 +91,6 @@ pnpm run test:integration
 pnpm run test:coverage
 ```
 
-### Integration Points
-
-#### Dependencies
-- **None**: This package has no production dependencies to maintain minimal footprint
-
-#### Consumers
-- **@inversifyjs/core**: Uses common types and utilities
-- **@inversifyjs/container**: Uses common interfaces and error types
-- **@inversifyjs/plugin**: Uses common plugin interfaces
-- **@inversifyjs/plugin-dispose**: Uses common types for disposal logic
-- **All other container packages**: Foundation for the entire ecosystem
-
 ### Common Development Tasks
 
 #### Adding New Utility Functions

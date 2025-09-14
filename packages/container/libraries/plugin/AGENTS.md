@@ -100,16 +100,6 @@ pnpm run lint
 
 Note: This package typically does not have tests since it primarily provides interfaces.
 
-### Integration Points
-
-#### Dependencies
-- **@inversifyjs/core**: For basic container types and interfaces (dev dependency)
-
-#### Consumers
-- **@inversifyjs/container**: Implements the plugin system
-- **@inversifyjs/plugin-dispose**: Implements disposal plugin using this interface
-- **Custom Plugins**: Third-party plugins implement these interfaces
-
 ### Plugin Development Examples
 
 #### Basic Plugin Implementation
