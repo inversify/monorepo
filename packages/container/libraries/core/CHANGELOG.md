@@ -9,8 +9,7 @@
 ### Patch Changes
 
 - 0f0fcdc: Deprecated `Provider` type. Use `Factory` instead. Providers will be removed in v8. Providers exist for historical reasons from v5 when async dependencies weren't supported. Factories are more flexible and can handle both sync and async operations.
-- Updated dependencies [bc06943]
-- Updated dependencies [0f3b8a5]
+- Updated dependencies
   - @inversifyjs/reflect-metadata-utils@1.4.0
 
 ## 8.0.0

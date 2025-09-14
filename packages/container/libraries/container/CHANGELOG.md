@@ -12,10 +12,7 @@
 ### Patch Changes
 
 - 0f0fcdc: Deprecated `toProvider()` method. Use `toFactory()` instead. Providers will be removed in v8. Providers exist for historical reasons from v5 when async dependencies weren't supported. Factories are more flexible and can handle both sync and async operations.
-- Updated dependencies [0f0fcdc]
-- Updated dependencies [bc06943]
-- Updated dependencies [6d890ac]
-- Updated dependencies [0f3b8a5]
+- Updated dependencies
   - @inversifyjs/core@9.0.0
   - @inversifyjs/reflect-metadata-utils@1.4.0
   - @inversifyjs/plugin@0.2.0
@@ -25,8 +22,7 @@
 ### Patch Changes
 
 - 67db8bd: Updated `Container` to trigger autobind options on autobound parent container related binding requests
-- Updated dependencies [67db8bd]
-- Updated dependencies [07abb74]
+- Updated dependencies
   - @inversifyjs/core@8.0.0
   - @inversifyjs/plugin@0.2.0
 
@@ -34,7 +30,7 @@
 
 ### Patch Changes
 
-- Updated dependencies [8a6722f]
+- Updated dependencies
   - @inversifyjs/core@7.2.0
   - @inversifyjs/plugin@0.2.0
 
@@ -42,7 +38,7 @@
 
 ### Patch Changes
 
-- Updated dependencies [1cc1a4d]
+- Updated dependencies
   - @inversifyjs/core@7.1.1
   - @inversifyjs/plugin@0.2.0
 
@@ -50,7 +46,7 @@
 
 ### Patch Changes
 
-- Updated dependencies [2f6e6e4]
+- Updated dependencies
   - @inversifyjs/core@7.1.0
   - @inversifyjs/plugin@0.2.0
 
