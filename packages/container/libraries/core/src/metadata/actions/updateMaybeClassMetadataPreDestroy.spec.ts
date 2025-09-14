@@ -1,12 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
 import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
 import { updateMaybeClassMetadataPreDestroy } from './updateMaybeClassMetadataPreDestroy';
 
 describe(updateMaybeClassMetadataPreDestroy, () => {
-  describe('having metadata with no postConstructorMethodName', () => {
+  describe('having metadata with no preDestroyMethodNames', () => {
     let metadataFixture: MaybeClassMetadata;
     let methodNameFixture: string | symbol;
 
@@ -14,8 +12,8 @@ describe(updateMaybeClassMetadataPreDestroy, () => {
       metadataFixture = {
         constructorArguments: [],
         lifecycle: {
-          postConstructMethodName: undefined,
-          preDestroyMethodName: undefined,
+          postConstructMethodNames: [],
+          preDestroyMethodNames: [],
         },
         properties: new Map(),
         scope: undefined,
@@ -37,8 +35,8 @@ describe(updateMaybeClassMetadataPreDestroy, () => {
         const expected: MaybeClassMetadata = {
           constructorArguments: [],
           lifecycle: {
-            postConstructMethodName: undefined,
-            preDestroyMethodName: methodNameFixture,
+            postConstructMethodNames: [],
+            preDestroyMethodNames: [methodNameFixture],
           },
           properties: new Map(),
           scope: undefined,
@@ -49,16 +47,18 @@ describe(updateMaybeClassMetadataPreDestroy, () => {
     });
   });
 
-  describe('having metadata with postConstructorMethodName', () => {
+  describe('having metadata with existing preDestroyMethodNames', () => {
     let metadataFixture: MaybeClassMetadata;
     let methodNameFixture: string | symbol;
+    let existingMethodNameFixture: string;
 
     beforeAll(() => {
+      existingMethodNameFixture = 'existingMethod';
       metadataFixture = {
         constructorArguments: [],
         lifecycle: {
-          postConstructMethodName: undefined,
-          preDestroyMethodName: 'postConstructorMethodName',
+          postConstructMethodNames: [],
+          preDestroyMethodNames: [existingMethodNameFixture],
         },
         properties: new Map(),
         scope: undefined,
@@ -70,25 +70,27 @@ describe(updateMaybeClassMetadataPreDestroy, () => {
       let result: unknown;
 
       beforeAll(() => {
-        try {
+        result =
           updateMaybeClassMetadataPreDestroy(methodNameFixture)(
             metadataFixture,
           );
-        } catch (error: unknown) {
-          result = error;
-        }
       });
 
-      it('should throw InversifyCoreError', () => {
-        const expectedErrorProperties: Partial<InversifyCoreError> = {
-          kind: InversifyCoreErrorKind.injectionDecoratorConflict,
-          message: 'Unexpected duplicated preDestroy decorator',
+      it('should return MaybeClassMetadata with both methods', () => {
+        const expected: MaybeClassMetadata = {
+          constructorArguments: [],
+          lifecycle: {
+            postConstructMethodNames: [],
+            preDestroyMethodNames: [
+              existingMethodNameFixture,
+              methodNameFixture,
+            ],
+          },
+          properties: new Map(),
+          scope: undefined,
         };
 
-        expect(result).toBeInstanceOf(InversifyCoreError);
-        expect(result).toStrictEqual(
-          expect.objectContaining(expectedErrorProperties),
-        );
+        expect(result).toStrictEqual(expected);
       });
     });
   });

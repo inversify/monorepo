@@ -6,6 +6,39 @@ import { ResolutionParams } from '../models/ResolutionParams';
 import { Resolved, SyncResolved } from '../models/Resolved';
 import { resolvePostConstruct } from './resolvePostConstruct';
 
+function resolveAllPostConstructMethods<TActivated>(
+  instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,
+  binding: InstanceBinding<TActivated>,
+  postConstructMethodNames: (string | symbol)[],
+): Resolved<TActivated> {
+  if (postConstructMethodNames.length === 0) {
+    return instance;
+  }
+
+  let result: Resolved<TActivated> = instance;
+
+  for (const methodName of postConstructMethodNames) {
+    if (isPromise<TActivated>(result)) {
+      result = result.then<TActivated>(
+        (resolvedInstance: TActivated): Resolved<TActivated> =>
+          resolvePostConstruct(
+            resolvedInstance as TActivated & Record<string | symbol, unknown>,
+            binding,
+            methodName,
+          ),
+      );
+    } else {
+      result = resolvePostConstruct(
+        result as SyncResolved<TActivated> & Record<string | symbol, unknown>,
+        binding,
+        methodName,
+      );
+    }
+  }
+
+  return result;
+}
+
 export function resolveInstanceBindingNodeFromConstructorParams<
   TActivated,
   TBinding extends InstanceBinding<TActivated> = InstanceBinding<TActivated>,
@@ -36,18 +69,18 @@ export function resolveInstanceBindingNodeFromConstructorParams<
     if (isPromise(propertiesAssignmentResult)) {
       return propertiesAssignmentResult.then(
         (): Resolved<TActivated> =>
-          resolvePostConstruct(
+          resolveAllPostConstructMethods(
             instance,
             node.binding,
-            node.classMetadata.lifecycle.postConstructMethodName,
+            node.classMetadata.lifecycle.postConstructMethodNames,
           ),
       );
     }
 
-    return resolvePostConstruct(
+    return resolveAllPostConstructMethods(
       instance,
       node.binding,
-      node.classMetadata.lifecycle.postConstructMethodName,
+      node.classMetadata.lifecycle.postConstructMethodNames,
     );
   };
 }

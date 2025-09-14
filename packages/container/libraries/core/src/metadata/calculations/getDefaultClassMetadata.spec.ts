@@ -15,8 +15,8 @@ describe(getDefaultClassMetadata, () => {
       const expected: ClassMetadata = {
         constructorArguments: [],
         lifecycle: {
-          postConstructMethodName: undefined,
-          preDestroyMethodName: undefined,
+          postConstructMethodNames: [],
+          preDestroyMethodNames: [],
         },
         properties: new Map(),
         scope: undefined,

@@ -64,8 +64,8 @@ describe(multiInject, () => {
           },
         ],
         lifecycle: {
-          postConstructMethodName: undefined,
-          preDestroyMethodName: undefined,
+          postConstructMethodNames: [],
+          preDestroyMethodNames: [],
         },
         properties: new Map([
           [

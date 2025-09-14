@@ -163,8 +163,8 @@ describe(buildFilteredServiceBindings, () => {
         classMetadataFixture = {
           constructorArguments: [],
           lifecycle: {
-            postConstructMethodName: undefined,
-            preDestroyMethodName: undefined,
+            postConstructMethodNames: [],
+            preDestroyMethodNames: [],
           },
           properties: new Map(),
           scope: undefined,
@@ -264,8 +264,8 @@ describe(buildFilteredServiceBindings, () => {
         classMetadataFixture = {
           constructorArguments: [],
           lifecycle: {
-            postConstructMethodName: undefined,
-            preDestroyMethodName: undefined,
+            postConstructMethodNames: [],
+            preDestroyMethodNames: [],
           },
           properties: new Map(),
           scope: classMetadataScopeFixture,

@@ -25,8 +25,8 @@ describe(postConstruct, () => {
       const expected: ClassMetadata = {
         constructorArguments: [],
         lifecycle: {
-          postConstructMethodName: 'dispose',
-          preDestroyMethodName: undefined,
+          postConstructMethodNames: ['dispose'],
+          preDestroyMethodNames: [],
         },
         properties: new Map(),
         scope: undefined,

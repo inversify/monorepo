@@ -82,8 +82,8 @@ This might be caused by one of the following reasons:
       classMetadataFixure = {
         constructorArguments: constructorClassMetadata,
         lifecycle: {
-          postConstructMethodName: undefined,
-          preDestroyMethodName: undefined,
+          postConstructMethodNames: [],
+          preDestroyMethodNames: [],
         },
         properties: new Map([[invalidPropertyName, maybeClassElementMetadata]]),
         scope: undefined,

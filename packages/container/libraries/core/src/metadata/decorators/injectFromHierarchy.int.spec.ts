@@ -43,8 +43,8 @@ describe(injectFromHierarchy, () => {
             },
           ],
           lifecycle: {
-            postConstructMethodName: undefined,
-            preDestroyMethodName: undefined,
+            postConstructMethodNames: [],
+            preDestroyMethodNames: [],
           },
           properties: new Map(),
           scope: undefined,
@@ -80,8 +80,8 @@ describe(injectFromHierarchy, () => {
         const expected: ClassMetadata = {
           constructorArguments: [],
           lifecycle: {
-            postConstructMethodName: undefined,
-            preDestroyMethodName: undefined,
+            postConstructMethodNames: [],
+            preDestroyMethodNames: [],
           },
           properties: new Map([
             [

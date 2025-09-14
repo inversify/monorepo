@@ -60,8 +60,8 @@ describe(optional, () => {
           },
         ],
         lifecycle: {
-          postConstructMethodName: undefined,
-          preDestroyMethodName: undefined,
+          postConstructMethodNames: [],
+          preDestroyMethodNames: [],
         },
         properties: new Map([
           [

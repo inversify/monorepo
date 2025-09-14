@@ -4,8 +4,8 @@ export function getDefaultClassMetadata(): ClassMetadata {
   return {
     constructorArguments: [],
     lifecycle: {
-      postConstructMethodName: undefined,
-      preDestroyMethodName: undefined,
+      postConstructMethodNames: [],
+      preDestroyMethodNames: [],
     },
     properties: new Map(),
     scope: undefined,

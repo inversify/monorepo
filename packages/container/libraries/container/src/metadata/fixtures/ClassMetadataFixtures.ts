@@ -5,8 +5,8 @@ export class ClassMetadataFixtures {
     const fixture: ClassMetadata = {
       constructorArguments: [],
       lifecycle: {
-        postConstructMethodName: undefined,
-        preDestroyMethodName: undefined,
+        postConstructMethodNames: [],
+        preDestroyMethodNames: [],
       },
       properties: new Map(),
       scope: undefined,
