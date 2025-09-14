@@ -48,7 +48,7 @@
   },
   "name": "@inversifyjs/framework-core",
   "peerDependencies": {
-    "inversify": "^7.9.1"
+    "inversify": "^7.10.0"
   },
   "private": "true",
   "publishConfig": {
