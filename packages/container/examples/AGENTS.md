@@ -4,12 +4,6 @@
 
 This directory contains example packages that demonstrate how to use the InversifyJS container libraries. These are **demonstration packages**, not libraries for consumption.
 
-## Package Structure
-
-### Example Packages
-- **plugin-example**: Demonstrates how to create InversifyJS plugins
-- **plugin-usage-example**: Shows how to use InversifyJS plugins in applications
-
 ## Working with Example Packages
 
 ### Key Characteristics

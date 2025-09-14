@@ -4,17 +4,6 @@
 
 This directory contains code examples and tools for generating documentation examples. These packages demonstrate usage patterns for the InversifyJS ecosystem but **do not export library code**.
 
-## Package Structure
-
-### Code Example Packages
-- **inversify-code-examples**: Examples for core InversifyJS library
-- **inversify-http-code-examples**: Examples for HTTP framework
-- **inversify-http-open-api-code-examples**: Examples for OpenAPI integration
-- **binding-decorators-code-examples**: Examples for binding decorators
-
-### Supporting Tools
-- **code-examples-devkit**: Shared utilities for code example generation
-
 ## Working with Code Example Packages
 
 ### Key Characteristics
@@ -54,19 +43,6 @@ generated/        # Auto-generated documentation files
 - Use `.int.spec.ts` suffix for integration tests
 - Test the **outcome** of the example, not implementation details
 - Examples should be **executable and demonstrable**
-
-### Example Test Pattern
-```typescript
-// Good - tests the example works
-describe('Container API (get)', () => {
-  it('should provide Katana weapon', () => {
-    expect(katana).toBeInstanceOf(Katana);
-  });
-});
-
-// Avoid - unit testing internals of examples
-// Examples are demonstrations, not libraries
-```
 
 ### Build Process
 

@@ -12,22 +12,6 @@ The `@inversifyjs/plugin-dispose` package provides automatic resource disposal a
 - **Disposal Patterns**: Supports various disposal patterns (IDisposable, async disposal, etc.)
 - **Memory Management**: Prevents memory leaks through proper resource cleanup
 
-## Package Structure
-
-### Core Components
-- **Dispose Plugin**: Main plugin implementation for disposal functionality
-- **Disposal Tracking**: Tracks disposable instances and their disposal status
-- **Disposal Strategies**: Different strategies for disposing various resource types
-- **Lifecycle Hooks**: Integration with container lifecycle events
-- **Error Handling**: Robust error handling during disposal operations
-
-### Design Philosophy
-- **Automatic Cleanup**: Resources should be cleaned up automatically when possible
-- **Fail-Safe**: Disposal errors should not crash the application
-- **Configurable**: Different disposal strategies for different scenarios
-- **Performance**: Minimal overhead for non-disposable services
-- **Composable**: Works well with other plugins
-
 ## Working with Plugin Dispose
 
 ### Key Characteristics

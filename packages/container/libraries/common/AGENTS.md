@@ -12,20 +12,6 @@ The `@inversifyjs/common` package provides shared utilities, types, and constant
 - **Base Interfaces**: Core abstractions that other packages implement
 - **Error Types**: Common error classes and error handling utilities
 
-## Package Structure
-
-### Core Components
-- **Types**: Shared TypeScript interfaces and type aliases
-- **Constants**: Enumerations and constant values
-- **Utilities**: Helper functions and utility classes
-- **Exceptions**: Base error classes and error handling patterns
-
-### Design Philosophy
-- **Minimal Dependencies**: Keep external dependencies to absolute minimum
-- **Stability**: Changes should be rare and backward compatible
-- **Reusability**: Utilities should be generic and widely applicable
-- **Type Safety**: Strong TypeScript support throughout
-
 ## Working with Common
 
 ### Key Characteristics

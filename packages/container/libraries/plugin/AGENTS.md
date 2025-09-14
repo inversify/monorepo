@@ -12,22 +12,6 @@ The `@inversifyjs/plugin` package provides the plugin system interface and base 
 - **Plugin Composition**: Enables multiple plugins to work together seamlessly
 - **Base Implementations**: Common plugin patterns and utilities
 
-## Package Structure
-
-### Core Components
-- **Plugin Interface**: Base interface all plugins must implement
-- **Plugin Manager**: Coordinates plugin lifecycle and execution
-- **Hook Definitions**: Extension points where plugins can inject behavior
-- **Plugin Registry**: System for registering and managing plugins
-- **Base Plugin Classes**: Common plugin implementations and utilities
-
-### Design Philosophy
-- **Extensibility**: Enable container functionality to be extended without core changes
-- **Composability**: Multiple plugins should work together without conflicts
-- **Performance**: Minimal overhead when plugins are not used
-- **Type Safety**: Strong TypeScript support for plugin development
-- **Isolation**: Plugins should not interfere with each other
-
 ## Working with Plugin System
 
 ### Key Characteristics

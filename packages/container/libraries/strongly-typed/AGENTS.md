@@ -12,22 +12,6 @@ The `@inversifyjs/strongly-typed` package provides enhanced type safety and comp
 - **Container Type Extensions**: Enhanced typing for container methods
 - **Inference Helpers**: Utilities to improve TypeScript type inference
 
-## Package Structure
-
-### Core Components
-- **Typed Service Identifiers**: Strongly typed service identifier system
-- **Container Extensions**: Type-safe extensions to container API
-- **Type Utilities**: Helper types for advanced type scenarios
-- **Branded Types**: Type branding for service identifiers and tokens
-- **Inference Helpers**: Utilities to assist TypeScript type inference
-
-### Design Philosophy
-- **Compile-Time Safety**: Catch errors at compile time, not runtime
-- **Zero Runtime Cost**: Type safety should not impact runtime performance
-- **Developer Experience**: Excellent IntelliSense and autocomplete support
-- **Gradual Adoption**: Can be adopted incrementally in existing projects
-- **Framework Agnostic**: Works with various TypeScript build configurations
-
 ## Working with Strong Typing
 
 ### Key Characteristics

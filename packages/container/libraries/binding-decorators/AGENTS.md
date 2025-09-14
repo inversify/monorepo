@@ -12,21 +12,6 @@ The `@inversifyjs/binding-decorators` package provides decorator-based binding c
 - **Binding Translation**: Converts decorator metadata into container bindings
 - **Type Safety**: Maintains strong TypeScript support for decorated classes
 
-## Package Structure
-
-### Core Components
-- **Binding Decorators**: `@injectable`, `@inject`, `@multiInject`, etc.
-- **Constraint Decorators**: `@named`, `@tagged`, `@optional`
-- **Scope Decorators**: `@singleton`, `@transient`, `@inRequestScope`
-- **Metadata Processors**: Logic to extract and process decorator metadata
-- **Type Reflection**: Integration with TypeScript's design-time type emission
-
-### Design Philosophy
-- **Declarative Configuration**: Configuration through decorators rather than code
-- **Type-Driven**: Leverage TypeScript's type system for dependency resolution
-- **Minimal Boilerplate**: Reduce the amount of configuration code needed
-- **IntelliSense Support**: Provide excellent developer experience in IDEs
-
 ## Working with Binding Decorators
 
 ### Key Characteristics

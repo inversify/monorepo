@@ -12,20 +12,6 @@ The `@inversifyjs/container` package provides the high-level container API and u
 - **User Experience**: Provides intuitive APIs for common DI scenarios
 - **Snapshot Management**: Container state snapshots for testing and rollback
 
-## Package Structure
-
-### Core Components
-- **Container**: Main container class with bind(), get(), resolve() methods
-- **Binding API**: Fluent binding configuration (to(), toConstant(), toFactory(), etc.)
-- **Snapshot System**: Save and restore container state
-- **Error Handling**: User-friendly error messages and diagnostics
-
-### API Design Philosophy
-- **Fluent Interface**: Chainable methods for binding configuration
-- **Type Safety**: Strong TypeScript support with generic constraints
-- **Discoverability**: IntelliSense-friendly API design
-- **Flexibility**: Support for various binding patterns and scenarios
-
 ## Working with Container
 
 ### Key Characteristics
