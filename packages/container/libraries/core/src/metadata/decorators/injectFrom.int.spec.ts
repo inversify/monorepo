@@ -12,6 +12,8 @@ import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
 import { ClassMetadata } from '../models/ClassMetadata';
 import { inject } from './inject';
 import { injectFrom } from './injectFrom';
+import { postConstruct } from './postConstruct';
+import { preDestroy } from './preDestroy';
 
 describe(injectFrom, () => {
   describe('having a options with extendConstructorArguments false and extendProperties false', () => {
@@ -281,6 +283,118 @@ describe(injectFrom, () => {
                 ['bar', expectedBarPropertyMetadata],
                 ['baz', expectedBazPropertyMetadata],
               ]),
+              scope: undefined,
+            };
+
+            expect(result).toStrictEqual(expectedClassMetadata);
+          });
+        });
+      });
+
+      describe('when called, having a source type with lifecycle metadata and a destination type with lifecycle metadata', () => {
+        let destinationType: Newable;
+
+        beforeAll(() => {
+          class BaseType {
+            @postConstruct()
+            public postConstructBase(): void {}
+
+            @preDestroy()
+            public preDestroyBase(): void {}
+          }
+
+          const baseType: Newable = BaseType;
+
+          @injectFrom({
+            extendConstructorArguments: extendConstructorArguments,
+            extendProperties: extendProperties,
+            type: baseType,
+          })
+          class DestinationType {
+            @postConstruct()
+            public postConstructChild(): void {}
+
+            @preDestroy()
+            public preDestroyChild(): void {}
+          }
+
+          destinationType = DestinationType;
+        });
+
+        describe('when called getOwnReflectMetadata', () => {
+          let result: unknown;
+
+          beforeAll(() => {
+            result = getOwnReflectMetadata(
+              destinationType,
+              classMetadataReflectKey,
+            );
+          });
+
+          it('should return metadata with both base and child lifecycle methods (lifecycle should be extended by default)', () => {
+            const expectedClassMetadata: ClassMetadata = {
+              constructorArguments: [],
+              lifecycle: {
+                postConstructMethodNames: new Set([
+                  'postConstructBase',
+                  'postConstructChild',
+                ]),
+                preDestroyMethodNames: new Set([
+                  'preDestroyBase',
+                  'preDestroyChild',
+                ]),
+              },
+              properties: new Map(),
+              scope: undefined,
+            };
+
+            expect(result).toStrictEqual(expectedClassMetadata);
+          });
+        });
+      });
+
+      describe('when called, having a source type with lifecycle metadata and a destination type with no lifecycle metadata', () => {
+        let destinationType: Newable;
+
+        beforeAll(() => {
+          class BaseType {
+            @postConstruct()
+            public postConstructBase(): void {}
+
+            @preDestroy()
+            public preDestroyBase(): void {}
+          }
+
+          const baseType: Newable = BaseType;
+
+          @injectFrom({
+            extendConstructorArguments: extendConstructorArguments,
+            extendProperties: extendProperties,
+            type: baseType,
+          })
+          class DestinationType {}
+
+          destinationType = DestinationType;
+        });
+
+        describe('when called getOwnReflectMetadata', () => {
+          let result: unknown;
+
+          beforeAll(() => {
+            result = getOwnReflectMetadata(
+              destinationType,
+              classMetadataReflectKey,
+            );
+          });
+
+          it('should return metadata with base lifecycle methods extended', () => {
+            const expectedClassMetadata: ClassMetadata = {
+              constructorArguments: [],
+              lifecycle: {
+                postConstructMethodNames: new Set(['postConstructBase']),
+                preDestroyMethodNames: new Set(['preDestroyBase']),
+              },
+              properties: new Map(),
               scope: undefined,
             };
 
@@ -598,6 +712,246 @@ describe(injectFrom, () => {
                 },
               ],
             ]),
+            scope: undefined,
+          };
+
+          expect(result).toStrictEqual(expectedClassMetadata);
+        });
+      });
+    });
+
+    describe('when called, having a source type with lifecycle metadata and a destination type with lifecycle metadata', () => {
+      let destinationType: Newable;
+
+      beforeAll(() => {
+        class BaseType {
+          @postConstruct()
+          public postConstructBase(): void {}
+
+          @preDestroy()
+          public preDestroyBase(): void {}
+        }
+
+        const baseType: Newable = BaseType;
+
+        @injectFrom({
+          extendConstructorArguments: extendConstructorArguments,
+          extendProperties: extendProperties,
+          type: baseType,
+        })
+        class DestinationType {
+          @postConstruct()
+          public postConstructChild(): void {}
+
+          @preDestroy()
+          public preDestroyChild(): void {}
+        }
+
+        destinationType = DestinationType;
+      });
+
+      describe('when called getOwnReflectMetadata', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = getOwnReflectMetadata(
+            destinationType,
+            classMetadataReflectKey,
+          );
+        });
+
+        it('should return metadata with both base and child lifecycle methods (lifecycle should be extended by default)', () => {
+          const expectedClassMetadata: ClassMetadata = {
+            constructorArguments: [],
+            lifecycle: {
+              postConstructMethodNames: new Set([
+                'postConstructBase',
+                'postConstructChild',
+              ]),
+              preDestroyMethodNames: new Set([
+                'preDestroyBase',
+                'preDestroyChild',
+              ]),
+            },
+            properties: new Map(),
+            scope: undefined,
+          };
+
+          expect(result).toStrictEqual(expectedClassMetadata);
+        });
+      });
+    });
+
+    describe('when called, having a source type with lifecycle metadata and a destination type with no lifecycle metadata', () => {
+      let destinationType: Newable;
+
+      beforeAll(() => {
+        class BaseType {
+          @postConstruct()
+          public postConstructBase(): void {}
+
+          @preDestroy()
+          public preDestroyBase(): void {}
+        }
+
+        const baseType: Newable = BaseType;
+
+        @injectFrom({
+          extendConstructorArguments: extendConstructorArguments,
+          extendProperties: extendProperties,
+          type: baseType,
+        })
+        class DestinationType {}
+
+        destinationType = DestinationType;
+      });
+
+      describe('when called getOwnReflectMetadata', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = getOwnReflectMetadata(
+            destinationType,
+            classMetadataReflectKey,
+          );
+        });
+
+        it('should return metadata with base lifecycle methods extended', () => {
+          const expectedClassMetadata: ClassMetadata = {
+            constructorArguments: [],
+            lifecycle: {
+              postConstructMethodNames: new Set(['postConstructBase']),
+              preDestroyMethodNames: new Set(['preDestroyBase']),
+            },
+            properties: new Map(),
+            scope: undefined,
+          };
+
+          expect(result).toStrictEqual(expectedClassMetadata);
+        });
+      });
+    });
+  });
+
+  describe('having explicit lifecycle extension options', () => {
+    describe('having lifecycle.extendPostConstructMethods false and lifecycle.extendPreDestroyMethods false', () => {
+      let destinationType: Newable;
+
+      beforeAll(() => {
+        class BaseType {
+          @postConstruct()
+          public postConstructBase(): void {}
+
+          @preDestroy()
+          public preDestroyBase(): void {}
+        }
+
+        const baseType: Newable = BaseType;
+
+        @injectFrom({
+          extendConstructorArguments: true,
+          extendProperties: true,
+          lifecycle: {
+            extendPostConstructMethods: false,
+            extendPreDestroyMethods: false,
+          },
+          type: baseType,
+        })
+        class DestinationType {
+          @postConstruct()
+          public postConstructChild(): void {}
+
+          @preDestroy()
+          public preDestroyChild(): void {}
+        }
+
+        destinationType = DestinationType;
+      });
+
+      describe('when called getOwnReflectMetadata', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = getOwnReflectMetadata(
+            destinationType,
+            classMetadataReflectKey,
+          );
+        });
+
+        it('should return metadata with only child lifecycle methods (base lifecycle should not be extended)', () => {
+          const expectedClassMetadata: ClassMetadata = {
+            constructorArguments: [],
+            lifecycle: {
+              postConstructMethodNames: new Set(['postConstructChild']),
+              preDestroyMethodNames: new Set(['preDestroyChild']),
+            },
+            properties: new Map(),
+            scope: undefined,
+          };
+
+          expect(result).toStrictEqual(expectedClassMetadata);
+        });
+      });
+    });
+
+    describe('having lifecycle.extendPostConstructMethods true and lifecycle.extendPreDestroyMethods true', () => {
+      let destinationType: Newable;
+
+      beforeAll(() => {
+        class BaseType {
+          @postConstruct()
+          public postConstructBase(): void {}
+
+          @preDestroy()
+          public preDestroyBase(): void {}
+        }
+
+        const baseType: Newable = BaseType;
+
+        @injectFrom({
+          extendConstructorArguments: true,
+          extendProperties: true,
+          lifecycle: {
+            extendPostConstructMethods: true,
+            extendPreDestroyMethods: true,
+          },
+          type: baseType,
+        })
+        class DestinationType {
+          @postConstruct()
+          public postConstructChild(): void {}
+
+          @preDestroy()
+          public preDestroyChild(): void {}
+        }
+
+        destinationType = DestinationType;
+      });
+
+      describe('when called getOwnReflectMetadata', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = getOwnReflectMetadata(
+            destinationType,
+            classMetadataReflectKey,
+          );
+        });
+
+        it('should return metadata with both base and child lifecycle methods', () => {
+          const expectedClassMetadata: ClassMetadata = {
+            constructorArguments: [],
+            lifecycle: {
+              postConstructMethodNames: new Set([
+                'postConstructBase',
+                'postConstructChild',
+              ]),
+              preDestroyMethodNames: new Set([
+                'preDestroyBase',
+                'preDestroyChild',
+              ]),
+            },
+            properties: new Map(),
             scope: undefined,
           };
 

@@ -92,6 +92,74 @@ describe(injectFromHierarchy, () => {
     });
   });
 
+  describe('when called with lifecycle options, and getBaseType returns a chain of Newables', () => {
+    let optionsFixture: InjectFromHierarchyOptions;
+
+    let base1Fixture: Newable;
+    let base2Fixture: Newable;
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    let injectFromResultMock: Mock<(target: Function) => void>;
+
+    beforeAll(() => {
+      optionsFixture = {
+        extendConstructorArguments: false,
+        extendProperties: false,
+        lifecycle: {
+          extendPostConstructMethods: true,
+          extendPreDestroyMethods: false,
+        },
+      };
+
+      base1Fixture = class Base1 {};
+      base2Fixture = class Base2 {};
+
+      injectFromResultMock = vitest.fn();
+
+      // Setup getBaseType chain: target -> base1 -> base2 -> undefined
+      vitest
+        .mocked(getBaseType)
+        .mockReturnValueOnce(base1Fixture)
+        .mockReturnValueOnce(base2Fixture)
+        .mockReturnValueOnce(undefined);
+
+      vitest.mocked(injectFrom).mockReturnValue(injectFromResultMock);
+
+      injectFromHierarchy(optionsFixture)(targetFixture);
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should traverse the full prototype chain', () => {
+      expect(getBaseType).toHaveBeenCalledTimes(3);
+      expect(getBaseType).toHaveBeenNthCalledWith(1, targetFixture);
+      expect(getBaseType).toHaveBeenNthCalledWith(2, base1Fixture);
+      expect(getBaseType).toHaveBeenNthCalledWith(3, base2Fixture);
+    });
+
+    it('should call injectFrom top-down with lifecycle options', () => {
+      const expectedFirst: InjectFromOptions = {
+        ...optionsFixture,
+        type: base2Fixture,
+      };
+      const expectedSecond: InjectFromOptions = {
+        ...optionsFixture,
+        type: base1Fixture,
+      };
+
+      // injectFrom called twice, then their returned decorators applied to target
+      expect(injectFrom).toHaveBeenCalledTimes(2);
+      expect(injectFrom).toHaveBeenNthCalledWith(1, expectedFirst);
+      expect(injectFrom).toHaveBeenNthCalledWith(2, expectedSecond);
+
+      expect(injectFromResultMock).toHaveBeenCalledTimes(2);
+      expect(injectFromResultMock).toHaveBeenNthCalledWith(1, targetFixture);
+      expect(injectFromResultMock).toHaveBeenNthCalledWith(2, targetFixture);
+    });
+  });
+
   describe('when called, and getBaseType() returns Object', () => {
     let optionsFixture: InjectFromHierarchyOptions;
 
