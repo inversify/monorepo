@@ -1,5 +1,18 @@
 # @inversifyjs/framework-core
 
+## 2.1.0
+
+### Minor Changes
+
+- fe0bbad: Add CatchError decorator
+- fe0bbad: Add UseErrorFilter decorator
+
+### Patch Changes
+
+- Updated dependencies [bc06943]
+- Updated dependencies [0f3b8a5]
+  - @inversifyjs/reflect-metadata-utils@1.4.0
+
 ## 2.0.0
 
 ### Major Changes
