@@ -53,8 +53,8 @@ describe(injectFrom, () => {
           const expected: ClassMetadata = {
             constructorArguments: [],
             lifecycle: {
-              postConstructMethodName: undefined,
-              preDestroyMethodName: undefined,
+              postConstructMethodNames: new Set(),
+              preDestroyMethodNames: new Set(),
             },
             properties: new Map(),
             scope: undefined,
@@ -117,8 +117,8 @@ describe(injectFrom, () => {
               },
             ],
             lifecycle: {
-              postConstructMethodName: undefined,
-              preDestroyMethodName: undefined,
+              postConstructMethodNames: new Set(),
+              preDestroyMethodNames: new Set(),
             },
             properties: new Map([
               [
@@ -274,8 +274,8 @@ describe(injectFrom, () => {
             const expectedClassMetadata: ClassMetadata = {
               constructorArguments: expectedConstructorArguments,
               lifecycle: {
-                postConstructMethodName: undefined,
-                preDestroyMethodName: undefined,
+                postConstructMethodNames: new Set(),
+                preDestroyMethodNames: new Set(),
               },
               properties: new Map([
                 ['bar', expectedBarPropertyMetadata],
@@ -330,8 +330,8 @@ describe(injectFrom, () => {
           const expected: ClassMetadata = {
             constructorArguments: [],
             lifecycle: {
-              postConstructMethodName: undefined,
-              preDestroyMethodName: undefined,
+              postConstructMethodNames: new Set(),
+              preDestroyMethodNames: new Set(),
             },
             properties: new Map(),
             scope: undefined,
@@ -388,8 +388,8 @@ describe(injectFrom, () => {
               },
             ],
             lifecycle: {
-              postConstructMethodName: undefined,
-              preDestroyMethodName: undefined,
+              postConstructMethodNames: new Set(),
+              preDestroyMethodNames: new Set(),
             },
             properties: new Map([
               [
@@ -459,8 +459,8 @@ describe(injectFrom, () => {
               },
             ],
             lifecycle: {
-              postConstructMethodName: undefined,
-              preDestroyMethodName: undefined,
+              postConstructMethodNames: new Set(),
+              preDestroyMethodNames: new Set(),
             },
             properties: new Map([
               [
@@ -563,8 +563,8 @@ describe(injectFrom, () => {
               },
             ],
             lifecycle: {
-              postConstructMethodName: undefined,
-              preDestroyMethodName: undefined,
+              postConstructMethodNames: new Set(),
+              preDestroyMethodNames: new Set(),
             },
             properties: new Map([
               [

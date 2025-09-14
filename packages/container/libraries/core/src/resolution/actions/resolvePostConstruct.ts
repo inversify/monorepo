@@ -8,7 +8,7 @@ import { Resolved, SyncResolved } from '../models/Resolved';
 export function resolvePostConstruct<TActivated>(
   instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,
   binding: InstanceBinding<TActivated>,
-  postConstructMethodName: string | symbol | undefined,
+  postConstructMethodName: string | symbol,
 ): Resolved<TActivated> {
   const postConstructResult: void | Promise<void> = invokePostConstruct(
     instance,
@@ -26,12 +26,8 @@ export function resolvePostConstruct<TActivated>(
 function invokePostConstruct<TActivated>(
   instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,
   binding: InstanceBinding<TActivated>,
-  postConstructMethodName: string | symbol | undefined,
+  postConstructMethodName: string | symbol,
 ): void | Promise<void> {
-  if (postConstructMethodName === undefined) {
-    return;
-  }
-
   if (postConstructMethodName in instance) {
     if (typeof instance[postConstructMethodName] === 'function') {
       let postConstructResult: unknown;

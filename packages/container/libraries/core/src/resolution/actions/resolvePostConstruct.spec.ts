@@ -18,34 +18,6 @@ import { resolvePostConstruct } from './resolvePostConstruct';
 type ActivatedTest = Record<string | symbol, unknown>;
 
 describe(resolvePostConstruct, () => {
-  describe('having undefined postConstructMethodName', () => {
-    let instanceFixture: ActivatedTest;
-    let bindingFixture: InstanceBinding<ActivatedTest>;
-    let postConstructMethodNameFixture: undefined;
-
-    beforeAll(() => {
-      instanceFixture = {};
-      bindingFixture = Symbol() as unknown as InstanceBinding<ActivatedTest>;
-      postConstructMethodNameFixture = undefined;
-    });
-
-    describe('when called', () => {
-      let result: unknown;
-
-      beforeAll(() => {
-        result = resolvePostConstruct(
-          instanceFixture,
-          bindingFixture,
-          postConstructMethodNameFixture,
-        );
-      });
-
-      it('should return instance', () => {
-        expect(result).toBe(instanceFixture);
-      });
-    });
-  });
-
   describe('having instance with no properties and postConstructMethodName', () => {
     let instanceFixture: ActivatedTest;
     let bindingFixture: InstanceBinding<ActivatedTest>;

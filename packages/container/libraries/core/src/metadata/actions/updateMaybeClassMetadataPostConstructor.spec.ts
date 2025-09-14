@@ -7,7 +7,7 @@ import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
 import { updateMaybeClassMetadataPostConstructor } from './updateMaybeClassMetadataPostConstructor';
 
 describe(updateMaybeClassMetadataPostConstructor, () => {
-  describe('having metadata with no postConstructorMethodName', () => {
+  describe('having metadata with no postConstructorMethodNames', () => {
     let metadataFixture: MaybeClassMetadata;
     let methodNameFixture: string | symbol;
 
@@ -30,8 +30,8 @@ describe(updateMaybeClassMetadataPostConstructor, () => {
         const expected: MaybeClassMetadata = {
           constructorArguments: [],
           lifecycle: {
-            postConstructMethodName: methodNameFixture,
-            preDestroyMethodName: undefined,
+            postConstructMethodNames: new Set([methodNameFixture]),
+            preDestroyMethodNames: new Set(),
           },
           properties: new Map(),
           scope: undefined,
@@ -42,16 +42,18 @@ describe(updateMaybeClassMetadataPostConstructor, () => {
     });
   });
 
-  describe('having metadata with postConstructorMethodName', () => {
+  describe('having metadata with existing postConstructorMethodNames', () => {
     let metadataFixture: MaybeClassMetadata;
     let methodNameFixture: string | symbol;
+    let existingMethodNameFixture: string;
 
     beforeAll(() => {
+      existingMethodNameFixture = 'existingMethod';
       metadataFixture = {
         constructorArguments: [],
         lifecycle: {
-          postConstructMethodName: 'postConstructorMethodName',
-          preDestroyMethodName: undefined,
+          postConstructMethodNames: new Set([existingMethodNameFixture]),
+          preDestroyMethodNames: new Set(),
         },
         properties: new Map(),
         scope: undefined,
@@ -63,24 +65,59 @@ describe(updateMaybeClassMetadataPostConstructor, () => {
       let result: unknown;
 
       beforeAll(() => {
-        try {
+        result =
           updateMaybeClassMetadataPostConstructor(methodNameFixture)(
             metadataFixture,
           );
-        } catch (error: unknown) {
-          result = error;
-        }
       });
 
-      it('should throw InversifyCoreError', () => {
-        const expectedErrorProperties: Partial<InversifyCoreError> = {
-          kind: InversifyCoreErrorKind.injectionDecoratorConflict,
-          message: 'Unexpected duplicated postConstruct decorator',
+      it('should return MaybeClassMetadata with both methods', () => {
+        const expected: MaybeClassMetadata = {
+          constructorArguments: [],
+          lifecycle: {
+            postConstructMethodNames: new Set([
+              existingMethodNameFixture,
+              methodNameFixture,
+            ]),
+            preDestroyMethodNames: new Set(),
+          },
+          properties: new Map(),
+          scope: undefined,
         };
 
-        expect(result).toBeInstanceOf(InversifyCoreError);
-        expect(result).toStrictEqual(
-          expect.objectContaining(expectedErrorProperties),
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
+
+  describe('having metadata with duplicate postConstructor method name', () => {
+    let metadataFixture: MaybeClassMetadata;
+    let methodNameFixture: string | symbol;
+
+    beforeAll(() => {
+      methodNameFixture = 'duplicateMethod';
+      metadataFixture = {
+        constructorArguments: [],
+        lifecycle: {
+          postConstructMethodNames: new Set([methodNameFixture]),
+          preDestroyMethodNames: new Set(),
+        },
+        properties: new Map(),
+        scope: undefined,
+      };
+    });
+
+    describe('when called', () => {
+      it('should throw an InversifyCoreError', () => {
+        expect(() => {
+          updateMaybeClassMetadataPostConstructor(methodNameFixture)(
+            metadataFixture,
+          );
+        }).toThrow(
+          new InversifyCoreError(
+            InversifyCoreErrorKind.injectionDecoratorConflict,
+            `Unexpected duplicated postConstruct method ${methodNameFixture.toString()}`,
+          ),
         );
       });
     });

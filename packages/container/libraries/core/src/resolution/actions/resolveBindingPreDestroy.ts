@@ -37,26 +37,49 @@ export function resolveBindingPreDestroy<TResolved>(
     if (isPromise(instance)) {
       return instance.then(
         (instance: Record<string | symbol, unknown>): void | Promise<void> =>
-          resolveInstancePreDestroy(classMetadata, instance),
+          resolveInstancePreDestroyMethods(classMetadata, instance),
       );
     } else {
-      return resolveInstancePreDestroy(classMetadata, instance);
+      return resolveInstancePreDestroyMethods(classMetadata, instance);
     }
   }
 }
 
-function resolveInstancePreDestroy(
+function resolveInstancePreDestroyMethod(
+  instance: Record<string | symbol, unknown>,
+  methodName: string | symbol,
+): void | Promise<void> {
+  if (typeof instance[methodName] === 'function') {
+    const result: void | Promise<void> = (
+      instance[methodName] as () => void | Promise<void>
+    )();
+
+    return result;
+  }
+}
+
+function resolveInstancePreDestroyMethods(
   classMetadata: ClassMetadata,
   instance: Record<string | symbol, unknown>,
 ): void | Promise<void> {
-  if (
-    classMetadata.lifecycle.preDestroyMethodName !== undefined &&
-    typeof instance[classMetadata.lifecycle.preDestroyMethodName] === 'function'
-  ) {
-    return (
-      instance[
-        classMetadata.lifecycle.preDestroyMethodName
-      ] as () => void | Promise<void>
-    )();
+  const preDestroyMethodNames: Set<string | symbol> =
+    classMetadata.lifecycle.preDestroyMethodNames;
+
+  if (preDestroyMethodNames.size === 0) {
+    return;
   }
+
+  let result: void | Promise<void> = undefined;
+
+  for (const methodName of preDestroyMethodNames) {
+    if (result === undefined) {
+      result = resolveInstancePreDestroyMethod(instance, methodName);
+    } else {
+      result = result.then((): void | Promise<void> =>
+        resolveInstancePreDestroyMethod(instance, methodName),
+      );
+    }
+  }
+
+  return result;
 }

@@ -6,14 +6,14 @@ export function updateMaybeClassMetadataPreDestroy(
   methodName: string | symbol,
 ): (metadata: MaybeClassMetadata) => MaybeClassMetadata {
   return (metadata: MaybeClassMetadata): MaybeClassMetadata => {
-    if (metadata.lifecycle.preDestroyMethodName !== undefined) {
+    if (metadata.lifecycle.preDestroyMethodNames.has(methodName)) {
       throw new InversifyCoreError(
         InversifyCoreErrorKind.injectionDecoratorConflict,
-        'Unexpected duplicated preDestroy decorator',
+        `Unexpected duplicated preDestroy method ${methodName.toString()}`,
       );
     }
 
-    metadata.lifecycle.preDestroyMethodName = methodName;
+    metadata.lifecycle.preDestroyMethodNames.add(methodName);
 
     return metadata;
   };
