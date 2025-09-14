@@ -53,7 +53,7 @@
   },
   "name": "@inversifyjs/zod-validation",
   "peerDependencies": {
-    "inversify": "^7.9.1",
+    "inversify": "^7.10.0",
     "zod": "^4.1.8"
   },
   "private": true,
