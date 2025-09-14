@@ -1,5 +1,12 @@
 # @inversifyjs/reflect-metadata-utils
 
+## 1.4.0
+
+### Minor Changes
+
+- bc06943: Added `buildEmptySetMetadata`
+- 0f3b8a5: Added `updateSetMetadataWithList`
+
 ## 1.3.0
 
 ### Minor Changes
