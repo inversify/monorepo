@@ -20,6 +20,7 @@ export type { CatchErrorOptions } from './error-filter/models/CatchErrorOptions'
 export type { ErrorFilter } from './error-filter/models/ErrorFilter';
 export type { Guard } from './guard/models/Guard';
 export type { Interceptor } from './interceptor/models/Interceptor';
+export type { InterceptorTransformObject } from './interceptor/models/InterceptorTransformObject';
 export type { ApplyMiddlewareOptions } from './middleware/models/ApplyMiddlewareOptions';
 export type { Middleware } from './middleware/models/Middleware';
 export type { MiddlewareOptions } from './middleware/models/MiddlewareOptions';
