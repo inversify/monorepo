@@ -6,8 +6,8 @@ export class ClassMetadataFixtures {
     const fixture: ClassMetadata = {
       constructorArguments: [],
       lifecycle: {
-        postConstructMethodNames: [],
-        preDestroyMethodNames: [],
+        postConstructMethodNames: new Set(),
+        preDestroyMethodNames: new Set(),
       },
       properties: new Map(),
       scope: undefined,
@@ -70,8 +70,8 @@ export class ClassMetadataFixtures {
     const fixture: ClassMetadata = {
       constructorArguments: [],
       lifecycle: {
-        postConstructMethodNames: [],
-        preDestroyMethodNames: [],
+        postConstructMethodNames: new Set(),
+        preDestroyMethodNames: new Set(),
       },
       properties: new Map(),
       scope: undefined,
@@ -84,8 +84,8 @@ export class ClassMetadataFixtures {
     const fixture: ClassMetadata = {
       constructorArguments: [],
       lifecycle: {
-        postConstructMethodNames: [],
-        preDestroyMethodNames: ['preDestroy'],
+        postConstructMethodNames: new Set(),
+        preDestroyMethodNames: new Set(['preDestroy']),
       },
       properties: new Map(),
       scope: undefined,

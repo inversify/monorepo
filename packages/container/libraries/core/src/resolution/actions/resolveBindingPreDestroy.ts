@@ -62,10 +62,10 @@ function resolveInstancePreDestroyMethods(
   classMetadata: ClassMetadata,
   instance: Record<string | symbol, unknown>,
 ): void | Promise<void> {
-  const preDestroyMethodNames: (string | symbol)[] =
+  const preDestroyMethodNames: Set<string | symbol> =
     classMetadata.lifecycle.preDestroyMethodNames;
 
-  if (preDestroyMethodNames.length === 0) {
+  if (preDestroyMethodNames.size === 0) {
     return;
   }
 

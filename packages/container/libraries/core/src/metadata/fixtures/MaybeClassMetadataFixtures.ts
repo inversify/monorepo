@@ -5,8 +5,8 @@ export class MaybeClassMetadataFixtures {
     const fixture: MaybeClassMetadata = {
       constructorArguments: [],
       lifecycle: {
-        postConstructMethodNames: [],
-        preDestroyMethodNames: [],
+        postConstructMethodNames: new Set(),
+        preDestroyMethodNames: new Set(),
       },
       properties: new Map(),
       scope: undefined,

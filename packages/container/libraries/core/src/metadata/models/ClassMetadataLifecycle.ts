@@ -1,4 +1,4 @@
 export interface ClassMetadataLifecycle {
-  postConstructMethodNames: (string | symbol)[];
-  preDestroyMethodNames: (string | symbol)[];
+  postConstructMethodNames: Set<string | symbol>;
+  preDestroyMethodNames: Set<string | symbol>;
 }

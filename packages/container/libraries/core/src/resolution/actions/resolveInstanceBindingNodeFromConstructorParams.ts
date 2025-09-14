@@ -9,9 +9,9 @@ import { resolvePostConstruct } from './resolvePostConstruct';
 function resolveAllPostConstructMethods<TActivated>(
   instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,
   binding: InstanceBinding<TActivated>,
-  postConstructMethodNames: (string | symbol)[],
+  postConstructMethodNames: Set<string | symbol>,
 ): Resolved<TActivated> {
-  if (postConstructMethodNames.length === 0) {
+  if (postConstructMethodNames.size === 0) {
     return instance;
   }
 

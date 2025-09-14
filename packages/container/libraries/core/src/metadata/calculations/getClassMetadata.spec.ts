@@ -93,8 +93,8 @@ describe(getClassMetadata, () => {
       metadataFixture = {
         constructorArguments: [],
         lifecycle: {
-          postConstructMethodNames: [],
-          preDestroyMethodNames: [],
+          postConstructMethodNames: new Set(),
+          preDestroyMethodNames: new Set(),
         },
         properties: new Map(),
         scope: undefined,
