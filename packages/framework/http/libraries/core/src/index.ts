@@ -4,12 +4,15 @@ import {
   CatchErrorOptions,
   ErrorFilter,
   Guard,
+  Interceptor,
+  InterceptorTransformObject,
   Middleware,
   MiddlewarePhase,
   Pipe,
   PipeMetadata,
   UseErrorFilter,
   UseGuard,
+  UseInterceptor,
 } from '@inversifyjs/framework-core';
 
 import { InversifyHttpAdapter } from './http/adapter/InversifyHttpAdapter';
@@ -85,6 +88,8 @@ export type {
   ErrorFilter,
   Guard,
   HttpAdapterOptions,
+  Interceptor,
+  InterceptorTransformObject,
   Middleware,
   MiddlewareHandler,
   Pipe,
@@ -158,4 +163,5 @@ export {
   UnauthorizedHttpResponse,
   UseErrorFilter,
   UseGuard,
+  UseInterceptor,
 };

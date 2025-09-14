@@ -3,9 +3,12 @@ import {
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
   ErrorFilter,
   getClassGuardList,
+  getClassInterceptorList,
   getClassMethodGuardList,
+  getClassMethodInterceptorList,
   getClassMethodMiddlewareList,
   Guard,
+  Interceptor,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
@@ -47,6 +50,16 @@ export function buildRouterExplorerControllerMethodMetadata<
     ...getClassMethodGuardList(controller, controllerMethodMetadata.methodKey),
   ];
 
+  const controllerMethodInterceptorList: Newable<
+    Interceptor<TRequest, TResponse>
+  >[] = [
+    ...getClassInterceptorList(controller),
+    ...getClassMethodInterceptorList(
+      controller,
+      controllerMethodMetadata.methodKey,
+    ),
+  ];
+
   const controllerMethodMiddlewareList: (
     | NewableFunction
     | ApplyMiddlewareOptions
@@ -83,6 +96,7 @@ export function buildRouterExplorerControllerMethodMetadata<
     errorTypeToErrorFilterMap,
     guardList: controllerMethodGuardList,
     headerMetadataList,
+    interceptorList: controllerMethodInterceptorList,
     methodKey: controllerMethodMetadata.methodKey,
     parameterMetadataList: controllerMethodParameterMetadataList,
     path: controllerMethodMetadata.path,
