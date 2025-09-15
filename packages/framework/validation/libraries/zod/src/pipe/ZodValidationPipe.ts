@@ -16,12 +16,17 @@ export class ZodValidationPipe implements Pipe {
   }
 
   public execute(input: unknown, metadata: PipeMetadata): unknown {
-    const parameterTypeList: ZodType[] =
-      getOwnReflectMetadata<ZodType[][]>(
-        metadata.targetClass,
-        zodValidationMetadataReflectKey,
-        metadata.methodName,
-      )?.[metadata.parameterIndex] ?? [];
+    const parameterTypeList: ZodType[] | undefined = getOwnReflectMetadata<
+      ZodType[][]
+    >(
+      metadata.targetClass,
+      zodValidationMetadataReflectKey,
+      metadata.methodName,
+    )?.[metadata.parameterIndex];
+
+    if (parameterTypeList === undefined) {
+      return input;
+    }
 
     return this.#applySchemaList(
       this.#applySchemaList(input, this.#typeList),
