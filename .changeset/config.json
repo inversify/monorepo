@@ -10,7 +10,7 @@
       "@inversifyjs/http-express-v4",
       "@inversifyjs/http-fastify",
       "@inversifyjs/http-hono",
-      "@inversifyjs/zod-validation"
+      "@inversifyjs/http-validation"
     ]
   ],
   "access": "restricted",
@@ -29,6 +29,7 @@
     "@inversifyjs/http-hono",
     "@inversifyjs/http-open-api",
     "@inversifyjs/http-openapi-example",
+    "@inversifyjs/http-validation",
     "@inversifyjs/inversify-http-docs-site",
     "@inversifyjs/inversify-http-open-api-docs-site",
     "@inversifyjs/logger",

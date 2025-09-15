@@ -20,6 +20,9 @@ coverage:
       '@inversifyjs/http-open-api':
         flags:
           - '@inversifyjs/http-open-api'
+      '@inversifyjs/http-validation':
+        flags:
+          - '@inversifyjs/http-validation'
       '@inversifyjs/logger':
         flags:
           - '@inversifyjs/logger'
@@ -57,6 +60,9 @@ flags:
   '@inversifyjs/http-open-api':
     paths:
       - packages/framework/http/libraries/open-api
+  '@inversifyjs/http-validation':
+    paths:
+      - packages/framework/http/libraries/validation
   '@inversifyjs/logger':
     paths:
       - packages/logger
