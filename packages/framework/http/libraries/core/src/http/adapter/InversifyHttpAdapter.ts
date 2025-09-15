@@ -18,6 +18,11 @@ import { Container, Newable } from 'inversify';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
+import { isHttpResponse } from '../../httpResponse/calculations/isHttpResponse';
+import { ErrorHttpResponse } from '../../httpResponse/models/ErrorHttpResponse';
+import { ForbiddenHttpResponse } from '../../httpResponse/models/ForbiddenHttpResponse';
+import { HttpResponse } from '../../httpResponse/models/HttpResponse';
+import { InternalServerErrorHttpResponse } from '../../httpResponse/models/InternalServerErrorHttpResponse';
 import { buildRouterExplorerControllerMetadataList } from '../../routerExplorer/calculations/buildRouterExplorerControllerMetadataList';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
@@ -26,18 +31,13 @@ import { setErrorFilterToErrorFilterMap } from '../actions/setErrorFilterToError
 import { buildInterceptedHandler } from '../calculations/buildInterceptedHandler';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
+import { HttpStatusCode } from '../models/HttpStatusCode';
 import { MiddlewareHandler } from '../models/MiddlewareHandler';
 import { RequestHandler } from '../models/RequestHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { RequiredOptions } from '../models/RequiredOptions';
 import { RouteParams } from '../models/RouteParams';
 import { RouterParams } from '../models/RouterParams';
-import { isHttpResponse } from '../responses/calculations/isHttpResponse';
-import { ErrorHttpResponse } from '../responses/error/ErrorHttpResponse';
-import { ForbiddenHttpResponse } from '../responses/error/ForbiddenHttpResponse';
-import { InternalServerErrorHttpResponse } from '../responses/error/InternalServerErrorHttpResponse';
-import { HttpResponse } from '../responses/HttpResponse';
-import { HttpStatusCode } from '../responses/HttpStatusCode';
 
 const DEFAULT_ERROR_MESSAGE: string = 'An unexpected error occurred';
 

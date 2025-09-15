@@ -1,4 +1,4 @@
-import { HttpResponse } from '../../http/responses/HttpResponse';
+import { HttpResponse } from '../../httpResponse/models/HttpResponse';
 import { InversifyHttpAdapterErrorKind } from './InversifyHttpAdapterErrorKind';
 
 const isHttpAdapterErrorSymbol: unique symbol = Symbol.for(

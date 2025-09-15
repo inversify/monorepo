@@ -1,8 +1,8 @@
 import { ErrorFilter, Guard, Interceptor } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
 
+import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { RequestMethodType } from '../../http/models/RequestMethodType';
-import { HttpStatusCode } from '../../http/responses/HttpStatusCode';
 import { ControllerMethodParameterMetadata } from './ControllerMethodParameterMetadata';
 
 export interface RouterExplorerControllerMethodMetadata<
