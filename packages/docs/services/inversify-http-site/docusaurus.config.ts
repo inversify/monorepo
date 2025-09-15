@@ -63,6 +63,13 @@ const config: Config = {
   projectName: 'http',
   tagline: 'A powerful set of tools to create HTTP APIs on top of InversifyJS',
   themeConfig: {
+    algolia: {
+      apiKey: 'd662eb902793e5d4c1f11d049fb18cdd',
+      appId: '8BIUPXYCF9',
+      contextualSearch: true,
+      indexName: 'crawler_inversify-http',
+      insights: false,
+    },
     footer: {
       links: [
         {
