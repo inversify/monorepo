@@ -33,6 +33,7 @@
     "@inversifyjs/inversify-http-docs-site",
     "@inversifyjs/inversify-http-open-api-docs-site",
     "@inversifyjs/logger",
+    "@inversifyjs/standard-schema-validation",
     "@inversifyjs/zod-validation"
   ]
 }
