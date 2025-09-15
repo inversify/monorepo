@@ -1,5 +1,5 @@
 {
-  "author": "Adrián Martínez Jiménez",
+  "author": "Roberto Pintos López",
   "bugs": {
     "url": "https://github.com/inversify/monorepo/issues"
   },
@@ -12,6 +12,7 @@
   "devDependencies": {
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
+    "@standard-schema/spec": "1.0.0",
     "@stryker-mutator/core": "9.1.1",
     "@stryker-mutator/typescript-checker": "9.1.1",
     "@stryker-mutator/vitest-runner": "9.1.1",
@@ -19,14 +20,15 @@
     "@types/node": "22.18.3",
     "@vitest/coverage-v8": "3.2.4",
     "eslint": "9.35.0",
-    "inversify": "7.10.0",
+    "inversify": "^7.10.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
     "rollup": "4.50.2",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.2",
-    "vitest": "3.2.4"
+    "vitest": "3.2.4",
+    "zod": "^4.1.8"
   },
   "devEngines": {
     "node": "^22.10.2",
@@ -52,10 +54,7 @@
       "require": "./lib/cjs/index.js"
     }
   },
-  "name": "@inversifyjs/zod-validation",
-  "peerDependencies": {
-    "zod": "^4.1.8"
-  },
+  "name": "@inversifyjs/standard-schema-validation",
   "private": true,
   "repository": {
     "type": "git",
