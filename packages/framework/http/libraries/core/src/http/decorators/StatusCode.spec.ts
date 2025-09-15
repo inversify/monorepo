@@ -5,7 +5,7 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 import { setReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMethodStatusCodeMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodStatusCodeMetadataReflectKey';
-import { HttpStatusCode } from '../responses/HttpStatusCode';
+import { HttpStatusCode } from '../models/HttpStatusCode';
 import { StatusCode } from './StatusCode';
 
 describe(StatusCode, () => {

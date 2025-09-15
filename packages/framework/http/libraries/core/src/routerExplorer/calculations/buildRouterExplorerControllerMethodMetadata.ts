@@ -13,7 +13,7 @@ import {
 } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
 
-import { HttpStatusCode } from '../../http/responses/HttpStatusCode';
+import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
