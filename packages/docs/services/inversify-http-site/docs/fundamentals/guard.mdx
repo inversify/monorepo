@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Guard
 ---
 import guardApiExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpressAllow.ts.txt';
@@ -71,3 +71,5 @@ Below are minimal “deny” guards that throw a `ForbiddenHttpResponse` directl
 ## Attaching guards
 
 Use the [UseGuard](../../api/decorators#useguard) decorator at the controller level (applies to all routes) or at the method level (applies to one route).
+
+Global guards can be registered using the [InversifyHttpAdapter](../../api/inversify-http-adapter#applyglobalguards).

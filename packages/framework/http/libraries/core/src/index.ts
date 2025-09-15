@@ -64,6 +64,7 @@ import { NotImplementedHttpResponse } from './http/responses/error/NotImplemente
 import { PaymentRequiredHttpResponse } from './http/responses/error/PaymentRequiredHttpResponse';
 import { ServiceUnavailableHttpResponse } from './http/responses/error/ServiceUnavailableHttpResponse';
 import { UnauthorizedHttpResponse } from './http/responses/error/UnauthorizedHttpResponse';
+import { UnprocessableEntityHttpResponse } from './http/responses/error/UnprocessableEntityHttpResponse';
 import { HttpResponse } from './http/responses/HttpResponse';
 import { HttpStatusCode } from './http/responses/HttpStatusCode';
 import { AcceptedHttpResponse } from './http/responses/success/AcceptedHttpResponse';
@@ -161,6 +162,7 @@ export {
   SetHeader,
   StatusCode,
   UnauthorizedHttpResponse,
+  UnprocessableEntityHttpResponse,
   UseErrorFilter,
   UseGuard,
   UseInterceptor,

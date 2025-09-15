@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 5
 title: Middleware
 ---
 import middlewareApiExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/middlewareApiExpressSetHeader.ts.txt';
@@ -106,3 +106,5 @@ Each adapter exposes its own request/response types. Here is the same middleware
 ## Attaching middleware
 
 Use the [ApplyMiddleware](../../api/decorators#applymiddleware) decorator at the controller level (applies to all routes) or at the method level (applies to one route).
+
+Global middleware can be registered using the [InversifyHttpAdapter](../../api/inversify-http-adapter#applyglobalmiddleware).

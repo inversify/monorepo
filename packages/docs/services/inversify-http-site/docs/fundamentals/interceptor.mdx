@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 4
 title: Interceptor
 ---
 import interceptorApiExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiExpressSendMetrics.ts.txt';
@@ -70,4 +70,4 @@ Under the hood, the adapter chains all registered transforms and applies them to
 
 Use the [UseInterceptor](../../api/decorators#useinterceptor) decorator at the controller level (applies to all routes) or at the method level (applies to a single route).
 
-You can also register global interceptors with your adapter instance's `useGlobalInterceptors(...)` method.
+Global interceptors can be registered using the [InversifyHttpAdapter](../../api/inversify-http-adapter#useglobalinterceptors).
