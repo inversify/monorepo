@@ -2,22 +2,22 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
+import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
 import { Server } from '../../server/models/Server';
 import {
-  ExpressNextInterceptor,
-  NextExpressController,
-} from './decoratorApiNextExpress';
+  FastifyNextInterceptor,
+  NextFastifyController,
+} from './decoratorApiNextFastify';
 
-describe('Decorator API (Next - Express 5)', () => {
+describe('Decorator API (Next - Fastify)', () => {
   let server: Server;
 
   beforeAll(async () => {
     const container: Container = new Container();
-    container.bind(ExpressNextInterceptor).toSelf().inSingletonScope();
-    container.bind(NextExpressController).toSelf().inSingletonScope();
+    container.bind(FastifyNextInterceptor).toSelf().inSingletonScope();
+    container.bind(NextFastifyController).toSelf().inSingletonScope();
 
-    server = await buildExpressServer(container);
+    server = await buildFastifyServer(container);
   });
 
   afterAll(async () => {

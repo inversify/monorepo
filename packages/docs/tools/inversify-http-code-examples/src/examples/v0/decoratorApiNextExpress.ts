@@ -1,25 +1,31 @@
-import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
-import { ExpressMiddleware } from '@inversifyjs/http-express';
+import {
+  Controller,
+  Get,
+  Interceptor,
+  Next,
+  UseInterceptor,
+} from '@inversifyjs/http-core';
 import { NextFunction, Request, Response } from 'express';
 
-export class ExpressNextMiddleware implements ExpressMiddleware {
-  public execute(
+export class ExpressNextInterceptor implements Interceptor<Request, Response> {
+  public async intercept(
     _request: Request,
     response: Response,
-    next: NextFunction,
-  ): void {
+    next: () => Promise<unknown>,
+  ): Promise<void> {
     response.setHeader('next-was-called', 'true');
-    next();
+    await next();
+    response.send('ok');
   }
 }
 
 // Begin-example
 @Controller('/next')
+@UseInterceptor(ExpressNextInterceptor)
 export class NextExpressController {
-  @ApplyMiddleware(ExpressNextMiddleware)
   @Get()
-  public async getNext(): Promise<string> {
-    return 'ok';
+  public getNext(@Next() next: NextFunction): void {
+    next();
   }
 }
 // End-example

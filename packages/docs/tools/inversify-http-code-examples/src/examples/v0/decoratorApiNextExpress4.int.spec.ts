@@ -5,7 +5,7 @@ import { Container } from 'inversify';
 import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server';
 import { Server } from '../../server/models/Server';
 import {
-  Express4NextMiddleware,
+  Express4NextInterceptor,
   NextExpress4Controller,
 } from './decoratorApiNextExpress4';
 
@@ -14,7 +14,7 @@ describe('Decorator API (Next - Express 4)', () => {
 
   beforeAll(async () => {
     const container: Container = new Container();
-    container.bind(Express4NextMiddleware).toSelf().inSingletonScope();
+    container.bind(Express4NextInterceptor).toSelf().inSingletonScope();
     container.bind(NextExpress4Controller).toSelf().inSingletonScope();
 
     server = await buildExpress4Server(container);
