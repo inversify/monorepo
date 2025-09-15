@@ -35,18 +35,18 @@ Determines whether a request can continue. If `activate` returns `true`, the req
 Each adapter has its own request type. Below is a minimal “allow” guard for each adapter.
 
 <Tabs>
-	<TabItem value="express4" label="Express 4">
-		<CodeBlock language="ts">{guardApiExpress4Source}</CodeBlock>
-	</TabItem>
-	<TabItem value="express5" label="Express 5">
-		<CodeBlock language="ts">{guardApiExpressSource}</CodeBlock>
-	</TabItem>
-	<TabItem value="fastify" label="Fastify">
-		<CodeBlock language="ts">{guardApiFastifySource}</CodeBlock>
-	</TabItem>
-	<TabItem value="hono" label="Hono">
-		<CodeBlock language="ts">{guardApiHonoSource}</CodeBlock>
-	</TabItem>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{guardApiExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{guardApiExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{guardApiFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{guardApiHonoSource}</CodeBlock>
+  </TabItem>
 </Tabs>
 
 ### Deny with a custom error response
@@ -54,18 +54,18 @@ Each adapter has its own request type. Below is a minimal “allow” guard for 
 Below are minimal “deny” guards that throw a `ForbiddenHttpResponse` directly.
 
 <Tabs>
-	<TabItem value="express4-deny" label="Express 4">
-		<CodeBlock language="ts">{guardApiExpress4DenySource}</CodeBlock>
-	</TabItem>
-	<TabItem value="express5-deny" label="Express 5">
-		<CodeBlock language="ts">{guardApiExpressDenySource}</CodeBlock>
-	</TabItem>
-	<TabItem value="fastify-deny" label="Fastify">
-		<CodeBlock language="ts">{guardApiFastifyDenySource}</CodeBlock>
-	</TabItem>
-	<TabItem value="hono-deny" label="Hono">
-		<CodeBlock language="ts">{guardApiHonoDenySource}</CodeBlock>
-	</TabItem>
+  <TabItem value="express4-deny" label="Express 4">
+    <CodeBlock language="ts">{guardApiExpress4DenySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5-deny" label="Express 5">
+    <CodeBlock language="ts">{guardApiExpressDenySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify-deny" label="Fastify">
+    <CodeBlock language="ts">{guardApiFastifyDenySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono-deny" label="Hono">
+    <CodeBlock language="ts">{guardApiHonoDenySource}</CodeBlock>
+  </TabItem>
 </Tabs>
 
 ## Attaching guards
