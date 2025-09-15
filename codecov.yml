@@ -35,6 +35,9 @@ coverage:
       '@inversifyjs/reflect-metadata-utils':
         flags:
           - '@inversifyjs/reflect-metadata-utils'
+      '@inversifyjs/standard-schema-validation':
+        flags:
+          - '@inversifyjs/standard-schema-validation'
       '@inversifyjs/zod-validation':
         flags:
           - '@inversifyjs/zod-validation'
@@ -75,6 +78,9 @@ flags:
   '@inversifyjs/reflect-metadata-utils':
     paths:
       - packages/foundation/libraries/reflect-metadata-utils
+  '@inversifyjs/standard-schema-validation':
+    paths:
+      - packages/framework/validation/libraries/standard-schema
   '@inversifyjs/zod-validation':
     paths:
       - packages/framework/validation/libraries/zod
