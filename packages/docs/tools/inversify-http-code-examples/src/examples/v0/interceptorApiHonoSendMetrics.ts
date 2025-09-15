@@ -1,0 +1,30 @@
+import { Interceptor } from '@inversifyjs/http-core';
+import { Context, HonoRequest } from 'hono';
+
+// Begin-example
+const METRICS: Record<string, number> = {};
+
+function registerMetrics(path: string): void {
+  METRICS[path] = (METRICS[path] ?? 0) + 1;
+}
+
+export class HonoMetricsInterceptor
+  implements Interceptor<HonoRequest, Context>
+{
+  public async intercept(
+    request: HonoRequest,
+    _context: Context,
+    next: () => Promise<unknown>,
+  ): Promise<void> {
+    const path: string = request.path;
+
+    // before handler
+    registerMetrics(path);
+
+    await next();
+
+    // after handler
+    registerMetrics(path);
+  }
+}
+// End-example

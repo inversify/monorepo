@@ -1,0 +1,73 @@
+---
+sidebar_position: 4
+title: Interceptor
+---
+import interceptorApiExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiExpressSendMetrics.ts.txt';
+import interceptorApiExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiExpress4SendMetrics.ts.txt';
+import interceptorApiFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiFastifySendMetrics.ts.txt';
+import interceptorApiHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiHonoSendMetrics.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Interceptor
+
+Interceptors run around your route handler—before it executes and after it completes. They can inspect the request/response, short-circuit the flow, and even transform the handler result.
+
+Interceptors must implement the `Interceptor<TRequest, TResponse>` interface:
+
+```ts
+interface Interceptor<TRequest = any, TResponse = any> {
+  intercept(
+    request: TRequest,
+    response: TResponse,
+    next: () => Promise<InterceptorTransformObject>,
+  ): Promise<void>;
+}
+
+interface InterceptorTransformObject {
+  push: (transform: (value: unknown) => unknown) => void;
+}
+```
+
+## intercept
+
+- Before the handler: do any pre-work (metrics, logging, auth checks, etc.).
+- Call `await next()` to hand control to the next interceptor or the controller handler.
+- After the handler: continue work (timers, audit logs, publish events, etc.).
+- To modify the handler return value, use the returned `InterceptorTransformObject` and call `transform.push(fn)`; your `fn` receives the handler result and should return the transformed value.
+
+## Adapter-specific examples
+
+Each adapter exposes its own native request/response types. Below is a simple “metrics” interceptor that increments a counter for the request path, running both before and after the handler.
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{interceptorApiExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{interceptorApiExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{interceptorApiFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{interceptorApiHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+## Transforming the handler result
+
+Interceptors can transform the value returned by your controller method. After `await next()`, use the returned transform object:
+
+```ts
+transform.push((value) => ({ ...value, intercepted: true }));
+```
+
+Under the hood, the adapter chains all registered transforms and applies them to the handler result before sending the response.
+
+## Attaching interceptors
+
+Use the [UseInterceptor](../../api/decorators#useinterceptor) decorator at the controller level (applies to all routes) or at the method level (applies to a single route).
+
+Global interceptors can be registered using the [InversifyHttpAdapter](../../api/inversify-http-adapter#useglobalinterceptors).

@@ -1,13 +1,13 @@
 # `OneToManyMapStar`
 
-A composite bidirectional multi‑index data structure used internally to maintain fast lookups between a set of **models** and many different **relation properties** (a star of one‑to‑many projections). It supports:
+A composite bidirectional multi-index data structure used internally to maintain fast lookups between a set of **models** and many different **relation properties** (a star of one-to-many projections). It supports:
 
 - Forward index: `model -> relation[]` (all relation objects associated with the model)
 - Inverted indices (one per relation key): `relationKeyValue -> model[]`
 - Cloning with structural duplication control (overridable shallow/deep clone hooks)
 - Targeted removal by relation key/value propagating consistency to all indices
 
-Compared with naïve structures (e.g. `Map<K, Set<Model>>` per property plus ad‑hoc reverse arrays) it centralizes consistency maintenance and offers predictable cloning hooks.
+Compared with naïve structures (e.g. `Map<K, Set<Model>>` per property plus ad-hoc reverse arrays) it centralizes consistency maintenance and offers predictable cloning hooks.
 
 ## Core Concepts
 
@@ -54,7 +54,7 @@ graph LR
   end
 ```
 
-Each relation object fan‑outs to many property values; each property value fans back to multiple models → a star of indices.
+Each relation object fan-outs to many property values; each property value fans back to multiple models → a star of indices.
 
 ## Operations Overview
 
@@ -63,12 +63,12 @@ Each relation object fan‑outs to many property values; each property value fan
 | `add(model, relation)` | Insert relation and update all relevant indices | O(k) (array push + k Map lookups/creates) |
 | `get(key, value)` | Retrieve models for a specific relation key value | O(1) expected (Map get) |
 | `getAllKeys(key)` | Iterate all relation values stored for a key | O(1) to obtain iterator; iteration O(distinct values) |
-| `removeByRelation(key, value)` | Remove every model that has at least one relation whose `key` equals `value` (and all its relations) | O(m * r * k) worst‑case |
+| `removeByRelation(key, value)` | Remove every model that has at least one relation whose `key` equals `value` (and all its relations) | O(m * r * k) worst-case |
 | `clone()` | Deep-ish structural copy with overridable element cloning | O(totalModels + totalRelations + totalKeyEntries) |
 
 Notes:
 - `removeByRelation` removes **all** relations for each affected model (not just those matching the (key,value) pair) because once a model is flagged by the key's value, the implementation purges its entire relation set (see Algorithm 4). This guarantees no dangling partial entries remain.
-- Cloning uses indirection maps to ensure each model/relation is cloned exactly once then re‑wired.
+- Cloning uses indirection maps to ensure each model/relation is cloned exactly once then re-wired.
 
 ## Mermaid: Add Flow
 
@@ -215,7 +215,7 @@ function removeByRelation(key, value): void
 ```
 
 ### Removal Properties
-- Idempotent for the same `(key,value)` pair after first execution (subsequent calls become no‑ops).
+- Idempotent for the same `(key,value)` pair after first execution (subsequent calls become no-ops).
 - Removes *all* relations for each affected model, ensuring no partial forward index remains for models that matched the filter.
 - The use of a `Set` of models ensures we don't process the same model multiple times even if it appears several times in the bucket array.
 

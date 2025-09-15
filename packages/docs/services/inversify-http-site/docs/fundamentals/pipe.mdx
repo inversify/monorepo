@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 6
 title: Pipe
 ---
 import pipeApiParseNumberSource from '@inversifyjs/http-code-examples/generated/examples/v0/pipeApiParseNumber.ts.txt';
@@ -33,3 +33,5 @@ Use parameter decorators to attach pipes where you need them. `Body`, `Params`, 
 - Whole object: `@Query(ParseNumberPipe) query: QueryObject`
 
 The adapter applies global pipes first, then parameter-level pipes, before calling your controller method.
+
+Global pipes can be registered using the [InversifyHttpAdapter](../../api/inversify-http-adapter#useglobalpipe).
