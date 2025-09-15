@@ -40,7 +40,6 @@
     "typescript"
   ],
   "license": "MIT",
-  "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
   "exports": {
     ".": "./lib/esm/index.js"
