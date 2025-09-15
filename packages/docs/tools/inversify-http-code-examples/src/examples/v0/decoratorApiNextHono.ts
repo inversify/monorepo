@@ -1,26 +1,33 @@
-import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
-import { HonoMiddleware } from '@inversifyjs/http-hono';
+import {
+  Controller,
+  Get,
+  Interceptor,
+  InterceptorTransformObject,
+  Next,
+  UseInterceptor,
+} from '@inversifyjs/http-core';
 import { Context, HonoRequest, Next as HonoNext } from 'hono';
 
-export class HonoNextMiddleware implements HonoMiddleware {
-  public async execute(
+export class HonoNextInterceptor implements Interceptor<HonoRequest, Context> {
+  public async intercept(
     _request: HonoRequest,
     context: Context,
-    next: HonoNext,
-  ): Promise<Response | undefined> {
+    next: () => Promise<InterceptorTransformObject>,
+  ): Promise<void> {
     context.header('next-was-called', 'true');
-    await next();
-    return undefined;
+    const transform: InterceptorTransformObject = await next();
+
+    transform.push(() => context.body('ok'));
   }
 }
 
 // Begin-example
 @Controller('/next')
 export class NextHonoController {
-  @ApplyMiddleware(HonoNextMiddleware)
+  @UseInterceptor(HonoNextInterceptor)
   @Get()
-  public async getNext(): Promise<string> {
-    return 'ok';
+  public async getNext(@Next() next: HonoNext): Promise<void> {
+    await next();
   }
 }
 // End-example

@@ -4,14 +4,17 @@ import { Container } from 'inversify';
 
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
 import { Server } from '../../server/models/Server';
-import { HonoNextMiddleware, NextHonoController } from './decoratorApiNextHono';
+import {
+  HonoNextInterceptor,
+  NextHonoController,
+} from './decoratorApiNextHono';
 
 describe('Decorator API (Next - Hono)', () => {
   let server: Server;
 
   beforeAll(async () => {
     const container: Container = new Container();
-    container.bind(HonoNextMiddleware).toSelf().inSingletonScope();
+    container.bind(HonoNextInterceptor).toSelf().inSingletonScope();
     container.bind(NextHonoController).toSelf().inSingletonScope();
 
     server = await buildHonoServer(container);
