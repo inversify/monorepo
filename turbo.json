@@ -26,6 +26,11 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/validation-code-examples#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**/*.{cts,mts,ts}"],
+      "outputs": ["generated/**", "lib/**"]
+    },
     "@inversifyjs/inversify-binding-decorators-docs-site#build": {
       "dependsOn": ["^build"],
       "inputs": [
@@ -66,6 +71,19 @@
       "outputs": ["build/**"]
     },
     "@inversifyjs/inversify-http-open-api-docs-site#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "blog/**",
+        "docs/**",
+        "src/**/*.{cts,mts,ts}",
+        "docusaurus.config.ts",
+        "sidebars.ts",
+        "versioned_docs/**",
+        "versioned_sidebars/**"
+      ],
+      "outputs": ["build/**"]
+    },
+    "@inversifyjs/inversify-validation-site#build": {
       "dependsOn": ["^build"],
       "inputs": [
         "blog/**",
