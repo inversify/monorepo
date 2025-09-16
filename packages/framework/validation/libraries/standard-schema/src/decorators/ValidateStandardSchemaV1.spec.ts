@@ -31,7 +31,7 @@ describe(ValidateStandardSchemaV1, () => {
 
   describe('when called', () => {
     let buildStandartdSchemaValidationMetadataFixture: (
-      zodValidationMetadata: StandardSchemaV1[][],
+      metadata: StandardSchemaV1[][],
     ) => StandardSchemaV1[][];
     let result: unknown;
 

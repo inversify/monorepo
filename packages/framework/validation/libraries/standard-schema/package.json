@@ -3,7 +3,7 @@
   "bugs": {
     "url": "https://github.com/inversify/monorepo/issues"
   },
-  "description": "InversifyJs http zod validation package",
+  "description": "InversifyJs http Standard Schema validation package",
   "dependencies": {
     "@inversifyjs/framework-core": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "workspace:*",
