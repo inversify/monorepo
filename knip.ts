@@ -79,6 +79,11 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/docs/tools/inversify-validation-code-examples": {
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/foundation/libraries/*": defaultWorkspaceProjectConfig,
     "packages/foundation/tools/*": defaultWorkspaceProjectConfig,
     "packages/foundation/tools/prettier-config": {
