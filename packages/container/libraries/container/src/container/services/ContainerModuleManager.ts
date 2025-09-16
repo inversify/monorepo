@@ -43,6 +43,7 @@ export class ContainerModuleManager {
   }
 
   public async load(...modules: ContainerModule[]): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/await-thenable
     await Promise.all(this.#load(...modules));
   }
 
@@ -60,6 +61,7 @@ export class ContainerModuleManager {
   }
 
   public async unload(...modules: ContainerModule[]): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/await-thenable
     await Promise.all(this.#unload(...modules));
 
     /*
