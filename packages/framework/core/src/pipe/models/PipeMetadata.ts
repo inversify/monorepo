@@ -1,5 +1,5 @@
 export interface PipeMetadata {
-  targetClass: object;
+  targetClass: NewableFunction;
   methodName: string | symbol;
   parameterIndex: number;
 }

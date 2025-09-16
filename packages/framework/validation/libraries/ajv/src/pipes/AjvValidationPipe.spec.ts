@@ -11,6 +11,7 @@ import {
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('../calculations/stringifyAjvErrors');
 
+import { PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
   InversifyValidationError,
@@ -39,11 +40,7 @@ describe(AjvValidationPipe, () => {
 
   describe('.execute', () => {
     let inputFixture: unknown;
-    let metadataFixture: {
-      methodName: string | symbol;
-      parameterIndex: number;
-      targetClass: object;
-    };
+    let metadataFixture: PipeMetadata;
 
     beforeAll(() => {
       inputFixture = { test: 'value' };
