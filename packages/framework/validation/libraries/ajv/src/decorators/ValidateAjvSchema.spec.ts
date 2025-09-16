@@ -2,27 +2,27 @@ import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
-vitest.mock('../calculations/updateStandardSchemaValidationMetadata');
+vitest.mock('../calculations/updateAjvValidationMetadata');
 
 import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { StandardSchemaV1 } from '@standard-schema/spec';
+import { AnySchema } from 'ajv';
 
-import { updateStandardSchemaValidationMetadata } from '../calculations/updateStandardSchemaValidationMetadata';
-import { standardSchemaValidationMetadataReflectKey } from '../reflectMetadata/models/standardSchemaValidationMetadataReflectKey';
-import { ValidateStandardSchemaV1 } from './ValidateStandardSchemaV1';
+import { updateAjvValidationMetadata } from '../calculations/updateAjvValidationMetadata';
+import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey';
+import { ValidateAjvSchema } from './ValidateAjvSchema';
 
-describe(ValidateStandardSchemaV1, () => {
-  let typeFixture: StandardSchemaV1;
+describe(ValidateAjvSchema, () => {
+  let schemaFixture: AnySchema;
 
   let targetFixture: object;
   let keyFixture: string | symbol | undefined;
   let indexFixture: number;
 
   beforeAll(() => {
-    typeFixture = Symbol() as unknown as StandardSchemaV1;
+    schemaFixture = Symbol() as unknown as AnySchema;
 
     targetFixture = {};
     keyFixture = Symbol();
@@ -31,18 +31,18 @@ describe(ValidateStandardSchemaV1, () => {
 
   describe('when called', () => {
     let buildStandartdSchemaValidationMetadataFixture: (
-      metadata: StandardSchemaV1[][],
-    ) => StandardSchemaV1[][];
+      metadata: AnySchema[][],
+    ) => AnySchema[][];
     let result: unknown;
 
     beforeAll(() => {
       buildStandartdSchemaValidationMetadataFixture = vitest.fn();
 
       vitest
-        .mocked(updateStandardSchemaValidationMetadata)
+        .mocked(updateAjvValidationMetadata)
         .mockReturnValueOnce(buildStandartdSchemaValidationMetadataFixture);
 
-      result = ValidateStandardSchemaV1(typeFixture)(
+      result = ValidateAjvSchema(schemaFixture)(
         targetFixture,
         keyFixture,
         indexFixture,
@@ -50,9 +50,9 @@ describe(ValidateStandardSchemaV1, () => {
     });
 
     it('should call updateStandardSchemaValidationMetadata()', () => {
-      expect(updateStandardSchemaValidationMetadata).toHaveBeenCalledTimes(1);
-      expect(updateStandardSchemaValidationMetadata).toHaveBeenCalledWith(
-        [typeFixture],
+      expect(updateAjvValidationMetadata).toHaveBeenCalledTimes(1);
+      expect(updateAjvValidationMetadata).toHaveBeenCalledWith(
+        [schemaFixture],
         indexFixture,
       );
     });
@@ -61,7 +61,7 @@ describe(ValidateStandardSchemaV1, () => {
       expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
       expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
         targetFixture.constructor,
-        standardSchemaValidationMetadataReflectKey,
+        ajvValidationMetadataReflectKey,
         buildEmptyArrayMetadata,
         buildStandartdSchemaValidationMetadataFixture,
         keyFixture,

@@ -3,8 +3,9 @@
   "bugs": {
     "url": "https://github.com/inversify/monorepo/issues"
   },
-  "description": "InversifyJs http Standard Schema validation package",
+  "description": "InversifyJs http ajv validation package",
   "dependencies": {
+    "@inversifyjs/common": "workspace:*",
     "@inversifyjs/framework-core": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "workspace:*",
     "@inversifyjs/validation-common": "workspace:*"
@@ -12,7 +13,6 @@
   "devDependencies": {
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
-    "@standard-schema/spec": "1.0.0",
     "@stryker-mutator/core": "9.1.1",
     "@stryker-mutator/typescript-checker": "9.1.1",
     "@stryker-mutator/vitest-runner": "9.1.1",
@@ -27,8 +27,7 @@
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.2",
-    "vitest": "3.2.4",
-    "zod": "^4.1.8"
+    "vitest": "3.2.4"
   },
   "devEngines": {
     "node": "^22.10.2",
@@ -54,7 +53,10 @@
       "require": "./lib/cjs/index.js"
     }
   },
-  "name": "@inversifyjs/standard-schema-validation",
+  "name": "@inversifyjs/ajv-validation",
+  "peerDependencies": {
+    "ajv": "^8.17.1"
+  },
   "private": true,
   "repository": {
     "type": "git",

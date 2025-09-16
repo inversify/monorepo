@@ -32,7 +32,6 @@ export class InversifyValidationError extends Error {
     value: unknown,
     kind: InversifyValidationErrorKind,
   ): value is InversifyValidationError {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return InversifyValidationError.is(value) && value.kind === kind;
   }
 }

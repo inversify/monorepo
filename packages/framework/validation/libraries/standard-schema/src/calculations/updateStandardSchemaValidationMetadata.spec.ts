@@ -7,12 +7,12 @@ import { updateStandardSchemaValidationMetadata } from './updateStandardSchemaVa
 describe(updateStandardSchemaValidationMetadata, () => {
   let typeFixture: StandardSchemaV1;
   let indexFixture: number;
-  let zodValidationMetadataFixtureElement: StandardSchemaV1;
+  let standardSchemaValidationMetadataFixtureElement: StandardSchemaV1;
 
   beforeAll(() => {
     typeFixture = Symbol.for('Type fixture') as unknown as StandardSchemaV1;
     indexFixture = 0;
-    zodValidationMetadataFixtureElement = Symbol.for(
+    standardSchemaValidationMetadataFixtureElement = Symbol.for(
       'Standard Schema validation metadata fixture element',
     ) as unknown as StandardSchemaV1;
   });
@@ -24,12 +24,12 @@ describe(updateStandardSchemaValidationMetadata, () => {
       result = updateStandardSchemaValidationMetadata(
         [typeFixture],
         indexFixture,
-      )([[zodValidationMetadataFixtureElement]]);
+      )([[standardSchemaValidationMetadataFixtureElement]]);
     });
 
     it('should return the expected metadata', () => {
       expect(result).toStrictEqual([
-        [zodValidationMetadataFixtureElement, typeFixture],
+        [standardSchemaValidationMetadataFixtureElement, typeFixture],
       ]);
     });
   });

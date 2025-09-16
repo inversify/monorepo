@@ -25,7 +25,7 @@ export class ZodValidationPipe implements Pipe {
     )?.[metadata.parameterIndex];
 
     if (parameterTypeList === undefined) {
-      return input;
+      return this.#applySchemaList(input, this.#typeList);
     }
 
     return this.#applySchemaList(

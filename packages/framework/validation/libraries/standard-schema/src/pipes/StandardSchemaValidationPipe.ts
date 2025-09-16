@@ -11,8 +11,8 @@ import { standardSchemaValidationMetadataReflectKey } from '../reflectMetadata/m
 export class StandardSchemaValidationPipe implements Pipe {
   readonly #schemaList: StandardSchemaV1[];
 
-  constructor(typeList?: StandardSchemaV1[]) {
-    this.#schemaList = typeList ?? [];
+  constructor(schemaList?: StandardSchemaV1[]) {
+    this.#schemaList = schemaList ?? [];
   }
 
   public async execute(
@@ -27,7 +27,7 @@ export class StandardSchemaValidationPipe implements Pipe {
       )?.[metadata.parameterIndex];
 
     if (parameterSchemaList === undefined) {
-      return input;
+      return this.#applySchemaList(input, this.#schemaList);
     }
 
     return this.#applySchemaList(
@@ -38,11 +38,11 @@ export class StandardSchemaValidationPipe implements Pipe {
 
   async #applySchemaList(
     input: unknown,
-    typeList: StandardSchemaV1[],
+    schemaList: StandardSchemaV1[],
   ): Promise<unknown> {
     let result: unknown = input;
 
-    for (const standardSchema of typeList) {
+    for (const standardSchema of schemaList) {
       const parsedResult: StandardSchemaV1.Result<unknown> =
         await standardSchema['~standard'].validate(result);
 
