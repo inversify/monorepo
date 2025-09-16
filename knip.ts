@@ -34,6 +34,7 @@ export default {
     "packages/docs/services/inversify-http-site",
     "packages/docs/services/inversify-http-open-api-site",
     "packages/docs/services/inversify-site",
+    "packages/docs/services/inversify-validation-site",
   ],
   workspaces: {
     ".": {
