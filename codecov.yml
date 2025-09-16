@@ -2,6 +2,9 @@ coverage:
   status:
     project:
       default: false
+      '@inversifyjs/ajv-validation':
+        flags:
+          - '@inversifyjs/ajv-validation'
       '@inversifyjs/binding-decorators':
         flags:
           - '@inversifyjs/binding-decorators'
@@ -35,10 +38,13 @@ coverage:
       '@inversifyjs/reflect-metadata-utils':
         flags:
           - '@inversifyjs/reflect-metadata-utils'
-      '@inversifyjs/zod-validation':
+      '@inversifyjs/standard-schema-validation':
         flags:
-          - '@inversifyjs/zod-validation'
+          - '@inversifyjs/standard-schema-validation'
 flags:
+  '@inversifyjs/ajv-validation':
+    paths:
+      - packages/framework/validation/libraries/ajv
   '@inversifyjs/binding-decorators':
     paths:
       - packages/container/libraries/binding-decorators/
@@ -75,6 +81,6 @@ flags:
   '@inversifyjs/reflect-metadata-utils':
     paths:
       - packages/foundation/libraries/reflect-metadata-utils
-  '@inversifyjs/zod-validation':
+  '@inversifyjs/standard-schema-validation':
     paths:
-      - packages/framework/validation/libraries/zod
+      - packages/framework/validation/libraries/standard-schema

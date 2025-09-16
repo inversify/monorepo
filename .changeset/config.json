@@ -5,6 +5,11 @@
   "fixed": [],
   "linked": [
     [
+      "@inversifyjs/ajv-validation",
+      "@inversifyjs/standard-schema-validation",
+      "@inversifyjs/validation-common"
+    ],
+    [
       "@inversifyjs/http-core",
       "@inversifyjs/http-express",
       "@inversifyjs/http-express-v4",
@@ -17,6 +22,7 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
+    "@inversifyjs/ajv-validation",
     "@inversifyjs/framework-core",
     "@inversifyjs/http-benchmarks",
     "@inversifyjs/http-code-examples",
@@ -33,6 +39,7 @@
     "@inversifyjs/inversify-http-docs-site",
     "@inversifyjs/inversify-http-open-api-docs-site",
     "@inversifyjs/logger",
-    "@inversifyjs/zod-validation"
+    "@inversifyjs/standard-schema-validation",
+    "@inversifyjs/validation-common"
   ]
 }

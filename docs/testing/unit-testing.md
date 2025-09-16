@@ -1,6 +1,6 @@
 # Unit testing
 
-Almost every module created must include its tests. Test modules must be written at the same directory using `jest`.
+Almost every module created must include its tests. Test modules must be written at the same directory using `vitest`.
 
 ## Structure of a test module
 
@@ -24,7 +24,7 @@ Could be tested with the following implementation
 
 ```ts
 describe(Foo, () => {
-  let barMock: jest.Mocked<Bar>;
+  let barMock: Mocked<Bar>;
   let foo: Foo;
 
   beforeAll(() => {
@@ -61,7 +61,7 @@ Could be tested with the following implementation
 
 ```ts
 describe(Foo, () => {
-  let barMock: jest.Mocked<Bar>;
+  let barMock: Mocked<Bar>;
   let foo: Foo;
 
   beforeAll(() => {
@@ -122,7 +122,7 @@ Could be tested with the following implementation
 
 ```ts
 describe(Foo, () => {
-  let barMock: jest.Mocked<Bar>;
+  let barMock: Mocked<Bar>;
   let foo: Foo;
 
   beforeAll(() => {
@@ -187,7 +187,7 @@ Could be tested with the following implementation
 
 ```ts
 describe(Foo, () => {
-  let barMock: jest.Mocked<Bar>;
+  let barMock: Mocked<Bar>;
   let foo: Foo;
 
   beforeAll(() => {
@@ -216,7 +216,7 @@ describe(Foo, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should call bar.getUndesirableName()', () => {
@@ -237,7 +237,7 @@ describe(Foo, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should return a string', () => {
@@ -261,7 +261,7 @@ describe(Foo, () => {
       });
 
       afterAll(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
       });
 
       it('should return a string', () => {
