@@ -41,9 +41,6 @@ coverage:
       '@inversifyjs/standard-schema-validation':
         flags:
           - '@inversifyjs/standard-schema-validation'
-      '@inversifyjs/zod-validation':
-        flags:
-          - '@inversifyjs/zod-validation'
 flags:
   '@inversifyjs/ajv-validation':
     paths:
@@ -87,6 +84,3 @@ flags:
   '@inversifyjs/standard-schema-validation':
     paths:
       - packages/framework/validation/libraries/standard-schema
-  '@inversifyjs/zod-validation':
-    paths:
-      - packages/framework/validation/libraries/zod
