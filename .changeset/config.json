@@ -6,6 +6,7 @@
   "linked": [
     [
       "@inversifyjs/ajv-validation",
+      "@inversifyjs/class-validation",
       "@inversifyjs/standard-schema-validation",
       "@inversifyjs/validation-common"
     ],
@@ -23,6 +24,7 @@
   "updateInternalDependencies": "patch",
   "ignore": [
     "@inversifyjs/ajv-validation",
+    "@inversifyjs/class-validation",
     "@inversifyjs/framework-core",
     "@inversifyjs/http-benchmarks",
     "@inversifyjs/http-code-examples",
