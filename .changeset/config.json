@@ -7,8 +7,7 @@
     [
       "@inversifyjs/ajv-validation",
       "@inversifyjs/standard-schema-validation",
-      "@inversifyjs/validation-common",
-      "@inversifyjs/zod-validation"
+      "@inversifyjs/validation-common"
     ],
     [
       "@inversifyjs/http-core",
@@ -41,7 +40,6 @@
     "@inversifyjs/inversify-http-open-api-docs-site",
     "@inversifyjs/logger",
     "@inversifyjs/standard-schema-validation",
-    "@inversifyjs/validation-common",
-    "@inversifyjs/zod-validation"
+    "@inversifyjs/validation-common"
   ]
 }
