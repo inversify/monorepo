@@ -2,6 +2,9 @@ coverage:
   status:
     project:
       default: false
+      '@inversifyjs/ajv-validation':
+        flags:
+          - '@inversifyjs/ajv-validation'
       '@inversifyjs/binding-decorators':
         flags:
           - '@inversifyjs/binding-decorators'
@@ -42,6 +45,9 @@ coverage:
         flags:
           - '@inversifyjs/zod-validation'
 flags:
+  '@inversifyjs/ajv-validation':
+    paths:
+      - packages/framework/validation/libraries/ajv
   '@inversifyjs/binding-decorators':
     paths:
       - packages/container/libraries/binding-decorators/
