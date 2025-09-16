@@ -8,6 +8,9 @@ coverage:
       '@inversifyjs/binding-decorators':
         flags:
           - '@inversifyjs/binding-decorators'
+      '@inversifyjs/class-validation':
+        flags:
+          - '@inversifyjs/class-validation'
       '@inversifyjs/common':
         flags:
           - '@inversifyjs/common'
@@ -48,6 +51,9 @@ flags:
   '@inversifyjs/binding-decorators':
     paths:
       - packages/container/libraries/binding-decorators/
+  '@inversifyjs/class-validation':
+    paths:
+      - packages/framework/validation/libraries/class-validator
   '@inversifyjs/common':
     paths:
       - packages/container/libraries/common/
