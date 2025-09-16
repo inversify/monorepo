@@ -83,6 +83,19 @@
       ],
       "outputs": ["build/**"]
     },
+    "@inversifyjs/inversify-validation-site#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "blog/**",
+        "docs/**",
+        "src/**/*.{cts,mts,ts}",
+        "docusaurus.config.ts",
+        "sidebars.ts",
+        "versioned_docs/**",
+        "versioned_sidebars/**"
+      ],
+      "outputs": ["build/**"]
+    },
     "format": {
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["src/**/*.{cts,mts,ts}"]
