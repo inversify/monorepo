@@ -13,12 +13,6 @@ Validates values using class-validator decorators and class-transformer for type
 `ClassValidationPipe` can be registered as a global pipe: `adapter.useGlobalPipe(new ClassValidationPipe())`.
 This way, controller parameters with decorated classes are automatically validated.
 
-The pipe performs the following operations:
-1. Extracts TypeScript type metadata for the parameter
-2. Transforms the plain input object into a class instance using `class-transformer`
-3. Validates the instance using `class-validator` with strict validation options
-4. Returns the validated and transformed instance
-
 ### Example: register a ClassValidationPipe globally
 
 <CodeBlock language="ts">{apiClassValidationPipeSource}</CodeBlock>

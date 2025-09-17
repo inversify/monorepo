@@ -5,6 +5,7 @@
   },
   "description": "InversifyJS validation docs code examples package",
   "devDependencies": {
+    "@inversifyjs/ajv-validation": "workspace:*",
     "@inversifyjs/class-validation": "workspace:*",
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/http-core": "workspace:*",
@@ -15,6 +16,8 @@
     "@types/express": "5.0.3",
     "@types/node": "22.18.4",
     "@vitest/coverage-v8": "3.2.4",
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1",
     "class-transformer": "~0.5.1",
     "class-validator": "~0.14.2",
     "eslint": "9.35.0",
