@@ -43,6 +43,7 @@
     "deploy:http:pages": "pnpm run --filter \"@inversifyjs/inversify-http-docs-site\" deploy",
     "deploy:http:open-api:pages": "pnpm run --filter \"@inversifyjs/inversify-http-open-api-docs-site\" deploy",
     "deploy:inversify:pages": "pnpm run --filter \"@inversifyjs/inversify-docs-site\" deploy",
+    "deploy:validation:pages": "pnpm run --filter \"@inversifyjs/inversify-validation-docs-site\" deploy",
     "format": "turbo run format",
     "lint": "turbo run lint",
     "prepare": "husky && turbo telemetry disable",

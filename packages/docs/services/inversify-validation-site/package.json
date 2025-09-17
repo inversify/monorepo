@@ -43,7 +43,7 @@
     "pnpm": "^10.13.1"
   },
   "license": "MIT",
-  "name": "@inversifyjs/inversify-validation-site",
+  "name": "@inversifyjs/inversify-validation-docs-site",
   "private": true,
   "publishConfig": {
     "access": "public"
