@@ -66,39 +66,6 @@ On validation failure, an `InversifyValidationError` is thrown and can be conver
 
 <CodeBlock language="ts">{apiValidateAjvSchemaSource}</CodeBlock>
 
-## JSON Schema Features
-
-Ajv supports the full JSON Schema specification, including:
-
-### Basic Types
-- `string`, `number`, `integer`, `boolean`, `array`, `object`, `null`
-
-### String Validation
-- `minLength`, `maxLength`: String length constraints
-- `pattern`: Regular expression validation
-- `format`: Built-in formats like `email`, `date`, `uri`, etc.
-
-### Number Validation
-- `minimum`, `maximum`: Value range constraints
-- `multipleOf`: Divisibility constraints
-
-### Array Validation
-- `minItems`, `maxItems`: Array length constraints
-- `items`: Schema for array items
-- `uniqueItems`: Ensure array elements are unique
-
-### Object Validation
-- `properties`: Define expected object properties
-- `required`: Specify required properties
-- `additionalProperties`: Control extra properties
-- `minProperties`, `maxProperties`: Object size constraints
-
-### Advanced Features
-- `$ref`: Schema references and reuse
-- `allOf`, `anyOf`, `oneOf`: Schema composition
-- `if`/`then`/`else`: Conditional validation
-- Custom keywords and formats
-
 ### Error Handling
 
 When validation fails, Ajv provides detailed error information including:
