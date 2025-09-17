@@ -64,11 +64,6 @@
 }
 
 .codeSnippetContent {
-  margin: 0;
-  color: #e2e8f0;
-  font-size: 0.8rem;
-  line-height: 1.4;
-  overflow: hidden;
   text-align: left;
 }
 
@@ -76,16 +71,17 @@
 @media screen and (max-width: 996px) {
   .floatingCode {
     position: relative;
-    top: auto !important;
-    right: auto !important;
+    top: auto;
+    right: auto;
     margin-bottom: 1rem;
     max-width: 100%;
     animation: none;
   }
 
-  .homePageFloatingCodeContainer .floatingCode:nth-child(1),
-  .homePageFloatingCodeContainer .floatingCode:nth-child(2),
-  .homePageFloatingCodeContainer .floatingCode:nth-child(3) {
+  .homePageFloatingCodeContainer div.floatingCode:nth-child(1),
+  .homePageFloatingCodeContainer div.floatingCode:nth-child(2),
+  .homePageFloatingCodeContainer div.floatingCode:nth-child(3) {
+    max-width: calc(100vw - 2rem);
     position: relative;
     top: auto;
     right: auto;

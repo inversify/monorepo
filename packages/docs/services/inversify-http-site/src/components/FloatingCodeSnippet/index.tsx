@@ -65,9 +65,9 @@ export default function FloatingCodeSnippet({
         <span className={styles.codeTitle}>{snippet.title}</span>
         <span className={styles.codeLang}>{snippet.language}</span>
       </div>
-      <pre className={styles.codeSnippetContent}>
-        <CodeBlock language="ts">{snippet.code}</CodeBlock>
-      </pre>
+      <CodeBlock className={styles.codeSnippetContent ?? ''} language="ts">
+        {snippet.code}
+      </CodeBlock>
     </div>
   );
 }

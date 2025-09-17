@@ -1,0 +1,38 @@
+---
+sidebar_position: 2
+title: Validation
+---
+
+import DocumentationButton from '@site/src/components/DocumentationButton';
+
+The **@inversifyjs/http-validation** package ecosystem provides comprehensive validation capabilities for InversifyJS HTTP applications. This powerful set of libraries enables you to validate request data using various validation approaches, from JSON Schema to decorator-based validation to modern TypeScript-first schema libraries.
+
+## Features
+
+- **Multiple Validation Approaches**: Support for Ajv (JSON Schema), class-validator (decorator-based), and Standard Schema (Zod, Valibot, ArkType, and more)
+- **Decorator-based Integration**: Use TypeScript decorators to apply validation rules directly to your controller methods and parameters
+- **Type-safe Validation**: Full TypeScript support with compile-time type checking and runtime validation
+- **Automatic Error Handling**: Built-in error filters that automatically transform validation errors into proper HTTP responses
+- **Framework Agnostic**: Works with Express, Fastify, Hono, and other supported HTTP frameworks
+- **Performance Optimized**: Compiled validation pipes for optimal runtime performance
+
+## Validation Options
+
+### Standard Schema Integration
+Use modern TypeScript-first schema libraries like **Zod**, **Valibot**, or **ArkType** through the Standard Schema interface. This approach provides excellent TypeScript integration and developer experience.
+
+### Ajv (JSON Schema)
+Validate data against **JSON Schema** definitions using the fast and widely-adopted Ajv validator. Perfect for API validation with standardized schema definitions.
+
+### Class-validator
+Use **decorator-based validation** directly on TypeScript classes with class-validator. This approach allows you to define validation rules as annotations on class properties.
+
+## Getting Started
+
+To learn more about using validation in your InversifyJS HTTP applications, including detailed examples, configuration guides, and API references for each validation approach, visit the comprehensive documentation:
+
+<DocumentationButton href="https://inversify.io/validation/">
+  <span>View Full Documentation</span>
+</DocumentationButton>
+
+The documentation includes step-by-step setup guides, validation decorator references, and complete examples showing how to build robust, validated APIs with automatic error handling.
