@@ -1,0 +1,51 @@
+---
+sidebar_position: 1
+title: Introduction
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+[Class-validator](https://github.com/typestack/class-validator) is a TypeScript library that uses decorators to validate classes and their properties. It provides a declarative way to validate data using annotations directly on class properties.
+
+Inversify Validation's Class Validation Pipe integrates seamlessly with class-validator, allowing you to validate incoming HTTP parameters (e.g., request body) using decorated classes in your controllers.
+
+## Install dependencies
+
+In order to use the package, install it along with the required peer dependencies:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+npm install class-validator class-transformer @inversifyjs/class-validation
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn add class-validator class-transformer @inversifyjs/class-validation
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm install class-validator class-transformer @inversifyjs/class-validation
+```
+
+  </TabItem>
+</Tabs>
+
+## TypeScript Configuration
+
+Class-validator requires specific TypeScript compiler options to function properly. Make sure your `tsconfig.json` includes:
+
+```json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
+```
