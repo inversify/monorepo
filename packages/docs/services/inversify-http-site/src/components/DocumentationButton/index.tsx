@@ -1,3 +1,4 @@
+import Link from '@docusaurus/Link';
 import React from 'react';
 
 import styles from './styles.module.css';
@@ -13,16 +14,16 @@ export default function DocumentationButton({
 }: DocumentationButtonProps): React.JSX.Element {
   return (
     <div className={styles.buttonContainer}>
-      <a
-        href={href}
+      <Link
+        to={href}
         target="_blank"
         rel="noopener noreferrer"
-        className={styles.documentationButton}
+        className={styles.documentationButton ?? ''}
       >
         <span className={styles.buttonText}>{children}</span>
         <span className={styles.buttonIcon}>📖</span>
         <div className={styles.shimmer}></div>
-      </a>
+      </Link>
     </div>
   );
 }
