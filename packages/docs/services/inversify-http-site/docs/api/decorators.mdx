@@ -99,6 +99,24 @@ Next(): ParameterDecorator
   </TabItem>
 </Tabs>
 
+### UseErrorFilter
+
+Attaches one or more error filters to a controller class or method. Error filters handle exceptions that occur during request processing.
+
+```ts
+UseErrorFilter(...errorFilterList: Newable<ErrorFilter>[]): ClassDecorator & MethodDecorator
+```
+
+Parameters
+
+- errorFilterList: One or more error filter classes implementing `ErrorFilter`.
+
+Notes
+
+- Scope: Place on the controller class to affect all routes, or on a method to affect only that route.
+- Order: Error filters are processed in the order they are provided.
+- Exception handling: Error filters can catch, transform, or handle exceptions thrown during request processing.
+
 ### UseGuard
 
 Attaches one or more [guards](../../fundamentals/guard) to a controller class or method. All guards must allow for the request to continue.
@@ -116,6 +134,24 @@ Notes
 - Scope: Place on the controller class to affect all routes, or on a method to affect only that route.
 - Guard return values: `activate()` may return `true` (continue), `false` (reply with `403 Forbidden`), or throw an `ErrorHttpResponse` (replied as-is, e.g., `throw new ForbiddenHttpResponse('message')`).
 
+### UseInterceptor
+
+Attaches one or more interceptors to a controller class or method. Interceptors can modify requests before they reach the handler and responses before they are sent.
+
+```ts
+UseInterceptor(...interceptorList: Newable<Interceptor>[]): ClassDecorator & MethodDecorator
+```
+
+Parameters
+
+- interceptorList: One or more interceptor classes implementing `Interceptor`.
+
+Notes
+
+- Scope: Place on the controller class to affect all routes, or on a method to affect only that route.
+- Order: Interceptors are executed in the order they are provided.
+- Request/Response modification: Interceptors can transform both incoming requests and outgoing responses.
+- Timing: Interceptors run around the handler method, allowing both pre and post-processing.
 
 ## HTTP Request message abstraction
 
