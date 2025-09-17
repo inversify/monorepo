@@ -8,6 +8,7 @@
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
+    "@inversifyjs/http-validation": "workspace:*",
     "@inversifyjs/standard-schema-validation": "workspace:*",
     "@inversifyjs/validation-common": "workspace:*",
     "@types/express": "5.0.3",
