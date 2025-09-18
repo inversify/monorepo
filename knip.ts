@@ -33,6 +33,7 @@ export default {
     "packages/docs/services/inversify-binding-decorators-site",
     "packages/docs/services/inversify-http-site",
     "packages/docs/services/inversify-http-open-api-site",
+    "packages/docs/services/inversify-logger-site",
     "packages/docs/services/inversify-site",
     "packages/docs/services/inversify-validation-site",
   ],

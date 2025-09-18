@@ -1,0 +1,65 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJs Logger docs site package",
+  "dependencies": {
+    "@docusaurus/core": "3.8.1",
+    "@docusaurus/faster": "3.8.1",
+    "@docusaurus/preset-classic": "3.8.1",
+    "@inversifyjs/logger-code-examples": "workspace:*",
+    "@mdx-js/react": "3.1.1",
+    "clsx": "2.1.1",
+    "prism-react-renderer": "2.4.1",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.8.1",
+    "@docusaurus/types": "3.8.1",
+    "@eslint/js": "9.35.0",
+    "@types/react": "19.1.13",
+    "eslint": "9.35.0",
+    "eslint-plugin-prettier": "5.5.4",
+    "eslint-plugin-simple-import-sort": "12.1.1",
+    "prettier": "3.6.2",
+    "typescript": "5.9.2",
+    "typescript-eslint": "8.44.0"
+  },
+  "homepage": "https://inversify.io",
+  "keywords": [
+    "dependency injection",
+    "dependency inversion",
+    "di",
+    "inversion of control container",
+    "ioc",
+    "javascript",
+    "node",
+    "typescript"
+  ],
+  "devEngines": {
+    "node": "^22.10.2",
+    "pnpm": "^10.13.1"
+  },
+  "license": "MIT",
+  "name": "@inversifyjs/inversify-logger-docs-site",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "deploy": "docusaurus deploy",
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "pnpm run typecheck && docusaurus build",
+    "format": "prettier --write ./src ./*.ts",
+    "lint": "eslint ./src ./docusaurus.config.ts ./sidebars.ts",
+    "serve": "docusaurus serve",
+    "typecheck": "tsc"
+  }
+}

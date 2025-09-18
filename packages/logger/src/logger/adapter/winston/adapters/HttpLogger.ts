@@ -1,6 +1,6 @@
 import { URL } from 'node:url';
 
-import { createLogger, format, transports } from 'winston';
+import { createLogger, transports } from 'winston';
 
 import { LoggerOptions } from '../../../../model/LoggerOptions';
 import { WinstonLoggerAdapter } from './WinstonLoggerAdapter';
