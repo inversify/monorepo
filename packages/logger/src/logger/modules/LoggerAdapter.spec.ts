@@ -9,7 +9,7 @@ import {
 } from 'vitest';
 
 import { LogLevel } from '../../model/LogLevel';
-import { ContextMetadata } from '../model/ContextMetadata';
+import { ContextMetadata } from '../models/ContextMetadata';
 import { LoggerAdapter } from './LoggerAdapter';
 
 class LoggerAdapterMock extends LoggerAdapter {

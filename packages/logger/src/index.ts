@@ -1,7 +1,5 @@
-import { ConsoleLogger } from './logger/ConsoleLogger';
-import { FileLogger } from './logger/FileLogger';
-import { Logger } from './logger/model/Logger';
-import { LoggerOptions } from './model/LoggerOptions';
-import { LogLevel } from './model/LogLevel';
-
-export { ConsoleLogger, FileLogger, Logger, LoggerOptions, LogLevel };
+export type { Logger } from './logger/models/Logger';
+export type { LoggerOptions } from './model/LoggerOptions';
+export { LogLevel } from './model/LogLevel';
+export { ConsoleLogger } from './logger/adapter/winston/adapters/ConsoleLogger';
+export { FileLogger } from './logger/adapter/winston/adapters/FileLogger';
