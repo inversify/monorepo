@@ -1,0 +1,47 @@
+---
+sidebar_position: 1
+title: Getting started
+---
+import consoleLoggerSource from '@inversifyjs/logger-code-examples/generated/examples/v1/consoleLogger.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting started
+
+`@inversifyjs/logger` is a powerful simple library to create loggers.
+
+
+## Install dependencies
+
+Install `@inversifyjs/logger` package:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+  npm install @inversifyjs/logger
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+  yarn add @inversifyjs/logger
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+  pnpm install @inversifyjs/logger
+```
+
+  </TabItem>
+</Tabs>
+
+## Create your first logger
+
+Just initialize a logger instance and start logging:
+
+<CodeBlock language="typescript">{consoleLoggerSource}</CodeBlock>

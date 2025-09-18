@@ -26,6 +26,11 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/logger-code-examples#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**/*.{cts,mts,ts}"],
+      "outputs": ["generated/**", "lib/**"]
+    },
     "@inversifyjs/validation-code-examples#build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{cts,mts,ts}"],
@@ -36,7 +41,8 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",
@@ -49,7 +55,8 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",
@@ -62,7 +69,8 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",
@@ -75,7 +83,22 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
+        "docusaurus.config.ts",
+        "sidebars.ts",
+        "versioned_docs/**",
+        "versioned_sidebars/**"
+      ],
+      "outputs": ["build/**"]
+    },
+    "@inversifyjs/inversify-logger-docs-site#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "blog/**",
+        "docs/**",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",
@@ -88,7 +111,8 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",

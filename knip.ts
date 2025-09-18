@@ -33,6 +33,7 @@ export default {
     "packages/docs/services/inversify-binding-decorators-site",
     "packages/docs/services/inversify-http-site",
     "packages/docs/services/inversify-http-open-api-site",
+    "packages/docs/services/inversify-logger-site",
     "packages/docs/services/inversify-site",
     "packages/docs/services/inversify-validation-site",
   ],
@@ -76,6 +77,11 @@ export default {
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-http-open-api-code-examples": {
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      project: defaultWorkspaceProjectConfig.project,
+    },
+    "packages/docs/tools/inversify-logger-code-examples": {
       entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
