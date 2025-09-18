@@ -198,7 +198,7 @@ export abstract class InversifyHttpAdapter<
 
   #buildLogger(httpAdapterOptions: RequiredOptions<TOptions>): Logger {
     if (typeof httpAdapterOptions.logger === 'boolean') {
-      return new ConsoleLogger(undefined);
+      return new ConsoleLogger();
     }
 
     return httpAdapterOptions.logger;
