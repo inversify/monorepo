@@ -17,7 +17,6 @@ export class HttpLogger extends WinstonLoggerAdapter {
       createLogger({
         transports: [
           new transports.Http({
-            format: format.json(),
             host: parsedUrl.hostname,
             path: parsedUrl.pathname,
             port: parseInt(parsedUrl.port),

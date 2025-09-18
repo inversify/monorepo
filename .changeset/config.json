@@ -42,6 +42,7 @@
     "@inversifyjs/inversify-http-open-api-docs-site",
     "@inversifyjs/inversify-validation-docs-site",
     "@inversifyjs/logger",
+    "@inversifyjs/logger-code-examples",
     "@inversifyjs/standard-schema-validation",
     "@inversifyjs/validation-code-examples",
     "@inversifyjs/validation-common"

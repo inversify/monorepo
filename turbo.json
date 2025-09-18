@@ -26,6 +26,11 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/logger-code-examples#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**/*.{cts,mts,ts}"],
+      "outputs": ["generated/**", "lib/**"]
+    },
     "@inversifyjs/validation-code-examples#build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{cts,mts,ts}"],
