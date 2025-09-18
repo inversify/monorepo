@@ -1,10 +1,10 @@
 import { Format, TransformableInfo } from 'logform';
 import { format, Logger } from 'winston';
 
-import { LoggerAdapter } from '../../logger/adapter/LoggerAdapter';
-import { ContextMetadata } from '../../logger/model/ContextMetadata';
-import { LoggerOptions } from '../../model/LoggerOptions';
-import { LogLevel } from '../../model/LogLevel';
+import { LoggerOptions } from '../../../../model/LoggerOptions';
+import { LogLevel } from '../../../../model/LogLevel';
+import { ContextMetadata } from '../../../models/ContextMetadata';
+import { LoggerAdapter } from '../../../modules/LoggerAdapter';
 
 export class WinstonLoggerAdapter extends LoggerAdapter {
   readonly #logger: Logger;
