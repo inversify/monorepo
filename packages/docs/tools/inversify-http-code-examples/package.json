@@ -12,6 +12,7 @@
     "@inversifyjs/http-express-v4": "workspace:*",
     "@inversifyjs/http-fastify": "workspace:*",
     "@inversifyjs/http-hono": "workspace:*",
+    "@inversifyjs/logger": "workspace:*",
     "@types/express": "5.0.3",
     "@types/express4": "npm:@types/express@4.17.23",
     "@types/node": "22.18.6",
