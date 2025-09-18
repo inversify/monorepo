@@ -1,22 +1,24 @@
 import Link from '@docusaurus/Link';
-import React from 'react';
+import React, { HTMLAttributeAnchorTarget } from 'react';
 
 import styles from './styles.module.css';
 
 interface DocumentationButtonProps {
   href: string;
   children: React.ReactNode;
+  target?: HTMLAttributeAnchorTarget;
 }
 
 export default function DocumentationButton({
   href,
   children,
+  target,
 }: DocumentationButtonProps): React.JSX.Element {
   return (
     <div className={styles.buttonContainer}>
       <Link
         to={href}
-        target="_blank"
+        target={target}
         rel="noopener noreferrer"
         className={styles.documentationButton ?? ''}
       >
