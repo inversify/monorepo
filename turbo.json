@@ -83,7 +83,7 @@
       ],
       "outputs": ["build/**"]
     },
-    "@inversifyjs/inversify-validation-site#build": {
+    "@inversifyjs/inversify-validation-docs-site#build": {
       "dependsOn": ["^build"],
       "inputs": [
         "blog/**",
