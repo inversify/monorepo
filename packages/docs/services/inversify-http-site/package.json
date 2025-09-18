@@ -53,6 +53,7 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
+    "clear": "docusaurus clear",
     "deploy": "docusaurus deploy",
     "docusaurus": "docusaurus",
     "start": "docusaurus start",

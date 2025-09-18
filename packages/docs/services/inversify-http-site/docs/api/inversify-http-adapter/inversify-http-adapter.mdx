@@ -21,11 +21,11 @@ class InversifyHttpAdapter<
 >
 ```
 
-- TRequest: Native request type from the underlying framework (e.g., `express.Request`, `FastifyRequest`, `HonoRequest`).
-- TResponse: Native response type from the underlying framework (e.g., `express.Response`, `FastifyReply`, `Context`).
-- TNextFunction: Native “next” function type for chaining handlers.
-- TResult: Adapter-specific return type for handlers and replies.
-- TOptions: Adapter options shape. Defaults to `HttpAdapterOptions`.
+- `TRequest`: Native request type from the underlying framework (e.g., `express.Request`, `FastifyRequest`, `HonoRequest`).
+- `TResponse`: Native response type from the underlying framework (e.g., `express.Response`, `FastifyReply`, `Context`).
+- `TNextFunction`: Native “next” function type for chaining handlers.
+- `TResult`: Adapter-specific return type for handlers and replies.
+- `TOptions`: Adapter options shape. Defaults to `HttpAdapterOptions`.
 
 ## Constructor
 
@@ -40,11 +40,16 @@ constructor(
 
 Creates an adapter instance bound to a DI container. Adapters typically invoke this from their subclass constructor and then expose a `build()` method that prepares the server.
 
-- container: The Inversify container that holds controllers, guards, pipes, middleware, interceptors, and filters.
-- defaultHttpAdapterOptions: The baseline options; merged with `httpAdapterOptions`.
-- httpAdapterOptions: Optional overrides. If `logger` is not `false`, route mappings will be logged on build.
-- awaitableRequestMethodParamTypes: Parameter types that should be awaited when building controller method arguments (e.g., when a parameter is resolved asynchronously). See parameter decorators under <Link to="../../fundamentals/controller">Controller</Link>.
+- `container`: The Inversify container that holds controllers, guards, pipes, middleware, interceptors, and filters.
+- `defaultHttpAdapterOptions`: The baseline options; merged with `httpAdapterOptions`.
+- `httpAdapterOptions`: Optional overrides. If `logger` is not `false`, route mappings will be logged on build.
+- `awaitableRequestMethodParamTypes`: Parameter types that should be awaited when building controller method arguments (e.g., when a parameter is resolved asynchronously). See parameter decorators under <Link to="../../fundamentals/controller">Controller</Link>.
 
+:::info[Custom loggers]
+  `httpAdapterOptions` can be use to provide a custom logger by setting the `logger` property to an object that implements the `Logger` interface from `@inversifyjs/logger`. This allows you to integrate your own logging solution with the adapter's logging mechanism.
+
+  Refer to the [logger page](../../ecosystem/logger.mdx) for more details on how to implement and use a custom logger.
+:::
 ---
 
 ## Public methods
@@ -59,7 +64,7 @@ applyGlobalMiddleware(
 
 Registers global middleware to run for every route.
 
-- middlewareList: Either middleware classes or a structured object with `preHandlerMiddlewareList` and `postHandlerMiddlewareList` to control the phase. See <Link to="../../fundamentals/middleware">Middleware</Link>.
+- `middlewareList`: Either middleware classes or a structured object with `preHandlerMiddlewareList` and `postHandlerMiddlewareList` to control the phase. See <Link to="../../fundamentals/middleware">Middleware</Link>.
 
 Notes:
 - Must be called before the server is built; calling it after `build()` throws an error.
@@ -75,7 +80,7 @@ useGlobalFilters(
 
 Registers global error filters. When a handler, guard, pipe, middleware, or interceptor throws, the adapter looks up the most specific filter whose handled `Error` type matches the thrown error (by walking the prototype chain), or a catch-all filter bound to `null` if provided.
 
-- errorFilterList: Error filter classes to register globally.
+- `errorFilterList`: Error filter classes to register globally.
 
 Behavior:
 - If no filter handles the error, an `InternalServerError` response is produced unless the error itself is an `ErrorHttpResponse`, which is sent as-is.
@@ -90,7 +95,7 @@ applyGlobalGuards(
 
 Registers global guards that run before middleware and route handlers. See <Link to="../../fundamentals/guard">Guard</Link>.
 
-- guardList: Guard classes to evaluate for every request.
+- `guardList`: Guard classes to evaluate for every request.
 
 Notes:
 - Must be called before the server is built; calling it after `build()` throws an error.
@@ -106,7 +111,7 @@ useGlobalInterceptors(
 
 Registers global interceptors that wrap route execution. Interceptors can run logic before and after the handler and may transform the handler result. See <Link to="../../fundamentals/interceptor">Interceptor</Link>.
 
-- interceptorList: Interceptor classes to apply globally.
+- `interceptorList`: Interceptor classes to apply globally.
 
 Notes:
 - Must be called before the server is built; calling it after `build()` throws an error.
@@ -121,7 +126,7 @@ useGlobalPipe(
 
 Registers global pipes that transform/validate controller method parameters immediately after extraction. See <Link to="../../fundamentals/pipe">Pipe</Link>.
 
-- pipeList: Pipe classes or instances. Instances are used as provided; classes are resolved from the container per request.
+- `pipeList`: Pipe classes or instances. Instances are used as provided; classes are resolved from the container per request.
 
 Order of execution:
 - Global pipes run before parameter-level pipes declared via parameter decorators (e.g., `@Body(ParseNumberPipe)`).

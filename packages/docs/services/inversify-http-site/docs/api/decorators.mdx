@@ -53,7 +53,7 @@ ApplyMiddleware(
 
 Parameters
 
-- middlewareList
+- `middlewareList`
   - `Newable<Middleware>`: One or more middleware classes. When passed directly, they run in the `PreHandler` phase.
   - `ApplyMiddlewareOptions`: Object form to control the execution phase and group multiple middleware.
     - phase (`MiddlewarePhase`): Either `PreHandler` or `PostHandler`.
@@ -109,7 +109,7 @@ UseErrorFilter(...errorFilterList: Newable<ErrorFilter>[]): ClassDecorator & Met
 
 Parameters
 
-- errorFilterList: One or more error filter classes implementing `ErrorFilter`.
+- `errorFilterList`: One or more error filter classes implementing `ErrorFilter`.
 
 Notes
 
@@ -127,7 +127,7 @@ UseGuard(...guardList: Newable<Guard>[]): ClassDecorator & MethodDecorator
 
 Parameters
 
-- guardList: One or more guard classes implementing `Guard<TRequest>`.
+- `guardList`: One or more guard classes implementing `Guard<TRequest>`.
 
 Notes
 
@@ -144,7 +144,7 @@ UseInterceptor(...interceptorList: Newable<Interceptor>[]): ClassDecorator & Met
 
 Parameters
 
-- interceptorList: One or more interceptor classes implementing `Interceptor`.
+- `interceptorList`: One or more interceptor classes implementing `Interceptor`.
 
 Notes
 
@@ -167,7 +167,7 @@ Body(parameterName?: string): ParameterDecorator
 
 Parameters
 
-- parameterName (optional string): When provided, extracts the named property from the body. When omitted, injects the entire body object.
+- `parameterName` (optional string): When provided, extracts the named property from the body. When omitted, injects the entire body object.
 
 #### Example: reading a request body
 
@@ -183,7 +183,7 @@ Headers(name?: string): ParameterDecorator
 
 Parameters
 
-- name (optional string): Header name to extract. When omitted, injects all headers as an object. Header names are case-insensitive.
+- `name` (optional string): Header name to extract. When omitted, injects all headers as an object. Header names are case-insensitive.
 
 #### Example: reading the User-Agent header
 
@@ -205,7 +205,7 @@ Cookies(name?: string): ParameterDecorator
 
 Parameters
 
-- name (optional string): Cookie name to extract. When omitted, injects a key-value map of all cookies.
+- `name` (optional string): Cookie name to extract. When omitted, injects a key-value map of all cookies.
 
 #### Example: reading a session cookie
 
@@ -291,8 +291,8 @@ SetHeader(headerKey: string, value: string): MethodDecorator
 
 Parameters
 
-- headerKey (string): Name of the header to be set.
-- value (string): Value of the header to be set.
+- `headerKey` (string): Name of the header to be set.
+- `value` (string): Value of the header to be set.
 
 #### Example: Setting a response header
 
@@ -308,7 +308,7 @@ StatusCode(statusCode: HttpStatusCode): MethodDecorator
 
 Parameters
 
-- headerKey (HttpStatusCode): Status code to be set.
+- `statusCode` (HttpStatusCode): Status code to be set.
 
 #### Example: Setting a response status code
 
@@ -326,7 +326,7 @@ All(path?: string): MethodDecorator
 
 Parameters
 
-- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. It binds the method to all HTTP methods for the given path.
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. It binds the method to all HTTP methods for the given path.
 
 #### Example: decorating a controller method
 
@@ -342,7 +342,7 @@ Delete(path?: string): MethodDecorator
 
 Parameters
 
-- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Delete('/remove')` maps to `DELETE <controllerPath>/remove`.
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Delete('/remove')` maps to `DELETE <controllerPath>/remove`.
 
 #### Example: decorating a controller method
 
@@ -358,7 +358,7 @@ Get(path?: string): MethodDecorator
 
 Parameters
 
-- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Get('/list')` maps to `GET <controllerPath>/list`. When omitted, the method is bound to the controller path itself.
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Get('/list')` maps to `GET <controllerPath>/list`. When omitted, the method is bound to the controller path itself.
 
 #### Example: decorating a controller method
 
@@ -381,7 +381,7 @@ Head(path?: string): MethodDecorator
 
 Parameters
 
-- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Head('/')` maps to `HEAD <controllerPath>`.
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Head('/')` maps to `HEAD <controllerPath>`.
 
 #### Example: decorating a controller method
 
@@ -397,7 +397,7 @@ Options(path?: string): MethodDecorator
 
 Parameters
 
-- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Options('/')` maps to `OPTIONS <controllerPath>`.
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Options('/')` maps to `OPTIONS <controllerPath>`.
 
 #### Example: decorating a controller method
 
@@ -413,7 +413,7 @@ Patch(path?: string): MethodDecorator
 
 Parameters
 
-- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Patch('/partial')` maps to `PATCH <controllerPath>/partial`.
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Patch('/partial')` maps to `PATCH <controllerPath>/partial`.
 
 #### Example: decorating a controller method
 
@@ -429,7 +429,7 @@ Post(path?: string): MethodDecorator
 
 Parameters
 
-- path (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Post('/create')` maps to `POST <controllerPath>/create`.
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Post('/create')` maps to `POST <controllerPath>/create`.
 
 #### Example: decorating a controller method
 
@@ -445,7 +445,7 @@ Put(path?: string): MethodDecorator
 
 Parameters
 
-- path (optional string): Route path mounted under the controller's base path. Defaults to '/'. Example: @Put('/update') maps to PUT &lt;controllerPath&gt;/update.
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to '/'. Example: @Put('/update') maps to PUT &lt;controllerPath&gt;/update.
 
 Notes
 
