@@ -1,0 +1,34 @@
+name: Deploy Inversify logger docs to GitHub Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: Deploy Inversify logger docusaurus site.
+    environment: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup
+
+      - name: Compile source files
+        run: pnpm run build --filter @inversifyjs/inversify-logger-docs-site
+
+      - uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.INVERSIFY_LOGGER_DOC_PAGES_DEPLOYMENT_PRIVATE_KEY }}
+      - name: Deploy to GitHub Pages
+        env:
+          USE_SSH: true
+        run: |
+          git config --global user.email "inversify.github.io.logger.deploy@github.com"
+          git config --global user.name "gh-actions"
+          pnpm deploy:logger:pages
