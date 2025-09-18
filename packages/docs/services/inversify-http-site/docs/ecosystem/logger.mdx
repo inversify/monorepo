@@ -4,6 +4,7 @@ title: Logger
 ---
 import ecosystemLoggerUsingALoggerSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemLoggerUsingALogger.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
+import DocumentationButton from '@site/src/components/DocumentationButton';
 
 `@inversifyjs/logger` is a versatile and extensible logging library designed for TypeScript applications. It provides a simple and consistent API for logging messages at various levels (e.g., info, warn, error) and supports multiple logging transports, including console, file, http and stream logging.
 
@@ -16,3 +17,7 @@ To use a logger in your application, just import the desired logger class and cr
 :::warning
 You might be tempted to use DI to inject the logger, but this is not recommended. Reading context in the log traces such as the name of the module which sends the logs is useful, and having a shared instance of the logger would make this impossible.
 :::
+
+<DocumentationButton href="https://inversify.io/logger/" target="_blank">
+  <span>View Full Documentation</span>
+</DocumentationButton>

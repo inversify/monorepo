@@ -143,7 +143,10 @@ function HomepageFeatures(): React.JSX.Element {
             <DocumentationButton href="/docs/introduction/getting-started">
               View Full Tutorial
             </DocumentationButton>
-            <DocumentationButton href="https://github.com/inversify/monorepo">
+            <DocumentationButton
+              href="https://github.com/inversify/monorepo"
+              target="_blank"
+            >
               View on GitHub
             </DocumentationButton>
           </div>
