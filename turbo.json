@@ -41,7 +41,8 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",
@@ -54,7 +55,8 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",
@@ -67,7 +69,8 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",
@@ -80,7 +83,8 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",
@@ -93,7 +97,8 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",
@@ -106,7 +111,8 @@
       "inputs": [
         "blog/**",
         "docs/**",
-        "src/**/*.{cts,mts,ts}",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
         "versioned_docs/**",
