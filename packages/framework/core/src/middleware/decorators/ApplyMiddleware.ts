@@ -3,7 +3,7 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { ServiceIdentifier } from 'inversify';
 
 import { classMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey';
 import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey';
@@ -12,7 +12,7 @@ import { Middleware } from '../models/Middleware';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function ApplyMiddleware(
-  ...middlewareList: (Newable<Middleware> | ApplyMiddlewareOptions)[]
+  ...middlewareList: (ServiceIdentifier<Middleware> | ApplyMiddlewareOptions)[]
 ): ClassDecorator & MethodDecorator {
   return (target: object, key?: string | symbol): void => {
     let classTarget: object;

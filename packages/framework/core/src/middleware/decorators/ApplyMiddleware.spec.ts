@@ -7,7 +7,7 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { ServiceIdentifier } from 'inversify';
 
 import { classMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey';
 import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey';
@@ -17,12 +17,12 @@ import { ApplyMiddleware } from './ApplyMiddleware';
 describe(ApplyMiddleware, () => {
   describe('having a ClassDecorator', () => {
     describe('when called', () => {
-      let middlewareFixture: Newable<Middleware>;
+      let middlewareServiceIdentifierFixture: ServiceIdentifier<Middleware>;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
       let targetFixture: NewableFunction;
 
       beforeAll(() => {
-        middlewareFixture = {} as Newable<Middleware>;
+        middlewareServiceIdentifierFixture = Symbol();
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
         targetFixture = class TestController {};
@@ -31,7 +31,7 @@ describe(ApplyMiddleware, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        ApplyMiddleware(middlewareFixture)(targetFixture);
+        ApplyMiddleware(middlewareServiceIdentifierFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -41,7 +41,7 @@ describe(ApplyMiddleware, () => {
       it('should call buildArrayMetadataWithArray()', () => {
         expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
-          middlewareFixture,
+          middlewareServiceIdentifierFixture,
         ]);
       });
 
@@ -64,14 +64,14 @@ describe(ApplyMiddleware, () => {
       let controllerMethodKeyFixture: string | symbol;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
       let descriptorFixture: PropertyDescriptor;
-      let middlewareFixture: Newable<Middleware>;
+      let middlewareServiceIdentifierFixture: ServiceIdentifier<Middleware>;
 
       beforeAll(() => {
         controllerFixture = class Test {};
         controllerMethodKeyFixture = 'testMethod';
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
-        middlewareFixture = {} as Newable<Middleware>;
+        middlewareServiceIdentifierFixture = Symbol();
         descriptorFixture = {
           value: 'value-descriptor-example',
         } as PropertyDescriptor;
@@ -80,7 +80,7 @@ describe(ApplyMiddleware, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        ApplyMiddleware(middlewareFixture)(
+        ApplyMiddleware(middlewareServiceIdentifierFixture)(
           controllerFixture,
           controllerMethodKeyFixture,
           descriptorFixture,
@@ -90,7 +90,7 @@ describe(ApplyMiddleware, () => {
       it('should call buildArrayMetadataWithArray()', () => {
         expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
-          middlewareFixture,
+          middlewareServiceIdentifierFixture,
         ]);
       });
 

@@ -1,27 +1,35 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('../calculations/buildRequestParameterDecorator');
+vitest.mock('../calculations/buildRouteParameterDecorator');
+
+import { Pipe } from '@inversifyjs/framework-core';
+import { ServiceIdentifier } from 'inversify';
 
 import { CustomParameterDecoratorHandler } from '../models/CustomParameterDecoratorHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { buildRequestParameterDecorator } from './buildRequestParameterDecorator';
+import { buildRouteParameterDecorator } from './buildRouteParameterDecorator';
 import { createCustomParameterDecorator } from './createCustomParameterDecorator';
 
 describe(createCustomParameterDecorator, () => {
   describe('when called', () => {
     let handlerFixture: CustomParameterDecoratorHandler;
+    let parameterPipeListFixture: (ServiceIdentifier<Pipe> | Pipe)[];
     let parameterDecoratorFixture: ParameterDecorator;
     let result: unknown;
 
     beforeAll(() => {
-      handlerFixture = {} as CustomParameterDecoratorHandler;
-      parameterDecoratorFixture = {} as ParameterDecorator;
+      handlerFixture = Symbol() as unknown as CustomParameterDecoratorHandler;
+      parameterPipeListFixture = [Symbol()];
+      parameterDecoratorFixture = Symbol() as unknown as ParameterDecorator;
 
       vitest
-        .mocked(buildRequestParameterDecorator)
+        .mocked(buildRouteParameterDecorator)
         .mockReturnValueOnce(parameterDecoratorFixture);
 
-      result = createCustomParameterDecorator(handlerFixture);
+      result = createCustomParameterDecorator(
+        handlerFixture,
+        ...parameterPipeListFixture,
+      );
     });
 
     afterAll(() => {
@@ -29,10 +37,10 @@ describe(createCustomParameterDecorator, () => {
     });
 
     it('should call requestParamFactory', () => {
-      expect(buildRequestParameterDecorator).toHaveBeenCalledTimes(1);
-      expect(buildRequestParameterDecorator).toHaveBeenCalledWith(
+      expect(buildRouteParameterDecorator).toHaveBeenCalledTimes(1);
+      expect(buildRouteParameterDecorator).toHaveBeenCalledWith(
         RequestMethodParameterType.Custom,
-        [],
+        parameterPipeListFixture,
         undefined,
         handlerFixture,
       );

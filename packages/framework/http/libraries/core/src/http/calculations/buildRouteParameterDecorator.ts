@@ -1,23 +1,27 @@
-import { Pipe } from '@inversifyjs/framework-core';
-import { Newable } from 'inversify';
+import { isPipe, Pipe } from '@inversifyjs/framework-core';
+import { ServiceIdentifier } from 'inversify';
 
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { CustomParameterDecoratorHandler } from '../models/CustomParameterDecoratorHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
+import { RouteParamOptions } from '../models/RouteParamOptions';
 import { requestParam } from './requestParam';
 
-export function buildRequestParameterDecorator(
+export function buildRouteParameterDecorator(
   parameterType: RequestMethodParameterType,
-  parameterPipeList: (Newable<Pipe> | Pipe)[],
-  parameterNameOrPipe?: string | (Newable<Pipe> | Pipe),
+  parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[],
+  parameterNameOrPipe?: RouteParamOptions | (ServiceIdentifier<Pipe> | Pipe),
   customParameterDecoratorHandler?: CustomParameterDecoratorHandler,
 ): ParameterDecorator {
   let parameterName: string | undefined = undefined;
-  const pipeList: (Newable<Pipe> | Pipe)[] = [];
+  const pipeList: (ServiceIdentifier<Pipe> | Pipe)[] = [];
 
   if (parameterNameOrPipe !== undefined) {
-    if (typeof parameterNameOrPipe === 'string') {
-      parameterName = parameterNameOrPipe;
+    if (
+      typeof parameterNameOrPipe === 'object' &&
+      !isPipe(parameterNameOrPipe)
+    ) {
+      parameterName = parameterNameOrPipe.name;
     } else {
       pipeList.push(parameterNameOrPipe);
     }

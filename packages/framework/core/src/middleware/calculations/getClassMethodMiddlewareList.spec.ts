@@ -3,8 +3,10 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { ServiceIdentifier } from 'inversify';
 
 import { classMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey';
+import { Middleware } from '../models/Middleware';
 import { getClassMethodMiddlewareList } from './getClassMethodMiddlewareList';
 
 describe(getClassMethodMiddlewareList, () => {
@@ -44,17 +46,17 @@ describe(getClassMethodMiddlewareList, () => {
   describe('when called, and getOwnReflectMetadata() returns an array', () => {
     let classFixture: NewableFunction;
     let classMethodKeyFixture: string | symbol;
-    let middlewareFixtures: NewableFunction[];
+    let middlewareServiceIdentifierListFixture: ServiceIdentifier<Middleware>[];
     let result: unknown;
 
     beforeAll(() => {
       classFixture = class Test {};
       classMethodKeyFixture = 'testMethod';
-      middlewareFixtures = [];
+      middlewareServiceIdentifierListFixture = [Symbol()];
 
       vitest
         .mocked(getOwnReflectMetadata)
-        .mockReturnValueOnce(middlewareFixtures);
+        .mockReturnValueOnce(middlewareServiceIdentifierListFixture);
 
       result = getClassMethodMiddlewareList(
         classFixture,
@@ -76,7 +78,7 @@ describe(getClassMethodMiddlewareList, () => {
     });
 
     it('should return an array', () => {
-      expect(result).toBe(middlewareFixtures);
+      expect(result).toBe(middlewareServiceIdentifierListFixture);
     });
   });
 });

@@ -2,7 +2,7 @@ import {
   Interceptor,
   InterceptorTransformObject,
 } from '@inversifyjs/framework-core';
-import { Container, Newable } from 'inversify';
+import { Container, ServiceIdentifier } from 'inversify';
 
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
 import { Controller } from '../models/Controller';
@@ -100,7 +100,7 @@ export function buildInterceptedHandler<
             await container.getAsync(
               routerExplorerControllerMethodMetadata.interceptorList[
                 index
-              ] as Newable<Interceptor<TRequest, TResponse>>,
+              ] as ServiceIdentifier<Interceptor<TRequest, TResponse>>,
             );
 
           await interceptor.intercept(

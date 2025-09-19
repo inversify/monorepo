@@ -14,7 +14,7 @@ import {
 } from '@inversifyjs/framework-core';
 import { ConsoleLogger, Logger } from '@inversifyjs/logger';
 import { getBaseType } from '@inversifyjs/prototype-utils';
-import { Container, Newable } from 'inversify';
+import { Container, Newable, ServiceIdentifier } from 'inversify';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
@@ -71,8 +71,8 @@ export abstract class InversifyHttpAdapter<
     Newable<Error> | null,
     Newable<ErrorFilter>
   >;
-  readonly #globalGuardList: Newable<Guard<TRequest>>[];
-  readonly #globalPipeList: (Newable<Pipe> | Pipe)[];
+  readonly #globalGuardList: ServiceIdentifier<Guard<TRequest>>[];
+  readonly #globalPipeList: (ServiceIdentifier<Pipe> | Pipe)[];
   readonly #logger: Logger;
   #isBuilt: boolean;
 
@@ -149,7 +149,9 @@ export abstract class InversifyHttpAdapter<
     }
   }
 
-  public applyGlobalGuards(...guardList: Newable<Guard<TRequest>>[]): void {
+  public applyGlobalGuards(
+    ...guardList: ServiceIdentifier<Guard<TRequest>>[]
+  ): void {
     if (this.#isBuilt) {
       throw new InversifyHttpAdapterError(
         InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
@@ -161,7 +163,7 @@ export abstract class InversifyHttpAdapter<
   }
 
   public useGlobalInterceptors(
-    ...interceptorList: Newable<Interceptor<TRequest, TResponse>>[]
+    ...interceptorList: ServiceIdentifier<Interceptor<TRequest, TResponse>>[]
   ): void {
     if (this.#isBuilt) {
       throw new InversifyHttpAdapterError(
@@ -175,7 +177,7 @@ export abstract class InversifyHttpAdapter<
     }
   }
 
-  public useGlobalPipe(...pipeList: (Newable<Pipe> | Pipe)[]): void {
+  public useGlobalPipe(...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]): void {
     this.#globalPipeList.push(...pipeList);
   }
 
@@ -493,13 +495,13 @@ export abstract class InversifyHttpAdapter<
 
   async #applyPipeList(
     params: unknown[],
-    pipeList: (Newable<Pipe> | Pipe)[],
+    pipeList: (ServiceIdentifier<Pipe> | Pipe)[],
     pipeMetadata: PipeMetadata,
   ): Promise<void> {
-    for (const pipeOrNewable of pipeList) {
-      const pipe: Pipe = isPipe(pipeOrNewable)
-        ? pipeOrNewable
-        : await this.#container.getAsync(pipeOrNewable);
+    for (const pipeOrServiceIdentifier of pipeList) {
+      const pipe: Pipe = isPipe(pipeOrServiceIdentifier)
+        ? pipeOrServiceIdentifier
+        : await this.#container.getAsync(pipeOrServiceIdentifier);
 
       params[pipeMetadata.parameterIndex] = await pipe.execute(
         params[pipeMetadata.parameterIndex],
@@ -652,28 +654,36 @@ export abstract class InversifyHttpAdapter<
   }
 
   #getMiddlewareHandlerFromMetadata(
-    middlewareList: NewableFunction[],
+    middlewareServiceIdentifierList: ServiceIdentifier<
+      Middleware<TRequest, TResponse, TNextFunction, TResult>
+    >[],
   ): MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>[] {
-    return middlewareList.map((newableFunction: NewableFunction) => {
-      return async (
-        request: TRequest,
-        response: TResponse,
-        next: TNextFunction,
-      ): Promise<TResult> => {
-        const middleware: Middleware<
-          TRequest,
-          TResponse,
-          TNextFunction,
-          TResult
-        > = await this.#container.getAsync(newableFunction);
+    return middlewareServiceIdentifierList.map(
+      (
+        middlewareServiceIdentifier: ServiceIdentifier<
+          Middleware<TRequest, TResponse, TNextFunction, TResult>
+        >,
+      ) => {
+        return async (
+          request: TRequest,
+          response: TResponse,
+          next: TNextFunction,
+        ): Promise<TResult> => {
+          const middleware: Middleware<
+            TRequest,
+            TResponse,
+            TNextFunction,
+            TResult
+          > = await this.#container.getAsync(middlewareServiceIdentifier);
 
-        return middleware.execute(request, response, next);
-      };
-    });
+          return middleware.execute(request, response, next);
+        };
+      },
+    );
   }
 
   #getGuardHandlerFromMetadata(
-    guardList: Newable<Guard<TRequest>>[],
+    guardServiceIdentifierList: ServiceIdentifier<Guard<TRequest>>[],
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
       TRequest,
       TResponse
@@ -692,30 +702,33 @@ export abstract class InversifyHttpAdapter<
       routerExplorerControllerMethodMetadata,
     );
 
-    return guardList.map((newableFunction: NewableFunction) => {
-      return async (
-        request: TRequest,
-        response: TResponse,
-        next: TNextFunction,
-      ): Promise<TResult | undefined> => {
-        try {
-          const guard: Guard<TRequest> =
-            await this.#container.getAsync(newableFunction);
+    return guardServiceIdentifierList.map(
+      (guardServiceIdentifier: ServiceIdentifier<Guard<TRequest>>) => {
+        return async (
+          request: TRequest,
+          response: TResponse,
+          next: TNextFunction,
+        ): Promise<TResult | undefined> => {
+          try {
+            const guard: Guard<TRequest> = await this.#container.getAsync(
+              guardServiceIdentifier,
+            );
 
-          const isAllowed: boolean = await guard.activate(request);
+            const isAllowed: boolean = await guard.activate(request);
 
-          if (isAllowed) {
-            await next();
+            if (isAllowed) {
+              await next();
 
-            return undefined;
+              return undefined;
+            }
+
+            return this.#reply(request, response, new ForbiddenHttpResponse());
+          } catch (error: unknown) {
+            return handleError(request, response, error);
           }
-
-          return this.#reply(request, response, new ForbiddenHttpResponse());
-        } catch (error: unknown) {
-          return handleError(request, response, error);
-        }
-      };
-    });
+        };
+      },
+    );
   }
 
   #printController(
@@ -754,7 +767,7 @@ export abstract class InversifyHttpAdapter<
   }
 
   #setGlobalInterceptor(
-    interceptor: Newable<Interceptor<TRequest, TResponse>>,
+    interceptor: ServiceIdentifier<Interceptor<TRequest, TResponse>>,
   ): void {
     this.globalHandlers.interceptorList.push(
       this.#container.get<Interceptor<TRequest, TResponse>>(interceptor),

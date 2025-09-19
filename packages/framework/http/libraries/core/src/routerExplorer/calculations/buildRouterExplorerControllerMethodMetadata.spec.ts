@@ -18,9 +18,10 @@ import {
   getClassMethodMiddlewareList,
   Guard,
   Interceptor,
+  Middleware,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
-import { Newable } from 'inversify';
+import { Newable, ServiceIdentifier } from 'inversify';
 
 import { RequestMethodType } from '../../http/models/RequestMethodType';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
@@ -48,7 +49,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     let classMethodInterceptorListFixture: Newable<Interceptor>[];
     let controllerMethodGuardListFixture: Newable<Guard>[];
     let controllerMethodInterceptorListFixture: Newable<Interceptor>[];
-    let controllerMethodMiddlewareListFixture: NewableFunction[];
+    let controllerMethodMiddlewareListFixture: ServiceIdentifier<Middleware>[];
     let middlewareOptionsFixture: MiddlewareOptions;
     let headerMetadataListFixture: [string, string][];
     let useNativeHandlerFixture: boolean;

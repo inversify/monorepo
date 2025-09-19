@@ -9,9 +9,10 @@ import {
   getClassMethodMiddlewareList,
   Guard,
   Interceptor,
+  Middleware,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
-import { Newable } from 'inversify';
+import { Newable, ServiceIdentifier } from 'inversify';
 
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
@@ -45,12 +46,12 @@ export function buildRouterExplorerControllerMethodMetadata<
       controllerMethodMetadata.methodKey,
     );
 
-  const controllerMethodGuardList: Newable<Guard<TRequest>>[] = [
+  const controllerMethodGuardList: ServiceIdentifier<Guard<TRequest>>[] = [
     ...getClassGuardList(controller),
     ...getClassMethodGuardList(controller, controllerMethodMetadata.methodKey),
   ];
 
-  const controllerMethodInterceptorList: Newable<
+  const controllerMethodInterceptorList: ServiceIdentifier<
     Interceptor<TRequest, TResponse>
   >[] = [
     ...getClassInterceptorList(controller),
@@ -61,7 +62,8 @@ export function buildRouterExplorerControllerMethodMetadata<
   ];
 
   const controllerMethodMiddlewareList: (
-    | NewableFunction
+    | // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ServiceIdentifier<Middleware<TRequest, TResponse, any, TResult>>
     | ApplyMiddlewareOptions
   )[] = getClassMethodMiddlewareList(
     controller,

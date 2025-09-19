@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Newable } from 'inversify';
+import { Newable, ServiceIdentifier } from 'inversify';
 
 import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
 import { Middleware } from '../models/Middleware';
@@ -9,9 +9,9 @@ import { MiddlewarePhase } from '../models/MiddlewarePhase';
 import { buildMiddlewareOptionsFromApplyMiddlewareOptions } from './buildMiddlewareOptionsFromApplyMiddlewareOptions';
 
 describe(buildMiddlewareOptionsFromApplyMiddlewareOptions, () => {
-  describe('having applyMiddlewareOptionsList with NewableFunction', () => {
-    let firstApplyMiddlewareOptionsFixture: NewableFunction;
-    let secondApplyMiddlewareOptionsFixture: NewableFunction;
+  describe('having applyMiddlewareOptionsList with ServiceIdentifier<Middleware>', () => {
+    let firstApplyMiddlewareOptionsFixture: ServiceIdentifier<Middleware>;
+    let secondApplyMiddlewareOptionsFixture: ServiceIdentifier<Middleware>;
 
     beforeAll(() => {
       firstApplyMiddlewareOptionsFixture = class FirstMiddlewareFixture {};

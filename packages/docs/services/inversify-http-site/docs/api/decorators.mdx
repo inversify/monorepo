@@ -37,6 +37,18 @@ import TabItem from '@theme/TabItem';
 
 This section covers Inversify HTTP decorators used to provide related metadata.
 
+:::info Service Identifiers
+
+Many decorators in this framework accept `ServiceIdentifier` types for dependency injection. A `ServiceIdentifier<T>` can be:
+- A class constructor (e.g., `MyMiddleware`)
+- A string token (e.g., `'my-middleware'`)
+- A symbol (e.g., `Symbol.for('my-middleware')`)
+- An abstract class reference
+
+This allows for flexible dependency resolution through the InversifyJS container.
+
+:::
+
 ## HTTP Request lifecycle
 
 Inversify HTTP decorators can be used to manage the lifecycle of HTTP requests, including middleware execution, request handling, and response generation. This allows for more modular and maintainable code.
@@ -47,22 +59,20 @@ Attaches middleware to a controller class (applies to all its routes) or to a sp
 
 ```ts
 ApplyMiddleware(
-  ...middlewareList: (Newable<Middleware> | ApplyMiddlewareOptions)[],
+  ...middlewareList: (ServiceIdentifier<Middleware> | ApplyMiddlewareOptions)[],
 ): ClassDecorator & MethodDecorator
 ```
 
 Parameters
 
-- `middlewareList`
-  - `Newable<Middleware>`: One or more middleware classes. When passed directly, they run in the `PreHandler` phase.
-  - `ApplyMiddlewareOptions`: Object form to control the execution phase and group multiple middleware.
-    - phase (`MiddlewarePhase`): Either `PreHandler` or `PostHandler`.
-    - middleware (`Newable<Middleware>` | `Newable<Middleware>`[]): One or many middleware classes.
+- `middlewareList`: One or more middleware service identifiers or options objects.
+  - `ServiceIdentifier<Middleware>`: A middleware class, string token, symbol, or abstract class that can be resolved by the DI container.
+  - `ApplyMiddlewareOptions`: Configuration object with middleware and phase settings.
 
 Notes
 
 - Scope: Place the decorator on the controller class to affect all routes, or on a method to affect only that route.
-- Phase: When passing middleware classes directly (not the options object), they run in the `PreHandler` phase by default.
+- Phase: When passing middleware service identifiers directly (not the options object), they run in the `PreHandler` phase by default.
 - Order: Within the same phase, middleware execute in the order they are provided.
 - See also: [Middleware fundamentals](../../fundamentals/middleware) for adapter-specific request/response types and tips.
 
@@ -122,36 +132,24 @@ Notes
 Attaches one or more [guards](../../fundamentals/guard) to a controller class or method. All guards must allow for the request to continue.
 
 ```ts
-UseGuard(...guardList: Newable<Guard>[]): ClassDecorator & MethodDecorator
+UseGuard(...guardList: ServiceIdentifier<Guard>[]): ClassDecorator & MethodDecorator
 ```
 
 Parameters
 
-- `guardList`: One or more guard classes implementing `Guard<TRequest>`.
-
-Notes
-
-- Scope: Place on the controller class to affect all routes, or on a method to affect only that route.
-- Guard return values: `activate()` may return `true` (continue), `false` (reply with `403 Forbidden`), or throw an `ErrorHttpResponse` (replied as-is, e.g., `throw new ForbiddenHttpResponse('message')`).
+- `guardList`: One or more guard service identifiers that can be resolved by the DI container.
 
 ### UseInterceptor
 
 Attaches one or more interceptors to a controller class or method. Interceptors can modify requests before they reach the handler and responses before they are sent.
 
 ```ts
-UseInterceptor(...interceptorList: Newable<Interceptor>[]): ClassDecorator & MethodDecorator
+UseInterceptor(...interceptorList: ServiceIdentifier<Interceptor>[]): ClassDecorator & MethodDecorator
 ```
 
 Parameters
 
-- `interceptorList`: One or more interceptor classes implementing `Interceptor`.
-
-Notes
-
-- Scope: Place on the controller class to affect all routes, or on a method to affect only that route.
-- Order: Interceptors are executed in the order they are provided.
-- Request/Response modification: Interceptors can transform both incoming requests and outgoing responses.
-- Timing: Interceptors run around the handler method, allowing both pre and post-processing.
+- `interceptorList`: One or more interceptor service identifiers that can be resolved by the DI container.
 
 ## HTTP Request message abstraction
 
@@ -162,12 +160,16 @@ Inversify HTTP decorators can be used to abstract HTTP request details, such as 
 Reads the HTTP request body, or a specific property of it when a name is provided.
 
 ```ts
-Body(parameterName?: string): ParameterDecorator
+Body(
+  optionsOrPipe?: RouteParameterOptions | (ServiceIdentifier<Pipe> | Pipe),
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
 ```
 
 Parameters
 
-- `parameterName` (optional string): When provided, extracts the named property from the body. When omitted, injects the entire body object.
+- `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like `parameterName`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
+- `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
 
 #### Example: reading a request body
 
@@ -178,12 +180,16 @@ Parameters
 Reads HTTP request headers, or a specific header when a name is provided.
 
 ```ts
-Headers(name?: string): ParameterDecorator
+Headers(
+  optionsOrPipe?: RouteParameterOptions | (ServiceIdentifier<Pipe> | Pipe),
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
 ```
 
 Parameters
 
-- `name` (optional string): Header name to extract. When omitted, injects all headers as an object. Header names are case-insensitive.
+- `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like header `name`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
+- `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
 
 #### Example: reading the User-Agent header
 
@@ -200,29 +206,44 @@ Remember to enable `useCookies` option when using `express` or `fastify` adapter
 :::
 
 ```ts
-Cookies(name?: string): ParameterDecorator
+Cookies(
+  optionsOrPipe?: RouteParameterOptions | (ServiceIdentifier<Pipe> | Pipe),
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
 ```
 
 Parameters
 
-- `name` (optional string): Cookie name to extract. When omitted, injects a key-value map of all cookies.
+- `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like cookie `name`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
+- `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
 
 #### Example: reading a session cookie
 
 <CodeBlock language="ts">{decoratorApiCookiesSource}</CodeBlock>
+
+### Params
+
+Reads HTTP route parameters (path parameters), or a specific parameter when a name is provided.
+
+```ts
+Params(
+  optionsOrPipe?: RouteParameterOptions | (ServiceIdentifier<Pipe> | Pipe),
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Parameters
+
+- `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like parameter `name`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
+- `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
 
 ### Request
 
 Retrieves the native request object of the current adapter. Useful when you need full access to the underlying framework request.
 
 ```ts
-Request(...pipeList: (Newable<Pipe> | Pipe)[]): ParameterDecorator
+Request(...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]): ParameterDecorator
 ```
-
-Notes
-
-- Type-safe: Type the parameter with the adapter's request type for intellisense and safety.
-- Pipes: You can attach pipes to the parameter if you need to transform or validate it.
 
 #### Example: accessing the native request per adapter
 
@@ -241,6 +262,22 @@ Notes
   </TabItem>
 </Tabs>
 
+### Query
+
+Reads HTTP query parameters, or a specific query parameter when a name is provided.
+
+```ts
+Query(
+  optionsOrPipe?: RouteParameterOptions | (ServiceIdentifier<Pipe> | Pipe),
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Parameters
+
+- `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like parameter `name`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
+- `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
+
 ## HTTP Response message abstraction
 
 Inversify HTTP decorators can also be used to abstract HTTP response details, such as status codes and headers. This allows for more consistent and maintainable response handling across controllers.
@@ -250,7 +287,7 @@ Inversify HTTP decorators can also be used to abstract HTTP response details, su
 Injects the native response object of the current adapter. Use it when you want to write directly to the underlying framework response.
 
 ```ts
-Response(...pipeList: (Newable<Pipe> | Pipe)[]): ParameterDecorator
+Response(...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]): ParameterDecorator
 ```
 
 Notes

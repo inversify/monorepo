@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pipe } from '@inversifyjs/framework-core';
-import { Newable } from 'inversify';
+import { ServiceIdentifier } from 'inversify';
 
 import { CustomParameterDecoratorHandler } from '../../http/models/CustomParameterDecoratorHandler';
 import { RequestMethodParameterType } from '../../http/models/RequestMethodParameterType';
@@ -15,5 +15,5 @@ export interface ControllerMethodParameterMetadata<
     | undefined;
   parameterType: RequestMethodParameterType;
   parameterName?: string | undefined;
-  pipeList: (Newable<Pipe> | Pipe)[];
+  pipeList: (ServiceIdentifier<Pipe> | Pipe)[];
 }

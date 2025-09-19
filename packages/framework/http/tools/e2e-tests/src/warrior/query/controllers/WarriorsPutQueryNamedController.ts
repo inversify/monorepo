@@ -6,7 +6,10 @@ import { WarriorWithQuery } from '../models/WarriorWithQuery';
 export class WarriorsPutQueryNamedController {
   @Put()
   public async putWarrior(
-    @Query('filter') filter: string,
+    @Query({
+      name: 'filter',
+    })
+    filter: string,
   ): Promise<WarriorWithQuery> {
     return {
       damage: 10,

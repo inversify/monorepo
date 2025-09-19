@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('../calculations/buildRequestParameterDecorator');
+vitest.mock('../calculations/buildRouteParameterDecorator');
 
-import { buildRequestParameterDecorator } from '../calculations/buildRequestParameterDecorator';
+import { buildRouteParameterDecorator } from '../calculations/buildRouteParameterDecorator';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { Next } from './Next';
 
@@ -15,7 +15,7 @@ describe(Next, () => {
       parameterDecoratorFixture = {} as ParameterDecorator;
 
       vitest
-        .mocked(buildRequestParameterDecorator)
+        .mocked(buildRouteParameterDecorator)
         .mockReturnValueOnce(parameterDecoratorFixture);
 
       result = Next();
@@ -25,9 +25,9 @@ describe(Next, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call requestParamFactory', () => {
-      expect(buildRequestParameterDecorator).toHaveBeenCalledTimes(1);
-      expect(buildRequestParameterDecorator).toHaveBeenCalledWith(
+    it('should call buildRouteParameterDecorator()', () => {
+      expect(buildRouteParameterDecorator).toHaveBeenCalledTimes(1);
+      expect(buildRouteParameterDecorator).toHaveBeenCalledWith(
         RequestMethodParameterType.Next,
         [],
       );

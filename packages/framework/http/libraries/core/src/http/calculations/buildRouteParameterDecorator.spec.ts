@@ -5,22 +5,26 @@ vitest.mock('./requestParam');
 import { Pipe } from '@inversifyjs/framework-core';
 import { Newable } from 'inversify';
 
+import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { buildRequestParameterDecorator } from './buildRequestParameterDecorator';
+import { RouteParamOptions } from '../models/RouteParamOptions';
+import { buildRouteParameterDecorator } from './buildRouteParameterDecorator';
 import { requestParam } from './requestParam';
 
-describe(buildRequestParameterDecorator, () => {
-  describe('having a parameterNameOrPipe with type string', () => {
+describe(buildRouteParameterDecorator, () => {
+  describe('having a RouteParameterOptions parameterNameOrPipe', () => {
     describe('when called', () => {
       let parameterTypeFixture: RequestMethodParameterType;
-      let parameterNameOrPipeFixture: string;
+      let parameterNameOrPipeFixture: RouteParamOptions;
       let parameterPipeListFixture: (Newable<Pipe> | Pipe)[];
       let parameterDecoratorFixture: ParameterDecorator;
       let result: unknown;
 
       beforeAll(() => {
         parameterTypeFixture = RequestMethodParameterType.Query;
-        parameterNameOrPipeFixture = 'parameterName';
+        parameterNameOrPipeFixture = {
+          name: 'parameterName',
+        };
         parameterPipeListFixture = [];
         parameterDecoratorFixture = {} as ParameterDecorator;
 
@@ -28,7 +32,7 @@ describe(buildRequestParameterDecorator, () => {
           .mocked(requestParam)
           .mockReturnValueOnce(parameterDecoratorFixture);
 
-        result = buildRequestParameterDecorator(
+        result = buildRouteParameterDecorator(
           parameterTypeFixture,
           parameterPipeListFixture,
           parameterNameOrPipeFixture,
@@ -39,13 +43,15 @@ describe(buildRequestParameterDecorator, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call requestParam', () => {
-        expect(requestParam).toHaveBeenCalledTimes(1);
-        expect(requestParam).toHaveBeenCalledWith({
-          parameterName: parameterNameOrPipeFixture,
+      it('should call requestParam()', () => {
+        const expected: ControllerMethodParameterMetadata = {
+          parameterName: parameterNameOrPipeFixture.name,
           parameterType: parameterTypeFixture,
           pipeList: parameterPipeListFixture,
-        });
+        };
+
+        expect(requestParam).toHaveBeenCalledTimes(1);
+        expect(requestParam).toHaveBeenCalledWith(expected);
       });
 
       it('should return a ParameterDecorator', () => {
@@ -72,7 +78,7 @@ describe(buildRequestParameterDecorator, () => {
           .mocked(requestParam)
           .mockReturnValueOnce(parameterDecoratorFixture);
 
-        result = buildRequestParameterDecorator(
+        result = buildRouteParameterDecorator(
           parameterTypeFixture,
           parameterPipeListFixture,
           parameterNameOrPipeFixture,
@@ -83,12 +89,14 @@ describe(buildRequestParameterDecorator, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call requestParam', () => {
-        expect(requestParam).toHaveBeenCalledTimes(1);
-        expect(requestParam).toHaveBeenCalledWith({
+      it('should call requestParam()', () => {
+        const expected: ControllerMethodParameterMetadata = {
           parameterType: parameterTypeFixture,
           pipeList: [parameterNameOrPipeFixture],
-        });
+        };
+
+        expect(requestParam).toHaveBeenCalledTimes(1);
+        expect(requestParam).toHaveBeenCalledWith(expected);
       });
 
       it('should return a ParameterDecorator', () => {
@@ -97,17 +105,19 @@ describe(buildRequestParameterDecorator, () => {
     });
   });
 
-  describe('having a parameterNameOrPipe with type string and parameterPipeList length greater than 0', () => {
+  describe('having a RouteParameterOptions parameterNameOrPipe and parameterPipeList length greater than 0', () => {
     describe('when called', () => {
       let parameterTypeFixture: RequestMethodParameterType;
-      let parameterNameOrPipeFixture: string;
+      let parameterNameOrPipeFixture: RouteParamOptions;
       let parameterPipeListFixture: (Newable<Pipe> | Pipe)[];
       let parameterDecoratorFixture: ParameterDecorator;
       let result: unknown;
 
       beforeAll(() => {
         parameterTypeFixture = RequestMethodParameterType.Query;
-        parameterNameOrPipeFixture = 'parameterName';
+        parameterNameOrPipeFixture = {
+          name: 'parameterName',
+        };
         parameterPipeListFixture = [{ execute: () => {} }];
         parameterDecoratorFixture = {} as ParameterDecorator;
 
@@ -115,7 +125,7 @@ describe(buildRequestParameterDecorator, () => {
           .mocked(requestParam)
           .mockReturnValueOnce(parameterDecoratorFixture);
 
-        result = buildRequestParameterDecorator(
+        result = buildRouteParameterDecorator(
           parameterTypeFixture,
           parameterPipeListFixture,
           parameterNameOrPipeFixture,
@@ -126,13 +136,15 @@ describe(buildRequestParameterDecorator, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call requestParam', () => {
-        expect(requestParam).toHaveBeenCalledTimes(1);
-        expect(requestParam).toHaveBeenCalledWith({
-          parameterName: parameterNameOrPipeFixture,
+      it('should call requestParam()', () => {
+        const expected: ControllerMethodParameterMetadata = {
+          parameterName: parameterNameOrPipeFixture.name,
           parameterType: parameterTypeFixture,
           pipeList: parameterPipeListFixture,
-        });
+        };
+
+        expect(requestParam).toHaveBeenCalledTimes(1);
+        expect(requestParam).toHaveBeenCalledWith(expected);
       });
 
       it('should return a ParameterDecorator', () => {

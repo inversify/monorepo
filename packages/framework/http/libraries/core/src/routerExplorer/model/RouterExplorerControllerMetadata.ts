@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { Middleware } from '@inversifyjs/framework-core';
+import { ServiceIdentifier } from 'inversify';
+
 import { RouterExplorerControllerMethodMetadata } from './RouterExplorerControllerMethodMetadata';
 
 export interface RouterExplorerControllerMetadata<
@@ -13,7 +16,11 @@ export interface RouterExplorerControllerMetadata<
     TResult
   >[];
   readonly path: string;
-  readonly postHandlerMiddlewareList: NewableFunction[];
-  readonly preHandlerMiddlewareList: NewableFunction[];
+  readonly postHandlerMiddlewareList: ServiceIdentifier<
+    Middleware<TRequest, TResponse, any, TResult>
+  >[];
+  readonly preHandlerMiddlewareList: ServiceIdentifier<
+    Middleware<TRequest, TResponse, any, TResult>
+  >[];
   readonly target: NewableFunction;
 }
