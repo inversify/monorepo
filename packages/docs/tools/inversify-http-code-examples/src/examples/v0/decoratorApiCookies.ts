@@ -9,7 +9,10 @@ export interface CookiesResult {
 export class CookiesController {
   @Get()
   public async getCookie(
-    @Cookies('sessionId') sessionId: string | undefined,
+    @Cookies({
+      name: 'sessionId',
+    })
+    sessionId: string | undefined,
   ): Promise<CookiesResult> {
     return {
       sessionId,

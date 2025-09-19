@@ -9,7 +9,10 @@ export interface HeadersResult {
 export class HeadersController {
   @Get()
   public async getUserAgent(
-    @Headers('x-client') userAgent: string | undefined,
+    @Headers({
+      name: 'x-client',
+    })
+    userAgent: string | undefined,
   ): Promise<HeadersResult> {
     return {
       agent: userAgent,

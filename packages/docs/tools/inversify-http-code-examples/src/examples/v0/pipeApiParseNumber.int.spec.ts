@@ -29,15 +29,33 @@ describe.each<[(container: Container) => Promise<Server>]>([
       class MathController {
         @Get('/sum/:a/:b')
         public async sum(
-          @Params('a', ParseNumberPipe) a: number,
-          @Params('b', ParseNumberPipe) b: number,
+          @Params(
+            {
+              name: 'a',
+            },
+            ParseNumberPipe,
+          )
+          a: number,
+          @Params(
+            {
+              name: 'b',
+            },
+            ParseNumberPipe,
+          )
+          b: number,
         ): Promise<SumResult> {
           return { sum: a + b };
         }
 
         @Get('/double')
         public async double(
-          @Query('v', ParseNumberPipe) v: number,
+          @Query(
+            {
+              name: 'v',
+            },
+            ParseNumberPipe,
+          )
+          v: number,
         ): Promise<SumResult> {
           return { sum: v * 2 };
         }
