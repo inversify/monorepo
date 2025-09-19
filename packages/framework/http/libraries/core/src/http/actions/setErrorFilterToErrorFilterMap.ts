@@ -5,10 +5,7 @@ import {
 import { Newable } from 'inversify';
 
 export function setErrorFilterToErrorFilterMap(
-  errorTypeToGlobalErrorFilterMap: Map<
-    Newable<Error> | null,
-    Newable<ErrorFilter>
-  >,
+  errorTypeToErrorFilterMap: Map<Newable<Error> | null, Newable<ErrorFilter>>,
   errorFilter: Newable<ErrorFilter>,
 ): void {
   const errorTypes: Set<Newable<Error> | null> =
@@ -16,10 +13,10 @@ export function setErrorFilterToErrorFilterMap(
 
   for (const errorType of errorTypes) {
     const existingErrorFilter: Newable<ErrorFilter> | undefined =
-      errorTypeToGlobalErrorFilterMap.get(errorType);
+      errorTypeToErrorFilterMap.get(errorType);
 
     if (existingErrorFilter === undefined) {
-      errorTypeToGlobalErrorFilterMap.set(errorType, errorFilter);
+      errorTypeToErrorFilterMap.set(errorType, errorFilter);
     }
   }
 }

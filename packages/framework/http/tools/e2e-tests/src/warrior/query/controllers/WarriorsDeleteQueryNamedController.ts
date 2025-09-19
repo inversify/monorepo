@@ -6,7 +6,10 @@ import { WarriorWithQuery } from '../models/WarriorWithQuery';
 export class WarriorsDeleteQueryNamedController {
   @Delete()
   public async deleteWarrior(
-    @Query('filter') filter: string,
+    @Query({
+      name: 'filter',
+    })
+    filter: string,
   ): Promise<WarriorWithQuery> {
     return {
       damage: 10,

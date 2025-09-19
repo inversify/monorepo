@@ -5,7 +5,12 @@ import { WarriorWithId } from '../models/WarriorWithId';
 @Controller('/warriors')
 export class WarriorsPostParamsNamedController {
   @Post('/:id')
-  public async createWarrior(@Params('id') id: string): Promise<WarriorWithId> {
+  public async createWarrior(
+    @Params({
+      name: 'id',
+    })
+    id: string,
+  ): Promise<WarriorWithId> {
     return {
       damage: 10,
       health: 100,

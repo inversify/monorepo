@@ -1,38 +1,44 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('../calculations/buildRequestParameterDecorator');
+vitest.mock('../calculations/buildRouteParameterDecorator');
 
-import { buildRequestParameterDecorator } from '../calculations/buildRequestParameterDecorator';
+import { Pipe } from '@inversifyjs/framework-core';
+import { ServiceIdentifier } from 'inversify';
+
+import { buildRouteParameterDecorator } from '../calculations/buildRouteParameterDecorator';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
+import { RouteParamOptions } from '../models/RouteParamOptions';
 import { Body } from './Body';
 
 describe(Body, () => {
   describe('when called', () => {
-    let parameterNameFixture: string | undefined;
+    let optionsFixture: RouteParamOptions | undefined;
+    let parameterPipeListFixture: (ServiceIdentifier<Pipe> | Pipe)[];
     let parameterDecoratorFixture: ParameterDecorator;
     let result: unknown;
 
     beforeAll(() => {
-      parameterNameFixture = undefined;
+      optionsFixture = undefined;
+      parameterPipeListFixture = [Symbol()];
       parameterDecoratorFixture = {} as ParameterDecorator;
 
       vitest
-        .mocked(buildRequestParameterDecorator)
+        .mocked(buildRouteParameterDecorator)
         .mockReturnValueOnce(parameterDecoratorFixture);
 
-      result = Body(parameterNameFixture);
+      result = Body(optionsFixture, ...parameterPipeListFixture);
     });
 
     afterAll(() => {
       vitest.clearAllMocks();
     });
 
-    it('should call requestParamFactory', () => {
-      expect(buildRequestParameterDecorator).toHaveBeenCalledTimes(1);
-      expect(buildRequestParameterDecorator).toHaveBeenCalledWith(
+    it('should call buildRouteParameterDecorator()', () => {
+      expect(buildRouteParameterDecorator).toHaveBeenCalledTimes(1);
+      expect(buildRouteParameterDecorator).toHaveBeenCalledWith(
         RequestMethodParameterType.Body,
-        [],
-        parameterNameFixture,
+        parameterPipeListFixture,
+        optionsFixture,
       );
     });
 

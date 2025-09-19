@@ -24,11 +24,11 @@ import { UseErrorFilter } from './UseErrorFilter';
 
 describe(UseErrorFilter, () => {
   describe('having a target', () => {
-    let middlewareFixture: Newable<ErrorFilter>;
+    let errorFilterFixture: Newable<ErrorFilter>;
     let targetFixture: NewableFunction;
 
     beforeAll(() => {
-      middlewareFixture = Symbol() as unknown as Newable<ErrorFilter>;
+      errorFilterFixture = Symbol() as unknown as Newable<ErrorFilter>;
       targetFixture = class TestController {};
     });
 
@@ -46,7 +46,7 @@ describe(UseErrorFilter, () => {
           .mocked(updateSetMetadataWithList)
           .mockReturnValueOnce(updateSetMetadataWithListResultFixture);
 
-        result = UseErrorFilter(middlewareFixture)(targetFixture);
+        result = UseErrorFilter(errorFilterFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -56,7 +56,7 @@ describe(UseErrorFilter, () => {
       it('should call updateSetMetadataWithList()', () => {
         expect(updateSetMetadataWithList).toHaveBeenCalledTimes(1);
         expect(updateSetMetadataWithList).toHaveBeenCalledWith([
-          middlewareFixture,
+          errorFilterFixture,
         ]);
       });
 
@@ -78,13 +78,13 @@ describe(UseErrorFilter, () => {
   });
 
   describe('having a target and a key', () => {
-    let middlewareFixture: Newable<ErrorFilter>;
+    let errorFilterFixture: Newable<ErrorFilter>;
     let targetFixture: NewableFunction;
     let methodKeyFixture: string | symbol;
     let descriptorFixture: PropertyDescriptor;
 
     beforeAll(() => {
-      middlewareFixture = Symbol() as unknown as Newable<ErrorFilter>;
+      errorFilterFixture = Symbol() as unknown as Newable<ErrorFilter>;
       targetFixture = class TestController {};
       methodKeyFixture = 'testMethod';
       descriptorFixture = {
@@ -106,7 +106,7 @@ describe(UseErrorFilter, () => {
           .mocked(updateSetMetadataWithList)
           .mockReturnValueOnce(updateSetMetadataWithListResultFixture);
 
-        result = UseErrorFilter(middlewareFixture)(
+        result = UseErrorFilter(errorFilterFixture)(
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           targetFixture.prototype,
           methodKeyFixture,
@@ -117,7 +117,7 @@ describe(UseErrorFilter, () => {
       it('should call updateSetMetadataWithList()', () => {
         expect(updateSetMetadataWithList).toHaveBeenCalledTimes(1);
         expect(updateSetMetadataWithList).toHaveBeenCalledWith([
-          middlewareFixture,
+          errorFilterFixture,
         ]);
       });
 

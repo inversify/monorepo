@@ -1,5 +1,10 @@
-import { ErrorFilter, Guard, Interceptor } from '@inversifyjs/framework-core';
-import { Newable } from 'inversify';
+import {
+  ErrorFilter,
+  Guard,
+  Interceptor,
+  Middleware,
+} from '@inversifyjs/framework-core';
+import { Newable, ServiceIdentifier } from 'inversify';
 
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { RequestMethodType } from '../../http/models/RequestMethodType';
@@ -14,17 +19,23 @@ export interface RouterExplorerControllerMethodMetadata<
     Newable<Error> | null,
     Newable<ErrorFilter>
   >;
-  readonly guardList: Newable<Guard<TRequest>>[];
+  readonly guardList: ServiceIdentifier<Guard<TRequest>>[];
   readonly headerMetadataList: [string, string][];
-  readonly interceptorList: Newable<Interceptor<TRequest>>[];
+  readonly interceptorList: ServiceIdentifier<Interceptor<TRequest>>[];
   readonly methodKey: string | symbol;
   readonly parameterMetadataList: (
     | ControllerMethodParameterMetadata<TRequest, TResponse, TResult>
     | undefined
   )[];
   readonly path: string;
-  readonly postHandlerMiddlewareList: NewableFunction[];
-  readonly preHandlerMiddlewareList: NewableFunction[];
+  readonly postHandlerMiddlewareList: ServiceIdentifier<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Middleware<TRequest, TResponse, any, TResult>
+  >[];
+  readonly preHandlerMiddlewareList: ServiceIdentifier<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Middleware<TRequest, TResponse, any, TResult>
+  >[];
   readonly requestMethodType: RequestMethodType;
   readonly statusCode: HttpStatusCode | undefined;
   readonly useNativeHandler: boolean;

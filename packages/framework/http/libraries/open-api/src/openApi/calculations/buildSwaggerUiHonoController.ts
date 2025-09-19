@@ -51,7 +51,10 @@ export function buildSwaggerUiHonoController(
 
     @Get('/resources/:resource')
     public override getSwaggerUiResource(
-      @Params('resource') resource: string,
+      @Params({
+        name: 'resource',
+      })
+      resource: string,
       @Response()
       context: Context,
     ): Response | undefined {

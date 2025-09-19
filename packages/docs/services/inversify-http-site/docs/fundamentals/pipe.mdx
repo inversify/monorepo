@@ -29,9 +29,6 @@ A simple pipe that parses the input into a number and rejects invalid values wit
 
 Use parameter decorators to attach pipes where you need them. `Body`, `Params`, `Query`, `Headers`, `Cookies`, `Request`, and `Response` all accept pipes.
 
-- Named parameter: `@Params('id', ParseNumberPipe) id: number`
-- Whole object: `@Query(ParseNumberPipe) query: QueryObject`
-
 The adapter applies global pipes first, then parameter-level pipes, before calling your controller method.
 
 Global pipes can be registered using the [InversifyHttpAdapter](../../api/inversify-http-adapter#useglobalpipe).

@@ -7,7 +7,7 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { ServiceIdentifier } from 'inversify';
 
 import { classGuardMetadataReflectKey } from '../../reflectMetadata/data/classGuardMetadataReflectKey';
 import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/classMethodGuardMetadataReflectKey';
@@ -17,12 +17,12 @@ import { UseGuard } from './UseGuard';
 describe(UseGuard, () => {
   describe('having a ClassDecorator', () => {
     describe('when called', () => {
-      let middlewareFixture: Newable<Guard>;
+      let guardServiceIdentifierFixture: ServiceIdentifier<Guard>;
       let targetFixture: NewableFunction;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
-        middlewareFixture = {} as Newable<Guard>;
+        guardServiceIdentifierFixture = Symbol();
         targetFixture = class TestController {};
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
@@ -31,7 +31,7 @@ describe(UseGuard, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseGuard(middlewareFixture)(targetFixture);
+        UseGuard(guardServiceIdentifierFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -41,7 +41,7 @@ describe(UseGuard, () => {
       it('should call buildArrayMetadataWithArray()', () => {
         expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
-          middlewareFixture,
+          guardServiceIdentifierFixture,
         ]);
       });
 
@@ -62,14 +62,14 @@ describe(UseGuard, () => {
     describe('when called', () => {
       let targetFixture: NewableFunction;
       let methodKeyFixture: string | symbol;
-      let middlewareFixture: Newable<Guard>;
+      let guardServiceIdentifierFixture: ServiceIdentifier<Guard>;
       let descriptorFixture: PropertyDescriptor;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
         targetFixture = class TestController {};
         methodKeyFixture = 'testMethod';
-        middlewareFixture = {} as Newable<Guard>;
+        guardServiceIdentifierFixture = Symbol();
         descriptorFixture = {
           value: 'value-descriptor-example',
         } as PropertyDescriptor;
@@ -80,7 +80,7 @@ describe(UseGuard, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseGuard(middlewareFixture)(
+        UseGuard(guardServiceIdentifierFixture)(
           targetFixture,
           methodKeyFixture,
           descriptorFixture,
@@ -90,7 +90,7 @@ describe(UseGuard, () => {
       it('should call buildArrayMetadataWithArray()', () => {
         expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
-          middlewareFixture,
+          guardServiceIdentifierFixture,
         ]);
       });
 

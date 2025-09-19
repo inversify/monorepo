@@ -8,8 +8,10 @@ vitest.mock('./buildRouterExplorerControllerMethodMetadataList');
 import {
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
   getClassMiddlewareList,
+  Middleware,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
+import { ServiceIdentifier } from 'inversify';
 
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
@@ -23,7 +25,7 @@ describe(buildRouterExplorerControllerMetadata, () => {
   describe('when called', () => {
     let controllerMetadataFixture: ControllerMetadata;
     let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
-    let controllerMiddlewareListFixture: NewableFunction[];
+    let controllerMiddlewareListFixture: ServiceIdentifier<Middleware>[];
     let middlewareOptionsFixture: MiddlewareOptions;
     let routerExplorerControllerMethodMetadataListFixture: RouterExplorerControllerMethodMetadata[];
     let result: unknown;

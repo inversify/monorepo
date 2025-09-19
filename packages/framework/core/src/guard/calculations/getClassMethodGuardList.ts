@@ -1,5 +1,5 @@
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { ServiceIdentifier } from 'inversify';
 
 import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/classMethodGuardMetadataReflectKey';
 import { Guard } from '../models/Guard';
@@ -8,7 +8,7 @@ import { Guard } from '../models/Guard';
 export function getClassMethodGuardList<TRequest = any>(
   classConstructor: NewableFunction,
   methodKey: string | symbol,
-): Newable<Guard<TRequest>>[] {
+): ServiceIdentifier<Guard<TRequest>>[] {
   return (
     getOwnReflectMetadata(
       classConstructor,

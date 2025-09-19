@@ -5,7 +5,12 @@ import { WarriorWithId } from '../models/WarriorWithId';
 @Controller('/warriors')
 export class WarriorsDeleteParamsNamedController {
   @Delete('/:id')
-  public async deleteWarrior(@Params('id') id: string): Promise<WarriorWithId> {
+  public async deleteWarrior(
+    @Params({
+      name: 'id',
+    })
+    id: string,
+  ): Promise<WarriorWithId> {
     return {
       damage: 10,
       health: 100,

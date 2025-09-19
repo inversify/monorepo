@@ -1,14 +1,14 @@
 import { Pipe } from '@inversifyjs/framework-core';
-import { Newable } from 'inversify';
+import { ServiceIdentifier } from 'inversify';
 
-import { buildRequestParameterDecorator } from '../calculations/buildRequestParameterDecorator';
+import { buildRouteParameterDecorator } from '../calculations/buildRouteParameterDecorator';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function Response(
-  ...parameterPipeList: (Newable<Pipe> | Pipe)[]
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
 ): ParameterDecorator {
-  return buildRequestParameterDecorator(
+  return buildRouteParameterDecorator(
     RequestMethodParameterType.Response,
     parameterPipeList,
   );

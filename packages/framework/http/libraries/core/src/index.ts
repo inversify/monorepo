@@ -44,6 +44,7 @@ import { RequestHandler } from './http/models/RequestHandler';
 import { RequestMethodParameterType } from './http/models/RequestMethodParameterType';
 import { RequestMethodType } from './http/models/RequestMethodType';
 import { RequiredOptions } from './http/models/RequiredOptions';
+import { RouteParamOptions } from './http/models/RouteParamOptions';
 import { RouteParams } from './http/models/RouteParams';
 import { RouterParams } from './http/models/RouterParams';
 import { isHttpResponse } from './httpResponse/calculations/isHttpResponse';
@@ -97,6 +98,7 @@ export type {
   PipeMetadata,
   RequestHandler,
   RequiredOptions,
+  RouteParamOptions,
   RouteParams,
   RouterParams,
 };

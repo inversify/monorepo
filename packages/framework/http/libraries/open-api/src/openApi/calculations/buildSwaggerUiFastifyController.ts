@@ -48,7 +48,10 @@ export function buildSwaggerUiFastifyController(
 
     @Get('/resources/:resource')
     public override async getSwaggerUiResource(
-      @Params('resource') resource: string,
+      @Params({
+        name: 'resource',
+      })
+      resource: string,
       @Response()
       response: FastifyReply,
     ): Promise<void> {

@@ -1,10 +1,16 @@
+import { ServiceIdentifier } from 'inversify';
+
 import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
+import { Middleware } from '../models/Middleware';
 import { MiddlewareOptions } from '../models/MiddlewareOptions';
 import { MiddlewarePhase } from '../models/MiddlewarePhase';
 import { isApplyMiddlewareOptions } from '../typeguard/isApplyMiddlewareOptions';
 
 export function buildMiddlewareOptionsFromApplyMiddlewareOptions(
-  applyMiddlewareOptionsList: (NewableFunction | ApplyMiddlewareOptions)[],
+  applyMiddlewareOptionsList: (
+    | ServiceIdentifier<Middleware>
+    | ApplyMiddlewareOptions
+  )[],
 ): MiddlewareOptions {
   const middlewareOptions: MiddlewareOptions = {
     postHandlerMiddlewareList: [],
@@ -13,18 +19,15 @@ export function buildMiddlewareOptionsFromApplyMiddlewareOptions(
 
   for (const applyMiddlewareOptions of applyMiddlewareOptionsList) {
     if (isApplyMiddlewareOptions(applyMiddlewareOptions)) {
-      const middlewareList: NewableFunction[] = [];
+      const middlewareList: ServiceIdentifier<Middleware>[] =
+        applyMiddlewareOptions.phase === MiddlewarePhase.PostHandler
+          ? middlewareOptions.postHandlerMiddlewareList
+          : middlewareOptions.preHandlerMiddlewareList;
 
       if (Array.isArray(applyMiddlewareOptions.middleware)) {
         middlewareList.push(...applyMiddlewareOptions.middleware);
       } else {
         middlewareList.push(applyMiddlewareOptions.middleware);
-      }
-
-      if (applyMiddlewareOptions.phase === MiddlewarePhase.PostHandler) {
-        middlewareOptions.postHandlerMiddlewareList.push(...middlewareList);
-      } else {
-        middlewareOptions.preHandlerMiddlewareList.push(...middlewareList);
       }
     } else {
       middlewareOptions.preHandlerMiddlewareList.push(applyMiddlewareOptions);

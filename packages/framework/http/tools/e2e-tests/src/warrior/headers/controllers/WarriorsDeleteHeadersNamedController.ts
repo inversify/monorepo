@@ -4,7 +4,10 @@ import { Controller, Delete, Headers } from '@inversifyjs/http-core';
 export class WarriorsDeleteHeadersNamedController {
   @Delete()
   public async deleteWarrior(
-    @Headers('x-test-header') testHeader: string,
+    @Headers({
+      name: 'x-test-header',
+    })
+    testHeader: string,
   ): Promise<Record<string, string>> {
     return {
       'x-test-header': testHeader,

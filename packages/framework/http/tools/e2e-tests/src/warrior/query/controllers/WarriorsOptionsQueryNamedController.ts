@@ -6,7 +6,10 @@ import { WarriorWithQuery } from '../models/WarriorWithQuery';
 export class WarriorsOptionsQueryNamedController {
   @Options()
   public async optionsWarrior(
-    @Query('filter') filter: string,
+    @Query({
+      name: 'filter',
+    })
+    filter: string,
   ): Promise<WarriorWithQuery> {
     return {
       damage: 10,

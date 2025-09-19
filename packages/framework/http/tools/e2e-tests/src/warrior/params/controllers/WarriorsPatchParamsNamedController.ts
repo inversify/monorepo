@@ -5,7 +5,12 @@ import { WarriorWithId } from '../models/WarriorWithId';
 @Controller('/warriors')
 export class WarriorsPatchParamsNamedController {
   @Patch('/:id')
-  public async updateWarrior(@Params('id') id: string): Promise<WarriorWithId> {
+  public async updateWarrior(
+    @Params({
+      name: 'id',
+    })
+    id: string,
+  ): Promise<WarriorWithId> {
     return {
       damage: 10,
       health: 100,

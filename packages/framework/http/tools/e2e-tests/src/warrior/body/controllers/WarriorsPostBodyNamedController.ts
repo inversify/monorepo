@@ -7,7 +7,10 @@ import { WarriorCreationResponseType } from '../models/WarriorCreationResponseTy
 export class WarriorsPostBodyNamedController {
   @Post()
   public async createWarrior(
-    @Body('name') name: string,
+    @Body({
+      name: 'name',
+    })
+    name: string,
   ): Promise<WarriorCreationResponse> {
     return {
       damage: 10,

@@ -3,8 +3,10 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { ServiceIdentifier } from 'inversify';
 
 import { classInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classInterceptorMetadataReflectKey';
+import { Interceptor } from '../models/Interceptor';
 import { getClassInterceptorList } from './getClassInterceptorList';
 
 describe(getClassInterceptorList, () => {
@@ -37,7 +39,7 @@ describe(getClassInterceptorList, () => {
 
   describe('when called, and getOwnReflectMetadata() returns an array', () => {
     let classFixture: NewableFunction;
-    let classInterceptorFixtures: NewableFunction[];
+    let classInterceptorFixtures: ServiceIdentifier<Interceptor>[];
     let result: unknown;
 
     beforeAll(() => {

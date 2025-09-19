@@ -4,7 +4,10 @@ import { Controller, Get, Headers } from '@inversifyjs/http-core';
 export class WarriorsGetHeadersNamedController {
   @Get()
   public async getWarrior(
-    @Headers('x-test-header') testHeader: string,
+    @Headers({
+      name: 'x-test-header',
+    })
+    testHeader: string,
   ): Promise<Record<string, string>> {
     return {
       'x-test-header': testHeader,

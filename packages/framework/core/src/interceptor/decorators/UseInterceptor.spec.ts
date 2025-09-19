@@ -7,7 +7,7 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { ServiceIdentifier } from 'inversify';
 
 import { classInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classInterceptorMetadataReflectKey';
 import { classMethodInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classMethodInterceptorMetadataReflectKey';
@@ -17,12 +17,12 @@ import { UseInterceptor } from './UseInterceptor';
 describe(UseInterceptor, () => {
   describe('having a ClassDecorator', () => {
     describe('when called', () => {
-      let middlewareFixture: Newable<Interceptor>;
+      let interceptorServiceIdentifier: ServiceIdentifier<Interceptor>;
       let targetFixture: NewableFunction;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
-        middlewareFixture = {} as Newable<Interceptor>;
+        interceptorServiceIdentifier = Symbol();
         targetFixture = class TestController {};
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
@@ -31,7 +31,7 @@ describe(UseInterceptor, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseInterceptor(middlewareFixture)(targetFixture);
+        UseInterceptor(interceptorServiceIdentifier)(targetFixture);
       });
 
       afterAll(() => {
@@ -41,7 +41,7 @@ describe(UseInterceptor, () => {
       it('should call buildArrayMetadataWithArray()', () => {
         expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
-          middlewareFixture,
+          interceptorServiceIdentifier,
         ]);
       });
 
@@ -62,14 +62,14 @@ describe(UseInterceptor, () => {
     describe('when called', () => {
       let targetFixture: NewableFunction;
       let methodKeyFixture: string | symbol;
-      let middlewareFixture: Newable<Interceptor>;
+      let interceptorServiceIdentifier: ServiceIdentifier<Interceptor>;
       let descriptorFixture: PropertyDescriptor;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
         targetFixture = class TestController {};
         methodKeyFixture = 'testMethod';
-        middlewareFixture = {} as Newable<Interceptor>;
+        interceptorServiceIdentifier = Symbol();
         descriptorFixture = {
           value: 'value-descriptor-example',
         } as PropertyDescriptor;
@@ -80,7 +80,7 @@ describe(UseInterceptor, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseInterceptor(middlewareFixture)(
+        UseInterceptor(interceptorServiceIdentifier)(
           targetFixture,
           methodKeyFixture,
           descriptorFixture,
@@ -90,7 +90,7 @@ describe(UseInterceptor, () => {
       it('should call buildArrayMetadataWithArray()', () => {
         expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
         expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
-          middlewareFixture,
+          interceptorServiceIdentifier,
         ]);
       });
 
