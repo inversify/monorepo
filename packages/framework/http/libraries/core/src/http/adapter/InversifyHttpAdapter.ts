@@ -233,8 +233,7 @@ export abstract class InversifyHttpAdapter<
           routerExplorerControllerMetadata.preHandlerMiddlewareList,
         ),
         routeParamsList: this.#builRouteParamdHandlerList(
-          routerExplorerControllerMetadata.target,
-          routerExplorerControllerMetadata.controllerMethodMetadataList,
+          routerExplorerControllerMetadata,
         ),
       });
 
@@ -249,14 +248,13 @@ export abstract class InversifyHttpAdapter<
   }
 
   #builRouteParamdHandlerList(
-    target: NewableFunction,
-    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+    routerExplorerControllerMetadata: RouterExplorerControllerMetadata<
       TRequest,
       TResponse,
-      unknown
-    >[],
+      TResult
+    >,
   ): RouteParams<TRequest, TResponse, TNextFunction, TResult>[] {
-    return routerExplorerControllerMethodMetadata.map(
+    return routerExplorerControllerMetadata.controllerMethodMetadataList.map(
       (
         routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
           TRequest,
@@ -275,7 +273,8 @@ export abstract class InversifyHttpAdapter<
           ),
         ],
         handler: this.#buildHandler(
-          target,
+          routerExplorerControllerMetadata.serviceIdentifier,
+          routerExplorerControllerMetadata.target,
           routerExplorerControllerMethodMetadata,
         ),
         path: routerExplorerControllerMethodMetadata.path,
@@ -292,6 +291,7 @@ export abstract class InversifyHttpAdapter<
   }
 
   #buildHandler(
+    serviceIdentifier: ServiceIdentifier,
     targetClass: NewableFunction,
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
       TRequest,
@@ -337,7 +337,7 @@ export abstract class InversifyHttpAdapter<
     );
 
     return buildInterceptedHandler(
-      targetClass,
+      serviceIdentifier,
       routerExplorerControllerMethodMetadata,
       this.#container,
       buildHandlerParams,

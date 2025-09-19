@@ -22,5 +22,6 @@ export interface RouterExplorerControllerMetadata<
   readonly preHandlerMiddlewareList: ServiceIdentifier<
     Middleware<TRequest, TResponse, any, TResult>
   >[];
+  readonly serviceIdentifier: ServiceIdentifier;
   readonly target: NewableFunction;
 }

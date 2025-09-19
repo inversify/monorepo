@@ -16,7 +16,7 @@ export function buildInterceptedHandler<
   TNextFunction extends (err?: any) => Promise<void> | void,
   TResult,
 >(
-  targetClass: NewableFunction,
+  serviceIdentifier: ServiceIdentifier<Controller>,
   routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
     TRequest,
     TResponse,
@@ -47,7 +47,8 @@ export function buildInterceptedHandler<
       next: TNextFunction,
     ): Promise<TResult> => {
       try {
-        const controller: Controller = await container.getAsync(targetClass);
+        const controller: Controller =
+          await container.getAsync(serviceIdentifier);
 
         const handlerParams: unknown[] = await buildHandlerParams(
           request,
@@ -113,7 +114,8 @@ export function buildInterceptedHandler<
         };
       } else {
         return async (): Promise<InterceptorTransformObject> => {
-          const controller: Controller = await container.getAsync(targetClass);
+          const controller: Controller =
+            await container.getAsync(serviceIdentifier);
 
           const handlerParams: unknown[] = await buildHandlerParams(
             request,

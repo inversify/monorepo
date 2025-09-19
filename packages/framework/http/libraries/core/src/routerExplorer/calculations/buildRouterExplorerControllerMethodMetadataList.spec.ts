@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('./buildRouterExplorerControllerMethodMetadata');
 
+import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
 import { buildRouterExplorerControllerMethodMetadata } from './buildRouterExplorerControllerMethodMetadata';
@@ -9,14 +10,18 @@ import { buildRouterExplorerControllerMethodMetadataList } from './buildRouterEx
 
 describe(buildRouterExplorerControllerMethodMetadataList, () => {
   describe('when called', () => {
-    let controllerFixture: NewableFunction;
+    let controllerMetadataFixture: ControllerMetadata;
     let controllerMethodMetadataFixture: ControllerMethodMetadata;
     let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
     let routerExplorerControllerMethodMetadataFixture: RouterExplorerControllerMethodMetadata;
     let result: unknown;
 
     beforeAll(() => {
-      controllerFixture = class Test {};
+      controllerMetadataFixture = {
+        path: '/',
+        serviceIdentifier: Symbol(),
+        target: class Test {},
+      };
       controllerMethodMetadataFixture = {} as ControllerMethodMetadata;
       controllerMethodMetadataListFixture = [controllerMethodMetadataFixture];
       routerExplorerControllerMethodMetadataFixture =
@@ -27,7 +32,7 @@ describe(buildRouterExplorerControllerMethodMetadataList, () => {
         .mockReturnValueOnce(routerExplorerControllerMethodMetadataFixture);
 
       result = buildRouterExplorerControllerMethodMetadataList(
-        controllerFixture,
+        controllerMetadataFixture,
         controllerMethodMetadataListFixture,
       );
     });
@@ -42,7 +47,7 @@ describe(buildRouterExplorerControllerMethodMetadataList, () => {
       );
 
       expect(buildRouterExplorerControllerMethodMetadata).toHaveBeenCalledWith(
-        controllerFixture,
+        controllerMetadataFixture,
         controllerMethodMetadataFixture,
       );
     });

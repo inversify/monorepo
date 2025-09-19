@@ -5,9 +5,9 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
-import { getControllers } from './getControllers';
+import { getControllerMetadataList } from './getControllerMetadataList';
 
-describe(getControllers, () => {
+describe(getControllerMetadataList, () => {
   describe('when called', () => {
     let controllerMetadataFixture: undefined;
     let result: unknown;
@@ -15,7 +15,7 @@ describe(getControllers, () => {
     beforeAll(() => {
       controllerMetadataFixture = undefined;
 
-      result = getControllers();
+      result = getControllerMetadataList();
     });
 
     afterAll(() => {

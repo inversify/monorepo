@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./getControllers');
+vitest.mock('./getControllerMetadataList');
 vitest.mock('./buildRouterExplorerControllerMetadata');
 
 import { Container } from 'inversify';
@@ -19,7 +19,7 @@ import { ControllerMetadata } from '../model/ControllerMetadata';
 import { RouterExplorerControllerMetadata } from '../model/RouterExplorerControllerMetadata';
 import { buildRouterExplorerControllerMetadata } from './buildRouterExplorerControllerMetadata';
 import { buildRouterExplorerControllerMetadataList } from './buildRouterExplorerControllerMetadataList';
-import { getControllers } from './getControllers';
+import { getControllerMetadataList } from './getControllerMetadataList';
 
 describe(buildRouterExplorerControllerMetadataList, () => {
   describe('when called, and exploreControllers returns undefined', () => {
@@ -32,7 +32,7 @@ describe(buildRouterExplorerControllerMetadataList, () => {
       controllerMetadataListFixture = undefined;
 
       vitest
-        .mocked(getControllers)
+        .mocked(getControllerMetadataList)
         .mockReturnValueOnce(controllerMetadataListFixture);
 
       try {
@@ -47,8 +47,8 @@ describe(buildRouterExplorerControllerMetadataList, () => {
     });
 
     it('should call exploreControllers', () => {
-      expect(getControllers).toHaveBeenCalledTimes(1);
-      expect(getControllers).toHaveBeenCalledWith();
+      expect(getControllerMetadataList).toHaveBeenCalledTimes(1);
+      expect(getControllerMetadataList).toHaveBeenCalledWith();
     });
 
     it('should throw an InversifyHttpAdapterError with the correct kind', () => {
@@ -73,6 +73,7 @@ describe(buildRouterExplorerControllerMetadataList, () => {
       > as Mocked<Container>;
       controllerMetadataFixture = {
         path: '',
+        serviceIdentifier: Symbol(),
         target: {} as NewableFunction,
       };
       controllerMetadataListFixture = [controllerMetadataFixture];
@@ -81,11 +82,12 @@ describe(buildRouterExplorerControllerMetadataList, () => {
         path: '',
         postHandlerMiddlewareList: [],
         preHandlerMiddlewareList: [],
+        serviceIdentifier: Symbol(),
         target: {} as NewableFunction,
       };
 
       vitest
-        .mocked(getControllers)
+        .mocked(getControllerMetadataList)
         .mockReturnValueOnce(controllerMetadataListFixture);
 
       containerMock.isBound.mockReturnValueOnce(true);
@@ -101,15 +103,15 @@ describe(buildRouterExplorerControllerMetadataList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getControllers()', () => {
-      expect(getControllers).toHaveBeenCalledTimes(1);
-      expect(getControllers).toHaveBeenCalledWith();
+    it('should call getControllerMetadataList()', () => {
+      expect(getControllerMetadataList).toHaveBeenCalledTimes(1);
+      expect(getControllerMetadataList).toHaveBeenCalledWith();
     });
 
     it('should call container.isBound()', () => {
       expect(containerMock.isBound).toHaveBeenCalledTimes(1);
       expect(containerMock.isBound).toHaveBeenCalledWith(
-        controllerMetadataFixture.target,
+        controllerMetadataFixture.serviceIdentifier,
       );
     });
 

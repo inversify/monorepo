@@ -35,12 +35,13 @@ export function buildRouterExplorerControllerMetadata<
   return {
     controllerMethodMetadataList:
       buildRouterExplorerControllerMethodMetadataList(
-        controllerMetadata.target,
+        controllerMetadata,
         controllerMethodMetadataList,
       ),
     path: controllerMetadata.path,
     postHandlerMiddlewareList: middlewareOptions.postHandlerMiddlewareList,
     preHandlerMiddlewareList: middlewareOptions.preHandlerMiddlewareList,
+    serviceIdentifier: controllerMetadata.serviceIdentifier,
     target: controllerMetadata.target,
   };
 }

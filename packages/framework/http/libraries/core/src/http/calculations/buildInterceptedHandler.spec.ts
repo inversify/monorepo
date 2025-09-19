@@ -13,7 +13,7 @@ import {
   Interceptor,
   InterceptorTransformObject,
 } from '@inversifyjs/framework-core';
-import { Container, Newable } from 'inversify';
+import { Container, Newable, ServiceIdentifier } from 'inversify';
 
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
 import { ControllerResponse } from '../models/ControllerResponse';
@@ -21,7 +21,7 @@ import { RequestHandler } from '../models/RequestHandler';
 import { buildInterceptedHandler } from './buildInterceptedHandler';
 
 describe(buildInterceptedHandler, () => {
-  let targetClassFixture: NewableFunction;
+  let serviceIdentifierFixture: ServiceIdentifier;
   let containerMock: Mocked<Container>;
   let buildHandlerParamsMock: Mock<
     (
@@ -49,7 +49,7 @@ describe(buildInterceptedHandler, () => {
   let nextFixture: () => void;
 
   beforeAll(() => {
-    targetClassFixture = class TestController {
+    serviceIdentifierFixture = class TestController {
       public testMethod(): ControllerResponse {
         return { body: 'test' };
       }
@@ -113,7 +113,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, string> =
           buildInterceptedHandler(
-            targetClassFixture,
+            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
             buildHandlerParamsMock,
@@ -131,7 +131,9 @@ describe(buildInterceptedHandler, () => {
 
       it('should call container.getAsync()', () => {
         expect(containerMock.getAsync).toHaveBeenCalledTimes(1);
-        expect(containerMock.getAsync).toHaveBeenCalledWith(targetClassFixture);
+        expect(containerMock.getAsync).toHaveBeenCalledWith(
+          serviceIdentifierFixture,
+        );
       });
 
       it('should call buildHandlerParams()', () => {
@@ -188,7 +190,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, string> =
           buildInterceptedHandler(
-            targetClassFixture,
+            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
             buildHandlerParamsMock,
@@ -314,7 +316,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, string> =
           buildInterceptedHandler(
-            targetClassFixture,
+            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
             buildHandlerParamsMock,
@@ -342,7 +344,7 @@ describe(buildInterceptedHandler, () => {
         );
         expect(containerMock.getAsync).toHaveBeenNthCalledWith(
           3,
-          targetClassFixture,
+          serviceIdentifierFixture,
         );
       });
 
@@ -473,7 +475,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, string> =
           buildInterceptedHandler(
-            targetClassFixture,
+            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
             buildHandlerParamsMock,
@@ -501,7 +503,7 @@ describe(buildInterceptedHandler, () => {
         );
         expect(containerMock.getAsync).toHaveBeenNthCalledWith(
           3,
-          targetClassFixture,
+          serviceIdentifierFixture,
         );
       });
 
@@ -589,7 +591,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, string> =
           buildInterceptedHandler(
-            targetClassFixture,
+            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
             buildHandlerParamsMock,
@@ -663,7 +665,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, string> =
           buildInterceptedHandler(
-            targetClassFixture,
+            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
             buildHandlerParamsMock,

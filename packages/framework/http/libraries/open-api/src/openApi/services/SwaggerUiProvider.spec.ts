@@ -200,6 +200,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/test',
+            serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
         ];
@@ -232,7 +233,8 @@ describe(SwaggerUiProvider, () => {
       it('should call container.isBound()', () => {
         expect(containerMock.isBound).toHaveBeenCalledTimes(1);
         expect(containerMock.isBound).toHaveBeenCalledWith(
-          (controllerMetadataListFixture[0] as ControllerMetadata).target,
+          (controllerMetadataListFixture[0] as ControllerMetadata)
+            .serviceIdentifier,
         );
       });
 
@@ -280,6 +282,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/test',
+            serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
         ];
@@ -310,7 +313,8 @@ describe(SwaggerUiProvider, () => {
       it('should call container.isBound()', () => {
         expect(containerMock.isBound).toHaveBeenCalledTimes(1);
         expect(containerMock.isBound).toHaveBeenCalledWith(
-          (controllerMetadataListFixture[0] as ControllerMetadata).target,
+          (controllerMetadataListFixture[0] as ControllerMetadata)
+            .serviceIdentifier,
         );
       });
 
@@ -376,6 +380,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
         ];
@@ -485,6 +490,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
         ];
@@ -571,6 +577,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
         ];
@@ -673,6 +680,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
         ];
@@ -812,6 +820,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
         ];
@@ -881,6 +890,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
         ];
@@ -954,6 +964,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
         ];
