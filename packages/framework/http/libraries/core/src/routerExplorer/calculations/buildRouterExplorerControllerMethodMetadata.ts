@@ -15,6 +15,7 @@ import {
 import { Newable, ServiceIdentifier } from 'inversify';
 
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
+import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
@@ -29,34 +30,37 @@ export function buildRouterExplorerControllerMethodMetadata<
   TResponse,
   TResult,
 >(
-  controller: NewableFunction,
+  controllerMetadata: ControllerMetadata,
   controllerMethodMetadata: ControllerMethodMetadata,
 ): RouterExplorerControllerMethodMetadata<TRequest, TResponse, TResult> {
   const controllerMethodParameterMetadataList: (
     | ControllerMethodParameterMetadata
     | undefined
   )[] = getControllerMethodParameterMetadataList(
-    controller,
+    controllerMetadata.target,
     controllerMethodMetadata.methodKey,
   );
 
   const controllerMethodStatusCode: HttpStatusCode | undefined =
     getControllerMethodStatusCodeMetadata(
-      controller,
+      controllerMetadata.target,
       controllerMethodMetadata.methodKey,
     );
 
   const controllerMethodGuardList: ServiceIdentifier<Guard<TRequest>>[] = [
-    ...getClassGuardList(controller),
-    ...getClassMethodGuardList(controller, controllerMethodMetadata.methodKey),
+    ...getClassGuardList(controllerMetadata.target),
+    ...getClassMethodGuardList(
+      controllerMetadata.target,
+      controllerMethodMetadata.methodKey,
+    ),
   ];
 
   const controllerMethodInterceptorList: ServiceIdentifier<
     Interceptor<TRequest, TResponse>
   >[] = [
-    ...getClassInterceptorList(controller),
+    ...getClassInterceptorList(controllerMetadata.target),
     ...getClassMethodInterceptorList(
-      controller,
+      controllerMetadata.target,
       controllerMethodMetadata.methodKey,
     ),
   ];
@@ -66,7 +70,7 @@ export function buildRouterExplorerControllerMethodMetadata<
     ServiceIdentifier<Middleware<TRequest, TResponse, any, TResult>>
     | ApplyMiddlewareOptions
   )[] = getClassMethodMiddlewareList(
-    controller,
+    controllerMetadata.target,
     controllerMethodMetadata.methodKey,
   );
 
@@ -74,7 +78,7 @@ export function buildRouterExplorerControllerMethodMetadata<
     Newable<Error> | null,
     Newable<ErrorFilter>
   > = buildErrorTypeToErrorFilterMap(
-    controller,
+    controllerMetadata.target,
     controllerMethodMetadata.methodKey,
   );
 
@@ -85,12 +89,12 @@ export function buildRouterExplorerControllerMethodMetadata<
 
   const headerMetadataList: [string, string][] =
     getControllerMethodHeaderMetadataList(
-      controller,
+      controllerMetadata.target,
       controllerMethodMetadata.methodKey,
     );
 
   const useNativeHandler: boolean = getControllerMethodUseNativeHandlerMetadata(
-    controller,
+    controllerMetadata.target,
     controllerMethodMetadata.methodKey,
   );
 

@@ -185,7 +185,7 @@ export abstract class SwaggerUiProvider<TResponse, TResult> {
       const filteredControllerMetadata: ControllerMetadata[] =
         controllerMetadataList.filter(
           (controllerMetadata: ControllerMetadata): boolean =>
-            container.isBound(controllerMetadata.target),
+            container.isBound(controllerMetadata.serviceIdentifier),
         );
 
       for (const controllerMetadata of filteredControllerMetadata) {

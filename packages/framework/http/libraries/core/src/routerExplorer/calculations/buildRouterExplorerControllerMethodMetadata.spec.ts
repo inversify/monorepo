@@ -24,6 +24,7 @@ import {
 import { Newable, ServiceIdentifier } from 'inversify';
 
 import { RequestMethodType } from '../../http/models/RequestMethodType';
+import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
@@ -36,8 +37,8 @@ import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMeth
 
 describe(buildRouterExplorerControllerMethodMetadata, () => {
   describe('when called', () => {
+    let controllerMetadataFixture: ControllerMetadata;
     let controllerMethodMetadataFixture: ControllerMethodMetadata;
-    let controllerFixture: NewableFunction;
     let controllerMethodParameterMetadataListFixture: (
       | ControllerMethodParameterMetadata
       | undefined
@@ -60,12 +61,16 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     let result: unknown;
 
     beforeAll(() => {
+      controllerMetadataFixture = {
+        path: '/',
+        serviceIdentifier: Symbol(),
+        target: class TestController {},
+      };
       controllerMethodMetadataFixture = {
         methodKey: 'testMethod',
         path: '/test',
         requestMethodType: RequestMethodType.Get,
       };
-      controllerFixture = class Test {};
       controllerMethodParameterMetadataListFixture = [];
       controllerMethodStatusCodeMetadataFixture = undefined;
       classGuardListFixture = [Symbol() as unknown as Newable<Guard>];
@@ -138,7 +143,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         .mockReturnValueOnce(errorTypeToErrorFilterMapFixture);
 
       result = buildRouterExplorerControllerMethodMetadata(
-        controllerFixture,
+        controllerMetadataFixture,
         controllerMethodMetadataFixture,
       );
     });
@@ -150,7 +155,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     it('should call getControllerMethodParameterMetadataList()', () => {
       expect(getControllerMethodParameterMetadataList).toHaveBeenCalledTimes(1);
       expect(getControllerMethodParameterMetadataList).toHaveBeenCalledWith(
-        controllerFixture,
+        controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
@@ -158,33 +163,37 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     it('should call getControllerMethodStatusCodeMetadata()', () => {
       expect(getControllerMethodStatusCodeMetadata).toHaveBeenCalledTimes(1);
       expect(getControllerMethodStatusCodeMetadata).toHaveBeenCalledWith(
-        controllerFixture,
+        controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
     it('should call getClassGuardList()', () => {
       expect(getClassGuardList).toHaveBeenCalledTimes(1);
-      expect(getClassGuardList).toHaveBeenCalledWith(controllerFixture);
+      expect(getClassGuardList).toHaveBeenCalledWith(
+        controllerMetadataFixture.target,
+      );
     });
 
     it('should call getClassMethodGuardList()', () => {
       expect(getClassMethodGuardList).toHaveBeenCalledTimes(1);
       expect(getClassMethodGuardList).toHaveBeenCalledWith(
-        controllerFixture,
+        controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
     it('should call getClassInterceptorList()', () => {
       expect(getClassInterceptorList).toHaveBeenCalledTimes(1);
-      expect(getClassInterceptorList).toHaveBeenCalledWith(controllerFixture);
+      expect(getClassInterceptorList).toHaveBeenCalledWith(
+        controllerMetadataFixture.target,
+      );
     });
 
     it('should call getClassMethodInterceptorList()', () => {
       expect(getClassMethodInterceptorList).toHaveBeenCalledTimes(1);
       expect(getClassMethodInterceptorList).toHaveBeenCalledWith(
-        controllerFixture,
+        controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
@@ -192,7 +201,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     it('should call getClassMethodMiddlewareList()', () => {
       expect(getClassMethodMiddlewareList).toHaveBeenCalledTimes(1);
       expect(getClassMethodMiddlewareList).toHaveBeenCalledWith(
-        controllerFixture,
+        controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
@@ -209,7 +218,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     it('should call getControllerMethodHeaderMetadataList()', () => {
       expect(getControllerMethodHeaderMetadataList).toHaveBeenCalledTimes(1);
       expect(getControllerMethodHeaderMetadataList).toHaveBeenCalledWith(
-        controllerFixture,
+        controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
@@ -219,7 +228,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         1,
       );
       expect(getControllerMethodUseNativeHandlerMetadata).toHaveBeenCalledWith(
-        controllerFixture,
+        controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
@@ -227,7 +236,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     it('should call buildErrorTypeToErrorFilterMap()', () => {
       expect(buildErrorTypeToErrorFilterMap).toHaveBeenCalledTimes(1);
       expect(buildErrorTypeToErrorFilterMap).toHaveBeenCalledWith(
-        controllerFixture,
+        controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });

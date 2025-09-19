@@ -33,6 +33,7 @@ describe(buildRouterExplorerControllerMetadata, () => {
     beforeAll(() => {
       controllerMetadataFixture = {
         path: '/test',
+        serviceIdentifier: Symbol(),
         target: class TestController {},
       };
       controllerMethodMetadataListFixture = [];
@@ -92,7 +93,7 @@ describe(buildRouterExplorerControllerMetadata, () => {
       expect(
         buildRouterExplorerControllerMethodMetadataList,
       ).toHaveBeenCalledWith(
-        controllerMetadataFixture.target,
+        controllerMetadataFixture,
         controllerMethodMetadataListFixture,
       );
     });
@@ -106,6 +107,7 @@ describe(buildRouterExplorerControllerMetadata, () => {
           middlewareOptionsFixture.postHandlerMiddlewareList,
         preHandlerMiddlewareList:
           middlewareOptionsFixture.preHandlerMiddlewareList,
+        serviceIdentifier: controllerMetadataFixture.serviceIdentifier,
         target: controllerMetadataFixture.target,
       };
 

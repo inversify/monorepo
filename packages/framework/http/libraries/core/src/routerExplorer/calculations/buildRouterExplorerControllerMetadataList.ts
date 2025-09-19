@@ -5,7 +5,7 @@ import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpA
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { RouterExplorerControllerMetadata } from '../model/RouterExplorerControllerMetadata';
 import { buildRouterExplorerControllerMetadata } from './buildRouterExplorerControllerMetadata';
-import { getControllers } from './getControllers';
+import { getControllerMetadataList } from './getControllerMetadataList';
 
 export function buildRouterExplorerControllerMetadataList<
   TRequest,
@@ -15,7 +15,7 @@ export function buildRouterExplorerControllerMetadataList<
   container: Container,
 ): RouterExplorerControllerMetadata<TRequest, TResponse, TResult>[] {
   const controllerMetadataList: ControllerMetadata[] | undefined =
-    getControllers();
+    getControllerMetadataList();
 
   if (controllerMetadataList === undefined) {
     throw new InversifyHttpAdapterError(
@@ -31,7 +31,7 @@ export function buildRouterExplorerControllerMetadataList<
   >[] = [];
 
   for (const controllerMetadata of controllerMetadataList) {
-    if (container.isBound(controllerMetadata.target)) {
+    if (container.isBound(controllerMetadata.serviceIdentifier)) {
       routerExplorerControllerMetadataList.push(
         buildRouterExplorerControllerMetadata(controllerMetadata),
       );

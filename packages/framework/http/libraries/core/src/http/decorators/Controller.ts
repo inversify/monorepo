@@ -17,6 +17,7 @@ export function Controller(
   return (target: NewableFunction): void => {
     const controllerMetadata: ControllerMetadata = {
       path: '/',
+      serviceIdentifier: target,
       target,
     };
 
@@ -29,6 +30,12 @@ export function Controller(
         controllerMetadata.path = buildNormalizedPath(
           pathOrOptions.path ?? '/',
         );
+
+        if (pathOrOptions.serviceIdentifier !== undefined) {
+          controllerMetadata.serviceIdentifier =
+            pathOrOptions.serviceIdentifier;
+        }
+
         scope = pathOrOptions.scope;
       }
     }

@@ -78,8 +78,8 @@ import { ResetContentHttpResponse } from './httpResponse/models/ResetContentHttp
 import { ServiceUnavailableHttpResponse } from './httpResponse/models/ServiceUnavailableHttpResponse';
 import { UnauthorizedHttpResponse } from './httpResponse/models/UnauthorizedHttpResponse';
 import { UnprocessableEntityHttpResponse } from './httpResponse/models/UnprocessableEntityHttpResponse';
+import { getControllerMetadataList } from './routerExplorer/calculations/getControllerMetadataList';
 import { getControllerMethodMetadataList } from './routerExplorer/calculations/getControllerMethodMetadataList';
-import { getControllers } from './routerExplorer/calculations/getControllers';
 import { ControllerMetadata } from './routerExplorer/model/ControllerMetadata';
 import { ControllerMethodMetadata } from './routerExplorer/model/ControllerMethodMetadata';
 
@@ -124,7 +124,7 @@ export {
   ForbiddenHttpResponse,
   GatewayTimeoutHttpResponse,
   Get,
-  getControllers as getControllerMetadataList,
+  getControllerMetadataList,
   getControllerMethodMetadataList as getControllerMethodMetadataList,
   GoneHttpResponse,
   Head,
