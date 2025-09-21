@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream';
 
 import cookie, { FastifyCookieOptions } from '@fastify/cookie';
+import fastifyFormbody from '@fastify/formbody';
 import {
   HttpStatusCode,
   InversifyHttpAdapter,
@@ -39,7 +40,11 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     httpAdapterOptions?: FastifyHttpAdapterOptions,
     customApp?: FastifyInstance,
   ) {
-    super(container, { logger: true, useCookies: false }, httpAdapterOptions);
+    super(
+      container,
+      { logger: true, useCookies: false, useFormUrlEncoded: false },
+      httpAdapterOptions,
+    );
     this.#app = this.#buildDefaultFastifyApp(customApp);
   }
 
@@ -220,6 +225,10 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           NonNullable<FastifyCookieOptions>
         >,
       );
+    }
+
+    if (this.httpAdapterOptions.useFormUrlEncoded) {
+      app.register(fastifyFormbody);
     }
 
     return app;

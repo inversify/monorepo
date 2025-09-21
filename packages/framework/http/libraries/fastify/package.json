@@ -6,6 +6,7 @@
   "description": "InversifyJs http fastify package",
   "dependencies": {
     "@fastify/cookie": "11.0.2",
+    "@fastify/formbody": "8.0.2",
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
