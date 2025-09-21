@@ -46,7 +46,10 @@ describe(buildUserSessionFromHonoRequest, () => {
       vitest.mocked(getBetterAuthFromRequest).mockReturnValueOnce(authMock);
 
       vitest
-        .mocked(authMock.api.getSession)
+        .mocked(
+          authMock.api
+            .getSession as unknown as () => Promise<UserSession<BetterAuthOptions> | null>,
+        )
         .mockResolvedValueOnce(sessionFixture);
 
       result = await buildUserSessionFromHonoRequest(requestMock);
@@ -106,7 +109,10 @@ describe(buildUserSessionFromHonoRequest, () => {
       vitest.mocked(getBetterAuthFromRequest).mockReturnValueOnce(authMock);
 
       vitest
-        .mocked(authMock.api.getSession)
+        .mocked(
+          authMock.api
+            .getSession as unknown as () => Promise<UserSession<BetterAuthOptions> | null>,
+        )
         .mockResolvedValueOnce(sessionFixture);
 
       result = await buildUserSessionFromHonoRequest(requestMock);
