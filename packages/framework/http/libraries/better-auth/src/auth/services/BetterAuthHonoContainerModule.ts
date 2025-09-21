@@ -1,0 +1,27 @@
+import { BetterAuthOptions } from 'better-auth';
+import { Newable } from 'inversify';
+
+import { buildBetterAuthHonoController } from '../calculations/buildBetterAuthHonoController';
+import { BetterAuth } from '../models/BetterAuth';
+import { BaseBetterAuthContainerModule } from './BaseBetterAuthContainerModule';
+
+export class BetterAuthHonoContainerModule<
+  TOptions extends BetterAuthOptions,
+  TFactory extends (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...args: any[]
+  ) => BetterAuth<TOptions> | Promise<BetterAuth<TOptions>>,
+> extends BaseBetterAuthContainerModule<TOptions, TFactory> {
+  public static fromOptions<TOptions extends BetterAuthOptions>(
+    basePath: string,
+    betterAuth: BetterAuth<TOptions>,
+  ): BetterAuthHonoContainerModule<TOptions, () => BetterAuth<TOptions>> {
+    return new BetterAuthHonoContainerModule(basePath, () => betterAuth, []);
+  }
+
+  protected override _buildBetterAuthControllerClass(
+    basePath: string,
+  ): Newable<unknown> {
+    return buildBetterAuthHonoController(basePath);
+  }
+}
