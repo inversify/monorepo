@@ -11,6 +11,7 @@
       "@inversifyjs/validation-common"
     ],
     [
+      "@inversifyjs/http-better-auth",
       "@inversifyjs/http-core",
       "@inversifyjs/http-express",
       "@inversifyjs/http-express-v4",
@@ -27,6 +28,7 @@
     "@inversifyjs/class-validation",
     "@inversifyjs/framework-core",
     "@inversifyjs/http-benchmarks",
+    "@inversifyjs/http-better-auth",
     "@inversifyjs/http-code-examples",
     "@inversifyjs/http-open-api-code-examples",
     "@inversifyjs/http-core",

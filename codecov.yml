@@ -20,6 +20,9 @@ coverage:
       '@inversifyjs/core':
         flags:
           - '@inversifyjs/core'
+      '@inversifyjs/http-better-auth':
+        flags:
+          - '@inversifyjs/http-better-auth'
       '@inversifyjs/http-core':
         flags:
           - '@inversifyjs/http-core'
@@ -66,6 +69,9 @@ flags:
   '@inversifyjs/framework-core':
     paths:
       - packages/framework/core
+  '@inversifyjs/http-better-auth':
+    paths:
+      - packages/framework/http/libraries/better-auth
   '@inversifyjs/http-core':
     paths:
       - packages/framework/http/libraries/core

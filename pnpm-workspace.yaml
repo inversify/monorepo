@@ -17,4 +17,5 @@ packages:
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@swc/core'
+  - better-sqlite3
   - oxc-resolver
