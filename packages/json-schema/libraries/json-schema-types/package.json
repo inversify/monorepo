@@ -58,5 +58,5 @@
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean"
   },
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
