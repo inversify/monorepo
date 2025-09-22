@@ -35,7 +35,6 @@
     }
   },
   "name": "@inversifyjs/validation-common",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"
@@ -49,5 +48,5 @@
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean"
   },
-  "version": "0.1.0"
+  "version": "2.0.0"
 }
