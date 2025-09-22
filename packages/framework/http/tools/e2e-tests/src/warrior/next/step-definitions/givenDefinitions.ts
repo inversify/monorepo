@@ -18,20 +18,21 @@ import { WarriorsOptionsNextExpress4Controller } from '../controllers/express4/W
 import { WarriorsPatchNextExpress4Controller } from '../controllers/express4/WarriorsPatchNextExpress4Controller';
 import { WarriorsPostNextExpress4Controller } from '../controllers/express4/WarriorsPostNextExpress4Controller';
 import { WarriorsPutNextExpress4Controller } from '../controllers/express4/WarriorsPutNextExpress4Controller';
+import { WarriorsDeleteNextFastifyController } from '../controllers/fastify/WarriorsDeleteNextFastifyController';
+import { WarriorsGetNextFastifyController } from '../controllers/fastify/WarriorsGetNextFastifyController';
+import { WarriorsOptionsNextFastifyController } from '../controllers/fastify/WarriorsOptionsFastifyExpressController';
+import { WarriorsPatchNextFastifyController } from '../controllers/fastify/WarriorsPatchNextFastifyController';
+import { WarriorsPostNextFastifyController } from '../controllers/fastify/WarriorsPostNextFastifyController';
+import { WarriorsPutNextFastifyController } from '../controllers/fastify/WarriorsPutNextFastifyController';
 import { WarriorsDeleteNextHonoController } from '../controllers/hono/WarriorsDeleteNextHonoController';
 import { WarriorsGetNextHonoController } from '../controllers/hono/WarriorsGetNextHonoController';
 import { WarriorsOptionsNextHonoController } from '../controllers/hono/WarriorsOptionsNextHonoController';
 import { WarriorsPatchNextHonoController } from '../controllers/hono/WarriorsPatchNextHonoController';
 import { WarriorsPostNextHonoController } from '../controllers/hono/WarriorsPostNextHonoController';
 import { WarriorsPutNextHonoController } from '../controllers/hono/WarriorsPutNextHonoController';
-import { WarriorsDeleteNextController } from '../controllers/WarriorsDeleteNextController';
-import { WarriorsGetNextController } from '../controllers/WarriorsGetNextController';
-import { WarriorsOptionsNextController } from '../controllers/WarriorsOptionsNextController';
-import { WarriorsPatchNextController } from '../controllers/WarriorsPatchNextController';
-import { WarriorsPostNextController } from '../controllers/WarriorsPostNextController';
-import { WarriorsPutNextController } from '../controllers/WarriorsPutNextController';
 import { NextExpress4Middleware } from '../middlewares/NextExpress4Middleware';
 import { NextExpressMiddleware } from '../middlewares/NextExpressMiddleware';
+import { NextFastifyMiddleware } from '../middlewares/NextFastifyMiddleware';
 import { NextHonoMiddleware } from '../middlewares/NextHonoMiddleware';
 
 function getWarriorNextController(
@@ -73,6 +74,23 @@ function getWarriorNextController(
       }
 
     // eslint-disable-next-line no-fallthrough
+    case ServerKind.fastify:
+      switch (method) {
+        case HttpMethod.delete:
+          return WarriorsDeleteNextFastifyController;
+        case HttpMethod.get:
+          return WarriorsGetNextFastifyController;
+        case HttpMethod.options:
+          return WarriorsOptionsNextFastifyController;
+        case HttpMethod.patch:
+          return WarriorsPatchNextFastifyController;
+        case HttpMethod.post:
+          return WarriorsPostNextFastifyController;
+        case HttpMethod.put:
+          return WarriorsPutNextFastifyController;
+      }
+
+    // eslint-disable-next-line no-fallthrough
     case ServerKind.hono:
       switch (method) {
         case HttpMethod.delete:
@@ -91,35 +109,22 @@ function getWarriorNextController(
 
     // eslint-disable-next-line no-fallthrough
     default:
-      switch (method) {
-        case HttpMethod.delete:
-          return WarriorsDeleteNextController;
-        case HttpMethod.get:
-          return WarriorsGetNextController;
-        case HttpMethod.options:
-          return WarriorsOptionsNextController;
-        case HttpMethod.patch:
-          return WarriorsPatchNextController;
-        case HttpMethod.post:
-          return WarriorsPostNextController;
-        case HttpMethod.put:
-          return WarriorsPutNextController;
-      }
+      throw new Error(
+        `getWarriorNextController not supported for ${serverKind as string} server`,
+      );
   }
 }
 
-function getWarriorNextMiddleware(
-  serverKind: ServerKind,
-): NewableFunction | undefined {
+function getWarriorNextMiddleware(serverKind: ServerKind): NewableFunction {
   switch (serverKind) {
     case ServerKind.express:
       return NextExpressMiddleware;
     case ServerKind.express4:
       return NextExpress4Middleware;
+    case ServerKind.fastify:
+      return NextFastifyMiddleware;
     case ServerKind.hono:
       return NextHonoMiddleware;
-    default:
-      return undefined;
   }
 }
 
@@ -142,10 +147,7 @@ function givenWarriorNextControllerForContainer(
     getWarriorNextMiddleware(serverKind);
 
   container.bind(controller).toSelf().inSingletonScope();
-
-  if (middleware !== undefined) {
-    container.bind(middleware).toSelf().inSingletonScope();
-  }
+  container.bind(middleware).toSelf().inSingletonScope();
 }
 
 Given<InversifyHttpWorld>(

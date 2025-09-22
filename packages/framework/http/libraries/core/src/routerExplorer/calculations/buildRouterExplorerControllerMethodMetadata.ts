@@ -7,6 +7,7 @@ import {
   getClassMethodGuardList,
   getClassMethodInterceptorList,
   getClassMethodMiddlewareList,
+  getClassMiddlewareList,
   Guard,
   Interceptor,
   Middleware,
@@ -65,6 +66,15 @@ export function buildRouterExplorerControllerMethodMetadata<
     ),
   ];
 
+  const controllerMiddlewareList: (
+    | // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ServiceIdentifier<Middleware<TRequest, TResponse, any, TResult>>
+    | ApplyMiddlewareOptions
+  )[] = getClassMiddlewareList(controllerMetadata.target);
+
+  const controllerMiddlewareOptions: MiddlewareOptions =
+    buildMiddlewareOptionsFromApplyMiddlewareOptions(controllerMiddlewareList);
+
   const controllerMethodMiddlewareList: (
     | // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ServiceIdentifier<Middleware<TRequest, TResponse, any, TResult>>
@@ -82,7 +92,7 @@ export function buildRouterExplorerControllerMethodMetadata<
     controllerMethodMetadata.methodKey,
   );
 
-  const middlewareOptions: MiddlewareOptions =
+  const controllerMethodMiddlewareOptions: MiddlewareOptions =
     buildMiddlewareOptionsFromApplyMiddlewareOptions(
       controllerMethodMiddlewareList,
     );
@@ -106,8 +116,14 @@ export function buildRouterExplorerControllerMethodMetadata<
     methodKey: controllerMethodMetadata.methodKey,
     parameterMetadataList: controllerMethodParameterMetadataList,
     path: controllerMethodMetadata.path,
-    postHandlerMiddlewareList: middlewareOptions.postHandlerMiddlewareList,
-    preHandlerMiddlewareList: middlewareOptions.preHandlerMiddlewareList,
+    postHandlerMiddlewareList: [
+      ...controllerMiddlewareOptions.postHandlerMiddlewareList,
+      ...controllerMethodMiddlewareOptions.postHandlerMiddlewareList,
+    ],
+    preHandlerMiddlewareList: [
+      ...controllerMiddlewareOptions.preHandlerMiddlewareList,
+      ...controllerMethodMiddlewareOptions.preHandlerMiddlewareList,
+    ],
     requestMethodType: controllerMethodMetadata.requestMethodType,
     statusCode: controllerMethodStatusCode,
     useNativeHandler,

@@ -1,12 +1,3 @@
-import {
-  ApplyMiddlewareOptions,
-  buildMiddlewareOptionsFromApplyMiddlewareOptions,
-  getClassMiddlewareList,
-  Middleware,
-  MiddlewareOptions,
-} from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
-
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { RouterExplorerControllerMetadata } from '../model/RouterExplorerControllerMetadata';
@@ -23,15 +14,6 @@ export function buildRouterExplorerControllerMetadata<
   const controllerMethodMetadataList: ControllerMethodMetadata[] =
     getControllerMethodMetadataList(controllerMetadata.target);
 
-  const controllerMiddlewareList: (
-    | // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ServiceIdentifier<Middleware<TRequest, TResponse, any, TResult>>
-    | ApplyMiddlewareOptions
-  )[] = getClassMiddlewareList(controllerMetadata.target);
-
-  const middlewareOptions: MiddlewareOptions =
-    buildMiddlewareOptionsFromApplyMiddlewareOptions(controllerMiddlewareList);
-
   return {
     controllerMethodMetadataList:
       buildRouterExplorerControllerMethodMetadataList(
@@ -39,8 +21,6 @@ export function buildRouterExplorerControllerMetadata<
         controllerMethodMetadataList,
       ),
     path: controllerMetadata.path,
-    postHandlerMiddlewareList: middlewareOptions.postHandlerMiddlewareList,
-    preHandlerMiddlewareList: middlewareOptions.preHandlerMiddlewareList,
     serviceIdentifier: controllerMetadata.serviceIdentifier,
     target: controllerMetadata.target,
   };

@@ -16,6 +16,7 @@ import {
   getClassMethodGuardList,
   getClassMethodInterceptorList,
   getClassMethodMiddlewareList,
+  getClassMiddlewareList,
   Guard,
   Interceptor,
   Middleware,
@@ -50,8 +51,10 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     let classMethodInterceptorListFixture: Newable<Interceptor>[];
     let controllerMethodGuardListFixture: Newable<Guard>[];
     let controllerMethodInterceptorListFixture: Newable<Interceptor>[];
+    let controllerMiddlewareListFixture: ServiceIdentifier<Middleware>[];
     let controllerMethodMiddlewareListFixture: ServiceIdentifier<Middleware>[];
-    let middlewareOptionsFixture: MiddlewareOptions;
+    let controllerMiddlewareOptionsFixture: MiddlewareOptions;
+    let controllerMethodMiddlewareOptionsFixture: MiddlewareOptions;
     let headerMetadataListFixture: [string, string][];
     let useNativeHandlerFixture: boolean;
     let errorTypeToErrorFilterMapFixture: Map<
@@ -89,8 +92,13 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         ...classInterceptorMetadataListFixture,
         ...classMethodInterceptorListFixture,
       ];
+      controllerMiddlewareListFixture = [];
       controllerMethodMiddlewareListFixture = [];
-      middlewareOptionsFixture = {
+      controllerMiddlewareOptionsFixture = {
+        postHandlerMiddlewareList: [],
+        preHandlerMiddlewareList: [],
+      };
+      controllerMethodMiddlewareOptionsFixture = {
         postHandlerMiddlewareList: [],
         preHandlerMiddlewareList: [],
       };
@@ -123,12 +131,17 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         .mockReturnValueOnce(classMethodInterceptorListFixture);
 
       vitest
+        .mocked(getClassMiddlewareList)
+        .mockReturnValueOnce(controllerMiddlewareListFixture);
+
+      vitest
         .mocked(getClassMethodMiddlewareList)
         .mockReturnValueOnce(controllerMethodMiddlewareListFixture);
 
       vitest
         .mocked(buildMiddlewareOptionsFromApplyMiddlewareOptions)
-        .mockReturnValueOnce(middlewareOptionsFixture);
+        .mockReturnValueOnce(controllerMiddlewareOptionsFixture)
+        .mockReturnValueOnce(controllerMethodMiddlewareOptionsFixture);
 
       vitest
         .mocked(getControllerMethodHeaderMetadataList)
@@ -206,13 +219,23 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       );
     });
 
-    it('should call buildMiddlewareOptionsFromApplyMiddlewareOptions()', () => {
+    it('should call getClassMiddlewareList()', () => {
+      expect(getClassMiddlewareList).toHaveBeenCalledTimes(1);
+      expect(getClassMiddlewareList).toHaveBeenCalledWith(
+        controllerMetadataFixture.target,
+      );
+    });
+
+    it('should call buildMiddlewareOptionsFromApplyMiddlewareOptions() twice', () => {
       expect(
         buildMiddlewareOptionsFromApplyMiddlewareOptions,
-      ).toHaveBeenCalledTimes(1);
+      ).toHaveBeenCalledTimes(2);
       expect(
         buildMiddlewareOptionsFromApplyMiddlewareOptions,
-      ).toHaveBeenCalledWith(controllerMethodMiddlewareListFixture);
+      ).toHaveBeenNthCalledWith(1, controllerMiddlewareListFixture);
+      expect(
+        buildMiddlewareOptionsFromApplyMiddlewareOptions,
+      ).toHaveBeenNthCalledWith(2, controllerMethodMiddlewareListFixture);
     });
 
     it('should call getControllerMethodHeaderMetadataList()', () => {
@@ -250,10 +273,14 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         methodKey: controllerMethodMetadataFixture.methodKey,
         parameterMetadataList: controllerMethodParameterMetadataListFixture,
         path: controllerMethodMetadataFixture.path,
-        postHandlerMiddlewareList:
-          middlewareOptionsFixture.postHandlerMiddlewareList,
-        preHandlerMiddlewareList:
-          middlewareOptionsFixture.preHandlerMiddlewareList,
+        postHandlerMiddlewareList: [
+          ...controllerMiddlewareOptionsFixture.postHandlerMiddlewareList,
+          ...controllerMethodMiddlewareOptionsFixture.postHandlerMiddlewareList,
+        ],
+        preHandlerMiddlewareList: [
+          ...controllerMiddlewareOptionsFixture.preHandlerMiddlewareList,
+          ...controllerMethodMiddlewareOptionsFixture.preHandlerMiddlewareList,
+        ],
         requestMethodType: controllerMethodMetadataFixture.requestMethodType,
         statusCode: controllerMethodStatusCodeMetadataFixture,
         useNativeHandler: useNativeHandlerFixture,

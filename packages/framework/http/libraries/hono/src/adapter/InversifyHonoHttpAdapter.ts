@@ -63,25 +63,6 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
   ): void {
     const router: Hono = new Hono();
 
-    const routerHonoMiddlewareList: HonoMiddlewareHandler[] = [
-      ...this.#buildHonoPreHandlerMiddlewareList(
-        this.globalHandlers.preHandlerMiddlewareList,
-      ),
-      ...this.#buildHonoPreHandlerMiddlewareList(
-        routerParams.preHandlerMiddlewareList,
-      ),
-      ...this.#buildHonoPostHandlerMiddlewareList(
-        this.globalHandlers.postHandlerMiddlewareList,
-      ),
-      ...this.#buildHonoPostHandlerMiddlewareList(
-        routerParams.postHandlerMiddlewareList,
-      ),
-    ];
-
-    if (routerHonoMiddlewareList.length > 0) {
-      router.use(...routerHonoMiddlewareList);
-    }
-
     for (const routeParams of routerParams.routeParamsList) {
       const routeHonoMiddlewareList: HonoMiddlewareHandler[] = [
         ...this.#buildHonoPreHandlerMiddlewareList(
