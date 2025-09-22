@@ -49,7 +49,6 @@
     }
   },
   "name": "@inversifyjs/http-validation",
-  "private": "true",
   "publishConfig": {
     "access": "public"
   },

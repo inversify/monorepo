@@ -55,7 +55,6 @@
     }
   },
   "name": "@inversifyjs/standard-schema-validation",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"

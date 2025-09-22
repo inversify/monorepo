@@ -53,7 +53,6 @@
     "fastify": "^5.6.0",
     "inversify": "^7.10.0"
   },
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"

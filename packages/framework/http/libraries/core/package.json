@@ -50,7 +50,6 @@
     }
   },
   "name": "@inversifyjs/http-core",
-  "private": "true",
   "peerDependencies": {
     "inversify": "^7.10.0"
   },
