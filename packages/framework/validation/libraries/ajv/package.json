@@ -57,6 +57,9 @@
   "peerDependencies": {
     "ajv": "^8.17.1"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"
