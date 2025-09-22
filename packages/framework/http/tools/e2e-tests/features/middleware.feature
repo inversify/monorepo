@@ -1,3 +1,4 @@
+@middleware
 Feature: middleware
 
 Middlewares allows to continue or stop the request lifecycle
