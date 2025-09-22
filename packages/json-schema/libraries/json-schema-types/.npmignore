@@ -11,6 +11,8 @@ lib/cjs/**/fixtures/**
 lib/esm/**/*.d.ts.map
 !lib/esm/index.d.ts
 !lib/esm/index.d.ts.map
+!lib/esm/jsonSchema/202012/index.d.ts
+!lib/esm/jsonSchema/202012/index.d.ts.map
 
 .lintstagedrc.json
 eslint.config.mjs
