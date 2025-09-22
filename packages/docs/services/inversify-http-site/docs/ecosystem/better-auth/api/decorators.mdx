@@ -1,0 +1,60 @@
+---
+sidebar_position: 3
+title: Parameter Decorators
+---
+import ecosystemBetterAuthExpressUserSessionSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthExpressUserSession.ts.txt';
+import ecosystemBetterAuthFastifyUserSessionSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthFastifyUserSession.ts.txt';
+import ecosystemBetterAuthOptionalAuthSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthOptionalAuth.ts.txt';
+import ecosystemBetterAuthParameterDecoratorGoodAndBadSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthParameterDecoratorGoodAndBad.ts.txt';
+import ecosystemBetterAuthParameterDecoratorsSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthParameterDecorators.ts.txt';
+import ecosystemBetterAuthUserInfoSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthUserInfo.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Parameter Decorators
+
+Parameter decorators provide a convenient way to inject user session information directly into your controller methods. InversifyJS HTTP Better Auth provides framework-specific decorators that extract and parse authentication data from incoming requests.
+
+## Available Decorators
+
+<Tabs>
+  <TabItem value="express" label="Express & Express 4">
+    <CodeBlock language="typescript">{ecosystemBetterAuthExpressUserSessionSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="typescript">{ecosystemBetterAuthFastifyUserSessionSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="typescript">{ecosystemBetterAuthParameterDecoratorsSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+:::warning[Required middleware]
+You must apply `betterAuthMiddlewareServiceIdentifier` middleware to any controller relying on session decorators or apply `betterAuthMiddlewareServiceIdentifier` as global middleware.
+:::
+
+## Return Types
+
+All decorators return either:
+- `UserSession<TOptions>` - When a valid session is found
+- `null` - When no valid session is found
+
+### Handling Authenticated Users
+
+<CodeBlock language="typescript">{ecosystemBetterAuthUserInfoSource}</CodeBlock>
+
+### Handling Optional Authentication
+
+<CodeBlock language="typescript">{ecosystemBetterAuthOptionalAuthSource}</CodeBlock>
+
+## Error Handling
+
+If the Better Auth middleware is not applied, the decorators will throw an error during request processing. Always ensure the middleware is properly configured:
+
+<CodeBlock language="typescript">{ecosystemBetterAuthParameterDecoratorGoodAndBadSource}</CodeBlock>
+
+## Related
+
+- [`UserSession`](../user-session) - The session data structure
+- [Container Modules](../container-modules) - For setting up Better Auth

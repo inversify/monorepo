@@ -1,0 +1,66 @@
+---
+sidebar_position: 1
+title: Introduction
+---
+import ecosystemBetterAuthIntroductionExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionExpress.ts.txt';
+import ecosystemBetterAuthIntroductionExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionExpress4.ts.txt';
+import ecosystemBetterAuthIntroductionFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionFastify.ts.txt';
+import ecosystemBetterAuthIntroductionHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionHono.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Introduction
+
+[Better Auth](https://www.better-auth.com/) is a comprehensive authentication library for TypeScript that provides secure, type-safe authentication with excellent developer experience. The InversifyJS HTTP framework provides seamless integration with Better Auth, allowing you to easily add authentication to your applications across Express, Express 4, Fastify, and Hono.
+
+## Features
+
+- **Type-safe authentication**: Full TypeScript support with type inference
+- **Multiple adapters**: Support for Express, Express 4, Fastify, and Hono
+- **Session management**: Built-in session handling with middleware integration
+- **Flexible configuration**: Easy setup with various authentication providers
+- **Parameter decorators**: Convenient access to user sessions in your controllers
+
+## Quick Start
+
+The integration provides container modules that automatically set up Better Auth endpoints and middleware for each supported framework.
+
+Start by installing the necessary packages:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+```bash
+npm install @inversifyjs/http-better-auth better-auth
+```
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+```bash
+yarn add @inversifyjs/http-better-auth better-auth
+```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+```bash
+pnpm add @inversifyjs/http-better-auth better-auth
+```
+  </TabItem>
+</Tabs>
+
+Then, choose the appropriate container module for your framework:
+
+<Tabs>
+  <TabItem value="express" label="Express">
+    <CodeBlock language="typescript">{ecosystemBetterAuthIntroductionExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="typescript">{ecosystemBetterAuthIntroductionExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="typescript">{ecosystemBetterAuthIntroductionFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="typescript">{ecosystemBetterAuthIntroductionHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+Refer to the [Better Auth Documentation](https://www.better-auth.com/docs) for detailed setup instructions and advanced configuration options.
