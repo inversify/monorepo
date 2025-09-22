@@ -145,45 +145,11 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
       void
     >,
   ): void {
-    const orderedPreHandlerMiddlewareList: MiddlewareHandler<
-      FastifyRequest,
-      FastifyReply,
-      (err?: Error) => void,
-      void
-    >[] = [
-      ...this.globalHandlers.preHandlerMiddlewareList,
-      ...routerParams.preHandlerMiddlewareList,
-    ];
-
-    const orderedPostHandlerMiddlewareList: MiddlewareHandler<
-      FastifyRequest,
-      FastifyReply,
-      (err?: Error) => void,
-      void
-    >[] = [
-      ...routerParams.postHandlerMiddlewareList,
-      ...this.globalHandlers.postHandlerMiddlewareList,
-    ];
-
     const router: FastifyPluginCallback = (
       fastifyInstance: FastifyInstance,
       _opts: Record<string, unknown>,
       done: () => void,
     ) => {
-      for (const middleware of orderedPreHandlerMiddlewareList) {
-        fastifyInstance.addHook(
-          'preHandler',
-          this.#buildFastifyPreHandlerAsyncMiddleware(middleware),
-        );
-      }
-
-      for (const middleware of orderedPostHandlerMiddlewareList) {
-        fastifyInstance.addHook(
-          'onResponse',
-          this.#buildFastifyOnResponseAsyncMiddleware(middleware),
-        );
-      }
-
       for (const routeParams of routerParams.routeParamsList) {
         const orderedMiddlewareList: MiddlewareHandler<
           FastifyRequest,

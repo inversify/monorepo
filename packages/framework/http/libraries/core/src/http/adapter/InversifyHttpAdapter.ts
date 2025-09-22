@@ -52,18 +52,6 @@ export abstract class InversifyHttpAdapter<
   protected readonly httpAdapterOptions: RequiredOptions<TOptions>;
   protected readonly globalHandlers: {
     interceptorList: Interceptor<TRequest, TResponse>[];
-    preHandlerMiddlewareList: MiddlewareHandler<
-      TRequest,
-      TResponse,
-      TNextFunction,
-      TResult
-    >[];
-    postHandlerMiddlewareList: MiddlewareHandler<
-      TRequest,
-      TResponse,
-      TNextFunction,
-      TResult
-    >[];
   };
   readonly #awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>;
   readonly #container: Container;
@@ -74,6 +62,12 @@ export abstract class InversifyHttpAdapter<
   readonly #globalGuardList: ServiceIdentifier<Guard<TRequest>>[];
   readonly #globalPipeList: (ServiceIdentifier<Pipe> | Pipe)[];
   readonly #logger: Logger;
+  readonly #postHandlerMiddlewareList: ServiceIdentifier<
+    MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>
+  >[];
+  readonly #preHandlerMiddlewareList: ServiceIdentifier<
+    MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>
+  >[];
   #isBuilt: boolean;
 
   constructor(
@@ -99,9 +93,9 @@ export abstract class InversifyHttpAdapter<
     this.#isBuilt = false;
     this.globalHandlers = {
       interceptorList: [],
-      postHandlerMiddlewareList: [],
-      preHandlerMiddlewareList: [],
     };
+    this.#postHandlerMiddlewareList = [];
+    this.#preHandlerMiddlewareList = [];
   }
 
   public applyGlobalMiddleware(
@@ -117,29 +111,11 @@ export abstract class InversifyHttpAdapter<
     const middlewareOptions: MiddlewareOptions =
       buildMiddlewareOptionsFromApplyMiddlewareOptions(middlewareList);
 
-    const preHandlerMiddlewareList: MiddlewareHandler<
-      TRequest,
-      TResponse,
-      TNextFunction,
-      TResult
-    >[] = this.#getMiddlewareHandlerFromMetadata(
-      middlewareOptions.preHandlerMiddlewareList,
+    this.#postHandlerMiddlewareList.push(
+      ...middlewareOptions.postHandlerMiddlewareList,
     );
-
-    const postHandlerMiddlewareList: MiddlewareHandler<
-      TRequest,
-      TResponse,
-      TNextFunction,
-      TResult
-    >[] = this.#getMiddlewareHandlerFromMetadata(
-      middlewareOptions.postHandlerMiddlewareList,
-    );
-
-    this.globalHandlers.preHandlerMiddlewareList.push(
-      ...preHandlerMiddlewareList,
-    );
-    this.globalHandlers.postHandlerMiddlewareList.push(
-      ...postHandlerMiddlewareList,
+    this.#preHandlerMiddlewareList.push(
+      ...middlewareOptions.preHandlerMiddlewareList,
     );
   }
 
@@ -226,12 +202,6 @@ export abstract class InversifyHttpAdapter<
     for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
       await this._buildRouter({
         path: routerExplorerControllerMetadata.path,
-        postHandlerMiddlewareList: this.#getMiddlewareHandlerFromMetadata(
-          routerExplorerControllerMetadata.postHandlerMiddlewareList,
-        ),
-        preHandlerMiddlewareList: this.#getMiddlewareHandlerFromMetadata(
-          routerExplorerControllerMetadata.preHandlerMiddlewareList,
-        ),
         routeParamsList: this.#builRouteParamdHandlerList(
           routerExplorerControllerMetadata,
         ),
@@ -259,7 +229,7 @@ export abstract class InversifyHttpAdapter<
         routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
           TRequest,
           TResponse,
-          unknown
+          TResult
         >,
       ) => ({
         guardList: [
@@ -278,12 +248,26 @@ export abstract class InversifyHttpAdapter<
           routerExplorerControllerMethodMetadata,
         ),
         path: routerExplorerControllerMethodMetadata.path,
-        postHandlerMiddlewareList: this.#getMiddlewareHandlerFromMetadata(
-          routerExplorerControllerMethodMetadata.postHandlerMiddlewareList,
-        ),
-        preHandlerMiddlewareList: this.#getMiddlewareHandlerFromMetadata(
-          routerExplorerControllerMethodMetadata.preHandlerMiddlewareList,
-        ),
+        postHandlerMiddlewareList: [
+          ...this.#getMiddlewareHandlerFromMetadata(
+            routerExplorerControllerMethodMetadata,
+            this.#postHandlerMiddlewareList,
+          ),
+          ...this.#getMiddlewareHandlerFromMetadata(
+            routerExplorerControllerMethodMetadata,
+            routerExplorerControllerMethodMetadata.postHandlerMiddlewareList,
+          ),
+        ],
+        preHandlerMiddlewareList: [
+          ...this.#getMiddlewareHandlerFromMetadata(
+            routerExplorerControllerMethodMetadata,
+            this.#preHandlerMiddlewareList,
+          ),
+          ...this.#getMiddlewareHandlerFromMetadata(
+            routerExplorerControllerMethodMetadata,
+            routerExplorerControllerMethodMetadata.preHandlerMiddlewareList,
+          ),
+        ],
         requestMethodType:
           routerExplorerControllerMethodMetadata.requestMethodType,
       }),
@@ -654,10 +638,23 @@ export abstract class InversifyHttpAdapter<
   }
 
   #getMiddlewareHandlerFromMetadata(
+    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >,
     middlewareServiceIdentifierList: ServiceIdentifier<
       Middleware<TRequest, TResponse, TNextFunction, TResult>
     >[],
   ): MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>[] {
+    const handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult> = this.#buildHandleError(
+      routerExplorerControllerMethodMetadata,
+    );
+
     return middlewareServiceIdentifierList.map(
       (
         middlewareServiceIdentifier: ServiceIdentifier<
@@ -669,14 +666,18 @@ export abstract class InversifyHttpAdapter<
           response: TResponse,
           next: TNextFunction,
         ): Promise<TResult> => {
-          const middleware: Middleware<
-            TRequest,
-            TResponse,
-            TNextFunction,
-            TResult
-          > = await this.#container.getAsync(middlewareServiceIdentifier);
+          try {
+            const middleware: Middleware<
+              TRequest,
+              TResponse,
+              TNextFunction,
+              TResult
+            > = await this.#container.getAsync(middlewareServiceIdentifier);
 
-          return middleware.execute(request, response, next);
+            return await middleware.execute(request, response, next);
+          } catch (error: unknown) {
+            return handleError(request, response, error);
+          }
         };
       },
     );

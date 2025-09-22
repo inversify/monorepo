@@ -80,8 +80,6 @@ describe(buildRouterExplorerControllerMetadataList, () => {
       routerExplorerControllerMetadataFixture = {
         controllerMethodMetadataList: [],
         path: '',
-        postHandlerMiddlewareList: [],
-        preHandlerMiddlewareList: [],
         serviceIdentifier: Symbol(),
         target: {} as NewableFunction,
       };
