@@ -54,6 +54,9 @@
     "express": "^4.21.2",
     "inversify": "^7.10.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"

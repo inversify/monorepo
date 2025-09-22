@@ -57,6 +57,9 @@
     "class-transformer": "~0.5.1",
     "class-validator": "~0.14.2"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"
