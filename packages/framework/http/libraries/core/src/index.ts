@@ -125,7 +125,7 @@ export {
   GatewayTimeoutHttpResponse,
   Get,
   getControllerMetadataList,
-  getControllerMethodMetadataList as getControllerMethodMetadataList,
+  getControllerMethodMetadataList,
   GoneHttpResponse,
   Head,
   Headers,

@@ -50,7 +50,6 @@
   "peerDependencies": {
     "inversify": "^7.10.0"
   },
-  "private": "true",
   "publishConfig": {
     "access": "public"
   },
@@ -73,5 +72,5 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "version": "0.1.0"
+  "version": "1.0.0"
 }

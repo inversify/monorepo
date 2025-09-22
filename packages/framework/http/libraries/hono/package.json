@@ -51,7 +51,6 @@
     "hono": "^4.9.8",
     "inversify": "^7.10.0"
   },
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"
@@ -70,5 +69,5 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "version": "1.0.0"
+  "version": "2.0.0"
 }
