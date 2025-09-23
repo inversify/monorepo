@@ -71,6 +71,12 @@ const config: Config = {
       indexName: 'inversify',
       insights: false,
     },
+    announcementBar: {
+      content:
+        'Your feedback is important to us! Please take a moment to read the <a target="_blank" rel="noopener noreferrer" href="/blog/planning-inversify-8-0-0/">v8 announcement</a>',
+      id: 'announcing_v8',
+      isCloseable: true,
+    },
     footer: {
       links: [
         {
