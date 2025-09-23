@@ -9,13 +9,14 @@ import {
   Response,
   SetHeader,
 } from '@inversifyjs/http-core';
+import {
+  BaseSwaggerUiController,
+  SwaggerUiProviderOptions,
+} from '@inversifyjs/http-open-api';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { FastifyReply } from 'fastify';
 import { Newable } from 'inversify';
 import mime from 'mime-types';
-
-import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
-import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 
 export function buildSwaggerUiFastifyController(
   options: SwaggerUiProviderOptions,

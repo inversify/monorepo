@@ -10,15 +10,16 @@ import {
   Response,
   SetHeader,
 } from '@inversifyjs/http-core';
+import {
+  BaseSwaggerUiController,
+  SwaggerUiProviderOptions,
+} from '@inversifyjs/http-open-api';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { Context } from 'hono';
 import { stream } from 'hono/streaming';
 import { StreamingApi } from 'hono/utils/stream';
 import { Newable } from 'inversify';
 import mime from 'mime-types';
-
-import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
-import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 
 export function buildSwaggerUiHonoController(
   options: SwaggerUiProviderOptions,

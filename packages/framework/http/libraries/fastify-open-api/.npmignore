@@ -6,9 +6,11 @@
 **/*.spec.js.map
 **/*.ts
 !lib/cjs/**/*.d.ts
+lib/cjs/server
 lib/esm/**/*.d.ts.map
 !lib/esm/index.d.ts
 !lib/esm/index.d.ts.map
+lib/esm/server
 
 .lintstagedrc.json
 eslint.config.mjs

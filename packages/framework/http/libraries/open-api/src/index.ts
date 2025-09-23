@@ -12,10 +12,8 @@ export { OasSecurity } from './metadata/decorators/OasSecurity';
 export { OasServer } from './metadata/decorators/OasServer';
 export { OasSummary } from './metadata/decorators/OasSummary';
 export { OasTag } from './metadata/decorators/OasTag';
-export { SwaggerUiExpress4Provider } from './openApi/services/SwaggerUiExpress4Provider';
-export { SwaggerUiExpressProvider } from './openApi/services/SwaggerUiExpressProvider';
-export { SwaggerUiFastifyProvider } from './openApi/services/SwaggerUiFastifyProvider';
-export { SwaggerUiHonoProvider } from './openApi/services/SwaggerUiHonoProvider';
+export { SwaggerUiProvider } from './openApi/services/SwaggerUiProvider';
+export { BaseSwaggerUiController } from './openApi/controllers/BaseSwagggerUiController';
 
 export type { BuildOpenApiBlockFunction } from './metadata/models/BuildOpenApiBlockFunction';
 export type { OasSchemaDecoratorOptions } from './metadata/models/OasSchemaDecoratorOptions';
