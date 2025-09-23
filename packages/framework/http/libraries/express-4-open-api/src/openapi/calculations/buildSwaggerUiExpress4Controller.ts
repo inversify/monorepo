@@ -6,12 +6,13 @@ import {
   Response,
   SetHeader,
 } from '@inversifyjs/http-core';
+import {
+  BaseSwaggerUiController,
+  SwaggerUiProviderOptions,
+} from '@inversifyjs/http-open-api';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import express from 'express4';
 import { Newable } from 'inversify';
-
-import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
-import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 
 export function buildSwaggerUiExpress4Controller(
   options: SwaggerUiProviderOptions,

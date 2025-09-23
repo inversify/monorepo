@@ -1,10 +1,12 @@
+import {
+  BaseSwaggerUiController,
+  SwaggerUiProvider,
+  SwaggerUiProviderOptions,
+} from '@inversifyjs/http-open-api';
 import { Context } from 'hono';
 import { Newable } from 'inversify';
 
 import { buildSwaggerUiHonoController } from '../calculations/buildSwaggerUiHonoController';
-import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
-import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
-import { SwaggerUiProvider } from './SwaggerUiProvider';
 
 export class SwaggerUiHonoProvider extends SwaggerUiProvider<
   Context,

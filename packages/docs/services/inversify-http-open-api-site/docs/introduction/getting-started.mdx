@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 
 ## Install dependencies
 
-To get started with Inversify HTTP, first install the required packages.
+To get started with Inversify HTTP OpenAPI, first install the required packages.
 
 Begin by installing the `inversify` packages and `reflect-metadata`:
 
@@ -45,29 +45,29 @@ Make sure to enable the [Experimental Decorators](https://www.typescriptlang.org
 
 :::
 
-## Choose an HTTP adapter
+## Choose an HTTP adapter with OpenAPI support
 
-Inversify HTTP works with several HTTP frameworks. Choose the adapter that best fits your needs:
+Inversify HTTP OpenAPI works with several HTTP frameworks. Choose the adapter and OpenAPI provider that best fits your needs:
 
 <Tabs>
   <TabItem value="express-v4" label="Express v4">
 
 ```bash
-  npm install @inversifyjs/http-express-v4
+  npm install @inversifyjs/http-express-v4 @inversifyjs/express-4-open-api
 ```
 
   </TabItem>
   <TabItem value="express" label="Express">
 
 ```bash
-  pnpm install @inversifyjs/http-express
+  pnpm install @inversifyjs/http-express @inversifyjs/express-open-api
 ```
 
   </TabItem>
   <TabItem value="fastify" label="Fastify">
 
 ```bash
-  yarn add @inversifyjs/http-fastify
+  yarn add @inversifyjs/http-fastify @inversifyjs/fastify-open-api
 ```
 
   </TabItem>
@@ -75,7 +75,7 @@ Inversify HTTP works with several HTTP frameworks. Choose the adapter that best 
   <TabItem value="hono" label="Hono">
 
 ```bash
-  yarn add @inversifyjs/http-hono
+  yarn add @inversifyjs/http-hono @inversifyjs/hono-open-api
 ```
 
   </TabItem>
