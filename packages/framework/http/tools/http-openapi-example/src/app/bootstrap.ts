@@ -1,5 +1,5 @@
+import { SwaggerUiExpressProvider } from '@inversifyjs/express-open-api';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
-import { SwaggerUiExpressProvider } from '@inversifyjs/http-open-api';
 import express from 'express';
 import { Container } from 'inversify';
 
