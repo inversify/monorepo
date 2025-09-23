@@ -28,9 +28,10 @@
   "packageRules": [
     {
       "enabled": false,
-      "matchDepTypes": [
-        "peerDependencies"
-      ]
+      "matchDepTypes": ["peerDependencies"],
+      "matchPackageNames": ["express"],
+      "matchUpdateTypes": ["major"],
+      "matchCurrentVersion": ">=4.0.0 <5.0.0"
     },
     {
       "groupName": "auto merge on patch or minor",
