@@ -6,6 +6,7 @@
   "description": "InversifyJS HTTP OpenAPI docs code examples package",
   "devDependencies": {
     "@inversifyjs/code-examples-devkit": "workspace:*",
+    "@inversifyjs/express-open-api": "workspace:*",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-open-api": "workspace:*",
