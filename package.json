@@ -9,6 +9,7 @@
     "@commitlint/cli": "20.0.0",
     "@commitlint/config-conventional": "20.0.0",
     "@commitlint/prompt-cli": "20.0.0",
+    "@inversifyjs/foundation-changelog-generator": "workspace:*",
     "@inversifyjs/foundation-eslint-config": "workspace:*",
     "@inversifyjs/foundation-prettier-config": "workspace:*",
     "@inversifyjs/foundation-rollup-config": "workspace:*",
