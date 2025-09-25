@@ -10,6 +10,7 @@ import {
   BoundServiceSyntax,
 } from './binding/models/BindingFluentSyntax';
 import { BindingIdentifier } from './binding/models/BindingIdentifier';
+import { MapToResolvedValueInjectOptions } from './binding/models/MapToResolvedValueInjectOptions';
 import {
   ResolvedValueInjectOptions,
   ResolvedValueMetadataInjectOptions,
@@ -47,6 +48,7 @@ export type {
   ContainerOptions,
   IsBound,
   IsBoundOptions,
+  MapToResolvedValueInjectOptions,
   OnActivation,
   OnDeactivation,
   Rebind,
