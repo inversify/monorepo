@@ -29,6 +29,7 @@
     }
   },
   "name": "@inversifyjs/foundation-changelog-generator",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"
