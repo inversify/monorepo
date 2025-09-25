@@ -1,6 +1,9 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
-  "changelog": "@changesets/cli/changelog",
+  "access": "restricted",
+  "baseBranch": "main",
+  "bumpVersionsWithWorkspaceProtocolOnly": true,
+  "changelog": "@inversifyjs/foundation-changelog-generator",
   "commit": false,
   "fixed": [
     [
@@ -24,9 +27,6 @@
       "@inversifyjs/http-validation"
     ]
   ],
-  "access": "restricted",
-  "baseBranch": "main",
-  "updateInternalDependencies": "patch",
   "ignore": [
     "@inversifyjs/http-benchmarks",
     "@inversifyjs/http-code-examples",
@@ -39,5 +39,6 @@
     "@inversifyjs/inversify-validation-docs-site",
     "@inversifyjs/logger-code-examples",
     "@inversifyjs/validation-code-examples"
-  ]
+  ],
+  "updateInternalDependencies": "patch"
 }
