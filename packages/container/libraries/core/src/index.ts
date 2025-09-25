@@ -31,6 +31,8 @@ import {
   DeactivationsService,
 } from './binding/services/DeactivationsService';
 import { decorate } from './decorator/actions/decorate';
+import { InversifyCoreError } from './error/models/InversifyCoreError';
+import { InversifyCoreErrorKind } from './error/models/InversifyCoreErrorKind';
 import { getClassMetadata } from './metadata/calculations/getClassMetadata';
 import { inject } from './metadata/decorators/inject';
 import { injectable } from './metadata/decorators/injectable';
@@ -197,6 +199,8 @@ export {
   injectable,
   injectFromBase,
   injectFromHierarchy,
+  InversifyCoreError,
+  InversifyCoreErrorKind,
   multiInject,
   named,
   optional,
