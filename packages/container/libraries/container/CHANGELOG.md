@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-Added `MapToResolvedValueInjectOptions` type export
+- Added `MapToResolvedValueInjectOptions` type export
 
 ## 1.13.0
 

@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-Added `MapToResolvedValueInjectOptions` type
+- Added `MapToResolvedValueInjectOptions` type
 
 - Updated dependencies
   - @inversifyjs/container@1.13.1
