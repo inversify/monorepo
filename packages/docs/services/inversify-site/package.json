@@ -5,9 +5,9 @@
   },
   "description": "InversifyJs docs site package",
   "dependencies": {
-    "@docusaurus/core": "3.9.0",
-    "@docusaurus/faster": "3.9.0",
-    "@docusaurus/preset-classic": "3.9.0",
+    "@docusaurus/core": "3.9.1",
+    "@docusaurus/faster": "3.9.1",
+    "@docusaurus/preset-classic": "3.9.1",
     "@inversifyjs/code-examples": "workspace:*",
     "@mdx-js/react": "3.1.1",
     "clsx": "2.1.1",
@@ -16,8 +16,8 @@
     "react-dom": "19.1.1"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.9.0",
-    "@docusaurus/types": "3.9.0",
+    "@docusaurus/module-type-aliases": "3.9.1",
+    "@docusaurus/types": "3.9.1",
     "@eslint/js": "9.36.0",
     "@types/react": "19.1.13",
     "eslint": "9.36.0",
