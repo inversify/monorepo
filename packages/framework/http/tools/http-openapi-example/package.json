@@ -10,7 +10,7 @@
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-open-api": "workspace:*",
     "express": "^5.1.0",
-    "inversify": "^7.10.0",
+    "inversify": "^7.10.1",
     "lmdb": "^3.4.2"
   },
   "devDependencies": {
