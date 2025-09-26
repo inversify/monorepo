@@ -1,5 +1,11 @@
 # @inversifyjs/container
 
+## 1.13.1
+
+### Patch Changes
+
+Added `MapToResolvedValueInjectOptions` type export
+
 ## 1.13.0
 
 ### Minor Changes
