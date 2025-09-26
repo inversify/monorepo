@@ -37,6 +37,9 @@ jobs:
         if: ${{ inputs.remove-changesets == true }}
         run: rm -f .changeset/*.md
 
+      - name: Build required packages
+        run: pnpm run build --filter=@inversifyjs/foundation-changelog-generator
+
       - name: Create Release Pull or publish changes
         uses: changesets/action@v1
         with:
