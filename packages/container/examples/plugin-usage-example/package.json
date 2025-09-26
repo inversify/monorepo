@@ -5,7 +5,7 @@
   },
   "description": "InversifyJs plugin example package",
   "dependencies": {
-    "inversify": "^7.10.0",
+    "inversify": "^7.10.1",
     "@inversifyjs/plugin-example": "workspace:*"
   },
   "devDependencies": {

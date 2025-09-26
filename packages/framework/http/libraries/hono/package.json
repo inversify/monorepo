@@ -49,7 +49,7 @@
   "name": "@inversifyjs/http-hono",
   "peerDependencies": {
     "hono": "^4.9.8",
-    "inversify": "^7.10.0"
+    "inversify": "^7.10.1"
   },
   "publishConfig": {
     "access": "public"
