@@ -16,8 +16,12 @@ const config: Config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
   organizationName: 'inversify',
   plugins: [
     (_context: LoadContext): Plugin<unknown> => ({
