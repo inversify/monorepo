@@ -1,8 +1,3 @@
-> [!NOTE]  
-> InversifyJS will be moving to the [monorepo](https://github.com/inversify/monorepo). Please, consider creating issues and pull requests there.
->
-> Next releases will be published in the monorepo, so consider starring it to be notified.
-
 <p align="center">
   <a href="https://www.npmjs.com/package/inversify" target="__blank"><img src="https://img.shields.io/npm/v/inversify?color=0476bc&label=" alt="NPM version"></a>
   <a href="https://www.npmjs.com/package/inversify" target="__blank"><img alt="NPM Downloads" src="https://img.shields.io/npm/dm/inversify?color=3890aa&label="></a>
@@ -14,8 +9,7 @@
   <a href="https://discord.gg/jXcMagAPnm" target="__blank"><img alt="Discord Server" src="https://img.shields.io/discord/816766547879657532?style=social&logo=discord"></a>
 </p>
 
-# InversifyJS
-A powerful and lightweight inversion of control container for JavaScript & Node.js apps powered by TypeScript.
+![Inversify social](./assets/inversify-social.png)
 
 ## 📕 Documentation
 Documentation is available at https://inversify.io
