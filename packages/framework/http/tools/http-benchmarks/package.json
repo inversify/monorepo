@@ -5,7 +5,7 @@
   },
   "description": "InversifyJs benchmarks package",
   "dependencies": {
-    "@hono/node-server": "1.19.4",
+    "@hono/node-server": "1.19.5",
     "@inversifyjs/benchmark-utils": "workspace:*",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",

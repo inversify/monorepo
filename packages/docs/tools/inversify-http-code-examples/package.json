@@ -5,7 +5,7 @@
   },
   "description": "InversifyJS HTTP docs code examples package",
   "devDependencies": {
-    "@hono/node-server": "1.19.4",
+    "@hono/node-server": "1.19.5",
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/http-better-auth": "workspace:*",
     "@inversifyjs/http-core": "workspace:*",
