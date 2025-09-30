@@ -27,7 +27,7 @@
   },
   "peerDependencies": {
     "fastify": "^5.6.1",
-    "inversify": "^7.10.1"
+    "inversify": "^7.10.2"
   },
   "devEngines": {
     "node": "^22.10.2",
