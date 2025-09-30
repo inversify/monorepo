@@ -46,7 +46,7 @@
   },
   "name": "@inversifyjs/logger",
   "peerDependencies": {
-    "winston": "^3.17.0"
+    "winston": "^3.18.1"
   },
   "publishConfig": {
     "access": "public"
