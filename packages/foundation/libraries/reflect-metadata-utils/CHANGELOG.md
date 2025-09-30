@@ -1,5 +1,11 @@
 # @inversifyjs/reflect-metadata-utils
 
+## 1.4.1
+
+### Patch Changes
+
+- Unify the peer-dep requirement for `reflect-metadata`
+
 ## 1.4.0
 
 ### Minor Changes

@@ -1,5 +1,14 @@
 # @inversifyjs/container
 
+## 1.13.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/reflect-metadata-utils@1.4.1
+  - @inversifyjs/core@9.0.1
+  - @inversifyjs/plugin@0.2.0
+
 ## 1.13.1
 
 ### Patch Changes

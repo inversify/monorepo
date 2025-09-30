@@ -1,5 +1,13 @@
 # @inversifyjs/binding-decorators
 
+## 1.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/reflect-metadata-utils@1.4.1
+  - inversify@7.10.2
+
 ## 1.1.4
 
 ### Patch Changes

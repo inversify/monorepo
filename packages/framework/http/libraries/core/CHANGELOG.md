@@ -1,5 +1,14 @@
 # @inversifyjs/http-core
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/reflect-metadata-utils@1.4.1
+  - @inversifyjs/framework-core@1.0.1
+  - inversify@7.10.2
+
 ## 3.0.0
 
 ## 2.0.0
