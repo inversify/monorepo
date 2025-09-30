@@ -2,6 +2,7 @@
 
 import process from 'node:process';
 
+import { defineConfig } from '@eslint/config-helpers';
 import eslint from '@eslint/js';
 import vitest from '@vitest/eslint-plugin';
 import tseslint from 'typescript-eslint';
@@ -9,7 +10,7 @@ import eslintPrettierConfig from 'eslint-plugin-prettier/recommended';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 /**
- * @returns {import('typescript-eslint').ConfigWithExtends}
+ * @returns {import('@eslint/config-helpers').ConfigWithExtends}
  */
 function buildBaseConfig() {
   return {
@@ -164,7 +165,11 @@ function buildBaseConfig() {
 export function buildDefaultConfig() {
   const baseRules = buildBaseConfig();
 
-  return tseslint.config(
+  const vitestPlugin = /** @type {import('@eslint/config-helpers').Plugin} */ (
+    /** @type {unknown} */ (vitest)
+  );
+
+  return defineConfig(
     {
       ...baseRules,
       files: ['**/*.{cjs,mts,ts,tsx}'],
@@ -187,7 +192,7 @@ export function buildDefaultConfig() {
     {
       files: ['**/*.spec.ts', '**/*.spec-d.ts'],
       plugins: {
-        vitest,
+        vitest: vitestPlugin,
       },
       rules: {
         ...vitest.configs.recommended.rules,
@@ -221,7 +226,7 @@ export function buildDefaultConfig() {
         'vitest/prefer-to-be-truthy': 'off',
       },
     },
-    /** @type {import('typescript-eslint').ConfigWithExtends} */ (
+    /** @type {import('@eslint/config-helpers').ConfigWithExtends} */ (
       eslintPrettierConfig
     ),
   );
