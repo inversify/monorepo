@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-unify the peer-dep requirement for `reflect-metadata`
+- Unify the peer-dep requirement for `reflect-metadata`
 
 ## 1.4.0
 
