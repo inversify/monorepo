@@ -87,8 +87,10 @@ describe(PluginManager, () => {
             planResultCacheService: expect.any(Object) as unknown,
           } as Partial<PluginContext> as PluginContext;
 
-          expect(pluginType).toHaveBeenCalledTimes(1);
-          expect(pluginType).toHaveBeenCalledWith(containerFixture, expected);
+          expect(pluginType).toHaveBeenCalledExactlyOnceWith(
+            containerFixture,
+            expected,
+          );
         });
 
         it('should throw an InversifyContainerError', () => {
@@ -146,8 +148,10 @@ describe(PluginManager, () => {
             planResultCacheService: expect.any(Object) as unknown,
           } as Partial<PluginContext> as PluginContext;
 
-          expect(pluginType).toHaveBeenCalledTimes(1);
-          expect(pluginType).toHaveBeenCalledWith(containerFixture, expected);
+          expect(pluginType).toHaveBeenCalledExactlyOnceWith(
+            containerFixture,
+            expected,
+          );
         });
 
         it('should call load method of the plugin instance', () => {
@@ -156,8 +160,7 @@ describe(PluginManager, () => {
             onPlan: expect.any(Function) as unknown,
           } as Partial<PluginApi> as PluginApi;
 
-          expect(pluginMock.load).toHaveBeenCalledTimes(1);
-          expect(pluginMock.load).toHaveBeenCalledWith(expected);
+          expect(pluginMock.load).toHaveBeenCalledExactlyOnceWith(expected);
         });
 
         it('should return undefined', () => {

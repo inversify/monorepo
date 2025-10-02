@@ -127,15 +127,13 @@ describe(registerSingletonScopedBindings, () => {
       });
 
       it('should call getPluginDisposeBinding()', () => {
-        expect(getPluginDisposeBinding).toHaveBeenCalledTimes(1);
-        expect(getPluginDisposeBinding).toHaveBeenCalledWith(
+        expect(getPluginDisposeBinding).toHaveBeenCalledExactlyOnceWith(
           leafBindingNode.binding,
         );
       });
 
       it('should call setPluginDisposeBinding()', () => {
-        expect(setPluginDisposeBinding).toHaveBeenCalledTimes(1);
-        expect(setPluginDisposeBinding).toHaveBeenCalledWith(
+        expect(setPluginDisposeBinding).toHaveBeenCalledExactlyOnceWith(
           leafBindingNode.binding,
           {
             dependendentBindings: new Set(),
@@ -172,8 +170,7 @@ describe(registerSingletonScopedBindings, () => {
       });
 
       it('should call getPluginDisposeBinding()', () => {
-        expect(getPluginDisposeBinding).toHaveBeenCalledTimes(1);
-        expect(getPluginDisposeBinding).toHaveBeenCalledWith(
+        expect(getPluginDisposeBinding).toHaveBeenCalledExactlyOnceWith(
           leafBindingNode.binding,
         );
       });
@@ -250,15 +247,13 @@ describe(registerSingletonScopedBindings, () => {
       });
 
       it('should call getPluginDisposeBinding()', () => {
-        expect(getPluginDisposeBinding).toHaveBeenCalledTimes(1);
-        expect(getPluginDisposeBinding).toHaveBeenCalledWith(
+        expect(getPluginDisposeBinding).toHaveBeenCalledExactlyOnceWith(
           leafBindingNode.binding,
         );
       });
 
       it('should call setPluginDisposeBinding()', () => {
-        expect(setPluginDisposeBinding).toHaveBeenCalledTimes(1);
-        expect(setPluginDisposeBinding).toHaveBeenCalledWith(
+        expect(setPluginDisposeBinding).toHaveBeenCalledExactlyOnceWith(
           leafBindingNode.binding,
           {
             dependendentBindings: new Set(),
@@ -442,8 +437,7 @@ describe(registerSingletonScopedBindings, () => {
       });
 
       it('should call getPluginDisposeBinding()', () => {
-        expect(getPluginDisposeBinding).toHaveBeenCalledTimes(1);
-        expect(getPluginDisposeBinding).toHaveBeenCalledWith(
+        expect(getPluginDisposeBinding).toHaveBeenCalledExactlyOnceWith(
           instanceBindingNode.binding,
         );
       });
@@ -617,8 +611,7 @@ describe(registerSingletonScopedBindings, () => {
       });
 
       it('should call getPluginDisposeBinding()', () => {
-        expect(getPluginDisposeBinding).toHaveBeenCalledTimes(1);
-        expect(getPluginDisposeBinding).toHaveBeenCalledWith(
+        expect(getPluginDisposeBinding).toHaveBeenCalledExactlyOnceWith(
           resolvedValueBindingNode.binding,
         );
       });
@@ -711,15 +704,13 @@ describe(registerSingletonScopedBindings, () => {
       });
 
       it('should call getPluginDisposeBinding()', () => {
-        expect(getPluginDisposeBinding).toHaveBeenCalledTimes(1);
-        expect(getPluginDisposeBinding).toHaveBeenCalledWith(
+        expect(getPluginDisposeBinding).toHaveBeenCalledExactlyOnceWith(
           leafBindingNode.binding,
         );
       });
 
       it('should call setPluginDisposeBinding()', () => {
-        expect(setPluginDisposeBinding).toHaveBeenCalledTimes(1);
-        expect(setPluginDisposeBinding).toHaveBeenCalledWith(
+        expect(setPluginDisposeBinding).toHaveBeenCalledExactlyOnceWith(
           leafBindingNode.binding,
           {
             dependendentBindings: new Set(),

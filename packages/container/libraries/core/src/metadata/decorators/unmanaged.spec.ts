@@ -63,15 +63,11 @@ describe(unmanaged, () => {
     it('should call buildUnmanagedMetadataFromMaybeClassElementMetadata()', () => {
       expect(
         buildUnmanagedMetadataFromMaybeClassElementMetadata,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        buildUnmanagedMetadataFromMaybeClassElementMetadata,
-      ).toHaveBeenCalledWith();
+      ).toHaveBeenCalledExactlyOnceWith();
     });
 
     it('should call injectBase()', () => {
-      expect(injectBase).toHaveBeenCalledTimes(1);
-      expect(injectBase).toHaveBeenCalledWith(
+      expect(injectBase).toHaveBeenCalledExactlyOnceWith(
         updateMetadataMock,
         decrementPendingClassMetadataCount,
       );

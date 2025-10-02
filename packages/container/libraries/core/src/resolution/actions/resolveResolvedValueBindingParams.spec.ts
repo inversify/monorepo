@@ -60,8 +60,7 @@ describe(resolveResolvedValueBindingParams, () => {
       });
 
       it('should call resolveServiceNode()', () => {
-        expect(resolveServiceNodeMock).toHaveBeenCalledTimes(1);
-        expect(resolveServiceNodeMock).toHaveBeenCalledWith(
+        expect(resolveServiceNodeMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           paramNodeFixture,
         );
@@ -93,8 +92,7 @@ describe(resolveResolvedValueBindingParams, () => {
       });
 
       it('should call resolveServiceNode()', () => {
-        expect(resolveServiceNodeMock).toHaveBeenCalledTimes(1);
-        expect(resolveServiceNodeMock).toHaveBeenCalledWith(
+        expect(resolveServiceNodeMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           paramNodeFixture,
         );

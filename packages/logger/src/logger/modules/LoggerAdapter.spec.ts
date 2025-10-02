@@ -70,8 +70,7 @@ describe(LoggerAdapter, () => {
       });
 
       it('should call printLog with LogType.INFO', () => {
-        expect(printLogMock).toHaveBeenCalledTimes(1);
-        expect(printLogMock).toHaveBeenCalledWith(
+        expect(printLogMock).toHaveBeenCalledExactlyOnceWith(
           LogLevel.INFO,
           messageFixture,
           contextMetadataFixture,
@@ -105,8 +104,7 @@ describe(LoggerAdapter, () => {
       });
 
       it('should call printLog with LogType.HTTP', () => {
-        expect(printLogMock).toHaveBeenCalledTimes(1);
-        expect(printLogMock).toHaveBeenCalledWith(
+        expect(printLogMock).toHaveBeenCalledExactlyOnceWith(
           LogLevel.HTTP,
           messageFixture,
           contextMetadataFixture,
@@ -140,8 +138,7 @@ describe(LoggerAdapter, () => {
       });
 
       it('should call printLog with LogType.SILLY', () => {
-        expect(printLogMock).toHaveBeenCalledTimes(1);
-        expect(printLogMock).toHaveBeenCalledWith(
+        expect(printLogMock).toHaveBeenCalledExactlyOnceWith(
           LogLevel.SILLY,
           messageFixture,
           contextMetadataFixture,
@@ -175,8 +172,7 @@ describe(LoggerAdapter, () => {
       });
 
       it('should call printLog with LogType.ERROR', () => {
-        expect(printLogMock).toHaveBeenCalledTimes(1);
-        expect(printLogMock).toHaveBeenCalledWith(
+        expect(printLogMock).toHaveBeenCalledExactlyOnceWith(
           LogLevel.ERROR,
           messageFixture,
           contextMetadataFixture,
@@ -210,8 +206,7 @@ describe(LoggerAdapter, () => {
       });
 
       it('should call printLog with LogType.WARN', () => {
-        expect(printLogMock).toHaveBeenCalledTimes(1);
-        expect(printLogMock).toHaveBeenCalledWith(
+        expect(printLogMock).toHaveBeenCalledExactlyOnceWith(
           LogLevel.WARN,
           messageFixture,
           contextMetadataFixture,
@@ -245,8 +240,7 @@ describe(LoggerAdapter, () => {
       });
 
       it('should call printLog with LogType.DEBUG', () => {
-        expect(printLogMock).toHaveBeenCalledTimes(1);
-        expect(printLogMock).toHaveBeenCalledWith(
+        expect(printLogMock).toHaveBeenCalledExactlyOnceWith(
           LogLevel.DEBUG,
           messageFixture,
           contextMetadataFixture,
@@ -280,8 +274,7 @@ describe(LoggerAdapter, () => {
       });
 
       it('should call printLog with LogType.VERBOSE', () => {
-        expect(printLogMock).toHaveBeenCalledTimes(1);
-        expect(printLogMock).toHaveBeenCalledWith(
+        expect(printLogMock).toHaveBeenCalledExactlyOnceWith(
           LogLevel.VERBOSE,
           messageFixture,
           contextMetadataFixture,
@@ -321,8 +314,7 @@ describe(LoggerAdapter, () => {
       });
 
       it('should call printLog with the provided parameters', () => {
-        expect(printLogMock).toHaveBeenCalledTimes(1);
-        expect(printLogMock).toHaveBeenCalledWith(
+        expect(printLogMock).toHaveBeenCalledExactlyOnceWith(
           logTypeFixture,
           messageFixture,
           contextMetadataFixture,
@@ -398,8 +390,7 @@ describe(LoggerAdapter, () => {
         });
 
         it('should call printLog with context from constructor', () => {
-          expect(printLogMock).toHaveBeenCalledTimes(1);
-          expect(printLogMock).toHaveBeenCalledWith(
+          expect(printLogMock).toHaveBeenCalledExactlyOnceWith(
             logTypeFixture,
             messageFixture,
             { context: contextFixture },
@@ -444,8 +435,7 @@ describe(LoggerAdapter, () => {
         });
 
         it('should call printLog with the explicit context', () => {
-          expect(printLogMock).toHaveBeenCalledTimes(1);
-          expect(printLogMock).toHaveBeenCalledWith(
+          expect(printLogMock).toHaveBeenCalledExactlyOnceWith(
             logTypeFixture,
             messageFixture,
             { context: explicitContextFixture },

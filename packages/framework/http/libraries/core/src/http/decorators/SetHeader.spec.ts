@@ -51,16 +51,14 @@ describe(SetHeader, () => {
     });
 
     it('should call buildSetHeaderMetadata', () => {
-      expect(buildSetHeaderMetadata).toHaveBeenCalledTimes(1);
-      expect(buildSetHeaderMetadata).toHaveBeenCalledWith(
+      expect(buildSetHeaderMetadata).toHaveBeenCalledExactlyOnceWith(
         keyFixture,
         valueFixture,
       );
     });
 
     it('should call setReflectMetadata', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         controllerFixture.constructor,
         controllerMethodHeaderMetadataReflectKey,
         buildEmptyMapMetadata,

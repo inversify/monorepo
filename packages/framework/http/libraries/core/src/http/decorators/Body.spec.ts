@@ -34,8 +34,7 @@ describe(Body, () => {
     });
 
     it('should call buildRouteParameterDecorator()', () => {
-      expect(buildRouteParameterDecorator).toHaveBeenCalledTimes(1);
-      expect(buildRouteParameterDecorator).toHaveBeenCalledWith(
+      expect(buildRouteParameterDecorator).toHaveBeenCalledExactlyOnceWith(
         RequestMethodParameterType.Body,
         parameterPipeListFixture,
         optionsFixture,

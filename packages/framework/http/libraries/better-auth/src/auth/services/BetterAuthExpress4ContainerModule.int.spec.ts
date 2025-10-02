@@ -141,8 +141,9 @@ describe(BetterAuthExpress4ContainerModule, () => {
     });
 
     it('should call transform()', () => {
-      expect(transformMock).toHaveBeenCalledTimes(1);
-      expect(transformMock).toHaveBeenCalledWith(expect.any(Function));
+      expect(transformMock).toHaveBeenCalledExactlyOnceWith(
+        expect.any(Function),
+      );
     });
   });
 });

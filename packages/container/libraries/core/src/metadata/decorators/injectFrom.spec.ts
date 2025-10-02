@@ -38,13 +38,13 @@ describe(injectFrom, () => {
     });
 
     it('should call getClassMetadata()', () => {
-      expect(getClassMetadata).toHaveBeenCalledTimes(1);
-      expect(getClassMetadata).toHaveBeenCalledWith(optionsFixture.type);
+      expect(getClassMetadata).toHaveBeenCalledExactlyOnceWith(
+        optionsFixture.type,
+      );
     });
 
     it('should call updateOwnReflectMetadata()', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         classMetadataReflectKey,
         getDefaultClassMetadata,

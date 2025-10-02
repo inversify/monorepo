@@ -36,8 +36,9 @@ describe(decorate, () => {
       });
 
       it('should call decorator', () => {
-        expect(classDecoratorMock).toHaveBeenCalledTimes(1);
-        expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
+        expect(classDecoratorMock).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+        );
       });
 
       it('should return undefined', () => {
@@ -69,8 +70,9 @@ describe(decorate, () => {
       });
 
       it('should call decorator', () => {
-        expect(classDecoratorMock).toHaveBeenCalledTimes(1);
-        expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
+        expect(classDecoratorMock).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+        );
       });
 
       it('should return undefined', () => {
@@ -109,8 +111,7 @@ describe(decorate, () => {
       });
 
       it('should call decorator', () => {
-        expect(parameterDecoratorMock).toHaveBeenCalledTimes(1);
-        expect(parameterDecoratorMock).toHaveBeenCalledWith(
+        expect(parameterDecoratorMock).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           undefined,
           parameterIndexFixture,
@@ -156,8 +157,7 @@ describe(decorate, () => {
       });
 
       it('should call decorator', () => {
-        expect(parameterDecoratorMock).toHaveBeenCalledTimes(1);
-        expect(parameterDecoratorMock).toHaveBeenCalledWith(
+        expect(parameterDecoratorMock).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           methodNameFixture,
           parameterIndexFixture,
@@ -199,8 +199,7 @@ describe(decorate, () => {
       });
 
       it('should call decorator', () => {
-        expect(methodDecoratorMock).toHaveBeenCalledTimes(1);
-        expect(methodDecoratorMock).toHaveBeenCalledWith(
+        expect(methodDecoratorMock).toHaveBeenCalledExactlyOnceWith(
           targetFixture.prototype,
           propertyFixture,
           undefined,

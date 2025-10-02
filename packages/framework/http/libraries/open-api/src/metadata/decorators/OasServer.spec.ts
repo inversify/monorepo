@@ -67,16 +67,13 @@ describe(OasServer, () => {
       });
 
       it('should call updateControllerOpenApiMetadataServer()', () => {
-        expect(updateControllerOpenApiMetadataServer).toHaveBeenCalledTimes(1);
-        expect(updateControllerOpenApiMetadataServer).toHaveBeenCalledWith(
-          serverFixture,
-          undefined,
-        );
+        expect(
+          updateControllerOpenApiMetadataServer,
+        ).toHaveBeenCalledExactlyOnceWith(serverFixture, undefined);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetTypeFixture,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,
@@ -126,16 +123,13 @@ describe(OasServer, () => {
       });
 
       it('should call updateControllerOpenApiMetadataServer()', () => {
-        expect(updateControllerOpenApiMetadataServer).toHaveBeenCalledTimes(1);
-        expect(updateControllerOpenApiMetadataServer).toHaveBeenCalledWith(
-          serverFixture,
-          keyFixture,
-        );
+        expect(
+          updateControllerOpenApiMetadataServer,
+        ).toHaveBeenCalledExactlyOnceWith(serverFixture, keyFixture);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetTypeFixture,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,

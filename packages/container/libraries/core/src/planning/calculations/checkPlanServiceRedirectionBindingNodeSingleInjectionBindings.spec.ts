@@ -60,10 +60,7 @@ describe(checkPlanServiceRedirectionBindingNodeSingleInjectionBindings, () => {
       it('should call throwErrorWhenUnexpectedBindingsAmountFound()', () => {
         expect(
           throwErrorWhenUnexpectedBindingsAmountFound,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          throwErrorWhenUnexpectedBindingsAmountFound,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           planServiceRedirectionBindingNodeFixture.redirections,
           isOptionalFixture,
           internalBindingConstraintsNodeFixture,
@@ -214,10 +211,7 @@ describe(checkPlanServiceRedirectionBindingNodeSingleInjectionBindings, () => {
       it('should call throwErrorWhenUnexpectedBindingsAmountFound()', () => {
         expect(
           throwErrorWhenUnexpectedBindingsAmountFound,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          throwErrorWhenUnexpectedBindingsAmountFound,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           planServiceRedirectionBindingNodeRedirectionFixture.redirections,
           isOptionalFixture,
           internalBindingConstraintsNodeFixture,

@@ -68,7 +68,7 @@ describe(PlanResultCacheManager, () => {
         expect(
           serviceReferenceManagerMock.planResultCacheService
             .invalidateServiceBinding,
-        ).toHaveBeenCalledWith({
+        ).toHaveBeenCalledExactlyOnceWith({
           ...invalidationFixture,
           operations: planParamsOperationsManagerFixture.planParamsOperations,
         });

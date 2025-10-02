@@ -47,8 +47,7 @@ describe(resolveBindingServiceActivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getActivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getActivations).toHaveBeenCalledWith(
+        expect(paramsMock.getActivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -83,15 +82,13 @@ describe(resolveBindingServiceActivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getActivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getActivations).toHaveBeenCalledWith(
+        expect(paramsMock.getActivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
 
       it('should call activation', () => {
-        expect(activationMock).toHaveBeenCalledTimes(1);
-        expect(activationMock).toHaveBeenCalledWith(
+        expect(activationMock).toHaveBeenCalledExactlyOnceWith(
           paramsMock.context,
           valueFixture,
         );
@@ -127,15 +124,13 @@ describe(resolveBindingServiceActivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getActivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getActivations).toHaveBeenCalledWith(
+        expect(paramsMock.getActivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
 
       it('should call activation', () => {
-        expect(activationMock).toHaveBeenCalledTimes(1);
-        expect(activationMock).toHaveBeenCalledWith(
+        expect(activationMock).toHaveBeenCalledExactlyOnceWith(
           paramsMock.context,
           valueFixture,
         );
@@ -176,8 +171,7 @@ describe(resolveBindingServiceActivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getActivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getActivations).toHaveBeenCalledWith(
+        expect(paramsMock.getActivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -212,15 +206,13 @@ describe(resolveBindingServiceActivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getActivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getActivations).toHaveBeenCalledWith(
+        expect(paramsMock.getActivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
 
       it('should call activation', () => {
-        expect(activationMock).toHaveBeenCalledTimes(1);
-        expect(activationMock).toHaveBeenCalledWith(
+        expect(activationMock).toHaveBeenCalledExactlyOnceWith(
           paramsMock.context,
           valueFixture,
         );
@@ -256,15 +248,13 @@ describe(resolveBindingServiceActivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getActivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getActivations).toHaveBeenCalledWith(
+        expect(paramsMock.getActivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
 
       it('should call activation', () => {
-        expect(activationMock).toHaveBeenCalledTimes(1);
-        expect(activationMock).toHaveBeenCalledWith(
+        expect(activationMock).toHaveBeenCalledExactlyOnceWith(
           paramsMock.context,
           valueFixture,
         );

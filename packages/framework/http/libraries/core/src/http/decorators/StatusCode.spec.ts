@@ -33,8 +33,7 @@ describe(StatusCode, () => {
     });
 
     it('should call setReflectMetadata', () => {
-      expect(setReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(setReflectMetadata).toHaveBeenCalledWith(
+      expect(setReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         controllerFixture.constructor,
         controllerMethodStatusCodeMetadataReflectKey,
         HttpStatusCode.OK,

@@ -59,8 +59,7 @@ describe(ClassValidationPipe, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           pipeMetadataFixture.targetClass.prototype,
           'design:paramtypes',
           pipeMetadataFixture.methodName,
@@ -117,8 +116,7 @@ describe(ClassValidationPipe, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           pipeMetadataFixture.targetClass.prototype,
           'design:paramtypes',
           pipeMetadataFixture.methodName,
@@ -126,13 +124,14 @@ describe(ClassValidationPipe, () => {
       });
 
       it('should call plainToInstance()', () => {
-        expect(plainToInstance).toHaveBeenCalledTimes(1);
-        expect(plainToInstance).toHaveBeenCalledWith(typeFixture, inputFixture);
+        expect(plainToInstance).toHaveBeenCalledExactlyOnceWith(
+          typeFixture,
+          inputFixture,
+        );
       });
 
       it('should call validate()', () => {
-        expect(validate).toHaveBeenCalledTimes(1);
-        expect(validate).toHaveBeenCalledWith(instanceFixture, {
+        expect(validate).toHaveBeenCalledExactlyOnceWith(instanceFixture, {
           forbidNonWhitelisted: true,
           forbidUnknownValues: true,
           skipMissingProperties: false,
@@ -182,8 +181,7 @@ describe(ClassValidationPipe, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           pipeMetadataFixture.targetClass.prototype,
           'design:paramtypes',
           pipeMetadataFixture.methodName,
@@ -191,8 +189,7 @@ describe(ClassValidationPipe, () => {
       });
 
       it('should call validate()', () => {
-        expect(validate).toHaveBeenCalledTimes(1);
-        expect(validate).toHaveBeenCalledWith(instanceFixture, {
+        expect(validate).toHaveBeenCalledExactlyOnceWith(instanceFixture, {
           forbidNonWhitelisted: true,
           forbidUnknownValues: true,
           skipMissingProperties: false,

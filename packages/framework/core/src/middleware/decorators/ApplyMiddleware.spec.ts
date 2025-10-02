@@ -39,15 +39,13 @@ describe(ApplyMiddleware, () => {
       });
 
       it('should call buildArrayMetadataWithArray()', () => {
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
+        expect(buildArrayMetadataWithArray).toHaveBeenCalledExactlyOnceWith([
           middlewareServiceIdentifierFixture,
         ]);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           classMiddlewareMetadataReflectKey,
           buildEmptyArrayMetadata,
@@ -88,15 +86,13 @@ describe(ApplyMiddleware, () => {
       });
 
       it('should call buildArrayMetadataWithArray()', () => {
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
+        expect(buildArrayMetadataWithArray).toHaveBeenCalledExactlyOnceWith([
           middlewareServiceIdentifierFixture,
         ]);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           controllerFixture.constructor,
           classMethodMiddlewareMetadataReflectKey,
           buildEmptyArrayMetadata,

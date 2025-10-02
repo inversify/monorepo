@@ -97,8 +97,7 @@ describe(injectBase, () => {
     });
 
     it('should call updateOwnReflectMetadata()', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         classMetadataReflectKey,
         getDefaultClassMetadata,
@@ -137,8 +136,7 @@ describe(injectBase, () => {
     });
 
     it('should call updateOwnReflectMetadata()', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         classMetadataReflectKey,
         getDefaultClassMetadata,
@@ -212,8 +210,7 @@ Found @inject decorator at method "doSomethingWithFoo" at class "TargetFixture"`
     });
 
     it('should call updateOwnReflectMetadata()', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         classMetadataReflectKey,
         getDefaultClassMetadata,
@@ -257,8 +254,7 @@ Found @inject decorator at method "foo" at class "TargetFixture"`,
     });
 
     it('should call handleInjectionError()', () => {
-      expect(handleInjectionError).toHaveBeenCalledTimes(1);
-      expect(handleInjectionError).toHaveBeenCalledWith(
+      expect(handleInjectionError).toHaveBeenCalledExactlyOnceWith(
         expect.any(Object),
         'foo',
         expect.any(Object),

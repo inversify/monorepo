@@ -241,8 +241,7 @@ describe(resolve, () => {
       });
 
       it('should call resolveConstantValueBinding()', () => {
-        expect(resolveConstantValueBinding).toHaveBeenCalledTimes(1);
-        expect(resolveConstantValueBinding).toHaveBeenCalledWith(
+        expect(resolveConstantValueBinding).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingFixture,
         );
@@ -316,8 +315,7 @@ describe(resolve, () => {
       });
 
       it('should call resolveConstantValueBinding()', () => {
-        expect(resolveConstantValueBinding).toHaveBeenCalledTimes(1);
-        expect(resolveConstantValueBinding).toHaveBeenCalledWith(
+        expect(resolveConstantValueBinding).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingFixture,
         );
@@ -348,8 +346,7 @@ describe(resolve, () => {
       });
 
       it('should call resolveConstantValueBinding()', () => {
-        expect(resolveConstantValueBinding).toHaveBeenCalledTimes(1);
-        expect(resolveConstantValueBinding).toHaveBeenCalledWith(
+        expect(resolveConstantValueBinding).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingFixture,
         );
@@ -423,8 +420,7 @@ describe(resolve, () => {
       });
 
       it('should call resolveDynamicValueBinding()', () => {
-        expect(resolveDynamicValueBinding).toHaveBeenCalledTimes(1);
-        expect(resolveDynamicValueBinding).toHaveBeenCalledWith(
+        expect(resolveDynamicValueBinding).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingFixture,
         );
@@ -496,8 +492,7 @@ describe(resolve, () => {
       });
 
       it('should call resolveFactoryBinding()', () => {
-        expect(resolveFactoryBinding).toHaveBeenCalledTimes(1);
-        expect(resolveFactoryBinding).toHaveBeenCalledWith(
+        expect(resolveFactoryBinding).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingFixture,
         );
@@ -574,8 +569,9 @@ describe(resolve, () => {
       });
 
       it('should call resolveInstanceBindingNode()', () => {
-        expect(resolveScopedInstanceBindingNodeMock).toHaveBeenCalledTimes(1);
-        expect(resolveScopedInstanceBindingNodeMock).toHaveBeenCalledWith(
+        expect(
+          resolveScopedInstanceBindingNodeMock,
+        ).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingNodeFixture,
         );
@@ -651,10 +647,9 @@ describe(resolve, () => {
       });
 
       it('should call resolveResolvedValueBindingNode()', () => {
-        expect(resolveScopedResolvedValueBindingNodeMock).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(resolveScopedResolvedValueBindingNodeMock).toHaveBeenCalledWith(
+        expect(
+          resolveScopedResolvedValueBindingNodeMock,
+        ).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingNodeFixture,
         );
@@ -726,8 +721,7 @@ describe(resolve, () => {
       });
 
       it('should call resolveProviderBinding()', () => {
-        expect(resolveProviderBinding).toHaveBeenCalledTimes(1);
-        expect(resolveProviderBinding).toHaveBeenCalledWith(
+        expect(resolveProviderBinding).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingFixture,
         );
@@ -796,10 +790,9 @@ describe(resolve, () => {
       });
 
       it('should call resolveServiceRedirectionBindingNode()', () => {
-        expect(resolveServiceRedirectionBindingNodeMock).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(resolveServiceRedirectionBindingNodeMock).toHaveBeenCalledWith(
+        expect(
+          resolveServiceRedirectionBindingNodeMock,
+        ).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           serviceRedirectionBindingNodeFixture,
         );
@@ -828,10 +821,9 @@ describe(resolve, () => {
       });
 
       it('should call resolveServiceRedirectionBindingNode()', () => {
-        expect(resolveServiceRedirectionBindingNodeMock).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(resolveServiceRedirectionBindingNodeMock).toHaveBeenCalledWith(
+        expect(
+          resolveServiceRedirectionBindingNodeMock,
+        ).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           serviceRedirectionBindingNodeFixture,
         );
@@ -909,10 +901,9 @@ describe(resolve, () => {
       });
 
       it('should call resolveServiceRedirectionBindingNode()', () => {
-        expect(resolveServiceRedirectionBindingNodeMock).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(resolveServiceRedirectionBindingNodeMock).toHaveBeenCalledWith(
+        expect(
+          resolveServiceRedirectionBindingNodeMock,
+        ).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           serviceRedirectionBindingNodeFixture,
         );

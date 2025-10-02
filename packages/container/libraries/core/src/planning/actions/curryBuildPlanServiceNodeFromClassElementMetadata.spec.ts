@@ -93,8 +93,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
       });
 
       it('should call buildFilteredServiceBindings()', () => {
-        expect(buildFilteredServiceBindings).toHaveBeenCalledTimes(1);
-        expect(buildFilteredServiceBindings).toHaveBeenCalledWith(
+        expect(buildFilteredServiceBindings).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           expect.any(BindingConstraintsImplementation),
           { chained: elementMetadataFixture.chained },
@@ -108,8 +107,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
           serviceIdentifier: elementMetadataFixture.value as ServiceIdentifier,
         };
 
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
+        expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           new SingleImmutableLinkedList({
             elem: {
@@ -181,8 +179,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
       });
 
       it('should call buildFilteredServiceBindings()', () => {
-        expect(buildFilteredServiceBindings).toHaveBeenCalledTimes(1);
-        expect(buildFilteredServiceBindings).toHaveBeenCalledWith(
+        expect(buildFilteredServiceBindings).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           expect.any(BindingConstraintsImplementation),
           { chained: false },
@@ -196,8 +193,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
           serviceIdentifier: elementMetadataFixture.value as ServiceIdentifier,
         };
 
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
+        expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           new SingleImmutableLinkedList({
             elem: {
@@ -232,10 +228,9 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
             previous: bindingConstraintsListFixture.last,
           };
 
-        expect(checkServiceNodeSingleInjectionBindings).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(checkServiceNodeSingleInjectionBindings).toHaveBeenCalledWith(
+        expect(
+          checkServiceNodeSingleInjectionBindings,
+        ).toHaveBeenCalledExactlyOnceWith(
           expectedServiceNode,
           elementMetadataFixture.optional,
           expectedBindingConstraintsListNode,

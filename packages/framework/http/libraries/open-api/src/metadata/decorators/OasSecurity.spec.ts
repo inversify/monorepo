@@ -68,15 +68,15 @@ describe(OasSecurity, () => {
       it('should call updateControllerOpenApiMetadataOperationArrayProperty()', () => {
         expect(
           updateControllerOpenApiMetadataOperationArrayProperty,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateControllerOpenApiMetadataOperationArrayProperty,
-        ).toHaveBeenCalledWith(contentFixture, keyFixture, 'security');
+        ).toHaveBeenCalledExactlyOnceWith(
+          contentFixture,
+          keyFixture,
+          'security',
+        );
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetTypeFixture,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,

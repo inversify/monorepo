@@ -39,8 +39,9 @@ describe(toSchemaInSchemaMetadataContext, () => {
     });
 
     it('should call toSchema() with a callback function', () => {
-      expect(toSchemaMock).toHaveBeenCalledTimes(1);
-      expect(toSchemaMock).toHaveBeenCalledWith(expect.any(Function));
+      expect(toSchemaMock).toHaveBeenCalledExactlyOnceWith(
+        expect.any(Function),
+      );
     });
 
     it('should return the result from toSchema()', () => {

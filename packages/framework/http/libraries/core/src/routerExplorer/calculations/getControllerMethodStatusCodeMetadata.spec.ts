@@ -30,8 +30,7 @@ describe(getControllerMethodStatusCodeMetadata, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         controllerFixture,
         controllerMethodStatusCodeMetadataReflectKey,
         controllerMethodKeyFixture,

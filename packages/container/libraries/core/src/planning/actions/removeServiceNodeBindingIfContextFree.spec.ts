@@ -159,8 +159,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       });
 
       it('should call binding.isSatisfiedBy()', () => {
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
           new BindingConstraintsImplementation(
             bindingConstraintsListFixture.last,
           ),
@@ -215,8 +214,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       });
 
       it('should call binding.isSatisfiedBy()', () => {
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
           new BindingConstraintsImplementation(
             bindingConstraintsListFixture.last,
           ),
@@ -307,8 +305,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       });
 
       it('should call binding.isSatisfiedBy()', () => {
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
           new BindingConstraintsImplementation(
             bindingConstraintsListFixture.last,
           ),
@@ -402,8 +399,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       });
 
       it('should call binding.isSatisfiedBy()', () => {
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
           new BindingConstraintsImplementation(
             bindingConstraintsListFixture.last,
           ),
@@ -501,8 +497,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       });
 
       it('should call binding.isSatisfiedBy()', () => {
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
           new BindingConstraintsImplementation(
             bindingConstraintsListFixture.last,
           ),
@@ -598,8 +593,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       });
 
       it('should call binding.isSatisfiedBy()', () => {
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
           new BindingConstraintsImplementation(
             bindingConstraintsListFixture.last,
           ),

@@ -65,13 +65,11 @@ describe(getPluginDisposeBinding, () => {
     });
 
     it('should call getPluginDisposeBindingMap', () => {
-      expect(getPluginDisposeBindingMap).toHaveBeenCalledTimes(1);
-      expect(getPluginDisposeBindingMap).toHaveBeenCalledWith();
+      expect(getPluginDisposeBindingMap).toHaveBeenCalledExactlyOnceWith();
     });
 
     it('should call map.get with the binding', () => {
-      expect(mapMock.get).toHaveBeenCalledTimes(1);
-      expect(mapMock.get).toHaveBeenCalledWith(bindingFixture);
+      expect(mapMock.get).toHaveBeenCalledExactlyOnceWith(bindingFixture);
     });
 
     it('should return BindingDisposeMetadata', () => {

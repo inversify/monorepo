@@ -153,16 +153,14 @@ describe(resolveSingletonScopedBinding, () => {
       });
 
       it('should call resolve()', () => {
-        expect(resolveMock).toHaveBeenCalledTimes(1);
-        expect(resolveMock).toHaveBeenCalledWith(
+        expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingFixture,
         );
       });
 
       it('should call resolveBindingActivations()', () => {
-        expect(resolveBindingActivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingActivations).toHaveBeenCalledWith(
+        expect(resolveBindingActivations).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingFixture,
           resolveResult,
@@ -170,8 +168,7 @@ describe(resolveSingletonScopedBinding, () => {
       });
 
       it('should call cacheResolvedValue()', () => {
-        expect(cacheResolvedValue).toHaveBeenCalledTimes(1);
-        expect(cacheResolvedValue).toHaveBeenCalledWith(
+        expect(cacheResolvedValue).toHaveBeenCalledExactlyOnceWith(
           bindingFixture,
           activatedResolveResult,
         );

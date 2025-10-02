@@ -42,15 +42,13 @@ describe(resolveServiceDeactivations, () => {
     });
 
     it('should call params.getBindings()', () => {
-      expect(paramsMock.getBindings).toHaveBeenCalledTimes(1);
-      expect(paramsMock.getBindings).toHaveBeenCalledWith(
+      expect(paramsMock.getBindings).toHaveBeenCalledExactlyOnceWith(
         serviceIdentifierFixture,
       );
     });
 
     it('should call resolveBindingsDeactivations()', () => {
-      expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
-      expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
+      expect(resolveBindingsDeactivations).toHaveBeenCalledExactlyOnceWith(
         paramsMock,
         undefined,
       );

@@ -38,15 +38,13 @@ describe(injectable, () => {
       it('should call updateClassMetadataWithTypescriptParameterTypes()', () => {
         expect(
           updateClassMetadataWithTypescriptParameterTypes,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateClassMetadataWithTypescriptParameterTypes,
-        ).toHaveBeenCalledWith(targetFixture);
+        ).toHaveBeenCalledExactlyOnceWith(targetFixture);
       });
 
       it('should call setIsInjectableFlag()', () => {
-        expect(setIsInjectableFlag).toHaveBeenCalledTimes(1);
-        expect(setIsInjectableFlag).toHaveBeenCalledWith(targetFixture);
+        expect(setIsInjectableFlag).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+        );
       });
 
       it('should not call updateOwnReflectMetadata()', () => {
@@ -80,22 +78,17 @@ describe(injectable, () => {
       });
 
       it('should call setIsInjectableFlag()', () => {
-        expect(setIsInjectableFlag).toHaveBeenCalledTimes(1);
-        expect(setIsInjectableFlag).toHaveBeenCalledWith(Foo);
+        expect(setIsInjectableFlag).toHaveBeenCalledExactlyOnceWith(Foo);
       });
 
       it('should call updateClassMetadataWithTypescriptParameterTypes()', () => {
         expect(
           updateClassMetadataWithTypescriptParameterTypes,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateClassMetadataWithTypescriptParameterTypes,
-        ).toHaveBeenCalledWith(Foo);
+        ).toHaveBeenCalledExactlyOnceWith(Foo);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           Foo,
           classMetadataReflectKey,
           getDefaultClassMetadata,

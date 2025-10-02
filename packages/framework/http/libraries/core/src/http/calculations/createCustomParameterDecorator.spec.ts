@@ -37,8 +37,7 @@ describe(createCustomParameterDecorator, () => {
     });
 
     it('should call requestParamFactory', () => {
-      expect(buildRouteParameterDecorator).toHaveBeenCalledTimes(1);
-      expect(buildRouteParameterDecorator).toHaveBeenCalledWith(
+      expect(buildRouteParameterDecorator).toHaveBeenCalledExactlyOnceWith(
         RequestMethodParameterType.Custom,
         parameterPipeListFixture,
         undefined,

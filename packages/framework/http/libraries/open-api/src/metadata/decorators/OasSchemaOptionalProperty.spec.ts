@@ -52,13 +52,13 @@ describe(OasSchemaOptionalProperty, () => {
     });
 
     it('should call BaseOasSchemaProperty()', () => {
-      expect(BaseOasSchemaProperty).toHaveBeenCalledTimes(1);
-      expect(BaseOasSchemaProperty).toHaveBeenCalledWith(false);
+      expect(BaseOasSchemaProperty).toHaveBeenCalledExactlyOnceWith(false);
     });
 
     it('should call the built property decorator function', () => {
-      expect(buildPropertyDecoratorMock).toHaveBeenCalledTimes(1);
-      expect(buildPropertyDecoratorMock).toHaveBeenCalledWith(schemaFixture);
+      expect(buildPropertyDecoratorMock).toHaveBeenCalledExactlyOnceWith(
+        schemaFixture,
+      );
     });
 
     it('should return a property decorator', () => {

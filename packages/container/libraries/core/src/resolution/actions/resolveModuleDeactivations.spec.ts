@@ -37,15 +37,13 @@ describe(resolveModuleDeactivations, () => {
     });
 
     it('should call params.getBindingsFromModule()', () => {
-      expect(paramsMock.getBindingsFromModule).toHaveBeenCalledTimes(1);
-      expect(paramsMock.getBindingsFromModule).toHaveBeenCalledWith(
+      expect(paramsMock.getBindingsFromModule).toHaveBeenCalledExactlyOnceWith(
         moduleIdFixture,
       );
     });
 
     it('should call resolveBindingsDeactivations()', () => {
-      expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
-      expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
+      expect(resolveBindingsDeactivations).toHaveBeenCalledExactlyOnceWith(
         paramsMock,
         undefined,
       );

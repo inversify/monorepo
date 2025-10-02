@@ -183,8 +183,7 @@ describe(resolvePostConstruct, () => {
       });
 
       it('should call post construct method', () => {
-        expect(postConstructMethodMock).toHaveBeenCalledTimes(1);
-        expect(postConstructMethodMock).toHaveBeenCalledWith();
+        expect(postConstructMethodMock).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return instance', () => {
@@ -220,8 +219,7 @@ describe(resolvePostConstruct, () => {
       });
 
       it('should call post construct method', () => {
-        expect(postConstructMethodMock).toHaveBeenCalledTimes(1);
-        expect(postConstructMethodMock).toHaveBeenCalledWith();
+        expect(postConstructMethodMock).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should throw an InversifyCoreError', () => {
@@ -255,8 +253,7 @@ describe(resolvePostConstruct, () => {
       });
 
       it('should call post construct method', () => {
-        expect(postConstructMethodMock).toHaveBeenCalledTimes(1);
-        expect(postConstructMethodMock).toHaveBeenCalledWith();
+        expect(postConstructMethodMock).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return instance', () => {
@@ -294,8 +291,7 @@ describe(resolvePostConstruct, () => {
       });
 
       it('should call post construct method', () => {
-        expect(postConstructMethodMock).toHaveBeenCalledTimes(1);
-        expect(postConstructMethodMock).toHaveBeenCalledWith();
+        expect(postConstructMethodMock).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should throw an InversifyCoreError', () => {

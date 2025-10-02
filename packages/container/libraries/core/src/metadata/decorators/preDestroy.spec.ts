@@ -59,15 +59,13 @@ describe(preDestroy, () => {
     });
 
     it('should call updateMaybeClassMetadataPreDestroy()', () => {
-      expect(updateMaybeClassMetadataPreDestroy).toHaveBeenCalledTimes(1);
-      expect(updateMaybeClassMetadataPreDestroy).toHaveBeenCalledWith(
-        propertyKeyFixture,
-      );
+      expect(
+        updateMaybeClassMetadataPreDestroy,
+      ).toHaveBeenCalledExactlyOnceWith(propertyKeyFixture);
     });
 
     it('should call updateOwnReflectMetadata()', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture.constructor,
         classMetadataReflectKey,
         getDefaultClassMetadata,
@@ -114,15 +112,13 @@ describe(preDestroy, () => {
     });
 
     it('should call updateMaybeClassMetadataPreDestroy()', () => {
-      expect(updateMaybeClassMetadataPreDestroy).toHaveBeenCalledTimes(1);
-      expect(updateMaybeClassMetadataPreDestroy).toHaveBeenCalledWith(
-        propertyKeyFixture,
-      );
+      expect(
+        updateMaybeClassMetadataPreDestroy,
+      ).toHaveBeenCalledExactlyOnceWith(propertyKeyFixture);
     });
 
     it('should call updateOwnReflectMetadata()', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture.constructor,
         classMetadataReflectKey,
         getDefaultClassMetadata,
@@ -131,8 +127,7 @@ describe(preDestroy, () => {
     });
 
     it('should call handleInjectionError', () => {
-      expect(handleInjectionError).toHaveBeenCalledTimes(1);
-      expect(handleInjectionError).toHaveBeenCalledWith(
+      expect(handleInjectionError).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         propertyKeyFixture,
         undefined,

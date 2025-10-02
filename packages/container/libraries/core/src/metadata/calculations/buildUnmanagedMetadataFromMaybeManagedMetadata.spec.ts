@@ -66,12 +66,9 @@ describe(buildUnmanagedMetadataFromMaybeManagedMetadata, () => {
         });
 
         it('should call assertMetadataFromTypescriptIfManaged()', () => {
-          expect(assertMetadataFromTypescriptIfManaged).toHaveBeenCalledTimes(
-            1,
-          );
-          expect(assertMetadataFromTypescriptIfManaged).toHaveBeenCalledWith(
-            maybeManagedClassElementMetadata,
-          );
+          expect(
+            assertMetadataFromTypescriptIfManaged,
+          ).toHaveBeenCalledExactlyOnceWith(maybeManagedClassElementMetadata);
         });
 
         it('should throw an InversifyCoreError', () => {
@@ -126,15 +123,13 @@ describe(buildUnmanagedMetadataFromMaybeManagedMetadata, () => {
       });
 
       it('should call assertMetadataFromTypescriptIfManaged()', () => {
-        expect(assertMetadataFromTypescriptIfManaged).toHaveBeenCalledTimes(1);
-        expect(assertMetadataFromTypescriptIfManaged).toHaveBeenCalledWith(
-          maybeManagedClassElementMetadata,
-        );
+        expect(
+          assertMetadataFromTypescriptIfManaged,
+        ).toHaveBeenCalledExactlyOnceWith(maybeManagedClassElementMetadata);
       });
 
       it('should call buildDefaultUnmanagedMetadata()', () => {
-        expect(buildDefaultUnmanagedMetadata).toHaveBeenCalledTimes(1);
-        expect(buildDefaultUnmanagedMetadata).toHaveBeenCalledWith();
+        expect(buildDefaultUnmanagedMetadata).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return UnmanagedClassElementMetadata', () => {

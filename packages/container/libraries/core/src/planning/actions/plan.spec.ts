@@ -92,15 +92,13 @@ describe(plan, () => {
     });
 
     it('should call buildGetPlanOptionsFromPlanParams()', () => {
-      expect(buildGetPlanOptionsFromPlanParams).toHaveBeenCalledTimes(1);
-      expect(buildGetPlanOptionsFromPlanParams).toHaveBeenCalledWith(
+      expect(buildGetPlanOptionsFromPlanParams).toHaveBeenCalledExactlyOnceWith(
         paramsFixture,
       );
     });
 
     it('should call params.operations.getPlan()', () => {
-      expect(paramsFixture.operations.getPlan).toHaveBeenCalledTimes(1);
-      expect(paramsFixture.operations.getPlan).toHaveBeenCalledWith(
+      expect(paramsFixture.operations.getPlan).toHaveBeenCalledExactlyOnceWith(
         getPlanOptionsFixture,
       );
     });
@@ -141,22 +139,21 @@ describe(plan, () => {
     });
 
     it('should call buildGetPlanOptionsFromPlanParams()', () => {
-      expect(buildGetPlanOptionsFromPlanParams).toHaveBeenCalledTimes(1);
-      expect(buildGetPlanOptionsFromPlanParams).toHaveBeenCalledWith(
+      expect(buildGetPlanOptionsFromPlanParams).toHaveBeenCalledExactlyOnceWith(
         paramsFixture,
       );
     });
 
     it('should call params.operations.getPlan()', () => {
-      expect(paramsFixture.operations.getPlan).toHaveBeenCalledTimes(1);
-      expect(paramsFixture.operations.getPlan).toHaveBeenCalledWith(
+      expect(paramsFixture.operations.getPlan).toHaveBeenCalledExactlyOnceWith(
         getPlanOptionsFixture,
       );
     });
 
     it('should call buildPlanServiceNode()', () => {
-      expect(buildPlanServiceNodeMock).toHaveBeenCalledTimes(1);
-      expect(buildPlanServiceNodeMock).toHaveBeenCalledWith(paramsFixture);
+      expect(buildPlanServiceNodeMock).toHaveBeenCalledExactlyOnceWith(
+        paramsFixture,
+      );
     });
 
     it('should return expected value', () => {

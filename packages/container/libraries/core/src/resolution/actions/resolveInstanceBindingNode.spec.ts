@@ -76,22 +76,15 @@ describe(resolveInstanceBindingNode, () => {
     });
 
     it('should call resolveInstanceBindingConstructorParams()', () => {
-      expect(resolveInstanceBindingConstructorParamsMock).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(resolveInstanceBindingConstructorParamsMock).toHaveBeenCalledWith(
-        paramsFixture,
-        nodeFixture,
-      );
+      expect(
+        resolveInstanceBindingConstructorParamsMock,
+      ).toHaveBeenCalledExactlyOnceWith(paramsFixture, nodeFixture);
     });
 
     it('should call resolveInstanceBindingNodeFromConstructorParams()', () => {
       expect(
         resolveInstanceBindingNodeFromConstructorParamsMock,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        resolveInstanceBindingNodeFromConstructorParamsMock,
-      ).toHaveBeenCalledWith(
+      ).toHaveBeenCalledExactlyOnceWith(
         constructorResolvedValues,
         paramsFixture,
         nodeFixture,
@@ -133,22 +126,15 @@ describe(resolveInstanceBindingNode, () => {
     });
 
     it('should call resolveInstanceBindingConstructorParams()', () => {
-      expect(resolveInstanceBindingConstructorParamsMock).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(resolveInstanceBindingConstructorParamsMock).toHaveBeenCalledWith(
-        paramsFixture,
-        nodeFixture,
-      );
+      expect(
+        resolveInstanceBindingConstructorParamsMock,
+      ).toHaveBeenCalledExactlyOnceWith(paramsFixture, nodeFixture);
     });
 
     it('should call resolveInstanceBindingNodeAsyncFromConstructorParams()', () => {
       expect(
         resolveInstanceBindingNodeAsyncFromConstructorParamsMock,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        resolveInstanceBindingNodeAsyncFromConstructorParamsMock,
-      ).toHaveBeenCalledWith(
+      ).toHaveBeenCalledExactlyOnceWith(
         Promise.resolve(constructorResolvedValues),
         paramsFixture,
         nodeFixture,

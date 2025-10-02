@@ -108,15 +108,13 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
     });
 
     it('should call new node.binding.implementationType()', () => {
-      expect(nodeMock.binding.implementationType).toHaveBeenCalledTimes(1);
-      expect(nodeMock.binding.implementationType).toHaveBeenCalledWith(
-        ...constructorValuesFixture,
-      );
+      expect(
+        nodeMock.binding.implementationType,
+      ).toHaveBeenCalledExactlyOnceWith(...constructorValuesFixture);
     });
 
     it('should call setInstanceProperties()', () => {
-      expect(setInstancePropertiesMock).toHaveBeenCalledTimes(1);
-      expect(setInstancePropertiesMock).toHaveBeenCalledWith(
+      expect(setInstancePropertiesMock).toHaveBeenCalledExactlyOnceWith(
         paramsFixture,
         expect.any(Object),
         nodeMock,
@@ -124,8 +122,7 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
     });
 
     it('should call resolvePostConstructor()', () => {
-      expect(resolvePostConstruct).toHaveBeenCalledTimes(1);
-      expect(resolvePostConstruct).toHaveBeenCalledWith(
+      expect(resolvePostConstruct).toHaveBeenCalledExactlyOnceWith(
         expect.any(Object),
         nodeMock.binding,
         'post-construct-method-name',
@@ -173,15 +170,13 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
     });
 
     it('should call new node.binding.implementationType()', () => {
-      expect(nodeMock.binding.implementationType).toHaveBeenCalledTimes(1);
-      expect(nodeMock.binding.implementationType).toHaveBeenCalledWith(
-        ...constructorValuesFixture,
-      );
+      expect(
+        nodeMock.binding.implementationType,
+      ).toHaveBeenCalledExactlyOnceWith(...constructorValuesFixture);
     });
 
     it('should call setInstanceProperties()', () => {
-      expect(setInstancePropertiesMock).toHaveBeenCalledTimes(1);
-      expect(setInstancePropertiesMock).toHaveBeenCalledWith(
+      expect(setInstancePropertiesMock).toHaveBeenCalledExactlyOnceWith(
         paramsFixture,
         expect.any(Object),
         nodeMock,
@@ -189,8 +184,7 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
     });
 
     it('should call resolvePostConstructor()', () => {
-      expect(resolvePostConstruct).toHaveBeenCalledTimes(1);
-      expect(resolvePostConstruct).toHaveBeenCalledWith(
+      expect(resolvePostConstruct).toHaveBeenCalledExactlyOnceWith(
         expect.any(Object),
         nodeMock.binding,
         'post-construct-method-name',

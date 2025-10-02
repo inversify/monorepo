@@ -35,8 +35,9 @@ describe(setErrorFilterToErrorFilterMap, () => {
     });
 
     it('should call getCatchErrorMetadata()', () => {
-      expect(getCatchErrorMetadata).toHaveBeenCalledTimes(1);
-      expect(getCatchErrorMetadata).toHaveBeenCalledWith(errorFilterFixture);
+      expect(getCatchErrorMetadata).toHaveBeenCalledExactlyOnceWith(
+        errorFilterFixture,
+      );
     });
 
     it('should set error filters', () => {

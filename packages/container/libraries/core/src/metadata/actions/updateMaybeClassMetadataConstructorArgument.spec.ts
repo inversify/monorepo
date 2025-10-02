@@ -62,8 +62,7 @@ describe(updateMaybeClassMetadataConstructorArgument, () => {
     });
 
     it('should call updateMetadata()', () => {
-      expect(updateMetadataMock).toHaveBeenCalledTimes(1);
-      expect(updateMetadataMock).toHaveBeenCalledWith(undefined);
+      expect(updateMetadataMock).toHaveBeenCalledExactlyOnceWith(undefined);
     });
 
     it('should return MaybeClassMetadata', () => {

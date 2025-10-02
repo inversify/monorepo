@@ -74,8 +74,7 @@ describe(LazyPlanServiceNode, () => {
         });
 
         it('should call buildPlanServiceNode()', () => {
-          expect(buildPlanServiceNodeMock).toHaveBeenCalledTimes(1);
-          expect(buildPlanServiceNodeMock).toHaveBeenCalledWith();
+          expect(buildPlanServiceNodeMock).toHaveBeenCalledExactlyOnceWith();
         });
 
         it('should return expected value', () => {
@@ -157,8 +156,7 @@ describe(LazyPlanServiceNode, () => {
         });
 
         it('should call buildPlanServiceNode()', () => {
-          expect(buildPlanServiceNodeMock).toHaveBeenCalledTimes(1);
-          expect(buildPlanServiceNodeMock).toHaveBeenCalledWith();
+          expect(buildPlanServiceNodeMock).toHaveBeenCalledExactlyOnceWith();
         });
 
         it('should return expected value', () => {

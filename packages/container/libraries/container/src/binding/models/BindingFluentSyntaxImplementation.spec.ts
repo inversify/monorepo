@@ -185,8 +185,9 @@ describe(BindInFluentSyntaxImplementation, () => {
         });
 
         it('should set binding scope', () => {
-          expect(bindingMockSetScopeMock).toHaveBeenCalledTimes(1);
-          expect(bindingMockSetScopeMock).toHaveBeenCalledWith(expectedScope);
+          expect(bindingMockSetScopeMock).toHaveBeenCalledExactlyOnceWith(
+            expectedScope,
+          );
         });
 
         it('should return BindWhenOnFluentSyntax', () => {
@@ -215,8 +216,9 @@ describe(BindInFluentSyntaxImplementation, () => {
     });
 
     it('should call buildBindingIdentifier', () => {
-      expect(buildBindingIdentifier).toHaveBeenCalledTimes(1);
-      expect(buildBindingIdentifier).toHaveBeenCalledWith(bindingMock);
+      expect(buildBindingIdentifier).toHaveBeenCalledExactlyOnceWith(
+        bindingMock,
+      );
     });
 
     it('should return the mocked identifier', () => {
@@ -406,13 +408,11 @@ describe(BindToFluentSyntaxImplementation, () => {
         });
 
         it('should call getBindingId', () => {
-          expect(getBindingId).toHaveBeenCalledTimes(1);
-          expect(getBindingId).toHaveBeenCalledWith();
+          expect(getBindingId).toHaveBeenCalledExactlyOnceWith();
         });
 
         it('should call callback', () => {
-          expect(callbackMock).toHaveBeenCalledTimes(1);
-          expect(callbackMock).toHaveBeenCalledWith(expectedBinding);
+          expect(callbackMock).toHaveBeenCalledExactlyOnceWith(expectedBinding);
         });
 
         it('should return expected result', () => {
@@ -463,13 +463,11 @@ describe(BindToFluentSyntaxImplementation, () => {
         });
 
         it('should call getBindingId', () => {
-          expect(getBindingId).toHaveBeenCalledTimes(1);
-          expect(getBindingId).toHaveBeenCalledWith();
+          expect(getBindingId).toHaveBeenCalledExactlyOnceWith();
         });
 
         it('should call callback', () => {
-          expect(callbackMock).toHaveBeenCalledTimes(1);
-          expect(callbackMock).toHaveBeenCalledWith(expectedBinding);
+          expect(callbackMock).toHaveBeenCalledExactlyOnceWith(expectedBinding);
         });
 
         it('should return expected result', () => {
@@ -534,20 +532,17 @@ describe(BindToFluentSyntaxImplementation, () => {
         });
 
         it('should call isResolvedValueMetadataInjectOptions()', () => {
-          expect(isResolvedValueMetadataInjectOptions).toHaveBeenCalledTimes(1);
-          expect(isResolvedValueMetadataInjectOptions).toHaveBeenCalledWith(
-            injectOptions,
-          );
+          expect(
+            isResolvedValueMetadataInjectOptions,
+          ).toHaveBeenCalledExactlyOnceWith(injectOptions);
         });
 
         it('should call getBindingId', () => {
-          expect(getBindingId).toHaveBeenCalledTimes(1);
-          expect(getBindingId).toHaveBeenCalledWith();
+          expect(getBindingId).toHaveBeenCalledExactlyOnceWith();
         });
 
         it('should call callback', () => {
-          expect(callbackMock).toHaveBeenCalledTimes(1);
-          expect(callbackMock).toHaveBeenCalledWith(expectedBinding);
+          expect(callbackMock).toHaveBeenCalledExactlyOnceWith(expectedBinding);
         });
 
         it('should return expected result', () => {
@@ -612,20 +607,17 @@ describe(BindToFluentSyntaxImplementation, () => {
         });
 
         it('should call isResolvedValueMetadataInjectOptions()', () => {
-          expect(isResolvedValueMetadataInjectOptions).toHaveBeenCalledTimes(1);
-          expect(isResolvedValueMetadataInjectOptions).toHaveBeenCalledWith(
-            injectOptions,
-          );
+          expect(
+            isResolvedValueMetadataInjectOptions,
+          ).toHaveBeenCalledExactlyOnceWith(injectOptions);
         });
 
         it('should call getBindingId', () => {
-          expect(getBindingId).toHaveBeenCalledTimes(1);
-          expect(getBindingId).toHaveBeenCalledWith();
+          expect(getBindingId).toHaveBeenCalledExactlyOnceWith();
         });
 
         it('should call callback', () => {
-          expect(callbackMock).toHaveBeenCalledTimes(1);
-          expect(callbackMock).toHaveBeenCalledWith(expectedBinding);
+          expect(callbackMock).toHaveBeenCalledExactlyOnceWith(expectedBinding);
         });
 
         it('should return expected result', () => {
@@ -704,20 +696,17 @@ describe(BindToFluentSyntaxImplementation, () => {
         });
 
         it('should call isResolvedValueMetadataInjectOptions()', () => {
-          expect(isResolvedValueMetadataInjectOptions).toHaveBeenCalledTimes(1);
-          expect(isResolvedValueMetadataInjectOptions).toHaveBeenCalledWith(
-            injectOptions,
-          );
+          expect(
+            isResolvedValueMetadataInjectOptions,
+          ).toHaveBeenCalledExactlyOnceWith(injectOptions);
         });
 
         it('should call getBindingId', () => {
-          expect(getBindingId).toHaveBeenCalledTimes(1);
-          expect(getBindingId).toHaveBeenCalledWith();
+          expect(getBindingId).toHaveBeenCalledExactlyOnceWith();
         });
 
         it('should call callback', () => {
-          expect(callbackMock).toHaveBeenCalledTimes(1);
-          expect(callbackMock).toHaveBeenCalledWith(expectedBinding);
+          expect(callbackMock).toHaveBeenCalledExactlyOnceWith(expectedBinding);
         });
 
         it('should return expected result', () => {
@@ -819,8 +808,7 @@ describe(BindToFluentSyntaxImplementation, () => {
         });
 
         it('should call getClassMetadata()', () => {
-          expect(getClassMetadata).toHaveBeenCalledTimes(1);
-          expect(getClassMetadata).toHaveBeenCalledWith(
+          expect(getClassMetadata).toHaveBeenCalledExactlyOnceWith(
             serviceIdentifierFixture,
           );
         });
@@ -844,8 +832,7 @@ describe(BindToFluentSyntaxImplementation, () => {
             type: bindingTypeValues.Instance,
           };
 
-          expect(callbackMock).toHaveBeenCalledTimes(1);
-          expect(callbackMock).toHaveBeenCalledWith(expectedBinding);
+          expect(callbackMock).toHaveBeenCalledExactlyOnceWith(expectedBinding);
         });
 
         it('should return expected result', () => {
@@ -873,8 +860,7 @@ describe(BindToFluentSyntaxImplementation, () => {
         });
 
         it('should call getClassMetadata()', () => {
-          expect(getClassMetadata).toHaveBeenCalledTimes(1);
-          expect(getClassMetadata).toHaveBeenCalledWith(
+          expect(getClassMetadata).toHaveBeenCalledExactlyOnceWith(
             serviceIdentifierFixture,
           );
         });
@@ -898,8 +884,7 @@ describe(BindToFluentSyntaxImplementation, () => {
             type: bindingTypeValues.Instance,
           };
 
-          expect(callbackMock).toHaveBeenCalledTimes(1);
-          expect(callbackMock).toHaveBeenCalledWith(expectedBinding);
+          expect(callbackMock).toHaveBeenCalledExactlyOnceWith(expectedBinding);
         });
 
         it('should return expected result', () => {
@@ -938,8 +923,7 @@ describe(BindToFluentSyntaxImplementation, () => {
           type: bindingTypeValues.ServiceRedirection,
         };
 
-        expect(callbackMock).toHaveBeenCalledTimes(1);
-        expect(callbackMock).toHaveBeenCalledWith(expectedBinding);
+        expect(callbackMock).toHaveBeenCalledExactlyOnceWith(expectedBinding);
       });
 
       it('should return undefined', () => {
@@ -1011,8 +995,7 @@ describe(BindOnFluentSyntaxImplementation, () => {
       });
 
       it('should set binding activation', () => {
-        expect(bindingActivationSetterMock).toHaveBeenCalledTimes(1);
-        expect(bindingActivationSetterMock).toHaveBeenCalledWith(
+        expect(bindingActivationSetterMock).toHaveBeenCalledExactlyOnceWith(
           activationFixture,
         );
       });
@@ -1091,8 +1074,7 @@ describe(BindOnFluentSyntaxImplementation, () => {
         });
 
         it('should call stringifyServiceIdentifier()', () => {
-          expect(stringifyServiceIdentifier).toHaveBeenCalledTimes(1);
-          expect(stringifyServiceIdentifier).toHaveBeenCalledWith(
+          expect(stringifyServiceIdentifier).toHaveBeenCalledExactlyOnceWith(
             bindingFixture.serviceIdentifier,
           );
         });
@@ -1169,8 +1151,7 @@ describe(BindOnFluentSyntaxImplementation, () => {
         });
 
         it('should set binding deactivation', () => {
-          expect(bindingDeactivationSetterMock).toHaveBeenCalledTimes(1);
-          expect(bindingDeactivationSetterMock).toHaveBeenCalledWith(
+          expect(bindingDeactivationSetterMock).toHaveBeenCalledExactlyOnceWith(
             deactivationFixture,
           );
         });
@@ -1201,8 +1182,9 @@ describe(BindOnFluentSyntaxImplementation, () => {
     });
 
     it('should call buildBindingIdentifier', () => {
-      expect(buildBindingIdentifier).toHaveBeenCalledTimes(1);
-      expect(buildBindingIdentifier).toHaveBeenCalledWith(bindingFixture);
+      expect(buildBindingIdentifier).toHaveBeenCalledExactlyOnceWith(
+        bindingFixture,
+      );
     });
 
     it('should return the mocked identifier', () => {
@@ -1265,8 +1247,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should set constraint', () => {
-      expect(isSatisfiedBySetterMock).toHaveBeenCalledTimes(1);
-      expect(isSatisfiedBySetterMock).toHaveBeenCalledWith(constraintFixture);
+      expect(isSatisfiedBySetterMock).toHaveBeenCalledExactlyOnceWith(
+        constraintFixture,
+      );
     });
 
     it('should return expected result', () => {
@@ -1291,8 +1274,7 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isAnyAncestorBindingConstraints', () => {
-      expect(isAnyAncestorBindingConstraints).toHaveBeenCalledTimes(1);
-      expect(isAnyAncestorBindingConstraints).toHaveBeenCalledWith(
+      expect(isAnyAncestorBindingConstraints).toHaveBeenCalledExactlyOnceWith(
         constraintFixture,
       );
     });
@@ -1321,10 +1303,7 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     it('should call isAnyAncestorBindingConstraintsWithServiceId', () => {
       expect(
         isAnyAncestorBindingConstraintsWithServiceId,
-      ).toHaveBeenCalledTimes(1);
-      expect(isAnyAncestorBindingConstraintsWithServiceId).toHaveBeenCalledWith(
-        serviceIdFixture,
-      );
+      ).toHaveBeenCalledExactlyOnceWith(serviceIdFixture);
     });
 
     it('should return expected result', () => {
@@ -1349,10 +1328,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isAnyAncestorBindingConstraintsWithName', () => {
-      expect(isAnyAncestorBindingConstraintsWithName).toHaveBeenCalledTimes(1);
-      expect(isAnyAncestorBindingConstraintsWithName).toHaveBeenCalledWith(
-        nameFixture,
-      );
+      expect(
+        isAnyAncestorBindingConstraintsWithName,
+      ).toHaveBeenCalledExactlyOnceWith(nameFixture);
     });
 
     it('should return expected result', () => {
@@ -1381,11 +1359,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isAnyAncestorBindingConstraintsWithTag', () => {
-      expect(isAnyAncestorBindingConstraintsWithTag).toHaveBeenCalledTimes(1);
-      expect(isAnyAncestorBindingConstraintsWithTag).toHaveBeenCalledWith(
-        tagFixture,
-        tagValueFixture,
-      );
+      expect(
+        isAnyAncestorBindingConstraintsWithTag,
+      ).toHaveBeenCalledExactlyOnceWith(tagFixture, tagValueFixture);
     });
 
     it('should return expected result', () => {
@@ -1405,8 +1381,7 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should set constraint', () => {
-      expect(isSatisfiedBySetterMock).toHaveBeenCalledTimes(1);
-      expect(isSatisfiedBySetterMock).toHaveBeenCalledWith(
+      expect(isSatisfiedBySetterMock).toHaveBeenCalledExactlyOnceWith(
         isBindingConstraintsWithNoNameNorTags,
       );
     });
@@ -1432,8 +1407,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isBindingConstraintsWithName', () => {
-      expect(isBindingConstraintsWithName).toHaveBeenCalledTimes(1);
-      expect(isBindingConstraintsWithName).toHaveBeenCalledWith(nameFixture);
+      expect(isBindingConstraintsWithName).toHaveBeenCalledExactlyOnceWith(
+        nameFixture,
+      );
     });
 
     it('should return expected result', () => {
@@ -1457,8 +1433,7 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isParentBindingConstraints', () => {
-      expect(isParentBindingConstraints).toHaveBeenCalledTimes(1);
-      expect(isParentBindingConstraints).toHaveBeenCalledWith(
+      expect(isParentBindingConstraints).toHaveBeenCalledExactlyOnceWith(
         constraintFixture,
       );
     });
@@ -1485,10 +1460,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isParentBindingConstraintsWithServiceId', () => {
-      expect(isParentBindingConstraintsWithServiceId).toHaveBeenCalledTimes(1);
-      expect(isParentBindingConstraintsWithServiceId).toHaveBeenCalledWith(
-        serviceIdFixture,
-      );
+      expect(
+        isParentBindingConstraintsWithServiceId,
+      ).toHaveBeenCalledExactlyOnceWith(serviceIdFixture);
     });
 
     it('should return expected result', () => {
@@ -1512,10 +1486,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isParentBindingConstraintsWithName', () => {
-      expect(isParentBindingConstraintsWithName).toHaveBeenCalledTimes(1);
-      expect(isParentBindingConstraintsWithName).toHaveBeenCalledWith(
-        nameFixture,
-      );
+      expect(
+        isParentBindingConstraintsWithName,
+      ).toHaveBeenCalledExactlyOnceWith(nameFixture);
     });
 
     it('should return expected result', () => {
@@ -1544,8 +1517,7 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isParentBindingConstraintsWithTag', () => {
-      expect(isParentBindingConstraintsWithTag).toHaveBeenCalledTimes(1);
-      expect(isParentBindingConstraintsWithTag).toHaveBeenCalledWith(
+      expect(isParentBindingConstraintsWithTag).toHaveBeenCalledExactlyOnceWith(
         tagFixture,
         tagValueFixture,
       );
@@ -1577,8 +1549,7 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isBindingConstraintsWithTag', () => {
-      expect(isBindingConstraintsWithTag).toHaveBeenCalledTimes(1);
-      expect(isBindingConstraintsWithTag).toHaveBeenCalledWith(
+      expect(isBindingConstraintsWithTag).toHaveBeenCalledExactlyOnceWith(
         tagFixture,
         tagValueFixture,
       );
@@ -1606,12 +1577,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isNotParentBindingConstraintsWithServiceId', () => {
-      expect(isNotParentBindingConstraintsWithServiceId).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(isNotParentBindingConstraintsWithServiceId).toHaveBeenCalledWith(
-        serviceIdFixture,
-      );
+      expect(
+        isNotParentBindingConstraintsWithServiceId,
+      ).toHaveBeenCalledExactlyOnceWith(serviceIdFixture);
     });
 
     it('should return expected result', () => {
@@ -1636,10 +1604,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isNotParentBindingConstraintsWithName', () => {
-      expect(isNotParentBindingConstraintsWithName).toHaveBeenCalledTimes(1);
-      expect(isNotParentBindingConstraintsWithName).toHaveBeenCalledWith(
-        nameFixture,
-      );
+      expect(
+        isNotParentBindingConstraintsWithName,
+      ).toHaveBeenCalledExactlyOnceWith(nameFixture);
     });
 
     it('should return expected result', () => {
@@ -1668,11 +1635,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isNotParentBindingConstraintsWithTag', () => {
-      expect(isNotParentBindingConstraintsWithTag).toHaveBeenCalledTimes(1);
-      expect(isNotParentBindingConstraintsWithTag).toHaveBeenCalledWith(
-        tagFixture,
-        tagValueFixture,
-      );
+      expect(
+        isNotParentBindingConstraintsWithTag,
+      ).toHaveBeenCalledExactlyOnceWith(tagFixture, tagValueFixture);
     });
 
     it('should return expected result', () => {
@@ -1697,8 +1662,7 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isNotParentBindingConstraints', () => {
-      expect(isNotParentBindingConstraints).toHaveBeenCalledTimes(1);
-      expect(isNotParentBindingConstraints).toHaveBeenCalledWith(
+      expect(isNotParentBindingConstraints).toHaveBeenCalledExactlyOnceWith(
         constraintFixture,
       );
     });
@@ -1725,8 +1689,7 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isNoAncestorBindingConstraints', () => {
-      expect(isNoAncestorBindingConstraints).toHaveBeenCalledTimes(1);
-      expect(isNoAncestorBindingConstraints).toHaveBeenCalledWith(
+      expect(isNoAncestorBindingConstraints).toHaveBeenCalledExactlyOnceWith(
         constraintFixture,
       );
     });
@@ -1753,12 +1716,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isNoAncestorBindingConstraintsWithServiceId', () => {
-      expect(isNoAncestorBindingConstraintsWithServiceId).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(isNoAncestorBindingConstraintsWithServiceId).toHaveBeenCalledWith(
-        serviceIdFixture,
-      );
+      expect(
+        isNoAncestorBindingConstraintsWithServiceId,
+      ).toHaveBeenCalledExactlyOnceWith(serviceIdFixture);
     });
 
     it('should return expected result', () => {
@@ -1783,10 +1743,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isNoAncestorBindingConstraintsWithName', () => {
-      expect(isNoAncestorBindingConstraintsWithName).toHaveBeenCalledTimes(1);
-      expect(isNoAncestorBindingConstraintsWithName).toHaveBeenCalledWith(
-        nameFixture,
-      );
+      expect(
+        isNoAncestorBindingConstraintsWithName,
+      ).toHaveBeenCalledExactlyOnceWith(nameFixture);
     });
 
     it('should return expected result', () => {
@@ -1815,11 +1774,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call isNoAncestorBindingConstraintsWithTag', () => {
-      expect(isNoAncestorBindingConstraintsWithTag).toHaveBeenCalledTimes(1);
-      expect(isNoAncestorBindingConstraintsWithTag).toHaveBeenCalledWith(
-        tagFixture,
-        tagValueFixture,
-      );
+      expect(
+        isNoAncestorBindingConstraintsWithTag,
+      ).toHaveBeenCalledExactlyOnceWith(tagFixture, tagValueFixture);
     });
 
     it('should return expected result', () => {
@@ -1846,8 +1803,9 @@ describe(BindWhenFluentSyntaxImplementation, () => {
     });
 
     it('should call buildBindingIdentifier', () => {
-      expect(buildBindingIdentifier).toHaveBeenCalledTimes(1);
-      expect(buildBindingIdentifier).toHaveBeenCalledWith(bindingFixture);
+      expect(buildBindingIdentifier).toHaveBeenCalledExactlyOnceWith(
+        bindingFixture,
+      );
     });
 
     it('should return the mocked identifier', () => {
@@ -1917,8 +1875,7 @@ describe(BindWhenOnFluentSyntaxImplementation, () => {
       });
 
       it('should set binding activation', () => {
-        expect(bindingActivationSetterMock).toHaveBeenCalledTimes(1);
-        expect(bindingActivationSetterMock).toHaveBeenCalledWith(
+        expect(bindingActivationSetterMock).toHaveBeenCalledExactlyOnceWith(
           activationFixture,
         );
       });
@@ -1945,8 +1902,7 @@ describe(BindWhenOnFluentSyntaxImplementation, () => {
       });
 
       it('should set binding deactivation', () => {
-        expect(bindingDeactivationSetterMock).toHaveBeenCalledTimes(1);
-        expect(bindingDeactivationSetterMock).toHaveBeenCalledWith(
+        expect(bindingDeactivationSetterMock).toHaveBeenCalledExactlyOnceWith(
           deactivationFixture,
         );
       });
@@ -1976,8 +1932,9 @@ describe(BindWhenOnFluentSyntaxImplementation, () => {
     });
 
     it('should call buildBindingIdentifier', () => {
-      expect(buildBindingIdentifier).toHaveBeenCalledTimes(1);
-      expect(buildBindingIdentifier).toHaveBeenCalledWith(bindingFixture);
+      expect(buildBindingIdentifier).toHaveBeenCalledExactlyOnceWith(
+        bindingFixture,
+      );
     });
 
     it('should return the mocked identifier', () => {
@@ -2066,8 +2023,9 @@ describe(BindInWhenOnFluentSyntaxImplementation, () => {
         });
 
         it('should set binding scope', () => {
-          expect(bindingMockSetScopeMock).toHaveBeenCalledTimes(1);
-          expect(bindingMockSetScopeMock).toHaveBeenCalledWith(expectedScope);
+          expect(bindingMockSetScopeMock).toHaveBeenCalledExactlyOnceWith(
+            expectedScope,
+          );
         });
 
         it('should return BindWhenOnFluentSyntax', () => {
@@ -2096,8 +2054,9 @@ describe(BindInWhenOnFluentSyntaxImplementation, () => {
     });
 
     it('should call buildBindingIdentifier', () => {
-      expect(buildBindingIdentifier).toHaveBeenCalledTimes(1);
-      expect(buildBindingIdentifier).toHaveBeenCalledWith(bindingMock);
+      expect(buildBindingIdentifier).toHaveBeenCalledExactlyOnceWith(
+        bindingMock,
+      );
     });
 
     it('should return the mocked identifier', () => {

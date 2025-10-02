@@ -140,8 +140,9 @@ describe(ContainerModuleManager, () => {
           ) => void,
         };
 
-        expect(asyncContainerModuleMock.load).toHaveBeenCalledTimes(1);
-        expect(asyncContainerModuleMock.load).toHaveBeenCalledWith(options);
+        expect(asyncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
+          options,
+        );
       });
 
       it('should return undefined', () => {
@@ -197,8 +198,9 @@ describe(ContainerModuleManager, () => {
           ) => void,
         };
 
-        expect(syncContainerModuleMock.load).toHaveBeenCalledTimes(1);
-        expect(syncContainerModuleMock.load).toHaveBeenCalledWith(options);
+        expect(syncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
+          options,
+        );
       });
 
       it('should return undefined', () => {
@@ -269,8 +271,9 @@ describe(ContainerModuleManager, () => {
           ) => void,
         };
 
-        expect(syncContainerModuleMock.load).toHaveBeenCalledTimes(1);
-        expect(syncContainerModuleMock.load).toHaveBeenCalledWith(options);
+        expect(syncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
+          options,
+        );
       });
 
       it('should return undefined', () => {
@@ -330,8 +333,9 @@ describe(ContainerModuleManager, () => {
           ) => void,
         };
 
-        expect(asyncContainerModuleMock.load).toHaveBeenCalledTimes(1);
-        expect(asyncContainerModuleMock.load).toHaveBeenCalledWith(options);
+        expect(asyncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
+          options,
+        );
       });
 
       it('should throw an InversifyContainerError', () => {

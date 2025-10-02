@@ -61,8 +61,7 @@ describe(resolveBindingDeactivations, () => {
       });
 
       it('should call resolveBindingPreDestroy()', () => {
-        expect(resolveBindingPreDestroy).toHaveBeenCalledTimes(1);
-        expect(resolveBindingPreDestroy).toHaveBeenCalledWith(
+        expect(resolveBindingPreDestroy).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture,
         );
@@ -71,8 +70,9 @@ describe(resolveBindingDeactivations, () => {
       it('should call resolveBindingServiceDeactivations()', () => {
         const bindingCache: Right<Resolved<unknown>> = bindingFixture.cache;
 
-        expect(resolveBindingServiceDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingServiceDeactivations).toHaveBeenCalledWith(
+        expect(
+          resolveBindingServiceDeactivations,
+        ).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture.serviceIdentifier,
           bindingCache.value,
@@ -100,8 +100,7 @@ describe(resolveBindingDeactivations, () => {
       });
 
       it('should call resolveBindingPreDestroy()', () => {
-        expect(resolveBindingPreDestroy).toHaveBeenCalledTimes(1);
-        expect(resolveBindingPreDestroy).toHaveBeenCalledWith(
+        expect(resolveBindingPreDestroy).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture,
         );
@@ -110,8 +109,9 @@ describe(resolveBindingDeactivations, () => {
       it('should call resolveBindingServiceDeactivations()', () => {
         const bindingCache: Right<Resolved<unknown>> = bindingFixture.cache;
 
-        expect(resolveBindingServiceDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingServiceDeactivations).toHaveBeenCalledWith(
+        expect(
+          resolveBindingServiceDeactivations,
+        ).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture.serviceIdentifier,
           bindingCache.value,
@@ -149,8 +149,7 @@ describe(resolveBindingDeactivations, () => {
       });
 
       it('should call resolveBindingPreDestroy()', () => {
-        expect(resolveBindingPreDestroy).toHaveBeenCalledTimes(1);
-        expect(resolveBindingPreDestroy).toHaveBeenCalledWith(
+        expect(resolveBindingPreDestroy).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture,
         );
@@ -159,8 +158,9 @@ describe(resolveBindingDeactivations, () => {
       it('should call resolveBindingServiceDeactivations()', () => {
         const bindingCache: Right<Resolved<unknown>> = bindingFixture.cache;
 
-        expect(resolveBindingServiceDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingServiceDeactivations).toHaveBeenCalledWith(
+        expect(
+          resolveBindingServiceDeactivations,
+        ).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture.serviceIdentifier,
           bindingCache.value,
@@ -198,8 +198,7 @@ describe(resolveBindingDeactivations, () => {
       });
 
       it('should call resolveBindingPreDestroy()', () => {
-        expect(resolveBindingPreDestroy).toHaveBeenCalledTimes(1);
-        expect(resolveBindingPreDestroy).toHaveBeenCalledWith(
+        expect(resolveBindingPreDestroy).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture,
         );
@@ -208,8 +207,9 @@ describe(resolveBindingDeactivations, () => {
       it('should call resolveBindingServiceDeactivations()', async () => {
         const bindingCache: Right<Resolved<unknown>> = bindingFixture.cache;
 
-        expect(resolveBindingServiceDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingServiceDeactivations).toHaveBeenCalledWith(
+        expect(
+          resolveBindingServiceDeactivations,
+        ).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture.serviceIdentifier,
           await bindingCache.value,
@@ -249,8 +249,9 @@ describe(resolveBindingDeactivations, () => {
       it('should call resolveBindingServiceDeactivations()', () => {
         const bindingCache: Right<Resolved<unknown>> = bindingFixture.cache;
 
-        expect(resolveBindingServiceDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingServiceDeactivations).toHaveBeenCalledWith(
+        expect(
+          resolveBindingServiceDeactivations,
+        ).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture.serviceIdentifier,
           bindingCache.value,

@@ -26,8 +26,7 @@ describe(Get, () => {
     });
 
     it('should call requestMethod', () => {
-      expect(requestMethod).toHaveBeenCalledTimes(1);
-      expect(requestMethod).toHaveBeenCalledWith(
+      expect(requestMethod).toHaveBeenCalledExactlyOnceWith(
         RequestMethodType.Get,
         pathFixture,
       );

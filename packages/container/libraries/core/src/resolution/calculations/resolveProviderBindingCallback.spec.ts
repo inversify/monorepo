@@ -51,8 +51,7 @@ describe(resolveProviderBindingCallback, () => {
     });
 
     it('should call binding.provider()', () => {
-      expect(providerBindingMock.provider).toHaveBeenCalledTimes(1);
-      expect(providerBindingMock.provider).toHaveBeenCalledWith(
+      expect(providerBindingMock.provider).toHaveBeenCalledExactlyOnceWith(
         resolutionParamsFixture.context,
       );
     });

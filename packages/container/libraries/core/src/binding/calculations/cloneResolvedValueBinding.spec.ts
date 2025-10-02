@@ -55,8 +55,7 @@ describe(cloneResolvedValueBinding, () => {
     });
 
     it('should call cloneBindingCache', () => {
-      expect(cloneBindingCache).toHaveBeenCalledTimes(1);
-      expect(cloneBindingCache).toHaveBeenCalledWith(
+      expect(cloneBindingCache).toHaveBeenCalledExactlyOnceWith(
         resolvedValueBindingFixture.cache,
       );
     });

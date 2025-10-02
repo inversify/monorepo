@@ -34,16 +34,14 @@ describe(setIsInjectableFlag, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         classIsInjectableFlagReflectKey,
       );
     });
 
     it('should call setReflectMetadata', () => {
-      expect(setReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(setReflectMetadata).toHaveBeenCalledWith(
+      expect(setReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         classIsInjectableFlagReflectKey,
         true,

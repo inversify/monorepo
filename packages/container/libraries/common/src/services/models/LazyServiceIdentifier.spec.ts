@@ -125,8 +125,7 @@ describe(LazyServiceIdentifier, () => {
       });
 
       it('should call buildServiceId()', () => {
-        expect(buildServiceIdMock).toHaveBeenCalledTimes(1);
-        expect(buildServiceIdMock).toHaveBeenCalledWith();
+        expect(buildServiceIdMock).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return expected result', () => {

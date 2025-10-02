@@ -25,16 +25,14 @@ describe(getBindingId, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         Object,
         '@inversifyjs/container/bindingId',
       );
     });
 
     it('should call updateOwnReflectMetadata()', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         Object,
         '@inversifyjs/container/bindingId',
         expect.any(Function),
@@ -63,16 +61,14 @@ describe(getBindingId, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         Object,
         '@inversifyjs/container/bindingId',
       );
     });
 
     it('should call setReflectMetadata()', () => {
-      expect(setReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(setReflectMetadata).toHaveBeenCalledWith(
+      expect(setReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         Object,
         '@inversifyjs/container/bindingId',
         Number.MIN_SAFE_INTEGER,

@@ -60,8 +60,7 @@ describe(getClassMetadata, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         classMetadataReflectKey,
       );
@@ -72,8 +71,7 @@ describe(getClassMetadata, () => {
     });
 
     it('should call throwAtInvalidClassMetadata()', () => {
-      expect(throwAtInvalidClassMetadata).toHaveBeenCalledTimes(1);
-      expect(throwAtInvalidClassMetadata).toHaveBeenCalledWith(
+      expect(throwAtInvalidClassMetadata).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         metadataFixture,
       );
@@ -114,21 +112,18 @@ describe(getClassMetadata, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         classMetadataReflectKey,
       );
     });
 
     it('should call getDefaultClassMetadata()', () => {
-      expect(getDefaultClassMetadata).toHaveBeenCalledTimes(1);
-      expect(getDefaultClassMetadata).toHaveBeenCalledWith();
+      expect(getDefaultClassMetadata).toHaveBeenCalledExactlyOnceWith();
     });
 
     it('should call validateConstructorMetadataArray()', () => {
-      expect(validateConstructorMetadataArray).toHaveBeenCalledTimes(1);
-      expect(validateConstructorMetadataArray).toHaveBeenCalledWith(
+      expect(validateConstructorMetadataArray).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         metadataFixture.constructorArguments,
       );

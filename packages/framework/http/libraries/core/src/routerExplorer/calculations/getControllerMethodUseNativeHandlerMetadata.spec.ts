@@ -28,8 +28,7 @@ describe(getControllerMethodUseNativeHandlerMetadata, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         controllerFixture,
         controllerMethodUseNativeHandlerMetadataReflectKey,
         controllerMethodKeyFixture,
@@ -67,8 +66,7 @@ describe(getControllerMethodUseNativeHandlerMetadata, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         controllerFixture,
         controllerMethodUseNativeHandlerMetadataReflectKey,
         controllerMethodKeyFixture,

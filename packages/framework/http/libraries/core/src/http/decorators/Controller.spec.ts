@@ -63,16 +63,19 @@ describe(Controller, () => {
       });
 
       it('should call buildNormalizedPath()', () => {
-        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
-        expect(buildNormalizedPath).toHaveBeenCalledWith(pathFixture);
+        expect(buildNormalizedPath).toHaveBeenCalledExactlyOnceWith(
+          pathFixture,
+        );
       });
 
       it('should call injectable', () => {
-        expect(injectable).toHaveBeenCalledWith(undefined);
+        expect(injectable).toHaveBeenCalledExactlyOnceWith(undefined);
       });
 
       it('should call ClassDecorator', () => {
-        expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
+        expect(classDecoratorMock).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+        );
       });
 
       it('should call buildArrayMetadataWithElement()', () => {
@@ -82,12 +85,13 @@ describe(Controller, () => {
           target: targetFixture,
         };
 
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith(expected);
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith(
+          expected,
+        );
       });
 
       it('should set metadata with controller path', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           Reflect,
           controllerMetadataReflectKey,
           buildEmptyArrayMetadata,
@@ -138,8 +142,9 @@ describe(Controller, () => {
       });
 
       it('should call buildNormalizedPath()', () => {
-        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
-        expect(buildNormalizedPath).toHaveBeenCalledWith(optionsFixture.path);
+        expect(buildNormalizedPath).toHaveBeenCalledExactlyOnceWith(
+          optionsFixture.path,
+        );
       });
 
       it('should call buildArrayMetadataWithElement()', () => {
@@ -149,12 +154,13 @@ describe(Controller, () => {
           target: targetFixture,
         };
 
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith(expected);
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith(
+          expected,
+        );
       });
 
       it('should set metadata with controller options', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           Reflect,
           controllerMetadataReflectKey,
           buildEmptyArrayMetadata,
@@ -206,16 +212,21 @@ describe(Controller, () => {
       });
 
       it('should call buildNormalizedPath()', () => {
-        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
-        expect(buildNormalizedPath).toHaveBeenCalledWith(optionsFixture.path);
+        expect(buildNormalizedPath).toHaveBeenCalledExactlyOnceWith(
+          optionsFixture.path,
+        );
       });
 
       it('should call injectable', () => {
-        expect(injectable).toHaveBeenCalledWith(optionsFixture.scope);
+        expect(injectable).toHaveBeenCalledExactlyOnceWith(
+          optionsFixture.scope,
+        );
       });
 
       it('should call ClassDecorator', () => {
-        expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
+        expect(classDecoratorMock).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+        );
       });
 
       it('should call buildArrayMetadataWithElement()', () => {
@@ -225,12 +236,13 @@ describe(Controller, () => {
           target: targetFixture,
         };
 
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith(expected);
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith(
+          expected,
+        );
       });
 
       it('should set metadata with controller options', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           Reflect,
           controllerMetadataReflectKey,
           buildEmptyArrayMetadata,
@@ -284,16 +296,19 @@ describe(Controller, () => {
       });
 
       it('should call buildNormalizedPath()', () => {
-        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
-        expect(buildNormalizedPath).toHaveBeenCalledWith('/');
+        expect(buildNormalizedPath).toHaveBeenCalledExactlyOnceWith('/');
       });
 
       it('should call injectable', () => {
-        expect(injectable).toHaveBeenCalledWith(optionsFixture.scope);
+        expect(injectable).toHaveBeenCalledExactlyOnceWith(
+          optionsFixture.scope,
+        );
       });
 
       it('should call ClassDecorator', () => {
-        expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
+        expect(classDecoratorMock).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+        );
       });
 
       it('should call buildArrayMetadataWithElement()', () => {
@@ -304,12 +319,13 @@ describe(Controller, () => {
           target: targetFixture,
         };
 
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith(expected);
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith(
+          expected,
+        );
       });
 
       it('should set metadata with controller options', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           Reflect,
           controllerMetadataReflectKey,
           buildEmptyArrayMetadata,

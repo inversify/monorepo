@@ -130,15 +130,13 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call container.getAsync()', () => {
-        expect(containerMock.getAsync).toHaveBeenCalledTimes(1);
-        expect(containerMock.getAsync).toHaveBeenCalledWith(
+        expect(containerMock.getAsync).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
 
       it('should call buildHandlerParams()', () => {
-        expect(buildHandlerParamsMock).toHaveBeenCalledTimes(1);
-        expect(buildHandlerParamsMock).toHaveBeenCalledWith(
+        expect(buildHandlerParamsMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           nextFixture,
@@ -146,8 +144,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call setHeaders()', () => {
-        expect(setHeadersMock).toHaveBeenCalledTimes(1);
-        expect(setHeadersMock).toHaveBeenCalledWith(
+        expect(setHeadersMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           routerExplorerControllerMethodMetadataFixture.headerMetadataList,
@@ -155,15 +152,13 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call controller.testMethod()', () => {
-        expect(controllerMock.testMethod).toHaveBeenCalledTimes(1);
-        expect(controllerMock.testMethod).toHaveBeenCalledWith(
+        expect(controllerMock.testMethod).toHaveBeenCalledExactlyOnceWith(
           ...handlerParamsFixture,
         );
       });
 
       it('should call reply()', () => {
-        expect(replyMock).toHaveBeenCalledTimes(1);
-        expect(replyMock).toHaveBeenCalledWith(
+        expect(replyMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           controllerResponseFixture,
@@ -207,8 +202,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call handleError()', () => {
-        expect(handleErrorMock).toHaveBeenCalledTimes(1);
-        expect(handleErrorMock).toHaveBeenCalledWith(
+        expect(handleErrorMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           errorFixture,
@@ -349,8 +343,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call firstInterceptor.intercept()', () => {
-        expect(firstInterceptorMock.intercept).toHaveBeenCalledTimes(1);
-        expect(firstInterceptorMock.intercept).toHaveBeenCalledWith(
+        expect(firstInterceptorMock.intercept).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           expect.any(Function),
@@ -358,8 +351,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call secondInterceptor.intercept()', () => {
-        expect(secondInterceptorMock.intercept).toHaveBeenCalledTimes(1);
-        expect(secondInterceptorMock.intercept).toHaveBeenCalledWith(
+        expect(secondInterceptorMock.intercept).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           expect.any(Function),
@@ -367,8 +359,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call buildHandlerParams()', () => {
-        expect(buildHandlerParamsMock).toHaveBeenCalledTimes(1);
-        expect(buildHandlerParamsMock).toHaveBeenCalledWith(
+        expect(buildHandlerParamsMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           nextFixture,
@@ -376,8 +367,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call setHeaders()', () => {
-        expect(setHeadersMock).toHaveBeenCalledTimes(1);
-        expect(setHeadersMock).toHaveBeenCalledWith(
+        expect(setHeadersMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           routerExplorerControllerMethodMetadataFixture.headerMetadataList,
@@ -385,15 +375,13 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call controller method with handler params', () => {
-        expect(controllerMock.testMethod).toHaveBeenCalledTimes(1);
-        expect(controllerMock.testMethod).toHaveBeenCalledWith(
+        expect(controllerMock.testMethod).toHaveBeenCalledExactlyOnceWith(
           ...handlerParamsFixture,
         );
       });
 
       it('should call reply()', () => {
-        expect(replyMock).toHaveBeenCalledTimes(1);
-        expect(replyMock).toHaveBeenCalledWith(
+        expect(replyMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           controllerResponseFixture,
@@ -508,8 +496,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call firstInterceptor.intercept()', () => {
-        expect(firstInterceptorMock.intercept).toHaveBeenCalledTimes(1);
-        expect(firstInterceptorMock.intercept).toHaveBeenCalledWith(
+        expect(firstInterceptorMock.intercept).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           expect.any(Function),
@@ -517,8 +504,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call secondInterceptor.intercept()', () => {
-        expect(secondInterceptorMock.intercept).toHaveBeenCalledTimes(1);
-        expect(secondInterceptorMock.intercept).toHaveBeenCalledWith(
+        expect(secondInterceptorMock.intercept).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           expect.any(Function),
@@ -526,8 +512,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call buildHandlerParams()', () => {
-        expect(buildHandlerParamsMock).toHaveBeenCalledTimes(1);
-        expect(buildHandlerParamsMock).toHaveBeenCalledWith(
+        expect(buildHandlerParamsMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           nextFixture,
@@ -535,8 +520,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call setHeaders()', () => {
-        expect(setHeadersMock).toHaveBeenCalledTimes(1);
-        expect(setHeadersMock).toHaveBeenCalledWith(
+        expect(setHeadersMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           routerExplorerControllerMethodMetadataFixture.headerMetadataList,
@@ -544,15 +528,13 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call controller method with handler params', () => {
-        expect(controllerMock.testMethod).toHaveBeenCalledTimes(1);
-        expect(controllerMock.testMethod).toHaveBeenCalledWith(
+        expect(controllerMock.testMethod).toHaveBeenCalledExactlyOnceWith(
           ...handlerParamsFixture,
         );
       });
 
       it('should call reply()', () => {
-        expect(replyMock).toHaveBeenCalledTimes(1);
-        expect(replyMock).toHaveBeenCalledWith(
+        expect(replyMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           transformedResultFixture,
@@ -608,8 +590,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call handleError()', () => {
-        expect(handleErrorMock).toHaveBeenCalledTimes(1);
-        expect(handleErrorMock).toHaveBeenCalledWith(
+        expect(handleErrorMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           errorFixture,
@@ -682,8 +663,7 @@ describe(buildInterceptedHandler, () => {
       });
 
       it('should call handleError()', () => {
-        expect(handleErrorMock).toHaveBeenCalledTimes(1);
-        expect(handleErrorMock).toHaveBeenCalledWith(
+        expect(handleErrorMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           errorFixture,

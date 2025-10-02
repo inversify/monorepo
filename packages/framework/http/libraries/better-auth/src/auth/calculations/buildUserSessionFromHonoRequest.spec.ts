@@ -60,18 +60,17 @@ describe(buildUserSessionFromHonoRequest, () => {
     });
 
     it('should call getBetterAuthFromRequest()', () => {
-      expect(getBetterAuthFromRequest).toHaveBeenCalledTimes(1);
-      expect(getBetterAuthFromRequest).toHaveBeenCalledWith(requestMock);
+      expect(getBetterAuthFromRequest).toHaveBeenCalledExactlyOnceWith(
+        requestMock,
+      );
     });
 
     it('should call request.header()', () => {
-      expect(requestMock.header).toHaveBeenCalledTimes(1);
-      expect(requestMock.header).toHaveBeenCalledWith('cookie');
+      expect(requestMock.header).toHaveBeenCalledExactlyOnceWith('cookie');
     });
 
     it('should call auth.api.getSession()', () => {
-      expect(authMock.api.getSession).toHaveBeenCalledTimes(1);
-      expect(authMock.api.getSession).toHaveBeenCalledWith({
+      expect(authMock.api.getSession).toHaveBeenCalledExactlyOnceWith({
         asResponse: false,
         headers: new Headers(),
       });
@@ -123,8 +122,9 @@ describe(buildUserSessionFromHonoRequest, () => {
     });
 
     it('should call getBetterAuthFromRequest()', () => {
-      expect(getBetterAuthFromRequest).toHaveBeenCalledTimes(1);
-      expect(getBetterAuthFromRequest).toHaveBeenCalledWith(requestMock);
+      expect(getBetterAuthFromRequest).toHaveBeenCalledExactlyOnceWith(
+        requestMock,
+      );
     });
 
     it('should call auth.api.getSession()', () => {
@@ -132,8 +132,7 @@ describe(buildUserSessionFromHonoRequest, () => {
 
       headers.append('cookie', cookieValueFixture);
 
-      expect(authMock.api.getSession).toHaveBeenCalledTimes(1);
-      expect(authMock.api.getSession).toHaveBeenCalledWith({
+      expect(authMock.api.getSession).toHaveBeenCalledExactlyOnceWith({
         asResponse: false,
         headers,
       });

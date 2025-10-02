@@ -42,11 +42,9 @@ describe(buildRouterExplorerControllerMethodMetadataList, () => {
     });
 
     it('should call buildRouterExplorerControllerMethodMetadata()', () => {
-      expect(buildRouterExplorerControllerMethodMetadata).toHaveBeenCalledTimes(
-        1,
-      );
-
-      expect(buildRouterExplorerControllerMethodMetadata).toHaveBeenCalledWith(
+      expect(
+        buildRouterExplorerControllerMethodMetadata,
+      ).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture,
         controllerMethodMetadataFixture,
       );

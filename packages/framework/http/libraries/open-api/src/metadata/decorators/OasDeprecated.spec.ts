@@ -62,10 +62,7 @@ describe(OasDeprecated, () => {
       it('should call updateControllerOpenApiMetadataOperationProperty()', () => {
         expect(
           updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           true,
           targetTypeFixture,
           keyFixture,
@@ -74,8 +71,7 @@ describe(OasDeprecated, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetTypeFixture,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,

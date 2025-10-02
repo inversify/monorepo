@@ -75,8 +75,7 @@ describe(DeactivationsService, () => {
       });
 
       it('should call deactivationMaps.add()', () => {
-        expect(deactivationMapsMock.add).toHaveBeenCalledTimes(1);
-        expect(deactivationMapsMock.add).toHaveBeenCalledWith(
+        expect(deactivationMapsMock.add).toHaveBeenCalledExactlyOnceWith(
           deactivationFixture,
           relationFixture,
         );
@@ -103,8 +102,7 @@ describe(DeactivationsService, () => {
       });
 
       it('should call deactivationMaps.clone', () => {
-        expect(deactivationMapsMock.clone).toHaveBeenCalledTimes(1);
-        expect(deactivationMapsMock.clone).toHaveBeenCalledWith();
+        expect(deactivationMapsMock.clone).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return a clone()', () => {
@@ -156,8 +154,9 @@ describe(DeactivationsService, () => {
       });
 
       it('should call chain()', () => {
-        expect(chain).toHaveBeenCalledTimes(1);
-        expect(chain).toHaveBeenCalledWith([bindingDeactivationFixture]);
+        expect(chain).toHaveBeenCalledExactlyOnceWith([
+          bindingDeactivationFixture,
+        ]);
       });
 
       it('should return BindingDeactivation[]', () => {
@@ -244,11 +243,9 @@ describe(DeactivationsService, () => {
       });
 
       it('should call deactivationMaps.removeByRelation()', () => {
-        expect(deactivationMapsMock.removeByRelation).toHaveBeenCalledTimes(1);
-        expect(deactivationMapsMock.removeByRelation).toHaveBeenCalledWith(
-          'moduleId',
-          moduleIdFixture,
-        );
+        expect(
+          deactivationMapsMock.removeByRelation,
+        ).toHaveBeenCalledExactlyOnceWith('moduleId', moduleIdFixture);
       });
 
       it('should return undefined', () => {
@@ -276,11 +273,9 @@ describe(DeactivationsService, () => {
       });
 
       it('should call deactivationMaps.removeByRelation()', () => {
-        expect(deactivationMapsMock.removeByRelation).toHaveBeenCalledTimes(1);
-        expect(deactivationMapsMock.removeByRelation).toHaveBeenCalledWith(
-          'serviceId',
-          serviceIdFixture,
-        );
+        expect(
+          deactivationMapsMock.removeByRelation,
+        ).toHaveBeenCalledExactlyOnceWith('serviceId', serviceIdFixture);
       });
 
       it('should return undefined', () => {

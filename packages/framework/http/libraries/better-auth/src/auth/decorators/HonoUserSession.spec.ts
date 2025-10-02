@@ -27,8 +27,7 @@ describe(HonoUserSession, () => {
     });
 
     it('should call createCustomParameterDecorator()', () => {
-      expect(createCustomParameterDecorator).toHaveBeenCalledTimes(1);
-      expect(createCustomParameterDecorator).toHaveBeenCalledWith(
+      expect(createCustomParameterDecorator).toHaveBeenCalledExactlyOnceWith(
         expect.any(Function),
       );
     });

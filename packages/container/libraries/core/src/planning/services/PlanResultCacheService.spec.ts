@@ -536,10 +536,7 @@ describe(PlanResultCacheService, () => {
             it('should call addRootServiceNodeBindingIfContextFree()', () => {
               expect(
                 addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledTimes(1);
-              expect(
-                addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledWith(
+              ).toHaveBeenCalledExactlyOnceWith(
                 expectedPlanParamsFixture,
                 planResultFixture.tree.root,
                 planResultCacheServiceInvalidationFixture.binding,
@@ -685,10 +682,7 @@ describe(PlanResultCacheService, () => {
             it('should call addRootServiceNodeBindingIfContextFree()', () => {
               expect(
                 addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledTimes(1);
-              expect(
-                addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledWith(
+              ).toHaveBeenCalledExactlyOnceWith(
                 expectedPlanParamsFixture,
                 planResultFixture.tree.root,
                 planResultCacheServiceInvalidationFixture.binding,
@@ -896,10 +890,7 @@ describe(PlanResultCacheService, () => {
             it('should call addRootServiceNodeBindingIfContextFree()', () => {
               expect(
                 addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledTimes(1);
-              expect(
-                addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledWith(
+              ).toHaveBeenCalledExactlyOnceWith(
                 expectedPlanParamsFixture,
                 planResultFixture.tree.root,
                 planResultCacheServiceInvalidationFixture.binding,
@@ -1117,10 +1108,7 @@ describe(PlanResultCacheService, () => {
             it('should call addRootServiceNodeBindingIfContextFree()', () => {
               expect(
                 addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledTimes(1);
-              expect(
-                addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledWith(
+              ).toHaveBeenCalledExactlyOnceWith(
                 expectedPlanParamsFixture,
                 planResultFixture.tree.root,
                 planResultCacheServiceInvalidationFixture.binding,
@@ -1350,10 +1338,7 @@ describe(PlanResultCacheService, () => {
             it('should call addRootServiceNodeBindingIfContextFree()', () => {
               expect(
                 addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledTimes(1);
-              expect(
-                addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledWith(
+              ).toHaveBeenCalledExactlyOnceWith(
                 expectedPlanParamsFixture,
                 planResultFixture.tree.root,
                 planResultCacheServiceInvalidationFixture.binding,
@@ -1571,10 +1556,7 @@ describe(PlanResultCacheService, () => {
             it('should call addRootServiceNodeBindingIfContextFree()', () => {
               expect(
                 addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledTimes(1);
-              expect(
-                addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledWith(
+              ).toHaveBeenCalledExactlyOnceWith(
                 expectedPlanParamsFixture,
                 planResultFixture.tree.root,
                 planResultCacheServiceInvalidationFixture.binding,
@@ -1798,10 +1780,7 @@ describe(PlanResultCacheService, () => {
             it('should call addRootServiceNodeBindingIfContextFree()', () => {
               expect(
                 addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledTimes(1);
-              expect(
-                addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledWith(
+              ).toHaveBeenCalledExactlyOnceWith(
                 expectedPlanParamsFixture,
                 planResultFixture.tree.root,
                 planResultCacheServiceInvalidationFixture.binding,
@@ -2029,10 +2008,7 @@ describe(PlanResultCacheService, () => {
             it('should call addRootServiceNodeBindingIfContextFree()', () => {
               expect(
                 addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledTimes(1);
-              expect(
-                addRootServiceNodeBindingIfContextFree,
-              ).toHaveBeenCalledWith(
+              ).toHaveBeenCalledExactlyOnceWith(
                 expectedPlanParamsFixture,
                 planResultFixture.tree.root,
                 planResultCacheServiceInvalidationFixture.binding,
@@ -2127,8 +2103,9 @@ describe(PlanResultCacheService, () => {
             servicesBranch: [],
           };
 
-          expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledTimes(1);
-          expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledWith(
+          expect(
+            addServiceNodeBindingIfContextFree,
+          ).toHaveBeenCalledExactlyOnceWith(
             expectedBasePlanParams,
             lazyPlanServiceNodeFixture,
             planResultCacheServiceInvalidationFixture.binding,
@@ -2219,8 +2196,9 @@ describe(PlanResultCacheService, () => {
             servicesBranch: [],
           };
 
-          expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledTimes(1);
-          expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledWith(
+          expect(
+            addServiceNodeBindingIfContextFree,
+          ).toHaveBeenCalledExactlyOnceWith(
             expectedBasePlanParams,
             lazyPlanServiceNodeFixture,
             planResultCacheServiceInvalidationFixture.binding,
@@ -2318,8 +2296,7 @@ describe(PlanResultCacheService, () => {
       });
 
       it('should call subscriber.clearCache()', () => {
-        expect(subscriberMock.clearCache).toHaveBeenCalledTimes(1);
-        expect(subscriberMock.clearCache).toHaveBeenCalledWith();
+        expect(subscriberMock.clearCache).toHaveBeenCalledExactlyOnceWith();
       });
     });
   });

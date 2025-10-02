@@ -61,8 +61,7 @@ describe(updateOwnReflectMetadata, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           metadataKeyFixture,
           undefined,
@@ -70,13 +69,13 @@ describe(updateOwnReflectMetadata, () => {
       });
 
       it('should call buildDefaultValue', () => {
-        expect(buildDefaultValueMock).toHaveBeenCalledTimes(1);
-        expect(buildDefaultValueMock).toHaveBeenCalledWith();
+        expect(buildDefaultValueMock).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call callback()', () => {
-        expect(callbackMock).toHaveBeenCalledTimes(1);
-        expect(callbackMock).toHaveBeenCalledWith(defaultValueFixture);
+        expect(callbackMock).toHaveBeenCalledExactlyOnceWith(
+          defaultValueFixture,
+        );
       });
 
       it('should define metadata', () => {
@@ -116,8 +115,7 @@ describe(updateOwnReflectMetadata, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           metadataKeyFixture,
           undefined,
@@ -129,8 +127,7 @@ describe(updateOwnReflectMetadata, () => {
       });
 
       it('should call callback()', () => {
-        expect(callbackMock).toHaveBeenCalledTimes(1);
-        expect(callbackMock).toHaveBeenCalledWith(metadataFixture);
+        expect(callbackMock).toHaveBeenCalledExactlyOnceWith(metadataFixture);
       });
 
       it('should define metadata', () => {
@@ -192,8 +189,7 @@ describe(updateOwnReflectMetadata, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           metadataKeyFixture,
           propertyKeyFixture,
@@ -201,13 +197,13 @@ describe(updateOwnReflectMetadata, () => {
       });
 
       it('should call buildDefaultValue', () => {
-        expect(buildDefaultValueMock).toHaveBeenCalledTimes(1);
-        expect(buildDefaultValueMock).toHaveBeenCalledWith();
+        expect(buildDefaultValueMock).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call callback()', () => {
-        expect(callbackMock).toHaveBeenCalledTimes(1);
-        expect(callbackMock).toHaveBeenCalledWith(defaultValueFixture);
+        expect(callbackMock).toHaveBeenCalledExactlyOnceWith(
+          defaultValueFixture,
+        );
       });
 
       it('should define metadata', () => {
@@ -254,8 +250,7 @@ describe(updateOwnReflectMetadata, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           metadataKeyFixture,
           propertyKeyFixture,
@@ -267,8 +262,7 @@ describe(updateOwnReflectMetadata, () => {
       });
 
       it('should call callback()', () => {
-        expect(callbackMock).toHaveBeenCalledTimes(1);
-        expect(callbackMock).toHaveBeenCalledWith(metadataFixture);
+        expect(callbackMock).toHaveBeenCalledExactlyOnceWith(metadataFixture);
       });
 
       it('should define metadata', () => {

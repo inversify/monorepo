@@ -50,8 +50,7 @@ describe(buildRouteParameterDecorator, () => {
           pipeList: parameterPipeListFixture,
         };
 
-        expect(requestParam).toHaveBeenCalledTimes(1);
-        expect(requestParam).toHaveBeenCalledWith(expected);
+        expect(requestParam).toHaveBeenCalledExactlyOnceWith(expected);
       });
 
       it('should return a ParameterDecorator', () => {
@@ -95,8 +94,7 @@ describe(buildRouteParameterDecorator, () => {
           pipeList: [parameterNameOrPipeFixture],
         };
 
-        expect(requestParam).toHaveBeenCalledTimes(1);
-        expect(requestParam).toHaveBeenCalledWith(expected);
+        expect(requestParam).toHaveBeenCalledExactlyOnceWith(expected);
       });
 
       it('should return a ParameterDecorator', () => {
@@ -143,8 +141,7 @@ describe(buildRouteParameterDecorator, () => {
           pipeList: parameterPipeListFixture,
         };
 
-        expect(requestParam).toHaveBeenCalledTimes(1);
-        expect(requestParam).toHaveBeenCalledWith(expected);
+        expect(requestParam).toHaveBeenCalledExactlyOnceWith(expected);
       });
 
       it('should return a ParameterDecorator', () => {

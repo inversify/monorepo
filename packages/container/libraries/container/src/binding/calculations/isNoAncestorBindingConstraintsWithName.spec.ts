@@ -54,13 +54,13 @@ describe(isNoAncestorBindingConstraintsWithName, () => {
     });
 
     it('should call isBindingConstraintsWithName()', () => {
-      expect(isBindingConstraintsWithName).toHaveBeenCalledTimes(1);
-      expect(isBindingConstraintsWithName).toHaveBeenCalledWith(nameFixture);
+      expect(isBindingConstraintsWithName).toHaveBeenCalledExactlyOnceWith(
+        nameFixture,
+      );
     });
 
     it('should call isNoAncestorBindingConstraints()', () => {
-      expect(isNoAncestorBindingConstraints).toHaveBeenCalledTimes(1);
-      expect(isNoAncestorBindingConstraints).toHaveBeenCalledWith(
+      expect(isNoAncestorBindingConstraints).toHaveBeenCalledExactlyOnceWith(
         isBindingConstraintsWithNameResultMock,
       );
     });

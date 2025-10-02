@@ -46,7 +46,7 @@ describe(requestParam, () => {
       });
 
       it('should call setReflectMetadata', () => {
-        expect(setReflectMetadata).toHaveBeenCalledWith(
+        expect(setReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           controllerMethodUseNativeHandlerMetadataReflectKey,
           true,
@@ -132,16 +132,14 @@ describe(requestParam, () => {
       });
 
       it('should call buildArrayMetadataWithIndex', () => {
-        expect(buildArrayMetadataWithIndex).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithIndex).toHaveBeenCalledWith(
+        expect(buildArrayMetadataWithIndex).toHaveBeenCalledExactlyOnceWith(
           controllerMethodParameterMetadataFixture,
           indexFixture,
         );
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           controllerMethodParameterMetadataReflectKey,
           buildEmptyArrayMetadata,

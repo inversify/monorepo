@@ -46,8 +46,7 @@ describe(resolveBindingServiceDeactivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getDeactivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getDeactivations).toHaveBeenCalledWith(
+        expect(paramsMock.getDeactivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -80,15 +79,13 @@ describe(resolveBindingServiceDeactivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getDeactivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getDeactivations).toHaveBeenCalledWith(
+        expect(paramsMock.getDeactivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
 
       it('should call activation', () => {
-        expect(deactivationMock).toHaveBeenCalledTimes(1);
-        expect(deactivationMock).toHaveBeenCalledWith(valueFixture);
+        expect(deactivationMock).toHaveBeenCalledExactlyOnceWith(valueFixture);
       });
 
       it('should return undefined', () => {
@@ -119,15 +116,13 @@ describe(resolveBindingServiceDeactivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getDeactivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getDeactivations).toHaveBeenCalledWith(
+        expect(paramsMock.getDeactivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
 
       it('should call activation', () => {
-        expect(deactivationMock).toHaveBeenCalledTimes(1);
-        expect(deactivationMock).toHaveBeenCalledWith(valueFixture);
+        expect(deactivationMock).toHaveBeenCalledExactlyOnceWith(valueFixture);
       });
 
       it('should return undefined', () => {
@@ -166,8 +161,7 @@ describe(resolveBindingServiceDeactivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getDeactivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getDeactivations).toHaveBeenCalledWith(
+        expect(paramsMock.getDeactivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -200,15 +194,13 @@ describe(resolveBindingServiceDeactivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getDeactivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getDeactivations).toHaveBeenCalledWith(
+        expect(paramsMock.getDeactivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
 
       it('should call activation', () => {
-        expect(deactivationMock).toHaveBeenCalledTimes(1);
-        expect(deactivationMock).toHaveBeenCalledWith(valueFixture);
+        expect(deactivationMock).toHaveBeenCalledExactlyOnceWith(valueFixture);
       });
 
       it('should return undefined', () => {
@@ -239,15 +231,13 @@ describe(resolveBindingServiceDeactivations, () => {
       });
 
       it('should call params.getActivations', () => {
-        expect(paramsMock.getDeactivations).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getDeactivations).toHaveBeenCalledWith(
+        expect(paramsMock.getDeactivations).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
 
       it('should call activation', () => {
-        expect(deactivationMock).toHaveBeenCalledTimes(1);
-        expect(deactivationMock).toHaveBeenCalledWith(valueFixture);
+        expect(deactivationMock).toHaveBeenCalledExactlyOnceWith(valueFixture);
       });
 
       it('should return undefined', () => {

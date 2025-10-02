@@ -27,8 +27,7 @@ describe(getClassMethodGuardList, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         classFixture,
         classMethodGuardMetadataReflectKey,
         classMethodKeyFixture,
@@ -63,8 +62,7 @@ describe(getClassMethodGuardList, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         classFixture,
         classMethodGuardMetadataReflectKey,
         classMethodKeyFixture,

@@ -138,10 +138,7 @@ describe(ServiceResolutionManager, () => {
 
           expect(
             serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledWith(expectedGetPlanOptions);
+          ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
         });
 
         it('should call plan()', () => {
@@ -158,8 +155,7 @@ describe(ServiceResolutionManager, () => {
             servicesBranch: [],
           };
 
-          expect(plan).toHaveBeenCalledTimes(1);
-          expect(plan).toHaveBeenCalledWith(expectedPlanParams);
+          expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
         });
 
         it('should call resolve()', () => {
@@ -177,8 +173,9 @@ describe(ServiceResolutionManager, () => {
             requestScopeCache: new Map(),
           };
 
-          expect(resolve).toHaveBeenCalledTimes(1);
-          expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+          expect(resolve).toHaveBeenCalledExactlyOnceWith(
+            expectedResolveParams,
+          );
         });
 
         it('should return expected value', () => {
@@ -240,10 +237,7 @@ describe(ServiceResolutionManager, () => {
 
           expect(
             serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledWith(expectedGetPlanOptions);
+          ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
         });
 
         it('should call plan()', () => {
@@ -260,8 +254,7 @@ describe(ServiceResolutionManager, () => {
             servicesBranch: [],
           };
 
-          expect(plan).toHaveBeenCalledTimes(1);
-          expect(plan).toHaveBeenCalledWith(expectedPlanParams);
+          expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
         });
 
         it('should call resolve()', () => {
@@ -279,8 +272,9 @@ describe(ServiceResolutionManager, () => {
             requestScopeCache: new Map(),
           };
 
-          expect(resolve).toHaveBeenCalledTimes(1);
-          expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+          expect(resolve).toHaveBeenCalledExactlyOnceWith(
+            expectedResolveParams,
+          );
         });
 
         it('should throw an InversifyContainerError', () => {
@@ -350,10 +344,7 @@ describe(ServiceResolutionManager, () => {
 
           expect(
             serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledWith(expectedGetPlanOptions);
+          ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
         });
 
         it('should call plan()', () => {
@@ -370,8 +361,7 @@ describe(ServiceResolutionManager, () => {
             servicesBranch: [],
           };
 
-          expect(plan).toHaveBeenCalledTimes(1);
-          expect(plan).toHaveBeenCalledWith(expectedPlanParams);
+          expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
         });
 
         it('should call onPlanHandler()', () => {
@@ -383,8 +373,7 @@ describe(ServiceResolutionManager, () => {
             tag: getOptionsFixture.tag,
           };
 
-          expect(onPlanHandlerMock).toHaveBeenCalledTimes(1);
-          expect(onPlanHandlerMock).toHaveBeenCalledWith(
+          expect(onPlanHandlerMock).toHaveBeenCalledExactlyOnceWith(
             expectedGetPlanOptions,
             planResultFixture,
           );
@@ -405,8 +394,9 @@ describe(ServiceResolutionManager, () => {
             requestScopeCache: new Map(),
           };
 
-          expect(resolve).toHaveBeenCalledTimes(1);
-          expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+          expect(resolve).toHaveBeenCalledExactlyOnceWith(
+            expectedResolveParams,
+          );
         });
 
         it('should return expected value', () => {
@@ -479,10 +469,7 @@ describe(ServiceResolutionManager, () => {
 
           expect(
             serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledWith(expectedGetPlanOptions);
+          ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
         });
 
         it('should call plan()', () => {
@@ -501,8 +488,7 @@ describe(ServiceResolutionManager, () => {
             servicesBranch: [],
           };
 
-          expect(plan).toHaveBeenCalledTimes(1);
-          expect(plan).toHaveBeenCalledWith(expectedPlanParams);
+          expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
         });
 
         it('should call resolve()', () => {
@@ -520,8 +506,9 @@ describe(ServiceResolutionManager, () => {
             requestScopeCache: new Map(),
           };
 
-          expect(resolve).toHaveBeenCalledTimes(1);
-          expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+          expect(resolve).toHaveBeenCalledExactlyOnceWith(
+            expectedResolveParams,
+          );
         });
 
         it('should return expected value', () => {
@@ -595,10 +582,7 @@ describe(ServiceResolutionManager, () => {
 
           expect(
             serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledWith(expectedGetPlanOptions);
+          ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
         });
 
         it('should call plan()', () => {
@@ -617,8 +601,7 @@ describe(ServiceResolutionManager, () => {
             servicesBranch: [],
           };
 
-          expect(plan).toHaveBeenCalledTimes(1);
-          expect(plan).toHaveBeenCalledWith(expectedPlanParams);
+          expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
         });
 
         it('should call resolve()', () => {
@@ -636,8 +619,9 @@ describe(ServiceResolutionManager, () => {
             requestScopeCache: new Map(),
           };
 
-          expect(resolve).toHaveBeenCalledTimes(1);
-          expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+          expect(resolve).toHaveBeenCalledExactlyOnceWith(
+            expectedResolveParams,
+          );
         });
 
         it('should return expected value', () => {
@@ -709,10 +693,7 @@ describe(ServiceResolutionManager, () => {
 
         expect(
           serviceReferenceManagerMock.planResultCacheService.get,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.planResultCacheService.get,
-        ).toHaveBeenCalledWith(expectedGetPlanOptions);
+        ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
       });
 
       it('should not call plan()', () => {
@@ -734,8 +715,7 @@ describe(ServiceResolutionManager, () => {
           requestScopeCache: new Map(),
         };
 
-        expect(resolve).toHaveBeenCalledTimes(1);
-        expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+        expect(resolve).toHaveBeenCalledExactlyOnceWith(expectedResolveParams);
       });
 
       it('should return expected value', () => {
@@ -794,10 +774,7 @@ describe(ServiceResolutionManager, () => {
 
           expect(
             serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.planResultCacheService.get,
-          ).toHaveBeenCalledWith(expectedGetPlanOptions);
+          ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
         });
 
         it('should call plan()', () => {
@@ -812,8 +789,7 @@ describe(ServiceResolutionManager, () => {
             servicesBranch: [],
           };
 
-          expect(plan).toHaveBeenCalledTimes(1);
-          expect(plan).toHaveBeenCalledWith(expectedPlanParams);
+          expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
         });
 
         it('should call resolve()', () => {
@@ -831,8 +807,9 @@ describe(ServiceResolutionManager, () => {
             requestScopeCache: new Map(),
           };
 
-          expect(resolve).toHaveBeenCalledTimes(1);
-          expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+          expect(resolve).toHaveBeenCalledExactlyOnceWith(
+            expectedResolveParams,
+          );
         });
 
         it('should return expected value', () => {
@@ -894,10 +871,7 @@ describe(ServiceResolutionManager, () => {
 
         expect(
           serviceReferenceManagerMock.planResultCacheService.get,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.planResultCacheService.get,
-        ).toHaveBeenCalledWith(expectedGetPlanOptions);
+        ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
       });
 
       it('should call plan()', () => {
@@ -915,8 +889,7 @@ describe(ServiceResolutionManager, () => {
           servicesBranch: [],
         };
 
-        expect(plan).toHaveBeenCalledTimes(1);
-        expect(plan).toHaveBeenCalledWith(expectedPlanParams);
+        expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
       });
 
       it('should call resolve()', () => {
@@ -934,8 +907,7 @@ describe(ServiceResolutionManager, () => {
           requestScopeCache: new Map(),
         };
 
-        expect(resolve).toHaveBeenCalledTimes(1);
-        expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+        expect(resolve).toHaveBeenCalledExactlyOnceWith(expectedResolveParams);
       });
 
       it('should return expected value', () => {
@@ -1000,10 +972,7 @@ describe(ServiceResolutionManager, () => {
 
         expect(
           serviceReferenceManagerMock.planResultCacheService.get,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.planResultCacheService.get,
-        ).toHaveBeenCalledWith(expectedGetPlanOptions);
+        ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
       });
 
       it('should call plan()', () => {
@@ -1021,8 +990,7 @@ describe(ServiceResolutionManager, () => {
           servicesBranch: [],
         };
 
-        expect(plan).toHaveBeenCalledTimes(1);
-        expect(plan).toHaveBeenCalledWith(expectedPlanParams);
+        expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
       });
 
       it('should call resolve()', () => {
@@ -1040,8 +1008,7 @@ describe(ServiceResolutionManager, () => {
           requestScopeCache: new Map(),
         };
 
-        expect(resolve).toHaveBeenCalledTimes(1);
-        expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+        expect(resolve).toHaveBeenCalledExactlyOnceWith(expectedResolveParams);
       });
 
       it('should throw an InversifyContainerError', () => {
@@ -1112,10 +1079,7 @@ describe(ServiceResolutionManager, () => {
 
         expect(
           serviceReferenceManagerMock.planResultCacheService.get,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.planResultCacheService.get,
-        ).toHaveBeenCalledWith(expectedGetPlanOptions);
+        ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
       });
 
       it('should call plan()', () => {
@@ -1133,8 +1097,7 @@ describe(ServiceResolutionManager, () => {
           servicesBranch: [],
         };
 
-        expect(plan).toHaveBeenCalledTimes(1);
-        expect(plan).toHaveBeenCalledWith(expectedPlanParams);
+        expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
       });
 
       it('should call resolve()', () => {
@@ -1152,8 +1115,7 @@ describe(ServiceResolutionManager, () => {
           requestScopeCache: new Map(),
         };
 
-        expect(resolve).toHaveBeenCalledTimes(1);
-        expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+        expect(resolve).toHaveBeenCalledExactlyOnceWith(expectedResolveParams);
       });
 
       it('should return expected value', () => {
@@ -1215,10 +1177,7 @@ describe(ServiceResolutionManager, () => {
 
         expect(
           serviceReferenceManagerMock.planResultCacheService.get,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.planResultCacheService.get,
-        ).toHaveBeenCalledWith(expectedGetPlanOptions);
+        ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
       });
 
       it('should call plan()', () => {
@@ -1235,8 +1194,7 @@ describe(ServiceResolutionManager, () => {
           servicesBranch: [],
         };
 
-        expect(plan).toHaveBeenCalledTimes(1);
-        expect(plan).toHaveBeenCalledWith(expectedPlanParams);
+        expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
       });
 
       it('should call resolve()', () => {
@@ -1254,8 +1212,7 @@ describe(ServiceResolutionManager, () => {
           requestScopeCache: new Map(),
         };
 
-        expect(resolve).toHaveBeenCalledTimes(1);
-        expect(resolve).toHaveBeenCalledWith(expectedResolveParams);
+        expect(resolve).toHaveBeenCalledExactlyOnceWith(expectedResolveParams);
       });
 
       it('should return expected value', () => {

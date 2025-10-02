@@ -47,8 +47,7 @@ describe(buildRouterExplorerControllerMetadataList, () => {
     });
 
     it('should call exploreControllers', () => {
-      expect(getControllerMetadataList).toHaveBeenCalledTimes(1);
-      expect(getControllerMetadataList).toHaveBeenCalledWith();
+      expect(getControllerMetadataList).toHaveBeenCalledExactlyOnceWith();
     });
 
     it('should throw an InversifyHttpAdapterError with the correct kind', () => {
@@ -102,22 +101,19 @@ describe(buildRouterExplorerControllerMetadataList, () => {
     });
 
     it('should call getControllerMetadataList()', () => {
-      expect(getControllerMetadataList).toHaveBeenCalledTimes(1);
-      expect(getControllerMetadataList).toHaveBeenCalledWith();
+      expect(getControllerMetadataList).toHaveBeenCalledExactlyOnceWith();
     });
 
     it('should call container.isBound()', () => {
-      expect(containerMock.isBound).toHaveBeenCalledTimes(1);
-      expect(containerMock.isBound).toHaveBeenCalledWith(
+      expect(containerMock.isBound).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.serviceIdentifier,
       );
     });
 
     it('should call buildRouterExplorerControllerMetadata()', () => {
-      expect(buildRouterExplorerControllerMetadata).toHaveBeenCalledTimes(1);
-      expect(buildRouterExplorerControllerMetadata).toHaveBeenCalledWith(
-        controllerMetadataFixture,
-      );
+      expect(
+        buildRouterExplorerControllerMetadata,
+      ).toHaveBeenCalledExactlyOnceWith(controllerMetadataFixture);
     });
 
     it('should return RouterExplorerControllerMetadata[]', () => {
