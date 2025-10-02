@@ -1,8 +1,16 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { betterAuth, BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server';
 import { Server } from '../../server/models/Server';
@@ -91,6 +99,50 @@ describe(BetterAuthExpress4ContainerModule, () => {
       it('should sign up successfully', () => {
         expect(signUpResponse.status).toBe(200);
       });
+    });
+  });
+
+  describe('having a Better Auth Express 4 server with transform', () => {
+    let transformMock: Mock<(controller: Newable<unknown>) => Newable<unknown>>;
+    let server: Server;
+
+    beforeAll(async () => {
+      transformMock = vitest.fn((controller: Newable<unknown>) => controller);
+
+      // eslint-disable-next-line @typescript-eslint/typedef
+      const options = {
+        database: db,
+        emailAndPassword: {
+          enabled: true,
+        },
+      } as const satisfies BetterAuthOptions;
+
+      const container: Container = new Container();
+
+      // eslint-disable-next-line @typescript-eslint/typedef
+      const betterAuthInstance = betterAuth(options);
+
+      const betterAuthExpress4ContainerModule: BetterAuthExpress4ContainerModule<
+        typeof options,
+        () => BetterAuth<typeof options>
+      > = BetterAuthExpress4ContainerModule.fromOptions(
+        '/api/auth',
+        betterAuthInstance,
+        transformMock,
+      );
+
+      await container.load(betterAuthExpress4ContainerModule);
+
+      server = await buildExpress4Server(container);
+    });
+
+    afterAll(async () => {
+      await server.shutdown();
+    });
+
+    it('should call transform()', () => {
+      expect(transformMock).toHaveBeenCalledTimes(1);
+      expect(transformMock).toHaveBeenCalledWith(expect.any(Function));
     });
   });
 });

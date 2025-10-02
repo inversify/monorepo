@@ -44,7 +44,9 @@ export abstract class BaseBetterAuthContainerModule<
     factory: TFactory,
     params: MapToResolvedValueInjectOptions<Parameters<TFactory>>,
     containerModuleOptions: ContainerModuleLoadOptions,
-    transform?: (controllerClass: Newable<unknown>) => Newable<unknown>,
+    transform:
+      | ((controllerClass: Newable<unknown>) => Newable<unknown>)
+      | undefined,
   ): void {
     containerModuleOptions
       .bind(betterAuthServiceIdentifier)
@@ -73,7 +75,7 @@ export abstract class BaseBetterAuthContainerModule<
     containerModuleOptions
       .bind(betterAuthControllerServiceIdentifier)
       .to(
-        transform !== undefined ? transform(controllerClass) : controllerClass,
+        transform === undefined ? controllerClass : transform(controllerClass),
       )
       .inSingletonScope();
   }
