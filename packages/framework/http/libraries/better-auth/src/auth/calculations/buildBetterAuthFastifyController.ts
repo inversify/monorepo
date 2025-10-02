@@ -14,15 +14,15 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { inject, Newable } from 'inversify';
 
 import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthControllerServiceIdentifier } from '../models/betterAuthControllerServiceIdentifier';
 import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier';
 
 export function buildBetterAuthFastifyController(
   basePath: string,
+  serviceIdentifier: symbol,
 ): Newable<unknown> {
   @Controller({
     path: basePath,
-    serviceIdentifier: betterAuthControllerServiceIdentifier,
+    serviceIdentifier,
   })
   class BetterAuthFastifyController<TOptions extends BetterAuthOptions> {
     readonly #auth: BetterAuth<TOptions>;

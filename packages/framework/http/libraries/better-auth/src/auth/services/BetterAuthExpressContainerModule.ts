@@ -27,7 +27,8 @@ export class BetterAuthExpressContainerModule<
 
   protected override _buildBetterAuthControllerClass(
     basePath: string,
+    serviceIdentifier: symbol,
   ): Newable<unknown> {
-    return buildBetterAuthExpressController(basePath);
+    return buildBetterAuthExpressController(basePath, serviceIdentifier);
   }
 }

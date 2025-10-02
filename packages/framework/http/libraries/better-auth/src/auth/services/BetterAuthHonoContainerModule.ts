@@ -27,7 +27,8 @@ export class BetterAuthHonoContainerModule<
 
   protected override _buildBetterAuthControllerClass(
     basePath: string,
+    serviceIdentifier: symbol,
   ): Newable<unknown> {
-    return buildBetterAuthHonoController(basePath);
+    return buildBetterAuthHonoController(basePath, serviceIdentifier);
   }
 }

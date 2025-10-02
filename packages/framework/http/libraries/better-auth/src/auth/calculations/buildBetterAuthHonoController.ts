@@ -4,15 +4,15 @@ import { Context } from 'hono';
 import { inject, Newable } from 'inversify';
 
 import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthControllerServiceIdentifier } from '../models/betterAuthControllerServiceIdentifier';
 import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier';
 
 export function buildBetterAuthHonoController(
   basePath: string,
+  serviceIdentifier: symbol,
 ): Newable<unknown> {
   @Controller({
     path: basePath,
-    serviceIdentifier: betterAuthControllerServiceIdentifier,
+    serviceIdentifier,
   })
   class BetterAuthHonoController<TOptions extends BetterAuthOptions> {
     readonly #auth: BetterAuth<TOptions>;

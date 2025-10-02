@@ -27,7 +27,8 @@ export class BetterAuthFastifyContainerModule<
 
   protected override _buildBetterAuthControllerClass(
     basePath: string,
+    serviceIdentifier: symbol,
   ): Newable<unknown> {
-    return buildBetterAuthFastifyController(basePath);
+    return buildBetterAuthFastifyController(basePath, serviceIdentifier);
   }
 }

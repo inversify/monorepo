@@ -8,7 +8,6 @@ import {
 
 import { buildBetterAuthMiddleware } from '../calculations/buildBetterAuthMiddleware';
 import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthControllerServiceIdentifier } from '../models/betterAuthControllerServiceIdentifier';
 import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier';
 import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier';
 
@@ -61,8 +60,15 @@ export abstract class BaseBetterAuthContainerModule<
       )
       .inSingletonScope();
 
+    const betterAuthControllerServiceIdentifier: unique symbol = Symbol(
+      '@inversifyjs/better-auth/betterAuthController',
+    );
+
     const controllerClass: Newable<unknown> =
-      this._buildBetterAuthControllerClass(basePath);
+      this._buildBetterAuthControllerClass(
+        basePath,
+        betterAuthControllerServiceIdentifier,
+      );
 
     containerModuleOptions
       .bind(betterAuthControllerServiceIdentifier)
@@ -74,5 +80,6 @@ export abstract class BaseBetterAuthContainerModule<
 
   protected abstract _buildBetterAuthControllerClass(
     basePath: string,
+    serviceIdentifier: symbol,
   ): Newable<unknown>;
 }
