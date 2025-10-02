@@ -27,9 +27,16 @@ export abstract class BaseBetterAuthContainerModule<
     basePath: string,
     factory: TFactory,
     params: MapToResolvedValueInjectOptions<Parameters<TFactory>>,
+    transform?: (controllerClass: Newable<unknown>) => Newable<unknown>,
   ) {
     super((containerModuleOptions: ContainerModuleLoadOptions) => {
-      this.#provide(basePath, factory, params, containerModuleOptions);
+      this.#provide(
+        basePath,
+        factory,
+        params,
+        containerModuleOptions,
+        transform,
+      );
     });
   }
 
@@ -38,6 +45,7 @@ export abstract class BaseBetterAuthContainerModule<
     factory: TFactory,
     params: MapToResolvedValueInjectOptions<Parameters<TFactory>>,
     containerModuleOptions: ContainerModuleLoadOptions,
+    transform?: (controllerClass: Newable<unknown>) => Newable<unknown>,
   ): void {
     containerModuleOptions
       .bind(betterAuthServiceIdentifier)
@@ -53,9 +61,14 @@ export abstract class BaseBetterAuthContainerModule<
       )
       .inSingletonScope();
 
+    const controllerClass: Newable<unknown> =
+      this._buildBetterAuthControllerClass(basePath);
+
     containerModuleOptions
       .bind(betterAuthControllerServiceIdentifier)
-      .to(this._buildBetterAuthControllerClass(basePath))
+      .to(
+        transform !== undefined ? transform(controllerClass) : controllerClass,
+      )
       .inSingletonScope();
   }
 

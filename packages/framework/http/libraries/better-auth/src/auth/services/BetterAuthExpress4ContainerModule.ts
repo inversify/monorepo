@@ -15,11 +15,13 @@ export class BetterAuthExpress4ContainerModule<
   public static fromOptions<TOptions extends BetterAuthOptions>(
     basePath: string,
     betterAuth: BetterAuth<TOptions>,
+    transform?: (controllerClass: Newable<unknown>) => Newable<unknown>,
   ): BetterAuthExpress4ContainerModule<TOptions, () => BetterAuth<TOptions>> {
     return new BetterAuthExpress4ContainerModule(
       basePath,
       () => betterAuth,
       [],
+      transform,
     );
   }
 

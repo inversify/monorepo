@@ -15,8 +15,14 @@ export class BetterAuthExpressContainerModule<
   public static fromOptions<TOptions extends BetterAuthOptions>(
     basePath: string,
     betterAuth: BetterAuth<TOptions>,
+    transform?: (controllerClass: Newable<unknown>) => Newable<unknown>,
   ): BetterAuthExpressContainerModule<TOptions, () => BetterAuth<TOptions>> {
-    return new BetterAuthExpressContainerModule(basePath, () => betterAuth, []);
+    return new BetterAuthExpressContainerModule(
+      basePath,
+      () => betterAuth,
+      [],
+      transform,
+    );
   }
 
   protected override _buildBetterAuthControllerClass(
