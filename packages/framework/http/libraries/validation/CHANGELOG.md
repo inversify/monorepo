@@ -1,5 +1,12 @@
 # @inversifyjs/http-validation
 
+## 3.1.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@3.1.0
+
 ## 3.0.1
 
 ### Patch Changes
