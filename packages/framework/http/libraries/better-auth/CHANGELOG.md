@@ -1,5 +1,17 @@
 # @inversifyjs/http-better-auth
 
+## 3.1.0
+
+### Minor Changes
+
+- Updated `BetterAuthcontainerModule` classes with optional `transform` parameter to support transforming BetterAuth controllers. This allows users to apply guards, middlewares, or error filters to controller classes.
+
+### Patch Changes
+
+- Updated BetterAuth container modules to avoid collissions when multiple BetterAuth modules are loaded.
+- Updated dependencies
+  - @inversifyjs/http-core@3.1.0
+
 ## 3.0.1
 
 ### Patch Changes
