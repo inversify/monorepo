@@ -224,14 +224,14 @@ describe(injectFromHierarchy, () => {
       expect(getBaseType).toHaveBeenNthCalledWith(1, targetFixture);
       expect(getBaseType).toHaveBeenNthCalledWith(2, base1Fixture);
 
-      expect(injectFrom).toHaveBeenCalledTimes(1);
-      expect(injectFrom).toHaveBeenCalledWith({
+      expect(injectFrom).toHaveBeenCalledExactlyOnceWith({
         ...optionsFixture,
         type: base1Fixture,
       } satisfies InjectFromOptions);
 
-      expect(injectFromResultMock).toHaveBeenCalledTimes(1);
-      expect(injectFromResultMock).toHaveBeenCalledWith(targetFixture);
+      expect(injectFromResultMock).toHaveBeenCalledExactlyOnceWith(
+        targetFixture,
+      );
     });
   });
 });

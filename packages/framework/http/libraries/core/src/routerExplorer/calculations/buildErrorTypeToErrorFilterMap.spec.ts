@@ -61,16 +61,16 @@ describe(buildErrorTypeToErrorFilterMap, () => {
     });
 
     it('should call getClassMethodErrorFilterMetadata()', () => {
-      expect(getClassMethodErrorFilterMetadata).toHaveBeenCalledTimes(1);
-      expect(getClassMethodErrorFilterMetadata).toHaveBeenCalledWith(
+      expect(getClassMethodErrorFilterMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         methodKeyFixture,
       );
     });
 
     it('should call getClassErrorFilterMetadata()', () => {
-      expect(getClassErrorFilterMetadata).toHaveBeenCalledTimes(1);
-      expect(getClassErrorFilterMetadata).toHaveBeenCalledWith(targetFixture);
+      expect(getClassErrorFilterMetadata).toHaveBeenCalledExactlyOnceWith(
+        targetFixture,
+      );
     });
 
     it('should call setErrorFilterToErrorFilterMap()', () => {
@@ -134,21 +134,20 @@ describe(buildErrorTypeToErrorFilterMap, () => {
     });
 
     it('should call getClassMethodErrorFilterMetadata()', () => {
-      expect(getClassMethodErrorFilterMetadata).toHaveBeenCalledTimes(1);
-      expect(getClassMethodErrorFilterMetadata).toHaveBeenCalledWith(
+      expect(getClassMethodErrorFilterMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         methodKeyFixture,
       );
     });
 
     it('should call getClassErrorFilterMetadata()', () => {
-      expect(getClassErrorFilterMetadata).toHaveBeenCalledTimes(1);
-      expect(getClassErrorFilterMetadata).toHaveBeenCalledWith(targetFixture);
+      expect(getClassErrorFilterMetadata).toHaveBeenCalledExactlyOnceWith(
+        targetFixture,
+      );
     });
 
     it('should call setErrorFilterToErrorFilterMap() for class filters only', () => {
-      expect(setErrorFilterToErrorFilterMap).toHaveBeenCalledTimes(1);
-      expect(setErrorFilterToErrorFilterMap).toHaveBeenCalledWith(
+      expect(setErrorFilterToErrorFilterMap).toHaveBeenCalledExactlyOnceWith(
         expect.any(Map),
         classErrorFilter1Fixture,
       );

@@ -67,13 +67,11 @@ describe(setPluginDisposeBinding, () => {
     });
 
     it('should call getPluginDisposeBindingMap()', () => {
-      expect(getPluginDisposeBindingMap).toHaveBeenCalledTimes(1);
-      expect(getPluginDisposeBindingMap).toHaveBeenCalledWith();
+      expect(getPluginDisposeBindingMap).toHaveBeenCalledExactlyOnceWith();
     });
 
     it('should call map.set()', () => {
-      expect(mapMock.set).toHaveBeenCalledTimes(1);
-      expect(mapMock.set).toHaveBeenCalledWith(
+      expect(mapMock.set).toHaveBeenCalledExactlyOnceWith(
         bindingFixture,
         bindingDisposeMetadataFixture,
       );

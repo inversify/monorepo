@@ -45,16 +45,14 @@ describe(getSchemaMetadata, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         schemaOpenApiMetadataReflectKey,
       );
     });
 
     it('should call buildDefaultSchemaMetadata()', () => {
-      expect(buildDefaultSchemaMetadata).toHaveBeenCalledTimes(1);
-      expect(buildDefaultSchemaMetadata).toHaveBeenCalledWith();
+      expect(buildDefaultSchemaMetadata).toHaveBeenCalledExactlyOnceWith();
     });
 
     it('should return SchemaMetadata', () => {
@@ -88,8 +86,7 @@ describe(getSchemaMetadata, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         schemaOpenApiMetadataReflectKey,
       );

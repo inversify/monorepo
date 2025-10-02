@@ -132,8 +132,7 @@ describe(updateControllerOpenApiMetadataServer, () => {
       });
 
       it('should call buildOrGetOperationObject()', () => {
-        expect(buildOrGetOperationObject).toHaveBeenCalledTimes(1);
-        expect(buildOrGetOperationObject).toHaveBeenCalledWith(
+        expect(buildOrGetOperationObject).toHaveBeenCalledExactlyOnceWith(
           metadataFixture,
           keyFixture,
         );
@@ -193,8 +192,7 @@ describe(updateControllerOpenApiMetadataServer, () => {
       });
 
       it('should call buildOrGetOperationObject()', () => {
-        expect(buildOrGetOperationObject).toHaveBeenCalledTimes(1);
-        expect(buildOrGetOperationObject).toHaveBeenCalledWith(
+        expect(buildOrGetOperationObject).toHaveBeenCalledExactlyOnceWith(
           metadataFixture,
           keyFixture,
         );

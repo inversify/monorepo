@@ -65,8 +65,7 @@ describe(BindingService, () => {
       });
 
       it('should call activationMaps.clone()', () => {
-        expect(bindingMapsMock.clone).toHaveBeenCalledTimes(1);
-        expect(bindingMapsMock.clone).toHaveBeenCalledWith();
+        expect(bindingMapsMock.clone).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return a clone()', () => {
@@ -139,8 +138,7 @@ describe(BindingService, () => {
         });
 
         it('should call bindingMaps.get()', () => {
-          expect(bindingMapsMock.get).toHaveBeenCalledTimes(1);
-          expect(bindingMapsMock.get).toHaveBeenCalledWith(
+          expect(bindingMapsMock.get).toHaveBeenCalledExactlyOnceWith(
             'serviceId',
             serviceIdFixture,
           );
@@ -202,8 +200,7 @@ describe(BindingService, () => {
             scope: bindingScopeValues.Singleton,
           };
 
-          expect(buildInstanceBinding).toHaveBeenCalledTimes(1);
-          expect(buildInstanceBinding).toHaveBeenCalledWith(
+          expect(buildInstanceBinding).toHaveBeenCalledExactlyOnceWith(
             expectedAutobindingOptions,
             serviceIdFixture,
           );
@@ -244,8 +241,7 @@ describe(BindingService, () => {
       });
 
       it('should call bindingMaps.get()', () => {
-        expect(bindingMapsMock.get).toHaveBeenCalledTimes(1);
-        expect(bindingMapsMock.get).toHaveBeenCalledWith(
+        expect(bindingMapsMock.get).toHaveBeenCalledExactlyOnceWith(
           'serviceId',
           serviceIdFixture,
         );
@@ -399,8 +395,7 @@ describe(BindingService, () => {
       });
 
       it('should call bindingMaps.get()', () => {
-        expect(bindingMapsMock.get).toHaveBeenCalledTimes(1);
-        expect(bindingMapsMock.get).toHaveBeenCalledWith(
+        expect(bindingMapsMock.get).toHaveBeenCalledExactlyOnceWith(
           'serviceId',
           serviceIdFixture,
         );
@@ -467,8 +462,10 @@ describe(BindingService, () => {
       });
 
       it('should call bindingMaps.get()', () => {
-        expect(bindingMapsMock.get).toHaveBeenCalledTimes(1);
-        expect(bindingMapsMock.get).toHaveBeenCalledWith('id', idFixture);
+        expect(bindingMapsMock.get).toHaveBeenCalledExactlyOnceWith(
+          'id',
+          idFixture,
+        );
       });
 
       it('should return BindingActivation[]', () => {
@@ -540,8 +537,7 @@ describe(BindingService, () => {
       });
 
       it('should call bindingMaps.get()', () => {
-        expect(bindingMapsMock.get).toHaveBeenCalledTimes(1);
-        expect(bindingMapsMock.get).toHaveBeenCalledWith(
+        expect(bindingMapsMock.get).toHaveBeenCalledExactlyOnceWith(
           'moduleId',
           moduleIdFixture,
         );
@@ -576,8 +572,9 @@ describe(BindingService, () => {
       });
 
       it('should call bindingMaps.getAllKeys()', () => {
-        expect(bindingMapsMock.getAllKeys).toHaveBeenCalledTimes(1);
-        expect(bindingMapsMock.getAllKeys).toHaveBeenCalledWith('serviceId');
+        expect(bindingMapsMock.getAllKeys).toHaveBeenCalledExactlyOnceWith(
+          'serviceId',
+        );
       });
     });
   });
@@ -646,11 +643,9 @@ describe(BindingService, () => {
       });
 
       it('should call bindingMaps.removeByRelation()', () => {
-        expect(bindingMapsMock.removeByRelation).toHaveBeenCalledTimes(1);
-        expect(bindingMapsMock.removeByRelation).toHaveBeenCalledWith(
-          'moduleId',
-          moduleIdFixture,
-        );
+        expect(
+          bindingMapsMock.removeByRelation,
+        ).toHaveBeenCalledExactlyOnceWith('moduleId', moduleIdFixture);
       });
 
       it('should return undefined', () => {
@@ -678,11 +673,9 @@ describe(BindingService, () => {
       });
 
       it('should call bindingMaps.removeByRelation()', () => {
-        expect(bindingMapsMock.removeByRelation).toHaveBeenCalledTimes(1);
-        expect(bindingMapsMock.removeByRelation).toHaveBeenCalledWith(
-          'serviceId',
-          serviceIdFixture,
-        );
+        expect(
+          bindingMapsMock.removeByRelation,
+        ).toHaveBeenCalledExactlyOnceWith('serviceId', serviceIdFixture);
       });
 
       it('should return undefined', () => {
@@ -716,8 +709,7 @@ describe(BindingService, () => {
             serviceId: bindingFixture.serviceIdentifier,
           };
 
-          expect(bindingMapsMock.add).toHaveBeenCalledTimes(1);
-          expect(bindingMapsMock.add).toHaveBeenCalledWith(
+          expect(bindingMapsMock.add).toHaveBeenCalledExactlyOnceWith(
             bindingFixture,
             expectedRelation,
           );
@@ -754,8 +746,7 @@ describe(BindingService, () => {
             serviceId: bindingFixture.serviceIdentifier,
           };
 
-          expect(bindingMapsMock.add).toHaveBeenCalledTimes(1);
-          expect(bindingMapsMock.add).toHaveBeenCalledWith(
+          expect(bindingMapsMock.add).toHaveBeenCalledExactlyOnceWith(
             bindingFixture,
             expectedRelation,
           );
@@ -787,11 +778,9 @@ describe(BindingService, () => {
       });
 
       it('should call bindingMapsMock.removeByRelation()', () => {
-        expect(bindingMapsMock.removeByRelation).toHaveBeenCalledTimes(1);
-        expect(bindingMapsMock.removeByRelation).toHaveBeenCalledWith(
-          'id',
-          idFixture,
-        );
+        expect(
+          bindingMapsMock.removeByRelation,
+        ).toHaveBeenCalledExactlyOnceWith('id', idFixture);
       });
 
       it('should return undefined', () => {

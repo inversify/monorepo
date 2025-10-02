@@ -167,8 +167,9 @@ describe(removeRootServiceNodeBindingIfContextFree, () => {
       });
 
       it('should call removeServiceNodeBindingIfContextFree()', () => {
-        expect(removeServiceNodeBindingIfContextFree).toHaveBeenCalledTimes(1);
-        expect(removeServiceNodeBindingIfContextFree).toHaveBeenCalledWith(
+        expect(
+          removeServiceNodeBindingIfContextFree,
+        ).toHaveBeenCalledExactlyOnceWith(
           lazyPlanServiceNodeFixture,
           bindingMock,
           buildPlanBindingConstraintsListFixture,

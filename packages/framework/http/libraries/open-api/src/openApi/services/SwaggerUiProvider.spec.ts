@@ -111,18 +111,19 @@ describe(SwaggerUiProvider, () => {
       });
 
       it('should call SwaggerUiProvider._buildControllerType()', () => {
-        expect(buildControllerTypeMock).toHaveBeenCalledTimes(1);
-        expect(buildControllerTypeMock).toHaveBeenCalledWith(optionsFixture);
+        expect(buildControllerTypeMock).toHaveBeenCalledExactlyOnceWith(
+          optionsFixture,
+        );
       });
 
       it('should call bindToFluentSyntax.toSelf()', () => {
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledTimes(1);
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledWith();
+        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call container.bind()', () => {
-        expect(containerMock.bind).toHaveBeenCalledTimes(1);
-        expect(containerMock.bind).toHaveBeenCalledWith(controllerTypeFixture);
+        expect(containerMock.bind).toHaveBeenCalledExactlyOnceWith(
+          controllerTypeFixture,
+        );
       });
 
       it('should return the expected result', () => {
@@ -162,18 +163,19 @@ describe(SwaggerUiProvider, () => {
       });
 
       it('should call SwaggerUiProvider._buildControllerType()', () => {
-        expect(buildControllerTypeMock).toHaveBeenCalledTimes(1);
-        expect(buildControllerTypeMock).toHaveBeenCalledWith(optionsFixture);
+        expect(buildControllerTypeMock).toHaveBeenCalledExactlyOnceWith(
+          optionsFixture,
+        );
       });
 
       it('should call bindToFluentSyntax.toSelf()', () => {
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledTimes(1);
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledWith();
+        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call container.bind()', () => {
-        expect(containerMock.bind).toHaveBeenCalledTimes(1);
-        expect(containerMock.bind).toHaveBeenCalledWith(controllerTypeFixture);
+        expect(containerMock.bind).toHaveBeenCalledExactlyOnceWith(
+          controllerTypeFixture,
+        );
       });
 
       it('should throw an Error', () => {
@@ -226,41 +228,37 @@ describe(SwaggerUiProvider, () => {
       });
 
       it('should call getControllerMetadataList()', () => {
-        expect(getControllerMetadataList).toHaveBeenCalledTimes(1);
-        expect(getControllerMetadataList).toHaveBeenCalledWith();
+        expect(getControllerMetadataList).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call container.isBound()', () => {
-        expect(containerMock.isBound).toHaveBeenCalledTimes(1);
-        expect(containerMock.isBound).toHaveBeenCalledWith(
+        expect(containerMock.isBound).toHaveBeenCalledExactlyOnceWith(
           (controllerMetadataListFixture[0] as ControllerMetadata)
             .serviceIdentifier,
         );
       });
 
       it('should call getControllerMethodMetadataList()', () => {
-        expect(getControllerMethodMetadataList).toHaveBeenCalledTimes(1);
-        expect(getControllerMethodMetadataList).toHaveBeenCalledWith(
+        expect(getControllerMethodMetadataList).toHaveBeenCalledExactlyOnceWith(
           (controllerMetadataListFixture[0] as ControllerMetadata).target,
         );
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           (controllerMetadataListFixture[0] as ControllerMetadata).target,
           controllerOpenApiMetadataReflectKey,
         );
       });
 
       it('should call container.bind()', () => {
-        expect(containerMock.bind).toHaveBeenCalledTimes(1);
-        expect(containerMock.bind).toHaveBeenCalledWith(controllerTypeFixture);
+        expect(containerMock.bind).toHaveBeenCalledExactlyOnceWith(
+          controllerTypeFixture,
+        );
       });
 
       it('should call bindToFluentSyntax.toSelf()', () => {
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledTimes(1);
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledWith();
+        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return the expected result', () => {
@@ -306,13 +304,11 @@ describe(SwaggerUiProvider, () => {
       });
 
       it('should call getControllerMetadataList()', () => {
-        expect(getControllerMetadataList).toHaveBeenCalledTimes(1);
-        expect(getControllerMetadataList).toHaveBeenCalledWith();
+        expect(getControllerMetadataList).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call container.isBound()', () => {
-        expect(containerMock.isBound).toHaveBeenCalledTimes(1);
-        expect(containerMock.isBound).toHaveBeenCalledWith(
+        expect(containerMock.isBound).toHaveBeenCalledExactlyOnceWith(
           (controllerMetadataListFixture[0] as ControllerMetadata)
             .serviceIdentifier,
         );
@@ -327,13 +323,13 @@ describe(SwaggerUiProvider, () => {
       });
 
       it('should call container.bind()', () => {
-        expect(containerMock.bind).toHaveBeenCalledTimes(1);
-        expect(containerMock.bind).toHaveBeenCalledWith(controllerTypeFixture);
+        expect(containerMock.bind).toHaveBeenCalledExactlyOnceWith(
+          controllerTypeFixture,
+        );
       });
 
       it('should call bindToFluentSyntax.toSelf()', () => {
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledTimes(1);
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledWith();
+        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return the expected result', () => {
@@ -420,15 +416,15 @@ describe(SwaggerUiProvider, () => {
       });
 
       it('should call buildNormalizedPath()', () => {
-        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
-        expect(buildNormalizedPath).toHaveBeenCalledWith('/api//test-method');
+        expect(buildNormalizedPath).toHaveBeenCalledExactlyOnceWith(
+          '/api//test-method',
+        );
       });
 
       it('should call mergeOpenApiPathItemObjectIntoOpenApiPaths()', () => {
         expect(
           mergeOpenApiPathItemObjectIntoOpenApiPaths,
-        ).toHaveBeenCalledTimes(1);
-        expect(mergeOpenApiPathItemObjectIntoOpenApiPaths).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           optionsFixture.api.openApiObject,
           '/api/test-method',
           expect.objectContaining({
@@ -439,13 +435,13 @@ describe(SwaggerUiProvider, () => {
       });
 
       it('should call container.bind()', () => {
-        expect(containerMock.bind).toHaveBeenCalledTimes(1);
-        expect(containerMock.bind).toHaveBeenCalledWith(controllerTypeFixture);
+        expect(containerMock.bind).toHaveBeenCalledExactlyOnceWith(
+          controllerTypeFixture,
+        );
       });
 
       it('should call bindToFluentSyntax.toSelf()', () => {
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledTimes(1);
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledWith();
+        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return the expected result', () => {
@@ -530,8 +526,7 @@ describe(SwaggerUiProvider, () => {
       it('should call mergeOpenApiPathItemObjectIntoOpenApiPaths() with pathItemObject without summary', () => {
         expect(
           mergeOpenApiPathItemObjectIntoOpenApiPaths,
-        ).toHaveBeenCalledTimes(1);
-        expect(mergeOpenApiPathItemObjectIntoOpenApiPaths).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           optionsFixture.api.openApiObject,
           '/api/test-method',
           expect.objectContaining({
@@ -934,13 +929,13 @@ describe(SwaggerUiProvider, () => {
       });
 
       it('should call container.bind()', () => {
-        expect(containerMock.bind).toHaveBeenCalledTimes(1);
-        expect(containerMock.bind).toHaveBeenCalledWith(controllerTypeFixture);
+        expect(containerMock.bind).toHaveBeenCalledExactlyOnceWith(
+          controllerTypeFixture,
+        );
       });
 
       it('should call bindToFluentSyntax.toSelf()', () => {
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledTimes(1);
-        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledWith();
+        expect(bindToFluentSyntaxMock.toSelf).toHaveBeenCalledExactlyOnceWith();
       });
     });
 

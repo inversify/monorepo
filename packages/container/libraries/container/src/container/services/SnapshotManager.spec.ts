@@ -124,28 +124,19 @@ describe(SnapshotManager, () => {
       it('should call activationService.clone()', () => {
         expect(
           serviceReferenceManagerMock.activationService.clone,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.activationService.clone,
-        ).toHaveBeenCalledWith();
+        ).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call bindingService.clone()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.clone,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.clone,
-        ).toHaveBeenCalledWith();
+        ).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call deactivationService.clone()', () => {
         expect(
           serviceReferenceManagerMock.deactivationService.clone,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.deactivationService.clone,
-        ).toHaveBeenCalledWith();
+        ).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {

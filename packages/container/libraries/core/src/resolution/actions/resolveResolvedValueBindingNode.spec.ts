@@ -68,16 +68,13 @@ describe(resolveResolvedValueBindingNode, () => {
     });
 
     it('should call resolveResolvedValueBindingParams()', () => {
-      expect(resolveResolvedValueBindingParamsMock).toHaveBeenCalledTimes(1);
-      expect(resolveResolvedValueBindingParamsMock).toHaveBeenCalledWith(
-        paramsFixture,
-        nodeMock,
-      );
+      expect(
+        resolveResolvedValueBindingParamsMock,
+      ).toHaveBeenCalledExactlyOnceWith(paramsFixture, nodeMock);
     });
 
     it('should call node.binding.factory()', () => {
-      expect(nodeMock.binding.factory).toHaveBeenCalledTimes(1);
-      expect(nodeMock.binding.factory).toHaveBeenCalledWith(
+      expect(nodeMock.binding.factory).toHaveBeenCalledExactlyOnceWith(
         ...constructorResolvedValues,
       );
     });
@@ -115,16 +112,13 @@ describe(resolveResolvedValueBindingNode, () => {
     });
 
     it('should call resolveResolvedValueBindingParams()', () => {
-      expect(resolveResolvedValueBindingParamsMock).toHaveBeenCalledTimes(1);
-      expect(resolveResolvedValueBindingParamsMock).toHaveBeenCalledWith(
-        paramsFixture,
-        nodeMock,
-      );
+      expect(
+        resolveResolvedValueBindingParamsMock,
+      ).toHaveBeenCalledExactlyOnceWith(paramsFixture, nodeMock);
     });
 
     it('should call node.binding.factory()', () => {
-      expect(nodeMock.binding.factory).toHaveBeenCalledTimes(1);
-      expect(nodeMock.binding.factory).toHaveBeenCalledWith(
+      expect(nodeMock.binding.factory).toHaveBeenCalledExactlyOnceWith(
         ...constructorResolvedValues,
       );
     });

@@ -65,8 +65,9 @@ describe(buildFilteredServiceBindings, () => {
       });
 
       it('should call params.getBinding()', () => {
-        expect(paramsMock.operations.getBindings).toHaveBeenCalledTimes(1);
-        expect(paramsMock.operations.getBindings).toHaveBeenCalledWith(
+        expect(
+          paramsMock.operations.getBindings,
+        ).toHaveBeenCalledExactlyOnceWith(
           bindingConstraintsFixture.serviceIdentifier,
         );
       });
@@ -113,8 +114,9 @@ describe(buildFilteredServiceBindings, () => {
       });
 
       it('should call params.getBinding()', () => {
-        expect(paramsMock.operations.getBindings).toHaveBeenCalledTimes(1);
-        expect(paramsMock.operations.getBindings).toHaveBeenCalledWith(
+        expect(
+          paramsMock.operations.getBindings,
+        ).toHaveBeenCalledExactlyOnceWith(
           bindingConstraintsFixture.serviceIdentifier,
         );
       });
@@ -188,22 +190,21 @@ describe(buildFilteredServiceBindings, () => {
       });
 
       it('should call params.getBinding()', () => {
-        expect(paramsMock.operations.getBindings).toHaveBeenCalledTimes(1);
-        expect(paramsMock.operations.getBindings).toHaveBeenCalledWith(
+        expect(
+          paramsMock.operations.getBindings,
+        ).toHaveBeenCalledExactlyOnceWith(
           bindingConstraintsFixture.serviceIdentifier,
         );
       });
 
       it('should call getClassMetadata()', () => {
-        expect(getClassMetadata).toHaveBeenCalledTimes(1);
-        expect(getClassMetadata).toHaveBeenCalledWith(
+        expect(getClassMetadata).toHaveBeenCalledExactlyOnceWith(
           bindingConstraintsFixture.serviceIdentifier,
         );
       });
 
       it('should call getBindingId()', () => {
-        expect(getBindingId).toHaveBeenCalledTimes(1);
-        expect(getBindingId).toHaveBeenCalledWith();
+        expect(getBindingId).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call params.setBinding()', () => {
@@ -224,8 +225,9 @@ describe(buildFilteredServiceBindings, () => {
           type: bindingTypeValues.Instance,
         };
 
-        expect(paramsMock.operations.setBinding).toHaveBeenCalledTimes(1);
-        expect(paramsMock.operations.setBinding).toHaveBeenCalledWith(expected);
+        expect(
+          paramsMock.operations.setBinding,
+        ).toHaveBeenCalledExactlyOnceWith(expected);
       });
 
       it('should return an array with a binding', () => {
@@ -289,22 +291,21 @@ describe(buildFilteredServiceBindings, () => {
       });
 
       it('should call params.getBinding()', () => {
-        expect(paramsMock.operations.getBindings).toHaveBeenCalledTimes(1);
-        expect(paramsMock.operations.getBindings).toHaveBeenCalledWith(
+        expect(
+          paramsMock.operations.getBindings,
+        ).toHaveBeenCalledExactlyOnceWith(
           bindingConstraintsFixture.serviceIdentifier,
         );
       });
 
       it('should call getClassMetadata()', () => {
-        expect(getClassMetadata).toHaveBeenCalledTimes(1);
-        expect(getClassMetadata).toHaveBeenCalledWith(
+        expect(getClassMetadata).toHaveBeenCalledExactlyOnceWith(
           bindingConstraintsFixture.serviceIdentifier,
         );
       });
 
       it('should call getBindingId()', () => {
-        expect(getBindingId).toHaveBeenCalledTimes(1);
-        expect(getBindingId).toHaveBeenCalledWith();
+        expect(getBindingId).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call params.setBinding()', () => {
@@ -325,8 +326,9 @@ describe(buildFilteredServiceBindings, () => {
           type: bindingTypeValues.Instance,
         };
 
-        expect(paramsMock.operations.setBinding).toHaveBeenCalledTimes(1);
-        expect(paramsMock.operations.setBinding).toHaveBeenCalledWith(expected);
+        expect(
+          paramsMock.operations.setBinding,
+        ).toHaveBeenCalledExactlyOnceWith(expected);
       });
 
       it('should return an array with a binding', () => {
@@ -390,8 +392,9 @@ describe(buildFilteredServiceBindings, () => {
       });
 
       it('should call params.getBinding()', () => {
-        expect(paramsMock.operations.getBindings).toHaveBeenCalledTimes(1);
-        expect(paramsMock.operations.getBindings).toHaveBeenCalledWith(
+        expect(
+          paramsMock.operations.getBindings,
+        ).toHaveBeenCalledExactlyOnceWith(
           optionsFixture.customServiceIdentifier,
         );
       });
@@ -444,10 +447,9 @@ describe(buildFilteredServiceBindings, () => {
       });
 
       it('should call params.operations.getBindingsChained()', () => {
-        expect(paramsMock.operations.getBindingsChained).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(paramsMock.operations.getBindingsChained).toHaveBeenCalledWith(
+        expect(
+          paramsMock.operations.getBindingsChained,
+        ).toHaveBeenCalledExactlyOnceWith(
           bindingConstraintsFixture.serviceIdentifier,
         );
       });

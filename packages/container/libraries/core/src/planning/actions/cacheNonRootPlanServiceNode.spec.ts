@@ -73,8 +73,9 @@ describe(cacheNonRootPlanServiceNode, () => {
       });
 
       it('should call operations.setNonCachedServiceNode()', () => {
-        expect(operationsMock.setNonCachedServiceNode).toHaveBeenCalledTimes(1);
-        expect(operationsMock.setNonCachedServiceNode).toHaveBeenCalledWith(
+        expect(
+          operationsMock.setNonCachedServiceNode,
+        ).toHaveBeenCalledExactlyOnceWith(
           planServiceNodeFixture,
           contextFixture,
         );
@@ -118,8 +119,9 @@ describe(cacheNonRootPlanServiceNode, () => {
       });
 
       it('should call operations.setNonCachedServiceNode()', () => {
-        expect(operationsMock.setNonCachedServiceNode).toHaveBeenCalledTimes(1);
-        expect(operationsMock.setNonCachedServiceNode).toHaveBeenCalledWith(
+        expect(
+          operationsMock.setNonCachedServiceNode,
+        ).toHaveBeenCalledExactlyOnceWith(
           planServiceNodeFixture,
           contextFixture,
         );
@@ -163,8 +165,7 @@ describe(cacheNonRootPlanServiceNode, () => {
       });
 
       it('should call operations.setPlan()', () => {
-        expect(operationsMock.setPlan).toHaveBeenCalledTimes(1);
-        expect(operationsMock.setPlan).toHaveBeenCalledWith(
+        expect(operationsMock.setPlan).toHaveBeenCalledExactlyOnceWith(
           getPlanOptionsFixture,
           {
             tree: {
@@ -212,8 +213,7 @@ describe(cacheNonRootPlanServiceNode, () => {
       });
 
       it('should call operations.setPlan()', () => {
-        expect(operationsMock.setPlan).toHaveBeenCalledTimes(1);
-        expect(operationsMock.setPlan).toHaveBeenCalledWith(
+        expect(operationsMock.setPlan).toHaveBeenCalledExactlyOnceWith(
           getPlanOptionsFixture,
           {
             tree: {

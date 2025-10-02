@@ -30,8 +30,7 @@ describe(updateClassMetadataWithTypescriptParameterTypes, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         typescriptParameterTypesReflectKey,
       );
@@ -66,16 +65,14 @@ describe(updateClassMetadataWithTypescriptParameterTypes, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         typescriptParameterTypesReflectKey,
       );
     });
 
     it('should call updateOwnReflectMetadata()', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         classMetadataReflectKey,
         getDefaultClassMetadata,

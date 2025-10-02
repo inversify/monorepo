@@ -50,16 +50,14 @@ describe(ValidateAjvSchema, () => {
     });
 
     it('should call updateStandardSchemaValidationMetadata()', () => {
-      expect(updateAjvValidationMetadata).toHaveBeenCalledTimes(1);
-      expect(updateAjvValidationMetadata).toHaveBeenCalledWith(
+      expect(updateAjvValidationMetadata).toHaveBeenCalledExactlyOnceWith(
         [schemaFixture],
         indexFixture,
       );
     });
 
     it('should call updateOwnReflectMetadata()', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture.constructor,
         ajvValidationMetadataReflectKey,
         buildEmptyArrayMetadata,

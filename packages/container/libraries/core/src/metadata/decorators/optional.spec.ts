@@ -64,15 +64,11 @@ describe(optional, () => {
     it('should call buildMaybeClassElementMetadataFromMaybeClassElementMetadata()', () => {
       expect(
         buildMaybeClassElementMetadataFromMaybeClassElementMetadata,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        buildMaybeClassElementMetadataFromMaybeClassElementMetadata,
-      ).toHaveBeenCalledWith(expect.any(Function));
+      ).toHaveBeenCalledExactlyOnceWith(expect.any(Function));
     });
 
     it('should call injectBase()', () => {
-      expect(injectBase).toHaveBeenCalledTimes(1);
-      expect(injectBase).toHaveBeenCalledWith(
+      expect(injectBase).toHaveBeenCalledExactlyOnceWith(
         updateMetadataMock,
         incrementPendingClassMetadataCount,
       );

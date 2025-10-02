@@ -54,13 +54,13 @@ describe(buildInstanceBinding, () => {
     });
 
     it('should call getClassMetadata()', () => {
-      expect(getClassMetadata).toHaveBeenCalledTimes(1);
-      expect(getClassMetadata).toHaveBeenCalledWith(serviceIdentifierFixture);
+      expect(getClassMetadata).toHaveBeenCalledExactlyOnceWith(
+        serviceIdentifierFixture,
+      );
     });
 
     it('should call getBindingId', () => {
-      expect(getBindingId).toHaveBeenCalledTimes(1);
-      expect(getBindingId).toHaveBeenCalledWith();
+      expect(getBindingId).toHaveBeenCalledExactlyOnceWith();
     });
 
     it('should return expected InstanceBinding', () => {

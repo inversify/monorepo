@@ -59,16 +59,14 @@ describe(isNotParentBindingConstraintsWithTag, () => {
     });
 
     it('should call isBindingConstraintsWithTag()', () => {
-      expect(isBindingConstraintsWithTag).toHaveBeenCalledTimes(1);
-      expect(isBindingConstraintsWithTag).toHaveBeenCalledWith(
+      expect(isBindingConstraintsWithTag).toHaveBeenCalledExactlyOnceWith(
         tagFixture,
         tagValueFixture,
       );
     });
 
     it('should call isNotParentBindingConstraints()', () => {
-      expect(isNotParentBindingConstraints).toHaveBeenCalledTimes(1);
-      expect(isNotParentBindingConstraints).toHaveBeenCalledWith(
+      expect(isNotParentBindingConstraints).toHaveBeenCalledExactlyOnceWith(
         isBindingConstraintsWithNameResultMock,
       );
     });

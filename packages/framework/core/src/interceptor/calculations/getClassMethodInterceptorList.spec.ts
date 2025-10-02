@@ -30,8 +30,7 @@ describe(getClassMethodInterceptorList, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         classFixture,
         classMethodInterceptorMetadataReflectKey,
         classMethodKeyFixture,
@@ -69,8 +68,7 @@ describe(getClassMethodInterceptorList, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         classFixture,
         classMethodInterceptorMetadataReflectKey,
         classMethodKeyFixture,

@@ -97,8 +97,7 @@ describe(resolveBindingPreDestroy, () => {
       });
 
       it('should call params.getClassMetadata()', () => {
-        expect(paramsMock.getClassMetadata).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getClassMetadata).toHaveBeenCalledWith(
+        expect(paramsMock.getClassMetadata).toHaveBeenCalledExactlyOnceWith(
           bindingFixture.implementationType,
         );
       });
@@ -126,8 +125,7 @@ describe(resolveBindingPreDestroy, () => {
       });
 
       it('should call params.getClassMetadata()', () => {
-        expect(paramsMock.getClassMetadata).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getClassMetadata).toHaveBeenCalledWith(
+        expect(paramsMock.getClassMetadata).toHaveBeenCalledExactlyOnceWith(
           bindingFixture.implementationType,
         );
       });
@@ -170,8 +168,7 @@ describe(resolveBindingPreDestroy, () => {
       });
 
       it('should call params.getClassMetadata()', () => {
-        expect(paramsMock.getClassMetadata).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getClassMetadata).toHaveBeenCalledWith(
+        expect(paramsMock.getClassMetadata).toHaveBeenCalledExactlyOnceWith(
           bindingFixture.implementationType,
         );
       });
@@ -238,15 +235,13 @@ describe(resolveBindingPreDestroy, () => {
       });
 
       it('should call params.getClassMetadata()', () => {
-        expect(paramsMock.getClassMetadata).toHaveBeenCalledTimes(1);
-        expect(paramsMock.getClassMetadata).toHaveBeenCalledWith(
+        expect(paramsMock.getClassMetadata).toHaveBeenCalledExactlyOnceWith(
           bindingFixture.implementationType,
         );
       });
 
       it('should call preDestroy() method', () => {
-        expect(preDestroyMock).toHaveBeenCalledTimes(1);
-        expect(preDestroyMock).toHaveBeenCalledWith();
+        expect(preDestroyMock).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {

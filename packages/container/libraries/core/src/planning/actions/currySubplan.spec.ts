@@ -182,10 +182,7 @@ describe(currySubplan, () => {
       it('should call tryBuildGetPlanOptionsFromManagedClassElementMetadata()', () => {
         expect(
           tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           instanceBindingNodeFixture.classMetadata.constructorArguments[0],
         );
       });
@@ -193,10 +190,7 @@ describe(currySubplan, () => {
       it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
         expect(
           buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
           instanceBindingNodeFixture.classMetadata.constructorArguments[0],
@@ -204,8 +198,7 @@ describe(currySubplan, () => {
       });
 
       it('should call cacheNonRootPlanServiceNode()', () => {
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledTimes(1);
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledWith(
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledExactlyOnceWith(
           undefined,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
@@ -256,28 +249,21 @@ describe(currySubplan, () => {
       it('should call tryBuildGetPlanOptionsFromManagedClassElementMetadata()', () => {
         expect(
           tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           instanceBindingNodeFixture.classMetadata.constructorArguments[0],
         );
       });
 
       it('should call operations.getPlan()', () => {
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledTimes(1);
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledWith(
-          getPlanOptionsFixture,
-        );
+        expect(
+          subplanParamsMock.operations.getPlan,
+        ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
       it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
         expect(
           buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
           instanceBindingNodeFixture.classMetadata.constructorArguments[0],
@@ -285,8 +271,7 @@ describe(currySubplan, () => {
       });
 
       it('should call cacheNonRootPlanServiceNode()', () => {
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledTimes(1);
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledWith(
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledExactlyOnceWith(
           getPlanOptionsFixture,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
@@ -352,19 +337,15 @@ describe(currySubplan, () => {
       it('should call tryBuildGetPlanOptionsFromManagedClassElementMetadata()', () => {
         expect(
           tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           instanceBindingNodeFixture.classMetadata.constructorArguments[0],
         );
       });
 
       it('should call operations.getPlan()', () => {
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledTimes(1);
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledWith(
-          getPlanOptionsFixture,
-        );
+        expect(
+          subplanParamsMock.operations.getPlan,
+        ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
       it('should not call buildPlanServiceNodeFromClassElementMetadata()', () => {
@@ -431,28 +412,21 @@ describe(currySubplan, () => {
       it('should call tryBuildGetPlanOptionsFromManagedClassElementMetadata()', () => {
         expect(
           tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           instanceBindingNodeFixture.classMetadata.constructorArguments[0],
         );
       });
 
       it('should call operations.getPlan()', () => {
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledTimes(1);
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledWith(
-          getPlanOptionsFixture,
-        );
+        expect(
+          subplanParamsMock.operations.getPlan,
+        ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
       it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
         expect(
           buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
           instanceBindingNodeFixture.classMetadata.constructorArguments[0],
@@ -460,8 +434,7 @@ describe(currySubplan, () => {
       });
 
       it('should call cacheNonRootPlanServiceNode()', () => {
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledTimes(1);
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledWith(
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledExactlyOnceWith(
           getPlanOptionsFixture,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
@@ -537,10 +510,7 @@ describe(currySubplan, () => {
 
         expect(
           tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           instanceBindingNodeFixture.classMetadata.properties.get(property),
         );
       });
@@ -552,10 +522,7 @@ describe(currySubplan, () => {
 
         expect(
           buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
           instanceBindingNodeFixture.classMetadata.properties.get(property),
@@ -563,8 +530,7 @@ describe(currySubplan, () => {
       });
 
       it('should call cacheNonRootPlanServiceNode()', () => {
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledTimes(1);
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledWith(
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledExactlyOnceWith(
           undefined,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
@@ -619,19 +585,15 @@ describe(currySubplan, () => {
 
         expect(
           tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           instanceBindingNodeFixture.classMetadata.properties.get(property),
         );
       });
 
       it('should call operations.getPlan()', () => {
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledTimes(1);
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledWith(
-          getPlanOptionsFixture,
-        );
+        expect(
+          subplanParamsMock.operations.getPlan,
+        ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
       it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
@@ -641,10 +603,7 @@ describe(currySubplan, () => {
 
         expect(
           buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
           instanceBindingNodeFixture.classMetadata.properties.get(property),
@@ -652,8 +611,7 @@ describe(currySubplan, () => {
       });
 
       it('should call cacheNonRootPlanServiceNode()', () => {
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledTimes(1);
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledWith(
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledExactlyOnceWith(
           getPlanOptionsFixture,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
@@ -723,19 +681,15 @@ describe(currySubplan, () => {
 
         expect(
           tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           instanceBindingNodeFixture.classMetadata.properties.get(property),
         );
       });
 
       it('should call operations.getPlan()', () => {
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledTimes(1);
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledWith(
-          getPlanOptionsFixture,
-        );
+        expect(
+          subplanParamsMock.operations.getPlan,
+        ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
       it('should not call buildPlanServiceNodeFromClassElementMetadata()', () => {
@@ -806,19 +760,15 @@ describe(currySubplan, () => {
 
         expect(
           tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          tryBuildGetPlanOptionsFromManagedClassElementMetadata,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           instanceBindingNodeFixture.classMetadata.properties.get(property),
         );
       });
 
       it('should call operations.getPlan()', () => {
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledTimes(1);
-        expect(subplanParamsMock.operations.getPlan).toHaveBeenCalledWith(
-          getPlanOptionsFixture,
-        );
+        expect(
+          subplanParamsMock.operations.getPlan,
+        ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
       it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
@@ -828,10 +778,7 @@ describe(currySubplan, () => {
 
         expect(
           buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
           instanceBindingNodeFixture.classMetadata.properties.get(property),
@@ -839,8 +786,7 @@ describe(currySubplan, () => {
       });
 
       it('should call cacheNonRootPlanServiceNode()', () => {
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledTimes(1);
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledWith(
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledExactlyOnceWith(
           getPlanOptionsFixture,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),
@@ -910,10 +856,7 @@ describe(currySubplan, () => {
       it('should call tryBuildGetPlanOptionsFromResolvedValueElementMetadata()', () => {
         expect(
           tryBuildGetPlanOptionsFromResolvedValueElementMetadata,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          tryBuildGetPlanOptionsFromResolvedValueElementMetadata,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           resolvedValueBindingNodeFixture.binding.metadata.arguments[0],
         );
       });
@@ -921,10 +864,7 @@ describe(currySubplan, () => {
       it('should call buildPlanServiceNodeFromResolvedValueElementMetadata()', () => {
         expect(
           buildPlanServiceNodeFromResolvedValueElementMetadataMock,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
           resolvedValueBindingNodeFixture.binding.metadata.arguments[0],
@@ -932,8 +872,7 @@ describe(currySubplan, () => {
       });
 
       it('should call cacheNonRootPlanServiceNode()', () => {
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledTimes(1);
-        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledWith(
+        expect(cacheNonRootPlanServiceNode).toHaveBeenCalledExactlyOnceWith(
           undefined,
           subplanParamsMock.operations,
           expect.any(LazyPlanServiceNode),

@@ -50,8 +50,7 @@ describe(resolveDynamicValueBindingCallback, () => {
     });
 
     it('should call dynamicValueBinding.value()', () => {
-      expect(dynamicValueBindingMock.value).toHaveBeenCalledTimes(1);
-      expect(dynamicValueBindingMock.value).toHaveBeenCalledWith(
+      expect(dynamicValueBindingMock.value).toHaveBeenCalledExactlyOnceWith(
         resolutionParamsFixture.context,
       );
     });

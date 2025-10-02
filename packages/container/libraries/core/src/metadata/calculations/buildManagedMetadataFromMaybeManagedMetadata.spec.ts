@@ -46,10 +46,9 @@ describe(buildManagedMetadataFromMaybeManagedMetadata, () => {
       });
 
       it('should call assertMetadataFromTypescriptIfManaged()', () => {
-        expect(assertMetadataFromTypescriptIfManaged).toHaveBeenCalledTimes(1);
-        expect(assertMetadataFromTypescriptIfManaged).toHaveBeenCalledWith(
-          metadataFixture,
-        );
+        expect(
+          assertMetadataFromTypescriptIfManaged,
+        ).toHaveBeenCalledExactlyOnceWith(metadataFixture);
       });
 
       it('should return ManagedClassElementMetadata', () => {
@@ -102,10 +101,9 @@ describe(buildManagedMetadataFromMaybeManagedMetadata, () => {
       });
 
       it('should call assertMetadataFromTypescriptIfManaged()', () => {
-        expect(assertMetadataFromTypescriptIfManaged).toHaveBeenCalledTimes(1);
-        expect(assertMetadataFromTypescriptIfManaged).toHaveBeenCalledWith(
-          metadataFixture,
-        );
+        expect(
+          assertMetadataFromTypescriptIfManaged,
+        ).toHaveBeenCalledExactlyOnceWith(metadataFixture);
       });
 
       it('should return ManagedClassElementMetadata with chained property', () => {

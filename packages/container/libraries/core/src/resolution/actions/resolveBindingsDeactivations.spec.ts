@@ -92,8 +92,7 @@ describe(resolveBindingsDeactivations, () => {
       });
 
       it('should call resolveBindingDeactivations()', () => {
-        expect(resolveBindingDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingDeactivations).toHaveBeenCalledWith(
+        expect(resolveBindingDeactivations).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture,
         );
@@ -120,8 +119,7 @@ describe(resolveBindingsDeactivations, () => {
       });
 
       it('should call resolveBindingDeactivations()', () => {
-        expect(resolveBindingDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingDeactivations).toHaveBeenCalledWith(
+        expect(resolveBindingDeactivations).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture,
         );

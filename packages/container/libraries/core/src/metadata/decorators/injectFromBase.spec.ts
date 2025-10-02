@@ -59,8 +59,7 @@ describe(injectFromBase, () => {
     });
 
     it('should call getBaseType()', () => {
-      expect(getBaseType).toHaveBeenCalledTimes(1);
-      expect(getBaseType).toHaveBeenCalledWith(targetFixture);
+      expect(getBaseType).toHaveBeenCalledExactlyOnceWith(targetFixture);
     });
 
     it('should call injectFrom()', () => {
@@ -69,11 +68,11 @@ describe(injectFromBase, () => {
         type: baseTypefixture,
       };
 
-      expect(injectFrom).toHaveBeenCalledTimes(1);
-      expect(injectFrom).toHaveBeenCalledWith(expected);
+      expect(injectFrom).toHaveBeenCalledExactlyOnceWith(expected);
 
-      expect(injectFromResultMock).toHaveBeenCalledTimes(1);
-      expect(injectFromResultMock).toHaveBeenCalledWith(targetFixture);
+      expect(injectFromResultMock).toHaveBeenCalledExactlyOnceWith(
+        targetFixture,
+      );
     });
 
     it('should return undefined', () => {
@@ -114,8 +113,7 @@ describe(injectFromBase, () => {
     });
 
     it('should call getBaseType()', () => {
-      expect(getBaseType).toHaveBeenCalledTimes(1);
-      expect(getBaseType).toHaveBeenCalledWith(targetFixture);
+      expect(getBaseType).toHaveBeenCalledExactlyOnceWith(targetFixture);
     });
 
     it('should call injectFrom() with lifecycle options', () => {
@@ -124,11 +122,11 @@ describe(injectFromBase, () => {
         type: baseTypefixture,
       };
 
-      expect(injectFrom).toHaveBeenCalledTimes(1);
-      expect(injectFrom).toHaveBeenCalledWith(expected);
+      expect(injectFrom).toHaveBeenCalledExactlyOnceWith(expected);
 
-      expect(injectFromResultMock).toHaveBeenCalledTimes(1);
-      expect(injectFromResultMock).toHaveBeenCalledWith(targetFixture);
+      expect(injectFromResultMock).toHaveBeenCalledExactlyOnceWith(
+        targetFixture,
+      );
     });
 
     it('should return undefined', () => {
@@ -161,8 +159,7 @@ describe(injectFromBase, () => {
     });
 
     it('should call getBaseType()', () => {
-      expect(getBaseType).toHaveBeenCalledTimes(1);
-      expect(getBaseType).toHaveBeenCalledWith(targetFixture);
+      expect(getBaseType).toHaveBeenCalledExactlyOnceWith(targetFixture);
     });
 
     it('should return undefined', () => {

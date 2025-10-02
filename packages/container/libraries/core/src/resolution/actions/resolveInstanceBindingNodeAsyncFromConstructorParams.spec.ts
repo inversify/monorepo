@@ -64,10 +64,7 @@ describe(resolveInstanceBindingNodeAsyncFromConstructorParams, () => {
     it('should call resolveInstanceBindingNodeFromConstructorParams()', () => {
       expect(
         resolveInstanceBindingNodeFromConstructorParamsMock,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        resolveInstanceBindingNodeFromConstructorParamsMock,
-      ).toHaveBeenCalledWith(
+      ).toHaveBeenCalledExactlyOnceWith(
         constructorResolvedValuesFixture,
         paramsFixture,
         nodeFixture,

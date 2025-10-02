@@ -69,8 +69,9 @@ describe(buildClassElementMetadataFromMaybeClassElementMetadata, () => {
       });
 
       it('should call buildDefaultMetadata()', () => {
-        expect(buildDefaultMetadataMock).toHaveBeenCalledTimes(1);
-        expect(buildDefaultMetadataMock).toHaveBeenCalledWith(...paramsFixture);
+        expect(buildDefaultMetadataMock).toHaveBeenCalledExactlyOnceWith(
+          ...paramsFixture,
+        );
       });
 
       it('should return ClassElementMetadata', () => {
@@ -134,13 +135,9 @@ describe(buildClassElementMetadataFromMaybeClassElementMetadata, () => {
       });
 
       it('should call buildMetadataFromMaybeManagedMetadata()', () => {
-        expect(buildMetadataFromMaybeManagedMetadataMock).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(buildMetadataFromMaybeManagedMetadataMock).toHaveBeenCalledWith(
-          metadataFixture,
-          ...paramsFixture,
-        );
+        expect(
+          buildMetadataFromMaybeManagedMetadataMock,
+        ).toHaveBeenCalledExactlyOnceWith(metadataFixture, ...paramsFixture);
       });
 
       it('should return ClassElementMetadata', () => {

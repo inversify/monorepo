@@ -58,28 +58,26 @@ describe(toSchema, () => {
     });
 
     it('should call tryBuildSchemaFromWellKnownType()', () => {
-      expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledTimes(1);
-      expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledWith(
-        typeFixture,
-      );
+      expect(
+        tryBuildSchemaFromWellKnownTypeMock,
+      ).toHaveBeenCalledExactlyOnceWith(typeFixture);
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadataMock).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         schemaOpenApiMetadataReflectKey,
       );
     });
 
     it('should call updateMetadataReferences()', () => {
-      expect(updateMetadataReferencesMock).toHaveBeenCalledTimes(1);
-      expect(updateMetadataReferencesMock).toHaveBeenCalledWith(typeFixture);
+      expect(updateMetadataReferencesMock).toHaveBeenCalledExactlyOnceWith(
+        typeFixture,
+      );
     });
 
     it('should call escapeJsonPointerFragments()', () => {
-      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledTimes(1);
-      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledWith(
+      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledExactlyOnceWith(
         typeFixture.name,
       );
     });
@@ -122,28 +120,26 @@ describe(toSchema, () => {
     });
 
     it('should call tryBuildSchemaFromWellKnownType()', () => {
-      expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledTimes(1);
-      expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledWith(
-        typeFixture,
-      );
+      expect(
+        tryBuildSchemaFromWellKnownTypeMock,
+      ).toHaveBeenCalledExactlyOnceWith(typeFixture);
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadataMock).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         schemaOpenApiMetadataReflectKey,
       );
     });
 
     it('should call updateMetadataReferences()', () => {
-      expect(updateMetadataReferencesMock).toHaveBeenCalledTimes(1);
-      expect(updateMetadataReferencesMock).toHaveBeenCalledWith(typeFixture);
+      expect(updateMetadataReferencesMock).toHaveBeenCalledExactlyOnceWith(
+        typeFixture,
+      );
     });
 
     it('should call escapeJsonPointerFragments()', () => {
-      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledTimes(1);
-      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledWith(
+      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledExactlyOnceWith(
         typeFixture.name,
       );
     });
@@ -188,28 +184,28 @@ describe(toSchema, () => {
     });
 
     it('should call tryBuildSchemaFromWellKnownType()', () => {
-      expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledTimes(1);
-      expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledWith(
-        typeFixture,
-      );
+      expect(
+        tryBuildSchemaFromWellKnownTypeMock,
+      ).toHaveBeenCalledExactlyOnceWith(typeFixture);
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadataMock).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         schemaOpenApiMetadataReflectKey,
       );
     });
 
     it('should call updateMetadataReferences()', () => {
-      expect(updateMetadataReferencesMock).toHaveBeenCalledTimes(1);
-      expect(updateMetadataReferencesMock).toHaveBeenCalledWith(typeFixture);
+      expect(updateMetadataReferencesMock).toHaveBeenCalledExactlyOnceWith(
+        typeFixture,
+      );
     });
 
     it('should call escapeJsonPointerFragments()', () => {
-      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledTimes(1);
-      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledWith(nameFixture);
+      expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledExactlyOnceWith(
+        nameFixture,
+      );
     });
 
     it('should return an OpenApi3Dot1SchemaObject with $ref using escaped metadata.name', () => {
@@ -241,15 +237,13 @@ describe(toSchema, () => {
     });
 
     it('should call tryBuildSchemaFromWellKnownType()', () => {
-      expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledTimes(1);
-      expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledWith(
-        typeFixture,
-      );
+      expect(
+        tryBuildSchemaFromWellKnownTypeMock,
+      ).toHaveBeenCalledExactlyOnceWith(typeFixture);
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadataMock).toHaveBeenCalledExactlyOnceWith(
         typeFixture,
         schemaOpenApiMetadataReflectKey,
       );

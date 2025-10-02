@@ -83,8 +83,7 @@ describe(StandardSchemaValidationPipe, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           metadataFixture.targetClass,
           standardSchemaValidationMetadataReflectKey,
           metadataFixture.methodName,
@@ -92,19 +91,15 @@ describe(StandardSchemaValidationPipe, () => {
       });
 
       it('should call type["~standard"].validate()', () => {
-        expect(schemaMock['~standard'].validate).toHaveBeenCalledTimes(1);
-        expect(schemaMock['~standard'].validate).toHaveBeenCalledWith(
-          inputFixture,
-        );
+        expect(
+          schemaMock['~standard'].validate,
+        ).toHaveBeenCalledExactlyOnceWith(inputFixture);
       });
 
       it('should call parameterType["~standard"].validate()', () => {
-        expect(parameterSchemaMock['~standard'].validate).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(parameterSchemaMock['~standard'].validate).toHaveBeenCalledWith(
-          inputFixture,
-        );
+        expect(
+          parameterSchemaMock['~standard'].validate,
+        ).toHaveBeenCalledExactlyOnceWith(inputFixture);
       });
 
       it('should return expected value', () => {
@@ -175,8 +170,7 @@ describe(StandardSchemaValidationPipe, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           metadataFixture.targetClass,
           standardSchemaValidationMetadataReflectKey,
           metadataFixture.methodName,
@@ -184,10 +178,9 @@ describe(StandardSchemaValidationPipe, () => {
       });
 
       it('should call type["~standard"].validate()', () => {
-        expect(schemaMock['~standard'].validate).toHaveBeenCalledTimes(1);
-        expect(schemaMock['~standard'].validate).toHaveBeenCalledWith(
-          inputFixture,
-        );
+        expect(
+          schemaMock['~standard'].validate,
+        ).toHaveBeenCalledExactlyOnceWith(inputFixture);
       });
 
       it('should throw InversifyValidationError', () => {

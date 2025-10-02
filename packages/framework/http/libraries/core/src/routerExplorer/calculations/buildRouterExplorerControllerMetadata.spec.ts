@@ -39,8 +39,7 @@ describe(buildRouterExplorerControllerMetadata, () => {
     });
 
     it('should call getControllerMethodMetadataList', () => {
-      expect(getControllerMethodMetadataList).toHaveBeenCalledTimes(1);
-      expect(getControllerMethodMetadataList).toHaveBeenCalledWith(
+      expect(getControllerMethodMetadataList).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
       );
     });
@@ -48,10 +47,7 @@ describe(buildRouterExplorerControllerMetadata, () => {
     it('should call buildRouterExplorerControllerMethodMetadataList', () => {
       expect(
         buildRouterExplorerControllerMethodMetadataList,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        buildRouterExplorerControllerMethodMetadataList,
-      ).toHaveBeenCalledWith(
+      ).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture,
         controllerMethodMetadataListFixture,
       );

@@ -50,16 +50,13 @@ describe(ValidateStandardSchemaV1, () => {
     });
 
     it('should call updateStandardSchemaValidationMetadata()', () => {
-      expect(updateStandardSchemaValidationMetadata).toHaveBeenCalledTimes(1);
-      expect(updateStandardSchemaValidationMetadata).toHaveBeenCalledWith(
-        [typeFixture],
-        indexFixture,
-      );
+      expect(
+        updateStandardSchemaValidationMetadata,
+      ).toHaveBeenCalledExactlyOnceWith([typeFixture], indexFixture);
     });
 
     it('should call updateOwnReflectMetadata()', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture.constructor,
         standardSchemaValidationMetadataReflectKey,
         buildEmptyArrayMetadata,

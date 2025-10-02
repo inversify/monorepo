@@ -92,8 +92,7 @@ describe(resolveInstanceBindingConstructorParams, () => {
       });
 
       it('should call resolveServiceNode()', () => {
-        expect(resolveServiceNodeMock).toHaveBeenCalledTimes(1);
-        expect(resolveServiceNodeMock).toHaveBeenCalledWith(
+        expect(resolveServiceNodeMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           constructorParamFixture,
         );
@@ -124,8 +123,7 @@ describe(resolveInstanceBindingConstructorParams, () => {
       });
 
       it('should call resolveServiceNode()', () => {
-        expect(resolveServiceNodeMock).toHaveBeenCalledTimes(1);
-        expect(resolveServiceNodeMock).toHaveBeenCalledWith(
+        expect(resolveServiceNodeMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           constructorParamFixture,
         );

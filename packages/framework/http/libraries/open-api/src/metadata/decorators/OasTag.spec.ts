@@ -64,15 +64,11 @@ describe(OasTag, () => {
       it('should call updateControllerOpenApiMetadataOperationArrayProperty()', () => {
         expect(
           updateControllerOpenApiMetadataOperationArrayProperty,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateControllerOpenApiMetadataOperationArrayProperty,
-        ).toHaveBeenCalledWith(contentFixture, keyFixture, 'tags');
+        ).toHaveBeenCalledExactlyOnceWith(contentFixture, keyFixture, 'tags');
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetTypeFixture,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,

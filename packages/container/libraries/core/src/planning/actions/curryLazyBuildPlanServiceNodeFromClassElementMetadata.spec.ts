@@ -85,10 +85,7 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
     it('should call curryBuildPlanServiceNodeFromClassElementMetadata()', () => {
       expect(
         curryBuildPlanServiceNodeFromClassElementMetadata,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        curryBuildPlanServiceNodeFromClassElementMetadata,
-      ).toHaveBeenCalledWith(buildServiceNodeBindingsFixture);
+      ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsFixture);
     });
 
     it('should return a PlanServiceNode', () => {
@@ -138,10 +135,7 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
     it('should call curryBuildPlanServiceNodeFromClassElementMetadata()', () => {
       expect(
         curryBuildPlanServiceNodeFromClassElementMetadata,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        curryBuildPlanServiceNodeFromClassElementMetadata,
-      ).toHaveBeenCalledWith(buildServiceNodeBindingsFixture);
+      ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsFixture);
     });
 
     it('should throw an Error', () => {
@@ -190,10 +184,7 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
     it('should call curryBuildPlanServiceNodeFromClassElementMetadata()', () => {
       expect(
         curryBuildPlanServiceNodeFromClassElementMetadata,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        curryBuildPlanServiceNodeFromClassElementMetadata,
-      ).toHaveBeenCalledWith(buildServiceNodeBindingsFixture);
+      ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsFixture);
     });
 
     it('should return undefined', () => {

@@ -56,8 +56,9 @@ describe(resolveBindingActivations, () => {
       });
 
       it('should call resolveBindingServiceActivations()', () => {
-        expect(resolveBindingServiceActivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingServiceActivations).toHaveBeenCalledWith(
+        expect(
+          resolveBindingServiceActivations,
+        ).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture.serviceIdentifier,
           resolvedValueFixture,
@@ -117,16 +118,16 @@ describe(resolveBindingActivations, () => {
       });
 
       it('should call binding.onActivation()', () => {
-        expect(onActivationMock).toHaveBeenCalledTimes(1);
-        expect(onActivationMock).toHaveBeenCalledWith(
+        expect(onActivationMock).toHaveBeenCalledExactlyOnceWith(
           paramsMock.context,
           resolvedValue,
         );
       });
 
       it('should call resolveBindingServiceActivations()', () => {
-        expect(resolveBindingServiceActivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingServiceActivations).toHaveBeenCalledWith(
+        expect(
+          resolveBindingServiceActivations,
+        ).toHaveBeenCalledExactlyOnceWith(
           paramsMock,
           bindingFixture.serviceIdentifier,
           onActivationResultFixture,

@@ -64,16 +64,14 @@ describe(OasSchema, () => {
       });
 
       it('should call updateSchemaMetadataName()', () => {
-        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledExactlyOnceWith(
           undefined,
           targetTypeFixture,
         );
       });
 
       it('should call updateSchemaMetadata()', () => {
-        expect(updateSchemaMetadataSchema).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataSchema).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledExactlyOnceWith(
           undefined,
           targetTypeFixture,
         );
@@ -151,16 +149,14 @@ describe(OasSchema, () => {
       });
 
       it('should call updateSchemaMetadataName()', () => {
-        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledExactlyOnceWith(
           undefined,
           targetTypeFixture,
         );
       });
 
       it('should call updateSchemaMetadata()', () => {
-        expect(updateSchemaMetadataSchema).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataSchema).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledExactlyOnceWith(
           schemaFixture,
           targetTypeFixture,
         );
@@ -243,16 +239,14 @@ describe(OasSchema, () => {
       });
 
       it('should call updateSchemaMetadataName()', () => {
-        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledExactlyOnceWith(
           optionsFixture,
           targetTypeFixture,
         );
       });
 
       it('should call updateSchemaMetadata()', () => {
-        expect(updateSchemaMetadataSchema).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataSchema).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledExactlyOnceWith(
           schemaFixture,
           targetTypeFixture,
         );
@@ -341,28 +335,26 @@ describe(OasSchema, () => {
       });
 
       it('should call updateSchemaMetadataName()', () => {
-        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledExactlyOnceWith(
           undefined,
           targetTypeFixture,
         );
       });
 
       it('should call toSchema()', () => {
-        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledTimes(1);
-        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledWith(
+        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledExactlyOnceWith(
           targetTypeFixture,
         );
       });
 
       it('should call build function with toSchema result', () => {
-        expect(buildFunctionFixture).toHaveBeenCalledTimes(1);
-        expect(buildFunctionFixture).toHaveBeenCalledWith(toSchemaFunctionMock);
+        expect(buildFunctionFixture).toHaveBeenCalledExactlyOnceWith(
+          toSchemaFunctionMock,
+        );
       });
 
       it('should call updateSchemaMetadata()', () => {
-        expect(updateSchemaMetadataSchema).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataSchema).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledExactlyOnceWith(
           builtSchemaFixture,
           targetTypeFixture,
         );
@@ -459,28 +451,26 @@ describe(OasSchema, () => {
       });
 
       it('should call updateSchemaMetadataName()', () => {
-        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataFromOptions).toHaveBeenCalledExactlyOnceWith(
           optionsFixture,
           targetTypeFixture,
         );
       });
 
       it('should call toSchema()', () => {
-        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledTimes(1);
-        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledWith(
+        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledExactlyOnceWith(
           targetTypeFixture,
         );
       });
 
       it('should call build function with toSchema result', () => {
-        expect(buildFunctionFixture).toHaveBeenCalledTimes(1);
-        expect(buildFunctionFixture).toHaveBeenCalledWith(toSchemaFunctionMock);
+        expect(buildFunctionFixture).toHaveBeenCalledExactlyOnceWith(
+          toSchemaFunctionMock,
+        );
       });
 
       it('should call updateSchemaMetadata()', () => {
-        expect(updateSchemaMetadataSchema).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataSchema).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataSchema).toHaveBeenCalledExactlyOnceWith(
           builtSchemaFixture,
           targetTypeFixture,
         );

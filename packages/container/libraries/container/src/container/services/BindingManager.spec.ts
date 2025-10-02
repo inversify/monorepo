@@ -152,10 +152,7 @@ describe(BindingManager, () => {
       it('should call bindingService.get()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.get,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.get,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should return false', () => {
@@ -209,10 +206,7 @@ describe(BindingManager, () => {
       it('should call bindingService.get()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.get,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.get,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call binding.isSatisfiedBy()', () => {
@@ -225,8 +219,7 @@ describe(BindingManager, () => {
           tags: new Map([[tagFixture.key, tagFixture.value]]),
         };
 
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
           expectedBindingConstraints,
         );
       });
@@ -282,10 +275,7 @@ describe(BindingManager, () => {
       it('should call bindingService.get()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.get,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.get,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call binding.isSatisfiedBy()', () => {
@@ -298,8 +288,7 @@ describe(BindingManager, () => {
           tags: new Map([[tagFixture.key, tagFixture.value]]),
         };
 
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
           expectedBindingConstraints,
         );
       });
@@ -350,10 +339,7 @@ describe(BindingManager, () => {
       it('should call bindingService.getNonParentBindings()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.getNonParentBindings,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.getNonParentBindings,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should return false', () => {
@@ -407,10 +393,7 @@ describe(BindingManager, () => {
       it('should call bindingService.getNonParentBindings()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.getNonParentBindings,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.getNonParentBindings,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call binding.isSatisfiedBy()', () => {
@@ -423,8 +406,7 @@ describe(BindingManager, () => {
           tags: new Map([[tagFixture.key, tagFixture.value]]),
         };
 
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
           expectedBindingConstraints,
         );
       });
@@ -480,10 +462,7 @@ describe(BindingManager, () => {
       it('should call bindingService.getNonParentBindings()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.getNonParentBindings,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.getNonParentBindings,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call binding.isSatisfiedBy()', () => {
@@ -496,8 +475,7 @@ describe(BindingManager, () => {
           tags: new Map([[tagFixture.key, tagFixture.value]]),
         };
 
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledTimes(1);
-        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledWith(
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
           expectedBindingConstraints,
         );
       });
@@ -538,15 +516,11 @@ describe(BindingManager, () => {
       it('should call serviceReferenceManager.bindingService.get()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.get,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.get,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call resolveBindingsDeactivations', () => {
-        expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
+        expect(resolveBindingsDeactivations).toHaveBeenCalledExactlyOnceWith(
           deactivationParamsFixture,
           [bindingFixture],
         );
@@ -555,28 +529,19 @@ describe(BindingManager, () => {
       it('should call activationService.removeAllByServiceId()', () => {
         expect(
           serviceReferenceManagerMock.activationService.removeAllByServiceId,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.activationService.removeAllByServiceId,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call bindingService.removeAllByServiceId()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.removeAllByServiceId,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.removeAllByServiceId,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call deactivationService.removeAllByServiceId()', () => {
         expect(
           serviceReferenceManagerMock.deactivationService.removeAllByServiceId,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.deactivationService.removeAllByServiceId,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call planResultCacheManager.invalidateService()', () => {
@@ -587,10 +552,7 @@ describe(BindingManager, () => {
 
         expect(
           planResultCacheManagerMock.invalidateService,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          planResultCacheManagerMock.invalidateService,
-        ).toHaveBeenCalledWith(invalidation);
+        ).toHaveBeenCalledExactlyOnceWith(invalidation);
       });
 
       it('should return BindToFluentSyntax', () => {
@@ -639,15 +601,11 @@ describe(BindingManager, () => {
       it('should call serviceReferenceManager.bindingService.get()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.get,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.get,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call resolveBindingsDeactivations', () => {
-        expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
-        expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
+        expect(resolveBindingsDeactivations).toHaveBeenCalledExactlyOnceWith(
           deactivationParamsFixture,
           [bindingFixture],
         );
@@ -656,28 +614,19 @@ describe(BindingManager, () => {
       it('should call activationService.removeAllByServiceId()', () => {
         expect(
           serviceReferenceManagerMock.activationService.removeAllByServiceId,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.activationService.removeAllByServiceId,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call bindingService.removeAllByServiceId()', () => {
         expect(
           serviceReferenceManagerMock.bindingService.removeAllByServiceId,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.bindingService.removeAllByServiceId,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call deactivationService.removeAllByServiceId()', () => {
         expect(
           serviceReferenceManagerMock.deactivationService.removeAllByServiceId,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.deactivationService.removeAllByServiceId,
-        ).toHaveBeenCalledWith(serviceIdentifierFixture);
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call serviceReferenceManager.invalidateService()', () => {
@@ -688,10 +637,7 @@ describe(BindingManager, () => {
 
         expect(
           planResultCacheManagerMock.invalidateService,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          planResultCacheManagerMock.invalidateService,
-        ).toHaveBeenCalledWith(invalidation);
+        ).toHaveBeenCalledExactlyOnceWith(invalidation);
       });
 
       it('should return BindToFluentSyntax', () => {
@@ -744,15 +690,11 @@ describe(BindingManager, () => {
         it('should call serviceReferenceManager.bindingService.get()', () => {
           expect(
             serviceReferenceManagerMock.bindingService.get,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.bindingService.get,
-          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+          ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
         });
 
         it('should call resolveBindingsDeactivations', () => {
-          expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
-          expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
+          expect(resolveBindingsDeactivations).toHaveBeenCalledExactlyOnceWith(
             deactivationParamsFixture,
             [bindingFixture],
           );
@@ -761,30 +703,20 @@ describe(BindingManager, () => {
         it('should call activationService.removeAllByServiceId()', () => {
           expect(
             serviceReferenceManagerMock.activationService.removeAllByServiceId,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.activationService.removeAllByServiceId,
-          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+          ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
         });
 
         it('should call bindingService.removeAllByServiceId()', () => {
           expect(
             serviceReferenceManagerMock.bindingService.removeAllByServiceId,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.bindingService.removeAllByServiceId,
-          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+          ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
         });
 
         it('should call deactivationService.removeAllByServiceId()', () => {
           expect(
             serviceReferenceManagerMock.deactivationService
               .removeAllByServiceId,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.deactivationService
-              .removeAllByServiceId,
-          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+          ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
         });
 
         it('should call serviceReferenceManager.invalidateService()', () => {
@@ -795,10 +727,7 @@ describe(BindingManager, () => {
 
           expect(
             planResultCacheManagerMock.invalidateService,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            planResultCacheManagerMock.invalidateService,
-          ).toHaveBeenCalledWith(invalidation);
+          ).toHaveBeenCalledExactlyOnceWith(invalidation);
         });
 
         it('should return undefined', () => {
@@ -837,15 +766,11 @@ describe(BindingManager, () => {
         it('should call serviceReferenceManager.bindingService.get()', () => {
           expect(
             serviceReferenceManagerMock.bindingService.get,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.bindingService.get,
-          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+          ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
         });
 
         it('should call resolveBindingsDeactivations', () => {
-          expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
-          expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
+          expect(resolveBindingsDeactivations).toHaveBeenCalledExactlyOnceWith(
             deactivationParamsFixture,
             [bindingFixture],
           );
@@ -854,30 +779,20 @@ describe(BindingManager, () => {
         it('should call activationService.removeAllByServiceId()', () => {
           expect(
             serviceReferenceManagerMock.activationService.removeAllByServiceId,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.activationService.removeAllByServiceId,
-          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+          ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
         });
 
         it('should call bindingService.removeAllByServiceId()', () => {
           expect(
             serviceReferenceManagerMock.bindingService.removeAllByServiceId,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.bindingService.removeAllByServiceId,
-          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+          ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
         });
 
         it('should call deactivationService.removeAllByServiceId()', () => {
           expect(
             serviceReferenceManagerMock.deactivationService
               .removeAllByServiceId,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.deactivationService
-              .removeAllByServiceId,
-          ).toHaveBeenCalledWith(serviceIdentifierFixture);
+          ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
         });
 
         it('should call serviceReferenceManager.invalidateService()', () => {
@@ -888,10 +803,7 @@ describe(BindingManager, () => {
 
           expect(
             planResultCacheManagerMock.invalidateService,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            planResultCacheManagerMock.invalidateService,
-          ).toHaveBeenCalledWith(invalidation);
+          ).toHaveBeenCalledExactlyOnceWith(invalidation);
         });
 
         it('should return undefined', () => {
@@ -951,15 +863,11 @@ describe(BindingManager, () => {
         it('should call bindingService.getById()', () => {
           expect(
             serviceReferenceManagerMock.bindingService.getById,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.bindingService.getById,
-          ).toHaveBeenCalledWith(bindingIdentifierFixture.id);
+          ).toHaveBeenCalledExactlyOnceWith(bindingIdentifierFixture.id);
         });
 
         it('should call resolveBindingsDeactivations()', () => {
-          expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
-          expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
+          expect(resolveBindingsDeactivations).toHaveBeenCalledExactlyOnceWith(
             deactivationParamsFixture,
             [bindingMock],
           );
@@ -968,10 +876,7 @@ describe(BindingManager, () => {
         it('should call bindingService.removeById()', () => {
           expect(
             serviceReferenceManagerMock.bindingService.removeById,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.bindingService.removeById,
-          ).toHaveBeenCalledWith(bindingIdentifierFixture.id);
+          ).toHaveBeenCalledExactlyOnceWith(bindingIdentifierFixture.id);
         });
 
         it('should call serviceReferenceManager.invalidateService()', () => {
@@ -982,10 +887,7 @@ describe(BindingManager, () => {
 
           expect(
             planResultCacheManagerMock.invalidateService,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            planResultCacheManagerMock.invalidateService,
-          ).toHaveBeenCalledWith(invalidation);
+          ).toHaveBeenCalledExactlyOnceWith(invalidation);
         });
 
         it('should return undefined', () => {
@@ -1037,15 +939,11 @@ describe(BindingManager, () => {
         it('should call bindingService.getById()', () => {
           expect(
             serviceReferenceManagerMock.bindingService.getById,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.bindingService.getById,
-          ).toHaveBeenCalledWith(bindingIdentifierFixture.id);
+          ).toHaveBeenCalledExactlyOnceWith(bindingIdentifierFixture.id);
         });
 
         it('should call resolveBindingsDeactivations()', () => {
-          expect(resolveBindingsDeactivations).toHaveBeenCalledTimes(1);
-          expect(resolveBindingsDeactivations).toHaveBeenCalledWith(
+          expect(resolveBindingsDeactivations).toHaveBeenCalledExactlyOnceWith(
             deactivationParamsFixture,
             [bindingMock],
           );
@@ -1054,19 +952,13 @@ describe(BindingManager, () => {
         it('should call bindingService.removeById()', () => {
           expect(
             serviceReferenceManagerMock.bindingService.removeById,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.bindingService.removeById,
-          ).toHaveBeenCalledWith(bindingIdentifierFixture.id);
+          ).toHaveBeenCalledExactlyOnceWith(bindingIdentifierFixture.id);
         });
 
         it('should call serviceReferenceManager.bindingService.getById()', () => {
           expect(
             serviceReferenceManagerMock.bindingService.getById,
-          ).toHaveBeenCalledTimes(1);
-          expect(
-            serviceReferenceManagerMock.bindingService.getById,
-          ).toHaveBeenCalledWith(bindingIdentifierFixture.id);
+          ).toHaveBeenCalledExactlyOnceWith(bindingIdentifierFixture.id);
         });
 
         it('should return undefined', () => {
@@ -1105,6 +997,7 @@ describe(BindingManager, () => {
         );
 
         for (const serviceId of serviceIdsFixture) {
+          // eslint-disable-next-line vitest/prefer-called-exactly-once-with
           expect(resolveServiceDeactivations).toHaveBeenCalledWith(
             deactivationParamsFixture,
             serviceId,
@@ -1120,6 +1013,7 @@ describe(BindingManager, () => {
         for (const serviceId of serviceIdsFixture) {
           expect(
             serviceReferenceManagerMock.activationService.removeAllByServiceId,
+            // eslint-disable-next-line vitest/prefer-called-exactly-once-with
           ).toHaveBeenCalledWith(serviceId);
         }
       });
@@ -1132,6 +1026,7 @@ describe(BindingManager, () => {
         for (const serviceId of serviceIdsFixture) {
           expect(
             serviceReferenceManagerMock.bindingService.removeAllByServiceId,
+            // eslint-disable-next-line vitest/prefer-called-exactly-once-with
           ).toHaveBeenCalledWith(serviceId);
         }
       });
@@ -1145,6 +1040,7 @@ describe(BindingManager, () => {
           expect(
             serviceReferenceManagerMock.deactivationService
               .removeAllByServiceId,
+            // eslint-disable-next-line vitest/prefer-called-exactly-once-with
           ).toHaveBeenCalledWith(serviceId);
         }
       });
@@ -1152,10 +1048,7 @@ describe(BindingManager, () => {
       it('should call planResultCacheService.clearCache()', () => {
         expect(
           serviceReferenceManagerMock.planResultCacheService.clearCache,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          serviceReferenceManagerMock.planResultCacheService.clearCache,
-        ).toHaveBeenCalledWith();
+        ).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {

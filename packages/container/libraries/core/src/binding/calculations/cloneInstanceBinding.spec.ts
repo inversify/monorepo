@@ -52,8 +52,7 @@ describe(cloneInstanceBinding, () => {
     });
 
     it('should call cloneBindingCache', () => {
-      expect(cloneBindingCache).toHaveBeenCalledTimes(1);
-      expect(cloneBindingCache).toHaveBeenCalledWith(
+      expect(cloneBindingCache).toHaveBeenCalledExactlyOnceWith(
         instanceBindingFixture.cache,
       );
     });

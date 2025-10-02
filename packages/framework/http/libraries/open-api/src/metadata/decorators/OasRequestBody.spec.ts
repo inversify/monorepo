@@ -88,10 +88,7 @@ describe(OasRequestBody, () => {
       it('should call updateControllerOpenApiMetadataOperationProperty()', () => {
         expect(
           updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           requestBodyFixture,
           targetFixture.constructor,
           keyFixture,
@@ -100,8 +97,7 @@ describe(OasRequestBody, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,
@@ -160,10 +156,7 @@ describe(OasRequestBody, () => {
       it('should call updateControllerOpenApiMetadataOperationProperty()', () => {
         expect(
           updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           referenceFixture,
           targetFixture.constructor,
           keyFixture,
@@ -172,8 +165,7 @@ describe(OasRequestBody, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,
@@ -260,24 +252,19 @@ describe(OasRequestBody, () => {
       it('should call toSchemaInControllerOpenApiMetadataContext()', () => {
         expect(
           toSchemaInControllerOpenApiMetadataContext,
-        ).toHaveBeenCalledTimes(1);
-        expect(toSchemaInControllerOpenApiMetadataContext).toHaveBeenCalledWith(
-          targetFixture.constructor,
-        );
+        ).toHaveBeenCalledExactlyOnceWith(targetFixture.constructor);
       });
 
       it('should call build function with toSchema result', () => {
-        expect(buildFunctionFixture).toHaveBeenCalledTimes(1);
-        expect(buildFunctionFixture).toHaveBeenCalledWith(toSchemaFunctionMock);
+        expect(buildFunctionFixture).toHaveBeenCalledExactlyOnceWith(
+          toSchemaFunctionMock,
+        );
       });
 
       it('should call updateControllerOpenApiMetadataOperationProperty()', () => {
         expect(
           updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           builtRequestBodyFixture,
           targetFixture.constructor,
           keyFixture,
@@ -286,8 +273,7 @@ describe(OasRequestBody, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,

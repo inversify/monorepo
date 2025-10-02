@@ -93,8 +93,7 @@ describe(resolveScoped, () => {
     });
 
     it('should call getBinding()', () => {
-      expect(getBindingMock).toHaveBeenCalledTimes(1);
-      expect(getBindingMock).toHaveBeenCalledWith(argFixture);
+      expect(getBindingMock).toHaveBeenCalledExactlyOnceWith(argFixture);
     });
 
     it('should return expected result', () => {
@@ -155,18 +154,18 @@ describe(resolveScoped, () => {
     });
 
     it('should call getBinding()', () => {
-      expect(getBindingMock).toHaveBeenCalledTimes(1);
-      expect(getBindingMock).toHaveBeenCalledWith(argFixture);
+      expect(getBindingMock).toHaveBeenCalledExactlyOnceWith(argFixture);
     });
 
     it('should call resolve()', () => {
-      expect(resolveMock).toHaveBeenCalledTimes(1);
-      expect(resolveMock).toHaveBeenCalledWith(paramsMock, argFixture);
+      expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
+        paramsMock,
+        argFixture,
+      );
     });
 
     it('should call resolveBindingActivations()', () => {
-      expect(resolveBindingActivations).toHaveBeenCalledTimes(1);
-      expect(resolveBindingActivations).toHaveBeenCalledWith(
+      expect(resolveBindingActivations).toHaveBeenCalledExactlyOnceWith(
         paramsMock,
         bindingFixture,
         resolveResult,
@@ -174,8 +173,7 @@ describe(resolveScoped, () => {
     });
 
     it('should call cacheResolvedValue()', () => {
-      expect(cacheResolvedValue).toHaveBeenCalledTimes(1);
-      expect(cacheResolvedValue).toHaveBeenCalledWith(
+      expect(cacheResolvedValue).toHaveBeenCalledExactlyOnceWith(
         bindingFixture,
         activatedResolveResult,
       );
@@ -233,20 +231,17 @@ describe(resolveScoped, () => {
     });
 
     it('should call getBinding()', () => {
-      expect(getBindingMock).toHaveBeenCalledTimes(1);
-      expect(getBindingMock).toHaveBeenCalledWith(argFixture);
+      expect(getBindingMock).toHaveBeenCalledExactlyOnceWith(argFixture);
     });
 
     it('should call params.requestScopeCache.has()', () => {
-      expect(paramsMock.requestScopeCache.has).toHaveBeenCalledTimes(1);
-      expect(paramsMock.requestScopeCache.has).toHaveBeenCalledWith(
+      expect(paramsMock.requestScopeCache.has).toHaveBeenCalledExactlyOnceWith(
         bindingFixture.id,
       );
     });
 
     it('should call params.requestScopeCache.get()', () => {
-      expect(paramsMock.requestScopeCache.get).toHaveBeenCalledTimes(1);
-      expect(paramsMock.requestScopeCache.get).toHaveBeenCalledWith(
+      expect(paramsMock.requestScopeCache.get).toHaveBeenCalledExactlyOnceWith(
         bindingFixture.id,
       );
     });
@@ -309,25 +304,24 @@ describe(resolveScoped, () => {
     });
 
     it('should call getBinding()', () => {
-      expect(getBindingMock).toHaveBeenCalledTimes(1);
-      expect(getBindingMock).toHaveBeenCalledWith(argFixture);
+      expect(getBindingMock).toHaveBeenCalledExactlyOnceWith(argFixture);
     });
 
     it('should call params.requestScopeCache.has()', () => {
-      expect(paramsMock.requestScopeCache.has).toHaveBeenCalledTimes(1);
-      expect(paramsMock.requestScopeCache.has).toHaveBeenCalledWith(
+      expect(paramsMock.requestScopeCache.has).toHaveBeenCalledExactlyOnceWith(
         bindingFixture.id,
       );
     });
 
     it('should call resolve()', () => {
-      expect(resolveMock).toHaveBeenCalledTimes(1);
-      expect(resolveMock).toHaveBeenCalledWith(paramsMock, argFixture);
+      expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
+        paramsMock,
+        argFixture,
+      );
     });
 
     it('should call resolveBindingActivations()', () => {
-      expect(resolveBindingActivations).toHaveBeenCalledTimes(1);
-      expect(resolveBindingActivations).toHaveBeenCalledWith(
+      expect(resolveBindingActivations).toHaveBeenCalledExactlyOnceWith(
         paramsMock,
         bindingFixture,
         resolveResult,
@@ -335,8 +329,7 @@ describe(resolveScoped, () => {
     });
 
     it('should call params.requestScopeCache.set()', () => {
-      expect(paramsMock.requestScopeCache.set).toHaveBeenCalledTimes(1);
-      expect(paramsMock.requestScopeCache.set).toHaveBeenCalledWith(
+      expect(paramsMock.requestScopeCache.set).toHaveBeenCalledExactlyOnceWith(
         bindingFixture.id,
         activatedResolveResult,
       );
@@ -396,18 +389,18 @@ describe(resolveScoped, () => {
     });
 
     it('should call getBinding()', () => {
-      expect(getBindingMock).toHaveBeenCalledTimes(1);
-      expect(getBindingMock).toHaveBeenCalledWith(argFixture);
+      expect(getBindingMock).toHaveBeenCalledExactlyOnceWith(argFixture);
     });
 
     it('should call resolve()', () => {
-      expect(resolveMock).toHaveBeenCalledTimes(1);
-      expect(resolveMock).toHaveBeenCalledWith(paramsMock, argFixture);
+      expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
+        paramsMock,
+        argFixture,
+      );
     });
 
     it('should call resolveBindingActivations()', () => {
-      expect(resolveBindingActivations).toHaveBeenCalledTimes(1);
-      expect(resolveBindingActivations).toHaveBeenCalledWith(
+      expect(resolveBindingActivations).toHaveBeenCalledExactlyOnceWith(
         paramsMock,
         bindingFixture,
         resolveResult,

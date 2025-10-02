@@ -51,8 +51,7 @@ describe(resolveFactoryBindingCallback, () => {
     });
 
     it('should call factoryValueBinding.factory()', () => {
-      expect(factoryValueBindingMock.factory).toHaveBeenCalledTimes(1);
-      expect(factoryValueBindingMock.factory).toHaveBeenCalledWith(
+      expect(factoryValueBindingMock.factory).toHaveBeenCalledExactlyOnceWith(
         resolutionParamsFixture.context,
       );
     });

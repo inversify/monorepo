@@ -172,8 +172,9 @@ describe(ServiceReferenceManager, () => {
       });
 
       it('should call onResetComputedPropertiesListenerMock()', () => {
-        expect(onResetComputedPropertiesListenerMock).toHaveBeenCalledTimes(1);
-        expect(onResetComputedPropertiesListenerMock).toHaveBeenCalledWith();
+        expect(
+          onResetComputedPropertiesListenerMock,
+        ).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {

@@ -166,62 +166,58 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     });
 
     it('should call getControllerMethodParameterMetadataList()', () => {
-      expect(getControllerMethodParameterMetadataList).toHaveBeenCalledTimes(1);
-      expect(getControllerMethodParameterMetadataList).toHaveBeenCalledWith(
+      expect(
+        getControllerMethodParameterMetadataList,
+      ).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
     it('should call getControllerMethodStatusCodeMetadata()', () => {
-      expect(getControllerMethodStatusCodeMetadata).toHaveBeenCalledTimes(1);
-      expect(getControllerMethodStatusCodeMetadata).toHaveBeenCalledWith(
+      expect(
+        getControllerMethodStatusCodeMetadata,
+      ).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
     it('should call getClassGuardList()', () => {
-      expect(getClassGuardList).toHaveBeenCalledTimes(1);
-      expect(getClassGuardList).toHaveBeenCalledWith(
+      expect(getClassGuardList).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
       );
     });
 
     it('should call getClassMethodGuardList()', () => {
-      expect(getClassMethodGuardList).toHaveBeenCalledTimes(1);
-      expect(getClassMethodGuardList).toHaveBeenCalledWith(
+      expect(getClassMethodGuardList).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
     it('should call getClassInterceptorList()', () => {
-      expect(getClassInterceptorList).toHaveBeenCalledTimes(1);
-      expect(getClassInterceptorList).toHaveBeenCalledWith(
+      expect(getClassInterceptorList).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
       );
     });
 
     it('should call getClassMethodInterceptorList()', () => {
-      expect(getClassMethodInterceptorList).toHaveBeenCalledTimes(1);
-      expect(getClassMethodInterceptorList).toHaveBeenCalledWith(
+      expect(getClassMethodInterceptorList).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
     it('should call getClassMethodMiddlewareList()', () => {
-      expect(getClassMethodMiddlewareList).toHaveBeenCalledTimes(1);
-      expect(getClassMethodMiddlewareList).toHaveBeenCalledWith(
+      expect(getClassMethodMiddlewareList).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
     it('should call getClassMiddlewareList()', () => {
-      expect(getClassMiddlewareList).toHaveBeenCalledTimes(1);
-      expect(getClassMiddlewareList).toHaveBeenCalledWith(
+      expect(getClassMiddlewareList).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
       );
     });
@@ -239,26 +235,25 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     });
 
     it('should call getControllerMethodHeaderMetadataList()', () => {
-      expect(getControllerMethodHeaderMetadataList).toHaveBeenCalledTimes(1);
-      expect(getControllerMethodHeaderMetadataList).toHaveBeenCalledWith(
+      expect(
+        getControllerMethodHeaderMetadataList,
+      ).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
     it('should call getControllerMethodUseNativeHandlerMetadata()', () => {
-      expect(getControllerMethodUseNativeHandlerMetadata).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(getControllerMethodUseNativeHandlerMetadata).toHaveBeenCalledWith(
+      expect(
+        getControllerMethodUseNativeHandlerMetadata,
+      ).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );
     });
 
     it('should call buildErrorTypeToErrorFilterMap()', () => {
-      expect(buildErrorTypeToErrorFilterMap).toHaveBeenCalledTimes(1);
-      expect(buildErrorTypeToErrorFilterMap).toHaveBeenCalledWith(
+      expect(buildErrorTypeToErrorFilterMap).toHaveBeenCalledExactlyOnceWith(
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );

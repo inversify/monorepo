@@ -61,13 +61,13 @@ describe(buildUserSessionFromFastifyRequest, () => {
       });
 
       it('should call getBetterAuthFromRequest()', () => {
-        expect(getBetterAuthFromRequest).toHaveBeenCalledTimes(1);
-        expect(getBetterAuthFromRequest).toHaveBeenCalledWith(requestFixture);
+        expect(getBetterAuthFromRequest).toHaveBeenCalledExactlyOnceWith(
+          requestFixture,
+        );
       });
 
       it('should call auth.api.getSession()', () => {
-        expect(authMock.api.getSession).toHaveBeenCalledTimes(1);
-        expect(authMock.api.getSession).toHaveBeenCalledWith({
+        expect(authMock.api.getSession).toHaveBeenCalledExactlyOnceWith({
           asResponse: false,
           headers: new Headers(),
         });
@@ -123,8 +123,9 @@ describe(buildUserSessionFromFastifyRequest, () => {
       });
 
       it('should call getBetterAuthFromRequest()', () => {
-        expect(getBetterAuthFromRequest).toHaveBeenCalledTimes(1);
-        expect(getBetterAuthFromRequest).toHaveBeenCalledWith(requestFixture);
+        expect(getBetterAuthFromRequest).toHaveBeenCalledExactlyOnceWith(
+          requestFixture,
+        );
       });
 
       it('should call auth.api.getSession()', () => {
@@ -132,8 +133,7 @@ describe(buildUserSessionFromFastifyRequest, () => {
 
         headers.append('cookie', requestFixture.headers.cookie as string);
 
-        expect(authMock.api.getSession).toHaveBeenCalledTimes(1);
-        expect(authMock.api.getSession).toHaveBeenCalledWith({
+        expect(authMock.api.getSession).toHaveBeenCalledExactlyOnceWith({
           asResponse: false,
           headers,
         });

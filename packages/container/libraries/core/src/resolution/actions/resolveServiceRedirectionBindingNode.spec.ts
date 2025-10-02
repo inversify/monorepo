@@ -87,8 +87,7 @@ describe(resolveServiceRedirectionBindingNode, () => {
       });
 
       it('should call resolveBindingNode()', () => {
-        expect(resolveBindingNodeMock).toHaveBeenCalledTimes(1);
-        expect(resolveBindingNodeMock).toHaveBeenCalledWith(
+        expect(resolveBindingNodeMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           bindingNodeFixture,
         );

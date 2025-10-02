@@ -167,8 +167,9 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
       });
 
       it('should call addServiceNodeBindingIfContextFree()', () => {
-        expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledTimes(1);
-        expect(addServiceNodeBindingIfContextFree).toHaveBeenCalledWith(
+        expect(
+          addServiceNodeBindingIfContextFree,
+        ).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           lazyPlanServiceNodeFixture,
           bindingMock,

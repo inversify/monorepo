@@ -43,8 +43,7 @@ describe(decrementPendingClassMetadataCount, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           typeFixture,
           pendingClassMetadataCountReflectKey,
           getDefaultPendingClassMetadataCount,

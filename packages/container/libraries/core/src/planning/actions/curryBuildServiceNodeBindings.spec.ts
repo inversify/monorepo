@@ -110,10 +110,9 @@ describe(curryBuildServiceNodeBindings, () => {
       it('should call getClassMetadata()', () => {
         expect(
           basePlanParamsMock.operations.getClassMetadata,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          basePlanParamsMock.operations.getClassMetadata,
-        ).toHaveBeenCalledWith(instanceBindingFixture.implementationType);
+        ).toHaveBeenCalledExactlyOnceWith(
+          instanceBindingFixture.implementationType,
+        );
       });
 
       it('should call subplan with correct params', () => {
@@ -129,8 +128,7 @@ describe(curryBuildServiceNodeBindings, () => {
           servicesBranch: basePlanParamsMock.servicesBranch,
         };
 
-        expect(subplanMock).toHaveBeenCalledTimes(1);
-        expect(subplanMock).toHaveBeenCalledWith(
+        expect(subplanMock).toHaveBeenCalledExactlyOnceWith(
           expectedSubplanParams,
           bindingConstraintsListFixture,
         );
@@ -208,8 +206,7 @@ describe(curryBuildServiceNodeBindings, () => {
           servicesBranch: basePlanParamsMock.servicesBranch,
         };
 
-        expect(subplanMock).toHaveBeenCalledTimes(1);
-        expect(subplanMock).toHaveBeenCalledWith(
+        expect(subplanMock).toHaveBeenCalledExactlyOnceWith(
           expectedSubplanParams,
           bindingConstraintsListFixture,
         );
@@ -284,8 +281,7 @@ describe(curryBuildServiceNodeBindings, () => {
             bindingConstraintsListFixture.last,
           );
 
-        expect(buildFilteredServiceBindings).toHaveBeenCalledTimes(1);
-        expect(buildFilteredServiceBindings).toHaveBeenCalledWith(
+        expect(buildFilteredServiceBindings).toHaveBeenCalledExactlyOnceWith(
           basePlanParamsMock,
           expectedBindingConstraints,
           {

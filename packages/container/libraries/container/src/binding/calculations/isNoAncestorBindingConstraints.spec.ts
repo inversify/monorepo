@@ -46,8 +46,7 @@ describe(isNoAncestorBindingConstraints, () => {
     });
 
     it('should call isAnyAncestorBindingConstraints()', () => {
-      expect(isAnyAncestorBindingConstraints).toHaveBeenCalledTimes(1);
-      expect(isAnyAncestorBindingConstraints).toHaveBeenCalledWith(
+      expect(isAnyAncestorBindingConstraints).toHaveBeenCalledExactlyOnceWith(
         conditionMock,
       );
     });
@@ -55,10 +54,7 @@ describe(isNoAncestorBindingConstraints, () => {
     it('should call isAnyAncestorBindingConstraintsConstraint()', () => {
       expect(
         isAnyAncestorBindingConstraintsConstraintMock,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        isAnyAncestorBindingConstraintsConstraintMock,
-      ).toHaveBeenCalledWith(constraintsFixture);
+      ).toHaveBeenCalledExactlyOnceWith(constraintsFixture);
     });
 
     it('should return false', () => {
@@ -83,8 +79,7 @@ describe(isNoAncestorBindingConstraints, () => {
     });
 
     it('should call isAnyAncestorBindingConstraints()', () => {
-      expect(isAnyAncestorBindingConstraints).toHaveBeenCalledTimes(1);
-      expect(isAnyAncestorBindingConstraints).toHaveBeenCalledWith(
+      expect(isAnyAncestorBindingConstraints).toHaveBeenCalledExactlyOnceWith(
         conditionMock,
       );
     });
@@ -92,10 +87,7 @@ describe(isNoAncestorBindingConstraints, () => {
     it('should call isAnyAncestorBindingConstraintsConstraint()', () => {
       expect(
         isAnyAncestorBindingConstraintsConstraintMock,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        isAnyAncestorBindingConstraintsConstraintMock,
-      ).toHaveBeenCalledWith(constraintsFixture);
+      ).toHaveBeenCalledExactlyOnceWith(constraintsFixture);
     });
 
     it('should return true', () => {

@@ -38,8 +38,7 @@ describe(isNotParentBindingConstraints, () => {
     });
 
     it('should call constraints.getAncestor()', () => {
-      expect(constraintsMock.getAncestor).toHaveBeenCalledTimes(1);
-      expect(constraintsMock.getAncestor).toHaveBeenCalledWith();
+      expect(constraintsMock.getAncestor).toHaveBeenCalledExactlyOnceWith();
     });
 
     it('should not call constraint()', () => {
@@ -71,13 +70,11 @@ describe(isNotParentBindingConstraints, () => {
     });
 
     it('should call constraints.getAncestor()', () => {
-      expect(constraintsMock.getAncestor).toHaveBeenCalledTimes(1);
-      expect(constraintsMock.getAncestor).toHaveBeenCalledWith();
+      expect(constraintsMock.getAncestor).toHaveBeenCalledExactlyOnceWith();
     });
 
     it('should call condition()', () => {
-      expect(conditionMock).toHaveBeenCalledTimes(1);
-      expect(conditionMock).toHaveBeenCalledWith(constraintsMock);
+      expect(conditionMock).toHaveBeenCalledExactlyOnceWith(constraintsMock);
     });
 
     it('should return expected result', () => {

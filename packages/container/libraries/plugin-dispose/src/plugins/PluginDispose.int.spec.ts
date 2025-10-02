@@ -45,8 +45,7 @@ describe(PluginDispose, () => {
     });
 
     it('should call the deactivation function', () => {
-      expect(bindingDeactivationMock).toHaveBeenCalledTimes(1);
-      expect(bindingDeactivationMock).toHaveBeenCalledWith(
+      expect(bindingDeactivationMock).toHaveBeenCalledExactlyOnceWith(
         bindingResolvedValue,
       );
     });
@@ -83,8 +82,7 @@ describe(PluginDispose, () => {
     });
 
     it('should call the deactivation function', () => {
-      expect(bindingDeactivationMock).toHaveBeenCalledTimes(1);
-      expect(bindingDeactivationMock).toHaveBeenCalledWith(
+      expect(bindingDeactivationMock).toHaveBeenCalledExactlyOnceWith(
         bindingResolvedValue,
       );
     });
@@ -141,15 +139,13 @@ describe(PluginDispose, () => {
     });
 
     it('should call the first deactivation function', () => {
-      expect(firstBindingDeactivationMock).toHaveBeenCalledTimes(1);
-      expect(firstBindingDeactivationMock).toHaveBeenCalledWith(
+      expect(firstBindingDeactivationMock).toHaveBeenCalledExactlyOnceWith(
         firstBindingResolvedValue,
       );
     });
 
     it('should call the second deactivation function', () => {
-      expect(secondBindingDeactivationMock).toHaveBeenCalledTimes(1);
-      expect(secondBindingDeactivationMock).toHaveBeenCalledWith(
+      expect(secondBindingDeactivationMock).toHaveBeenCalledExactlyOnceWith(
         secondBindingResolvedValue,
       );
     });

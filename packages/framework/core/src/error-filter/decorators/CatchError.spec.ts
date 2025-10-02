@@ -60,20 +60,23 @@ describe(CatchError, () => {
       });
 
       it('should call injectable', () => {
-        expect(injectable).toHaveBeenCalledWith(undefined);
+        expect(injectable).toHaveBeenCalledExactlyOnceWith(undefined);
       });
 
       it('should call ClassDecorator', () => {
-        expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
+        expect(classDecoratorMock).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+        );
       });
 
       it('should call buildCatchErrorMetadata', () => {
-        expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
-        expect(buildCatchErrorMetadata).toHaveBeenCalledWith(errorFixture);
+        expect(buildCatchErrorMetadata).toHaveBeenCalledExactlyOnceWith(
+          errorFixture,
+        );
       });
 
       it('should set metadata with error filter', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           catchErrorMetadataReflectKey,
           buildEmptySetMetadata,
@@ -119,14 +122,13 @@ describe(CatchError, () => {
       });
 
       it('should call buildCatchErrorMetadata', () => {
-        expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
-        expect(buildCatchErrorMetadata).toHaveBeenCalledWith(
+        expect(buildCatchErrorMetadata).toHaveBeenCalledExactlyOnceWith(
           optionsFixture.error,
         );
       });
 
       it('should set metadata with controller options', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           catchErrorMetadataReflectKey,
           buildEmptySetMetadata,
@@ -171,22 +173,25 @@ describe(CatchError, () => {
       });
 
       it('should call injectable', () => {
-        expect(injectable).toHaveBeenCalledWith(optionsFixture.scope);
+        expect(injectable).toHaveBeenCalledExactlyOnceWith(
+          optionsFixture.scope,
+        );
       });
 
       it('should call ClassDecorator', () => {
-        expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
+        expect(classDecoratorMock).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+        );
       });
 
       it('should call buildCatchErrorMetadata', () => {
-        expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
-        expect(buildCatchErrorMetadata).toHaveBeenCalledWith(
+        expect(buildCatchErrorMetadata).toHaveBeenCalledExactlyOnceWith(
           optionsFixture.error,
         );
       });
 
       it('should set metadata with controller options', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           catchErrorMetadataReflectKey,
           buildEmptySetMetadata,
@@ -228,20 +233,21 @@ describe(CatchError, () => {
       });
 
       it('should call injectable', () => {
-        expect(injectable).toHaveBeenCalledWith(undefined);
+        expect(injectable).toHaveBeenCalledExactlyOnceWith(undefined);
       });
 
       it('should call ClassDecorator', () => {
-        expect(classDecoratorMock).toHaveBeenCalledWith(targetFixture);
+        expect(classDecoratorMock).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+        );
       });
 
       it('should call buildCatchErrorMetadata', () => {
-        expect(buildCatchErrorMetadata).toHaveBeenCalledTimes(1);
-        expect(buildCatchErrorMetadata).toHaveBeenCalledWith(null);
+        expect(buildCatchErrorMetadata).toHaveBeenCalledExactlyOnceWith(null);
       });
 
       it('should set metadata with error filter', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           catchErrorMetadataReflectKey,
           buildEmptySetMetadata,

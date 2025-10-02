@@ -60,8 +60,9 @@ describe(PluginDispose, () => {
       });
 
       it('should register the singleton scoped bindings', () => {
-        expect(pluginApiMock.onPlan).toHaveBeenCalledTimes(1);
-        expect(pluginApiMock.onPlan).toHaveBeenCalledWith(expect.any(Function));
+        expect(pluginApiMock.onPlan).toHaveBeenCalledExactlyOnceWith(
+          expect.any(Function),
+        );
       });
 
       it('should return undefined', () => {

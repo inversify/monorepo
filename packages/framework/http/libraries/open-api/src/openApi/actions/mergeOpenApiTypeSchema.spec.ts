@@ -81,8 +81,9 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getSchemaMetadata()', () => {
-          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+          );
         });
 
         it('should not modify schemasObject', () => {
@@ -125,8 +126,9 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getSchemaMetadata()', () => {
-          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+          );
         });
 
         it('should modify schemasObject', () => {
@@ -175,8 +177,9 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getSchemaMetadata()', () => {
-          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+          );
         });
 
         it('should not modify schemasObject', () => {
@@ -220,8 +223,9 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getSchemaMetadata()', () => {
-          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+          );
         });
 
         it('should add schema to schemasObject with merged customAttributes', () => {
@@ -277,8 +281,9 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getSchemaMetadata()', () => {
-          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+          );
         });
 
         it('should add schema to schemasObject using the schema directly', () => {
@@ -343,8 +348,9 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getSchemaMetadata()', () => {
-          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+          );
         });
 
         it('should add schema to schemasObject with allOf structure', () => {
@@ -409,8 +415,9 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getSchemaMetadata()', () => {
-          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+          );
         });
 
         it('should add schema to schemasObject with defined property schemas', () => {
@@ -480,8 +487,9 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getSchemaMetadata()', () => {
-          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+          );
         });
 
         it('should add schema to schemasObject with required properties array', () => {
@@ -548,13 +556,13 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getSchemaMetadata()', () => {
-          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+          );
         });
 
         it('should call getOwnReflectMetadata()', () => {
-          expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
+          expect(getOwnReflectMetadataMock).toHaveBeenCalledExactlyOnceWith(
             typeFixture.prototype,
             'design:type',
             'unknownProperty',
@@ -616,13 +624,13 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getSchemaMetadata()', () => {
-          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getSchemaMetadataMock).toHaveBeenCalledWith(typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+          );
         });
 
         it('should call getOwnReflectMetadata()', () => {
-          expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
+          expect(getOwnReflectMetadataMock).toHaveBeenCalledExactlyOnceWith(
             typeFixture.prototype,
             'design:type',
             'stringProperty',
@@ -630,10 +638,9 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call tryBuildSchemaFromWellKnownType()', () => {
-          expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledTimes(1);
-          expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledWith(
-            propertyTypeFixture,
-          );
+          expect(
+            tryBuildSchemaFromWellKnownTypeMock,
+          ).toHaveBeenCalledExactlyOnceWith(propertyTypeFixture);
         });
 
         it('should add schema to schemasObject with well-known type schema', () => {
@@ -722,8 +729,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getOwnReflectMetadata()', () => {
-          expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
+          expect(getOwnReflectMetadataMock).toHaveBeenCalledExactlyOnceWith(
             typeFixture.prototype,
             'design:type',
             'customProperty',
@@ -731,17 +737,15 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call tryBuildSchemaFromWellKnownType()', () => {
-          expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledTimes(1);
-          expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledWith(
-            propertyTypeFixture,
-          );
+          expect(
+            tryBuildSchemaFromWellKnownTypeMock,
+          ).toHaveBeenCalledExactlyOnceWith(propertyTypeFixture);
         });
 
         it('should call escapeJsonPointerFragments()', () => {
-          expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledTimes(1);
-          expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledWith(
-            'CustomPropertyType',
-          );
+          expect(
+            escapeJsonPointerFragmentsMock,
+          ).toHaveBeenCalledExactlyOnceWith('CustomPropertyType');
         });
 
         it('should add schema to schemasObject with property reference', () => {
@@ -832,8 +836,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call getOwnReflectMetadata()', () => {
-          expect(getOwnReflectMetadataMock).toHaveBeenCalledTimes(1);
-          expect(getOwnReflectMetadataMock).toHaveBeenCalledWith(
+          expect(getOwnReflectMetadataMock).toHaveBeenCalledExactlyOnceWith(
             typeFixture.prototype,
             'design:type',
             'customProperty',
@@ -841,17 +844,15 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should call tryBuildSchemaFromWellKnownType()', () => {
-          expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledTimes(1);
-          expect(tryBuildSchemaFromWellKnownTypeMock).toHaveBeenCalledWith(
-            propertyTypeFixture,
-          );
+          expect(
+            tryBuildSchemaFromWellKnownTypeMock,
+          ).toHaveBeenCalledExactlyOnceWith(propertyTypeFixture);
         });
 
         it('should call escapeJsonPointerFragments() with propertyType.name', () => {
-          expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledTimes(1);
-          expect(escapeJsonPointerFragmentsMock).toHaveBeenCalledWith(
-            'CustomPropertyType',
-          );
+          expect(
+            escapeJsonPointerFragmentsMock,
+          ).toHaveBeenCalledExactlyOnceWith('CustomPropertyType');
         });
 
         it('should add schema to schemasObject with property reference using propertyType.name', () => {

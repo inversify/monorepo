@@ -25,8 +25,7 @@ describe(getClassMiddlewareList, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         classMiddlewareMetadataReflectKey,
       );
@@ -58,8 +57,7 @@ describe(getClassMiddlewareList, () => {
     });
 
     it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         classMiddlewareMetadataReflectKey,
       );

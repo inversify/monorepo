@@ -26,8 +26,7 @@ describe(Patch, () => {
     });
 
     it('should call requestMethod', () => {
-      expect(requestMethod).toHaveBeenCalledTimes(1);
-      expect(requestMethod).toHaveBeenCalledWith(
+      expect(requestMethod).toHaveBeenCalledExactlyOnceWith(
         RequestMethodType.Patch,
         pathFixture,
       );

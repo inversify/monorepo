@@ -50,13 +50,11 @@ describe(requestMethod, () => {
       });
 
       it('should call buildNormalizedPath()', () => {
-        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
-        expect(buildNormalizedPath).toHaveBeenCalledWith('/');
+        expect(buildNormalizedPath).toHaveBeenCalledExactlyOnceWith('/');
       });
 
       it('should call buildArrayMetadataWithElement', () => {
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith({
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith({
           methodKey: keyFixture,
           path: normalizedPathFixture,
           requestMethodType: RequestMethodType.Get,
@@ -64,8 +62,7 @@ describe(requestMethod, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           controllerMethodMetadataReflectKey,
           buildEmptyArrayMetadata,
@@ -111,13 +108,13 @@ describe(requestMethod, () => {
       });
 
       it('should call buildNormalizedPath()', () => {
-        expect(buildNormalizedPath).toHaveBeenCalledTimes(1);
-        expect(buildNormalizedPath).toHaveBeenCalledWith(pathFixture);
+        expect(buildNormalizedPath).toHaveBeenCalledExactlyOnceWith(
+          pathFixture,
+        );
       });
 
       it('should call buildArrayMetadataWithElement', () => {
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledWith({
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith({
           methodKey: keyFixture,
           path: normalizedPathFixture,
           requestMethodType: RequestMethodType.Get,
@@ -125,8 +122,7 @@ describe(requestMethod, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           controllerMethodMetadataReflectKey,
           buildEmptyArrayMetadata,

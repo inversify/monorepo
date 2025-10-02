@@ -274,10 +274,9 @@ describe(Container, () => {
         });
 
         it('should call planResultCacheService.subscribe()', () => {
-          expect(planResultCacheServiceMock.subscribe).toHaveBeenCalledTimes(1);
-          expect(planResultCacheServiceMock.subscribe).toHaveBeenCalledWith(
-            planResultCacheServiceMock,
-          );
+          expect(
+            planResultCacheServiceMock.subscribe,
+          ).toHaveBeenCalledExactlyOnceWith(planResultCacheServiceMock);
         });
 
         it('should call ServiceReferenceManager()', () => {
@@ -320,8 +319,7 @@ describe(Container, () => {
         });
 
         it('should call new ActivationsService.build()', () => {
-          expect(ActivationsService.build).toHaveBeenCalledTimes(1);
-          expect(ActivationsService.build).toHaveBeenCalledWith(
+          expect(ActivationsService.build).toHaveBeenCalledExactlyOnceWith(
             expect.any(Function),
           );
         });
@@ -331,23 +329,20 @@ describe(Container, () => {
             scope: defaultScopeFixture,
           };
 
-          expect(BindingService.build).toHaveBeenCalledTimes(1);
-          expect(BindingService.build).toHaveBeenCalledWith(
+          expect(BindingService.build).toHaveBeenCalledExactlyOnceWith(
             expect.any(Function),
             expectedAutobindOptions,
           );
         });
 
         it('should call DeactivationsService.build()', () => {
-          expect(DeactivationsService.build).toHaveBeenCalledTimes(1);
-          expect(DeactivationsService.build).toHaveBeenCalledWith(
+          expect(DeactivationsService.build).toHaveBeenCalledExactlyOnceWith(
             expect.any(Function),
           );
         });
 
         it('should call PlanResultCacheService()', () => {
-          expect(PlanResultCacheService).toHaveBeenCalledTimes(1);
-          expect(PlanResultCacheService).toHaveBeenCalledWith();
+          expect(PlanResultCacheService).toHaveBeenCalledExactlyOnceWith();
         });
 
         it('should not call planResultCacheService.subscribe()', () => {
@@ -355,8 +350,7 @@ describe(Container, () => {
         });
 
         it('should call ServiceReferenceManager()', () => {
-          expect(ServiceReferenceManager).toHaveBeenCalledTimes(1);
-          expect(ServiceReferenceManager).toHaveBeenCalledWith(
+          expect(ServiceReferenceManager).toHaveBeenCalledExactlyOnceWith(
             activationServiceMock,
             bindingServiceMock,
             deactivationServiceMock,
@@ -385,8 +379,7 @@ describe(Container, () => {
       });
 
       it('should call bindingManager.bind()', () => {
-        expect(bindingManagerMock.bind).toHaveBeenCalledTimes(1);
-        expect(bindingManagerMock.bind).toHaveBeenCalledWith(
+        expect(bindingManagerMock.bind).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -436,8 +429,9 @@ describe(Container, () => {
       });
 
       it('should call serviceResolutionManager.get()', () => {
-        expect(serviceResolutionManagerMock.get).toHaveBeenCalledTimes(1);
-        expect(serviceResolutionManagerMock.get).toHaveBeenCalledWith(
+        expect(
+          serviceResolutionManagerMock.get,
+        ).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
           getOptionsFixture,
         );
@@ -488,8 +482,9 @@ describe(Container, () => {
       });
 
       it('should call serviceResolutionManager.getAll()', () => {
-        expect(serviceResolutionManagerMock.getAll).toHaveBeenCalledTimes(1);
-        expect(serviceResolutionManagerMock.getAll).toHaveBeenCalledWith(
+        expect(
+          serviceResolutionManagerMock.getAll,
+        ).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
           getOptionsFixture,
         );
@@ -540,10 +535,9 @@ describe(Container, () => {
       });
 
       it('should call serviceResolutionManager.getAllAsync()', () => {
-        expect(serviceResolutionManagerMock.getAllAsync).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(serviceResolutionManagerMock.getAllAsync).toHaveBeenCalledWith(
+        expect(
+          serviceResolutionManagerMock.getAllAsync,
+        ).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
           getOptionsFixture,
         );
@@ -594,8 +588,9 @@ describe(Container, () => {
       });
 
       it('should call serviceResolutionManager.getAsync()', () => {
-        expect(serviceResolutionManagerMock.getAsync).toHaveBeenCalledTimes(1);
-        expect(serviceResolutionManagerMock.getAsync).toHaveBeenCalledWith(
+        expect(
+          serviceResolutionManagerMock.getAsync,
+        ).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
           getOptionsFixture,
         );
@@ -643,8 +638,7 @@ describe(Container, () => {
       });
 
       it('should call bindingService.isBound()', () => {
-        expect(bindingManagerMock.isBound).toHaveBeenCalledTimes(1);
-        expect(bindingManagerMock.isBound).toHaveBeenCalledWith(
+        expect(bindingManagerMock.isBound).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
           {
             name: nameFixture,
@@ -693,14 +687,12 @@ describe(Container, () => {
       });
 
       it('should call bindingService.isCurrentBound()', () => {
-        expect(bindingManagerMock.isCurrentBound).toHaveBeenCalledTimes(1);
-        expect(bindingManagerMock.isCurrentBound).toHaveBeenCalledWith(
-          serviceIdentifierFixture,
-          {
-            name: nameFixture,
-            tag: tagFixture,
-          },
-        );
+        expect(
+          bindingManagerMock.isCurrentBound,
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture, {
+          name: nameFixture,
+          tag: tagFixture,
+        });
       });
 
       it('should return expected result', () => {
@@ -730,8 +722,7 @@ describe(Container, () => {
       });
 
       it('should call containerModuleManager.load', () => {
-        expect(containerModuleManagerMock.load).toHaveBeenCalledTimes(1);
-        expect(containerModuleManagerMock.load).toHaveBeenCalledWith(
+        expect(containerModuleManagerMock.load).toHaveBeenCalledExactlyOnceWith(
           containerModuleMock,
         );
       });
@@ -763,10 +754,9 @@ describe(Container, () => {
       });
 
       it('should call containerModuleManager.loadSync', () => {
-        expect(containerModuleManagerMock.loadSync).toHaveBeenCalledTimes(1);
-        expect(containerModuleManagerMock.loadSync).toHaveBeenCalledWith(
-          containerModuleMock,
-        );
+        expect(
+          containerModuleManagerMock.loadSync,
+        ).toHaveBeenCalledExactlyOnceWith(containerModuleMock);
       });
 
       it('should return undefined', () => {
@@ -803,8 +793,7 @@ describe(Container, () => {
           serviceId: serviceIdentifierFixture,
         };
 
-        expect(activationServiceMock.add).toHaveBeenCalledTimes(1);
-        expect(activationServiceMock.add).toHaveBeenCalledWith(
+        expect(activationServiceMock.add).toHaveBeenCalledExactlyOnceWith(
           activationMock,
           bindingActivationRelation,
         );
@@ -844,8 +833,7 @@ describe(Container, () => {
           serviceId: serviceIdentifierFixture,
         };
 
-        expect(deactivationServiceMock.add).toHaveBeenCalledTimes(1);
-        expect(deactivationServiceMock.add).toHaveBeenCalledWith(
+        expect(deactivationServiceMock.add).toHaveBeenCalledExactlyOnceWith(
           deactivationMock,
           bindingDeactivationRelation,
         );
@@ -881,8 +869,7 @@ describe(Container, () => {
       });
 
       it('should call bindingManager.rebind()', () => {
-        expect(bindingManagerMock.rebind).toHaveBeenCalledTimes(1);
-        expect(bindingManagerMock.rebind).toHaveBeenCalledWith(
+        expect(bindingManagerMock.rebind).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -917,8 +904,7 @@ describe(Container, () => {
       });
 
       it('should call bindingManager.rebindSync()', () => {
-        expect(bindingManagerMock.rebindSync).toHaveBeenCalledTimes(1);
-        expect(bindingManagerMock.rebindSync).toHaveBeenCalledWith(
+        expect(bindingManagerMock.rebindSync).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -956,8 +942,7 @@ describe(Container, () => {
       });
 
       it('should call pluginManager.register()', () => {
-        expect(pluginManagerMock.register).toHaveBeenCalledTimes(1);
-        expect(pluginManagerMock.register).toHaveBeenCalledWith(
+        expect(pluginManagerMock.register).toHaveBeenCalledExactlyOnceWith(
           container,
           pluginConstructorFixture,
         );
@@ -982,8 +967,7 @@ describe(Container, () => {
       });
 
       it('should call snapshotManager.restore()', () => {
-        expect(snapshotManagerMock.restore).toHaveBeenCalledTimes(1);
-        expect(snapshotManagerMock.restore).toHaveBeenCalledWith();
+        expect(snapshotManagerMock.restore).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {
@@ -1005,8 +989,7 @@ describe(Container, () => {
       });
 
       it('should call snapshotManager.snapshot()', () => {
-        expect(snapshotManagerMock.snapshot).toHaveBeenCalledTimes(1);
-        expect(snapshotManagerMock.snapshot).toHaveBeenCalledWith();
+        expect(snapshotManagerMock.snapshot).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {
@@ -1036,8 +1019,7 @@ describe(Container, () => {
       });
 
       it('should call bindingManager.unbind()', () => {
-        expect(bindingManagerMock.unbind).toHaveBeenCalledTimes(1);
-        expect(bindingManagerMock.unbind).toHaveBeenCalledWith(
+        expect(bindingManagerMock.unbind).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -1069,8 +1051,7 @@ describe(Container, () => {
       });
 
       it('should call bindingManager.unbindSync()', () => {
-        expect(bindingManagerMock.unbindSync).toHaveBeenCalledTimes(1);
-        expect(bindingManagerMock.unbindSync).toHaveBeenCalledWith(
+        expect(bindingManagerMock.unbindSync).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -1096,8 +1077,7 @@ describe(Container, () => {
       });
 
       it('should call bindingManager.unbindAll()', () => {
-        expect(bindingManagerMock.unbindAll).toHaveBeenCalledTimes(1);
-        expect(bindingManagerMock.unbindAll).toHaveBeenCalledWith();
+        expect(bindingManagerMock.unbindAll).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {
@@ -1127,10 +1107,9 @@ describe(Container, () => {
       });
 
       it('should call containerModuleManager.unload()', () => {
-        expect(containerModuleManagerMock.unload).toHaveBeenCalledTimes(1);
-        expect(containerModuleManagerMock.unload).toHaveBeenCalledWith(
-          containerModuleFixture,
-        );
+        expect(
+          containerModuleManagerMock.unload,
+        ).toHaveBeenCalledExactlyOnceWith(containerModuleFixture);
       });
 
       it('should return undefined', () => {
@@ -1160,10 +1139,9 @@ describe(Container, () => {
       });
 
       it('should call containerModuleManager.unloadSync()', () => {
-        expect(containerModuleManagerMock.unloadSync).toHaveBeenCalledTimes(1);
-        expect(containerModuleManagerMock.unloadSync).toHaveBeenCalledWith(
-          containerModuleFixture,
-        );
+        expect(
+          containerModuleManagerMock.unloadSync,
+        ).toHaveBeenCalledExactlyOnceWith(containerModuleFixture);
       });
 
       it('should return undefined', () => {

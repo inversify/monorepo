@@ -54,15 +54,13 @@ describe(UseErrorFilter, () => {
       });
 
       it('should call updateSetMetadataWithList()', () => {
-        expect(updateSetMetadataWithList).toHaveBeenCalledTimes(1);
-        expect(updateSetMetadataWithList).toHaveBeenCalledWith([
+        expect(updateSetMetadataWithList).toHaveBeenCalledExactlyOnceWith([
           errorFilterFixture,
         ]);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           classErrorFilterMetadataReflectKey,
           buildEmptySetMetadata,
@@ -115,15 +113,13 @@ describe(UseErrorFilter, () => {
       });
 
       it('should call updateSetMetadataWithList()', () => {
-        expect(updateSetMetadataWithList).toHaveBeenCalledTimes(1);
-        expect(updateSetMetadataWithList).toHaveBeenCalledWith([
+        expect(updateSetMetadataWithList).toHaveBeenCalledExactlyOnceWith([
           errorFilterFixture,
         ]);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           classMethodErrorFilterMetadataReflectKey,
           buildEmptySetMetadata,

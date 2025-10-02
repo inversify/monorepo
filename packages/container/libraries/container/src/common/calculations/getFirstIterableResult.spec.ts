@@ -35,8 +35,9 @@ describe(getFirstIterableResult, () => {
       });
 
       it('should call getFirstIteratorResult()', () => {
-        expect(getFirstIteratorResult).toHaveBeenCalledTimes(1);
-        expect(getFirstIteratorResult).toHaveBeenCalledWith(undefined);
+        expect(getFirstIteratorResult).toHaveBeenCalledExactlyOnceWith(
+          undefined,
+        );
       });
 
       it('should return expected value', () => {
@@ -78,13 +79,13 @@ describe(getFirstIterableResult, () => {
       });
 
       it('should call iterable[Symbol.iterator]()', () => {
-        expect(iterableMock[Symbol.iterator]).toHaveBeenCalledTimes(1);
-        expect(iterableMock[Symbol.iterator]).toHaveBeenCalledWith();
+        expect(iterableMock[Symbol.iterator]).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should call getFirstIteratorResult()', () => {
-        expect(getFirstIteratorResult).toHaveBeenCalledTimes(1);
-        expect(getFirstIteratorResult).toHaveBeenCalledWith(iteratorFixture);
+        expect(getFirstIteratorResult).toHaveBeenCalledExactlyOnceWith(
+          iteratorFixture,
+        );
       });
 
       it('should return expected result', () => {

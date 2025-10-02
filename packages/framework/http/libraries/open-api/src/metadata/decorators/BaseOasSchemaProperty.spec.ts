@@ -64,8 +64,7 @@ describe(BaseOasSchemaProperty, () => {
       });
 
       it('should call updateSchemaMetadataProperty()', () => {
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataProperty).toHaveBeenCalledExactlyOnceWith(
           propertyKeyFixture,
           requiredFixture,
           undefined,
@@ -73,8 +72,7 @@ describe(BaseOasSchemaProperty, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetObjectFixture.constructor,
           schemaOpenApiMetadataReflectKey,
           buildDefaultSchemaMetadata,
@@ -130,8 +128,7 @@ describe(BaseOasSchemaProperty, () => {
       });
 
       it('should call updateSchemaMetadataProperty()', () => {
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataProperty).toHaveBeenCalledExactlyOnceWith(
           propertyKeyFixture,
           requiredFixture,
           schemaFixture,
@@ -139,8 +136,7 @@ describe(BaseOasSchemaProperty, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetObjectFixture.constructor,
           schemaOpenApiMetadataReflectKey,
           buildDefaultSchemaMetadata,
@@ -208,20 +204,19 @@ describe(BaseOasSchemaProperty, () => {
       });
 
       it('should call toSchema()', () => {
-        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledTimes(1);
-        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledWith(
+        expect(toSchemaInSchemaMetadataContext).toHaveBeenCalledExactlyOnceWith(
           targetObjectFixture.constructor,
         );
       });
 
       it('should call build function with toSchema result', () => {
-        expect(buildFunctionFixture).toHaveBeenCalledTimes(1);
-        expect(buildFunctionFixture).toHaveBeenCalledWith(toSchemaFunctionMock);
+        expect(buildFunctionFixture).toHaveBeenCalledExactlyOnceWith(
+          toSchemaFunctionMock,
+        );
       });
 
       it('should call updateSchemaMetadataProperty()', () => {
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledTimes(1);
-        expect(updateSchemaMetadataProperty).toHaveBeenCalledWith(
+        expect(updateSchemaMetadataProperty).toHaveBeenCalledExactlyOnceWith(
           propertyKeyFixture,
           requiredFixture,
           builtSchemaFixture,
@@ -229,8 +224,7 @@ describe(BaseOasSchemaProperty, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetObjectFixture.constructor,
           schemaOpenApiMetadataReflectKey,
           buildDefaultSchemaMetadata,

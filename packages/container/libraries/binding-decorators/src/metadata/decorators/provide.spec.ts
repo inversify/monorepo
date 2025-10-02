@@ -68,16 +68,17 @@ describe(provide, () => {
       });
 
       it('should call updateMetadataMap()', () => {
-        expect(updateMetadataMap).toHaveBeenCalledTimes(1);
-        expect(updateMetadataMap).toHaveBeenCalledWith(targetFixture, {
-          action: expect.any(Function),
-          serviceIdentifier: targetFixture,
-        });
+        expect(updateMetadataMap).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+          {
+            action: expect.any(Function),
+            serviceIdentifier: targetFixture,
+          },
+        );
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           Object,
           bindingMetadataMapReflectKey,
           buildDefaultBindingMetadataMap,
@@ -136,16 +137,17 @@ describe(provide, () => {
       });
 
       it('should call updateMetadataMap()', () => {
-        expect(updateMetadataMap).toHaveBeenCalledTimes(1);
-        expect(updateMetadataMap).toHaveBeenCalledWith(targetFixture, {
-          action: expect.any(Function),
-          serviceIdentifier: serviceIdentifierFixture,
-        });
+        expect(updateMetadataMap).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+          {
+            action: expect.any(Function),
+            serviceIdentifier: serviceIdentifierFixture,
+          },
+        );
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           Object,
           bindingMetadataMapReflectKey,
           buildDefaultBindingMetadataMap,

@@ -99,15 +99,13 @@ describe(curryBuildPlanServiceNode, () => {
       });
 
       it('should call buildPlanBindingConstraintsList()', () => {
-        expect(buildPlanBindingConstraintsList).toHaveBeenCalledTimes(1);
-        expect(buildPlanBindingConstraintsList).toHaveBeenCalledWith(
+        expect(buildPlanBindingConstraintsList).toHaveBeenCalledExactlyOnceWith(
           planParamsFixture,
         );
       });
 
       it('should call buildFilteredServiceBindings()', () => {
-        expect(buildFilteredServiceBindings).toHaveBeenCalledTimes(1);
-        expect(buildFilteredServiceBindings).toHaveBeenCalledWith(
+        expect(buildFilteredServiceBindings).toHaveBeenCalledExactlyOnceWith(
           planParamsFixture,
           new BindingConstraintsImplementation(
             bindingConstraintsListFixture.last,
@@ -124,8 +122,7 @@ describe(curryBuildPlanServiceNode, () => {
             planParamsFixture.rootConstraints.serviceIdentifier,
         };
 
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
+        expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
           planParamsFixture,
           bindingConstraintsListFixture,
           bindingsFixture,
@@ -201,15 +198,13 @@ describe(curryBuildPlanServiceNode, () => {
       });
 
       it('should call buildPlanBindingConstraintsList()', () => {
-        expect(buildPlanBindingConstraintsList).toHaveBeenCalledTimes(1);
-        expect(buildPlanBindingConstraintsList).toHaveBeenCalledWith(
+        expect(buildPlanBindingConstraintsList).toHaveBeenCalledExactlyOnceWith(
           planParamsFixture,
         );
       });
 
       it('should call buildFilteredServiceBindings()', () => {
-        expect(buildFilteredServiceBindings).toHaveBeenCalledTimes(1);
-        expect(buildFilteredServiceBindings).toHaveBeenCalledWith(
+        expect(buildFilteredServiceBindings).toHaveBeenCalledExactlyOnceWith(
           planParamsFixture,
           new BindingConstraintsImplementation(
             bindingConstraintsListFixture.last,
@@ -226,8 +221,7 @@ describe(curryBuildPlanServiceNode, () => {
             planParamsFixture.rootConstraints.serviceIdentifier,
         };
 
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledTimes(1);
-        expect(buildServiceNodeBindingsMock).toHaveBeenCalledWith(
+        expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
           planParamsFixture,
           bindingConstraintsListFixture,
           bindingsFixture,
@@ -244,10 +238,9 @@ describe(curryBuildPlanServiceNode, () => {
             planParamsFixture.rootConstraints.serviceIdentifier,
         };
 
-        expect(checkServiceNodeSingleInjectionBindings).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(checkServiceNodeSingleInjectionBindings).toHaveBeenCalledWith(
+        expect(
+          checkServiceNodeSingleInjectionBindings,
+        ).toHaveBeenCalledExactlyOnceWith(
           expectedServiceNode,
           false,
           bindingConstraintsListFixture.last,

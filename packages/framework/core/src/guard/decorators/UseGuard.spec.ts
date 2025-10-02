@@ -39,15 +39,13 @@ describe(UseGuard, () => {
       });
 
       it('should call buildArrayMetadataWithArray()', () => {
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
+        expect(buildArrayMetadataWithArray).toHaveBeenCalledExactlyOnceWith([
           guardServiceIdentifierFixture,
         ]);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           classGuardMetadataReflectKey,
           buildEmptyArrayMetadata,
@@ -88,15 +86,13 @@ describe(UseGuard, () => {
       });
 
       it('should call buildArrayMetadataWithArray()', () => {
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
+        expect(buildArrayMetadataWithArray).toHaveBeenCalledExactlyOnceWith([
           guardServiceIdentifierFixture,
         ]);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           classMethodGuardMetadataReflectKey,
           buildEmptyArrayMetadata,

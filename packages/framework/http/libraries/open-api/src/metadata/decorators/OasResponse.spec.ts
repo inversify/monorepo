@@ -89,10 +89,7 @@ describe(OasResponse, () => {
       it('should call updateControllerOpenApiMetadataOperationRecordProperty()', () => {
         expect(
           updateControllerOpenApiMetadataOperationRecordProperty,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateControllerOpenApiMetadataOperationRecordProperty,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           codeFixture.toString(),
           responseFixture,
           targetFixture.constructor,
@@ -102,8 +99,7 @@ describe(OasResponse, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,
@@ -188,24 +184,19 @@ describe(OasResponse, () => {
       it('should call toSchemaInControllerOpenApiMetadataContext()', () => {
         expect(
           toSchemaInControllerOpenApiMetadataContext,
-        ).toHaveBeenCalledTimes(1);
-        expect(toSchemaInControllerOpenApiMetadataContext).toHaveBeenCalledWith(
-          targetFixture.constructor,
-        );
+        ).toHaveBeenCalledExactlyOnceWith(targetFixture.constructor);
       });
 
       it('should call build function with toSchema result', () => {
-        expect(buildFunctionFixture).toHaveBeenCalledTimes(1);
-        expect(buildFunctionFixture).toHaveBeenCalledWith(toSchemaFunctionMock);
+        expect(buildFunctionFixture).toHaveBeenCalledExactlyOnceWith(
+          toSchemaFunctionMock,
+        );
       });
 
       it('should call updateControllerOpenApiMetadataOperationRecordProperty()', () => {
         expect(
           updateControllerOpenApiMetadataOperationRecordProperty,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateControllerOpenApiMetadataOperationRecordProperty,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           codeFixture.toString(),
           builtResponseFixture,
           targetFixture.constructor,
@@ -215,8 +206,7 @@ describe(OasResponse, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,

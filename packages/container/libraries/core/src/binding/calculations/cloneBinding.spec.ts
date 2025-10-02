@@ -85,8 +85,9 @@ describe(cloneBinding, () => {
       });
 
       it('should call cloneConstantValueBinding', () => {
-        expect(cloneConstantValueBinding).toHaveBeenCalledTimes(1);
-        expect(cloneConstantValueBinding).toHaveBeenCalledWith(bindingFixture);
+        expect(cloneConstantValueBinding).toHaveBeenCalledExactlyOnceWith(
+          bindingFixture,
+        );
       });
 
       it('should return the cloned binding', () => {
@@ -135,8 +136,9 @@ describe(cloneBinding, () => {
       });
 
       it('should call cloneDynamicValueBinding', () => {
-        expect(cloneDynamicValueBinding).toHaveBeenCalledTimes(1);
-        expect(cloneDynamicValueBinding).toHaveBeenCalledWith(bindingFixture);
+        expect(cloneDynamicValueBinding).toHaveBeenCalledExactlyOnceWith(
+          bindingFixture,
+        );
       });
 
       it('should return the cloned binding', () => {
@@ -181,8 +183,9 @@ describe(cloneBinding, () => {
     });
 
     it('should call cloneFactoryBinding', () => {
-      expect(cloneFactoryBinding).toHaveBeenCalledTimes(1);
-      expect(cloneFactoryBinding).toHaveBeenCalledWith(bindingFixture);
+      expect(cloneFactoryBinding).toHaveBeenCalledExactlyOnceWith(
+        bindingFixture,
+      );
     });
 
     it('should return the cloned binding', () => {
@@ -226,8 +229,9 @@ describe(cloneBinding, () => {
     });
 
     it('should call cloneInstanceBinding', () => {
-      expect(cloneInstanceBinding).toHaveBeenCalledTimes(1);
-      expect(cloneInstanceBinding).toHaveBeenCalledWith(bindingFixture);
+      expect(cloneInstanceBinding).toHaveBeenCalledExactlyOnceWith(
+        bindingFixture,
+      );
     });
 
     it('should return the cloned binding', () => {
@@ -271,8 +275,9 @@ describe(cloneBinding, () => {
     });
 
     it('should call cloneProviderBinding', () => {
-      expect(cloneProviderBinding).toHaveBeenCalledTimes(1);
-      expect(cloneProviderBinding).toHaveBeenCalledWith(bindingFixture);
+      expect(cloneProviderBinding).toHaveBeenCalledExactlyOnceWith(
+        bindingFixture,
+      );
     });
 
     it('should return the cloned binding', () => {
@@ -319,8 +324,9 @@ describe(cloneBinding, () => {
     });
 
     it('should call cloneResolvedValueBinding', () => {
-      expect(cloneResolvedValueBinding).toHaveBeenCalledTimes(1);
-      expect(cloneResolvedValueBinding).toHaveBeenCalledWith(bindingFixture);
+      expect(cloneResolvedValueBinding).toHaveBeenCalledExactlyOnceWith(
+        bindingFixture,
+      );
     });
 
     it('should return the cloned binding', () => {
@@ -357,8 +363,7 @@ describe(cloneBinding, () => {
     });
 
     it('should call cloneServiceRedirectionBinding', () => {
-      expect(cloneServiceRedirectionBinding).toHaveBeenCalledTimes(1);
-      expect(cloneServiceRedirectionBinding).toHaveBeenCalledWith(
+      expect(cloneServiceRedirectionBinding).toHaveBeenCalledExactlyOnceWith(
         bindingFixture,
       );
     });

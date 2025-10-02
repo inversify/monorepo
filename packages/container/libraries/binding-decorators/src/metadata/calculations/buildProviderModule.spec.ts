@@ -40,8 +40,7 @@ describe(buildProviderModule, () => {
     });
 
     it('should call getReflectMetadata()', () => {
-      expect(getReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getReflectMetadata).toHaveBeenCalledWith(
+      expect(getReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         Object,
         bindingMetadataMapReflectKey,
       );
@@ -75,16 +74,14 @@ describe(buildProviderModule, () => {
     });
 
     it('should call getReflectMetadata()', () => {
-      expect(getReflectMetadata).toHaveBeenCalledTimes(1);
-      expect(getReflectMetadata).toHaveBeenCalledWith(
+      expect(getReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         Object,
         bindingMetadataMapReflectKey,
       );
     });
 
     it('should call bindingMetadata.action()', () => {
-      expect(bindingMetadataMock.action).toHaveBeenCalledTimes(1);
-      expect(bindingMetadataMock.action).toHaveBeenCalledWith(
+      expect(bindingMetadataMock.action).toHaveBeenCalledExactlyOnceWith(
         optionsFixture.bind,
       );
     });

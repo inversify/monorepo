@@ -72,18 +72,14 @@ describe(inject, () => {
     it('should call buildManagedMetadataFromMaybeClassElementMetadata()', () => {
       expect(
         buildManagedMetadataFromMaybeClassElementMetadata,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        buildManagedMetadataFromMaybeClassElementMetadata,
-      ).toHaveBeenCalledWith(
+      ).toHaveBeenCalledExactlyOnceWith(
         ClassElementMetadataKind.singleInjection,
         serviceIdentifierFixture,
       );
     });
 
     it('should call injectBase()', () => {
-      expect(injectBase).toHaveBeenCalledTimes(1);
-      expect(injectBase).toHaveBeenCalledWith(
+      expect(injectBase).toHaveBeenCalledExactlyOnceWith(
         updateMetadataMock,
         decrementPendingClassMetadataCount,
       );

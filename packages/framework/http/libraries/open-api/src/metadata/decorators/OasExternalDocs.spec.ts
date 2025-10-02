@@ -69,10 +69,7 @@ describe(OasExternalDocs, () => {
       it('should call updateControllerOpenApiMetadataOperationProperty()', () => {
         expect(
           updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          updateControllerOpenApiMetadataOperationProperty,
-        ).toHaveBeenCalledWith(
+        ).toHaveBeenCalledExactlyOnceWith(
           contentFixture,
           targetTypeFixture,
           keyFixture,
@@ -81,8 +78,7 @@ describe(OasExternalDocs, () => {
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetTypeFixture,
           controllerOpenApiMetadataReflectKey,
           buildDefaultControllerOpenApiMetadata,

@@ -163,8 +163,9 @@ describe(BetterAuthHonoContainerModule, () => {
     });
 
     it('should call transform()', () => {
-      expect(transformMock).toHaveBeenCalledTimes(1);
-      expect(transformMock).toHaveBeenCalledWith(expect.any(Function));
+      expect(transformMock).toHaveBeenCalledExactlyOnceWith(
+        expect.any(Function),
+      );
     });
   });
 });

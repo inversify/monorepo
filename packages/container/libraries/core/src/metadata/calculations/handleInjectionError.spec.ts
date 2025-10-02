@@ -64,8 +64,7 @@ describe(handleInjectionError, () => {
       });
 
       it('should call getDecoratorInfo()', () => {
-        expect(getDecoratorInfo).toHaveBeenCalledTimes(1);
-        expect(getDecoratorInfo).toHaveBeenCalledWith(
+        expect(getDecoratorInfo).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           propertyKeyFixture,
           parameterIndexFixture,
@@ -73,8 +72,7 @@ describe(handleInjectionError, () => {
       });
 
       it('should call stringifyDecoratorInfo()', () => {
-        expect(stringifyDecoratorInfo).toHaveBeenCalledTimes(1);
-        expect(stringifyDecoratorInfo).toHaveBeenCalledWith(
+        expect(stringifyDecoratorInfo).toHaveBeenCalledExactlyOnceWith(
           decoratorInfoFixture,
         );
       });

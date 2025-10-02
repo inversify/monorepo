@@ -65,8 +65,7 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           metadataFixture.targetClass,
           ajvValidationMetadataReflectKey,
           metadataFixture.methodName,
@@ -74,8 +73,7 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should call ajv.validate()', () => {
-        expect(ajvMock.validate).toHaveBeenCalledTimes(1);
-        expect(ajvMock.validate).toHaveBeenCalledWith(
+        expect(ajvMock.validate).toHaveBeenCalledExactlyOnceWith(
           schemaListElemFixture,
           inputFixture,
         );
@@ -112,8 +110,7 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           metadataFixture.targetClass,
           ajvValidationMetadataReflectKey,
           metadataFixture.methodName,
@@ -121,16 +118,14 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should call ajv.validate()', () => {
-        expect(ajvMock.validate).toHaveBeenCalledTimes(1);
-        expect(ajvMock.validate).toHaveBeenCalledWith(
+        expect(ajvMock.validate).toHaveBeenCalledExactlyOnceWith(
           schemaListElemFixture,
           inputFixture,
         );
       });
 
       it('should call stringifyAjvErrors()', () => {
-        expect(stringifyAjvErrors).toHaveBeenCalledTimes(1);
-        expect(stringifyAjvErrors).toHaveBeenCalledWith([]);
+        expect(stringifyAjvErrors).toHaveBeenCalledExactlyOnceWith([]);
       });
 
       it('should throw expected Error', () => {
@@ -165,8 +160,7 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           metadataFixture.targetClass,
           ajvValidationMetadataReflectKey,
           metadataFixture.methodName,
@@ -174,8 +168,7 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should call ajv.validate()', () => {
-        expect(ajvMock.validate).toHaveBeenCalledTimes(1);
-        expect(ajvMock.validate).toHaveBeenCalledWith(
+        expect(ajvMock.validate).toHaveBeenCalledExactlyOnceWith(
           schemaListElemFixture,
           inputFixture,
         );
@@ -214,8 +207,7 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           metadataFixture.targetClass,
           ajvValidationMetadataReflectKey,
           metadataFixture.methodName,
@@ -223,16 +215,14 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should call ajv.validate()', () => {
-        expect(ajvMock.validate).toHaveBeenCalledTimes(1);
-        expect(ajvMock.validate).toHaveBeenCalledWith(
+        expect(ajvMock.validate).toHaveBeenCalledExactlyOnceWith(
           schemaListElemFixture,
           inputFixture,
         );
       });
 
       it('should call stringifyAjvErrors()', () => {
-        expect(stringifyAjvErrors).toHaveBeenCalledTimes(1);
-        expect(stringifyAjvErrors).toHaveBeenCalledWith([]);
+        expect(stringifyAjvErrors).toHaveBeenCalledExactlyOnceWith([]);
       });
 
       it('should throw expected Error', () => {
@@ -271,8 +261,7 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(getOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           metadataFixture.targetClass,
           ajvValidationMetadataReflectKey,
           metadataFixture.methodName,

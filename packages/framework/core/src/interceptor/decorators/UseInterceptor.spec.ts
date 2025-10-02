@@ -39,15 +39,13 @@ describe(UseInterceptor, () => {
       });
 
       it('should call buildArrayMetadataWithArray()', () => {
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
+        expect(buildArrayMetadataWithArray).toHaveBeenCalledExactlyOnceWith([
           interceptorServiceIdentifier,
         ]);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           classInterceptorMetadataReflectKey,
           buildEmptyArrayMetadata,
@@ -88,15 +86,13 @@ describe(UseInterceptor, () => {
       });
 
       it('should call buildArrayMetadataWithArray()', () => {
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledTimes(1);
-        expect(buildArrayMetadataWithArray).toHaveBeenCalledWith([
+        expect(buildArrayMetadataWithArray).toHaveBeenCalledExactlyOnceWith([
           interceptorServiceIdentifier,
         ]);
       });
 
       it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledTimes(1);
-        expect(updateOwnReflectMetadata).toHaveBeenCalledWith(
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           classMethodInterceptorMetadataReflectKey,
           buildEmptyArrayMetadata,

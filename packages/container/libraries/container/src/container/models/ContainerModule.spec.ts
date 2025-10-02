@@ -47,8 +47,7 @@ describe(ContainerModule, () => {
       });
 
       it('should call load()', () => {
-        expect(asyncLoadMock).toHaveBeenCalledTimes(1);
-        expect(asyncLoadMock).toHaveBeenCalledWith(optionsFixture);
+        expect(asyncLoadMock).toHaveBeenCalledExactlyOnceWith(optionsFixture);
       });
 
       it('should return expected value', () => {
@@ -67,8 +66,7 @@ describe(ContainerModule, () => {
       });
 
       it('should call load()', () => {
-        expect(syncLoadMock).toHaveBeenCalledTimes(1);
-        expect(syncLoadMock).toHaveBeenCalledWith(optionsFixture);
+        expect(syncLoadMock).toHaveBeenCalledExactlyOnceWith(optionsFixture);
       });
 
       it('should return expected value', () => {
