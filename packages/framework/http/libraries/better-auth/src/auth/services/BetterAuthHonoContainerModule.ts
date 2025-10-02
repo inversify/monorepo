@@ -15,13 +15,20 @@ export class BetterAuthHonoContainerModule<
   public static fromOptions<TOptions extends BetterAuthOptions>(
     basePath: string,
     betterAuth: BetterAuth<TOptions>,
+    transform?: (controllerClass: Newable<unknown>) => Newable<unknown>,
   ): BetterAuthHonoContainerModule<TOptions, () => BetterAuth<TOptions>> {
-    return new BetterAuthHonoContainerModule(basePath, () => betterAuth, []);
+    return new BetterAuthHonoContainerModule(
+      basePath,
+      () => betterAuth,
+      [],
+      transform,
+    );
   }
 
   protected override _buildBetterAuthControllerClass(
     basePath: string,
+    serviceIdentifier: symbol,
   ): Newable<unknown> {
-    return buildBetterAuthHonoController(basePath);
+    return buildBetterAuthHonoController(basePath, serviceIdentifier);
   }
 }

@@ -15,13 +15,20 @@ export class BetterAuthFastifyContainerModule<
   public static fromOptions<TOptions extends BetterAuthOptions>(
     basePath: string,
     betterAuth: BetterAuth<TOptions>,
+    transform?: (controllerClass: Newable<unknown>) => Newable<unknown>,
   ): BetterAuthFastifyContainerModule<TOptions, () => BetterAuth<TOptions>> {
-    return new BetterAuthFastifyContainerModule(basePath, () => betterAuth, []);
+    return new BetterAuthFastifyContainerModule(
+      basePath,
+      () => betterAuth,
+      [],
+      transform,
+    );
   }
 
   protected override _buildBetterAuthControllerClass(
     basePath: string,
+    serviceIdentifier: symbol,
   ): Newable<unknown> {
-    return buildBetterAuthFastifyController(basePath);
+    return buildBetterAuthFastifyController(basePath, serviceIdentifier);
   }
 }

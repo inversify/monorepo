@@ -8,7 +8,6 @@ import {
 
 import { buildBetterAuthMiddleware } from '../calculations/buildBetterAuthMiddleware';
 import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthControllerServiceIdentifier } from '../models/betterAuthControllerServiceIdentifier';
 import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier';
 import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier';
 
@@ -27,9 +26,16 @@ export abstract class BaseBetterAuthContainerModule<
     basePath: string,
     factory: TFactory,
     params: MapToResolvedValueInjectOptions<Parameters<TFactory>>,
+    transform?: (controllerClass: Newable<unknown>) => Newable<unknown>,
   ) {
     super((containerModuleOptions: ContainerModuleLoadOptions) => {
-      this.#provide(basePath, factory, params, containerModuleOptions);
+      this.#provide(
+        basePath,
+        factory,
+        params,
+        containerModuleOptions,
+        transform,
+      );
     });
   }
 
@@ -38,6 +44,9 @@ export abstract class BaseBetterAuthContainerModule<
     factory: TFactory,
     params: MapToResolvedValueInjectOptions<Parameters<TFactory>>,
     containerModuleOptions: ContainerModuleLoadOptions,
+    transform:
+      | ((controllerClass: Newable<unknown>) => Newable<unknown>)
+      | undefined,
   ): void {
     containerModuleOptions
       .bind(betterAuthServiceIdentifier)
@@ -53,13 +62,26 @@ export abstract class BaseBetterAuthContainerModule<
       )
       .inSingletonScope();
 
+    const betterAuthControllerServiceIdentifier: unique symbol = Symbol(
+      '@inversifyjs/better-auth/betterAuthController',
+    );
+
+    const controllerClass: Newable<unknown> =
+      this._buildBetterAuthControllerClass(
+        basePath,
+        betterAuthControllerServiceIdentifier,
+      );
+
     containerModuleOptions
       .bind(betterAuthControllerServiceIdentifier)
-      .to(this._buildBetterAuthControllerClass(basePath))
+      .to(
+        transform === undefined ? controllerClass : transform(controllerClass),
+      )
       .inSingletonScope();
   }
 
   protected abstract _buildBetterAuthControllerClass(
     basePath: string,
+    serviceIdentifier: symbol,
   ): Newable<unknown>;
 }

@@ -7,15 +7,15 @@ import express from 'express';
 import { inject, Newable } from 'inversify';
 
 import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthControllerServiceIdentifier } from '../models/betterAuthControllerServiceIdentifier';
 import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier';
 
 export function buildBetterAuthExpressController(
   basePath: string,
+  serviceIdentifier: symbol,
 ): Newable<unknown> {
   @Controller({
     path: basePath,
-    serviceIdentifier: betterAuthControllerServiceIdentifier,
+    serviceIdentifier,
   })
   class BetterAuthExpressController<TOptions extends BetterAuthOptions> {
     readonly #handler: (

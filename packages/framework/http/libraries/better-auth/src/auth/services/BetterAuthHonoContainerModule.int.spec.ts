@@ -1,8 +1,16 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  Mock,
+  vitest,
+} from 'vitest';
 
 import { betterAuth, BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
 import { Server } from '../../server/models/Server';
@@ -113,6 +121,50 @@ describe(BetterAuthHonoContainerModule, () => {
       it('should sign up successfully with a JSON request', () => {
         expect(signUpJsonResponse.status).toBe(200);
       });
+    });
+  });
+
+  describe('having a Better Auth Hono server with transform', () => {
+    let transformMock: Mock<(controller: Newable<unknown>) => Newable<unknown>>;
+    let server: Server;
+
+    beforeAll(async () => {
+      transformMock = vitest.fn((controller: Newable<unknown>) => controller);
+
+      // eslint-disable-next-line @typescript-eslint/typedef
+      const options = {
+        database: db,
+        emailAndPassword: {
+          enabled: true,
+        },
+      } as const satisfies BetterAuthOptions;
+
+      const container: Container = new Container();
+
+      // eslint-disable-next-line @typescript-eslint/typedef
+      const betterAuthInstance = betterAuth(options);
+
+      const betterAuthHonoContainerModule: BetterAuthHonoContainerModule<
+        typeof options,
+        () => BetterAuth<typeof options>
+      > = BetterAuthHonoContainerModule.fromOptions(
+        '/api/auth',
+        betterAuthInstance,
+        transformMock,
+      );
+
+      await container.load(betterAuthHonoContainerModule);
+
+      server = await buildHonoServer(container);
+    });
+
+    afterAll(async () => {
+      await server.shutdown();
+    });
+
+    it('should call transform()', () => {
+      expect(transformMock).toHaveBeenCalledTimes(1);
+      expect(transformMock).toHaveBeenCalledWith(expect.any(Function));
     });
   });
 });
