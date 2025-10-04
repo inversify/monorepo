@@ -10,9 +10,9 @@
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
-    "@stryker-mutator/core": "9.1.1",
-    "@stryker-mutator/typescript-checker": "9.1.1",
-    "@stryker-mutator/vitest-runner": "9.1.1",
+    "@stryker-mutator/core": "9.2.0",
+    "@stryker-mutator/typescript-checker": "9.2.0",
+    "@stryker-mutator/vitest-runner": "9.2.0",
     "@types/node": "22.18.8",
     "@vitest/coverage-v8": "3.2.4",
     "eslint": "9.37.0",
