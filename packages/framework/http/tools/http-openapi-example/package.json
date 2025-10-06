@@ -11,7 +11,7 @@
     "@inversifyjs/http-open-api": "workspace:*",
     "express": "^5.1.0",
     "inversify": "^7.10.2",
-    "lmdb": "^3.4.2"
+    "lmdb": "^3.4.3"
   },
   "devDependencies": {
     "@inversifyjs/open-api-types": "workspace:*",
