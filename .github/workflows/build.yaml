@@ -75,7 +75,7 @@ jobs:
           echo "$(pnpm run benchmarks:container:esm)" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -126,7 +126,7 @@ jobs:
           echo "$(pnpm run benchmarks:http:cjs:low)" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
