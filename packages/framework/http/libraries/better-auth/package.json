@@ -24,7 +24,7 @@
     "better-sqlite3": "^12.4.1",
     "eslint": "9.37.0",
     "fastify": "5.6.1",
-    "hono": "4.9.11",
+    "hono": "4.9.12",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
     "rollup": "4.52.4",
