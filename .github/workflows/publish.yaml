@@ -21,13 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           fetch-depth: 0
 
       - uses: ./.github/actions/setup
 
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@67018539274d69449ef7c02e8e71183d1719ab42 # v2
         id: create_token
         with:
           app-id: ${{ vars.GH_APP_ID }}
@@ -41,7 +41,7 @@ jobs:
         run: pnpm run build --filter=@inversifyjs/foundation-changelog-generator
 
       - name: Create Release Pull or publish changes
-        uses: changesets/action@v1
+        uses: changesets/action@6d3568c53fbe1db6c1f9ab1c7fbf9092bc18627f # v1
         with:
           commit: "chore: bump package versions"
           publish: pnpm run release
