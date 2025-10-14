@@ -11,6 +11,7 @@
     ":semanticPrefixFixDepsChoreOthers",
     "group:monorepos",
     "group:recommended",
+    "helpers:pinGitHubActionDigests",
     "mergeConfidence:age-confidence-badges",
     "replacements:all",
     "workarounds:all"
@@ -38,6 +39,11 @@
       "automerge": true,
       "matchUpdateTypes": ["patch", "minor"],
       "excludePackageNames": ["turbo", "typescript"]
+    },
+    {
+      "description": "Group GitHub Actions updates",
+      "groupName": "GitHub Actions",
+      "matchManagers": ["github-actions"]
     }
   ],
   "rangeStrategy": "bump",
