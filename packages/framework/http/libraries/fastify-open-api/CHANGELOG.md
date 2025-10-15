@@ -1,5 +1,14 @@
 # @inversifyjs/fastify-open-api
 
+## 3.2.0
+
+### Patch Changes
+
+- Updated dependencies
+  - inversify@7.10.3
+  - @inversifyjs/http-core@3.2.0
+  - @inversifyjs/http-open-api@3.2.0
+
 ## 3.1.0
 
 ### Patch Changes
