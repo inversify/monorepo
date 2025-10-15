@@ -40,10 +40,10 @@ export interface BindToFluentSyntax<T> {
       ? (context: ResolutionContext) => T
       : never,
   ): BindWhenOnFluentSyntax<T>;
-  toResolvedValue(factory: () => T): BindInWhenOnFluentSyntax<T>;
+  toResolvedValue(factory: () => T | Promise<T>): BindInWhenOnFluentSyntax<T>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   toResolvedValue<TArgs extends unknown[] = any[]>(
-    factory: (...args: TArgs) => T,
+    factory: (...args: TArgs) => T | Promise<T>,
     injectOptions: MapToResolvedValueInjectOptions<TArgs>,
   ): BindInWhenOnFluentSyntax<T>;
   toService(service: ServiceIdentifier<T>): void;
