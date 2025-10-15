@@ -11,7 +11,7 @@
     "@inversifyjs/core": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "22.18.10",
+    "@types/node": "24.7.2",
     "eslint": "9.37.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
@@ -23,7 +23,7 @@
   },
   "homepage": "https://inversify.io",
   "devEngines": {
-    "node": "^22.10.2",
+    "node": "^24.10.0",
     "pnpm": "^10.13.1"
   },
   "license": "MIT",

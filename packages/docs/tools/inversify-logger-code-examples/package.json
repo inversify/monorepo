@@ -7,7 +7,7 @@
   "devDependencies": {
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/logger": "workspace:*",
-    "@types/node": "22.18.10",
+    "@types/node": "24.7.2",
     "@vitest/coverage-v8": "3.2.4",
     "eslint": "9.37.0",
     "glob": "11.0.3",
@@ -19,7 +19,7 @@
   },
   "homepage": "https://inversify.io",
   "devEngines": {
-    "node": "^22.10.2",
+    "node": "^24.10.0",
     "pnpm": "^10.13.1"
   },
   "license": "MIT",

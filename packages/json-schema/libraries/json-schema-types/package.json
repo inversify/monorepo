@@ -25,7 +25,7 @@
     "typescript"
   ],
   "devEngines": {
-    "node": "^22.10.2",
+    "node": "^24.10.0",
     "pnpm": "^10.13.1"
   },
   "license": "MIT",

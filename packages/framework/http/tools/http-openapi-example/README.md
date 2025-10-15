@@ -6,7 +6,7 @@ This package spins up an Express server wired with Inversify, and serves a Swagg
 
 ## Prerequisites
 
-- Node.js: 22.x
+- Node.js: 24.x
 - pnpm: 10.x
 
 ## Setup
