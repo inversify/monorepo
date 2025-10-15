@@ -245,7 +245,7 @@ export class BindToFluentSyntaxImplementation<T>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public toFactory<T extends Factory<unknown, any>>(
     this: BindToFluentSyntaxImplementation<T>,
-    builder: (context: ResolutionContext) => T,
+    builder: (context: ResolutionContext) => T | Promise<T>,
   ): BindWhenOnFluentSyntax<T> {
     const binding: FactoryBinding<Factory<unknown>> = {
       cache: {

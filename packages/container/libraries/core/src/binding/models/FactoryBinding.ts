@@ -10,5 +10,7 @@ export interface FactoryBinding<TActivated extends Factory<unknown>>
     typeof bindingScopeValues.Singleton,
     TActivated
   > {
-  readonly factory: (context: ResolutionContext) => TActivated;
+  readonly factory: (
+    context: ResolutionContext,
+  ) => TActivated | Promise<TActivated>;
 }

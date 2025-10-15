@@ -9,26 +9,55 @@ import {
 } from 'vitest';
 
 import { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import { Factory } from '@inversifyjs/core';
 
 import {
   BindInWhenOnFluentSyntax,
   BindToFluentSyntax,
+  BindWhenOnFluentSyntax,
 } from './BindingFluentSyntax';
 import { ResolvedValueMetadataInjectOptions } from './ResolvedValueInjectOptions';
 
 // eslint-disable-next-line vitest/prefer-describe-function-title
 describe('BindToFluentSyntax', () => {
-  let bindToFluentSyntaxMock: Mocked<BindToFluentSyntax<unknown>>;
+  describe('.toFactory', () => {
+    let bindToFluentSyntaxMock: Mocked<BindToFluentSyntax<Factory<unknown>>>;
 
-  beforeAll(() => {
-    bindToFluentSyntaxMock = {
-      toResolvedValue: vitest.fn() as unknown,
-    } as Partial<Mocked<BindToFluentSyntax<unknown>>> as Mocked<
-      BindToFluentSyntax<unknown>
-    >;
+    beforeAll(() => {
+      bindToFluentSyntaxMock = {
+        toFactory: vitest.fn(),
+      } as Partial<Mocked<BindToFluentSyntax<Factory<unknown>>>> as Mocked<
+        BindToFluentSyntax<Factory<unknown>>
+      >;
+    });
+
+    describe('having an async factory', () => {
+      let factoryFixture: () => Promise<Factory<unknown>>;
+
+      beforeAll(() => {
+        factoryFixture = async (): Promise<Factory<unknown>> => async () =>
+          undefined;
+      });
+
+      it('when called, should not throw a syntax error', () => {
+        expectTypeOf(
+          bindToFluentSyntaxMock.toFactory(factoryFixture),
+        ).toEqualTypeOf<BindWhenOnFluentSyntax<Factory<unknown>>>();
+      });
+    });
   });
 
   describe('.toResolvedValue', () => {
+    let bindToFluentSyntaxMock: Mocked<BindToFluentSyntax<unknown>>;
+
+    beforeAll(() => {
+      bindToFluentSyntaxMock = {
+        toResolvedValue: vitest.fn() as unknown,
+      } as Partial<Mocked<BindToFluentSyntax<unknown>>> as Mocked<
+        BindToFluentSyntax<unknown>
+      >;
+    });
+
     describe('having an async factory with no arguments', () => {
       let factoryFixture: () => Promise<unknown>;
 
