@@ -113,7 +113,7 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Setup K6
-        uses: grafana/setup-k6-action@98db1bcacc2d06234a3cade8629ebc97e0130ec2 # v1
+        uses: grafana/setup-k6-action@ffe7d7290dfa715e48c2ccc924d068444c94bde2 # v1.1.0
 
       - name: Compile source files
         run: pnpm run build
