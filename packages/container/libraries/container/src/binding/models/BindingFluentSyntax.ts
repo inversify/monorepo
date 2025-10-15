@@ -26,7 +26,7 @@ export interface BindToFluentSyntax<T> {
   toFactory(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     factory: T extends Factory<unknown, any>
-      ? (context: ResolutionContext) => T
+      ? (context: ResolutionContext) => T | Promise<T>
       : never,
   ): BindWhenOnFluentSyntax<T>;
   /**

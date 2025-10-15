@@ -480,7 +480,8 @@ describe(resolve, () => {
         isMultiple: false,
         serviceIdentifier: factoryBinding.serviceIdentifier,
       }),
-      () => factoryBinding.factory(resolutionContext),
+      (): Factory<unknown> | Promise<Factory<unknown>> =>
+        factoryBinding.factory(resolutionContext),
     ],
     [
       'with provider bound service',
