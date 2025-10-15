@@ -29,6 +29,43 @@ describe('BindToFluentSyntax', () => {
   });
 
   describe('.toResolvedValue', () => {
+    describe('having an async factory with no arguments', () => {
+      let factoryFixture: () => Promise<unknown>;
+
+      beforeAll(() => {
+        factoryFixture = async (): Promise<unknown> => undefined;
+      });
+
+      it('when called, with no inject options, should not throw a syntax error', () => {
+        expectTypeOf(
+          bindToFluentSyntaxMock.toResolvedValue(factoryFixture),
+        ).toEqualTypeOf<BindInWhenOnFluentSyntax<unknown>>();
+      });
+    });
+
+    describe('having an async factory with a fixed number of primitive arguments', () => {
+      let factoryFixture: (arg1: string, arg2: number) => Promise<unknown>;
+
+      beforeAll(() => {
+        factoryFixture = async (
+          _arg1: string,
+          _arg2: number,
+        ): Promise<unknown> => undefined;
+      });
+
+      it('when called, with as many right service identifier inject options as function parameters, should not throw a syntax error', () => {
+        const firstServiceIdentifier: ServiceIdentifier<string> = Symbol();
+        const secondServiceIdentifier: ServiceIdentifier<number> = Symbol();
+
+        expectTypeOf(
+          bindToFluentSyntaxMock.toResolvedValue(factoryFixture, [
+            firstServiceIdentifier,
+            secondServiceIdentifier,
+          ]),
+        ).toEqualTypeOf<BindInWhenOnFluentSyntax<unknown>>();
+      });
+    });
+
     describe('having a factory with a fixed number of primitive arguments', () => {
       let factoryFixture: (arg1: string, arg2: number) => unknown;
 

@@ -209,13 +209,15 @@ export class BindToFluentSyntaxImplementation<T>
     return new BindInWhenOnFluentSyntaxImplementation(binding);
   }
 
-  public toResolvedValue(factory: () => T): BindInWhenOnFluentSyntax<T>;
+  public toResolvedValue(
+    factory: () => T | Promise<T>,
+  ): BindInWhenOnFluentSyntax<T>;
   public toResolvedValue<TArgs extends unknown[]>(
-    factory: (...args: TArgs) => T,
+    factory: (...args: TArgs) => T | Promise<T>,
     injectOptions: MapToResolvedValueInjectOptions<TArgs>,
   ): BindInWhenOnFluentSyntax<T>;
   public toResolvedValue<TArgs extends unknown[]>(
-    factory: (...args: TArgs) => T,
+    factory: (...args: TArgs) => T | Promise<T>,
     injectOptions?: MapToResolvedValueInjectOptions<TArgs>,
   ): BindInWhenOnFluentSyntax<T> {
     const binding: ResolvedValueBinding<T> = {
