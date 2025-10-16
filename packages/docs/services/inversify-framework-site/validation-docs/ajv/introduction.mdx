@@ -1,0 +1,48 @@
+---
+sidebar_position: 1
+title: Introduction
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import apiIntroductionSource from '@inversifyjs/validation-code-examples/generated/examples/v1/ajv/apiIntroduction.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+[Ajv](https://ajv.js.org/) (Another JSON Schema Validator) is a popular, fast JSON Schema validator for Node.js and browser. It validates data against JSON Schema and is commonly used for API request/response validation.
+
+Inversify Validation's Ajv package provides seamless integration with Ajv, allowing you to validate data in your Inversify applications using JSON Schema definitions. The package includes both standard and compiled validation pipes for optimal performance.
+
+## Install dependencies
+
+In order to use the package, install it along with Ajv:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+npm install ajv @inversifyjs/ajv-validation
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn add ajv @inversifyjs/ajv-validation
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm install ajv @inversifyjs/ajv-validation
+```
+
+  </TabItem>
+</Tabs>
+
+## Quick Start
+
+Here's a simple example of how to use Ajv validation in your Inversify application:
+
+<CodeBlock language="ts">{apiIntroductionSource}</CodeBlock>
+
+This example sets up Ajv validation for a user creation endpoint, ensuring that the request body matches the defined JSON schema before the controller method executes.

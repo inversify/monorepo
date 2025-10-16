@@ -1,0 +1,104 @@
+/* Code Demo */
+.floatingCode {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: codeFloat 6s ease-in-out infinite;
+  animation-delay: var(--delay);
+  max-width: 400px;
+  cursor: pointer;
+}
+
+.floatingCode.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.floatingCode:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.floatingCode:focus {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+@keyframes codeFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.codeSnippetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.codeTitle {
+  color: var(--ifm-color-primary-lighter);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.codeLang {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.codeSnippetContent {
+  text-align: left;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 996px) {
+  .floatingCode {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-bottom: 1rem;
+    max-width: 100%;
+    animation: none;
+  }
+
+  .homePageFloatingCodeContainer div.floatingCode:nth-child(1),
+  .homePageFloatingCodeContainer div.floatingCode:nth-child(2),
+  .homePageFloatingCodeContainer div.floatingCode:nth-child(3) {
+    max-width: calc(100vw - 2rem);
+    position: relative;
+    top: auto;
+    right: auto;
+  }
+}
+
+.homePageFloatingCodeContainer .floatingCode:nth-child(1) {
+  top: 20px;
+  right: 50px;
+}
+
+.homePageFloatingCodeContainer .floatingCode:nth-child(2) {
+  top: 100px;
+  right: 20px;
+}
+
+.homePageFloatingCodeContainer .floatingCode:nth-child(3) {
+  top: 180px;
+  right: 80px;
+}

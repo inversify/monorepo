@@ -1,0 +1,46 @@
+---
+sidebar_position: 2
+title: API
+---
+import apiStandardSchemaValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/standardSchema/apiStandardSchemaValidationPipe.ts.txt';
+import apiValidateStandardSchemaV1Source from '@inversifyjs/validation-code-examples/generated/examples/v1/standardSchema/apiValidateStandardSchemaV1.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+## StandardSchemaValidationPipe
+
+Validates values using any schema that implements the Standard Schema v1 spec. Register it globally to validate incoming HTTP parameters (e.g., body) in your controllers.
+
+```ts
+constructor(schemaList?: StandardSchemaV1[])
+```
+
+Parameters
+
+- schemaList (optional StandardSchemaV1[]): One or more Standard Schema schemas applied globally to every validated value. These run before any parameter-level schemas added via `@ValidateStandardSchemaV1`.
+
+`StandardSchemaValidationPipe` can be registered as a global pipe: `adapter.useGlobalPipe(new StandardSchemaValidationPipe())`.
+This way, controller parameters decorated `@ValidateStandardSchemaV1` are automatically validated.
+
+### Example: register a StandardSchemaValidationPipe globally
+
+<CodeBlock language="ts">{apiStandardSchemaValidationPipeSource}</CodeBlock>
+
+## ValidateStandardSchemaV1
+
+Attaches one or more Standard Schema v1 schemas to a specific parameter (e.g., `@Body()`), so the `StandardSchemaValidationPipe` can validate and (optionally) transform the value before your controller method runs.
+
+```ts
+ValidateStandardSchemaV1(...schemaList: StandardSchemaV1[]): ParameterDecorator
+```
+
+Parameters
+
+- schemaList: One or more schemas from any library that implements the Standard Schema v1 spec (e.g., Zod, Valibot, Arktype).
+
+When multiple schemas are provided, they run in order. The output of one becomes the input of the next. Any schemas provided to `StandardSchemaValidationPipe` run first; parameter-level schemas run afterwards. If a schema transforms the value (e.g., parsing/coercion), the controller receives the transformed value.
+
+On failure, an `InversifyValidationError` is thrown and can be converted to a Bad Request HTTP response by `ValidationErrorFilter`.
+
+Example: validate request body with Zod
+
+<CodeBlock language="ts">{apiValidateStandardSchemaV1Source}</CodeBlock>

@@ -1,0 +1,34 @@
+---
+sidebar_position: 6
+title: Pipe
+---
+import pipeApiParseNumberSource from '@inversifyjs/http-code-examples/generated/examples/v0/pipeApiParseNumber.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Pipe
+
+Pipes transform or validate individual parameters. They run immediately after a parameter is extracted from the request. A pipe can return a new value to replace the parameter, or throw an `ErrorHttpResponse` to stop processing.
+
+```ts
+interface Pipe<TInput = unknown, TOutput = unknown> {
+  execute(input: TInput, metadata: PipeMetadata): Promise<TOutput> | TOutput;
+}
+```
+
+## execute
+
+Processes the input and returns the transformed value. If the input is invalid, throw an `ErrorHttpResponse` to end the request early.
+
+## Example: Parse a number with validation
+
+A simple pipe that parses the input into a number and rejects invalid values with a `400 Bad Request`.
+
+<CodeBlock language="ts">{pipeApiParseNumberSource}</CodeBlock>
+
+## Attaching pipes
+
+Use parameter decorators to attach pipes where you need them. `Body`, `Params`, `Query`, `Headers`, `Cookies`, `Request`, and `Response` all accept pipes.
+
+The adapter applies global pipes first, then parameter-level pipes, before calling your controller method.
+
+Global pipes can be registered using the [InversifyHttpAdapter](../../api/inversify-http-adapter#useglobalpipe).

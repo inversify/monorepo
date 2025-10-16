@@ -1,0 +1,121 @@
+---
+sidebar_position: 4
+title: Container Modules
+---
+import ecosystemBetterAuthCompleteExampleSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthCompleteExample.ts.txt';
+import ecosystemBetterAuthIntroductionExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionExpress.ts.txt';
+import ecosystemBetterAuthIntroductionExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionExpress4.ts.txt';
+import ecosystemBetterAuthIntroductionFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionFastify.ts.txt';
+import ecosystemBetterAuthIntroductionHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionHono.ts.txt';
+import ecosystemBetterAuthParameterDecoratorsSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthParameterDecorators.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Container Modules
+
+Container modules provide a convenient way to set up Better Auth authentication in your InversifyJS dependency injection container. Each framework has its own specialized container module that automatically configures the necessary services, middleware, and controllers.
+
+## Available Container Modules
+
+### `BetterAuthExpressContainerModule`
+
+**Framework**: Express
+
+Sets up Better Auth for Express applications.
+
+<CodeBlock language="typescript">{ecosystemBetterAuthIntroductionExpressSource}</CodeBlock>
+
+### `BetterAuthExpress4ContainerModule`
+
+**Framework**: Express v4
+
+Sets up Better Auth for Express v4 applications.
+
+<CodeBlock language="typescript">{ecosystemBetterAuthIntroductionExpress4Source}</CodeBlock>
+
+### `BetterAuthFastifyContainerModule`
+
+**Framework**: Fastify
+
+Sets up Better Auth for Fastify applications.
+
+<CodeBlock language="typescript">{ecosystemBetterAuthIntroductionFastifySource}</CodeBlock>
+
+### `BetterAuthHonoContainerModule`
+
+**Framework**: Hono
+
+Sets up Better Auth for Hono applications.
+
+<CodeBlock language="typescript">{ecosystemBetterAuthIntroductionHonoSource}</CodeBlock>
+
+## Factory Method: `fromOptions()`
+
+All container modules provide a static `fromOptions()` method for easy instantiation:
+
+```typescript
+public static fromOptions<TOptions extends BetterAuthOptions>(
+  basePath: string,
+  betterAuth: BetterAuth<TOptions>,
+): ContainerModule<TOptions, () => BetterAuth<TOptions>>
+```
+
+### Parameters
+
+- `basePath` - The base URL path where Better Auth endpoints will be mounted (e.g., `/api/auth`)
+- `betterAuth` - A configured Better Auth instance
+
+### Return Value
+
+Returns a container module instance configured for the specific framework.
+
+## What Gets Registered
+
+When you load a Better Auth container module, it automatically registers the following services in your container:
+
+### 1. Better Auth Service
+
+The core Better Auth instance is registered as a singleton service.
+
+**Service Identifier**: `betterAuthServiceIdentifier`
+
+### 2. Better Auth Middleware
+
+Framework-specific middleware for handling authentication is registered as a singleton.
+
+**Service Identifier**: `betterAuthMiddlewareServiceIdentifier`
+
+### 3. Better Auth Controller
+
+A framework-specific controller that handles all Better Auth endpoints (sign-in, sign-up, sign-out, etc.) is registered.
+
+**Service Identifier**: `betterAuthControllerServiceIdentifier`
+
+## Service Identifiers
+
+You can import service identifiers from '@inversifyjs/http-better-auth'
+
+<CodeBlock language="typescript">{ecosystemBetterAuthParameterDecoratorsSource}</CodeBlock>
+
+## Type Parameters
+
+All container modules are generic and accept the following type parameters:
+
+### `TOptions`
+
+Extends `BetterAuthOptions` - captures your specific Better Auth configuration for type safety.
+
+### `TFactory`
+
+A factory function type that produces a `BetterAuth<TOptions>` instance. Usually `() => BetterAuth<TOptions>` when using `fromOptions()`.
+
+## Complete Example
+
+Here's a complete example showing how to set up a Hono application with Better Auth:
+
+<CodeBlock language="typescript">{ecosystemBetterAuthCompleteExampleSource}</CodeBlock>
+
+## Related
+
+- [Parameter Decorators](../decorators) - For accessing session data in controllers
+- [`BetterAuth`](../better-auth) - The Better Auth instance type
+- [`UserSession`](../user-session) - The session data structure

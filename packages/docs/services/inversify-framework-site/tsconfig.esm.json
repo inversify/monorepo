@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "@inversifyjs/foundation-typescript-config/tsconfig.base.esm.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "lib": ["ES2022", "DOM"],
+    "noEmit": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "jsx": "preserve",
+    "paths": {
+      "@site/*": ["./*"]
+    },
+    "tsBuildInfoFile": "tsconfig.esm.tsbuildinfo"
+  },
+  "exclude": [".docusaurus", "build"]
+}
