@@ -1,5 +1,12 @@
 # @inversifyjs/http-core
 
+## 3.2.0
+
+### Patch Changes
+
+- Updated dependencies
+  - inversify@7.10.3
+
 ## 3.1.0
 
 ## 3.0.1

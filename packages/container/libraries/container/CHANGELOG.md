@@ -1,5 +1,18 @@
 # @inversifyjs/container
 
+## 1.14.0
+
+### Minor Changes
+
+- Updated `BindToFluentSyntax.factory` to allow asyn factory builders
+
+### Patch Changes
+
+- Updated `BindToFluentSyntax.toResolvedValue` to allow async factories
+- Updated dependencies
+  - @inversifyjs/core@9.1.0
+  - @inversifyjs/plugin@0.2.0
+
 ## 1.13.2
 
 ### Patch Changes

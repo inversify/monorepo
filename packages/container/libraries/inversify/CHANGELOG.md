@@ -1,5 +1,16 @@
 # inversify
 
+## 7.10.3
+
+### Patch Changes
+
+- Updated `BindToFluentSyntax.factory` to allow async factory builders
+- Updated `Factory` to allow async functions
+
+- Updated dependencies
+  - @inversifyjs/container@1.14.0
+  - @inversifyjs/core@9.1.0
+
 ## 7.10.2
 
 ### Patch Changes

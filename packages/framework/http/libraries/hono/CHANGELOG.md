@@ -1,5 +1,17 @@
 # @inversifyjs/http-hono
 
+## 3.2.0
+
+### Minor Changes
+
+- Added `CorsMiddleware`
+
+### Patch Changes
+
+- Updated dependencies
+  - inversify@7.10.3
+  - @inversifyjs/http-core@3.2.0
+
 ## 3.1.0
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @inversifyjs/core
 
+## 9.1.0
+
+### Minor Changes
+
+- Updated `Factory` to allow async functions.
+- Updated `FactoryBinding.factory` to allow async factory builders.
+
 ## 9.0.1
 
 ### Patch Changes
