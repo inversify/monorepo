@@ -128,6 +128,10 @@ const config: Config = {
               to: '/blog',
             },
             {
+              label: 'HTTP Docs',
+              to: '/docs/introduction/getting-started',
+            },
+            {
               label: 'Logger Docs',
               to: '/logger/introduction/getting-started',
             },
@@ -152,24 +156,28 @@ const config: Config = {
     navbar: {
       items: [
         {
-          label: 'Tutorial',
-          position: 'left',
-          sidebarId: 'tutorialSidebar',
-          type: 'docSidebar',
+          items: [
+            {
+              label: 'HTTP Docs',
+              to: '/docs/introduction/getting-started',
+            },
+            {
+              label: 'Logger Docs',
+              to: '/logger/introduction/getting-started',
+            },
+            {
+              label: 'OpenApi Docs',
+              to: '/openapi/introduction/getting-started',
+            },
+            {
+              label: 'Validation Docs',
+              to: '/validation/introduction/getting-started',
+            },
+          ],
+          label: 'Docs',
+          type: 'dropdown',
         },
         { label: 'Blog', position: 'left', to: '/blog' },
-        {
-          label: 'Logger Docs',
-          to: '/logger/introduction/getting-started',
-        },
-        {
-          label: 'OpenApi Docs',
-          to: '/openapi/introduction/getting-started',
-        },
-        {
-          label: 'Validation Docs',
-          to: '/validation/introduction/getting-started',
-        },
         {
           className: 'navbar-version-dropdown-main',
           position: 'right',
@@ -200,17 +208,17 @@ const config: Config = {
         },
       ],
       logo: {
-        alt: 'Inversify HTTP',
+        alt: 'Inversify Framework Logo',
         src: 'img/logo.svg',
       },
-      title: 'Inversify HTTP',
+      title: 'Inversify Framework',
     },
     prism: {
       darkTheme: prismThemes.dracula,
       theme: prismThemes.github,
     },
   } satisfies Preset.ThemeConfig,
-  title: 'Inversify HTTP',
+  title: 'Inversify Framework',
   trailingSlash: true,
   url: 'https://inversify.github.io',
 };

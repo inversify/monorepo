@@ -1,0 +1,34 @@
+name: Deploy Inversify framework docs to GitHub Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: Deploy Inversify framework docusaurus site.
+    environment: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup
+
+      - name: Compile source files
+        run: pnpm run build --filter @inversifyjs/framework-docs-site
+
+      - uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.INVERSIFY_FRAMEWORK_DOC_PAGES_DEPLOYMENT_PRIVATE_KEY }}
+      - name: Deploy to GitHub Pages
+        env:
+          USE_SSH: true
+        run: |
+          git config --global user.email "inversify.github.io.framework.deploy@github.com"
+          git config --global user.name "gh-actions"
+          pnpm deploy:framework:pages
