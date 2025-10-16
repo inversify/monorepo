@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-export const DEFAULT_Z_INDEX_HIGH: number = 3;
-export const DEFAULT_Z_INDEX_MEDIUM: number = 2;
+const DEFAULT_Z_INDEX_HIGH: number = 3;
+const DEFAULT_Z_INDEX_MEDIUM: number = 2;
 export const DEFAULT_Z_INDEX_LOW: number = 1;
 
 interface UseHomeFloatingCodeSnippetsReturn {

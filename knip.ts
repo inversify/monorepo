@@ -60,6 +60,13 @@ export default {
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
     "packages/docs/services/*": defaultWorkspaceProjectConfig,
+    "packages/docs/services/inversify-framework-site": {
+      entry: [
+        "src/{pages,theme}/**/*.{js,ts,jsx,tsx}",
+        "{blog,docs,logger-docs,openapi-docs,validation-docs}/**/*.mdx",
+      ],
+      ignoreDependencies: ["@docusaurus/faster"],
+    },
     "packages/docs/tools/*": defaultWorkspaceProjectConfig,
     "packages/docs/tools/binding-decorators-code-examples": {
       entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
