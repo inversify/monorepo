@@ -52,7 +52,7 @@
   "name": "@inversifyjs/http-express",
   "peerDependencies": {
     "express": "^5.1.0",
-    "inversify": "^7.10.2"
+    "inversify": "^7.10.3"
   },
   "publishConfig": {
     "access": "public"
