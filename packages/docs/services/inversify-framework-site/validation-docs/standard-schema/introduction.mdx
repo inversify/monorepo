@@ -1,0 +1,40 @@
+---
+sidebar_position: 1
+title: Introduction
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+[Standard Schema](https://standardschema.dev/) is a common interface designed to be implemented by JavaScript and TypeScript schema libraries.
+
+Any schema library that implements the Standard Schema interface can be used with Inversify Validation's Standard Schema Validation Pipe. This allows you to use this pipe with popular schema libraries like [Zod](https://zod.dev/), [Valibot](https://valibot.dev/), [Arktype](https://arktype.io/) and [others](https://standardschema.dev/#what-schema-libraries-implement-the-spec).
+
+## Install dependencies
+
+In order to use the package, install it along with the validation library of your choice:
+
+
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+  npm install zod @inversifyjs/standard-schema-validation
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+  yarn add zod @inversifyjs/standard-schema-validation
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+  pnpm install zod @inversifyjs/standard-schema-validation
+```
+
+  </TabItem>
+</Tabs>

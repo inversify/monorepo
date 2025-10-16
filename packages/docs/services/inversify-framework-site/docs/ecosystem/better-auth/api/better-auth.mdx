@@ -1,0 +1,53 @@
+---
+sidebar_position: 1
+title: BetterAuth
+---
+import ecosystemBetterAuthBasicUsageSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthBasicUsage.ts.txt';
+import ecosystemBetterAuthContainerModulesSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthContainerModules.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# BetterAuth
+
+The `BetterAuth` type represents a configured Better Auth instance with full type safety based on the provided options.
+
+## Type Definition
+
+```typescript
+import { betterAuth, BetterAuthOptions } from 'better-auth';
+
+export type BetterAuth<TOptions extends BetterAuthOptions> = ReturnType<
+  typeof betterAuth<TOptions>
+>;
+```
+
+## Description
+
+`BetterAuth<TOptions>` is a generic type that wraps the return type of the Better Auth library's `betterAuth` function. It preserves the type information from your Better Auth configuration, ensuring that all authentication features and plugins are properly typed throughout your application.
+
+## Type Parameters
+
+- `TOptions` - Extends `BetterAuthOptions` from the Better Auth library. This parameter captures your specific Better Auth configuration, including enabled authentication methods, plugins, and database settings.
+
+## Usage
+
+### Basic Usage
+
+<CodeBlock language="typescript">{ecosystemBetterAuthBasicUsageSource}</CodeBlock>
+
+### With Container Modules
+
+The `BetterAuth` type is commonly used with container modules to ensure type safety when setting up authentication in your dependency injection container:
+
+<CodeBlock language="typescript">{ecosystemBetterAuthContainerModulesSource}</CodeBlock>
+
+## Type Safety Benefits
+
+- **Configuration Inference**: The type preserves your exact Better Auth configuration
+- **Method Availability**: Ensures only configured authentication methods are available
+- **Database Schema**: Reflects your database schema and user/session types
+
+## Related Types
+
+- [`UserSession`](../user-session) - For accessing user and session information
+- [Container Modules](../container-modules) - For setting up Better Auth with InversifyJS
+- [Parameter Decorators](../decorators) - For accessing authentication data in controllers

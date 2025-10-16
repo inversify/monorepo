@@ -1,0 +1,32 @@
+---
+sidebar_position: 2
+title: API
+---
+import apiClassValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/classValidator/apiClassValidationPipe.ts.txt';
+import gettingStartedSource from '@inversifyjs/validation-code-examples/generated/examples/v1/classValidator/gettingStarted.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+## ClassValidationPipe
+
+Validates values using class-validator decorators and class-transformer for type conversion. The pipe automatically extracts parameter type metadata and validates incoming data against the decorated class properties.
+
+`ClassValidationPipe` can be registered as a global pipe: `adapter.useGlobalPipe(new ClassValidationPipe())`.
+This way, controller parameters with decorated classes are automatically validated.
+
+### Example: register a ClassValidationPipe globally
+
+<CodeBlock language="ts">{apiClassValidationPipeSource}</CodeBlock>
+
+## Using class-validator decorators
+
+To validate request parameters, create classes with class-validator decorators and use them as parameter types in your controller methods. The `ClassValidationPipe` will automatically validate and transform the data.
+
+On validation failure, an `InversifyValidationError` is thrown and can be converted to a Bad Request HTTP response by `InversifyValidationErrorFilter`.
+
+### Example: validate request body with class-validator
+
+<CodeBlock language="ts">{gettingStartedSource}</CodeBlock>
+
+### Available Validation Decorators
+
+Class-validator provides many built-in validation decorators. For a complete list of available decorators, see the [class-validator documentation](https://github.com/typestack/class-validator#validation-decorators).

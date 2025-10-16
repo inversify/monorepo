@@ -1,0 +1,31 @@
+---
+sidebar_position: 1
+title: Extending class schemas
+---
+
+import CodeBlock from '@theme/CodeBlock';
+import decoratorApiOasExtendingClassSchemasSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasExtendingClassSchemas.ts.txt';
+
+# Extending Class Schemas
+
+When working with OpenAPI schemas in InversifyJS HTTP, you might need to create schemas that extend from a base schema. This is useful for creating inheritance hierarchies where child schemas include all properties from a parent schema plus additional properties.
+
+## Basic Schema Extension
+
+To extend a class schema, you can use the `@OasSchema` decorator with a function that takes a `ToSchemaFunction` parameter. This function allows you to reference other schema classes.
+
+<CodeBlock language="ts">{decoratorApiOasExtendingClassSchemasSource}</CodeBlock>
+
+## How It Works
+
+1. **Base Schema**: The `BaseSchema` class is decorated with `@OasSchema` and includes the `foo` property decorated with `@OasSchemaProperty`.
+
+2. **Extended Schema**: The `ExtendedSchema` class:
+   - Extends `BaseSchema` using TypeScript inheritance (`extends BaseSchema`)
+   - Uses `@OasSchema((toSchema: ToSchemaFunction) => toSchema(BaseSchema))` to reference the base schema in the OpenAPI specification
+   - Adds additional properties (`bar` and `count`) with their own `@OasSchemaProperty` decorators
+
+3. **OpenAPI Generation**: This generates an OpenAPI schema where:
+   - The base schema is defined with its properties
+   - The extended schema uses `allOf` with a reference (`$ref`) to the base schema
+   - The extended schema includes its own properties in addition to the inherited ones

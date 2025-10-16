@@ -1,0 +1,76 @@
+---
+sidebar_position: 2
+title: API
+---
+import apiAjvValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/ajv/apiAjvValidationPipe.ts.txt';
+import apiAjvCompiledValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/ajv/apiAjvCompiledValidationPipe.ts.txt';
+import apiValidateAjvSchemaSource from '@inversifyjs/validation-code-examples/generated/examples/v1/ajv/apiValidateAjvSchema.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+## AjvValidationPipe
+
+Validates values using Ajv JSON Schema validator. Register it globally to validate incoming HTTP parameters (e.g., body) in your controllers.
+
+```ts
+constructor(ajv: Ajv, schemaList?: AnySchema[])
+```
+
+Parameters
+
+- **ajv** (Ajv): The Ajv instance to use for validation. You can configure it with custom formats, keywords, and options.
+- **schemaList** (optional AnySchema[]): One or more JSON schemas applied globally to every validated value. These run before any parameter-level schemas added via `@ValidateAjvSchema`.
+
+`AjvValidationPipe` can be registered as a global pipe: `adapter.useGlobalPipe(new AjvValidationPipe(ajv))`.
+This way, controller parameters decorated with `@ValidateAjvSchema` are automatically validated.
+
+### Example: register an AjvValidationPipe globally
+
+<CodeBlock language="ts">{apiAjvValidationPipeSource}</CodeBlock>
+
+## AjvCompiledValidationPipe
+
+An optimized version of `AjvValidationPipe` that uses compiled Ajv validation functions for better performance. Best suited for production environments where schemas don't change frequently.
+
+```ts
+constructor(ajv: Ajv, schemaList?: AnySchema[])
+```
+
+Parameters
+
+- **ajv** (Ajv): The Ajv instance to use for validation. Schemas must have an `$id` property to be compiled.
+- **schemaList** (optional AnySchema[]): One or more JSON schemas applied globally to every validated value.
+
+**Important**: When using `AjvCompiledValidationPipe`, all schemas must have an `$id` property. The pipe compiles and caches validation functions for better performance.
+
+### Example: register an AjvCompiledValidationPipe globally
+
+<CodeBlock language="ts">{apiAjvCompiledValidationPipeSource}</CodeBlock>
+
+## ValidateAjvSchema
+
+Attaches one or more JSON schemas to a specific parameter (e.g., `@Body()`), so the `AjvValidationPipe` or `AjvCompiledValidationPipe` can validate the value before your controller method runs.
+
+```ts
+ValidateAjvSchema(...schemaList: AnySchema[]): ParameterDecorator
+```
+
+Parameters
+
+- **schemaList**: One or more JSON Schema objects that define the expected structure and constraints for the parameter value.
+
+When multiple schemas are provided, they run in sequence. The value must pass all schema validations. Any schemas provided to `AjvValidationPipe` run first; parameter-level schemas run afterwards.
+
+On validation failure, an `InversifyValidationError` is thrown and can be converted to a Bad Request HTTP response by `ValidationErrorFilter`.
+
+### Example: validate request body with JSON Schema
+
+<CodeBlock language="ts">{apiValidateAjvSchemaSource}</CodeBlock>
+
+### Error Handling
+
+When validation fails, Ajv provides detailed error information including:
+- Property path where validation failed
+- Expected vs actual values
+- Validation rule that was violated
+
+The `AjvValidationPipe` automatically converts these errors into user-friendly messages that can be returned as HTTP responses.

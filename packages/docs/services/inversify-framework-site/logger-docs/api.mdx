@@ -1,0 +1,224 @@
+---
+sidebar_position: 2
+title: API
+---
+
+import consoleLoggerSource from '@inversifyjs/logger-code-examples/generated/examples/v1/consoleLogger.ts.txt';
+import fileLoggerSource from '@inversifyjs/logger-code-examples/generated/examples/v1/fileLogger.ts.txt';
+import httpLoggerSource from '@inversifyjs/logger-code-examples/generated/examples/v1/httpLogger.ts.txt';
+import streamLoggerSource from '@inversifyjs/logger-code-examples/generated/examples/v1/streamLogger.ts.txt';
+import loggerInterfaceSource from '@inversifyjs/logger-code-examples/generated/examples/v1/loggerInterface.ts.txt';
+import loggerOptionsSource from '@inversifyjs/logger-code-examples/generated/examples/v1/loggerOptions.ts.txt';
+import loggerWithContextSource from '@inversifyjs/logger-code-examples/generated/examples/v1/loggerWithContext.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# API Reference
+
+This section covers the complete API surface of the InversifyJS Logger package, including interfaces, enums, and concrete logger implementations.
+
+## Core Interfaces and Types
+
+The InversifyJS Logger package provides a clean abstraction for logging functionality, allowing you to inject different logger implementations while maintaining a consistent interface.
+
+### Logger
+
+The main logger interface that defines the contract for all logger implementations.
+
+```ts
+interface Logger {
+  log(logType: LogLevel, message: string, context?: ContextMetadata): void;
+  error(message: string, context?: ContextMetadata): void;
+  warn(message: string, context?: ContextMetadata): void;
+  info(message: string, context?: ContextMetadata): void;
+  http(message: string, context?: ContextMetadata): void;
+  verbose(message: string, context?: ContextMetadata): void;
+  debug(message: string, context?: ContextMetadata): void;
+  silly(message: string, context?: ContextMetadata): void;
+}
+```
+
+The `Logger` interface provides methods for all standard log levels, plus a generic `log` method that accepts a `LogLevel` parameter. All methods accept an optional `context` parameter for providing additional metadata.
+
+#### Example: Using the Logger interface
+
+<CodeBlock language="ts">{loggerInterfaceSource}</CodeBlock>
+
+### LogLevel
+
+An enumeration defining the available log levels in order of severity.
+
+```ts
+enum LogLevel {
+  ERROR = 'error',
+  WARN = 'warn',
+  INFO = 'info',
+  HTTP = 'http',
+  VERBOSE = 'verbose',
+  DEBUG = 'debug',
+  SILLY = 'silly',
+}
+```
+
+Log levels are ordered by severity, with `ERROR` being the highest severity and `SILLY` being the lowest. When configuring logger options, you can specify which log levels should be processed.
+
+### LoggerOptions
+
+Configuration interface for customizing logger behavior.
+
+```ts
+interface LoggerOptions {
+  json?: boolean;
+  logTypes?: LogLevel[];
+  timestamp?: boolean;
+}
+```
+
+Parameters:
+- `json` (optional boolean): When `true`, formats logs as JSON.
+- `logTypes` (optional LogLevel[]): Array of log levels to process. Messages with log levels not in this array will be ignored.
+- `timestamp` (optional boolean): When `true`, includes timestamps in log messages.
+
+#### Example: Configuring logger options
+
+<CodeBlock language="ts">{loggerOptionsSource}</CodeBlock>
+
+### ContextMetadata
+
+Interface for providing additional context data with log messages.
+
+```ts
+interface ContextMetadata {
+  [key: string]: unknown;
+  context?: string | undefined;
+}
+```
+
+The `ContextMetadata` interface allows you to attach arbitrary key-value pairs to log messages. The special `context` property can be used to override the logger's default context name for specific log messages.
+
+#### Example: Using context metadata
+
+<CodeBlock language="ts">{loggerWithContextSource}</CodeBlock>
+
+## Logger Implementations
+
+The InversifyJS Logger package provides several concrete logger implementations based on the Winston logging library. All implementations extend the base `WinstonLoggerAdapter` class and implement the `Logger` interface.
+
+### ConsoleLogger
+
+A logger implementation that outputs to the console/terminal.
+
+```ts
+class ConsoleLogger extends WinstonLoggerAdapter {
+  constructor(context?: string, loggerOptions?: LoggerOptions)
+}
+```
+
+Parameters:
+- `context` (optional string): A context name that will be included in log messages to identify the source.
+- `loggerOptions` (optional LoggerOptions): Configuration options for customizing logger behavior.
+
+#### Example: Console logging
+
+<CodeBlock language="ts">{consoleLoggerSource}</CodeBlock>
+
+### FileLogger
+
+A logger implementation that writes logs to a file.
+
+```ts
+class FileLogger extends WinstonLoggerAdapter {
+  constructor(fileName: string, context?: string, loggerOptions?: LoggerOptions)
+}
+```
+
+Parameters:
+- `fileName` (string): Path to the log file. The file will be created if it doesn't exist.
+- `context` (optional string): A context name that will be included in log messages to identify the source.
+- `loggerOptions` (optional LoggerOptions): Configuration options for customizing logger behavior.
+
+#### Example: File logging
+
+<CodeBlock language="ts">{fileLoggerSource}</CodeBlock>
+
+### HttpLogger
+
+A logger implementation that sends logs to an HTTP endpoint.
+
+```ts
+class HttpLogger extends WinstonLoggerAdapter {
+  constructor(url: URL | string, context?: string, loggerOptions?: LoggerOptions)
+}
+```
+
+Parameters:
+- `url` (URL | string): The HTTP endpoint where logs should be sent. Can be a string URL or a URL object.
+- `context` (optional string): A context name that will be included in log messages to identify the source.
+- `loggerOptions` (optional LoggerOptions): Configuration options for customizing logger behavior.
+
+Notes:
+- The HTTP logger sends log data via HTTP POST requests to the specified endpoint.
+- The target endpoint should be configured to accept and process log data.
+- Consider using HTTPS endpoints for production environments to ensure log data is transmitted securely.
+
+#### Example: HTTP logging
+
+<CodeBlock language="ts">{httpLoggerSource}</CodeBlock>
+
+### StreamLogger
+
+A logger implementation that writes to a Node.js writable stream.
+
+```ts
+class StreamLogger extends WinstonLoggerAdapter {
+  constructor(
+    stream: NodeJS.WritableStream,
+    eol?: string | undefined,
+    context?: string,
+    loggerOptions?: LoggerOptions
+  )
+}
+```
+
+Parameters:
+- `stream` (NodeJS.WritableStream): The writable stream where logs should be written (e.g., `process.stdout`, `process.stderr`, or a file stream).
+- `eol` (optional string): End-of-line character(s) to use. Defaults to the system's default line ending.
+- `context` (optional string): A context name that will be included in log messages to identify the source.
+- `loggerOptions` (optional LoggerOptions): Configuration options for customizing logger behavior.
+
+#### Example: Stream logging
+
+<CodeBlock language="ts">{streamLoggerSource}</CodeBlock>
+
+## Log Message Formatting
+
+All logger implementations support two output formats:
+
+### Human-readable Format (default)
+
+When `json: false` or when the `json` option is omitted, logs are formatted as:
+
+```
+[Context] - ProcessID Timestamp LogLevel: Message
+```
+
+Example:
+```
+[MyAwesomeApp] - 12345 2023-09-18 02:30:45.123 PM info: User login successful
+```
+
+### JSON Format
+
+When `json: true`, logs are formatted as structured JSON objects:
+
+```json
+{
+  "level": "info",
+  "message": "User login successful",
+  "timestamp": "2023-09-18 02:30:45.123 PM",
+  "context": "MyAwesomeApp",
+  "userId": "12345",
+  "action": "login"
+}
+```

@@ -1,0 +1,352 @@
+---
+sidebar_position: 1
+title: Decorator
+---
+import decoratorApiOasRequestBodySource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decoratorApiOasRequestBody.ts.txt';
+import decoratorApiOasComprehensiveSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasComprehensive.ts.txt';
+import decoratorApiOasDeprecatedSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasDeprecated.ts.txt';
+import decoratorApiOasDescriptionSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasDescription.ts.txt';
+import decoratorApiOasExternalDocsSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasExternalDocs.ts.txt';
+import decoratorApiOasOperationIdSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasOperationId.ts.txt';
+import decoratorApiOasParameterSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasParameter.ts.txt';
+import decoratorApiOasResponseSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasResponse.ts.txt';
+import decoratorApiOasSchemaSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasSchema.ts.txt';
+import decoratorApiOasSchemaWithControllerSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasSchemaWithController.ts.txt';
+import decoratorApiOasSecuritySource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasSecurity.ts.txt';
+import decoratorApiOasServerSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasServer.ts.txt';
+import decoratorApiOasSummarySource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasSummary.ts.txt';
+import decoratorApiOasTagSource from '@inversifyjs/http-open-api-code-examples/generated/examples/v1/decorators/decoratorApiOasTag.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Decorators
+
+This section covers Inversify HTTP OpenAPI decorators used to provide OpenAPI metadata to your controllers and operations.
+
+## Operation Metadata
+
+These decorators provide metadata for individual API operations (methods).
+
+### OasDescription
+
+Adds a description to an API operation, providing detailed information about what the operation does.
+
+```ts
+OasDescription(content: string): MethodDecorator
+```
+
+Parameters
+
+- content (string): A detailed description of the operation.
+
+#### Example: adding a description to an operation
+
+<CodeBlock language="ts">{decoratorApiOasDescriptionSource}</CodeBlock>
+
+### OasSummary
+
+Adds a brief summary to an API operation, providing a short description of what the operation does.
+
+```ts
+OasSummary(summary: string): ClassDecorator & MethodDecorator
+```
+
+Parameters
+
+- summary (string): A brief summary of the operation or controller.
+
+Notes
+
+- Scope: Can be applied to both controller classes and individual methods.
+
+#### Example: adding a summary to an operation
+
+<CodeBlock language="ts">{decoratorApiOasSummarySource}</CodeBlock>
+
+### OasOperationId
+
+Sets a unique identifier for the API operation, useful for code generation and tooling.
+
+```ts
+OasOperationId(content: string): MethodDecorator
+```
+
+Parameters
+
+- content (string): A unique identifier for the operation.
+
+#### Example: setting an operation ID
+
+<CodeBlock language="ts">{decoratorApiOasOperationIdSource}</CodeBlock>
+
+### OasDeprecated
+
+Marks an API operation as deprecated, indicating it will be removed in future versions.
+
+```ts
+OasDeprecated(): MethodDecorator
+```
+
+#### Example: marking an operation as deprecated
+
+<CodeBlock language="ts">{decoratorApiOasDeprecatedSource}</CodeBlock>
+
+### OasTag
+
+Adds tags to an API operation for grouping and organization in documentation.
+
+```ts
+OasTag(content: string): MethodDecorator
+```
+
+Parameters
+
+- content (string): The tag name to associate with the operation.
+
+Notes
+
+- Multiple tags: You can apply multiple `@OasTag` decorators to the same operation.
+
+#### Example: adding tags to an operation
+
+<CodeBlock language="ts">{decoratorApiOasTagSource}</CodeBlock>
+
+### OasExternalDocs
+
+Links to external documentation for an API operation.
+
+```ts
+OasExternalDocs(content: OpenApi3Dot1ExternalDocumentationObject): MethodDecorator
+```
+
+Parameters
+
+- content (OpenApi3Dot1ExternalDocumentationObject): External documentation object containing description and URL.
+
+#### Example: linking to external documentation
+
+<CodeBlock language="ts">{decoratorApiOasExternalDocsSource}</CodeBlock>
+
+## Request and Response Documentation
+
+These decorators document the request and response structures of your API operations.
+
+### OasRequestBody
+
+Documents the request body structure and content types for an API operation.
+
+```ts
+OasRequestBody(
+  requestBody:
+    | OpenApi3Dot1RequestBodyObject
+    | OpenApi3Dot1ReferenceObject
+    | BuildOpenApiBlockFunction<
+        OpenApi3Dot1RequestBodyObject | OpenApi3Dot1ReferenceObject
+      >,
+): MethodDecorator
+```
+
+Parameters
+
+- requestBody: Request body specification or a function that builds it using schema references. See [Schema Reference Functions](#schema-reference-functions) for more information about using the `BuildOpenApiBlockFunction`.
+
+#### Example: documenting a request body
+
+<CodeBlock language="ts">{decoratorApiOasRequestBodySource}</CodeBlock>
+
+### OasResponse
+
+Documents possible response structures and status codes for an API operation.
+
+```ts
+OasResponse(
+  code: HttpStatusCode,
+  response:
+    | OpenApi3Dot1ResponseObject
+    | BuildOpenApiBlockFunction<OpenApi3Dot1ResponseObject>,
+): MethodDecorator
+```
+
+Parameters
+
+- code (HttpStatusCode): The HTTP status code for this response.
+- response: Response specification or a function that builds it using schema references. See [Schema Reference Functions](#schema-reference-functions) for more information about using the `BuildOpenApiBlockFunction`.
+
+Notes
+
+- Multiple responses: You can apply multiple `@OasResponse` decorators to document different status codes.
+
+#### Example: documenting multiple response types
+
+<CodeBlock language="ts">{decoratorApiOasResponseSource}</CodeBlock>
+
+### OasParameter
+
+Documents parameters for an API operation (query, path, header, or cookie parameters).
+
+```ts
+OasParameter(
+  parameter:
+    | OpenApi3Dot1ParameterObject
+    | OpenApi3Dot1ReferenceObject
+    | BuildOpenApiBlockFunction<
+        OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject
+      >,
+): MethodDecorator
+```
+
+Parameters
+
+- parameter: Parameter specification or a function that builds it using schema references. See [Schema Reference Functions](#schema-reference-functions) for more information about using the `BuildOpenApiBlockFunction`.
+
+Notes
+
+- Multiple parameters: You can apply multiple `@OasParameter` decorators to document different parameters.
+
+#### Example: documenting a query parameter
+
+<CodeBlock language="ts">{decoratorApiOasParameterSource}</CodeBlock>
+
+## Security and Server Configuration
+
+These decorators configure security requirements and server information.
+
+### OasSecurity
+
+Specifies security requirements for an API operation.
+
+```ts
+OasSecurity(content: OpenApi3Dot1SecurityRequirementObject): MethodDecorator
+```
+
+Parameters
+
+- content (OpenApi3Dot1SecurityRequirementObject): Security requirement specification.
+
+#### Example: requiring bearer authentication
+
+<CodeBlock language="ts">{decoratorApiOasSecuritySource}</CodeBlock>
+
+### OasServer
+
+Specifies server information for a controller or specific operation.
+
+```ts
+OasServer(server: OpenApi3Dot1ServerObject): ClassDecorator & MethodDecorator
+```
+
+Parameters
+
+- server (OpenApi3Dot1ServerObject): Server specification including URL and description.
+
+Notes
+
+- Scope: Can be applied to both controller classes and individual methods.
+
+#### Example: specifying server information
+
+<CodeBlock language="ts">{decoratorApiOasServerSource}</CodeBlock>
+
+## Schema Definition
+
+These decorators are used to define and document data models.
+
+### OasSchema
+
+Defines OpenAPI schema metadata for a class, making it available for reference in other decorators.
+
+```ts
+OasSchema(
+  schema?:
+    | OpenApi3Dot1SchemaObject
+    | BuildOpenApiBlockFunction<OpenApi3Dot1SchemaObject>,
+  options?: OasSchemaDecoratorOptions,
+): ClassDecorator
+```
+
+Parameters
+
+- schema (optional): Schema specification or a function that builds it. See [Schema Reference Functions](#schema-reference-functions) for more information about using the `BuildOpenApiBlockFunction`.
+- options (optional): Additional options for schema generation. See [OasSchemaDecoratorOptions](#oasschemadecoratoroptions) for available options.
+
+#### OasSchemaDecoratorOptions
+
+The `OasSchemaDecoratorOptions` interface provides additional configuration options for the `@OasSchema` decorator:
+
+```ts
+interface OasSchemaDecoratorOptions {
+  customAttributes?: OpenApi3Dot1SchemaObject;
+  name?: string;
+}
+```
+
+Properties:
+
+- `customAttributes` (optional): Custom OpenAPI schema attributes to merge with the generated schema. This allows you to add or override specific schema properties.
+- `name` (optional): Custom name for the schema reference. If not provided, the class name will be used.
+
+#### Example: defining a schema class
+
+<CodeBlock language="ts">{decoratorApiOasSchemaSource}</CodeBlock>
+
+### OasSchemaProperty
+
+Marks a class property as required in the OpenAPI schema.
+
+```ts
+OasSchemaProperty(
+  schema?:
+    | OpenApi3Dot1SchemaObject
+    | BuildOpenApiBlockFunction<OpenApi3Dot1SchemaObject>,
+): PropertyDecorator
+```
+
+Parameters
+
+- schema (optional): Schema specification for the property. See [Schema Reference Functions](#schema-reference-functions) for more information about using the `BuildOpenApiBlockFunction`.
+
+### OasSchemaOptionalProperty
+
+Marks a class property as optional in the OpenAPI schema.
+
+```ts
+OasSchemaOptionalProperty(
+  schema?:
+    | OpenApi3Dot1SchemaObject
+    | BuildOpenApiBlockFunction<OpenApi3Dot1SchemaObject>,
+): PropertyDecorator
+```
+
+Parameters
+
+- schema (optional): Schema specification for the property. See [Schema Reference Functions](#schema-reference-functions) for more information about using the `BuildOpenApiBlockFunction`.
+
+#### Example: using schemas with controllers
+
+<CodeBlock language="ts">{decoratorApiOasSchemaWithControllerSource}</CodeBlock>
+
+## Comprehensive Example
+
+Here's a comprehensive example showing multiple OpenAPI decorators working together:
+
+<CodeBlock language="ts">{decoratorApiOasComprehensiveSource}</CodeBlock>
+
+## Schema Reference Functions
+
+When using decorators that accept a `BuildOpenApiBlockFunction`, you have access to a `toSchema` function that allows you to reference schema classes:
+
+```ts
+@OasRequestBody((toSchema) => ({
+  content: {
+    'application/json': {
+      schema: toSchema(MySchemaClass),
+    },
+  },
+  required: true,
+}))
+```
+
+`MySchemaClass` should be properly decorated with `@OasSchema` and its properties with `@OasSchemaProperty` or `@OasSchemaOptionalProperty`.
+
+This approach provides type safety and automatic schema resolution for your OpenAPI documentation.

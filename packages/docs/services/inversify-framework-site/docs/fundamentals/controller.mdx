@@ -1,0 +1,75 @@
+---
+sidebar_position: 1
+title: Controller
+---
+import controllerApiBasicsSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiBasics.ts.txt';
+import controllerApiRegisterSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiRegister.ts.txt';
+import controllerNonNativeTypesSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerNonNativeTypes.ts.txt';
+import decoratorApiResponseExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress4.ts.txt';
+import decoratorApiResponseExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress.ts.txt';
+import decoratorApiResponseFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseFastify.ts.txt';
+import decoratorApiResponseHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseHono.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Controller
+
+Controllers are classes annotated with the `@Controller()` decorator. They group request handlers for a feature area. A controller defines a base path and one or more route handlers using [method decorators](../../api/decorators/#http-methods).
+
+:::info[Controller and injectable decorators]
+  You don't need to add `@injectable()`. The `@Controller()` decorator already applies it for you.
+:::
+
+## Basic example
+
+A minimal controller with one route:
+
+<CodeBlock language="ts">{controllerApiBasicsSource}</CodeBlock>
+
+## Registering a controller
+
+Register controllers in your container. Bind your controller class and choose a scope.
+
+<CodeBlock language="ts">{controllerApiRegisterSource}</CodeBlock>
+
+When you call `build()` on your server adapter, it builds routes from controller metadata at runtime.
+
+## Implementation approaches
+
+There are two complementary ways to write controller routes in Inversify HTTP. You can keep your handlers framework-agnostic and let Inversify send the response for you, or you can opt into native adapter types and take full control of the underlying framework's response flow.
+
+### 1. Non-native types (Recommended)
+
+With the framework-agnostic approach, your controller methods return values and Inversify converts them into HTTP responses. The adapter decides how to shape the response based on the value: strings are sent as plain text, objects (including undefined) are sent as JSON, Node streams are piped as streaming responses, and primitive values like numbers or booleans are stringified as text. The status code is 200 by default, but you can override it per route with the `@StatusCode()` decorator or by returning a typed `HttpResponse` (for example, `new CreatedHttpResponse(body)` or throwing an `ErrorHttpResponse`). This keeps controllers portable across adapters and focuses them on business logic rather than framework details.
+
+<CodeBlock language="ts">{controllerNonNativeTypesSource}</CodeBlock>
+
+### 2. Native types (Advanced)
+
+If you need direct access to adapter features, inject native types with `@Response()` and `@Next()`. In this mode you're responsible for the full response lifecycle: setting headers, choosing the status code, sending the body (or streaming), and deciding whether to call `next()` to continue the pipeline. This trades portability for full control and is useful for advanced scenarios like fine-grained caching headers, streaming, or integrating with middleware that expects native objects.
+
+Usage with different adapters:
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{decoratorApiResponseExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{decoratorApiResponseExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{decoratorApiResponseFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{decoratorApiResponseHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+:::tip[When to use native types]
+Reach for native types when you need precise control over the HTTP exchange—streaming large payloads, fine-tuning caching and headers, squeezing out adapter-specific performance, or interoperating with middleware that expects a native response object. For most routes, the framework-agnostic approach remains simpler, more portable, and easier to test.
+:::
+
+:::warning[Important: Choose one approach per route]
+Avoid mixing modes within the same route. If you inject `@Response()` or `@Next()`, your handler should manage the response entirely and typically return `void` (or the framework `Response` for Hono). Conversely, when you return values for Inversify to send, don't also write to the native response object.
+:::

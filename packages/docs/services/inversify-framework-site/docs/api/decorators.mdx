@@ -1,0 +1,493 @@
+---
+sidebar_position: 1
+title: Decorator
+---
+import decoratorApiAllSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiAll.ts.txt';
+import decoratorApiApplyMiddlewareControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiApplyMiddlewareController.ts.txt';
+import decoratorApiApplyMiddlewareRouteSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiApplyMiddlewareRoute.ts.txt';
+import decoratorApiBodySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBody.ts.txt';
+import decoratorApiCookiesSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiCookies.ts.txt';
+import decoratorApiDeleteSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiDelete.ts.txt';
+import decoratorApiGetSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiGet.ts.txt';
+import decoratorApiHeadersSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiHeaders.ts.txt';
+import decoratorApiHeadSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiHead.ts.txt';
+import decoratorApiNextExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextExpress4.ts.txt';
+import decoratorApiNextExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextExpress.ts.txt';
+import decoratorApiNextFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextFastify.ts.txt';
+import decoratorApiNextHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextHono.ts.txt';
+import decoratorApiOptionsSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiOptions.ts.txt';
+import decoratorApiPatchSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPatch.ts.txt';
+import decoratorApiPostSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPost.ts.txt';
+import decoratorApiPutSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPut.ts.txt';
+import decoratorApiRequestExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestExpress4.ts.txt';
+import decoratorApiRequestExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestExpress.ts.txt';
+import decoratorApiRequestFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestFastify.ts.txt';
+import decoratorApiRequestHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestHono.ts.txt';
+import decoratorApiResponseExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress4.ts.txt';
+import decoratorApiResponseExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress.ts.txt';
+import decoratorApiResponseFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseFastify.ts.txt';
+import decoratorApiResponseHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseHono.ts.txt';
+import decoratorApiSetHeaderSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiSetHeader.ts.txt';
+import decoratorApiStatusCodeSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiStatusCode.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Decorators
+
+This section covers Inversify HTTP decorators used to provide related metadata.
+
+:::info Service Identifiers
+
+Many decorators in this framework accept `ServiceIdentifier` types for dependency injection. A `ServiceIdentifier<T>` can be:
+- A class constructor (e.g., `MyMiddleware`)
+- A string token (e.g., `'my-middleware'`)
+- A symbol (e.g., `Symbol.for('my-middleware')`)
+- An abstract class reference
+
+This allows for flexible dependency resolution through the InversifyJS container.
+
+:::
+
+## HTTP Request lifecycle
+
+Inversify HTTP decorators can be used to manage the lifecycle of HTTP requests, including middleware execution, request handling, and response generation. This allows for more modular and maintainable code.
+
+### ApplyMiddleware
+
+Attaches middleware to a controller class (applies to all its routes) or to a specific route method.
+
+```ts
+ApplyMiddleware(
+  ...middlewareList: (ServiceIdentifier<Middleware> | ApplyMiddlewareOptions)[],
+): ClassDecorator & MethodDecorator
+```
+
+Parameters
+
+- `middlewareList`: One or more middleware service identifiers or options objects.
+  - `ServiceIdentifier<Middleware>`: A middleware class, string token, symbol, or abstract class that can be resolved by the DI container.
+  - `ApplyMiddlewareOptions`: Configuration object with middleware and phase settings.
+
+Notes
+
+- Scope: Place the decorator on the controller class to affect all routes, or on a method to affect only that route.
+- Phase: When passing middleware service identifiers directly (not the options object), they run in the `PreHandler` phase by default.
+- Order: Within the same phase, middleware execute in the order they are provided.
+- See also: [Middleware fundamentals](../../fundamentals/middleware) for adapter-specific request/response types and tips.
+
+#### Example: apply middleware to a controller (all routes)
+
+<CodeBlock language="ts">{decoratorApiApplyMiddlewareControllerSource}</CodeBlock>
+
+#### Example: apply middleware to a single route
+
+<CodeBlock language="ts">{decoratorApiApplyMiddlewareRouteSource}</CodeBlock>
+
+### Next
+
+Injects the framework-specific next function into your controller method. Call it to continue a pipeline. For example, a middleware can run first (e.g., to set headers), then your controller can return the response.
+
+```ts
+Next(): ParameterDecorator
+```
+
+#### Example: calling next per adapter
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{decoratorApiNextExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{decoratorApiNextExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{decoratorApiNextFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{decoratorApiNextHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+### UseErrorFilter
+
+Attaches one or more error filters to a controller class or method. Error filters handle exceptions that occur during request processing.
+
+```ts
+UseErrorFilter(...errorFilterList: Newable<ErrorFilter>[]): ClassDecorator & MethodDecorator
+```
+
+Parameters
+
+- `errorFilterList`: One or more error filter classes implementing `ErrorFilter`.
+
+Notes
+
+- Scope: Place on the controller class to affect all routes, or on a method to affect only that route.
+- Order: Error filters are processed in the order they are provided.
+- Exception handling: Error filters can catch, transform, or handle exceptions thrown during request processing.
+
+### UseGuard
+
+Attaches one or more [guards](../../fundamentals/guard) to a controller class or method. All guards must allow for the request to continue.
+
+```ts
+UseGuard(...guardList: ServiceIdentifier<Guard>[]): ClassDecorator & MethodDecorator
+```
+
+Parameters
+
+- `guardList`: One or more guard service identifiers that can be resolved by the DI container.
+
+### UseInterceptor
+
+Attaches one or more interceptors to a controller class or method. Interceptors can modify requests before they reach the handler and responses before they are sent.
+
+```ts
+UseInterceptor(...interceptorList: ServiceIdentifier<Interceptor>[]): ClassDecorator & MethodDecorator
+```
+
+Parameters
+
+- `interceptorList`: One or more interceptor service identifiers that can be resolved by the DI container.
+
+## HTTP Request message abstraction
+
+Inversify HTTP decorators can be used to abstract HTTP request details, such as headers, query parameters, and request bodies. This allows for cleaner controller code and better separation of concerns.
+
+### Body
+
+Reads the HTTP request body, or a specific property of it when a name is provided.
+
+```ts
+Body(
+  optionsOrPipe?: RouteParameterOptions | (ServiceIdentifier<Pipe> | Pipe),
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Parameters
+
+- `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like `parameterName`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
+- `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
+
+#### Example: reading a request body
+
+<CodeBlock language="ts">{decoratorApiBodySource}</CodeBlock>
+
+### Headers
+
+Reads HTTP request headers, or a specific header when a name is provided.
+
+```ts
+Headers(
+  optionsOrPipe?: RouteParameterOptions | (ServiceIdentifier<Pipe> | Pipe),
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Parameters
+
+- `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like header `name`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
+- `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
+
+#### Example: reading the User-Agent header
+
+<CodeBlock language="ts">{decoratorApiHeadersSource}</CodeBlock>
+
+### Cookies
+
+Reads HTTP cookies, or a specific cookie when a name is provided.
+
+:::warning
+
+Remember to enable `useCookies` option when using `express` or `fastify` adapters.
+
+:::
+
+```ts
+Cookies(
+  optionsOrPipe?: RouteParameterOptions | (ServiceIdentifier<Pipe> | Pipe),
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Parameters
+
+- `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like cookie `name`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
+- `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
+
+#### Example: reading a session cookie
+
+<CodeBlock language="ts">{decoratorApiCookiesSource}</CodeBlock>
+
+### Params
+
+Reads HTTP route parameters (path parameters), or a specific parameter when a name is provided.
+
+```ts
+Params(
+  optionsOrPipe?: RouteParameterOptions | (ServiceIdentifier<Pipe> | Pipe),
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Parameters
+
+- `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like parameter `name`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
+- `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
+
+### Request
+
+Retrieves the native request object of the current adapter. Useful when you need full access to the underlying framework request.
+
+```ts
+Request(...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]): ParameterDecorator
+```
+
+#### Example: accessing the native request per adapter
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{decoratorApiRequestExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{decoratorApiRequestExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{decoratorApiRequestFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{decoratorApiRequestHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+### Query
+
+Reads HTTP query parameters, or a specific query parameter when a name is provided.
+
+```ts
+Query(
+  optionsOrPipe?: RouteParameterOptions | (ServiceIdentifier<Pipe> | Pipe),
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Parameters
+
+- `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like parameter `name`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
+- `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
+
+## HTTP Response message abstraction
+
+Inversify HTTP decorators can also be used to abstract HTTP response details, such as status codes and headers. This allows for more consistent and maintainable response handling across controllers.
+
+### Response
+
+Injects the native response object of the current adapter. Use it when you want to write directly to the underlying framework response.
+
+```ts
+Response(...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]): ParameterDecorator
+```
+
+Notes
+
+- Type-safe: Type the parameter with the adapter's response type for intellisense and safety.
+- Return type: When you write to the native response, prefer a return type of `void`. For Hono, return the `Response` produced by the `Context`.
+- Hono: Prefer using `@Context()` from `@inversifyjs/http-hono` to access Hono's `Context` object.
+
+#### Example: sending a response per adapter
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{decoratorApiResponseExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{decoratorApiResponseExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{decoratorApiResponseFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+
+    :::info[Context decorator]
+      `@inversifyjs/http-hono` provides the `@Context()` decorator to access the `Context` object.
+    :::
+
+    <CodeBlock language="ts">{decoratorApiResponseHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+### SetHeader
+
+Sets a HTTP response header.
+
+```ts
+SetHeader(headerKey: string, value: string): MethodDecorator
+```
+
+Parameters
+
+- `headerKey` (string): Name of the header to be set.
+- `value` (string): Value of the header to be set.
+
+#### Example: Setting a response header
+
+<CodeBlock language="ts">{decoratorApiSetHeaderSource}</CodeBlock>
+
+### StatusCode
+
+Sets the HTTP response status code.
+
+```ts
+StatusCode(statusCode: HttpStatusCode): MethodDecorator
+```
+
+Parameters
+
+- `statusCode` (HttpStatusCode): Status code to be set.
+
+#### Example: Setting a response status code
+
+<CodeBlock language="ts">{decoratorApiStatusCodeSource}</CodeBlock>
+
+## HTTP methods
+
+### All
+
+Sets up a route for all HTTP methods.
+
+```ts
+All(path?: string): MethodDecorator
+```
+
+Parameters
+
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. It binds the method to all HTTP methods for the given path.
+
+#### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiAllSource}</CodeBlock>
+
+### Delete
+
+Sets up a route for DELETE requests.
+
+```ts
+Delete(path?: string): MethodDecorator
+```
+
+Parameters
+
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Delete('/remove')` maps to `DELETE <controllerPath>/remove`.
+
+#### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiDeleteSource}</CodeBlock>
+
+### Get
+
+Sets up a route for GET requests.
+
+```ts
+Get(path?: string): MethodDecorator
+```
+
+Parameters
+
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Get('/list')` maps to `GET <controllerPath>/list`. When omitted, the method is bound to the controller path itself.
+
+#### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiGetSource}</CodeBlock>
+
+### Head
+
+Sets up a route for HEAD requests.
+
+:::warning
+
+Since `hono@4`, HEAD routes are no longer allowed, use `@Get` routes instead if you rely on the Hono adapter.
+
+:::
+
+
+```ts
+Head(path?: string): MethodDecorator
+```
+
+Parameters
+
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Head('/')` maps to `HEAD <controllerPath>`.
+
+#### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiHeadSource}</CodeBlock>
+
+### Options
+
+Sets up a route for OPTIONS requests.
+
+```ts
+Options(path?: string): MethodDecorator
+```
+
+Parameters
+
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Options('/')` maps to `OPTIONS <controllerPath>`.
+
+#### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiOptionsSource}</CodeBlock>
+
+### Patch
+
+Sets up a route for PATCH requests.
+
+```ts
+Patch(path?: string): MethodDecorator
+```
+
+Parameters
+
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Patch('/partial')` maps to `PATCH <controllerPath>/partial`.
+
+#### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiPatchSource}</CodeBlock>
+
+### Post
+
+Sets up a route for POST requests.
+
+```ts
+Post(path?: string): MethodDecorator
+```
+
+Parameters
+
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to `'/'`. Example: `@Post('/create')` maps to `POST <controllerPath>/create`.
+
+#### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiPostSource}</CodeBlock>
+
+### Put
+
+Sets up a route for PUT requests.
+
+```ts
+Put(path?: string): MethodDecorator
+```
+
+Parameters
+
+- `path` (optional string): Route path mounted under the controller's base path. Defaults to '/'. Example: @Put('/update') maps to PUT &lt;controllerPath&gt;/update.
+
+Notes
+
+- Use @Body to read the request payload for PUT.
+
+#### Example: decorating a controller method
+
+<CodeBlock language="ts">{decoratorApiPutSource}</CodeBlock>

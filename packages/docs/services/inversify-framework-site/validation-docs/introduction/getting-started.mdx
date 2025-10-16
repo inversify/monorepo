@@ -1,0 +1,89 @@
+---
+sidebar_position: 1
+title: Getting started
+---
+import gettingStartedSource from '@inversifyjs/validation-code-examples/generated/examples/v1/standardSchema/gettingStarted.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting started
+
+Inversify Validation is a powerful set of tools to create validation flows on top of InversifyJS. It provides decorators and utilities to define validation schemas, apply them to your classes, and handle validation errors gracefully.
+
+:::info
+
+This docs focusess on validation in the context of HTTP applications, but the validation tools can be used in any context a Pipe can be used.
+
+:::
+
+## Install dependencies
+
+Given a HTTP adapter of your choice already set up, using validation tools is straightforward:
+
+Begin by installing the validation package of your choice along with its peer dependencies:
+
+<Tabs>
+  <TabItem value="Zod (Standard schema)" label="Zod (Standard schema)">
+
+```bash
+  npm install zod @inversifyjs/standard-schema-validation
+```
+
+  </TabItem>
+  <TabItem value="Ajv" label="Ajv">
+
+```bash
+  npm install ajv @inversifyjs/ajv-validation
+```
+
+  </TabItem>
+  <TabItem value="class-validator" label="class-validator">
+
+```bash
+  npm install class-validator class-transformer @inversifyjs/class-validation
+```
+
+  </TabItem>
+</Tabs>
+
+:::warning
+
+Make sure to enable the [Experimental Decorators](https://www.typescriptlang.org/tsconfig/#experimentalDecorators) and [Emit Decorator Metadata](https://www.typescriptlang.org/tsconfig/#emitDecoratorMetadata) options in your `tsconfig.json`.
+
+:::
+
+## Install integration package
+
+Validation tools are designed to work outside HTTP context. In order to use them in an HTTP application, you need to install the appropriate package.
+
+```bash
+  npm install @inversifyjs/http-validation
+```
+
+## Configure server
+
+In order to enable validation in your application, you need to configure the server:
+
+1. Use the specific validator error pipe. If we take the previous example, we need to use a `StandardSchemaValidationPipe`, for Zod is integrated via Standard Schema integration.
+2. Use the `ValidationErrorFilter` to handle validation errors. This error filter provided by the `@inversifyjs/http-validation` package catches validation errors in order to send Bad Request HTTP responses on top of them.
+
+```ts
+  const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
+    container,
+    {
+      logger: true,
+      useCookies: true,
+    },
+  );
+
+  adapter.useGlobalFilters(ValidationErrorFilter);
+  adapter.useGlobalPipe(new StandardSchemaValidationPipe());
+```
+
+## Configure controller
+
+After configuring the server, just apply the validation decorators to your controller routes. Below is a basic example of setting up a controller to validate a request body.
+
+<CodeBlock language="typescript">{gettingStartedSource}</CodeBlock>
+

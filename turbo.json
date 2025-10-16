@@ -36,6 +36,23 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/framework-docs-site#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "blog/**",
+        "docs/**",
+        "logger-docs/**",
+        "openapi-docs/**",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
+        "docusaurus.config.ts",
+        "sidebars.ts",
+        "validation-docs/**",
+        "versioned_docs/**",
+        "versioned_sidebars/**"
+      ],
+      "outputs": ["build/**"]
+    },
     "@inversifyjs/inversify-binding-decorators-docs-site#build": {
       "dependsOn": ["^build"],
       "inputs": [

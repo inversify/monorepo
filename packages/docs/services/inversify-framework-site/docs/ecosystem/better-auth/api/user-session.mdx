@@ -1,0 +1,91 @@
+---
+sidebar_position: 2
+title: UserSession
+---
+import ecosystemBetterAuthOptionalAuthSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthOptionalAuth.ts.txt';
+import ecosystemBetterAuthParameterDecoratorsSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthParameterDecorators.ts.txt';
+import ecosystemBetterAuthSessionInfoSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthSessionInfo.ts.txt';
+import ecosystemBetterAuthUserInfoSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthUserInfo.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# UserSession
+
+The `UserSession` interface provides type-safe access to the current user and session information from Better Auth.
+
+## Interface Definition
+
+```typescript
+import {
+  BetterAuthOptions,
+  InferSession,
+  InferUser,
+  PrettifyDeep,
+} from 'better-auth';
+
+export interface UserSession<TOptions extends BetterAuthOptions> {
+  session: PrettifyDeep<InferSession<TOptions>>;
+  user: PrettifyDeep<InferUser<TOptions>>;
+}
+```
+
+## Description
+
+`UserSession<TOptions>` is a generic interface that combines user and session information from Better Auth into a single object. It leverages Better Auth's type inference system to provide accurate typing based on your specific configuration, including any plugins or custom fields you've defined.
+
+## Type Parameters
+
+- `TOptions` - Extends `BetterAuthOptions` from the Better Auth library. This parameter ensures that the user and session types match your Better Auth configuration exactly.
+
+## Properties
+
+### `session`
+- **Type**: `PrettifyDeep<InferSession<TOptions>>`
+- **Description**: Contains the current session information, including session ID, user ID, expiration, and any additional session fields defined by your configuration or plugins.
+
+### `user`
+- **Type**: `PrettifyDeep<InferUser<TOptions>>`
+- **Description**: Contains the current user information, including user ID, email, name, and any additional user fields defined by your configuration or plugins.
+
+## Usage
+
+### With Parameter Decorators
+
+The most common way to access `UserSession` is through parameter decorators in your controllers:
+
+<CodeBlock language="typescript">{ecosystemBetterAuthParameterDecoratorsSource}</CodeBlock>
+
+### Accessing User Information
+
+<CodeBlock language="typescript">{ecosystemBetterAuthUserInfoSource}</CodeBlock>
+
+### Accessing Session Information
+
+<CodeBlock language="typescript">{ecosystemBetterAuthSessionInfoSource}</CodeBlock>
+
+### Handling Unauthenticated Requests
+
+When no valid session is found, the `UserSession` will be `null`:
+
+<CodeBlock language="typescript">{ecosystemBetterAuthOptionalAuthSource}</CodeBlock>
+
+## Type Safety Benefits
+
+- **Configuration-Aware**: Types reflect your exact Better Auth configuration
+- **Plugin Integration**: Includes types for any Better Auth plugins you've enabled
+- **Custom Fields**: Supports custom user and session fields
+- **Null Safety**: Properly handles unauthenticated states
+
+## Framework Support
+
+`UserSession` is available across all supported frameworks through their respective parameter decorators:
+
+- **Express**: Use `@ExpressUserSession()`
+- **Express v4**: Use `@ExpressUserSession()` (same decorator as Express)
+- **Fastify**: Use `@FastifyUserSession()`
+- **Hono**: Use `@HonoUserSession()`
+
+## Related
+
+- [Parameter Decorators](../decorators) - For accessing UserSession in controllers
+- [Container Modules](../container-modules) - For setting up Better Auth authentication
+- [`BetterAuth`](../better-auth) - The Better Auth instance type
