@@ -66,7 +66,7 @@ function HomepageHeader(): React.JSX.Element {
                 />
               </div>
               <div className={styles.heroButtons}>
-                <DocumentationButton href="/docs/introduction/getting-started">
+                <DocumentationButton href="https://github.com/inversify/framework">
                   Get Started
                 </DocumentationButton>
                 <DocumentationButton href="https://github.com/inversify/monorepo">
@@ -140,7 +140,7 @@ function HomepageFeatures(): React.JSX.Element {
           </div>
 
           <div className={styles.quickStartActions}>
-            <DocumentationButton href="/docs/introduction/getting-started">
+            <DocumentationButton href="https://github.com/inversify/framework">
               View Full Tutorial
             </DocumentationButton>
             <DocumentationButton
