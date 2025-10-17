@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "24.8.1",
-    "eslint": "9.37.0",
+    "eslint": "9.38.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
     "rollup": "4.52.4",
