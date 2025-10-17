@@ -31,7 +31,6 @@ export default {
   },
   ignoreWorkspaces: [
     "packages/docs/services/inversify-binding-decorators-site",
-    "packages/docs/services/inversify-http-site",
     "packages/docs/services/inversify-http-open-api-site",
     "packages/docs/services/inversify-logger-site",
     "packages/docs/services/inversify-site",
@@ -65,6 +64,10 @@ export default {
         "src/{pages,theme}/**/*.{js,ts,jsx,tsx}",
         "{blog,docs,logger-docs,openapi-docs,validation-docs}/**/*.mdx",
       ],
+      ignoreDependencies: ["@docusaurus/faster"],
+    },
+    "packages/docs/services/inversify-http-site": {
+      entry: ["src/{pages,theme}/**/*.{js,ts,jsx,tsx}", "{blog,docs}/**/*.mdx"],
       ignoreDependencies: ["@docusaurus/faster"],
     },
     "packages/docs/tools/*": defaultWorkspaceProjectConfig,
