@@ -95,48 +95,6 @@
       ],
       "outputs": ["build/**"]
     },
-    "@inversifyjs/inversify-http-open-api-docs-site#build": {
-      "dependsOn": ["^build"],
-      "inputs": [
-        "blog/**",
-        "docs/**",
-        "src/**/*.{css,cts,mts,ts,tsx}",
-        "static/**",
-        "docusaurus.config.ts",
-        "sidebars.ts",
-        "versioned_docs/**",
-        "versioned_sidebars/**"
-      ],
-      "outputs": ["build/**"]
-    },
-    "@inversifyjs/inversify-logger-docs-site#build": {
-      "dependsOn": ["^build"],
-      "inputs": [
-        "blog/**",
-        "docs/**",
-        "src/**/*.{css,cts,mts,ts,tsx}",
-        "static/**",
-        "docusaurus.config.ts",
-        "sidebars.ts",
-        "versioned_docs/**",
-        "versioned_sidebars/**"
-      ],
-      "outputs": ["build/**"]
-    },
-    "@inversifyjs/inversify-validation-docs-site#build": {
-      "dependsOn": ["^build"],
-      "inputs": [
-        "blog/**",
-        "docs/**",
-        "src/**/*.{css,cts,mts,ts,tsx}",
-        "static/**",
-        "docusaurus.config.ts",
-        "sidebars.ts",
-        "versioned_docs/**",
-        "versioned_sidebars/**"
-      ],
-      "outputs": ["build/**"]
-    },
     "format": {
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["src/**/*.{cts,mts,ts}"]

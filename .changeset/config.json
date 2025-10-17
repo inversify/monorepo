@@ -35,9 +35,6 @@
     "@inversifyjs/http-openapi-example",
     "@inversifyjs/framework-docs-site",
     "@inversifyjs/inversify-http-docs-site",
-    "@inversifyjs/inversify-http-open-api-docs-site",
-    "@inversifyjs/inversify-logger-docs-site",
-    "@inversifyjs/inversify-validation-docs-site",
     "@inversifyjs/logger-code-examples",
     "@inversifyjs/validation-code-examples"
   ],
