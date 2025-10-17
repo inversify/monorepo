@@ -79,15 +79,6 @@ const config: Config = {
         {
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/introduction/getting-started',
-            },
-          ],
-          title: 'Docs',
-        },
-        {
-          items: [
-            {
               href: 'https://discord.gg/jXcMagAPnm',
               label: 'Discord',
             },
@@ -112,12 +103,6 @@ const config: Config = {
     },
     navbar: {
       items: [
-        {
-          label: 'Tutorial',
-          position: 'left',
-          sidebarId: 'tutorialSidebar',
-          type: 'docSidebar',
-        },
         { label: 'Blog', position: 'left', to: '/blog' },
         {
           position: 'right',
