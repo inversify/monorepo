@@ -16,7 +16,7 @@
   "devDependencies": {
     "@inversifyjs/open-api-types": "workspace:*",
     "@types/express": "^5.0.3",
-    "@types/node": "24.9.0",
+    "@types/node": "24.9.1",
     "eslint": "9.38.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
