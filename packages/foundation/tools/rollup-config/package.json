@@ -7,7 +7,7 @@
   "dependencies": {
     "@rollup/plugin-multi-entry": "7.1.0",
     "@rollup/plugin-terser": "0.4.4",
-    "@rollup/plugin-typescript": "12.2.0",
+    "@rollup/plugin-typescript": "12.3.0",
     "rollup-plugin-dts": "6.2.3",
     "rollup": "4.52.5"
   },
