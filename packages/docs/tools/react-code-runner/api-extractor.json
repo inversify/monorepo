@@ -1,0 +1,43 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+  "apiReport": {
+    "enabled": false
+  },
+  "bundledPackages": [
+    "@inversifyjs/common",
+    "@inversifyjs/container",
+    "@inversifyjs/core",
+    "inversify"
+  ],
+  "compiler": {
+    "tsconfigFilePath": "./tsconfig.esm.json"
+  },
+  "docModel": {
+    "enabled": false
+  },
+  "dtsRollup": {
+    "enabled": true,
+    "untrimmedFilePath": "./generated/types.d.ts.txt"
+  },
+  "mainEntryPointFilePath": "./lib/esm/inversifyBundle.d.ts",
+  "messages": {
+    "compilerMessageReporting": {
+      "default": {
+        "logLevel": "warning"
+      }
+    },
+    "extractorMessageReporting": {
+      "default": {
+        "logLevel": "warning"
+      }
+    },
+    "tsdocMessageReporting": {
+      "default": {
+        "logLevel": "warning"
+      }
+    }
+  },
+  "tsdocMetadata": {
+    "enabled": false
+  }
+}

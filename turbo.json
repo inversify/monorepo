@@ -11,6 +11,11 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/react-code-runner#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**/*.{cts,mts,ts}"],
+      "outputs": ["generated/**", "lib/**"]
+    },
     "@inversifyjs/code-examples#build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{cts,mts,ts}"],

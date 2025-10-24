@@ -1,0 +1,74 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJS bundles package",
+  "devDependencies": {
+    "@babel/types": "7.28.4",
+    "@eslint/config-helpers": "0.4.1",
+    "@eslint/js": "9.38.0",
+    "@inversifyjs/common": "1.5.2",
+    "@inversifyjs/container": "1.14.0",
+    "@inversifyjs/core": "9.1.0",
+    "@microsoft/api-extractor": "7.53.1",
+    "@rollup/plugin-node-resolve": "16.0.3",
+    "@rollup/plugin-terser": "0.4.4",
+    "@rollup/plugin-typescript": "12.1.4",
+    "@types/babel__core": "7.20.5",
+    "@types/babel__standalone": "7.1.9",
+    "@types/react": "19.2.2",
+    "@vitejs/plugin-react": "5.0.4",
+    "eslint": "9.38.0",
+    "eslint-plugin-prettier": "5.5.4",
+    "eslint-plugin-simple-import-sort": "12.1.1",
+    "glob": "11.0.3",
+    "inversify": "7.10.3",
+    "prettier": "3.6.2",
+    "rimraf": "6.0.1",
+    "rollup": "4.52.5",
+    "ts-loader": "9.5.4",
+    "tslib": "2.8.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.46.2",
+    "vite": "7.1.12",
+    "vite-plugin-dts": "4.5.4",
+    "vite-plugin-lib-inject-css": "2.2.2"
+  },
+  "peerDependencies": {
+    "@babel/standalone": "^7.28.4",
+    "@swc/wasm-web": "^1.13.20",
+    "monaco-editor": "~0.54.0",
+    "react": "19.2.0"
+  },
+  "homepage": "https://inversify.io",
+  "devEngines": {
+    "node": "^24.10.0",
+    "pnpm": "^10.13.1"
+  },
+  "license": "MIT",
+  "exports": {
+    "./InversifyCodeEditor": "./lib/esm/components/InversifyCodeEditor/index.js",
+    "./inversifyBundle.js": "./lib/esm/inversifyBundle.js",
+    "./generated/types.d.ts.txt": "./generated/types.d.ts.txt"
+  },
+  "name": "@inversifyjs/react-code-runner",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "build": "pnpm run build:esm",
+    "build:esm": "rollup -c ./bundle.rollup.config.mjs && pnpm run bundle:types:esm && vite build",
+    "build:clean": "rimraf generated lib",
+    "bundle:types:esm": "pnpm exec api-extractor run --local --verbose",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src",
+    "prebuild": "pnpm run build:clean"
+  },
+  "type": "module"
+}

@@ -1,0 +1,14 @@
+/.turbo
+
+**/*.spec.js
+**/*.spec.js.map
+**/*.ts
+lib/**
+
+.lintstagedrc.json
+eslint.config.mjs
+prettier.config.mjs
+rollup.config.mjs
+tsconfig.esm.json
+tsconfig.esm.tsbuildinfo
+tsconfig.json
