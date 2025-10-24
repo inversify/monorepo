@@ -1,0 +1,25 @@
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinnerDot {
+  animation: spin 1s linear infinite;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  height: 40px;
+  width: 40px;
+}
+
+.spinnerOverlay {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  bottom: 0;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+}
