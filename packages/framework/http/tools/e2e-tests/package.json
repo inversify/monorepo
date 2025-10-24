@@ -19,8 +19,8 @@
     "inversify": "7.10.3"
   },
   "devDependencies": {
-    "@types/express": "^5.0.3",
-    "@types/express4": "npm:@types/express@4.17.23",
+    "@types/express": "^5.0.4",
+    "@types/express4": "npm:@types/express@4.17.24",
     "eslint": "9.38.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
