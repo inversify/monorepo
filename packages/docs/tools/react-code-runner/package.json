@@ -63,7 +63,7 @@
   },
   "scripts": {
     "build": "pnpm run build:esm",
-    "build:esm": "rollup -c ./rollup.bundle.config.mjs && pnpm run bundle:types:esm && vite build",
+    "build:esm": "rollup -c ./bundle.rollup.config.mjs && pnpm run bundle:types:esm && vite build",
     "build:clean": "rimraf generated lib",
     "bundle:types:esm": "pnpm exec api-extractor run --local --verbose",
     "format": "prettier --write ./src",

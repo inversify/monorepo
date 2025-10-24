@@ -98,6 +98,15 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/docs/tools/react-code-runner": {
+      ...defaultWorkspaceProjectConfig,
+      ignoreDependencies: [
+        ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        "@inversifyjs/common",
+        "@inversifyjs/container",
+        "@inversifyjs/core",
+      ],
+    },
     "packages/foundation/libraries/*": defaultWorkspaceProjectConfig,
     "packages/foundation/tools/*": defaultWorkspaceProjectConfig,
     "packages/foundation/tools/prettier-config": {
