@@ -1,5 +1,5 @@
 import { Guard } from '@inversifyjs/http-core';
-import { HonoRequest } from 'hono';
+import { type HonoRequest } from 'hono';
 
 // Begin-example
 export class HonoAllowGuard implements Guard<HonoRequest> {

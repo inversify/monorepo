@@ -1,5 +1,5 @@
 import { Interceptor } from '@inversifyjs/http-core';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { type FastifyReply, type FastifyRequest } from 'fastify';
 
 // Begin-example
 const METRICS: Record<string, number> = {};

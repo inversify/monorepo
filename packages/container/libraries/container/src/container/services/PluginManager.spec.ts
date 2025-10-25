@@ -108,6 +108,7 @@ describe(PluginManager, () => {
     });
 
     describe('having a plugin newable type', () => {
+      let pluginClassMock: Newable<Mocked<Plugin<Container>>>;
       let pluginMock: Mocked<Plugin<Container>>;
 
       let pluginType: Newable<Plugin<Container>, [Container, PluginContext]>;
@@ -117,8 +118,14 @@ describe(PluginManager, () => {
           [isPlugin]: true,
           load: vitest.fn(),
         } as Partial<Mocked<Plugin<Container>>> as Mocked<Plugin<Container>>;
+        pluginClassMock = class implements Partial<Mocked<Plugin<Container>>> {
+          public [isPlugin]: true = true as const;
+          public load: Mocked<Plugin<Container>>['load'] = pluginMock.load;
+        } as Newable<Mocked<Plugin<Container>>>;
 
-        pluginType = vitest.fn().mockReturnValueOnce(pluginMock);
+        pluginType = vitest
+          .fn<Newable<Mocked<Plugin<Container>>>>()
+          .mockImplementation(pluginClassMock);
       });
 
       describe('when called', () => {

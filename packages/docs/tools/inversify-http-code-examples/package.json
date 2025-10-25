@@ -18,7 +18,7 @@
     "@types/express": "5.0.4",
     "@types/express4": "npm:@types/express@4.17.24",
     "@types/node": "24.9.1",
-    "@vitest/coverage-v8": "3.2.4",
+    "@vitest/coverage-v8": "4.0.3",
     "better-auth": "1.3.31",
     "better-sqlite3": "12.4.1",
     "eslint": "9.38.0",
@@ -32,7 +32,7 @@
     "rimraf": "6.0.1",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "3.2.4"
+    "vitest": "4.0.3"
   },
   "homepage": "https://inversify.io",
   "devEngines": {

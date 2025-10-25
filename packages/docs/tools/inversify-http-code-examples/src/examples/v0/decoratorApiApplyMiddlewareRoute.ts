@@ -1,6 +1,6 @@
 import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
 import { HonoMiddleware } from '@inversifyjs/http-hono';
-import { Context, HonoRequest, Next } from 'hono';
+import { type Context, type HonoRequest, type Next } from 'hono';
 
 export class MyMiddleware implements HonoMiddleware {
   public async execute(

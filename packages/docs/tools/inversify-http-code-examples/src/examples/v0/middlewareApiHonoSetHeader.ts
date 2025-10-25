@@ -1,5 +1,5 @@
 import { HonoMiddleware } from '@inversifyjs/http-hono';
-import { Context, HonoRequest, Next } from 'hono';
+import { type Context, type HonoRequest, Next } from 'hono';
 
 // Begin-example
 export class HonoCustomHeaderMiddleware implements HonoMiddleware {
