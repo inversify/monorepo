@@ -33,7 +33,13 @@ describe(WeakList, () => {
             setImmediate(resolve),
           );
 
-          globalThis.gc?.();
+          if (globalThis.gc === undefined) {
+            throw new Error(
+              'Garbage collector is not exposed. Run the tests with the --expose-gc flag.',
+            );
+          }
+
+          globalThis.gc();
 
           result = Array.from(weakList);
         });

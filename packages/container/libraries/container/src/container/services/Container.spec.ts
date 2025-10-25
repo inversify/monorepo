@@ -6,6 +6,7 @@ import {
   it,
   Mock,
   Mocked,
+  MockInstance,
   vitest,
 } from 'vitest';
 
@@ -56,19 +57,51 @@ import { ServiceReferenceManager } from './ServiceReferenceManager';
 import { ServiceResolutionManager } from './ServiceResolutionManager';
 import { SnapshotManager } from './SnapshotManager';
 
+interface Constructable {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  new (...args: any[]): any;
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Procedure = (...args: any[]) => any;
+
+// Workaround for
+function mocked<T extends Procedure | Constructable>(
+  value: T,
+): MockInstance<T> {
+  return value as unknown as MockInstance<T>;
+}
+
 describe(Container, () => {
   let activationServiceMock: Mocked<ActivationsService>;
   let bindingManagerMock: Mocked<BindingManager>;
+  let bindingManagerClassMock: Newable<Mocked<BindingManager>>;
   let bindingServiceMock: Mocked<BindingService>;
+  let containerModuleManagerClassMock: Newable<Mocked<ContainerModuleManager>>;
   let containerModuleManagerMock: Mocked<ContainerModuleManager>;
+  let deactivationParamsManagerClassMock: Newable<
+    Mocked<DeactivationParamsManager>
+  >;
   let deactivationParamsManagerMock: Mocked<DeactivationParamsManager>;
   let deactivationServiceMock: Mocked<DeactivationsService>;
+  let planParamsOperationsManagerClassMock: Newable<
+    Mocked<PlanParamsOperationsManager>
+  >;
   let planParamsOperationsManagerMock: Mocked<PlanParamsOperationsManager>;
+  let planResultCacheManagerClassMock: Newable<Mocked<PlanResultCacheManager>>;
   let planResultCacheManagerMock: Mocked<PlanResultCacheManager>;
+  let planResultCacheServiceClassMock: Newable<Mocked<PlanResultCacheService>>;
   let planResultCacheServiceMock: Mocked<PlanResultCacheService>;
+  let pluginManagerClassMock: Newable<Mocked<PluginManager>>;
   let pluginManagerMock: Mocked<PluginManager>;
+  let serviceReferenceManagerClassMock: Newable<
+    Mocked<ServiceReferenceManager>
+  >;
   let serviceReferenceManagerMock: Mocked<ServiceReferenceManager>;
+  let serviceResolutionManagerClassMock: Newable<
+    Mocked<ServiceResolutionManager>
+  >;
   let serviceResolutionManagerMock: Mocked<ServiceResolutionManager>;
+  let snapshotManagerClassMock: Newable<Mocked<SnapshotManager>>;
   let snapshotManagerMock: Mocked<SnapshotManager>;
 
   beforeAll(() => {
@@ -89,6 +122,25 @@ describe(Container, () => {
       unbindAll: vitest.fn(),
       unbindSync: vitest.fn(),
     } as Partial<Mocked<BindingManager>> as Mocked<BindingManager>;
+    bindingManagerClassMock = class implements Partial<Mocked<BindingManager>> {
+      public bind: Mocked<BindingManager>['bind'] = bindingManagerMock.bind;
+      public isBound: Mocked<BindingManager>['isBound'] =
+        bindingManagerMock.isBound;
+      public isCurrentBound: Mocked<BindingManager>['isCurrentBound'] =
+        bindingManagerMock.isCurrentBound;
+      public rebind: Mocked<BindingManager>['rebind'] =
+        bindingManagerMock.rebind;
+      public rebindSync: Mocked<BindingManager>['rebindSync'] =
+        bindingManagerMock.rebindSync;
+      public unbind: Mocked<BindingManager>['unbind'] =
+        bindingManagerMock.unbind;
+      public unbindAll: Mocked<BindingManager>['unbindAll'] =
+        bindingManagerMock.unbindAll;
+      public unbindSync: Mocked<BindingManager>['unbindSync'] =
+        bindingManagerMock.unbindSync;
+    } as Newable<Partial<Mocked<BindingManager>>> as Newable<
+      Mocked<BindingManager>
+    >;
     bindingServiceMock = {
       clone: vitest.fn().mockReturnThis(),
       get: vitest.fn(),
@@ -102,11 +154,33 @@ describe(Container, () => {
     } as Partial<
       Mocked<ContainerModuleManager>
     > as Mocked<ContainerModuleManager>;
+    containerModuleManagerClassMock = class
+      implements Partial<Mocked<ContainerModuleManager>>
+    {
+      public load: Mocked<ContainerModuleManager>['load'] =
+        containerModuleManagerMock.load;
+      public loadSync: Mocked<ContainerModuleManager>['loadSync'] =
+        containerModuleManagerMock.loadSync;
+      public unload: Mocked<ContainerModuleManager>['unload'] =
+        containerModuleManagerMock.unload;
+      public unloadSync: Mocked<ContainerModuleManager>['unloadSync'] =
+        containerModuleManagerMock.unloadSync;
+    } as Newable<Partial<Mocked<ContainerModuleManager>>> as Newable<
+      Mocked<ContainerModuleManager>
+    >;
     deactivationParamsManagerMock = {
       deactivationParams: Symbol() as unknown as DeactivationParams,
     } as Partial<
       Mocked<DeactivationParamsManager>
     > as Mocked<DeactivationParamsManager>;
+    deactivationParamsManagerClassMock = class
+      implements Partial<Mocked<DeactivationParamsManager>>
+    {
+      public deactivationParams: Mocked<DeactivationParamsManager>['deactivationParams'] =
+        deactivationParamsManagerMock.deactivationParams;
+    } as Newable<Partial<Mocked<DeactivationParamsManager>>> as Newable<
+      Mocked<DeactivationParamsManager>
+    >;
     deactivationServiceMock = {
       add: vitest.fn(),
       clone: vitest.fn().mockReturnThis(),
@@ -126,11 +200,27 @@ describe(Container, () => {
     } as Partial<
       Mocked<PlanParamsOperationsManager>
     > as Mocked<PlanParamsOperationsManager>;
+    planParamsOperationsManagerClassMock = class
+      implements Partial<Mocked<PlanParamsOperationsManager>>
+    {
+      public planParamsOperations: Mocked<PlanParamsOperationsManager>['planParamsOperations'] =
+        planParamsOperationsManagerMock.planParamsOperations;
+    } as Newable<Partial<Mocked<PlanParamsOperationsManager>>> as Newable<
+      Mocked<PlanParamsOperationsManager>
+    >;
     planResultCacheManagerMock = {
       invalidateService: vitest.fn(),
     } as Partial<
       Mocked<PlanResultCacheManager>
     > as Mocked<PlanResultCacheManager>;
+    planResultCacheManagerClassMock = class
+      implements Partial<Mocked<PlanResultCacheManager>>
+    {
+      public invalidateService: Mocked<PlanResultCacheManager>['invalidateService'] =
+        planResultCacheManagerMock.invalidateService;
+    } as Newable<Partial<Mocked<PlanResultCacheManager>>> as Newable<
+      Mocked<PlanResultCacheManager>
+    >;
     planResultCacheServiceMock = {
       get: vitest.fn(),
       set: vitest.fn(),
@@ -138,9 +228,27 @@ describe(Container, () => {
     } as Partial<
       Mocked<PlanResultCacheService>
     > as Mocked<PlanResultCacheService>;
+    planResultCacheServiceClassMock = class
+      implements Partial<Mocked<PlanResultCacheService>>
+    {
+      public get: Mocked<PlanResultCacheService>['get'] =
+        planResultCacheServiceMock.get;
+      public set: Mocked<PlanResultCacheService>['set'] =
+        planResultCacheServiceMock.set;
+      public subscribe: Mocked<PlanResultCacheService>['subscribe'] =
+        planResultCacheServiceMock.subscribe;
+    } as Newable<Partial<Mocked<PlanResultCacheService>>> as Newable<
+      Mocked<PlanResultCacheService>
+    >;
     pluginManagerMock = {
       register: vitest.fn(),
     } as Partial<Mocked<PluginManager>> as Mocked<PluginManager>;
+    pluginManagerClassMock = class implements Partial<Mocked<PluginManager>> {
+      public register: Mocked<PluginManager>['register'] =
+        pluginManagerMock.register;
+    } as Newable<Partial<Mocked<PluginManager>>> as Newable<
+      Mocked<PluginManager>
+    >;
     serviceReferenceManagerMock = {
       activationService: activationServiceMock,
       bindingService: bindingServiceMock,
@@ -150,6 +258,22 @@ describe(Container, () => {
     } as Partial<
       Mocked<ServiceReferenceManager>
     > as Mocked<ServiceReferenceManager>;
+    serviceReferenceManagerClassMock = class
+      implements Partial<Mocked<ServiceReferenceManager>>
+    {
+      public activationService: Mocked<ServiceReferenceManager>['activationService'] =
+        serviceReferenceManagerMock.activationService;
+      public bindingService: Mocked<ServiceReferenceManager>['bindingService'] =
+        serviceReferenceManagerMock.bindingService;
+      public deactivationService: Mocked<ServiceReferenceManager>['deactivationService'] =
+        serviceReferenceManagerMock.deactivationService;
+      public onReset: Mocked<ServiceReferenceManager>['onReset'] =
+        serviceReferenceManagerMock.onReset;
+      public planResultCacheService: Mocked<ServiceReferenceManager>['planResultCacheService'] =
+        serviceReferenceManagerMock.planResultCacheService;
+    } as Newable<Partial<Mocked<ServiceReferenceManager>>> as Newable<
+      Mocked<ServiceReferenceManager>
+    >;
     serviceResolutionManagerMock = {
       get: vitest.fn(),
       getAll: vitest.fn(),
@@ -158,56 +282,78 @@ describe(Container, () => {
     } as Partial<
       Mocked<ServiceResolutionManager>
     > as Mocked<ServiceResolutionManager>;
+    serviceResolutionManagerClassMock = class
+      implements Partial<Mocked<ServiceResolutionManager>>
+    {
+      public get: Mocked<ServiceResolutionManager>['get'] =
+        serviceResolutionManagerMock.get;
+      public getAll: Mocked<ServiceResolutionManager>['getAll'] =
+        serviceResolutionManagerMock.getAll;
+      public getAllAsync: Mocked<ServiceResolutionManager>['getAllAsync'] =
+        serviceResolutionManagerMock.getAllAsync;
+      public getAsync: Mocked<ServiceResolutionManager>['getAsync'] =
+        serviceResolutionManagerMock.getAsync;
+    } as Newable<Partial<Mocked<ServiceResolutionManager>>> as Newable<
+      Mocked<ServiceResolutionManager>
+    >;
     snapshotManagerMock = {
       restore: vitest.fn(),
       snapshot: vitest.fn(),
     } as Partial<Mocked<SnapshotManager>> as Mocked<SnapshotManager>;
+    snapshotManagerClassMock = class
+      implements Partial<Mocked<SnapshotManager>>
+    {
+      public restore: Mocked<SnapshotManager>['restore'] =
+        snapshotManagerMock.restore;
+      public snapshot: Mocked<SnapshotManager>['snapshot'] =
+        snapshotManagerMock.snapshot;
+    } as Newable<Partial<Mocked<SnapshotManager>>> as Newable<
+      Mocked<SnapshotManager>
+    >;
 
     vitest
       .mocked(ActivationsService.build)
       .mockReturnValue(activationServiceMock);
 
-    vitest.mocked(BindingManager).mockReturnValue(bindingManagerMock);
+    mocked(BindingManager).mockImplementation(bindingManagerClassMock);
 
     vitest.mocked(BindingService.build).mockReturnValue(bindingServiceMock);
 
-    vitest
-      .mocked(ContainerModuleManager)
-      .mockReturnValue(containerModuleManagerMock);
+    mocked(ContainerModuleManager).mockImplementation(
+      containerModuleManagerClassMock,
+    );
 
-    vitest
-      .mocked(DeactivationParamsManager)
-      .mockReturnValue(deactivationParamsManagerMock);
+    mocked(DeactivationParamsManager).mockImplementation(
+      deactivationParamsManagerClassMock,
+    );
 
     vitest
       .mocked(DeactivationsService.build)
       .mockReturnValue(deactivationServiceMock);
 
-    vitest
-      .mocked(PlanParamsOperationsManager)
-      .mockReturnValue(planParamsOperationsManagerMock);
+    mocked(PlanParamsOperationsManager).mockImplementation(
+      planParamsOperationsManagerClassMock,
+    );
 
-    vitest
-      .mocked(PlanResultCacheManager)
-      .mockReturnValue(planResultCacheManagerMock);
+    mocked(PlanResultCacheManager).mockImplementation(
+      planResultCacheManagerClassMock,
+    );
 
-    vitest
-      .mocked(PlanResultCacheService)
-      .mockReturnValue(planResultCacheServiceMock);
+    mocked(PlanResultCacheService).mockImplementation(
+      planResultCacheServiceClassMock,
+    );
 
-    vitest.mocked(PluginManager).mockReturnValue(pluginManagerMock);
+    mocked(PluginManager).mockImplementation(pluginManagerClassMock);
 
-    vitest
-      .mocked(ServiceReferenceManager)
-      .mockReturnValue(serviceReferenceManagerMock);
+    mocked(ServiceReferenceManager).mockImplementation(
+      serviceReferenceManagerClassMock,
+    );
 
-    vitest
-      .mocked(ServiceResolutionManager)
-      .mockReturnValue(serviceResolutionManagerMock);
+    mocked(ServiceResolutionManager).mockImplementation(
+      serviceResolutionManagerClassMock,
+    );
 
-    vitest.mocked(SnapshotManager).mockImplementation((): SnapshotManager => {
-      return snapshotManagerMock;
-    });
+    mocked(SnapshotManager).mockImplementation(snapshotManagerClassMock);
   });
 
   describe('.constructor', () => {
@@ -276,7 +422,7 @@ describe(Container, () => {
         it('should call planResultCacheService.subscribe()', () => {
           expect(
             planResultCacheServiceMock.subscribe,
-          ).toHaveBeenCalledExactlyOnceWith(planResultCacheServiceMock);
+          ).toHaveBeenCalledExactlyOnceWith(expect.any(PlanResultCacheService));
         });
 
         it('should call ServiceReferenceManager()', () => {
@@ -286,14 +432,26 @@ describe(Container, () => {
             activationServiceMock,
             bindingServiceMock,
             deactivationServiceMock,
-            planResultCacheServiceMock,
+            expect.any(PlanResultCacheService),
           );
           expect(ServiceReferenceManager).toHaveBeenNthCalledWith(
             2,
             activationServiceMock,
             bindingServiceMock,
             deactivationServiceMock,
-            planResultCacheServiceMock,
+            expect.any(PlanResultCacheService),
+          );
+        });
+
+        it('should call PlanParamsOperationsManager()', () => {
+          expect(PlanParamsOperationsManager).toHaveBeenCalledTimes(2);
+          expect(PlanParamsOperationsManager).toHaveBeenNthCalledWith(
+            1,
+            expect.any(ServiceReferenceManager),
+          );
+          expect(PlanParamsOperationsManager).toHaveBeenNthCalledWith(
+            2,
+            expect.any(ServiceReferenceManager),
           );
         });
       });
@@ -354,7 +512,7 @@ describe(Container, () => {
             activationServiceMock,
             bindingServiceMock,
             deactivationServiceMock,
-            planResultCacheServiceMock,
+            expect.any(PlanResultCacheService),
           );
         });
       });
