@@ -1,5 +1,5 @@
 import { Interceptor } from '@inversifyjs/http-core';
-import { Context, HonoRequest } from 'hono';
+import { type Context, type HonoRequest } from 'hono';
 
 // Begin-example
 const METRICS: Record<string, number> = {};

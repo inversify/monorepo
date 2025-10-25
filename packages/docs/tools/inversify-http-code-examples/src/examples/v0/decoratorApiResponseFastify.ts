@@ -1,5 +1,5 @@
 import { Controller, Get, Response } from '@inversifyjs/http-core';
-import { FastifyReply } from 'fastify';
+import { type FastifyReply } from 'fastify';
 
 // Begin-example
 @Controller('/message')

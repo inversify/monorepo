@@ -1,5 +1,9 @@
 import { FastifyMiddleware } from '@inversifyjs/http-fastify';
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
+import {
+  type FastifyReply,
+  type FastifyRequest,
+  type HookHandlerDoneFunction,
+} from 'fastify';
 
 // Begin-example
 export class FastifyCustomHeaderMiddleware implements FastifyMiddleware {

@@ -1,5 +1,5 @@
 import { Guard } from '@inversifyjs/http-core';
-import { FastifyRequest } from 'fastify';
+import { type FastifyRequest } from 'fastify';
 
 // Begin-example
 export class FastifyAllowGuard implements Guard<FastifyRequest> {

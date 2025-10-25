@@ -5,7 +5,11 @@ import {
   Next,
   UseInterceptor,
 } from '@inversifyjs/http-core';
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
+import {
+  type FastifyReply,
+  type FastifyRequest,
+  type HookHandlerDoneFunction,
+} from 'fastify';
 
 export class FastifyNextInterceptor
   implements Interceptor<FastifyRequest, FastifyReply>
