@@ -1,14 +1,13 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/prototype-utils');
 
-import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { findInPrototypeChain } from '@inversifyjs/prototype-utils';
 
-import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
 import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata';
 
 describe(getControllerMethodUseNativeHandlerMetadata, () => {
-  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
+  describe('when called, and findInPrototypeChain() returns undefined', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodKeyFixture: string | symbol;
     let result: unknown;
@@ -16,6 +15,8 @@ describe(getControllerMethodUseNativeHandlerMetadata, () => {
     beforeAll(() => {
       controllerFixture = class Test {};
       controllerMethodKeyFixture = 'testMethod';
+
+      vitest.mocked(findInPrototypeChain).mockReturnValueOnce(undefined);
 
       result = getControllerMethodUseNativeHandlerMetadata(
         controllerFixture,
@@ -27,11 +28,10 @@ describe(getControllerMethodUseNativeHandlerMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+    it('should call findInPrototypeChain()', () => {
+      expect(findInPrototypeChain).toHaveBeenCalledExactlyOnceWith(
         controllerFixture,
-        controllerMethodUseNativeHandlerMetadataReflectKey,
-        controllerMethodKeyFixture,
+        expect.any(Function),
       );
     });
 
@@ -40,7 +40,7 @@ describe(getControllerMethodUseNativeHandlerMetadata, () => {
     });
   });
 
-  describe('when called, and getOwnReflectMetadata() returns a boolean', () => {
+  describe('when called, and findInPrototypeChain() returns a boolean', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodKeyFixture: string | symbol;
     let useNativeHandlerFixture: boolean;
@@ -49,10 +49,10 @@ describe(getControllerMethodUseNativeHandlerMetadata, () => {
     beforeAll(() => {
       controllerFixture = class Test {};
       controllerMethodKeyFixture = 'testMethod';
-      useNativeHandlerFixture = false;
+      useNativeHandlerFixture = true;
 
       vitest
-        .mocked(getOwnReflectMetadata)
+        .mocked(findInPrototypeChain)
         .mockReturnValueOnce(useNativeHandlerFixture);
 
       result = getControllerMethodUseNativeHandlerMetadata(
@@ -65,11 +65,10 @@ describe(getControllerMethodUseNativeHandlerMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+    it('should call findInPrototypeChain()', () => {
+      expect(findInPrototypeChain).toHaveBeenCalledExactlyOnceWith(
         controllerFixture,
-        controllerMethodUseNativeHandlerMetadataReflectKey,
-        controllerMethodKeyFixture,
+        expect.any(Function),
       );
     });
 

@@ -1,23 +1,27 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock('@inversifyjs/prototype-utils');
 
-import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { findInPrototypeChain } from '@inversifyjs/prototype-utils';
 
-import { controllerMethodStatusCodeMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodStatusCodeMetadataReflectKey';
+import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata';
 
 describe(getControllerMethodStatusCodeMetadata, () => {
-  describe('when called', () => {
+  describe('when called, and findInPrototypeChain() returns a status code', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodKeyFixture: string | symbol;
-    let statusCodeMetadataFixture: undefined;
+    let statusCodeMetadataFixture: HttpStatusCode;
     let result: unknown;
 
     beforeAll(() => {
       controllerFixture = class Test {};
       controllerMethodKeyFixture = 'testMethod';
-      statusCodeMetadataFixture = undefined;
+      statusCodeMetadataFixture = HttpStatusCode.CREATED;
+
+      vitest
+        .mocked(findInPrototypeChain)
+        .mockReturnValueOnce(statusCodeMetadataFixture);
 
       result = getControllerMethodStatusCodeMetadata(
         controllerFixture,
@@ -29,15 +33,14 @@ describe(getControllerMethodStatusCodeMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+    it('should call findInPrototypeChain()', () => {
+      expect(findInPrototypeChain).toHaveBeenCalledExactlyOnceWith(
         controllerFixture,
-        controllerMethodStatusCodeMetadataReflectKey,
-        controllerMethodKeyFixture,
+        expect.any(Function),
       );
     });
 
-    it('should return the controller metadata', () => {
+    it('should return the status code', () => {
       expect(result).toBe(statusCodeMetadataFixture);
     });
   });

@@ -1,4 +1,6 @@
+import { findInPrototypeChain } from '@inversifyjs/prototype-utils';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import type { Newable } from 'inversify';
 
 import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
 
@@ -7,10 +9,14 @@ export function getControllerMethodUseNativeHandlerMetadata(
   methodKey: string | symbol,
 ): boolean {
   return (
-    getOwnReflectMetadata(
-      controllerConstructor,
-      controllerMethodUseNativeHandlerMetadataReflectKey,
-      methodKey,
+    findInPrototypeChain<boolean>(
+      controllerConstructor as Newable,
+      (type: Newable): boolean | undefined =>
+        getOwnReflectMetadata(
+          type,
+          controllerMethodUseNativeHandlerMetadataReflectKey,
+          methodKey,
+        ),
     ) ?? false
   );
 }
