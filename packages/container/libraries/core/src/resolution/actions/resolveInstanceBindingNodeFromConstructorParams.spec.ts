@@ -90,10 +90,9 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
 
       vitest
         .mocked(nodeMock.binding.implementationType)
-        .mockImplementationOnce(function (
-          this: Record<string | symbol, unknown>,
-        ) {
-          this[expectedResultProperty] = expectedResultValue;
+        .mockImplementationOnce(function (this: unknown) {
+          (this as Record<string | symbol, unknown>)[expectedResultProperty] =
+            expectedResultValue;
         });
 
       setInstancePropertiesMock.mockReturnValueOnce(undefined);
@@ -152,10 +151,9 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
 
       vitest
         .mocked(nodeMock.binding.implementationType)
-        .mockImplementationOnce(function (
-          this: Record<string | symbol, unknown>,
-        ) {
-          this[expectedResultProperty] = expectedResultValue;
+        .mockImplementationOnce(function (this: unknown) {
+          (this as Record<string | symbol, unknown>)[expectedResultProperty] =
+            expectedResultValue;
         });
 
       setInstancePropertiesMock.mockResolvedValueOnce(undefined);
