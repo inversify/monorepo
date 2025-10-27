@@ -77,7 +77,13 @@
 .theme-announcement-bar {
   --site-announcement-bar-stripe-color1: var(--ifm-color-primary-lighter);
   --site-announcement-bar-stripe-color2: var(--ifm-color-primary-lightest);
-  background: repeating-linear-gradient(45deg, var(--site-announcement-bar-stripe-color1), var(--site-announcement-bar-stripe-color1) 20px, var(--site-announcement-bar-stripe-color2) 10px, var(--site-announcement-bar-stripe-color2) 40px);
+  background: repeating-linear-gradient(
+    45deg,
+    var(--site-announcement-bar-stripe-color1),
+    var(--site-announcement-bar-stripe-color1) 20px,
+    var(--site-announcement-bar-stripe-color2) 10px,
+    var(--site-announcement-bar-stripe-color2) 40px
+  );
   font-size: 20px;
   font-weight: bold;
 }

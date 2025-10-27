@@ -3,6 +3,7 @@
   "extends": "@inversifyjs/foundation-typescript-config/tsconfig.base.esm.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "lib": ["DOM", "ES2022"],
     "noEmit": true,
     "noPropertyAccessFromIndexSignature": false,
     "jsx": "preserve",

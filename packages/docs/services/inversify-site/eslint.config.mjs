@@ -1,12 +1,13 @@
 // @ts-check
 
+import { defineConfig, globalIgnores } from '@eslint/config-helpers';
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintPrettierConfig from 'eslint-plugin-prettier/recommended';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 /**
- * @returns {import('typescript-eslint').ConfigWithExtends}
+ * @returns {import('@eslint/config-helpers').ConfigWithExtends}
  */
 function buildBaseConfig() {
   return {
@@ -170,13 +171,14 @@ function buildBaseConfig() {
 
 const baseRules = buildBaseConfig();
 
-export default tseslint.config(
+export default defineConfig(
+  globalIgnores(['vite.config.ts']),
   {
     ...baseRules,
     files: ['**/*.{ts,tsx}'],
     ignores: ['**/*.spec.{ts,tsx}'],
   },
-  /** @type {import('typescript-eslint').ConfigWithExtends} */ (
+  /** @type {import('@eslint/config-helpers').ConfigWithExtends} */ (
     eslintPrettierConfig
   ),
 );
