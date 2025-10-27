@@ -1,5 +1,11 @@
 # @inversifyjs/http-core
 
+## 3.3.0
+
+### Minor Changes
+
+- Updated `HttpAdapter` to build controller routes on top of parent controller class metadata, allowing route extension
+
 ## 3.2.0
 
 ### Patch Changes
