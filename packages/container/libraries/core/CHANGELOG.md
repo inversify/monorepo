@@ -1,5 +1,12 @@
 # @inversifyjs/core
 
+## 9.1.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/prototype-utils@0.1.3
+
 ## 9.1.0
 
 ### Minor Changes

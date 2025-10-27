@@ -1,5 +1,13 @@
 # @inversifyjs/http-fastify
 
+## 3.3.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@3.3.0
+  - inversify@7.10.4
+
 ## 3.2.0
 
 ### Patch Changes
