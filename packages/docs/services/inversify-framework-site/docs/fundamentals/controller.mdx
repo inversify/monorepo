@@ -2,7 +2,9 @@
 sidebar_position: 1
 title: Controller
 ---
+
 import controllerApiBasicsSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiBasics.ts.txt';
+import controllerApiInheritanceSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiInheritance.ts.txt';
 import controllerApiRegisterSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiRegister.ts.txt';
 import controllerNonNativeTypesSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerNonNativeTypes.ts.txt';
 import decoratorApiResponseExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress4.ts.txt';
@@ -18,7 +20,7 @@ import TabItem from '@theme/TabItem';
 Controllers are classes annotated with the `@Controller()` decorator. They group request handlers for a feature area. A controller defines a base path and one or more route handlers using [method decorators](../../api/decorators/#http-methods).
 
 :::info[Controller and injectable decorators]
-  You don't need to add `@injectable()`. The `@Controller()` decorator already applies it for you.
+You don't need to add `@injectable()`. The `@Controller()` decorator already applies it for you.
 :::
 
 ## Basic example
@@ -72,4 +74,23 @@ Reach for native types when you need precise control over the HTTP exchange—st
 
 :::warning[Important: Choose one approach per route]
 Avoid mixing modes within the same route. If you inject `@Response()` or `@Next()`, your handler should manage the response entirely and typically return `void` (or the framework `Response` for Hono). Conversely, when you return values for Inversify to send, don't also write to the native response object.
+:::
+
+## Inheritance
+
+Controllers support inheritance, allowing you to define base controllers with common route handlers that can be reused and optionally overridden in derived controllers. This promotes code reuse and consistency across similar endpoints.
+
+<CodeBlock language="ts">{controllerApiInheritanceSource}</CodeBlock>
+
+### How inheritance works
+
+When a controller extends a base class:
+
+- **All route handlers from the base controller are inherited** - The derived controller automatically includes all HTTP method decorators (`@Get()`, `@Post()`, etc.) from its parent classes
+- **Routes can be overridden** - If a derived controller defines a route with the same HTTP method and path as its base class, the derived implementation takes precedence
+- **Base path applies to all routes** - The `@Controller()` path specified on the derived class applies to both inherited and overridden routes
+- **Metadata walks up the prototype chain** - The framework traverses the entire inheritance hierarchy to collect all route metadata
+
+:::info[Route collision resolution]
+When a derived controller defines a route with the same HTTP method and path as its parent, the derived controller's implementation takes precedence. This allows you to selectively customize behavior while keeping the base implementation for other routes.
 :::

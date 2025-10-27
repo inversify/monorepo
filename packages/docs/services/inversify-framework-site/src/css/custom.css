@@ -84,30 +84,50 @@
   display: none;
 }
 
-[data-path*='/logger/'] .navbar__item.navbar__link.navbar-version-dropdown-logger:not(#\#):not(#\#),
-[data-path*='/logger'] .navbar__item.navbar__link.navbar-version-dropdown-logger:not(#\#):not(#\#),
-[data-path*='/logger/'] .menu__link.navbar-version-dropdown-logger:not(#\#):not(#\#),
-[data-path*='/logger'] .menu__link.navbar-version-dropdown-logger:not(#\#):not(#\#) {
+[data-path*='/logger/']
+  .navbar__item.navbar__link.navbar-version-dropdown-logger:not(#\#):not(#\#),
+[data-path*='/logger']
+  .navbar__item.navbar__link.navbar-version-dropdown-logger:not(#\#):not(#\#),
+[data-path*='/logger/']
+  .menu__link.navbar-version-dropdown-logger:not(#\#):not(#\#),
+[data-path*='/logger']
+  .menu__link.navbar-version-dropdown-logger:not(#\#):not(#\#) {
   display: inline-block;
 }
 
-[data-path*='/docs/'] .navbar__item.navbar__link.navbar-version-dropdown-main:not(#\#):not(#\#),
-[data-path*='/docs'] .navbar__item.navbar__link.navbar-version-dropdown-main:not(#\#):not(#\#),
-[data-path*='/docs/'] .menu__link.navbar-version-dropdown-main:not(#\#):not(#\#),
-[data-path*='/docs'] .menu__link.navbar-version-dropdown-main:not(#\#):not(#\#) {
+[data-path*='/docs/']
+  .navbar__item.navbar__link.navbar-version-dropdown-main:not(#\#):not(#\#),
+[data-path*='/docs']
+  .navbar__item.navbar__link.navbar-version-dropdown-main:not(#\#):not(#\#),
+[data-path*='/docs/']
+  .menu__link.navbar-version-dropdown-main:not(#\#):not(#\#),
+[data-path*='/docs']
+  .menu__link.navbar-version-dropdown-main:not(#\#):not(#\#) {
   display: inline-block;
 }
 
-[data-path*='/openapi/'] .navbar__item.navbar__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
-[data-path*='/openapi'] .navbar__item.navbar__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
-[data-path*='/openapi/'] .menu__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
-[data-path*='/openapi'] .menu__link.navbar-version-dropdown-openapi:not(#\#):not(#\#) {
+[data-path*='/openapi/']
+  .navbar__item.navbar__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
+[data-path*='/openapi']
+  .navbar__item.navbar__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
+[data-path*='/openapi/']
+  .menu__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
+[data-path*='/openapi']
+  .menu__link.navbar-version-dropdown-openapi:not(#\#):not(#\#) {
   display: inline-block;
 }
 
-[data-path*='/validation/'] .navbar__item.navbar__link.navbar-version-dropdown-validation:not(#\#):not(#\#),
-[data-path*='/validation'] .navbar__item.navbar__link.navbar-version-dropdown-validation:not(#\#):not(#\#),
-[data-path*='/validation/'] .menu__link.navbar-version-dropdown-validation:not(#\#):not(#\#),
-[data-path*='/validation'] .menu__link.navbar-version-dropdown-validation:not(#\#):not(#\#) {
+[data-path*='/validation/']
+  .navbar__item.navbar__link.navbar-version-dropdown-validation:not(#\#):not(
+    #\#
+  ),
+[data-path*='/validation']
+  .navbar__item.navbar__link.navbar-version-dropdown-validation:not(#\#):not(
+    #\#
+  ),
+[data-path*='/validation/']
+  .menu__link.navbar-version-dropdown-validation:not(#\#):not(#\#),
+[data-path*='/validation']
+  .menu__link.navbar-version-dropdown-validation:not(#\#):not(#\#) {
   display: inline-block;
 }
