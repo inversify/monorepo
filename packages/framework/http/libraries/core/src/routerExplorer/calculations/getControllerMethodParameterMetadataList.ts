@@ -1,6 +1,6 @@
 import { getBaseType } from '@inversifyjs/prototype-utils';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import type { Newable } from 'inversify';
 
 import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey';
 import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
