@@ -2,14 +2,14 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 
-import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { getReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { getControllerMethodMetadataList } from './getControllerMethodMetadataList';
 
 describe(getControllerMethodMetadataList, () => {
-  describe('when called, and getOwnReflectMetadata() returns undefined', () => {
+  describe('when called, and getReflectMetadata() returns undefined', () => {
     let controllerFixture: NewableFunction;
     let result: unknown;
 
@@ -23,8 +23,8 @@ describe(getControllerMethodMetadataList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+    it('should call getReflectMetadata()', () => {
+      expect(getReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         controllerFixture,
         controllerMethodMetadataReflectKey,
       );
@@ -35,7 +35,7 @@ describe(getControllerMethodMetadataList, () => {
     });
   });
 
-  describe('when called, and getOwnReflectMetadata() returns ControllerMethodMetadata[]', () => {
+  describe('when called, and getReflectMetadata() returns ControllerMethodMetadata[]', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodMetadataFixtures: ControllerMethodMetadata[];
     let result: unknown;
@@ -47,7 +47,7 @@ describe(getControllerMethodMetadataList, () => {
       ];
 
       vitest
-        .mocked(getOwnReflectMetadata)
+        .mocked(getReflectMetadata)
         .mockReturnValueOnce(controllerMethodMetadataFixtures);
 
       result = getControllerMethodMetadataList(controllerFixture);
@@ -57,8 +57,8 @@ describe(getControllerMethodMetadataList, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call getOwnReflectMetadata()', () => {
-      expect(getOwnReflectMetadata).toHaveBeenCalledTimes(1);
+    it('should call getReflectMetadata()', () => {
+      expect(getReflectMetadata).toHaveBeenCalledTimes(1);
     });
 
     it('should return an array', () => {
