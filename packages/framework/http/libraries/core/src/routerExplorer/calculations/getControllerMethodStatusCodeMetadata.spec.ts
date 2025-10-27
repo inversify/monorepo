@@ -23,6 +23,10 @@ describe(getControllerMethodStatusCodeMetadata, () => {
       controllerMethodKeyFixture = 'testMethod';
       statusCodeMetadataFixture = undefined;
 
+      vitest
+        .mocked(getOwnReflectMetadata)
+        .mockReturnValueOnce(statusCodeMetadataFixture);
+
       vitest.mocked(getBaseType).mockReturnValueOnce(undefined);
 
       result = getControllerMethodStatusCodeMetadata(
