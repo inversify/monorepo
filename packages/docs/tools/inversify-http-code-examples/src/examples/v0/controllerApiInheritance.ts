@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Put } from '@inversifyjs/http-core';
+import { Controller, Get } from '@inversifyjs/http-core';
 
 export interface Resource {
   id: number;
