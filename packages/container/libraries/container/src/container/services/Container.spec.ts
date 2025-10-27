@@ -6,7 +6,6 @@ import {
   it,
   Mock,
   Mocked,
-  MockInstance,
   vitest,
 } from 'vitest';
 
@@ -56,20 +55,6 @@ import { PluginManager } from './PluginManager';
 import { ServiceReferenceManager } from './ServiceReferenceManager';
 import { ServiceResolutionManager } from './ServiceResolutionManager';
 import { SnapshotManager } from './SnapshotManager';
-
-interface Constructable {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new (...args: any[]): any;
-}
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Procedure = (...args: any[]) => any;
-
-// Workaround for
-function mocked<T extends Procedure | Constructable>(
-  value: T,
-): MockInstance<T> {
-  return value as unknown as MockInstance<T>;
-}
 
 describe(Container, () => {
   let activationServiceMock: Mocked<ActivationsService>;
@@ -315,45 +300,45 @@ describe(Container, () => {
       .mocked(ActivationsService.build)
       .mockReturnValue(activationServiceMock);
 
-    mocked(BindingManager).mockImplementation(bindingManagerClassMock);
+    vitest.mocked(BindingManager).mockImplementation(bindingManagerClassMock);
 
     vitest.mocked(BindingService.build).mockReturnValue(bindingServiceMock);
 
-    mocked(ContainerModuleManager).mockImplementation(
-      containerModuleManagerClassMock,
-    );
+    vitest
+      .mocked(ContainerModuleManager)
+      .mockImplementation(containerModuleManagerClassMock);
 
-    mocked(DeactivationParamsManager).mockImplementation(
-      deactivationParamsManagerClassMock,
-    );
+    vitest
+      .mocked(DeactivationParamsManager)
+      .mockImplementation(deactivationParamsManagerClassMock);
 
     vitest
       .mocked(DeactivationsService.build)
       .mockReturnValue(deactivationServiceMock);
 
-    mocked(PlanParamsOperationsManager).mockImplementation(
-      planParamsOperationsManagerClassMock,
-    );
+    vitest
+      .mocked(PlanParamsOperationsManager)
+      .mockImplementation(planParamsOperationsManagerClassMock);
 
-    mocked(PlanResultCacheManager).mockImplementation(
-      planResultCacheManagerClassMock,
-    );
+    vitest
+      .mocked(PlanResultCacheManager)
+      .mockImplementation(planResultCacheManagerClassMock);
 
-    mocked(PlanResultCacheService).mockImplementation(
-      planResultCacheServiceClassMock,
-    );
+    vitest
+      .mocked(PlanResultCacheService)
+      .mockImplementation(planResultCacheServiceClassMock);
 
-    mocked(PluginManager).mockImplementation(pluginManagerClassMock);
+    vitest.mocked(PluginManager).mockImplementation(pluginManagerClassMock);
 
-    mocked(ServiceReferenceManager).mockImplementation(
-      serviceReferenceManagerClassMock,
-    );
+    vitest
+      .mocked(ServiceReferenceManager)
+      .mockImplementation(serviceReferenceManagerClassMock);
 
-    mocked(ServiceResolutionManager).mockImplementation(
-      serviceResolutionManagerClassMock,
-    );
+    vitest
+      .mocked(ServiceResolutionManager)
+      .mockImplementation(serviceResolutionManagerClassMock);
 
-    mocked(SnapshotManager).mockImplementation(snapshotManagerClassMock);
+    vitest.mocked(SnapshotManager).mockImplementation(snapshotManagerClassMock);
   });
 
   describe('.constructor', () => {

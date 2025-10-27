@@ -17,7 +17,7 @@
     "@stryker-mutator/vitest-runner": "9.2.0",
     "@types/express": "5.0.4",
     "@types/node": "24.9.1",
-    "@vitest/coverage-v8": "4.0.3",
+    "@vitest/coverage-v8": "4.0.4",
     "eslint": "9.38.0",
     "inversify": "^7.10.3",
     "prettier": "3.6.2",
@@ -26,7 +26,7 @@
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "4.0.3"
+    "vitest": "4.0.4"
   },
   "devEngines": {
     "node": "^24.10.0",
