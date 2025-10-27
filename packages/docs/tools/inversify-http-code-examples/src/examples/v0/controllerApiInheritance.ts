@@ -1,4 +1,4 @@
-import { Controller, Get } from '@inversifyjs/http-core';
+import { Controller, Get, Params } from '@inversifyjs/http-core';
 
 export interface Resource {
   id: number;
@@ -16,8 +16,13 @@ abstract class BaseResourceController {
   }
 
   @Get('/:id')
-  public async getById(): Promise<Resource> {
-    return { id: 1, name: 'Resource 1' };
+  public async getById(
+    @Params({
+      name: 'id',
+    })
+    id: string,
+  ): Promise<Resource> {
+    return { id: parseInt(id), name: `Resource ${id}` };
   }
 }
 

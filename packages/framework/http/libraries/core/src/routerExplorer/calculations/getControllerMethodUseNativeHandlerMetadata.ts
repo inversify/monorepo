@@ -1,4 +1,6 @@
+import { getBaseType } from '@inversifyjs/prototype-utils';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { Newable } from 'inversify';
 
 import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
 
@@ -6,11 +8,21 @@ export function getControllerMethodUseNativeHandlerMetadata(
   controllerConstructor: NewableFunction,
   methodKey: string | symbol,
 ): boolean {
-  return (
-    getOwnReflectMetadata(
-      controllerConstructor,
+  let currentType: Newable | undefined = controllerConstructor as Newable;
+
+  while (currentType !== undefined) {
+    const useNativeHandler: boolean | undefined = getOwnReflectMetadata(
+      currentType,
       controllerMethodUseNativeHandlerMetadataReflectKey,
       methodKey,
-    ) ?? false
-  );
+    );
+
+    if (useNativeHandler !== undefined) {
+      return useNativeHandler;
+    }
+
+    currentType = getBaseType(currentType);
+  }
+
+  return false;
 }
