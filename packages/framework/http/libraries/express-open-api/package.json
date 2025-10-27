@@ -11,7 +11,7 @@
   "devDependencies": {
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/open-api-types": "workspace:*",
-    "@types/express": "^5.0.4",
+    "@types/express": "^5.0.5",
     "@types/node": "24.9.1",
     "@vitest/coverage-v8": "4.0.4",
     "eslint": "9.38.0",
@@ -26,7 +26,7 @@
   },
   "peerDependencies": {
     "express": "^5.1.0",
-    "inversify": "^7.10.3"
+    "inversify": "^7.10.4"
   },
   "devEngines": {
     "node": "^24.10.0",

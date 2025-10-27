@@ -28,7 +28,7 @@
   },
   "peerDependencies": {
     "hono": "^4.10.3",
-    "inversify": "^7.10.3"
+    "inversify": "^7.10.4"
   },
   "devEngines": {
     "node": "^24.10.0",
