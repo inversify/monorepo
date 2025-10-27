@@ -11,7 +11,7 @@
     "@nestjs/common": "11.1.8",
     "@nestjs/core": "11.1.8",
     "inversify6": "npm:inversify@6.2.2",
-    "inversify7": "npm:inversify@7.10.3",
+    "inversify7": "npm:inversify@7.10.4",
     "rxjs": "7.8.2",
     "tinybench": "5.1.0",
     "tsyringe": "4.10.0"

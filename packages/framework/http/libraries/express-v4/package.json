@@ -13,7 +13,7 @@
     "@stryker-mutator/vitest-runner": "9.2.0",
     "@stryker-mutator/typescript-checker": "9.2.0",
     "@types/cookie-parser": "^1.4.10",
-    "@types/express": "^4.17.24",
+    "@types/express": "^4.17.25",
     "@types/node": "24.9.1",
     "@vitest/coverage-v8": "4.0.4",
     "eslint": "9.38.0",
@@ -52,7 +52,7 @@
   "name": "@inversifyjs/http-express-v4",
   "peerDependencies": {
     "express": "^4.21.2",
-    "inversify": "^7.10.3"
+    "inversify": "^7.10.4"
   },
   "publishConfig": {
     "access": "public"
