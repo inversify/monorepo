@@ -1,6 +1,6 @@
 # `SingleImmutableLinkedList`
 
-An ultra–lightweight, append-only, persistent (structurally shared) singly linked list used internally in the planning algorithms (see `planing.md`). It provides **O(1)** append (named `concat`) and cheap snapshots while preserving previous versions without cloning.
+An ultra-lightweight, append-only, persistent (structurally shared) singly linked list used internally in the planning algorithms (see `planing.md`). It provides **O(1)** append (named `concat`) and cheap snapshots while preserving previous versions without cloning.
 
 ## When / Why We Use It
 
