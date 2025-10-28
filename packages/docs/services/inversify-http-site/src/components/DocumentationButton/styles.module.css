@@ -1,3 +1,19 @@
+/* Pulse animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 15px
+      color-mix(in srgb, var(--ifm-color-primary) 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 4px 15px
+      color-mix(in srgb, var(--ifm-color-primary) 50%, transparent);
+  }
+  100% {
+    box-shadow: 0 4px 15px
+      color-mix(in srgb, var(--ifm-color-primary) 30%, transparent);
+  }
+}
+
 .buttonContainer {
   display: flex;
   justify-content: center;
@@ -6,6 +22,7 @@
 }
 
 .documentationButton {
+  animation: pulse 2s infinite;
   align-items: center;
   background: var(--ifm-color-primary);
   border-radius: 12px;
@@ -28,6 +45,7 @@
 }
 
 .documentationButton:hover {
+  animation: none;
   border-color: var(--ifm-color-primary-darker);
   box-shadow: 0 8px 25px
     color-mix(in srgb, var(--ifm-color-primary) 40%, transparent);
@@ -78,30 +96,6 @@
 
 .documentationButton:hover .shimmer {
   left: 100%;
-}
-
-/* Pulse animation */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 4px 15px
-      color-mix(in srgb, var(--ifm-color-primary) 30%, transparent);
-  }
-  50% {
-    box-shadow: 0 4px 15px
-      color-mix(in srgb, var(--ifm-color-primary) 50%, transparent);
-  }
-  100% {
-    box-shadow: 0 4px 15px
-      color-mix(in srgb, var(--ifm-color-primary) 30%, transparent);
-  }
-}
-
-.documentationButton {
-  animation: pulse 2s infinite;
-}
-
-.documentationButton:hover {
-  animation: none;
 }
 
 /* Dark theme adjustments */

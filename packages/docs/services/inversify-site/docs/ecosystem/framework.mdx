@@ -1,0 +1,54 @@
+---
+sidebar_position: 2
+title: Framework
+---
+import DocumentationButton from '@site/src/components/DocumentationButton';
+
+# Inversify HTTP Framework
+
+Build type-safe HTTP servers with InversifyJS and ship great DX from day one. The Inversify HTTP framework gives you a cohesive set of building blocks—controllers, decorators, guards, interceptors, middleware, pipes, and error filters—designed to work across multiple adapters (Express 4/5, Fastify, and Hono). It comes with first-class OpenAPI, validation, logging, and authentication integrations so you can move from idea to production without reinventing the web layer.
+
+## What it is
+
+At its core, the framework brings InversifyJS Dependency Injection to your HTTP stack with a clean, decorator-driven programming model. Define controllers with `@Controller()` and declare routes with method decorators like `@Get()` and `@Post()`. Parameter decorators make it easy to read request data (body, query, params, headers, cookies) in a type-safe way, while the container handles wiring so your application code stays focused on business logic.
+
+## Choose your HTTP runtime
+
+Write your application once and run it on Express 4, Express 5, Fastify, or Hono. Most controller code is framework-agnostic by design. When you need full control, you can opt into native request/response types for a specific adapter; otherwise, just return values from your handlers and let the adapter shape the HTTP response for you.
+
+## Cross-cutting concerns, first class
+
+Real applications need structure around routing. The framework offers dedicated primitives to keep concerns separate and testable. Guards make authorization decisions and can short-circuit a request before it reaches your handler. Interceptors run around the handler, perfect for metrics, tracing, or transforming the return value. Middleware gives you adapter-native access when you want to set headers or integrate third-party libraries. Pipes let you transform or validate individual parameters right after they're read from the request. Error filters provide a centralized way to turn thrown errors into consistent HTTP responses. Each primitive can be applied globally, per controller, or per route.
+
+## Responses your way
+
+You decide how responses are produced. The default is simple: return a value and the adapter will send it (objects as JSON, strings as text, streams as streaming responses). For advanced scenarios, switch to native types and manage the response lifecycle yourself—set status codes, write headers, stream payloads, and call the adapter's `next()` when appropriate.
+
+## OpenAPI and documentation
+
+Generate OpenAPI 3.1 specifications straight from your controllers and serve an interactive Swagger UI with the provided Swagger UI provider. Your documentation stays in sync with your code, and consumers get a polished experience without extra tooling.
+
+## Validation that fits your style
+
+Pick the validation approach that works for you. Use Ajv for JSON Schema, class-validator for decorator-based validation on classes, or Standard Schema to plug in modern TypeScript-first libraries like Zod, Valibot, or ArkType. Validation integrates through pipes and error filters so invalid input becomes clear, consistent HTTP responses.
+
+## Authentication with Better Auth
+
+The Better Auth integration makes it straightforward to add secure, type-safe authentication flows. Container modules set up the required endpoints and middleware for your chosen adapter, and parameter decorators give your controllers convenient access to session information.
+
+## Logging that feels at home
+
+Use the logging utilities to record application activity with a simple, extensible API. Choose transports that match your deployment and keep contextual information close to where logs are emitted.
+
+## Learn more and get started
+
+The dedicated Framework site includes step-by-step guides, API references, and runnable examples for every adapter. Start here:
+
+<DocumentationButton href="https://inversify.io/framework/" target="_blank">
+  <span>View Full Documentation</span>
+</DocumentationButton>
+
+If you're already using InversifyJS for DI, this is the fastest path to a cohesive, testable HTTP stack.
+
+
+
