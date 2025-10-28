@@ -1,0 +1,305 @@
+---
+sidebar_position: 3
+title: Strongly Typed Container
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Strongly Typed Container
+
+The `@inversifyjs/strongly-typed` package adds TypeScript type definitions that bring compile-time type safety to your InversifyJS Container and `@inject()` decorators. With this package, you define a binding map that serves as a contract for your container, ensuring that bindings, retrievals, and injections are all type-checked at compile time.
+
+## When to use it
+
+Use the strongly-typed container when you want to catch binding and injection errors at compile time instead of runtime. You'll get IDE autocomplete for service identifiers and ensure type safety across your entire dependency injection setup. The binding map serves as living documentation of available services and prevents accidental injection of wrong types.
+
+If you prefer maximum flexibility or are working with highly dynamic binding scenarios, the standard container may be more appropriate.
+
+## Key features
+
+### Type-safe bindings
+
+Bind services with compile-time validation that ensures you're registering the correct types for each service identifier.
+
+### Type-safe retrieval
+
+Get services with automatic type inference so your IDE knows exactly what type you're working with.
+
+### Type-safe injection
+
+Use strongly-typed `@inject()` decorators for constructor and property injection that verify the injected type matches the parameter or property type.
+
+### Promise support
+
+Distinguish between sync and async bindings at the type level, ensuring you use the correct retrieval method.
+
+### Zero runtime overhead
+
+All type checking happens at compile time, so there's no performance penalty in production.
+
+### Flexible usage
+
+Can be used as a direct import or as type assertions to keep the library out of your final dependency tree.
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+npm install @inversifyjs/strongly-typed
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm add @inversifyjs/strongly-typed
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn add @inversifyjs/strongly-typed
+```
+
+  </TabItem>
+</Tabs>
+
+## Quick start
+
+### Define your binding map
+
+Start by defining a binding map that describes all the services your container will provide:
+
+```typescript
+interface Foo {
+  foo: string;
+}
+
+interface Bar {
+  bar: string;
+}
+
+interface BindingMap {
+  foo: Foo;
+  bar: Bar;
+}
+```
+
+### Create a typed container
+
+You can instantiate a `TypedContainer` directly:
+
+```typescript
+import { TypedContainer } from '@inversifyjs/strongly-typed';
+
+const container = new TypedContainer<BindingMap>();
+```
+
+Or use type assertions to keep the library out of your dependency tree:
+
+```typescript
+import { Container } from 'inversify';
+import type { TypedContainer } from '@inversifyjs/strongly-typed';
+
+const container = new Container() as TypedContainer<BindingMap>;
+```
+
+### Type-safe bindings
+
+All bindings are now type-checked:
+
+```typescript
+// ✅ Valid - correct type
+container.bind('foo').toConstantValue({ foo: 'abc' });
+
+// ❌ Compilation error - wrong type
+container.rebind('foo').toConstantValue({ unknown: 'uh-oh' });
+
+// ❌ Compilation error - unknown identifier
+container.bind('unknown').toConstantValue({ foo: 'xyz' });
+```
+
+### Type-safe retrieval
+
+Service retrieval is fully type-checked with automatic type inference:
+
+```typescript
+// ✅ Valid - inferred type is Foo
+const foo = container.get('foo');
+
+// ❌ Compilation error - bar is not assignable to Foo
+const wrongType: Foo = container.get('bar');
+
+// ❌ Compilation error - unknown identifier
+const invalid = container.get('unknown-identifier');
+```
+
+## Strongly-typed injection
+
+To use strongly-typed decorators, re-export the `inject` and `multiInject` decorators with type assertions:
+
+```typescript
+import { inject, multiInject } from 'inversify';
+import type { TypedInject, TypedMultiInject } from '@inversifyjs/strongly-typed';
+
+export const $inject = inject as TypedInject<BindingMap>;
+export const $multiInject = multiInject as TypedMultiInject<BindingMap>;
+```
+
+### Constructor injection
+
+Use the typed decorator for constructor parameters:
+
+```typescript
+import { injectable } from 'inversify';
+
+@injectable()
+class MyService {
+  constructor(
+    @$inject('foo') // ✅ Valid
+    foo: Foo,
+
+    @$inject('foo') // ❌ Compilation error - foo is not assignable to Bar
+    bar: Bar,
+  ) {}
+}
+```
+
+### Property injection
+
+Property injection works for **public** properties:
+
+```typescript
+@injectable()
+class MyService {
+  @$inject('foo') // ✅ Valid
+  public foo: Foo;
+
+  @$inject('foo') // ❌ Compilation error - wrong type
+  public bar: Bar;
+}
+```
+
+:::note
+Private properties cannot be strongly typed due to TypeScript decorator limitations. Use public properties (optionally prefixed with underscore) or fall back to the regular `@inject()` decorator for private properties.
+:::
+
+## Advanced usage
+
+### Promise bindings
+
+InversifyJS allows binding Promises, but they must be retrieved using `getAsync()`. The type system enforces this:
+
+```typescript
+interface BindingMap {
+  number: number;
+  asyncNumber: Promise<number>;
+}
+
+const container = new TypedContainer<BindingMap>();
+
+// ✅ Valid - sync binding with sync method
+const num = container.get('number'); // number
+
+// ❌ Compilation error - can't use get() for Promise bindings
+const asyncNum = container.get('asyncNumber');
+
+// ✅ Valid - async binding with async method
+const asyncNumCorrect = await container.getAsync('asyncNumber'); // number
+```
+
+### Container hierarchies
+
+When creating child containers with parents, manually merge the binding maps:
+
+```typescript
+type ParentMap = {
+  parentService: ParentService;
+};
+
+type ChildMap = {
+  childService: ChildService;
+};
+
+const parent = new TypedContainer<ParentMap>();
+const child = new TypedContainer<ParentMap & ChildMap>({ parent });
+
+// Child can access both parent and child bindings
+const parentSvc = child.get('parentService');
+const childSvc = child.get('childService');
+```
+
+### Container modules
+
+Create strongly-typed container modules:
+
+```typescript
+import { TypedContainerModule } from '@inversifyjs/strongly-typed';
+
+const myModule = new TypedContainerModule<BindingMap>(
+  (bind) => {
+    bind('foo').toConstantValue({ foo: 'value' });
+    bind('bar').toConstantValue({ bar: 'value' });
+  }
+);
+
+await container.load(myModule);
+```
+
+## Known limitations
+
+### Private properties
+
+Due to TypeScript decorator limitations, private properties cannot be strongly typed with injection decorators:
+
+```typescript
+@injectable()
+class MyService {
+  @$inject('foo')
+  private foo: Foo; // ❌ Compilation error
+}
+```
+
+You can work around this by making the property public (consider using an underscore prefix as a convention like `public _foo`) or by using the regular `@inject()` decorator from `inversify` for private properties.
+
+### Constructor error messages
+
+When constructor injection types are incorrect, TypeScript produces generic error messages like:
+
+```
+Unable to resolve signature of parameter decorator when called as an expression.
+  Argument of type '2' is not assignable to parameter of type 'undefined'.
+```
+
+This indicates that the constructor parameter at index `2` has the wrong type for the injected identifier.
+
+## Benefits
+
+### Earlier error detection
+
+Catch type mismatches during development, not in production. The TypeScript compiler becomes your first line of defense against injection mistakes.
+
+### Better IDE support
+
+Get autocomplete for service identifiers and automatic type inference. Your editor knows exactly what types are available and what each service returns.
+
+### Self-documenting
+
+The binding map serves as documentation of available services. New team members can look at the type definition to understand what services the container provides.
+
+### Refactoring safety
+
+The type system catches broken references when refactoring. Rename a service identifier and the compiler will show you everywhere that needs updating.
+
+### Zero runtime cost
+
+All benefits come from compile-time type checking. There's no additional JavaScript generated and no performance overhead at runtime.
+
+## Package information
+
+- **npm**: [`@inversifyjs/strongly-typed`](https://www.npmjs.com/package/@inversifyjs/strongly-typed)
+- **GitHub**: [inversify/monorepo](https://github.com/inversify/monorepo)
+- **License**: MIT
