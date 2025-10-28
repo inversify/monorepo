@@ -5,7 +5,13 @@ title: Error Filter
 import errorFilterApiControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiController.ts.txt';
 import errorFilterApiInvalidOperationErrorSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiInvalidOperationError.ts.txt';
 import errorFilterApiInvalidOperationErrorFilterSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiInvalidOperationErrorFilter.ts.txt';
+import errorFilterApiGlobalExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiGlobalExpress.ts.txt';
+import errorFilterApiGlobalExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiGlobalExpress4.ts.txt';
+import errorFilterApiGlobalFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiGlobalFastify.ts.txt';
+import errorFilterApiGlobalHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiGlobalHono.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Error Filter
 
@@ -41,11 +47,53 @@ Create an error filter that catches the custom error and returns an appropriate 
 
 <CodeBlock language="ts">{errorFilterApiInvalidOperationErrorFilterSource}</CodeBlock>
 
+:::warning[universal error filter and infinite loops]
+  When creating a universal error filter (one that catches anything), be cautious about throwing `HttpResponse` errors from within the filter. This can lead to infinite loops if the filter catches its own thrown errors. Instead, consider returning the response directly.
+:::
+
 ### Controller
 
 Apply the error filter to a controller using the `@UseErrorFilter()` decorator:
 
 <CodeBlock language="ts">{errorFilterApiControllerSource}</CodeBlock>
+
+## Returning responses from error filters
+
+Error filters can directly manipulate the HTTP response using the adapter-specific request and response objects. This approach is particularly useful for global error filters that need to handle all types of errors without causing infinite loops.
+
+### Examples by Adapter
+
+<Tabs groupId="adapter">
+  <TabItem value="express" label="Express 5">
+    <CodeBlock language="ts">{errorFilterApiGlobalExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="express4" label="Express 4">
+  <CodeBlock language="ts">{errorFilterApiGlobalExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{errorFilterApiGlobalFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{errorFilterApiGlobalHonoSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+In these examples:
+
+- The error filter implements the adapter-specific `ErrorFilter` type (e.g., `ExpressErrorFilter`, `FastifyErrorFilter`)
+- A logger is instantiated using `ConsoleLogger` from `@inversifyjs/logger` to log errors
+- The `isHttpResponse()` utility checks if the caught error is an `HttpResponse` instance
+- If it's an `HttpResponse`, the filter logs it with `.http()` level and sends the response with the original status code and body
+- For generic errors, the filter logs them with `.error()` level using `JSON.stringify(err, Object.getOwnPropertyNames(err))` to properly serialize the error (see [why this is necessary](https://stackoverflow.com/a/26199752/7895659))
+- The filter returns a 500 Internal Server Error response for generic errors
+- The filter is registered globally using `adapter.useGlobalFilters(GlobalErrorFilter)`
+
+This pattern ensures that:
+- `HttpResponse` errors (like `NotFoundHttpResponse`, `InternalServerErrorHttpResponse`) are handled without infinite loops
+- Generic JavaScript errors are caught, logged, and transformed into proper HTTP responses
+- Error details are properly serialized for logging (Error objects have non-enumerable properties that require special handling)
+- Error handling and logging are centralized and consistent across your application
+
 
 ## Attaching error filters
 
