@@ -1,6 +1,6 @@
-import { InversifyExpressHttpAdapter } from './adapter/InversifyExpressHttpAdapter';
-import { ExpressMiddleware } from './models/ExpressMiddleware';
+export { InversifyExpressHttpAdapter } from './adapter/InversifyExpressHttpAdapter';
 
-export type { ExpressMiddleware };
-
-export { InversifyExpressHttpAdapter };
+export type { ExpressErrorFilter } from './models/ExpressErrorFilter';
+export type { ExpressGuard } from './models/ExpresssGuard';
+export type { ExpressInterceptor } from './models/ExpressInterceptor';
+export type { ExpressMiddleware } from './models/ExpressMiddleware';
