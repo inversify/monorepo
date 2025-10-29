@@ -14,7 +14,7 @@
     "@inversifyjs/http-hono": "workspace:*",
     "@inversifyjs/open-api-types": "workspace:*",
     "@types/mime-types": "3.0.1",
-    "@types/node": "24.9.1",
+    "@types/node": "24.9.2",
     "@vitest/coverage-v8": "4.0.4",
     "eslint": "9.38.0",
     "hono": "4.10.3",
