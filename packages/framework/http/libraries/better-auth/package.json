@@ -20,7 +20,7 @@
     "@types/express": "5.0.5",
     "@types/express4": "npm:@types/express@4.17.25",
     "@types/node": "24.9.2",
-    "@vitest/coverage-v8": "4.0.4",
+    "@vitest/coverage-v8": "4.0.5",
     "better-sqlite3": "^12.4.1",
     "eslint": "9.38.0",
     "fastify": "5.6.1",
@@ -31,7 +31,7 @@
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "4.0.4"
+    "vitest": "4.0.5"
   },
   "devEngines": {
     "node": "^24.10.0",

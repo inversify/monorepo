@@ -15,7 +15,7 @@
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^4.17.25",
     "@types/node": "24.9.2",
-    "@vitest/coverage-v8": "4.0.4",
+    "@vitest/coverage-v8": "4.0.5",
     "eslint": "9.38.0",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
@@ -23,7 +23,7 @@
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "4.0.4"
+    "vitest": "4.0.5"
   },
   "devEngines": {
     "node": "^24.10.0",
