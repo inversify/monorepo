@@ -54,6 +54,11 @@ Creates an adapter instance bound to a DI container. Adapters typically invoke t
 
 ## Public methods
 
+:::warning[Global context]
+Some of this methods set global middleware, guards, pipes, interceptors, or error filters that apply to all routes managed by this adapter instance.
+Routes not managed by this adapter (e.g., routes added directly to the underlying server) are unaffected.
+:::
+
 ### applyGlobalMiddleware
 
 ```ts
