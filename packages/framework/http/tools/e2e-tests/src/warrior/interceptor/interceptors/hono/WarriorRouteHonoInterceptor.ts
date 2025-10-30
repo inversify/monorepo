@@ -1,13 +1,11 @@
 import {
   HttpStatusCode,
-  Interceptor,
   InterceptorTransformObject,
 } from '@inversifyjs/http-core';
+import { HonoInterceptor } from '@inversifyjs/http-hono';
 import { Context, HonoRequest } from 'hono';
 
-export class WarriorRouteHonoInterceptor
-  implements Interceptor<HonoRequest, Context>
-{
+export class WarriorRouteHonoInterceptor implements HonoInterceptor {
   public async intercept(
     _request: HonoRequest,
     context: Context,

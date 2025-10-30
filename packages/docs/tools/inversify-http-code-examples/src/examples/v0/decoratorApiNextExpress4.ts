@@ -1,13 +1,8 @@
-import {
-  Controller,
-  Get,
-  Interceptor,
-  Next,
-  UseInterceptor,
-} from '@inversifyjs/http-core';
+import { Controller, Get, Next, UseInterceptor } from '@inversifyjs/http-core';
+import { ExpressInterceptor } from '@inversifyjs/http-express-v4';
 import { type NextFunction, Request, Response } from 'express4';
 
-export class Express4NextInterceptor implements Interceptor<Request, Response> {
+export class Express4NextInterceptor implements ExpressInterceptor {
   public async intercept(
     _request: Request,
     response: Response,

@@ -1,19 +1,12 @@
-import {
-  Controller,
-  Get,
-  Interceptor,
-  Next,
-  UseInterceptor,
-} from '@inversifyjs/http-core';
+import { Controller, Get, Next, UseInterceptor } from '@inversifyjs/http-core';
+import { FastifyInterceptor } from '@inversifyjs/http-fastify';
 import {
   type FastifyReply,
   type FastifyRequest,
   type HookHandlerDoneFunction,
 } from 'fastify';
 
-export class FastifyNextInterceptor
-  implements Interceptor<FastifyRequest, FastifyReply>
-{
+export class FastifyNextInterceptor implements FastifyInterceptor {
   public async intercept(
     _request: FastifyRequest,
     reply: FastifyReply,

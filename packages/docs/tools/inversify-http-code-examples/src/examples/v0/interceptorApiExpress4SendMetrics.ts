@@ -1,4 +1,4 @@
-import { Interceptor } from '@inversifyjs/http-core';
+import { ExpressInterceptor } from '@inversifyjs/http-express-v4';
 import { Request, Response } from 'express4';
 
 // Begin-example
@@ -8,9 +8,7 @@ function registerMetrics(path: string): void {
   METRICS[path] = (METRICS[path] ?? 0) + 1;
 }
 
-export class Express4MetricsInterceptor
-  implements Interceptor<Request, Response>
-{
+export class Express4MetricsInterceptor implements ExpressInterceptor {
   public async intercept(
     request: Request,
     _response: Response,
