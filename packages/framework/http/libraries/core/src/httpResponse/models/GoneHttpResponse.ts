@@ -6,7 +6,7 @@ import { ErrorHttpResponse } from './ErrorHttpResponse';
 export class GoneHttpResponse extends ErrorHttpResponse {
   constructor(
     body?: object | string | number | boolean | Stream | undefined,
-    errorMessage?: string,
+    errorMessage: string = 'Gone',
     errorOptions?: ErrorOptions,
   ) {
     super(HttpStatusCode.GONE, body, errorMessage, errorOptions);

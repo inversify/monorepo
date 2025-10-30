@@ -6,7 +6,7 @@ import { ErrorHttpResponse } from './ErrorHttpResponse';
 export class BadRequestHttpResponse extends ErrorHttpResponse {
   constructor(
     body?: object | string | number | boolean | Stream | undefined,
-    errorMessage?: string,
+    errorMessage: string = 'Bad Request',
     errorOptions?: ErrorOptions,
   ) {
     super(HttpStatusCode.BAD_REQUEST, body, errorMessage, errorOptions);

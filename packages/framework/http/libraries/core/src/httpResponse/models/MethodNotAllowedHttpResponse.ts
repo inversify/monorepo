@@ -6,7 +6,7 @@ import { ErrorHttpResponse } from './ErrorHttpResponse';
 export class MethodNotAllowedHttpResponse extends ErrorHttpResponse {
   constructor(
     body?: object | string | number | boolean | Stream | undefined,
-    errorMessage?: string,
+    errorMessage: string = 'Method Not Allowed',
     errorOptions?: ErrorOptions,
   ) {
     super(HttpStatusCode.METHOD_NOT_ALLOWED, body, errorMessage, errorOptions);

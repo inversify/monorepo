@@ -6,7 +6,7 @@ import { ErrorHttpResponse } from './ErrorHttpResponse';
 export class InsufficientStorageHttpResponse extends ErrorHttpResponse {
   constructor(
     body?: object | string | number | boolean | Stream | undefined,
-    errorMessage?: string,
+    errorMessage: string = 'Insufficient Storage',
     errorOptions?: ErrorOptions,
   ) {
     super(

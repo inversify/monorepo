@@ -6,7 +6,7 @@ import { ErrorHttpResponse } from './ErrorHttpResponse';
 export class LoopDetectedHttpResponse extends ErrorHttpResponse {
   constructor(
     body?: object | string | number | boolean | Stream | undefined,
-    errorMessage?: string,
+    errorMessage: string = 'Loop Detected',
     errorOptions?: ErrorOptions,
   ) {
     super(HttpStatusCode.LOOP_DETECTED, body, errorMessage, errorOptions);

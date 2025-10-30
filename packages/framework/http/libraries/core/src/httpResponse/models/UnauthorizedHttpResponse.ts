@@ -6,7 +6,7 @@ import { ErrorHttpResponse } from './ErrorHttpResponse';
 export class UnauthorizedHttpResponse extends ErrorHttpResponse {
   constructor(
     body?: object | string | number | boolean | Stream | undefined,
-    errorMessage?: string,
+    errorMessage: string = 'Unauthorized',
     errorOptions?: ErrorOptions,
   ) {
     super(HttpStatusCode.UNAUTHORIZED, body, errorMessage, errorOptions);

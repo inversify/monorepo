@@ -6,7 +6,7 @@ import { ErrorHttpResponse } from './ErrorHttpResponse';
 export class NotAcceptableHttpResponse extends ErrorHttpResponse {
   constructor(
     body?: object | string | number | boolean | Stream | undefined,
-    errorMessage?: string,
+    errorMessage: string = 'Not Acceptable',
     errorOptions?: ErrorOptions,
   ) {
     super(HttpStatusCode.NOT_ACCEPTABLE, body, errorMessage, errorOptions);

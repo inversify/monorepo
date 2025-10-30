@@ -6,7 +6,7 @@ import { ErrorHttpResponse } from './ErrorHttpResponse';
 export class ServiceUnavailableHttpResponse extends ErrorHttpResponse {
   constructor(
     body?: object | string | number | boolean | Stream | undefined,
-    errorMessage?: string,
+    errorMessage: string = 'Service Unavailable',
     errorOptions?: ErrorOptions,
   ) {
     super(HttpStatusCode.SERVICE_UNAVAILABLE, body, errorMessage, errorOptions);

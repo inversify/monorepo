@@ -6,7 +6,7 @@ import { ErrorHttpResponse } from './ErrorHttpResponse';
 export class GatewayTimeoutHttpResponse extends ErrorHttpResponse {
   constructor(
     body?: object | string | number | boolean | Stream | undefined,
-    errorMessage?: string,
+    errorMessage: string = 'Gateway Timeout',
     errorOptions?: ErrorOptions,
   ) {
     super(HttpStatusCode.GATEWAY_TIMEOUT, body, errorMessage, errorOptions);
