@@ -19,7 +19,6 @@ import { Container, Newable, ServiceIdentifier } from 'inversify';
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
 import { isHttpResponse } from '../../httpResponse/calculations/isHttpResponse';
-import { ErrorHttpResponse } from '../../httpResponse/models/ErrorHttpResponse';
 import { ForbiddenHttpResponse } from '../../httpResponse/models/ForbiddenHttpResponse';
 import { HttpResponse } from '../../httpResponse/models/HttpResponse';
 import { InternalServerErrorHttpResponse } from '../../httpResponse/models/InternalServerErrorHttpResponse';
@@ -566,7 +565,7 @@ export abstract class InversifyHttpAdapter<
       if (errorFilter === undefined) {
         let httpResponse: HttpResponse | undefined = undefined;
 
-        if (ErrorHttpResponse.is(error)) {
+        if (isHttpResponse(error)) {
           httpResponse = error;
         } else {
           this.#printError(error);

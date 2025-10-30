@@ -52,7 +52,7 @@ export class NonNativeUsersController {
   public async getUserNotFound(): Promise<never> {
     throw new ErrorHttpResponse(
       HttpStatusCode.NOT_FOUND,
-      'User not found',
+      { message: 'The requested user does not exist' },
       'The requested user does not exist',
     );
   }

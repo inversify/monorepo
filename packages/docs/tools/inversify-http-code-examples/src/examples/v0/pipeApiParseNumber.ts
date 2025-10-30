@@ -6,7 +6,10 @@ export class ParseNumberPipe implements Pipe<unknown, number> {
     const parsed: number = Number(input);
 
     if (Number.isNaN(parsed)) {
-      throw new BadRequestHttpResponse('Invalid number');
+      throw new BadRequestHttpResponse(
+        { message: 'Invalid number' },
+        'Invalid number',
+      );
     }
 
     return parsed;

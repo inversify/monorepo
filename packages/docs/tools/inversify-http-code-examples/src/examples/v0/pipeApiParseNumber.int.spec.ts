@@ -99,7 +99,7 @@ describe.each<[(container: Container) => Promise<Server>]>([
       const body: unknown = await response.json();
 
       expect(response.status).toBe(400);
-      expect(body).toMatchObject({ error: 'Bad Request', statusCode: 400 });
+      expect(body).toMatchObject({ message: 'Invalid number' });
     });
 
     it('returns 400 Bad Request when not a number (Query)', async () => {
@@ -109,7 +109,7 @@ describe.each<[(container: Container) => Promise<Server>]>([
       const body: unknown = await response.json();
 
       expect(response.status).toBe(400);
-      expect(body).toMatchObject({ error: 'Bad Request', statusCode: 400 });
+      expect(body).toMatchObject({ message: 'Invalid number' });
     });
   },
 );

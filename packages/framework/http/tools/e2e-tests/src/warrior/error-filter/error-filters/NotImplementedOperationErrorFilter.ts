@@ -11,8 +11,12 @@ export class NotImplementedOperationErrorFilter
   implements ErrorFilter<NotImplementedOperationError>
 {
   public catch(error: NotImplementedOperationError): void {
-    throw new NotImplementedHttpResponse(error.message, undefined, {
-      cause: error,
-    });
+    throw new NotImplementedHttpResponse(
+      { message: error.message },
+      error.message,
+      {
+        cause: error,
+      },
+    );
   }
 }

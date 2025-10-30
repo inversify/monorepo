@@ -1,12 +1,19 @@
+import type { Stream } from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class InsufficientStorageHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'Insufficient Storage',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage: string = 'Insufficient Storage',
     errorOptions?: ErrorOptions,
   ) {
-    super(HttpStatusCode.INSUFFICIENT_STORAGE, error, message, errorOptions);
+    super(
+      HttpStatusCode.INSUFFICIENT_STORAGE,
+      body,
+      errorMessage,
+      errorOptions,
+    );
   }
 }

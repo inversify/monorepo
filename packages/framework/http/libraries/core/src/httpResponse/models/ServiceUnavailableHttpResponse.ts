@@ -1,12 +1,14 @@
+import type { Stream } from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class ServiceUnavailableHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'Service Unavailable',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage: string = 'Service Unavailable',
     errorOptions?: ErrorOptions,
   ) {
-    super(HttpStatusCode.SERVICE_UNAVAILABLE, error, message, errorOptions);
+    super(HttpStatusCode.SERVICE_UNAVAILABLE, body, errorMessage, errorOptions);
   }
 }

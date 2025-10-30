@@ -1,12 +1,14 @@
+import type { Stream } from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class NotAcceptableHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'Not Acceptable',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage: string = 'Not Acceptable',
     errorOptions?: ErrorOptions,
   ) {
-    super(HttpStatusCode.NOT_ACCEPTABLE, error, message, errorOptions);
+    super(HttpStatusCode.NOT_ACCEPTABLE, body, errorMessage, errorOptions);
   }
 }

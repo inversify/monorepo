@@ -1,12 +1,14 @@
+import type { Stream } from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class NotFoundHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'Not Found',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage: string = 'Not Found',
     errorOptions?: ErrorOptions,
   ) {
-    super(HttpStatusCode.NOT_FOUND, error, message, errorOptions);
+    super(HttpStatusCode.NOT_FOUND, body, errorMessage, errorOptions);
   }
 }

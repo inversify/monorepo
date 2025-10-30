@@ -79,18 +79,12 @@ describe('Error Filter API (Global - Express 5)', () => {
       `http://${server.host}:${server.port.toString()}/demo/http-response`,
     );
     const body: {
-      statusCode: number;
-      error: string;
       message: string;
     } = (await response.json()) as {
-      statusCode: number;
-      error: string;
       message: string;
     };
 
     expect(response.status).toBe(404);
-    expect(body.statusCode).toBe(404);
-    expect(body.error).toBe('Not Found');
     expect(body.message).toBe('Resource not found');
   });
 
@@ -99,18 +93,12 @@ describe('Error Filter API (Global - Express 5)', () => {
       `http://${server.host}:${server.port.toString()}/demo/generic-error`,
     );
     const body: {
-      statusCode: number;
-      error: string;
       message: string;
     } = (await response.json()) as {
-      statusCode: number;
-      error: string;
       message: string;
     };
 
     expect(response.status).toBe(500);
-    expect(body.statusCode).toBe(500);
-    expect(body.error).toBe('Internal Server Error');
     expect(body.message).toBe('Unhandled error');
   });
 
@@ -119,18 +107,12 @@ describe('Error Filter API (Global - Express 5)', () => {
       `http://${server.host}:${server.port.toString()}/demo/internal-server-error`,
     );
     const body: {
-      statusCode: number;
-      error: string;
       message: string;
     } = (await response.json()) as {
-      statusCode: number;
-      error: string;
       message: string;
     };
 
     expect(response.status).toBe(500);
-    expect(body.statusCode).toBe(500);
-    expect(body.error).toBe('Internal Server Error');
     expect(body.message).toBe('Internal error occurred');
   });
 });

@@ -1,12 +1,14 @@
+import type { Stream } from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class UnauthorizedHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'Unauthorized',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage: string = 'Unauthorized',
     errorOptions?: ErrorOptions,
   ) {
-    super(HttpStatusCode.UNAUTHORIZED, error, message, errorOptions);
+    super(HttpStatusCode.UNAUTHORIZED, body, errorMessage, errorOptions);
   }
 }

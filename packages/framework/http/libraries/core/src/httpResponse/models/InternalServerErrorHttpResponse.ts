@@ -1,12 +1,19 @@
+import type { Stream } from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class InternalServerErrorHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'Internal Server Error',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage: string = 'Internal Server Error',
     errorOptions?: ErrorOptions,
   ) {
-    super(HttpStatusCode.INTERNAL_SERVER_ERROR, error, message, errorOptions);
+    super(
+      HttpStatusCode.INTERNAL_SERVER_ERROR,
+      body,
+      errorMessage,
+      errorOptions,
+    );
   }
 }

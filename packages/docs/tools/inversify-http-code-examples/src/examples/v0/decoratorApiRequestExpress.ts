@@ -21,6 +21,7 @@ export class RequestExpressController {
     if (Array.isArray(value)) {
       if (value.length !== 1) {
         throw new BadRequestHttpResponse(
+          { message: 'Expected a single `x-test-header` value' },
           'Expected a single `x-test-header` value',
         );
       }

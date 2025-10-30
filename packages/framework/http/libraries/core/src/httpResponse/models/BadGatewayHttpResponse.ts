@@ -1,12 +1,14 @@
+import type { Stream } from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class BadGatewayHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'Bad Gateway',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage: string = 'Bad Gateway',
     errorOptions?: ErrorOptions,
   ) {
-    super(HttpStatusCode.BAD_GATEWAY, error, message, errorOptions);
+    super(HttpStatusCode.BAD_GATEWAY, body, errorMessage, errorOptions);
   }
 }

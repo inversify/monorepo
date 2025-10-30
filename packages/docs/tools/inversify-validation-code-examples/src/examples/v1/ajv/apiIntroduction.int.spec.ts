@@ -1,12 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { AjvValidationPipe } from '@inversifyjs/ajv-validation';
-import {
-  BadRequestHttpResponse,
-  CatchError,
-  ErrorFilter,
-} from '@inversifyjs/http-core';
-import { InversifyValidationError } from '@inversifyjs/validation-common';
+import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { Container } from 'inversify';
@@ -14,15 +9,6 @@ import { Container } from 'inversify';
 import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer';
 import { Server } from '../../../server/models/Server';
 import { UserController } from './apiIntroduction';
-
-@CatchError(InversifyValidationError)
-class ValidationErrorFilter implements ErrorFilter<InversifyValidationError> {
-  public catch(error: InversifyValidationError): never {
-    throw new BadRequestHttpResponse(error.message, undefined, {
-      cause: error,
-    });
-  }
-}
 
 describe('API Introduction (AJV)', () => {
   describe('having an AjvValidationPipe in an HTTP server with Quick Start user validation', () => {
@@ -33,12 +19,15 @@ describe('API Introduction (AJV)', () => {
       const ajv: Ajv = new Ajv();
       addFormats(ajv);
 
-      container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+      container
+        .bind(InversifyValidationErrorFilter)
+        .toSelf()
+        .inSingletonScope();
       container.bind(UserController).toSelf().inSingletonScope();
 
       server = await buildExpressServer(
         container,
-        [ValidationErrorFilter],
+        [InversifyValidationErrorFilter],
         [new AjvValidationPipe(ajv)],
       );
     });
@@ -130,9 +119,7 @@ describe('API Introduction (AJV)', () => {
         );
 
         await expect(response.json()).resolves.toStrictEqual({
-          error: 'Bad Request',
           message: expect.stringContaining('name'),
-          statusCode: 400,
         });
       });
     });
@@ -162,9 +149,7 @@ describe('API Introduction (AJV)', () => {
           expect.stringContaining('application/json'),
         );
         await expect(response.json()).resolves.toStrictEqual({
-          error: 'Bad Request',
           message: expect.stringContaining('format'),
-          statusCode: 400,
         });
       });
     });
@@ -195,9 +180,7 @@ describe('API Introduction (AJV)', () => {
           expect.stringContaining('application/json'),
         );
         await expect(response.json()).resolves.toStrictEqual({
-          error: 'Bad Request',
           message: expect.stringContaining('minimum'),
-          statusCode: 400,
         });
       });
     });
