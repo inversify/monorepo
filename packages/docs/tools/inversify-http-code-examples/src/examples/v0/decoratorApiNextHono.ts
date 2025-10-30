@@ -1,14 +1,14 @@
 import {
   Controller,
   Get,
-  Interceptor,
   InterceptorTransformObject,
   Next,
   UseInterceptor,
 } from '@inversifyjs/http-core';
+import { HonoInterceptor } from '@inversifyjs/http-hono';
 import { type Context, type HonoRequest, type Next as HonoNext } from 'hono';
 
-export class HonoNextInterceptor implements Interceptor<HonoRequest, Context> {
+export class HonoNextInterceptor implements HonoInterceptor {
   public async intercept(
     _request: HonoRequest,
     context: Context,

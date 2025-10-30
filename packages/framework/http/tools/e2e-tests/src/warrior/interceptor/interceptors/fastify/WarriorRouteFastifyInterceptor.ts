@@ -1,13 +1,11 @@
 import {
   HttpStatusCode,
-  Interceptor,
   InterceptorTransformObject,
 } from '@inversifyjs/http-core';
+import { FastifyInterceptor } from '@inversifyjs/http-fastify';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
-export class WarriorRouteFastifyInterceptor
-  implements Interceptor<FastifyRequest, FastifyReply>
-{
+export class WarriorRouteFastifyInterceptor implements FastifyInterceptor {
   public async intercept(
     _request: FastifyRequest,
     response: FastifyReply,

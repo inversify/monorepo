@@ -1,13 +1,11 @@
 import {
   HttpStatusCode,
-  Interceptor,
   InterceptorTransformObject,
 } from '@inversifyjs/http-core';
+import { ExpressInterceptor } from '@inversifyjs/http-express';
 import express from 'express';
 
-export class WarriorRouteExpressInterceptor
-  implements Interceptor<express.Request, express.Response>
-{
+export class WarriorRouteExpressInterceptor implements ExpressInterceptor {
   public async intercept(
     _request: express.Request,
     response: express.Response,

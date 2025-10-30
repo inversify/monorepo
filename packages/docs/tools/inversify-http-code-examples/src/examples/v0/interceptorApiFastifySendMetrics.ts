@@ -1,4 +1,4 @@
-import { Interceptor } from '@inversifyjs/http-core';
+import { FastifyInterceptor } from '@inversifyjs/http-fastify';
 import { type FastifyReply, type FastifyRequest } from 'fastify';
 
 // Begin-example
@@ -8,9 +8,7 @@ function registerMetrics(path: string): void {
   METRICS[path] = (METRICS[path] ?? 0) + 1;
 }
 
-export class FastifyMetricsInterceptor
-  implements Interceptor<FastifyRequest, FastifyReply>
-{
+export class FastifyMetricsInterceptor implements FastifyInterceptor {
   public async intercept(
     request: FastifyRequest,
     _reply: FastifyReply,

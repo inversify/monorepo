@@ -1,11 +1,10 @@
-import { HttpStatusCode, Middleware } from '@inversifyjs/http-core';
+import { HttpStatusCode } from '@inversifyjs/http-core';
+import { HonoMiddleware } from '@inversifyjs/http-hono';
 import { Context, HonoRequest, Next } from 'hono';
 import { injectable } from 'inversify';
 
 @injectable()
-export class UnsuccessfulHonoMiddleware
-  implements Middleware<HonoRequest, Context, Next, Response>
-{
+export class UnsuccessfulHonoMiddleware implements HonoMiddleware {
   public async execute(
     _request: HonoRequest,
     response: Context,
