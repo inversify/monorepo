@@ -17,7 +17,7 @@
     "@types/node": "24.9.2",
     "@vitest/coverage-v8": "4.0.5",
     "eslint": "9.38.0",
-    "hono": "4.10.3",
+    "hono": "4.10.4",
     "prettier": "3.6.2",
     "rimraf": "6.0.1",
     "rollup": "4.52.5",
@@ -27,7 +27,7 @@
     "vitest": "4.0.5"
   },
   "peerDependencies": {
-    "hono": "^4.10.3",
+    "hono": "^4.10.4",
     "inversify": "^7.10.4"
   },
   "devEngines": {
