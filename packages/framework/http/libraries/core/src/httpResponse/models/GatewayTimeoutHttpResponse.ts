@@ -1,12 +1,14 @@
+import Stream from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class GatewayTimeoutHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'Gateway Timeout',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage?: string,
     errorOptions?: ErrorOptions,
   ) {
-    super(HttpStatusCode.GATEWAY_TIMEOUT, error, message, errorOptions);
+    super(HttpStatusCode.GATEWAY_TIMEOUT, body, errorMessage, errorOptions);
   }
 }

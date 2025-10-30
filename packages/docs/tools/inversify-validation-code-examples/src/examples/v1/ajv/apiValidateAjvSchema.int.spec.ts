@@ -1,12 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { AjvValidationPipe } from '@inversifyjs/ajv-validation';
-import {
-  BadRequestHttpResponse,
-  CatchError,
-  ErrorFilter,
-} from '@inversifyjs/http-core';
-import { InversifyValidationError } from '@inversifyjs/validation-common';
+import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { Container } from 'inversify';
@@ -14,15 +9,6 @@ import { Container } from 'inversify';
 import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer';
 import { Server } from '../../../server/models/Server';
 import { UserController } from './apiValidateAjvSchema';
-
-@CatchError(InversifyValidationError)
-class ValidationErrorFilter implements ErrorFilter<InversifyValidationError> {
-  public catch(error: InversifyValidationError): never {
-    throw new BadRequestHttpResponse(error.message, undefined, {
-      cause: error,
-    });
-  }
-}
 
 describe('ValidateAjvSchema API', () => {
   describe('having an AjvValidationPipe in an HTTP server with ValidateAjvSchema decorated endpoints', () => {
@@ -33,12 +19,15 @@ describe('ValidateAjvSchema API', () => {
       const ajv: Ajv = new Ajv();
       addFormats(ajv);
 
-      container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+      container
+        .bind(InversifyValidationErrorFilter)
+        .toSelf()
+        .inSingletonScope();
       container.bind(UserController).toSelf().inSingletonScope();
 
       server = await buildExpressServer(
         container,
-        [ValidationErrorFilter],
+        [InversifyValidationErrorFilter],
         [new AjvValidationPipe(ajv)],
       );
     });
@@ -105,9 +94,7 @@ describe('ValidateAjvSchema API', () => {
           expect.stringContaining('application/json'),
         );
         await expect(response.json()).resolves.toStrictEqual({
-          error: 'Bad Request',
           message: expect.stringContaining('email'),
-          statusCode: 400,
         });
       });
     });
@@ -137,9 +124,7 @@ describe('ValidateAjvSchema API', () => {
           expect.stringContaining('application/json'),
         );
         await expect(response.json()).resolves.toStrictEqual({
-          error: 'Bad Request',
           message: expect.stringContaining('format'),
-          statusCode: 400,
         });
       });
     });

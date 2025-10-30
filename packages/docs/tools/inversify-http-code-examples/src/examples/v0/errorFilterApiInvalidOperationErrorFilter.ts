@@ -12,9 +12,13 @@ export class InvalidOperationErrorFilter
   implements ErrorFilter<InvalidOperationError>
 {
   public catch(error: InvalidOperationError): void {
-    throw new UnprocessableEntityHttpResponse(error.message, undefined, {
-      cause: error,
-    });
+    throw new UnprocessableEntityHttpResponse(
+      { message: error.message },
+      error.message,
+      {
+        cause: error,
+      },
+    );
   }
 }
 // End-example

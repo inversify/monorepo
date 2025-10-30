@@ -28,14 +28,10 @@ describe('Error Filter API (Express 5)', () => {
     );
     const body: string = await response.text();
     const jsonBody: {
-      statusCode: number;
-      error: string;
       message: string;
     } = JSON.parse(body);
 
     expect(response.status).toBe(422);
-    expect(jsonBody.statusCode).toBe(422);
-    expect(jsonBody.error).toBe('Unprocessable Entity');
     expect(jsonBody.message).toBe(
       '[InvalidOperationError]: Product validation failed',
     );

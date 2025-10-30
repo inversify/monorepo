@@ -39,9 +39,7 @@ describe('Guard API deny (Express 4)', () => {
 
     expect(response.status).toBe(403);
     expect(body).toMatchObject({
-      error: 'Forbidden',
       message: 'Missing or invalid credentials',
-      statusCode: 403,
     });
   });
 });

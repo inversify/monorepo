@@ -55,7 +55,10 @@ export class GlobalErrorFilter implements HonoErrorFilter {
 export class DemoController {
   @Get('/http-response')
   public httpResponse(): void {
-    throw new NotFoundHttpResponse('Resource not found');
+    throw new NotFoundHttpResponse(
+      { message: 'Resource not found' },
+      'Resource not found',
+    );
   }
 
   @Get('/generic-error')
@@ -65,6 +68,9 @@ export class DemoController {
 
   @Get('/internal-server-error')
   public internalServerError(): void {
-    throw new InternalServerErrorHttpResponse('Internal error occurred');
+    throw new InternalServerErrorHttpResponse(
+      { message: 'Internal error occurred' },
+      'Internal error occurred',
+    );
   }
 }

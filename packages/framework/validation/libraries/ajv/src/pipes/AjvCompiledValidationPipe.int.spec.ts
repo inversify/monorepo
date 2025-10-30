@@ -86,9 +86,13 @@ export async function buildExpressServer(
 @CatchError(InversifyValidationError)
 class ValidationErrorFilter implements ErrorFilter<InversifyValidationError> {
   public catch(error: InversifyValidationError): never {
-    throw new BadRequestHttpResponse(error.message, undefined, {
-      cause: error,
-    });
+    throw new BadRequestHttpResponse(
+      { message: error.message },
+      error.message,
+      {
+        cause: error,
+      },
+    );
   }
 }
 
@@ -190,11 +194,9 @@ describe(AjvCompiledValidationPipe, () => {
           expect.stringContaining('application/json'),
         );
         await expect(response.json()).resolves.toStrictEqual({
-          error: 'Bad Request',
           message: expect.stringContaining(
             '[schema: #/additionalProperties, instance: ]: "must NOT have additional properties"',
           ),
-          statusCode: 400,
         });
       });
     });

@@ -1,12 +1,14 @@
+import Stream from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class ConflictHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'Conflict',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage?: string,
     errorOptions?: ErrorOptions,
   ) {
-    super(HttpStatusCode.CONFLICT, error, message, errorOptions);
+    super(HttpStatusCode.CONFLICT, body, errorMessage, errorOptions);
   }
 }

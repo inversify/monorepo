@@ -13,6 +13,7 @@ export function getBetterAuthFromRequest<TOptions extends BetterAuthOptions>(
 
   if (auth === undefined) {
     throw new InternalServerErrorHttpResponse(
+      undefined,
       'BetterAuth auth not found when accessing user session. Did you forget to apply the BetterAuth middleware?',
     );
   }

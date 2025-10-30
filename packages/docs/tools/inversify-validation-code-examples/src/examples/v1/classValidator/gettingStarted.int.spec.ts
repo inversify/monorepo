@@ -16,9 +16,13 @@ import { MessageController } from './gettingStarted';
 @CatchError(InversifyValidationError)
 class ValidationErrorFilter implements ErrorFilter<InversifyValidationError> {
   public catch(error: InversifyValidationError): never {
-    throw new BadRequestHttpResponse(error.message, undefined, {
-      cause: error,
-    });
+    throw new BadRequestHttpResponse(
+      { message: error.message },
+      error.message,
+      {
+        cause: error,
+      },
+    );
   }
 }
 

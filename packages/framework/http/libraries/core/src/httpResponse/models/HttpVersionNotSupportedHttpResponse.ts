@@ -1,16 +1,18 @@
+import Stream from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class HttpVersionNotSupportedHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'HTTP Version Not Supported',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage?: string,
     errorOptions?: ErrorOptions,
   ) {
     super(
       HttpStatusCode.HTTP_VERSION_NOT_SUPPORTED,
-      error,
-      message,
+      body,
+      errorMessage,
       errorOptions,
     );
   }

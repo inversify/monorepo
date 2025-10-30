@@ -1,12 +1,14 @@
+import Stream from 'node:stream';
+
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
 import { ErrorHttpResponse } from './ErrorHttpResponse';
 
 export class GoneHttpResponse extends ErrorHttpResponse {
   constructor(
-    message?: string,
-    error: string = 'Gone',
+    body?: object | string | number | boolean | Stream | undefined,
+    errorMessage?: string,
     errorOptions?: ErrorOptions,
   ) {
-    super(HttpStatusCode.GONE, error, message, errorOptions);
+    super(HttpStatusCode.GONE, body, errorMessage, errorOptions);
   }
 }

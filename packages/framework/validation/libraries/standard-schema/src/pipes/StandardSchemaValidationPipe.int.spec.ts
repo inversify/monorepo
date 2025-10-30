@@ -86,7 +86,7 @@ export async function buildExpressServer(
 @CatchError(InversifyValidationError)
 class ValidationErrorFilter implements ErrorFilter<InversifyValidationError> {
   public catch(error: InversifyValidationError): never {
-    throw new BadRequestHttpResponse(error.message, undefined, {
+    throw new BadRequestHttpResponse({ message: error.message }, undefined, {
       cause: error,
     });
   }
@@ -185,11 +185,9 @@ describe(StandardSchemaValidationPipe, () => {
           expect.stringContaining('application/json'),
         );
         await expect(response.json()).resolves.toStrictEqual({
-          error: 'Bad Request',
           message: expect.stringContaining(
             'Unrecognized key: "someExtraProperty"',
           ),
-          statusCode: 400,
         });
       });
     });

@@ -85,9 +85,13 @@ export async function buildExpressServer(
 @CatchError(InversifyValidationError)
 class ValidationErrorFilter implements ErrorFilter<InversifyValidationError> {
   public catch(error: InversifyValidationError): never {
-    throw new BadRequestHttpResponse(error.message, undefined, {
-      cause: error,
-    });
+    throw new BadRequestHttpResponse(
+      { message: error.message },
+      error.message,
+      {
+        cause: error,
+      },
+    );
   }
 }
 
@@ -182,11 +186,9 @@ describe(ClassValidationPipe, () => {
           expect.stringContaining('application/json'),
         );
         await expect(response.json()).resolves.toStrictEqual({
-          error: 'Bad Request',
           message: expect.stringContaining(
             'property someExtraProperty has failed the following constraints: whitelistValidation',
           ),
-          statusCode: 400,
         });
       });
     });

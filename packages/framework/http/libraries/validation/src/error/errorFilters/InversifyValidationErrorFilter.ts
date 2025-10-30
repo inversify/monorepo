@@ -11,9 +11,13 @@ export class InversifyValidationErrorFilter
 {
   public catch(error: InversifyValidationError): never {
     if (error.kind === InversifyValidationErrorKind.validationFailed) {
-      throw new BadRequestHttpResponse(error.message, undefined, {
-        cause: error,
-      });
+      throw new BadRequestHttpResponse(
+        { message: error.message },
+        error.message,
+        {
+          cause: error,
+        },
+      );
     }
 
     throw error;
