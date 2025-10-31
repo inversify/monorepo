@@ -13,12 +13,12 @@ import {
   PipeMetadata,
 } from '@inversifyjs/framework-core';
 import { ConsoleLogger, Logger } from '@inversifyjs/logger';
-import { getBaseType } from '@inversifyjs/prototype-utils';
 import { Container, Newable, ServiceIdentifier } from 'inversify';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
 import { isHttpResponse } from '../../httpResponse/calculations/isHttpResponse';
+import { ErrorHttpResponse } from '../../httpResponse/models/ErrorHttpResponse';
 import { ForbiddenHttpResponse } from '../../httpResponse/models/ForbiddenHttpResponse';
 import { HttpResponse } from '../../httpResponse/models/HttpResponse';
 import { InternalServerErrorHttpResponse } from '../../httpResponse/models/InternalServerErrorHttpResponse';
@@ -27,7 +27,9 @@ import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/Co
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
 import { setErrorFilterToErrorFilterMap } from '../actions/setErrorFilterToErrorFilterMap';
+import { buildHttpResponseErrorFilter } from '../calculations/buildHttpResponseErrorFilter';
 import { buildInterceptedHandler } from '../calculations/buildInterceptedHandler';
+import { getErrorFilterForError } from '../calculations/getErrorFilterForError';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
 import { HttpStatusCode } from '../models/HttpStatusCode';
@@ -56,7 +58,7 @@ export abstract class InversifyHttpAdapter<
   readonly #container: Container;
   readonly #errorTypeToGlobalErrorFilterMap: Map<
     Newable<Error> | null,
-    Newable<ErrorFilter>
+    ErrorFilter | Newable<ErrorFilter>
   >;
   readonly #globalGuardList: ServiceIdentifier<Guard<TRequest>>[];
   readonly #globalPipeList: (ServiceIdentifier<Pipe> | Pipe)[];
@@ -95,6 +97,8 @@ export abstract class InversifyHttpAdapter<
     };
     this.#postHandlerMiddlewareList = [];
     this.#preHandlerMiddlewareList = [];
+
+    this.#setErrorHttpResponseErrorFilter();
   }
 
   public applyGlobalMiddleware(
@@ -495,39 +499,12 @@ export abstract class InversifyHttpAdapter<
 
   async #getErrorFilterForError(
     error: unknown,
-    errorToFilterMap: Map<Newable<Error> | null, Newable<ErrorFilter>>,
+    errorToFilterMapList: Map<
+      Newable<Error> | null,
+      ErrorFilter | Newable<ErrorFilter>
+    >[],
   ): Promise<ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined> {
-    if (error instanceof Error) {
-      let currentErrorType: Newable<Error> =
-        error.constructor as Newable<Error>;
-
-      while (currentErrorType !== Error) {
-        const errorFilterType: Newable<ErrorFilter> | undefined =
-          errorToFilterMap.get(currentErrorType);
-
-        if (errorFilterType !== undefined) {
-          return this.#container.getAsync(errorFilterType);
-        }
-
-        currentErrorType = getBaseType(currentErrorType) as Newable<Error>;
-      }
-
-      const errorFilterType: Newable<ErrorFilter> | undefined =
-        errorToFilterMap.get(currentErrorType);
-
-      if (errorFilterType !== undefined) {
-        return this.#container.getAsync(errorFilterType);
-      }
-    }
-
-    const errorFilterType: Newable<ErrorFilter> | undefined =
-      errorToFilterMap.get(null);
-
-    if (errorFilterType !== undefined) {
-      return this.#container.getAsync(errorFilterType);
-    }
-
-    return undefined;
+    return getErrorFilterForError(this.#container, error, errorToFilterMapList);
   }
 
   #buildHandleError(
@@ -552,32 +529,23 @@ export abstract class InversifyHttpAdapter<
     ): Promise<TResult> => {
       const errorFilter:
         | ErrorFilter<unknown, TRequest, TResponse, TResult>
-        | undefined =
-        (await this.#getErrorFilterForError(
-          error,
-          routerExplorerControllerMethodMetadata.errorTypeToErrorFilterMap,
-        )) ??
-        (await this.#getErrorFilterForError(
-          error,
-          this.#errorTypeToGlobalErrorFilterMap,
-        ));
+        | undefined = await this.#getErrorFilterForError(error, [
+        routerExplorerControllerMethodMetadata.errorTypeToErrorFilterMap,
+        this.#errorTypeToGlobalErrorFilterMap,
+      ]);
 
       if (errorFilter === undefined) {
         let httpResponse: HttpResponse | undefined = undefined;
 
-        if (isHttpResponse(error)) {
-          httpResponse = error;
-        } else {
-          this.#printError(error);
+        this.#printError(error);
 
-          httpResponse = new InternalServerErrorHttpResponse(
-            undefined,
-            undefined,
-            {
-              cause: error,
-            },
-          );
-        }
+        httpResponse = new InternalServerErrorHttpResponse(
+          undefined,
+          undefined,
+          {
+            cause: error,
+          },
+        );
 
         return this.#reply(request, response, httpResponse);
       }
@@ -763,6 +731,13 @@ export abstract class InversifyHttpAdapter<
     setErrorFilterToErrorFilterMap(
       this.#errorTypeToGlobalErrorFilterMap,
       errorFilter,
+    );
+  }
+
+  #setErrorHttpResponseErrorFilter(): void {
+    this.#errorTypeToGlobalErrorFilterMap.set(
+      ErrorHttpResponse,
+      buildHttpResponseErrorFilter(this.#reply.bind(this)),
     );
   }
 
