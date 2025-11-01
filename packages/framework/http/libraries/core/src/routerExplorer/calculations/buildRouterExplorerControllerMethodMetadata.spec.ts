@@ -22,6 +22,7 @@ import {
   Middleware,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
+import { Logger } from '@inversifyjs/logger';
 import { Newable, ServiceIdentifier } from 'inversify';
 
 import { RequestMethodType } from '../../http/models/RequestMethodType';
@@ -37,9 +38,26 @@ import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStat
 import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata';
 
 describe(buildRouterExplorerControllerMethodMetadata, () => {
+  let loggerFixture: Logger;
+  let controllerMetadataFixture: ControllerMetadata;
+  let controllerMethodMetadataFixture: ControllerMethodMetadata;
+
+  beforeAll(() => {
+    loggerFixture = Symbol() as unknown as Logger;
+
+    controllerMetadataFixture = {
+      path: '/',
+      serviceIdentifier: Symbol(),
+      target: class TestController {},
+    };
+    controllerMethodMetadataFixture = {
+      methodKey: 'testMethod',
+      path: '/test',
+      requestMethodType: RequestMethodType.Get,
+    };
+  });
+
   describe('when called', () => {
-    let controllerMetadataFixture: ControllerMetadata;
-    let controllerMethodMetadataFixture: ControllerMethodMetadata;
     let controllerMethodParameterMetadataListFixture: (
       | ControllerMethodParameterMetadata
       | undefined
@@ -64,16 +82,6 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     let result: unknown;
 
     beforeAll(() => {
-      controllerMetadataFixture = {
-        path: '/',
-        serviceIdentifier: Symbol(),
-        target: class TestController {},
-      };
-      controllerMethodMetadataFixture = {
-        methodKey: 'testMethod',
-        path: '/test',
-        requestMethodType: RequestMethodType.Get,
-      };
       controllerMethodParameterMetadataListFixture = [];
       controllerMethodStatusCodeMetadataFixture = undefined;
       classGuardListFixture = [Symbol() as unknown as Newable<Guard>];
@@ -156,6 +164,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         .mockReturnValueOnce(errorTypeToErrorFilterMapFixture);
 
       result = buildRouterExplorerControllerMethodMetadata(
+        loggerFixture,
         controllerMetadataFixture,
         controllerMethodMetadataFixture,
       );
@@ -254,6 +263,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
 
     it('should call buildErrorTypeToErrorFilterMap()', () => {
       expect(buildErrorTypeToErrorFilterMap).toHaveBeenCalledExactlyOnceWith(
+        loggerFixture,
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
       );

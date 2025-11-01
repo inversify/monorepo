@@ -1,3 +1,5 @@
+import { Logger } from '@inversifyjs/logger';
+
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { RouterExplorerControllerMetadata } from '../model/RouterExplorerControllerMetadata';
@@ -9,6 +11,7 @@ export function buildRouterExplorerControllerMetadata<
   TResponse,
   TResult,
 >(
+  logger: Logger,
   controllerMetadata: ControllerMetadata,
 ): RouterExplorerControllerMetadata<TRequest, TResponse, TResult> {
   const controllerMethodMetadataList: ControllerMethodMetadata[] =
@@ -17,6 +20,7 @@ export function buildRouterExplorerControllerMetadata<
   return {
     controllerMethodMetadataList:
       buildRouterExplorerControllerMethodMetadataList(
+        logger,
         controllerMetadata,
         controllerMethodMetadataList,
       ),

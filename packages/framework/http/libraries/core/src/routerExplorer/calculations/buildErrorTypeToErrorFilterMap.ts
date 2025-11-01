@@ -3,11 +3,13 @@ import {
   getClassErrorFilterMetadata,
   getClassMethodErrorFilterMetadata,
 } from '@inversifyjs/framework-core';
+import { Logger } from '@inversifyjs/logger';
 import { Newable } from 'inversify';
 
 import { setErrorFilterToErrorFilterMap } from '../../http/actions/setErrorFilterToErrorFilterMap';
 
 export function buildErrorTypeToErrorFilterMap(
+  logger: Logger,
   target: NewableFunction,
   methodKey: string | symbol,
 ): Map<Newable<Error> | null, Newable<ErrorFilter>> {
@@ -20,11 +22,19 @@ export function buildErrorTypeToErrorFilterMap(
     target,
     methodKey,
   )) {
-    setErrorFilterToErrorFilterMap(errorTypeToErrorFilterMap, errorFilter);
+    setErrorFilterToErrorFilterMap(
+      logger,
+      errorTypeToErrorFilterMap,
+      errorFilter,
+    );
   }
 
   for (const errorFilter of getClassErrorFilterMetadata(target)) {
-    setErrorFilterToErrorFilterMap(errorTypeToErrorFilterMap, errorFilter);
+    setErrorFilterToErrorFilterMap(
+      logger,
+      errorTypeToErrorFilterMap,
+      errorFilter,
+    );
   }
 
   return errorTypeToErrorFilterMap;
