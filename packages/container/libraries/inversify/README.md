@@ -56,7 +56,7 @@ InversifyJS has been developed with 4 main goals:
 [<img src="https://avatars.githubusercontent.com/u/6764390?s=200&v=4" width="100" alt="Elastic logo" />](https://www.elastic.co/)
 [<img src="https://avatars.githubusercontent.com/u/9784193?s=200&v=4" width="100" alt="Ledger logo" />](https://www.ledger.com/)
 [<img src="https://avatars3.githubusercontent.com/u/6962987?s=200&v=4" width="100" alt="Slack logo" />](https://api.slack.com/)
-[<img src="https://user-images.githubusercontent.com/10656223/33888109-fae0852e-df43-11e7-97f6-9db543da0bde.png" width="100" alt="Baidu logo">](http://www.baidu.com/) [<img src="https://avatars2.githubusercontent.com/u/8085382?s=200&v=4" width="100" alt="iMdada logo" />](https://www.imdada.cn/)
+[<img src="https://user-images.githubusercontent.com/10656223/33888109-fae0852e-df43-11e7-97f6-9db543da0bde.png" width="100" alt="Baidu logo" />](http://www.baidu.com/) [<img src="https://avatars2.githubusercontent.com/u/8085382?s=200&v=4" width="100" alt="iMdada logo" />](https://www.imdada.cn/)
 [<img src="https://avatars0.githubusercontent.com/u/1520648?s=200&v=4" width="100" alt="Plain Concepts logo" />](https://www.plainconcepts.com/)
 [<img src="https://avatars3.githubusercontent.com/u/114767?s=200&v=4" width="100" alt="Lonely Planet logo" />](https://www.lonelyplanet.com/)
 [<img src="https://avatars0.githubusercontent.com/u/25283328?s=200&v=4" width="100" alt="Jincor logo" />](https://jincor.com/)
