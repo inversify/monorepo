@@ -44,6 +44,11 @@
       "description": "Group GitHub Actions updates",
       "groupName": "GitHub Actions",
       "matchManagers": ["github-actions"]
+    },
+    {
+      "description": "Quarantine packages with current known issues",
+      "enabled": false,
+      "matchPackageNames": ["@eslint/js", "eslint"]
     }
   ],
   "rangeStrategy": "bump",
