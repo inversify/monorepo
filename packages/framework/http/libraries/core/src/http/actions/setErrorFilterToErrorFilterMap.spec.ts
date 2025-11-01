@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, vitest } from 'vitest';
+import { beforeAll, describe, expect, it, Mocked, vitest } from 'vitest';
 
 vitest.mock('@inversifyjs/framework-core');
 
@@ -6,11 +6,20 @@ import {
   ErrorFilter,
   getCatchErrorMetadata,
 } from '@inversifyjs/framework-core';
+import { Logger } from '@inversifyjs/logger';
 import { Newable } from 'inversify';
 
 import { setErrorFilterToErrorFilterMap } from './setErrorFilterToErrorFilterMap';
 
 describe(setErrorFilterToErrorFilterMap, () => {
+  let loggerMock: Mocked<Logger>;
+
+  beforeAll(() => {
+    loggerMock = {
+      warn: vitest.fn(),
+    } as Partial<Mocked<Logger>> as Mocked<Logger>;
+  });
+
   describe('when called', () => {
     let errorTypeToGlobalErrorFilterMapFixture: Map<
       Newable<Error> | null,
@@ -29,6 +38,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
         .mockReturnValueOnce(errorTypesFixture);
 
       setErrorFilterToErrorFilterMap(
+        loggerMock,
         errorTypeToGlobalErrorFilterMapFixture,
         errorFilterFixture,
       );
@@ -76,6 +86,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
         .mockReturnValueOnce(errorTypesFixture);
 
       setErrorFilterToErrorFilterMap(
+        loggerMock,
         errorTypeToGlobalErrorFilterMapFixture,
         errorFilterFixture,
       );
@@ -116,6 +127,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
         .mockReturnValueOnce(errorTypesFixture);
 
       setErrorFilterToErrorFilterMap(
+        loggerMock,
         errorTypeToGlobalErrorFilterMapFixture,
         errorFilterFixture,
       );

@@ -1,3 +1,4 @@
+import { Logger } from '@inversifyjs/logger';
 import { Container } from 'inversify';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
@@ -13,6 +14,7 @@ export function buildRouterExplorerControllerMetadataList<
   TResult,
 >(
   container: Container,
+  logger: Logger,
 ): RouterExplorerControllerMetadata<TRequest, TResponse, TResult>[] {
   const controllerMetadataList: ControllerMetadata[] | undefined =
     getControllerMetadataList();
@@ -33,7 +35,7 @@ export function buildRouterExplorerControllerMetadataList<
   for (const controllerMetadata of controllerMetadataList) {
     if (container.isBound(controllerMetadata.serviceIdentifier)) {
       routerExplorerControllerMetadataList.push(
-        buildRouterExplorerControllerMetadata(controllerMetadata),
+        buildRouterExplorerControllerMetadata(logger, controllerMetadata),
       );
     }
   }

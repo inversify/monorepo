@@ -200,7 +200,10 @@ export abstract class InversifyHttpAdapter<
       TRequest,
       TResponse,
       TResult
-    >[] = buildRouterExplorerControllerMetadataList(this.#container);
+    >[] = buildRouterExplorerControllerMetadataList(
+      this.#container,
+      this.#logger,
+    );
 
     for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
       await this._buildRouter({
@@ -729,6 +732,7 @@ export abstract class InversifyHttpAdapter<
 
   #setGlobalErrorFilter(errorFilter: Newable<ErrorFilter>): void {
     setErrorFilterToErrorFilterMap(
+      this.#logger,
       this.#errorTypeToGlobalErrorFilterMap,
       errorFilter,
     );

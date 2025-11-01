@@ -11,6 +11,7 @@ import {
 vitest.mock('./getControllerMetadataList');
 vitest.mock('./buildRouterExplorerControllerMetadata');
 
+import { Logger } from '@inversifyjs/logger';
 import { Container } from 'inversify';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
@@ -22,13 +23,21 @@ import { buildRouterExplorerControllerMetadataList } from './buildRouterExplorer
 import { getControllerMetadataList } from './getControllerMetadataList';
 
 describe(buildRouterExplorerControllerMetadataList, () => {
-  describe('when called, and exploreControllers returns undefined', () => {
-    let containerMock: Mocked<Container>;
+  let containerMock: Mocked<Container>;
+  let loggerFixture: Logger;
+
+  beforeAll(() => {
+    containerMock = {
+      isBound: vitest.fn(),
+    } as Partial<Mocked<Container>> as Mocked<Container>;
+    loggerFixture = Symbol() as unknown as Logger;
+  });
+
+  describe('when called, and getControllerMetadataList() returns undefined', () => {
     let controllerMetadataListFixture: undefined;
     let result: unknown;
 
     beforeAll(async () => {
-      containerMock = {} as Partial<Mocked<Container>> as Mocked<Container>;
       controllerMetadataListFixture = undefined;
 
       vitest
@@ -36,7 +45,7 @@ describe(buildRouterExplorerControllerMetadataList, () => {
         .mockReturnValueOnce(controllerMetadataListFixture);
 
       try {
-        result = buildRouterExplorerControllerMetadataList(containerMock);
+        buildRouterExplorerControllerMetadataList(containerMock, loggerFixture);
       } catch (error: unknown) {
         result = error;
       }
@@ -50,26 +59,27 @@ describe(buildRouterExplorerControllerMetadataList, () => {
       expect(getControllerMetadataList).toHaveBeenCalledExactlyOnceWith();
     });
 
-    it('should throw an InversifyHttpAdapterError with the correct kind', () => {
+    it('should throw an InversifyHttpAdapterError', () => {
+      const expectedErrorProperties: Partial<InversifyHttpAdapterError> = {
+        kind: InversifyHttpAdapterErrorKind.noControllerFound,
+        message:
+          'No controllers found. Please ensure that your controllers are properly registered in your container and are annotated with the @Controller() decorator.',
+      };
+
       expect(result).toBeInstanceOf(InversifyHttpAdapterError);
-      expect(result).toHaveProperty(
-        'kind',
-        InversifyHttpAdapterErrorKind.noControllerFound,
+      expect(result).toStrictEqual(
+        expect.objectContaining(expectedErrorProperties),
       );
     });
   });
 
-  describe('when called, and exploreControllers returns a ControllerMetadata list', () => {
-    let containerMock: Mocked<Container>;
+  describe('when called, and getControllerMetadataList() returns a ControllerMetadata list', () => {
     let controllerMetadataFixture: ControllerMetadata;
     let controllerMetadataListFixture: ControllerMetadata[];
     let routerExplorerControllerMetadataFixture: RouterExplorerControllerMetadata;
     let result: unknown;
 
     beforeAll(async () => {
-      containerMock = { isBound: vitest.fn() } as Partial<
-        Mocked<Container>
-      > as Mocked<Container>;
       controllerMetadataFixture = {
         path: '',
         serviceIdentifier: Symbol(),
@@ -93,7 +103,10 @@ describe(buildRouterExplorerControllerMetadataList, () => {
         .mocked(buildRouterExplorerControllerMetadata)
         .mockReturnValueOnce(routerExplorerControllerMetadataFixture);
 
-      result = buildRouterExplorerControllerMetadataList(containerMock);
+      result = buildRouterExplorerControllerMetadataList(
+        containerMock,
+        loggerFixture,
+      );
     });
 
     afterAll(() => {
@@ -113,7 +126,10 @@ describe(buildRouterExplorerControllerMetadataList, () => {
     it('should call buildRouterExplorerControllerMetadata()', () => {
       expect(
         buildRouterExplorerControllerMetadata,
-      ).toHaveBeenCalledExactlyOnceWith(controllerMetadataFixture);
+      ).toHaveBeenCalledExactlyOnceWith(
+        loggerFixture,
+        controllerMetadataFixture,
+      );
     });
 
     it('should return RouterExplorerControllerMetadata[]', () => {

@@ -3,6 +3,8 @@ import { beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock('./getControllerMethodMetadataList');
 vitest.mock('./buildRouterExplorerControllerMethodMetadataList');
 
+import { Logger } from '@inversifyjs/logger';
+
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { RouterExplorerControllerMetadata } from '../model/RouterExplorerControllerMetadata';
@@ -12,18 +14,25 @@ import { buildRouterExplorerControllerMethodMetadataList } from './buildRouterEx
 import { getControllerMethodMetadataList } from './getControllerMethodMetadataList';
 
 describe(buildRouterExplorerControllerMetadata, () => {
+  let loggerFixture: Logger;
+  let controllerMetadataFixture: ControllerMetadata;
+
+  beforeAll(() => {
+    loggerFixture = Symbol() as unknown as Logger;
+
+    controllerMetadataFixture = {
+      path: '/test',
+      serviceIdentifier: Symbol(),
+      target: class TestController {},
+    };
+  });
+
   describe('when called', () => {
-    let controllerMetadataFixture: ControllerMetadata;
     let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
     let routerExplorerControllerMethodMetadataListFixture: RouterExplorerControllerMethodMetadata[];
     let result: unknown;
 
     beforeAll(() => {
-      controllerMetadataFixture = {
-        path: '/test',
-        serviceIdentifier: Symbol(),
-        target: class TestController {},
-      };
       controllerMethodMetadataListFixture = [];
       routerExplorerControllerMethodMetadataListFixture = [];
 
@@ -35,7 +44,10 @@ describe(buildRouterExplorerControllerMetadata, () => {
         .mocked(buildRouterExplorerControllerMethodMetadataList)
         .mockReturnValueOnce(routerExplorerControllerMethodMetadataListFixture);
 
-      result = buildRouterExplorerControllerMetadata(controllerMetadataFixture);
+      result = buildRouterExplorerControllerMetadata(
+        loggerFixture,
+        controllerMetadataFixture,
+      );
     });
 
     it('should call getControllerMethodMetadataList', () => {
@@ -48,6 +60,7 @@ describe(buildRouterExplorerControllerMetadata, () => {
       expect(
         buildRouterExplorerControllerMethodMetadataList,
       ).toHaveBeenCalledExactlyOnceWith(
+        loggerFixture,
         controllerMetadataFixture,
         controllerMethodMetadataListFixture,
       );
