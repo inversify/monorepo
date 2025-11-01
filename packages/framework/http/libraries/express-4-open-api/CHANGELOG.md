@@ -1,5 +1,13 @@
 # @inversifyjs/express-4-open-api
 
+## 4.0.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@4.0.0
+  - @inversifyjs/http-open-api@4.0.0
+
 ## 3.3.0
 
 ### Patch Changes

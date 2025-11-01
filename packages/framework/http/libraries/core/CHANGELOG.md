@@ -1,5 +1,37 @@
 # @inversifyjs/http-core
 
+## 4.0.0
+
+### Major Changes
+
+- Updated `ErrorHttpResponse` without `is`.
+- Updated `SuccessHttpResponse` without `is`.
+- Updated `ErrorHttpResponse` based classes constructors with `body` and `message` params:
+
+Before:
+
+```ts
+throw new BadRequestHttpResponse("Error message", undefined, {
+  cause: new Error(),
+});
+```
+
+After:
+
+```ts
+throw new BadRequestHttpResponse(
+  { message: "my http body content" },
+  "Error message",
+  {
+    cause: new Error(),
+  }
+);
+```
+
+### Minor Changes
+
+- Updated InversifyHttpAdapter with default `ErrorHttpResponse` ErrorFilter
+
 ## 3.3.0
 
 ### Minor Changes

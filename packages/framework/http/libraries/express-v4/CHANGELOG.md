@@ -1,5 +1,15 @@
 # @inversifyjs/http-express-v4
 
+## 4.0.0
+
+### Patch Changes
+
+- Added `ExpressErrorFilter` type.
+- Added `ExpressGuard` type.
+- Added `ExpressInterceptor` type.
+- Updated dependencies
+  - @inversifyjs/http-core@4.0.0
+
 ## 3.3.0
 
 ### Patch Changes

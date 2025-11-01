@@ -1,5 +1,15 @@
 # @inversifyjs/http-fastify
 
+## 4.0.0
+
+### Patch Changes
+
+- Added `FastifyErrorFilter` type.
+- Added `FastifyGuard` type.
+- Added `FastifyInterceptor` type.
+- Updated dependencies
+  - @inversifyjs/http-core@4.0.0
+
 ## 3.3.0
 
 ### Patch Changes
