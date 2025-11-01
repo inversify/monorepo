@@ -13,6 +13,7 @@ import {
   Middleware,
   MiddlewareOptions,
 } from '@inversifyjs/framework-core';
+import { Logger } from '@inversifyjs/logger';
 import { Newable, ServiceIdentifier } from 'inversify';
 
 import { HttpStatusCode } from '../../http/models/HttpStatusCode';
@@ -31,6 +32,7 @@ export function buildRouterExplorerControllerMethodMetadata<
   TResponse,
   TResult,
 >(
+  logger: Logger,
   controllerMetadata: ControllerMetadata,
   controllerMethodMetadata: ControllerMethodMetadata,
 ): RouterExplorerControllerMethodMetadata<TRequest, TResponse, TResult> {
@@ -88,6 +90,7 @@ export function buildRouterExplorerControllerMethodMetadata<
     Newable<Error> | null,
     Newable<ErrorFilter>
   > = buildErrorTypeToErrorFilterMap(
+    logger,
     controllerMetadata.target,
     controllerMethodMetadata.methodKey,
   );

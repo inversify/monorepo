@@ -8,15 +8,24 @@ import {
   getClassErrorFilterMetadata,
   getClassMethodErrorFilterMetadata,
 } from '@inversifyjs/framework-core';
+import { Logger } from '@inversifyjs/logger';
 import { Newable } from 'inversify';
 
 import { setErrorFilterToErrorFilterMap } from '../../http/actions/setErrorFilterToErrorFilterMap';
 import { buildErrorTypeToErrorFilterMap } from './buildErrorTypeToErrorFilterMap';
 
 describe(buildErrorTypeToErrorFilterMap, () => {
+  let targetFixture: NewableFunction;
+  let methodKeyFixture: string;
+  let loggerFixture: Logger;
+
+  beforeAll(() => {
+    targetFixture = class TestController {};
+    methodKeyFixture = 'testMethod';
+    loggerFixture = Symbol() as unknown as Logger;
+  });
+
   describe('when called', () => {
-    let targetFixture: NewableFunction;
-    let methodKeyFixture: string;
     let methodErrorFilterSetFixture: Set<Newable<ErrorFilter>>;
     let classErrorFilterSetFixture: Set<Newable<ErrorFilter>>;
     let methodErrorFilter1Fixture: Newable<ErrorFilter>;
@@ -26,8 +35,6 @@ describe(buildErrorTypeToErrorFilterMap, () => {
     let result: unknown;
 
     beforeAll(() => {
-      targetFixture = class TestController {};
-      methodKeyFixture = 'testMethod';
       methodErrorFilter1Fixture =
         class MethodErrorFilter1 {} as Newable<ErrorFilter>;
       methodErrorFilter2Fixture =
@@ -53,7 +60,11 @@ describe(buildErrorTypeToErrorFilterMap, () => {
         .mocked(getClassErrorFilterMetadata)
         .mockReturnValueOnce(classErrorFilterSetFixture);
 
-      result = buildErrorTypeToErrorFilterMap(targetFixture, methodKeyFixture);
+      result = buildErrorTypeToErrorFilterMap(
+        loggerFixture,
+        targetFixture,
+        methodKeyFixture,
+      );
     });
 
     afterAll(() => {
@@ -77,21 +88,25 @@ describe(buildErrorTypeToErrorFilterMap, () => {
       expect(setErrorFilterToErrorFilterMap).toHaveBeenCalledTimes(4);
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         1,
+        loggerFixture,
         expect.any(Map),
         methodErrorFilter1Fixture,
       );
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         2,
+        loggerFixture,
         expect.any(Map),
         methodErrorFilter2Fixture,
       );
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         3,
+        loggerFixture,
         expect.any(Map),
         classErrorFilter1Fixture,
       );
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         4,
+        loggerFixture,
         expect.any(Map),
         classErrorFilter2Fixture,
       );
@@ -103,16 +118,12 @@ describe(buildErrorTypeToErrorFilterMap, () => {
   });
 
   describe('when called, and getClassMethodErrorFilterMetadata() returns an empty Set', () => {
-    let targetFixture: NewableFunction;
-    let methodKeyFixture: string;
     let methodErrorFilterSetFixture: Set<Newable<ErrorFilter>>;
     let classErrorFilterSetFixture: Set<Newable<ErrorFilter>>;
     let classErrorFilter1Fixture: Newable<ErrorFilter>;
     let result: unknown;
 
     beforeAll(() => {
-      targetFixture = class TestController {};
-      methodKeyFixture = 'testMethod';
       methodErrorFilterSetFixture = new Set();
       classErrorFilter1Fixture =
         class ClassErrorFilter1 {} as Newable<ErrorFilter>;
@@ -126,7 +137,11 @@ describe(buildErrorTypeToErrorFilterMap, () => {
         .mocked(getClassErrorFilterMetadata)
         .mockReturnValueOnce(classErrorFilterSetFixture);
 
-      result = buildErrorTypeToErrorFilterMap(targetFixture, methodKeyFixture);
+      result = buildErrorTypeToErrorFilterMap(
+        loggerFixture,
+        targetFixture,
+        methodKeyFixture,
+      );
     });
 
     afterAll(() => {
@@ -148,6 +163,7 @@ describe(buildErrorTypeToErrorFilterMap, () => {
 
     it('should call setErrorFilterToErrorFilterMap() for class filters only', () => {
       expect(setErrorFilterToErrorFilterMap).toHaveBeenCalledExactlyOnceWith(
+        loggerFixture,
         expect.any(Map),
         classErrorFilter1Fixture,
       );
@@ -159,15 +175,11 @@ describe(buildErrorTypeToErrorFilterMap, () => {
   });
 
   describe('when called, and both getClassMethodErrorFilterMetadata() and getClassErrorFilterMetadata() return empty Sets', () => {
-    let targetFixture: NewableFunction;
-    let methodKeyFixture: string;
     let methodErrorFilterSetFixture: Set<Newable<ErrorFilter>>;
     let classErrorFilterSetFixture: Set<Newable<ErrorFilter>>;
     let result: unknown;
 
     beforeAll(() => {
-      targetFixture = class TestController {};
-      methodKeyFixture = 'testMethod';
       methodErrorFilterSetFixture = new Set();
       classErrorFilterSetFixture = new Set();
 
@@ -179,7 +191,11 @@ describe(buildErrorTypeToErrorFilterMap, () => {
         .mocked(getClassErrorFilterMetadata)
         .mockReturnValueOnce(classErrorFilterSetFixture);
 
-      result = buildErrorTypeToErrorFilterMap(targetFixture, methodKeyFixture);
+      result = buildErrorTypeToErrorFilterMap(
+        loggerFixture,
+        targetFixture,
+        methodKeyFixture,
+      );
     });
 
     afterAll(() => {

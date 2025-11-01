@@ -2,6 +2,8 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('./buildRouterExplorerControllerMethodMetadata');
 
+import { Logger } from '@inversifyjs/logger';
+
 import { ControllerMetadata } from '../model/ControllerMetadata';
 import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
@@ -9,20 +11,26 @@ import { buildRouterExplorerControllerMethodMetadata } from './buildRouterExplor
 import { buildRouterExplorerControllerMethodMetadataList } from './buildRouterExplorerControllerMethodMetadataList';
 
 describe(buildRouterExplorerControllerMethodMetadataList, () => {
+  let loggerFixture: Logger;
+  let controllerMetadataFixture: ControllerMetadata;
+  let controllerMethodMetadataFixture: ControllerMethodMetadata;
+
+  beforeAll(() => {
+    loggerFixture = Symbol() as unknown as Logger;
+    controllerMetadataFixture = {
+      path: '/',
+      serviceIdentifier: Symbol(),
+      target: class Test {},
+    };
+    controllerMethodMetadataFixture = {} as ControllerMethodMetadata;
+  });
+
   describe('when called', () => {
-    let controllerMetadataFixture: ControllerMetadata;
-    let controllerMethodMetadataFixture: ControllerMethodMetadata;
     let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
     let routerExplorerControllerMethodMetadataFixture: RouterExplorerControllerMethodMetadata;
     let result: unknown;
 
     beforeAll(() => {
-      controllerMetadataFixture = {
-        path: '/',
-        serviceIdentifier: Symbol(),
-        target: class Test {},
-      };
-      controllerMethodMetadataFixture = {} as ControllerMethodMetadata;
       controllerMethodMetadataListFixture = [controllerMethodMetadataFixture];
       routerExplorerControllerMethodMetadataFixture =
         {} as RouterExplorerControllerMethodMetadata;
@@ -32,6 +40,7 @@ describe(buildRouterExplorerControllerMethodMetadataList, () => {
         .mockReturnValueOnce(routerExplorerControllerMethodMetadataFixture);
 
       result = buildRouterExplorerControllerMethodMetadataList(
+        loggerFixture,
         controllerMetadataFixture,
         controllerMethodMetadataListFixture,
       );
@@ -45,6 +54,7 @@ describe(buildRouterExplorerControllerMethodMetadataList, () => {
       expect(
         buildRouterExplorerControllerMethodMetadata,
       ).toHaveBeenCalledExactlyOnceWith(
+        loggerFixture,
         controllerMetadataFixture,
         controllerMethodMetadataFixture,
       );
