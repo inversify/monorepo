@@ -16,7 +16,7 @@
     "@types/mime-types": "3.0.1",
     "@types/node": "24.9.2",
     "@vitest/coverage-v8": "4.0.6",
-    "eslint": "9.39.0",
+    "eslint": "9.38.0",
     "hono": "4.10.4",
     "prettier": "3.6.2",
     "rimraf": "6.1.0",

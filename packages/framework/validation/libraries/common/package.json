@@ -5,7 +5,7 @@
   },
   "description": "InversifyJs common validation package",
   "devDependencies": {
-    "eslint": "9.39.0",
+    "eslint": "9.38.0",
     "prettier": "3.6.2",
     "rimraf": "6.1.0",
     "rollup": "4.52.5",
