@@ -5,6 +5,7 @@ import { Container } from 'inversify';
 import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
 import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server';
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
+import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer';
 import { Server } from '../../server/models/Server';
 import { ContentController } from './decoratorApiHead';
 
@@ -12,6 +13,7 @@ describe.each<[(container: Container) => Promise<Server>]>([
   [buildExpress4Server],
   [buildExpressServer],
   [buildFastifyServer],
+  [buildUwebSocketsJsServer],
 ])(
   'Decorator API (Head)',
   (buildServer: (container: Container) => Promise<Server>) => {
