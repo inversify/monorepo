@@ -54,7 +54,11 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     return this.#app;
   }
 
-  protected _getBody(request: FastifyRequest, parameterName?: string): unknown {
+  protected _getBody(
+    request: FastifyRequest,
+    _response: FastifyReply,
+    parameterName?: string,
+  ): unknown {
     return parameterName !== undefined
       ? (request.body as Record<string, unknown>)[parameterName]
       : request.body;

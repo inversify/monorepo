@@ -368,9 +368,10 @@ export abstract class InversifyHttpAdapter<
 
         switch (controllerMethodParameterMetadata.parameterType) {
           case RequestMethodParameterType.Body:
-            return (request: TRequest): unknown =>
+            return (request: TRequest, response: TResponse): unknown =>
               this._getBody(
                 request,
+                response,
                 controllerMethodParameterMetadata.parameterName,
               );
           case RequestMethodParameterType.Cookies:
@@ -757,6 +758,7 @@ export abstract class InversifyHttpAdapter<
 
   protected abstract _getBody(
     request: TRequest,
+    response: TResponse,
     parameterName?: string,
   ): unknown;
 
