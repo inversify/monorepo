@@ -30,10 +30,17 @@ import { WarriorsOptionsNextHonoController } from '../controllers/hono/WarriorsO
 import { WarriorsPatchNextHonoController } from '../controllers/hono/WarriorsPatchNextHonoController';
 import { WarriorsPostNextHonoController } from '../controllers/hono/WarriorsPostNextHonoController';
 import { WarriorsPutNextHonoController } from '../controllers/hono/WarriorsPutNextHonoController';
+import { WarriorsDeleteNextUwebSocketsController } from '../controllers/uwebsockets/WarriorsDeleteNextUwebSocketsController';
+import { WarriorsGetNextUwebSocketsController } from '../controllers/uwebsockets/WarriorsGetNextUwebSocketsController';
+import { WarriorsOptionsNextUwebSocketsController } from '../controllers/uwebsockets/WarriorsOptionsNextUwebSocketsController';
+import { WarriorsPatchNextUwebSocketsController } from '../controllers/uwebsockets/WarriorsPatchNextUwebSocketsController';
+import { WarriorsPostNextUwebSocketsController } from '../controllers/uwebsockets/WarriorsPostNextUwebSocketsController';
+import { WarriorsPutNextUwebSocketsController } from '../controllers/uwebsockets/WarriorsPutNextUwebSocketsController';
 import { NextExpress4Middleware } from '../middlewares/NextExpress4Middleware';
 import { NextExpressMiddleware } from '../middlewares/NextExpressMiddleware';
 import { NextFastifyMiddleware } from '../middlewares/NextFastifyMiddleware';
 import { NextHonoMiddleware } from '../middlewares/NextHonoMiddleware';
+import { NextUwebSocketsMiddleware } from '../middlewares/NextUwebSocketsMiddleware';
 
 function getWarriorNextController(
   method: HttpMethod,
@@ -108,6 +115,23 @@ function getWarriorNextController(
       }
 
     // eslint-disable-next-line no-fallthrough
+    case ServerKind.uwebsockets:
+      switch (method) {
+        case HttpMethod.delete:
+          return WarriorsDeleteNextUwebSocketsController;
+        case HttpMethod.get:
+          return WarriorsGetNextUwebSocketsController;
+        case HttpMethod.options:
+          return WarriorsOptionsNextUwebSocketsController;
+        case HttpMethod.patch:
+          return WarriorsPatchNextUwebSocketsController;
+        case HttpMethod.post:
+          return WarriorsPostNextUwebSocketsController;
+        case HttpMethod.put:
+          return WarriorsPutNextUwebSocketsController;
+      }
+
+    // eslint-disable-next-line no-fallthrough
     default:
       throw new Error(
         `getWarriorNextController not supported for ${serverKind as string} server`,
@@ -125,6 +149,8 @@ function getWarriorNextMiddleware(serverKind: ServerKind): NewableFunction {
       return NextFastifyMiddleware;
     case ServerKind.hono:
       return NextHonoMiddleware;
+    case ServerKind.uwebsockets:
+      return NextUwebSocketsMiddleware;
   }
 }
 

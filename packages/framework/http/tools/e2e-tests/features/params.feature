@@ -1,3 +1,4 @@
+@params
 Feature: params decorator
 
 The params decorator allows extracting parameters from URL
@@ -16,27 +17,27 @@ The params decorator allows extracting parameters from URL
         Then the response contains the correct URL parameters
 
         Examples:
-          | server_kind | method   |
-          | "express"   | "DELETE" |
-          | "express"   | "GET"    |
-          | "express"   | "PATCH"  |
-          | "express"   | "POST"   |
-          | "express"   | "PUT"    |
-          | "express4"  | "DELETE" |
-          | "express4"  | "GET"    |
-          | "express4"  | "PATCH"  |
-          | "express4"  | "POST"   |
-          | "express4"  | "PUT"    |
-          | "fastify"   | "DELETE" |
-          | "fastify"   | "GET"    |
-          | "fastify"   | "PATCH"  |
-          | "fastify"   | "POST"   |
-          | "fastify"   | "PUT"    |
-          | "hono"      | "DELETE" |
-          | "hono"      | "GET"    |
-          | "hono"      | "PATCH"  |
-          | "hono"      | "POST"   |
-          | "hono"      | "PUT"    |
+          | server_kind   | method   |
+          | "express"     | "DELETE" |
+          | "express"     | "GET"    |
+          | "express"     | "PATCH"  |
+          | "express"     | "POST"   |
+          | "express"     | "PUT"    |
+          | "express4"    | "DELETE" |
+          | "express4"    | "GET"    |
+          | "express4"    | "PATCH"  |
+          | "express4"    | "POST"   |
+          | "express4"    | "PUT"    |
+          | "fastify"     | "DELETE" |
+          | "fastify"     | "GET"    |
+          | "fastify"     | "PATCH"  |
+          | "fastify"     | "POST"   |
+          | "fastify"     | "PUT"    |
+          | "hono"        | "DELETE" |
+          | "hono"        | "GET"    |
+          | "hono"        | "PATCH"  |
+          | "hono"        | "POST"   |
+          | "hono"        | "PUT"    |
 
       Scenario: URL parameters are correctly extracted with params decorator with parameter name
 
@@ -48,24 +49,29 @@ The params decorator allows extracting parameters from URL
         Then the response contains the correct URL parameters
 
         Examples:
-          | server_kind | method   |
-          | "express"   | "DELETE" |
-          | "express"   | "GET"    |
-          | "express"   | "PATCH"  |
-          | "express"   | "POST"   |
-          | "express"   | "PUT"    |
-          | "express4"  | "DELETE" |
-          | "express4"  | "GET"    |
-          | "express4"  | "PATCH"  |
-          | "express4"  | "POST"   |
-          | "express4"  | "PUT"    |
-          | "fastify"   | "DELETE" |
-          | "fastify"   | "GET"    |
-          | "fastify"   | "PATCH"  |
-          | "fastify"   | "POST"   |
-          | "fastify"   | "PUT"    |
-          | "hono"      | "DELETE" |
-          | "hono"      | "GET"    |
-          | "hono"      | "PATCH"  |
-          | "hono"      | "POST"   |
-          | "hono"      | "PUT"    |
+          | server_kind   | method   |
+          | "express"     | "DELETE" |
+          | "express"     | "GET"    |
+          | "express"     | "PATCH"  |
+          | "express"     | "POST"   |
+          | "express"     | "PUT"    |
+          | "express4"    | "DELETE" |
+          | "express4"    | "GET"    |
+          | "express4"    | "PATCH"  |
+          | "express4"    | "POST"   |
+          | "express4"    | "PUT"    |
+          | "fastify"     | "DELETE" |
+          | "fastify"     | "GET"    |
+          | "fastify"     | "PATCH"  |
+          | "fastify"     | "POST"   |
+          | "fastify"     | "PUT"    |
+          | "hono"        | "DELETE" |
+          | "hono"        | "GET"    |
+          | "hono"        | "PATCH"  |
+          | "hono"        | "POST"   |
+          | "hono"        | "PUT"    |
+          | "uwebsockets" | "DELETE" |
+          | "uwebsockets" | "GET"    |
+          | "uwebsockets" | "PATCH"  |
+          | "uwebsockets" | "POST"   |
+          | "uwebsockets" | "PUT"    |

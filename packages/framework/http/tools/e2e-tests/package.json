@@ -12,11 +12,13 @@
     "@inversifyjs/http-express-v4": "workspace:*",
     "@inversifyjs/http-fastify": "workspace:*",
     "@inversifyjs/http-hono": "workspace:*",
+    "@inversifyjs/http-uwebsockets": "workspace:*",
     "express": "^5.1.0",
     "express4": "npm:express@4.21.2",
     "fastify": "^5.6.1",
     "hono": "^4.10.4",
-    "inversify": "7.10.4"
+    "inversify": "7.10.4",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.5",
