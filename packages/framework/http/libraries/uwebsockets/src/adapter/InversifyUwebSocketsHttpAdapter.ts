@@ -172,13 +172,17 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     response: HttpResponse,
     parameterName?: string,
   ): Promise<unknown> {
-    if (parameterName !== undefined) {
-      throw new Error(
-        'Getting specific body parameters is not supported in uWebSockets.js adapter.',
-      );
+    const body: unknown = await this.#parseBody(response);
+
+    if (parameterName === undefined) {
+      return body;
     }
 
-    return this.#parseBody(response);
+    if (!(parameterName in (body as Record<string, unknown>))) {
+      throw new Error(`Body parameter '${parameterName}' not found.`);
+    }
+
+    return (body as Record<string, unknown>)[parameterName];
   }
 
   protected _getParams(request: HttpRequest, parameterName?: string): unknown {
@@ -290,7 +294,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
 
   #parseHeaders(request: HttpRequest): Record<string, string> {
     const headers: Record<string, string> = {};
-    request.forEach((value: string, key: string) => {
+    request.forEach((key: string, value: string) => {
       headers[key] = value;
     });
     return headers;
