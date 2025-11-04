@@ -15,6 +15,7 @@ import decoratorApiNextExpress4Source from '@inversifyjs/http-code-examples/gene
 import decoratorApiNextExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextExpress.ts.txt';
 import decoratorApiNextFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextFastify.ts.txt';
 import decoratorApiNextHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextHono.ts.txt';
+import decoratorApiNextUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextUwebsockets.ts.txt';
 import decoratorApiOptionsSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiOptions.ts.txt';
 import decoratorApiPatchSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPatch.ts.txt';
 import decoratorApiPostSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPost.ts.txt';
@@ -23,10 +24,12 @@ import decoratorApiRequestExpress4Source from '@inversifyjs/http-code-examples/g
 import decoratorApiRequestExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestExpress.ts.txt';
 import decoratorApiRequestFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestFastify.ts.txt';
 import decoratorApiRequestHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestHono.ts.txt';
+import decoratorApiRequestUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestUwebsockets.ts.txt';
 import decoratorApiResponseExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress4.ts.txt';
 import decoratorApiResponseExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress.ts.txt';
 import decoratorApiResponseFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseFastify.ts.txt';
 import decoratorApiResponseHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseHono.ts.txt';
+import decoratorApiResponseUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseUwebsockets.ts.txt';
 import decoratorApiSetHeaderSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiSetHeader.ts.txt';
 import decoratorApiStatusCodeSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiStatusCode.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
@@ -106,6 +109,9 @@ Next(): ParameterDecorator
   </TabItem>
   <TabItem value="hono" label="Hono">
     <CodeBlock language="ts">{decoratorApiNextHonoSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="uwebsockets" label="uWebSockets.js">
+    <CodeBlock language="ts">{decoratorApiNextUwebsocketsSource}</CodeBlock>
   </TabItem>
 </Tabs>
 
@@ -260,6 +266,9 @@ Request(...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]): ParameterDecorator
   <TabItem value="hono" label="Hono">
     <CodeBlock language="ts">{decoratorApiRequestHonoSource}</CodeBlock>
   </TabItem>
+  <TabItem value="uwebsockets" label="uWebSockets.js">
+    <CodeBlock language="ts">{decoratorApiRequestUwebsocketsSource}</CodeBlock>
+  </TabItem>
 </Tabs>
 
 ### Query
@@ -315,6 +324,9 @@ Notes
     :::
 
     <CodeBlock language="ts">{decoratorApiResponseHonoSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="uwebsockets" label="uWebSockets.js">
+    <CodeBlock language="ts">{decoratorApiResponseUwebsocketsSource}</CodeBlock>
   </TabItem>
 </Tabs>
 
