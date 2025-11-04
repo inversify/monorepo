@@ -1,3 +1,8 @@
+adapter:
+  label: Adapter
+  permalink: /adapter
+  description: Posts related to Inversify adapters
+
 releases:
   label: Releases
   permalink: /releases
