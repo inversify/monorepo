@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream';
 
-import { Logger } from '@inversifyjs/logger';
+import { type Logger } from '@inversifyjs/logger';
 import { HttpResponse } from 'uWebSockets.js';
 
 import { toArrayBuffer } from '../calculations/toArrayBuffer';
