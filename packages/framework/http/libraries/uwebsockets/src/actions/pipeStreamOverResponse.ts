@@ -33,13 +33,6 @@ export function pipeStreamOverResponse(
   readableStream: Readable,
   logger: Logger | undefined,
 ): void {
-  // Check if the stream is in object mode
-  if (readableStream.readableObjectMode) {
-    throw new Error(
-      'Object mode streams are not supported. Stream must emit Buffer or string chunks.',
-    );
-  }
-
   let isStreamClosed: boolean = false;
   let storedBuffer: ArrayBuffer | undefined;
   let storedOffset: number | undefined;
@@ -62,7 +55,7 @@ export function pipeStreamOverResponse(
   });
 
   // Handle stream data chunks
-  readableStream.on('data', (chunk: Buffer | string): void => {
+  readableStream.on('data', (chunk: unknown): void => {
     if ((response as CustomHttpResponse)[abortedSymbol] === true) {
       cleanup();
       return;

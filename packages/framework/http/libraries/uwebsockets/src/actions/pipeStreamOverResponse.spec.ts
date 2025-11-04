@@ -18,46 +18,7 @@ import { CustomHttpResponse } from '../models/CustomHttpResponse';
 import { pipeStreamOverResponse } from './pipeStreamOverResponse';
 
 describe(pipeStreamOverResponse, () => {
-  describe('having a stream in object mode', () => {
-    let readableStreamFixture: Readable;
-
-    beforeAll(() => {
-      readableStreamFixture = {
-        readableObjectMode: true,
-      } as Partial<Readable> as Readable;
-    });
-
-    describe('when called', () => {
-      let responseFixture: HttpResponse;
-      let result: unknown;
-
-      beforeAll(() => {
-        responseFixture = Symbol() as unknown as HttpResponse;
-
-        try {
-          pipeStreamOverResponse(
-            responseFixture,
-            readableStreamFixture,
-            undefined,
-          );
-        } catch (error: unknown) {
-          result = error;
-        }
-      });
-
-      it('should throw an Error', () => {
-        const expectedErrorProperties: Partial<Error> = {
-          message:
-            'Object mode streams are not supported. Stream must emit Buffer or string chunks.',
-        };
-
-        expect(result).toBeInstanceOf(Error);
-        expect(result).toMatchObject(expectedErrorProperties);
-      });
-    });
-  });
-
-  describe('having a non object mode stream', () => {
+  describe('having a stream', () => {
     let readableStreamMock: Mocked<Readable>;
     let responseMock: Mocked<CustomHttpResponse>;
     let loggerMock: Mocked<Logger>;
@@ -67,7 +28,6 @@ describe(pipeStreamOverResponse, () => {
         destroy: vitest.fn() as unknown,
         on: vitest.fn() as unknown,
         pause: vitest.fn() as unknown,
-        readableObjectMode: false,
         resume: vitest.fn() as unknown,
       } as Partial<Mocked<Readable>> as Mocked<Readable>;
 
