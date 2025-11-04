@@ -6,10 +6,12 @@ import guardApiExpressSource from '@inversifyjs/http-code-examples/generated/exa
 import guardApiExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpress4Allow.ts.txt';
 import guardApiFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiFastifyAllow.ts.txt';
 import guardApiHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiHonoAllow.ts.txt';
+import guardApiUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiUwebsocketsAllow.ts.txt';
 import guardApiExpressDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpressDeny.ts.txt';
 import guardApiExpress4DenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpress4Deny.ts.txt';
 import guardApiFastifyDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiFastifyDeny.ts.txt';
 import guardApiHonoDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiHonoDeny.ts.txt';
+import guardApiUwebsocketsDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiUwebsocketsDeny.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -47,6 +49,9 @@ Each adapter has its own request type. Below is a minimal “allow” guard for 
   <TabItem value="hono" label="Hono">
     <CodeBlock language="ts">{guardApiHonoSource}</CodeBlock>
   </TabItem>
+  <TabItem value="uwebsockets" label="uWebSockets.js">
+    <CodeBlock language="ts">{guardApiUwebsocketsSource}</CodeBlock>
+  </TabItem>
 </Tabs>
 
 ### Deny with a custom error response
@@ -65,6 +70,9 @@ Below are minimal “deny” guards that throw a `ForbiddenHttpResponse` directl
   </TabItem>
   <TabItem value="hono-deny" label="Hono">
     <CodeBlock language="ts">{guardApiHonoDenySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="uwebsockets-deny" label="uWebSockets.js">
+    <CodeBlock language="ts">{guardApiUwebsocketsDenySource}</CodeBlock>
   </TabItem>
 </Tabs>
 

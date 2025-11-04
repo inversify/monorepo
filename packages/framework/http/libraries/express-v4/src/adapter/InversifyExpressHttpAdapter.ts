@@ -124,29 +124,33 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     response.setHeader(key, value);
   }
 
-  protected _getBody(request: Request, parameterName?: string): unknown {
-    return parameterName !== undefined
-      ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        request.body[parameterName]
-      : request.body;
+  protected _getBody(
+    request: Request,
+    _response: Response,
+    parameterName?: string,
+  ): unknown {
+    return parameterName === undefined
+      ? request.body
+      : // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        request.body[parameterName];
   }
 
   protected _getParams(request: Request, parameterName?: string): unknown {
-    return parameterName !== undefined
-      ? request.params[parameterName]
-      : request.params;
+    return parameterName === undefined
+      ? request.params
+      : request.params[parameterName];
   }
 
   protected _getQuery(request: Request, parameterName?: string): unknown {
-    return parameterName !== undefined
-      ? request.query[parameterName]
-      : request.query;
+    return parameterName === undefined
+      ? request.query
+      : request.query[parameterName];
   }
 
   protected _getHeaders(request: Request, parameterName?: string): unknown {
-    return parameterName !== undefined
-      ? request.headers[parameterName]
-      : request.headers;
+    return parameterName === undefined
+      ? request.headers
+      : request.headers[parameterName];
   }
 
   protected _getCookies(
@@ -154,9 +158,9 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     _response: Response,
     parameterName?: string,
   ): unknown {
-    return parameterName !== undefined
-      ? request.cookies[parameterName]
-      : request.cookies;
+    return parameterName === undefined
+      ? request.cookies
+      : request.cookies[parameterName];
   }
 
   #buildDefaultExpressApp(customApp?: Application): Application {

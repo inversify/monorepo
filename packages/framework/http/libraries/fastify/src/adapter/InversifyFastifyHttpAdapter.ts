@@ -54,7 +54,11 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     return this.#app;
   }
 
-  protected _getBody(request: FastifyRequest, parameterName?: string): unknown {
+  protected _getBody(
+    request: FastifyRequest,
+    _response: FastifyReply,
+    parameterName?: string,
+  ): unknown {
     return parameterName !== undefined
       ? (request.body as Record<string, unknown>)[parameterName]
       : request.body;
@@ -112,12 +116,12 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     response.send(value);
   }
 
-  protected _replyStream(
+  protected async _replyStream(
     _request: FastifyRequest,
     response: FastifyReply,
     value: Readable,
-  ): void {
-    response.send(value);
+  ): Promise<void> {
+    await response.send(value);
   }
 
   protected _setStatus(
@@ -141,7 +145,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     routerParams: RouterParams<
       FastifyRequest,
       FastifyReply,
-      (err?: Error) => void,
+      HookHandlerDoneFunction,
       void
     >,
   ): void {
@@ -154,7 +158,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
         const orderedMiddlewareList: MiddlewareHandler<
           FastifyRequest,
           FastifyReply,
-          (err?: Error) => void
+          HookHandlerDoneFunction
         >[] = [
           ...routeParams.preHandlerMiddlewareList,
           ...routeParams.guardList,
@@ -204,7 +208,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     handler: RequestHandler<
       FastifyRequest,
       FastifyReply,
-      (err?: Error) => void
+      HookHandlerDoneFunction
     >,
   ): RouteHandlerMethod {
     return async (
@@ -216,7 +220,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           resolve: (value?: unknown) => void,
           reject: (error?: unknown) => void,
         ) => {
-          const done: (err?: Error) => void = (err?: Error) => {
+          const done: HookHandlerDoneFunction = (err?: Error): void => {
             if (err !== undefined) {
               reject(err);
             } else {
@@ -242,7 +246,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
         middleware: MiddlewareHandler<
           FastifyRequest,
           FastifyReply,
-          (err?: Error) => void
+          HookHandlerDoneFunction
         >,
       ) => this.#buildFastifyPreHandlerAsyncMiddleware(middleware),
     );
@@ -260,7 +264,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
         middleware: MiddlewareHandler<
           FastifyRequest,
           FastifyReply,
-          (err?: Error) => void
+          HookHandlerDoneFunction
         >,
       ) => this.#buildFastifyOnResponseAsyncMiddleware(middleware),
     );
@@ -279,7 +283,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           resolve: (value?: unknown) => void,
           reject: (error?: unknown) => void,
         ) => {
-          const done: (err?: Error) => void = (err?: Error) => {
+          const done: HookHandlerDoneFunction = (err?: Error) => {
             if (err !== undefined) {
               reject(err);
             } else {
@@ -287,7 +291,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
             }
           };
 
-          resolve(middleware(request, reply, done));
+          middleware(request, reply, done);
         },
       );
     };
@@ -306,7 +310,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           resolve: (value?: unknown) => void,
           reject: (error?: unknown) => void,
         ) => {
-          const done: (err?: Error) => void = (err?: Error) => {
+          const done: HookHandlerDoneFunction = (err?: Error) => {
             if (err !== undefined) {
               reject(err);
             } else {
@@ -314,7 +318,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
             }
           };
 
-          resolve(middleware(request, reply, done));
+          middleware(request, reply, done);
         },
       );
     };

@@ -28,26 +28,7 @@ export async function buildFastifyServer(
     host: address.address,
     port: address.port,
     shutdown: async (): Promise<void> => {
-      await new Promise<void>(
-        (
-          resolve: (value: void | PromiseLike<void>) => void,
-          reject: (reason?: unknown) => void,
-        ) => {
-          application.close().then(
-            () => {
-              resolve();
-            },
-            (err: unknown) => {
-              if (err === undefined) {
-                resolve();
-              } else {
-                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-                reject(err);
-              }
-            },
-          );
-        },
-      );
+      await application.close();
     },
   };
 }

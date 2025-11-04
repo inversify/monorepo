@@ -54,6 +54,18 @@ import { WarriorsPostSuccessfulHonoMiddlewareController } from '../controllers/h
 import { WarriorsPostUnsuccessfulHonoMiddlewareController } from '../controllers/hono/WarriorsPostUnsuccessfulHonoMiddlewareController';
 import { WarriorsPutSuccessfulHonoMiddlewareController } from '../controllers/hono/WarriorsPutSuccessfulHonoMiddlewareController';
 import { WarriorsPutUnsuccessfulHonoMiddlewareController } from '../controllers/hono/WarriorsPutUnsuccessfulHonoMiddlewareController';
+import { WarriorsDeleteSuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsDeleteSuccessfulUwebSocketsMiddlewareController';
+import { WarriorsDeleteUnsuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsDeleteUnsuccessfulUwebSocketsMiddlewareController';
+import { WarriorsGetSuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsGetSuccessfulUwebSocketsMiddlewareController';
+import { WarriorsGetUnsuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsGetUnsuccessfulUwebSocketsMiddlewareController';
+import { WarriorsOptionsSuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsOptionsSuccessfulUwebSocketsMiddlewareController';
+import { WarriorsOptionsUnsuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsOptionsUnsuccessfulUwebSocketsMiddlewareController';
+import { WarriorsPatchSuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsPatchSuccessfulUwebSocketsMiddlewareController';
+import { WarriorsPatchUnsuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsPatchUnsuccessfulUwebSocketsMiddlewareController';
+import { WarriorsPostSuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsPostSuccessfulUwebSocketsMiddlewareController';
+import { WarriorsPostUnsuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsPostUnsuccessfulUwebSocketsMiddlewareController';
+import { WarriorsPutSuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsPutSuccessfulUwebSocketsMiddlewareController';
+import { WarriorsPutUnsuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsPutUnsuccessfulUwebSocketsMiddlewareController';
 import { SuccessfulExpressMiddleware } from '../middlewares/express/SuccessfulExpressMiddleware';
 import { UnsuccessfulExpressMiddleware } from '../middlewares/express/UnsuccessfulExpressMiddleware';
 import { SuccessfulExpressV4Middleware } from '../middlewares/express4/SuccessfulExpressV4Middleware';
@@ -62,6 +74,8 @@ import { SuccessfulFastifyMiddleware } from '../middlewares/fastify/SuccessfulFa
 import { UnsuccessfulFastifyMiddleware } from '../middlewares/fastify/UnsuccessfulFastifyMiddleware';
 import { SuccessfulHonoMiddleware } from '../middlewares/hono/SuccessfulHonoMiddleware';
 import { UnsuccessfulHonoMiddleware } from '../middlewares/hono/UnsuccessfulHonoMiddleware';
+import { SuccessfulUwebSocketsMiddleware } from '../middlewares/uwebsockets/SuccessfulUwebSocketsMiddleware';
+import { UnsuccessfulUwebSocketsMiddleware } from '../middlewares/uwebsockets/UnsuccessfulUwebSocketsMiddleware';
 
 function getMethodWarriorSuccessfulExpressMiddlewareController(
   method: HttpMethod,
@@ -136,6 +150,25 @@ function getMethodWarriorSuccessfulHonoMiddlewareController(
       return WarriorsPostSuccessfulHonoMiddlewareController;
     case HttpMethod.put:
       return WarriorsPutSuccessfulHonoMiddlewareController;
+  }
+}
+
+function getMethodWarriorSuccessfulUwebSocketsMiddlewareController(
+  method: HttpMethod,
+): NewableFunction {
+  switch (method) {
+    case HttpMethod.delete:
+      return WarriorsDeleteSuccessfulUwebSocketsMiddlewareController;
+    case HttpMethod.get:
+      return WarriorsGetSuccessfulUwebSocketsMiddlewareController;
+    case HttpMethod.options:
+      return WarriorsOptionsSuccessfulUwebSocketsMiddlewareController;
+    case HttpMethod.patch:
+      return WarriorsPatchSuccessfulUwebSocketsMiddlewareController;
+    case HttpMethod.post:
+      return WarriorsPostSuccessfulUwebSocketsMiddlewareController;
+    case HttpMethod.put:
+      return WarriorsPutSuccessfulUwebSocketsMiddlewareController;
   }
 }
 
@@ -215,6 +248,25 @@ function getMethodWarriorUnsuccessfulHonoMiddlewareController(
   }
 }
 
+function getMethodWarriorUnsuccessfulUwebSocketsMiddlewareController(
+  method: HttpMethod,
+): NewableFunction {
+  switch (method) {
+    case HttpMethod.delete:
+      return WarriorsDeleteUnsuccessfulUwebSocketsMiddlewareController;
+    case HttpMethod.get:
+      return WarriorsGetUnsuccessfulUwebSocketsMiddlewareController;
+    case HttpMethod.options:
+      return WarriorsOptionsUnsuccessfulUwebSocketsMiddlewareController;
+    case HttpMethod.patch:
+      return WarriorsPatchUnsuccessfulUwebSocketsMiddlewareController;
+    case HttpMethod.post:
+      return WarriorsPostUnsuccessfulUwebSocketsMiddlewareController;
+    case HttpMethod.put:
+      return WarriorsPutUnsuccessfulUwebSocketsMiddlewareController;
+  }
+}
+
 function givenWarriorSuccessfulMiddlewareControllerForContainer(
   this: InversifyHttpWorld,
   method: HttpMethod,
@@ -247,6 +299,9 @@ function givenWarriorSuccessfulMiddlewareControllerForContainer(
       getMethodWarriorSuccessfulController =
         getMethodWarriorSuccessfulHonoMiddlewareController;
       break;
+    case ServerKind.uwebsockets:
+      getMethodWarriorSuccessfulController =
+        getMethodWarriorSuccessfulUwebSocketsMiddlewareController;
   }
 
   const controller: NewableFunction =
@@ -265,6 +320,9 @@ function givenWarriorSuccessfulMiddlewareControllerForContainer(
       break;
     case ServerKind.hono:
       middleware = SuccessfulHonoMiddleware;
+      break;
+    case ServerKind.uwebsockets:
+      middleware = SuccessfulUwebSocketsMiddleware;
       break;
   }
 
@@ -304,6 +362,10 @@ function givenWarriorUnsuccessfulMiddlewareControllerForContainer(
       getMethodWarriorUnsuccessfulController =
         getMethodWarriorUnsuccessfulHonoMiddlewareController;
       break;
+    case ServerKind.uwebsockets:
+      getMethodWarriorUnsuccessfulController =
+        getMethodWarriorUnsuccessfulUwebSocketsMiddlewareController;
+      break;
   }
 
   const controller: NewableFunction =
@@ -324,6 +386,9 @@ function givenWarriorUnsuccessfulMiddlewareControllerForContainer(
     case ServerKind.hono:
       successfulMiddleware = SuccessfulHonoMiddleware;
       break;
+    case ServerKind.uwebsockets:
+      successfulMiddleware = SuccessfulUwebSocketsMiddleware;
+      break;
   }
 
   let unsuccessfulMiddleware: NewableFunction;
@@ -340,6 +405,9 @@ function givenWarriorUnsuccessfulMiddlewareControllerForContainer(
       break;
     case ServerKind.hono:
       unsuccessfulMiddleware = UnsuccessfulHonoMiddleware;
+      break;
+    case ServerKind.uwebsockets:
+      unsuccessfulMiddleware = UnsuccessfulUwebSocketsMiddleware;
       break;
   }
 

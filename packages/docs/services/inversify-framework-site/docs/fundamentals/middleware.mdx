@@ -6,6 +6,7 @@ import middlewareApiExpressSource from '@inversifyjs/http-code-examples/generate
 import middlewareApiExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/middlewareApiExpress4SetHeader.ts.txt';
 import middlewareApiFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/middlewareApiFastifySetHeader.ts.txt';
 import middlewareApiHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/middlewareApiHonoSetHeader.ts.txt';
+import middlewareApiUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/middlewareApiUwebsocketsSetHeader.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -72,6 +73,16 @@ type HonoMiddleware = Middleware<
 >;
 ```
   </TabItem>
+  <TabItem value="uwebsockets" label="uWebSockets.js">
+```ts
+type UwebSocketsMiddleware = Middleware<
+  HttpRequest,
+  HttpResponse,
+  () => void,
+  void
+>;
+```
+  </TabItem>
 </Tabs>
 
 ## execute
@@ -100,6 +111,9 @@ Each adapter exposes its own request/response types. Here is the same middleware
       If you are implementing a post handler middleware in Hono, the adapter already calls `next()` for you after the middleware execution. Do not call it again in your middleware implementation, or an Internal Server Error will occur.
 
     :::
+  </TabItem>
+  <TabItem value="uwebsockets" label="uWebSockets.js">
+    <CodeBlock language="ts">{middlewareApiUwebsocketsSource}</CodeBlock>
   </TabItem>
 </Tabs>
 

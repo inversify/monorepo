@@ -13,6 +13,7 @@
     "@inversifyjs/http-express-v4": "workspace:*",
     "@inversifyjs/http-fastify": "workspace:*",
     "@inversifyjs/http-hono": "workspace:*",
+    "@inversifyjs/http-uwebsockets": "workspace:*",
     "@inversifyjs/logger": "workspace:*",
     "@types/better-sqlite3": "7.6.13",
     "@types/express": "5.0.5",
@@ -32,6 +33,7 @@
     "rimraf": "6.1.0",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0",
     "vitest": "4.0.6"
   },
   "homepage": "https://inversify.io",

@@ -6,6 +6,7 @@ import { buildExpressServer } from '../../server/adapter/express/actions/buildEx
 import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server';
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
+import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer';
 import { Server } from '../../server/models/Server';
 import { Content, ContentController } from './decoratorApiPatch';
 
@@ -14,6 +15,7 @@ describe.each<[(container: Container) => Promise<Server>]>([
   [buildExpressServer],
   [buildFastifyServer],
   [buildHonoServer],
+  [buildUwebSocketsJsServer],
 ])(
   'Decorator API (Patch)',
   (buildServer: (container: Container) => Promise<Server>) => {

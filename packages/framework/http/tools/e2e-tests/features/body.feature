@@ -1,3 +1,4 @@
+@body
 Feature: body decorator
 
 The body decorator allows extracting the body from HTTP requests
@@ -16,27 +17,32 @@ The body decorator allows extracting the body from HTTP requests
         Then the response contains the correct body data
 
         Examples:
-          | server_kind | method   |
-          | "express"   | "DELETE" |
-          | "express"   | "OPTIONS"|
-          | "express"   | "PATCH"  |
-          | "express"   | "POST"   |
-          | "express"   | "PUT"    |
-          | "express4"  | "DELETE" |
-          | "express4"  | "OPTIONS"|
-          | "express4"  | "PATCH"  |
-          | "express4"  | "POST"   |
-          | "express4"  | "PUT"    |
-          | "fastify"   | "DELETE" |
-          | "fastify"   | "OPTIONS"|
-          | "fastify"   | "PATCH"  |
-          | "fastify"   | "POST"   |
-          | "fastify"   | "PUT"    |
-          | "hono"      | "DELETE" |
-          | "hono"      | "OPTIONS"|
-          | "hono"      | "PATCH"  |
-          | "hono"      | "POST"   |
-          | "hono"      | "PUT"    |
+          | server_kind   | method   |
+          | "express"     | "DELETE" |
+          | "express"     | "OPTIONS"|
+          | "express"     | "PATCH"  |
+          | "express"     | "POST"   |
+          | "express"     | "PUT"    |
+          | "express4"    | "DELETE" |
+          | "express4"    | "OPTIONS"|
+          | "express4"    | "PATCH"  |
+          | "express4"    | "POST"   |
+          | "express4"    | "PUT"    |
+          | "fastify"     | "DELETE" |
+          | "fastify"     | "OPTIONS"|
+          | "fastify"     | "PATCH"  |
+          | "fastify"     | "POST"   |
+          | "fastify"     | "PUT"    |
+          | "hono"        | "DELETE" |
+          | "hono"        | "OPTIONS"|
+          | "hono"        | "PATCH"  |
+          | "hono"        | "POST"   |
+          | "hono"        | "PUT"    |
+          | "uwebsockets" | "DELETE" |
+          | "uwebsockets" | "OPTIONS"|
+          | "uwebsockets" | "PATCH"  |
+          | "uwebsockets" | "POST"   |
+          | "uwebsockets" | "PUT"    |
 
       Scenario: HTTP request body is correctly extracted with body decorator with parameter name
 
@@ -48,24 +54,29 @@ The body decorator allows extracting the body from HTTP requests
         Then the response contains the correct body data
 
         Examples:
-          | server_kind | method   |
-          | "express"   | "DELETE" |
-          | "express"   | "OPTIONS"|
-          | "express"   | "PATCH"  |
-          | "express"   | "POST"   |
-          | "express"   | "PUT"    |
-          | "express4"  | "DELETE" |
-          | "express4"  | "OPTIONS"|
-          | "express4"  | "PATCH"  |
-          | "express4"  | "POST"   |
-          | "express4"  | "PUT"    |
-          | "fastify"   | "DELETE" |
-          | "fastify"   | "OPTIONS"|
-          | "fastify"   | "PATCH"  |
-          | "fastify"   | "POST"   |
-          | "fastify"   | "PUT"    |
-          | "hono"      | "DELETE" |
-          | "hono"      | "OPTIONS"|
-          | "hono"      | "PATCH"  |
-          | "hono"      | "POST"   |
-          | "hono"      | "PUT"    |
+          | server_kind   | method   |
+          | "express"     | "DELETE" |
+          | "express"     | "OPTIONS"|
+          | "express"     | "PATCH"  |
+          | "express"     | "POST"   |
+          | "express"     | "PUT"    |
+          | "express4"    | "DELETE" |
+          | "express4"    | "OPTIONS"|
+          | "express4"    | "PATCH"  |
+          | "express4"    | "POST"   |
+          | "express4"    | "PUT"    |
+          | "fastify"     | "DELETE" |
+          | "fastify"     | "OPTIONS"|
+          | "fastify"     | "PATCH"  |
+          | "fastify"     | "POST"   |
+          | "fastify"     | "PUT"    |
+          | "hono"        | "DELETE" |
+          | "hono"        | "OPTIONS"|
+          | "hono"        | "PATCH"  |
+          | "hono"        | "POST"   |
+          | "hono"        | "PUT"    |
+          | "uwebsockets" | "DELETE" |
+          | "uwebsockets" | "OPTIONS"|
+          | "uwebsockets" | "PATCH"  |
+          | "uwebsockets" | "POST"   |
+          | "uwebsockets" | "PUT"    |

@@ -26,10 +26,16 @@ import { WarriorsGetHonoInterceptorController } from '../controllers/hono/Warrio
 import { WarriorsPatchHonoInterceptorController } from '../controllers/hono/WarriorsPatchHonoInterceptorController';
 import { WarriorsPostHonoInterceptorController } from '../controllers/hono/WarriorsPostHonoInterceptorController';
 import { WarriorsPutHonoInterceptorController } from '../controllers/hono/WarriorsPutHonoInterceptorController';
+import { WarriorsDeleteUwebSocketsInterceptorController } from '../controllers/uwebsockets/WarriorsDeleteUwebSocketsInterceptorController';
+import { WarriorsGetUwebSocketsInterceptorController } from '../controllers/uwebsockets/WarriorsGetUwebSocketsInterceptorController';
+import { WarriorsPatchUwebSocketsInterceptorController } from '../controllers/uwebsockets/WarriorsPatchUwebSocketsInterceptorController';
+import { WarriorsPostUwebSocketsInterceptorController } from '../controllers/uwebsockets/WarriorsPostUwebSocketsInterceptorController';
+import { WarriorsPutUwebSocketsInterceptorController } from '../controllers/uwebsockets/WarriorsPutUwebSocketsInterceptorController';
 import { WarriorRouteExpressInterceptor } from '../interceptors/express/WarriorRouteExpressInterceptor';
 import { WarriorRouteExpressV4Interceptor } from '../interceptors/express4/WarriorRouteExpressV4Interceptor';
 import { WarriorRouteFastifyInterceptor } from '../interceptors/fastify/WarriorRouteFastifyInterceptor';
 import { WarriorRouteHonoInterceptor } from '../interceptors/hono/WarriorRouteHonoInterceptor';
+import { WarriorRouteUwebSocketsInterceptor } from '../interceptors/uwebsockets/WarriorRouteUwebSocketsInterceptor';
 
 function getMethodWarriorExpressInterceptorController(
   method: HttpMethod,
@@ -107,6 +113,25 @@ function getMethodWarriorHonoInterceptorController(
   }
 }
 
+function getMethodWarriorUwebSocketsInterceptorController(
+  method: HttpMethod,
+): NewableFunction {
+  switch (method) {
+    case HttpMethod.delete:
+      return WarriorsDeleteUwebSocketsInterceptorController;
+    case HttpMethod.get:
+      return WarriorsGetUwebSocketsInterceptorController;
+    case HttpMethod.patch:
+      return WarriorsPatchUwebSocketsInterceptorController;
+    case HttpMethod.post:
+      return WarriorsPostUwebSocketsInterceptorController;
+    case HttpMethod.put:
+      return WarriorsPutUwebSocketsInterceptorController;
+    case HttpMethod.options:
+      throw new Error('OPTIONS method not supported for interceptor tests');
+  }
+}
+
 function givenWarriorInterceptorControllerForContainer(
   this: InversifyHttpWorld,
   method: HttpMethod,
@@ -134,6 +159,10 @@ function givenWarriorInterceptorControllerForContainer(
     case ServerKind.hono:
       getMethodWarriorController = getMethodWarriorHonoInterceptorController;
       break;
+    case ServerKind.uwebsockets:
+      getMethodWarriorController =
+        getMethodWarriorUwebSocketsInterceptorController;
+      break;
   }
 
   const controller: NewableFunction = getMethodWarriorController(method);
@@ -151,6 +180,9 @@ function givenWarriorInterceptorControllerForContainer(
       break;
     case ServerKind.hono:
       interceptor = WarriorRouteHonoInterceptor;
+      break;
+    case ServerKind.uwebsockets:
+      interceptor = WarriorRouteUwebSocketsInterceptor;
       break;
   }
 

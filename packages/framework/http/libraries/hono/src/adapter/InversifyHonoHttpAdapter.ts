@@ -87,6 +87,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
 
   protected async _getBody(
     request: HonoRequest,
+    _response: Context,
     parameterName?: string,
   ): Promise<unknown> {
     const body: Record<string, unknown> = await request.json();

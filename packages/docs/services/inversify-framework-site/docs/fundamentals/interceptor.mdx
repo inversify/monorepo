@@ -6,6 +6,7 @@ import interceptorApiExpressSource from '@inversifyjs/http-code-examples/generat
 import interceptorApiExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiExpress4SendMetrics.ts.txt';
 import interceptorApiFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiFastifySendMetrics.ts.txt';
 import interceptorApiHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiHonoSendMetrics.ts.txt';
+import interceptorApiUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiUwebsocketsSendMetrics.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -53,6 +54,9 @@ Each adapter exposes its own native request/response types. Below is a simple â€
   </TabItem>
   <TabItem value="hono" label="Hono">
     <CodeBlock language="ts">{interceptorApiHonoSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="uwebsockets" label="uWebSockets.js">
+    <CodeBlock language="ts">{interceptorApiUwebsocketsSource}</CodeBlock>
   </TabItem>
 </Tabs>
 

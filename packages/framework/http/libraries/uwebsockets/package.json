@@ -1,0 +1,77 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJs http express package",
+  "dependencies": {
+    "@inversifyjs/http-core": "workspace:*",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
+  },
+  "devDependencies": {
+    "@stryker-mutator/core": "9.3.0",
+    "@stryker-mutator/vitest-runner": "9.3.0",
+    "@stryker-mutator/typescript-checker": "9.3.0",
+    "@types/node": "24.9.2",
+    "@vitest/coverage-v8": "4.0.6",
+    "eslint": "9.38.0",
+    "prettier": "3.6.2",
+    "rimraf": "6.1.0",
+    "rollup": "4.52.5",
+    "ts-loader": "9.5.4",
+    "tslib": "2.8.1",
+    "typescript": "5.9.3",
+    "vitest": "4.0.6"
+  },
+  "devEngines": {
+    "node": "^24.10.0",
+    "pnpm": "^10.13.1"
+  },
+  "homepage": "https://inversify.io",
+  "keywords": [
+    "dependency injection",
+    "dependency inversion",
+    "di",
+    "inversion of control container",
+    "ioc",
+    "javascript",
+    "node",
+    "typescript"
+  ],
+  "license": "MIT",
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "exports": {
+    ".": {
+      "import": "./lib/esm/index.js",
+      "require": "./lib/cjs/index.js"
+    }
+  },
+  "name": "@inversifyjs/http-uwebsockets",
+  "peerDependencies": {
+    "@inversifyjs/logger": "^1.1.0",
+    "inversify": "^7.10.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "build": "pnpm run build:cjs && pnpm run build:esm",
+    "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
+    "build:esm": "rollup -c ./rollup.config.mjs && pnpm exec foundation-ts-package-esm ./lib/esm",
+    "build:clean": "rimraf lib",
+    "format": "prettier --write ./src/**/*.ts",
+    "lint": "eslint ./src",
+    "prebuild": "pnpm run build:clean",
+    "test": "vitest run",
+    "test:integration": "pnpm run test --project Integration",
+    "test:coverage": "pnpm run test:unit --coverage",
+    "test:uncommitted": "pnpm run test --changed=HEAD",
+    "test:unit": "pnpm run test --project Unit"
+  },
+  "version": "4.0.0"
+}

@@ -7,11 +7,13 @@ import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { InversifyExpressHttpAdapter as InversifyExpress4HttpAdapter } from '@inversifyjs/http-express-v4';
 import { InversifyFastifyHttpAdapter } from '@inversifyjs/http-fastify';
 import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
+import { InversifyUwebSocketsHttpAdapter } from '@inversifyjs/http-uwebsockets';
 import express from 'express';
 import express4 from 'express4';
 import { FastifyInstance } from 'fastify';
 import { Hono } from 'hono';
 import { Container } from 'inversify';
+import { us_socket_local_port } from 'uWebSockets.js';
 
 import { defaultAlias } from '../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld';
@@ -201,6 +203,34 @@ async function buildFastifyServer(container: Container): Promise<Server> {
   };
 }
 
+async function buildUwebSocketsJsServer(container: Container): Promise<Server> {
+  const adapter: InversifyUwebSocketsHttpAdapter =
+    new InversifyUwebSocketsHttpAdapter(container, {
+      logger: true,
+      useJson: true,
+    });
+
+  // eslint-disable-next-line @typescript-eslint/typedef
+  const application = await adapter.build();
+
+  return new Promise<Server>(
+    (resolve: (value: Server | PromiseLike<Server>) => void) => {
+      // eslint-disable-next-line @typescript-eslint/typedef
+      application.listen('127.0.0.1', 0, (socket) => {
+        const server: Server = {
+          host: '127.0.0.1',
+          port: us_socket_local_port(socket),
+          shutdown: async (): Promise<void> => {
+            application.close();
+          },
+        };
+
+        resolve(server);
+      });
+    },
+  );
+}
+
 async function givenServer(
   this: InversifyHttpWorld,
   serverKind: ServerKind,
@@ -231,6 +261,9 @@ async function givenServer(
     case ServerKind.fastify: {
       server = await buildFastifyServer(container);
       break;
+    }
+    case ServerKind.uwebsockets: {
+      server = await buildUwebSocketsJsServer(container);
     }
   }
 

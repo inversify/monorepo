@@ -33,7 +33,11 @@ export function buildInterceptedHandler<
     response: TResponse,
     error: unknown,
   ) => Promise<TResult>,
-  reply: (req: TRequest, res: TResponse, value: ControllerResponse) => TResult,
+  reply: (
+    req: TRequest,
+    res: TResponse,
+    value: ControllerResponse,
+  ) => TResult | Promise<TResult>,
   setHeaders: (
     request: TRequest,
     response: TResponse,
@@ -66,7 +70,7 @@ export function buildInterceptedHandler<
           routerExplorerControllerMethodMetadata.methodKey
         ]?.(...handlerParams);
 
-        return reply(request, response, value);
+        return await reply(request, response, value);
       } catch (error: unknown) {
         return handleError(request, response, error);
       }
@@ -145,7 +149,7 @@ export function buildInterceptedHandler<
         handlerResult = (await transform(handlerResult)) as ControllerResponse;
       }
 
-      return reply(request, response, handlerResult);
+      return await reply(request, response, handlerResult);
     } catch (error: unknown) {
       return handleError(request, response, error);
     }

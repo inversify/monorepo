@@ -10,26 +10,32 @@ import { WarriorsDeleteRequestExpressController } from '../controllers/WarriorsD
 import { WarriorsDeleteRequestExpressV4Controller } from '../controllers/WarriorsDeleteRequestExpressV4Controller';
 import { WarriorsDeleteRequestFastifyController } from '../controllers/WarriorsDeleteRequestFastifyController';
 import { WarriorsDeleteRequestHonoController } from '../controllers/WarriorsDeleteRequestHonoController';
+import { WarriorsDeleteRequestUwebSocketsController } from '../controllers/WarriorsDeleteRequestUwebSocketsController';
 import { WarriorsGetRequestExpressController } from '../controllers/WarriorsGetRequestExpressController';
 import { WarriorsGetRequestExpressV4Controller } from '../controllers/WarriorsGetRequestExpressV4Controller';
 import { WarriorsGetRequestFastifyController } from '../controllers/WarriorsGetRequestFastifyController';
 import { WarriorsGetRequestHonoController } from '../controllers/WarriorsGetRequestHonoController';
+import { WarriorsGetRequestUwebSocketsController } from '../controllers/WarriorsGetRequestUwebSocketsController';
 import { WarriorsOptionsRequestExpressController } from '../controllers/WarriorsOptionsRequestExpressController';
 import { WarriorsOptionsRequestExpressV4Controller } from '../controllers/WarriorsOptionsRequestExpressV4Controller';
 import { WarriorsOptionsRequestFastifyController } from '../controllers/WarriorsOptionsRequestFastifyController';
 import { WarriorsOptionsRequestHonoController } from '../controllers/WarriorsOptionsRequestHonoController';
+import { WarriorsOptionsRequestUwebSocketsController } from '../controllers/WarriorsOptionsRequestUwebSocketsController';
 import { WarriorsPatchRequestExpressController } from '../controllers/WarriorsPatchRequestExpressController';
 import { WarriorsPatchRequestExpressV4Controller } from '../controllers/WarriorsPatchRequestExpressV4Controller';
 import { WarriorsPatchRequestFastifyController } from '../controllers/WarriorsPatchRequestFastifyController';
 import { WarriorsPatchRequestHonoController } from '../controllers/WarriorsPatchRequestHonoController';
+import { WarriorsPatchRequestUwebSocketsController } from '../controllers/WarriorsPatchRequestUwebSocketsController';
 import { WarriorsPostRequestExpressController } from '../controllers/WarriorsPostRequestExpressController';
 import { WarriorsPostRequestExpressV4Controller } from '../controllers/WarriorsPostRequestExpressV4Controller';
 import { WarriorsPostRequestFastifyController } from '../controllers/WarriorsPostRequestFastifyController';
 import { WarriorsPostRequestHonoController } from '../controllers/WarriorsPostRequestHonoController';
+import { WarriorsPostRequestUwebSocketsController } from '../controllers/WarriorsPostRequestUwebSocketsController';
 import { WarriorsPutRequestExpressController } from '../controllers/WarriorsPutRequestExpressController';
 import { WarriorsPutRequestExpressV4Controller } from '../controllers/WarriorsPutRequestExpressV4Controller';
 import { WarriorsPutRequestFastifyController } from '../controllers/WarriorsPutRequestFastifyController';
 import { WarriorsPutRequestHonoController } from '../controllers/WarriorsPutRequestHonoController';
+import { WarriorsPutRequestUwebSocketsController } from '../controllers/WarriorsPutRequestUwebSocketsController';
 
 function getMethodWarriorRequestExpressController(
   method: HttpMethod,
@@ -107,6 +113,25 @@ function getMethodWarriorRequestHonoController(
   }
 }
 
+function getMethodWarriorRequestUwebSocketsController(
+  method: HttpMethod,
+): NewableFunction {
+  switch (method) {
+    case HttpMethod.delete:
+      return WarriorsDeleteRequestUwebSocketsController;
+    case HttpMethod.get:
+      return WarriorsGetRequestUwebSocketsController;
+    case HttpMethod.options:
+      return WarriorsOptionsRequestUwebSocketsController;
+    case HttpMethod.patch:
+      return WarriorsPatchRequestUwebSocketsController;
+    case HttpMethod.post:
+      return WarriorsPostRequestUwebSocketsController;
+    case HttpMethod.put:
+      return WarriorsPutRequestUwebSocketsController;
+  }
+}
+
 function givenWarriorRequestControllerForContainer(
   this: InversifyHttpWorld,
   method: HttpMethod,
@@ -137,6 +162,10 @@ function givenWarriorRequestControllerForContainer(
       break;
     case ServerKind.hono:
       getMethodWarriorRequestController = getMethodWarriorRequestHonoController;
+      break;
+    case ServerKind.uwebsockets:
+      getMethodWarriorRequestController =
+        getMethodWarriorRequestUwebSocketsController;
       break;
   }
 

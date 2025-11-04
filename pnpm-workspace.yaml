@@ -14,8 +14,16 @@ packages:
   - packages/logger
   - packages/open-api/libraries/*
 
+ignoredBuiltDependencies:
+  - '@scarf/scarf'
+  - lmdb
+  - msgpackr-extract
+
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@swc/core'
   - better-sqlite3
+  - core-js
+  - core-js-pure
+  - esbuild
   - oxc-resolver
