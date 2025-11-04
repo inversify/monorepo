@@ -8,8 +8,8 @@
     "@stryker-mutator/core": "9.3.0",
     "@stryker-mutator/typescript-checker": "9.3.0",
     "@stryker-mutator/vitest-runner": "9.3.0",
-    "@types/node": "24.9.2",
-    "@vitest/coverage-v8": "4.0.6",
+    "@types/node": "24.10.0",
+    "@vitest/coverage-v8": "4.0.7",
     "eslint": "9.38.0",
     "logform": "^2.7.0",
     "prettier": "3.6.2",
@@ -18,7 +18,7 @@
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "4.0.6"
+    "vitest": "4.0.7"
   },
   "devEngines": {
     "node": "^24.10.0",

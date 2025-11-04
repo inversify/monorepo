@@ -8,7 +8,7 @@
     "typescript": "5.9.3"
   },
   "devDependencies": {
-    "@types/node": "24.9.2",
+    "@types/node": "24.10.0",
     "eslint": "9.38.0",
     "prettier": "3.6.2",
     "rimraf": "6.1.0",
