@@ -21,7 +21,9 @@ export interface RouterExplorerControllerMethodMetadata<
   >;
   readonly guardList: ServiceIdentifier<Guard<TRequest>>[];
   readonly headerMetadataList: [string, string][];
-  readonly interceptorList: ServiceIdentifier<Interceptor<TRequest>>[];
+  readonly interceptorList: ServiceIdentifier<
+    Interceptor<TRequest, TResponse>
+  >[];
   readonly methodKey: string | symbol;
   readonly parameterMetadataList: (
     | ControllerMethodParameterMetadata<TRequest, TResponse, TResult>

@@ -145,7 +145,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     routerParams: RouterParams<
       FastifyRequest,
       FastifyReply,
-      (err?: Error) => void,
+      HookHandlerDoneFunction,
       void
     >,
   ): void {
@@ -158,7 +158,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
         const orderedMiddlewareList: MiddlewareHandler<
           FastifyRequest,
           FastifyReply,
-          (err?: Error) => void
+          HookHandlerDoneFunction
         >[] = [
           ...routeParams.preHandlerMiddlewareList,
           ...routeParams.guardList,
@@ -208,7 +208,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     handler: RequestHandler<
       FastifyRequest,
       FastifyReply,
-      (err?: Error) => void
+      HookHandlerDoneFunction
     >,
   ): RouteHandlerMethod {
     return async (
@@ -220,7 +220,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           resolve: (value?: unknown) => void,
           reject: (error?: unknown) => void,
         ) => {
-          const done: (err?: Error) => void = (err?: Error) => {
+          const done: HookHandlerDoneFunction = (err?: Error): void => {
             if (err !== undefined) {
               reject(err);
             } else {
@@ -228,7 +228,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
             }
           };
 
-          handler(request, reply, done);
+          resolve(handler(request, reply, done));
         },
       );
     };
@@ -246,7 +246,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
         middleware: MiddlewareHandler<
           FastifyRequest,
           FastifyReply,
-          (err?: Error) => void
+          HookHandlerDoneFunction
         >,
       ) => this.#buildFastifyPreHandlerAsyncMiddleware(middleware),
     );
@@ -264,7 +264,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
         middleware: MiddlewareHandler<
           FastifyRequest,
           FastifyReply,
-          (err?: Error) => void
+          HookHandlerDoneFunction
         >,
       ) => this.#buildFastifyOnResponseAsyncMiddleware(middleware),
     );
@@ -283,7 +283,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           resolve: (value?: unknown) => void,
           reject: (error?: unknown) => void,
         ) => {
-          const done: (err?: Error) => void = (err?: Error) => {
+          const done: HookHandlerDoneFunction = (err?: Error) => {
             if (err !== undefined) {
               reject(err);
             } else {
@@ -291,7 +291,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
             }
           };
 
-          resolve(middleware(request, reply, done));
+          middleware(request, reply, done);
         },
       );
     };
@@ -310,7 +310,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           resolve: (value?: unknown) => void,
           reject: (error?: unknown) => void,
         ) => {
-          const done: (err?: Error) => void = (err?: Error) => {
+          const done: HookHandlerDoneFunction = (err?: Error) => {
             if (err !== undefined) {
               reject(err);
             } else {
