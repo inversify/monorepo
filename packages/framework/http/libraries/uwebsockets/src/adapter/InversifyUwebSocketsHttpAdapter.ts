@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 import { URLSearchParamsIterator } from 'node:url';
 
 import {
@@ -17,13 +18,10 @@ import {
   TemplatedApp,
 } from 'uWebSockets.js';
 
+import { pipeStreamOverResponse } from '../actions/pipeStreamOverResponse';
+import { abortedSymbol } from '../data/abortedSymbol';
+import { CustomHttpResponse } from '../models/CustomHttpResponse';
 import { UwebSocketsHttpAdapterOptions } from '../models/UwebSocketsHttpAdapterOptions';
-
-const abortedSymbol: unique symbol = Symbol.for('aborted');
-
-interface CustomHttpResponse extends HttpResponse {
-  [abortedSymbol]?: boolean;
-}
 
 export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   HttpRequest,
@@ -140,9 +138,15 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     }
   }
 
-  protected _replyStream(): void {
-    throw new Error(
-      'Stream responses are not supported in uWebSockets.js adapter.',
+  protected _replyStream(
+    _request: HttpRequest,
+    response: HttpResponse,
+    stream: Readable,
+  ): void {
+    pipeStreamOverResponse(
+      response,
+      stream,
+      this.httpAdapterOptions.logger === false ? undefined : this._logger,
     );
   }
 

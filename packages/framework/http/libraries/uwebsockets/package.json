@@ -9,6 +9,7 @@
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
   },
   "devDependencies": {
+    "@inversifyjs/logger": "workspace:*",
     "@stryker-mutator/core": "9.3.0",
     "@stryker-mutator/vitest-runner": "9.3.0",
     "@stryker-mutator/typescript-checker": "9.3.0",
