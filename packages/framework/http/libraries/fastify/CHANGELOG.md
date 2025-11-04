@@ -1,5 +1,14 @@
 # @inversifyjs/http-fastify
 
+## 4.1.0
+
+### Patch Changes
+
+Updated `InversifyFastifyHttpAdapter` to properly handle streams
+
+- Updated dependencies
+  - @inversifyjs/http-core@4.1.0
+
 ## 4.0.0
 
 ### Patch Changes
