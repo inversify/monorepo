@@ -301,13 +301,17 @@ export abstract class InversifyHttpAdapter<
       req: TRequest,
       res: TResponse,
       value: ControllerResponse,
-    ) => TResult;
+    ) => TResult | Promise<TResult>;
 
     if (routerExplorerControllerMethodMetadata.useNativeHandler) {
       reply = (_req: TRequest, _res: TResponse, value: ControllerResponse) =>
         value as TResult;
     } else {
-      reply = (req: TRequest, res: TResponse, value: ControllerResponse) =>
+      reply = (
+        req: TRequest,
+        res: TResponse,
+        value: ControllerResponse,
+      ): TResult | Promise<TResult> =>
         this.#reply(
           req,
           res,
@@ -577,7 +581,7 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     value: ControllerResponse,
     statusCode?: HttpStatusCode,
-  ): TResult {
+  ): TResult | Promise<TResult> {
     let body: object | string | number | boolean | Readable | undefined =
       undefined;
     let httpStatusCode: HttpStatusCode | undefined = statusCode;
@@ -692,7 +696,11 @@ export abstract class InversifyHttpAdapter<
               return undefined;
             }
 
-            return this.#reply(request, response, new ForbiddenHttpResponse());
+            return await this.#reply(
+              request,
+              response,
+              new ForbiddenHttpResponse(),
+            );
           } catch (error: unknown) {
             return handleError(request, response, error);
           }
@@ -799,7 +807,7 @@ export abstract class InversifyHttpAdapter<
     request: TRequest,
     response: TResponse,
     value: Readable,
-  ): TResult;
+  ): TResult | Promise<TResult>;
 
   protected abstract _setStatus(
     request: TRequest,

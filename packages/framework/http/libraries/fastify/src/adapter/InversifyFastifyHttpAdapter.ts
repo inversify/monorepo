@@ -116,12 +116,12 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     response.send(value);
   }
 
-  protected _replyStream(
+  protected async _replyStream(
     _request: FastifyRequest,
     response: FastifyReply,
     value: Readable,
-  ): void {
-    response.send(value);
+  ): Promise<void> {
+    await response.send(value);
   }
 
   protected _setStatus(
