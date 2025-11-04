@@ -228,7 +228,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
             }
           };
 
-          resolve(handler(request, reply, done));
+          handler(request, reply, done);
         },
       );
     };
@@ -318,7 +318,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
             }
           };
 
-          resolve(middleware(request, reply, done));
+          middleware(request, reply, done);
         },
       );
     };
