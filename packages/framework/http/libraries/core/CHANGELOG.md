@@ -1,5 +1,15 @@
 # @inversifyjs/http-core
 
+## 4.1.0
+
+### Minor Changes
+
+Updated `InversifyHttpAdapter` with protected `_logger`
+
+### Patch Changes
+
+- Updated `InversifyHttpAdapter._getBody` with missing response param
+
 ## 4.0.0
 
 ### Major Changes
