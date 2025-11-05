@@ -9,6 +9,7 @@ import { CurrentInversifyExpressBasicGetScenario } from '../scenario/currentInve
 import { CurrentInversifyExpress4BasicGetScenario } from '../scenario/currentInversifyExpress4/CurrentInversifyExpress4BasicGetScenario';
 import { CurrentInversifyFastifyBasicGetScenario } from '../scenario/currentInversifyFastify/CurrentInversifyFastifyBasicGetScenario';
 import { CurrentInversifyHonoBasicGetScenario } from '../scenario/currentInversifyHono/CurrentInversifyHonoBasicGetScenario';
+import { CurrentInversifyUwebsocketsBasicGetScenario } from '../scenario/currentInversifyUwebsockets/CurrentInversifyUwebsocketsBasicGetScenario';
 import { ExpressBasicGetScenario } from '../scenario/express/ExpressBasicGetScenario';
 import { Express4BasicGetScenario } from '../scenario/express4/Express4BasicGetScenario';
 import { FastifyBasicGetScenario } from '../scenario/fastify/FastifyBasicGetScenario';
@@ -16,6 +17,7 @@ import { HonoBasicGetScenario } from '../scenario/hono/HonoBasicGetScenario';
 import { Platform } from '../scenario/models/Platform';
 import { NestJsExpressBasicGetScenario } from '../scenario/nestJsExpress/NestJsExpressBasicGetScenario';
 import { NestJsFastifyBasicGetScenario } from '../scenario/nestJsFastify/NestJsFastifyBasicGetScenario';
+import { UwebsocketsBasicGetScenario } from '../scenario/uwebsockets/UwebsocketsBasicGetScenario';
 
 export async function run(): Promise<void> {
   // Run express basic get request scenarios
@@ -66,5 +68,17 @@ export async function run(): Promise<void> {
     const summaryList: K6Summary[] = await executeHttpBenchmark(scenarioList);
 
     printHttpBenchmarkResults('Hono Basic Get Request', summaryList);
+  }
+
+  // Run uWebSockets basic get request scenarios
+  {
+    const scenarioList: Scenario<Platform, K6Summary>[] = [
+      new CurrentInversifyUwebsocketsBasicGetScenario(),
+      new UwebsocketsBasicGetScenario(),
+    ];
+
+    const summaryList: K6Summary[] = await executeHttpBenchmark(scenarioList);
+
+    printHttpBenchmarkResults('uWebSockets Basic Get Request', summaryList);
   }
 }

@@ -4,10 +4,12 @@ export enum Platform {
   currentInversifyExpress4 = 'currentInversifyExpress4',
   currentInversifyFastify = 'currentInversifyFastify',
   currentInversifyHono = 'currentInversifyHono',
+  currentInversifyUwebsockets = 'currentInversifyUwebsockets',
   express = 'express',
   express4 = 'express4',
   fastify = 'fastify',
   hono = 'hono',
+  uwebsockets = 'uwebsockets',
   nestJsExpress = 'NestJSExpress',
   nestJsFastify = 'NestJSFastify',
 }
