@@ -304,8 +304,15 @@ export abstract class InversifyHttpAdapter<
     ) => TResult | Promise<TResult>;
 
     if (routerExplorerControllerMethodMetadata.useNativeHandler) {
-      reply = (_req: TRequest, _res: TResponse, value: ControllerResponse) =>
-        value as TResult;
+      reply = (req: TRequest, res: TResponse, value: ControllerResponse) => {
+        this.#setHeaders(
+          req,
+          res,
+          routerExplorerControllerMethodMetadata.headerMetadataList,
+        );
+
+        return value as TResult;
+      };
     } else {
       reply = (
         req: TRequest,
@@ -317,6 +324,7 @@ export abstract class InversifyHttpAdapter<
           res,
           value,
           routerExplorerControllerMethodMetadata.statusCode,
+          routerExplorerControllerMethodMetadata.headerMetadataList,
         );
     }
 
@@ -335,7 +343,6 @@ export abstract class InversifyHttpAdapter<
       buildHandlerParams,
       handleError,
       reply,
-      this.#setHeaders.bind(this),
     );
   }
 
@@ -581,6 +588,7 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     value: ControllerResponse,
     statusCode?: HttpStatusCode,
+    headerList?: [string, string][],
   ): TResult | Promise<TResult> {
     let body: object | string | number | boolean | Readable | undefined =
       undefined;
@@ -595,6 +603,10 @@ export abstract class InversifyHttpAdapter<
 
     if (httpStatusCode !== undefined) {
       this._setStatus(request, response, httpStatusCode);
+    }
+
+    if (headerList !== undefined) {
+      this.#setHeaders(request, response, headerList);
     }
 
     if (typeof body === 'string') {

@@ -38,11 +38,6 @@ export function buildInterceptedHandler<
     res: TResponse,
     value: ControllerResponse,
   ) => TResult | Promise<TResult>,
-  setHeaders: (
-    request: TRequest,
-    response: TResponse,
-    headerList: [string, string][],
-  ) => void,
 ): RequestHandler<TRequest, TResponse, TNextFunction, TResult> {
   if (routerExplorerControllerMethodMetadata.interceptorList.length === 0) {
     return async (
@@ -58,12 +53,6 @@ export function buildInterceptedHandler<
           request,
           response,
           next,
-        );
-
-        setHeaders(
-          request,
-          response,
-          routerExplorerControllerMethodMetadata.headerMetadataList,
         );
 
         const value: ControllerResponse = await controller[
@@ -125,12 +114,6 @@ export function buildInterceptedHandler<
             request,
             response,
             next,
-          );
-
-          setHeaders(
-            request,
-            response,
-            routerExplorerControllerMethodMetadata.headerMetadataList,
           );
 
           handlerResult = await controller[
