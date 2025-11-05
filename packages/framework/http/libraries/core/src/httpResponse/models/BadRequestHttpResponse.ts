@@ -8,7 +8,14 @@ export class BadRequestHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Bad Request',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
-    super(HttpStatusCode.BAD_REQUEST, body, errorMessage, errorOptions);
+    super(
+      HttpStatusCode.BAD_REQUEST,
+      body,
+      errorMessage,
+      errorOptions,
+      headers,
+    );
   }
 }

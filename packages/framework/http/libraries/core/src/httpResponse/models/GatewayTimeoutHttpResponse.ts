@@ -8,7 +8,14 @@ export class GatewayTimeoutHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Gateway Timeout',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
-    super(HttpStatusCode.GATEWAY_TIMEOUT, body, errorMessage, errorOptions);
+    super(
+      HttpStatusCode.GATEWAY_TIMEOUT,
+      body,
+      errorMessage,
+      errorOptions,
+      headers,
+    );
   }
 }

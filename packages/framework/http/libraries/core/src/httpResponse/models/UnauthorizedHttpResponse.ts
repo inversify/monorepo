@@ -8,7 +8,14 @@ export class UnauthorizedHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Unauthorized',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
-    super(HttpStatusCode.UNAUTHORIZED, body, errorMessage, errorOptions);
+    super(
+      HttpStatusCode.UNAUTHORIZED,
+      body,
+      errorMessage,
+      errorOptions,
+      headers,
+    );
   }
 }

@@ -8,23 +8,22 @@ import {
 
 export class ErrorHttpResponse extends Error implements HttpResponse {
   public readonly [isHttpResponseSymbol]: true;
-  public readonly body?:
-    | object
-    | string
-    | number
-    | boolean
-    | Stream
-    | undefined;
 
   constructor(
     public readonly statusCode: HttpStatusCode,
-    body?: object | string | number | boolean | Stream | undefined,
+    public readonly body?:
+      | object
+      | string
+      | number
+      | boolean
+      | Stream
+      | undefined,
     message?: string | undefined,
     errorOptions?: ErrorOptions | undefined,
+    public readonly headers?: Record<string, string> | undefined,
   ) {
     super(message, errorOptions);
 
-    this.body = body;
     this[isHttpResponseSymbol] = true;
   }
 }
