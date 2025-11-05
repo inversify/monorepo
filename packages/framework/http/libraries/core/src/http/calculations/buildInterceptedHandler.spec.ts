@@ -36,13 +36,6 @@ describe(buildInterceptedHandler, () => {
   let replyMock: Mock<
     (req: unknown, res: unknown, value: ControllerResponse) => string
   >;
-  let setHeadersMock: Mock<
-    (
-      request: unknown,
-      response: unknown,
-      headerList: [string, string][],
-    ) => void
-  >;
 
   let requestFixture: unknown;
   let responseFixture: unknown;
@@ -62,7 +55,6 @@ describe(buildInterceptedHandler, () => {
     buildHandlerParamsMock = vitest.fn();
     handleErrorMock = vitest.fn();
     replyMock = vitest.fn();
-    setHeadersMock = vitest.fn();
 
     requestFixture = { url: '/test' };
     responseFixture = { status: 200 };
@@ -119,7 +111,6 @@ describe(buildInterceptedHandler, () => {
             buildHandlerParamsMock,
             handleErrorMock,
             replyMock,
-            setHeadersMock,
           );
 
         result = await handler(requestFixture, responseFixture, nextFixture);
@@ -140,14 +131,6 @@ describe(buildInterceptedHandler, () => {
           requestFixture,
           responseFixture,
           nextFixture,
-        );
-      });
-
-      it('should call setHeaders()', () => {
-        expect(setHeadersMock).toHaveBeenCalledExactlyOnceWith(
-          requestFixture,
-          responseFixture,
-          routerExplorerControllerMethodMetadataFixture.headerMetadataList,
         );
       });
 
@@ -191,7 +174,6 @@ describe(buildInterceptedHandler, () => {
             buildHandlerParamsMock,
             handleErrorMock,
             replyMock,
-            setHeadersMock,
           );
 
         result = await handler(requestFixture, responseFixture, nextFixture);
@@ -316,7 +298,6 @@ describe(buildInterceptedHandler, () => {
             buildHandlerParamsMock,
             handleErrorMock,
             replyMock,
-            setHeadersMock,
           );
 
         result = await handler(requestFixture, responseFixture, nextFixture);
@@ -363,14 +344,6 @@ describe(buildInterceptedHandler, () => {
           requestFixture,
           responseFixture,
           nextFixture,
-        );
-      });
-
-      it('should call setHeaders()', () => {
-        expect(setHeadersMock).toHaveBeenCalledExactlyOnceWith(
-          requestFixture,
-          responseFixture,
-          routerExplorerControllerMethodMetadataFixture.headerMetadataList,
         );
       });
 
@@ -469,7 +442,6 @@ describe(buildInterceptedHandler, () => {
             buildHandlerParamsMock,
             handleErrorMock,
             replyMock,
-            setHeadersMock,
           );
 
         result = await handler(requestFixture, responseFixture, nextFixture);
@@ -516,14 +488,6 @@ describe(buildInterceptedHandler, () => {
           requestFixture,
           responseFixture,
           nextFixture,
-        );
-      });
-
-      it('should call setHeaders()', () => {
-        expect(setHeadersMock).toHaveBeenCalledExactlyOnceWith(
-          requestFixture,
-          responseFixture,
-          routerExplorerControllerMethodMetadataFixture.headerMetadataList,
         );
       });
 
@@ -579,7 +543,6 @@ describe(buildInterceptedHandler, () => {
             buildHandlerParamsMock,
             handleErrorMock,
             replyMock,
-            setHeadersMock,
           );
 
         result = await handler(requestFixture, responseFixture, nextFixture);
@@ -652,7 +615,6 @@ describe(buildInterceptedHandler, () => {
             buildHandlerParamsMock,
             handleErrorMock,
             replyMock,
-            setHeadersMock,
           );
 
         result = await handler(requestFixture, responseFixture, nextFixture);
