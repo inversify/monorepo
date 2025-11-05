@@ -8,7 +8,14 @@ export class NotImplementedHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Not Implemented',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
-    super(HttpStatusCode.NOT_IMPLEMENTED, body, errorMessage, errorOptions);
+    super(
+      HttpStatusCode.NOT_IMPLEMENTED,
+      body,
+      errorMessage,
+      errorOptions,
+      headers,
+    );
   }
 }

@@ -8,12 +8,14 @@ export class InternalServerErrorHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Internal Server Error',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
     super(
       HttpStatusCode.INTERNAL_SERVER_ERROR,
       body,
       errorMessage,
       errorOptions,
+      headers,
     );
   }
 }

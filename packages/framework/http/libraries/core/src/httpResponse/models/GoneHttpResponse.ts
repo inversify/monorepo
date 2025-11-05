@@ -8,7 +8,8 @@ export class GoneHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Gone',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
-    super(HttpStatusCode.GONE, body, errorMessage, errorOptions);
+    super(HttpStatusCode.GONE, body, errorMessage, errorOptions, headers);
   }
 }

@@ -8,7 +8,8 @@ export class ConflictHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Conflict',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
-    super(HttpStatusCode.CONFLICT, body, errorMessage, errorOptions);
+    super(HttpStatusCode.CONFLICT, body, errorMessage, errorOptions, headers);
   }
 }

@@ -8,7 +8,14 @@ export class NotAcceptableHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Not Acceptable',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
-    super(HttpStatusCode.NOT_ACCEPTABLE, body, errorMessage, errorOptions);
+    super(
+      HttpStatusCode.NOT_ACCEPTABLE,
+      body,
+      errorMessage,
+      errorOptions,
+      headers,
+    );
   }
 }

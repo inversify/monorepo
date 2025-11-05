@@ -8,12 +8,14 @@ export class HttpVersionNotSupportedHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'HTTP Version Not Supported',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
     super(
       HttpStatusCode.HTTP_VERSION_NOT_SUPPORTED,
       body,
       errorMessage,
       errorOptions,
+      headers,
     );
   }
 }

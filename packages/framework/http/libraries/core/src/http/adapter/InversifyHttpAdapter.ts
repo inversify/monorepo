@@ -305,11 +305,23 @@ export abstract class InversifyHttpAdapter<
 
     if (routerExplorerControllerMethodMetadata.useNativeHandler) {
       reply = (req: TRequest, res: TResponse, value: ControllerResponse) => {
-        this.#setHeaders(
-          req,
-          res,
-          routerExplorerControllerMethodMetadata.headerMetadataList,
-        );
+        if (routerExplorerControllerMethodMetadata.statusCode !== undefined) {
+          this._setStatus(
+            req,
+            res,
+            routerExplorerControllerMethodMetadata.statusCode,
+          );
+        }
+
+        const headers: Record<string, string> | undefined =
+          this.#reduceHeaderList(
+            routerExplorerControllerMethodMetadata.headerMetadataList,
+            undefined,
+          );
+
+        if (headers !== undefined) {
+          this.#setHeaders(req, res, headers);
+        }
 
         return value as TResult;
       };
@@ -560,7 +572,13 @@ export abstract class InversifyHttpAdapter<
           },
         );
 
-        return this.#reply(request, response, httpResponse);
+        return this.#reply(
+          request,
+          response,
+          httpResponse,
+          undefined,
+          routerExplorerControllerMethodMetadata.headerMetadataList,
+        );
       }
 
       try {
@@ -576,9 +594,9 @@ export abstract class InversifyHttpAdapter<
   #setHeaders(
     request: TRequest,
     response: TResponse,
-    headerList: [string, string][],
+    headers: Record<string, string>,
   ): void {
-    for (const [key, value] of headerList) {
+    for (const [key, value] of Object.entries(headers)) {
       this._setHeader(request, response, key, value);
     }
   }
@@ -590,13 +608,15 @@ export abstract class InversifyHttpAdapter<
     statusCode?: HttpStatusCode,
     headerList?: [string, string][],
   ): TResult | Promise<TResult> {
+    let httpStatusCode: HttpStatusCode | undefined = statusCode;
+    let headers: Record<string, string> | undefined = undefined;
     let body: object | string | number | boolean | Readable | undefined =
       undefined;
-    let httpStatusCode: HttpStatusCode | undefined = statusCode;
 
     if (isHttpResponse(value)) {
-      body = value.body;
       httpStatusCode = value.statusCode;
+      headers = value.headers;
+      body = value.body;
     } else {
       body = value;
     }
@@ -605,8 +625,10 @@ export abstract class InversifyHttpAdapter<
       this._setStatus(request, response, httpStatusCode);
     }
 
-    if (headerList !== undefined) {
-      this.#setHeaders(request, response, headerList);
+    headers = this.#reduceHeaderList(headerList, headers);
+
+    if (headers !== undefined) {
+      this.#setHeaders(request, response, headers);
     }
 
     if (typeof body === 'string') {
@@ -712,6 +734,8 @@ export abstract class InversifyHttpAdapter<
               request,
               response,
               new ForbiddenHttpResponse(),
+              undefined,
+              routerExplorerControllerMethodMetadata.headerMetadataList,
             );
           } catch (error: unknown) {
             return handleError(request, response, error);
@@ -749,6 +773,27 @@ export abstract class InversifyHttpAdapter<
     }
 
     this._logger.error(errorMessage);
+  }
+
+  #reduceHeaderList(
+    headerList: [string, string][] | undefined,
+    headers: Record<string, string> | undefined,
+  ): Record<string, string> | undefined {
+    if (headerList === undefined) {
+      return headers;
+    }
+
+    return headerList.reduce<Record<string, string>>(
+      (
+        headers: Record<string, string>,
+        [headerName, headerValue]: [string, string],
+      ) => {
+        headers[headerName] = headerValue;
+
+        return headers;
+      },
+      headers ?? {},
+    );
   }
 
   #setGlobalErrorFilter(errorFilter: Newable<ErrorFilter>): void {

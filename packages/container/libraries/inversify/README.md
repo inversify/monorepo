@@ -12,7 +12,8 @@
 ![Inversify social](./assets/inversify-social.png)
 
 ## 📕 Documentation
-Documentation is available at https://inversify.io
+Container documentation is available at https://inversify.io
+Framework documentation is available at https://inversify.io/framework/
 
 ## About
 InversifyJS is a lightweight inversion of control (IoC) container for TypeScript and JavaScript apps.

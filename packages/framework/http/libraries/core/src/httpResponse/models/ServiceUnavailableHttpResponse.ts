@@ -8,7 +8,14 @@ export class ServiceUnavailableHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Service Unavailable',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
-    super(HttpStatusCode.SERVICE_UNAVAILABLE, body, errorMessage, errorOptions);
+    super(
+      HttpStatusCode.SERVICE_UNAVAILABLE,
+      body,
+      errorMessage,
+      errorOptions,
+      headers,
+    );
   }
 }

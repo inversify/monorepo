@@ -8,7 +8,8 @@ export class ForbiddenHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Forbidden',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
-    super(HttpStatusCode.FORBIDDEN, body, errorMessage, errorOptions);
+    super(HttpStatusCode.FORBIDDEN, body, errorMessage, errorOptions, headers);
   }
 }

@@ -8,7 +8,8 @@ export class NotFoundHttpResponse extends ErrorHttpResponse {
     body?: object | string | number | boolean | Stream | undefined,
     errorMessage: string = 'Not Found',
     errorOptions?: ErrorOptions,
+    headers?: Record<string, string>,
   ) {
-    super(HttpStatusCode.NOT_FOUND, body, errorMessage, errorOptions);
+    super(HttpStatusCode.NOT_FOUND, body, errorMessage, errorOptions, headers);
   }
 }

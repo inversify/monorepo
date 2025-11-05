@@ -8,6 +8,7 @@ export const isHttpResponse: unique symbol = Symbol.for(
 
 export interface HttpResponse {
   [isHttpResponse]: true;
-  statusCode: HttpStatusCode;
   body?: object | string | number | boolean | Stream | undefined;
+  headers?: Record<string, string> | undefined;
+  statusCode: HttpStatusCode;
 }

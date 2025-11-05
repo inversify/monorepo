@@ -12,6 +12,7 @@ export class SuccessHttpResponse implements HttpResponse {
   constructor(
     public readonly statusCode: HttpStatusCode,
     public readonly body?: object | string | number | boolean | Stream,
+    public readonly headers?: Record<string, string>,
   ) {
     this[isHttpResponseSymbol] = true;
   }
