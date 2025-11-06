@@ -20,6 +20,7 @@ import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from '../../metadata/actio
 import { ControllerOpenApiMetadata } from '../../metadata/models/ControllerOpenApiMetadata';
 import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
 import { mergeOpenApiTypeSchema } from '../actions/mergeOpenApiTypeSchema';
+import { buildSwaggerUiController } from '../calculations/buildSwaggerUiController';
 import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
 import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 
@@ -55,7 +56,7 @@ type MetadataTuple = [
   ControllerMethodMetadata[],
 ];
 
-export abstract class SwaggerUiProvider {
+export class SwaggerUiProvider {
   readonly #options: SwaggerUiProviderOptions;
 
   #provided: boolean;
@@ -84,11 +85,17 @@ export abstract class SwaggerUiProvider {
     );
 
     const controllerType: Newable<BaseSwaggerUiController> =
-      this._buildControllerType(this.#options);
+      this.#buildControllerType(this.#options);
 
     container.bind(controllerType).toSelf();
 
     this.#provided = true;
+  }
+
+  #buildControllerType(
+    options: SwaggerUiProviderOptions,
+  ): Newable<BaseSwaggerUiController> {
+    return buildSwaggerUiController(options);
   }
 
   #buildOpenApiObjectFromPathItemTupleList(
@@ -258,8 +265,4 @@ export abstract class SwaggerUiProvider {
       openApi3Dot1PathItemObject[key] = operationObject;
     }
   }
-
-  protected abstract _buildControllerType(
-    options: SwaggerUiProviderOptions,
-  ): Newable<BaseSwaggerUiController>;
 }

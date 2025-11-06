@@ -6,18 +6,17 @@ import {
   Params,
   SetHeader,
 } from '@inversifyjs/http-core';
-import {
-  BaseSwaggerUiController,
-  SwaggerUiProviderOptions,
-} from '@inversifyjs/http-open-api';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { Newable } from 'inversify';
 
-export function buildSwaggerUiExpressController(
+import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
+import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
+
+export function buildSwaggerUiController(
   options: SwaggerUiProviderOptions,
 ): Newable<BaseSwaggerUiController> {
   @Controller(buildNormalizedPath(options.api.path))
-  class SwaggerUiExpressController extends BaseSwaggerUiController {
+  class SwaggerUiController extends BaseSwaggerUiController {
     constructor() {
       super(options);
     }
@@ -50,5 +49,5 @@ export function buildSwaggerUiExpressController(
     }
   }
 
-  return SwaggerUiExpressController;
+  return SwaggerUiController;
 }

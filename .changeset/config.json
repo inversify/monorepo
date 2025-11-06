@@ -13,10 +13,6 @@
       "@inversifyjs/validation-common"
     ],
     [
-      "@inversifyjs/express-4-open-api",
-      "@inversifyjs/express-open-api",
-      "@inversifyjs/fastify-open-api",
-      "@inversifyjs/hono-open-api",
       "@inversifyjs/http-better-auth",
       "@inversifyjs/http-core",
       "@inversifyjs/http-express",
