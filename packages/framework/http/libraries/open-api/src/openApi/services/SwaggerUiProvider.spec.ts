@@ -4,7 +4,6 @@ import {
   describe,
   expect,
   it,
-  Mock,
   Mocked,
   vitest,
 } from 'vitest';
@@ -15,6 +14,7 @@ vitest.mock(
   '../../metadata/actions/mergeOpenApiPathItemObjectIntoOpenApiPaths',
 );
 vitest.mock('../actions/mergeOpenApiTypeSchema');
+vitest.mock('../calculations/buildSwaggerUiController');
 
 import {
   buildNormalizedPath,
@@ -36,22 +36,11 @@ import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from '../../metadata/actio
 import { ControllerOpenApiMetadata } from '../../metadata/models/ControllerOpenApiMetadata';
 import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
 import { mergeOpenApiTypeSchema } from '../actions/mergeOpenApiTypeSchema';
+import { buildSwaggerUiController } from '../calculations/buildSwaggerUiController';
 import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
 import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 import { SwaggerUiProviderUiOptions } from '../models/SwaggerUiProviderUiOptions';
 import { SwaggerUiProvider } from './SwaggerUiProvider';
-
-const buildControllerTypeMock: Mock<
-  (options: SwaggerUiProviderOptions) => Newable<BaseSwaggerUiController>
-> = vitest.fn();
-
-class SwaggerUiProviderMock extends SwaggerUiProvider {
-  protected override _buildControllerType(
-    options: SwaggerUiProviderOptions,
-  ): Newable<BaseSwaggerUiController> {
-    return buildControllerTypeMock(options);
-  }
-}
 
 describe(SwaggerUiProvider, () => {
   let optionsFixture: SwaggerUiProviderOptions;
@@ -87,14 +76,16 @@ describe(SwaggerUiProvider, () => {
     });
 
     describe('when called, and getControllerMetadataList() returns undefined', () => {
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       let result: unknown;
 
       beforeAll(() => {
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
-        buildControllerTypeMock.mockReturnValueOnce(controllerTypeFixture);
+        vitest
+          .mocked(buildSwaggerUiController)
+          .mockReturnValueOnce(controllerTypeFixture);
 
         vitest.mocked(getControllerMetadataList).mockReturnValueOnce(undefined);
 
@@ -107,8 +98,8 @@ describe(SwaggerUiProvider, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call SwaggerUiProvider._buildControllerType()', () => {
-        expect(buildControllerTypeMock).toHaveBeenCalledExactlyOnceWith(
+      it('should call buildSwaggerUiController()', () => {
+        expect(buildSwaggerUiController).toHaveBeenCalledExactlyOnceWith(
           optionsFixture,
         );
       });
@@ -133,14 +124,16 @@ describe(SwaggerUiProvider, () => {
     });
 
     describe('when called twice, and getControllerMetadataList() returns undefined', () => {
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       let result: unknown;
 
       beforeAll(() => {
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
-        buildControllerTypeMock.mockReturnValueOnce(controllerTypeFixture);
+        vitest
+          .mocked(buildSwaggerUiController)
+          .mockReturnValueOnce(controllerTypeFixture);
 
         vitest.mocked(getControllerMetadataList).mockReturnValueOnce(undefined);
 
@@ -159,8 +152,8 @@ describe(SwaggerUiProvider, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call SwaggerUiProvider._buildControllerType()', () => {
-        expect(buildControllerTypeMock).toHaveBeenCalledExactlyOnceWith(
+      it('should call buildSwaggerUiController()', () => {
+        expect(buildSwaggerUiController).toHaveBeenCalledExactlyOnceWith(
           optionsFixture,
         );
       });
@@ -191,7 +184,7 @@ describe(SwaggerUiProvider, () => {
 
     describe('when called, and getControllerMetadataList() returns controller metadata list with no controller openapi metadata', () => {
       let controllerMetadataListFixture: ControllerMetadata[];
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       let result: unknown;
 
@@ -204,9 +197,11 @@ describe(SwaggerUiProvider, () => {
           },
         ];
 
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
-        buildControllerTypeMock.mockReturnValueOnce(controllerTypeFixture);
+        vitest
+          .mocked(buildSwaggerUiController)
+          .mockReturnValueOnce(controllerTypeFixture);
 
         vitest
           .mocked(getControllerMetadataList)
@@ -269,7 +264,7 @@ describe(SwaggerUiProvider, () => {
 
     describe('when called, and getControllerMetadataList() returns filtered controller metadata (unbound controller)', () => {
       let controllerMetadataListFixture: ControllerMetadata[];
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       let result: unknown;
 
@@ -282,9 +277,11 @@ describe(SwaggerUiProvider, () => {
           },
         ];
 
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
-        buildControllerTypeMock.mockReturnValueOnce(controllerTypeFixture);
+        vitest
+          .mocked(buildSwaggerUiController)
+          .mockReturnValueOnce(controllerTypeFixture);
 
         vitest
           .mocked(getControllerMetadataList)
@@ -344,7 +341,7 @@ describe(SwaggerUiProvider, () => {
       let controllerOpenApiMetadataFixture: ControllerOpenApiMetadata;
       let operationObjectFixture: OpenApi3Dot1OperationObject;
 
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       let result: unknown;
 
@@ -378,9 +375,11 @@ describe(SwaggerUiProvider, () => {
           },
         ];
 
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
-        buildControllerTypeMock.mockReturnValueOnce(controllerTypeFixture);
+        vitest
+          .mocked(buildSwaggerUiController)
+          .mockReturnValueOnce(controllerTypeFixture);
 
         vitest
           .mocked(getControllerMetadataList)
@@ -456,7 +455,7 @@ describe(SwaggerUiProvider, () => {
       let controllerOpenApiMetadataFixture: ControllerOpenApiMetadata;
       let operationObjectFixture: OpenApi3Dot1OperationObject;
 
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       beforeAll(() => {
         operationObjectFixture = {
@@ -488,7 +487,7 @@ describe(SwaggerUiProvider, () => {
           },
         ];
 
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
         vitest
           .mocked(getControllerMetadataList)
@@ -548,7 +547,7 @@ describe(SwaggerUiProvider, () => {
       let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
       let controllerOpenApiMetadataFixture: ControllerOpenApiMetadata;
 
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       beforeAll(() => {
         controllerOpenApiMetadataFixture = {
@@ -574,7 +573,7 @@ describe(SwaggerUiProvider, () => {
           },
         ];
 
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
         vitest
           .mocked(getControllerMetadataList)
@@ -625,7 +624,7 @@ describe(SwaggerUiProvider, () => {
       let operationObjectFixture1: OpenApi3Dot1OperationObject;
       let operationObjectFixture2: OpenApi3Dot1OperationObject;
       let operationObjectFixture3: OpenApi3Dot1OperationObject;
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       beforeAll(() => {
         operationObjectFixture1 = {
@@ -677,7 +676,7 @@ describe(SwaggerUiProvider, () => {
           },
         ];
 
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
         vitest
           .mocked(getControllerMetadataList)
@@ -777,7 +776,7 @@ describe(SwaggerUiProvider, () => {
       let controllerOpenApiMetadataFixture: ControllerOpenApiMetadata;
       let operationObjectFixture: OpenApi3Dot1OperationObject;
 
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       let result: unknown;
 
@@ -817,7 +816,7 @@ describe(SwaggerUiProvider, () => {
           },
         ];
 
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
         vitest
           .mocked(getControllerMetadataList)
@@ -864,7 +863,7 @@ describe(SwaggerUiProvider, () => {
       let typeFixture1: NewableFunction;
       let typeFixture2: NewableFunction;
 
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       beforeAll(() => {
         typeFixture1 = Symbol() as unknown as NewableFunction;
@@ -887,9 +886,11 @@ describe(SwaggerUiProvider, () => {
           },
         ];
 
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
-        buildControllerTypeMock.mockReturnValueOnce(controllerTypeFixture);
+        vitest
+          .mocked(buildSwaggerUiController)
+          .mockReturnValueOnce(controllerTypeFixture);
 
         vitest
           .mocked(getControllerMetadataList)
@@ -941,7 +942,7 @@ describe(SwaggerUiProvider, () => {
       let controllerMethodMetadataListFixture: ControllerMethodMetadata[];
       let controllerOpenApiMetadataFixture: ControllerOpenApiMetadata;
 
-      let swaggerUiProvider: SwaggerUiProviderMock;
+      let swaggerUiProvider: SwaggerUiProvider;
 
       beforeAll(() => {
         controllerOpenApiMetadataFixture = {
@@ -961,9 +962,11 @@ describe(SwaggerUiProvider, () => {
           },
         ];
 
-        swaggerUiProvider = new SwaggerUiProviderMock(optionsFixture);
+        swaggerUiProvider = new SwaggerUiProvider(optionsFixture);
 
-        buildControllerTypeMock.mockReturnValueOnce(controllerTypeFixture);
+        vitest
+          .mocked(buildSwaggerUiController)
+          .mockReturnValueOnce(controllerTypeFixture);
 
         vitest
           .mocked(getControllerMetadataList)
