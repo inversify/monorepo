@@ -83,9 +83,9 @@ describe(buildSwaggerUiExpress4Controller, () => {
         );
       });
 
-      it('should return an "application/javascript" Content-Type header', () => {
+      it('should return an "text/javascript" Content-Type header', () => {
         expect(response.headers.get('Content-Type')).toStrictEqual(
-          expect.stringContaining('application/javascript'),
+          expect.stringContaining('text/javascript'),
         );
       });
 
@@ -94,7 +94,7 @@ describe(buildSwaggerUiExpress4Controller, () => {
       });
     });
 
-    describe('when called GET /resources/spec', () => {
+    describe('when called GET /spec', () => {
       let response: Response;
 
       beforeAll(async () => {

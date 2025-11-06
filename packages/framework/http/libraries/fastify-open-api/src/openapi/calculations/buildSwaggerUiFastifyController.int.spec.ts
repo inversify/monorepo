@@ -51,6 +51,8 @@ describe(buildSwaggerUiFastifyController, () => {
             method: 'GET',
           },
         );
+
+        await response.text(); // consume body to avoid keeping the connection open
       });
 
       it('should return an "text/html" Content-Type header', () => {
@@ -81,6 +83,8 @@ describe(buildSwaggerUiFastifyController, () => {
             method: 'GET',
           },
         );
+
+        await response.text(); // consume body to avoid keeping the connection open
       });
 
       it('should return an "text/javascript" Content-Type header', () => {
@@ -94,8 +98,9 @@ describe(buildSwaggerUiFastifyController, () => {
       });
     });
 
-    describe('when called GET /resources/spec', () => {
+    describe('when called GET /spec', () => {
       let response: Response;
+      let responseJsonBody: unknown;
 
       beforeAll(async () => {
         response = await fetch(
@@ -104,6 +109,7 @@ describe(buildSwaggerUiFastifyController, () => {
             method: 'GET',
           },
         );
+        responseJsonBody = await response.json();
       });
 
       it('should return an "application/json" Content-Type header', () => {
@@ -117,9 +123,7 @@ describe(buildSwaggerUiFastifyController, () => {
       });
 
       it('should return the OpenAPI spec', async () => {
-        const data: unknown = await response.json();
-
-        expect(data).toStrictEqual(specFixture);
+        expect(responseJsonBody).toStrictEqual(specFixture);
       });
     });
   });

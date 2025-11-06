@@ -2,8 +2,8 @@ import {
   buildNormalizedPath,
   Controller,
   Get,
+  HttpResponse,
   Params,
-  Response,
   SetHeader,
 } from '@inversifyjs/http-core';
 import {
@@ -11,17 +11,13 @@ import {
   SwaggerUiProviderOptions,
 } from '@inversifyjs/http-open-api';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
-import express from 'express4';
 import { Newable } from 'inversify';
 
 export function buildSwaggerUiExpress4Controller(
   options: SwaggerUiProviderOptions,
-): Newable<BaseSwaggerUiController<express.Response, void>> {
+): Newable<BaseSwaggerUiController> {
   @Controller(buildNormalizedPath(options.api.path))
-  class SwaggerUiExpressController extends BaseSwaggerUiController<
-    express.Response,
-    void
-  > {
+  class SwaggerUiExpressController extends BaseSwaggerUiController {
     constructor() {
       super(options);
     }
@@ -49,18 +45,8 @@ export function buildSwaggerUiExpress4Controller(
         name: 'resource',
       })
       resource: string,
-      @Response()
-      response: express.Response,
-    ): void {
-      super.getSwaggerUiResource(resource, response);
-    }
-
-    protected _sendFile(
-      response: express.Response,
-      rootPath: string,
-      path: string,
-    ): void {
-      response.sendFile(path, { root: rootPath });
+    ): HttpResponse {
+      return super.getSwaggerUiResource(resource);
     }
   }
 

@@ -6,13 +6,11 @@
   "description": "InversifyJs HTTP Fastify OpenAPI package",
   "dependencies": {
     "@inversifyjs/http-core": "workspace:*",
-    "@inversifyjs/http-open-api": "workspace:*",
-    "mime-types": "^3.0.1"
+    "@inversifyjs/http-open-api": "workspace:*"
   },
   "devDependencies": {
     "@inversifyjs/http-fastify": "workspace:*",
     "@inversifyjs/open-api-types": "workspace:*",
-    "@types/mime-types": "3.0.1",
     "@types/node": "24.10.0",
     "@vitest/coverage-v8": "4.0.7",
     "eslint": "9.38.0",

@@ -1,5 +1,14 @@
-import { buildNormalizedPath } from '@inversifyjs/http-core';
+import fs from 'node:fs';
+import path from 'node:path';
+
+import {
+  buildNormalizedPath,
+  HttpResponse,
+  NotFoundHttpResponse,
+  OkHttpResponse,
+} from '@inversifyjs/http-core';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
+import mime from 'mime-types';
 import { getAbsoluteFSPath } from 'swagger-ui-dist';
 
 import { htmlTemplateString, jsTemplateString } from '../data/constants';
@@ -7,7 +16,7 @@ import { SwaggerUiInitOptions } from '../models/SwaggerUiInitOptions';
 import { SwaggerUiOptions } from '../models/SwaggerUiOptions';
 import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
 
-export abstract class BaseSwaggerUiController<TResponse, TResult> {
+export abstract class BaseSwaggerUiController {
   protected _basePath: string;
 
   readonly #options: SwaggerUiProviderOptions;
@@ -36,10 +45,10 @@ export abstract class BaseSwaggerUiController<TResponse, TResult> {
     return this.#swaggerUiInitJs;
   }
 
-  public getSwaggerUiResource(resource: string, response: TResponse): TResult {
+  public getSwaggerUiResource(resource: string): HttpResponse {
     const rootPath: string = getAbsoluteFSPath();
 
-    return this._sendFile(response, rootPath, resource);
+    return this.#sendFile(rootPath, resource);
   }
 
   #buildJsInitOptions(initOptions: SwaggerUiInitOptions): string {
@@ -116,6 +125,31 @@ export abstract class BaseSwaggerUiController<TResponse, TResult> {
       .replace('<% title %>', options.ui?.title ?? '');
   }
 
+  #sendFile(rootPath: string, filePath: string): HttpResponse {
+    const normalizedRoot: string = path.resolve(rootPath);
+    const normalizedPath: string = path.resolve(normalizedRoot, filePath);
+    const relativePath: string = path.relative(normalizedRoot, normalizedPath);
+
+    if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+      return new NotFoundHttpResponse();
+    }
+
+    if (
+      !fs.existsSync(normalizedPath) ||
+      fs.statSync(normalizedPath).isDirectory()
+    ) {
+      return new NotFoundHttpResponse();
+    }
+
+    const mimeType: string | false = mime.lookup(filePath);
+    const headers: Record<string, string> | undefined =
+      mimeType === false ? undefined : { 'Content-Type': mimeType };
+
+    const fileStream: fs.ReadStream = fs.createReadStream(normalizedPath);
+
+    return new OkHttpResponse(fileStream, headers);
+  }
+
   #toExternalScriptTag(url: string): string {
     return `<script src='${url}'></script>`;
   }
@@ -142,10 +176,4 @@ export abstract class BaseSwaggerUiController<TResponse, TResult> {
       return customCode.map(toScript).join('\n');
     }
   }
-
-  protected abstract _sendFile(
-    response: TResponse,
-    rootPath: string,
-    path: string,
-  ): TResult;
 }

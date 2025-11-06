@@ -1,13 +1,9 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { Readable } from 'node:stream';
-
 import {
   buildNormalizedPath,
   Controller,
   Get,
+  HttpResponse,
   Params,
-  Response,
   SetHeader,
 } from '@inversifyjs/http-core';
 import {
@@ -15,20 +11,13 @@ import {
   SwaggerUiProviderOptions,
 } from '@inversifyjs/http-open-api';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
-import { Context } from 'hono';
-import { stream } from 'hono/streaming';
-import { StreamingApi } from 'hono/utils/stream';
 import { Newable } from 'inversify';
-import mime from 'mime-types';
 
 export function buildSwaggerUiHonoController(
   options: SwaggerUiProviderOptions,
-): Newable<BaseSwaggerUiController<Context, Response | undefined>> {
+): Newable<BaseSwaggerUiController> {
   @Controller(buildNormalizedPath(options.api.path))
-  class SwaggerUiHonoController extends BaseSwaggerUiController<
-    Context,
-    Response | undefined
-  > {
+  class SwaggerUiHonoController extends BaseSwaggerUiController {
     constructor() {
       super(options);
     }
@@ -56,30 +45,8 @@ export function buildSwaggerUiHonoController(
         name: 'resource',
       })
       resource: string,
-      @Response()
-      context: Context,
-    ): Response | undefined {
-      return super.getSwaggerUiResource(resource, context);
-    }
-
-    protected _sendFile(
-      context: Context,
-      rootPath: string,
-      filePath: string,
-    ): Response | undefined {
-      const mimeType: string | false = mime.lookup(filePath);
-
-      if (mimeType !== false) {
-        context.header('Content-Type', mimeType);
-      }
-
-      const fullPath: string = path.join(rootPath, filePath);
-
-      const fileStream: fs.ReadStream = fs.createReadStream(fullPath);
-
-      return stream(context, async (stream: StreamingApi): Promise<void> => {
-        await stream.pipe(Readable.toWeb(fileStream));
-      });
+    ): HttpResponse {
+      return super.getSwaggerUiResource(resource);
     }
   }
 
