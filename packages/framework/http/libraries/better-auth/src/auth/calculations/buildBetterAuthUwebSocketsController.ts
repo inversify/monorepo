@@ -118,22 +118,32 @@ export function buildBetterAuthUwebSocketsController(
     }
 
     async #parseBody(res: HttpResponse): Promise<string> {
-      return new Promise<string>((resolve: (value: string) => void) => {
-        let buffer: Buffer | undefined;
-        res.onData((chunk: ArrayBuffer, isLast: boolean) => {
-          const curBuf: Buffer<ArrayBuffer> = Buffer.from(chunk);
-          buffer = buffer
-            ? Buffer.concat([buffer, curBuf])
-            : isLast
-              ? curBuf
-              : Buffer.concat([curBuf]);
-          if (isLast) {
-            const stringifiedBody: string = buffer.toString();
+      return new Promise<string>(
+        (
+          resolve: (value: string) => void,
+          reject: (reason?: unknown) => void,
+        ) => {
+          let buffer: Buffer | undefined;
 
-            resolve(stringifiedBody);
-          }
-        });
-      });
+          res.onAborted(() => {
+            reject(new Error('Request aborted'));
+          });
+
+          res.onData((chunk: ArrayBuffer, isLast: boolean) => {
+            const curBuf: Buffer<ArrayBuffer> = Buffer.from(chunk);
+            buffer = buffer
+              ? Buffer.concat([buffer, curBuf])
+              : isLast
+                ? curBuf
+                : Buffer.concat([curBuf]);
+            if (isLast) {
+              const stringifiedBody: string = buffer.toString();
+
+              resolve(stringifiedBody);
+            }
+          });
+        },
+      );
     }
 
     async #sendResponse(

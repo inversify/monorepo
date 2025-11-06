@@ -252,26 +252,36 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   }
 
   async #parseBody(res: HttpResponse): Promise<unknown> {
-    return new Promise<unknown>((resolve: (value: unknown) => void) => {
-      let buffer: Buffer | undefined;
-      res.onData((chunk: ArrayBuffer, isLast: boolean) => {
-        const curBuf: Buffer<ArrayBuffer> = Buffer.from(chunk);
-        buffer = buffer
-          ? Buffer.concat([buffer, curBuf])
-          : isLast
-            ? curBuf
-            : Buffer.concat([curBuf]);
-        if (isLast) {
-          const stringifiedBody: string = buffer.toString();
+    return new Promise<unknown>(
+      (
+        resolve: (value: unknown) => void,
+        reject: (reason?: unknown) => void,
+      ) => {
+        let buffer: Buffer | undefined;
 
-          if (this.httpAdapterOptions.useJson) {
-            resolve(JSON.parse(stringifiedBody));
-          } else {
-            resolve(stringifiedBody);
+        res.onAborted(() => {
+          reject(new Error('Request aborted'));
+        });
+
+        res.onData((chunk: ArrayBuffer, isLast: boolean) => {
+          const curBuf: Buffer<ArrayBuffer> = Buffer.from(chunk);
+          buffer = buffer
+            ? Buffer.concat([buffer, curBuf])
+            : isLast
+              ? curBuf
+              : Buffer.concat([curBuf]);
+          if (isLast) {
+            const stringifiedBody: string = buffer.toString();
+
+            if (this.httpAdapterOptions.useJson) {
+              resolve(JSON.parse(stringifiedBody));
+            } else {
+              resolve(stringifiedBody);
+            }
           }
-        }
-      });
-    });
+        });
+      },
+    );
   }
 
   #parseCookies(request: HttpRequest): Record<string, string> {
