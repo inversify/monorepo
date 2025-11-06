@@ -5,7 +5,6 @@
   },
   "description": "InversifyJs HTTP OpenAPI example package",
   "dependencies": {
-    "@inversifyjs/express-open-api": "workspace:*",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-open-api": "workspace:*",

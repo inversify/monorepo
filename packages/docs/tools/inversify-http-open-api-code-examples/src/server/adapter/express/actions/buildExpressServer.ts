@@ -1,8 +1,8 @@
 import http, { RequestListener } from 'node:http';
 import { AddressInfo } from 'node:net';
 
-import { SwaggerUiExpressProvider } from '@inversifyjs/express-open-api';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
+import { SwaggerUiProvider } from '@inversifyjs/http-open-api';
 import express from 'express';
 import { Container } from 'inversify';
 
@@ -19,22 +19,21 @@ export async function buildExpressServer(
     },
   );
 
-  const swaggerProvider: SwaggerUiExpressProvider =
-    new SwaggerUiExpressProvider({
-      api: {
-        openApiObject: {
-          info: {
-            title: 'My awesome API',
-            version: '1.0.0',
-          },
-          openapi: '3.1.1',
+  const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+    api: {
+      openApiObject: {
+        info: {
+          title: 'My awesome API',
+          version: '1.0.0',
         },
-        path: '/docs',
+        openapi: '3.1.1',
       },
-      ui: {
-        title: 'My awesome API docs',
-      },
-    });
+      path: '/docs',
+    },
+    ui: {
+      title: 'My awesome API docs',
+    },
+  });
 
   swaggerProvider.provide(container);
 
