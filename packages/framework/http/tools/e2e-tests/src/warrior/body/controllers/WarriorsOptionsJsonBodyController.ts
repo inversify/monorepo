@@ -1,24 +1,21 @@
 import { Body, Controller, Options } from '@inversifyjs/http-core';
 
 import { WarriorCreationResponse } from '../models/WarriorCreationResponse';
-import { WarriorCreationResponseType } from '../models/WarriorCreationResponseType';
+import { WarriorRequest } from '../models/WarriorRequest';
 
 @Controller('/warriors')
-export class WarriorsOptionsBodyNamedController {
+export class WarriorsOptionsJsonBodyController {
   @Options()
   public async optionsWarrior(
-    @Body({
-      name: 'name',
-    })
-    name: string,
+    @Body() body: WarriorRequest,
   ): Promise<WarriorCreationResponse> {
     return {
       damage: 10,
       health: 100,
-      name: name,
+      name: body.name,
       range: 1,
       speed: 10,
-      type: WarriorCreationResponseType.Melee,
+      type: body.type,
     };
   }
 }

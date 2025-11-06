@@ -8,56 +8,138 @@ import { HttpMethod } from '../../../http/models/HttpMethod';
 import { setServerRequest } from '../../../server/actions/setServerRequest';
 import { getServerOrFail } from '../../../server/calculations/getServerOrFail';
 import { Server } from '../../../server/models/Server';
-import { WarriorsDeleteBodyController } from '../controllers/WarriorsDeleteBodyController';
-import { WarriorsDeleteBodyNamedController } from '../controllers/WarriorsDeleteBodyNamedController';
-import { WarriorsOptionsBodyController } from '../controllers/WarriorsOptionsBodyController';
-import { WarriorsOptionsBodyNamedController } from '../controllers/WarriorsOptionsBodyNamedController';
-import { WarriorsPatchBodyController } from '../controllers/WarriorsPatchBodyController';
-import { WarriorsPatchBodyNamedController } from '../controllers/WarriorsPatchBodyNamedController';
-import { WarriorsPostBodyController } from '../controllers/WarriorsPostBodyController';
-import { WarriorsPostBodyNamedController } from '../controllers/WarriorsPostBodyNamedController';
-import { WarriorsPutBodyController } from '../controllers/WarriorsPutBodyController';
-import { WarriorsPutBodyNamedController } from '../controllers/WarriorsPutBodyNamedController';
+import { WarriorsDeleteJsonBodyController } from '../controllers/WarriorsDeleteJsonBodyController';
+import { WarriorsDeleteJsonBodyNamedController } from '../controllers/WarriorsDeleteJsonBodyNamedController';
+import { WarriorsDeleteStringBodyController } from '../controllers/WarriorsDeleteStringBodyController';
+import { WarriorsOptionsJsonBodyController } from '../controllers/WarriorsOptionsJsonBodyController';
+import { WarriorsOptionsJsonBodyNamedController } from '../controllers/WarriorsOptionsJsonBodyNamedController';
+import { WarriorsOptionsStringBodyController } from '../controllers/WarriorsOptionsStringBodyController';
+import { WarriorsPatchJsonBodyController } from '../controllers/WarriorsPatchJsonBodyController';
+import { WarriorsPatchJsonBodyNamedController } from '../controllers/WarriorsPatchJsonBodyNamedController';
+import { WarriorsPatchStringBodyController } from '../controllers/WarriorsPatchStringBodyController';
+import { WarriorsPostJsonBodyController } from '../controllers/WarriorsPostJsonBodyController';
+import { WarriorsPostJsonBodyNamedController } from '../controllers/WarriorsPostJsonBodyNamedController';
+import { WarriorsPostStringBodyController } from '../controllers/WarriorsPostStringBodyController';
+import { WarriorsPutJsonBodyController } from '../controllers/WarriorsPutJsonBodyController';
+import { WarriorsPutJsonBodyNamedController } from '../controllers/WarriorsPutJsonBodyNamedController';
+import { WarriorsPutStringBodyController } from '../controllers/WarriorsPutStringBodyController';
 import { WarriorCreationResponseType } from '../models/WarriorCreationResponseType';
 import { WarriorRequest } from '../models/WarriorRequest';
 
-function getMethodWarriorBodyController(method: HttpMethod): NewableFunction {
-  switch (method) {
-    case HttpMethod.delete:
-      return WarriorsDeleteBodyController;
-    case HttpMethod.get:
-      throw new Error('Get not supported for body controller');
-    case HttpMethod.options:
-      return WarriorsOptionsBodyController;
-    case HttpMethod.patch:
-      return WarriorsPatchBodyController;
-    case HttpMethod.post:
-      return WarriorsPostBodyController;
-    case HttpMethod.put:
-      return WarriorsPutBodyController;
-  }
-}
-
-function getMethodWarriorBodyNamedController(
+function getMethodWarriorJsonBodyController(
   method: HttpMethod,
 ): NewableFunction {
   switch (method) {
     case HttpMethod.delete:
-      return WarriorsDeleteBodyNamedController;
+      return WarriorsDeleteJsonBodyController;
     case HttpMethod.get:
-      throw new Error('Get not supported for body named controller');
+      throw new Error('Get not supported for body controller');
     case HttpMethod.options:
-      return WarriorsOptionsBodyNamedController;
+      return WarriorsOptionsJsonBodyController;
     case HttpMethod.patch:
-      return WarriorsPatchBodyNamedController;
+      return WarriorsPatchJsonBodyController;
     case HttpMethod.post:
-      return WarriorsPostBodyNamedController;
+      return WarriorsPostJsonBodyController;
     case HttpMethod.put:
-      return WarriorsPutBodyNamedController;
+      return WarriorsPutJsonBodyController;
   }
 }
 
-function givenWarriorRequestWithBodyForServer(
+function getMethodWarriorJsonBodyNamedController(
+  method: HttpMethod,
+): NewableFunction {
+  switch (method) {
+    case HttpMethod.delete:
+      return WarriorsDeleteJsonBodyNamedController;
+    case HttpMethod.get:
+      throw new Error('Get not supported for body named controller');
+    case HttpMethod.options:
+      return WarriorsOptionsJsonBodyNamedController;
+    case HttpMethod.patch:
+      return WarriorsPatchJsonBodyNamedController;
+    case HttpMethod.post:
+      return WarriorsPostJsonBodyNamedController;
+    case HttpMethod.put:
+      return WarriorsPutJsonBodyNamedController;
+  }
+}
+
+function getMethodWarriorStringBodyController(
+  method: HttpMethod,
+): NewableFunction {
+  switch (method) {
+    case HttpMethod.delete:
+      return WarriorsDeleteStringBodyController;
+    case HttpMethod.get:
+      throw new Error('Get not supported for body controller');
+    case HttpMethod.options:
+      return WarriorsOptionsStringBodyController;
+    case HttpMethod.patch:
+      return WarriorsPatchStringBodyController;
+    case HttpMethod.post:
+      return WarriorsPostStringBodyController;
+    case HttpMethod.put:
+      return WarriorsPutStringBodyController;
+  }
+}
+
+function givenWarriorRequestWithEmptyStringBodyForServer(
+  this: InversifyHttpWorld,
+  method: HttpMethod,
+  requestAlias?: string,
+  serverAlias?: string,
+): void {
+  const parsedRequestAlias: string = requestAlias ?? defaultAlias;
+  const parsedServerAlias: string = serverAlias ?? defaultAlias;
+  const server: Server = getServerOrFail.bind(this)(parsedServerAlias);
+
+  const url: string = `http://${server.host}:${server.port.toString()}/warriors`;
+
+  const requestInit: RequestInit = {
+    body: '',
+    headers: {
+      'Content-Type': 'text/plain',
+    },
+    method,
+  };
+
+  const request: Request = new Request(url, requestInit);
+
+  setServerRequest.bind(this)(parsedRequestAlias, {
+    body: '',
+    queryParameters: {},
+    request,
+    urlParameters: {},
+  });
+}
+
+function givenWarriorRequestWithNoStringBodyForServer(
+  this: InversifyHttpWorld,
+  method: HttpMethod,
+  requestAlias?: string,
+  serverAlias?: string,
+): void {
+  const parsedRequestAlias: string = requestAlias ?? defaultAlias;
+  const parsedServerAlias: string = serverAlias ?? defaultAlias;
+  const server: Server = getServerOrFail.bind(this)(parsedServerAlias);
+
+  const url: string = `http://${server.host}:${server.port.toString()}/warriors`;
+
+  const requestInit: RequestInit = {
+    method,
+  };
+
+  const request: Request = new Request(url, requestInit);
+
+  setServerRequest.bind(this)(parsedRequestAlias, {
+    body: undefined,
+    queryParameters: {},
+    request,
+    urlParameters: {},
+  });
+}
+
+function givenWarriorRequestWithJsonBodyForServer(
   this: InversifyHttpWorld,
   method: HttpMethod,
   requestAlias?: string,
@@ -101,7 +183,8 @@ function givenWarriorBodyControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction = getMethodWarriorBodyController(method);
+  const controller: NewableFunction =
+    getMethodWarriorJsonBodyController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }
@@ -116,7 +199,22 @@ function givenWarriorBodyNamedControllerForContainer(
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
   const controller: NewableFunction =
-    getMethodWarriorBodyNamedController(method);
+    getMethodWarriorJsonBodyNamedController(method);
+
+  container.bind(controller).toSelf().inSingletonScope();
+}
+
+function givenWarriorStringBodyControllerForContainer(
+  this: InversifyHttpWorld,
+  method: HttpMethod,
+  containerAlias?: string,
+): void {
+  const parsedContainerAlias: string = containerAlias ?? defaultAlias;
+  const container: Container =
+    getContainerOrFail.bind(this)(parsedContainerAlias);
+
+  const controller: NewableFunction =
+    getMethodWarriorStringBodyController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }
@@ -136,8 +234,29 @@ Given<InversifyHttpWorld>(
 );
 
 Given<InversifyHttpWorld>(
-  'a "{httpMethod}" warriors HTTP request with body',
+  'a warrior controller with string body decorator without parameter name for "{httpMethod}" method',
   function (this: InversifyHttpWorld, httpMethod: HttpMethod): void {
-    givenWarriorRequestWithBodyForServer.bind(this)(httpMethod);
+    givenWarriorStringBodyControllerForContainer.bind(this)(httpMethod);
+  },
+);
+
+Given<InversifyHttpWorld>(
+  'a "{httpMethod}" warriors HTTP request with empty string body',
+  function (this: InversifyHttpWorld, httpMethod: HttpMethod): void {
+    givenWarriorRequestWithEmptyStringBodyForServer.bind(this)(httpMethod);
+  },
+);
+
+Given<InversifyHttpWorld>(
+  'a "{httpMethod}" warriors HTTP request with JSON body',
+  function (this: InversifyHttpWorld, httpMethod: HttpMethod): void {
+    givenWarriorRequestWithJsonBodyForServer.bind(this)(httpMethod);
+  },
+);
+
+Given<InversifyHttpWorld>(
+  'a "{httpMethod}" warriors HTTP request with no body',
+  function (this: InversifyHttpWorld, httpMethod: HttpMethod): void {
+    givenWarriorRequestWithNoStringBodyForServer.bind(this)(httpMethod);
   },
 );

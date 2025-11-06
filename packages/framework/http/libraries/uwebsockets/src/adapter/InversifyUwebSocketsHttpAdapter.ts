@@ -41,7 +41,6 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
       container,
       {
         logger: true,
-        useJson: true,
       },
       httpAdapterOptions,
       [RequestMethodParameterType.Body],
@@ -172,11 +171,13 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected async _getBody(
-    _request: HttpRequest,
+    request: HttpRequest,
     response: HttpResponse,
     parameterName?: string,
   ): Promise<unknown> {
-    const body: unknown = await this.#parseBody(response);
+    const contentType: string | undefined = this.#parseContentType(request);
+
+    const body: unknown = await this.#parseBody(contentType, response);
 
     if (parameterName === undefined) {
       return body;
@@ -251,27 +252,73 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     }
   }
 
-  async #parseBody(res: HttpResponse): Promise<unknown> {
-    return new Promise<unknown>((resolve: (value: unknown) => void) => {
-      let buffer: Buffer | undefined;
-      res.onData((chunk: ArrayBuffer, isLast: boolean) => {
-        const curBuf: Buffer<ArrayBuffer> = Buffer.from(chunk);
-        buffer = buffer
-          ? Buffer.concat([buffer, curBuf])
-          : isLast
-            ? curBuf
-            : Buffer.concat([curBuf]);
-        if (isLast) {
-          const stringifiedBody: string = buffer.toString();
+  async #parseBody(
+    contentType: string | undefined,
+    response: HttpResponse,
+  ): Promise<unknown> {
+    return new Promise<unknown>(
+      (
+        resolve: (value: unknown) => void,
+        reject: (reason?: unknown) => void,
+      ) => {
+        const chunks: Buffer[] = [];
+        let totalLength: number = 0;
 
-          if (this.httpAdapterOptions.useJson) {
-            resolve(JSON.parse(stringifiedBody));
-          } else {
-            resolve(stringifiedBody);
+        response.onAborted(() => {
+          reject(new Error('Request aborted'));
+        });
+
+        response.onData((chunk: ArrayBuffer, isLast: boolean) => {
+          const curBuf: Buffer<ArrayBuffer> = Buffer.from(chunk);
+          chunks.push(curBuf);
+          totalLength += curBuf.length;
+
+          if (isLast) {
+            const buffer: Buffer = Buffer.concat(chunks, totalLength);
+            const stringifiedBody: string = buffer.toString();
+
+            try {
+              resolve(this.#parseStringifiedBody(contentType, stringifiedBody));
+            } catch (error: unknown) {
+              reject(
+                new Error('Failed to parse request body', {
+                  cause: error,
+                }),
+              );
+            }
           }
-        }
-      });
-    });
+        });
+      },
+    );
+  }
+
+  #parseContentType(request: HttpRequest): string | undefined {
+    const [contentType]: string[] = request
+      .getHeader('content-type')
+      .split(';');
+
+    if (contentType === undefined) {
+      return contentType;
+    }
+
+    const normalizedContentType: string = contentType.trim().toLowerCase();
+
+    return normalizedContentType === '' ? undefined : normalizedContentType;
+  }
+
+  #parseStringifiedBody(
+    contentType: string | undefined,
+    stringifiedBody: string,
+  ): unknown {
+    switch (contentType) {
+      case 'application/json':
+        return JSON.parse(stringifiedBody);
+      case 'application/x-www-form-urlencoded': {
+        return this.#parseUrlEncodedBody(stringifiedBody);
+      }
+      default:
+        return stringifiedBody;
+    }
   }
 
   #parseCookies(request: HttpRequest): Record<string, string> {
@@ -323,5 +370,28 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     }
 
     return result;
+  }
+
+  #parseUrlEncodedBody(
+    stringifiedBody: string,
+  ): Record<string, string | string[]> {
+    const urlSearchParams: URLSearchParams = new URLSearchParams(
+      stringifiedBody,
+    );
+    const parsedBody: Record<string, string | string[]> = {};
+
+    urlSearchParams.forEach((value: string, key: string) => {
+      if (parsedBody[key] === undefined) {
+        parsedBody[key] = value;
+      } else {
+        if (Array.isArray(parsedBody[key])) {
+          parsedBody[key].push(value);
+        } else {
+          parsedBody[key] = [parsedBody[key], value];
+        }
+      }
+    });
+
+    return parsedBody;
   }
 }

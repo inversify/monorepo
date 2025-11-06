@@ -12,15 +12,15 @@ import { betterAuth, BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
 import { Container, Newable } from 'inversify';
 
-import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
+import { buildUwebSocketsJsServer } from '../../server/adapter/uwebsockets/actions/buildUwebSocketsJsServer';
 import { Server } from '../../server/models/Server';
 import { createDirectory } from '../../test/actions/createDirectory';
 import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations';
 import { removeFileIfExists } from '../../test/actions/removeFileIfExists';
 import { BetterAuth } from '../models/BetterAuth';
-import { BetterAuthFastifyContainerModule } from './BetterAuthFastifyContainerModule';
+import { BetterAuthUwebSocketsContainerModule } from './BetterAuthUwebSocketsContainerModule';
 
-describe(BetterAuthFastifyContainerModule, () => {
+describe(BetterAuthUwebSocketsContainerModule, () => {
   let db: BetterSqlite3.Database;
   let dbPath: string;
   let options: {
@@ -31,7 +31,7 @@ describe(BetterAuthFastifyContainerModule, () => {
   };
 
   beforeAll(async () => {
-    dbPath = './temp/better-auth-container-fastify-module.db';
+    dbPath = './temp/better-auth-container-uwebsockets-module.db';
 
     await createDirectory('./temp');
     await removeFileIfExists(dbPath);
@@ -53,7 +53,7 @@ describe(BetterAuthFastifyContainerModule, () => {
     await removeFileIfExists(dbPath);
   });
 
-  describe('having a Better Auth Fastify server', () => {
+  describe('having a Better Auth UwebSockets server', () => {
     let server: Server;
 
     beforeAll(async () => {
@@ -62,17 +62,17 @@ describe(BetterAuthFastifyContainerModule, () => {
       // eslint-disable-next-line @typescript-eslint/typedef
       const betterAuthInstance = betterAuth(options);
 
-      const betterAuthFastifyContainerModule: BetterAuthFastifyContainerModule<
+      const betterAuthUwebSocketsContainerModule: BetterAuthUwebSocketsContainerModule<
         typeof options,
         () => BetterAuth<typeof options>
-      > = BetterAuthFastifyContainerModule.fromOptions(
+      > = BetterAuthUwebSocketsContainerModule.fromOptions(
         '/api/auth',
         betterAuthInstance,
       );
 
-      await container.load(betterAuthFastifyContainerModule);
+      await container.load(betterAuthUwebSocketsContainerModule);
 
-      server = await buildFastifyServer(container);
+      server = await buildUwebSocketsJsServer(container);
     });
 
     afterAll(async () => {
@@ -135,7 +135,7 @@ describe(BetterAuthFastifyContainerModule, () => {
     });
   });
 
-  describe('having a Better Auth Fastify server with transform', () => {
+  describe('having a Better Auth UwebSockets server with transform', () => {
     let transformMock: Mock<(controller: Newable<unknown>) => Newable<unknown>>;
     let server: Server;
 
@@ -147,18 +147,18 @@ describe(BetterAuthFastifyContainerModule, () => {
       // eslint-disable-next-line @typescript-eslint/typedef
       const betterAuthInstance = betterAuth(options);
 
-      const betterAuthFastifyContainerModule: BetterAuthFastifyContainerModule<
+      const betterAuthUwebSocketsContainerModule: BetterAuthUwebSocketsContainerModule<
         typeof options,
         () => BetterAuth<typeof options>
-      > = BetterAuthFastifyContainerModule.fromOptions(
+      > = BetterAuthUwebSocketsContainerModule.fromOptions(
         '/api/auth',
         betterAuthInstance,
         transformMock,
       );
 
-      await container.load(betterAuthFastifyContainerModule);
+      await container.load(betterAuthUwebSocketsContainerModule);
 
-      server = await buildFastifyServer(container);
+      server = await buildUwebSocketsJsServer(container);
     });
 
     afterAll(async () => {
