@@ -42,15 +42,13 @@ import { SwaggerUiProviderUiOptions } from '../models/SwaggerUiProviderUiOptions
 import { SwaggerUiProvider } from './SwaggerUiProvider';
 
 const buildControllerTypeMock: Mock<
-  (
-    options: SwaggerUiProviderOptions,
-  ) => Newable<BaseSwaggerUiController<unknown, unknown>>
+  (options: SwaggerUiProviderOptions) => Newable<BaseSwaggerUiController>
 > = vitest.fn();
 
-class SwaggerUiProviderMock extends SwaggerUiProvider<unknown, unknown> {
+class SwaggerUiProviderMock extends SwaggerUiProvider {
   protected override _buildControllerType(
     options: SwaggerUiProviderOptions,
-  ): Newable<BaseSwaggerUiController<unknown, unknown>> {
+  ): Newable<BaseSwaggerUiController> {
     return buildControllerTypeMock(options);
   }
 }
@@ -58,7 +56,7 @@ class SwaggerUiProviderMock extends SwaggerUiProvider<unknown, unknown> {
 describe(SwaggerUiProvider, () => {
   let optionsFixture: SwaggerUiProviderOptions;
 
-  let controllerTypeFixture: Newable<BaseSwaggerUiController<unknown, unknown>>;
+  let controllerTypeFixture: Newable<BaseSwaggerUiController>;
 
   beforeAll(() => {
     optionsFixture = {
@@ -68,9 +66,8 @@ describe(SwaggerUiProvider, () => {
       },
       ui: Symbol() as unknown as SwaggerUiProviderUiOptions,
     };
-    controllerTypeFixture = Symbol() as unknown as Newable<
-      BaseSwaggerUiController<unknown, unknown>
-    >;
+    controllerTypeFixture =
+      Symbol() as unknown as Newable<BaseSwaggerUiController>;
   });
 
   describe('.provide', () => {

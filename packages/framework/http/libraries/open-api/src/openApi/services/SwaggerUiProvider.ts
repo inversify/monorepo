@@ -55,7 +55,7 @@ type MetadataTuple = [
   ControllerMethodMetadata[],
 ];
 
-export abstract class SwaggerUiProvider<TResponse, TResult> {
+export abstract class SwaggerUiProvider {
   readonly #options: SwaggerUiProviderOptions;
 
   #provided: boolean;
@@ -83,7 +83,7 @@ export abstract class SwaggerUiProvider<TResponse, TResult> {
       metadataTuple,
     );
 
-    const controllerType: Newable<BaseSwaggerUiController<TResponse, TResult>> =
+    const controllerType: Newable<BaseSwaggerUiController> =
       this._buildControllerType(this.#options);
 
     container.bind(controllerType).toSelf();
@@ -261,5 +261,5 @@ export abstract class SwaggerUiProvider<TResponse, TResult> {
 
   protected abstract _buildControllerType(
     options: SwaggerUiProviderOptions,
-  ): Newable<BaseSwaggerUiController<TResponse, TResult>>;
+  ): Newable<BaseSwaggerUiController>;
 }
