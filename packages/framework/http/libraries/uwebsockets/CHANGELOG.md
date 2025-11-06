@@ -1,5 +1,14 @@
 # @inversifyjs/http-uwebsockets
 
+## 4.2.0
+
+### Patch Changes
+
+- Updated `InversifyUwebSocketsHttpAdapter` to improve body parse performance.
+- Updated `InversifyUwebSocketsHttpAdapter` body parse flow to properly parse url encoded and plain bodies.
+- Updated dependencies
+  - @inversifyjs/http-core@4.2.0
+
 ## 4.1.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @inversifyjs/http-better-auth
 
+## 4.2.0
+
+### Minor Changes
+
+- Added `UwebSocketsUserSession`
+- Added `BetterAuthUwebSocketsContainerModule`
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@4.2.0
+
 ## 4.1.0
 
 ### Patch Changes

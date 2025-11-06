@@ -1,5 +1,16 @@
 # @inversifyjs/http-open-api
 
+## 4.2.0
+
+### Minor Changes
+
+- Updated `SwaggerUiProvider` to no longer be abstract
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@4.2.0
+
 ## 4.1.0
 
 ### Patch Changes
