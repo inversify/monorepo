@@ -4,7 +4,7 @@ import { WarriorCreationResponse } from '../models/WarriorCreationResponse';
 import { WarriorRequest } from '../models/WarriorRequest';
 
 @Controller('/warriors')
-export class WarriorsDeleteBodyController {
+export class WarriorsDeleteJsonBodyController {
   @Delete()
   public async deleteWarrior(
     @Body() body: WarriorRequest,

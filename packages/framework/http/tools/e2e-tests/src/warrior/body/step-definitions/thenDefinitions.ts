@@ -36,9 +36,44 @@ async function thenResponseContainsTheCorrectBodyData(
   assert(warriorCreationResponse.type === requestBody.type);
 }
 
+async function thenResponseContainsEmptyBody(
+  this: InversifyHttpWorld,
+  requestAlias?: string,
+  responseAlias?: string,
+): Promise<void> {
+  const parsedRequestAlias: string = requestAlias ?? 'default';
+  const parsedResponseAlias: string = responseAlias ?? 'default';
+  const request: RequestParameter =
+    getServerRequestOrFail.bind(this)(parsedRequestAlias);
+
+  const requestBody: unknown = request.body;
+
+  assert(
+    requestBody === '',
+    `Expected request body to be an empty string, but got: ${JSON.stringify(requestBody)}`,
+  );
+
+  const responseParameter: ResponseParameter =
+    getServerResponseOrFail.bind(this)(parsedResponseAlias);
+
+  const responseBody: unknown = responseParameter.body;
+
+  assert(
+    responseBody === '',
+    `Expected response body to be an empty string, but got: ${JSON.stringify(responseBody)}`,
+  );
+}
+
 Then<InversifyHttpWorld>(
   'the response contains the correct body data',
   async function (this: InversifyHttpWorld): Promise<void> {
     await thenResponseContainsTheCorrectBodyData.bind(this)();
+  },
+);
+
+Then<InversifyHttpWorld>(
+  'the response contains empty body',
+  async function (this: InversifyHttpWorld): Promise<void> {
+    await thenResponseContainsEmptyBody.bind(this)();
   },
 );

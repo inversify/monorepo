@@ -6,12 +6,43 @@ The body decorator allows extracting the body from HTTP requests
   Background: Having a container
     Given a container
 
-    Rule: body decorator allows extracting HTTP request body
+    Rule: body decorator allows extracting HTTP request empty string body
+
+      # Express 4 parses empty bodies as "{}" ¯\_(ツ)_/¯, so giving up testing it here
+      # TODO: Fix hono
+      Scenario: HTTP request empty body is correctly extracted with body decorator without parameter name
+
+        Given a warrior controller with string body decorator without parameter name for <method> method
+        And a <server_kind> server from container
+        And a <method> warriors HTTP request with empty string body
+        When the request is send
+        Then the response status code is Ok-ish
+        Then the response contains empty body
+
+        Examples:
+          | server_kind   | method   |
+          | "express"     | "DELETE" |
+          | "express"     | "OPTIONS"|
+          | "express"     | "PATCH"  |
+          | "express"     | "POST"   |
+          | "express"     | "PUT"    |
+          | "fastify"     | "DELETE" |
+          | "fastify"     | "OPTIONS"|
+          | "fastify"     | "PATCH"  |
+          | "fastify"     | "POST"   |
+          | "fastify"     | "PUT"    |
+          | "uwebsockets" | "DELETE" |
+          | "uwebsockets" | "OPTIONS"|
+          | "uwebsockets" | "PATCH"  |
+          | "uwebsockets" | "POST"   |
+          | "uwebsockets" | "PUT"    |
+
+    Rule: body decorator allows extracting HTTP request JSON body
       Scenario: HTTP request body is correctly extracted with body decorator without parameter name
 
         Given a warrior controller with body decorator without parameter name for <method> method
         And a <server_kind> server from container
-        And a <method> warriors HTTP request with body
+        And a <method> warriors HTTP request with JSON body
         When the request is send
         Then the response status code is Ok-ish
         Then the response contains the correct body data
@@ -48,7 +79,7 @@ The body decorator allows extracting the body from HTTP requests
 
         Given a warrior controller with body decorator with parameter name for <method> method
         And a <server_kind> server from container
-        And a <method> warriors HTTP request with body
+        And a <method> warriors HTTP request with JSON body
         When the request is send
         Then the response status code is Ok-ish
         Then the response contains the correct body data

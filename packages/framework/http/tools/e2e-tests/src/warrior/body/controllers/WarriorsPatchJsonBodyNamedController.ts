@@ -1,21 +1,24 @@
 import { Body, Controller, Patch } from '@inversifyjs/http-core';
 
 import { WarriorCreationResponse } from '../models/WarriorCreationResponse';
-import { WarriorRequest } from '../models/WarriorRequest';
+import { WarriorCreationResponseType } from '../models/WarriorCreationResponseType';
 
 @Controller('/warriors')
-export class WarriorsPatchBodyController {
+export class WarriorsPatchJsonBodyNamedController {
   @Patch()
   public async updateWarrior(
-    @Body() body: WarriorRequest,
+    @Body({
+      name: 'name',
+    })
+    name: string,
   ): Promise<WarriorCreationResponse> {
     return {
       damage: 10,
       health: 100,
-      name: body.name,
+      name: name,
       range: 1,
       speed: 10,
-      type: body.type,
+      type: WarriorCreationResponseType.Melee,
     };
   }
 }

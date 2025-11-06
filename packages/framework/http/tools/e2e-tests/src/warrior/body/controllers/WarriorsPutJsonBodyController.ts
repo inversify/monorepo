@@ -4,7 +4,7 @@ import { WarriorCreationResponse } from '../models/WarriorCreationResponse';
 import { WarriorRequest } from '../models/WarriorRequest';
 
 @Controller('/warriors')
-export class WarriorsPutBodyController {
+export class WarriorsPutJsonBodyController {
   @Put()
   public async updateWarrior(
     @Body() body: WarriorRequest,
