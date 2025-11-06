@@ -10,7 +10,6 @@ export async function buildUwebSocketsJsServer(
   const adapter: InversifyUwebSocketsHttpAdapter =
     new InversifyUwebSocketsHttpAdapter(container, {
       logger: true,
-      useJson: true,
     });
 
   // eslint-disable-next-line @typescript-eslint/typedef

@@ -41,7 +41,6 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
       container,
       {
         logger: true,
-        useJson: true,
       },
       httpAdapterOptions,
       [RequestMethodParameterType.Body],
@@ -172,11 +171,15 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected async _getBody(
-    _request: HttpRequest,
+    request: HttpRequest,
     response: HttpResponse,
     parameterName?: string,
   ): Promise<unknown> {
-    const body: unknown = await this.#parseBody(response);
+    const [contentType]: string[] = request
+      .getHeader('content-type')
+      .split(';');
+
+    const body: unknown = await this.#parseBody(contentType, response);
 
     if (parameterName === undefined) {
       return body;
@@ -251,39 +254,68 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     }
   }
 
-  async #parseBody(res: HttpResponse): Promise<unknown> {
+  async #parseBody(
+    contentType: string | undefined,
+    response: HttpResponse,
+  ): Promise<unknown> {
     return new Promise<unknown>(
       (
         resolve: (value: unknown) => void,
         reject: (reason?: unknown) => void,
       ) => {
-        let buffer: Buffer | undefined;
+        const chunks: Buffer[] = [];
+        let totalLength: number = 0;
 
-        res.onAborted(() => {
+        response.onAborted(() => {
           reject(new Error('Request aborted'));
         });
 
-        res.onData((chunk: ArrayBuffer, isLast: boolean) => {
+        response.onData((chunk: ArrayBuffer, isLast: boolean) => {
           const curBuf: Buffer<ArrayBuffer> = Buffer.from(chunk);
-
-          if (buffer === undefined) {
-            buffer = curBuf;
-          } else {
-            buffer = Buffer.concat([buffer, curBuf]);
-          }
+          chunks.push(curBuf);
+          totalLength += curBuf.length;
 
           if (isLast) {
+            const buffer: Buffer = Buffer.concat(chunks, totalLength);
             const stringifiedBody: string = buffer.toString();
 
-            if (this.httpAdapterOptions.useJson) {
-              resolve(JSON.parse(stringifiedBody));
-            } else {
-              resolve(stringifiedBody);
+            try {
+              resolve(this.#parseStringifiedBody(contentType, stringifiedBody));
+            } catch (error: unknown) {
+              reject(
+                new Error('Failed to parse request body', {
+                  cause: error,
+                }),
+              );
             }
           }
         });
       },
     );
+  }
+
+  #parseStringifiedBody(
+    contentType: string | undefined,
+    stringifiedBody: string,
+  ): unknown {
+    switch (contentType) {
+      case 'application/json':
+        return JSON.parse(stringifiedBody);
+      case 'application/x-www-form-urlencoded': {
+        const urlSearchParams: URLSearchParams = new URLSearchParams(
+          stringifiedBody,
+        );
+        const parsedBody: Record<string, string> = {};
+
+        urlSearchParams.forEach((value: string, key: string) => {
+          parsedBody[key] = value;
+        });
+
+        return parsedBody;
+      }
+      default:
+        return stringifiedBody;
+    }
   }
 
   #parseCookies(request: HttpRequest): Record<string, string> {

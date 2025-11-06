@@ -62,18 +62,18 @@ export function buildBetterAuthUwebSocketsController(
         return;
       }
 
-      const body: string = await this.#parseBody(response);
+      const body: Buffer = await this.#parseBody(response);
 
-      if (body !== '') {
+      if (body.length > 0) {
         const contentType: string | null = headers.get('content-type');
 
         if (
           contentType !== null &&
           contentType.includes('application/x-www-form-urlencoded')
         ) {
-          requestInit.body = new URLSearchParams(body);
+          requestInit.body = new URLSearchParams(body.toString());
         } else {
-          requestInit.body = body;
+          requestInit.body = body.toString();
         }
       }
     }
@@ -117,13 +117,14 @@ export function buildBetterAuthUwebSocketsController(
       return new URL(url);
     }
 
-    async #parseBody(res: HttpResponse): Promise<string> {
-      return new Promise<string>(
+    async #parseBody(res: HttpResponse): Promise<Buffer> {
+      return new Promise<Buffer>(
         (
-          resolve: (value: string) => void,
+          resolve: (value: Buffer) => void,
           reject: (reason?: unknown) => void,
         ) => {
-          let buffer: Buffer | undefined;
+          const chunks: Buffer[] = [];
+          let totalLength: number = 0;
 
           res.onAborted(() => {
             reject(new Error('Request aborted'));
@@ -131,17 +132,13 @@ export function buildBetterAuthUwebSocketsController(
 
           res.onData((chunk: ArrayBuffer, isLast: boolean) => {
             const curBuf: Buffer<ArrayBuffer> = Buffer.from(chunk);
-
-            if (buffer === undefined) {
-              buffer = curBuf;
-            } else {
-              buffer = Buffer.concat([buffer, curBuf]);
-            }
+            chunks.push(curBuf);
+            totalLength += curBuf.length;
 
             if (isLast) {
-              const stringifiedBody: string = buffer.toString();
+              const buffer: Buffer = Buffer.concat(chunks, totalLength);
 
-              resolve(stringifiedBody);
+              resolve(buffer);
             }
           });
         },
