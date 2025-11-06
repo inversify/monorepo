@@ -55,6 +55,18 @@ export function buildBetterAuthUwebSocketsController(
       response: HttpResponse,
       requestInit: RequestInit,
     ): Promise<void> {
+      const contentLength: string | null = headers.get('content-length');
+      const hasChunkedTransfer: boolean =
+        headers.get('transfer-encoding')?.toLowerCase().includes('chunked') ??
+        false;
+
+      if (
+        (contentLength === null || contentLength === '0') &&
+        !hasChunkedTransfer
+      ) {
+        return;
+      }
+
       const body: string = await this.#parseBody(response);
 
       if (body !== '') {
