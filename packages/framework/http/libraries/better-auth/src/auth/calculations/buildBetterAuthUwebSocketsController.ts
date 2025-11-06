@@ -131,11 +131,13 @@ export function buildBetterAuthUwebSocketsController(
 
           res.onData((chunk: ArrayBuffer, isLast: boolean) => {
             const curBuf: Buffer<ArrayBuffer> = Buffer.from(chunk);
-            buffer = buffer
-              ? Buffer.concat([buffer, curBuf])
-              : isLast
-                ? curBuf
-                : Buffer.concat([curBuf]);
+
+            if (buffer === undefined) {
+              buffer = curBuf;
+            } else {
+              buffer = Buffer.concat([buffer, curBuf]);
+            }
+
             if (isLast) {
               const stringifiedBody: string = buffer.toString();
 
