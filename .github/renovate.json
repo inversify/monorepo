@@ -48,7 +48,7 @@
     {
       "description": "Quarantine packages with current known issues",
       "enabled": false,
-      "matchPackageNames": ["@eslint/js", "eslint"]
+      "matchPackageNames": []
     }
   ],
   "rangeStrategy": "bump",
