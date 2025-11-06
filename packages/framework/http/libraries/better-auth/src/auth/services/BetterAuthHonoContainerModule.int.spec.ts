@@ -22,6 +22,7 @@ import { BetterAuthHonoContainerModule } from './BetterAuthHonoContainerModule';
 
 describe(BetterAuthHonoContainerModule, () => {
   let db: BetterSqlite3.Database;
+  let dbPath: string;
   let options: {
     database: BetterSqlite3.Database;
     emailAndPassword: {
@@ -30,7 +31,7 @@ describe(BetterAuthHonoContainerModule, () => {
   };
 
   beforeAll(async () => {
-    const dbPath: string = './temp/better-auth-container-hono-module.db';
+    dbPath = './temp/better-auth-container-hono-module.db';
 
     await createDirectory('./temp');
     await removeFileIfExists(dbPath);
@@ -45,6 +46,11 @@ describe(BetterAuthHonoContainerModule, () => {
     } as const satisfies BetterAuthOptions;
 
     await generateAndRunBetterAuthMigrations(options);
+  });
+
+  afterAll(async () => {
+    db.close();
+    await removeFileIfExists(dbPath);
   });
 
   describe('having a Better Auth Hono server', () => {
