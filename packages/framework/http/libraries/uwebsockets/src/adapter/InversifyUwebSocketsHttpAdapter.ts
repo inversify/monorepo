@@ -302,16 +302,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
       case 'application/json':
         return JSON.parse(stringifiedBody);
       case 'application/x-www-form-urlencoded': {
-        const urlSearchParams: URLSearchParams = new URLSearchParams(
-          stringifiedBody,
-        );
-        const parsedBody: Record<string, string> = {};
-
-        urlSearchParams.forEach((value: string, key: string) => {
-          parsedBody[key] = value;
-        });
-
-        return parsedBody;
+        return this.#parseUrlEncodedBody(stringifiedBody);
       }
       default:
         return stringifiedBody;
@@ -367,5 +358,28 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     }
 
     return result;
+  }
+
+  #parseUrlEncodedBody(
+    stringifiedBody: string,
+  ): Record<string, string | string[]> {
+    const urlSearchParams: URLSearchParams = new URLSearchParams(
+      stringifiedBody,
+    );
+    const parsedBody: Record<string, string | string[]> = {};
+
+    urlSearchParams.forEach((value: string, key: string) => {
+      if (parsedBody[key] === undefined) {
+        parsedBody[key] = value;
+      } else {
+        if (Array.isArray(parsedBody[key])) {
+          parsedBody[key].push(value);
+        } else {
+          parsedBody[key] = [parsedBody[key], value];
+        }
+      }
+    });
+
+    return parsedBody;
   }
 }
