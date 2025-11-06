@@ -22,6 +22,12 @@ import { BetterAuthUwebSocketsContainerModule } from './BetterAuthUwebSocketsCon
 
 describe(BetterAuthUwebSocketsContainerModule, () => {
   let db: BetterSqlite3.Database;
+  let options: {
+    database: BetterSqlite3.Database;
+    emailAndPassword: {
+      enabled: boolean;
+    };
+  };
 
   beforeAll(async () => {
     const dbPath: string = './temp/better-auth-container-uwebsockets-module.db';
@@ -30,22 +36,21 @@ describe(BetterAuthUwebSocketsContainerModule, () => {
     await removeFileIfExists(dbPath);
 
     db = new BetterSqlite3(dbPath);
+
+    options = {
+      database: db,
+      emailAndPassword: {
+        enabled: true,
+      },
+    } as const satisfies BetterAuthOptions;
+
+    await generateAndRunBetterAuthMigrations(options);
   });
 
-  describe('having a Better Auth Hono server', () => {
+  describe('having a Better Auth UwebSockets server', () => {
     let server: Server;
 
     beforeAll(async () => {
-      // eslint-disable-next-line @typescript-eslint/typedef
-      const options = {
-        database: db,
-        emailAndPassword: {
-          enabled: true,
-        },
-      } as const satisfies BetterAuthOptions;
-
-      await generateAndRunBetterAuthMigrations(options);
-
       const container: Container = new Container();
 
       // eslint-disable-next-line @typescript-eslint/typedef
@@ -124,20 +129,12 @@ describe(BetterAuthUwebSocketsContainerModule, () => {
     });
   });
 
-  describe('having a Better Auth Hono server with transform', () => {
+  describe('having a Better Auth UwebSockets server with transform', () => {
     let transformMock: Mock<(controller: Newable<unknown>) => Newable<unknown>>;
     let server: Server;
 
     beforeAll(async () => {
       transformMock = vitest.fn((controller: Newable<unknown>) => controller);
-
-      // eslint-disable-next-line @typescript-eslint/typedef
-      const options = {
-        database: db,
-        emailAndPassword: {
-          enabled: true,
-        },
-      } as const satisfies BetterAuthOptions;
 
       const container: Container = new Container();
 

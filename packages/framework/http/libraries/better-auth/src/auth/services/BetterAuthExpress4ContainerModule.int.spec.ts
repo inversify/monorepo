@@ -22,6 +22,12 @@ import { BetterAuthExpress4ContainerModule } from './BetterAuthExpress4Container
 
 describe(BetterAuthExpress4ContainerModule, () => {
   let db: BetterSqlite3.Database;
+  let options: {
+    database: BetterSqlite3.Database;
+    emailAndPassword: {
+      enabled: boolean;
+    };
+  };
 
   beforeAll(async () => {
     const dbPath: string = './temp/better-auth-container-express-4-module.db';
@@ -30,22 +36,21 @@ describe(BetterAuthExpress4ContainerModule, () => {
     await removeFileIfExists(dbPath);
 
     db = new BetterSqlite3(dbPath);
+
+    options = {
+      database: db,
+      emailAndPassword: {
+        enabled: true,
+      },
+    } as const satisfies BetterAuthOptions;
+
+    await generateAndRunBetterAuthMigrations(options);
   });
 
   describe('having a Better Auth Express 4 server', () => {
     let server: Server;
 
     beforeAll(async () => {
-      // eslint-disable-next-line @typescript-eslint/typedef
-      const options = {
-        database: db,
-        emailAndPassword: {
-          enabled: true,
-        },
-      } as const satisfies BetterAuthOptions;
-
-      await generateAndRunBetterAuthMigrations(options);
-
       const container: Container = new Container();
 
       // eslint-disable-next-line @typescript-eslint/typedef
@@ -108,14 +113,6 @@ describe(BetterAuthExpress4ContainerModule, () => {
 
     beforeAll(async () => {
       transformMock = vitest.fn((controller: Newable<unknown>) => controller);
-
-      // eslint-disable-next-line @typescript-eslint/typedef
-      const options = {
-        database: db,
-        emailAndPassword: {
-          enabled: true,
-        },
-      } as const satisfies BetterAuthOptions;
 
       const container: Container = new Container();
 
