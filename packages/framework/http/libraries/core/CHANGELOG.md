@@ -1,5 +1,11 @@
 # @inversifyjs/http-core
 
+## 4.2.0
+
+### Minor Changes
+
+- Updated `HttpResponse` with optional headers
+
 ## 4.1.0
 
 ### Minor Changes
