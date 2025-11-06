@@ -38,20 +38,9 @@ async function thenResponseContainsTheCorrectBodyData(
 
 async function thenResponseContainsEmptyBody(
   this: InversifyHttpWorld,
-  requestAlias?: string,
   responseAlias?: string,
 ): Promise<void> {
-  const parsedRequestAlias: string = requestAlias ?? 'default';
   const parsedResponseAlias: string = responseAlias ?? 'default';
-  const request: RequestParameter =
-    getServerRequestOrFail.bind(this)(parsedRequestAlias);
-
-  const requestBody: unknown = request.body;
-
-  assert(
-    requestBody === '',
-    `Expected request body to be an empty string, but got: ${JSON.stringify(requestBody)}`,
-  );
 
   const responseParameter: ResponseParameter =
     getServerResponseOrFail.bind(this)(parsedResponseAlias);
