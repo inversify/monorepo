@@ -175,9 +175,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     response: HttpResponse,
     parameterName?: string,
   ): Promise<unknown> {
-    const [contentType]: string[] = request
-      .getHeader('content-type')
-      .split(';');
+    const contentType: string | undefined = this.#parseContentType(request);
 
     const body: unknown = await this.#parseBody(contentType, response);
 
@@ -292,6 +290,20 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
         });
       },
     );
+  }
+
+  #parseContentType(request: HttpRequest): string | undefined {
+    const [contentType]: string[] = request
+      .getHeader('content-type')
+      .split(';');
+
+    if (contentType === undefined) {
+      return contentType;
+    }
+
+    const normalizedContentType: string = contentType.trim().toLowerCase();
+
+    return normalizedContentType === '' ? undefined : normalizedContentType;
   }
 
   #parseStringifiedBody(
