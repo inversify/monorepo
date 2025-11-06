@@ -5,7 +5,7 @@ title: SwaggerUiProvider
 
 # SwaggerUiProvider
 
-The `SwaggerUiProvider` is an abstract class that generates and provides Swagger UI documentation for your HTTP controllers. It automatically scans your controllers and their OpenAPI metadata to build a complete OpenAPI 3.1 specification and serves it through a Swagger UI interface.
+The `SwaggerUiProvider` is a class that generates and provides Swagger UI documentation for your HTTP controllers. It automatically scans your controllers and their OpenAPI metadata to build a complete OpenAPI 3.1 specification and serves it through a Swagger UI interface.
 
 ## Core Methods
 
@@ -138,12 +138,3 @@ Controllers must meet the following requirements for proper documentation genera
 - Be registered in the Inversify container
 - Have appropriate OpenAPI decorators applied (from the OpenAPI decorator library)
 - Use consistent path definitions between HTTP route decorators and OpenAPI metadata
-
-### Framework Compatibility
-
-The `SwaggerUiProvider` is an abstract class that requires framework-specific implementations. Each supported HTTP framework (Express, Fastify, Hono) has its own concrete provider implementation that handles framework-specific response handling and static file serving:
-
-- `SwaggerUiExpressProvider` from `@inversifyjs/express-open-api`
-- `SwaggerUiExpress4Provider` from `@inversifyjs/express-4-open-api`
-- `SwaggerUiFastifyProvider` from `@inversifyjs/fastify-open-api`
-- `SwaggerUiHonoProvider` from `@inversifyjs/hono-open-api`

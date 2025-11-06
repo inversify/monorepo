@@ -45,45 +45,10 @@ Make sure to enable the [Experimental Decorators](https://www.typescriptlang.org
 
 :::
 
-## Choose an HTTP adapter with OpenAPI support
-
-Inversify HTTP OpenAPI works with several HTTP frameworks. Choose the adapter and OpenAPI provider that best fits your needs:
-
-<Tabs>
-  <TabItem value="express-v4" label="Express v4">
-
-```bash
-  npm install @inversifyjs/http-express-v4 @inversifyjs/express-4-open-api
-```
-
-  </TabItem>
-  <TabItem value="express" label="Express">
-
-```bash
-  npm install @inversifyjs/http-express @inversifyjs/express-open-api
-```
-
-  </TabItem>
-  <TabItem value="fastify" label="Fastify">
-
-```bash
-  npm install @inversifyjs/http-fastify @inversifyjs/fastify-open-api
-```
-
-  </TabItem>
-
-  <TabItem value="hono" label="Hono">
-
-```bash
-  npm install @inversifyjs/http-hono @inversifyjs/hono-open-api
-```
-
-  </TabItem>
-</Tabs>
-
 ## Configure server
 
 After installing the packages, create a server to listen for incoming requests. Below is a basic example of setting up an Express server with Inversify HTTP.
+You may set your server up with other supported frameworks like Hono or uWebSockets as well.
 
 <CodeBlock language="typescript">{gettingStartedCreateServerAndListenSource}</CodeBlock>
 
