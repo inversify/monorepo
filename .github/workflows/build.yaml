@@ -118,12 +118,20 @@ jobs:
       - name: Compile source files
         run: pnpm run build
 
-      - name: Run benchmarks (CommonJS)
-        id: run-cjs-benchmarks
+      - name: Run HTTP benchmarks (CommonJS)
+        id: run-http-cjs-benchmarks
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "result<<$EOF" >> $GITHUB_OUTPUT
-          echo "$(pnpm run benchmarks:http:cjs:low)" >> $GITHUB_OUTPUT
+          echo "$(pnpm run benchmarks:http:cjs:medium)" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+
+      - name: Run HTTP benchmarks (ESM)
+        id: run-http-esm-benchmarks
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "result<<$EOF" >> $GITHUB_OUTPUT
+          echo "$(pnpm run benchmarks:http:esm:medium)" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
       - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
@@ -137,7 +145,10 @@ jobs:
               body: `Benchmarks results:
             ---
             \`\`\`bash
-            ${{steps.run-cjs-benchmarks.outputs.result}}
+            ${{steps.run-http-cjs-benchmarks.outputs.result}}
+            \`\`\`
+            \`\`\`bash
+            ${{steps.run-http-esm-benchmarks.outputs.result}}
             \`\`\``
             })
 
