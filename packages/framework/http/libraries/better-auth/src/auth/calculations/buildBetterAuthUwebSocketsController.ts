@@ -1,8 +1,3 @@
-/*
- * Better Auth Fastify Controller
- * https://www.better-auth.com/docs/integrations/fastify
- */
-
 import {
   All,
   Controller,
