@@ -19,7 +19,7 @@ export function buildBetterAuthUwebSocketsController(
     path: basePath,
     serviceIdentifier,
   })
-  class BetterAuthFastifyController<TOptions extends BetterAuthOptions> {
+  class BetterAuthUwebSocketsController<TOptions extends BetterAuthOptions> {
     readonly #auth: BetterAuth<TOptions>;
 
     constructor(
@@ -154,5 +154,5 @@ export function buildBetterAuthUwebSocketsController(
     }
   }
 
-  return BetterAuthFastifyController;
+  return BetterAuthUwebSocketsController;
 }
