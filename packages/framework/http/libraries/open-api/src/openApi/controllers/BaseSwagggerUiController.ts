@@ -4,6 +4,7 @@ import path from 'node:path';
 import {
   buildNormalizedPath,
   HttpResponse,
+  NotFoundHttpResponse,
   OkHttpResponse,
 } from '@inversifyjs/http-core';
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
@@ -125,14 +126,26 @@ export abstract class BaseSwaggerUiController {
   }
 
   #sendFile(rootPath: string, filePath: string): HttpResponse {
-    const mimeType: string | false = mime.lookup(filePath);
+    const normalizedRoot: string = path.resolve(rootPath);
+    const normalizedPath: string = path.resolve(normalizedRoot, filePath);
+    const relativePath: string = path.relative(normalizedRoot, normalizedPath);
 
+    if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+      return new NotFoundHttpResponse();
+    }
+
+    if (
+      !fs.existsSync(normalizedPath) ||
+      fs.statSync(normalizedPath).isDirectory()
+    ) {
+      return new NotFoundHttpResponse();
+    }
+
+    const mimeType: string | false = mime.lookup(filePath);
     const headers: Record<string, string> | undefined =
       mimeType === false ? undefined : { 'Content-Type': mimeType };
 
-    const fullPath: string = path.join(rootPath, filePath);
-
-    const fileStream: fs.ReadStream = fs.createReadStream(fullPath);
+    const fileStream: fs.ReadStream = fs.createReadStream(normalizedPath);
 
     return new OkHttpResponse(fileStream, headers);
   }
