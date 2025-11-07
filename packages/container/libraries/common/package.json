@@ -9,7 +9,7 @@
     "@stryker-mutator/vitest-runner": "9.3.0",
     "@stryker-mutator/typescript-checker": "9.3.0",
     "@types/node": "24.10.0",
-    "@vitest/coverage-v8": "4.0.7",
+    "@vitest/coverage-v8": "4.0.8",
     "eslint": "9.39.1",
     "prettier": "3.6.2",
     "rimraf": "6.1.0",
@@ -17,7 +17,7 @@
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "4.0.7"
+    "vitest": "4.0.8"
   },
   "devEngines": {
     "node": "^24.10.0",
