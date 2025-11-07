@@ -328,7 +328,6 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
       return {};
     }
 
-    // Parse cookies manually
     const cookies: Record<string, string> = {};
 
     for (const cookie of cookieHeader.split(';')) {
