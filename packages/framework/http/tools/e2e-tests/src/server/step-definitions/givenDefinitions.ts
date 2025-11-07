@@ -25,7 +25,7 @@ import { ServerKind } from '../models/ServerKind';
 async function buildExpressServer(container: Container): Promise<Server> {
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
     container,
-    { logger: true, useJson: true, useText: true },
+    { logger: true, useJson: true, useText: true, useUrlEncoded: true },
   );
 
   const application: express.Application = await adapter.build();
@@ -75,6 +75,7 @@ async function buildExpress4Server(container: Container): Promise<Server> {
       logger: true,
       useJson: true,
       useText: true,
+      useUrlEncoded: true,
     });
 
   const application: express4.Application = await adapter.build();
@@ -166,7 +167,7 @@ async function buildHonoServer(container: Container): Promise<Server> {
 async function buildFastifyServer(container: Container): Promise<Server> {
   const adapter: InversifyFastifyHttpAdapter = new InversifyFastifyHttpAdapter(
     container,
-    { logger: true },
+    { logger: true, useFormUrlEncoded: true },
   );
 
   const application: FastifyInstance = await adapter.build();

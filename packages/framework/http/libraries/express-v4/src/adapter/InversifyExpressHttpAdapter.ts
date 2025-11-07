@@ -40,6 +40,7 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         useCookies: false,
         useJson: true,
         useText: false,
+        useUrlEncoded: false,
       },
       httpAdapterOptions,
     );
@@ -177,6 +178,15 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
 
     if (this.httpAdapterOptions.useText) {
       app.use(express.text({ type: 'text/*' }));
+    }
+
+    if (this.httpAdapterOptions.useUrlEncoded) {
+      app.use(
+        express.urlencoded({
+          extended: false,
+          type: 'application/x-www-form-urlencoded',
+        }),
+      );
     }
 
     return app;
