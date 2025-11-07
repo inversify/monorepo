@@ -136,7 +136,7 @@ function givenWarriorRequestWithStringBodyForServer(
   const request: Request = new Request(url, requestInit);
 
   setServerRequest.bind(this)(parsedRequestAlias, {
-    body: '',
+    body: 'string-body-content',
     queryParameters: {},
     request,
     urlParameters: {},
