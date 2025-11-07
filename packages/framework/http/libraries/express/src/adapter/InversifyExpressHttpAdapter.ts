@@ -39,6 +39,7 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         logger: true,
         useCookies: false,
         useJson: true,
+        useText: false,
       },
       httpAdapterOptions,
     );
@@ -171,7 +172,11 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     }
 
     if (this.httpAdapterOptions.useJson) {
-      app.use(express.json());
+      app.use(express.json({ type: 'application/json' }));
+    }
+
+    if (this.httpAdapterOptions.useText) {
+      app.use(express.text({ type: 'text/*' }));
     }
 
     return app;

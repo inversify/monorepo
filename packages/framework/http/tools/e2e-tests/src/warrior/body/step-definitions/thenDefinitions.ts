@@ -53,6 +53,23 @@ async function thenResponseContainsEmptyBody(
   );
 }
 
+async function thenResponseContainsStringBody(
+  this: InversifyHttpWorld,
+  responseAlias?: string,
+): Promise<void> {
+  const parsedResponseAlias: string = responseAlias ?? 'default';
+
+  const responseParameter: ResponseParameter =
+    getServerResponseOrFail.bind(this)(parsedResponseAlias);
+
+  const responseBody: unknown = responseParameter.body;
+
+  assert(
+    responseBody === 'string-body-content',
+    `Expected response body to be "string-body-content", but got: ${JSON.stringify(responseBody)}`,
+  );
+}
+
 Then<InversifyHttpWorld>(
   'the response contains the correct body data',
   async function (this: InversifyHttpWorld): Promise<void> {
@@ -64,5 +81,12 @@ Then<InversifyHttpWorld>(
   'the response contains empty body',
   async function (this: InversifyHttpWorld): Promise<void> {
     await thenResponseContainsEmptyBody.bind(this)();
+  },
+);
+
+Then<InversifyHttpWorld>(
+  'the response contains string body',
+  async function (this: InversifyHttpWorld): Promise<void> {
+    await thenResponseContainsStringBody.bind(this)();
   },
 );

@@ -113,6 +113,36 @@ function givenWarriorRequestWithEmptyStringBodyForServer(
   });
 }
 
+function givenWarriorRequestWithStringBodyForServer(
+  this: InversifyHttpWorld,
+  method: HttpMethod,
+  requestAlias?: string,
+  serverAlias?: string,
+): void {
+  const parsedRequestAlias: string = requestAlias ?? defaultAlias;
+  const parsedServerAlias: string = serverAlias ?? defaultAlias;
+  const server: Server = getServerOrFail.bind(this)(parsedServerAlias);
+
+  const url: string = `http://${server.host}:${server.port.toString()}/warriors`;
+
+  const requestInit: RequestInit = {
+    body: 'string-body-content',
+    headers: {
+      'Content-Type': 'text/plain',
+    },
+    method,
+  };
+
+  const request: Request = new Request(url, requestInit);
+
+  setServerRequest.bind(this)(parsedRequestAlias, {
+    body: 'string-body-content',
+    queryParameters: {},
+    request,
+    urlParameters: {},
+  });
+}
+
 function givenWarriorRequestWithNoStringBodyForServer(
   this: InversifyHttpWorld,
   method: HttpMethod,
@@ -258,5 +288,12 @@ Given<InversifyHttpWorld>(
   'a "{httpMethod}" warriors HTTP request with no body',
   function (this: InversifyHttpWorld, httpMethod: HttpMethod): void {
     givenWarriorRequestWithNoStringBodyForServer.bind(this)(httpMethod);
+  },
+);
+
+Given<InversifyHttpWorld>(
+  'a "{httpMethod}" warriors HTTP request with string body',
+  function (this: InversifyHttpWorld, httpMethod: HttpMethod): void {
+    givenWarriorRequestWithStringBodyForServer.bind(this)(httpMethod);
   },
 );
