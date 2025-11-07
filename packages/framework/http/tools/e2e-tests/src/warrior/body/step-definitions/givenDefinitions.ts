@@ -11,18 +11,23 @@ import { Server } from '../../../server/models/Server';
 import { WarriorsDeleteJsonBodyController } from '../controllers/WarriorsDeleteJsonBodyController';
 import { WarriorsDeleteJsonBodyNamedController } from '../controllers/WarriorsDeleteJsonBodyNamedController';
 import { WarriorsDeleteStringBodyController } from '../controllers/WarriorsDeleteStringBodyController';
+import { WarriorsDeleteUrlEncodedBodyController } from '../controllers/WarriorsDeleteUrlEncodedBodyController';
 import { WarriorsOptionsJsonBodyController } from '../controllers/WarriorsOptionsJsonBodyController';
 import { WarriorsOptionsJsonBodyNamedController } from '../controllers/WarriorsOptionsJsonBodyNamedController';
 import { WarriorsOptionsStringBodyController } from '../controllers/WarriorsOptionsStringBodyController';
+import { WarriorsOptionsUrlEncodedBodyController } from '../controllers/WarriorsOptionsUrlEncodedBodyController';
 import { WarriorsPatchJsonBodyController } from '../controllers/WarriorsPatchJsonBodyController';
 import { WarriorsPatchJsonBodyNamedController } from '../controllers/WarriorsPatchJsonBodyNamedController';
 import { WarriorsPatchStringBodyController } from '../controllers/WarriorsPatchStringBodyController';
+import { WarriorsPatchUrlEncodedBodyController } from '../controllers/WarriorsPatchUrlEncodedBodyController';
 import { WarriorsPostJsonBodyController } from '../controllers/WarriorsPostJsonBodyController';
 import { WarriorsPostJsonBodyNamedController } from '../controllers/WarriorsPostJsonBodyNamedController';
 import { WarriorsPostStringBodyController } from '../controllers/WarriorsPostStringBodyController';
+import { WarriorsPostUrlEncodedBodyController } from '../controllers/WarriorsPostUrlEncodedBodyController';
 import { WarriorsPutJsonBodyController } from '../controllers/WarriorsPutJsonBodyController';
 import { WarriorsPutJsonBodyNamedController } from '../controllers/WarriorsPutJsonBodyNamedController';
 import { WarriorsPutStringBodyController } from '../controllers/WarriorsPutStringBodyController';
+import { WarriorsPutUrlEncodedBodyController } from '../controllers/WarriorsPutUrlEncodedBodyController';
 import { WarriorCreationResponseType } from '../models/WarriorCreationResponseType';
 import { WarriorRequest } from '../models/WarriorRequest';
 
@@ -80,6 +85,25 @@ function getMethodWarriorStringBodyController(
       return WarriorsPostStringBodyController;
     case HttpMethod.put:
       return WarriorsPutStringBodyController;
+  }
+}
+
+function getMethodWarriorUrlEncodedBodyController(
+  method: HttpMethod,
+): NewableFunction {
+  switch (method) {
+    case HttpMethod.delete:
+      return WarriorsDeleteUrlEncodedBodyController;
+    case HttpMethod.get:
+      throw new Error('Get not supported for body controller');
+    case HttpMethod.options:
+      return WarriorsOptionsUrlEncodedBodyController;
+    case HttpMethod.patch:
+      return WarriorsPatchUrlEncodedBodyController;
+    case HttpMethod.post:
+      return WarriorsPostUrlEncodedBodyController;
+    case HttpMethod.put:
+      return WarriorsPutUrlEncodedBodyController;
   }
 }
 
@@ -204,6 +228,46 @@ function givenWarriorRequestWithJsonBodyForServer(
   });
 }
 
+function givenWarriorRequestWithUrlEncodedBodyForServer(
+  this: InversifyHttpWorld,
+  method: HttpMethod,
+  requestAlias?: string,
+  serverAlias?: string,
+): void {
+  const parsedRequestAlias: string = requestAlias ?? defaultAlias;
+  const parsedServerAlias: string = serverAlias ?? defaultAlias;
+  const server: Server = getServerOrFail.bind(this)(parsedServerAlias);
+
+  const url: string = `http://${server.host}:${server.port.toString()}/warriors`;
+
+  const warriorRequest: WarriorRequest = {
+    name: 'Samurai',
+    type: WarriorCreationResponseType.Melee,
+  };
+
+  const urlEncodedBody: string = new URLSearchParams({
+    name: warriorRequest.name,
+    type: warriorRequest.type,
+  }).toString();
+
+  const requestInit: RequestInit = {
+    body: urlEncodedBody,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    method,
+  };
+
+  const request: Request = new Request(url, requestInit);
+
+  setServerRequest.bind(this)(parsedRequestAlias, {
+    body: warriorRequest,
+    queryParameters: {},
+    request,
+    urlParameters: {},
+  });
+}
+
 function givenWarriorBodyControllerForContainer(
   this: InversifyHttpWorld,
   method: HttpMethod,
@@ -245,6 +309,21 @@ function givenWarriorStringBodyControllerForContainer(
 
   const controller: NewableFunction =
     getMethodWarriorStringBodyController(method);
+
+  container.bind(controller).toSelf().inSingletonScope();
+}
+
+function givenWarriorUrlEncodedBodyControllerForContainer(
+  this: InversifyHttpWorld,
+  method: HttpMethod,
+  containerAlias?: string,
+): void {
+  const parsedContainerAlias: string = containerAlias ?? defaultAlias;
+  const container: Container =
+    getContainerOrFail.bind(this)(parsedContainerAlias);
+
+  const controller: NewableFunction =
+    getMethodWarriorUrlEncodedBodyController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }
@@ -295,5 +374,19 @@ Given<InversifyHttpWorld>(
   'a "{httpMethod}" warriors HTTP request with string body',
   function (this: InversifyHttpWorld, httpMethod: HttpMethod): void {
     givenWarriorRequestWithStringBodyForServer.bind(this)(httpMethod);
+  },
+);
+
+Given<InversifyHttpWorld>(
+  'a warrior controller with urlencoded body decorator without parameter name for "{httpMethod}" method',
+  function (this: InversifyHttpWorld, httpMethod: HttpMethod): void {
+    givenWarriorUrlEncodedBodyControllerForContainer.bind(this)(httpMethod);
+  },
+);
+
+Given<InversifyHttpWorld>(
+  'a "{httpMethod}" warriors HTTP request with urlencoded body',
+  function (this: InversifyHttpWorld, httpMethod: HttpMethod): void {
+    givenWarriorRequestWithUrlEncodedBodyForServer.bind(this)(httpMethod);
   },
 );
