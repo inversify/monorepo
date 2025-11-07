@@ -2,6 +2,7 @@ import { Readable } from 'node:stream';
 
 import cookie, { FastifyCookieOptions } from '@fastify/cookie';
 import fastifyFormbody from '@fastify/formbody';
+import fastifyMultipart, { type Multipart } from '@fastify/multipart';
 import {
   HttpStatusCode,
   InversifyHttpAdapter,
@@ -42,7 +43,12 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   ) {
     super(
       container,
-      { logger: true, useCookies: false, useFormUrlEncoded: false },
+      {
+        logger: true,
+        useCookies: false,
+        useFormUrlEncoded: false,
+        useMultipartFormData: false,
+      },
       httpAdapterOptions,
     );
     this.#app = this.#buildDefaultFastifyApp(customApp);
@@ -59,9 +65,13 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     _response: FastifyReply,
     parameterName?: string,
   ): unknown {
-    return parameterName === undefined
-      ? request.body
-      : (request.body as Record<string, unknown>)[parameterName];
+    return request.isMultipart()
+      ? parameterName === undefined
+        ? request.parts()
+        : this.#getPart(request.parts(), parameterName)
+      : parameterName === undefined
+        ? request.body
+        : (request.body as Record<string, unknown>)[parameterName];
   }
 
   protected _getParams(
@@ -201,6 +211,17 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
       app.register(fastifyFormbody);
     }
 
+    if (this.httpAdapterOptions.useMultipartFormData !== false) {
+      if (this.httpAdapterOptions.useMultipartFormData === true) {
+        app.register(fastifyMultipart);
+      } else {
+        app.register(
+          fastifyMultipart,
+          this.httpAdapterOptions.useMultipartFormData,
+        );
+      }
+    }
+
     return app;
   }
 
@@ -332,5 +353,20 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           (method: RequestMethodType) => method !== RequestMethodType.All,
         )
       : requestMethodType;
+  }
+
+  async #getPart(
+    parts: AsyncIterableIterator<Multipart>,
+    name: string,
+  ): Promise<Multipart | Multipart[] | undefined> {
+    const foundParts: Multipart[] = [];
+
+    for await (const part of parts) {
+      if (part.fieldname === name) {
+        foundParts.push(part);
+      }
+    }
+
+    return foundParts.length > 1 ? foundParts : foundParts[0];
   }
 }
