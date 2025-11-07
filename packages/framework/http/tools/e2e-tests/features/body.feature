@@ -227,3 +227,32 @@ The body decorator allows extracting the body from HTTP requests
           | "uwebsockets" | "PATCH"  |
           | "uwebsockets" | "POST"   |
           | "uwebsockets" | "PUT"    |
+
+    @only
+    Rule: body decorator allows extracting HTTP request multipart/form-data body
+      Scenario: HTTP request multipart/form-data body is correctly extracted with body decorator without parameter name
+
+        Given a warrior controller with multipart body decorator without parameter name for <method> method for <server_kind> server
+        And a <server_kind> server from container
+        And a <method> warriors HTTP request with multipart body
+        When the request is send
+        Then the response status code is Ok-ish
+        Then the response contains the correct multipart body data
+
+        Examples:
+          | server_kind   | method   |
+          | "fastify"     | "DELETE" |
+          | "fastify"     | "OPTIONS"|
+          | "fastify"     | "PATCH"  |
+          | "fastify"     | "POST"   |
+          | "fastify"     | "PUT"    |
+          | "hono"        | "DELETE" |
+          | "hono"        | "OPTIONS"|
+          | "hono"        | "PATCH"  |
+          | "hono"        | "POST"   |
+          | "hono"        | "PUT"    |
+          | "uwebsockets" | "DELETE" |
+          | "uwebsockets" | "OPTIONS"|
+          | "uwebsockets" | "PATCH"  |
+          | "uwebsockets" | "POST"   |
+          | "uwebsockets" | "PUT"    |

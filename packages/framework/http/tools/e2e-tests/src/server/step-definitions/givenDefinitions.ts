@@ -167,7 +167,7 @@ async function buildHonoServer(container: Container): Promise<Server> {
 async function buildFastifyServer(container: Container): Promise<Server> {
   const adapter: InversifyFastifyHttpAdapter = new InversifyFastifyHttpAdapter(
     container,
-    { logger: true, useFormUrlEncoded: true },
+    { logger: true, useFormUrlEncoded: true, useMultipartFormData: true },
   );
 
   const application: FastifyInstance = await adapter.build();
