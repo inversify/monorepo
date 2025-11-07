@@ -31,6 +31,11 @@ The body decorator allows extracting the body from HTTP requests
           | "fastify"     | "PATCH"  |
           | "fastify"     | "POST"   |
           | "fastify"     | "PUT"    |
+          | "hono"        | "DELETE" |
+          | "hono"        | "OPTIONS"|
+          | "hono"        | "PATCH"  |
+          | "hono"        | "POST"   |
+          | "hono"        | "PUT"    |
           | "uwebsockets" | "DELETE" |
           | "uwebsockets" | "OPTIONS"|
           | "uwebsockets" | "PATCH"  |
@@ -62,6 +67,11 @@ The body decorator allows extracting the body from HTTP requests
           | "fastify"     | "PATCH"  |
           | "fastify"     | "POST"   |
           | "fastify"     | "PUT"    |
+          | "hono"        | "DELETE" |
+          | "hono"        | "OPTIONS"|
+          | "hono"        | "PATCH"  |
+          | "hono"        | "POST"   |
+          | "hono"        | "PUT"    |
           | "uwebsockets" | "DELETE" |
           | "uwebsockets" | "OPTIONS"|
           | "uwebsockets" | "PATCH"  |

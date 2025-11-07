@@ -59,35 +59,35 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     _response: FastifyReply,
     parameterName?: string,
   ): unknown {
-    return parameterName !== undefined
-      ? (request.body as Record<string, unknown>)[parameterName]
-      : request.body;
+    return parameterName === undefined
+      ? request.body
+      : (request.body as Record<string, unknown>)[parameterName];
   }
 
   protected _getParams(
     request: FastifyRequest,
     parameterName?: string,
   ): unknown {
-    return parameterName !== undefined
-      ? (request.params as Record<string, unknown>)[parameterName]
-      : request.params;
+    return parameterName === undefined
+      ? request.params
+      : (request.params as Record<string, unknown>)[parameterName];
   }
   protected _getQuery(
     request: FastifyRequest,
     parameterName?: string,
   ): unknown {
-    return parameterName !== undefined
-      ? (request.query as Record<string, unknown>)[parameterName]
-      : request.query;
+    return parameterName === undefined
+      ? request.query
+      : (request.query as Record<string, unknown>)[parameterName];
   }
 
   protected _getHeaders(
     request: FastifyRequest,
     parameterName?: string,
   ): unknown {
-    return parameterName !== undefined
-      ? request.headers[parameterName]
-      : request.headers;
+    return parameterName === undefined
+      ? request.headers
+      : (request.headers as Record<string, unknown>)[parameterName];
   }
 
   protected _getCookies(
@@ -95,9 +95,9 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     _response: FastifyReply,
     parameterName?: string,
   ): unknown {
-    return parameterName !== undefined
-      ? request.cookies[parameterName]
-      : request.cookies;
+    return parameterName === undefined
+      ? request.cookies
+      : (request.cookies as Record<string, unknown>)[parameterName];
   }
 
   protected _replyText(

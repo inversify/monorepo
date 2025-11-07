@@ -90,27 +90,49 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     _response: Context,
     parameterName?: string,
   ): Promise<unknown> {
-    const body: Record<string, unknown> = await request.json();
+    const contentType: string | undefined = this.#parseContentType(request);
 
-    return parameterName !== undefined ? body[parameterName] : body;
+    let body: unknown;
+
+    switch (contentType) {
+      case 'application/json':
+        body = await request.json();
+        break;
+      case 'application/x-www-form-urlencoded':
+        body = this.#parseUrlEncodedBody(await request.text());
+        break;
+      case 'multipart/form-data': {
+        const formData: FormData = await request.formData();
+
+        return parameterName === undefined
+          ? formData
+          : formData.get(parameterName);
+      }
+      default:
+        body = await request.text();
+    }
+
+    return parameterName === undefined
+      ? body
+      : (body as Record<string, unknown>)[parameterName];
   }
 
   protected _getParams(request: HonoRequest, parameterName?: string): unknown {
-    return parameterName !== undefined
-      ? request.param(parameterName)
-      : request.param();
+    return parameterName === undefined
+      ? request.param()
+      : request.param(parameterName);
   }
 
   protected _getQuery(request: HonoRequest, parameterName?: string): unknown {
-    return parameterName !== undefined
-      ? request.query(parameterName)
-      : request.query();
+    return parameterName === undefined
+      ? request.query()
+      : request.query(parameterName);
   }
 
   protected _getHeaders(request: HonoRequest, parameterName?: string): unknown {
-    return parameterName !== undefined
-      ? request.header(parameterName)
-      : request.header();
+    return parameterName === undefined
+      ? request.header()
+      : request.header(parameterName);
   }
 
   protected _getCookies(
@@ -118,9 +140,9 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     response: Context,
     parameterName?: string,
   ): unknown {
-    return parameterName !== undefined
-      ? getCookie(response, parameterName)
-      : getCookie(response);
+    return parameterName === undefined
+      ? getCookie(response)
+      : getCookie(response, parameterName);
   }
 
   protected _replyText(
@@ -242,5 +264,47 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
 
   #convertRequestMethodType(requestMethodType: string): string {
     return requestMethodType.toUpperCase();
+  }
+
+  #parseContentType(request: HonoRequest): string | undefined {
+    const contentTypeHeader: string | undefined =
+      request.header('content-type');
+
+    if (contentTypeHeader === undefined) {
+      return undefined;
+    }
+
+    const [contentType]: string[] = contentTypeHeader.split(';');
+
+    if (contentType === undefined) {
+      return contentType;
+    }
+
+    const normalizedContentType: string = contentType.trim().toLowerCase();
+
+    return normalizedContentType === '' ? undefined : normalizedContentType;
+  }
+
+  #parseUrlEncodedBody(
+    stringifiedBody: string,
+  ): Record<string, string | string[]> {
+    const urlSearchParams: URLSearchParams = new URLSearchParams(
+      stringifiedBody,
+    );
+    const parsedBody: Record<string, string | string[]> = {};
+
+    urlSearchParams.forEach((value: string, key: string) => {
+      if (parsedBody[key] === undefined) {
+        parsedBody[key] = value;
+      } else {
+        if (Array.isArray(parsedBody[key])) {
+          parsedBody[key].push(value);
+        } else {
+          parsedBody[key] = [parsedBody[key], value];
+        }
+      }
+    });
+
+    return parsedBody;
   }
 }
