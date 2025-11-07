@@ -101,9 +101,13 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
       case 'application/x-www-form-urlencoded':
         body = this.#parseUrlEncodedBody(await request.text());
         break;
-      case 'multipart/form-data':
-        body = await request.formData();
-        break;
+      case 'multipart/form-data': {
+        const formData: FormData = await request.formData();
+
+        return parameterName === undefined
+          ? formData
+          : formData.get(parameterName);
+      }
       default:
         body = await request.text();
     }
