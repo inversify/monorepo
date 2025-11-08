@@ -8,6 +8,7 @@ import {
   InversifyHttpAdapter,
   MiddlewareHandler,
   RequestHandler,
+  RequestMethodParameterType,
   RequestMethodType,
   RouterParams,
 } from '@inversifyjs/http-core';
@@ -50,6 +51,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
         useMultipartFormData: false,
       },
       httpAdapterOptions,
+      [RequestMethodParameterType.Body],
     );
     this.#app = this.#buildDefaultFastifyApp(customApp);
   }
@@ -65,13 +67,11 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     _response: FastifyReply,
     parameterName?: string,
   ): unknown {
-    return request.isMultipart()
-      ? parameterName === undefined
-        ? request.parts()
-        : this.#getPart(request.parts(), parameterName)
-      : parameterName === undefined
-        ? request.body
-        : (request.body as Record<string, unknown>)[parameterName];
+    if (this.httpAdapterOptions.useMultipartFormData !== false) {
+      return this.#getMultipartRequestBody(request, parameterName);
+    } else {
+      return this.#getRequestBody(request, parameterName);
+    }
   }
 
   protected _getParams(
@@ -355,6 +355,17 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
       : requestMethodType;
   }
 
+  #getMultipartRequestBody(
+    request: FastifyRequest,
+    parameterName: string | undefined,
+  ): unknown {
+    return request.isMultipart()
+      ? parameterName === undefined
+        ? request.parts()
+        : this.#getPart(request.parts(), parameterName)
+      : this.#getRequestBody(request, parameterName);
+  }
+
   async #getPart(
     parts: AsyncIterableIterator<Multipart>,
     name: string,
@@ -368,5 +379,14 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     }
 
     return foundParts.length > 1 ? foundParts : foundParts[0];
+  }
+
+  #getRequestBody(
+    request: FastifyRequest,
+    parameterName: string | undefined,
+  ): unknown {
+    return parameterName === undefined
+      ? request.body
+      : (request.body as Record<string, unknown>)[parameterName];
   }
 }
