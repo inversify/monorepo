@@ -1,5 +1,17 @@
 # @inversifyjs/http-fastify
 
+## 4.3.0
+
+### Minor Changes
+
+- Updated `InversifyFastifyHttpAdapter` to handle multipart form data
+- Updated `FastifyHttpAdapterOptions` with `useMultipartFormData`
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@4.3.0
+
 ## 4.2.0
 
 ### Patch Changes

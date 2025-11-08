@@ -1,5 +1,13 @@
 # @inversifyjs/http-hono
 
+## 4.3.0
+
+### Patch Changes
+
+- Updated `InversifyHonoHttpAdapter._getBody` to properly handled `text/plain`, `application/x-www-form-urlencoded` and `multipart/form-data` bodies
+- Updated dependencies
+  - @inversifyjs/http-core@4.3.0
+
 ## 4.2.0
 
 ### Patch Changes

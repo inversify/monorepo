@@ -1,5 +1,18 @@
 # @inversifyjs/http-express-v4
 
+## 4.3.0
+
+### Minor Changes
+
+- Updated `ExpressHttpAdapterOptions` with `useText`
+- Updated `InversifyExpressHttpAdapter` to handle url encoded bodies
+- Updated `ExpressHttpAdapterOptions` with `useUrlEncoded`
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@4.3.0
+
 ## 4.2.0
 
 ### Patch Changes
