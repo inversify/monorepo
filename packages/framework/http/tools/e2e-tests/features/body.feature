@@ -228,7 +228,6 @@ The body decorator allows extracting the body from HTTP requests
           | "uwebsockets" | "POST"   |
           | "uwebsockets" | "PUT"    |
 
-    @only
     Rule: body decorator allows extracting HTTP request multipart/form-data body
       Scenario: HTTP request multipart/form-data body is correctly extracted with body decorator without parameter name
 
