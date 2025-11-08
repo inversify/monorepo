@@ -70,6 +70,32 @@ async function thenResponseContainsStringBody(
   );
 }
 
+async function thenResponseContainsTheCorrectMultipartBodyData(
+  this: InversifyHttpWorld,
+  requestAlias?: string,
+  responseAlias?: string,
+): Promise<void> {
+  const parsedRequestAlias: string = requestAlias ?? 'default';
+  const parsedResponseAlias: string = responseAlias ?? 'default';
+  const request: RequestParameter =
+    getServerRequestOrFail.bind(this)(parsedRequestAlias);
+
+  const requestBody: WarriorRequest | undefined = request.body as
+    | WarriorRequest
+    | undefined;
+
+  assert(requestBody !== undefined);
+
+  const responseParameter: ResponseParameter =
+    getServerResponseOrFail.bind(this)(parsedResponseAlias);
+
+  const warriorCreationResponse: WarriorCreationResponse =
+    responseParameter.body as WarriorCreationResponse;
+
+  assert(warriorCreationResponse.name === requestBody.name);
+  assert(warriorCreationResponse.type === requestBody.type);
+}
+
 Then<InversifyHttpWorld>(
   'the response contains the correct body data',
   async function (this: InversifyHttpWorld): Promise<void> {
@@ -88,5 +114,12 @@ Then<InversifyHttpWorld>(
   'the response contains string body',
   async function (this: InversifyHttpWorld): Promise<void> {
     await thenResponseContainsStringBody.bind(this)();
+  },
+);
+
+Then<InversifyHttpWorld>(
+  'the response contains the correct multipart body data',
+  async function (this: InversifyHttpWorld): Promise<void> {
+    await thenResponseContainsTheCorrectMultipartBodyData.bind(this)();
   },
 );

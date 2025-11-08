@@ -12,6 +12,7 @@ import {
 import { Container } from 'inversify';
 import {
   App,
+  getParts,
   HttpRequest,
   HttpResponse,
   RecognizedString,
@@ -175,9 +176,9 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     response: HttpResponse,
     parameterName?: string,
   ): Promise<unknown> {
-    const contentType: string | undefined = this.#parseContentType(request);
+    const contentTypeHeader: string = request.getHeader('content-type');
 
-    const body: unknown = await this.#parseBody(contentType, response);
+    const body: unknown = await this.#parseBody(contentTypeHeader, response);
 
     if (parameterName === undefined) {
       return body;
@@ -253,7 +254,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   }
 
   async #parseBody(
-    contentType: string | undefined,
+    contentTypeHeader: string,
     response: HttpResponse,
   ): Promise<unknown> {
     return new Promise<unknown>(
@@ -275,10 +276,9 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
 
           if (isLast) {
             const buffer: Buffer = Buffer.concat(chunks, totalLength);
-            const stringifiedBody: string = buffer.toString();
 
             try {
-              resolve(this.#parseStringifiedBody(contentType, stringifiedBody));
+              resolve(this.#parseStringifiedBody(contentTypeHeader, buffer));
             } catch (error: unknown) {
               reject(
                 new Error('Failed to parse request body', {
@@ -292,10 +292,8 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     );
   }
 
-  #parseContentType(request: HttpRequest): string | undefined {
-    const [contentType]: string[] = request
-      .getHeader('content-type')
-      .split(';');
+  #parseContentType(contentTypeHeader: string): string | undefined {
+    const [contentType]: string[] = contentTypeHeader.split(';');
 
     if (contentType === undefined) {
       return contentType;
@@ -306,18 +304,19 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     return normalizedContentType === '' ? undefined : normalizedContentType;
   }
 
-  #parseStringifiedBody(
-    contentType: string | undefined,
-    stringifiedBody: string,
-  ): unknown {
+  #parseStringifiedBody(contentTypeHeader: string, buffer: Buffer): unknown {
+    const contentType: string | undefined =
+      this.#parseContentType(contentTypeHeader);
+
     switch (contentType) {
       case 'application/json':
-        return JSON.parse(stringifiedBody);
-      case 'application/x-www-form-urlencoded': {
-        return this.#parseUrlEncodedBody(stringifiedBody);
-      }
+        return JSON.parse(buffer.toString());
+      case 'application/x-www-form-urlencoded':
+        return this.#parseUrlEncodedBody(buffer.toString());
+      case 'multipart/form-data':
+        return getParts(buffer, contentTypeHeader);
       default:
-        return stringifiedBody;
+        return buffer.toString();
     }
   }
 

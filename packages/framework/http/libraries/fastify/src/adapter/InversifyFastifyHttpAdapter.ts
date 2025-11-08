@@ -2,11 +2,13 @@ import { Readable } from 'node:stream';
 
 import cookie, { FastifyCookieOptions } from '@fastify/cookie';
 import fastifyFormbody from '@fastify/formbody';
+import fastifyMultipart from '@fastify/multipart';
 import {
   HttpStatusCode,
   InversifyHttpAdapter,
   MiddlewareHandler,
   RequestHandler,
+  RequestMethodParameterType,
   RequestMethodType,
   RouterParams,
 } from '@inversifyjs/http-core';
@@ -42,8 +44,14 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   ) {
     super(
       container,
-      { logger: true, useCookies: false, useFormUrlEncoded: false },
+      {
+        logger: true,
+        useCookies: false,
+        useFormUrlEncoded: false,
+        useMultipartFormData: false,
+      },
       httpAdapterOptions,
+      [RequestMethodParameterType.Body],
     );
     this.#app = this.#buildDefaultFastifyApp(customApp);
   }
@@ -59,9 +67,11 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     _response: FastifyReply,
     parameterName?: string,
   ): unknown {
-    return parameterName === undefined
-      ? request.body
-      : (request.body as Record<string, unknown>)[parameterName];
+    if (this.httpAdapterOptions.useMultipartFormData !== false) {
+      return this.#getMultipartRequestBody(request, parameterName);
+    } else {
+      return this.#getRequestBody(request, parameterName);
+    }
   }
 
   protected _getParams(
@@ -201,6 +211,17 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
       app.register(fastifyFormbody);
     }
 
+    if (this.httpAdapterOptions.useMultipartFormData !== false) {
+      if (this.httpAdapterOptions.useMultipartFormData === true) {
+        app.register(fastifyMultipart);
+      } else {
+        app.register(
+          fastifyMultipart,
+          this.httpAdapterOptions.useMultipartFormData,
+        );
+      }
+    }
+
     return app;
   }
 
@@ -332,5 +353,31 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
           (method: RequestMethodType) => method !== RequestMethodType.All,
         )
       : requestMethodType;
+  }
+
+  #getMultipartRequestBody(
+    request: FastifyRequest,
+    parameterName: string | undefined,
+  ): unknown {
+    if (request.isMultipart()) {
+      if (parameterName === undefined) {
+        return request.parts();
+      }
+
+      throw new Error(
+        'Cannot get multipart form data body with a specific parameter name.',
+      );
+    } else {
+      return this.#getRequestBody(request, parameterName);
+    }
+  }
+
+  #getRequestBody(
+    request: FastifyRequest,
+    parameterName: string | undefined,
+  ): unknown {
+    return parameterName === undefined
+      ? request.body
+      : (request.body as Record<string, unknown>)[parameterName];
   }
 }
