@@ -2,7 +2,7 @@ import { Readable } from 'node:stream';
 
 import cookie, { FastifyCookieOptions } from '@fastify/cookie';
 import fastifyFormbody from '@fastify/formbody';
-import fastifyMultipart, { type Multipart } from '@fastify/multipart';
+import fastifyMultipart from '@fastify/multipart';
 import {
   HttpStatusCode,
   InversifyHttpAdapter,
@@ -359,26 +359,17 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     request: FastifyRequest,
     parameterName: string | undefined,
   ): unknown {
-    return request.isMultipart()
-      ? parameterName === undefined
-        ? request.parts()
-        : this.#getPart(request.parts(), parameterName)
-      : this.#getRequestBody(request, parameterName);
-  }
-
-  async #getPart(
-    parts: AsyncIterableIterator<Multipart>,
-    name: string,
-  ): Promise<Multipart | Multipart[] | undefined> {
-    const foundParts: Multipart[] = [];
-
-    for await (const part of parts) {
-      if (part.fieldname === name) {
-        foundParts.push(part);
+    if (request.isMultipart()) {
+      if (parameterName === undefined) {
+        return request.parts();
       }
-    }
 
-    return foundParts.length > 1 ? foundParts : foundParts[0];
+      throw new Error(
+        'Cannot get multipart form data body with a specific parameter name.',
+      );
+    } else {
+      return this.#getRequestBody(request, parameterName);
+    }
   }
 
   #getRequestBody(
