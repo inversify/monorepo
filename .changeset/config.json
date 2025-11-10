@@ -31,7 +31,6 @@
     "@inversifyjs/http-e2e-tests",
     "@inversifyjs/http-openapi-example",
     "@inversifyjs/framework-docs-site",
-    "@inversifyjs/inversify-http-docs-site",
     "@inversifyjs/logger-code-examples",
     "@inversifyjs/react-code-runner",
     "@inversifyjs/validation-code-examples"

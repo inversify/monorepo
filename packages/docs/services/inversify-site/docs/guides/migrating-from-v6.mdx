@@ -30,7 +30,7 @@ The following table summarizes the key changes from v6 to v7:
 | `container.getTagged`                 | `container.get(X, { tag: ... })`         | Merged all `get` variants with an options parameter              |
 | `container.tryGet`                    | `container.get(X, { optional: true })`   | Added `optional` flag for optional `get`                         |
 | `container.tryGetNamed`               | `container.get(X, { name: ..., optional: true })` | Combined named and optional parameters                  |
-| `container.tryGetTagged`              | `container.get(X, { tag: ..., optional: true })`  | Combined tagged and optional parameters                  |
+| `container.tryGetTagged`              | `container.get(X, { tag: ..., optional: true })`  | Combined tagged and optional parameters                 |
 | `container.load`                      | `await container.load`                   | Now returns a Promise                                            |
 | `container.load`                      | `container.loadSync`                     | Synchronous alternative to async `load`                          |
 | `container.unload`                    | `await container.unload`                 | Now returns a Promise                                            |
@@ -44,7 +44,7 @@ The following table summarizes the key changes from v6 to v7:
 | `interfaces.Factory<T>`               | `Factory<T>`                             | Directly exported, no longer under `interfaces` namespace        |
 | `interfaces.Newable<T>`               | `Newable<T>`                             | Directly exported, no longer under `interfaces` namespace        |
 | Implicit injection inheritance        | `@injectFromBase` decorator              | Explicit inheritance with a decorator                            |
-| `import { interfaces } from "inversify";` | `import { ... } from "inversify7";` | Removed `interfaces` namespace, use direct imports               |
+| `import { interfaces } from "inversify";` | `import { ... } from "inversify";`   | Removed `interfaces` namespace, use direct imports               |
 
 ## Container API
 
