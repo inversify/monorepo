@@ -1,0 +1,240 @@
+.frameworkBanner {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ifm-color-primary) 5%, var(--ifm-background-color) 95%) 0%,
+    color-mix(in srgb, var(--ifm-color-primary-dark) 10%, var(--ifm-background-color) 90%) 100%
+  );
+  position: relative;
+  overflow: hidden;
+  border-top: 3px solid var(--ifm-color-primary);
+  border-bottom: 3px solid var(--ifm-color-primary);
+  box-shadow: 
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -1px rgb(0 0 0 / 0.06),
+    inset 0 1px 0 0 rgb(255 255 255 / 0.1);
+}
+
+.frameworkBanner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ifm-color-primary) 50%, transparent 50%),
+    transparent
+  );
+}
+
+.frameworkBanner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      color-mix(in srgb, var(--ifm-color-primary) 2%, transparent 98%) 10px,
+      color-mix(in srgb, var(--ifm-color-primary) 2%, transparent 98%) 20px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 10px,
+      color-mix(in srgb, var(--ifm-color-primary) 2%, transparent 98%) 10px,
+      color-mix(in srgb, var(--ifm-color-primary) 2%, transparent 98%) 20px
+    );
+  pointer-events: none;
+}
+
+.bannerContent {
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  padding: 0.25rem 0;
+}
+
+.accordionButton {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.accordionButton:hover {
+  background: color-mix(in srgb, var(--ifm-color-primary) 5%, transparent 95%);
+}
+
+.accordionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 800px;
+}
+
+.accordionHeaderContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bannerBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--ifm-color-primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-weight: bold;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  margin: 0;
+  box-shadow: 
+    0 4px 12px color-mix(in srgb, var(--ifm-color-primary) 30%, transparent 70%),
+    0 0 0 2px color-mix(in srgb, var(--ifm-color-primary) 10%, transparent 90%),
+    inset 0 1px 0 0 color-mix(in srgb, white 20%, transparent 80%);
+  flex-shrink: 0;
+  border: 2px solid color-mix(in srgb, var(--ifm-color-primary) 20%, transparent 80%);
+}
+
+.pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.bannerTitle {
+  font-size: 1.5rem;
+  margin: 0;
+  background: linear-gradient(
+    120deg,
+    var(--ifm-color-primary-darkest),
+    var(--ifm-color-primary)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+  text-align: center;
+}
+
+.titleFull {
+  display: inline;
+}
+
+.titleMobile {
+  display: none;
+}
+
+.chevronIcon {
+  color: var(--ifm-color-primary);
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.accordionContent {
+  max-height: 0;
+  max-width: 800px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+  padding: 0 1rem;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.accordionContentOpen {
+  max-height: 500px;
+  padding: 1rem;
+}
+
+.bannerDescription {
+  font-size: 1.125rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.bannerButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.bannerButtons .button {
+  transition: all 0.3s ease;
+}
+
+.bannerButtons .button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--ifm-color-primary) 30%, transparent 70%);
+}
+
+@media screen and (max-width: 996px) {
+  .bannerTitle {
+    font-size: 1.25rem;
+  }
+
+  .bannerDescription {
+    font-size: 1rem;
+  }
+
+  .frameworkBanner {
+    padding: 0.75rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .bannerTitle {
+    font-size: 1.125rem;
+  }
+
+  .titleFull {
+    display: none;
+  }
+
+  .titleMobile {
+    display: inline;
+  }
+
+  .bannerDescription {
+    font-size: 0.875rem;
+  }
+
+  .accordionHeader {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+  }
+}
