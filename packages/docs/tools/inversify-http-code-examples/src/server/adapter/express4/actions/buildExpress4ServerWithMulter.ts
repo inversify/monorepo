@@ -2,14 +2,22 @@ import http, { RequestListener } from 'node:http';
 import { AddressInfo } from 'node:net';
 
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express-v4';
-import express4 from 'express4';
+import express from 'express4';
 import { Container } from 'inversify';
+import multer from 'multer';
 
 import { Server } from '../../../models/Server';
 
-export async function buildExpress4Server(
+export async function buildExpress4ServerWithMulter(
   container: Container,
 ): Promise<Server> {
+  const app: express.Application = express();
+
+  // Configure multer to handle multipart/form-data
+  const upload: multer.Multer = multer();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  app.use(upload.any() as any);
+
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
     container,
     {
@@ -19,9 +27,11 @@ export async function buildExpress4Server(
       useText: true,
       useUrlEncoded: true,
     },
+    app,
   );
 
-  const application: express4.Application = await adapter.build();
+  const application: express.Application = await adapter.build();
+
   const httpServer: http.Server = http.createServer(
     application as RequestListener,
   );

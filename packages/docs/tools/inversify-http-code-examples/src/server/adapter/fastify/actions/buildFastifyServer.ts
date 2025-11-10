@@ -11,7 +11,12 @@ export async function buildFastifyServer(
 ): Promise<Server> {
   const adapter: InversifyFastifyHttpAdapter = new InversifyFastifyHttpAdapter(
     container,
-    { logger: true, useCookies: true },
+    {
+      logger: true,
+      useCookies: true,
+      useFormUrlEncoded: true,
+      useMultipartFormData: true,
+    },
   );
 
   const application: FastifyInstance = await adapter.build();
