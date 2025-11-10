@@ -42,7 +42,6 @@
     "commit": "commit",
     "deploy:binding-decorators:pages": "pnpm run --filter \"@inversifyjs/inversify-binding-decorators-docs-site\" deploy",
     "deploy:framework:pages": "pnpm run --filter \"@inversifyjs/framework-docs-site\" deploy",
-    "deploy:http:pages": "pnpm run --filter \"@inversifyjs/inversify-http-docs-site\" deploy",
     "deploy:http:open-api:pages": "pnpm run --filter \"@inversifyjs/inversify-http-open-api-docs-site\" deploy",
     "deploy:inversify:pages": "pnpm run --filter \"@inversifyjs/inversify-docs-site\" deploy",
     "deploy:logger:pages": "pnpm run --filter \"@inversifyjs/inversify-logger-docs-site\" deploy",
