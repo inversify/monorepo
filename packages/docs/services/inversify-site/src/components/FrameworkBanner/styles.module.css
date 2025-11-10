@@ -1,14 +1,24 @@
 .frameworkBanner {
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--ifm-color-primary) 5%, var(--ifm-background-color) 95%) 0%,
-    color-mix(in srgb, var(--ifm-color-primary-dark) 10%, var(--ifm-background-color) 90%) 100%
+    color-mix(
+        in srgb,
+        var(--ifm-color-primary) 5%,
+        var(--ifm-background-color) 95%
+      )
+      0%,
+    color-mix(
+        in srgb,
+        var(--ifm-color-primary-dark) 10%,
+        var(--ifm-background-color) 90%
+      )
+      100%
   );
   position: relative;
   overflow: hidden;
   border-top: 3px solid var(--ifm-color-primary);
   border-bottom: 3px solid var(--ifm-color-primary);
-  box-shadow: 
+  box-shadow:
     0 4px 6px -1px rgb(0 0 0 / 0.1),
     0 2px 4px -1px rgb(0 0 0 / 0.06),
     inset 0 1px 0 0 rgb(255 255 255 / 0.1);
@@ -36,7 +46,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
+  background-image:
     repeating-linear-gradient(
       45deg,
       transparent,
@@ -105,12 +115,13 @@
   font-size: 0.875rem;
   letter-spacing: 0.05em;
   margin: 0;
-  box-shadow: 
+  box-shadow:
     0 4px 12px color-mix(in srgb, var(--ifm-color-primary) 30%, transparent 70%),
     0 0 0 2px color-mix(in srgb, var(--ifm-color-primary) 10%, transparent 90%),
     inset 0 1px 0 0 color-mix(in srgb, white 20%, transparent 80%);
   flex-shrink: 0;
-  border: 2px solid color-mix(in srgb, var(--ifm-color-primary) 20%, transparent 80%);
+  border: 2px solid
+    color-mix(in srgb, var(--ifm-color-primary) 20%, transparent 80%);
 }
 
 .pulse {
@@ -166,7 +177,9 @@
   max-height: 0;
   max-width: 800px;
   overflow: hidden;
-  transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+  transition:
+    max-height 0.3s ease-out,
+    padding 0.3s ease-out;
   padding: 0 1rem;
   text-align: center;
   margin: 0 auto;
@@ -198,7 +211,8 @@
 
 .bannerButtons .button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px color-mix(in srgb, var(--ifm-color-primary) 30%, transparent 70%);
+  box-shadow: 0 8px 16px
+    color-mix(in srgb, var(--ifm-color-primary) 30%, transparent 70%);
 }
 
 @media screen and (max-width: 996px) {
