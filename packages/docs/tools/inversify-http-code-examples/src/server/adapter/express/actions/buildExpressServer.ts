@@ -15,6 +15,9 @@ export async function buildExpressServer(
     {
       logger: true,
       useCookies: true,
+      useJson: true,
+      useText: true,
+      useUrlEncoded: true,
     },
   );
 

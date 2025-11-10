@@ -6,6 +6,13 @@ import decoratorApiAllSource from '@inversifyjs/http-code-examples/generated/exa
 import decoratorApiApplyMiddlewareControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiApplyMiddlewareController.ts.txt';
 import decoratorApiApplyMiddlewareRouteSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiApplyMiddlewareRoute.ts.txt';
 import decoratorApiBodySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBody.ts.txt';
+import decoratorApiBodyJsonSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBodyJson.ts.txt';
+import decoratorApiBodyUrlEncodedSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBodyUrlEncoded.ts.txt';
+import decoratorApiBodyTextSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBodyText.ts.txt';
+import decoratorApiBodyMultipartFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBodyMultipartFastify.ts.txt';
+import decoratorApiBodyMultipartHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBodyMultipartHono.ts.txt';
+import decoratorApiBodyMultipartUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBodyMultipartUwebsockets.ts.txt';
+import decoratorApiBodyMultipartExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBodyMultipartExpress.ts.txt';
 import decoratorApiCookiesSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiCookies.ts.txt';
 import decoratorApiDeleteSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiDelete.ts.txt';
 import decoratorApiGetSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiGet.ts.txt';
@@ -163,7 +170,7 @@ Inversify HTTP decorators can be used to abstract HTTP request details, such as 
 
 ### Body
 
-Reads the HTTP request body, or a specific property of it when a name is provided.
+Reads the HTTP request body, or a specific property of it when a name is provided. The type and shape of the body depends on the `Content-Type` header of the request and the adapter being used.
 
 ```ts
 Body(
@@ -177,9 +184,69 @@ Parameters
 - `optionsOrPipe` (optional): Either route parameter options or a pipe. When this is `RouteParameterOptions`, it contains configuration like `parameterName`. When it's a pipe (service identifier or instance), it's the first pipe in the pipeline.
 - `parameterPipeList`: Additional pipes to apply to the parameter for transformation and validation.
 
-#### Example: reading a request body
+#### Content Type Handling
 
-<CodeBlock language="ts">{decoratorApiBodySource}</CodeBlock>
+The `@Body()` decorator automatically parses the request body based on the `Content-Type` header. Different adapters may require specific configuration options to be enabled.
+
+##### JSON (`application/json`)
+
+All adapters support JSON parsing by default (though Express adapters may require the `useJson` option to be enabled).
+
+<CodeBlock language="ts">{decoratorApiBodyJsonSource}</CodeBlock>
+
+##### URL-encoded Form Data (`application/x-www-form-urlencoded`)
+
+Form data is parsed into a `Record<string, string | string[]>` object. Express and Fastify adapters require specific options to be enabled:
+
+- **Express/Express v4**: Set `useUrlEncoded: true` in adapter options
+- **Fastify**: Set `useFormUrlEncoded: true` in adapter options
+- **Hono/uWebSockets.js**: Supported by default
+
+<CodeBlock language="ts">{decoratorApiBodyUrlEncodedSource}</CodeBlock>
+
+##### Plain Text (`text/plain`, `text/*`)
+
+Text bodies are received as strings. Express adapters require the `useText: true` option to be enabled.
+
+<CodeBlock language="ts">{decoratorApiBodyTextSource}</CodeBlock>
+
+##### Multipart Form Data (`multipart/form-data`)
+
+Multipart form data handling varies significantly between adapters. The body type and parsing behavior is adapter-specific:
+
+**Fastify**
+
+Enable with `useMultipartFormData: true` (or pass multipart options) in adapter options. Returns an `AsyncIterableIterator<Multipart>`.
+
+<CodeBlock language="ts">{decoratorApiBodyMultipartFastifySource}</CodeBlock>
+
+**Hono**
+
+Multipart is supported by default. Returns a `FormData` object.
+
+<CodeBlock language="ts">{decoratorApiBodyMultipartHonoSource}</CodeBlock>
+
+**uWebSockets.js**
+
+Multipart is supported by default. Returns a `MultipartField[]` array.
+
+<CodeBlock language="ts">{decoratorApiBodyMultipartUwebsocketsSource}</CodeBlock>
+
+**Express/Express v4**
+
+:::warning Multipart Support
+
+Express adapters do **not** handle `multipart/form-data` out of the box. You must register a multipart middleware (such as `multer`) on your Express app before building the InversifyJS HTTP server.
+
+:::
+
+<CodeBlock language="ts">{decoratorApiBodyMultipartExpressSource}</CodeBlock>
+
+#### Notes
+
+- The `@Body()` decorator is asynchronous for some adapters (Fastify, Hono, uWebSockets.js). The framework handles this automatically.
+- When using `parameterName`, the decorator extracts a specific property from the parsed body object (not supported for multipart bodies that return iterators or FormData).
+- Always validate and sanitize body input using pipes or validation libraries to ensure security.
 
 ### Headers
 
