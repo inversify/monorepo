@@ -1,0 +1,259 @@
+---
+sidebar_position: 4
+title: Suites
+---
+
+import DocumentationButton from '@site/src/components/DocumentationButton';
+
+# Suites
+
+Unit testing in dependency injection systems often involves repetitive setup and brittle mock wiring. Suites is a unit
+testing framework that creates isolated test environments with a single declarative call, helping developers focus on
+test logic rather than infrastructure, boilerplate and setup.
+
+## When to use it
+
+Use Suites when you:
+- Need fast, maintainable unit tests for InversifyJS classes
+- Want compile-time type safety for all mocked dependencies
+- Need to eliminate repetitive mock setup boilerplate
+- Want to test classes with both isolation and selective collaboration
+- Need AI-assisted testing with clear, structured patterns
+
+:::info
+If you need full integration tests with real dependencies and actual InversifyJS containers, traditional
+container configuration may be more appropriate.
+:::
+
+## Core features
+
+- **Auto-generates type-safe mocks** - All dependencies become fully typed `Mocked<T>` instances with compile-time validation
+- **Solitary and sociable testing** - Test classes in complete isolation or enable selective collaboration between business logic
+- **InversifyJS-aware** - Recognizes `@injectable`, `@inject`, `@multiInject`, `@tagged`, and `@named` decorators automatically
+- **Virtual DI container** - No actual InversifyJS container needed - analyzes classes and creates only required mocks
+- **Token auto-mocking** - Token-injected dependencies are always mocked, ensuring tests remain unit tests
+- **Framework integration** - Works with Jest, Vitest, and Sinon out of the box
+
+## Installation
+
+For InversifyJS 6.x:
+
+```bash
+npm install -D @suites/unit @suites/di.inversify@^3.0.0 @suites/doubles.jest
+```
+
+:::info
+Use `@suites/doubles.vitest` or `@suites/doubles.sinon` if you're using Vitest or Sinon instead of Jest.
+:::
+
+Add type references to `global.d.ts`:
+
+```typescript
+/// <reference types="@suites/doubles.jest/unit" />
+/// <reference types="@suites/di.inversify" />
+```
+
+## Quick Examples
+
+### Solitary Testing
+
+Test a class in complete isolation with all dependencies automatically mocked:
+
+```typescript title="order.service.ts"
+@injectable()
+class OrderService {
+  constructor(
+    private readonly paymentGateway: PaymentGateway,
+    private readonly inventoryService: InventoryService
+  ) {}
+
+  async processOrder(orderId: string) {
+    const inventory = await this.inventoryService.checkStock(orderId);
+    return this.paymentGateway.charge(inventory.total);
+  }
+}
+```
+
+```typescript title="order.service.spec.ts"
+import { TestBed, type Mocked } from '@suites/unit';
+import { injectable } from 'inversify';
+
+describe('Order Service Unit Spec', () => {
+  let orderService: OrderService;
+  let paymentGateway: Mocked<PaymentGateway>;
+  let inventoryService: Mocked<InventoryService>;
+
+  beforeAll(async () => {
+    const { unit, unitRef } = await TestBed.solitary(OrderService).compile();
+
+    orderService = unit;
+    paymentGateway = unitRef.get(PaymentGateway);
+    inventoryService = unitRef.get(InventoryService);
+  });
+
+  it('should process order with payment', async () => {
+    inventoryService.checkStock.mockResolvedValue({ total: 100 });
+    paymentGateway.charge.mockResolvedValue({ success: true });
+
+    const result = await orderService.processOrder('123');
+
+    expect(result.success).toBe(true);
+    expect(paymentGateway.charge).toHaveBeenCalledWith(100);
+  });
+});
+```
+
+### Sociable Testing with Collaboration
+
+Test classes with their real collaborators while mocking external boundaries:
+
+```typescript
+@injectable()
+class PriceCalculator {
+  calculateTotal(items: Item[]): number {
+    return items.reduce((sum, item) => sum + item.price, 0);
+  }
+}
+```
+
+```typescript
+@injectable()
+class OrderService {
+  constructor(
+    private calculator: PriceCalculator,
+    private paymentGateway: PaymentGateway
+  ) {}
+
+  async processOrder(items: Item[]) {
+    const total = this.calculator.calculateTotal(items);
+    return this.paymentGateway.charge(total);
+  }
+}
+```
+
+```typescript
+import { TestBed, type Mocked } from '@suites/unit';
+
+describe('Order Service Sociable Unit Spec', () => {
+  let orderService: OrderService;
+  let paymentGateway: Mocked<PaymentGateway>;
+
+  beforeAll(async () => {
+    const { unit, unitRef } = await TestBed.sociable(OrderService)
+      .collaborate()                    // All business logic collaborates
+      .exclude([PaymentGateway])        // Exclude external services
+      .compile();
+
+    orderService = unit;
+    paymentGateway = unitRef.get(PaymentGateway);
+  });
+
+  it('should calculate and charge correct total', async () => {
+    paymentGateway.charge.mockResolvedValue({ success: true });
+
+    await orderService.processOrder([
+      { price: 10 },
+      { price: 20 }
+    ]);
+
+    // Real calculator logic executed, only gateway is mocked
+    expect(paymentGateway.charge).toHaveBeenCalledWith(30);
+  });
+});
+```
+
+### Token Dependencies
+
+Token-injected dependencies are always auto-mocked (read more about [Dependency Inversion](/docs/introduction/dependency-inversion/)):
+
+```typescript
+@injectable()
+class PaymentService {
+  constructor(
+    private validator: PaymentValidator,              // Class dependency
+    @inject('DATABASE') private database: Database,   // Token dependency
+  ) {}
+}
+
+describe('PaymentService', () => {
+  let service: PaymentService;
+  let validator: Mocked<PaymentValidator>;
+  let database: Mocked<Database>;
+
+  beforeAll(async () => {
+    const { unit, unitRef } = await TestBed.solitary(PaymentService).compile();
+
+    service = unit;
+    validator = unitRef.get(PaymentValidator);      // By class
+    database = unitRef.get<Database>('DATABASE');   // By token
+  });
+});
+```
+
+### InversifyJS Metadata Support
+
+Suites fully supports InversifyJS metadata patterns for tagged and named bindings:
+
+```typescript
+@injectable()
+class Ninja {
+  constructor(
+    @inject('Weapon') @tagged('canThrow', false) private katana: Weapon,
+    @inject('Weapon') @tagged('canThrow', true) private shuriken: Weapon
+  ) {}
+}
+
+describe('Ninja', () => {
+  let ninja: Ninja;
+  let katana: Mocked<Weapon>;
+  let shuriken: Mocked<Weapon>;
+
+  beforeAll(async () => {
+    const { unit, unitRef } = await TestBed.solitary(Ninja).compile();
+
+    ninja = unit;
+
+    // Access mocks by tag metadata
+    katana = unitRef.get<Weapon>('Weapon', { canThrow: false });
+    shuriken = unitRef.get<Weapon>('Weapon', { canThrow: true });
+  });
+
+  it('should use correct weapons', () => {
+    // Both mocks are fully typed and independent
+    expect(katana).toBeDefined();
+    expect(shuriken).toBeDefined();
+  });
+});
+```
+
+You can also configure mocks with metadata before compilation:
+
+```typescript
+await TestBed.solitary(Ninja)
+  .mock<Weapon>('Weapon', { canThrow: true })
+  .impl(stub => ({
+    attack: stub.mockReturnValue('shuriken attack!')
+  }))
+  .compile();
+```
+
+## How it works
+
+Suites uses a **virtual DI container** that analyzes Inversify's classes without initializing an actual container.
+
+It:
+
+1. Detects `@injectable` and `@inject` decorators automatically
+2. Creates type-safe mocks for all dependencies
+3. Wires them together without framework overhead
+4. Ensures token dependencies are always mocked (keeps tests as unit tests, not integration tests)
+
+This means you get the testing ergonomics of a DI framework without the initialization cost or complexity.
+
+## Documentation
+
+Full documentation with guides, API references, and examples:
+
+<DocumentationButton href="https://suites.dev" target="_blank">
+  <span>View Full Documentation</span>
+</DocumentationButton>
