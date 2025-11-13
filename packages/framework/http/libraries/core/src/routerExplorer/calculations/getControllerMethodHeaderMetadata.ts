@@ -22,7 +22,7 @@ export function getControllerMethodHeaderMetadata(
 
     if (typeHeaderMetadata !== undefined) {
       for (const key in typeHeaderMetadata) {
-        if (!(key in headerMetadata)) {
+        if (!Object.hasOwn(headerMetadata, key)) {
           headerMetadata[key] = typeHeaderMetadata[key] as string;
         }
       }

@@ -784,7 +784,7 @@ export abstract class InversifyHttpAdapter<
     }
 
     for (const key in headerMetadata) {
-      if (!(key in headers)) {
+      if (!Object.hasOwn(headers, key)) {
         headers[key] = headerMetadata[key] as string;
       }
     }
