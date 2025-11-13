@@ -5,6 +5,7 @@ import { BasicGetAppModule } from '../../scenario/nestJs/BasicGetAppModule';
 
 async function setUp(): Promise<void> {
   const app: NestApplication = await NestFactory.create(BasicGetAppModule, {
+    bodyParser: false,
     logger: false,
   });
 
