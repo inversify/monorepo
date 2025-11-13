@@ -14,6 +14,9 @@ async function setUp(): Promise<void> {
     container,
     {
       logger: false,
+      useCookies: false,
+      useFormUrlEncoded: false,
+      useMultipartFormData: false,
     },
   );
 

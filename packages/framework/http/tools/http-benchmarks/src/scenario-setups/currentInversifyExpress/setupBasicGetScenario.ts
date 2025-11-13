@@ -14,6 +14,10 @@ async function setUp(): Promise<void> {
     container,
     {
       logger: false,
+      useCookies: false,
+      useJson: false,
+      useText: false,
+      useUrlEncoded: false,
     },
   );
 
