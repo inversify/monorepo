@@ -44,6 +44,9 @@ coverage:
       '@inversifyjs/reflect-metadata-utils':
         flags:
           - '@inversifyjs/reflect-metadata-utils'
+      '@inversifyjs/http-sse':
+        flags:
+          - '@inversifyjs/http-sse'
       '@inversifyjs/standard-schema-validation':
         flags:
           - '@inversifyjs/standard-schema-validation'
@@ -78,6 +81,9 @@ flags:
   '@inversifyjs/http-open-api':
     paths:
       - packages/framework/http/libraries/open-api
+  '@inversifyjs/http-sse':
+    paths:
+      - packages/framework/http/libraries/sse
   '@inversifyjs/http-validation':
     paths:
       - packages/framework/http/libraries/validation
