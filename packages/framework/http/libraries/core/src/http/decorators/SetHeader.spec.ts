@@ -3,10 +3,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock('@inversifyjs/reflect-metadata-utils');
 vitest.mock('../calculations/buildSetHeaderMetadata');
 
-import {
-  buildEmptyMapMetadata,
-  updateOwnReflectMetadata,
-} from '@inversifyjs/reflect-metadata-utils';
+import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey';
 import { buildSetHeaderMetadata } from '../calculations/buildSetHeaderMetadata';
@@ -20,8 +17,8 @@ describe(SetHeader, () => {
     let keyFixture: string;
     let valueFixture: string;
     let callbackFixture: (
-      mapMetadata: Map<string, string>,
-    ) => Map<string, string>;
+      mapMetadata: Record<string, string>,
+    ) => Record<string, string>;
 
     beforeAll(() => {
       controllerFixture = class Test {};
@@ -32,8 +29,8 @@ describe(SetHeader, () => {
       keyFixture = 'key-example';
       valueFixture = 'value-example';
       callbackFixture = (
-        mapMetadata: Map<string, string>,
-      ): Map<string, string> => mapMetadata;
+        mapMetadata: Record<string, string>,
+      ): Record<string, string> => mapMetadata;
 
       vitest
         .mocked(buildSetHeaderMetadata)
@@ -61,7 +58,7 @@ describe(SetHeader, () => {
       expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         controllerFixture.constructor,
         controllerMethodHeaderMetadataReflectKey,
-        buildEmptyMapMetadata,
+        expect.any(Function),
         callbackFixture,
         controllerMethodKeyFixture,
       );
