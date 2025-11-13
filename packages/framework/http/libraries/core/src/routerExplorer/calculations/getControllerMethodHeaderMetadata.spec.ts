@@ -8,21 +8,21 @@ import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { Newable } from 'inversify';
 
 import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey';
-import { getControllerMethodHeaderMetadataList } from './getControllerMethodHeaderMetadataList';
+import { getControllerMethodHeaderMetadata } from './getControllerMethodHeaderMetadata';
 
-describe(getControllerMethodHeaderMetadataList, () => {
-  describe('when called', () => {
+describe(getControllerMethodHeaderMetadata, () => {
+  describe('when called, and getBaseType() returns undefined', () => {
     let controllerFixture: NewableFunction;
     let controllerMethodKeyFixture: string | symbol;
-    let headerListFixture: [string, string][];
-    let headerMetadataFixture: Map<string, string>;
+    let headerMetadataFixture: Record<string, string>;
     let result: unknown;
 
     beforeAll(() => {
       controllerFixture = class Test {};
       controllerMethodKeyFixture = 'testMethod';
-      headerListFixture = [['key-example', 'value-example']];
-      headerMetadataFixture = new Map<string, string>(headerListFixture);
+      headerMetadataFixture = {
+        'key-example': 'value-example',
+      };
 
       vitest
         .mocked(getOwnReflectMetadata)
@@ -30,7 +30,7 @@ describe(getControllerMethodHeaderMetadataList, () => {
 
       vitest.mocked(getBaseType).mockReturnValueOnce(undefined);
 
-      result = getControllerMethodHeaderMetadataList(
+      result = getControllerMethodHeaderMetadata(
         controllerFixture,
         controllerMethodKeyFixture,
       );
@@ -48,8 +48,8 @@ describe(getControllerMethodHeaderMetadataList, () => {
       );
     });
 
-    it('should return [string, string][]', () => {
-      expect(result).toStrictEqual(headerListFixture);
+    it('should return expected result', () => {
+      expect(result).toStrictEqual(headerMetadataFixture);
     });
   });
 
@@ -57,8 +57,8 @@ describe(getControllerMethodHeaderMetadataList, () => {
     let baseControllerFixture: Newable<object>;
     let controllerFixture: Newable;
     let controllerMethodKeyFixture: string | symbol;
-    let baseHeaderMetadataFixture: Map<string, string>;
-    let derivedHeaderMetadataFixture: Map<string, string>;
+    let baseHeaderMetadataFixture: Record<string, string>;
+    let derivedHeaderMetadataFixture: Record<string, string>;
     let result: unknown;
 
     beforeAll(() => {
@@ -66,12 +66,12 @@ describe(getControllerMethodHeaderMetadataList, () => {
       controllerFixture = class TestController extends baseControllerFixture {};
       controllerMethodKeyFixture = 'testMethod';
 
-      baseHeaderMetadataFixture = new Map<string, string>([
-        ['X-Base-Header', 'base-value'],
-      ]);
-      derivedHeaderMetadataFixture = new Map<string, string>([
-        ['X-Derived-Header', 'derived-value'],
-      ]);
+      baseHeaderMetadataFixture = {
+        'X-Base-Header': 'base-value',
+      };
+      derivedHeaderMetadataFixture = {
+        'X-Derived-Header': 'derived-value',
+      };
 
       vitest
         .mocked(getOwnReflectMetadata)
@@ -83,7 +83,7 @@ describe(getControllerMethodHeaderMetadataList, () => {
         .mockReturnValueOnce(baseControllerFixture)
         .mockReturnValueOnce(undefined);
 
-      result = getControllerMethodHeaderMetadataList(
+      result = getControllerMethodHeaderMetadata(
         controllerFixture,
         controllerMethodKeyFixture,
       );
@@ -115,11 +115,13 @@ describe(getControllerMethodHeaderMetadataList, () => {
       expect(getBaseType).toHaveBeenNthCalledWith(2, baseControllerFixture);
     });
 
-    it('should return merged headers from both classes', () => {
-      expect(result).toStrictEqual([
-        ['X-Derived-Header', 'derived-value'],
-        ['X-Base-Header', 'base-value'],
-      ]);
+    it('should return expected result', () => {
+      const expected: Record<string, string> = {
+        'X-Base-Header': 'base-value',
+        'X-Derived-Header': 'derived-value',
+      };
+
+      expect(result).toStrictEqual(expected);
     });
   });
 
@@ -127,8 +129,8 @@ describe(getControllerMethodHeaderMetadataList, () => {
     let baseControllerFixture: Newable<object>;
     let controllerFixture: Newable;
     let controllerMethodKeyFixture: string | symbol;
-    let baseHeaderMetadataFixture: Map<string, string>;
-    let derivedHeaderMetadataFixture: Map<string, string>;
+    let baseHeaderMetadataFixture: Record<string, string>;
+    let derivedHeaderMetadataFixture: Record<string, string>;
     let result: unknown;
 
     beforeAll(() => {
@@ -136,14 +138,15 @@ describe(getControllerMethodHeaderMetadataList, () => {
       controllerFixture = class TestController extends baseControllerFixture {};
       controllerMethodKeyFixture = 'testMethod';
 
-      baseHeaderMetadataFixture = new Map<string, string>([
-        ['X-Custom-Header', 'base-value'],
-        ['X-Base-Only', 'base-only-value'],
-      ]);
-      derivedHeaderMetadataFixture = new Map<string, string>([
-        ['X-Custom-Header', 'derived-value'],
-        ['X-Derived-Only', 'derived-only-value'],
-      ]);
+      baseHeaderMetadataFixture = {
+        'X-Base-Only': 'base-only-value',
+        'X-Custom-Header': 'base-value',
+      };
+
+      derivedHeaderMetadataFixture = {
+        'X-Custom-Header': 'derived-value',
+        'X-Derived-Only': 'derived-only-value',
+      };
 
       vitest
         .mocked(getOwnReflectMetadata)
@@ -155,7 +158,7 @@ describe(getControllerMethodHeaderMetadataList, () => {
         .mockReturnValueOnce(baseControllerFixture)
         .mockReturnValueOnce(undefined);
 
-      result = getControllerMethodHeaderMetadataList(
+      result = getControllerMethodHeaderMetadata(
         controllerFixture,
         controllerMethodKeyFixture,
       );
@@ -187,12 +190,14 @@ describe(getControllerMethodHeaderMetadataList, () => {
       expect(getBaseType).toHaveBeenNthCalledWith(2, baseControllerFixture);
     });
 
-    it('should return headers with child taking precedence over colliding keys', () => {
-      expect(result).toStrictEqual([
-        ['X-Custom-Header', 'derived-value'],
-        ['X-Derived-Only', 'derived-only-value'],
-        ['X-Base-Only', 'base-only-value'],
-      ]);
+    it('should return expected result', () => {
+      const expected: Record<string, string> = {
+        'X-Base-Only': 'base-only-value',
+        'X-Custom-Header': 'derived-value',
+        'X-Derived-Only': 'derived-only-value',
+      };
+
+      expect(result).toStrictEqual(expected);
     });
   });
 
@@ -200,7 +205,8 @@ describe(getControllerMethodHeaderMetadataList, () => {
     let baseControllerFixture: Newable<object>;
     let controllerFixture: Newable;
     let controllerMethodKeyFixture: string | symbol;
-    let baseHeaderMetadataFixture: Map<string, string>;
+    let baseHeaderMetadataFixture: Record<string, string>;
+
     let result: unknown;
 
     beforeAll(() => {
@@ -208,9 +214,9 @@ describe(getControllerMethodHeaderMetadataList, () => {
       controllerFixture = class TestController extends baseControllerFixture {};
       controllerMethodKeyFixture = 'testMethod';
 
-      baseHeaderMetadataFixture = new Map<string, string>([
-        ['X-Parent-Header', 'parent-value'],
-      ]);
+      baseHeaderMetadataFixture = {
+        'X-Parent-Header': 'parent-value',
+      };
 
       vitest
         .mocked(getOwnReflectMetadata)
@@ -222,7 +228,7 @@ describe(getControllerMethodHeaderMetadataList, () => {
         .mockReturnValueOnce(baseControllerFixture)
         .mockReturnValueOnce(undefined);
 
-      result = getControllerMethodHeaderMetadataList(
+      result = getControllerMethodHeaderMetadata(
         controllerFixture,
         controllerMethodKeyFixture,
       );
@@ -234,14 +240,24 @@ describe(getControllerMethodHeaderMetadataList, () => {
 
     it('should call getOwnReflectMetadata()', () => {
       expect(getOwnReflectMetadata).toHaveBeenCalledTimes(2);
+      expect(getOwnReflectMetadata).toHaveBeenNthCalledWith(
+        1,
+        controllerFixture,
+        controllerMethodHeaderMetadataReflectKey,
+        controllerMethodKeyFixture,
+      );
     });
 
     it('should call getBaseType()', () => {
       expect(getBaseType).toHaveBeenCalledTimes(2);
     });
 
-    it('should return headers from parent class', () => {
-      expect(result).toStrictEqual([['X-Parent-Header', 'parent-value']]);
+    it('should return expected result', () => {
+      const expected: Record<string, string> = {
+        'X-Parent-Header': 'parent-value',
+      };
+
+      expect(result).toStrictEqual(expected);
     });
   });
 });

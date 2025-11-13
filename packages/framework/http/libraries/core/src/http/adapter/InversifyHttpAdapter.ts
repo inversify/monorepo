@@ -313,15 +313,11 @@ export abstract class InversifyHttpAdapter<
           );
         }
 
-        const headers: Record<string, string> | undefined =
-          this.#reduceHeaderList(
-            routerExplorerControllerMethodMetadata.headerMetadataList,
-            undefined,
-          );
-
-        if (headers !== undefined) {
-          this.#setHeaders(req, res, headers);
-        }
+        this.#setHeaders(
+          req,
+          res,
+          routerExplorerControllerMethodMetadata.headerMetadataList,
+        );
 
         return value as TResult;
       };
@@ -596,8 +592,8 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     headers: Record<string, string>,
   ): void {
-    for (const [key, value] of Object.entries(headers)) {
-      this._setHeader(request, response, key, value);
+    for (const key in headers) {
+      this._setHeader(request, response, key, headers[key] as string);
     }
   }
 
@@ -606,7 +602,7 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     value: ControllerResponse,
     statusCode?: HttpStatusCode,
-    headerList?: [string, string][],
+    headerMetadata?: Record<string, string>,
   ): TResult | Promise<TResult> {
     let httpStatusCode: HttpStatusCode | undefined = statusCode;
     let headers: Record<string, string> | undefined = undefined;
@@ -625,7 +621,7 @@ export abstract class InversifyHttpAdapter<
       this._setStatus(request, response, httpStatusCode);
     }
 
-    headers = this.#reduceHeaderList(headerList, headers);
+    headers = this.#appendHeaderMetadata(headerMetadata, headers);
 
     if (headers !== undefined) {
       this.#setHeaders(request, response, headers);
@@ -775,25 +771,25 @@ export abstract class InversifyHttpAdapter<
     this._logger.error(errorMessage);
   }
 
-  #reduceHeaderList(
-    headerList: [string, string][] | undefined,
+  #appendHeaderMetadata(
+    headerMetadata: Record<string, string> | undefined,
     headers: Record<string, string> | undefined,
   ): Record<string, string> | undefined {
-    if (headerList === undefined) {
+    if (headerMetadata === undefined) {
       return headers;
     }
 
-    return headerList.reduce<Record<string, string>>(
-      (
-        headers: Record<string, string>,
-        [headerName, headerValue]: [string, string],
-      ) => {
-        headers[headerName] = headerValue;
+    if (headers === undefined) {
+      return { ...headerMetadata };
+    }
 
-        return headers;
-      },
-      headers ?? {},
-    );
+    for (const key in headerMetadata) {
+      if (!Object.hasOwn(headers, key)) {
+        headers[key] = headerMetadata[key] as string;
+      }
+    }
+
+    return headers;
   }
 
   #setGlobalErrorFilter(errorFilter: Newable<ErrorFilter>): void {

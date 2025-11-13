@@ -22,7 +22,7 @@ import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
 import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
 import { buildErrorTypeToErrorFilterMap } from './buildErrorTypeToErrorFilterMap';
-import { getControllerMethodHeaderMetadataList } from './getControllerMethodHeaderMetadataList';
+import { getControllerMethodHeaderMetadata } from './getControllerMethodHeaderMetadata';
 import { getControllerMethodParameterMetadataList } from './getControllerMethodParameterMetadataList';
 import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata';
 import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata';
@@ -100,8 +100,8 @@ export function buildRouterExplorerControllerMethodMetadata<
       controllerMethodMiddlewareList,
     );
 
-  const headerMetadataList: [string, string][] =
-    getControllerMethodHeaderMetadataList(
+  const headerMetadataList: Record<string, string> =
+    getControllerMethodHeaderMetadata(
       controllerMetadata.target,
       controllerMethodMetadata.methodKey,
     );

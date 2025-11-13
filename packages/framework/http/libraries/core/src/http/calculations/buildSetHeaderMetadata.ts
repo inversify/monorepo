@@ -1,16 +1,21 @@
+import { concatenateHeaders } from './concatenateHeaders';
+
 export function buildSetHeaderMetadata(
   headerKey: string,
   value: string,
-): (headerMetadata: Map<string, string>) => Map<string, string> {
-  return (headerMetadata: Map<string, string>): Map<string, string> => {
-    const fixedKey: string = headerKey.toLowerCase();
+): (headerMetadata: Record<string, string>) => Record<string, string> {
+  return (headerMetadata: Record<string, string>): Record<string, string> => {
+    const headerName: string = headerKey.toLowerCase();
 
-    const headerValue: string | undefined = headerMetadata.get(fixedKey);
-
-    if (headerValue !== undefined) {
-      headerMetadata.set(fixedKey, `${headerValue}, ${value}`);
+    const headerValue: string | undefined = headerMetadata[headerName];
+    if (headerValue === undefined) {
+      headerMetadata[headerName] = value;
     } else {
-      headerMetadata.set(fixedKey, value);
+      headerMetadata[headerName] = concatenateHeaders(
+        headerName,
+        headerValue,
+        value,
+      );
     }
 
     return headerMetadata;
