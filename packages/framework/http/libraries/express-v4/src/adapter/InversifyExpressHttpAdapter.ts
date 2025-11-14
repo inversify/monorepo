@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream';
 
 import {
+  buildNormalizedPath,
   HttpStatusCode,
   InversifyHttpAdapter,
   MiddlewareHandler,
@@ -13,7 +14,6 @@ import express, {
   Request,
   RequestHandler as ExpressRequestHandler,
   Response,
-  Router,
 } from 'express';
 import { Container } from 'inversify';
 
@@ -57,8 +57,6 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
   protected _buildRouter(
     routerParams: RouterParams<Request, Response, NextFunction, void>,
   ): void {
-    const router: Router = Router();
-
     for (const routeParams of routerParams.routeParamsList) {
       const orderedPreHandlerMiddlewareList: MiddlewareHandler<
         Request,
@@ -74,15 +72,17 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         void
       >[] = routeParams.postHandlerMiddlewareList;
 
-      router[routeParams.requestMethodType](
-        routeParams.path,
+      const normalizedPath: string = buildNormalizedPath(
+        `${routerParams.path}${routeParams.path}`,
+      );
+
+      this.#app[routeParams.requestMethodType](
+        normalizedPath,
         ...(orderedPreHandlerMiddlewareList as ExpressRequestHandler[]),
         routeParams.handler as ExpressRequestHandler,
         ...(orderedPostHandlerMiddlewareList as ExpressRequestHandler[]),
       );
     }
-
-    this.#app.use(routerParams.path, router);
   }
 
   protected _replyText(
