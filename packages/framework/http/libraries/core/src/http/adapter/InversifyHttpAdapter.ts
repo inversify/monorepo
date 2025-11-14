@@ -366,6 +366,10 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     next: TNextFunction,
   ) => Promise<unknown[]> {
+    if (controllerMethodParameterMetadataList.length === 0) {
+      return async (): Promise<unknown[]> => [];
+    }
+
     const paramBuilders: (
       | ((
           request: TRequest,
