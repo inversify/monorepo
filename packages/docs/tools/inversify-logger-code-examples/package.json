@@ -8,14 +8,14 @@
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/logger": "workspace:*",
     "@types/node": "24.10.1",
-    "@vitest/coverage-v8": "4.0.8",
+    "@vitest/coverage-v8": "4.0.9",
     "eslint": "9.39.1",
     "glob": "11.0.3",
     "prettier": "3.6.2",
     "rimraf": "6.1.0",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "4.0.8"
+    "vitest": "4.0.9"
   },
   "homepage": "https://inversify.io",
   "devEngines": {
