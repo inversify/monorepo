@@ -138,7 +138,7 @@ export abstract class InversifyHttpAdapter<
     if (this.#isBuilt) {
       throw new InversifyHttpAdapterError(
         InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
-        'Cannot apply global guard after the server has been built',
+        'Cannot apply global guards after the server has been built',
       );
     }
 
@@ -151,7 +151,7 @@ export abstract class InversifyHttpAdapter<
     if (this.#isBuilt) {
       throw new InversifyHttpAdapterError(
         InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
-        'Cannot apply global interceptor after the server has been built',
+        'Cannot apply global interceptors after the server has been built',
       );
     }
 
@@ -161,6 +161,13 @@ export abstract class InversifyHttpAdapter<
   }
 
   public useGlobalPipe(...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]): void {
+    if (this.#isBuilt) {
+      throw new InversifyHttpAdapterError(
+        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
+        'Cannot apply global pipes after the server has been built',
+      );
+    }
+
     this.#globalPipeList.push(...pipeList);
   }
 
