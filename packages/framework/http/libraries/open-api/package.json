@@ -27,7 +27,7 @@
     "@types/mime-types": "3.0.1",
     "@types/node": "24.10.1",
     "@types/swagger-ui-dist": "3.30.6",
-    "@vitest/coverage-v8": "4.0.8",
+    "@vitest/coverage-v8": "4.0.9",
     "eslint": "9.39.1",
     "express": "5.1.0",
     "express4": "npm:express@4.21.2",
@@ -39,7 +39,7 @@
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "4.0.8"
+    "vitest": "4.0.9"
   },
   "devEngines": {
     "node": "^24.10.0",
