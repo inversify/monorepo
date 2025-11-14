@@ -27,9 +27,13 @@ import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/Co
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
 import { setErrorFilterToErrorFilterMap } from '../actions/setErrorFilterToErrorFilterMap';
+import { areAllParamsSync } from '../calculations/areAllParamsSync';
 import { buildHttpResponseErrorFilter } from '../calculations/buildHttpResponseErrorFilter';
 import { buildInterceptedHandler } from '../calculations/buildInterceptedHandler';
+import { buildSyncCallRouteHandler } from '../calculations/buildSyncCallRouteHandler';
 import { getErrorFilterForError } from '../calculations/getErrorFilterForError';
+import { Controller } from '../models/Controller';
+import { ControllerFunction } from '../models/ControllerFunction';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
 import { HttpStatusCode } from '../models/HttpStatusCode';
@@ -287,14 +291,15 @@ export abstract class InversifyHttpAdapter<
       unknown
     >,
   ): RequestHandler<TRequest, TResponse, TNextFunction, TResult> {
-    const buildHandlerParams: (
+    const buildCallRouteHandler: (
       request: TRequest,
       response: TResponse,
       next: TNextFunction,
-    ) => Promise<unknown[]> = this.#buildHandlerParams(
+    ) => Promise<ControllerResponse> = this.#buildCallRouteHandler(
       targetClass,
       routerExplorerControllerMethodMetadata.methodKey,
       routerExplorerControllerMethodMetadata.parameterMetadataList,
+      serviceIdentifier,
     );
 
     let reply: (
@@ -345,30 +350,41 @@ export abstract class InversifyHttpAdapter<
     );
 
     return buildInterceptedHandler(
-      serviceIdentifier,
       routerExplorerControllerMethodMetadata,
       this.#container,
-      buildHandlerParams,
+      buildCallRouteHandler,
       handleError,
       reply,
     );
   }
 
-  #buildHandlerParams(
+  #buildCallRouteHandler(
     targetClass: NewableFunction,
     controllerMethodKey: string | symbol,
     controllerMethodParameterMetadataList: (
       | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
       | undefined
     )[],
+    serviceIdentifier: ServiceIdentifier,
   ): (
     request: TRequest,
     response: TResponse,
     next: TNextFunction,
-  ) => Promise<unknown[]> {
+  ) => Promise<ControllerResponse> {
     if (controllerMethodParameterMetadataList.length === 0) {
-      return async (): Promise<unknown[]> => [];
+      return async (): Promise<ControllerResponse> => {
+        const controller: Controller =
+          await this.#container.getAsync<Controller>(serviceIdentifier);
+
+        return (controller[controllerMethodKey] as ControllerFunction)();
+      };
     }
+
+    const provideSyncBuilder: boolean = areAllParamsSync(
+      this.#awaitableRequestMethodParamTypes,
+      controllerMethodParameterMetadataList,
+      this.#globalPipeList,
+    );
 
     const paramBuilders: (
       | ((
@@ -441,11 +457,20 @@ export abstract class InversifyHttpAdapter<
       },
     );
 
+    if (provideSyncBuilder) {
+      return buildSyncCallRouteHandler(
+        this.#container,
+        serviceIdentifier,
+        controllerMethodKey,
+        paramBuilders,
+      );
+    }
+
     return async (
       request: TRequest,
       response: TResponse,
       next: TNextFunction,
-    ): Promise<unknown[]> => {
+    ): Promise<ControllerResponse> => {
       const params: unknown[] = new Array(
         controllerMethodParameterMetadataList.length,
       );
@@ -501,7 +526,10 @@ export abstract class InversifyHttpAdapter<
         ),
       );
 
-      return params;
+      const controller: Controller =
+        await this.#container.getAsync<Controller>(serviceIdentifier);
+
+      return (controller[controllerMethodKey] as ControllerFunction)(...params);
     };
   }
 
