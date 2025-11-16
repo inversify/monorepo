@@ -1,10 +1,6 @@
 import { Controller, Get, Next, UseInterceptor } from '@inversifyjs/http-core';
 import { FastifyInterceptor } from '@inversifyjs/http-fastify';
-import {
-  type FastifyReply,
-  type FastifyRequest,
-  type HookHandlerDoneFunction,
-} from 'fastify';
+import { type FastifyReply, type FastifyRequest } from 'fastify';
 
 export class FastifyNextInterceptor implements FastifyInterceptor {
   public async intercept(
@@ -23,7 +19,7 @@ export class FastifyNextInterceptor implements FastifyInterceptor {
 @UseInterceptor(FastifyNextInterceptor)
 export class NextFastifyController {
   @Get()
-  public getNext(@Next() next: HookHandlerDoneFunction): void {
+  public getNext(@Next() next: () => void): void {
     next();
   }
 }

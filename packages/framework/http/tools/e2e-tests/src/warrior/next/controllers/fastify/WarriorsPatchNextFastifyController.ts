@@ -5,7 +5,6 @@ import {
   Next,
   Patch,
 } from '@inversifyjs/http-core';
-import { HookHandlerDoneFunction } from 'fastify';
 
 import { NextFastifyMiddleware } from '../../middlewares/NextFastifyMiddleware';
 
@@ -16,7 +15,7 @@ export class WarriorsPatchNextFastifyController {
     phase: MiddlewarePhase.PostHandler,
   })
   @Patch()
-  public patchWarrior(@Next() doneFn: HookHandlerDoneFunction): void {
+  public patchWarrior(@Next() doneFn: () => void): void {
     doneFn();
   }
 }
