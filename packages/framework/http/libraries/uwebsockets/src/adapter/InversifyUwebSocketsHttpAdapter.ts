@@ -2,6 +2,8 @@ import { Readable } from 'node:stream';
 import { URLSearchParamsIterator } from 'node:url';
 
 import {
+  buildNormalizedPath,
+  handleMiddlewareList,
   HttpStatusCode,
   InversifyHttpAdapter,
   MiddlewareHandler,
@@ -72,11 +74,14 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
         ...routeParams.postHandlerMiddlewareList,
       ];
 
-      let routePath: string = `${routerParams.path}${routeParams.path}`;
+      const routePath: string = buildNormalizedPath(
+        `${routerParams.path}${routeParams.path}`,
+      );
 
-      if (routePath.endsWith('/') && routePath.length > 1) {
-        routePath = routePath.slice(0, -1);
-      }
+      const handleMiddlewares: (
+        request: HttpRequest,
+        response: HttpResponse,
+      ) => Promise<void> = handleMiddlewareList(orderedHandlers);
 
       this.#getAppRouteHandler(routeParams.requestMethodType)(
         routePath,
@@ -85,30 +90,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
             (res as CustomHttpResponse)[abortedSymbol] = true;
           });
 
-          let currentIndex: number = 0;
-          let [currentHandler]: MiddlewareHandler<
-            HttpRequest,
-            HttpResponse,
-            () => void,
-            void
-          >[] = orderedHandlers;
-          let nextCalled: boolean = false;
-
-          const next: () => void = (): void => {
-            nextCalled = true;
-          };
-
-          while (currentHandler !== undefined) {
-            await currentHandler(req, res, next);
-
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (!nextCalled) {
-              break;
-            }
-
-            nextCalled = false;
-            currentHandler = orderedHandlers[++currentIndex];
-          }
+          await handleMiddlewares(req, res);
         },
       );
     }

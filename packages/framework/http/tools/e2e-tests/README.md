@@ -1,3 +1,3 @@
-# @inversifyjs/container-e2e-tests
+# @inversifyjs/http-e2e-tests
 
-Inversify E2E test package.
+Inversify HTTP E2E test package.
