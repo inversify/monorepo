@@ -78,6 +78,7 @@ import { ResetContentHttpResponse } from './httpResponse/models/ResetContentHttp
 import { ServiceUnavailableHttpResponse } from './httpResponse/models/ServiceUnavailableHttpResponse';
 import { UnauthorizedHttpResponse } from './httpResponse/models/UnauthorizedHttpResponse';
 import { UnprocessableEntityHttpResponse } from './httpResponse/models/UnprocessableEntityHttpResponse';
+import { handleMiddlewareList } from './middleware/actions/handleMiddlewareList';
 import { getControllerMetadataList } from './routerExplorer/calculations/getControllerMetadataList';
 import { getControllerMethodMetadataList } from './routerExplorer/calculations/getControllerMethodMetadataList';
 import { ControllerMetadata } from './routerExplorer/model/ControllerMetadata';
@@ -127,6 +128,7 @@ export {
   getControllerMetadataList,
   getControllerMethodMetadataList,
   GoneHttpResponse,
+  handleMiddlewareList,
   Head,
   Headers,
   HttpResponse,
