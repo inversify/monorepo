@@ -1,6 +1,6 @@
 import { describe, expect, it, Mock, vitest } from 'vitest';
 
-import { Container, injectable, preDestroy } from '../..';
+import { bindingScopeValues, Container, injectable, preDestroy } from '../..';
 
 describe('Issue 1416', () => {
   it('should allow providing default values on optional bindings', async () => {
@@ -24,7 +24,9 @@ describe('Issue 1416', () => {
       public destroy(): void {}
     }
 
-    const container: Container = new Container({ defaultScope: 'Singleton' });
+    const container: Container = new Container({
+      defaultScope: bindingScopeValues.Singleton,
+    });
 
     container.bind(Test1).toSelf();
     container.bind(Test2).toService(Test1);

@@ -35,10 +35,6 @@ export function handleMiddlewareList<TRequest, TResponse, TResult>(
       throw new Error('No middleware handlers to process');
     }
 
-    if (orderedHandlers.length === 1) {
-      return currentHandler(request, response, noop);
-    }
-
     let nextCalled: boolean = false;
 
     const next: () => void = (): void => {
