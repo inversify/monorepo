@@ -82,6 +82,7 @@ describe(buildRouterExplorerControllerMetadataList, () => {
     beforeAll(async () => {
       controllerMetadataFixture = {
         path: '',
+        priority: 0,
         serviceIdentifier: Symbol(),
         target: {} as NewableFunction,
       };
