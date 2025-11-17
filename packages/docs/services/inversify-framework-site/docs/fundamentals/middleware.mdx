@@ -58,7 +58,7 @@ type ExpressMiddleware = Middleware<
 type FastifyMiddleware = Middleware<
   FastifyRequest,
   FastifyReply,
-  HookHandlerDoneFunction,
+  () => void,
   void
 >;
 ```

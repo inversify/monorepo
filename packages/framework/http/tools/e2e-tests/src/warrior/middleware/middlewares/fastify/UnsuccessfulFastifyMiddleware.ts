@@ -1,16 +1,15 @@
 import { HttpStatusCode, Middleware } from '@inversifyjs/http-core';
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { injectable } from 'inversify';
 
 @injectable()
 export class UnsuccessfulFastifyMiddleware
-  implements
-    Middleware<FastifyRequest, FastifyReply, HookHandlerDoneFunction, void>
+  implements Middleware<FastifyRequest, FastifyReply, () => void, void>
 {
   public async execute(
     _request: FastifyRequest,
     response: FastifyReply,
-    _next: HookHandlerDoneFunction,
+    _next: () => void,
   ): Promise<void> {
     response.status(HttpStatusCode.FORBIDDEN).send();
   }
