@@ -1,5 +1,14 @@
 # @inversifyjs/http-fastify
 
+## 4.4.0
+
+### Patch Changes
+
+Fixed fastify next function to be `() => void`
+
+- Updated dependencies
+  - @inversifyjs/http-core@4.4.0
+
 ## 4.3.0
 
 ### Minor Changes
