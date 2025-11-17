@@ -1,5 +1,17 @@
 # @inversifyjs/http-core
 
+## 4.4.0
+
+### Minor Changes
+
+- Updated `ControllerOptions` with optional `priority`
+  Added `handleMiddlewareList`
+
+### Patch Changes
+
+- Updated `InversifyHttpAdapter.useGlobalPipe` to avoid applying pipes after build
+  Updated header metadata to be an object
+
 ## 4.3.0
 
 ## 4.2.0
