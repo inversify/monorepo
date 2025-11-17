@@ -17,6 +17,7 @@ export function Controller(
   return (target: NewableFunction): void => {
     const controllerMetadata: ControllerMetadata = {
       path: '/',
+      priority: 0,
       serviceIdentifier: target,
       target,
     };
@@ -30,6 +31,10 @@ export function Controller(
         controllerMetadata.path = buildNormalizedPath(
           pathOrOptions.path ?? '/',
         );
+
+        if (pathOrOptions.priority !== undefined) {
+          controllerMetadata.priority = pathOrOptions.priority;
+        }
 
         if (pathOrOptions.serviceIdentifier !== undefined) {
           controllerMetadata.serviceIdentifier =

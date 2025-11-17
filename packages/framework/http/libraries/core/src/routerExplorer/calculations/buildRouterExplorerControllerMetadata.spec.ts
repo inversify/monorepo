@@ -22,6 +22,7 @@ describe(buildRouterExplorerControllerMetadata, () => {
 
     controllerMetadataFixture = {
       path: '/test',
+      priority: 0,
       serviceIdentifier: Symbol(),
       target: class TestController {},
     };

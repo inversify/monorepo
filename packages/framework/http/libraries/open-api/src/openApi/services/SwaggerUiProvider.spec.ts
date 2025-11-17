@@ -192,6 +192,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/test',
+            priority: 0,
             serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
@@ -272,6 +273,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/test',
+            priority: 0,
             serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
@@ -370,6 +372,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            priority: 0,
             serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
@@ -482,6 +485,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            priority: 0,
             serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
@@ -568,6 +572,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            priority: 0,
             serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
@@ -671,6 +676,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            priority: 0,
             serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
@@ -811,6 +817,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            priority: 0,
             serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
@@ -881,6 +888,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            priority: 0,
             serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
@@ -957,6 +965,7 @@ describe(SwaggerUiProvider, () => {
         controllerMetadataListFixture = [
           {
             path: '/api',
+            priority: 0,
             serviceIdentifier: Symbol(),
             target: Symbol() as unknown as NewableFunction,
           },
