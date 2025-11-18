@@ -27,10 +27,15 @@ import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/Co
 import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
 import { setErrorFilterToErrorFilterMap } from '../actions/setErrorFilterToErrorFilterMap';
+import { areAllParamsSync } from '../calculations/areAllParamsSync';
 import { buildHttpResponseErrorFilter } from '../calculations/buildHttpResponseErrorFilter';
 import { buildInterceptedHandler } from '../calculations/buildInterceptedHandler';
+import { buildSyncCallRouteHandler } from '../calculations/buildSyncCallRouteHandler';
 import { getErrorFilterForError } from '../calculations/getErrorFilterForError';
+import { Controller } from '../models/Controller';
+import { ControllerFunction } from '../models/ControllerFunction';
 import { ControllerResponse } from '../models/ControllerResponse';
+import { CustomParameterDecoratorHandlerOptions } from '../models/CustomParameterDecoratorHandlerOptions';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
 import { HttpStatusCode } from '../models/HttpStatusCode';
 import { MiddlewareHandler } from '../models/MiddlewareHandler';
@@ -57,6 +62,10 @@ export abstract class InversifyHttpAdapter<
   protected readonly _logger: Logger;
   readonly #awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>;
   readonly #container: Container;
+  readonly #customParameterDecoratorHandlerOptions: CustomParameterDecoratorHandlerOptions<
+    TRequest,
+    TResponse
+  >;
   readonly #errorTypeToGlobalErrorFilterMap: Map<
     Newable<Error> | null,
     ErrorFilter | Newable<ErrorFilter>
@@ -83,6 +92,8 @@ export abstract class InversifyHttpAdapter<
       awaitableRequestMethodParamTypes,
     );
     this.#container = container;
+    this.#customParameterDecoratorHandlerOptions =
+      this.#buildCustomParameterDecoratorHandlerOptions();
     this.httpAdapterOptions = this.#parseHttpAdapterOptions(
       defaultHttpAdapterOptions,
       httpAdapterOptions,
@@ -134,7 +145,7 @@ export abstract class InversifyHttpAdapter<
     if (this.#isBuilt) {
       throw new InversifyHttpAdapterError(
         InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
-        'Cannot apply global guard after the server has been built',
+        'Cannot apply global guards after the server has been built',
       );
     }
 
@@ -147,7 +158,7 @@ export abstract class InversifyHttpAdapter<
     if (this.#isBuilt) {
       throw new InversifyHttpAdapterError(
         InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
-        'Cannot apply global interceptor after the server has been built',
+        'Cannot apply global interceptors after the server has been built',
       );
     }
 
@@ -157,6 +168,13 @@ export abstract class InversifyHttpAdapter<
   }
 
   public useGlobalPipe(...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]): void {
+    if (this.#isBuilt) {
+      throw new InversifyHttpAdapterError(
+        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
+        'Cannot apply global pipes after the server has been built',
+      );
+    }
+
     this.#globalPipeList.push(...pipeList);
   }
 
@@ -175,6 +193,21 @@ export abstract class InversifyHttpAdapter<
     params[index] = this.#awaitableRequestMethodParamTypes.has(type)
       ? await param
       : param;
+  }
+
+  #buildCustomParameterDecoratorHandlerOptions(): CustomParameterDecoratorHandlerOptions<
+    TRequest,
+    TResponse
+  > {
+    return {
+      getBody: this._getBody.bind(this),
+      getCookies: this._getCookies.bind(this),
+      getHeaders: this._getHeaders.bind(this),
+      getParams: this._getParams.bind(this),
+      getQuery: this._getQuery.bind(this),
+      setHeader: this._setHeader.bind(this),
+      setStatus: this._setStatus.bind(this),
+    };
   }
 
   #buildLogger(httpAdapterOptions: RequiredOptions<TOptions>): Logger {
@@ -284,17 +317,18 @@ export abstract class InversifyHttpAdapter<
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
       TRequest,
       TResponse,
-      unknown
+      TResult
     >,
   ): RequestHandler<TRequest, TResponse, TNextFunction, TResult> {
-    const buildHandlerParams: (
+    const buildCallRouteHandler: (
       request: TRequest,
       response: TResponse,
       next: TNextFunction,
-    ) => Promise<unknown[]> = this.#buildHandlerParams(
+    ) => Promise<ControllerResponse> = this.#buildCallRouteHandler(
       targetClass,
       routerExplorerControllerMethodMetadata.methodKey,
       routerExplorerControllerMethodMetadata.parameterMetadataList,
+      serviceIdentifier,
     );
 
     let reply: (
@@ -313,15 +347,11 @@ export abstract class InversifyHttpAdapter<
           );
         }
 
-        const headers: Record<string, string> | undefined =
-          this.#reduceHeaderList(
-            routerExplorerControllerMethodMetadata.headerMetadataList,
-            undefined,
-          );
-
-        if (headers !== undefined) {
-          this.#setHeaders(req, res, headers);
-        }
+        this.#setHeaders(
+          req,
+          res,
+          routerExplorerControllerMethodMetadata.headerMetadataList,
+        );
 
         return value as TResult;
       };
@@ -349,27 +379,42 @@ export abstract class InversifyHttpAdapter<
     );
 
     return buildInterceptedHandler(
-      serviceIdentifier,
       routerExplorerControllerMethodMetadata,
       this.#container,
-      buildHandlerParams,
+      buildCallRouteHandler,
       handleError,
       reply,
     );
   }
 
-  #buildHandlerParams(
+  #buildCallRouteHandler(
     targetClass: NewableFunction,
     controllerMethodKey: string | symbol,
     controllerMethodParameterMetadataList: (
-      | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
+      | ControllerMethodParameterMetadata<TRequest, TResponse, TResult>
       | undefined
     )[],
+    serviceIdentifier: ServiceIdentifier,
   ): (
     request: TRequest,
     response: TResponse,
     next: TNextFunction,
-  ) => Promise<unknown[]> {
+  ) => Promise<ControllerResponse> {
+    if (controllerMethodParameterMetadataList.length === 0) {
+      return async (): Promise<ControllerResponse> => {
+        const controller: Controller =
+          await this.#container.getAsync<Controller>(serviceIdentifier);
+
+        return (controller[controllerMethodKey] as ControllerFunction)();
+      };
+    }
+
+    const provideSyncBuilder: boolean = areAllParamsSync(
+      this.#awaitableRequestMethodParamTypes,
+      controllerMethodParameterMetadataList,
+      this.#globalPipeList,
+    );
+
     const paramBuilders: (
       | ((
           request: TRequest,
@@ -380,7 +425,7 @@ export abstract class InversifyHttpAdapter<
     )[] = controllerMethodParameterMetadataList.map(
       (
         controllerMethodParameterMetadata:
-          | ControllerMethodParameterMetadata<TRequest, TResponse, unknown>
+          | ControllerMethodParameterMetadata<TRequest, TResponse, TResult>
           | undefined,
       ) => {
         if (controllerMethodParameterMetadata === undefined) {
@@ -407,6 +452,7 @@ export abstract class InversifyHttpAdapter<
               controllerMethodParameterMetadata.customParameterDecoratorHandler?.(
                 request,
                 response,
+                this.#customParameterDecoratorHandlerOptions,
               );
           case RequestMethodParameterType.Headers:
             return (request: TRequest): unknown =>
@@ -441,11 +487,20 @@ export abstract class InversifyHttpAdapter<
       },
     );
 
+    if (provideSyncBuilder) {
+      return buildSyncCallRouteHandler(
+        this.#container,
+        serviceIdentifier,
+        controllerMethodKey,
+        paramBuilders,
+      );
+    }
+
     return async (
       request: TRequest,
       response: TResponse,
       next: TNextFunction,
-    ): Promise<unknown[]> => {
+    ): Promise<ControllerResponse> => {
       const params: unknown[] = new Array(
         controllerMethodParameterMetadataList.length,
       );
@@ -501,7 +556,10 @@ export abstract class InversifyHttpAdapter<
         ),
       );
 
-      return params;
+      const controller: Controller =
+        await this.#container.getAsync<Controller>(serviceIdentifier);
+
+      return (controller[controllerMethodKey] as ControllerFunction)(...params);
     };
   }
 
@@ -536,7 +594,7 @@ export abstract class InversifyHttpAdapter<
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
       TRequest,
       TResponse,
-      unknown
+      TResult
     >,
   ): (
     request: TRequest,
@@ -596,8 +654,8 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     headers: Record<string, string>,
   ): void {
-    for (const [key, value] of Object.entries(headers)) {
-      this._setHeader(request, response, key, value);
+    for (const key in headers) {
+      this._setHeader(request, response, key, headers[key] as string);
     }
   }
 
@@ -606,7 +664,7 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     value: ControllerResponse,
     statusCode?: HttpStatusCode,
-    headerList?: [string, string][],
+    headerMetadata?: Record<string, string>,
   ): TResult | Promise<TResult> {
     let httpStatusCode: HttpStatusCode | undefined = statusCode;
     let headers: Record<string, string> | undefined = undefined;
@@ -625,7 +683,7 @@ export abstract class InversifyHttpAdapter<
       this._setStatus(request, response, httpStatusCode);
     }
 
-    headers = this.#reduceHeaderList(headerList, headers);
+    headers = this.#appendHeaderMetadata(headerMetadata, headers);
 
     if (headers !== undefined) {
       this.#setHeaders(request, response, headers);
@@ -694,7 +752,8 @@ export abstract class InversifyHttpAdapter<
     guardServiceIdentifierList: ServiceIdentifier<Guard<TRequest>>[],
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
       TRequest,
-      TResponse
+      TResponse,
+      TResult
     >,
   ): MiddlewareHandler<
     TRequest,
@@ -751,7 +810,7 @@ export abstract class InversifyHttpAdapter<
     routerExplorerControllerMethodMetadataList: RouterExplorerControllerMethodMetadata<
       TRequest,
       TResponse,
-      unknown
+      TResult
     >[],
   ): void {
     if (this.httpAdapterOptions.logger !== false) {
@@ -775,25 +834,25 @@ export abstract class InversifyHttpAdapter<
     this._logger.error(errorMessage);
   }
 
-  #reduceHeaderList(
-    headerList: [string, string][] | undefined,
+  #appendHeaderMetadata(
+    headerMetadata: Record<string, string> | undefined,
     headers: Record<string, string> | undefined,
   ): Record<string, string> | undefined {
-    if (headerList === undefined) {
+    if (headerMetadata === undefined) {
       return headers;
     }
 
-    return headerList.reduce<Record<string, string>>(
-      (
-        headers: Record<string, string>,
-        [headerName, headerValue]: [string, string],
-      ) => {
-        headers[headerName] = headerValue;
+    if (headers === undefined) {
+      return { ...headerMetadata };
+    }
 
-        return headers;
-      },
-      headers ?? {},
-    );
+    for (const key in headerMetadata) {
+      if (!Object.hasOwn(headers, key)) {
+        headers[key] = headerMetadata[key] as string;
+      }
+    }
+
+    return headers;
   }
 
   #setGlobalErrorFilter(errorFilter: Newable<ErrorFilter>): void {
@@ -827,11 +886,21 @@ export abstract class InversifyHttpAdapter<
     parameterName?: string,
   ): unknown;
 
+  protected abstract _getParams(request: TRequest): Record<string, string>;
+  protected abstract _getParams(
+    request: TRequest,
+    parameterName: string,
+  ): string | undefined;
   protected abstract _getParams(
     request: TRequest,
     parameterName?: string,
-  ): unknown;
+  ): Record<string, string> | string | undefined;
 
+  protected abstract _getQuery(request: TRequest): Record<string, unknown>;
+  protected abstract _getQuery(
+    request: TRequest,
+    parameterName: string,
+  ): unknown;
   protected abstract _getQuery(
     request: TRequest,
     parameterName?: string,
@@ -839,8 +908,19 @@ export abstract class InversifyHttpAdapter<
 
   protected abstract _getHeaders(
     request: TRequest,
+  ): Record<string, string | string[] | undefined>;
+  protected abstract _getHeaders(
+    request: TRequest,
+    parameterName: string,
+  ): string | string[] | undefined;
+  protected abstract _getHeaders(
+    request: TRequest,
     parameterName?: string,
-  ): unknown;
+  ):
+    | Record<string, string | string[] | undefined>
+    | string
+    | string[]
+    | undefined;
 
   protected abstract _getCookies(
     request: TRequest,

@@ -5,7 +5,6 @@ import {
 import { Container, ServiceIdentifier } from 'inversify';
 
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
-import { Controller } from '../models/Controller';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { RequestHandler } from '../models/RequestHandler';
 
@@ -16,18 +15,17 @@ export function buildInterceptedHandler<
   TNextFunction extends (err?: any) => Promise<void> | void,
   TResult,
 >(
-  serviceIdentifier: ServiceIdentifier<Controller>,
   routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
     TRequest,
     TResponse,
-    unknown
+    TResult
   >,
   container: Container,
-  buildHandlerParams: (
+  callRouteHandler: (
     request: TRequest,
     response: TResponse,
     next: TNextFunction,
-  ) => Promise<unknown[]>,
+  ) => Promise<ControllerResponse>,
   handleError: (
     request: TRequest,
     response: TResponse,
@@ -46,18 +44,11 @@ export function buildInterceptedHandler<
       next: TNextFunction,
     ): Promise<TResult> => {
       try {
-        const controller: Controller =
-          await container.getAsync(serviceIdentifier);
-
-        const handlerParams: unknown[] = await buildHandlerParams(
+        const value: ControllerResponse = await callRouteHandler(
           request,
           response,
           next,
         );
-
-        const value: ControllerResponse = await controller[
-          routerExplorerControllerMethodMetadata.methodKey
-        ]?.(...handlerParams);
 
         return await reply(request, response, value);
       } catch (error: unknown) {
@@ -107,18 +98,7 @@ export function buildInterceptedHandler<
         };
       } else {
         return async (): Promise<InterceptorTransformObject> => {
-          const controller: Controller =
-            await container.getAsync(serviceIdentifier);
-
-          const handlerParams: unknown[] = await buildHandlerParams(
-            request,
-            response,
-            next,
-          );
-
-          handlerResult = await controller[
-            routerExplorerControllerMethodMetadata.methodKey
-          ]?.(...handlerParams);
+          handlerResult = await callRouteHandler(request, response, next);
 
           return transformObject;
         };

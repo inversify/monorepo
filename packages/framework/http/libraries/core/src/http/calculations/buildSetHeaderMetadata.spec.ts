@@ -1,57 +1,98 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
+
+vitest.mock('./concatenateHeaders');
 
 import { buildSetHeaderMetadata } from './buildSetHeaderMetadata';
+import { concatenateHeaders } from './concatenateHeaders';
 
 describe(buildSetHeaderMetadata, () => {
-  describe('when called, and headerValue is undefined', () => {
-    let headerMetadataFixture: Map<string, string>;
+  describe('having empty header metadata', () => {
+    let headerMetadataFixture: Record<string, string>;
+
     let headerKeyFixture: string;
     let valueFixture: string;
-    let result: Map<string, string>;
 
     beforeAll(() => {
-      headerMetadataFixture = new Map();
+      headerMetadataFixture = {};
+
       headerKeyFixture = 'key';
       valueFixture = 'newValue';
-
-      result = buildSetHeaderMetadata(
-        headerKeyFixture,
-        valueFixture,
-      )(headerMetadataFixture);
     });
 
-    it('should set the header metadata', () => {
-      expect(result.get(headerKeyFixture)).toBe(valueFixture);
-    });
+    describe('when called', () => {
+      let result: unknown;
 
-    it('should return parameter header metadata', () => {
-      expect(result).toBe(headerMetadataFixture);
+      beforeAll(() => {
+        headerMetadataFixture = {};
+
+        result = buildSetHeaderMetadata(
+          headerKeyFixture,
+          valueFixture,
+        )(headerMetadataFixture);
+      });
+
+      it('should return expected result', () => {
+        const expected: Record<string, string> = {
+          [headerKeyFixture.toLowerCase()]: valueFixture,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
     });
   });
 
-  describe('when called, and headerValue is defined', () => {
-    let headerMetadataFixture: Map<string, string>;
+  describe('having header metadata with matching headerKey', () => {
+    let headerMetadataFixture: Record<string, string>;
+
     let headerKeyFixture: string;
     let valueFixture: string;
-    let result: Map<string, string>;
 
     beforeAll(() => {
-      headerMetadataFixture = new Map([['key', 'value']]);
       headerKeyFixture = 'key';
       valueFixture = 'newValue';
 
-      result = buildSetHeaderMetadata(
-        headerKeyFixture,
-        valueFixture,
-      )(headerMetadataFixture);
+      headerMetadataFixture = {
+        [headerKeyFixture.toLowerCase()]: valueFixture,
+      };
     });
 
-    it('should set the header metadata', () => {
-      expect(result.get(headerKeyFixture)).toBe(`value, ${valueFixture}`);
-    });
+    describe('when called', () => {
+      let concatenationResultFixture: string;
 
-    it('should return parameter header metadata', () => {
-      expect(result).toBe(headerMetadataFixture);
+      let result: Record<string, string>;
+
+      beforeAll(() => {
+        concatenationResultFixture = 'concatenation-fixture';
+
+        vitest
+          .mocked(concatenateHeaders)
+          .mockReturnValueOnce(concatenationResultFixture);
+
+        result = buildSetHeaderMetadata(
+          headerKeyFixture,
+          valueFixture,
+        )(headerMetadataFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call concatenateHeaders()', () => {
+        expect(concatenateHeaders).toHaveBeenCalledExactlyOnceWith(
+          headerKeyFixture.toLowerCase(),
+          valueFixture,
+          valueFixture,
+        );
+      });
+
+      it('should return expected result', () => {
+        const expected: Record<string, string> = {
+          [headerKeyFixture.toLowerCase()]: concatenationResultFixture,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
     });
   });
 });

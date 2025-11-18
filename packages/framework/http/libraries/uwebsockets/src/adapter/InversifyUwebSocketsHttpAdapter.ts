@@ -2,6 +2,8 @@ import { Readable } from 'node:stream';
 import { URLSearchParamsIterator } from 'node:url';
 
 import {
+  buildNormalizedPath,
+  handleMiddlewareList,
   HttpStatusCode,
   InversifyHttpAdapter,
   MiddlewareHandler,
@@ -72,11 +74,14 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
         ...routeParams.postHandlerMiddlewareList,
       ];
 
-      let routePath: string = `${routerParams.path}${routeParams.path}`;
+      const routePath: string = buildNormalizedPath(
+        `${routerParams.path}${routeParams.path}`,
+      );
 
-      if (routePath.endsWith('/') && routePath.length > 1) {
-        routePath = routePath.slice(0, -1);
-      }
+      const handleMiddlewares: (
+        request: HttpRequest,
+        response: HttpResponse,
+      ) => Promise<void> = handleMiddlewareList(orderedHandlers);
 
       this.#getAppRouteHandler(routeParams.requestMethodType)(
         routePath,
@@ -85,30 +90,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
             (res as CustomHttpResponse)[abortedSymbol] = true;
           });
 
-          let currentIndex: number = 0;
-          let [currentHandler]: MiddlewareHandler<
-            HttpRequest,
-            HttpResponse,
-            () => void,
-            void
-          >[] = orderedHandlers;
-          let nextCalled: boolean = false;
-
-          const next: () => void = (): void => {
-            nextCalled = true;
-          };
-
-          while (currentHandler !== undefined) {
-            await currentHandler(req, res, next);
-
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (!nextCalled) {
-              break;
-            }
-
-            nextCalled = false;
-            currentHandler = orderedHandlers[++currentIndex];
-          }
+          await handleMiddlewares(req, res);
         },
       );
     }
@@ -191,7 +173,15 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     return (body as Record<string, unknown>)[parameterName];
   }
 
-  protected _getParams(request: HttpRequest, parameterName?: string): unknown {
+  protected _getParams(request: HttpRequest): Record<string, string>;
+  protected _getParams(
+    request: HttpRequest,
+    parameterName: string,
+  ): string | undefined;
+  protected _getParams(
+    request: HttpRequest,
+    parameterName?: string,
+  ): Record<string, string> | string | undefined {
     if (parameterName === undefined) {
       throw new Error(
         'Getting all route parameters is not supported in uWebSockets.js adapter.',
@@ -201,13 +191,29 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     return request.getParameter(parameterName);
   }
 
+  protected _getQuery(request: HttpRequest): Record<string, unknown>;
+  protected _getQuery(request: HttpRequest, parameterName: string): unknown;
   protected _getQuery(request: HttpRequest, parameterName?: string): unknown {
     return parameterName === undefined
       ? this.#parseQuery(request)
       : request.getQuery(parameterName);
   }
 
-  protected _getHeaders(request: HttpRequest, parameterName?: string): unknown {
+  protected _getHeaders(
+    request: HttpRequest,
+  ): Record<string, string | string[] | undefined>;
+  protected _getHeaders(
+    request: HttpRequest,
+    parameterName: string,
+  ): string | string[] | undefined;
+  protected _getHeaders(
+    request: HttpRequest,
+    parameterName?: string,
+  ):
+    | Record<string, string | string[] | undefined>
+    | string
+    | string[]
+    | undefined {
     return parameterName === undefined
       ? this.#parseHeaders(request)
       : request.getHeader(parameterName);

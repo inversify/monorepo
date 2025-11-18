@@ -81,6 +81,7 @@ describe(Controller, () => {
       it('should call buildArrayMetadataWithElement()', () => {
         const expected: ControllerMetadata = {
           path: pathFixture,
+          priority: 0,
           serviceIdentifier: targetFixture,
           target: targetFixture,
         };
@@ -150,6 +151,7 @@ describe(Controller, () => {
       it('should call buildArrayMetadataWithElement()', () => {
         const expected: ControllerMetadata = {
           path: optionsFixture.path as string,
+          priority: 0,
           serviceIdentifier: targetFixture,
           target: targetFixture,
         };
@@ -232,6 +234,7 @@ describe(Controller, () => {
       it('should call buildArrayMetadataWithElement()', () => {
         const expected: ControllerMetadata = {
           path: optionsFixture.path as string,
+          priority: 0,
           serviceIdentifier: targetFixture,
           target: targetFixture,
         };
@@ -314,8 +317,92 @@ describe(Controller, () => {
       it('should call buildArrayMetadataWithElement()', () => {
         const expected: ControllerMetadata = {
           path: normalizedPathFixture,
+          priority: 0,
           serviceIdentifier:
             optionsFixture.serviceIdentifier as ServiceIdentifier,
+          target: targetFixture,
+        };
+
+        expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith(
+          expected,
+        );
+      });
+
+      it('should set metadata with controller options', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+          Reflect,
+          controllerMetadataReflectKey,
+          buildEmptyArrayMetadata,
+          callbackFixture,
+        );
+      });
+    });
+  });
+
+  describe('having ControllerOptions with priority', () => {
+    let optionsFixture: ControllerOptions;
+    let targetFixture: NewableFunction;
+
+    beforeAll(() => {
+      optionsFixture = {
+        path: '/api',
+        priority: 100,
+      };
+      targetFixture = class TestController {};
+    });
+
+    describe('when called', () => {
+      let classDecoratorMock: Mock<ClassDecorator>;
+      let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
+
+      beforeAll(() => {
+        callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
+          arrayMetadata;
+
+        vitest
+          .mocked(buildNormalizedPath)
+          .mockReturnValueOnce(optionsFixture.path as string);
+
+        vitest
+          .mocked(buildArrayMetadataWithElement)
+          .mockReturnValueOnce(callbackFixture);
+
+        classDecoratorMock = vitest.fn();
+
+        vitest
+          .mocked(injectable)
+          .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
+
+        Controller(optionsFixture)(targetFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call buildNormalizedPath()', () => {
+        expect(buildNormalizedPath).toHaveBeenCalledExactlyOnceWith(
+          optionsFixture.path,
+        );
+      });
+
+      it('should call injectable', () => {
+        expect(injectable).toHaveBeenCalledExactlyOnceWith(
+          optionsFixture.scope,
+        );
+      });
+
+      it('should call ClassDecorator', () => {
+        expect(classDecoratorMock).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+        );
+      });
+
+      it('should call buildArrayMetadataWithElement()', () => {
+        const expected: ControllerMetadata = {
+          path: optionsFixture.path as string,
+          priority: optionsFixture.priority as number,
+          serviceIdentifier: targetFixture,
           target: targetFixture,
         };
 

@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream';
 
 import {
+  buildNormalizedPath,
   HttpStatusCode,
   InversifyHttpAdapter,
   MiddlewareHandler,
@@ -13,7 +14,6 @@ import express, {
   Request,
   RequestHandler as ExpressRequestHandler,
   Response,
-  Router,
 } from 'express';
 import { Container } from 'inversify';
 
@@ -57,8 +57,6 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
   protected _buildRouter(
     routerParams: RouterParams<Request, Response, NextFunction, void>,
   ): void {
-    const router: Router = Router();
-
     for (const routeParams of routerParams.routeParamsList) {
       const orderedPreHandlerMiddlewareList: MiddlewareHandler<
         Request,
@@ -74,15 +72,17 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         void
       >[] = routeParams.postHandlerMiddlewareList;
 
-      router[routeParams.requestMethodType](
-        routeParams.path,
+      const normalizedPath: string = buildNormalizedPath(
+        `${routerParams.path}${routeParams.path}`,
+      );
+
+      this.#app[routeParams.requestMethodType](
+        normalizedPath,
         ...(orderedPreHandlerMiddlewareList as ExpressRequestHandler[]),
         routeParams.handler as ExpressRequestHandler,
         ...(orderedPostHandlerMiddlewareList as ExpressRequestHandler[]),
       );
     }
-
-    this.#app.use(routerParams.path, router);
   }
 
   protected _replyText(
@@ -137,19 +137,46 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         request.body[parameterName];
   }
 
-  protected _getParams(request: Request, parameterName?: string): unknown {
+  protected _getParams(request: express.Request): Record<string, string>;
+  protected _getParams(
+    request: express.Request,
+    parameterName: string,
+  ): string | undefined;
+  protected _getParams(
+    request: express.Request,
+    parameterName?: string,
+  ): Record<string, string> | string | undefined {
     return parameterName === undefined
       ? request.params
       : request.params[parameterName];
   }
 
-  protected _getQuery(request: Request, parameterName?: string): unknown {
+  protected _getQuery(request: express.Request): Record<string, unknown>;
+  protected _getQuery(request: express.Request, parameterName: string): unknown;
+  protected _getQuery(
+    request: express.Request,
+    parameterName?: string,
+  ): unknown {
     return parameterName === undefined
       ? request.query
       : request.query[parameterName];
   }
 
-  protected _getHeaders(request: Request, parameterName?: string): unknown {
+  protected _getHeaders(
+    request: express.Request,
+  ): Record<string, string | string[] | undefined>;
+  protected _getHeaders(
+    request: express.Request,
+    parameterName: string,
+  ): string | string[] | undefined;
+  protected _getHeaders(
+    request: express.Request,
+    parameterName?: string,
+  ):
+    | Record<string, string | string[] | undefined>
+    | string
+    | string[]
+    | undefined {
     return parameterName === undefined
       ? request.headers
       : request.headers[parameterName];

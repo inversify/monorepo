@@ -20,7 +20,7 @@ export interface RouterExplorerControllerMethodMetadata<
     Newable<ErrorFilter>
   >;
   readonly guardList: ServiceIdentifier<Guard<TRequest>>[];
-  readonly headerMetadataList: [string, string][];
+  readonly headerMetadataList: Record<string, string>;
   readonly interceptorList: ServiceIdentifier<
     Interceptor<TRequest, TResponse>
   >[];

@@ -1,6 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { InversifyCoreError, InversifyCoreErrorKind } from '@inversifyjs/core';
+import {
+  bindingScopeValues,
+  InversifyCoreError,
+  InversifyCoreErrorKind,
+} from '@inversifyjs/core';
 
 import {
   Container,
@@ -41,7 +45,7 @@ describe('Issue 549', () => {
 
       firstClassServiceIdentifier = A;
 
-      container = new Container({ defaultScope: 'Singleton' });
+      container = new Container({ defaultScope: bindingScopeValues.Singleton });
       container.bind(A).toSelf();
       container.bind(B).toSelf();
 

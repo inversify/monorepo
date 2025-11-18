@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata';
 
-import { inject, injectable } from '@inversifyjs/core';
+import { bindingScopeValues, inject, injectable } from '@inversifyjs/core';
 
 import { Container } from '../container/services/Container';
 
@@ -41,7 +41,9 @@ describe('Container.get should not instantiate async singleton bindings twice', 
   let result: unknown;
 
   beforeAll(async () => {
-    const container: Container = new Container({ defaultScope: 'Singleton' });
+    const container: Container = new Container({
+      defaultScope: bindingScopeValues.Singleton,
+    });
 
     container.bind(Application).toSelf();
     container.bind(Dependency1).toSelf();

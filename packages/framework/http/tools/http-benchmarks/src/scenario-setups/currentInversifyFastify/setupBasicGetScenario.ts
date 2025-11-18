@@ -1,12 +1,14 @@
 import { InversifyFastifyHttpAdapter } from '@inversifyjs/http-fastify';
 import { FastifyInstance } from 'fastify';
-import { Container } from 'inversify';
+import { bindingScopeValues, Container } from 'inversify';
 
 import { DEFAULT_PORT } from '../../constant/defaultPort';
 import { AppController } from '../../scenario/currentInversify/AppController';
 
 async function setUp(): Promise<void> {
-  const container: Container = new Container({ defaultScope: 'Singleton' });
+  const container: Container = new Container({
+    defaultScope: bindingScopeValues.Singleton,
+  });
 
   container.bind(AppController).toSelf();
 
@@ -14,6 +16,9 @@ async function setUp(): Promise<void> {
     container,
     {
       logger: false,
+      useCookies: false,
+      useFormUrlEncoded: false,
+      useMultipartFormData: false,
     },
   );
 

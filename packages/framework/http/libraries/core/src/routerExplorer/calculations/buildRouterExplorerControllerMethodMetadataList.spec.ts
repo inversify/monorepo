@@ -19,6 +19,7 @@ describe(buildRouterExplorerControllerMethodMetadataList, () => {
     loggerFixture = Symbol() as unknown as Logger;
     controllerMetadataFixture = {
       path: '/',
+      priority: 0,
       serviceIdentifier: Symbol(),
       target: class Test {},
     };

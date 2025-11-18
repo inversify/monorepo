@@ -117,19 +117,43 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
       : (body as Record<string, unknown>)[parameterName];
   }
 
-  protected _getParams(request: HonoRequest, parameterName?: string): unknown {
+  protected _getParams(request: HonoRequest): Record<string, string>;
+  protected _getParams(
+    request: HonoRequest,
+    parameterName: string,
+  ): string | undefined;
+  protected _getParams(
+    request: HonoRequest,
+    parameterName?: string,
+  ): Record<string, string> | string | undefined {
     return parameterName === undefined
       ? request.param()
       : request.param(parameterName);
   }
 
+  protected _getQuery(request: HonoRequest): Record<string, unknown>;
+  protected _getQuery(request: HonoRequest, parameterName: string): unknown;
   protected _getQuery(request: HonoRequest, parameterName?: string): unknown {
     return parameterName === undefined
       ? request.query()
       : request.query(parameterName);
   }
 
-  protected _getHeaders(request: HonoRequest, parameterName?: string): unknown {
+  protected _getHeaders(
+    request: HonoRequest,
+  ): Record<string, string | string[] | undefined>;
+  protected _getHeaders(
+    request: HonoRequest,
+    parameterName: string,
+  ): string | string[] | undefined;
+  protected _getHeaders(
+    request: HonoRequest,
+    parameterName?: string,
+  ):
+    | Record<string, string | string[] | undefined>
+    | string
+    | string[]
+    | undefined {
     return parameterName === undefined
       ? request.header()
       : request.header(parameterName);

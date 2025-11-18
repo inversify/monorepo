@@ -2,6 +2,8 @@
 sidebar_position: 1
 title: Decorator
 ---
+import controllerApiPrioritySource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiPriority.ts.txt';
+import controllerApiPriorityExpress5Source from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiPriorityExpress5.ts.txt';
 import decoratorApiAllSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiAll.ts.txt';
 import decoratorApiApplyMiddlewareControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiApplyMiddlewareController.ts.txt';
 import decoratorApiApplyMiddlewareRouteSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiApplyMiddlewareRoute.ts.txt';
@@ -429,6 +431,47 @@ Parameters
 #### Example: Setting a response status code
 
 <CodeBlock language="ts">{decoratorApiStatusCodeSource}</CodeBlock>
+
+## Controller
+
+The `@Controller` decorator marks a class as an HTTP controller and allows you to configure its base path, priority, scope, and service identifier.
+
+```ts
+Controller(pathOrOptions?: string | ControllerOptions): ClassDecorator
+```
+
+Parameters
+
+- `pathOrOptions` (optional): Either a string representing the base path, or a `ControllerOptions` object with the following properties:
+  - `path` (optional string): Base path for all routes in this controller. Defaults to `'/'`.
+  - `priority` (optional number): Registration priority. Controllers with higher priority values are registered before those with lower values. Defaults to `0`. Useful for controlling route evaluation order, such as ensuring wildcard fallback routes are registered last.
+  - `scope` (optional BindingScope): InversifyJS binding scope (`Request`, `Singleton`, or `Transient`).
+  - `serviceIdentifier` (optional ServiceIdentifier): Custom service identifier for dependency injection.
+
+Notes
+
+- **Route registration order**: Controllers are registered in descending order of priority (highest priority first). This is particularly useful when you need specific routes to be evaluated before more general ones (e.g., ensuring `/api/users` is checked before a wildcard `/*` fallback).
+- **Default priority**: Controllers without an explicit priority are assigned `0`.
+
+#### Example: Controller with priority
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{controllerApiPrioritySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{controllerApiPriorityExpress5Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{controllerApiPrioritySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{controllerApiPrioritySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="uwebsockets" label="uWebSockets.js">
+    <CodeBlock language="ts">{controllerApiPrioritySource}</CodeBlock>
+  </TabItem>
+</Tabs>
 
 ## HTTP methods
 

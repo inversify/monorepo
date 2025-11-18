@@ -13,7 +13,7 @@ import {
   Interceptor,
   InterceptorTransformObject,
 } from '@inversifyjs/framework-core';
-import { Container, Newable, ServiceIdentifier } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
 import { ControllerResponse } from '../models/ControllerResponse';
@@ -21,14 +21,13 @@ import { RequestHandler } from '../models/RequestHandler';
 import { buildInterceptedHandler } from './buildInterceptedHandler';
 
 describe(buildInterceptedHandler, () => {
-  let serviceIdentifierFixture: ServiceIdentifier;
   let containerMock: Mocked<Container>;
-  let buildHandlerParamsMock: Mock<
+  let callRouteHandlerMock: Mock<
     (
       request: unknown,
       response: unknown,
       next: () => void,
-    ) => Promise<unknown[]>
+    ) => Promise<ControllerResponse>
   >;
   let handleErrorMock: Mock<
     (request: unknown, response: unknown, error: unknown) => Promise<string>
@@ -42,17 +41,11 @@ describe(buildInterceptedHandler, () => {
   let nextFixture: () => void;
 
   beforeAll(() => {
-    serviceIdentifierFixture = class TestController {
-      public testMethod(): ControllerResponse {
-        return { body: 'test' };
-      }
-    };
-
     containerMock = {
       getAsync: vitest.fn(),
     } as Partial<Mocked<Container>> as Mocked<Container>;
 
-    buildHandlerParamsMock = vitest.fn();
+    callRouteHandlerMock = vitest.fn();
     handleErrorMock = vitest.fn();
     replyMock = vitest.fn();
 
@@ -81,34 +74,23 @@ describe(buildInterceptedHandler, () => {
     });
 
     describe('when called', () => {
-      let controllerMock: { testMethod: Mock };
-      let handlerParamsFixture: unknown[];
       let controllerResponseFixture: ControllerResponse;
       let replyResultFixture: string;
 
       let result: unknown;
 
       beforeAll(async () => {
-        controllerMock = {
-          testMethod: vitest.fn(),
-        };
-        handlerParamsFixture = ['param1', 'param2'];
         controllerResponseFixture = { body: 'test response' };
         replyResultFixture = 'reply result';
 
-        containerMock.getAsync.mockResolvedValueOnce(controllerMock);
-        buildHandlerParamsMock.mockResolvedValueOnce(handlerParamsFixture);
-        controllerMock.testMethod.mockResolvedValueOnce(
-          controllerResponseFixture,
-        );
+        callRouteHandlerMock.mockResolvedValueOnce(controllerResponseFixture);
         replyMock.mockReturnValueOnce(replyResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
-            buildHandlerParamsMock,
+            callRouteHandlerMock,
             handleErrorMock,
             replyMock,
           );
@@ -120,23 +102,11 @@ describe(buildInterceptedHandler, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call container.getAsync()', () => {
-        expect(containerMock.getAsync).toHaveBeenCalledExactlyOnceWith(
-          serviceIdentifierFixture,
-        );
-      });
-
-      it('should call buildHandlerParams()', () => {
-        expect(buildHandlerParamsMock).toHaveBeenCalledExactlyOnceWith(
+      it('should call callRouteHandler()', () => {
+        expect(callRouteHandlerMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           nextFixture,
-        );
-      });
-
-      it('should call controller.testMethod()', () => {
-        expect(controllerMock.testMethod).toHaveBeenCalledExactlyOnceWith(
-          ...handlerParamsFixture,
         );
       });
 
@@ -163,15 +133,14 @@ describe(buildInterceptedHandler, () => {
         errorFixture = new Error('Test error');
         errorResultFixture = 'error result';
 
-        containerMock.getAsync.mockRejectedValueOnce(errorFixture);
+        callRouteHandlerMock.mockRejectedValueOnce(errorFixture);
         handleErrorMock.mockResolvedValueOnce(errorResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
-            buildHandlerParamsMock,
+            callRouteHandlerMock,
             handleErrorMock,
             replyMock,
           );
@@ -236,8 +205,6 @@ describe(buildInterceptedHandler, () => {
 
     describe('when called', () => {
       let stamps: string[];
-      let controllerMock: { testMethod: Mock };
-      let handlerParamsFixture: unknown[];
       let controllerResponseFixture: ControllerResponse;
       let replyResultFixture: string;
 
@@ -245,10 +212,6 @@ describe(buildInterceptedHandler, () => {
 
       beforeAll(async () => {
         stamps = [];
-        controllerMock = {
-          testMethod: vitest.fn(),
-        };
-        handlerParamsFixture = ['param1', 'param2'];
         controllerResponseFixture = { body: 'test response' };
         replyResultFixture = 'reply result';
 
@@ -278,24 +241,20 @@ describe(buildInterceptedHandler, () => {
 
         containerMock.getAsync
           .mockResolvedValueOnce(firstInterceptorMock)
-          .mockResolvedValueOnce(secondInterceptorMock)
-          .mockResolvedValueOnce(controllerMock);
+          .mockResolvedValueOnce(secondInterceptorMock);
 
-        buildHandlerParamsMock.mockResolvedValueOnce(handlerParamsFixture);
-
-        controllerMock.testMethod.mockImplementationOnce(() => {
-          stamps.push('controller-method');
+        callRouteHandlerMock.mockImplementationOnce(async () => {
+          stamps.push('route-handler');
           return controllerResponseFixture;
         });
 
         replyMock.mockReturnValueOnce(replyResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
-            buildHandlerParamsMock,
+            callRouteHandlerMock,
             handleErrorMock,
             replyMock,
           );
@@ -307,8 +266,8 @@ describe(buildInterceptedHandler, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call container.getAsync() for interceptors and controller', () => {
-        expect(containerMock.getAsync).toHaveBeenCalledTimes(3);
+      it('should call container.getAsync() for interceptors', () => {
+        expect(containerMock.getAsync).toHaveBeenCalledTimes(2);
         expect(containerMock.getAsync).toHaveBeenNthCalledWith(
           1,
           firstInterceptorType,
@@ -316,10 +275,6 @@ describe(buildInterceptedHandler, () => {
         expect(containerMock.getAsync).toHaveBeenNthCalledWith(
           2,
           secondInterceptorType,
-        );
-        expect(containerMock.getAsync).toHaveBeenNthCalledWith(
-          3,
-          serviceIdentifierFixture,
         );
       });
 
@@ -339,17 +294,11 @@ describe(buildInterceptedHandler, () => {
         );
       });
 
-      it('should call buildHandlerParams()', () => {
-        expect(buildHandlerParamsMock).toHaveBeenCalledExactlyOnceWith(
+      it('should call callRouteHandler()', () => {
+        expect(callRouteHandlerMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           nextFixture,
-        );
-      });
-
-      it('should call controller method with handler params', () => {
-        expect(controllerMock.testMethod).toHaveBeenCalledExactlyOnceWith(
-          ...handlerParamsFixture,
         );
       });
 
@@ -365,7 +314,7 @@ describe(buildInterceptedHandler, () => {
         expect(stamps).toStrictEqual([
           'first-interceptor-before',
           'second-interceptor-before',
-          'controller-method',
+          'route-handler',
           'second-interceptor-after',
           'first-interceptor-after',
         ]);
@@ -378,8 +327,6 @@ describe(buildInterceptedHandler, () => {
 
     describe('when called, and interceptor.intercept() calls next().push()', () => {
       let stamps: string[];
-      let controllerMock: { testMethod: Mock };
-      let handlerParamsFixture: unknown[];
       let controllerResponseFixture: ControllerResponse;
       let replyResultFixture: string;
       let transformedResultFixture: ControllerResponse;
@@ -388,10 +335,6 @@ describe(buildInterceptedHandler, () => {
 
       beforeAll(async () => {
         stamps = [];
-        controllerMock = {
-          testMethod: vitest.fn(),
-        };
-        handlerParamsFixture = ['param1', 'param2'];
         controllerResponseFixture = { body: 'test response' };
         replyResultFixture = 'reply result';
         transformedResultFixture = { body: 'transformed test response' };
@@ -422,24 +365,20 @@ describe(buildInterceptedHandler, () => {
 
         containerMock.getAsync
           .mockResolvedValueOnce(firstInterceptorMock)
-          .mockResolvedValueOnce(secondInterceptorMock)
-          .mockResolvedValueOnce(controllerMock);
+          .mockResolvedValueOnce(secondInterceptorMock);
 
-        buildHandlerParamsMock.mockResolvedValueOnce(handlerParamsFixture);
-
-        controllerMock.testMethod.mockImplementationOnce(() => {
-          stamps.push('controller-method');
+        callRouteHandlerMock.mockImplementationOnce(async () => {
+          stamps.push('route-handler');
           return controllerResponseFixture;
         });
 
         replyMock.mockReturnValueOnce(replyResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
-            buildHandlerParamsMock,
+            callRouteHandlerMock,
             handleErrorMock,
             replyMock,
           );
@@ -451,8 +390,8 @@ describe(buildInterceptedHandler, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call container.getAsync() for interceptors and controller', () => {
-        expect(containerMock.getAsync).toHaveBeenCalledTimes(3);
+      it('should call container.getAsync() for interceptors', () => {
+        expect(containerMock.getAsync).toHaveBeenCalledTimes(2);
         expect(containerMock.getAsync).toHaveBeenNthCalledWith(
           1,
           firstInterceptorType,
@@ -460,10 +399,6 @@ describe(buildInterceptedHandler, () => {
         expect(containerMock.getAsync).toHaveBeenNthCalledWith(
           2,
           secondInterceptorType,
-        );
-        expect(containerMock.getAsync).toHaveBeenNthCalledWith(
-          3,
-          serviceIdentifierFixture,
         );
       });
 
@@ -483,17 +418,11 @@ describe(buildInterceptedHandler, () => {
         );
       });
 
-      it('should call buildHandlerParams()', () => {
-        expect(buildHandlerParamsMock).toHaveBeenCalledExactlyOnceWith(
+      it('should call callRouteHandler()', () => {
+        expect(callRouteHandlerMock).toHaveBeenCalledExactlyOnceWith(
           requestFixture,
           responseFixture,
           nextFixture,
-        );
-      });
-
-      it('should call controller method with handler params', () => {
-        expect(controllerMock.testMethod).toHaveBeenCalledExactlyOnceWith(
-          ...handlerParamsFixture,
         );
       });
 
@@ -509,7 +438,7 @@ describe(buildInterceptedHandler, () => {
         expect(stamps).toStrictEqual([
           'first-interceptor-before',
           'second-interceptor-before',
-          'controller-method',
+          'route-handler',
           'second-interceptor-after',
           'first-interceptor-after',
         ]);
@@ -535,12 +464,11 @@ describe(buildInterceptedHandler, () => {
         containerMock.getAsync.mockResolvedValueOnce(firstInterceptorMock);
         handleErrorMock.mockResolvedValueOnce(errorResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
-            buildHandlerParamsMock,
+            callRouteHandlerMock,
             handleErrorMock,
             replyMock,
           );
@@ -595,24 +523,18 @@ describe(buildInterceptedHandler, () => {
           },
         );
 
-        const controllerMock: unknown = {
-          testMethod: vitest.fn().mockRejectedValueOnce(errorFixture),
-        };
-
         containerMock.getAsync
           .mockResolvedValueOnce(firstInterceptorMock)
-          .mockResolvedValueOnce(secondInterceptorMock)
-          .mockResolvedValueOnce(controllerMock);
+          .mockResolvedValueOnce(secondInterceptorMock);
 
-        buildHandlerParamsMock.mockResolvedValueOnce(['param1', 'param2']);
+        callRouteHandlerMock.mockRejectedValueOnce(errorFixture);
         handleErrorMock.mockResolvedValueOnce(errorResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            serviceIdentifierFixture,
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
-            buildHandlerParamsMock,
+            callRouteHandlerMock,
             handleErrorMock,
             replyMock,
           );

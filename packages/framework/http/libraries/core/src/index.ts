@@ -37,6 +37,8 @@ import { Request } from './http/decorators/Request';
 import { Response } from './http/decorators/Response';
 import { SetHeader } from './http/decorators/SetHeader';
 import { StatusCode } from './http/decorators/StatusCode';
+import { CustomParameterDecoratorHandler } from './http/models/CustomParameterDecoratorHandler';
+import { CustomParameterDecoratorHandlerOptions } from './http/models/CustomParameterDecoratorHandlerOptions';
 import { HttpAdapterOptions } from './http/models/HttpAdapterOptions';
 import { HttpStatusCode } from './http/models/HttpStatusCode';
 import { MiddlewareHandler } from './http/models/MiddlewareHandler';
@@ -78,6 +80,7 @@ import { ResetContentHttpResponse } from './httpResponse/models/ResetContentHttp
 import { ServiceUnavailableHttpResponse } from './httpResponse/models/ServiceUnavailableHttpResponse';
 import { UnauthorizedHttpResponse } from './httpResponse/models/UnauthorizedHttpResponse';
 import { UnprocessableEntityHttpResponse } from './httpResponse/models/UnprocessableEntityHttpResponse';
+import { handleMiddlewareList } from './middleware/actions/handleMiddlewareList';
 import { getControllerMetadataList } from './routerExplorer/calculations/getControllerMetadataList';
 import { getControllerMethodMetadataList } from './routerExplorer/calculations/getControllerMethodMetadataList';
 import { ControllerMetadata } from './routerExplorer/model/ControllerMetadata';
@@ -87,6 +90,8 @@ export type {
   CatchErrorOptions,
   ControllerMetadata,
   ControllerMethodMetadata,
+  CustomParameterDecoratorHandler,
+  CustomParameterDecoratorHandlerOptions,
   ErrorFilter,
   Guard,
   HttpAdapterOptions,
@@ -127,6 +132,7 @@ export {
   getControllerMetadataList,
   getControllerMethodMetadataList,
   GoneHttpResponse,
+  handleMiddlewareList,
   Head,
   Headers,
   HttpResponse,

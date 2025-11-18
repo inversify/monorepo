@@ -37,6 +37,10 @@ Register controllers in your container. Bind your controller class and choose a 
 
 When you call `build()` on your server adapter, it builds routes from controller metadata at runtime.
 
+:::tip[Controller registration order]
+Controllers are registered in descending order of priority (highest first). Use the `priority` option in `@Controller()` to control route evaluation order. This is useful for ensuring specific routes are matched before more general ones, or for implementing custom fallback handlers like a 404 route. See the [Controller decorator API](../../api/decorators/#controller) for details.
+:::
+
 ## Implementation approaches
 
 There are two complementary ways to write controller routes in Inversify HTTP. You can keep your handlers framework-agnostic and let Inversify send the response for you, or you can opt into native adapter types and take full control of the underlying framework's response flow.

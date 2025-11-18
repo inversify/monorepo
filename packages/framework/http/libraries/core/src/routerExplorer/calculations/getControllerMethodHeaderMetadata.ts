@@ -4,26 +4,26 @@ import { Newable } from 'inversify';
 
 import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey';
 
-export function getControllerMethodHeaderMetadataList(
+export function getControllerMethodHeaderMetadata(
   controller: NewableFunction,
   methodKey: string | symbol,
-): [string, string][] {
-  const headerMetadataMap: Map<string, string> = new Map<string, string>();
+): Record<string, string> {
+  const headerMetadata: Record<string, string> = {};
 
   let currentType: Newable | undefined = controller as Newable;
 
   while (currentType !== undefined) {
-    const headerMetadata: Map<string, string> | undefined =
+    const typeHeaderMetadata: Record<string, string> | undefined =
       getOwnReflectMetadata(
         currentType,
         controllerMethodHeaderMetadataReflectKey,
         methodKey,
       );
 
-    if (headerMetadata !== undefined) {
-      for (const [key, value] of headerMetadata.entries()) {
-        if (!headerMetadataMap.has(key)) {
-          headerMetadataMap.set(key, value);
+    if (typeHeaderMetadata !== undefined) {
+      for (const key in typeHeaderMetadata) {
+        if (!Object.hasOwn(headerMetadata, key)) {
+          headerMetadata[key] = typeHeaderMetadata[key] as string;
         }
       }
     }
@@ -31,5 +31,5 @@ export function getControllerMethodHeaderMetadataList(
     currentType = getBaseType(currentType);
   }
 
-  return [...headerMetadataMap.entries()];
+  return headerMetadata;
 }

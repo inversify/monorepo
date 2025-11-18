@@ -4,10 +4,11 @@ import cookie, { FastifyCookieOptions } from '@fastify/cookie';
 import fastifyFormbody from '@fastify/formbody';
 import fastifyMultipart from '@fastify/multipart';
 import {
+  buildNormalizedPath,
+  handleMiddlewareList,
   HttpStatusCode,
   InversifyHttpAdapter,
   MiddlewareHandler,
-  RequestHandler,
   RequestMethodParameterType,
   RequestMethodType,
   RouterParams,
@@ -18,10 +19,6 @@ import {
   FastifyPluginCallback,
   FastifyReply,
   FastifyRequest,
-  HookHandlerDoneFunction,
-  HTTPMethods,
-  onResponseAsyncHookHandler,
-  preHandlerAsyncHookHandler,
   RouteHandlerMethod,
 } from 'fastify';
 import { Container } from 'inversify';
@@ -31,7 +28,7 @@ import { FastifyHttpAdapterOptions } from '../models/FastifyHttpAdapterOptions';
 export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   FastifyRequest,
   FastifyReply,
-  HookHandlerDoneFunction,
+  () => void,
   void,
   FastifyHttpAdapterOptions
 > {
@@ -74,14 +71,21 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     }
   }
 
+  protected _getParams(request: FastifyRequest): Record<string, string>;
+  protected _getParams(
+    request: FastifyRequest,
+    parameterName: string,
+  ): string | undefined;
   protected _getParams(
     request: FastifyRequest,
     parameterName?: string,
-  ): unknown {
+  ): Record<string, string> | string | undefined {
     return parameterName === undefined
-      ? request.params
-      : (request.params as Record<string, unknown>)[parameterName];
+      ? (request.params as Record<string, string>)
+      : (request.params as Record<string, string>)[parameterName];
   }
+  protected _getQuery(request: FastifyRequest): Record<string, unknown>;
+  protected _getQuery(request: FastifyRequest, parameterName: string): unknown;
   protected _getQuery(
     request: FastifyRequest,
     parameterName?: string,
@@ -93,11 +97,22 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
 
   protected _getHeaders(
     request: FastifyRequest,
+  ): Record<string, string | string[] | undefined>;
+  protected _getHeaders(
+    request: FastifyRequest,
+    parameterName: string,
+  ): string | string[] | undefined;
+  protected _getHeaders(
+    request: FastifyRequest,
     parameterName?: string,
-  ): unknown {
+  ):
+    | Record<string, string | string[] | undefined>
+    | string
+    | string[]
+    | undefined {
     return parameterName === undefined
       ? request.headers
-      : (request.headers as Record<string, unknown>)[parameterName];
+      : request.headers[parameterName];
   }
 
   protected _getCookies(
@@ -107,7 +122,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   ): unknown {
     return parameterName === undefined
       ? request.cookies
-      : (request.cookies as Record<string, unknown>)[parameterName];
+      : request.cookies[parameterName];
   }
 
   protected _replyText(
@@ -152,48 +167,42 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected _buildRouter(
-    routerParams: RouterParams<
-      FastifyRequest,
-      FastifyReply,
-      HookHandlerDoneFunction,
-      void
-    >,
+    routerParams: RouterParams<FastifyRequest, FastifyReply, () => void, void>,
   ): void {
-    const router: FastifyPluginCallback = (
-      fastifyInstance: FastifyInstance,
-      _opts: Record<string, unknown>,
-      done: () => void,
-    ) => {
-      for (const routeParams of routerParams.routeParamsList) {
-        const orderedMiddlewareList: MiddlewareHandler<
-          FastifyRequest,
-          FastifyReply,
-          HookHandlerDoneFunction
-        >[] = [
-          ...routeParams.preHandlerMiddlewareList,
-          ...routeParams.guardList,
-        ];
+    for (const routeParams of routerParams.routeParamsList) {
+      const orderedHandlers: MiddlewareHandler<
+        FastifyRequest,
+        FastifyReply,
+        () => void,
+        void
+      >[] = [
+        ...routeParams.preHandlerMiddlewareList,
+        ...routeParams.guardList,
+        routeParams.handler,
+        ...routeParams.postHandlerMiddlewareList,
+      ];
 
-        const normalizedUrl: string =
-          routeParams.path === '/' ? '' : routeParams.path;
+      const normalizedPath: string = buildNormalizedPath(
+        `${routerParams.path}${routeParams.path}`,
+      );
 
-        fastifyInstance.route({
-          handler: this.#buildFastifyHandler(routeParams.handler),
-          method: this.#convertRequestMethodType(routeParams.requestMethodType),
-          onResponse: this.#buildFastifyOnResponseAsyncMiddlewareList(
-            routeParams.postHandlerMiddlewareList,
-          ),
-          preHandler: this.#buildFastifyPreHandlerAsyncMiddlewareList(
-            orderedMiddlewareList,
-          ),
-          url: normalizedUrl,
-        });
-      }
+      const handleMiddlewares: (
+        request: FastifyRequest,
+        response: FastifyReply,
+      ) => Promise<void> = handleMiddlewareList(orderedHandlers);
 
-      done();
-    };
+      const fastifyHandler: RouteHandlerMethod = async (
+        request: FastifyRequest,
+        reply: FastifyReply,
+      ): Promise<void> => {
+        await handleMiddlewares(request, reply);
+      };
 
-    this.#app.register(router, { prefix: routerParams.path });
+      this.#getAppRouteHandler(routeParams.requestMethodType)(
+        normalizedPath,
+        fastifyHandler,
+      );
+    }
   }
 
   #buildDefaultFastifyApp(customApp?: FastifyInstance): FastifyInstance {
@@ -225,134 +234,27 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     return app;
   }
 
-  #buildFastifyHandler(
-    handler: RequestHandler<
-      FastifyRequest,
-      FastifyReply,
-      HookHandlerDoneFunction
-    >,
-  ): RouteHandlerMethod {
-    return async (
-      request: FastifyRequest,
-      reply: FastifyReply,
-    ): Promise<void> => {
-      await new Promise(
-        (
-          resolve: (value?: unknown) => void,
-          reject: (error?: unknown) => void,
-        ) => {
-          const done: HookHandlerDoneFunction = (err?: Error): void => {
-            if (err !== undefined) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          };
-
-          resolve(handler(request, reply, done));
-        },
-      );
-    };
-  }
-
-  #buildFastifyPreHandlerAsyncMiddlewareList(
-    middlewareList: MiddlewareHandler<
-      FastifyRequest,
-      FastifyReply,
-      HookHandlerDoneFunction
-    >[],
-  ): preHandlerAsyncHookHandler[] {
-    return middlewareList.map(
-      (
-        middleware: MiddlewareHandler<
-          FastifyRequest,
-          FastifyReply,
-          HookHandlerDoneFunction
-        >,
-      ) => this.#buildFastifyPreHandlerAsyncMiddleware(middleware),
-    );
-  }
-
-  #buildFastifyOnResponseAsyncMiddlewareList(
-    middlewareList: MiddlewareHandler<
-      FastifyRequest,
-      FastifyReply,
-      HookHandlerDoneFunction
-    >[],
-  ): onResponseAsyncHookHandler[] {
-    return middlewareList.map(
-      (
-        middleware: MiddlewareHandler<
-          FastifyRequest,
-          FastifyReply,
-          HookHandlerDoneFunction
-        >,
-      ) => this.#buildFastifyOnResponseAsyncMiddleware(middleware),
-    );
-  }
-
-  #buildFastifyPreHandlerAsyncMiddleware(
-    middleware: MiddlewareHandler<
-      FastifyRequest,
-      FastifyReply,
-      HookHandlerDoneFunction
-    >,
-  ): preHandlerAsyncHookHandler {
-    return async (request: FastifyRequest, reply: FastifyReply) => {
-      await new Promise(
-        (
-          resolve: (value?: unknown) => void,
-          reject: (error?: unknown) => void,
-        ) => {
-          const done: HookHandlerDoneFunction = (err?: Error) => {
-            if (err !== undefined) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          };
-
-          middleware(request, reply, done);
-        },
-      );
-    };
-  }
-
-  #buildFastifyOnResponseAsyncMiddleware(
-    middleware: MiddlewareHandler<
-      FastifyRequest,
-      FastifyReply,
-      HookHandlerDoneFunction
-    >,
-  ): onResponseAsyncHookHandler {
-    return async (request: FastifyRequest, reply: FastifyReply) => {
-      await new Promise(
-        (
-          resolve: (value?: unknown) => void,
-          reject: (error?: unknown) => void,
-        ) => {
-          const done: HookHandlerDoneFunction = (err?: Error) => {
-            if (err !== undefined) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          };
-
-          middleware(request, reply, done);
-        },
-      );
-    };
-  }
-
-  #convertRequestMethodType(
+  #getAppRouteHandler(
     requestMethodType: RequestMethodType,
-  ): HTTPMethods | HTTPMethods[] {
-    return requestMethodType === RequestMethodType.All
-      ? Object.values(RequestMethodType).filter(
-          (method: RequestMethodType) => method !== RequestMethodType.All,
-        )
-      : requestMethodType;
+  ): (pattern: string, handler: RouteHandlerMethod) => FastifyInstance {
+    switch (requestMethodType) {
+      case RequestMethodType.All:
+        return this.#app.all.bind(this.#app);
+      case RequestMethodType.Delete:
+        return this.#app.delete.bind(this.#app);
+      case RequestMethodType.Get:
+        return this.#app.get.bind(this.#app);
+      case RequestMethodType.Head:
+        return this.#app.head.bind(this.#app);
+      case RequestMethodType.Options:
+        return this.#app.options.bind(this.#app);
+      case RequestMethodType.Patch:
+        return this.#app.patch.bind(this.#app);
+      case RequestMethodType.Post:
+        return this.#app.post.bind(this.#app);
+      case RequestMethodType.Put:
+        return this.#app.put.bind(this.#app);
+    }
   }
 
   #getMultipartRequestBody(
