@@ -27,7 +27,7 @@
     "express": "5.1.0",
     "express4": "npm:express@4.21.2",
     "fastify": "5.6.2",
-    "glob": "11.1.0",
+    "glob": "12.0.0",
     "hono": "4.10.6",
     "inversify": "7.10.4",
     "multer": "2.0.2",
