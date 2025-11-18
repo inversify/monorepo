@@ -79,6 +79,11 @@ export function buildBundleConfig(
       plugins,
     },
     {
+      external: [
+        NODE_REGEX,
+        ...packageDependencies,
+        ...packagePeerDependencies,
+      ],
       input: declarationFilePath,
       output: [{ file: declarationFilePath, format: 'es' }],
       plugins: [
@@ -135,6 +140,11 @@ export function buildMultiBundleConfig(inputFiles, outputDir) {
       ],
     },
     {
+      external: [
+        NODE_REGEX,
+        ...packageDependencies,
+        ...packagePeerDependencies,
+      ],
       input: declarationFilePath,
       output: [{ file: declarationFilePath, format: 'es' }],
       plugins: [

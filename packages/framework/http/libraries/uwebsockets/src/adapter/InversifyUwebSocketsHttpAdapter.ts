@@ -173,7 +173,15 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     return (body as Record<string, unknown>)[parameterName];
   }
 
-  protected _getParams(request: HttpRequest, parameterName?: string): unknown {
+  protected _getParams(request: HttpRequest): Record<string, string>;
+  protected _getParams(
+    request: HttpRequest,
+    parameterName: string,
+  ): string | undefined;
+  protected _getParams(
+    request: HttpRequest,
+    parameterName?: string,
+  ): Record<string, string> | string | undefined {
     if (parameterName === undefined) {
       throw new Error(
         'Getting all route parameters is not supported in uWebSockets.js adapter.',
@@ -183,13 +191,29 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     return request.getParameter(parameterName);
   }
 
+  protected _getQuery(request: HttpRequest): Record<string, unknown>;
+  protected _getQuery(request: HttpRequest, parameterName: string): unknown;
   protected _getQuery(request: HttpRequest, parameterName?: string): unknown {
     return parameterName === undefined
       ? this.#parseQuery(request)
       : request.getQuery(parameterName);
   }
 
-  protected _getHeaders(request: HttpRequest, parameterName?: string): unknown {
+  protected _getHeaders(
+    request: HttpRequest,
+  ): Record<string, string | string[] | undefined>;
+  protected _getHeaders(
+    request: HttpRequest,
+    parameterName: string,
+  ): string | string[] | undefined;
+  protected _getHeaders(
+    request: HttpRequest,
+    parameterName?: string,
+  ):
+    | Record<string, string | string[] | undefined>
+    | string
+    | string[]
+    | undefined {
     return parameterName === undefined
       ? this.#parseHeaders(request)
       : request.getHeader(parameterName);

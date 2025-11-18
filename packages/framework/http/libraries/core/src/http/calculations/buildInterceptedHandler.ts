@@ -18,7 +18,7 @@ export function buildInterceptedHandler<
   routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
     TRequest,
     TResponse,
-    unknown
+    TResult
   >,
   container: Container,
   callRouteHandler: (

@@ -37,6 +37,8 @@ import { Request } from './http/decorators/Request';
 import { Response } from './http/decorators/Response';
 import { SetHeader } from './http/decorators/SetHeader';
 import { StatusCode } from './http/decorators/StatusCode';
+import { CustomParameterDecoratorHandler } from './http/models/CustomParameterDecoratorHandler';
+import { CustomParameterDecoratorHandlerOptions } from './http/models/CustomParameterDecoratorHandlerOptions';
 import { HttpAdapterOptions } from './http/models/HttpAdapterOptions';
 import { HttpStatusCode } from './http/models/HttpStatusCode';
 import { MiddlewareHandler } from './http/models/MiddlewareHandler';
@@ -88,6 +90,8 @@ export type {
   CatchErrorOptions,
   ControllerMetadata,
   ControllerMethodMetadata,
+  CustomParameterDecoratorHandler,
+  CustomParameterDecoratorHandlerOptions,
   ErrorFilter,
   Guard,
   HttpAdapterOptions,

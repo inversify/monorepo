@@ -71,14 +71,21 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     }
   }
 
+  protected _getParams(request: FastifyRequest): Record<string, string>;
+  protected _getParams(
+    request: FastifyRequest,
+    parameterName: string,
+  ): string | undefined;
   protected _getParams(
     request: FastifyRequest,
     parameterName?: string,
-  ): unknown {
+  ): Record<string, string> | string | undefined {
     return parameterName === undefined
-      ? request.params
-      : (request.params as Record<string, unknown>)[parameterName];
+      ? (request.params as Record<string, string>)
+      : (request.params as Record<string, string>)[parameterName];
   }
+  protected _getQuery(request: FastifyRequest): Record<string, unknown>;
+  protected _getQuery(request: FastifyRequest, parameterName: string): unknown;
   protected _getQuery(
     request: FastifyRequest,
     parameterName?: string,
@@ -90,11 +97,22 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
 
   protected _getHeaders(
     request: FastifyRequest,
+  ): Record<string, string | string[] | undefined>;
+  protected _getHeaders(
+    request: FastifyRequest,
+    parameterName: string,
+  ): string | string[] | undefined;
+  protected _getHeaders(
+    request: FastifyRequest,
     parameterName?: string,
-  ): unknown {
+  ):
+    | Record<string, string | string[] | undefined>
+    | string
+    | string[]
+    | undefined {
     return parameterName === undefined
       ? request.headers
-      : (request.headers as Record<string, unknown>)[parameterName];
+      : request.headers[parameterName];
   }
 
   protected _getCookies(
@@ -104,7 +122,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   ): unknown {
     return parameterName === undefined
       ? request.cookies
-      : (request.cookies as Record<string, unknown>)[parameterName];
+      : request.cookies[parameterName];
   }
 
   protected _replyText(
