@@ -86,7 +86,7 @@ describe(buildInterceptedHandler, () => {
         callRouteHandlerMock.mockResolvedValueOnce(controllerResponseFixture);
         replyMock.mockReturnValueOnce(replyResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
@@ -136,7 +136,7 @@ describe(buildInterceptedHandler, () => {
         callRouteHandlerMock.mockRejectedValueOnce(errorFixture);
         handleErrorMock.mockResolvedValueOnce(errorResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
@@ -250,7 +250,7 @@ describe(buildInterceptedHandler, () => {
 
         replyMock.mockReturnValueOnce(replyResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
@@ -374,7 +374,7 @@ describe(buildInterceptedHandler, () => {
 
         replyMock.mockReturnValueOnce(replyResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
@@ -464,7 +464,7 @@ describe(buildInterceptedHandler, () => {
         containerMock.getAsync.mockResolvedValueOnce(firstInterceptorMock);
         handleErrorMock.mockResolvedValueOnce(errorResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
             routerExplorerControllerMethodMetadataFixture,
             containerMock,
@@ -530,7 +530,7 @@ describe(buildInterceptedHandler, () => {
         callRouteHandlerMock.mockRejectedValueOnce(errorFixture);
         handleErrorMock.mockResolvedValueOnce(errorResultFixture);
 
-        const handler: RequestHandler<unknown, unknown, () => void, string> =
+        const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
             routerExplorerControllerMethodMetadataFixture,
             containerMock,

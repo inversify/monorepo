@@ -137,19 +137,46 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         request.body[parameterName];
   }
 
-  protected _getParams(request: Request, parameterName?: string): unknown {
+  protected _getParams(request: express.Request): Record<string, string>;
+  protected _getParams(
+    request: express.Request,
+    parameterName: string,
+  ): string | undefined;
+  protected _getParams(
+    request: express.Request,
+    parameterName?: string,
+  ): Record<string, string> | string | undefined {
     return parameterName === undefined
       ? request.params
       : request.params[parameterName];
   }
 
-  protected _getQuery(request: Request, parameterName?: string): unknown {
+  protected _getQuery(request: express.Request): Record<string, unknown>;
+  protected _getQuery(request: express.Request, parameterName: string): unknown;
+  protected _getQuery(
+    request: express.Request,
+    parameterName?: string,
+  ): unknown {
     return parameterName === undefined
       ? request.query
       : request.query[parameterName];
   }
 
-  protected _getHeaders(request: Request, parameterName?: string): unknown {
+  protected _getHeaders(
+    request: express.Request,
+  ): Record<string, string | string[] | undefined>;
+  protected _getHeaders(
+    request: express.Request,
+    parameterName: string,
+  ): string | string[] | undefined;
+  protected _getHeaders(
+    request: express.Request,
+    parameterName?: string,
+  ):
+    | Record<string, string | string[] | undefined>
+    | string
+    | string[]
+    | undefined {
     return parameterName === undefined
       ? request.headers
       : request.headers[parameterName];
