@@ -13,7 +13,7 @@
     "eslint": "9.39.1",
     "logform": "^2.7.0",
     "prettier": "3.6.2",
-    "rimraf": "6.1.0",
+    "rimraf": "6.1.2",
     "rollup": "4.53.3",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
