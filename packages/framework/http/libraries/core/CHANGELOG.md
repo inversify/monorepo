@@ -1,5 +1,15 @@
 # @inversifyjs/http-core
 
+## 4.5.0
+
+### Minor Changes
+
+- Updated `CustomParameterDecoratorHandler` with options param
+- Added `ControllerOptions`
+- Added `ControllerResponse`
+- Added `isHttpResponseSymbol`
+- Updated `InversifyHttpAdapter.applyGlobalMiddleware` to allow passing service identifiers
+
 ## 4.4.0
 
 ### Minor Changes
