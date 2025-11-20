@@ -21,7 +21,7 @@
     "@types/express": "5.0.5",
     "@types/express4": "npm:@types/express@4.17.25",
     "@types/node": "24.10.1",
-    "@vitest/coverage-v8": "4.0.12",
+    "@vitest/coverage-v8": "4.0.10",
     "better-sqlite3": "^12.4.1",
     "eslint": "9.39.1",
     "fastify": "5.6.2",
@@ -33,7 +33,7 @@
     "tslib": "2.8.1",
     "typescript": "5.9.3",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0",
-    "vitest": "4.0.12"
+    "vitest": "4.0.10"
   },
   "devEngines": {
     "node": "^24.10.0",
