@@ -37,6 +37,8 @@ import { Request } from './http/decorators/Request';
 import { Response } from './http/decorators/Response';
 import { SetHeader } from './http/decorators/SetHeader';
 import { StatusCode } from './http/decorators/StatusCode';
+import { ControllerOptions } from './http/models/ControllerOptions';
+import { ControllerResponse } from './http/models/ControllerResponse';
 import { CustomParameterDecoratorHandler } from './http/models/CustomParameterDecoratorHandler';
 import { CustomParameterDecoratorHandlerOptions } from './http/models/CustomParameterDecoratorHandlerOptions';
 import { HttpAdapterOptions } from './http/models/HttpAdapterOptions';
@@ -61,7 +63,10 @@ import { ErrorHttpResponse } from './httpResponse/models/ErrorHttpResponse';
 import { ForbiddenHttpResponse } from './httpResponse/models/ForbiddenHttpResponse';
 import { GatewayTimeoutHttpResponse } from './httpResponse/models/GatewayTimeoutHttpResponse';
 import { GoneHttpResponse } from './httpResponse/models/GoneHttpResponse';
-import { HttpResponse } from './httpResponse/models/HttpResponse';
+import {
+  HttpResponse,
+  isHttpResponse as isHttpResponseSymbol,
+} from './httpResponse/models/HttpResponse';
 import { HttpVersionNotSupportedHttpResponse } from './httpResponse/models/HttpVersionNotSupportedHttpResponse';
 import { InsufficientStorageHttpResponse } from './httpResponse/models/InsufficientStorageHttpResponse';
 import { InternalServerErrorHttpResponse } from './httpResponse/models/InternalServerErrorHttpResponse';
@@ -90,6 +95,8 @@ export type {
   CatchErrorOptions,
   ControllerMetadata,
   ControllerMethodMetadata,
+  ControllerOptions,
+  ControllerResponse,
   CustomParameterDecoratorHandler,
   CustomParameterDecoratorHandlerOptions,
   ErrorFilter,
@@ -142,6 +149,7 @@ export {
   InternalServerErrorHttpResponse,
   InversifyHttpAdapter,
   isHttpResponse,
+  isHttpResponseSymbol,
   LoopDetectedHttpResponse,
   MethodNotAllowedHttpResponse,
   MiddlewarePhase,

@@ -113,7 +113,10 @@ export abstract class InversifyHttpAdapter<
   }
 
   public applyGlobalMiddleware(
-    ...middlewareList: (Newable<Middleware> | ApplyMiddlewareOptions)[]
+    ...middlewareList: (
+      | ServiceIdentifier<Middleware>
+      | ApplyMiddlewareOptions
+    )[]
   ): void {
     if (this.#isBuilt) {
       throw new InversifyHttpAdapterError(
