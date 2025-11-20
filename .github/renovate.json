@@ -48,7 +48,7 @@
     {
       "description": "Quarantine packages with current known issues",
       "enabled": false,
-      "matchPackageNames": ["@vitest/coverage-v8", "vitest"]
+      "matchPackageNames": ["@vitest/coverage-v8", "monaco-editor", "vitest"]
     }
   ],
   "rangeStrategy": "bump",
