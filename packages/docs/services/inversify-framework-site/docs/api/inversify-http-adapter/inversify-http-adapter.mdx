@@ -63,13 +63,13 @@ Routes not managed by this adapter (e.g., routes added directly to the underlyin
 
 ```ts
 applyGlobalMiddleware(
-  ...middlewareList: (Newable<Middleware> | ApplyMiddlewareOptions)[]
+  ...middlewareList: (ServiceIdentifier<Middleware> | ApplyMiddlewareOptions)[]
 ): void
 ```
 
 Registers global middleware to run for every route.
 
-- `middlewareList`: Either middleware classes or a structured object with `preHandlerMiddlewareList` and `postHandlerMiddlewareList` to control the phase. See <Link to="../../fundamentals/middleware">Middleware</Link>.
+- `middlewareList`: Either middleware service identifiers (class references or symbols) or a structured object with `preHandlerMiddlewareList` and `postHandlerMiddlewareList` to control the phase. See <Link to="../../fundamentals/middleware">Middleware</Link>.
 
 Notes:
 - Must be called before the server is built; calling it after `build()` throws an error.
@@ -94,13 +94,13 @@ Behavior:
 
 ```ts
 applyGlobalGuards(
-  ...guardList: Newable<Guard<TRequest>>[]
+  ...guardList: ServiceIdentifier<Guard<TRequest>>[]
 ): void
 ```
 
 Registers global guards that run before middleware and route handlers. See <Link to="../../fundamentals/guard">Guard</Link>.
 
-- `guardList`: Guard classes to evaluate for every request.
+- `guardList`: Guard service identifiers (class references or symbols) to evaluate for every request.
 
 Notes:
 - Must be called before the server is built; calling it after `build()` throws an error.
@@ -110,13 +110,13 @@ Notes:
 
 ```ts
 useGlobalInterceptors(
-  ...interceptorList: Newable<Interceptor<TRequest, TResponse>>[]
+  ...interceptorList: ServiceIdentifier<Interceptor<TRequest, TResponse>>[]
 ): void
 ```
 
 Registers global interceptors that wrap route execution. Interceptors can run logic before and after the handler and may transform the handler result. See <Link to="../../fundamentals/interceptor">Interceptor</Link>.
 
-- `interceptorList`: Interceptor classes to apply globally.
+- `interceptorList`: Interceptor service identifiers (class references or symbols) to apply globally.
 
 Notes:
 - Must be called before the server is built; calling it after `build()` throws an error.
@@ -125,13 +125,13 @@ Notes:
 
 ```ts
 useGlobalPipe(
-  ...pipeList: (Newable<Pipe> | Pipe)[]
+  ...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]
 ): void
 ```
 
 Registers global pipes that transform/validate controller method parameters immediately after extraction. See <Link to="../../fundamentals/pipe">Pipe</Link>.
 
-- `pipeList`: Pipe classes or instances. Instances are used as provided; classes are resolved from the container per request.
+- `pipeList`: Pipe service identifiers (class references or symbols) or pipe instances. Instances are used as provided; service identifiers are resolved from the container per request.
 
 Order of execution:
 - Global pipes run before parameter-level pipes declared via parameter decorators (e.g., `@Body(ParseNumberPipe)`).
