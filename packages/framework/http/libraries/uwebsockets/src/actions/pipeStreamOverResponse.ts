@@ -19,13 +19,12 @@ import { CustomHttpResponse } from '../models/CustomHttpResponse';
  *
  * @param response - The uWebSockets.js HTTP response object
  * @param readableStream - The Node.js Readable stream to pipe (must not be in object mode)
- * @param options - Optional configuration for logging
- * @throws {Error} If the stream is in object mode
+ * @param logger - Optional logger for error logging
  *
  * @example
  * ```typescript
  * const fileStream = fs.createReadStream('./video.mp4');
- * pipeStreamOverResponse(response, fileStream, { logErrors: true });
+ * pipeStreamOverResponse(response, fileStream, undefined);
  * ```
  */
 export function pipeStreamOverResponse(
