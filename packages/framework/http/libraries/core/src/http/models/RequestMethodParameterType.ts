@@ -9,3 +9,10 @@ export enum RequestMethodParameterType {
   Response = 'response',
   Query = 'query',
 }
+
+export type CustomRequestMethodParameterType =
+  RequestMethodParameterType.Custom;
+export type NonCustomRequestMethodParameterType = Exclude<
+  RequestMethodParameterType,
+  CustomRequestMethodParameterType
+>;

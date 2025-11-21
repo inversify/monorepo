@@ -452,7 +452,7 @@ export abstract class InversifyHttpAdapter<
               );
           case RequestMethodParameterType.Custom:
             return (request: TRequest, response: TResponse): unknown =>
-              controllerMethodParameterMetadata.customParameterDecoratorHandler?.(
+              controllerMethodParameterMetadata.customParameterDecoratorHandler(
                 request,
                 response,
                 this.#customParameterDecoratorHandlerOptions,
@@ -948,6 +948,11 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     value: Readable,
   ): TResult | Promise<TResult>;
+
+  protected abstract _sendBodySeparator(
+    request: TRequest,
+    response: TResponse,
+  ): void | Promise<void>;
 
   protected abstract _setStatus(
     request: TRequest,

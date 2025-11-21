@@ -132,6 +132,17 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     );
   }
 
+  protected _sendBodySeparator(
+    _request: HttpRequest,
+    _response: HttpResponse,
+  ): void {
+    if (this.httpAdapterOptions.logger !== false) {
+      this._logger.warn(
+        'Unable to send body separator, raw response is not defined. Headers will be delivered with the first chunk of the body.',
+      );
+    }
+  }
+
   protected _setStatus(
     _request: HttpRequest,
     response: HttpResponse,

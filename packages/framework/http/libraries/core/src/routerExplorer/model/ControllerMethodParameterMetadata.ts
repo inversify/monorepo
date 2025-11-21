@@ -3,17 +3,36 @@ import { Pipe } from '@inversifyjs/framework-core';
 import { ServiceIdentifier } from 'inversify';
 
 import { CustomParameterDecoratorHandler } from '../../http/models/CustomParameterDecoratorHandler';
-import { RequestMethodParameterType } from '../../http/models/RequestMethodParameterType';
+import {
+  CustomRequestMethodParameterType,
+  NonCustomRequestMethodParameterType,
+  RequestMethodParameterType,
+} from '../../http/models/RequestMethodParameterType';
 
-export interface ControllerMethodParameterMetadata<
-  TRequest = any,
-  TResponse = any,
-  TResult = any,
+export interface BaseControllerMethodParameterMetadata<
+  TParamType extends RequestMethodParameterType,
 > {
-  customParameterDecoratorHandler?:
-    | CustomParameterDecoratorHandler<TRequest, TResponse, TResult>
-    | undefined;
-  parameterType: RequestMethodParameterType;
+  parameterType: TParamType;
   parameterName?: string | undefined;
   pipeList: (ServiceIdentifier<Pipe> | Pipe)[];
 }
+
+export interface ControllerMethodCustomParameterMetadata<
+  TRequest = any,
+  TResponse = any,
+  TResult = any,
+> extends BaseControllerMethodParameterMetadata<CustomRequestMethodParameterType> {
+  customParameterDecoratorHandler: CustomParameterDecoratorHandler<
+    TRequest,
+    TResponse,
+    TResult
+  >;
+}
+
+export type ControllerMethodParameterMetadata<
+  TRequest = any,
+  TResponse = any,
+  TResult = any,
+> =
+  | BaseControllerMethodParameterMetadata<NonCustomRequestMethodParameterType>
+  | ControllerMethodCustomParameterMetadata<TRequest, TResponse, TResult>;

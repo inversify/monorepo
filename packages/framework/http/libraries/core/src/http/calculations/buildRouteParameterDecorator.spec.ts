@@ -14,7 +14,7 @@ import { requestParam } from './requestParam';
 describe(buildRouteParameterDecorator, () => {
   describe('having a RouteParameterOptions parameterNameOrPipe', () => {
     describe('when called', () => {
-      let parameterTypeFixture: RequestMethodParameterType;
+      let parameterTypeFixture: RequestMethodParameterType.Query;
       let parameterNameOrPipeFixture: RouteParamOptions;
       let parameterPipeListFixture: (Newable<Pipe> | Pipe)[];
       let parameterDecoratorFixture: ParameterDecorator;
@@ -61,7 +61,7 @@ describe(buildRouteParameterDecorator, () => {
 
   describe('having a parameterNameOrPipe with type Pipe', () => {
     describe('when called', () => {
-      let parameterTypeFixture: RequestMethodParameterType;
+      let parameterTypeFixture: RequestMethodParameterType.Query;
       let parameterNameOrPipeFixture: Pipe;
       let parameterPipeListFixture: (Newable<Pipe> | Pipe)[];
       let parameterDecoratorFixture: ParameterDecorator;
@@ -105,7 +105,7 @@ describe(buildRouteParameterDecorator, () => {
 
   describe('having a RouteParameterOptions parameterNameOrPipe and parameterPipeList length greater than 0', () => {
     describe('when called', () => {
-      let parameterTypeFixture: RequestMethodParameterType;
+      let parameterTypeFixture: RequestMethodParameterType.Query;
       let parameterNameOrPipeFixture: RouteParamOptions;
       let parameterPipeListFixture: (Newable<Pipe> | Pipe)[];
       let parameterDecoratorFixture: ParameterDecorator;
