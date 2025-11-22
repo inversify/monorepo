@@ -9,7 +9,7 @@ import {
   RequestMethodParameterType,
 } from '../../http/models/RequestMethodParameterType';
 
-export interface BaseControllerMethodParameterMetadata<
+interface BaseControllerMethodParameterMetadata<
   TParamType extends RequestMethodParameterType,
 > {
   parameterType: TParamType;
@@ -17,7 +17,7 @@ export interface BaseControllerMethodParameterMetadata<
   pipeList: (ServiceIdentifier<Pipe> | Pipe)[];
 }
 
-export interface ControllerMethodCustomParameterMetadata<
+interface ControllerMethodCustomParameterMetadata<
   TRequest = any,
   TResponse = any,
   TResult = any,
