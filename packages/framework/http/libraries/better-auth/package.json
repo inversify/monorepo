@@ -61,7 +61,7 @@
   },
   "name": "@inversifyjs/http-better-auth",
   "peerDependencies": {
-    "better-auth": "^1.4.0",
+    "better-auth": "^1.3.34",
     "inversify": "^7.10.4"
   },
   "publishConfig": {
