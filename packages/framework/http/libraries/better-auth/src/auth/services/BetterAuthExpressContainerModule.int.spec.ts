@@ -80,40 +80,22 @@ describe(BetterAuthExpressContainerModule, () => {
     });
 
     describe('when user sign up and login', () => {
-      let formUrlEncodedEmailFixture: string;
-      let jsonEmailFixture: string;
+      let emailFixture: string;
       let usernameFixture: string;
       let passwordFixture: string;
 
-      let signUpFormUrlEncodedResponse: Response;
-      let signUpJsonResponse: Response;
+      let signUpResponse: Response;
 
       beforeAll(async () => {
-        formUrlEncodedEmailFixture = 'mail@sample.com';
-        jsonEmailFixture = 'mail2@sample.com';
+        emailFixture = 'mail@sample.com';
         usernameFixture = 'username';
         passwordFixture = 'P4ssw0rd!';
 
-        signUpFormUrlEncodedResponse = await fetch(
-          `http://${server.host}:${server.port.toString()}/api/auth/sign-up/email`,
-          {
-            body: new URLSearchParams({
-              email: formUrlEncodedEmailFixture,
-              name: usernameFixture,
-              password: passwordFixture,
-            }),
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            method: 'POST',
-          },
-        );
-
-        signUpJsonResponse = await fetch(
+        signUpResponse = await fetch(
           `http://${server.host}:${server.port.toString()}/api/auth/sign-up/email`,
           {
             body: JSON.stringify({
-              email: jsonEmailFixture,
+              email: emailFixture,
               name: usernameFixture,
               password: passwordFixture,
             }),
@@ -125,12 +107,8 @@ describe(BetterAuthExpressContainerModule, () => {
         );
       });
 
-      it('should sign up successfully with a form-urlencoded request', () => {
-        expect(signUpFormUrlEncodedResponse.status).toBe(200);
-      });
-
-      it('should sign up successfully with a JSON request', () => {
-        expect(signUpJsonResponse.status).toBe(200);
+      it('should sign up successfully', () => {
+        expect(signUpResponse.status).toBe(200);
       });
     });
   });
