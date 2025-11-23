@@ -1,9 +1,10 @@
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
 import { setControllerMethodParameterMetadata } from '../../routerExplorer/actions/setControllerMethodParameterMetadata';
+import { setControllerMethodUseNativeHandlerMetadata } from '../../routerExplorer/actions/setControllerMethodUseNativeHandlerMetadata';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 
-export function requestParam(
+export function nativeRequestParam(
   controllerMethodParameterMetadata: ControllerMethodParameterMetadata,
 ): ParameterDecorator {
   return (
@@ -14,7 +15,7 @@ export function requestParam(
     if (key === undefined) {
       throw new InversifyHttpAdapterError(
         InversifyHttpAdapterErrorKind.requestParamIncorrectUse,
-        'Expected param decorator to be used on a method parameter. Instead, it was found on a constructor parameter',
+        'Expected native param decorator to be used on a method parameter. Instead, it was found on a constructor parameter',
       );
     }
 
@@ -24,5 +25,6 @@ export function requestParam(
       key,
       index,
     );
+    setControllerMethodUseNativeHandlerMetadata(target.constructor, key);
   };
 }

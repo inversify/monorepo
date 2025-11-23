@@ -1,11 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import {
-  ApplyMiddleware,
-  Controller,
-  Get,
-  Response as HonoContext,
-} from '@inversifyjs/http-core';
+import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
 import { Context, Hono } from 'hono';
 import { ClientRequest, ClientRequestOptions } from 'hono/client';
 import { testClient } from 'hono/testing';
@@ -14,6 +9,7 @@ import { ContentfulStatusCode } from 'hono/utils/http-status';
 import { Container } from 'inversify';
 
 import { InversifyHonoHttpAdapter } from '../adapter/InversifyHonoHttpAdapter';
+import { Context as HonoContext } from '../index';
 import { CorsMiddleware } from './CorsMiddleware';
 
 interface TestClient {

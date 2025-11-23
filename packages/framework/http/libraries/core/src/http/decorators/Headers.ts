@@ -1,7 +1,9 @@
 import { Pipe } from '@inversifyjs/framework-core';
 import { ServiceIdentifier } from 'inversify';
 
-import { buildRouteParameterDecorator } from '../calculations/buildRouteParameterDecorator';
+import { buildNonCustomControllerMethodParameterMetadata } from '../calculations/buildNonCustomControllerMethodParameterMetadata';
+import { getOptionsAndPipes } from '../calculations/getOptionsAndPipes';
+import { requestParam } from '../calculations/requestParam';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { RouteParamOptions } from '../models/RouteParamOptions';
 
@@ -10,9 +12,16 @@ export function Headers(
   optionsOrPipe?: RouteParamOptions | (ServiceIdentifier<Pipe> | Pipe),
   ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
 ): ParameterDecorator {
-  return buildRouteParameterDecorator(
-    RequestMethodParameterType.Headers,
-    parameterPipeList,
-    optionsOrPipe,
+  const [options, pipeList]: [
+    RouteParamOptions | undefined,
+    (ServiceIdentifier<Pipe> | Pipe)[],
+  ] = getOptionsAndPipes(optionsOrPipe, parameterPipeList);
+
+  return requestParam(
+    buildNonCustomControllerMethodParameterMetadata(
+      RequestMethodParameterType.Headers,
+      pipeList,
+      options,
+    ),
   );
 }
