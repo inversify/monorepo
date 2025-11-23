@@ -1,14 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('../calculations/buildRouteParameterDecorator');
+vitest.mock('./requestParam');
 
 import { Pipe } from '@inversifyjs/framework-core';
 import { ServiceIdentifier } from 'inversify';
 
+import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { CustomParameterDecoratorHandler } from '../models/CustomParameterDecoratorHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { buildRouteParameterDecorator } from './buildRouteParameterDecorator';
 import { createCustomParameterDecorator } from './createCustomParameterDecorator';
+import { requestParam } from './requestParam';
 
 describe(createCustomParameterDecorator, () => {
   describe('when called', () => {
@@ -20,10 +21,10 @@ describe(createCustomParameterDecorator, () => {
     beforeAll(() => {
       handlerFixture = Symbol() as unknown as CustomParameterDecoratorHandler;
       parameterPipeListFixture = [Symbol()];
-      parameterDecoratorFixture = Symbol() as unknown as ParameterDecorator;
+      parameterDecoratorFixture = {} as ParameterDecorator;
 
       vitest
-        .mocked(buildRouteParameterDecorator)
+        .mocked(requestParam)
         .mockReturnValueOnce(parameterDecoratorFixture);
 
       result = createCustomParameterDecorator(
@@ -36,13 +37,15 @@ describe(createCustomParameterDecorator, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call requestParamFactory', () => {
-      expect(buildRouteParameterDecorator).toHaveBeenCalledExactlyOnceWith(
-        RequestMethodParameterType.Custom,
-        parameterPipeListFixture,
-        undefined,
-        handlerFixture,
-      );
+    it('should call requestParam', () => {
+      const expected: ControllerMethodParameterMetadata = {
+        customParameterDecoratorHandler: handlerFixture,
+        parameterName: undefined,
+        parameterType: RequestMethodParameterType.Custom,
+        pipeList: parameterPipeListFixture,
+      };
+
+      expect(requestParam).toHaveBeenCalledExactlyOnceWith(expected);
     });
 
     it('should return a ParameterDecorator', () => {

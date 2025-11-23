@@ -1,8 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('../calculations/buildRouteParameterDecorator');
+vitest.mock('../calculations/nativeRequestParam');
 
-import { buildRouteParameterDecorator } from '../calculations/buildRouteParameterDecorator';
+import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
+import { nativeRequestParam } from '../calculations/nativeRequestParam';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { Next } from './Next';
 
@@ -15,7 +16,7 @@ describe(Next, () => {
       parameterDecoratorFixture = {} as ParameterDecorator;
 
       vitest
-        .mocked(buildRouteParameterDecorator)
+        .mocked(nativeRequestParam)
         .mockReturnValueOnce(parameterDecoratorFixture);
 
       result = Next();
@@ -25,11 +26,14 @@ describe(Next, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call buildRouteParameterDecorator()', () => {
-      expect(buildRouteParameterDecorator).toHaveBeenCalledExactlyOnceWith(
-        RequestMethodParameterType.Next,
-        [],
-      );
+    it('should call nativeRequestParam()', () => {
+      const expected: ControllerMethodParameterMetadata = {
+        parameterName: undefined,
+        parameterType: RequestMethodParameterType.Next,
+        pipeList: [],
+      };
+
+      expect(nativeRequestParam).toHaveBeenCalledExactlyOnceWith(expected);
     });
 
     it('should return a ParameterDecorator', () => {

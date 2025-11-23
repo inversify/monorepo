@@ -1,11 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('../calculations/buildRouteParameterDecorator');
+vitest.mock('../calculations/requestParam');
+vitest.mock('../calculations/getOptionsAndPipes');
 
 import { Pipe } from '@inversifyjs/framework-core';
 import { ServiceIdentifier } from 'inversify';
 
-import { buildRouteParameterDecorator } from '../calculations/buildRouteParameterDecorator';
+import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
+import { getOptionsAndPipes } from '../calculations/getOptionsAndPipes';
+import { requestParam } from '../calculations/requestParam';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { RouteParamOptions } from '../models/RouteParamOptions';
 import { Headers } from './Headers';
@@ -23,7 +26,11 @@ describe(Headers, () => {
       parameterDecoratorFixture = {} as ParameterDecorator;
 
       vitest
-        .mocked(buildRouteParameterDecorator)
+        .mocked(getOptionsAndPipes)
+        .mockReturnValueOnce([optionsFixture, parameterPipeListFixture]);
+
+      vitest
+        .mocked(requestParam)
         .mockReturnValueOnce(parameterDecoratorFixture);
 
       result = Headers(optionsFixture, ...parameterPipeListFixture);
@@ -33,12 +40,14 @@ describe(Headers, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call buildRouteParameterDecorator()', () => {
-      expect(buildRouteParameterDecorator).toHaveBeenCalledExactlyOnceWith(
-        RequestMethodParameterType.Headers,
-        parameterPipeListFixture,
-        optionsFixture,
-      );
+    it('should call requestParam()', () => {
+      const expected: ControllerMethodParameterMetadata = {
+        parameterName: optionsFixture?.name,
+        parameterType: RequestMethodParameterType.Headers,
+        pipeList: parameterPipeListFixture,
+      };
+
+      expect(requestParam).toHaveBeenCalledExactlyOnceWith(expected);
     });
 
     it('should return a ParameterDecorator', () => {
