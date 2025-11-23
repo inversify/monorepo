@@ -5,14 +5,12 @@ vitest.mock('@inversifyjs/reflect-metadata-utils');
 import {
   buildArrayMetadataWithIndex,
   buildEmptyArrayMetadata,
-  setReflectMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
 import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey';
-import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { requestParam } from './requestParam';
