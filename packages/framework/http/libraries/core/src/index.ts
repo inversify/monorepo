@@ -17,6 +17,7 @@ import {
 
 import { InversifyHttpAdapter } from './http/adapter/InversifyHttpAdapter';
 import { buildNormalizedPath } from './http/calculations/buildNormalizedPath';
+import { createCustomNativeParameterDecorator } from './http/calculations/createCustomNativeParameterDecorator';
 import { createCustomParameterDecorator } from './http/calculations/createCustomParameterDecorator';
 import { All } from './http/decorators/All';
 import { Body } from './http/decorators/Body';
@@ -39,6 +40,8 @@ import { SetHeader } from './http/decorators/SetHeader';
 import { StatusCode } from './http/decorators/StatusCode';
 import { ControllerOptions } from './http/models/ControllerOptions';
 import { ControllerResponse } from './http/models/ControllerResponse';
+import { CustomNativeParameterDecoratorHandler } from './http/models/CustomNativeParameterDecoratorHandler';
+import { CustomNativeParameterDecoratorHandlerOptions } from './http/models/CustomNativeParameterDecoratorHandlerOptions';
 import { CustomParameterDecoratorHandler } from './http/models/CustomParameterDecoratorHandler';
 import { CustomParameterDecoratorHandlerOptions } from './http/models/CustomParameterDecoratorHandlerOptions';
 import { HttpAdapterOptions } from './http/models/HttpAdapterOptions';
@@ -97,6 +100,8 @@ export type {
   ControllerMethodMetadata,
   ControllerOptions,
   ControllerResponse,
+  CustomNativeParameterDecoratorHandler,
+  CustomNativeParameterDecoratorHandlerOptions,
   CustomParameterDecoratorHandler,
   CustomParameterDecoratorHandlerOptions,
   ErrorFilter,
@@ -129,6 +134,7 @@ export {
   ContentDifferentHttpResponse,
   Controller,
   Cookies,
+  createCustomNativeParameterDecorator,
   createCustomParameterDecorator,
   CreatedHttpResponse,
   Delete,

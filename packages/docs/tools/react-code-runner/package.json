@@ -11,7 +11,7 @@
     "@inversifyjs/common": "1.5.2",
     "@inversifyjs/container": "1.14.1",
     "@inversifyjs/core": "9.1.1",
-    "@microsoft/api-extractor": "7.55.0",
+    "@microsoft/api-extractor": "7.55.1",
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-terser": "0.4.4",
     "@rollup/plugin-typescript": "12.3.0",
@@ -38,7 +38,7 @@
   "peerDependencies": {
     "@babel/standalone": "^7.28.5",
     "@swc/wasm-web": "^1.15.3",
-    "monaco-editor": "~0.54.0",
+    "monaco-editor": "~0.55.1",
     "react": "19.2.0"
   },
   "homepage": "https://inversify.io",

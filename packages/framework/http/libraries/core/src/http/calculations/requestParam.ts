@@ -1,16 +1,7 @@
-import {
-  buildArrayMetadataWithIndex,
-  buildEmptyArrayMetadata,
-  setReflectMetadata,
-  updateOwnReflectMetadata,
-} from '@inversifyjs/reflect-metadata-utils';
-
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
-import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey';
-import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
+import { setControllerMethodParameterMetadata } from '../../routerExplorer/actions/setControllerMethodParameterMetadata';
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 
 export function requestParam(
   controllerMethodParameterMetadata: ControllerMethodParameterMetadata,
@@ -27,26 +18,11 @@ export function requestParam(
       );
     }
 
-    updateOwnReflectMetadata(
+    setControllerMethodParameterMetadata(
+      controllerMethodParameterMetadata,
       target.constructor,
-      controllerMethodParameterMetadataReflectKey,
-      buildEmptyArrayMetadata,
-      buildArrayMetadataWithIndex(controllerMethodParameterMetadata, index),
       key,
+      index,
     );
-
-    if (
-      controllerMethodParameterMetadata.parameterType ===
-        RequestMethodParameterType.Next ||
-      controllerMethodParameterMetadata.parameterType ===
-        RequestMethodParameterType.Response
-    ) {
-      setReflectMetadata(
-        target.constructor,
-        controllerMethodUseNativeHandlerMetadataReflectKey,
-        true,
-        key,
-      );
-    }
   };
 }
