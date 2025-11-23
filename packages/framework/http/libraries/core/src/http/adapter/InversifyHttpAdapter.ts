@@ -949,6 +949,11 @@ export abstract class InversifyHttpAdapter<
     value: Readable,
   ): TResult | Promise<TResult>;
 
+  protected abstract _sendBodySeparator(
+    request: TRequest,
+    response: TResponse,
+  ): void | Promise<void>;
+
   protected abstract _setStatus(
     request: TRequest,
     response: TResponse,
