@@ -109,6 +109,10 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     value.pipe(response);
   }
 
+  protected _sendBodySeparator(_request: Request, response: Response): void {
+    response.flushHeaders();
+  }
+
   protected _setStatus(
     _request: Request,
     response: Response,

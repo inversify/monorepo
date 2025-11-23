@@ -1,5 +1,7 @@
+import { type ServerResponse } from 'node:http';
 import { Readable } from 'node:stream';
 
+import { type HttpBindings } from '@hono/node-server';
 import {
   HttpAdapterOptions,
   HttpStatusCode,
@@ -193,6 +195,22 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     return stream(response, async (stream: StreamingApi): Promise<void> => {
       await stream.pipe(Readable.toWeb(value));
     });
+  }
+
+  protected _sendBodySeparator(_request: HonoRequest, response: Context): void {
+    const rawResponse: ServerResponse | undefined = (
+      response as Context<{ Bindings: Partial<HttpBindings> }>
+    ).env.outgoing;
+
+    if (rawResponse === undefined) {
+      if (this.httpAdapterOptions.logger !== false) {
+        this._logger.warn(
+          'Unable to send body separator, raw response is not defined. Headers will be delivered with the first chunk of the body.',
+        );
+      }
+    } else {
+      rawResponse.flushHeaders();
+    }
   }
 
   protected _setStatus(

@@ -149,6 +149,13 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     await response.send(value);
   }
 
+  protected _sendBodySeparator(
+    _request: FastifyRequest,
+    response: FastifyReply,
+  ): void {
+    response.raw.flushHeaders();
+  }
+
   protected _setStatus(
     _request: FastifyRequest,
     response: FastifyReply,
