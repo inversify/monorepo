@@ -209,7 +209,22 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
         );
       }
     } else {
-      rawResponse.flushHeaders();
+      // Hono does not understand it must not send headers again later, so we must not flush them here.
+      // See https://github.com/honojs/hono/issues/4537
+
+      // const statusCode: number = response.res.status;
+      // const headers: Headers = response.res.headers;
+
+      // rawResponse.statusCode = statusCode;
+      // rawResponse.setHeaders(headers);
+
+      // rawResponse.flushHeaders();
+
+      if (this.httpAdapterOptions.logger !== false) {
+        this._logger.warn(
+          'Unable to send body separator, raw response is defined but hono is unable to prevent headers from being sent again.',
+        );
+      }
     }
   }
 
