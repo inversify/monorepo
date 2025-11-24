@@ -29,7 +29,6 @@ describe(isApplyMiddlewareOptions, () => {
         | undefined
         | null
         | object
-        | { middleware: string }
         | { middleware: () => void }
         | { middleware: Newable<Middleware>; phase: number }
         | ApplyMiddlewareOptions,
