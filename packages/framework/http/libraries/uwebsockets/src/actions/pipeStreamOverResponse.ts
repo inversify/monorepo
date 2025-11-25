@@ -64,14 +64,9 @@ export function pipeStreamOverResponse(
 
     const lastOffset: number = response.getWriteOffset();
 
-    const [ok, done]: [boolean, boolean] = response.tryEnd(
-      arrayBuffer,
-      arrayBuffer.byteLength,
-    );
+    const ok: boolean = response.write(arrayBuffer);
 
-    if (done) {
-      cleanup();
-    } else if (!ok) {
+    if (!ok) {
       readableStream.pause();
 
       storedBuffer = arrayBuffer;
@@ -80,6 +75,7 @@ export function pipeStreamOverResponse(
       response.onWritable((offset: number): boolean => {
         if ((response as CustomHttpResponse)[abortedSymbol] === true) {
           cleanup();
+
           return false;
         }
 
@@ -87,14 +83,11 @@ export function pipeStreamOverResponse(
           return false;
         }
 
-        const [retryOk, retryDone]: [boolean, boolean] = response.tryEnd(
+        const retryOk: boolean = response.write(
           storedBuffer.slice(offset - storedOffset),
-          storedBuffer.byteLength,
         );
 
-        if (retryDone) {
-          cleanup();
-        } else if (retryOk) {
+        if (retryOk) {
           readableStream.resume();
         }
 
@@ -118,5 +111,7 @@ export function pipeStreamOverResponse(
 
   readableStream.on('end', (): void => {
     cleanup();
+
+    response.end();
   });
 }
