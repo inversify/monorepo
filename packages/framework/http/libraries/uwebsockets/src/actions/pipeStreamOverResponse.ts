@@ -15,7 +15,6 @@ import { CustomHttpResponse } from '../models/CustomHttpResponse';
  * - Backpressure: Pauses the stream when the socket buffer is full
  * - Abort handling: Cleans up resources when the client disconnects
  * - Error handling: Catches stream errors and sends appropriate error responses
- * - Object mode detection: Throws an error if the stream is in object mode
  *
  * @param response - The uWebSockets.js HTTP response object
  * @param readableStream - The Node.js Readable stream to pipe (must not be in object mode)
