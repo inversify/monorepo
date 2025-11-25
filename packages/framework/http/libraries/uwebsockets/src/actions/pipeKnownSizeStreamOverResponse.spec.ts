@@ -14,13 +14,14 @@ import { Logger } from '@inversifyjs/logger';
 
 import { abortedSymbol } from '../data/abortedSymbol';
 import { CustomHttpResponse } from '../models/CustomHttpResponse';
-import { pipeStreamOverResponse } from './pipeStreamOverResponse';
+import { pipeKnownSizeStreamOverResponse } from './pipeKnownSizeStreamOverResponse';
 
-describe(pipeStreamOverResponse, () => {
+describe(pipeKnownSizeStreamOverResponse, () => {
   describe('having a stream', () => {
     let readableStreamMock: Mocked<Readable>;
     let responseMock: Mocked<CustomHttpResponse>;
     let loggerMock: Mocked<Logger>;
+    let totalSizeFixture: number;
 
     beforeAll(() => {
       readableStreamMock = {
@@ -36,18 +37,25 @@ describe(pipeStreamOverResponse, () => {
         getWriteOffset: vitest.fn(),
         onAborted: vitest.fn(),
         onWritable: vitest.fn(),
-        write: vitest.fn(),
+        tryEnd: vitest.fn(),
         writeStatus: vitest.fn(),
       } as Partial<Mocked<CustomHttpResponse>> as Mocked<CustomHttpResponse>;
 
       loggerMock = {
         error: vitest.fn(),
       } as Partial<Mocked<Logger>> as Mocked<Logger>;
+
+      totalSizeFixture = 1024;
     });
 
     describe('when called', () => {
       beforeAll(() => {
-        pipeStreamOverResponse(responseMock, readableStreamMock, loggerMock);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          loggerMock,
+        );
       });
 
       afterAll(() => {
@@ -84,7 +92,12 @@ describe(pipeStreamOverResponse, () => {
       let onAbortedCallback: () => void;
 
       beforeAll(() => {
-        pipeStreamOverResponse(responseMock, readableStreamMock, loggerMock);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          loggerMock,
+        );
 
         onAbortedCallback = responseMock.onAborted.mock
           .calls[0]?.[0] as () => void;
@@ -101,12 +114,17 @@ describe(pipeStreamOverResponse, () => {
       });
     });
 
-    describe('when called, and readableStream emits data, and response.write() returns true', () => {
+    describe('when called, and readableStream emits data, and response.tryEnd() returns done true', () => {
       let dataCallback: (chunk: Buffer) => void;
       let chunkFixture: Buffer;
 
       beforeAll(() => {
-        pipeStreamOverResponse(responseMock, readableStreamMock, loggerMock);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          loggerMock,
+        );
 
         const dataCall:
           | [event: string | symbol, listener: (...args: unknown[]) => void]
@@ -119,7 +137,7 @@ describe(pipeStreamOverResponse, () => {
 
         responseMock.getWriteOffset.mockReturnValueOnce(0);
 
-        responseMock.write.mockReturnValueOnce(true);
+        responseMock.tryEnd.mockReturnValueOnce([true, true]);
 
         dataCallback(chunkFixture);
       });
@@ -132,23 +150,29 @@ describe(pipeStreamOverResponse, () => {
         expect(responseMock.getWriteOffset).toHaveBeenCalledExactlyOnceWith();
       });
 
-      it('should call response.write()', () => {
-        expect(responseMock.write).toHaveBeenCalledExactlyOnceWith(
+      it('should call response.tryEnd()', () => {
+        expect(responseMock.tryEnd).toHaveBeenCalledExactlyOnceWith(
           expect.any(ArrayBuffer),
+          totalSizeFixture,
         );
       });
 
-      it('should not call readableStream.pause()', () => {
-        expect(readableStreamMock.pause).not.toHaveBeenCalled();
+      it('should call readableStream.destroy()', () => {
+        expect(readableStreamMock.destroy).toHaveBeenCalledExactlyOnceWith();
       });
     });
 
-    describe('when called, and stream emits data, and response.write() returns false (backpressure)', () => {
+    describe('when called, and stream emits data, and response.tryEnd() returns ok false (backpressure)', () => {
       let dataCallback: (chunk: Buffer) => void;
       let chunkFixture: Buffer;
 
       beforeAll(() => {
-        pipeStreamOverResponse(responseMock, readableStreamMock, loggerMock);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          loggerMock,
+        );
 
         const dataCall:
           | [event: string | symbol, listener: (...args: unknown[]) => void]
@@ -160,7 +184,7 @@ describe(pipeStreamOverResponse, () => {
         chunkFixture = Buffer.from('test data');
 
         responseMock.getWriteOffset.mockReturnValueOnce(0);
-        responseMock.write.mockReturnValueOnce(false);
+        responseMock.tryEnd.mockReturnValueOnce([false, false]);
 
         dataCallback(chunkFixture);
       });
@@ -186,7 +210,12 @@ describe(pipeStreamOverResponse, () => {
       let chunkFixture: Buffer;
 
       beforeAll(() => {
-        pipeStreamOverResponse(responseMock, readableStreamMock, loggerMock);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          loggerMock,
+        );
 
         const dataCall:
           | [event: string | symbol, listener: (...args: unknown[]) => void]
@@ -198,7 +227,7 @@ describe(pipeStreamOverResponse, () => {
         chunkFixture = Buffer.from('test data');
 
         responseMock.getWriteOffset.mockReturnValueOnce(0);
-        responseMock.write.mockReturnValueOnce(false);
+        responseMock.tryEnd.mockReturnValueOnce([false, false]);
 
         dataCallback(chunkFixture);
 
@@ -206,7 +235,7 @@ describe(pipeStreamOverResponse, () => {
           offset: number,
         ) => boolean;
 
-        responseMock.write.mockReturnValueOnce(true);
+        responseMock.tryEnd.mockReturnValueOnce([true, false]);
 
         onWritableCallback(0);
       });
@@ -220,13 +249,18 @@ describe(pipeStreamOverResponse, () => {
       });
     });
 
-    describe('when called, and backpressure occurs, and response.onWritable() is called with retry failure', () => {
+    describe('when called, and backpressure occurs, and response.onWritable() is called with retry done', () => {
       let dataCallback: (chunk: Buffer) => void;
       let onWritableCallback: (offset: number) => boolean;
       let chunkFixture: Buffer;
 
       beforeAll(() => {
-        pipeStreamOverResponse(responseMock, readableStreamMock, loggerMock);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          loggerMock,
+        );
 
         const dataCall:
           | [event: string | symbol, listener: (...args: unknown[]) => void]
@@ -238,7 +272,7 @@ describe(pipeStreamOverResponse, () => {
         chunkFixture = Buffer.from('test data');
 
         responseMock.getWriteOffset.mockReturnValueOnce(0);
-        responseMock.write.mockReturnValueOnce(false);
+        responseMock.tryEnd.mockReturnValueOnce([false, false]);
 
         dataCallback(chunkFixture);
 
@@ -246,7 +280,7 @@ describe(pipeStreamOverResponse, () => {
           offset: number,
         ) => boolean;
 
-        responseMock.write.mockReturnValueOnce(false);
+        responseMock.tryEnd.mockReturnValueOnce([true, true]);
 
         onWritableCallback(0);
       });
@@ -255,8 +289,8 @@ describe(pipeStreamOverResponse, () => {
         vitest.clearAllMocks();
       });
 
-      it('should not call readableStream.destroy()', () => {
-        expect(readableStreamMock.destroy).not.toHaveBeenCalled();
+      it('should call readableStream.destroy()', () => {
+        expect(readableStreamMock.destroy).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should not call readableStream.resume()', () => {
@@ -271,7 +305,12 @@ describe(pipeStreamOverResponse, () => {
       beforeAll(() => {
         (responseMock as CustomHttpResponse)[abortedSymbol] = true;
 
-        pipeStreamOverResponse(responseMock, readableStreamMock, loggerMock);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          loggerMock,
+        );
 
         const dataCall:
           | [event: string | symbol, listener: (...args: unknown[]) => void]
@@ -295,8 +334,8 @@ describe(pipeStreamOverResponse, () => {
         expect(readableStreamMock.destroy).toHaveBeenCalledExactlyOnceWith();
       });
 
-      it('should not call response.write()', () => {
-        expect(responseMock.write).not.toHaveBeenCalled();
+      it('should not call response.tryEnd()', () => {
+        expect(responseMock.tryEnd).not.toHaveBeenCalled();
       });
     });
 
@@ -305,7 +344,12 @@ describe(pipeStreamOverResponse, () => {
       let errorFixture: Error;
 
       beforeAll(() => {
-        pipeStreamOverResponse(responseMock, readableStreamMock, loggerMock);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          loggerMock,
+        );
 
         const errorCall:
           | [event: string | symbol, listener: (...args: unknown[]) => void]
@@ -345,7 +389,12 @@ describe(pipeStreamOverResponse, () => {
       let errorFixture: Error;
 
       beforeAll(() => {
-        pipeStreamOverResponse(responseMock, readableStreamMock, undefined);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          undefined,
+        );
 
         const errorCall:
           | [event: string | symbol, listener: (...args: unknown[]) => void]
@@ -381,7 +430,12 @@ describe(pipeStreamOverResponse, () => {
       beforeAll(() => {
         (responseMock as CustomHttpResponse)[abortedSymbol] = true;
 
-        pipeStreamOverResponse(responseMock, readableStreamMock, loggerMock);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          loggerMock,
+        );
 
         const errorCall:
           | [event: string | symbol, listener: (...args: unknown[]) => void]
@@ -414,7 +468,12 @@ describe(pipeStreamOverResponse, () => {
       let endCallback: () => void;
 
       beforeAll(() => {
-        pipeStreamOverResponse(responseMock, readableStreamMock, loggerMock);
+        pipeKnownSizeStreamOverResponse(
+          responseMock,
+          readableStreamMock,
+          totalSizeFixture,
+          loggerMock,
+        );
 
         const endCall:
           | [event: string | symbol, listener: (...args: unknown[]) => void]
@@ -432,10 +491,6 @@ describe(pipeStreamOverResponse, () => {
 
       it('should call readableStream.destroy()', () => {
         expect(readableStreamMock.destroy).toHaveBeenCalledExactlyOnceWith();
-      });
-
-      it('should call response.end()', () => {
-        expect(responseMock.end).toHaveBeenCalledExactlyOnceWith();
       });
     });
   });
