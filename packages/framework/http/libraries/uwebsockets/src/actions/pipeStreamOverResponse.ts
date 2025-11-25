@@ -111,6 +111,8 @@ export function pipeStreamOverResponse(
   readableStream.on('end', (): void => {
     cleanup();
 
-    response.end();
+    if ((response as CustomHttpResponse)[abortedSymbol] !== true) {
+      response.end();
+    }
   });
 }
