@@ -15,17 +15,15 @@ import { CustomHttpResponse } from '../models/CustomHttpResponse';
  * - Backpressure: Pauses the stream when the socket buffer is full
  * - Abort handling: Cleans up resources when the client disconnects
  * - Error handling: Catches stream errors and sends appropriate error responses
- * - Object mode detection: Throws an error if the stream is in object mode
  *
  * @param response - The uWebSockets.js HTTP response object
  * @param readableStream - The Node.js Readable stream to pipe (must not be in object mode)
- * @param options - Optional configuration for logging
- * @throws {Error} If the stream is in object mode
+ * @param logger - Optional logger for error logging
  *
  * @example
  * ```typescript
  * const fileStream = fs.createReadStream('./video.mp4');
- * pipeStreamOverResponse(response, fileStream, { logErrors: true });
+ * pipeStreamOverResponse(response, fileStream, undefined);
  * ```
  */
 export function pipeStreamOverResponse(
@@ -65,14 +63,9 @@ export function pipeStreamOverResponse(
 
     const lastOffset: number = response.getWriteOffset();
 
-    const [ok, done]: [boolean, boolean] = response.tryEnd(
-      arrayBuffer,
-      arrayBuffer.byteLength,
-    );
+    const ok: boolean = response.write(arrayBuffer);
 
-    if (done) {
-      cleanup();
-    } else if (!ok) {
+    if (!ok) {
       readableStream.pause();
 
       storedBuffer = arrayBuffer;
@@ -81,6 +74,7 @@ export function pipeStreamOverResponse(
       response.onWritable((offset: number): boolean => {
         if ((response as CustomHttpResponse)[abortedSymbol] === true) {
           cleanup();
+
           return false;
         }
 
@@ -88,14 +82,11 @@ export function pipeStreamOverResponse(
           return false;
         }
 
-        const [retryOk, retryDone]: [boolean, boolean] = response.tryEnd(
+        const retryOk: boolean = response.write(
           storedBuffer.slice(offset - storedOffset),
-          storedBuffer.byteLength,
         );
 
-        if (retryDone) {
-          cleanup();
-        } else if (retryOk) {
+        if (retryOk) {
           readableStream.resume();
         }
 
@@ -119,5 +110,9 @@ export function pipeStreamOverResponse(
 
   readableStream.on('end', (): void => {
     cleanup();
+
+    if ((response as CustomHttpResponse)[abortedSymbol] !== true) {
+      response.end();
+    }
   });
 }

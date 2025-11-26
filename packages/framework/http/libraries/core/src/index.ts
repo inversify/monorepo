@@ -17,6 +17,7 @@ import {
 
 import { InversifyHttpAdapter } from './http/adapter/InversifyHttpAdapter';
 import { buildNormalizedPath } from './http/calculations/buildNormalizedPath';
+import { createCustomNativeParameterDecorator } from './http/calculations/createCustomNativeParameterDecorator';
 import { createCustomParameterDecorator } from './http/calculations/createCustomParameterDecorator';
 import { All } from './http/decorators/All';
 import { Body } from './http/decorators/Body';
@@ -37,6 +38,10 @@ import { Request } from './http/decorators/Request';
 import { Response } from './http/decorators/Response';
 import { SetHeader } from './http/decorators/SetHeader';
 import { StatusCode } from './http/decorators/StatusCode';
+import { ControllerOptions } from './http/models/ControllerOptions';
+import { ControllerResponse } from './http/models/ControllerResponse';
+import { CustomNativeParameterDecoratorHandler } from './http/models/CustomNativeParameterDecoratorHandler';
+import { CustomNativeParameterDecoratorHandlerOptions } from './http/models/CustomNativeParameterDecoratorHandlerOptions';
 import { CustomParameterDecoratorHandler } from './http/models/CustomParameterDecoratorHandler';
 import { CustomParameterDecoratorHandlerOptions } from './http/models/CustomParameterDecoratorHandlerOptions';
 import { HttpAdapterOptions } from './http/models/HttpAdapterOptions';
@@ -61,7 +66,10 @@ import { ErrorHttpResponse } from './httpResponse/models/ErrorHttpResponse';
 import { ForbiddenHttpResponse } from './httpResponse/models/ForbiddenHttpResponse';
 import { GatewayTimeoutHttpResponse } from './httpResponse/models/GatewayTimeoutHttpResponse';
 import { GoneHttpResponse } from './httpResponse/models/GoneHttpResponse';
-import { HttpResponse } from './httpResponse/models/HttpResponse';
+import {
+  HttpResponse,
+  isHttpResponse as isHttpResponseSymbol,
+} from './httpResponse/models/HttpResponse';
 import { HttpVersionNotSupportedHttpResponse } from './httpResponse/models/HttpVersionNotSupportedHttpResponse';
 import { InsufficientStorageHttpResponse } from './httpResponse/models/InsufficientStorageHttpResponse';
 import { InternalServerErrorHttpResponse } from './httpResponse/models/InternalServerErrorHttpResponse';
@@ -91,6 +99,10 @@ export type {
   CatchErrorOptions,
   ControllerMetadata,
   ControllerMethodMetadata,
+  ControllerOptions,
+  ControllerResponse,
+  CustomNativeParameterDecoratorHandler,
+  CustomNativeParameterDecoratorHandlerOptions,
   CustomParameterDecoratorHandler,
   CustomParameterDecoratorHandlerOptions,
   ErrorFilter,
@@ -123,6 +135,7 @@ export {
   ContentDifferentHttpResponse,
   Controller,
   Cookies,
+  createCustomNativeParameterDecorator,
   createCustomParameterDecorator,
   CreatedHttpResponse,
   Delete,
@@ -143,6 +156,7 @@ export {
   InternalServerErrorHttpResponse,
   InversifyHttpAdapter,
   isHttpResponse,
+  isHttpResponseSymbol,
   LoopDetectedHttpResponse,
   MethodNotAllowedHttpResponse,
   MiddlewarePhase,
@@ -169,6 +183,7 @@ export {
   Response,
   ServiceUnavailableHttpResponse,
   SetHeader,
+  SuccessHttpResponse,
   StatusCode,
   SuccessHttpResponse,
   UnauthorizedHttpResponse,

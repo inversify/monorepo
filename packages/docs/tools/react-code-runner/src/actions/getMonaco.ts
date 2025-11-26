@@ -10,17 +10,16 @@ export default async function getMonaco(): Promise<typeof monaco> {
   if (monacoImport === undefined) {
     monacoImport = await import('monaco-editor');
 
-    monacoImport.languages.typescript.typescriptDefaults.addExtraLib(
+    monacoImport.typescript.typescriptDefaults.addExtraLib(
       inversifyTypes,
       fakePath,
     );
 
-    monacoImport.languages.typescript.typescriptDefaults.setCompilerOptions({
+    monacoImport.typescript.typescriptDefaults.setCompilerOptions({
       allowSyntheticDefaultImports: true,
       experimentalDecorators: true,
-      moduleResolution:
-        monacoImport.languages.typescript.ModuleResolutionKind.NodeJs,
-      target: monacoImport.languages.typescript.ScriptTarget.ES2020,
+      moduleResolution: monacoImport.typescript.ModuleResolutionKind.NodeJs,
+      target: monacoImport.typescript.ScriptTarget.ES2020,
     });
   }
 

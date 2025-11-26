@@ -1,5 +1,25 @@
 # @inversifyjs/http-core
 
+## 4.6.0
+
+### Minor Changes
+
+- Updated HTTP adapter with `_sendBodySeparator`
+
+### Patch Changes
+
+Add support for custom native parameter decorators
+
+## 4.5.0
+
+### Minor Changes
+
+- Updated `CustomParameterDecoratorHandler` with options param
+- Added `ControllerOptions`
+- Added `ControllerResponse`
+- Added `isHttpResponseSymbol`
+- Updated `InversifyHttpAdapter.applyGlobalMiddleware` to allow passing service identifiers
+
 ## 4.4.0
 
 ### Minor Changes

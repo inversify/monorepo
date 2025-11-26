@@ -13,7 +13,7 @@ describe(isPipe, () => {
   ])(
     'having a value %s',
     (
-      valueFixture: undefined | null | object | { execute: string } | Pipe,
+      valueFixture: undefined | null | object | Pipe,
       expectedResult: boolean,
     ) => {
       describe('when called', () => {

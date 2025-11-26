@@ -21,6 +21,7 @@ import {
   FastifyRequest,
   RouteHandlerMethod,
 } from 'fastify';
+import { HttpHeader } from 'fastify/types/utils';
 import { Container } from 'inversify';
 
 import { FastifyHttpAdapterOptions } from '../models/FastifyHttpAdapterOptions';
@@ -147,6 +148,28 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     value: Readable,
   ): Promise<void> {
     await response.send(value);
+  }
+
+  protected _sendBodySeparator(
+    _request: FastifyRequest,
+    response: FastifyReply,
+  ): void {
+    // Set headers and status code if not already set
+
+    response.raw.statusCode = response.statusCode;
+
+    const responseHeaders: Record<
+      HttpHeader,
+      string | number | string[] | undefined
+    > = response.getHeaders();
+
+    for (const [headerKey, headerValue] of Object.entries(responseHeaders)) {
+      if (headerValue !== undefined) {
+        response.raw.setHeader(headerKey, headerValue);
+      }
+    }
+
+    response.raw.flushHeaders();
   }
 
   protected _setStatus(

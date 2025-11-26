@@ -1,11 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('../calculations/buildRouteParameterDecorator');
+vitest.mock('../calculations/requestParam');
+vitest.mock('../calculations/getOptionsAndPipes');
 
 import { Pipe } from '@inversifyjs/framework-core';
 import { ServiceIdentifier } from 'inversify';
 
-import { buildRouteParameterDecorator } from '../calculations/buildRouteParameterDecorator';
+import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
+import { getOptionsAndPipes } from '../calculations/getOptionsAndPipes';
+import { requestParam } from '../calculations/requestParam';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { Query } from './Query';
 
@@ -22,7 +25,11 @@ describe(Query, () => {
       parameterDecoratorFixture = {} as ParameterDecorator;
 
       vitest
-        .mocked(buildRouteParameterDecorator)
+        .mocked(getOptionsAndPipes)
+        .mockReturnValueOnce([parameterFixture, parameterPipeListFixture]);
+
+      vitest
+        .mocked(requestParam)
         .mockReturnValueOnce(parameterDecoratorFixture);
 
       result = Query(parameterFixture, ...parameterPipeListFixture);
@@ -32,12 +39,14 @@ describe(Query, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call buildRouteParameterDecorator()', () => {
-      expect(buildRouteParameterDecorator).toHaveBeenCalledExactlyOnceWith(
-        RequestMethodParameterType.Query,
-        parameterPipeListFixture,
-        parameterFixture,
-      );
+    it('should call requestParam()', () => {
+      const expected: ControllerMethodParameterMetadata = {
+        parameterName: undefined,
+        parameterType: RequestMethodParameterType.Query,
+        pipeList: parameterPipeListFixture,
+      };
+
+      expect(requestParam).toHaveBeenCalledExactlyOnceWith(expected);
     });
 
     it('should return a ParameterDecorator', () => {

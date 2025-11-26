@@ -2,18 +2,50 @@
 import { Pipe } from '@inversifyjs/framework-core';
 import { ServiceIdentifier } from 'inversify';
 
+import { CustomNativeParameterDecoratorHandler } from '../../http/models/CustomNativeParameterDecoratorHandler';
 import { CustomParameterDecoratorHandler } from '../../http/models/CustomParameterDecoratorHandler';
-import { RequestMethodParameterType } from '../../http/models/RequestMethodParameterType';
+import {
+  NonCustomRequestMethodParameterType,
+  RequestMethodParameterType,
+} from '../../http/models/RequestMethodParameterType';
 
-export interface ControllerMethodParameterMetadata<
-  TRequest = any,
-  TResponse = any,
-  TResult = any,
+interface BaseControllerMethodParameterMetadata<
+  TParamType extends RequestMethodParameterType,
 > {
-  customParameterDecoratorHandler?:
-    | CustomParameterDecoratorHandler<TRequest, TResponse, TResult>
-    | undefined;
-  parameterType: RequestMethodParameterType;
+  parameterType: TParamType;
   parameterName?: string | undefined;
   pipeList: (ServiceIdentifier<Pipe> | Pipe)[];
 }
+
+interface ControllerMethodCustomParameterMetadata<
+  TRequest = any,
+  TResponse = any,
+  TResult = any,
+> extends BaseControllerMethodParameterMetadata<RequestMethodParameterType.Custom> {
+  customParameterDecoratorHandler: CustomParameterDecoratorHandler<
+    TRequest,
+    TResponse,
+    TResult
+  >;
+}
+
+interface ControllerMethodCustomNativeParameterMetadata<
+  TRequest = any,
+  TResponse = any,
+  TResult = any,
+> extends BaseControllerMethodParameterMetadata<RequestMethodParameterType.CustomNative> {
+  customParameterDecoratorHandler: CustomNativeParameterDecoratorHandler<
+    TRequest,
+    TResponse,
+    TResult
+  >;
+}
+
+export type ControllerMethodParameterMetadata<
+  TRequest = any,
+  TResponse = any,
+  TResult = any,
+> =
+  | BaseControllerMethodParameterMetadata<NonCustomRequestMethodParameterType>
+  | ControllerMethodCustomNativeParameterMetadata<TRequest, TResponse, TResult>
+  | ControllerMethodCustomParameterMetadata<TRequest, TResponse, TResult>;

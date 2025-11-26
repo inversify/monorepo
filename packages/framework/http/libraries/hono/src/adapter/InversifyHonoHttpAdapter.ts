@@ -1,5 +1,7 @@
+import { type ServerResponse } from 'node:http';
 import { Readable } from 'node:stream';
 
+import { type HttpBindings } from '@hono/node-server';
 import {
   HttpAdapterOptions,
   HttpStatusCode,
@@ -193,6 +195,37 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     return stream(response, async (stream: StreamingApi): Promise<void> => {
       await stream.pipe(Readable.toWeb(value));
     });
+  }
+
+  protected _sendBodySeparator(_request: HonoRequest, response: Context): void {
+    const rawResponse: ServerResponse | undefined = (
+      response as Context<{ Bindings: Partial<HttpBindings> }>
+    ).env.outgoing;
+
+    if (rawResponse === undefined) {
+      if (this.httpAdapterOptions.logger !== false) {
+        this._logger.warn(
+          'Unable to send body separator, raw response is not defined. Headers will be delivered with the first chunk of the body.',
+        );
+      }
+    } else {
+      // Hono does not understand it must not send headers again later, so we must not flush them here.
+      // See https://github.com/honojs/hono/issues/4537
+
+      // const statusCode: number = response.res.status;
+      // const headers: Headers = response.res.headers;
+
+      // rawResponse.statusCode = statusCode;
+      // rawResponse.setHeaders(headers);
+
+      // rawResponse.flushHeaders();
+
+      if (this.httpAdapterOptions.logger !== false) {
+        this._logger.warn(
+          'Unable to send body separator, raw response is defined but hono is unable to prevent headers from being sent again.',
+        );
+      }
+    }
   }
 
   protected _setStatus(

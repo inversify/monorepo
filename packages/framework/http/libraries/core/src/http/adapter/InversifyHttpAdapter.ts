@@ -35,6 +35,7 @@ import { getErrorFilterForError } from '../calculations/getErrorFilterForError';
 import { Controller } from '../models/Controller';
 import { ControllerFunction } from '../models/ControllerFunction';
 import { ControllerResponse } from '../models/ControllerResponse';
+import { CustomNativeParameterDecoratorHandlerOptions } from '../models/CustomNativeParameterDecoratorHandlerOptions';
 import { CustomParameterDecoratorHandlerOptions } from '../models/CustomParameterDecoratorHandlerOptions';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
 import { HttpStatusCode } from '../models/HttpStatusCode';
@@ -62,6 +63,10 @@ export abstract class InversifyHttpAdapter<
   protected readonly _logger: Logger;
   readonly #awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>;
   readonly #container: Container;
+  readonly #customNativeParameterDecoratorHandlerOptions: CustomNativeParameterDecoratorHandlerOptions<
+    TRequest,
+    TResponse
+  >;
   readonly #customParameterDecoratorHandlerOptions: CustomParameterDecoratorHandlerOptions<
     TRequest,
     TResponse
@@ -94,6 +99,8 @@ export abstract class InversifyHttpAdapter<
     this.#container = container;
     this.#customParameterDecoratorHandlerOptions =
       this.#buildCustomParameterDecoratorHandlerOptions();
+    this.#customNativeParameterDecoratorHandlerOptions =
+      this.#buildCustomNativeParameterDecoratorHandlerOptions();
     this.httpAdapterOptions = this.#parseHttpAdapterOptions(
       defaultHttpAdapterOptions,
       httpAdapterOptions,
@@ -113,7 +120,10 @@ export abstract class InversifyHttpAdapter<
   }
 
   public applyGlobalMiddleware(
-    ...middlewareList: (Newable<Middleware> | ApplyMiddlewareOptions)[]
+    ...middlewareList: (
+      | ServiceIdentifier<Middleware>
+      | ApplyMiddlewareOptions
+    )[]
   ): void {
     if (this.#isBuilt) {
       throw new InversifyHttpAdapterError(
@@ -205,6 +215,23 @@ export abstract class InversifyHttpAdapter<
       getHeaders: this._getHeaders.bind(this),
       getParams: this._getParams.bind(this),
       getQuery: this._getQuery.bind(this),
+      setHeader: this._setHeader.bind(this),
+      setStatus: this._setStatus.bind(this),
+    };
+  }
+
+  #buildCustomNativeParameterDecoratorHandlerOptions(): CustomNativeParameterDecoratorHandlerOptions<
+    TRequest,
+    TResponse
+  > {
+    return {
+      getBody: this._getBody.bind(this),
+      getCookies: this._getCookies.bind(this),
+      getHeaders: this._getHeaders.bind(this),
+      getParams: this._getParams.bind(this),
+      getQuery: this._getQuery.bind(this),
+      send: this.#reply.bind(this),
+      sendBodySeparator: this._sendBodySeparator.bind(this),
       setHeader: this._setHeader.bind(this),
       setStatus: this._setStatus.bind(this),
     };
@@ -449,10 +476,17 @@ export abstract class InversifyHttpAdapter<
               );
           case RequestMethodParameterType.Custom:
             return (request: TRequest, response: TResponse): unknown =>
-              controllerMethodParameterMetadata.customParameterDecoratorHandler?.(
+              controllerMethodParameterMetadata.customParameterDecoratorHandler(
                 request,
                 response,
                 this.#customParameterDecoratorHandlerOptions,
+              );
+          case RequestMethodParameterType.CustomNative:
+            return (request: TRequest, response: TResponse): unknown =>
+              controllerMethodParameterMetadata.customParameterDecoratorHandler(
+                request,
+                response,
+                this.#customNativeParameterDecoratorHandlerOptions,
               );
           case RequestMethodParameterType.Headers:
             return (request: TRequest): unknown =>
@@ -945,6 +979,11 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     value: Readable,
   ): TResult | Promise<TResult>;
+
+  protected abstract _sendBodySeparator(
+    request: TRequest,
+    response: TResponse,
+  ): void | Promise<void>;
 
   protected abstract _setStatus(
     request: TRequest,

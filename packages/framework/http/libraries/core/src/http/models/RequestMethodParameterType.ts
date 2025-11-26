@@ -2,6 +2,7 @@ export enum RequestMethodParameterType {
   Body = 'body',
   Cookies = 'cookies',
   Custom = 'custom',
+  CustomNative = 'customNative',
   Headers = 'headers',
   Next = 'next',
   Params = 'params',
@@ -9,3 +10,8 @@ export enum RequestMethodParameterType {
   Response = 'response',
   Query = 'query',
 }
+
+export type NonCustomRequestMethodParameterType = Exclude<
+  RequestMethodParameterType,
+  RequestMethodParameterType.Custom | RequestMethodParameterType.CustomNative
+>;

@@ -8,9 +8,10 @@
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
-    "@stryker-mutator/core": "9.3.0",
-    "@stryker-mutator/typescript-checker": "9.3.0",
-    "@stryker-mutator/vitest-runner": "9.3.0",
+    "@hono/node-server": "1.19.6",
+    "@stryker-mutator/core": "9.4.0",
+    "@stryker-mutator/typescript-checker": "9.4.0",
+    "@stryker-mutator/vitest-runner": "9.4.0",
     "@types/node": "24.10.1",
     "@vitest/coverage-v8": "4.0.10",
     "eslint": "9.39.1",
@@ -72,5 +73,5 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "version": "4.4.0"
+  "version": "4.6.0"
 }

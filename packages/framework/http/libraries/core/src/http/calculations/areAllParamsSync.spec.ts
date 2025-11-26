@@ -2,23 +2,12 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { Pipe } from '@inversifyjs/framework-core';
 
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { areAllParamsSync } from './areAllParamsSync';
 
 const pipeStub: Pipe = {
   execute: () => undefined,
 };
-
-const createControllerMethodParameterMetadata: (
-  overrides?: Partial<ControllerMethodParameterMetadata>,
-) => ControllerMethodParameterMetadata = (
-  overrides: Partial<ControllerMethodParameterMetadata> = {},
-) => ({
-  parameterType: RequestMethodParameterType.Query,
-  pipeList: [],
-  ...overrides,
-});
 
 describe(areAllParamsSync, () => {
   describe.each<
@@ -34,9 +23,10 @@ describe(areAllParamsSync, () => {
       new Set<RequestMethodParameterType>(),
       [
         undefined,
-        createControllerMethodParameterMetadata({
+        {
           parameterType: RequestMethodParameterType.Cookies,
-        }),
+          pipeList: [],
+        },
       ],
       [],
     ],
@@ -44,7 +34,12 @@ describe(areAllParamsSync, () => {
       'non empty global pipe list',
       false,
       new Set<RequestMethodParameterType>(),
-      [createControllerMethodParameterMetadata()],
+      [
+        {
+          parameterType: RequestMethodParameterType.Query,
+          pipeList: [],
+        },
+      ],
       [pipeStub],
     ],
     [
@@ -52,9 +47,10 @@ describe(areAllParamsSync, () => {
       false,
       new Set<RequestMethodParameterType>(),
       [
-        createControllerMethodParameterMetadata({
+        {
+          parameterType: RequestMethodParameterType.Query,
           pipeList: [pipeStub],
-        }),
+        },
       ],
       [],
     ],
@@ -63,9 +59,10 @@ describe(areAllParamsSync, () => {
       false,
       new Set<RequestMethodParameterType>([RequestMethodParameterType.Body]),
       [
-        createControllerMethodParameterMetadata({
+        {
           parameterType: RequestMethodParameterType.Body,
-        }),
+          pipeList: [],
+        },
       ],
       [],
     ],
