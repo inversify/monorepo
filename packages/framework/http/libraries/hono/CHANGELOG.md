@@ -1,5 +1,18 @@
 # @inversifyjs/http-hono
 
+## 4.6.0
+
+### Minor Changes
+
+- Updated HTTP adapter with `_sendBodySeparator`
+
+### Patch Changes
+
+Add support for custom native parameter decorators
+
+- Updated dependencies
+  - @inversifyjs/http-core@4.6.0
+
 ## 4.5.0
 
 ### Patch Changes

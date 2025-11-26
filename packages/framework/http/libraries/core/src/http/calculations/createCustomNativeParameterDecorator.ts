@@ -3,17 +3,23 @@ import { ServiceIdentifier } from 'inversify';
 
 import { CustomNativeParameterDecoratorHandler } from '../models/CustomNativeParameterDecoratorHandler';
 import { buildCustomNativeControllerMethodParameterMetadata } from './buildCustomNativeControllerMethodParameterMetadata';
-import { requestParam } from './requestParam';
+import { nativeRequestParam } from './nativeRequestParam';
 
 export function createCustomNativeParameterDecorator<
   TRequest,
   TResponse,
+  TDecoratorResult,
   TResult,
 >(
-  handler: CustomNativeParameterDecoratorHandler<TRequest, TResponse, TResult>,
+  handler: CustomNativeParameterDecoratorHandler<
+    TRequest,
+    TResponse,
+    TDecoratorResult,
+    TResult
+  >,
   ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
 ): ParameterDecorator {
-  return requestParam(
+  return nativeRequestParam(
     buildCustomNativeControllerMethodParameterMetadata(
       parameterPipeList,
       handler,

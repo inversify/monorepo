@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('./requestParam');
+vitest.mock('./nativeRequestParam');
 
 import { Pipe } from '@inversifyjs/framework-core';
 import { ServiceIdentifier } from 'inversify';
@@ -9,7 +9,7 @@ import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/Co
 import { CustomNativeParameterDecoratorHandler } from '../models/CustomNativeParameterDecoratorHandler';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
 import { createCustomNativeParameterDecorator } from './createCustomNativeParameterDecorator';
-import { requestParam } from './requestParam';
+import { nativeRequestParam } from './nativeRequestParam';
 
 describe(createCustomNativeParameterDecorator, () => {
   describe('when called', () => {
@@ -25,7 +25,7 @@ describe(createCustomNativeParameterDecorator, () => {
       parameterDecoratorFixture = {} as ParameterDecorator;
 
       vitest
-        .mocked(requestParam)
+        .mocked(nativeRequestParam)
         .mockReturnValueOnce(parameterDecoratorFixture);
 
       result = createCustomNativeParameterDecorator(
@@ -38,7 +38,7 @@ describe(createCustomNativeParameterDecorator, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call requestParam()', () => {
+    it('should call nativeRequestParam()', () => {
       const expected: ControllerMethodParameterMetadata = {
         customParameterDecoratorHandler: handlerFixture,
         parameterName: undefined,
@@ -46,7 +46,7 @@ describe(createCustomNativeParameterDecorator, () => {
         pipeList: parameterPipeListFixture,
       };
 
-      expect(requestParam).toHaveBeenCalledExactlyOnceWith(expected);
+      expect(nativeRequestParam).toHaveBeenCalledExactlyOnceWith(expected);
     });
 
     it('should return expected result', () => {

@@ -61,7 +61,7 @@
   },
   "name": "@inversifyjs/http-better-auth",
   "peerDependencies": {
-    "better-auth": "^1.4.1",
+    "better-auth": "^1.4.2",
     "inversify": "^7.10.4"
   },
   "publishConfig": {
@@ -86,5 +86,5 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "version": "4.5.0"
+  "version": "4.6.0"
 }
