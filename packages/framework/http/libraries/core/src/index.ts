@@ -78,6 +78,7 @@ import { PartialContentHttpResponse } from './httpResponse/models/PartialContent
 import { PaymentRequiredHttpResponse } from './httpResponse/models/PaymentRequiredHttpResponse';
 import { ResetContentHttpResponse } from './httpResponse/models/ResetContentHttpResponse';
 import { ServiceUnavailableHttpResponse } from './httpResponse/models/ServiceUnavailableHttpResponse';
+import { SuccessHttpResponse } from './httpResponse/models/SuccessHttpResponse';
 import { UnauthorizedHttpResponse } from './httpResponse/models/UnauthorizedHttpResponse';
 import { UnprocessableEntityHttpResponse } from './httpResponse/models/UnprocessableEntityHttpResponse';
 import { handleMiddlewareList } from './middleware/actions/handleMiddlewareList';
@@ -169,6 +170,7 @@ export {
   ServiceUnavailableHttpResponse,
   SetHeader,
   StatusCode,
+  SuccessHttpResponse,
   UnauthorizedHttpResponse,
   UnprocessableEntityHttpResponse,
   UseErrorFilter,
