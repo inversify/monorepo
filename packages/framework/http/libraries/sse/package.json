@@ -5,21 +5,36 @@
   },
   "description": "InversifyJs http sse package",
   "dependencies": {
+    "@inversifyjs/framework-core": "workspace:*",
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
+    "@hono/node-server": "1.19.6",
+    "@inversifyjs/http-express": "workspace:*",
+    "@inversifyjs/http-express-v4": "workspace:*",
+    "@inversifyjs/http-fastify": "workspace:*",
+    "@inversifyjs/http-hono": "workspace:*",
+    "@inversifyjs/http-uwebsockets": "workspace:*",
     "@stryker-mutator/core": "9.3.0",
     "@stryker-mutator/typescript-checker": "9.3.0",
     "@stryker-mutator/vitest-runner": "9.3.0",
+    "@types/express": "5.0.5",
+    "@types/express4": "npm:@types/express@4.17.25",
     "@types/node": "24.10.0",
     "@vitest/coverage-v8": "4.0.8",
     "eslint": "9.39.1",
+    "express": "5.1.0",
+    "express4": "npm:express@4.21.2",
+    "fastify": "5.6.2",
+    "hono": "4.10.7",
+    "inversify": "7.10.4",
     "prettier": "3.6.2",
     "rimraf": "6.1.0",
     "rollup": "4.53.2",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0",
     "vitest": "4.0.8"
   },
   "devEngines": {
@@ -67,5 +82,5 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "version": "4.3.0"
+  "version": "1.0.0"
 }
