@@ -63,7 +63,11 @@ export function pipeStreamOverResponse(
 
     const lastOffset: number = response.getWriteOffset();
 
-    const ok: boolean = response.write(arrayBuffer);
+    let ok: boolean = true as boolean;
+
+    response.cork((): void => {
+      ok = response.write(arrayBuffer);
+    });
 
     if (!ok) {
       readableStream.pause();
@@ -82,9 +86,15 @@ export function pipeStreamOverResponse(
           return false;
         }
 
-        const retryOk: boolean = response.write(
-          storedBuffer.slice(offset - storedOffset),
-        );
+        let retryOk: boolean = true as boolean;
+
+        response.cork((): void => {
+          retryOk = response.write(
+            (storedBuffer as ArrayBuffer).slice(
+              offset - (storedOffset as number),
+            ),
+          );
+        });
 
         if (retryOk) {
           readableStream.resume();
@@ -112,7 +122,9 @@ export function pipeStreamOverResponse(
     cleanup();
 
     if ((response as CustomHttpResponse)[abortedSymbol] !== true) {
-      response.end();
+      response.cork((): void => {
+        response.end();
+      });
     }
   });
 }

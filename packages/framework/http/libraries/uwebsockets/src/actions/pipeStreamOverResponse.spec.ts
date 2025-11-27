@@ -31,7 +31,9 @@ describe(pipeStreamOverResponse, () => {
       } as Partial<Mocked<Readable>> as Mocked<Readable>;
 
       responseMock = {
-        cork: vitest.fn(),
+        cork: vitest.fn().mockImplementation((callback: () => void) => {
+          callback();
+        }),
         end: vitest.fn(),
         getWriteOffset: vitest.fn(),
         onAborted: vitest.fn(),
