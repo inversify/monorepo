@@ -59,7 +59,7 @@ export function BuildSsePublisher<TResult = any>(
           'content-type',
           'text/event-stream',
         );
-        options.setHeader(request, response, 'expire', '0');
+        options.setHeader(request, response, 'expires', '0');
         options.setHeader(request, response, 'pragma', 'no-cache');
         options.setHeader(request, response, 'connection', 'keep-alive');
         // NGINX support https://www.nginx.com/resources/wiki/start/topics/examples/x-accel/#x-accel-buffering
