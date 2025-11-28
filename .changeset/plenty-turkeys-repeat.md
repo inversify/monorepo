@@ -3,6 +3,6 @@
 ---
 
 - Added `MessageEvent`
+- Added `SsePublisher`
 - Added `SsePublisherOptions`
 - Added `SseStream`
-- Added `BuildSsePublisher`

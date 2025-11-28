@@ -9,12 +9,12 @@ import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFa
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
 import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer';
 import { Server } from '../../server/models/Server';
-import { MessageEvent } from '../../sse/models/MessageEvent';
 import { SseStream } from '../../stream/models/SseStream';
+import { MessageEvent } from '../models/MessageEvent';
 import { SsePublisherOptions } from '../models/SsePublisherOptions';
-import { BuildSsePublisher } from './BuildSsePublisher';
+import { SsePublisher } from './SsePublisher';
 
-describe(BuildSsePublisher, () => {
+describe(SsePublisher, () => {
   describe.each<[(container: Container) => Promise<Server>]>([
     [buildExpress4Server],
     [buildExpressServer],
@@ -33,10 +33,10 @@ describe(BuildSsePublisher, () => {
       class MessagesController {
         @Get()
         public getMessages(
-          @BuildSsePublisher()
-          buildSsePublisher: (sseOptions: SsePublisherOptions) => unknown,
+          @SsePublisher()
+          ssePublisher: (sseOptions: SsePublisherOptions) => unknown,
         ): unknown {
-          return buildSsePublisher({
+          return ssePublisher({
             events: this.#yieldData.bind(this)(),
           });
         }
@@ -144,10 +144,10 @@ describe(BuildSsePublisher, () => {
       class MessagesController {
         @Get()
         public getMessages(
-          @BuildSsePublisher()
-          buildSsePublisher: (sseOptions: SsePublisherOptions) => unknown,
+          @SsePublisher()
+          ssePublisher: (sseOptions: SsePublisherOptions) => unknown,
         ): unknown {
-          return buildSsePublisher({
+          return ssePublisher({
             events: this.#yieldData.bind(this)(),
           });
         }
@@ -256,25 +256,25 @@ describe(BuildSsePublisher, () => {
       class MessagesController {
         @Get()
         public getMessages(
-          @BuildSsePublisher()
-          buildSsePublisher: (sseOptions: SsePublisherOptions) => unknown,
+          @SsePublisher()
+          ssePublisher: (sseOptions: SsePublisherOptions) => unknown,
         ): unknown {
           const sseStream: SseStream = new SseStream();
 
           void this.#yieldData(sseStream);
 
-          return buildSsePublisher({
+          return ssePublisher({
             events: sseStream,
           });
         }
 
         async #yieldData(stream: SseStream): Promise<void> {
-          stream.writeMessageEvent({ data: 'message 1' });
+          await stream.writeMessageEvent({ data: 'message 1' });
 
           await yieldPromise;
 
-          stream.writeMessageEvent({ data: 'message 2' });
-          stream.writeMessageEvent({ data: 'message 3' });
+          await stream.writeMessageEvent({ data: 'message 2' });
+          await stream.writeMessageEvent({ data: 'message 3' });
 
           stream.end();
         }

@@ -22,7 +22,7 @@ async function* mapMessageEventAsyncIterable(
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-unnecessary-type-parameters, @typescript-eslint/no-explicit-any
-export function BuildSsePublisher<TResult = any>(
+export function SsePublisher<TResult = any>(
   ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
 ): ParameterDecorator {
   return createCustomNativeParameterDecorator<
