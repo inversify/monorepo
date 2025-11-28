@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { createReadStream, type Stats, statSync } from 'node:fs';
+import { createReadStream } from 'node:fs';
+import { stat } from 'node:fs/promises';
 import { Readable } from 'node:stream';
 
 import {
@@ -55,13 +56,12 @@ const FileStream: () => ParameterDecorator = () =>
         HttpResponse,
         undefined
       >,
-    ): ((streamOptions: FileStreamOptions) => void) => {
-      return (streamOptions: FileStreamOptions): void => {
+    ): ((streamOptions: FileStreamOptions) => Promise<void>) => {
+      return async (streamOptions: FileStreamOptions): Promise<void> => {
         const { contentType, filePath }: FileStreamOptions = streamOptions;
 
         // Get file size for Content-Length header
-        const stats: Stats = statSync(filePath);
-        const fileSize: number = stats.size;
+        const fileSize: number = (await stat(filePath)).size;
 
         // Set response headers
         options.setStatus(_request, response, HttpStatusCode.OK);
@@ -78,7 +78,6 @@ const FileStream: () => ParameterDecorator = () =>
           contentType ?? 'application/octet-stream',
         );
 
-        // Create a readable stream from the file
         const fileStream: Readable = createReadStream(filePath);
 
         // Use uWebSockets.js native streaming with known size
@@ -96,13 +95,13 @@ const FileStream: () => ParameterDecorator = () =>
 @Controller('/files')
 export class FileStreamController {
   @Get(':filename')
-  public streamFile(
+  public async streamFile(
     // SECURITY: Always sanitize your inputs. Validate filename to prevent path traversal attacks
     @Params({ name: 'filename' }, ValidFilenamePipe) filename: string,
-    @FileStream() stream: (options: FileStreamOptions) => void,
-  ): void {
+    @FileStream() stream: (options: FileStreamOptions) => Promise<void>,
+  ): Promise<void> {
     // Stream the file with appropriate content type
-    stream({
+    await stream({
       contentType: 'video/mp4',
       filePath: `/var/www/files/${filename}`,
     });
