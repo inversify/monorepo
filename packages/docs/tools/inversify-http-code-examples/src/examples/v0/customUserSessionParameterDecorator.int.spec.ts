@@ -8,9 +8,9 @@ import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFa
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
 import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer';
 import { Server } from '../../server/models/Server';
-import { User } from './controllerNonNativeTypes';
 import {
   AuthMiddleware,
+  User,
   UsersController,
 } from './customUserSessionParameterDecorator';
 

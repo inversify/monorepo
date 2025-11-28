@@ -22,15 +22,6 @@ export interface FileStreamOptions {
   contentType?: string;
 }
 
-/**
- * Validates that a filename doesn't contain path traversal sequences
- * to prevent directory traversal attacks (e.g., '../../../etc/passwd')
- */
-function isValidFilename(filename: string): boolean {
-  // Reject filenames containing path traversal sequences or absolute paths
-  return !/[/\\]|\.\./.test(filename);
-}
-
 @injectable()
 class ValidFilenamePipe implements Pipe<unknown, string> {
   public execute(input: unknown, metadata: PipeMetadata): string {
