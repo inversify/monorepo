@@ -4,6 +4,8 @@ title: Decorator
 ---
 import controllerApiPrioritySource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiPriority.ts.txt';
 import controllerApiPriorityExpress5Source from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiPriorityExpress5.ts.txt';
+import customUserSessionParameterDecoratorSource from '@inversifyjs/http-code-examples/generated/examples/v0/customUserSessionParameterDecorator.ts.txt'
+import customFileStreamParameterDecoratorUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/customFileStreamParameterDecoratorUwebsockets.ts.txt';
 import decoratorApiAllSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiAll.ts.txt';
 import decoratorApiApplyMiddlewareControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiApplyMiddlewareController.ts.txt';
 import decoratorApiApplyMiddlewareRouteSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiApplyMiddlewareRoute.ts.txt';
@@ -472,6 +474,73 @@ Notes
     <CodeBlock language="ts">{controllerApiPrioritySource}</CodeBlock>
   </TabItem>
 </Tabs>
+
+## Custom decorators
+
+### createCustomParameterDecorator
+
+`createCustomParameterDecorator` allows you to define your own decorators to be used in route handler parameters.
+
+```ts
+createCustomParameterDecorator<TRequest, TResponse, TResult>(
+  handler: CustomParameterDecoratorHandler<TRequest, TResponse, TResult>,
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Parameters
+
+- `handler` (optional): Parameter decorator handler. It takes a `request`, a `response` and `CustomParameterDecoratorHandlerOptions` that can be used to read request values or write response status code or headers.
+- `parameterPipeList` (optional): List of pipes to be applied.
+
+#### Example: user custom decorator
+
+Asuming an auth middleware lets user details in a `user` property of a given `request`, we can easily create a custom decorator to provide such user details as follows:
+
+<CodeBlock language="ts">{customUserSessionParameterDecoratorSource}</CodeBlock>
+
+### createCustomNativeParameterDecorator
+
+`createCustomNativeParameterDecorator` allows you to define your own decorators to be used in route handler parameters.
+
+:::warning[Native mode]
+  Using a custom native parameter decorator in a route handler forces the native mode.
+:::
+
+```ts
+createCustomNativeParameterDecorator<
+  TRequest,
+  TResponse,
+  TDecoratorResult,
+  TResult,
+>(
+  handler: CustomNativeParameterDecoratorHandler<
+    TRequest,
+    TResponse,
+    TDecoratorResult,
+    TResult
+  >,
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Parameters
+
+- `handler` (optional): Parameter decorator handler. It takes a `request`, a `response` and `CustomNativeParameterDecoratorHandlerOptions` that can be used to read request values or write response status code, headers or body.
+- `parameterPipeList` (optional): List of pipes to be applied.
+
+#### Example: uWebSockets file stream decorator
+
+Streams are often used in http frameworks to handle large files or data transfers efficiently. Using a stream has its downsides.
+For example, there's no way to tell what's the current size of the file if we just pass it as a stream. No Content-Length header
+is expected in the http response either. To solve this, we can create a custom decorator that reads the file metadata and uses
+uWebSockets.js's native response methods to set the appropriate headers before streaming the file content, avoiding using chunked
+transfer encoding in favor of providing Content-Length.
+
+Since we are using the decorator to write directly a response body, we need to force the native mode by using `createCustomNativeParameterDecorator`.
+Otherwise, the framework would try to send status codes and headers after the body has been written, which is simply not possible due to the nature of HTTP.
+
+<CodeBlock language="ts">{customFileStreamParameterDecoratorUwebsocketsSource}</CodeBlock>
 
 ## HTTP methods
 
