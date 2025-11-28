@@ -9,6 +9,8 @@ const isSseStreamSymbol: unique symbol = Symbol.for(
 
 export class SseStream extends Readable {
   public readonly [isSseStreamSymbol]: boolean = true;
+  #readyPromise: Promise<void> | null = null;
+  #readyResolve: (() => void) | null = null;
 
   public static is(value: unknown): value is SseStream {
     return (
@@ -19,11 +21,31 @@ export class SseStream extends Readable {
   }
 
   public override _read(_size: number): void {
-    // Do nothing
+    if (this.#readyResolve !== null) {
+      this.#readyResolve();
+      this.#readyResolve = null;
+      this.#readyPromise = null;
+    }
   }
 
-  public writeMessageEvent(event: MessageEvent): boolean {
-    return this.push(stringifyMessageEvent(event));
+  public async writeMessageEvent(event: MessageEvent): Promise<void> {
+    // Wait for any existing backpressure to resolve before pushing
+    if (this.#readyPromise !== null) {
+      await this.#readyPromise;
+    }
+
+    const canContinue: boolean = this.push(stringifyMessageEvent(event));
+
+    if (canContinue) {
+      return;
+    }
+
+    // Buffer is full, wait for _read() to be called
+    this.#readyPromise = new Promise<void>((resolve: () => void) => {
+      this.#readyResolve = resolve;
+    });
+
+    return this.#readyPromise;
   }
 
   public end(): void {
