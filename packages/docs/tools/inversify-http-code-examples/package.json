@@ -13,6 +13,7 @@
     "@inversifyjs/http-express-v4": "workspace:*",
     "@inversifyjs/http-fastify": "workspace:*",
     "@inversifyjs/http-hono": "workspace:*",
+    "@inversifyjs/http-sse": "workspace:*",
     "@inversifyjs/http-uwebsockets": "workspace:*",
     "@inversifyjs/logger": "workspace:*",
     "@types/better-sqlite3": "7.6.13",
