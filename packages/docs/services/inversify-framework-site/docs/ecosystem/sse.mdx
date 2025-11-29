@@ -1,0 +1,138 @@
+---
+sidebar_position: 4
+title: Server-Sent Events (SSE)
+---
+
+import ecosystemSseBasicUsageSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemSseBasicUsage.ts.txt';
+import ecosystemSseMessageEventTypesSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemSseMessageEventTypes.ts.txt';
+import ecosystemSseSseStreamSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemSseSseStream.ts.txt';
+import ecosystemSseWithStatusCodeSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemSseWithStatusCode.ts.txt';
+import ecosystemSseRealTimeChatSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemSseRealTimeChat.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+The `@inversifyjs/http-sse` package provides a type-safe, adapter-agnostic way to stream server-sent events (SSE) from your Inversify HTTP controllers. Send real-time updates to clients over standard HTTP connections using a simple, decorator-driven API that works across Express 4/5, Fastify, Hono, and uWebSockets.js.
+
+## What is Server-Sent Events?
+
+Server-Sent Events (SSE) is a web standard for pushing real-time updates from server to client over HTTP. Unlike WebSockets, SSE is unidirectional (server → client), uses plain HTTP, and automatically handles reconnection. It's perfect for:
+
+- Live notifications and alerts
+- Real-time dashboards and metrics
+- Chat applications (server broadcasts)
+- Progress tracking for long-running operations
+- Event logs and activity streams
+
+## Key features
+
+- **Adapter agnostic**: Works with Express 4/5, Fastify, Hono, and uWebSockets.js
+- **Type-safe**: Full TypeScript support with typed message events
+- **Backpressure handling**: Built-in stream management prevents overwhelming clients
+- **Flexible API**: Use async generators or `SseStream` for manual control
+- **Standards compliant**: Follows W3C Server-Sent Events specification
+
+## Installation
+
+```bash
+npm install @inversifyjs/http-sse
+```
+
+The package has peer dependencies on `@inversifyjs/framework-core` and `@inversifyjs/http-core`, which are typically already installed when using the Inversify HTTP framework.
+
+## Basic usage
+
+Use the `@SsePublisher()` decorator to inject an SSE publisher function into your controller method. Pass it an async generator that yields message events:
+
+<CodeBlock language="ts">{ecosystemSseBasicUsageSource}</CodeBlock>
+
+The client receives events in the standard SSE format:
+
+```
+data: Event 1
+
+data: Event 2
+
+data: Event 3
+
+```
+
+## Message event structure
+
+Each message event supports multiple fields that control how the client processes it:
+
+<CodeBlock language="ts">{ecosystemSseMessageEventTypesSource}</CodeBlock>
+
+**MessageEvent fields:**
+
+- `data`: Message content (string or array of strings for multi-line data)
+- `type`: Event type for client-side filtering (triggers custom event listeners)
+- `id`: Unique identifier that clients send back when reconnecting
+- `retry`: Milliseconds before client should retry on connection loss
+
+## Using SseStream for manual control
+
+For scenarios where you need manual control over when events are sent, use `SseStream`. This is a Node.js Readable stream with built-in backpressure handling:
+
+<CodeBlock language="ts">{ecosystemSseSseStreamSource}</CodeBlock>
+
+**SseStream benefits:**
+
+- Full control over event timing
+- Automatic backpressure handling (waits when client buffer is full)
+- Can be passed around to other services
+- Supports both push and pull patterns
+
+## Custom status codes
+
+By default, SSE connections return `200 OK`. You can customize the status code:
+
+<CodeBlock language="ts">{ecosystemSseWithStatusCodeSource}</CodeBlock>
+
+## Real-world example: Live chat
+
+Here's a complete example showing how to build a broadcast-style chat system with SSE:
+
+<CodeBlock language="ts">{ecosystemSseRealTimeChatSource}</CodeBlock>
+
+**How it works:**
+
+1. Clients connect to `/chat/stream` and receive an SSE stream
+2. `ChatService` manages multiple active streams
+3. When a message is posted to `/chat/send`, it's broadcast to all connected clients
+4. Streams are automatically cleaned up when clients disconnect
+
+## HTTP headers
+
+The SSE publisher automatically sets the appropriate headers for SSE connections:
+
+- `Content-Type: text/event-stream`
+- `Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0, no-transform`
+- `Connection: keep-alive`
+- `Transfer-Encoding: chunked`
+- `X-Accel-Buffering: no` (for NGINX support)
+
+## Client-side usage
+
+Connect to your SSE endpoint from the browser using the standard EventSource API:
+
+```typescript
+// Basic connection
+const eventSource = new EventSource('/events');
+
+eventSource.onmessage = (event) => {
+  console.log('Received:', event.data);
+};
+
+// Listen for custom event types
+eventSource.addEventListener('notification', (event) => {
+  console.log('Notification:', event.data);
+});
+
+// Handle errors and reconnection
+eventSource.onerror = (error) => {
+  console.error('Connection error:', error);
+  // Browser automatically reconnects
+};
+
+// Close when done
+eventSource.close();
+```
