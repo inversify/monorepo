@@ -1,7 +1,8 @@
-import { type ServerResponse } from 'node:http';
+import http from 'node:http';
+import http2 from 'node:http2';
 import { Readable } from 'node:stream';
 
-import { type HttpBindings } from '@hono/node-server';
+import { type Http2Bindings, type HttpBindings } from '@hono/node-server';
 import {
   HttpAdapterOptions,
   HttpStatusCode,
@@ -198,8 +199,11 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected _sendBodySeparator(_request: HonoRequest, response: Context): void {
-    const rawResponse: ServerResponse | undefined = (
-      response as Context<{ Bindings: Partial<HttpBindings> }>
+    const rawResponse:
+      | http.ServerResponse
+      | http2.Http2ServerResponse
+      | undefined = (
+      response as Context<{ Bindings: Partial<HttpBindings | Http2Bindings> }>
     ).env.outgoing;
 
     if (rawResponse === undefined) {
