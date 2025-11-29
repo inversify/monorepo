@@ -5,8 +5,7 @@ import { SchemaPropertyMetadata } from './SchemaPropertyMetadata';
 import { SchemaReferencesMetadata } from './SchemaReferencesMetadata';
 
 export interface SchemaMetadata
-  extends ReferencedSchemaMetadata,
-    SchemaReferencesMetadata {
+  extends ReferencedSchemaMetadata, SchemaReferencesMetadata {
   customAttributes: OpenApi3Dot1SchemaObject | undefined;
   name: string | undefined;
   properties: Map<string, SchemaPropertyMetadata>;

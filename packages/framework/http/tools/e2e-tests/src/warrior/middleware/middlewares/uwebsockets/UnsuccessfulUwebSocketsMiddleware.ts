@@ -4,9 +4,7 @@ import { injectable } from 'inversify';
 import { HttpRequest, HttpResponse } from 'uWebSockets.js';
 
 @injectable()
-export class UnsuccessfulUwebSocketsMiddleware
-  implements UwebSocketsMiddleware
-{
+export class UnsuccessfulUwebSocketsMiddleware implements UwebSocketsMiddleware {
   public async execute(
     _request: HttpRequest,
     response: HttpResponse,

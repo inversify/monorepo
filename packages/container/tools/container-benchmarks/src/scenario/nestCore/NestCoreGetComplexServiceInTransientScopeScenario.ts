@@ -184,9 +184,7 @@ class Node1 {
 })
 class ContainerModule {}
 
-export class NestCoreGetComplexServiceInTransientScopeScenario
-  implements Scenario<Platform>
-{
+export class NestCoreGetComplexServiceInTransientScopeScenario implements Scenario<Platform> {
   public readonly platform: Platform;
 
   #context!: INestApplicationContext;

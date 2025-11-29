@@ -6,9 +6,12 @@ import {
 } from '@inversifyjs/validation-common';
 
 @CatchError(InversifyValidationError)
-export class InversifyValidationErrorFilter
-  implements ErrorFilter<InversifyValidationError, unknown, unknown, unknown>
-{
+export class InversifyValidationErrorFilter implements ErrorFilter<
+  InversifyValidationError,
+  unknown,
+  unknown,
+  unknown
+> {
   public catch(error: InversifyValidationError): never {
     if (error.kind === InversifyValidationErrorKind.validationFailed) {
       throw new BadRequestHttpResponse(

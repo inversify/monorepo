@@ -77,9 +77,9 @@ import {
   ResolvedValueMetadataInjectTagOptions,
 } from './ResolvedValueInjectOptions';
 
-export class BindInFluentSyntaxImplementation<T>
-  implements BindInFluentSyntax<T>
-{
+export class BindInFluentSyntaxImplementation<
+  T,
+> implements BindInFluentSyntax<T> {
   readonly #binding: Writable<ScopedBinding<BindingType, BindingScope, T>>;
 
   constructor(binding: Writable<ScopedBinding<BindingType, BindingScope, T>>) {
@@ -109,9 +109,9 @@ export class BindInFluentSyntaxImplementation<T>
   }
 }
 
-export class BindToFluentSyntaxImplementation<T>
-  implements BindToFluentSyntax<T>
-{
+export class BindToFluentSyntaxImplementation<
+  T,
+> implements BindToFluentSyntax<T> {
   readonly #callback: (binding: Binding<T>) => void;
   readonly #containerModuleId: number | undefined;
   readonly #defaultScope: BindingScope;
@@ -385,9 +385,9 @@ export class BindToFluentSyntaxImplementation<T>
   }
 }
 
-export class BindOnFluentSyntaxImplementation<T>
-  implements BindOnFluentSyntax<T>
-{
+export class BindOnFluentSyntaxImplementation<
+  T,
+> implements BindOnFluentSyntax<T> {
   readonly #binding: Writable<ScopedBinding<BindingType, BindingScope, T>>;
 
   constructor(binding: Writable<ScopedBinding<BindingType, BindingScope, T>>) {
@@ -422,9 +422,9 @@ export class BindOnFluentSyntaxImplementation<T>
   }
 }
 
-export class BindWhenFluentSyntaxImplementation<T>
-  implements BindWhenFluentSyntax<T>
-{
+export class BindWhenFluentSyntaxImplementation<
+  T,
+> implements BindWhenFluentSyntax<T> {
   readonly #binding: Writable<ScopedBinding<BindingType, BindingScope, T>>;
 
   constructor(binding: Writable<ScopedBinding<BindingType, BindingScope, T>>) {

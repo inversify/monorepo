@@ -15,9 +15,7 @@ interface MtgCard {
   color: string;
 }
 
-export class LorcanaCardCatalogProvider
-  implements CardCatalogProvider<LorcanaCard>
-{
+export class LorcanaCardCatalogProvider implements CardCatalogProvider<LorcanaCard> {
   public async fetch(_limit: number, _offset: number): Promise<LorcanaCard[]> {
     return [];
   }

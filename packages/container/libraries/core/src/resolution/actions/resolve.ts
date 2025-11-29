@@ -60,8 +60,8 @@ const resolveInstanceBindingNode: <
 
 const resolveResolvedValueBindingNode: <
   TActivated,
-  TBinding extends
-    ResolvedValueBinding<TActivated> = ResolvedValueBinding<TActivated>,
+  TBinding extends ResolvedValueBinding<TActivated> =
+    ResolvedValueBinding<TActivated>,
 >(
   params: ResolutionParams,
   node: ResolvedValueBindingNode<TBinding>,

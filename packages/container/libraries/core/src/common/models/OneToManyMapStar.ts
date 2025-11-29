@@ -15,9 +15,10 @@ type RelationToModelMap<TModel, TRelation extends object> = {
 /**
  * Data structure able to efficiently manage a set of models related to a set of properties in a one to many relation.
  */
-export class OneToManyMapStar<TModel, TRelation extends object>
-  implements Cloneable<OneToManyMapStar<TModel, TRelation>>
-{
+export class OneToManyMapStar<
+  TModel,
+  TRelation extends object,
+> implements Cloneable<OneToManyMapStar<TModel, TRelation>> {
   readonly #modelToRelationMap: Map<TModel, TRelation[]>;
   readonly #relationToModelsMaps: RelationToModelMap<TModel, TRelation>;
   readonly #spec: OneToManyMapStartSpec<TRelation>;

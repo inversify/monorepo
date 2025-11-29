@@ -56,8 +56,7 @@ export interface BindInFluentSyntax<T> extends BoundServiceSyntax {
 }
 
 export interface BindInWhenOnFluentSyntax<T>
-  extends BindInFluentSyntax<T>,
-    BindWhenOnFluentSyntax<T> {}
+  extends BindInFluentSyntax<T>, BindWhenOnFluentSyntax<T> {}
 
 export interface BindOnFluentSyntax<T> extends BoundServiceSyntax {
   onActivation(activation: BindingActivation<T>): BindWhenFluentSyntax<T>;
@@ -65,8 +64,7 @@ export interface BindOnFluentSyntax<T> extends BoundServiceSyntax {
 }
 
 export interface BindWhenOnFluentSyntax<T>
-  extends BindWhenFluentSyntax<T>,
-    BindOnFluentSyntax<T> {}
+  extends BindWhenFluentSyntax<T>, BindOnFluentSyntax<T> {}
 
 export interface BindWhenFluentSyntax<T> extends BoundServiceSyntax {
   when(

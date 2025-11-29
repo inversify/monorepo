@@ -5,9 +5,7 @@ import {
 import { UwebSocketsInterceptor } from '@inversifyjs/http-uwebsockets';
 import { HttpRequest, HttpResponse } from 'uWebSockets.js';
 
-export class WarriorRouteUwebSocketsInterceptor
-  implements UwebSocketsInterceptor
-{
+export class WarriorRouteUwebSocketsInterceptor implements UwebSocketsInterceptor {
   public async intercept(
     _request: HttpRequest,
     response: HttpResponse,
