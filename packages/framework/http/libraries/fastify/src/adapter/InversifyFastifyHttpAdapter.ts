@@ -1,3 +1,5 @@
+import http from 'node:http';
+import http2 from 'node:http2';
 import { Readable } from 'node:stream';
 
 import cookie, { FastifyCookieOptions } from '@fastify/cookie';
@@ -19,6 +21,7 @@ import {
   FastifyPluginCallback,
   FastifyReply,
   FastifyRequest,
+  RouteGenericInterface,
   RouteHandlerMethod,
 } from 'fastify';
 import { HttpHeader } from 'fastify/types/utils';
@@ -26,9 +29,22 @@ import { Container } from 'inversify';
 
 import { FastifyHttpAdapterOptions } from '../models/FastifyHttpAdapterOptions';
 
+type InversifyFastifyRequest = FastifyRequest<
+  RouteGenericInterface,
+  http.Server | http2.Http2Server,
+  http.IncomingMessage | http2.Http2ServerRequest
+>;
+
+type InversifyFastifyReply = FastifyReply<
+  RouteGenericInterface,
+  http.Server | http2.Http2Server,
+  http.IncomingMessage | http2.Http2ServerRequest,
+  http.ServerResponse | http2.Http2ServerResponse
+>;
+
 export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
-  FastifyRequest,
-  FastifyReply,
+  InversifyFastifyRequest,
+  InversifyFastifyReply,
   () => void,
   void,
   FastifyHttpAdapterOptions
@@ -61,8 +77,8 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected _getBody(
-    request: FastifyRequest,
-    _response: FastifyReply,
+    request: InversifyFastifyRequest,
+    _response: InversifyFastifyReply,
     parameterName?: string,
   ): unknown {
     if (this.httpAdapterOptions.useMultipartFormData !== false) {
@@ -72,23 +88,30 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     }
   }
 
-  protected _getParams(request: FastifyRequest): Record<string, string>;
   protected _getParams(
-    request: FastifyRequest,
+    request: InversifyFastifyRequest,
+  ): Record<string, string>;
+  protected _getParams(
+    request: InversifyFastifyRequest,
     parameterName: string,
   ): string | undefined;
   protected _getParams(
-    request: FastifyRequest,
+    request: InversifyFastifyRequest,
     parameterName?: string,
   ): Record<string, string> | string | undefined {
     return parameterName === undefined
       ? (request.params as Record<string, string>)
       : (request.params as Record<string, string>)[parameterName];
   }
-  protected _getQuery(request: FastifyRequest): Record<string, unknown>;
-  protected _getQuery(request: FastifyRequest, parameterName: string): unknown;
   protected _getQuery(
-    request: FastifyRequest,
+    request: InversifyFastifyRequest,
+  ): Record<string, unknown>;
+  protected _getQuery(
+    request: InversifyFastifyRequest,
+    parameterName: string,
+  ): unknown;
+  protected _getQuery(
+    request: InversifyFastifyRequest,
     parameterName?: string,
   ): unknown {
     return parameterName === undefined
@@ -97,14 +120,14 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected _getHeaders(
-    request: FastifyRequest,
+    request: InversifyFastifyRequest,
   ): Record<string, string | string[] | undefined>;
   protected _getHeaders(
-    request: FastifyRequest,
+    request: InversifyFastifyRequest,
     parameterName: string,
   ): string | string[] | undefined;
   protected _getHeaders(
-    request: FastifyRequest,
+    request: InversifyFastifyRequest,
     parameterName?: string,
   ):
     | Record<string, string | string[] | undefined>
@@ -117,8 +140,8 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected _getCookies(
-    request: FastifyRequest,
-    _response: FastifyReply,
+    request: InversifyFastifyRequest,
+    _response: InversifyFastifyReply,
     parameterName?: string,
   ): unknown {
     return parameterName === undefined
@@ -127,62 +150,76 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected _replyText(
-    _request: FastifyRequest,
-    response: FastifyReply,
+    _request: InversifyFastifyRequest,
+    response: InversifyFastifyReply,
     value: string,
   ): void {
     response.send(value);
   }
 
   protected _replyJson(
-    _request: FastifyRequest,
-    response: FastifyReply,
+    _request: InversifyFastifyRequest,
+    response: InversifyFastifyReply,
     value?: object,
   ): void {
     response.send(value);
   }
 
   protected async _replyStream(
-    _request: FastifyRequest,
-    response: FastifyReply,
+    _request: InversifyFastifyRequest,
+    response: InversifyFastifyReply,
     value: Readable,
   ): Promise<void> {
     await response.send(value);
   }
 
   protected _sendBodySeparator(
-    _request: FastifyRequest,
-    response: FastifyReply,
+    _request: InversifyFastifyRequest,
+    response: InversifyFastifyReply,
   ): void {
     // Set headers and status code if not already set
-
-    response.raw.statusCode = response.statusCode;
 
     const responseHeaders: Record<
       HttpHeader,
       string | number | string[] | undefined
     > = response.getHeaders();
 
-    for (const [headerKey, headerValue] of Object.entries(responseHeaders)) {
-      if (headerValue !== undefined) {
-        response.raw.setHeader(headerKey, headerValue);
-      }
-    }
+    if ('stream' in response.raw) {
+      const headers: http2.OutgoingHttpHeaders = {
+        ':status': response.statusCode,
+      };
 
-    response.raw.flushHeaders();
+      for (const [headerKey, headerValue] of Object.entries(responseHeaders)) {
+        if (headerValue !== undefined) {
+          headers[headerKey] = headerValue;
+        }
+      }
+
+      response.raw.stream.respond(headers, { endStream: false });
+    } else {
+      response.raw.statusCode = response.statusCode;
+
+      for (const [headerKey, headerValue] of Object.entries(responseHeaders)) {
+        if (headerValue !== undefined) {
+          response.raw.setHeader(headerKey, headerValue);
+        }
+      }
+
+      response.raw.flushHeaders();
+    }
   }
 
   protected _setStatus(
-    _request: FastifyRequest,
-    response: FastifyReply,
+    _request: InversifyFastifyRequest,
+    response: InversifyFastifyReply,
     statusCode: HttpStatusCode,
   ): void {
     response.status(statusCode);
   }
 
   protected _setHeader(
-    _request: FastifyRequest,
-    response: FastifyReply,
+    _request: InversifyFastifyRequest,
+    response: InversifyFastifyReply,
     key: string,
     value: string,
   ): void {
@@ -190,12 +227,17 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected _buildRouter(
-    routerParams: RouterParams<FastifyRequest, FastifyReply, () => void, void>,
+    routerParams: RouterParams<
+      InversifyFastifyRequest,
+      InversifyFastifyReply,
+      () => void,
+      void
+    >,
   ): void {
     for (const routeParams of routerParams.routeParamsList) {
       const orderedHandlers: MiddlewareHandler<
-        FastifyRequest,
-        FastifyReply,
+        InversifyFastifyRequest,
+        InversifyFastifyReply,
         () => void,
         void
       >[] = [
@@ -210,13 +252,13 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
       );
 
       const handleMiddlewares: (
-        request: FastifyRequest,
-        response: FastifyReply,
+        request: InversifyFastifyRequest,
+        response: InversifyFastifyReply,
       ) => Promise<void> = handleMiddlewareList(orderedHandlers);
 
       const fastifyHandler: RouteHandlerMethod = async (
-        request: FastifyRequest,
-        reply: FastifyReply,
+        request: InversifyFastifyRequest,
+        reply: InversifyFastifyReply,
       ): Promise<void> => {
         await handleMiddlewares(request, reply);
       };
@@ -281,7 +323,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   }
 
   #getMultipartRequestBody(
-    request: FastifyRequest,
+    request: InversifyFastifyRequest,
     parameterName: string | undefined,
   ): unknown {
     if (request.isMultipart()) {
@@ -298,7 +340,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   }
 
   #getRequestBody(
-    request: FastifyRequest,
+    request: InversifyFastifyRequest,
     parameterName: string | undefined,
   ): unknown {
     return parameterName === undefined
