@@ -39,9 +39,7 @@ class Samurai {
 })
 class ContainerModule {}
 
-export class NestCoreGetServiceInTransientScopeScenario
-  implements Scenario<Platform>
-{
+export class NestCoreGetServiceInTransientScopeScenario implements Scenario<Platform> {
   public readonly platform: Platform;
 
   #context!: INestApplicationContext;

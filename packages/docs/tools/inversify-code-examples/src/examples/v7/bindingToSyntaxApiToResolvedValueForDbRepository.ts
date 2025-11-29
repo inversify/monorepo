@@ -1,17 +1,15 @@
 // Is-inversify-import-example
 import { Container, inject, injectable, Newable } from 'inversify7';
 
-class AwesomeDbDriverCollectionImplementation<T>
-  implements AwesomeDbDriverCollection<T>
-{
+class AwesomeDbDriverCollectionImplementation<
+  T,
+> implements AwesomeDbDriverCollection<T> {
   public find(): T[] {
     return [];
   }
 }
 
-class AwesomeDbDriverConnectionImplementation
-  implements AwesomeDbDriverConnection
-{
+class AwesomeDbDriverConnectionImplementation implements AwesomeDbDriverConnection {
   public close(): void {
     return;
   }

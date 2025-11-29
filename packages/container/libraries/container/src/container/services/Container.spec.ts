@@ -139,9 +139,9 @@ describe(Container, () => {
     } as Partial<
       Mocked<ContainerModuleManager>
     > as Mocked<ContainerModuleManager>;
-    containerModuleManagerClassMock = class
-      implements Partial<Mocked<ContainerModuleManager>>
-    {
+    containerModuleManagerClassMock = class implements Partial<
+      Mocked<ContainerModuleManager>
+    > {
       public load: Mocked<ContainerModuleManager>['load'] =
         containerModuleManagerMock.load;
       public loadSync: Mocked<ContainerModuleManager>['loadSync'] =
@@ -158,9 +158,9 @@ describe(Container, () => {
     } as Partial<
       Mocked<DeactivationParamsManager>
     > as Mocked<DeactivationParamsManager>;
-    deactivationParamsManagerClassMock = class
-      implements Partial<Mocked<DeactivationParamsManager>>
-    {
+    deactivationParamsManagerClassMock = class implements Partial<
+      Mocked<DeactivationParamsManager>
+    > {
       public deactivationParams: Mocked<DeactivationParamsManager>['deactivationParams'] =
         deactivationParamsManagerMock.deactivationParams;
     } as Newable<Partial<Mocked<DeactivationParamsManager>>> as Newable<
@@ -185,9 +185,9 @@ describe(Container, () => {
     } as Partial<
       Mocked<PlanParamsOperationsManager>
     > as Mocked<PlanParamsOperationsManager>;
-    planParamsOperationsManagerClassMock = class
-      implements Partial<Mocked<PlanParamsOperationsManager>>
-    {
+    planParamsOperationsManagerClassMock = class implements Partial<
+      Mocked<PlanParamsOperationsManager>
+    > {
       public planParamsOperations: Mocked<PlanParamsOperationsManager>['planParamsOperations'] =
         planParamsOperationsManagerMock.planParamsOperations;
     } as Newable<Partial<Mocked<PlanParamsOperationsManager>>> as Newable<
@@ -198,9 +198,9 @@ describe(Container, () => {
     } as Partial<
       Mocked<PlanResultCacheManager>
     > as Mocked<PlanResultCacheManager>;
-    planResultCacheManagerClassMock = class
-      implements Partial<Mocked<PlanResultCacheManager>>
-    {
+    planResultCacheManagerClassMock = class implements Partial<
+      Mocked<PlanResultCacheManager>
+    > {
       public invalidateService: Mocked<PlanResultCacheManager>['invalidateService'] =
         planResultCacheManagerMock.invalidateService;
     } as Newable<Partial<Mocked<PlanResultCacheManager>>> as Newable<
@@ -213,9 +213,9 @@ describe(Container, () => {
     } as Partial<
       Mocked<PlanResultCacheService>
     > as Mocked<PlanResultCacheService>;
-    planResultCacheServiceClassMock = class
-      implements Partial<Mocked<PlanResultCacheService>>
-    {
+    planResultCacheServiceClassMock = class implements Partial<
+      Mocked<PlanResultCacheService>
+    > {
       public get: Mocked<PlanResultCacheService>['get'] =
         planResultCacheServiceMock.get;
       public set: Mocked<PlanResultCacheService>['set'] =
@@ -243,9 +243,9 @@ describe(Container, () => {
     } as Partial<
       Mocked<ServiceReferenceManager>
     > as Mocked<ServiceReferenceManager>;
-    serviceReferenceManagerClassMock = class
-      implements Partial<Mocked<ServiceReferenceManager>>
-    {
+    serviceReferenceManagerClassMock = class implements Partial<
+      Mocked<ServiceReferenceManager>
+    > {
       public activationService: Mocked<ServiceReferenceManager>['activationService'] =
         serviceReferenceManagerMock.activationService;
       public bindingService: Mocked<ServiceReferenceManager>['bindingService'] =
@@ -267,9 +267,9 @@ describe(Container, () => {
     } as Partial<
       Mocked<ServiceResolutionManager>
     > as Mocked<ServiceResolutionManager>;
-    serviceResolutionManagerClassMock = class
-      implements Partial<Mocked<ServiceResolutionManager>>
-    {
+    serviceResolutionManagerClassMock = class implements Partial<
+      Mocked<ServiceResolutionManager>
+    > {
       public get: Mocked<ServiceResolutionManager>['get'] =
         serviceResolutionManagerMock.get;
       public getAll: Mocked<ServiceResolutionManager>['getAll'] =
@@ -285,9 +285,9 @@ describe(Container, () => {
       restore: vitest.fn(),
       snapshot: vitest.fn(),
     } as Partial<Mocked<SnapshotManager>> as Mocked<SnapshotManager>;
-    snapshotManagerClassMock = class
-      implements Partial<Mocked<SnapshotManager>>
-    {
+    snapshotManagerClassMock = class implements Partial<
+      Mocked<SnapshotManager>
+    > {
       public restore: Mocked<SnapshotManager>['restore'] =
         snapshotManagerMock.restore;
       public snapshot: Mocked<SnapshotManager>['snapshot'] =

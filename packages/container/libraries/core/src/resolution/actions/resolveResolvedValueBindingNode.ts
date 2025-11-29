@@ -7,8 +7,8 @@ import { Resolved } from '../models/Resolved';
 
 export function resolveResolvedValueBindingNode<
   TActivated,
-  TBinding extends
-    ResolvedValueBinding<TActivated> = ResolvedValueBinding<TActivated>,
+  TBinding extends ResolvedValueBinding<TActivated> =
+    ResolvedValueBinding<TActivated>,
 >(
   resolveResolvedValueBindingParams: (
     params: ResolutionParams,

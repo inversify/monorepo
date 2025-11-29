@@ -7,8 +7,8 @@ import { ResolutionParams } from '../models/ResolutionParams';
 
 export function resolveResolvedValueBindingParams<
   TActivated,
-  TBinding extends
-    ResolvedValueBinding<TActivated> = ResolvedValueBinding<TActivated>,
+  TBinding extends ResolvedValueBinding<TActivated> =
+    ResolvedValueBinding<TActivated>,
 >(
   resolveServiceNode: (
     params: ResolutionParams,

@@ -3,7 +3,7 @@
   "name": "@inversifyjs/foundation-typescript-config",
   "description": "Common typescript config for inversify monorepo packages",
   "devDependencies": {
-    "prettier": "3.6.2"
+    "prettier": "3.7.2"
   },
   "license": "MIT",
   "bugs": {

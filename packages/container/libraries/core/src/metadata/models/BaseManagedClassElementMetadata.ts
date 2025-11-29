@@ -4,8 +4,9 @@ import { BaseClassElementMetadata } from './BaseClassElementMetadata';
 import { MetadataName } from './MetadataName';
 import { MetadataTag } from './MetadataTag';
 
-export interface BaseManagedClassElementMetadata<TKind>
-  extends BaseClassElementMetadata<TKind> {
+export interface BaseManagedClassElementMetadata<
+  TKind,
+> extends BaseClassElementMetadata<TKind> {
   isFromTypescriptParamType?: true;
   name: MetadataName | undefined;
   optional: boolean;

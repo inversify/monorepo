@@ -8,9 +8,7 @@ import { InvalidOperationError } from './errorFilterApiInvalidOperationError';
 
 // Begin-example
 @CatchError(InvalidOperationError)
-export class InvalidOperationErrorFilter
-  implements ErrorFilter<InvalidOperationError>
-{
+export class InvalidOperationErrorFilter implements ErrorFilter<InvalidOperationError> {
   public catch(error: InvalidOperationError): void {
     throw new UnprocessableEntityHttpResponse(
       { message: error.message },

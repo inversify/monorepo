@@ -3,9 +3,7 @@ import { Container } from '@inversifyjs/container';
 
 import { Platform } from '../models/Platform';
 
-export abstract class InversifyCurrentBaseScenario
-  implements Scenario<Platform>
-{
+export abstract class InversifyCurrentBaseScenario implements Scenario<Platform> {
   public readonly platform: Platform;
 
   protected readonly _container: Container;
