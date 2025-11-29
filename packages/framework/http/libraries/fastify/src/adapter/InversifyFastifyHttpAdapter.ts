@@ -179,15 +179,15 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   ): void {
     // Set headers and status code if not already set
 
-    response.raw.statusCode = response.statusCode;
-
     const responseHeaders: Record<
       HttpHeader,
       string | number | string[] | undefined
     > = response.getHeaders();
 
     if ('stream' in response.raw) {
-      const headers: http2.OutgoingHttpHeaders = {};
+      const headers: http2.OutgoingHttpHeaders = {
+        ':status': response.statusCode,
+      };
 
       for (const [headerKey, headerValue] of Object.entries(responseHeaders)) {
         if (headerValue !== undefined) {
@@ -197,6 +197,8 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
 
       response.raw.stream.respond(headers, { endStream: false });
     } else {
+      response.raw.statusCode = response.statusCode;
+
       for (const [headerKey, headerValue] of Object.entries(responseHeaders)) {
         if (headerValue !== undefined) {
           response.raw.setHeader(headerKey, headerValue);
