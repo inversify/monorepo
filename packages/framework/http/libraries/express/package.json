@@ -51,7 +51,7 @@
   },
   "name": "@inversifyjs/http-express",
   "peerDependencies": {
-    "express": "^5.1.0",
+    "express": "^5.2.0",
     "inversify": "^7.10.4"
   },
   "publishConfig": {

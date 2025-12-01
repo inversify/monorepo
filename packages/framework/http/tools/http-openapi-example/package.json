@@ -8,7 +8,7 @@
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-open-api": "workspace:*",
-    "express": "^5.1.0",
+    "express": "^5.2.0",
     "inversify": "^7.10.4",
     "lmdb": "^3.4.4"
   },
