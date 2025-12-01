@@ -3,6 +3,11 @@ adapter:
   permalink: /adapter
   description: Posts related to Inversify adapters
 
+features:
+  label: Features
+  permalink: /features
+  description: Posts related to new features
+
 releases:
   label: Releases
   permalink: /releases
