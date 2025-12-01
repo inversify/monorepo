@@ -29,6 +29,10 @@ import { Container } from 'inversify';
 
 import { FastifyHttpAdapterOptions } from '../models/FastifyHttpAdapterOptions';
 
+const ADAPTER_ID: unique symbol = Symbol.for(
+  '@inversifyjs/http-fastify/InversifyFastifyHttpAdapter',
+);
+
 type InversifyFastifyRequest = FastifyRequest<
   RouteGenericInterface,
   http.Server | http2.Http2Server,
@@ -49,6 +53,8 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   void,
   FastifyHttpAdapterOptions
 > {
+  public readonly id: symbol = ADAPTER_ID;
+
   readonly #app: FastifyInstance;
 
   constructor(
