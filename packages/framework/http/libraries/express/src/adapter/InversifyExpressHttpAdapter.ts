@@ -19,6 +19,10 @@ import { Container } from 'inversify';
 
 import { ExpressHttpAdapterOptions } from '../models/ExpressHttpAdapterOptions';
 
+const ADAPTER_ID: unique symbol = Symbol.for(
+  '@inversifyjs/http-express/InversifyExpressHttpAdapter',
+);
+
 export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
   Request,
   Response,
@@ -26,6 +30,8 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
   void,
   ExpressHttpAdapterOptions
 > {
+  public readonly id: symbol = ADAPTER_ID;
+
   readonly #app: Application;
 
   constructor(

@@ -84,6 +84,7 @@ export abstract class InversifyHttpAdapter<
     MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>
   >[];
   #isBuilt: boolean;
+  public abstract readonly id: string | symbol;
 
   constructor(
     container: Container,

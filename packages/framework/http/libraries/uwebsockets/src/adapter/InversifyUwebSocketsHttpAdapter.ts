@@ -26,6 +26,10 @@ import { abortedSymbol } from '../data/abortedSymbol';
 import { CustomHttpResponse } from '../models/CustomHttpResponse';
 import { UwebSocketsHttpAdapterOptions } from '../models/UwebSocketsHttpAdapterOptions';
 
+const ADAPTER_ID: unique symbol = Symbol.for(
+  '@inversifyjs/http-uwebsockets/InversifyUwebSocketsHttpAdapter',
+);
+
 export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   HttpRequest,
   HttpResponse,
@@ -33,6 +37,8 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   void,
   UwebSocketsHttpAdapterOptions
 > {
+  public readonly id: symbol = ADAPTER_ID;
+
   readonly #app: TemplatedApp;
 
   constructor(

@@ -26,12 +26,18 @@ import { StatusCode } from 'hono/utils/http-status';
 import { StreamingApi } from 'hono/utils/stream';
 import { Container } from 'inversify';
 
+const ADAPTER_ID: unique symbol = Symbol.for(
+  '@inversifyjs/http-hono/InversifyHonoHttpAdapter',
+);
+
 export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
   HonoRequest,
   Context,
   Next,
   Response | undefined
 > {
+  public readonly id: symbol = ADAPTER_ID;
+
   readonly #app: Hono;
 
   constructor(
