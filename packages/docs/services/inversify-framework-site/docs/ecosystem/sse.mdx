@@ -63,7 +63,7 @@ Each message event supports multiple fields that control how the client processe
 
 **MessageEvent fields:**
 
-- `data`: Message content (string or array of strings for multi-line data)
+- `data`: Message content (string or array of strings for multi-line data). The library does not support embedded newline characters in a single string; multi-line messages must be supplied as an array of strings, where each array entry becomes a separate `data:` line in the SSE stream. If you have a multi-line string, split it on newlines before sending (e.g., `message.split('\n')`).
 - `type`: Event type for client-side filtering (triggers custom event listeners)
 - `id`: Unique identifier that clients send back when reconnecting
 - `retry`: Milliseconds before client should retry on connection loss
