@@ -1,5 +1,13 @@
 # @inversifyjs/http-uwebsockets
 
+## 4.7.0
+
+### Patch Changes
+
+- Updated `InversifyUwebSocketsAdapter` to properly cork stream write operations
+- Updated dependencies
+  - @inversifyjs/http-core@4.7.0
+
 ## 4.6.0
 
 ### Minor Changes
