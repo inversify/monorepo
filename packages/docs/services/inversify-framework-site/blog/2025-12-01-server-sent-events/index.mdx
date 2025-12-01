@@ -1,0 +1,74 @@
+---
+slug: server-sent-events-real-time-made-simple
+title: Server-Sent Events - Real-Time Updates Made Simple
+authors: [notaphplover]
+tags: [features]
+---
+import ecosystemSseRealTimeChatSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemSseRealTimeChat.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+You know what's funny? We've been building real-time features with WebSockets for years, pulling in entire libraries, managing bidirectional connections, and writing custom reconnection logic. Meanwhile, there's been a simpler solution hiding in plain sight: **Server-Sent Events (SSE)**.
+
+And now it's ridiculously easy to use in InversifyJS.
+
+{/* truncate */}
+
+![Real-time streaming banner](./streaming-banner.jpg)
+
+## Why SSE?
+
+Server-Sent Events is a web standard for pushing real-time updates from server to client over plain HTTP. It's unidirectional (server → client), works with standard HTTP, and browsers handle reconnection automatically.
+
+Think about it: live notifications, dashboard metrics, activity streams, progress bars. Most "real-time" features don't need bidirectional communication - they just need the server to push updates. That's SSE's sweet spot.
+
+## The Developer Experience
+
+Here's what we aimed for: streaming real-time data should feel as natural as returning a value. No boilerplate, no connection management, just focus on what data to send.
+
+<CodeBlock language="ts">{ecosystemSseRealTimeChatSource}</CodeBlock>
+
+This complete chat broadcasting system shows how simple real-time can be:
+
+- Clients connect to `/chat/stream` and get a live SSE stream
+- The `ChatService` manages all active streams  
+- Post to `/chat/send` to broadcast to all connected clients
+- Cleanup happens automatically on disconnect
+
+The same pattern works for live sports scores, stock tickers, collaborative notifications - any pub/sub scenario.
+
+## What You Get
+
+**Zero client-side setup** - Every browser has `EventSource` built-in. No libraries, no configuration:
+
+```javascript
+const eventSource = new EventSource('/chat/stream');
+eventSource.onmessage = (event) => console.log(event.data);
+// Browser handles reconnection automatically
+```
+
+**Works everywhere** - Express 4/5, Fastify, Hono, uWebSockets.js. Same API across all adapters.
+
+**Type-safe** - Full TypeScript support for message events, including custom types, IDs, and retry hints.
+
+**Production-ready** - Built-in backpressure handling, proper HTTP headers, automatic stream cleanup.
+
+## When to Use SSE vs WebSockets
+
+**Choose SSE when:**
+- You only need server → client communication
+- You want automatic reconnection without code
+- You're working with standard HTTP infrastructure
+
+**Choose WebSockets when:**
+- You need true bidirectional communication (client ↔ server)
+- You're building real-time games or collaborative editors with frequent client updates
+
+For dashboards, notifications, and monitoring? SSE is the simpler choice.
+
+## Getting Started
+
+```bash
+npm install @inversifyjs/http-sse
+```
+
+Check out the [full documentation](../../docs/ecosystem/sse) for more examples and patterns, including async generators, manual stream control with `SseStream`, custom status codes, and integration recipes.
