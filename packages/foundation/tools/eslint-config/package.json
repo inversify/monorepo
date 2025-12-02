@@ -11,7 +11,7 @@
     "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "prettier": "3.7.3",
-    "typescript-eslint": "8.48.0"
+    "typescript-eslint": "8.48.1"
   },
   "peerDependencies": {
     "@eslint/js": "^9.39.1"
