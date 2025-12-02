@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import 'reflect-metadata';
+import 'reflect-metadata/lite';
 
 import { bindingScopeValues, inject, injectable } from '@inversifyjs/core';
 

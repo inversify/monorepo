@@ -2,7 +2,7 @@
 /* eslint-disable vitest/expect-expect */
 import { describe, it } from 'vitest';
 
-import 'reflect-metadata';
+import 'reflect-metadata/lite';
 
 import { inject, injectable, multiInject } from 'inversify';
 

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/typedef */
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import 'reflect-metadata';
+import 'reflect-metadata/lite';
 
 import { injectable } from 'inversify';
 
