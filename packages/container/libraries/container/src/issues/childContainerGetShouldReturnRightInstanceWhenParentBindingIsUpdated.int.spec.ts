@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import 'reflect-metadata';
+import 'reflect-metadata/lite';
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 

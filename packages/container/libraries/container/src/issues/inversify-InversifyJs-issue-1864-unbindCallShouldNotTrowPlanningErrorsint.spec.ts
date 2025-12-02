@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import 'reflect-metadata';
+import 'reflect-metadata/lite';
 
 import { inject, multiInject } from '@inversifyjs/core';
 
