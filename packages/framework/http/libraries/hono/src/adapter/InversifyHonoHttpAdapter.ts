@@ -199,9 +199,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     response: Context,
     value: Readable,
   ): Response {
-    return stream(response, async (stream: StreamingApi): Promise<void> => {
-      await stream.pipe(Readable.toWeb(value));
-    });
+    return response.newResponse(Readable.toWeb(value));
   }
 
   protected _sendBodySeparator(_request: HonoRequest, response: Context): void {
