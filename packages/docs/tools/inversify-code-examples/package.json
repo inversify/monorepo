@@ -6,7 +6,7 @@
   "description": "InversifyJs docs code examples package",
   "dependencies": {
     "inversify": "6.2.2",
-    "inversify7": "npm:inversify@7.10.4"
+    "inversify7": "npm:inversify@7.10.5"
   },
   "devDependencies": {
     "@inversifyjs/code-examples-devkit": "workspace:*",
@@ -14,7 +14,7 @@
     "@vitest/coverage-v8": "4.0.10",
     "eslint": "9.39.1",
     "glob": "13.0.0",
-    "prettier": "3.7.3",
+    "prettier": "3.7.4",
     "reflect-metadata": "0.2.2",
     "rimraf": "6.1.2",
     "tslib": "2.8.1",

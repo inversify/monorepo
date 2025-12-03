@@ -5,12 +5,12 @@
   },
   "description": "InversifyJs plugin example package",
   "dependencies": {
-    "inversify": "^7.10.4",
+    "inversify": "^7.10.5",
     "@inversifyjs/plugin-example": "workspace:*"
   },
   "devDependencies": {
     "eslint": "9.39.1",
-    "prettier": "3.7.3",
+    "prettier": "3.7.4",
     "rimraf": "6.1.2",
     "rollup": "4.53.3",
     "ts-loader": "9.5.4",

@@ -10,7 +10,7 @@
     "vitest": "^4.0.10"
   },
   "devDependencies": {
-    "prettier": "3.7.3"
+    "prettier": "3.7.4"
   },
   "exports": "./lib/index.js",
   "homepage": "https://github.com/inversify/monorepo#readme",
