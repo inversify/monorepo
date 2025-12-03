@@ -1,5 +1,16 @@
 # @inversifyjs/http-core
 
+## 4.8.0
+
+### Minor Changes
+
+- Updated adapter with `id` property
+
+### Patch Changes
+
+- Updated dependencies
+  - inversify@7.10.5
+
 ## 4.7.0
 
 ### Minor Changes

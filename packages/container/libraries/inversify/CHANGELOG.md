@@ -1,5 +1,13 @@
 # inversify
 
+## 7.10.5
+
+### Patch Changes
+
+- Updated entrypoint to import 'reflect-metadata/lite' instead of 'reflect-metadata'
+- Updated dependencies
+  - @inversifyjs/container@1.14.2
+
 ## 7.10.4
 
 ### Patch Changes
