@@ -14,9 +14,12 @@
     "url": "https://github.com/inversify/monorepo/issues"
   },
   "homepage": "https://github.com/inversify/monorepo#readme",
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"
-  }
+  },
+  "version": "0.1.0"
 }
