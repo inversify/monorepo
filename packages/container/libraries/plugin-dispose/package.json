@@ -16,7 +16,7 @@
     "@stryker-mutator/typescript-checker": "9.4.0",
     "@vitest/coverage-v8": "4.0.10",
     "eslint": "9.39.1",
-    "prettier": "3.7.3",
+    "prettier": "3.7.4",
     "rimraf": "6.1.2",
     "rollup": "4.53.3",
     "ts-loader": "9.5.4",
@@ -25,7 +25,7 @@
     "vitest": "4.0.10"
   },
   "peerDependencies": {
-    "inversify": "^7.10.4"
+    "inversify": "^7.10.5"
   },
   "homepage": "https://inversify.io",
   "keywords": [
