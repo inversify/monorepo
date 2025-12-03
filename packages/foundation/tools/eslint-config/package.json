@@ -22,10 +22,13 @@
   "homepage": "https://github.com/inversify/monorepo#readme",
   "license": "MIT",
   "name": "@inversifyjs/foundation-eslint-config",
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"
   },
-  "type": "module"
+  "type": "module",
+  "version": "0.1.0"
 }
