@@ -33,7 +33,7 @@
     "express4": "npm:express@4.22.1",
     "fastify": "5.6.2",
     "hono": "4.10.7",
-    "prettier": "3.7.3",
+    "prettier": "3.7.4",
     "rimraf": "6.1.2",
     "rollup": "4.53.3",
     "ts-loader": "9.5.4",
@@ -67,7 +67,7 @@
   },
   "name": "@inversifyjs/http-open-api",
   "peerDependencies": {
-    "inversify": "^7.10.4"
+    "inversify": "^7.10.5"
   },
   "publishConfig": {
     "access": "public"
