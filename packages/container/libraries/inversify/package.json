@@ -68,6 +68,6 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "sideEffects": false,
+  "sideEffects": true,
   "version": "7.10.5"
 }
