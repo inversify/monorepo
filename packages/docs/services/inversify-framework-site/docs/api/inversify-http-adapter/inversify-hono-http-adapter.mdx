@@ -1,0 +1,151 @@
+---
+sidebar_position: 5
+title: InversifyHonoHttpAdapter
+---
+import adapterBasicUsageHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/adapterBasicUsageHono.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# InversifyHonoHttpAdapter
+
+The Hono HTTP adapter implementation. This adapter allows you to use InversifyJS framework with Hono applications, providing ultrafast routing and edge runtime support.
+
+:::tip[Base class documentation]
+This adapter extends [InversifyHttpAdapter](./inversify-http-adapter.mdx). See the base class documentation for information about common methods like `applyGlobalMiddleware`, `useGlobalFilters`, `applyGlobalGuards`, `useGlobalInterceptors`, and `useGlobalPipe`.
+:::
+
+## Installation
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm">
+    ```bash
+    npm install @inversifyjs/http-hono hono inversify reflect-metadata
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+    ```bash
+    yarn add @inversifyjs/http-hono hono inversify reflect-metadata
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm add @inversifyjs/http-hono hono inversify reflect-metadata
+    ```
+  </TabItem>
+</Tabs>
+
+## Constructor
+
+```ts
+constructor(
+  container: Container,
+  httpAdapterOptions?: HttpAdapterOptions,
+  customApp?: Hono,
+)
+```
+
+Creates a Hono adapter instance.
+
+### Parameters
+
+- **`container`**: The Inversify container that holds controllers, guards, pipes, middleware, interceptors, and filters.
+- **`httpAdapterOptions`** (optional): Configuration options for the adapter. See [Options](#options) below.
+- **`customApp`** (optional): A custom Hono application instance. If not provided, a default Hono instance is created.
+
+### Default Options
+
+The adapter uses these defaults if not overridden:
+
+```ts
+{
+  logger: true,
+}
+```
+
+## Methods
+
+### build
+
+```ts
+async build(): Promise<Hono>
+```
+
+Builds and returns the Hono application with all configured routes, middleware, and handlers.
+
+**Returns**: The Hono instance ready to be used with `serve` or various runtime adapters.
+
+## Options
+
+### HttpAdapterOptions
+
+```ts
+interface HttpAdapterOptions {
+  logger?: boolean | Logger;
+}
+```
+
+#### Properties
+
+- **`logger`**: Set to `true` to log route mappings on build, or `false` to disable logging, or provide a custom logger implementing the `Logger` interface from `@inversifyjs/logger`. Default: `true`
+
+## Usage Example
+
+<CodeBlock language="ts">{adapterBasicUsageHonoSource}</CodeBlock>
+
+## Hono-Specific Features
+
+### Edge Runtime Support
+
+Hono is designed to work seamlessly with edge runtimes like Cloudflare Workers, Deno Deploy, and Bun. The InversifyJS adapter maintains this compatibility.
+
+### Lightweight and Fast
+
+Hono has zero dependencies and uses modern Web Standards APIs, making it extremely lightweight and fast. The router is optimized using a RegExp-based approach.
+
+### Multiple Runtime Support
+
+You can run Hono with various runtimes:
+
+```ts
+// Node.js
+import { serve } from '@hono/node-server';
+
+// Cloudflare Workers
+export default app;
+
+// Deno
+Deno.serve(app.fetch);
+
+// Bun
+export default {
+  port: 3000,
+  fetch: app.fetch,
+};
+```
+
+### Body Parsing
+
+Unlike Express or Fastify, body parsing in Hono is handled asynchronously. The adapter automatically awaits body parameters decorated with `@Body()`.
+
+## Type Parameters
+
+The adapter is strongly typed with Hono types:
+
+```ts
+InversifyHonoHttpAdapter extends InversifyHttpAdapter<
+  HonoRequest,          // Hono Request
+  Context,              // Hono Context
+  Next,                 // Hono Next function
+  Response | undefined, // Handler return type
+  HttpAdapterOptions
+>
+```
+
+## See Also
+
+- [InversifyHttpAdapter (Base Class)](./inversify-http-adapter.mdx) - Common methods and configuration
+- [Controller](../../fundamentals/controller.mdx) - Creating route handlers
+- [Middleware](../../fundamentals/middleware.mdx) - Adding middleware to routes
+- [Guards](../../fundamentals/guard.mdx) - Protecting routes with guards
+- [Hono Documentation](https://hono.dev/) - Official Hono documentation

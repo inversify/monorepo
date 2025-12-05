@@ -1,0 +1,137 @@
+---
+sidebar_position: 3
+title: InversifyExpressHttpAdapter (Express 5)
+---
+import adapterBasicUsageExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/adapterBasicUsageExpress.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# InversifyExpressHttpAdapter (Express 5)
+
+The Express 5 HTTP adapter implementation. This adapter allows you to use InversifyJS framework with Express v5.x applications, which includes native Promise support and other modern features.
+
+:::tip[Base class documentation]
+This adapter extends [InversifyHttpAdapter](./inversify-http-adapter.mdx). See the base class documentation for information about common methods like `applyGlobalMiddleware`, `useGlobalFilters`, `applyGlobalGuards`, `useGlobalInterceptors`, and `useGlobalPipe`.
+:::
+
+## Installation
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm">
+    ```bash
+    npm install @inversifyjs/http-express express inversify reflect-metadata
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+    ```bash
+    yarn add @inversifyjs/http-express express inversify reflect-metadata
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm add @inversifyjs/http-express express inversify reflect-metadata
+    ```
+  </TabItem>
+</Tabs>
+
+## Constructor
+
+```ts
+constructor(
+  container: Container,
+  httpAdapterOptions?: ExpressHttpAdapterOptions,
+  customApp?: Application,
+)
+```
+
+Creates an Express 5 adapter instance.
+
+### Parameters
+
+- **`container`**: The Inversify container that holds controllers, guards, pipes, middleware, interceptors, and filters.
+- **`httpAdapterOptions`** (optional): Configuration options for the adapter. See [Options](#options) below.
+- **`customApp`** (optional): A custom Express 5 application instance. If not provided, a default Express application is created.
+
+### Default Options
+
+The adapter uses these defaults if not overridden:
+
+```ts
+{
+  logger: true,
+  useCookies: false,
+  useJson: true,
+  useText: false,
+  useUrlEncoded: false,
+}
+```
+
+## Methods
+
+### build
+
+```ts
+async build(): Promise<Application>
+```
+
+Builds and returns the Express 5 application with all configured routes, middleware, and handlers.
+
+**Returns**: The Express 5 `Application` instance ready to be used with `app.listen()` or passed to `http.createServer()`.
+
+## Options
+
+### ExpressHttpAdapterOptions
+
+```ts
+interface ExpressHttpAdapterOptions extends HttpAdapterOptions {
+  useCookies?: boolean;
+  useJson?: boolean;
+  useText?: boolean;
+  useUrlEncoded?: boolean;
+}
+```
+
+#### Properties
+
+- **`logger`** (inherited): Set to `true` to log route mappings on build, or `false` to disable logging, or provide a custom logger implementing the `Logger` interface from `@inversifyjs/logger`.
+- **`useCookies`**: Enable cookie parsing middleware. Default: `false`
+- **`useJson`**: Enable JSON body parsing middleware. Default: `true`
+- **`useText`**: Enable text body parsing middleware. Default: `false`
+- **`useUrlEncoded`**: Enable URL-encoded body parsing middleware. Default: `false`
+
+## Usage Example
+
+<CodeBlock language="ts">{adapterBasicUsageExpressSource}</CodeBlock>
+
+## Express 5 Features
+
+Express 5 includes several improvements over Express 4:
+
+- Native Promise support in middleware and route handlers
+- Improved error handling for rejected promises
+- Updated dependencies and security improvements
+- Better TypeScript support
+
+The InversifyJS adapter automatically supports these features, including proper async/await error handling.
+
+## Type Parameters
+
+The adapter is strongly typed with Express 5 types:
+
+```ts
+InversifyExpressHttpAdapter extends InversifyHttpAdapter<
+  Request,           // Express 5 Request
+  Response,          // Express 5 Response
+  NextFunction,      // Express 5 NextFunction
+  void,              // Handler return type
+  ExpressHttpAdapterOptions
+>
+```
+
+## See Also
+
+- [InversifyHttpAdapter (Base Class)](./inversify-http-adapter.mdx) - Common methods and configuration
+- [Controller](../../fundamentals/controller.mdx) - Creating route handlers
+- [Middleware](../../fundamentals/middleware.mdx) - Adding middleware to routes
+- [Guards](../../fundamentals/guard.mdx) - Protecting routes with guards
