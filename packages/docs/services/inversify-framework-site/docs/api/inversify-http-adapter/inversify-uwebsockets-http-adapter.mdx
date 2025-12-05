@@ -1,0 +1,159 @@
+---
+sidebar_position: 6
+title: InversifyUwebSocketsHttpAdapter
+---
+import adapterBasicUsageUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/adapterBasicUsageUwebsockets.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# InversifyUwebSocketsHttpAdapter
+
+The uWebSockets.js HTTP adapter implementation. This adapter allows you to use InversifyJS framework with uWebSockets.js, one of the fastest HTTP server implementations available.
+
+:::tip[Base class documentation]
+This adapter extends [InversifyHttpAdapter](./inversify-http-adapter.mdx). See the base class documentation for information about common methods like `applyGlobalMiddleware`, `useGlobalFilters`, `applyGlobalGuards`, `useGlobalInterceptors`, and `useGlobalPipe`.
+:::
+
+## Installation
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm">
+    ```bash
+    npm install @inversifyjs/http-uwebsockets uWebSockets.js inversify reflect-metadata
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+    ```bash
+    yarn add @inversifyjs/http-uwebsockets uWebSockets.js inversify reflect-metadata
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm add @inversifyjs/http-uwebsockets uWebSockets.js inversify reflect-metadata
+    ```
+  </TabItem>
+</Tabs>
+
+## Constructor
+
+```ts
+constructor(
+  container: Container,
+  httpAdapterOptions?: UwebSocketsHttpAdapterOptions,
+  customApp?: TemplatedApp,
+)
+```
+
+Creates a uWebSockets adapter instance.
+
+### Parameters
+
+- **`container`**: The Inversify container that holds controllers, guards, pipes, middleware, interceptors, and filters.
+- **`httpAdapterOptions`** (optional): Configuration options for the adapter. See [Options](#options) below.
+- **`customApp`** (optional): A custom uWebSockets.js `TemplatedApp` instance (created with `App()` or `SSLApp()`). If not provided, a default HTTP app is created.
+
+### Default Options
+
+The adapter uses these defaults if not overridden:
+
+```ts
+{
+  logger: true,
+}
+```
+
+## Methods
+
+### build
+
+```ts
+async build(): Promise<TemplatedApp>
+```
+
+Builds and returns the uWebSockets.js application with all configured routes, middleware, and handlers.
+
+**Returns**: The uWebSockets.js `TemplatedApp` instance ready to be used with `app.listen()`.
+
+## Options
+
+### UwebSocketsHttpAdapterOptions
+
+```ts
+type UwebSocketsHttpAdapterOptions = HttpAdapterOptions;
+```
+
+Currently, the uWebSockets adapter uses the base `HttpAdapterOptions`:
+
+#### Properties
+
+- **`logger`**: Set to `true` to log route mappings on build, or `false` to disable logging, or provide a custom logger implementing the `Logger` interface from `@inversifyjs/logger`. Default: `true`
+
+## Usage Example
+
+<CodeBlock language="ts">{adapterBasicUsageUwebsocketsSource}</CodeBlock>
+
+## uWebSockets.js-Specific Features
+
+### Extreme Performance
+
+uWebSockets.js is benchmarked as one of the fastest HTTP server implementations in existence, not just in Node.js. It provides microsecond-level response times and can handle millions of requests with minimal resource usage.
+
+### SSL/TLS Support
+
+You can create an SSL-enabled server by passing a custom `SSLApp()` instance:
+
+```ts
+import { SSLApp } from 'uWebSockets.js';
+
+const sslApp = SSLApp({
+  key_file_name: 'path/to/key.pem',
+  cert_file_name: 'path/to/cert.pem',
+});
+
+const adapter = new InversifyUwebSocketsHttpAdapter(
+  container,
+  { logger: true },
+  sslApp,
+);
+```
+
+### WebSocket Support
+
+While this adapter focuses on HTTP, uWebSockets.js also provides excellent WebSocket support. You can combine InversifyJS HTTP controllers with native uWebSockets.js WebSocket handlers.
+
+### Body Parsing
+
+Body parsing in uWebSockets.js is handled asynchronously due to the streaming nature of the API. The adapter automatically awaits body parameters decorated with `@Body()`.
+
+### Backpressure Handling
+
+uWebSockets.js requires careful handling of response streams to respect backpressure. The adapter handles this automatically when using `@Response()` parameter decorators with streams.
+
+## Type Parameters
+
+The adapter is strongly typed with uWebSockets.js types:
+
+```ts
+InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
+  HttpRequest,                  // uWebSockets.js HttpRequest
+  HttpResponse,                 // uWebSockets.js HttpResponse
+  () => void,                   // Next function
+  void,                         // Handler return type
+  UwebSocketsHttpAdapterOptions
+>
+```
+
+## Performance Considerations
+
+- uWebSockets.js uses a completely different architecture than Node.js's built-in HTTP module
+- Responses must be sent within the callback scope or corked for optimal performance
+- The adapter handles these details automatically, but custom middleware should be aware of these constraints
+
+## See Also
+
+- [InversifyHttpAdapter (Base Class)](./inversify-http-adapter.mdx) - Common methods and configuration
+- [Controller](../../fundamentals/controller.mdx) - Creating route handlers
+- [Middleware](../../fundamentals/middleware.mdx) - Adding middleware to routes
+- [Guards](../../fundamentals/guard.mdx) - Protecting routes with guards
+- [uWebSockets.js Documentation](https://unetworking.github.io/uWebSockets.js/) - Official uWebSockets.js documentation

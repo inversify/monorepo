@@ -8,6 +8,16 @@ import Link from '@docusaurus/Link';
 
 The base class all HTTP adapters extend (Express 4/5, Fastify, Hono, etc.). It wires controllers, guards, pipes, middleware, and interceptors into a working HTTP server. You generally consume its public methods from an adapter instance; if you are building a new adapter, implement the protected abstract methods described below.
 
+## Adapter-Specific Documentation
+
+For concrete adapter implementations with constructor signatures, options, and usage examples:
+
+- <Link to="./inversify-express4-http-adapter">Express 4 Adapter</Link>
+- <Link to="./inversify-express-http-adapter">Express 5 Adapter</Link>
+- <Link to="./inversify-fastify-http-adapter">Fastify Adapter</Link>
+- <Link to="./inversify-hono-http-adapter">Hono Adapter</Link>
+- <Link to="./inversify-uwebsockets-http-adapter">uWebSockets Adapter</Link>
+
 ## Type parameters
 
 ```ts
@@ -69,7 +79,7 @@ applyGlobalMiddleware(
 
 Registers global middleware to run for every route.
 
-- `middlewareList`: Either middleware service identifiers (class references or symbols) or a structured object with `preHandlerMiddlewareList` and `postHandlerMiddlewareList` to control the phase. See <Link to="../../fundamentals/middleware">Middleware</Link>.
+- `middlewareList`: Either middleware service identifiers (class references or symbols) or a structured object with `preHandlerMiddlewareList` and `postHandlerMiddlewareList` to control the phase. See [Middleware](../../fundamentals/middleware.mdx).
 
 Notes:
 - Must be called before the server is built; calling it after `build()` throws an error.

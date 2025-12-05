@@ -1,0 +1,126 @@
+---
+sidebar_position: 2
+title: InversifyExpressHttpAdapter (Express 4)
+---
+import adapterBasicUsageExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/adapterBasicUsageExpress4.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# InversifyExpressHttpAdapter (Express 4)
+
+The Express 4 HTTP adapter implementation. This adapter allows you to use InversifyJS framework with Express v4.x applications.
+
+:::tip[Base class documentation]
+This adapter extends [InversifyHttpAdapter](./inversify-http-adapter.mdx). See the base class documentation for information about common methods like `applyGlobalMiddleware`, `useGlobalFilters`, `applyGlobalGuards`, `useGlobalInterceptors`, and `useGlobalPipe`.
+:::
+
+## Installation
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm">
+    ```bash
+    npm install @inversifyjs/http-express-v4 express@^4.0.0 inversify reflect-metadata
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+    ```bash
+    yarn add @inversifyjs/http-express-v4 express@^4.0.0 inversify reflect-metadata
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm add @inversifyjs/http-express-v4 express@^4.0.0 inversify reflect-metadata
+    ```
+  </TabItem>
+</Tabs>
+
+## Constructor
+
+```ts
+constructor(
+  container: Container,
+  httpAdapterOptions?: ExpressHttpAdapterOptions,
+  customApp?: Application,
+)
+```
+
+Creates an Express 4 adapter instance.
+
+### Parameters
+
+- **`container`**: The Inversify container that holds controllers, guards, pipes, middleware, interceptors, and filters.
+- **`httpAdapterOptions`** (optional): Configuration options for the adapter. See [Options](#options) below.
+- **`customApp`** (optional): A custom Express 4 application instance. If not provided, a default Express application is created.
+
+### Default Options
+
+The adapter uses these defaults if not overridden:
+
+```ts
+{
+  logger: true,
+  useCookies: false,
+  useJson: true,
+  useText: false,
+  useUrlEncoded: false,
+}
+```
+
+## Methods
+
+### build
+
+```ts
+async build(): Promise<Application>
+```
+
+Builds and returns the Express 4 application with all configured routes, middleware, and handlers.
+
+**Returns**: The Express 4 `Application` instance ready to be used with `app.listen()` or passed to `http.createServer()`.
+
+## Options
+
+### ExpressHttpAdapterOptions
+
+```ts
+interface ExpressHttpAdapterOptions extends HttpAdapterOptions {
+  useCookies?: boolean;
+  useJson?: boolean;
+  useText?: boolean;
+  useUrlEncoded?: boolean;
+}
+```
+
+#### Properties
+
+- **`logger`** (inherited): Set to `true` to log route mappings on build, or `false` to disable logging, or provide a custom logger implementing the `Logger` interface from `@inversifyjs/logger`.
+- **`useCookies`**: Enable cookie parsing middleware. Default: `false`
+- **`useJson`**: Enable JSON body parsing middleware. Default: `true`
+- **`useText`**: Enable text body parsing middleware. Default: `false`
+- **`useUrlEncoded`**: Enable URL-encoded body parsing middleware. Default: `false`
+
+## Usage Example
+
+<CodeBlock language="ts">{adapterBasicUsageExpress4Source}</CodeBlock>
+
+## Type Parameters
+
+The adapter is strongly typed with Express 4 types:
+
+```ts
+InversifyExpressHttpAdapter extends InversifyHttpAdapter<
+  Request,           // Express 4 Request
+  Response,          // Express 4 Response
+  NextFunction,      // Express 4 NextFunction
+  void,              // Handler return type
+  ExpressHttpAdapterOptions
+>
+```
+
+## See Also
+
+- [InversifyHttpAdapter (Base Class)](./inversify-http-adapter.mdx) - Common methods and configuration
+- [Controller](../../fundamentals/controller.mdx) - Creating route handlers
+- [Middleware](../../fundamentals/middleware.mdx) - Adding middleware to routes
+- [Guards](../../fundamentals/guard.mdx) - Protecting routes with guards

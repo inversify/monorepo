@@ -1,0 +1,144 @@
+---
+sidebar_position: 4
+title: InversifyFastifyHttpAdapter
+---
+import adapterBasicUsageFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/adapterBasicUsageFastify.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# InversifyFastifyHttpAdapter
+
+The Fastify HTTP adapter implementation. This adapter allows you to use InversifyJS framework with Fastify applications, providing high performance and low overhead.
+
+:::tip[Base class documentation]
+This adapter extends [InversifyHttpAdapter](./inversify-http-adapter.mdx). See the base class documentation for information about common methods like `applyGlobalMiddleware`, `useGlobalFilters`, `applyGlobalGuards`, `useGlobalInterceptors`, and `useGlobalPipe`.
+:::
+
+## Installation
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm">
+    ```bash
+    npm install @inversifyjs/http-fastify fastify inversify reflect-metadata
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+    ```bash
+    yarn add @inversifyjs/http-fastify fastify inversify reflect-metadata
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm add @inversifyjs/http-fastify fastify inversify reflect-metadata
+    ```
+  </TabItem>
+</Tabs>
+
+## Constructor
+
+```ts
+constructor(
+  container: Container,
+  httpAdapterOptions?: FastifyHttpAdapterOptions,
+  customApp?: FastifyInstance,
+)
+```
+
+Creates a Fastify adapter instance.
+
+### Parameters
+
+- **`container`**: The Inversify container that holds controllers, guards, pipes, middleware, interceptors, and filters.
+- **`httpAdapterOptions`** (optional): Configuration options for the adapter. See [Options](#options) below.
+- **`customApp`** (optional): A custom Fastify instance. If not provided, a default Fastify instance is created.
+
+### Default Options
+
+The adapter uses these defaults if not overridden:
+
+```ts
+{
+  logger: true,
+  useCookies: false,
+  useFormUrlEncoded: false,
+  useMultipartFormData: false,
+}
+```
+
+## Methods
+
+### build
+
+```ts
+async build(): Promise<FastifyInstance>
+```
+
+Builds and returns the Fastify instance with all configured routes, middleware, and handlers.
+
+**Returns**: The Fastify `FastifyInstance` ready to be used with `fastify.listen()`.
+
+## Options
+
+### FastifyHttpAdapterOptions
+
+```ts
+interface FastifyHttpAdapterOptions extends HttpAdapterOptions {
+  useCookies?: boolean;
+  useFormUrlEncoded?: boolean;
+  useMultipartFormData?:
+    | boolean
+    | FastifyMultipartAttachFieldsToBodyOptions
+    | FastifyMultipartOptions;
+}
+```
+
+#### Properties
+
+- **`logger`** (inherited): Set to `true` to log route mappings on build, or `false` to disable logging, or provide a custom logger implementing the `Logger` interface from `@inversifyjs/logger`.
+- **`useCookies`**: Enable cookie parsing with `@fastify/cookie` plugin. Default: `false`
+- **`useFormUrlEncoded`**: Enable form URL-encoded body parsing with `@fastify/formbody` plugin. Default: `false`
+- **`useMultipartFormData`**: Enable multipart/form-data parsing with `@fastify/multipart` plugin. Can be:
+  - `false`: Disabled (default)
+  - `true`: Enabled with default options
+  - Configuration object: Custom options for the multipart plugin
+
+## Usage Example
+
+<CodeBlock language="ts">{adapterBasicUsageFastifySource}</CodeBlock>
+
+## Fastify-Specific Features
+
+### High Performance
+
+Fastify is one of the fastest Node.js web frameworks. The InversifyJS adapter maintains this performance while providing the full DI framework capabilities.
+
+### Schema Validation
+
+While InversifyJS provides its own validation through pipes, you can also leverage Fastify's built-in JSON Schema validation for additional performance.
+
+### Async/Await Support
+
+The adapter fully supports async/await patterns and properly handles promise rejections in route handlers.
+
+## Type Parameters
+
+The adapter is strongly typed with Fastify types:
+
+```ts
+InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
+  InversifyFastifyRequest,  // Fastify Request
+  InversifyFastifyReply,    // Fastify Reply
+  () => void,               // Next function
+  void,                     // Handler return type
+  FastifyHttpAdapterOptions
+>
+```
+
+## See Also
+
+- [InversifyHttpAdapter (Base Class)](./inversify-http-adapter.mdx) - Common methods and configuration
+- [Controller](../../fundamentals/controller.mdx) - Creating route handlers
+- [Middleware](../../fundamentals/middleware.mdx) - Adding middleware to routes
+- [Guards](../../fundamentals/guard.mdx) - Protecting routes with guards
+- [Fastify Documentation](https://fastify.dev/) - Official Fastify documentation
