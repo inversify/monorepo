@@ -1,5 +1,11 @@
 # @inversifyjs/container
 
+## 1.14.3
+
+### Patch Changes
+
+- Updated metadata to reflect side effects
+
 ## 1.14.2
 
 ### Patch Changes
