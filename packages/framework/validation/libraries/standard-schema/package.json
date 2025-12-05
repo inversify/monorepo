@@ -20,7 +20,7 @@
     "@types/node": "24.10.1",
     "@vitest/coverage-v8": "4.0.10",
     "eslint": "9.39.1",
-    "inversify": "^7.10.5",
+    "inversify": "^7.10.6",
     "prettier": "3.7.4",
     "rimraf": "6.1.2",
     "rollup": "4.53.3",
