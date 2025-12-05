@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express-v4';
-import express4 from 'express4';
+import express from 'express4';
 import { Container } from 'inversify';
 
 export async function adapterBasicUsageExpress4(): Promise<void> {
@@ -23,7 +23,7 @@ export async function adapterBasicUsageExpress4(): Promise<void> {
   );
 
   // Build the Express 4 application
-  const app: express4.Application = await adapter.build();
+  const app: express.Application = await adapter.build();
 
   // Start the server
   app.listen(3000, () => {
