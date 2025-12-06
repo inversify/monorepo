@@ -4,12 +4,13 @@
     "url": "https://github.com/inversify/monorepo/issues"
   },
   "description": "Common ESLint config for inversify monorepo packages",
-  "devDependencies": {
+  "dependencies": {
     "@eslint/config-helpers": "0.5.0",
     "@vitest/eslint-plugin": "1.5.1",
-    "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.4",
-    "eslint-plugin-simple-import-sort": "12.1.1",
+    "eslint-plugin-simple-import-sort": "12.1.1"
+  },
+  "devDependencies": {
     "prettier": "3.7.4",
     "typescript-eslint": "8.48.1"
   },
