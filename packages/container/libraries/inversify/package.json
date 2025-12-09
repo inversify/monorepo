@@ -10,7 +10,7 @@
     "@inversifyjs/core": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "24.10.1",
+    "@types/node": "24.10.2",
     "@vitest/coverage-v8": "4.0.10",
     "eslint": "9.39.1",
     "prettier": "3.7.4",
