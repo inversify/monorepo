@@ -16,7 +16,7 @@
     "@stryker-mutator/typescript-checker": "9.4.0",
     "@stryker-mutator/vitest-runner": "9.4.0",
     "@types/express": "5.0.6",
-    "@types/node": "24.10.2",
+    "@types/node": "24.10.3",
     "@vitest/coverage-v8": "4.0.10",
     "eslint": "9.39.1",
     "inversify": "^7.10.6",
