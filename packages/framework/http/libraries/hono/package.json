@@ -8,11 +8,11 @@
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
-    "@hono/node-server": "1.19.6",
+    "@hono/node-server": "1.19.7",
     "@stryker-mutator/core": "9.4.0",
     "@stryker-mutator/typescript-checker": "9.4.0",
     "@stryker-mutator/vitest-runner": "9.4.0",
-    "@types/node": "24.10.1",
+    "@types/node": "24.10.2",
     "@vitest/coverage-v8": "4.0.10",
     "eslint": "9.39.1",
     "prettier": "3.7.4",
@@ -49,7 +49,7 @@
   },
   "name": "@inversifyjs/http-hono",
   "peerDependencies": {
-    "hono": "^4.10.7",
+    "hono": "^4.10.8",
     "inversify": "^7.10.6"
   },
   "publishConfig": {

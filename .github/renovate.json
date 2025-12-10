@@ -35,7 +35,7 @@
       "matchCurrentVersion": ">=4.0.0 <5.0.0"
     },
     {
-      "groupName": "auto merge on patch or minor",
+      "description": "auto merge on patch or minor",
       "automerge": true,
       "matchUpdateTypes": ["patch", "minor"],
       "excludePackageNames": ["turbo", "typescript"]

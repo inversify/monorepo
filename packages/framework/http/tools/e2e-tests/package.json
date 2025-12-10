@@ -6,7 +6,7 @@
   "description": "InversifyJs http E2E tests package",
   "dependencies": {
     "@cucumber/cucumber": "12.3.0",
-    "@hono/node-server": "1.19.6",
+    "@hono/node-server": "1.19.7",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-express-v4": "workspace:*",
@@ -16,7 +16,7 @@
     "express": "^5.2.1",
     "express4": "npm:express@4.22.1",
     "fastify": "^5.6.2",
-    "hono": "^4.10.7",
+    "hono": "^4.10.8",
     "inversify": "7.10.6",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
   },
