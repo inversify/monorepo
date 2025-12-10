@@ -1,3 +1,7 @@
+import { GetPlanOptions, PlanResult } from '@inversifyjs/core';
+
+import { Cloneable } from '../clone/models/Cloneable';
+
 const WORKER_SCRIPT: string = `
 self.addEventListener('message', async (ev) => {
   const { id, code, args } = ev.data || {};
@@ -13,9 +17,9 @@ self.addEventListener('message', async (ev) => {
       throw new Error('Default export must be a function');
 
     const result = await fn(...args);
-    self.postMessage({ id, result });
+    self.postMessage({ id, kind: 'success', result });
   } catch (error) {
-    self.postMessage({ id, error });
+    self.postMessage({ id, kind: 'error', error });
   }
 });
 `;
@@ -26,16 +30,32 @@ interface RpcWorkerMessage {
   code: string;
 }
 
+interface BaseRpcWorkerResultMessage<TKind extends RpcWorkerResultMessageKind> {
+  kind: TKind;
+}
+
+enum RpcWorkerResultMessageKind {
+  error = 'error',
+  plan = 'plan',
+  success = 'success',
+}
+
 type RpcWorkerResultMessage =
   | RpcWorkerResultErrorMessage
+  | RpcWorkerResultPlanMessage
   | RpcWorkerResultSuccessMessage;
 
-interface RpcWorkerResultErrorMessage {
+interface RpcWorkerResultErrorMessage extends BaseRpcWorkerResultMessage<RpcWorkerResultMessageKind.error> {
   id: number;
   error: unknown;
 }
 
-interface RpcWorkerResultSuccessMessage {
+interface RpcWorkerResultPlanMessage extends BaseRpcWorkerResultMessage<RpcWorkerResultMessageKind.plan> {
+  options: Cloneable<GetPlanOptions>;
+  result: Cloneable<PlanResult>;
+}
+
+interface RpcWorkerResultSuccessMessage extends BaseRpcWorkerResultMessage<RpcWorkerResultMessageKind.success> {
   id: number;
   result: unknown;
 }
@@ -77,27 +97,50 @@ export default function createRpcWorker(): CreateRpcWorkerResult {
     callbacksMap.clear();
   });
 
+  function handleCallbackMapOnMessageId(id: number): RpcCallbacks | undefined {
+    const rpcCallback: RpcCallbacks | undefined = callbacksMap.get(id);
+
+    if (rpcCallback === undefined) return;
+
+    callbacksMap.delete(id);
+
+    return rpcCallback;
+  }
+
   worker.addEventListener(
     'message',
     (ev: MessageEvent<RpcWorkerResultMessage>) => {
-      const data: RpcWorkerResultMessage = ev.data;
+      switch (ev.data.kind) {
+        case RpcWorkerResultMessageKind.error:
+          {
+            const rpcCallback: RpcCallbacks | undefined =
+              handleCallbackMapOnMessageId(ev.data.id);
 
-      const rpcCallback: RpcCallbacks | undefined = callbacksMap.get(data.id);
+            if (rpcCallback === undefined) {
+              return;
+            }
 
-      if (rpcCallback === undefined) return;
+            rpcCallback.reject(ev.data.error);
+          }
+          break;
+        case RpcWorkerResultMessageKind.plan:
+          {
+            console.log(ev.data.options);
+            console.log(ev.data.result);
+          }
+          break;
+        case RpcWorkerResultMessageKind.success:
+          {
+            const rpcCallback: RpcCallbacks | undefined =
+              handleCallbackMapOnMessageId(ev.data.id);
 
-      callbacksMap.delete(data.id);
+            if (rpcCallback === undefined) {
+              return;
+            }
 
-      if ((data as Partial<RpcWorkerResultErrorMessage>).error === undefined) {
-        const { result }: RpcWorkerResultSuccessMessage =
-          data as RpcWorkerResultSuccessMessage;
-
-        rpcCallback.resolve(result);
-      } else {
-        const { error }: RpcWorkerResultErrorMessage =
-          data as RpcWorkerResultErrorMessage;
-
-        rpcCallback.reject(error);
+            rpcCallback.resolve(ev.data.result);
+          }
+          break;
       }
     },
   );

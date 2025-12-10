@@ -1,8 +1,8 @@
 import type * as Preset from '@docusaurus/preset-classic';
 import type { Config, LoadContext, Plugin } from '@docusaurus/types';
+import { rspack, WebpackPluginInstance } from '@rspack/core';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import { themes as prismThemes } from 'prism-react-renderer';
-
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
   baseUrl: '/',
@@ -35,6 +35,17 @@ const config: Config = {
               },
             ],
           },
+          plugins: [
+            new MonacoWebpackPlugin(),
+            new rspack.CopyRspackPlugin({
+              patterns: [
+                {
+                  from: require.resolve('@inversifyjs/react-code-runner/inversifyBundle.js'),
+                  to: 'inversify.js',
+                },
+              ],
+            }) as WebpackPluginInstance,
+          ],
         };
       },
       name: 'custom-asset-modules',
