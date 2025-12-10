@@ -11,7 +11,7 @@
     "@inversifyjs/http-open-api": "workspace:*",
     "@inversifyjs/open-api-types": "workspace:*",
     "@types/express": "5.0.6",
-    "@types/node": "24.10.2",
+    "@types/node": "24.10.3",
     "@vitest/coverage-v8": "4.0.10",
     "eslint": "9.39.1",
     "express": "5.2.1",
