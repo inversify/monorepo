@@ -39,7 +39,7 @@
     "@babel/standalone": "^7.28.5",
     "@swc/wasm-web": "^1.15.3",
     "monaco-editor": "~0.55.1",
-    "react": "19.2.1"
+    "react": "19.2.2"
   },
   "homepage": "https://inversify.io",
   "devEngines": {
