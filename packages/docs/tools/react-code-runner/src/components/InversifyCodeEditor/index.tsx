@@ -69,10 +69,11 @@ export function InversifyCodeEditor({
     }
 
     return () => {
-      if (editor.current) {
+      if (editor.current !== null) {
         editor.current.dispose();
-        rpcWorker.current.terminate();
       }
+
+      rpcWorker.current.terminate();
     };
   }, []);
 
