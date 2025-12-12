@@ -31,9 +31,13 @@ export function clone(
         return cached as Cloneable<T>;
       }
 
-      return curriedCloneObject(
+      const objectClone: Cloneable<T> = curriedCloneObject(
         input as Record<string | symbol, unknown>,
       ) as Cloneable<T>;
+
+      objectToCloneWeakMap.set(input, objectClone);
+
+      return objectClone;
     }
 
     return input as Cloneable<T>;
