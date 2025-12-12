@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["src/**/*.{cts,mts,ts}"],
+      "inputs": ["src/**/*.{cts,mts,ts,tsx}"],
       "outputs": ["dist/**", "lib/**"]
     },
     "@inversifyjs/binding-decorators-code-examples#build": {
@@ -13,7 +13,7 @@
     },
     "@inversifyjs/react-code-runner#build": {
       "dependsOn": ["^build"],
-      "inputs": ["src/**/*.{cts,mts,ts}"],
+      "inputs": ["src/**/*.{css,cts,mts,ts,tsx}"],
       "outputs": ["generated/**", "lib/**"]
     },
     "@inversifyjs/code-examples#build": {

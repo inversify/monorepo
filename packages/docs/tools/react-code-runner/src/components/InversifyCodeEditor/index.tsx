@@ -1,3 +1,4 @@
+import { GetPlanOptions, PlanResult } from '@inversifyjs/core';
 import { transformSync } from '@swc/wasm-web';
 import type * as monaco from 'monaco-editor';
 import React, { MouseEventHandler, useEffect, useRef } from 'react';
@@ -9,25 +10,36 @@ import getInversifyMainFileMonacoModel from '../../actions/getInversifyMainFileM
 import getMonaco from '../../actions/getMonaco';
 import transformSourceCode from '../../actions/transformSourceCode';
 import { mapImports } from '../../calculations/mapImports';
+import { Cloneable } from '../../clone/models/Cloneable';
 import { useSwc } from '../../hooks/useSwc';
 import styles from './styles.module.css';
 
 export interface InversifyCodeEditorProps {
+  beforeCodeRun?: () => void;
   Button: (params: {
     readonly label?: string | undefined;
     readonly onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
   }) => React.ReactElement;
+  onPlan?: (
+    options: Cloneable<GetPlanOptions>,
+    result: Cloneable<PlanResult>,
+  ) => void | Promise<void>;
   style?: React.CSSProperties | undefined;
 }
 
 export function InversifyCodeEditor({
+  beforeCodeRun,
   // eslint-disable-next-line @typescript-eslint/naming-convention
   Button,
+  onPlan,
   style,
 }: InversifyCodeEditorProps): React.ReactElement {
   const isSwcInitialized: boolean = useSwc();
-  const rpcWorker: React.RefObject<CreateRpcWorkerResult> =
-    useRef(createRpcWorker());
+  const rpcWorker: React.RefObject<CreateRpcWorkerResult> = useRef(
+    createRpcWorker({
+      onPlan,
+    }),
+  );
   const containerElement: React.RefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement | null>(null);
   const editor: React.RefObject<monaco.editor.IStandaloneCodeEditor | null> =
@@ -78,15 +90,17 @@ export function InversifyCodeEditor({
       <div className={styles.spinnerOverlay} style={spinnerOverlayStyles}>
         <div className={styles.spinnerDot} />
       </div>
-      <div style={{ height: '100%', width: '100%' }}>
+      <div style={{ height: 'calc(100% - 40px)', width: '100%' }}>
         <div
           ref={containerElement}
-          className="react-monaco-editor-container"
-          style={{ height: '100%', width: '100%' }}
+          className={styles.reactMonacoEditorContainer}
         />
+      </div>
+      <div>
         <Button
           onClick={() => {
             if (editor.current !== null && isSwcInitialized) {
+              beforeCodeRun?.();
               const transpiledJsCode: string = transformSync(
                 editor.current.getValue(),
                 {

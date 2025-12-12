@@ -65,12 +65,23 @@ interface RpcCallbacks {
   reject: (reason: unknown) => void;
 }
 
+export interface CreateRpcWorkerOptions {
+  onPlan?:
+    | ((
+        options: Cloneable<GetPlanOptions>,
+        result: Cloneable<PlanResult>,
+      ) => void | Promise<void>)
+    | undefined;
+}
+
 export interface CreateRpcWorkerResult {
   rpc: (args: unknown[], code: string) => Promise<unknown>;
   terminate: () => void;
 }
 
-export default function createRpcWorker(): CreateRpcWorkerResult {
+export default function createRpcWorker(
+  options?: CreateRpcWorkerOptions,
+): CreateRpcWorkerResult {
   const blob: Blob = new Blob([WORKER_SCRIPT], { type: 'text/javascript' });
   const workerUrl: string = URL.createObjectURL(blob);
 
@@ -125,8 +136,7 @@ export default function createRpcWorker(): CreateRpcWorkerResult {
           break;
         case RpcWorkerResultMessageKind.plan:
           {
-            console.log(ev.data.options);
-            console.log(ev.data.result);
+            void options?.onPlan?.(ev.data.options, ev.data.result);
           }
           break;
         case RpcWorkerResultMessageKind.success:

@@ -49,6 +49,7 @@
   },
   "license": "MIT",
   "exports": {
+    ".": "./lib/esm/index.js",
     "./InversifyCodeEditor": "./lib/esm/components/InversifyCodeEditor/index.js",
     "./inversifyBundle.js": "./lib/esm/inversifyBundle.js",
     "./generated/types.d.ts.txt": "./generated/types.d.ts.txt"
