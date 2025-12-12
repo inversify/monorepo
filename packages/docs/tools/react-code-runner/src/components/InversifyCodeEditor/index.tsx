@@ -35,9 +35,19 @@ export function InversifyCodeEditor({
   style,
 }: InversifyCodeEditorProps): React.ReactElement {
   const isSwcInitialized: boolean = useSwc();
+
+  const onPlanRef: React.RefObject<typeof onPlan> = useRef(onPlan);
+
+  useEffect(() => {
+    onPlanRef.current = onPlan;
+  }, [onPlan]);
+
   const rpcWorker: React.RefObject<CreateRpcWorkerResult> = useRef(
     createRpcWorker({
-      onPlan,
+      onPlan: (
+        options: Cloneable<GetPlanOptions>,
+        result: Cloneable<PlanResult>,
+      ): void | Promise<void> => onPlanRef.current?.(options, result),
     }),
   );
   const containerElement: React.RefObject<HTMLDivElement | null> =
