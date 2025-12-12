@@ -17,15 +17,10 @@ import { Cloneable, CloneableFunction } from '@inversifyjs/react-code-runner';
  */
 function escapeMermaidString(str: string): string {
   return str
-    .replace(/\\/g, '\\\\') // Escape backslashes
-    .replace(/"/g, '\\"') // Escape quotes
-    .replace(/\n/g, ' ') // Replace newlines with spaces
+    .replace(/\n/g, '<br />') // Replace newlines
     .replace(/\r/g, '') // Remove carriage returns
     .replace(/\t/g, '  ') // Replace tabs with spaces
-    .replace(/[<>]/g, '') // Remove angle brackets (can break Mermaid)
-    .replace(/[{}]/g, '') // Remove curly braces (can break Mermaid)
-    .replace(/\[/g, '(')
-    .replace(/\]/g, ')');
+    .replace(/([[\]{}\\"<>])/g, '\\$1'); // Escape brackets and braces
 }
 
 /**
@@ -270,7 +265,7 @@ export default function buildMermaidFlowChart(
       } else if (value === undefined) {
         valueStr = 'undefined';
       } else if (typeof value === 'object') {
-        valueStr = '{...}';
+        valueStr = escapeMermaidString('{...}');
       } else if (typeof value === 'string') {
         valueStr = escapeMermaidString(
           value.slice(0, MAX_VALUE_PREVIEW_LENGTH),
