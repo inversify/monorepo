@@ -65,7 +65,7 @@ interface RpcCallbacks {
   reject: (reason: unknown) => void;
 }
 
-export interface CreateRpcWorkerOptions {
+interface CreateRpcWorkerOptions {
   onPlan?:
     | ((
         options: Cloneable<GetPlanOptions>,

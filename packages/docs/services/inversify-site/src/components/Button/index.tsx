@@ -2,13 +2,13 @@ import Link, { Props } from '@docusaurus/Link';
 import clsx from 'clsx';
 import { MouseEventHandler } from 'react';
 
-export enum ButtonPropSize {
+enum ButtonPropSize {
   large = 'lg',
   medium = 'md',
   small = 'sm',
 }
 
-export interface ButtonProps {
+interface ButtonProps {
   readonly block?: boolean | undefined;
   readonly className?: string | undefined;
   readonly disabled?: boolean | undefined;
