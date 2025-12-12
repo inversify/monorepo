@@ -128,9 +128,9 @@ export default function buildMermaidFlowChart(
       serviceIdentifierToString(serviceNode.serviceIdentifier),
     );
 
-    lines.push(`${nodeId}["ServiceNode
-Service identifier: ${serviceIdStr}
-Is context free: ${String(serviceNode.isContextFree)}"]`);
+    lines.push(
+      `${nodeId}["ServiceNode<br/>Service identifier: ${serviceIdStr}<br/>Is context free: ${String(serviceNode.isContextFree)}"]`,
+    );
 
     // Process bindings
     if (serviceNode.bindings !== undefined) {
@@ -177,8 +177,9 @@ Is context free: ${String(serviceNode.isContextFree)}"]`);
 
     const escapedClassName: string = escapeMermaidString(className);
 
-    lines.push(`${nodeId}["${bindingType}: ${escapedClassName}
-Binding scope: ${node.binding.scope}"]`);
+    lines.push(
+      `${nodeId}["${bindingType}: ${escapedClassName}<br/>Binding scope: ${node.binding.scope}"]`,
+    );
     lines.push(`${parentNodeId} --> ${nodeId}`);
 
     // Process constructor parameters
@@ -211,8 +212,9 @@ Binding scope: ${node.binding.scope}"]`);
     const nodeId: string = getOrCreateNodeId(node, 'resolved');
     const bindingType: string = node.binding.type;
 
-    lines.push(`${nodeId}["${bindingType}
-Binding scope: ${node.binding.scope}"]`);
+    lines.push(
+      `${nodeId}["${bindingType}<br/>Binding scope: ${node.binding.scope}"]`,
+    );
     lines.push(`${parentNodeId} --> ${nodeId}`);
 
     // Process parameters
@@ -284,8 +286,9 @@ Binding scope: ${node.binding.scope}"]`);
       label = `${bindingType}: ${valueStr}`;
     }
 
-    lines.push(`${nodeId}["${label}
-Binding scope: ${node.binding.scope}"]`);
+    lines.push(
+      `${nodeId}["${label}<br/>Binding scope: ${node.binding.scope}"]`,
+    );
     lines.push(`${parentNodeId} --> ${nodeId}`);
   }
 
@@ -294,16 +297,14 @@ Binding scope: ${node.binding.scope}"]`);
   const serviceIdStr: string = escapeMermaidString(
     serviceIdentifierToString(options.serviceIdentifier),
   );
-  const optionalLabel: string = options.optional ? ' (optional)\n' : '';
+  const optionalLabel: string = options.optional ? ' (optional)<br/>' : '';
   const multipleLabel: string =
-    'isMultiple' in options && options.isMultiple ? ' (multiple)\n' : '';
+    'isMultiple' in options && options.isMultiple ? ' (multiple)<br/>' : '';
   const nameLabel: string =
-    options.name !== undefined ? `Name: "${String(options.name)}"\n` : '';
+    options.name !== undefined ? `Name: "${String(options.name)}"<br/>` : '';
 
   lines.push(
-    `${rootNodeId}["Request:
-Service identifier: ${serviceIdStr}
-${nameLabel}${optionalLabel}${multipleLabel}"]`,
+    `${rootNodeId}["Request:<br/>Service identifier: ${serviceIdStr}<br/>${nameLabel}${optionalLabel}${multipleLabel}"]`,
   );
   lines.push(
     `style ${rootNodeId} fill:#e1f5ff,stroke:#0288d1,stroke-width:3px`,
