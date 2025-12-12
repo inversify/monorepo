@@ -10,6 +10,8 @@ export type CustomCloneableHandlerTuple<T = any> = [
 export function clone(
   customHandlers: CustomCloneableHandlerTuple[],
 ): <T>(input: T) => Cloneable<T> {
+  const objectToCloneWeakMap: WeakMap<object, unknown> = new WeakMap();
+
   const curriedClone: <T>(input: T) => Cloneable<T> = function <T>(
     input: T,
   ): Cloneable<T> {
@@ -24,6 +26,11 @@ export function clone(
     }
 
     if (typeof input === 'object' && input !== null) {
+      const cached: unknown = objectToCloneWeakMap.get(input as object);
+      if (cached !== undefined) {
+        return cached as Cloneable<T>;
+      }
+
       return curriedCloneObject(
         input as Record<string | symbol, unknown>,
       ) as Cloneable<T>;
