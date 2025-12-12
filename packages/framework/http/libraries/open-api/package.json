@@ -9,7 +9,7 @@
     "@inversifyjs/json-schema-pointer": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "workspace:*",
     "mime-types": "^3.0.2",
-    "swagger-ui-dist": "^5.30.3"
+    "swagger-ui-dist": "^5.31.0"
   },
   "devDependencies": {
     "@hono/node-server": "1.19.7",
