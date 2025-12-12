@@ -35,7 +35,7 @@ const MermaidGraph: ({
 
       void initializeMermaid();
     }
-  }, [source]);
+  }, [id, source]);
 
   return <div id={id} ref={mermaidRef}></div>;
 };
