@@ -5,7 +5,7 @@
   },
   "description": "InversifyJs docs site package",
   "dependencies": {
-    "@babel/standalone": "7.28.4",
+    "@babel/standalone": "7.28.5",
     "@docusaurus/core": "3.9.2",
     "@docusaurus/faster": "3.9.2",
     "@docusaurus/plugin-content-docs": "3.9.2",
