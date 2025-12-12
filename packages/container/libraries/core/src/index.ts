@@ -78,6 +78,7 @@ import { GetPlanOptions } from './planning/models/GetPlanOptions';
 import { GetPlanOptionsTagConstraint } from './planning/models/GetPlanOptionsTagConstraint';
 import { GetSingleServicePlanOptions } from './planning/models/GetSingleServicePlanOptions';
 import { InstanceBindingNode } from './planning/models/InstanceBindingNode';
+import { LazyPlanServiceNode } from './planning/models/LazyPlanServiceNode';
 import { LeafBindingNode } from './planning/models/LeafBindingNode';
 import { MultipleBindingPlanParamsConstraint } from './planning/models/MultipleBindingPlanParamsConstraint';
 import { NonCachedServiceNodeContext } from './planning/models/NonCachedServiceNodeContext';
@@ -201,6 +202,7 @@ export {
   injectFromHierarchy,
   InversifyCoreError,
   InversifyCoreErrorKind,
+  LazyPlanServiceNode,
   multiInject,
   named,
   optional,
