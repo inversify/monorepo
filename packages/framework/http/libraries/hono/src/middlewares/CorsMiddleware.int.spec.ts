@@ -13,17 +13,21 @@ import { Context as HonoContext } from '../index';
 import { CorsMiddleware } from './CorsMiddleware';
 
 interface TestClient {
-  messages: ClientRequest<{
-    $get: {
-      input: object;
-      output: {
-        query: string | undefined;
-        results: string[];
+  messages: ClientRequest<
+    string,
+    string,
+    {
+      $get: {
+        input: object;
+        output: {
+          query: string | undefined;
+          results: string[];
+        };
+        outputFormat: 'json';
+        status: ContentfulStatusCode;
       };
-      outputFormat: 'json';
-      status: ContentfulStatusCode;
-    };
-  }>;
+    }
+  >;
 }
 
 describe(CorsMiddleware, () => {
