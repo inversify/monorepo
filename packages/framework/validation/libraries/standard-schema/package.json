@@ -28,7 +28,7 @@
     "tslib": "2.8.1",
     "typescript": "5.9.3",
     "vitest": "4.0.10",
-    "zod": "^4.1.13"
+    "zod": "^4.2.0"
   },
   "devEngines": {
     "node": "^24.10.0",
