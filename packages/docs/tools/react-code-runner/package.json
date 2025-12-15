@@ -27,7 +27,7 @@
     "inversify": "7.10.6",
     "prettier": "3.7.4",
     "rimraf": "6.1.2",
-    "rollup": "4.53.3",
+    "rollup": "4.53.4",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
@@ -38,7 +38,7 @@
   },
   "peerDependencies": {
     "@babel/standalone": "^7.28.5",
-    "@swc/wasm-web": "^1.15.4",
+    "@swc/wasm-web": "^1.15.5",
     "monaco-editor": "~0.55.1",
     "react": "19.2.3"
   },
