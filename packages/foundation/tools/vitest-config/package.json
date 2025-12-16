@@ -7,7 +7,7 @@
   "dependencies": {
     "@swc/core": "^1.15.5",
     "unplugin-swc": "^1.5.9",
-    "vitest": "^4.0.10"
+    "vitest": "4.0.16"
   },
   "devDependencies": {
     "prettier": "3.7.4"
