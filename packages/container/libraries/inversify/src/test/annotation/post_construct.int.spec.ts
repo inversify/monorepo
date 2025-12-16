@@ -15,7 +15,7 @@ describe('@postConstruct', () => {
       Katana.toString();
     }
 
-    expect(setup).toThrow(`Unexpected injection error.
+    expect(setup).toThrowError(`Unexpected injection error.
 
 Cause:
 

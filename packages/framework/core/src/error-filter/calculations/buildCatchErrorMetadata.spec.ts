@@ -77,7 +77,7 @@ describe(buildCatchErrorMetadata, () => {
     it('should throw an InversifyFrameworkCoreError', () => {
       expect(() => {
         buildCatchErrorMetadata(errorTypeFixture)(catchErrorMetadataFixture);
-      }).toThrow(
+      }).toThrowError(
         new InversifyFrameworkCoreError(
           InversifyFrameworkCoreErrorKind.injectionDecoratorConflict,
           `CatchError for error type '${errorTypeFixture.name}' is already defined.`,
@@ -102,7 +102,7 @@ describe(buildCatchErrorMetadata, () => {
     it('should throw an InversifyFrameworkCoreError', () => {
       expect(() => {
         buildCatchErrorMetadata(errorTypeFixture)(catchErrorMetadataFixture);
-      }).toThrow(
+      }).toThrowError(
         new InversifyFrameworkCoreError(
           InversifyFrameworkCoreErrorKind.injectionDecoratorConflict,
           `CatchError for error type 'null' is already defined.`,

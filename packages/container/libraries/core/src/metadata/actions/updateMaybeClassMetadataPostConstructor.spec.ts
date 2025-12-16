@@ -113,7 +113,7 @@ describe(updateMaybeClassMetadataPostConstructor, () => {
           updateMaybeClassMetadataPostConstructor(methodNameFixture)(
             metadataFixture,
           );
-        }).toThrow(
+        }).toThrowError(
           new InversifyCoreError(
             InversifyCoreErrorKind.injectionDecoratorConflict,
             `Unexpected duplicated postConstruct method ${methodNameFixture.toString()}`,

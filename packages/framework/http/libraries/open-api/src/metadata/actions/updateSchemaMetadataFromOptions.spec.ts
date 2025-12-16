@@ -165,7 +165,7 @@ describe(updateSchemaMetadataFromOptions, () => {
             optionsFixture,
             targetFixture,
           )(metadataFixture),
-        ).toThrow('Cannot redefine "TestClass" schema name');
+        ).toThrowError('Cannot redefine "TestClass" schema name');
       });
     });
   });

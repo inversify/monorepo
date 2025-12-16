@@ -22,7 +22,7 @@ describe('inversify/InversifyJS#1864', () => {
       container.unbindSync('bar');
       container.unbindSync(Foo);
       container.unbindSync(Foo);
-    }).not.toThrow();
+    }).not.toThrowError();
   });
 
   it('Container leaf bind request should not throw planning errors', () => {
@@ -38,7 +38,7 @@ describe('inversify/InversifyJS#1864', () => {
 
     expect(() => {
       container.bind('bar').toConstantValue('bar');
-    }).not.toThrow();
+    }).not.toThrowError();
   });
 
   it('Container non leaf bind request should not throw planning errors', () => {
@@ -58,7 +58,7 @@ describe('inversify/InversifyJS#1864', () => {
 
     expect(() => {
       container.bind('bar').to(Bar);
-    }).not.toThrow();
+    }).not.toThrowError();
 
     container.bind('baz').toConstantValue('baz');
 
@@ -85,6 +85,6 @@ describe('inversify/InversifyJS#1864', () => {
 
     expect(() => {
       container.bind('bar').to(Circular);
-    }).not.toThrow();
+    }).not.toThrowError();
   });
 });

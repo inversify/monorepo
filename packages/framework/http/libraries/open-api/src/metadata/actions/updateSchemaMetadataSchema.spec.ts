@@ -82,7 +82,7 @@ describe(updateSchemaMetadataSchema, () => {
             schemaFixture,
             targetFixture,
           )(metadataFixture),
-        ).toThrow('Cannot redefine "TestClass" schema');
+        ).toThrowError('Cannot redefine "TestClass" schema');
       });
     });
   });

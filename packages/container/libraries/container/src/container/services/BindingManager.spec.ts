@@ -997,7 +997,6 @@ describe(BindingManager, () => {
         );
 
         for (const serviceId of serviceIdsFixture) {
-          // eslint-disable-next-line vitest/prefer-called-exactly-once-with
           expect(resolveServiceDeactivations).toHaveBeenCalledWith(
             deactivationParamsFixture,
             serviceId,
@@ -1013,7 +1012,6 @@ describe(BindingManager, () => {
         for (const serviceId of serviceIdsFixture) {
           expect(
             serviceReferenceManagerMock.activationService.removeAllByServiceId,
-            // eslint-disable-next-line vitest/prefer-called-exactly-once-with
           ).toHaveBeenCalledWith(serviceId);
         }
       });
@@ -1026,7 +1024,6 @@ describe(BindingManager, () => {
         for (const serviceId of serviceIdsFixture) {
           expect(
             serviceReferenceManagerMock.bindingService.removeAllByServiceId,
-            // eslint-disable-next-line vitest/prefer-called-exactly-once-with
           ).toHaveBeenCalledWith(serviceId);
         }
       });
@@ -1040,7 +1037,6 @@ describe(BindingManager, () => {
           expect(
             serviceReferenceManagerMock.deactivationService
               .removeAllByServiceId,
-            // eslint-disable-next-line vitest/prefer-called-exactly-once-with
           ).toHaveBeenCalledWith(serviceId);
         }
       });
