@@ -28,11 +28,10 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
   Response,
   NextFunction,
   void,
-  ExpressHttpAdapterOptions
+  ExpressHttpAdapterOptions,
+  Application
 > {
   public readonly id: symbol = ADAPTER_ID;
-
-  readonly #app: Application;
 
   constructor(
     container: Container,
@@ -49,15 +48,40 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         useUrlEncoded: false,
       },
       httpAdapterOptions,
+      [],
+      customApp,
     );
-
-    this.#app = customApp ?? this.#buildDefaultExpressApp();
   }
 
-  public async build(): Promise<Application> {
-    await this._buildServer();
+  protected _buildApp(customApp: Application | undefined): Application {
+    return customApp ?? this._buildDefaultExpressApp();
+  }
 
-    return this.#app;
+  protected _buildDefaultExpressApp(customApp?: Application): Application {
+    const app: Application = customApp ?? express();
+
+    if (this.httpAdapterOptions.useCookies) {
+      app.use(cookieParser());
+    }
+
+    if (this.httpAdapterOptions.useJson) {
+      app.use(express.json({ type: 'application/json' }));
+    }
+
+    if (this.httpAdapterOptions.useText) {
+      app.use(express.text({ type: 'text/*' }));
+    }
+
+    if (this.httpAdapterOptions.useUrlEncoded) {
+      app.use(
+        express.urlencoded({
+          extended: false,
+          type: 'application/x-www-form-urlencoded',
+        }),
+      );
+    }
+
+    return app;
   }
 
   protected _buildRouter(
@@ -82,7 +106,7 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         `${routerParams.path}${routeParams.path}`,
       );
 
-      this.#app[routeParams.requestMethodType](
+      this._app[routeParams.requestMethodType](
         normalizedPath,
         ...(orderedPreHandlerMiddlewareList as ExpressRequestHandler[]),
         routeParams.handler as ExpressRequestHandler,
@@ -200,32 +224,5 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     return parameterName === undefined
       ? request.cookies
       : request.cookies[parameterName];
-  }
-
-  #buildDefaultExpressApp(customApp?: Application): Application {
-    const app: Application = customApp ?? express();
-
-    if (this.httpAdapterOptions.useCookies) {
-      app.use(cookieParser());
-    }
-
-    if (this.httpAdapterOptions.useJson) {
-      app.use(express.json({ type: 'application/json' }));
-    }
-
-    if (this.httpAdapterOptions.useText) {
-      app.use(express.text({ type: 'text/*' }));
-    }
-
-    if (this.httpAdapterOptions.useUrlEncoded) {
-      app.use(
-        express.urlencoded({
-          extended: false,
-          type: 'application/x-www-form-urlencoded',
-        }),
-      );
-    }
-
-    return app;
   }
 }

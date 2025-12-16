@@ -74,7 +74,7 @@ describe('Issue 543', () => {
       return container.get(TYPE.Root);
     }
 
-    expect(throws).toThrow(
+    expect(throws).toThrowError(
       'Circular dependency found: Symbol(Root) -> Symbol(Circular) -> Symbol(Child) -> Symbol(Child2) -> Symbol(Circular)',
     );
   });

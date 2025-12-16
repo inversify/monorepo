@@ -43,6 +43,6 @@ Details
 
 [class: "InvalidDecoratorUsageWarrior", index: "0"]`;
 
-    expect(useDecoratorMoreThanOnce).toThrow(msg);
+    expect(useDecoratorMoreThanOnce).toThrowError(msg);
   });
 });

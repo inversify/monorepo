@@ -55,11 +55,13 @@ export abstract class InversifyHttpAdapter<
   TNextFunction extends (err?: any) => Promise<void> | void,
   TResult,
   TOptions extends HttpAdapterOptions = HttpAdapterOptions,
+  TApp = unknown,
 > {
   protected readonly httpAdapterOptions: RequiredOptions<TOptions>;
   protected readonly globalHandlers: {
     interceptorList: Interceptor<TRequest, TResponse>[];
   };
+  protected readonly _app: TApp;
   protected readonly _logger: Logger;
   readonly #awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>;
   readonly #container: Container;
@@ -93,6 +95,7 @@ export abstract class InversifyHttpAdapter<
     awaitableRequestMethodParamTypes?:
       | Iterable<RequestMethodParameterType>
       | undefined,
+    customApp?: TApp,
   ) {
     this.#awaitableRequestMethodParamTypes = new Set(
       awaitableRequestMethodParamTypes,
@@ -118,6 +121,8 @@ export abstract class InversifyHttpAdapter<
     this.#preHandlerMiddlewareList = [];
 
     this.#setErrorHttpResponseErrorFilter();
+
+    this._app = this._buildApp(customApp);
   }
 
   public applyGlobalMiddleware(
@@ -144,12 +149,6 @@ export abstract class InversifyHttpAdapter<
     );
   }
 
-  public useGlobalFilters(...errorFilterList: Newable<ErrorFilter>[]): void {
-    for (const errorFilter of errorFilterList) {
-      this.#setGlobalErrorFilter(errorFilter);
-    }
-  }
-
   public applyGlobalGuards(
     ...guardList: ServiceIdentifier<Guard<TRequest>>[]
   ): void {
@@ -161,6 +160,18 @@ export abstract class InversifyHttpAdapter<
     }
 
     this.#globalGuardList.push(...guardList);
+  }
+
+  public async build(): Promise<TApp> {
+    await this._buildServer();
+
+    return this._app;
+  }
+
+  public useGlobalFilters(...errorFilterList: Newable<ErrorFilter>[]): void {
+    for (const errorFilter of errorFilterList) {
+      this.#setGlobalErrorFilter(errorFilter);
+    }
   }
 
   public useGlobalInterceptors(
@@ -913,7 +924,7 @@ export abstract class InversifyHttpAdapter<
     );
   }
 
-  public abstract build(): Promise<unknown>;
+  protected abstract _buildApp(customApp: TApp | undefined): TApp;
 
   protected abstract _getBody(
     request: TRequest,

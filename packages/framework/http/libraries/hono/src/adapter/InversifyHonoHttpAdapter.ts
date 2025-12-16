@@ -21,9 +21,7 @@ import {
   Next,
 } from 'hono';
 import { getCookie } from 'hono/cookie';
-import { stream } from 'hono/streaming';
 import { StatusCode } from 'hono/utils/http-status';
-import { StreamingApi } from 'hono/utils/stream';
 import { Container } from 'inversify';
 
 const ADAPTER_ID: unique symbol = Symbol.for(
@@ -34,11 +32,11 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
   HonoRequest,
   Context,
   Next,
-  Response | undefined
+  Response | undefined,
+  HttpAdapterOptions,
+  Hono
 > {
   public readonly id: symbol = ADAPTER_ID;
-
-  readonly #app: Hono;
 
   constructor(
     container: Container,
@@ -52,14 +50,12 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
       },
       httpAdapterOptions,
       [RequestMethodParameterType.Body],
+      customApp,
     );
-    this.#app = customApp ?? new Hono();
   }
 
-  public async build(): Promise<Hono> {
-    await this._buildServer();
-
-    return this.#app;
+  protected _buildApp(customApp: Hono | undefined): Hono {
+    return customApp ?? new Hono();
   }
 
   protected _buildRouter(
@@ -91,7 +87,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
       );
     }
 
-    this.#app.route(routerParams.path, router);
+    this._app.route(routerParams.path, router);
   }
 
   protected async _getBody(

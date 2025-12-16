@@ -51,11 +51,10 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   InversifyFastifyReply,
   () => void,
   void,
-  FastifyHttpAdapterOptions
+  FastifyHttpAdapterOptions,
+  FastifyInstance
 > {
   public readonly id: symbol = ADAPTER_ID;
-
-  readonly #app: FastifyInstance;
 
   constructor(
     container: Container,
@@ -72,14 +71,43 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
       },
       httpAdapterOptions,
       [RequestMethodParameterType.Body],
+      customApp,
     );
-    this.#app = this.#buildDefaultFastifyApp(customApp);
   }
 
-  public async build(): Promise<FastifyInstance> {
-    await this._buildServer();
+  protected _buildApp(customApp: FastifyInstance | undefined): FastifyInstance {
+    return customApp ?? this._buildDefaultFastifyApp();
+  }
 
-    return this.#app;
+  protected _buildDefaultFastifyApp(
+    customApp?: FastifyInstance,
+  ): FastifyInstance {
+    const app: FastifyInstance = customApp ?? fastify();
+
+    if (this.httpAdapterOptions.useCookies) {
+      app.register(
+        cookie as unknown as FastifyPluginCallback<
+          NonNullable<FastifyCookieOptions>
+        >,
+      );
+    }
+
+    if (this.httpAdapterOptions.useFormUrlEncoded) {
+      app.register(fastifyFormbody);
+    }
+
+    if (this.httpAdapterOptions.useMultipartFormData !== false) {
+      if (this.httpAdapterOptions.useMultipartFormData === true) {
+        app.register(fastifyMultipart);
+      } else {
+        app.register(
+          fastifyMultipart,
+          this.httpAdapterOptions.useMultipartFormData,
+        );
+      }
+    }
+
+    return app;
   }
 
   protected _getBody(
@@ -276,55 +304,26 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     }
   }
 
-  #buildDefaultFastifyApp(customApp?: FastifyInstance): FastifyInstance {
-    const app: FastifyInstance = customApp ?? fastify();
-
-    if (this.httpAdapterOptions.useCookies) {
-      app.register(
-        cookie as unknown as FastifyPluginCallback<
-          NonNullable<FastifyCookieOptions>
-        >,
-      );
-    }
-
-    if (this.httpAdapterOptions.useFormUrlEncoded) {
-      app.register(fastifyFormbody);
-    }
-
-    if (this.httpAdapterOptions.useMultipartFormData !== false) {
-      if (this.httpAdapterOptions.useMultipartFormData === true) {
-        app.register(fastifyMultipart);
-      } else {
-        app.register(
-          fastifyMultipart,
-          this.httpAdapterOptions.useMultipartFormData,
-        );
-      }
-    }
-
-    return app;
-  }
-
   #getAppRouteHandler(
     requestMethodType: RequestMethodType,
   ): (pattern: string, handler: RouteHandlerMethod) => FastifyInstance {
     switch (requestMethodType) {
       case RequestMethodType.All:
-        return this.#app.all.bind(this.#app);
+        return this._app.all.bind(this._app);
       case RequestMethodType.Delete:
-        return this.#app.delete.bind(this.#app);
+        return this._app.delete.bind(this._app);
       case RequestMethodType.Get:
-        return this.#app.get.bind(this.#app);
+        return this._app.get.bind(this._app);
       case RequestMethodType.Head:
-        return this.#app.head.bind(this.#app);
+        return this._app.head.bind(this._app);
       case RequestMethodType.Options:
-        return this.#app.options.bind(this.#app);
+        return this._app.options.bind(this._app);
       case RequestMethodType.Patch:
-        return this.#app.patch.bind(this.#app);
+        return this._app.patch.bind(this._app);
       case RequestMethodType.Post:
-        return this.#app.post.bind(this.#app);
+        return this._app.post.bind(this._app);
       case RequestMethodType.Put:
-        return this.#app.put.bind(this.#app);
+        return this._app.put.bind(this._app);
     }
   }
 

@@ -21,7 +21,7 @@ describe('Error message when resolving fails', () => {
       container.get('Ninja');
     };
 
-    expect(tryWeapon).toThrow(`No bindings found for service: "Ninja".
+    expect(tryWeapon).toThrowError(`No bindings found for service: "Ninja".
 
 Trying to resolve bindings for "Ninja (Root service)".
 
@@ -40,7 +40,7 @@ Binding constraints:
 
     expect(() => {
       tryGetNamedWeapon('superior');
-    }).toThrow(`No bindings found for service: "Weapon".
+    }).toThrowError(`No bindings found for service: "Weapon".
 
 Trying to resolve bindings for "Weapon (Root service)".
 
@@ -49,7 +49,7 @@ Binding constraints:
 - name: superior`);
     expect(() => {
       tryGetNamedWeapon(Symbol.for('Superior'));
-    }).toThrow(`No bindings found for service: "Weapon".
+    }).toThrowError(`No bindings found for service: "Weapon".
 
 Trying to resolve bindings for "Weapon (Root service)".
 
@@ -58,7 +58,7 @@ Binding constraints:
 - name: Symbol(Superior)`);
     expect(() => {
       tryGetNamedWeapon(0);
-    }).toThrow(`No bindings found for service: "Weapon".
+    }).toThrowError(`No bindings found for service: "Weapon".
 
 Trying to resolve bindings for "Weapon (Root service)".
 
@@ -82,7 +82,7 @@ Binding constraints:
 
     expect(() => {
       tryGetTaggedWeapon('canShoot');
-    }).toThrow(`No bindings found for service: "Weapon".
+    }).toThrowError(`No bindings found for service: "Weapon".
 
 Trying to resolve bindings for "Weapon (Root service)".
 
@@ -93,7 +93,7 @@ Binding constraints:
   - canShoot`);
     expect(() => {
       tryGetTaggedWeapon(Symbol.for('Can shoot'));
-    }).toThrow(`No bindings found for service: "Weapon".
+    }).toThrowError(`No bindings found for service: "Weapon".
 
 Trying to resolve bindings for "Weapon (Root service)".
 
@@ -104,7 +104,7 @@ Binding constraints:
   - Symbol(Can shoot)`);
     expect(() => {
       tryGetTaggedWeapon(0);
-    }).toThrow(`No bindings found for service: "Weapon".
+    }).toThrowError(`No bindings found for service: "Weapon".
 
 Trying to resolve bindings for "Weapon (Root service)".
 
@@ -122,7 +122,7 @@ Binding constraints:
     container.bind('Weapon').to(Bokken);
 
     expect(() => container.get('Weapon'))
-      .toThrow(`Ambiguous bindings found for service: "Weapon".
+      .toThrowError(`Ambiguous bindings found for service: "Weapon".
 
 Registered bindings:
 

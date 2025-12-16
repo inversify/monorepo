@@ -79,7 +79,7 @@ describe(Container, () => {
       container.get<Ninja>(ninjaId);
     };
 
-    expect(throwFunction).toThrow(`No bindings found for service: "Ninja".
+    expect(throwFunction).toThrowError(`No bindings found for service: "Ninja".
 
 Trying to resolve bindings for "Ninja (Root service)".
 
@@ -108,7 +108,7 @@ Binding constraints:
     };
 
     expect(throwFunction)
-      .toThrow(`Ambiguous bindings found for service: "Warrior".
+      .toThrowError(`Ambiguous bindings found for service: "Warrior".
 
 Registered bindings:
 
@@ -152,7 +152,7 @@ Binding constraints:
 
     expect(container.get(Samurai)).toBeInstanceOf(Samurai);
     expect(() => container.get(Ninja))
-      .toThrow(`No bindings found for service: "Ninja".
+      .toThrowError(`No bindings found for service: "Ninja".
 
 Trying to resolve bindings for "Ninja (Root service)".
 
@@ -163,7 +163,7 @@ Binding constraints:
     container.snapshot(); // snapshot container = v2
 
     expect(() => container.get(Ninja))
-      .toThrow(`No bindings found for service: "Ninja".
+      .toThrowError(`No bindings found for service: "Ninja".
 
 Trying to resolve bindings for "Ninja (Root service)".
 
@@ -180,7 +180,7 @@ Binding constraints:
 
     expect(container.get(Samurai)).toBeInstanceOf(Samurai);
     expect(() => container.get(Ninja))
-      .toThrow(`No bindings found for service: "Ninja".
+      .toThrowError(`No bindings found for service: "Ninja".
 
 Trying to resolve bindings for "Ninja (Root service)".
 

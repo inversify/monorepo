@@ -177,7 +177,7 @@ describe('interfaces', () => {
             // @ts-expect-error :: num is never
             num.then;
             /* eslint-enable @typescript-eslint/no-unused-expressions */
-          }).toThrow('Unexpected asynchronous service');
+          }).toThrowError('Unexpected asynchronous service');
 
           const n: Promise<number> = container.getAsync('asyncNumber');
 
@@ -190,7 +190,7 @@ describe('interfaces', () => {
           foo = container.get('bar');
 
           // @ts-expect-error :: unknown service identifier
-          expect(() => container.get('unknown') as unknown).toThrow(
+          expect(() => container.get('unknown') as unknown).toThrowError(
             'No bindings found',
           );
         });

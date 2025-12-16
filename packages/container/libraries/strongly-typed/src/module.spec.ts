@@ -146,7 +146,7 @@ describe('interfaces', () => {
             // @ts-expect-error :: Expect error when getting wrong type
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const incorrectResult: Foo = container.get('bar');
-          }).toThrow('No bindings found for service: "bar".');
+          }).toThrowError('No bindings found for service: "bar".');
 
           const result = container.get('foo');
 
