@@ -35,11 +35,10 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   HttpResponse,
   () => void,
   void,
-  UwebSocketsHttpAdapterOptions
+  UwebSocketsHttpAdapterOptions,
+  TemplatedApp
 > {
   public readonly id: symbol = ADAPTER_ID;
-
-  readonly #app: TemplatedApp;
 
   constructor(
     container: Container,
@@ -53,15 +52,12 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
       },
       httpAdapterOptions,
       [RequestMethodParameterType.Body],
+      customApp,
     );
-
-    this.#app = customApp ?? this.#buildDefaultApp();
   }
 
-  public async build(): Promise<TemplatedApp> {
-    await this._buildServer();
-
-    return this.#app;
+  protected _buildApp(customApp: TemplatedApp | undefined): TemplatedApp {
+    return customApp ?? App();
   }
 
   protected _buildRouter(
@@ -251,10 +247,6 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     return parameterName === undefined ? cookies : cookies[parameterName];
   }
 
-  #buildDefaultApp(): TemplatedApp {
-    return App();
-  }
-
   #getAppRouteHandler(
     requestMethodType: RequestMethodType,
   ): (
@@ -263,21 +255,21 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   ) => TemplatedApp {
     switch (requestMethodType) {
       case RequestMethodType.All:
-        return this.#app.any.bind(this.#app);
+        return this._app.any.bind(this._app);
       case RequestMethodType.Delete:
-        return this.#app.del.bind(this.#app);
+        return this._app.del.bind(this._app);
       case RequestMethodType.Get:
-        return this.#app.get.bind(this.#app);
+        return this._app.get.bind(this._app);
       case RequestMethodType.Head:
-        return this.#app.head.bind(this.#app);
+        return this._app.head.bind(this._app);
       case RequestMethodType.Options:
-        return this.#app.options.bind(this.#app);
+        return this._app.options.bind(this._app);
       case RequestMethodType.Patch:
-        return this.#app.patch.bind(this.#app);
+        return this._app.patch.bind(this._app);
       case RequestMethodType.Post:
-        return this.#app.post.bind(this.#app);
+        return this._app.post.bind(this._app);
       case RequestMethodType.Put:
-        return this.#app.put.bind(this.#app);
+        return this._app.put.bind(this._app);
     }
   }
 

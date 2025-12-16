@@ -25,12 +25,13 @@
     ]
   ],
   "ignore": [
+    "@inversifyjs/framework-docs-site",
     "@inversifyjs/http-benchmarks",
     "@inversifyjs/http-code-examples",
     "@inversifyjs/http-open-api-code-examples",
     "@inversifyjs/http-e2e-tests",
     "@inversifyjs/http-openapi-example",
-    "@inversifyjs/framework-docs-site",
+    "@inversifyjs/inversify-docs-site",
     "@inversifyjs/logger-code-examples",
     "@inversifyjs/react-code-runner",
     "@inversifyjs/validation-code-examples"
