@@ -12,7 +12,7 @@
   "devDependencies": {
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
-    "@standard-schema/spec": "1.0.0",
+    "@standard-schema/spec": "1.1.0",
     "@stryker-mutator/core": "9.4.0",
     "@stryker-mutator/typescript-checker": "9.4.0",
     "@stryker-mutator/vitest-runner": "9.4.0",
@@ -23,12 +23,12 @@
     "inversify": "^7.10.6",
     "prettier": "3.7.4",
     "rimraf": "6.1.2",
-    "rollup": "4.53.4",
+    "rollup": "4.53.5",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
     "vitest": "4.0.10",
-    "zod": "^4.2.0"
+    "zod": "^4.2.1"
   },
   "devEngines": {
     "node": "^24.10.0",
