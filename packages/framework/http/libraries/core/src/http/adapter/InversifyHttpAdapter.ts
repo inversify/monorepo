@@ -163,7 +163,16 @@ export abstract class InversifyHttpAdapter<
   }
 
   public async build(): Promise<TApp> {
-    await this._buildServer();
+    if (this.#isBuilt) {
+      throw new InversifyHttpAdapterError(
+        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
+        'The server has already been built',
+      );
+    }
+
+    await this.#registerControllers();
+
+    this.#isBuilt = true;
 
     return this._app;
   }
@@ -198,12 +207,6 @@ export abstract class InversifyHttpAdapter<
     }
 
     this.#globalPipeList.push(...pipeList);
-  }
-
-  protected async _buildServer(): Promise<void> {
-    await this.#registerControllers();
-
-    this.#isBuilt = true;
   }
 
   async #appendHandlerParam(
