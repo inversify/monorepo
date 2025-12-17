@@ -1,5 +1,14 @@
 # inversify
 
+## 7.10.7
+
+### Patch Changes
+
+- Updated circular dependency detection to handle V8 issues on nearly exhausted call stack scenarios
+- Updated dependencies
+  - @inversifyjs/core@9.1.2
+  - @inversifyjs/container@1.14.4
+
 ## 7.10.6
 
 ### Patch Changes

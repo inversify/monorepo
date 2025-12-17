@@ -1,5 +1,14 @@
 # @inversifyjs/http-hono
 
+## 4.8.1
+
+### Patch Changes
+
+- Updated adapters to rely on non abstract build
+- Updated dependencies
+  - @inversifyjs/http-core@4.8.1
+  - inversify@7.10.7
+
 ## 4.8.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @inversifyjs/core
 
+## 9.1.2
+
+### Patch Changes
+
+- Updated circular dependency detection to handle V8 issues on nearly exhausted call stack scenarios
+
 ## 9.1.1
 
 ### Patch Changes
