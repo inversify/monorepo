@@ -34,7 +34,7 @@ export function isStackOverflowError(error: unknown): boolean {
      * 7. V8 reports this as: `SyntaxError: Invalid regular expression: ... Stack overflow`
      */
     return (
-      innerError instanceof TypeError &&
+      innerError instanceof SyntaxError &&
       innerError.message.includes('Stack overflow')
     );
   }
