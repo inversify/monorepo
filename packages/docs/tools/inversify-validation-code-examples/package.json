@@ -23,7 +23,7 @@
     "eslint": "9.39.2",
     "express": "5.2.1",
     "glob": "13.0.0",
-    "inversify": "7.10.6",
+    "inversify": "7.10.7",
     "prettier": "3.7.4",
     "rimraf": "6.1.2",
     "tslib": "2.8.1",
