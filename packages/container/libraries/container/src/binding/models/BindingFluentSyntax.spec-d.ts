@@ -221,11 +221,12 @@ describe('BindToFluentSyntax', () => {
         };
 
         const secondServiceIdentifier: ResolvedValueMetadataInjectOptions<
-          string[]
+          string[] | undefined
         > = {
-          // @ts-expect-error :: Unexpected optional inject option
           optional: true,
-          serviceIdentifier: Symbol(),
+          serviceIdentifier: Symbol() as ServiceIdentifier<
+            string[] | undefined
+          >,
         };
 
         const thirdServiceIdentifier: ResolvedValueMetadataInjectOptions<
@@ -237,11 +238,10 @@ describe('BindToFluentSyntax', () => {
           serviceIdentifier: Symbol(),
         };
 
-        // @ts-expect-error :: Expected isMultiple inject option
         const fourthServiceIdentifier: ResolvedValueMetadataInjectOptions<
           string[]
         > = {
-          serviceIdentifier: Symbol(),
+          serviceIdentifier: Symbol() as ServiceIdentifier<string[]>,
         };
 
         assertType(
@@ -350,7 +350,6 @@ describe('BindToFluentSyntax', () => {
           serviceIdentifier: Symbol(),
         };
 
-        // @ts-expect-error :: Expected isMultiple inject option
         const secondServiceIdentifier: ResolvedValueMetadataInjectOptions<
           string[] | undefined
         > = {
