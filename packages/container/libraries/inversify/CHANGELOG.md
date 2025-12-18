@@ -1,5 +1,13 @@
 # inversify
 
+## 7.10.8
+
+### Patch Changes
+
+- Updated `BindToFluentSyntax.toResolvedValue` to allow non multiple array `ServiceIdentifier` `injectOptions`
+- Updated dependencies
+  - @inversifyjs/container@1.14.5
+
 ## 7.10.7
 
 ### Patch Changes
