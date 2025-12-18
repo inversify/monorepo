@@ -52,7 +52,7 @@
   "name": "@inversifyjs/http-fastify",
   "peerDependencies": {
     "fastify": "^5.6.2",
-    "inversify": "^7.10.6"
+    "inversify": "^7.10.7"
   },
   "publishConfig": {
     "access": "public"

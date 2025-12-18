@@ -24,7 +24,7 @@
     "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "glob": "13.0.0",
-    "inversify": "7.10.6",
+    "inversify": "7.10.7",
     "prettier": "3.7.4",
     "rimraf": "6.1.2",
     "rollup": "4.53.5",
@@ -38,7 +38,7 @@
   },
   "peerDependencies": {
     "@babel/standalone": "^7.28.5",
-    "@swc/wasm-web": "^1.15.5",
+    "@swc/wasm-web": "^1.15.6",
     "monaco-editor": "~0.55.1",
     "react": "19.2.3"
   },
