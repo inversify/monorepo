@@ -1,5 +1,12 @@
 # @inversifyjs/http-core
 
+## 4.9.0
+
+### Minor Changes
+
+- Added `httpServerServiceIdentifier`
+- Updated `InversifyHttpAdapter.build` to inject http server
+
 ## 4.8.1
 
 ### Patch Changes

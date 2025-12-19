@@ -91,5 +91,5 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "version": "4.8.1"
+  "version": "4.9.0"
 }
