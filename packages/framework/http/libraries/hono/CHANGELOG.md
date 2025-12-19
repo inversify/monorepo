@@ -1,5 +1,12 @@
 # @inversifyjs/http-hono
 
+## 4.9.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@4.9.0
+
 ## 4.8.1
 
 ### Patch Changes
