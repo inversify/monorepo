@@ -38,6 +38,7 @@ import { ControllerResponse } from '../models/ControllerResponse';
 import { CustomNativeParameterDecoratorHandlerOptions } from '../models/CustomNativeParameterDecoratorHandlerOptions';
 import { CustomParameterDecoratorHandlerOptions } from '../models/CustomParameterDecoratorHandlerOptions';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
+import { httpServerServiceIdentifier } from '../models/httpServerServiceIdentifier';
 import { HttpStatusCode } from '../models/HttpStatusCode';
 import { MiddlewareHandler } from '../models/MiddlewareHandler';
 import { RequestHandler } from '../models/RequestHandler';
@@ -170,6 +171,8 @@ export abstract class InversifyHttpAdapter<
       );
     }
 
+    this.#bindAdapterRelatedServices();
+
     await this.#registerControllers();
 
     this.#isBuilt = true;
@@ -220,6 +223,40 @@ export abstract class InversifyHttpAdapter<
       : param;
   }
 
+  #appendHeaderMetadata(
+    headerMetadata: Record<string, string> | undefined,
+    headers: Record<string, string> | undefined,
+  ): Record<string, string> | undefined {
+    if (headerMetadata === undefined) {
+      return headers;
+    }
+
+    if (headers === undefined) {
+      return { ...headerMetadata };
+    }
+
+    for (const key in headerMetadata) {
+      if (!Object.hasOwn(headers, key)) {
+        headers[key] = headerMetadata[key] as string;
+      }
+    }
+
+    return headers;
+  }
+
+  #bindAdapterRelatedServices(): void {
+    if (this.#container.isBound(httpServerServiceIdentifier)) {
+      throw new InversifyHttpAdapterError(
+        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
+        'An HTTP server is already registered in the container',
+      );
+    }
+
+    this.#container
+      .bind<TApp>(httpServerServiceIdentifier)
+      .toConstantValue(this._app);
+  }
+
   #buildCustomParameterDecoratorHandlerOptions(): CustomParameterDecoratorHandlerOptions<
     TRequest,
     TResponse
@@ -258,42 +295,6 @@ export abstract class InversifyHttpAdapter<
     }
 
     return httpAdapterOptions.logger;
-  }
-
-  #parseHttpAdapterOptions(
-    defaultHttpAdapterOptions: RequiredOptions<TOptions>,
-    httpAdapterOptions: TOptions | undefined,
-  ): RequiredOptions<TOptions> {
-    return {
-      ...defaultHttpAdapterOptions,
-      ...httpAdapterOptions,
-    };
-  }
-
-  async #registerControllers(): Promise<void> {
-    const routerExplorerControllerMetadataList: RouterExplorerControllerMetadata<
-      TRequest,
-      TResponse,
-      TResult
-    >[] = buildRouterExplorerControllerMetadataList(
-      this.#container,
-      this._logger,
-    );
-
-    for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
-      await this._buildRouter({
-        path: routerExplorerControllerMetadata.path,
-        routeParamsList: this.#builRouteParamdHandlerList(
-          routerExplorerControllerMetadata,
-        ),
-      });
-
-      this.#printController(
-        routerExplorerControllerMetadata.target.name,
-        routerExplorerControllerMetadata.path,
-        routerExplorerControllerMetadata.controllerMethodMetadataList,
-      );
-    }
   }
 
   #builRouteParamdHandlerList(
@@ -698,14 +699,14 @@ export abstract class InversifyHttpAdapter<
     return handleError;
   }
 
-  #setHeaders(
-    request: TRequest,
-    response: TResponse,
-    headers: Record<string, string>,
-  ): void {
-    for (const key in headers) {
-      this._setHeader(request, response, key, headers[key] as string);
-    }
+  #parseHttpAdapterOptions(
+    defaultHttpAdapterOptions: RequiredOptions<TOptions>,
+    httpAdapterOptions: TOptions | undefined,
+  ): RequiredOptions<TOptions> {
+    return {
+      ...defaultHttpAdapterOptions,
+      ...httpAdapterOptions,
+    };
   }
 
   #reply(
@@ -748,6 +749,16 @@ export abstract class InversifyHttpAdapter<
       }
     } else {
       return this._replyText(request, response, JSON.stringify(body));
+    }
+  }
+
+  #setHeaders(
+    request: TRequest,
+    response: TResponse,
+    headers: Record<string, string>,
+  ): void {
+    for (const key in headers) {
+      this._setHeader(request, response, key, headers[key] as string);
     }
   }
 
@@ -883,25 +894,30 @@ export abstract class InversifyHttpAdapter<
     this._logger.error(errorMessage);
   }
 
-  #appendHeaderMetadata(
-    headerMetadata: Record<string, string> | undefined,
-    headers: Record<string, string> | undefined,
-  ): Record<string, string> | undefined {
-    if (headerMetadata === undefined) {
-      return headers;
-    }
+  async #registerControllers(): Promise<void> {
+    const routerExplorerControllerMetadataList: RouterExplorerControllerMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >[] = buildRouterExplorerControllerMetadataList(
+      this.#container,
+      this._logger,
+    );
 
-    if (headers === undefined) {
-      return { ...headerMetadata };
-    }
+    for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
+      await this._buildRouter({
+        path: routerExplorerControllerMetadata.path,
+        routeParamsList: this.#builRouteParamdHandlerList(
+          routerExplorerControllerMetadata,
+        ),
+      });
 
-    for (const key in headerMetadata) {
-      if (!Object.hasOwn(headers, key)) {
-        headers[key] = headerMetadata[key] as string;
-      }
+      this.#printController(
+        routerExplorerControllerMetadata.target.name,
+        routerExplorerControllerMetadata.path,
+        routerExplorerControllerMetadata.controllerMethodMetadataList,
+      );
     }
-
-    return headers;
   }
 
   #setGlobalErrorFilter(errorFilter: Newable<ErrorFilter>): void {
