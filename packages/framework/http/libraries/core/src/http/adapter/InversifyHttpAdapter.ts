@@ -38,7 +38,7 @@ import { ControllerResponse } from '../models/ControllerResponse';
 import { CustomNativeParameterDecoratorHandlerOptions } from '../models/CustomNativeParameterDecoratorHandlerOptions';
 import { CustomParameterDecoratorHandlerOptions } from '../models/CustomParameterDecoratorHandlerOptions';
 import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
-import { httpServerServiceIdentifier } from '../models/httpServerServiceIdentifier';
+import { httpApplicationServiceIdentifier } from '../models/httpApplicationServiceIdentifier';
 import { HttpStatusCode } from '../models/HttpStatusCode';
 import { MiddlewareHandler } from '../models/MiddlewareHandler';
 import { RequestHandler } from '../models/RequestHandler';
@@ -245,7 +245,7 @@ export abstract class InversifyHttpAdapter<
   }
 
   #bindAdapterRelatedServices(): void {
-    if (this.#container.isBound(httpServerServiceIdentifier)) {
+    if (this.#container.isBound(httpApplicationServiceIdentifier)) {
       throw new InversifyHttpAdapterError(
         InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
         'An HTTP server is already registered in the container',
@@ -253,7 +253,7 @@ export abstract class InversifyHttpAdapter<
     }
 
     this.#container
-      .bind<TApp>(httpServerServiceIdentifier)
+      .bind<TApp>(httpApplicationServiceIdentifier)
       .toConstantValue(this._app);
   }
 
