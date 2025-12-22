@@ -45,7 +45,7 @@ import { CustomNativeParameterDecoratorHandlerOptions } from './http/models/Cust
 import { CustomParameterDecoratorHandler } from './http/models/CustomParameterDecoratorHandler';
 import { CustomParameterDecoratorHandlerOptions } from './http/models/CustomParameterDecoratorHandlerOptions';
 import { HttpAdapterOptions } from './http/models/HttpAdapterOptions';
-import { httpServerServiceIdentifier } from './http/models/httpServerServiceIdentifier';
+import { httpApplicationServiceIdentifier } from './http/models/httpApplicationServiceIdentifier';
 import { HttpStatusCode } from './http/models/HttpStatusCode';
 import { MiddlewareHandler } from './http/models/MiddlewareHandler';
 import { RequestHandler } from './http/models/RequestHandler';
@@ -151,7 +151,7 @@ export {
   Head,
   Headers,
   HttpResponse,
-  httpServerServiceIdentifier,
+  httpApplicationServiceIdentifier,
   HttpStatusCode,
   HttpVersionNotSupportedHttpResponse,
   InsufficientStorageHttpResponse,
