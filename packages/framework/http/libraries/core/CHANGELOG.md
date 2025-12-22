@@ -1,5 +1,11 @@
 # @inversifyjs/http-core
 
+## 4.9.1
+
+### Patch Changes
+
+- Renamed misleading `httpServerServiceIdentifier` to `httpApplicationServiceIdentifier`
+
 ## 4.9.0
 
 ### Minor Changes

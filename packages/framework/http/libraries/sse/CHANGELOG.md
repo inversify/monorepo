@@ -1,5 +1,12 @@
 # @inversifyjs/http-sse
 
+## 1.1.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@4.9.1
+
 ## 1.1.3
 
 ### Patch Changes
