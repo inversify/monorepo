@@ -17,14 +17,14 @@
     "prettier": "3.7.4",
     "reflect-metadata": "0.2.2",
     "rimraf": "6.1.2",
-    "rollup": "4.53.5",
+    "rollup": "4.54.0",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
     "vitest": "4.0.16"
   },
   "peerDependencies": {
-    "inversify": "^7.10.7"
+    "inversify": "^7.10.8"
   },
   "homepage": "https://inversify.io",
   "keywords": [
