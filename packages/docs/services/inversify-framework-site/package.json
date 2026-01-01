@@ -10,6 +10,7 @@
     "@docusaurus/plugin-content-docs": "3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
     "@inversifyjs/http-code-examples": "workspace:*",
+    "@inversifyjs/graphql-code-examples": "workspace:*",
     "@inversifyjs/http-open-api-code-examples": "workspace:*",
     "@inversifyjs/logger-code-examples": "workspace:*",
     "@inversifyjs/validation-code-examples": "workspace:*",

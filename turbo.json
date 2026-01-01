@@ -51,6 +51,7 @@
       "inputs": [
         "blog/**",
         "docs/**",
+        "graphql-docs/**",
         "logger-docs/**",
         "openapi-docs/**",
         "src/**/*.{css,cts,mts,ts,tsx}",

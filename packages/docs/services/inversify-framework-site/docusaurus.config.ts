@@ -42,6 +42,15 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'graphql',
+        path: 'graphql-docs',
+        routeBasePath: 'graphql',
+        sidebarPath: './sidebarsGraphql.ts',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         id: 'logger',
         path: 'logger-docs',
         routeBasePath: 'logger',
@@ -160,6 +169,10 @@ const config: Config = {
             {
               label: 'HTTP Docs',
               to: '/docs/introduction/getting-started',
+            },
+            {
+              label: 'GraphQL Docs',
+              to: '/graphql/introduction/getting-started',
             },
             {
               label: 'Logger Docs',

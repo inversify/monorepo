@@ -1,0 +1,63 @@
+# Apollo Fastify
+
+The `@inversifyjs/apollo-fastify` package provides integration with Apollo Server and Fastify.
+
+## ApolloFastifyServerContainerModule
+
+`ApolloFastifyServerContainerModule` is a container module that binds the Apollo Server to the Inversify container.
+
+### Static Methods
+
+#### `graphServerFromOptions`
+
+Creates a container module for a standard GraphQL server.
+
+```typescript
+static graphServerFromOptions<TContext extends BaseContext>(
+  controllerOptions: ApolloFastifyControllerOptions<TContext>,
+  serverOptions: ApolloServerInjectOptions<TContext>
+): ApolloFastifyServerContainerModule;
+```
+
+#### `subgraphServerFromOptions`
+
+Creates a container module for a subgraph server (federation).
+
+```typescript
+static subgraphServerFromOptions<TContext extends BaseContext>(
+  controllerOptions: ApolloFastifyControllerOptions<TContext>,
+  serverOptions: ApolloServerInjectOptions<TContext>
+): ApolloFastifyServerContainerModule;
+```
+
+### Parameters
+
+#### `ApolloFastifyControllerOptions`
+
+Configuration options for the Fastify controller.
+
+```typescript
+interface ApolloFastifyControllerOptions<TContext extends BaseContext> {
+  controllerOptions?: string | ControllerOptions | undefined;
+  getContext: (arg: ApolloFastifyContextFunctionArgument) => Promise<TContext>;
+}
+```
+
+- `controllerOptions`: Optional path string or `ControllerOptions` object (from `@inversifyjs/http-core`) to configure the controller path and other settings.
+- `getContext`: A function that returns a promise resolving to the GraphQL context. It receives the Fastify context argument (request, reply).
+
+#### `ApolloServerInjectOptions`
+
+Configuration options for the Apollo Server instance.
+
+```typescript
+interface ApolloServerInjectOptions<TContext extends BaseContext> {
+  plugins?: ApolloServerPlugin<TContext>[] | undefined;
+  resolverServiceIdentifier: ServiceIdentifier<IResolvers<any, TContext>>;
+  typeDefs: TypeSource;
+}
+```
+
+- `plugins`: Optional array of Apollo Server plugins.
+- `resolverServiceIdentifier`: The service identifier used to resolve the GraphQL resolvers from the container.
+- `typeDefs`: The GraphQL type definitions (schema).

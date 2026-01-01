@@ -63,7 +63,7 @@ export default {
     "packages/docs/services/inversify-framework-site": {
       entry: [
         "src/{pages,theme}/**/*.{js,ts,jsx,tsx}",
-        "{blog,docs,logger-docs,openapi-docs,validation-docs}/**/*.mdx",
+        "{blog,docs,graphql-docs,logger-docs,openapi-docs,validation-docs}/**/*.mdx",
       ],
       ignoreDependencies: ["@docusaurus/faster"],
     },

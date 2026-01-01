@@ -1,0 +1,50 @@
+---
+sidebar_position: 1
+title: Getting started
+---
+import gettingStartedSource from '@inversifyjs/graphql-code-examples/generated/examples/latest/gettingStarted.mts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting started
+
+## Prerequisites
+
+To use Inversify GraphQL, you need to have an Inversify HTTP server set up.
+Please refer to the [HTTP Getting Started](../../../docs/introduction/getting-started) guide for instructions on how to set up an HTTP server.
+
+## Install dependencies
+
+Install the required packages:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+npm install @inversifyjs/apollo-express @inversifyjs/apollo-core @apollo/server graphql
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm install @inversifyjs/apollo-express @inversifyjs/apollo-core @apollo/server graphql
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn add @inversifyjs/apollo-express @inversifyjs/apollo-core @apollo/server graphql
+```
+
+  </TabItem>
+</Tabs>
+
+## Create a GraphQL Server
+
+You can create a GraphQL server using `ApolloExpressServerContainerModule`.
+
+<CodeBlock language="typescript">{gettingStartedSource}</CodeBlock>
+

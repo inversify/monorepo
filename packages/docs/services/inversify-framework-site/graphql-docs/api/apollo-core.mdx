@@ -1,0 +1,15 @@
+# Apollo Inversify (Core)
+
+The `@inversifyjs/apollo-core` package provides core functionality for Inversify Apollo integration.
+
+## InversifyApolloProvider
+
+`InversifyApolloProvider` is a service that provides access to the Apollo Server instance.
+
+```typescript
+export const inversifyApolloProviderServiceIdentifier = Symbol.for('InversifyApolloProvider');
+
+export interface InversifyApolloProvider<TServer> {
+  server: ApolloServer<BaseContext>;
+}
+```
