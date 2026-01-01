@@ -1,14 +1,8 @@
 /.turbo
 /coverage
+/lib
 /reports
-
-**/*.spec.js
-**/*.spec.js.map
-**/*.ts
-!lib/cjs/**/*.d.ts
-lib/esm/**/*.d.ts.map
-!lib/esm/index.d.ts
-!lib/esm/index.d.ts.map
+/src
 
 .lintstagedrc.json
 eslint.config.mjs

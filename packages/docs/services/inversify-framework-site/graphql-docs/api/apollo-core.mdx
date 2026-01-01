@@ -10,6 +10,7 @@ The `@inversifyjs/apollo-core` package provides core functionality for Inversify
 export const inversifyApolloProviderServiceIdentifier = Symbol.for('InversifyApolloProvider');
 
 export interface InversifyApolloProvider<TServer> {
-  server: ApolloServer<BaseContext>;
+  readonly apolloServer: ApolloServer<any>;
+  readonly server: TServer;
 }
 ```
