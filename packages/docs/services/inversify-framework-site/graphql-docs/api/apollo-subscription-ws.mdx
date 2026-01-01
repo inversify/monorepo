@@ -1,0 +1,41 @@
+# Apollo WS
+
+The `@inversifyjs/apollo-subscription-ws` package provides support for GraphQL subscriptions using `graphql-ws`.
+
+## ApolloSubscriptionServerContainerModule
+
+`ApolloSubscriptionServerContainerModule` is a container module that sets up the subscription server.
+
+### Constructor
+
+```typescript
+constructor(options?: ApolloSubscriptionServerContainerModuleOptions)
+```
+
+### Parameters
+
+#### `ApolloSubscriptionServerContainerModuleOptions`
+
+Configuration options for the subscription server.
+
+```typescript
+interface ApolloSubscriptionServerContainerModuleOptions {
+  path?: string;
+}
+```
+
+- `path`: The path where the WebSocket server will listen. Defaults to `/subscriptions`.
+
+### Usage
+
+```typescript
+import { ApolloSubscriptionServerContainerModule } from '@inversifyjs/apollo-subscription-ws';
+
+// ...
+
+await container.load(
+  new ApolloSubscriptionServerContainerModule({
+    path: '/subscriptions',
+  }),
+);
+```

@@ -1,0 +1,67 @@
+# Apollo Express
+
+The `@inversifyjs/apollo-express` package provides integration with Apollo Server and Express.
+
+## ApolloExpressServerContainerModule
+
+`ApolloExpressServerContainerModule` is a container module that binds the Apollo Server to the Inversify container.
+
+### Static Methods
+
+#### `graphServerFromOptions`
+
+Creates a container module for a standard GraphQL server.
+
+```typescript
+static graphServerFromOptions<TContext extends BaseContext>(
+  controllerOptions: ApolloExpressControllerOptions<TContext>,
+  serverOptions: ApolloServerInjectOptions<TContext>
+): ApolloExpressServerContainerModule;
+```
+
+#### `subgraphServerFromOptions`
+
+Creates a container module for a subgraph server (federation).
+
+```typescript
+static subgraphServerFromOptions<TContext extends BaseContext>(
+  controllerOptions: ApolloExpressControllerOptions<TContext>,
+  serverOptions: ApolloServerInjectOptions<TContext>
+): ApolloExpressServerContainerModule;
+```
+
+### Parameters
+
+#### `ApolloExpressControllerOptions`
+
+Configuration options for the Express controller.
+
+```typescript
+interface ApolloExpressControllerOptions<TContext extends BaseContext> {
+  controllerOptions?: string | ControllerOptions | undefined;
+  getContext: (arg: ExpressContextFunctionArgument) => Promise<TContext>;
+}
+```
+
+- `controllerOptions`: Optional path string or `ControllerOptions` object (from `@inversifyjs/http-core`) to configure the controller path and other settings.
+- `getContext`: A function that returns a promise resolving to the GraphQL context. It receives the Express context argument (request, response).
+
+#### `ApolloServerInjectOptions`
+
+Configuration options for the Apollo Server instance.
+
+```typescript
+interface ApolloServerInjectOptions<TContext extends BaseContext> {
+  http?: {
+    createServer?: (requestListener?: http.RequestListener) => http.Server;
+  };
+  plugins?: ApolloServerPlugin<TContext>[] | undefined;
+  resolverServiceIdentifier: ServiceIdentifier<IResolvers<any, TContext>>;
+  typeDefs: TypeSource;
+}
+```
+
+- `http`: Optional object to provide a custom `createServer` function (e.g., for HTTPS). Defaults to `http.createServer`.
+- `plugins`: Optional array of Apollo Server plugins.
+- `resolverServiceIdentifier`: The service identifier used to resolve the GraphQL resolvers from the container.
+- `typeDefs`: The GraphQL type definitions (schema).

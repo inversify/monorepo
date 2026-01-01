@@ -63,7 +63,7 @@ export default {
     "packages/docs/services/inversify-framework-site": {
       entry: [
         "src/{pages,theme}/**/*.{js,ts,jsx,tsx}",
-        "{blog,docs,logger-docs,openapi-docs,validation-docs}/**/*.mdx",
+        "{blog,docs,graphql-docs,logger-docs,openapi-docs,validation-docs}/**/*.mdx",
       ],
       ignoreDependencies: ["@docusaurus/faster"],
     },
@@ -79,6 +79,14 @@ export default {
     },
     "packages/docs/tools/inversify-code-examples": {
       entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      project: defaultWorkspaceProjectConfig.project,
+    },
+    "packages/docs/tools/inversify-graphql-code-examples": {
+      entry: [
+        "src/examples/**/*.{mts,ts}",
+        "src/scripts/generateExamples/index.mts",
+      ],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },

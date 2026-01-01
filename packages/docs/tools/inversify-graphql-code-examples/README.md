@@ -1,4 +1,4 @@
-# @inversifyjs/code-examples
+# @inversifyjs/graphql-code-examples
 
 Inversify docs code examples.
 
