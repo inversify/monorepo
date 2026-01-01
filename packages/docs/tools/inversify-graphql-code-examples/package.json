@@ -1,0 +1,66 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJs GraphQL docs code examples package",
+  "devDependencies": {
+    "@inversifyjs/code-examples-devkit": "workspace:*",
+    "@inversifyjs/http-express": "workspace:*",
+    "@apollo/server": "5.2.0",
+    "@inversifyjs/apollo-core": "0.6.0",
+    "@inversifyjs/apollo-express": "0.7.0",
+    "graphql": "16.12.0",
+    "@types/express": "5.0.6",
+    "@types/node": "24.10.4",
+    "@vitest/coverage-v8": "4.0.16",
+    "eslint": "9.39.2",
+    "glob": "13.0.0",
+    "inversify": "7.10.8",
+    "prettier": "3.7.4",
+    "reflect-metadata": "0.2.2",
+    "rimraf": "6.1.2",
+    "tslib": "2.8.1",
+    "typescript": "5.9.3",
+    "vitest": "4.0.16"
+  },
+  "homepage": "https://inversify.io",
+  "keywords": [
+    "dependency injection",
+    "dependency inversion",
+    "di",
+    "inversion of control container",
+    "ioc",
+    "javascript",
+    "node",
+    "typescript"
+  ],
+  "devEngines": {
+    "node": "^24.10.0",
+    "pnpm": "^10.13.1"
+  },
+  "license": "MIT",
+  "name": "@inversifyjs/graphql-code-examples",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "build": "pnpm run build:cjs && pnpm run generate:examples",
+    "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
+    "build:clean": "rimraf generated lib",
+    "format": "prettier --write ./src",
+    "generate:examples": "node ./lib/cjs/scripts/generateExamples/index.mjs",
+    "lint": "eslint ./src",
+    "prebuild": "pnpm run build:clean",
+    "test": "vitest run",
+    "test:integration": "pnpm run test --project Integration",
+    "test:coverage": "pnpm run test:unit --coverage",
+    "test:uncommitted": "pnpm run test --changed=HEAD",
+    "test:unit": "pnpm run test --project Unit"
+  }
+}

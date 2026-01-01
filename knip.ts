@@ -82,6 +82,14 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/docs/tools/inversify-graphql-code-examples": {
+      entry: [
+        "src/examples/**/*.{mts,ts}",
+        "src/scripts/generateExamples/index.mts",
+      ],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/docs/tools/inversify-http-code-examples": {
       entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
