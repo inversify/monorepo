@@ -1,0 +1,54 @@
+---
+sidebar_position: 4
+title: 继承
+---
+# 继承
+
+继承可以通过依赖 `@injectFromBase` 装饰器来实现。此装饰器允许你从基类注入依赖项。有关更多信息，请参阅 [API 文档](../api/decorator.mdx#injectfrombase)。
+
+以前版本的 Inversify 曾经提供隐式注入继承。但是，这种方法已被弃用，转而支持 `@injectFromBase` 装饰器。
+
+## 动机
+
+装饰器不是设计用来继承的。类继承与以前的方法配合得不好。`@injectFromBase` 装饰器允许开发人员决定是否应提供装饰继承。
+
+作为隐式继承的交换，以前的 Inversify 版本执行了多项检查以确保注入了每个类参数。一些边缘情况迫使声明非托管父构造函数参数，以便 Inversify 可以绕过这些检查。
+
+- 在子类根本不需要注入的情况下，声明父构造函数参数注入是没有意义的：
+
+```ts
+class BaseShape {
+  kind: string;
+
+  // We should not inject the kind in the parent class
+  constructor(kind: string) {
+    this.kind = kind;
+  }
+}
+
+class SquareShape extends BaseShape {
+  constructor() {
+    super('square');
+  }
+}
+```
+
+- 在子类参数与父类参数不匹配的情况下，声明父构造函数参数注入是没有意义的：
+
+```ts
+class BaseShape {
+  // We should not inject kind nor sides, for they are likely to be in the wrong order in the child class
+  constructor(
+    public readonly kind: string,
+    public readonly sides: number,
+  ) {}
+}
+
+class RegularPolygonShape extends BaseShape {
+  constructor(sides: number) {
+    super('RegularPolygon', sides);
+  }
+}
+```
+
+当前的方法允许开发人员依赖 `@injectFromBase` 装饰器来决定是否继承父类注入。

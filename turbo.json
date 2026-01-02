@@ -83,6 +83,7 @@
       "inputs": [
         "blog/**",
         "docs/**",
+        "i18n/**",
         "src/**/*.{css,cts,mts,ts,tsx}",
         "static/**",
         "docusaurus.config.ts",
