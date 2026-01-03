@@ -101,6 +101,7 @@ describe(BetterAuthExpress4ContainerModule, () => {
             }),
             headers: {
               'Content-Type': 'application/json',
+              Origin: `http://${server.host}:${server.port.toString()}`,
             },
             method: 'POST',
           },
