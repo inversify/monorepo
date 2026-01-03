@@ -1,0 +1,20 @@
+---
+sidebar_position: 2
+title: 依赖倒置
+---
+import CodeBlock from '@theme/CodeBlock';
+import dependencyInversionSource from '@inversifyjs/code-examples/generated/examples/dependencyInversion.ts.txt';
+
+# 依赖倒置
+
+要应用依赖倒置原则，您可以使用注入符号（Symbols）：
+
+<CodeBlock language="ts">{dependencyInversionSource}</CodeBlock>
+
+通过使用符号，您可以提供接口实现，而依赖类无需了解依赖实现的细节。
+
+:::note
+
+虽然推荐为此目的使用符号，但 InversifyJS 也支持使用类和字符串字面量作为服务标识符。
+
+:::

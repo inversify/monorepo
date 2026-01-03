@@ -1,6 +1,5 @@
 import Link from '@docusaurus/Link';
-import { DocusaurusContext } from '@docusaurus/types';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import Translate from '@docusaurus/Translate';
 import Heading from '@theme/Heading';
 import clsx from 'clsx';
 import React from 'react';
@@ -8,20 +7,37 @@ import React from 'react';
 import styles from './styles.module.css';
 
 export default function HomepageHeader(): React.JSX.Element {
-  const { siteConfig }: DocusaurusContext = useDocusaurusContext();
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <Heading as="h1" className="hero__title">
-          {siteConfig.title}
+          <Translate
+            id="homepage.title"
+            description="The title on the homepage"
+          >
+            InversifyJS
+          </Translate>
         </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p className="hero__subtitle">
+          <Translate
+            id="homepage.tagline"
+            description="The tagline on the homepage"
+          >
+            A powerful and lightweight inversion of control container for
+            JavaScript & Node.js apps powered by TypeScript
+          </Translate>
+        </p>
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
             to="/docs/introduction/getting-started"
           >
-            Quick Start
+            <Translate
+              id="homepageHeader.quickStart"
+              description="Label for the quick start button on the homepage header"
+            >
+              Quick Start
+            </Translate>
           </Link>
         </div>
       </div>

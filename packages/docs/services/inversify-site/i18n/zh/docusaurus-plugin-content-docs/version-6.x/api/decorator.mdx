@@ -1,0 +1,174 @@
+---
+sidebar_position: 4
+title: 装饰器 (Decorator)
+---
+import decoratorApiInjectConstructorArgumentSource from '@inversifyjs/code-examples/generated/examples/decoratorApiInjectConstructorArgument.ts.txt';
+import decoratorApiInjectPropertySource from '@inversifyjs/code-examples/generated/examples/decoratorApiInjectProperty.ts.txt';
+import decoratorApiMultiInjectPropertySource from '@inversifyjs/code-examples/generated/examples/decoratorApiMultiInjectProperty.ts.txt';
+import decoratorApiNamedSource from '@inversifyjs/code-examples/generated/examples/decoratorApiNamed.ts.txt';
+import decoratorApiOptionalSource from '@inversifyjs/code-examples/generated/examples/decoratorApiOptional.ts.txt';
+import decoratorApiPostConstructSource from '@inversifyjs/code-examples/generated/examples/decoratorApiPostConstruct.ts.txt';
+import decoratorApiPreDestroySource from '@inversifyjs/code-examples/generated/examples/decoratorApiPreDestroy.ts.txt';
+import decoratorApiTaggedSource from '@inversifyjs/code-examples/generated/examples/decoratorApiTagged.ts.txt';
+import decoratorApiUnmanagedSource from '@inversifyjs/code-examples/generated/examples/decoratorApiUnmanaged.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 装饰器
+
+本节介绍用于提供类元数据的 Inversify 装饰器。
+
+## injectable
+
+用于设置类元数据的装饰器，以便容器可以接收类发出的元数据。
+
+强烈建议使用 `@injectable` 装饰器注释作为服务提供的每个类。但是，并非在每种情况下都是强制性的。
+
+### 什么时候 injectable 是强制性的？
+
+每当预期类发出的元数据时。
+
+考虑以下示例代码：
+
+```ts
+import 'reflect-metadata/lite';
+import { injectable } from 'inversify';
+
+@injectable()
+class B {
+  readonly foo: string = 'foo';
+}
+
+@injectable()
+class A {
+  constructor(public readonly b: B) {}
+}
+```
+
+启用 [emitDecoratorMetadata](https://www.typescriptlang.org/tsconfig/#emitDecoratorMetadata) 选项的 CommonJS 转译可能如下所示：
+
+```js
+Object.defineProperty(exports, "__esModule", { value: true });
+require("reflect-metadata");
+const inversify_1 = require("inversify");
+let B = class B {
+    foo = 'foo';
+};
+B = __decorate([
+    (0, inversify_1.injectable)()
+], B);
+let A = class A {
+    b;
+    constructor(b) {
+        this.b = b;
+    }
+};
+A = __decorate([
+    (0, inversify_1.injectable)(),
+    __metadata("design:paramtypes", [B])
+], A);
+```
+
+仅当将任何类装饰器应用于目标类时，TypeScript 才会发出类元数据。如果我们从 `A` 中删除 `@injectable`，则转译后的代码看起来会有很大不同：
+
+```js
+Object.defineProperty(exports, "__esModule", { value: true });
+require("reflect-metadata");
+class B {
+    foo = 'foo';
+}
+class A {
+    b;
+    constructor(b) {
+        this.b = b;
+    }
+}
+```
+
+这一次，即使启用了 `emitDecoratorMetadata` TypeScript 选项，也不会发出类元数据，从而导致执行时出现问题。
+
+## inject
+
+用于在构造函数参数或类属性与服务 ID 之间建立关系的装饰器。
+
+解析类的实例时，目标构造函数参数或属性将以与 [container.get](./container.mdx#get) 行为相同的方式解析。
+
+### 示例：装饰类构造函数参数
+
+<CodeBlock language="ts">{decoratorApiInjectConstructorArgumentSource}</CodeBlock>
+
+### 示例：装饰属性
+
+<CodeBlock language="ts">{decoratorApiInjectPropertySource}</CodeBlock>
+
+## multiInject
+
+用于在构造函数参数或类属性与服务 ID 之间建立关系的装饰器。
+
+解析类的实例时，目标构造函数参数或属性将以与启用 `enforceBindingConstraints` 标志的 [container.getAll](./container.mdx#getall) 行为相同的方式解析。
+
+### 示例：装饰属性
+
+<CodeBlock language="ts">{decoratorApiMultiInjectPropertySource}</CodeBlock>
+
+## named
+
+用于在构造函数参数或类属性与元数据名称之间建立关系的装饰器。
+
+<CodeBlock language="ts">{decoratorApiNamedSource}</CodeBlock>
+
+## optional
+
+用于确定目标构造函数参数或属性是可选的装饰器，因此，如果未找到关联服务 ID 的绑定，则不应解析该参数或属性。
+
+<CodeBlock language="ts">{decoratorApiOptionalSource}</CodeBlock>
+
+## postConstruct
+
+用于为目标类建立激活处理程序的装饰器。有关更多信息，请参阅 [文档](../fundamentals/lifecycle/activation.mdx)。
+
+<CodeBlock language="ts">{decoratorApiPostConstructSource}</CodeBlock>
+
+## preDestroy
+
+用于为目标类建立停用处理程序的装饰器。有关更多信息，请参阅 [文档](../fundamentals/lifecycle/deactivation.mdx)。
+
+<CodeBlock language="ts">{decoratorApiPreDestroySource}</CodeBlock>
+
+## tagged
+
+用于在构造函数参数或类属性与元数据标签之间建立关系的装饰器。
+
+<CodeBlock language="ts">{decoratorApiTaggedSource}</CodeBlock>
+
+## targetName
+
+用于在设计时在构造函数参数或类属性名称之间建立关系的装饰器。
+
+打包器可能会缩小代码，从而更改类属性名称。此装饰器跟踪原始名称。
+
+此属性保存在绑定约束中 `target` 请求的 `name` 属性中。
+
+```ts
+@injectable()
+class Ninja implements Ninja {
+  public katana: Weapon;
+  public shuriken: Weapon;
+  constructor(
+      @inject("Weapon") @targetName("katana") katana: Weapon,
+      @inject("Weapon") @targetName("shuriken") shuriken: Weapon
+  ) {
+      this.katana = katana;
+      this.shuriken = shuriken;
+  }
+}
+
+container.bind<Weapon>("Weapon").to(Katana).when((request: interfaces.Request) => {
+  return request.target.name.equals("katana");
+});
+```
+
+## unmanaged
+
+用于确定 Inversify 不应注入目标构造函数参数或属性的装饰器。
+
+<CodeBlock language="ts">{decoratorApiUnmanagedSource}</CodeBlock>

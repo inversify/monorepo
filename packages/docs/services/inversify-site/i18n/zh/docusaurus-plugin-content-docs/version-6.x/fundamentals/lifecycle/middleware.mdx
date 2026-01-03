@@ -1,0 +1,147 @@
+---
+sidebar_position: 3
+title: 中间件
+---
+# 中间件
+
+:::warning
+
+包含中间件文档是出于历史原因。它们可能会被删除，取而代之的是更合适的功能。
+
+:::
+
+可以将中间件添加到容器中以拦截服务解析请求：
+
+## 基本中间件
+
+```ts
+import { interfaces, Container } from "inversify";
+
+function logger(planAndResolve: interfaces.Next): interfaces.Next {
+    return (args: interfaces.NextArgs) => {
+        let start = new Date().getTime();
+        let result = planAndResolve(args);
+        let end = new Date().getTime();
+        console.log(`wooooo  ${end - start}`);
+        return result;
+    };
+}
+
+let container = new Container();
+container.applyMiddleware(logger);
+```
+
+## 多个中间件函数
+
+当应用多个中间件函数时：
+
+```ts
+container.applyMiddleware(middleware1, middleware2);
+```
+
+中间件将从右到左调用。
+这意味着 `middleware2` 在 `middleware1` 之前调用。
+
+## 上下文拦截器
+
+在某些情况下，您可能希望拦截解析计划。
+
+默认的 `contextInterceptor` 作为 `args` 的属性传递给中间件。
+
+```ts
+function middleware1(planAndResolve: interfaces.Next): interfaces.Next<unknown> {
+    return (args: interfaces.NextArgs) => {
+        // args.nextContextInterceptor
+        // ...
+    };
+}
+```
+
+您可以使用函数扩展默认的 `contextInterceptor`：
+
+```ts
+function middleware1(planAndResolve: interfaces.Next<unknown>): interfaces.Next<unknown> {
+    return (args: interfaces.NextArgs) => {
+        let nextContextInterceptor = args.contextInterceptor;
+        args.contextInterceptor = (context: interfaces.Context) => {
+            console.log(context);
+            return nextContextInterceptor(context);
+        };
+        return planAndResolve(args);
+    };
+}
+```
+
+## 自定义元数据读取器
+
+:::danger
+
+不建议创建您自己的自定义元数据读取器。我们包含此功能是为了允许库/框架创建者拥有更高级别的自定义，但普通用户不应使用自定义元数据读取器。通常，只有在开发框架时才应使用自定义元数据读取器，以便为用户提供比默认注释 API 更不明确的注释 API。
+
+如果您正在开发框架或库并创建自定义元数据读取器，请记住为您的框架提供对默认 API 中所有装饰器的替代支持：`@injectable`、`@inject`、`@multiInject`、`@tagged`、`@named`、`@optional`、`@postConstruct`、`@preDestroy`、`@targetName` 和 `@unmanaged`。
+
+:::
+
+中间件允许您拦截计划并解析它，但不允许您更改注释阶段的行为方式。
+
+还有第二个扩展点，允许您决定要使用哪种注释系统。默认注释系统由装饰器和 reflect-metadata 提供支持：
+
+```ts
+@injectable()
+class Ninja implements Ninja {
+
+    private _katana: Katana;
+    private _shuriken: Shuriken;
+
+    constructor(
+        @inject("Katana") katana: Katana,
+        @inject("Shuriken") shuriken: Shuriken
+    ) {
+        this._katana = katana;
+        this._shuriken = shuriken;
+    }
+
+    public fight() { return this._katana.hit(); };
+    public sneak() { return this._shuriken.throw(); };
+
+}
+```
+
+您可以使用自定义元数据读取器来实现自定义注释系统。
+
+例如，您可以实现基于静态属性的注释系统：
+
+```ts
+class Ninja implements Ninja {
+
+    public static constructorInjections = [
+        "Katana", "Shuriken"
+    ];
+
+    private _katana: Katana;
+    private _shuriken: Shuriken;
+
+    constructor(
+        katana: Katana,
+        shuriken: Shuriken
+    ) {
+        this._katana = katana;
+        this._shuriken = shuriken;
+    }
+
+    public fight() { return this._katana.hit(); };
+    public sneak() { return this._shuriken.throw(); };
+
+}
+```
+
+自定义元数据读取器必须实现 `interfaces.MetadataReader` 接口。
+
+完整的示例 [可以在我们的单元测试中找到](https://github.com/inversify/InversifyJS/blob/master/test/features/metadata_reader.test.ts)。
+
+一旦您有了自定义元数据读取器，就可以应用它了：
+
+```ts
+let container = new Container();
+container.applyCustomMetadataReader(new StaticPropsMetadataReader());
+```
