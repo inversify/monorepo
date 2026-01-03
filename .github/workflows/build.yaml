@@ -123,7 +123,7 @@ jobs:
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "result<<$EOF" >> $GITHUB_OUTPUT
-          echo "$(pnpm run benchmarks:http:cjs:high)" >> $GITHUB_OUTPUT
+          echo "$(pnpm run benchmarks:http:cjs:low)" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
       - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
