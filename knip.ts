@@ -70,6 +70,7 @@ export default {
     "packages/docs/services/inversify-site": {
       entry: ["src/{pages,theme}/**/*.{js,ts,jsx,tsx}", "{blog,docs}/**/*.mdx"],
       ignoreDependencies: ["@docusaurus/faster", "inversify"],
+      ignoreFiles: ["i18n/**"],
     },
     "packages/docs/tools/*": defaultWorkspaceProjectConfig,
     "packages/docs/tools/binding-decorators-code-examples": {

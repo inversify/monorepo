@@ -1,0 +1,33 @@
+---
+sidebar_position: 1
+title: 绑定装饰器
+---
+import DocumentationButton from '@site/src/components/DocumentationButton';
+
+# Inversify 绑定装饰器
+
+`@inversifyjs/binding-decorators` 包提供了一组方便的装饰器，可简化 InversifyJS 容器中的绑定配置。你可以使用 `@provide()` 等装饰器在靠近其实现的地方声明和组织依赖项，而不是为每个服务手动调用 `bind`。
+
+## 何时使用
+
+当你更喜欢基于注释的配置时，请使用绑定装饰器，因为它可以：
+
+- 减少容器设置样板代码
+- 将绑定与类定义放在一起
+- 提高大型代码库中服务的可发现性
+
+如果你需要完全编程或动态的绑定逻辑，传统的模块/容器绑定代码可能仍然更合适。
+
+## 主要特性
+
+- `@provide()` 装饰器用于自动注册类
+- 支持命名和标记绑定
+- 分层在核心容器之上，因此它是可选的
+
+## 文档
+
+你可以在此处找到完整的文档、示例和使用指南：
+
+<DocumentationButton href="https://inversify.io/binding-decorators/" target="_blank">
+  <span>查看完整文档</span>
+</DocumentationButton>

@@ -1,0 +1,30 @@
+---
+sidebar_position: 1
+title: 快速入门
+---
+import CodeBlock from '@theme/CodeBlock';
+import gettingStartedSource from '@inversifyjs/code-examples/generated/examples/v7/gettingStarted.ts.txt';
+
+# 快速入门
+
+首先安装 `inversify` 和 `reflect-metadata`：
+
+```bash
+npm install inversify reflect-metadata
+```
+
+接下来，初始化你的第一个容器并添加一些绑定：
+
+:::warning
+
+确保在你的 `tsconfig.json` 中启用 [Experimental decorators](https://www.typescriptlang.org/tsconfig/#experimentalDecorators) 和 [Emit Decorator Metadata](https://www.typescriptlang.org/tsconfig/#emitDecoratorMetadata) 选项以使用此库。
+
+:::
+
+<CodeBlock language="ts">{gettingStartedSource}</CodeBlock>
+
+`@injectable` 装饰器允许 `Katana` 和 `Ninja` 类都用作容器绑定。`@inject` 装饰器提供有关 `Ninja` 依赖项的元数据，因此容器知道应该提供 `Katana` 作为 `Ninja` 构造函数的第一个参数。
+
+绑定是通过 `Container` API 提供的。
+
+通过这两个步骤，你就可以初始化你的第一个 ninja 了！
