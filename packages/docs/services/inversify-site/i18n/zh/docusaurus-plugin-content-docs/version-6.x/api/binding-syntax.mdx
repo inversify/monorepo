@@ -1,0 +1,373 @@
+---
+sidebar_position: 1
+title: 绑定语法
+---
+import bindingOnSyntaxApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/bindingOnSyntaxApiOnActivation.ts.txt';
+import bindingToSyntaxApiToSource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiTo.ts.txt';
+import bindingToSyntaxApiToAutoFactorySource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToAutoFactory.ts.txt';
+import bindingToSyntaxApiToAutoNamedFactorySource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToAutoNamedFactory.ts.txt';
+import bindingToSyntaxApiToConstantValueSource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToConstantValue.ts.txt';
+import bindingToSyntaxApiToConstructorSource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToConstructor.ts.txt';
+import bindingToSyntaxApiToDynamicValueSource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToDynamicValue.ts.txt';
+import bindingToSyntaxApiToFactorySource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToFactory.ts.txt';
+import bindingToSyntaxApiToProviderSource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToProvider.ts.txt';
+import bindingToSyntaxApiToSelfSource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToSelf.ts.txt';
+import bindingToSyntaxApiToServiceSource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToService.ts.txt';
+import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/bindingWhenSyntaxApiWhen.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 绑定语法
+
+绑定语法作为流畅的接口提供，源于使用 [容器 API](./container.mdx#bind) 或 [容器模块 API](./container-module.mdx#bind)。
+
+## BindingToSyntax
+
+```ts
+interface BindingToSyntax<T> {
+  // ...
+}
+```
+
+表示给定服务标识符的服务绑定。
+
+```ts
+const bindingToSyntax = container.bind('service-id');
+```
+
+进一步的文档将此服务标识符称为“给定服务标识符”。
+
+### to
+
+```ts
+to(constructor: interfaces.Newable<T>): interfaces.BindingInWhenOnSyntax<T>;
+```
+
+将类实例化绑定到给定的服务绑定。每当解析服务时，都会调用类构造函数来构建解析值。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToSource}</CodeBlock>
+
+### toSelf
+
+```ts
+toSelf(): interfaces.BindingInWhenOnSyntax<T>;
+```
+
+如果给定的服务标识符是一个类，则建立到该类的类型绑定。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToSelfSource}</CodeBlock>
+
+### toConstantValue
+
+```ts
+toConstantValue(value: T): interfaces.BindingWhenOnSyntax<T>;
+```
+
+将单例作用域中的值绑定到给定的服务标识符。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToConstantValueSource}</CodeBlock>
+
+### toDynamicValue
+
+```ts
+toDynamicValue(func: interfaces.DynamicValue<T>): interfaces.BindingInWhenOnSyntax<T>;
+```
+
+将函数绑定到给定的服务 ID。每当解析服务时，都会调用传递的函数来构建解析值。
+
+:::info
+
+请记住，如果服务在当前作用域中已缓存，则不会解析该服务。
+
+:::
+
+<CodeBlock language="ts">{bindingToSyntaxApiToDynamicValueSource}</CodeBlock>
+
+### toConstructor
+
+```ts
+toConstructor<T2>(constructor: interfaces.Newable<T2>): interfaces.BindingWhenOnSyntax<T>;
+```
+
+将类绑定到给定的服务 ID。每当解析服务时，类构造函数将作为解析值传递。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToConstructorSource}</CodeBlock>
+
+### toFactory
+
+```ts
+toFactory<T2>(factory: interfaces.FactoryCreator<T2>): interfaces.BindingWhenOnSyntax<T>;
+```
+
+将工厂绑定到给定的服务标识符。每当解析服务时，工厂将作为解析值传递。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToFactorySource}</CodeBlock>
+
+### toFunction
+
+```ts
+toFunction(func: T): interfaces.BindingWhenOnSyntax<T>;
+```
+
+`BindingToSyntax.toConstantValue` 的别名，仅限于函数。
+
+### toAutoFactory
+
+```ts
+toAutoFactory<T2>(serviceIdentifier: interfaces.ServiceIdentifier<T2>): interfaces.BindingWhenOnSyntax<T>;
+```
+
+将与目标服务标识符关联的服务工厂绑定到给定的服务标识符。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToAutoFactorySource}</CodeBlock>
+
+### toAutoNamedFactory
+
+```ts
+toAutoNamedFactory<T2>(serviceIdentifier: interfaces.ServiceIdentifier<T2>): BindingWhenOnSyntax<T>;
+```
+
+将与目标服务标识符和名称关联的服务工厂绑定到给定的服务标识符。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToAutoNamedFactorySource}</CodeBlock>
+
+### toProvider
+
+```ts
+toProvider<T2>(provider: interfaces.ProviderCreator<T2>): interfaces.BindingWhenOnSyntax<T>;
+```
+
+将与目标服务标识符关联的服务提供者绑定到给定的服务标识符。提供者只是一个异步工厂。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToProviderSource}</CodeBlock>
+
+### toService
+
+```ts
+toService(service: interfaces.ServiceIdentifier<T>): void;
+```
+
+将绑定到目标服务标识符的服务绑定到给定的服务标识符。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToServiceSource}</CodeBlock>
+
+## BindingInSyntax
+
+```ts
+interface BindingInSyntax<T> {
+  // ...
+}
+```
+
+表示给定服务标识符和服务解析（如构造函数、工厂或提供者）的服务绑定。
+
+### inSingletonScope
+
+```ts
+inSingletonScope(): BindingWhenOnSyntax<T>;
+```
+
+将绑定作用域设置为单例。有关更多信息，请参阅 [文档](../fundamentals/binding.mdx#singleton)。
+
+### inTransientScope
+
+```ts
+inTransientScope(): BindingWhenOnSyntax<T>;
+```
+
+将绑定作用域设置为瞬态。有关更多信息，请参阅 [文档](../fundamentals/binding.mdx#transient)。
+
+### inRequestScope
+
+```ts
+inRequestScope(): BindingWhenOnSyntax<T>;
+```
+
+将绑定作用域设置为请求。有关更多信息，请参阅 [文档](../fundamentals/binding.mdx#request)。
+
+## BindingOnSyntax
+
+```ts
+interface BindingOnSyntax<T> {
+  // ...
+}
+```
+
+允许设置绑定激活和停用处理程序。
+
+### onActivation
+
+```ts
+onActivation(fn: (context: Context, injectable: T) => T | Promise<T>): BindingWhenSyntax<T>;
+```
+
+设置绑定激活处理程序。激活处理程序在依赖项解析之后且添加到作用域缓存之前调用。如果依赖项取自作用域缓存，则不会调用激活处理程序。
+
+<CodeBlock language="ts">{bindingOnSyntaxApiOnActivationSource}</CodeBlock>
+
+### onDeactivation
+
+```ts
+onDeactivation(fn: (injectable: T) => void | Promise<void>): BindingWhenSyntax<T>;
+```
+
+在单例作用域绑定上设置绑定停用处理程序。当绑定从容器中解绑时，将调用停用处理程序。
+
+:::warning
+
+只有单例作用域绑定可以具有停用处理程序。如果您尝试向非单例绑定添加停用处理程序，则会抛出错误。
+
+:::
+
+## BindingWhenSyntax
+
+```ts
+interface BindingWhenSyntax<T> {
+  // ...
+}
+```
+
+允许设置绑定约束。
+
+### when
+
+为当前绑定设置约束。
+
+```ts
+when(constraint: (request: Request) => boolean): BindingOnSyntax<T>;
+```
+
+<CodeBlock language="ts">{bindingWhenSyntaxApiWhenSource}</CodeBlock>
+
+在前面的示例中，实现了一个自定义约束，仅当目标名称为特定名称时才使用绑定。
+
+### whenTargetNamed
+
+约束绑定仅当目标名称为特定名称时才使用。
+
+```ts
+whenTargetNamed(name: string | number | symbol): BindingOnSyntax<T>;
+```
+
+### whenTargetIsDefault
+
+```ts
+whenTargetIsDefault(): BindingOnSyntax<T>;
+```
+
+约束绑定仅当目标没有名称也没有标签时才使用。
+
+### whenTargetTagged
+
+```ts
+whenTargetTagged(tag: string | number | symbol, value: unknown): BindingOnSyntax<T>;
+```
+
+约束绑定仅当目标标签为特定标签时才使用。
+
+### whenInjectedInto
+
+```ts
+whenInjectedInto(parent: NewableFunction | string): BindingOnSyntax<T>;
+```
+
+约束绑定仅当父目标服务标识符为特定标识符时才使用。
+
+### whenParentNamed
+
+```ts
+whenParentNamed(name: string | number | symbol): BindingOnSyntax<T>;
+```
+
+约束绑定仅当父目标名称为特定名称时才使用。
+
+### whenParentTagged
+
+```ts
+whenParentTagged(tag: string | number | symbol, value: unknown): BindingOnSyntax<T>;
+```
+
+约束绑定仅当父目标标签为特定标签时才使用。
+
+### whenAnyAncestorIs
+
+```ts
+whenAnyAncestorIs(ancestor: NewableFunction | string): BindingOnSyntax<T>;
+```
+
+约束绑定仅当任何祖先目标服务标识符为特定标识符时才使用。
+
+### whenNoAncestorIs
+
+```ts
+whenNoAncestorIs(ancestor: NewableFunction | string): BindingOnSyntax<T>;
+```
+
+约束绑定仅当没有祖先目标服务标识符为特定标识符时才使用。
+
+### whenAnyAncestorNamed
+
+```ts
+whenAnyAncestorNamed(name: string | number | symbol): BindingOnSyntax<T>;
+```
+
+约束绑定仅当任何祖先目标名称为特定名称时才使用。
+
+### whenAnyAncestorTagged
+
+```ts
+whenAnyAncestorTagged(tag: string | number | symbol, value: unknown): BindingOnSyntax<T>;
+```
+
+约束绑定仅当任何祖先目标标签为特定标签时才使用。
+
+### whenNoAncestorNamed
+
+```ts
+whenNoAncestorNamed(name: string | number | symbol): BindingOnSyntax<T>;
+```
+
+约束绑定仅当没有祖先目标名称为特定名称时才使用。
+
+### whenNoAncestorTagged
+
+```ts
+whenNoAncestorTagged(tag: string | number | symbol, value: unknown): BindingOnSyntax<T>;
+```
+
+约束绑定仅当没有祖先目标标签为特定标签时才使用。
+
+### whenAnyAncestorMatches
+
+```ts
+whenAnyAncestorMatches(constraint: (request: Request) => boolean): BindingOnSyntax<T>;
+```
+
+约束绑定仅当任何祖先匹配特定约束时才使用。
+
+### whenNoAncestorMatches
+
+```ts
+whenNoAncestorMatches(constraint: (request: Request) => boolean): BindingOnSyntax<T>;
+```
+
+约束绑定仅当没有祖先匹配特定约束时才使用。
+
+## BindingWhenOnSyntax
+
+[BindingWhenSyntax](#bindingwhensyntax) 和 [BindingOnSyntax](#bindingonsyntax) 的联合。
+
+```ts
+export interface BindingWhenOnSyntax<T>
+  extends BindingWhenSyntax<T>,
+    BindingOnSyntax<T> {}
+```
+
+## BindingInWhenOnSyntax
+
+[BindingInSyntax](#bindinginsyntax) 和 [BindingWhenOnSyntax](#bindingwhenonsyntax) 的联合。
+
+```ts
+export interface BindingInWhenOnSyntax<T>
+  extends BindingInSyntax<T>,
+    BindingWhenOnSyntax<T> {}
+```

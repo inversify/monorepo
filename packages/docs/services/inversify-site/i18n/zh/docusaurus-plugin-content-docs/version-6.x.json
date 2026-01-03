@@ -4,15 +4,15 @@
     "description": "The label for version 6.x"
   },
   "sidebar.tutorialSidebar.category.Introduction": {
-    "message": "Introduction",
+    "message": "介绍",
     "description": "The label for category 'Introduction' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Fundamentals": {
-    "message": "Fundamentals",
+    "message": "基础",
     "description": "The label for category 'Fundamentals' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Lifecycle": {
-    "message": "Lifecycle",
+    "message": "生命周期",
     "description": "The label for category 'Lifecycle' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.API": {

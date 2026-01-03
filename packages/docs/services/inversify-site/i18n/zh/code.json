@@ -556,5 +556,46 @@
   "theme.tags.tagsPageTitle": {
     "message": "标签",
     "description": "The title of the tag list page"
+  },
+  "homepageFeatures.stronglyTyped.description": {
+    "message": "InversifyJS 由 TypeScript 驱动。TypeScript 使 JavaScript 开发人员在开发 JavaScript 应用程序时能够使用高效的开发工具和实践。",
+    "description": "Description for the strongly typed feature on the homepage"
+  },
+  "homepageFeatures.universal.description": {
+    "message": "InversifyJS 编译为干净、简单的 JavaScript 代码，可在任何浏览器、Node.js 或任何支持 ECMAScript 2022（或更新版本）的 JavaScript 引擎中运行。",
+    "description": "Description for the universal feature on the homepage"
+  },
+  "homepageFeatures.pluggable.description": {
+    "message": "InversifyJS 与框架无关，其设计方式使其能够与 hapi、express、react 或 backbone 等流行框架和库集成。",
+    "description": "Description for the pluggable feature on the homepage"
+  },
+  "homepageHeader.quickStart": {
+    "message": "快速开始",
+    "description": "Label for the quick start button on the homepage header"
+  },
+  "frameworkBanner.description": {
+    "message": "使用我们的新框架将您的依赖注入提升到一个新的水平！构建具有内置 HTTP、路由等支持的现代 Web 应用程序。",
+    "description": "Description for the framework banner on the homepage"
+  },
+  "frameworkBanner.exploreButton": {
+    "message": "探索框架",
+    "description": "Label for the explore framework button on the framework banner"
+  },
+  "homepageFeatures.stronglyTyped.title": {
+    "message": "强类型"
+  },
+  "homepageFeatures.universal.title": {
+    "message": "通用"
+  },
+  "homepageFeatures.pluggable.title": {
+    "message": "可插拔"
+  },
+  "homepage.title": {
+    "message": "InversifyJS",
+    "description": "The title on the homepage"
+  },
+  "homepage.tagline": {
+    "message": "一个强大且轻量级的控制反转容器，适用于由 TypeScript 驱动的 JavaScript 和 Node.js 应用程序",
+    "description": "The tagline on the homepage"
   }
 }

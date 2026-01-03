@@ -1,3 +1,4 @@
+import Translate from '@docusaurus/Translate';
 import { Icon } from '@iconify/react';
 import React, { useState } from 'react';
 
@@ -49,13 +50,23 @@ export default function FrameworkBanner(): React.JSX.Element {
             .join(' ')}
         >
           <p className={styles.bannerDescription}>
-            Take your dependency injection to the next level with our new
-            framework! Build modern web applications with built-in support for
-            HTTP, routing, and more.
+            <Translate
+              id="frameworkBanner.description"
+              description="Description for the framework banner on the homepage"
+            >
+              Take your dependency injection to the next level with our new
+              framework! Build modern web applications with built-in support for
+              HTTP, routing, and more.
+            </Translate>
           </p>
           <div className={styles.bannerButtons}>
             <DocumentationButton href="https://inversify.io/framework/">
-              Explore Framework
+              <Translate
+                id="frameworkBanner.exploreButton"
+                description="Label for the explore framework button on the framework banner"
+              >
+                Explore Framework
+              </Translate>
             </DocumentationButton>
           </div>
         </div>

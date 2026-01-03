@@ -1,0 +1,36 @@
+---
+sidebar_position: 2
+title: DI 层次结构
+---
+import diHierarchySource from '@inversifyjs/code-examples/generated/examples/diHierarchy.ts.txt';
+import diHierarchyAndCachedBindingsSource from '@inversifyjs/code-examples/generated/examples/v6/diHierarchyAndCachedBindings.ts.txt';
+
+import CodeBlock from '@theme/CodeBlock';
+
+# DI 层次结构
+
+InversifyJS 是一个流行的库，用于在 TypeScript 应用程序中实现控制反转 (IoC) 和依赖注入 (DI)。它支持分层依赖注入，这在复杂的应用程序中可能是一个强大的工具。
+
+使用 InversifyJS 的分层注入系统，您可以创建一个容器层次结构，其中每个容器都可以有一个父容器。这允许在您的应用程序中更好地组织和分离关注点。
+
+当需要注入依赖项时，InversifyJS 首先在当前容器中查找绑定。如果未找到绑定，它将向上移动到父容器并继续搜索。此过程一直持续到找到绑定或到达顶级父容器为止。
+
+:::warning[绑定覆盖]
+
+找到的绑定可能会覆盖祖先绑定，即使它们的约束未得到满足。例如，如果在子容器中找到了请求服务的命名绑定，则该绑定将覆盖父绑定，即使此绑定稍后在非命名解析请求中被丢弃。
+
+:::
+
+:::warning[DI 层次结构和缓存绑定]
+
+使用分层注入时，请注意，即使调用来自另一个子容器，第一次解析的缓存绑定也将用于后续解析。
+
+<CodeBlock language="ts">{diHierarchyAndCachedBindingsSource}</CodeBlock>
+
+如果这种行为是不需要的，请考虑改用 `ContainerModule`。这样，您可以在两个容器中加载它。不同的容器将具有不同的绑定，因此具有不同的缓存值。
+
+:::
+
+通过使用 InversifyJS 的分层注入系统，您可以轻松管理复杂的依赖关系并保持代码整洁和模块化。它为处理 TypeScript 应用程序中的依赖关系提供了一种灵活且可扩展的解决方案。
+
+<CodeBlock language="ts">{diHierarchySource}</CodeBlock>

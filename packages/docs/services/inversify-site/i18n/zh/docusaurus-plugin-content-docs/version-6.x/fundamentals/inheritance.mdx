@@ -1,0 +1,52 @@
+---
+sidebar_position: 4
+title: 继承
+---
+# 继承
+
+只要构造函数参数被正确装饰，就可以实现继承。有两种方法可以确保这一点：
+
+- 派生类中装饰的构造函数参数的数量大于或等于其基类中构造函数参数的数量。
+- 启用了 [skipBaseClassChecks](../api/container.mdx#skipbaseclasschecks) 选项。
+
+## 错误继承注入的示例
+
+```ts
+@injectable()
+class Warrior {
+  public rank: string;
+  constructor(rank: string) { // 参数数量 = 1
+    this.rank = rank;
+  }
+}
+
+@injectable()
+class SamuraiMaster extends Warrior {
+  constructor() { // 参数数量 = 0
+    super("master");
+  }
+}
+```
+
+当尝试获取 `SamuraiMaster` 时，容器会抛出一个错误，指示构造函数参数未正确装饰。
+
+## 使用 @unmanaged 装饰器
+
+[unmanaged](../api/decorator.mdx#unmanaged) 装饰器告诉 Inversify 基类构造函数参数不应被管理。这通常发生在处理仅注入叶类型的继承层次结构时。
+
+```ts
+@injectable()
+class Warrior {
+  public rank: string;
+  constructor(@unmanaged() rank: string) { // 参数数量 = 0，非托管参数不包括在内
+    this.rank = rank;
+  }
+}
+
+@injectable()
+class SamuraiMaster extends Warrior {
+  constructor() { // 参数数量 = 0
+    super("master");
+  }
+}
+```
