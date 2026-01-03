@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "6.x",
+    "description": "The label for version 6.x"
+  },
+  "sidebar.tutorialSidebar.category.Introduction": {
+    "message": "Introduction",
+    "description": "The label for category 'Introduction' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Fundamentals": {
+    "message": "Fundamentals",
+    "description": "The label for category 'Fundamentals' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Lifecycle": {
+    "message": "Lifecycle",
+    "description": "The label for category 'Lifecycle' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.API": {
+    "message": "API",
+    "description": "The label for category 'API' in sidebar 'tutorialSidebar'"
+  }
+}

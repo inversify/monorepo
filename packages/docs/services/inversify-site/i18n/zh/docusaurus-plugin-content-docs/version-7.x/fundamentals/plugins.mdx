@@ -1,0 +1,90 @@
+---
+sidebar_position: 5
+title: 插件
+---
+
+# 插件
+
+InversifyJS 提供了一个插件系统，允许你扩展容器的功能。插件可以向容器添加新方法，挂钩到容器的生命周期，并与容器的内部服务进行交互。
+
+## 创建插件
+
+:::danger
+
+目前，插件是一项实验性功能，可能会在未来的版本中发生变化。使用风险自负。
+
+:::
+
+要创建插件，你需要扩展 `@inversifyjs/plugin` 中的 `Plugin` 类并实现 `load` 方法。`load` 方法接收一个 `PluginApi` 对象，允许插件在容器上定义新方法并挂钩到容器的解析过程。
+
+```typescript
+import { Plugin, PluginApi, PluginContext } from '@inversifyjs/plugin';
+import { Container } from 'inversify';
+
+// Extend the container with plugin defined methods
+declare module 'inversify' {
+  interface Container {
+    myMethod(...args: any[]): string;
+  }
+}
+
+class MyPlugin extends Plugin<Container> {
+  public load(api: PluginApi): void {
+    // Define a new method on the container
+    api.define('myMethod', (...args) => {
+      // Implementation of the method
+      return 'Result of myMethod';
+    });
+
+    // Hook into the container's plan phase
+    api.onPlan((options, result) => {
+      // Do something with the plan result
+      console.log(`Planning resolution for ${String(options.serviceId)}`);
+    });
+  }
+}
+```
+
+## 插件上下文
+
+创建插件时，它会接收一个容器实例和一个插件上下文。插件上下文提供对容器内部服务的访问：
+
+- `activationService`：管理服务的激活处理程序（绑定激活在绑定中设置）。
+- `bindingService`：管理容器中的绑定。
+- `deactivationService`：管理服务的停用处理程序（绑定停用在绑定中设置）。
+- `planResultCacheService`：管理规划结果的缓存。
+
+这些服务允许插件与容器的核心功能进行交互并提供高级扩展。
+
+## 注册插件
+
+要使用插件，你需要使用 `register` 方法将其注册到容器中：
+
+```typescript
+const container = new Container();
+container.register(MyPlugin);
+```
+
+注册后，插件可以向容器添加方法，挂钩到容器的生命周期，并修改容器的行为。
+
+## 插件 API
+
+`PluginApi` 接口提供以下方法：
+
+### define
+
+```typescript
+define(name: string | symbol, method: (...args: any[]) => unknown): void
+```
+
+在容器上定义一个新方法。注册插件后，该方法将在容器实例上可用。
+
+### onPlan
+
+```typescript
+onPlan(handler: (options: GetPlanOptions, result: PlanResult) => void): void
+```
+
+注册一个处理程序，当容器规划解析时调用该处理程序。这可用于修改解析规划或在解析过程中执行其他操作。
+
+插件提供了一种无需修改核心代码即可扩展 InversifyJS 的简洁方法，从而允许模块化和可维护的扩展。

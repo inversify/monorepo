@@ -1,0 +1,135 @@
+---
+sidebar_position: 1
+title: 从 v6 迁移
+---
+import bindingOnSyntaxApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v7/bindingOnSyntaxApiOnActivation.ts.txt';
+import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/v7/bindingWhenSyntaxApiWhen.ts.txt';
+import containerApiGetAllWithNamedBindingsSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAllWithNamedBindings.ts.txt';
+import containerApiGetNamedSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetNamed.ts.txt';
+import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v7/containerModuleApiExample.ts.txt';
+import diHierarchySource from '@inversifyjs/code-examples/generated/examples/v7/diHierarchy.ts.txt';
+import fundamentalsAutobindingSource from '@inversifyjs/code-examples/generated/examples/v7/fundamentalsAutobinding.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 从 v6 迁移
+
+InversifyJS v7 引入了一些重大更改。本指南将帮助你将现有的 InversifyJS v6 代码迁移到 v7。
+
+## 更改概述
+
+下表总结了从 v6 到 v7 的主要更改：
+
+| v6                                    | v7                                       | 备注                                                          |
+|---------------------------------------|------------------------------------------|------------------------------------------------------------------|
+| `autoBindInjectable` 选项           | `autobind` 选项                        | 重命名的容器构造函数选项                             |
+| `container.resolve(X)`                | `container.get(X, { autobind: true })`   | `resolve` 被带有 `autobind` 选项的 `get` 替换               |
+| 自定义元数据和中间件       | 无直接替换                    | 已删除以简化库并避免暴露内部数据结构 |
+| `container.isBoundNamed`              | `container.isBound(X, { name: ... })`    | 合并了所有带有选项参数的 `isBound` 变体          |
+| `container.isBoundTagged`             | `container.isBound(X, { tag: ... })`     | 合并了所有带有选项参数的 `isBound` 变体          |
+| `container.getNamed`                  | `container.get(X, { name: ... })`        | 合并了所有带有选项参数的 `get` 变体              |
+| `container.getTagged`                 | `container.get(X, { tag: ... })`         | 合并了所有带有选项参数的 `get` 变体              |
+| `container.tryGet`                    | `container.get(X, { optional: true })`   | 为可选的 `get` 添加了 `optional` 标志                         |
+| `container.tryGetNamed`               | `container.get(X, { name: ..., optional: true })` | 组合了命名和可选参数                  |
+| `container.tryGetTagged`              | `container.get(X, { tag: ..., optional: true })`  | 组合了标记和可选参数                 |
+| `container.load`                      | `await container.load`                   | 现在返回一个 Promise                                            |
+| `container.load`                      | `container.loadSync`                     | 异步 `load` 的同步替代方案                          |
+| `container.unload`                    | `await container.unload`                 | 现在返回一个 Promise                                            |
+| `container.unload`                    | `container.unloadSync`                   | 异步 `unload` 的同步替代方案                        |
+| `container.rebind`                    | `await container.rebind` 或 `container.rebindSync` | 现在是异步的，带有同步替代方案                     |
+| `container.unbind`                    | `await container.unbind` 或 `container.unbindSync` | 现在是异步的，带有同步替代方案                     |
+| `container.createChild()`             | `new Container({ parent: container })`   | 通过构造函数创建的子容器                         |
+| `interfaces.Context`                  | `ResolutionContext`                      | 更新了绑定 API 中的上下文参数类型                |
+| `interfaces.Request`                  | `BindingConstraints`                     | 更新了绑定约束参数类型                        |
+| `interfaces.Provider<T>`              | `Provider<T>`                            | 直接导出，不再在 `interfaces` 命名空间下        |
+| `interfaces.Factory<T>`               | `Factory<T>`                             | 直接导出，不再在 `interfaces` 命名空间下        |
+| `interfaces.Newable<T>`               | `Newable<T>`                             | 直接导出，不再在 `interfaces` 命名空间下        |
+| 隐式注入继承        | `@injectFromBase` 装饰器              | 使用装饰器的显式继承                            |
+| `import { interfaces } from "inversify";` | `import { ... } from "inversify";`   | 删除了 `interfaces` 命名空间，使用直接导入               |
+
+## 容器 API
+
+### 自动绑定
+
+在 v6 中，通过将 `autoBindInjectable` 选项传递给容器构造函数来启用自动绑定。在 v7 中，此选项已重命名为 `autobind`，并且可以作为 `Container` 构造函数选项或 `Container.get` 选项的一部分传递。
+
+在 v6 中，`container.resolve` 自动将解析的服务绑定到容器。在 v7 中，此行为已被删除。要启用它，请传递 `autobind` 选项。
+
+<CodeBlock language="ts">{fundamentalsAutobindingSource}</CodeBlock>
+
+### 自定义元数据和中间件
+
+此功能已在 v7 中删除，没有直接替换。它没有被广泛使用，并且增加了库的复杂性。将来可能会引入更好的 API。
+
+### 类似 `isBound` 的方法
+
+像 `Container.isBoundNamed` 和 `Container.isBoundTagged` 这样的方法已被 `Container.isBound` 替换，带有一个可选的 `isBoundOptions` 参数来处理命名和标记绑定。
+
+有关更多详细信息，请参阅 [isBound](../../api/container#isbound) 和 [isCurrentBound](../../api/container#iscurrentbound) 的 API 文档。
+
+### 类似 `get` 的方法
+
+`Container.getNamed`、`Container.getTagged`、`Container.tryGet`、`Container.tryGetNamed` 和 `Container.tryGetTagged` 方法已被带有 `OptionalGetOptions` 参数的 `Container.get` 替换。
+
+同样，`Container.getAll`、`Container.getAllAsync` 和 `Container.getAsync` 现在接受 `GetOptions` 对象来指定名称或标签。
+
+<CodeBlock language="ts">{containerApiGetNamedSource}</CodeBlock>
+
+此外，`Container.getAll` 和 `Container.getAllAsync` 现在强制执行绑定约束。例如：
+
+<CodeBlock language="ts">{containerApiGetAllWithNamedBindingsSource}</CodeBlock>
+
+在 v6 中，`container.getAll` 返回与服务标识符匹配的所有绑定。在 v7 中，它仅返回与服务标识符和绑定约束都匹配的绑定。
+
+:::info
+
+如果你需要模拟旧行为，可以使用自定义约束来实现。有关更多信息，请参阅此 [问题](https://github.com/inversify/InversifyJS/issues/1796#issuecomment-2842402397)。
+
+:::
+
+### `load` 和 `unload` 方法
+
+这些方法现在是异步的并返回 Promise。还提供了同步替代方案 `loadSync` 和 `unloadSync`。
+
+<CodeBlock language="ts">{containerModuleApiExampleSource}</CodeBlock>
+
+### `rebind` 方法
+
+`Container.rebind` 方法现在是异步的并返回 Promise。还提供了同步替代方案 `Container.rebindSync`。
+
+### `unbind` 和 `unbindAll` 方法
+
+`Container.unbind` 方法现在是异步的并返回 Promise。还提供了同步替代方案 `Container.unbindSync`。
+
+### 父容器和子容器
+
+在 v6 中，使用 `createChild` 方法创建子容器。在 v7 中，此方法已被删除。相反，将父容器传递给子容器的构造函数。
+
+<CodeBlock language="ts">{diHierarchySource}</CodeBlock>
+
+## 容器模块 API
+
+容器模块加载选项现在作为对象传递。
+
+<CodeBlock language="ts">{containerModuleApiExampleSource}</CodeBlock>
+
+## BindingFluentSyntax API
+
+### `ResolutionContext` 代替 `interfaces.Context`
+
+`Context` 类已被 `ResolutionContext` 替换，以简化 API 并隐藏内部数据结构。
+
+<CodeBlock language="ts">{bindingOnSyntaxApiOnActivationSource}</CodeBlock>
+
+### `BindingConstraints` 代替 `interfaces.Request`
+
+`Request` 对象已被 `BindingConstraints` 替换，以简化 API 并隐藏内部数据结构。
+
+<CodeBlock language="ts">{bindingWhenSyntaxApiWhenSource}</CodeBlock>
+
+## 装饰器 API
+
+### 继承
+
+注入继承现在使用 `@injectFromBase` 装饰器显式进行。这提供了更多控制，并避免了与构造函数参数不匹配相关的边缘情况。
+
+有关更多详细信息，请参阅 [继承文档](../../fundamentals/inheritance)。

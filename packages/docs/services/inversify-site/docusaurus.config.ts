@@ -14,7 +14,16 @@ const config: Config = {
   },
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    localeConfigs: {
+      zh: {
+        direction: 'ltr',
+        htmlLang: 'zh-CN',
+        label: '简体中文',
+        path: 'zh',
+        translate: true,
+      },
+    },
+    locales: ['en', 'zh'],
   },
   markdown: {
     hooks: {
@@ -130,6 +139,10 @@ const config: Config = {
     },
     navbar: {
       items: [
+        {
+          position: 'left',
+          type: 'localeDropdown',
+        },
         {
           label: 'Tutorial',
           position: 'left',
