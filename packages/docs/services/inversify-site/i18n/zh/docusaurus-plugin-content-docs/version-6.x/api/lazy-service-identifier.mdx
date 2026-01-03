@@ -9,7 +9,7 @@ import lazyServiceIdentifierSource from '@inversifyjs/code-examples/generated/ex
 
 ## 概述
 
-`LazyServiceIdentifier` 类是一个实用程序，它将服务标识符的解析延迟到依赖注入期间实际需要它们的时候。其主要目的是防止在类服务标识符完全初始化之前访问它们。
+`LazyServiceIdentifier` 类是一个实用程序，它将服务标识符的解析延迟到实际需要它们时进行依赖注入。其主要目的是防止在类服务标识符完全初始化之前访问它们。
 
 ## 问题：过早访问类服务标识符
 
