@@ -1,0 +1,14 @@
+import mercuriusGraphqlServerSource from '@inversifyjs/graphql-code-examples/generated/examples/latest/mercurius/mercuriusGraphqlServer.mts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Mercurius integration
+
+Mercurius is a GraphQL adapter for Fastify. It is very simple to set up and does not require an HTTP adapter from InversifyJS.
+
+You can simply create a Fastify instance, register Mercurius, and start the server.
+
+<CodeBlock language="ts">{mercuriusGraphqlServerSource}</CodeBlock>
+
+If you want to use the InversifyJS HTTP adapter, you can get the Fastify instance by calling `adapter.build()` and then register Mercurius.
+
+For more information, please refer to the [Mercurius documentation](https://mercurius.dev/).
