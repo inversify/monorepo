@@ -1,5 +1,17 @@
 # @inversifyjs/container
 
+## 1.15.0
+
+### Minor Changes
+
+- Added `Container.unbindAllSync`
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/core@9.2.0
+  - @inversifyjs/plugin@0.2.0
+
 ## 1.14.5
 
 ### Patch Changes
