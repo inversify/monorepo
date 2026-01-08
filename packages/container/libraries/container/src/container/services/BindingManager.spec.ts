@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/core');
+vitest.mock(import('@inversifyjs/core'));
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 import {
@@ -969,7 +969,92 @@ describe(BindingManager, () => {
   });
 
   describe('.unbindAll', () => {
-    describe('when called', () => {
+    describe('when called, and all deactivations are synchronous', () => {
+      let serviceIdsFixture: string[];
+      let result: unknown;
+
+      beforeAll(() => {
+        serviceIdsFixture = ['service1', 'service2'];
+        vitest
+          .mocked(serviceReferenceManagerMock.bindingService)
+          .getNonParentBoundServices.mockReturnValueOnce(serviceIdsFixture);
+
+        vitest.mocked(resolveServiceDeactivations).mockReturnValue(undefined);
+
+        result = new BindingManager(
+          deactivationParamsFixture,
+          defaultScopeFixture,
+          planResultCacheManagerMock,
+          serviceReferenceManagerMock,
+        ).unbindAll();
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call resolveServiceDeactivations for each service', () => {
+        expect(resolveServiceDeactivations).toHaveBeenCalledTimes(
+          serviceIdsFixture.length,
+        );
+
+        for (const serviceId of serviceIdsFixture) {
+          expect(resolveServiceDeactivations).toHaveBeenCalledWith(
+            deactivationParamsFixture,
+            serviceId,
+          );
+        }
+      });
+
+      it('should call removeAllByServiceId on activationService for each service', () => {
+        expect(
+          serviceReferenceManagerMock.activationService.removeAllByServiceId,
+        ).toHaveBeenCalledTimes(serviceIdsFixture.length);
+
+        for (const serviceId of serviceIdsFixture) {
+          expect(
+            serviceReferenceManagerMock.activationService.removeAllByServiceId,
+          ).toHaveBeenCalledWith(serviceId);
+        }
+      });
+
+      it('should call removeAllByServiceId on bindingService for each service', () => {
+        expect(
+          serviceReferenceManagerMock.bindingService.removeAllByServiceId,
+        ).toHaveBeenCalledTimes(serviceIdsFixture.length);
+
+        for (const serviceId of serviceIdsFixture) {
+          expect(
+            serviceReferenceManagerMock.bindingService.removeAllByServiceId,
+          ).toHaveBeenCalledWith(serviceId);
+        }
+      });
+
+      it('should call removeAllByServiceId on deactivationService for each service', () => {
+        expect(
+          serviceReferenceManagerMock.deactivationService.removeAllByServiceId,
+        ).toHaveBeenCalledTimes(serviceIdsFixture.length);
+
+        for (const serviceId of serviceIdsFixture) {
+          expect(
+            serviceReferenceManagerMock.deactivationService
+              .removeAllByServiceId,
+          ).toHaveBeenCalledWith(serviceId);
+        }
+      });
+
+      it('should call planResultCacheService.clearCache()', () => {
+        expect(
+          serviceReferenceManagerMock.planResultCacheService.clearCache,
+        ).toHaveBeenCalledExactlyOnceWith();
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+
+    describe('when called, and at least one deactivation is asynchronous', () => {
       let serviceIdsFixture: string[];
       let result: unknown;
 
@@ -978,6 +1063,11 @@ describe(BindingManager, () => {
         vitest
           .mocked(serviceReferenceManagerMock.bindingService)
           .getNonParentBoundServices.mockReturnValueOnce(serviceIdsFixture);
+
+        vitest
+          .mocked(resolveServiceDeactivations)
+          .mockReturnValueOnce(undefined)
+          .mockResolvedValueOnce(undefined);
 
         result = await new BindingManager(
           deactivationParamsFixture,

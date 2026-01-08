@@ -220,7 +220,7 @@ export class Container {
   }
 
   public async unbindAll(): Promise<void> {
-    return this.#bindingManager.unbindAll();
+    await this.#bindingManager.unbindAll();
   }
 
   public unbindSync(identifier: BindingIdentifier | ServiceIdentifier): void {

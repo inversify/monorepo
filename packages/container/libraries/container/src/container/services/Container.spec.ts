@@ -9,9 +9,9 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/core');
+vitest.mock(import('@inversifyjs/core'));
 
-vitest.mock('../../common/calculations/getFirstIterableResult');
+vitest.mock(import('../../common/calculations/getFirstIterableResult.js'));
 
 import { Newable, ServiceIdentifier } from '@inversifyjs/common';
 import {
@@ -31,15 +31,15 @@ import {
   PlanResultCacheService,
 } from '@inversifyjs/core';
 
-vitest.mock('./BindingManager');
-vitest.mock('./ContainerModuleManager');
-vitest.mock('./DeactivationParamsManager');
-vitest.mock('./PlanParamsOperationsManager');
-vitest.mock('./PlanResultCacheManager');
-vitest.mock('./PluginManager');
-vitest.mock('./ServiceReferenceManager');
-vitest.mock('./ServiceResolutionManager');
-vitest.mock('./SnapshotManager');
+vitest.mock(import('./BindingManager.js'));
+vitest.mock(import('./ContainerModuleManager.js'));
+vitest.mock(import('./DeactivationParamsManager.js'));
+vitest.mock(import('./PlanParamsOperationsManager.js'));
+vitest.mock(import('./PlanResultCacheManager.js'));
+vitest.mock(import('./PluginManager.js'));
+vitest.mock(import('./ServiceReferenceManager.js'));
+vitest.mock(import('./ServiceResolutionManager.js'));
+vitest.mock(import('./SnapshotManager.js'));
 
 import { Plugin, PluginContext } from '@inversifyjs/plugin';
 
