@@ -224,6 +224,7 @@ export function buildDefaultConfig() {
         'vitest/prefer-lowercase-title': 'off',
         'vitest/prefer-to-be-falsy': 'off',
         'vitest/prefer-to-be-truthy': 'off',
+        'vitest/require-mock-type-parameters': 'off',
       },
     },
     /** @type {import('@eslint/config-helpers').ConfigWithExtends} */ (

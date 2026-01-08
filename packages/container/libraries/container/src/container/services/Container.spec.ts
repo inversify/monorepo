@@ -9,9 +9,9 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/core');
+vitest.mock(import('@inversifyjs/core'));
 
-vitest.mock('../../common/calculations/getFirstIterableResult');
+vitest.mock(import('../../common/calculations/getFirstIterableResult.js'));
 
 import { Newable, ServiceIdentifier } from '@inversifyjs/common';
 import {
@@ -31,15 +31,15 @@ import {
   PlanResultCacheService,
 } from '@inversifyjs/core';
 
-vitest.mock('./BindingManager');
-vitest.mock('./ContainerModuleManager');
-vitest.mock('./DeactivationParamsManager');
-vitest.mock('./PlanParamsOperationsManager');
-vitest.mock('./PlanResultCacheManager');
-vitest.mock('./PluginManager');
-vitest.mock('./ServiceReferenceManager');
-vitest.mock('./ServiceResolutionManager');
-vitest.mock('./SnapshotManager');
+vitest.mock(import('./BindingManager.js'));
+vitest.mock(import('./ContainerModuleManager.js'));
+vitest.mock(import('./DeactivationParamsManager.js'));
+vitest.mock(import('./PlanParamsOperationsManager.js'));
+vitest.mock(import('./PlanResultCacheManager.js'));
+vitest.mock(import('./PluginManager.js'));
+vitest.mock(import('./ServiceReferenceManager.js'));
+vitest.mock(import('./ServiceResolutionManager.js'));
+vitest.mock(import('./SnapshotManager.js'));
 
 import { Plugin, PluginContext } from '@inversifyjs/plugin';
 
@@ -105,6 +105,7 @@ describe(Container, () => {
       rebindSync: vitest.fn(),
       unbind: vitest.fn(),
       unbindAll: vitest.fn(),
+      unbindAllSync: vitest.fn(),
       unbindSync: vitest.fn(),
     } as Partial<Mocked<BindingManager>> as Mocked<BindingManager>;
     bindingManagerClassMock = class implements Partial<Mocked<BindingManager>> {
@@ -121,6 +122,8 @@ describe(Container, () => {
         bindingManagerMock.unbind;
       public unbindAll: Mocked<BindingManager>['unbindAll'] =
         bindingManagerMock.unbindAll;
+      public unbindAllSync: Mocked<BindingManager>['unbindAllSync'] =
+        bindingManagerMock.unbindAllSync;
       public unbindSync: Mocked<BindingManager>['unbindSync'] =
         bindingManagerMock.unbindSync;
     } as Newable<Partial<Mocked<BindingManager>>> as Newable<
@@ -1221,6 +1224,32 @@ describe(Container, () => {
 
       it('should call bindingManager.unbindAll()', () => {
         expect(bindingManagerMock.unbindAll).toHaveBeenCalledExactlyOnceWith();
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe('.unbindAllSync', () => {
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        bindingManagerMock.unbindAllSync.mockReturnValueOnce(undefined);
+
+        result = new Container().unbindAllSync();
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call bindingManager.unbindAllSync()', () => {
+        expect(
+          bindingManagerMock.unbindAllSync,
+        ).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {
