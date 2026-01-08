@@ -1,13 +1,4 @@
-import { KnipConfig } from "knip";
-
-type IsNotFunction<T> = T extends (...args: any) => any ? never : T;
-type RecordValues<T> = T extends Record<any, infer U> ? U : never;
-
-type KnipConfigObject = IsNotFunction<KnipConfig>;
-
-type WorkspaceProjectConfig = RecordValues<
-  Required<KnipConfigObject["workspaces"]>
->;
+import { type KnipConfig, type WorkspaceProjectConfig } from "knip";
 
 const defaultWorkspaceProjectConfig: WorkspaceProjectConfig & {
   entry: string[];
