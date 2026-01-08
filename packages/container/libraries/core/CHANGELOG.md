@@ -1,5 +1,11 @@
 # @inversifyjs/core
 
+## 9.2.0
+
+### Minor Changes
+
+- Added`BindingManager.unbindAllSync()`
+
 ## 9.1.2
 
 ### Patch Changes
