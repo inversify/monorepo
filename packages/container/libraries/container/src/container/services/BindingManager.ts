@@ -99,29 +99,19 @@ export class BindingManager {
     await this.#unbind(identifier);
   }
 
-  public unbindAll(): void | Promise<void> {
-    const nonParentBoundServiceIds: ServiceIdentifier[] = [
-      ...this.#serviceReferenceManager.bindingService.getNonParentBoundServices(),
-    ];
+  public async unbindAll(): Promise<void> {
+    await this.#unbindAll();
+  }
 
-    const deactivationResults: (void | Promise<void>)[] =
-      nonParentBoundServiceIds.map(
-        (serviceId: ServiceIdentifier): void | Promise<void> =>
-          resolveServiceDeactivations(this.#deactivationParams, serviceId),
+  public unbindAllSync(): void {
+    const result: void | Promise<void> = this.#unbindAll();
+
+    if (result !== undefined) {
+      throw new InversifyContainerError(
+        InversifyContainerErrorKind.invalidOperation,
+        'Unexpected asynchronous deactivation when unbinding all services. Consider using Container.unbindAll() instead.',
       );
-
-    const hasAsyncDeactivations: boolean = deactivationResults.some(
-      (result: void | Promise<void>): boolean => isPromise(result),
-    );
-
-    if (hasAsyncDeactivations) {
-      // eslint-disable-next-line @typescript-eslint/await-thenable
-      return Promise.all(deactivationResults).then((): void => {
-        this.#clearAfterUnbindAll(nonParentBoundServiceIds);
-      });
     }
-
-    this.#clearAfterUnbindAll(nonParentBoundServiceIds);
   }
 
   public unbindSync(identifier: BindingIdentifier | ServiceIdentifier): void {
@@ -214,6 +204,31 @@ export class BindingManager {
         });
       }
     }
+  }
+
+  #unbindAll(): void | Promise<void> {
+    const nonParentBoundServiceIds: ServiceIdentifier[] = [
+      ...this.#serviceReferenceManager.bindingService.getNonParentBoundServices(),
+    ];
+
+    const deactivationResults: (void | Promise<void>)[] =
+      nonParentBoundServiceIds.map(
+        (serviceId: ServiceIdentifier): void | Promise<void> =>
+          resolveServiceDeactivations(this.#deactivationParams, serviceId),
+      );
+
+    const hasAsyncDeactivations: boolean = deactivationResults.some(
+      (result: void | Promise<void>): boolean => isPromise(result),
+    );
+
+    if (hasAsyncDeactivations) {
+      // eslint-disable-next-line @typescript-eslint/await-thenable
+      return Promise.all(deactivationResults).then((): void => {
+        this.#clearAfterUnbindAll(nonParentBoundServiceIds);
+      });
+    }
+
+    this.#clearAfterUnbindAll(nonParentBoundServiceIds);
   }
 
   #clearAfterUnbindAll(serviceIds: ServiceIdentifier[]): void {

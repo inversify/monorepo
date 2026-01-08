@@ -223,6 +223,10 @@ export class Container {
     await this.#bindingManager.unbindAll();
   }
 
+  public unbindAllSync(): void {
+    this.#bindingManager.unbindAllSync();
+  }
+
   public unbindSync(identifier: BindingIdentifier | ServiceIdentifier): void {
     this.#bindingManager.unbindSync(identifier);
   }

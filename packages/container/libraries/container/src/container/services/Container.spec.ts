@@ -105,6 +105,7 @@ describe(Container, () => {
       rebindSync: vitest.fn(),
       unbind: vitest.fn(),
       unbindAll: vitest.fn(),
+      unbindAllSync: vitest.fn(),
       unbindSync: vitest.fn(),
     } as Partial<Mocked<BindingManager>> as Mocked<BindingManager>;
     bindingManagerClassMock = class implements Partial<Mocked<BindingManager>> {
@@ -121,6 +122,8 @@ describe(Container, () => {
         bindingManagerMock.unbind;
       public unbindAll: Mocked<BindingManager>['unbindAll'] =
         bindingManagerMock.unbindAll;
+      public unbindAllSync: Mocked<BindingManager>['unbindAllSync'] =
+        bindingManagerMock.unbindAllSync;
       public unbindSync: Mocked<BindingManager>['unbindSync'] =
         bindingManagerMock.unbindSync;
     } as Newable<Partial<Mocked<BindingManager>>> as Newable<
@@ -1221,6 +1224,32 @@ describe(Container, () => {
 
       it('should call bindingManager.unbindAll()', () => {
         expect(bindingManagerMock.unbindAll).toHaveBeenCalledExactlyOnceWith();
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe('.unbindAllSync', () => {
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        bindingManagerMock.unbindAllSync.mockReturnValueOnce(undefined);
+
+        result = new Container().unbindAllSync();
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call bindingManager.unbindAllSync()', () => {
+        expect(
+          bindingManagerMock.unbindAllSync,
+        ).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {
