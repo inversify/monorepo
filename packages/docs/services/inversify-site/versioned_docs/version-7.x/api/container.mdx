@@ -234,6 +234,14 @@ unbindAll(): Promise<void>;
 
 Remove all bindings binded in this container.  This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
 
+## unbindAllSync
+
+```ts
+unbindAllSync(): void;
+```
+
+Synchronous version of `unbindAll`. Remove all bindings binded in this container. Will throw an error if any unbinding operation would be asynchronous. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+
 ## unbindSync
 
 ```ts

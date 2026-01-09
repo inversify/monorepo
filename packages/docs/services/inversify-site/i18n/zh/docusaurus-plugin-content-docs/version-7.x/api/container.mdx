@@ -234,6 +234,14 @@ unbindAll(): Promise<void>;
 
 删除此容器中绑定的所有绑定。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
 
+## unbindAllSync
+
+```ts
+unbindAllSync(): void;
+```
+
+`unbindAll` 的同步版本。删除此容器中绑定的所有绑定。如果任何解绑操作是异步的，将抛出错误。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+
 ## unbindSync
 
 ```ts
