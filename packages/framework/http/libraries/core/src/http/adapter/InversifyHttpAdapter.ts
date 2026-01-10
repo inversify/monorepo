@@ -57,6 +57,7 @@ export abstract class InversifyHttpAdapter<
   TResult,
   TOptions extends HttpAdapterOptions = HttpAdapterOptions,
   TApp = unknown,
+  TParams extends Record<string | number, unknown> = Record<string, string>,
 > {
   protected readonly httpAdapterOptions: RequiredOptions<TOptions>;
   protected readonly globalHandlers: {
@@ -951,15 +952,15 @@ export abstract class InversifyHttpAdapter<
     parameterName?: string,
   ): unknown;
 
-  protected abstract _getParams(request: TRequest): Record<string, string>;
+  protected abstract _getParams(request: TRequest): TParams;
   protected abstract _getParams(
     request: TRequest,
     parameterName: string,
-  ): string | undefined;
+  ): TParams[string] | undefined;
   protected abstract _getParams(
     request: TRequest,
     parameterName?: string,
-  ): Record<string, string> | string | undefined;
+  ): TParams | TParams[string] | undefined;
 
   protected abstract _getQuery(request: TRequest): Record<string, unknown>;
   protected abstract _getQuery(
