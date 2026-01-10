@@ -23,13 +23,19 @@ const ADAPTER_ID: unique symbol = Symbol.for(
   '@inversifyjs/http-express/InversifyExpressHttpAdapter',
 );
 
+interface ExpressParams {
+  [key: string]: string | string[];
+  [key: number]: string;
+}
+
 export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
   Request,
   Response,
   NextFunction,
   void,
   ExpressHttpAdapterOptions,
-  Application
+  Application,
+  ExpressParams
 > {
   public readonly id: symbol = ADAPTER_ID;
 
@@ -171,15 +177,15 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         request.body[parameterName];
   }
 
-  protected _getParams(request: express.Request): Record<string, string>;
+  protected _getParams(request: express.Request): ExpressParams;
   protected _getParams(
     request: express.Request,
     parameterName: string,
-  ): string | undefined;
+  ): string | string[] | undefined;
   protected _getParams(
     request: express.Request,
     parameterName?: string,
-  ): Record<string, string> | string | undefined {
+  ): ExpressParams | string | string[] | undefined {
     return parameterName === undefined
       ? request.params
       : request.params[parameterName];
