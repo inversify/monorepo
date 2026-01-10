@@ -14,7 +14,7 @@
     "@stryker-mutator/core": "9.4.0",
     "@stryker-mutator/typescript-checker": "9.4.0",
     "@stryker-mutator/vitest-runner": "9.4.0",
-    "@types/node": "24.10.6",
+    "@types/node": "24.10.7",
     "@vitest/coverage-v8": "4.0.16",
     "eslint": "9.39.2",
     "prettier": "3.7.4",
