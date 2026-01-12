@@ -12,7 +12,7 @@
     "@inversifyjs/open-api-types": "workspace:*",
     "@types/express": "5.0.6",
     "@types/node": "24.10.7",
-    "@vitest/coverage-v8": "4.0.16",
+    "@vitest/coverage-v8": "4.0.17",
     "eslint": "9.39.2",
     "express": "5.2.1",
     "glob": "13.0.0",
@@ -21,7 +21,7 @@
     "rimraf": "6.1.2",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "4.0.16"
+    "vitest": "4.0.17"
   },
   "homepage": "https://inversify.io",
   "devEngines": {
