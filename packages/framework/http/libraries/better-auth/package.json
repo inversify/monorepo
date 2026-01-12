@@ -21,7 +21,7 @@
     "@types/express": "5.0.6",
     "@types/express4": "npm:@types/express@4.17.25",
     "@types/node": "24.10.7",
-    "@vitest/coverage-v8": "4.0.16",
+    "@vitest/coverage-v8": "4.0.17",
     "better-sqlite3": "^12.6.0",
     "eslint": "9.39.2",
     "fastify": "5.6.2",
@@ -33,7 +33,7 @@
     "tslib": "2.8.1",
     "typescript": "5.9.3",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0",
-    "vitest": "4.0.16"
+    "vitest": "4.0.17"
   },
   "devEngines": {
     "node": "^24.10.0",
@@ -61,7 +61,7 @@
   },
   "name": "@inversifyjs/http-better-auth",
   "peerDependencies": {
-    "better-auth": "^1.4.10",
+    "better-auth": "^1.4.11",
     "inversify": "^7.11.0"
   },
   "publishConfig": {
