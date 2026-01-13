@@ -25,7 +25,7 @@
     "better-sqlite3": "^12.6.0",
     "eslint": "9.39.2",
     "fastify": "5.6.2",
-    "hono": "4.11.3",
+    "hono": "4.11.4",
     "prettier": "3.7.4",
     "rimraf": "6.1.2",
     "rollup": "4.55.1",
@@ -61,7 +61,7 @@
   },
   "name": "@inversifyjs/http-better-auth",
   "peerDependencies": {
-    "better-auth": "^1.4.11",
+    "better-auth": "^1.4.12",
     "inversify": "^7.11.0"
   },
   "publishConfig": {

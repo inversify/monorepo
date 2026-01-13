@@ -32,7 +32,7 @@
     "express": "5.2.1",
     "express4": "npm:express@4.22.1",
     "fastify": "5.6.2",
-    "hono": "4.11.3",
+    "hono": "4.11.4",
     "prettier": "3.7.4",
     "rimraf": "6.1.2",
     "rollup": "4.55.1",
