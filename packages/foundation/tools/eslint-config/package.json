@@ -8,7 +8,7 @@
     "@eslint/config-helpers": "0.5.1",
     "@vitest/eslint-plugin": "1.6.6",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-prettier": "5.5.4",
+    "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "typescript-eslint": "8.53.0"
   },
