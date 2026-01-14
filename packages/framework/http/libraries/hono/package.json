@@ -8,7 +8,7 @@
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
-    "@hono/node-server": "1.19.8",
+    "@hono/node-server": "1.19.9",
     "@stryker-mutator/core": "9.4.0",
     "@stryker-mutator/typescript-checker": "9.4.0",
     "@stryker-mutator/vitest-runner": "9.4.0",
