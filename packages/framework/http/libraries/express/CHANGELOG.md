@@ -1,5 +1,13 @@
 # @inversifyjs/http-express
 
+## 4.10.0
+
+### Patch Changes
+
+- Updated `InversifyHttpAdapter` with right url params type
+- Updated dependencies
+  - @inversifyjs/http-core@4.10.0
+
 ## 4.9.1
 
 ### Patch Changes

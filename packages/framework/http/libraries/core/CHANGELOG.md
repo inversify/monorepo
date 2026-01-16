@@ -1,5 +1,11 @@
 # @inversifyjs/http-core
 
+## 4.10.0
+
+### Minor Changes
+
+Update HttpAdapter with optional TParams generic
+
 ## 4.9.1
 
 ### Patch Changes
