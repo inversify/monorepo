@@ -36,7 +36,7 @@
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "monaco-editor-webpack-plugin": "7.1.1",
-    "prettier": "3.7.4",
+    "prettier": "3.8.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.53.0"
   },
