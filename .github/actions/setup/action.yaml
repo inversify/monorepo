@@ -22,7 +22,7 @@ runs:
         echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
       shell: bash
 
-    - uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+    - uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
       name: Setup pnpm cache
       with:
         path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
@@ -35,7 +35,7 @@ runs:
       shell: bash
 
     - name: Cache turbo
-      uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+      uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
       with:
         path: .turbo
         key: ${{ runner.os }}-turbo-${{ github.sha }}
