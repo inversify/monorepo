@@ -1,5 +1,11 @@
 # @inversifyjs/http-core
 
+## 4.10.1
+
+### Patch Changes
+
+- Updated `InversifyHttpAdapter` to properly apply global interceptor handlers
+
 ## 4.10.0
 
 ### Minor Changes
