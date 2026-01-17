@@ -4,7 +4,6 @@ import {
 } from '@inversifyjs/framework-core';
 import { Container, ServiceIdentifier } from 'inversify';
 
-import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { RequestHandler } from '../models/RequestHandler';
 
@@ -15,11 +14,7 @@ export function buildInterceptedHandler<
   TNextFunction extends (err?: any) => Promise<void> | void,
   TResult,
 >(
-  routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
-    TRequest,
-    TResponse,
-    TResult
-  >,
+  interceptorList: ServiceIdentifier<Interceptor<TRequest, TResponse>>[],
   container: Container,
   callRouteHandler: (
     request: TRequest,
@@ -37,7 +32,7 @@ export function buildInterceptedHandler<
     value: ControllerResponse,
   ) => TResult | Promise<TResult>,
 ): RequestHandler<TRequest, TResponse, TNextFunction, TResult> {
-  if (routerExplorerControllerMethodMetadata.interceptorList.length === 0) {
+  if (interceptorList.length === 0) {
     return async (
       request: TRequest,
       response: TResponse,
@@ -77,15 +72,13 @@ export function buildInterceptedHandler<
     ) => () => Promise<InterceptorTransformObject> = (
       index: number,
     ): (() => Promise<InterceptorTransformObject>) => {
-      if (
-        index < routerExplorerControllerMethodMetadata.interceptorList.length
-      ) {
+      if (index < interceptorList.length) {
         return async (): Promise<InterceptorTransformObject> => {
           const interceptor: Interceptor<TRequest, TResponse> =
             await container.getAsync(
-              routerExplorerControllerMethodMetadata.interceptorList[
-                index
-              ] as ServiceIdentifier<Interceptor<TRequest, TResponse>>,
+              interceptorList[index] as ServiceIdentifier<
+                Interceptor<TRequest, TResponse>
+              >,
             );
 
           await interceptor.intercept(
