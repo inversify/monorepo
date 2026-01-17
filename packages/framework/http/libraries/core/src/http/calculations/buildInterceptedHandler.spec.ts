@@ -13,9 +13,8 @@ import {
   Interceptor,
   InterceptorTransformObject,
 } from '@inversifyjs/framework-core';
-import { Container, Newable } from 'inversify';
+import { Container, Newable, ServiceIdentifier } from 'inversify';
 
-import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
 import { ControllerResponse } from '../models/ControllerResponse';
 import { RequestHandler } from '../models/RequestHandler';
 import { buildInterceptedHandler } from './buildInterceptedHandler';
@@ -55,22 +54,12 @@ describe(buildInterceptedHandler, () => {
   });
 
   describe('having no interceptors', () => {
-    let routerExplorerControllerMethodMetadataFixture: RouterExplorerControllerMethodMetadata<
-      unknown,
-      unknown,
-      unknown
-    >;
+    let interceptorListFixture: ServiceIdentifier<
+      Interceptor<unknown, unknown>
+    >[];
 
     beforeAll(() => {
-      routerExplorerControllerMethodMetadataFixture = {
-        headerMetadataList: [['Content-Type', 'application/json']],
-        interceptorList: [],
-        methodKey: 'testMethod',
-      } as unknown as RouterExplorerControllerMethodMetadata<
-        unknown,
-        unknown,
-        unknown
-      >;
+      interceptorListFixture = [];
     });
 
     describe('when called', () => {
@@ -88,7 +77,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            routerExplorerControllerMethodMetadataFixture,
+            interceptorListFixture,
             containerMock,
             callRouteHandlerMock,
             handleErrorMock,
@@ -138,7 +127,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            routerExplorerControllerMethodMetadataFixture,
+            interceptorListFixture,
             containerMock,
             callRouteHandlerMock,
             handleErrorMock,
@@ -171,11 +160,9 @@ describe(buildInterceptedHandler, () => {
     let secondInterceptorMock: Mocked<Interceptor<unknown, unknown>>;
     let firstInterceptorType: Newable<Interceptor<unknown, unknown>>;
     let secondInterceptorType: Newable<Interceptor<unknown, unknown>>;
-    let routerExplorerControllerMethodMetadataFixture: RouterExplorerControllerMethodMetadata<
-      unknown,
-      unknown,
-      unknown
-    >;
+    let interceptorListFixture: ServiceIdentifier<
+      Interceptor<unknown, unknown>
+    >[];
 
     beforeAll(() => {
       firstInterceptorMock = {
@@ -192,15 +179,7 @@ describe(buildInterceptedHandler, () => {
         Interceptor<unknown, unknown>
       >;
 
-      routerExplorerControllerMethodMetadataFixture = {
-        headerMetadataList: [['Content-Type', 'application/json']],
-        interceptorList: [firstInterceptorType, secondInterceptorType],
-        methodKey: 'testMethod',
-      } as unknown as RouterExplorerControllerMethodMetadata<
-        unknown,
-        unknown,
-        unknown
-      >;
+      interceptorListFixture = [firstInterceptorType, secondInterceptorType];
     });
 
     describe('when called', () => {
@@ -252,7 +231,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            routerExplorerControllerMethodMetadataFixture,
+            interceptorListFixture,
             containerMock,
             callRouteHandlerMock,
             handleErrorMock,
@@ -376,7 +355,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            routerExplorerControllerMethodMetadataFixture,
+            interceptorListFixture,
             containerMock,
             callRouteHandlerMock,
             handleErrorMock,
@@ -466,7 +445,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            routerExplorerControllerMethodMetadataFixture,
+            interceptorListFixture,
             containerMock,
             callRouteHandlerMock,
             handleErrorMock,
@@ -532,7 +511,7 @@ describe(buildInterceptedHandler, () => {
 
         const handler: RequestHandler<unknown, unknown, () => void, unknown> =
           buildInterceptedHandler(
-            routerExplorerControllerMethodMetadataFixture,
+            interceptorListFixture,
             containerMock,
             callRouteHandlerMock,
             handleErrorMock,

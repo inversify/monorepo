@@ -60,9 +60,6 @@ export abstract class InversifyHttpAdapter<
   TParams extends Record<string | number, unknown> = Record<string, string>,
 > {
   protected readonly httpAdapterOptions: RequiredOptions<TOptions>;
-  protected readonly globalHandlers: {
-    interceptorList: Interceptor<TRequest, TResponse>[];
-  };
   protected readonly _app: TApp;
   protected readonly _logger: Logger;
   readonly #awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>;
@@ -80,6 +77,9 @@ export abstract class InversifyHttpAdapter<
     ErrorFilter | Newable<ErrorFilter>
   >;
   readonly #globalGuardList: ServiceIdentifier<Guard<TRequest>>[];
+  readonly #globalInterceptorList: ServiceIdentifier<
+    Interceptor<TRequest, TResponse>
+  >[];
   readonly #globalPipeList: (ServiceIdentifier<Pipe> | Pipe)[];
   readonly #postHandlerMiddlewareList: ServiceIdentifier<
     MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>
@@ -112,13 +112,11 @@ export abstract class InversifyHttpAdapter<
       httpAdapterOptions,
     );
     this.#globalGuardList = [];
+    this.#globalInterceptorList = [];
     this.#globalPipeList = [];
     this.#errorTypeToGlobalErrorFilterMap = new Map();
     this._logger = this.#buildLogger(this.httpAdapterOptions);
     this.#isBuilt = false;
-    this.globalHandlers = {
-      interceptorList: [],
-    };
     this.#postHandlerMiddlewareList = [];
     this.#preHandlerMiddlewareList = [];
 
@@ -198,7 +196,7 @@ export abstract class InversifyHttpAdapter<
     }
 
     for (const interceptor of interceptorList) {
-      this.#setGlobalInterceptor(interceptor);
+      this.#globalInterceptorList.push(interceptor);
     }
   }
 
@@ -423,7 +421,10 @@ export abstract class InversifyHttpAdapter<
     );
 
     return buildInterceptedHandler(
-      routerExplorerControllerMethodMetadata,
+      [
+        ...routerExplorerControllerMethodMetadata.interceptorList,
+        ...this.#globalInterceptorList,
+      ],
       this.#container,
       buildCallRouteHandler,
       handleError,
@@ -933,14 +934,6 @@ export abstract class InversifyHttpAdapter<
     this.#errorTypeToGlobalErrorFilterMap.set(
       ErrorHttpResponse,
       buildHttpResponseErrorFilter(this.#reply.bind(this)),
-    );
-  }
-
-  #setGlobalInterceptor(
-    interceptor: ServiceIdentifier<Interceptor<TRequest, TResponse>>,
-  ): void {
-    this.globalHandlers.interceptorList.push(
-      this.#container.get<Interceptor<TRequest, TResponse>>(interceptor),
     );
   }
 

@@ -12,7 +12,7 @@ import express from 'express';
 import express4 from 'express4';
 import { FastifyInstance } from 'fastify';
 import { Hono } from 'hono';
-import { Container } from 'inversify';
+import { Container, ServiceIdentifier } from 'inversify';
 import { us_socket_local_port } from 'uWebSockets.js';
 
 import { defaultAlias } from '../../common/models/defaultAlias';
@@ -22,11 +22,18 @@ import { setServer } from '../actions/setServer';
 import { Server } from '../models/Server';
 import { ServerKind } from '../models/ServerKind';
 
-async function buildExpressServer(container: Container): Promise<Server> {
+async function buildExpressServer(
+  container: Container,
+  globalInterceptors?: ServiceIdentifier<unknown>[],
+): Promise<Server> {
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
     container,
     { logger: true, useJson: true, useText: true, useUrlEncoded: true },
   );
+
+  if (globalInterceptors !== undefined && globalInterceptors.length > 0) {
+    adapter.useGlobalInterceptors(...globalInterceptors);
+  }
 
   const application: express.Application = await adapter.build();
   const httpServer: http.Server = http.createServer(
@@ -69,7 +76,10 @@ async function buildExpressServer(container: Container): Promise<Server> {
   );
 }
 
-async function buildExpress4Server(container: Container): Promise<Server> {
+async function buildExpress4Server(
+  container: Container,
+  globalInterceptors?: ServiceIdentifier<unknown>[],
+): Promise<Server> {
   const adapter: InversifyExpress4HttpAdapter =
     new InversifyExpress4HttpAdapter(container, {
       logger: true,
@@ -77,6 +87,10 @@ async function buildExpress4Server(container: Container): Promise<Server> {
       useText: true,
       useUrlEncoded: true,
     });
+
+  if (globalInterceptors !== undefined && globalInterceptors.length > 0) {
+    adapter.useGlobalInterceptors(...globalInterceptors);
+  }
 
   const application: express4.Application = await adapter.build();
   const httpServer: http.Server = http.createServer(
@@ -119,11 +133,18 @@ async function buildExpress4Server(container: Container): Promise<Server> {
   );
 }
 
-async function buildHonoServer(container: Container): Promise<Server> {
+async function buildHonoServer(
+  container: Container,
+  globalInterceptors?: ServiceIdentifier<unknown>[],
+): Promise<Server> {
   const adapter: InversifyHonoHttpAdapter = new InversifyHonoHttpAdapter(
     container,
     { logger: true },
   );
+
+  if (globalInterceptors !== undefined && globalInterceptors.length > 0) {
+    adapter.useGlobalInterceptors(...globalInterceptors);
+  }
 
   const application: Hono = await adapter.build();
 
@@ -164,11 +185,18 @@ async function buildHonoServer(container: Container): Promise<Server> {
   );
 }
 
-async function buildFastifyServer(container: Container): Promise<Server> {
+async function buildFastifyServer(
+  container: Container,
+  globalInterceptors?: ServiceIdentifier<unknown>[],
+): Promise<Server> {
   const adapter: InversifyFastifyHttpAdapter = new InversifyFastifyHttpAdapter(
     container,
     { logger: true, useFormUrlEncoded: true, useMultipartFormData: true },
   );
+
+  if (globalInterceptors !== undefined && globalInterceptors.length > 0) {
+    adapter.useGlobalInterceptors(...globalInterceptors);
+  }
 
   const application: FastifyInstance = await adapter.build();
 
@@ -208,11 +236,18 @@ async function buildFastifyServer(container: Container): Promise<Server> {
   };
 }
 
-async function buildUwebSocketsJsServer(container: Container): Promise<Server> {
+async function buildUwebSocketsJsServer(
+  container: Container,
+  globalInterceptors?: ServiceIdentifier<unknown>[],
+): Promise<Server> {
   const adapter: InversifyUwebSocketsHttpAdapter =
     new InversifyUwebSocketsHttpAdapter(container, {
       logger: true,
     });
+
+  if (globalInterceptors !== undefined && globalInterceptors.length > 0) {
+    adapter.useGlobalInterceptors(...globalInterceptors);
+  }
 
   // eslint-disable-next-line @typescript-eslint/typedef
   const application = await adapter.build();
@@ -247,27 +282,30 @@ async function givenServer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
+  const globalInterceptors: ServiceIdentifier<unknown>[] | undefined =
+    this.globalInterceptors.get(parsedContainerAlias);
+
   let server: Server;
 
   switch (serverKind) {
     case ServerKind.express: {
-      server = await buildExpressServer(container);
+      server = await buildExpressServer(container, globalInterceptors);
       break;
     }
     case ServerKind.express4: {
-      server = await buildExpress4Server(container);
+      server = await buildExpress4Server(container, globalInterceptors);
       break;
     }
     case ServerKind.hono: {
-      server = await buildHonoServer(container);
+      server = await buildHonoServer(container, globalInterceptors);
       break;
     }
     case ServerKind.fastify: {
-      server = await buildFastifyServer(container);
+      server = await buildFastifyServer(container, globalInterceptors);
       break;
     }
     case ServerKind.uwebsockets: {
-      server = await buildUwebSocketsJsServer(container);
+      server = await buildUwebSocketsJsServer(container, globalInterceptors);
     }
   }
 

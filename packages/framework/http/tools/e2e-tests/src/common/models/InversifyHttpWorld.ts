@@ -1,4 +1,6 @@
 import { IWorld } from '@cucumber/cucumber';
+import { Interceptor } from '@inversifyjs/http-core';
+import { ServiceIdentifier } from 'inversify';
 import { Container } from 'inversify';
 
 import { RequestParameter } from '../../http/models/RequestParameter';
@@ -17,6 +19,7 @@ interface ContainerRequests {
 export interface InversifyHttpWorld extends IWorld {
   readonly containerRequests: ContainerRequests;
   readonly entities: EntitiesMap;
+  readonly globalInterceptors: Map<string, ServiceIdentifier<Interceptor>[]>;
   readonly serverRequests: Map<string, RequestParameter>;
   readonly serverResponses: Map<string, ResponseParameter>;
 }
