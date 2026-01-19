@@ -35,7 +35,7 @@
     "hono": "4.11.4",
     "prettier": "3.8.0",
     "rimraf": "6.1.2",
-    "rollup": "4.55.1",
+    "rollup": "4.55.2",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
