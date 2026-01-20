@@ -47,23 +47,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git checkout -B changeset-release/master
+          git checkout -B changeset-release/main
           git add .
           git commit -m "chore: bump package versions"
 
       - name: Push branch
         if: steps.commit.outputs.has_changes == 'true'
-        run: git push origin changeset-release/master --force
+        run: git push origin changeset-release/main --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Open PR
         if: steps.commit.outputs.has_changes == 'true'
         run: |
-          if [ "$(gh pr list --head changeset-release/master --state open --json number --jq 'length')" -eq 0 ]; then
+          if [ "$(gh pr list --head changeset-release/main --state open --json number --jq 'length')" -eq 0 ]; then
             gh pr create \
-              --base master \
-              --head changeset-release/master \
+              --base main \
+              --head changeset-release/main \
               --title "[Changesets] Bump package versions" \
               --body "Automated release PR"
           fi
