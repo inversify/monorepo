@@ -1,0 +1,497 @@
+---
+sidebar_position: 1
+title: Migrating from inversify-express-utils
+---
+import migrationServerSetupSource from '@inversifyjs/http-code-examples/generated/examples/v0/migrationServerSetup.ts.txt';
+import migrationServerSetupFooControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/migrationServerSetupFooController.ts.txt';
+import migrationMiddlewareSource from '@inversifyjs/http-code-examples/generated/examples/v0/migrationMiddleware.ts.txt';
+import migrationMiddlewareUsageSource from '@inversifyjs/http-code-examples/generated/examples/v0/migrationMiddlewareUsage.ts.txt';
+import migrationTracingMiddlewareSource from '@inversifyjs/http-code-examples/generated/examples/v0/migrationTracingMiddleware.ts.txt';
+import migrationTracingControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/migrationTracingController.ts.txt';
+import migrationHttpContextMiddlewareSource from '@inversifyjs/http-code-examples/generated/examples/v0/migrationHttpContextMiddleware.ts.txt';
+import migrationBaseHttpControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/migrationBaseHttpController.ts.txt';
+import migrationAuthMiddlewareSource from '@inversifyjs/http-code-examples/generated/examples/v0/migrationAuthMiddleware.ts.txt';
+import migrationErrorFilterSource from '@inversifyjs/http-code-examples/generated/examples/v0/migrationErrorFilter.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Migrating from inversify-express-utils
+
+This guide helps you migrate from `inversify-express-utils` to `@inversifyjs/http-express` (or `@inversifyjs/http-express-v4` for Express 4). The new HTTP packages are part of the InversifyJS monorepo and offer improved performance, better TypeScript support, and compatibility with InversifyJS v7.
+
+:::info Why migrate?
+
+`inversify-express-utils` is deprecated and does not support InversifyJS v7. The new `@inversifyjs/http-*` packages provide:
+- Full compatibility with InversifyJS v7
+- Support for multiple HTTP frameworks (Express, Fastify, Hono, uWebSockets.js)
+- Improved performance and smaller bundle size
+- Better TypeScript type inference
+- Modern decorator-based API with guards, interceptors, pipes, and error filters
+
+:::
+
+## Overview of Changes
+
+The following table summarizes the key changes from `inversify-express-utils` to `@inversifyjs/http-express`:
+
+| inversify-express-utils                     | @inversifyjs/http-express                              | Comment                                                          |
+|---------------------------------------------|--------------------------------------------------------|------------------------------------------------------------------|
+| `inversify-express-utils`                   | `@inversifyjs/http-core` + `@inversifyjs/http-express` | Split into core and adapter packages                             |
+| `InversifyExpressServer`                    | `InversifyExpressHttpAdapter`                          | New adapter-based architecture                                   |
+| `@controller("/path")`                      | `@Controller("/path")`                                 | Renamed decorator (PascalCase)                                   |
+| `@httpGet`, `@httpPost`, etc.               | `@Get`, `@Post`, etc.                                  | Renamed decorators (shorter names)                               |
+| `@request()`                                | `@Request()`                                           | Renamed decorator (PascalCase)                                   |
+| `@response()`                               | `@Response()`                                          | Renamed decorator (PascalCase)                                   |
+| `@requestParam("id")`                       | `@Params({ name: "id" })`                              | Renamed with options object                                      |
+| `@queryParam("search")`                     | `@Query({ name: "search" })`                           | Renamed with options object                                      |
+| `@requestBody()`                            | `@Body()`                                              | Renamed decorator                                                |
+| `@requestHeaders("name")`                   | `@Headers({ name: "name" })`                           | Renamed with options object                                      |
+| `@cookies("name")`                          | `@Cookies({ name: "name" })`                           | Renamed with options object                                      |
+| `@next()`                                   | `@Next()`                                              | Renamed decorator (PascalCase)                                   |
+| `@principal()`                              | Custom middleware + decorator                          | Removed, use custom implementation                               |
+| `BaseHttpController`                        | No direct replacement                                  | Use custom implementation with `AsyncLocalStorage`               |
+| `BaseMiddleware`                            | `Middleware` interface                                 | Simplified middleware interface                                  |
+| `interfaces.Controller`                     | Not required                                           | Controllers don't need to implement an interface                 |
+| `interfaces.HttpContext`                    | Custom implementation                                  | Use `AsyncLocalStorage` for request-scoped context               |
+| `AuthProvider`                              | Custom middleware                                      | Implement authentication via middleware                          |
+| `server.setConfig()`                        | Adapter options                                        | Use adapter constructor options                                  |
+| `server.setErrorConfig()`                   | `UseErrorFilter` decorator                             | Use error filters                                                |
+| `TYPE.Controller` binding                   | Not required                                           | Controllers are auto-discovered                                  |
+| `cleanUpMetadata()`                         | Not required                                           | Metadata is scoped to container                                  |
+| `getRouteInfo()`                            | Not available                                          | Route introspection not yet implemented                          |
+| `@withMiddleware()`                         | `@ApplyMiddleware()`                                   | Renamed decorator                                                |
+
+## Installation
+
+First, update your dependencies:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+# Remove old packages
+npm uninstall inversify-express-utils
+
+# Install new packages (Express 5)
+npm install @inversifyjs/http-core @inversifyjs/http-express
+
+# Or for Express 4
+npm install @inversifyjs/http-core @inversifyjs/http-express-v4
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+# Remove old packages
+pnpm remove inversify-express-utils
+
+# Install new packages (Express 5)
+pnpm add @inversifyjs/http-core @inversifyjs/http-express
+
+# Or for Express 4
+pnpm add @inversifyjs/http-core @inversifyjs/http-express-v4
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+# Remove old packages
+yarn remove inversify-express-utils
+
+# Install new packages (Express 5)
+yarn add @inversifyjs/http-core @inversifyjs/http-express
+
+# Or for Express 4
+yarn add @inversifyjs/http-core @inversifyjs/http-express-v4
+```
+
+  </TabItem>
+</Tabs>
+
+:::warning InversifyJS v7
+
+Make sure you're using InversifyJS v7. If you're migrating from v6, see the [InversifyJS v7 migration guide](https://inversify.io/docs/guides/migrating-from-v6) first.
+
+:::
+
+## Server Setup
+
+### Before (inversify-express-utils)
+
+```ts
+import * as bodyParser from 'body-parser';
+import { Container } from 'inversify';
+import { InversifyExpressServer } from 'inversify-express-utils';
+
+import './controllers/foo_controller';
+
+const container = new Container();
+container.bind<FooService>('FooService').to(FooService);
+
+const server = new InversifyExpressServer(container);
+
+server.setConfig((app) => {
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
+});
+
+server.setErrorConfig((app) => {
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+  });
+});
+
+const app = server.build();
+app.listen(3000);
+```
+
+### After (@inversifyjs/http-express)
+
+<CodeBlock language="ts">{migrationServerSetupSource}</CodeBlock>
+
+:::tip Key differences
+
+1. **Constructor**: `InversifyExpressHttpAdapter` takes `(container, options)` - the Express app is created by `build()`
+2. **Body parsing**: Use adapter options like `useJson` and `useUrlEncoded` instead of `setConfig()`
+3. **Async**: `adapter.build()` returns a Promise that resolves to the Express application
+4. **Controller binding**: Controllers must be explicitly bound to the container
+
+:::
+
+## Controllers
+
+### Before (inversify-express-utils)
+
+```ts
+import { Request, Response } from 'express';
+import { inject } from 'inversify';
+import {
+  controller,
+  httpGet,
+  httpPost,
+  httpDelete,
+  request,
+  response,
+  requestParam,
+  queryParam,
+  requestBody,
+} from 'inversify-express-utils';
+
+@controller('/foo')
+export class FooController {
+  constructor(@inject('FooService') private fooService: FooService) {}
+
+  @httpGet('/')
+  private list(
+    @queryParam('start') start: number,
+    @queryParam('count') count: number,
+  ): string[] {
+    return this.fooService.findAll(count);
+  }
+
+  @httpPost('/')
+  private async create(
+    @requestBody() body: CreateFooDto,
+    @response() res: Response,
+  ): Promise<void> {
+    await this.fooService.create(body);
+    res.sendStatus(201);
+  }
+
+  @httpDelete('/:id')
+  private async delete(
+    @requestParam('id') id: string,
+  ): Promise<void> {
+    await this.fooService.delete(id);
+  }
+}
+```
+
+### After (@inversifyjs/http-express)
+
+<CodeBlock language="ts">{migrationServerSetupFooControllerSource}</CodeBlock>
+
+:::tip Key differences
+
+1. **Decorator naming**: Decorators use PascalCase (`@Controller`, `@Get`) instead of camelCase (`@controller`, `@httpGet`)
+2. **Parameter decorators**: Use options objects (`@Params({ name: 'id' })`) instead of string arguments (`@requestParam('id')`)
+3. **Status codes**: Use `@StatusCode` decorator instead of accessing the response object
+4. **Injectable**: Controllers should be decorated with `@injectable()`
+5. **Return values**: Return values are automatically serialized as JSON
+
+:::
+
+## Middleware
+
+### Before (inversify-express-utils)
+
+```ts
+import { injectable, inject } from 'inversify';
+import { BaseMiddleware } from 'inversify-express-utils';
+import { Request, Response, NextFunction } from 'express';
+
+@injectable()
+class LoggerMiddleware extends BaseMiddleware {
+  @inject('Logger') private logger: Logger;
+
+  public handler(req: Request, res: Response, next: NextFunction): void {
+    this.logger.info(`${req.method} ${req.url}`);
+    next();
+  }
+}
+
+// Using middleware on a route
+@controller('/users')
+class UserController {
+  @httpGet('/', TYPES.LoggerMiddleware)
+  public getUsers(): User[] {
+    return [];
+  }
+}
+```
+
+### After (@inversifyjs/http-express)
+
+<CodeBlock language="ts">{migrationMiddlewareSource}</CodeBlock>
+
+Using middleware on a route:
+
+<CodeBlock language="ts">{migrationMiddlewareUsageSource}</CodeBlock>
+
+:::tip Key differences
+
+1. **Interface**: Implement `ExpressMiddleware` instead of extending `BaseMiddleware`
+2. **Method name**: Use `execute` instead of `handler`
+3. **Decorator**: Use `@ApplyMiddleware()` instead of passing middleware to HTTP method decorators
+4. **HttpContext**: Not available directly; use `AsyncLocalStorage` pattern if needed (see below)
+
+:::
+
+### Request-scoped Middleware (BaseMiddleware.bind)
+
+In `inversify-express-utils`, `BaseMiddleware` provided a `bind()` method to create request-scoped bindings. In the new packages, attach data to the request object.
+
+#### Before
+
+```ts
+@injectable()
+class TracingMiddleware extends BaseMiddleware {
+  public handler(req: Request, res: Response, next: NextFunction): void {
+    this.bind<string>(TYPES.TraceId).toConstantValue(req.header('X-Trace-Id') ?? '');
+    next();
+  }
+}
+```
+
+#### After
+
+Extend the Express Request type and attach data directly:
+
+<CodeBlock language="ts">{migrationTracingMiddlewareSource}</CodeBlock>
+
+Access in controller:
+
+<CodeBlock language="ts">{migrationTracingControllerSource}</CodeBlock>
+
+## BaseHttpController and HttpContext
+
+`inversify-express-utils` provided `BaseHttpController` with access to `httpContext` containing the request, response, and user principal. The new packages don't include this pattern, but you can implement it using Node.js `AsyncLocalStorage`.
+
+### Implementing HttpContext with AsyncLocalStorage
+
+First, create a middleware to set up the context:
+
+<CodeBlock language="ts">{migrationHttpContextMiddlewareSource}</CodeBlock>
+
+Then create a base controller with context access:
+
+<CodeBlock language="ts">{migrationBaseHttpControllerSource}</CodeBlock>
+
+Register `HttpContextMiddleware` as a global middleware to make context available in all controllers:
+
+```ts
+const adapter = new InversifyExpressHttpAdapter(container, {
+  logger: true,
+  useJson: true,
+});
+
+adapter.applyGlobalMiddleware(HttpContextMiddleware);
+
+const app = await adapter.build();
+```
+
+## AuthProvider and Principal
+
+`inversify-express-utils` had a built-in authentication system with `AuthProvider` and `Principal`. The new packages delegate authentication to external solutions or custom implementations.
+
+### Before (inversify-express-utils)
+
+```ts
+import { injectable, inject } from 'inversify';
+import { interfaces } from 'inversify-express-utils';
+
+@injectable()
+class CustomAuthProvider implements interfaces.AuthProvider {
+  @inject('AuthService') private authService: AuthService;
+
+  public async getUser(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<interfaces.Principal> {
+    const token = req.headers['x-auth-token'];
+    const user = await this.authService.getUser(token);
+    return new Principal(user);
+  }
+}
+
+const server = new InversifyExpressServer(
+  container, null, null, null, CustomAuthProvider
+);
+```
+
+### After (@inversifyjs/http-express)
+
+Use a middleware combined with the `AsyncLocalStorage` pattern shown above:
+
+<CodeBlock language="ts">{migrationAuthMiddlewareSource}</CodeBlock>
+
+Alternatively, consider using [Better Auth](../../ecosystem/better-auth/api/better-auth) integration for a complete authentication solution.
+
+## Error Handling
+
+### Before (inversify-express-utils)
+
+```ts
+const server = new InversifyExpressServer(container);
+
+server.setErrorConfig((app) => {
+  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack);
+    res.status(500).json({ error: err.message });
+  });
+});
+```
+
+### After (@inversifyjs/http-express)
+
+Use the `@CatchError` and `@UseErrorFilter` decorators with custom error filters:
+
+<CodeBlock language="ts">{migrationErrorFilterSource}</CodeBlock>
+
+:::tip Key differences
+
+1. **@CatchError decorator**: Error filters must be decorated with `@CatchError(ErrorType)` to specify which errors they handle
+2. **Throw responses**: Error filters throw HTTP response objects instead of returning them
+3. **Controller-level**: Apply `@UseErrorFilter` at the controller or method level
+
+:::
+
+See [Error Filters](../../fundamentals/error-filter) for more details.
+
+## Controller Binding
+
+### Before (inversify-express-utils)
+
+```ts
+// Controllers were auto-discovered via side-effect imports
+import './controllers/user_controller';
+
+// Or manually bound with TYPE.Controller
+container.bind<interfaces.Controller>(TYPE.Controller)
+  .to(UserController)
+  .whenTargetNamed('UserController');
+```
+
+### After (@inversifyjs/http-express)
+
+```ts
+import { UserController } from './controllers/user_controller';
+
+// Bind controllers to the container
+container.bind(UserController).toSelf();
+```
+
+## HTTP Method Decorators
+
+| inversify-express-utils | @inversifyjs/http-core |
+|-------------------------|------------------------|
+| `@httpGet(path)`        | `@Get(path)`           |
+| `@httpPost(path)`       | `@Post(path)`          |
+| `@httpPut(path)`        | `@Put(path)`           |
+| `@httpPatch(path)`      | `@Patch(path)`         |
+| `@httpDelete(path)`     | `@Delete(path)`        |
+| `@httpHead(path)`       | `@Head(path)`          |
+| `@httpOptions(path)`    | `@Options(path)`       |
+| `@All(path)`            | `@All(path)`           |
+| `@httpMethod(method, path)` | Use specific decorator |
+
+## Parameter Decorators
+
+| inversify-express-utils | @inversifyjs/http-core | Notes |
+|-------------------------|------------------------|-------|
+| `@request()`            | `@Request()`           | PascalCase |
+| `@response()`           | `@Response()`          | PascalCase |
+| `@requestParam(name)`   | `@Params({ name })`    | Options object |
+| `@requestParam()`       | `@Params()`            | Get all params |
+| `@queryParam(name)`     | `@Query({ name })`     | Options object |
+| `@queryParam()`         | `@Query()`             | Get all query params |
+| `@requestBody()`        | `@Body()`              | Renamed |
+| `@requestHeaders(name)` | `@Headers({ name })`   | Options object |
+| `@cookies(name)`        | `@Cookies({ name })`   | Options object |
+| `@next()`               | `@Next()`              | PascalCase |
+| `@principal()`          | Custom implementation  | See AuthProvider section |
+
+## New Features
+
+The new packages include several features not available in `inversify-express-utils`:
+
+- **[Guards](../../fundamentals/guard)**: Authorization checks that run before handlers
+- **[Interceptors](../../fundamentals/interceptor)**: Pre/post processing of requests and responses
+- **[Pipes](../../fundamentals/pipe)**: Parameter transformation and validation
+- **[Error Filters](../../fundamentals/error-filter)**: Structured error handling
+- **Multiple HTTP adapters**: Support for Express, Fastify, Hono, and uWebSockets.js
+- **OpenAPI integration**: Automatic API documentation generation
+
+## Troubleshooting
+
+### "Controller not found" errors
+
+Make sure your controllers are:
+1. Decorated with `@injectable()`
+2. Bound to the container before calling `adapter.build()`
+
+### Middleware not executing
+
+Ensure middleware classes:
+1. Implement the correct interface (`ExpressMiddleware` for Express)
+2. Are decorated with `@injectable()` if they have dependencies
+3. Call `next()` to continue the request pipeline
+
+### Body parsing not working
+
+Use the adapter options to configure body parsing:
+
+```ts
+const adapter = new InversifyExpressHttpAdapter(container, {
+  useJson: true,
+  useUrlEncoded: true,
+});
+```
+
+### TypeScript decorator errors
+
+Ensure your `tsconfig.json` has:
+
+```json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
+```
