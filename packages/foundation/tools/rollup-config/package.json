@@ -9,10 +9,10 @@
     "@rollup/plugin-terser": "0.4.4",
     "@rollup/plugin-typescript": "12.3.0",
     "rollup-plugin-dts": "6.3.0",
-    "rollup": "4.55.2"
+    "rollup": "4.55.3"
   },
   "devDependencies": {
-    "prettier": "3.8.0"
+    "prettier": "3.8.1"
   },
   "exports": "./lib/index.js",
   "homepage": "https://github.com/inversify/monorepo#readme",

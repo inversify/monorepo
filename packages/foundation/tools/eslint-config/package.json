@@ -13,7 +13,7 @@
     "typescript-eslint": "8.53.1"
   },
   "devDependencies": {
-    "prettier": "3.8.0"
+    "prettier": "3.8.1"
   },
   "peerDependencies": {
     "@eslint/js": "^9.39.2"
