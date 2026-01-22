@@ -6,7 +6,7 @@
   "description": "InversifyJs strong type definitions",
   "devDependencies": {
     "@types/node": "24.10.9",
-    "@vitest/coverage-v8": "4.0.17",
+    "@vitest/coverage-v8": "4.0.18",
     "eslint": "9.39.2",
     "prettier": "3.8.1",
     "reflect-metadata": "0.2.2",
@@ -15,7 +15,7 @@
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "4.0.17"
+    "vitest": "4.0.18"
   },
   "devEngines": {
     "node": "^24.10.0",
