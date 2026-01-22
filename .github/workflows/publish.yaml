@@ -1,25 +1,36 @@
-name: publish
+name: Publish npm packages
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 on:
   workflow_dispatch:
     inputs:
-      npm-token:
-        description: npm token to be used to publish npm packages
-        required: false
-      remove-changesets:
-        default: false
-        description: Remove changesets to force a release
-        required: false
-        type: boolean
+      environment:
+        description: "Must match your username"
+        required: true
+        type: choice
+        options:
+          - notaphplover
+
+permissions:
+  contents: write
 
 jobs:
   publish:
-    name: Bump package versions and publish to npm.
-    environment: CI
+    name: Publish npm packages
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
     steps:
+      - name: Validate environment matches actor
+        run: |
+          echo "Actor: ${{ github.actor }}"
+          echo "Environment: ${{ inputs.environment }}"
+
+          if [ "${{ inputs.environment }}" != "${{ github.actor }}" ]; then
+            echo "::error::Environment must match your username"
+            exit 1
+          fi
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -27,25 +38,10 @@ jobs:
 
       - uses: ./.github/actions/setup
 
-      - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
-        id: create_token
-        with:
-          app-id: ${{ vars.GH_APP_ID }}
-          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-
-      - name: Remove changesets if needed to force a release
-        if: ${{ inputs.remove-changesets == true }}
-        run: rm -f .changeset/*.md
-
-      - name: Build required packages
-        run: pnpm run build --filter=@inversifyjs/foundation-changelog-generator
-
-      - name: Create Release Pull or publish changes
+      - name: Publish npm packages
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         with:
-          commit: "chore: bump package versions"
           publish: pnpm run release
-          title: "[Changesets] Bump package versions"
         env:
-          GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
-          NPM_TOKEN: ${{ inputs.npm-token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
