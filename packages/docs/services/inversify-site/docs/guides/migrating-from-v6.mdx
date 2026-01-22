@@ -9,6 +9,10 @@ import containerApiGetNamedSource from '@inversifyjs/code-examples/generated/exa
 import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v7/containerModuleApiExample.ts.txt';
 import diHierarchySource from '@inversifyjs/code-examples/generated/examples/v7/diHierarchy.ts.txt';
 import fundamentalsAutobindingSource from '@inversifyjs/code-examples/generated/examples/v7/fundamentalsAutobinding.ts.txt';
+import migrationToAutoFactorySource from '@inversifyjs/code-examples/generated/examples/v7/migrationToAutoFactory.ts.txt';
+import migrationToAutoNamedFactorySource from '@inversifyjs/code-examples/generated/examples/v7/migrationToAutoNamedFactory.ts.txt';
+import migrationToConstructorSource from '@inversifyjs/code-examples/generated/examples/v7/migrationToConstructor.ts.txt';
+import migrationToFunctionSource from '@inversifyjs/code-examples/generated/examples/v7/migrationToFunction.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 # Migrating from v6
@@ -38,6 +42,10 @@ The following table summarizes the key changes from v6 to v7:
 | `container.rebind`                    | `await container.rebind` or `container.rebindSync` | Now async, with a sync alternative                     |
 | `container.unbind`                    | `await container.unbind` or `container.unbindSync` | Now async, with a sync alternative                     |
 | `container.createChild()`             | `new Container({ parent: container })`   | Child containers created via constructor                         |
+| `.toAutoFactory(X)`                   | `.toFactory((ctx) => () => ctx.get(X))`  | Use `toFactory` with `ResolutionContext.get()`                   |
+| `.toAutoNamedFactory(X)`              | `.toFactory((ctx) => (name) => ctx.get(X, { name }))` | Use `toFactory` with named resolution         |
+| `.toConstructor(X)`                   | `.toConstantValue(X)`                    | Bind constructors as constant values                             |
+| `.toFunction(fn)`                     | `.toConstantValue(fn)`                   | Bind functions as constant values                                |
 | `interfaces.Context`                  | `ResolutionContext`                      | Updated context parameter type in the binding API                |
 | `interfaces.Request`                  | `BindingConstraints`                     | Updated binding constraint parameter type                        |
 | `interfaces.Provider<T>`              | `Provider<T>`                            | Directly exported, no longer under `interfaces` namespace        |
@@ -125,6 +133,34 @@ The `Context` class has been replaced by `ResolutionContext` to simplify the API
 The `Request` object has been replaced by `BindingConstraints` to simplify the API and hide internal data structures.
 
 <CodeBlock language="ts">{bindingWhenSyntaxApiWhenSource}</CodeBlock>
+
+### Removed Binding Methods
+
+Several binding methods have been removed in v7 to simplify the API. Here's how to migrate each one:
+
+#### `toAutoFactory`
+
+The `toAutoFactory` method has been removed. Use `toFactory` with `ResolutionContext.get()` instead:
+
+<CodeBlock language="ts">{migrationToAutoFactorySource}</CodeBlock>
+
+#### `toAutoNamedFactory`
+
+Similarly, `toAutoNamedFactory` has been removed. Use `toFactory` with named resolution:
+
+<CodeBlock language="ts">{migrationToAutoNamedFactorySource}</CodeBlock>
+
+#### `toConstructor`
+
+The `toConstructor` method has been removed. Since a constructor is just a value (a callable one), use `toConstantValue` instead:
+
+<CodeBlock language="ts">{migrationToConstructorSource}</CodeBlock>
+
+#### `toFunction`
+
+The `toFunction` method has been removed. Since a function is just a value, use `toConstantValue` instead:
+
+<CodeBlock language="ts">{migrationToFunctionSource}</CodeBlock>
 
 ## Decorators API
 
