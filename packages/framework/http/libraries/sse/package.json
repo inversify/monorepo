@@ -21,7 +21,7 @@
     "@types/express": "5.0.6",
     "@types/express4": "npm:@types/express@4.17.25",
     "@types/node": "24.10.9",
-    "@vitest/coverage-v8": "4.0.17",
+    "@vitest/coverage-v8": "4.0.18",
     "eslint": "9.39.2",
     "express": "5.2.1",
     "express4": "npm:express@4.22.1",
@@ -35,7 +35,7 @@
     "tslib": "2.8.1",
     "typescript": "5.9.3",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0",
-    "vitest": "4.0.17"
+    "vitest": "4.0.18"
   },
   "devEngines": {
     "node": "^24.10.0",
