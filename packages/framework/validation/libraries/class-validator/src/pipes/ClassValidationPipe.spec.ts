@@ -8,9 +8,9 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
-vitest.mock('class-validator');
-vitest.mock('class-transformer');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
+vitest.mock(import('class-validator'));
+vitest.mock(import('class-transformer'));
 
 import { PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
@@ -31,11 +31,9 @@ describe(ClassValidationPipe, () => {
   });
 
   describe('.execute()', () => {
-    let inputFixture: unknown;
     let pipeMetadataFixture: PipeMetadata;
 
     beforeAll(() => {
-      inputFixture = { content: 'hello world' };
       pipeMetadataFixture = {
         methodName: 'someMethod',
         parameterIndex: 0,
@@ -43,165 +41,510 @@ describe(ClassValidationPipe, () => {
       };
     });
 
-    describe('when called, and getOwnReflectMetadata() returns undefined', () => {
-      let result: unknown;
+    describe('having an undefined input', () => {
+      let inputFixture: undefined;
 
-      beforeAll(async () => {
-        try {
-          await classValidationPipe.execute(inputFixture, pipeMetadataFixture);
-        } catch (error: unknown) {
-          result = error;
-        }
+      beforeAll(() => {
+        inputFixture = undefined;
       });
 
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
+      describe('when called, and getOwnReflectMetadata() returns type Object', () => {
+        let result: unknown;
 
-      it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-          pipeMetadataFixture.targetClass.prototype,
-          'design:paramtypes',
-          pipeMetadataFixture.methodName,
-        );
-      });
+        beforeAll(async () => {
+          vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce([Object]);
 
-      it('should throw an InversifyValidationError', () => {
-        const expectedErrorProperties: Partial<InversifyValidationError> = {
-          kind: InversifyValidationErrorKind.invalidConfiguration,
-          message: expect.stringMatching(
-            /Param type metadata for SomeClass\.someMethod\[0\] is not defined. Are you enabling "emitDecoratorMetadata" and "experimentalDecorators" Typescript compiler options\?/,
-          ),
-        };
+          result = await classValidationPipe.execute(
+            inputFixture,
+            pipeMetadataFixture,
+          );
+        });
 
-        expect(result).toBeInstanceOf(InversifyValidationError);
-        expect(result).toMatchObject(expectedErrorProperties);
-      });
-    });
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
 
-    describe('when called, and getOwnReflectMetadata() returns type and validate() returns result with errors', () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-      let typeFixture: Function;
-      let instanceFixture: object;
-      let errorFixtureMock: Mocked<ValidationError>;
-      let errorMessageFixture: string;
+        it('should call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            pipeMetadataFixture.targetClass.prototype,
+            'design:paramtypes',
+            pipeMetadataFixture.methodName,
+          );
+        });
 
-      let result: unknown;
+        it('should not call plainToInstance()', () => {
+          expect(plainToInstance).not.toHaveBeenCalled();
+        });
 
-      beforeAll(async () => {
-        typeFixture = class Message {};
-        instanceFixture = {
-          content: 'hello world',
-        };
-        errorFixtureMock = {
-          toString: vitest.fn(),
-        } as Partial<Mocked<ValidationError>> as Mocked<ValidationError>;
-        errorMessageFixture = 'Validation failed';
+        it('should not call validate()', () => {
+          expect(validate).not.toHaveBeenCalled();
+        });
 
-        vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce([typeFixture]);
-        vitest.mocked(plainToInstance).mockReturnValueOnce(instanceFixture);
-        vitest.mocked(validate).mockResolvedValueOnce([errorFixtureMock]);
-
-        errorFixtureMock.toString.mockReturnValueOnce(errorMessageFixture);
-
-        try {
-          await classValidationPipe.execute(inputFixture, pipeMetadataFixture);
-        } catch (error: unknown) {
-          result = error;
-        }
-      });
-
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-          pipeMetadataFixture.targetClass.prototype,
-          'design:paramtypes',
-          pipeMetadataFixture.methodName,
-        );
-      });
-
-      it('should call plainToInstance()', () => {
-        expect(plainToInstance).toHaveBeenCalledExactlyOnceWith(
-          typeFixture,
-          inputFixture,
-        );
-      });
-
-      it('should call validate()', () => {
-        expect(validate).toHaveBeenCalledExactlyOnceWith(instanceFixture, {
-          forbidNonWhitelisted: true,
-          forbidUnknownValues: true,
-          skipMissingProperties: false,
-          skipNullProperties: false,
-          skipUndefinedProperties: false,
-          stopAtFirstError: false,
-          whitelist: true,
+        it('should return undefined', () => {
+          expect(result).toBeUndefined();
         });
       });
 
-      it('should throw an InversifyValidationError', () => {
-        const expectedErrorProperties: Partial<InversifyValidationError> = {
-          kind: InversifyValidationErrorKind.validationFailed,
-          message: expect.stringContaining(errorMessageFixture),
-        };
+      describe('when called, and getOwnReflectMetadata() returns type undefined', () => {
+        let result: unknown;
 
-        expect(result).toBeInstanceOf(InversifyValidationError);
-        expect(result).toMatchObject(expectedErrorProperties);
-      });
-    });
+        beforeAll(async () => {
+          vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce([undefined]);
 
-    describe('when called, and getOwnReflectMetadata() returns type and validate() returns result with no errors', () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-      let typeFixture: Function;
-      let instanceFixture: object;
+          result = await classValidationPipe.execute(
+            inputFixture,
+            pipeMetadataFixture,
+          );
+        });
 
-      let result: unknown;
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
 
-      beforeAll(async () => {
-        typeFixture = class Message {};
-        instanceFixture = {
-          content: 'hello world',
-        };
+        it('should call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            pipeMetadataFixture.targetClass.prototype,
+            'design:paramtypes',
+            pipeMetadataFixture.methodName,
+          );
+        });
 
-        vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce([typeFixture]);
-        vitest.mocked(plainToInstance).mockReturnValueOnce(instanceFixture);
-        vitest.mocked(validate).mockResolvedValueOnce([]);
+        it('should not call plainToInstance()', () => {
+          expect(plainToInstance).not.toHaveBeenCalled();
+        });
 
-        result = await classValidationPipe.execute(
-          inputFixture,
-          pipeMetadataFixture,
-        );
-      });
+        it('should not call validate()', () => {
+          expect(validate).not.toHaveBeenCalled();
+        });
 
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should call getOwnReflectMetadata()', () => {
-        expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-          pipeMetadataFixture.targetClass.prototype,
-          'design:paramtypes',
-          pipeMetadataFixture.methodName,
-        );
-      });
-
-      it('should call validate()', () => {
-        expect(validate).toHaveBeenCalledExactlyOnceWith(instanceFixture, {
-          forbidNonWhitelisted: true,
-          forbidUnknownValues: true,
-          skipMissingProperties: false,
-          skipNullProperties: false,
-          skipUndefinedProperties: false,
-          stopAtFirstError: false,
-          whitelist: true,
+        it('should return undefined', () => {
+          expect(result).toBeUndefined();
         });
       });
 
-      it('should return expected result', () => {
-        expect(result).toBe(instanceFixture);
+      describe('when called, and getOwnReflectMetadata() returns a validated type', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+        let typeFixture: Function;
+        let result: unknown;
+
+        beforeAll(async () => {
+          typeFixture = class Message {};
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce([typeFixture]);
+
+          try {
+            await classValidationPipe.execute(
+              inputFixture,
+              pipeMetadataFixture,
+            );
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            pipeMetadataFixture.targetClass.prototype,
+            'design:paramtypes',
+            pipeMetadataFixture.methodName,
+          );
+        });
+
+        it('should not call plainToInstance()', () => {
+          expect(plainToInstance).not.toHaveBeenCalled();
+        });
+
+        it('should not call validate()', () => {
+          expect(validate).not.toHaveBeenCalled();
+        });
+
+        it('should throw an InversifyValidationError', () => {
+          const expectedErrorProperties: Partial<InversifyValidationError> = {
+            kind: InversifyValidationErrorKind.validationFailed,
+            message: expect.stringMatching(
+              /Validation failed\. Found nullish value but expected type "Message" at SomeClass\.someMethod\[0\]\./,
+            ),
+          };
+
+          expect(result).toBeInstanceOf(InversifyValidationError);
+          expect(result).toMatchObject(expectedErrorProperties);
+        });
+      });
+    });
+
+    describe('having a null input', () => {
+      let inputFixture: null;
+
+      beforeAll(() => {
+        inputFixture = null;
+      });
+
+      describe('when called, and getOwnReflectMetadata() returns type Object', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce([Object]);
+
+          result = await classValidationPipe.execute(
+            inputFixture,
+            pipeMetadataFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            pipeMetadataFixture.targetClass.prototype,
+            'design:paramtypes',
+            pipeMetadataFixture.methodName,
+          );
+        });
+
+        it('should not call plainToInstance()', () => {
+          expect(plainToInstance).not.toHaveBeenCalled();
+        });
+
+        it('should not call validate()', () => {
+          expect(validate).not.toHaveBeenCalled();
+        });
+
+        it('should return null', () => {
+          expect(result).toBeNull();
+        });
+      });
+
+      describe('when called, and getOwnReflectMetadata() returns a validated type', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+        let typeFixture: Function;
+        let result: unknown;
+
+        beforeAll(async () => {
+          typeFixture = class Message {};
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce([typeFixture]);
+
+          try {
+            await classValidationPipe.execute(
+              inputFixture,
+              pipeMetadataFixture,
+            );
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            pipeMetadataFixture.targetClass.prototype,
+            'design:paramtypes',
+            pipeMetadataFixture.methodName,
+          );
+        });
+
+        it('should not call plainToInstance()', () => {
+          expect(plainToInstance).not.toHaveBeenCalled();
+        });
+
+        it('should not call validate()', () => {
+          expect(validate).not.toHaveBeenCalled();
+        });
+
+        it('should throw an InversifyValidationError', () => {
+          const expectedErrorProperties: Partial<InversifyValidationError> = {
+            kind: InversifyValidationErrorKind.validationFailed,
+            message: expect.stringMatching(
+              /Validation failed\. Found nullish value but expected type "Message" at SomeClass\.someMethod\[0\]\./,
+            ),
+          };
+
+          expect(result).toBeInstanceOf(InversifyValidationError);
+          expect(result).toMatchObject(expectedErrorProperties);
+        });
+      });
+    });
+
+    describe('having a string input', () => {
+      let inputFixture: string;
+
+      beforeAll(() => {
+        inputFixture = 'hello world';
+      });
+
+      describe('when called, and getOwnReflectMetadata() returns type String', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce([String]);
+
+          result = await classValidationPipe.execute(
+            inputFixture,
+            pipeMetadataFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            pipeMetadataFixture.targetClass.prototype,
+            'design:paramtypes',
+            pipeMetadataFixture.methodName,
+          );
+        });
+
+        it('should not call plainToInstance()', () => {
+          expect(plainToInstance).not.toHaveBeenCalled();
+        });
+
+        it('should not call validate()', () => {
+          expect(validate).not.toHaveBeenCalled();
+        });
+
+        it('should return the input', () => {
+          expect(result).toBe(inputFixture);
+        });
+      });
+    });
+
+    describe('having a number input', () => {
+      let inputFixture: number;
+
+      beforeAll(() => {
+        inputFixture = 42;
+      });
+
+      describe('when called, and getOwnReflectMetadata() returns type Number', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce([Number]);
+
+          result = await classValidationPipe.execute(
+            inputFixture,
+            pipeMetadataFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            pipeMetadataFixture.targetClass.prototype,
+            'design:paramtypes',
+            pipeMetadataFixture.methodName,
+          );
+        });
+
+        it('should not call plainToInstance()', () => {
+          expect(plainToInstance).not.toHaveBeenCalled();
+        });
+
+        it('should not call validate()', () => {
+          expect(validate).not.toHaveBeenCalled();
+        });
+
+        it('should return the input', () => {
+          expect(result).toBe(inputFixture);
+        });
+      });
+    });
+
+    describe('having an object input', () => {
+      let inputFixture: object;
+
+      beforeAll(() => {
+        inputFixture = { content: 'hello world' };
+      });
+
+      describe('when called, and getOwnReflectMetadata() returns undefined', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          try {
+            await classValidationPipe.execute(
+              inputFixture,
+              pipeMetadataFixture,
+            );
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            pipeMetadataFixture.targetClass.prototype,
+            'design:paramtypes',
+            pipeMetadataFixture.methodName,
+          );
+        });
+
+        it('should throw an InversifyValidationError', () => {
+          const expectedErrorProperties: Partial<InversifyValidationError> = {
+            kind: InversifyValidationErrorKind.invalidConfiguration,
+            message: expect.stringMatching(
+              /Param type metadata for SomeClass\.someMethod\[0\] is not defined. Are you enabling "emitDecoratorMetadata" and "experimentalDecorators" Typescript compiler options\?/,
+            ),
+          };
+
+          expect(result).toBeInstanceOf(InversifyValidationError);
+          expect(result).toMatchObject(expectedErrorProperties);
+        });
+      });
+
+      describe('when called, and getOwnReflectMetadata() returns a validated type and validate() returns errors', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+        let typeFixture: Function;
+        let instanceFixture: object;
+        let errorFixtureMock: Mocked<ValidationError>;
+        let errorMessageFixture: string;
+
+        let result: unknown;
+
+        beforeAll(async () => {
+          typeFixture = class Message {};
+          instanceFixture = {
+            content: 'hello world',
+          };
+          errorFixtureMock = {
+            toString: vitest.fn(),
+          } as Partial<Mocked<ValidationError>> as Mocked<ValidationError>;
+          errorMessageFixture = 'Validation failed';
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce([typeFixture]);
+          vitest.mocked(plainToInstance).mockReturnValueOnce(instanceFixture);
+          vitest.mocked(validate).mockResolvedValueOnce([errorFixtureMock]);
+
+          errorFixtureMock.toString.mockReturnValueOnce(errorMessageFixture);
+
+          try {
+            await classValidationPipe.execute(
+              inputFixture,
+              pipeMetadataFixture,
+            );
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            pipeMetadataFixture.targetClass.prototype,
+            'design:paramtypes',
+            pipeMetadataFixture.methodName,
+          );
+        });
+
+        it('should call plainToInstance()', () => {
+          expect(plainToInstance).toHaveBeenCalledExactlyOnceWith(
+            typeFixture,
+            inputFixture,
+          );
+        });
+
+        it('should call validate()', () => {
+          expect(validate).toHaveBeenCalledExactlyOnceWith(instanceFixture, {
+            forbidNonWhitelisted: true,
+            forbidUnknownValues: true,
+            skipMissingProperties: false,
+            skipNullProperties: false,
+            skipUndefinedProperties: false,
+            stopAtFirstError: false,
+            whitelist: true,
+          });
+        });
+
+        it('should throw an InversifyValidationError', () => {
+          const expectedErrorProperties: Partial<InversifyValidationError> = {
+            kind: InversifyValidationErrorKind.validationFailed,
+            message: expect.stringContaining(errorMessageFixture),
+          };
+
+          expect(result).toBeInstanceOf(InversifyValidationError);
+          expect(result).toMatchObject(expectedErrorProperties);
+        });
+      });
+
+      describe('when called, and getOwnReflectMetadata() returns a validated type and validate() returns no errors', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+        let typeFixture: Function;
+        let instanceFixture: object;
+
+        let result: unknown;
+
+        beforeAll(async () => {
+          typeFixture = class Message {};
+          instanceFixture = {
+            content: 'hello world',
+          };
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce([typeFixture]);
+          vitest.mocked(plainToInstance).mockReturnValueOnce(instanceFixture);
+          vitest.mocked(validate).mockResolvedValueOnce([]);
+
+          result = await classValidationPipe.execute(
+            inputFixture,
+            pipeMetadataFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            pipeMetadataFixture.targetClass.prototype,
+            'design:paramtypes',
+            pipeMetadataFixture.methodName,
+          );
+        });
+
+        it('should call validate()', () => {
+          expect(validate).toHaveBeenCalledExactlyOnceWith(instanceFixture, {
+            forbidNonWhitelisted: true,
+            forbidUnknownValues: true,
+            skipMissingProperties: false,
+            skipNullProperties: false,
+            skipUndefinedProperties: false,
+            stopAtFirstError: false,
+            whitelist: true,
+          });
+        });
+
+        it('should return expected result', () => {
+          expect(result).toBe(instanceFixture);
+        });
       });
     });
   });

@@ -192,5 +192,30 @@ describe(ClassValidationPipe, () => {
         });
       });
     });
+
+    describe('when a POST /messages request is made without a body', () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/messages`,
+          {
+            method: 'POST',
+          },
+        );
+      });
+
+      it('should return expected Response', async () => {
+        expect(response.status).toBe(400);
+        expect(response.headers.get('content-type')).toStrictEqual(
+          expect.stringContaining('application/json'),
+        );
+        await expect(response.json()).resolves.toStrictEqual({
+          message: expect.stringMatching(
+            /Validation failed\. Found nullish value but expected type "Message" at MessageController\.createMessage\[0\]\./,
+          ),
+        });
+      });
+    });
   });
 });
