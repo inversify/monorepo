@@ -7,6 +7,25 @@ import {
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+const ALLOW_NULLISH_VALUE_TYPES_LIST: (Function | undefined)[] = [
+  Object,
+  undefined,
+];
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+const NON_VALIDATED_TYPES_LIST: Function[] = [
+  Array,
+  BigInt,
+  Boolean,
+  Buffer,
+  Function,
+  Number,
+  Object,
+  String,
+  Symbol,
+];
+
 export class ClassValidationPipe implements Pipe {
   public async execute(
     input: unknown,
@@ -20,11 +39,26 @@ export class ClassValidationPipe implements Pipe {
       metadata.methodName,
     )?.[metadata.parameterIndex];
 
+    if (input == undefined) {
+      if (ALLOW_NULLISH_VALUE_TYPES_LIST.includes(inputType)) {
+        return input;
+      }
+
+      throw new InversifyValidationError(
+        InversifyValidationErrorKind.validationFailed,
+        `Validation failed. Found nullish value but expected type "${inputType?.name ?? 'undefined'}" at ${metadata.targetClass.name}.${metadata.methodName.toString()}[${metadata.parameterIndex.toString()}].`,
+      );
+    }
+
     if (inputType === undefined) {
       throw new InversifyValidationError(
         InversifyValidationErrorKind.invalidConfiguration,
         `Param type metadata for ${metadata.targetClass.name}.${metadata.methodName.toString()}[${metadata.parameterIndex.toString()}] is not defined. Are you enabling "emitDecoratorMetadata" and "experimentalDecorators" Typescript compiler options?`,
       );
+    }
+
+    if (NON_VALIDATED_TYPES_LIST.includes(inputType)) {
+      return input;
     }
 
     const instance: object = plainToInstance(
