@@ -1,5 +1,13 @@
 # @inversifyjs/class-validation
 
+## 2.0.2
+
+### Patch Changes
+
+- Updated `ClassValidationPipe` to properly handle nullish and primitive values
+- Updated dependencies
+  - @inversifyjs/validation-common@2.0.2
+
 ## 2.0.1
 
 ### Patch Changes

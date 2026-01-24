@@ -1,5 +1,7 @@
 # @inversifyjs/http-core
 
+## 4.10.2
+
 ## 4.10.1
 
 ### Patch Changes
@@ -111,7 +113,7 @@ Updated `InversifyHttpAdapter` with protected `_logger`
 Before:
 
 ```ts
-throw new BadRequestHttpResponse("Error message", undefined, {
+throw new BadRequestHttpResponse('Error message', undefined, {
   cause: new Error(),
 });
 ```
@@ -120,11 +122,11 @@ After:
 
 ```ts
 throw new BadRequestHttpResponse(
-  { message: "my http body content" },
-  "Error message",
+  { message: 'my http body content' },
+  'Error message',
   {
     cause: new Error(),
-  }
+  },
 );
 ```
 
