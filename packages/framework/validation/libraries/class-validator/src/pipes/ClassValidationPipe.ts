@@ -8,7 +8,7 @@ import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export const ALLOW_NULLISH_VALUE_TYPES_LIST: (Function | undefined)[] = [
+const ALLOW_NULLISH_VALUE_TYPES_LIST: (Function | undefined)[] = [
   Object,
   undefined,
 ];
