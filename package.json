@@ -20,7 +20,7 @@
     "husky": "9.1.7",
     "knip": "5.82.1",
     "lint-staged": "16.2.7",
-    "turbo": "2.7.6"
+    "turbo": "2.8.0"
   },
   "homepage": "https://inversify.io",
   "keywords": [],
