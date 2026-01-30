@@ -28,7 +28,7 @@
     "hono": "4.11.7",
     "prettier": "3.8.1",
     "rimraf": "6.1.2",
-    "rollup": "4.57.0",
+    "rollup": "4.57.1",
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
@@ -61,7 +61,7 @@
   },
   "name": "@inversifyjs/http-better-auth",
   "peerDependencies": {
-    "better-auth": "^1.4.17",
+    "better-auth": "^1.4.18",
     "inversify": "^7.11.0"
   },
   "publishConfig": {
