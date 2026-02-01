@@ -6,9 +6,9 @@
   "description": "InversifyJs JSON Schema pointer package",
   "devDependencies": {
     "@inversifyjs/json-schema-types": "workspace:*",
-    "@stryker-mutator/core": "9.4.0",
-    "@stryker-mutator/vitest-runner": "9.4.0",
-    "@stryker-mutator/typescript-checker": "9.4.0",
+    "@stryker-mutator/core": "9.5.0",
+    "@stryker-mutator/vitest-runner": "9.5.0",
+    "@stryker-mutator/typescript-checker": "9.5.0",
     "@types/node": "24.10.9",
     "@vitest/coverage-v8": "4.0.18",
     "eslint": "9.39.2",
