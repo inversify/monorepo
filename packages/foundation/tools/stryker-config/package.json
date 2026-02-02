@@ -5,7 +5,7 @@
   },
   "description": "Stryker config for monorepo packages",
   "devDependencies": {
-    "@stryker-mutator/api": "9.5.0",
+    "@stryker-mutator/api": "9.5.1",
     "prettier": "3.8.1"
   },
   "exports": "./lib/index.js",
