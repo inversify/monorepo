@@ -7,7 +7,7 @@
   "devDependencies": {
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/logger": "workspace:*",
-    "@types/node": "24.10.9",
+    "@types/node": "24.10.10",
     "@vitest/coverage-v8": "4.0.18",
     "eslint": "9.39.2",
     "glob": "13.0.0",

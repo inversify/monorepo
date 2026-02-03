@@ -8,8 +8,8 @@
     "@inversifyjs/benchmark-utils": "workspace:*",
     "@inversifyjs/container": "workspace:*",
     "@inversifyjs/core": "workspace:*",
-    "@nestjs/common": "11.1.12",
-    "@nestjs/core": "11.1.12",
+    "@nestjs/common": "11.1.13",
+    "@nestjs/core": "11.1.13",
     "inversify6": "npm:inversify@6.2.2",
     "inversify7": "npm:inversify@7.11.0",
     "rxjs": "7.8.2",
@@ -17,7 +17,7 @@
     "tsyringe": "4.10.0"
   },
   "devDependencies": {
-    "@types/node": "^24.10.9",
+    "@types/node": "^24.10.10",
     "eslint": "9.39.2",
     "prettier": "3.8.1",
     "rimraf": "6.1.2",
