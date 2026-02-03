@@ -22,7 +22,7 @@
     "class-validator": "~0.14.3",
     "eslint": "9.39.2",
     "express": "5.2.1",
-    "glob": "13.0.0",
+    "glob": "13.0.1",
     "inversify": "7.11.0",
     "prettier": "3.8.1",
     "rimraf": "6.1.2",
