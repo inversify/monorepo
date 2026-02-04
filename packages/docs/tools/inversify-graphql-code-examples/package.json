@@ -10,7 +10,7 @@
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/http-core": "4.10.2",
     "@inversifyjs/http-express": "4.10.2",
-    "@apollo/server": "5.3.0",
+    "@apollo/server": "5.4.0",
     "@types/express": "5.0.6",
     "@types/node": "24.10.10",
     "@vitest/coverage-v8": "4.0.18",
