@@ -23,7 +23,7 @@ export interface BindingRelation {
   [BindingRelationKind.serviceId]: ServiceIdentifier;
 }
 
-export class OneToManyBindingMapStar extends OneToManyMapStar<
+class OneToManyBindingMapStar extends OneToManyMapStar<
   Binding<unknown>,
   BindingRelation
 > {
