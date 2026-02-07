@@ -2,13 +2,10 @@ import { Binding } from '../models/Binding';
 import { bindingTypeValues } from '../models/BindingType';
 import { Factory } from '../models/Factory';
 import { FactoryBinding } from '../models/FactoryBinding';
-import { Provider } from '../models/Provider';
-import { ProviderBinding } from '../models/ProviderBinding';
 import { cloneConstantValueBinding } from './cloneConstantValueBinding';
 import { cloneDynamicValueBinding } from './cloneDynamicValueBinding';
 import { cloneFactoryBinding } from './cloneFactoryBinding';
 import { cloneInstanceBinding } from './cloneInstanceBinding';
-import { cloneProviderBinding } from './cloneProviderBinding';
 import { cloneResolvedValueBinding } from './cloneResolvedValueBinding';
 import { cloneServiceRedirectionBinding } from './cloneServiceRedirectionBinding';
 
@@ -33,10 +30,6 @@ export function cloneBinding<TActivated>(
       ) as Binding<TActivated>;
     case bindingTypeValues.Instance:
       return cloneInstanceBinding(binding);
-    case bindingTypeValues.Provider:
-      return cloneProviderBinding(
-        binding as ProviderBinding<TActivated & Provider<unknown>>, // eslint-disable-line @typescript-eslint/no-deprecated
-      ) as Binding<TActivated>;
     case bindingTypeValues.ResolvedValue:
       return cloneResolvedValueBinding(binding);
     case bindingTypeValues.ServiceRedirection:

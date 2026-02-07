@@ -13,8 +13,6 @@ import { DynamicValueBinding } from '../../binding/models/DynamicValueBinding';
 import { Factory } from '../../binding/models/Factory';
 import { FactoryBinding } from '../../binding/models/FactoryBinding';
 import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { Provider } from '../../binding/models/Provider';
-import { ProviderBinding } from '../../binding/models/ProviderBinding';
 import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
 import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
 import { ActivationsService } from '../../binding/services/ActivationsService';
@@ -78,7 +76,6 @@ describe(resolve, () => {
   let factoryBinding: FactoryBinding<Factory<unknown>>;
   let instanceBinding: InstanceBinding<unknown>;
   let priestInstanceBinding: InstanceBinding<Priest>;
-  let providerBinding: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
   let resolvedValueBinding: ResolvedValueBinding<unknown>;
   let serviceRedirectionBinding: ServiceRedirectionBinding<unknown>;
   let serviceRedirectionToNonExistentBinding: ServiceRedirectionBinding<unknown>;
@@ -191,24 +188,6 @@ describe(resolve, () => {
       type: bindingTypeValues.Instance,
     };
 
-    const provider: Provider<unknown> = async () => Symbol(); // eslint-disable-line @typescript-eslint/no-deprecated
-
-    providerBinding = {
-      cache: {
-        isRight: false,
-        value: undefined,
-      },
-      id: 5,
-      isSatisfiedBy: () => true,
-      moduleId: undefined,
-      onActivation: undefined,
-      onDeactivation: undefined,
-      provider: () => provider,
-      scope: bindingScopeValues.Singleton,
-      serviceIdentifier: ServiceIds.provider,
-      type: bindingTypeValues.Provider,
-    };
-
     resolvedValueBinding = {
       cache: {
         isRight: false,
@@ -270,7 +249,6 @@ describe(resolve, () => {
     bindingService.set(factoryBinding);
     bindingService.set(instanceBinding);
     bindingService.set(priestInstanceBinding);
-    bindingService.set(providerBinding);
     bindingService.set(resolvedValueBinding);
     bindingService.set(serviceRedirectionBinding);
     bindingService.set(serviceRedirectionToNonExistentBinding);
@@ -482,14 +460,6 @@ describe(resolve, () => {
       }),
       (): Factory<unknown> | Promise<Factory<unknown>> =>
         factoryBinding.factory(resolutionContext),
-    ],
-    [
-      'with provider bound service',
-      (): PlanParamsConstraint => ({
-        isMultiple: false,
-        serviceIdentifier: providerBinding.serviceIdentifier,
-      }),
-      () => providerBinding.provider(resolutionContext),
     ],
     [
       'with instance binding service',

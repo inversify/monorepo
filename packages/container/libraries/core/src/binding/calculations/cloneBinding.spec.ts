@@ -6,8 +6,6 @@ import { DynamicValueBinding } from '../models/DynamicValueBinding';
 import { Factory } from '../models/Factory';
 import { FactoryBinding } from '../models/FactoryBinding';
 import { InstanceBinding } from '../models/InstanceBinding';
-import { Provider } from '../models/Provider';
-import { ProviderBinding } from '../models/ProviderBinding';
 import { ResolvedValueBinding } from '../models/ResolvedValueBinding';
 import { ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding';
 import { cloneBinding } from './cloneBinding';
@@ -15,18 +13,16 @@ import { cloneConstantValueBinding } from './cloneConstantValueBinding';
 import { cloneDynamicValueBinding } from './cloneDynamicValueBinding';
 import { cloneFactoryBinding } from './cloneFactoryBinding';
 import { cloneInstanceBinding } from './cloneInstanceBinding';
-import { cloneProviderBinding } from './cloneProviderBinding';
 import { cloneResolvedValueBinding } from './cloneResolvedValueBinding';
 import { cloneServiceRedirectionBinding } from './cloneServiceRedirectionBinding';
 
 // Mock all clone functions
-vitest.mock('./cloneConstantValueBinding');
-vitest.mock('./cloneDynamicValueBinding');
-vitest.mock('./cloneFactoryBinding');
-vitest.mock('./cloneInstanceBinding');
-vitest.mock('./cloneProviderBinding');
-vitest.mock('./cloneResolvedValueBinding');
-vitest.mock('./cloneServiceRedirectionBinding');
+vitest.mock(import('./cloneConstantValueBinding.js'));
+vitest.mock(import('./cloneDynamicValueBinding.js'));
+vitest.mock(import('./cloneFactoryBinding.js'));
+vitest.mock(import('./cloneInstanceBinding.js'));
+vitest.mock(import('./cloneResolvedValueBinding.js'));
+vitest.mock(import('./cloneServiceRedirectionBinding.js'));
 
 describe(cloneBinding, () => {
   // Common setup
@@ -36,7 +32,6 @@ describe(cloneBinding, () => {
     vitest.mocked(cloneDynamicValueBinding).mockReset();
     vitest.mocked(cloneFactoryBinding).mockReset();
     vitest.mocked(cloneInstanceBinding).mockReset();
-    vitest.mocked(cloneProviderBinding).mockReset();
     vitest.mocked(cloneResolvedValueBinding).mockReset();
     vitest.mocked(cloneServiceRedirectionBinding).mockReset();
   });
@@ -230,52 +225,6 @@ describe(cloneBinding, () => {
 
     it('should call cloneInstanceBinding', () => {
       expect(cloneInstanceBinding).toHaveBeenCalledExactlyOnceWith(
-        bindingFixture,
-      );
-    });
-
-    it('should return the cloned binding', () => {
-      expect(result).toBe(clonedBindingFixture);
-    });
-  });
-
-  describe('having a ProviderBinding', () => {
-    let bindingFixture: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
-    let clonedBindingFixture: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
-    let result: unknown;
-
-    beforeAll(() => {
-      bindingFixture = {
-        cache: {
-          isRight: false,
-          value: undefined,
-        },
-        id: 0,
-        isSatisfiedBy: () => true,
-        moduleId: 1,
-        onActivation: vitest.fn(),
-        onDeactivation: vitest.fn(),
-        provider: vitest.fn(),
-        scope: 'Singleton',
-        serviceIdentifier: Symbol(),
-        type: bindingTypeValues.Provider,
-      };
-
-      clonedBindingFixture = { ...bindingFixture };
-
-      vitest
-        .mocked(cloneProviderBinding)
-        .mockReturnValueOnce(clonedBindingFixture);
-
-      result = cloneBinding(bindingFixture);
-    });
-
-    afterAll(() => {
-      vitest.clearAllMocks();
-    });
-
-    it('should call cloneProviderBinding', () => {
-      expect(cloneProviderBinding).toHaveBeenCalledExactlyOnceWith(
         bindingFixture,
       );
     });

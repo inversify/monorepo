@@ -8,48 +8,53 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./resolveConstantValueBinding');
-vitest.mock('./resolveDynamicValueBinding');
-vitest.mock('./resolveFactoryBinding');
-vitest.mock('./resolveInstanceBindingConstructorParams', () => ({
+vitest.mock(import('./resolveConstantValueBinding.js'));
+vitest.mock(import('./resolveDynamicValueBinding.js'));
+vitest.mock(import('./resolveFactoryBinding.js'));
+vitest.mock(import('./resolveInstanceBindingConstructorParams.js'), () => ({
   resolveInstanceBindingConstructorParams: vitest
     .fn()
     .mockReturnValue(vitest.fn()),
 }));
-vitest.mock('./resolveInstanceBindingNode', () => ({
+vitest.mock(import('./resolveInstanceBindingNode.js'), () => ({
   resolveInstanceBindingNode: vitest.fn().mockReturnValue(vitest.fn()),
 }));
-vitest.mock('./resolveInstanceBindingNodeAsyncFromConstructorParams', () => ({
-  resolveInstanceBindingNodeAsyncFromConstructorParams: vitest
-    .fn()
-    .mockReturnValue(vitest.fn()),
-}));
-vitest.mock('./resolveInstanceBindingNodeFromConstructorParams', () => ({
-  resolveInstanceBindingNodeFromConstructorParams: vitest
-    .fn()
-    .mockReturnValue(vitest.fn()),
-}));
-vitest.mock('./resolveProviderBinding');
-vitest.mock('./resolveScopedInstanceBindingNode', () => ({
+vitest.mock(
+  import('./resolveInstanceBindingNodeAsyncFromConstructorParams.js'),
+  () => ({
+    resolveInstanceBindingNodeAsyncFromConstructorParams: vitest
+      .fn()
+      .mockReturnValue(vitest.fn()),
+  }),
+);
+vitest.mock(
+  import('./resolveInstanceBindingNodeFromConstructorParams.js'),
+  () => ({
+    resolveInstanceBindingNodeFromConstructorParams: vitest
+      .fn()
+      .mockReturnValue(vitest.fn()),
+  }),
+);
+vitest.mock(import('./resolveScopedInstanceBindingNode.js'), () => ({
   resolveScopedInstanceBindingNode: vitest.fn().mockReturnValue(vitest.fn()),
 }));
-vitest.mock('./resolveScopedResolvedValueBindingNode', () => ({
+vitest.mock(import('./resolveScopedResolvedValueBindingNode.js'), () => ({
   resolveScopedResolvedValueBindingNode: vitest
     .fn()
     .mockReturnValue(vitest.fn()),
 }));
-vitest.mock('./resolveServiceRedirectionBindingNode', () => ({
+vitest.mock(import('./resolveServiceRedirectionBindingNode.js'), () => ({
   resolveServiceRedirectionBindingNode: vitest
     .fn()
     .mockReturnValue(vitest.fn()),
 }));
-vitest.mock('./resolveResolvedValueBindingParams', () => ({
+vitest.mock(import('./resolveResolvedValueBindingParams.js'), () => ({
   resolveResolvedValueBindingParams: vitest.fn().mockReturnValue(vitest.fn()),
 }));
-vitest.mock('./resolveResolvedValueBindingNode', () => ({
+vitest.mock(import('./resolveResolvedValueBindingNode.js'), () => ({
   resolveResolvedValueBindingNode: vitest.fn().mockReturnValue(vitest.fn()),
 }));
-vitest.mock('./setInstanceProperties', () => ({
+vitest.mock(import('./setInstanceProperties.js'), () => ({
   setInstanceProperties: vitest.fn().mockReturnValue(vitest.fn()),
 }));
 
@@ -60,8 +65,6 @@ import { DynamicValueBinding } from '../../binding/models/DynamicValueBinding';
 import { Factory } from '../../binding/models/Factory';
 import { FactoryBinding } from '../../binding/models/FactoryBinding';
 import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { Provider } from '../../binding/models/Provider';
-import { ProviderBinding } from '../../binding/models/ProviderBinding';
 import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
 import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
 import { Writable } from '../../common/models/Writable';
@@ -78,7 +81,6 @@ import { resolve } from './resolve';
 import { resolveConstantValueBinding } from './resolveConstantValueBinding';
 import { resolveDynamicValueBinding } from './resolveDynamicValueBinding';
 import { resolveFactoryBinding } from './resolveFactoryBinding';
-import { resolveProviderBinding } from './resolveProviderBinding';
 import { resolveScopedInstanceBindingNode } from './resolveScopedInstanceBindingNode';
 import { resolveScopedResolvedValueBindingNode } from './resolveScopedResolvedValueBindingNode';
 import { resolveServiceRedirectionBindingNode } from './resolveServiceRedirectionBindingNode';
@@ -652,78 +654,6 @@ describe(resolve, () => {
         ).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
           bindingNodeFixture,
-        );
-      });
-
-      it('should return expected result', () => {
-        expect(result).toBe(resolveValue);
-      });
-    });
-  });
-
-  describe('having ResolutionParams with plan tree with root with provider value binding', () => {
-    let resolutionParamsFixture: ResolutionParams;
-    let bindingFixture: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
-
-    beforeAll(() => {
-      const serviceNode: PlanServiceNode = {
-        bindings: undefined,
-        isContextFree: true,
-        serviceIdentifier: 'service-id',
-      };
-
-      bindingFixture = {
-        cache: {
-          isRight: false,
-          value: undefined,
-        },
-        id: 1,
-        isSatisfiedBy: () => true,
-        moduleId: undefined,
-        onActivation: undefined,
-        onDeactivation: undefined,
-        provider: () => async () => Symbol(),
-        scope: bindingScopeValues.Singleton,
-        serviceIdentifier: 'service-id',
-        type: bindingTypeValues.Provider,
-      };
-
-      const bindingNode: PlanBindingNode = {
-        binding: bindingFixture,
-      };
-
-      (serviceNode as Writable<PlanServiceNode>).bindings = bindingNode;
-
-      resolutionParamsFixture = {
-        planResult: {
-          tree: {
-            root: serviceNode,
-          },
-        },
-      } as Partial<ResolutionParams> as ResolutionParams;
-    });
-
-    describe('when called', () => {
-      let resolveValue: Provider<unknown>; // eslint-disable-line @typescript-eslint/no-deprecated
-
-      let result: unknown;
-
-      beforeAll(() => {
-        resolveValue = async () => Symbol();
-
-        vitest.mocked(resolveProviderBinding).mockReturnValueOnce(resolveValue);
-
-        result = resolve(resolutionParamsFixture);
-      });
-
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should call resolveProviderBinding()', () => {
-        expect(resolveProviderBinding).toHaveBeenCalledExactlyOnceWith(
-          resolutionParamsFixture,
-          bindingFixture,
         );
       });
 

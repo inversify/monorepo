@@ -913,53 +913,6 @@ Binding constraints:
     expect(engine instanceof DieselEngine).toBe(true);
   });
 
-  it('Should support the injection of providers', async () => {
-    type KatanaProvider = () => Promise<Katana>;
-
-    interface Ninja {
-      katana: Katana | null;
-      katanaProvider: KatanaProvider;
-    }
-
-    @injectable()
-    class Katana {
-      public hit() {
-        return 'cut!';
-      }
-    }
-
-    @injectable()
-    class NinjaWithProvider implements Ninja {
-      public katana: Katana | null;
-      public katanaProvider: KatanaProvider;
-
-      constructor(@inject('Provider<Katana>') katanaProvider: KatanaProvider) {
-        this.katanaProvider = katanaProvider;
-        this.katana = null;
-      }
-    }
-
-    const container: Container = new Container();
-    container.bind<Ninja>('Ninja').to(NinjaWithProvider);
-    container.bind<Katana>('Katana').to(Katana);
-
-    // eslint-disable-next-line @typescript-eslint/no-deprecated
-    container.bind<KatanaProvider>('Provider<Katana>').toProvider(
-      (context: ResolutionContext) => async () =>
-        new Promise<Katana>((resolve: (value: Katana) => void) => {
-          const katana: Katana = context.get<Katana>('Katana');
-          resolve(katana);
-        }),
-    );
-
-    const ninja: Ninja = container.get<Ninja>('Ninja');
-
-    const katana: Katana = await ninja.katanaProvider();
-    ninja.katana = katana;
-
-    expect(ninja.katana.hit()).toBe('cut!');
-  });
-
   describe('Injection of multiple values with string as keys', () => {
     it('Should support the injection of multiple values', () => {
       const warriorId: string = 'Warrior';

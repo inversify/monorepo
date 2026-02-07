@@ -9,30 +9,43 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/common');
-vitest.mock('@inversifyjs/core');
+vitest.mock(import('@inversifyjs/common'));
+vitest.mock(import('@inversifyjs/core'));
 
-vitest.mock('../actions/getBindingId');
-vitest.mock('../calculations/buildBindingIdentifier');
-vitest.mock('../calculations/isAnyAncestorBindingConstraints');
-vitest.mock('../calculations/isAnyAncestorBindingConstraintsWithName');
-vitest.mock('../calculations/isAnyAncestorBindingConstraintsWithServiceId');
-vitest.mock('../calculations/isAnyAncestorBindingConstraintsWithTag');
-vitest.mock('../calculations/isBindingConstraintsWithName');
-vitest.mock('../calculations/isBindingConstraintsWithTag');
-vitest.mock('../calculations/isNoAncestorBindingConstraints');
-vitest.mock('../calculations/isNoAncestorBindingConstraintsWithTag');
-vitest.mock('../calculations/isNoAncestorBindingConstraintsWithServiceId');
-vitest.mock('../calculations/isNoAncestorBindingConstraintsWithName');
-vitest.mock('../calculations/isNotParentBindingConstraints');
-vitest.mock('../calculations/isNotParentBindingConstraintsWithName');
-vitest.mock('../calculations/isNotParentBindingConstraintsWithServiceId');
-vitest.mock('../calculations/isNotParentBindingConstraintsWithTag');
-vitest.mock('../calculations/isParentBindingConstraints');
-vitest.mock('../calculations/isParentBindingConstraintsWithName');
-vitest.mock('../calculations/isParentBindingConstraintsWithServiceId');
-vitest.mock('../calculations/isParentBindingConstraintsWithTag');
-vitest.mock('../calculations/isResolvedValueMetadataInjectOptions');
+vitest.mock(import('../calculations/buildBindingIdentifier.js'));
+vitest.mock(import('../calculations/isAnyAncestorBindingConstraints.js'));
+vitest.mock(
+  import('../calculations/isAnyAncestorBindingConstraintsWithName.js'),
+);
+vitest.mock(
+  import('../calculations/isAnyAncestorBindingConstraintsWithServiceId.js'),
+);
+vitest.mock(
+  import('../calculations/isAnyAncestorBindingConstraintsWithTag.js'),
+);
+vitest.mock(import('../calculations/isBindingConstraintsWithName.js'));
+vitest.mock(import('../calculations/isBindingConstraintsWithTag.js'));
+vitest.mock(import('../calculations/isNoAncestorBindingConstraints.js'));
+vitest.mock(import('../calculations/isNoAncestorBindingConstraintsWithTag.js'));
+vitest.mock(
+  import('../calculations/isNoAncestorBindingConstraintsWithServiceId.js'),
+);
+vitest.mock(
+  import('../calculations/isNoAncestorBindingConstraintsWithName.js'),
+);
+vitest.mock(import('../calculations/isNotParentBindingConstraints.js'));
+vitest.mock(import('../calculations/isNotParentBindingConstraintsWithName.js'));
+vitest.mock(
+  import('../calculations/isNotParentBindingConstraintsWithServiceId.js'),
+);
+vitest.mock(import('../calculations/isNotParentBindingConstraintsWithTag.js'));
+vitest.mock(import('../calculations/isParentBindingConstraints.js'));
+vitest.mock(import('../calculations/isParentBindingConstraintsWithName.js'));
+vitest.mock(
+  import('../calculations/isParentBindingConstraintsWithServiceId.js'),
+);
+vitest.mock(import('../calculations/isParentBindingConstraintsWithTag.js'));
+vitest.mock(import('../calculations/isResolvedValueMetadataInjectOptions.js'));
 
 import {
   ServiceIdentifier,
@@ -56,7 +69,6 @@ import {
   InstanceBinding,
   MetadataName,
   MetadataTag,
-  Provider,
   ResolutionContext,
   ResolvedValueElementMetadataKind,
   ScopedBinding,
@@ -232,7 +244,6 @@ describe(BindToFluentSyntaxImplementation, () => {
 
   let dynamicValueBuilderfixture: DynamicValueBuilder<unknown>;
   let factoryBuilderFixture: (context: ResolutionContext) => Factory<unknown>;
-  let providerBuilderFixture: (context: ResolutionContext) => Provider<unknown>; // eslint-disable-line @typescript-eslint/no-deprecated
 
   let callbackMock: Mock<(binding: Binding) => void>;
   let containerModuleIdFixture: number;
@@ -247,8 +258,6 @@ describe(BindToFluentSyntaxImplementation, () => {
 
     dynamicValueBuilderfixture = () => Symbol.for('dynamic-value');
     factoryBuilderFixture = () => () => Symbol.for('value-from-factory');
-    providerBuilderFixture = () => async () =>
-      Symbol.for('value-from-provider');
 
     vitest.mocked(getBindingId).mockReturnValue(bindingIdFixture);
 
@@ -354,33 +363,6 @@ describe(BindToFluentSyntaxImplementation, () => {
         scope: bindingScopeValues.Singleton,
         serviceIdentifier: serviceIdentifierFixture,
         type: bindingTypeValues.Factory,
-      }),
-      BindWhenOnFluentSyntaxImplementation,
-    ],
-    [
-      '.toProvider()',
-      (
-        bindToFluentSyntaxImplementation: BindToFluentSyntaxImplementation<
-          Provider<unknown> // eslint-disable-line @typescript-eslint/no-deprecated
-        >,
-      ): unknown =>
-        bindToFluentSyntaxImplementation.toProvider(providerBuilderFixture), // eslint-disable-line @typescript-eslint/no-deprecated
-      (): Binding => ({
-        cache: {
-          isRight: false,
-          value: undefined,
-        },
-        id: bindingIdFixture,
-        isSatisfiedBy: expect.any(Function) as unknown as (
-          metadata: BindingConstraints,
-        ) => boolean,
-        moduleId: containerModuleIdFixture,
-        onActivation: undefined,
-        onDeactivation: undefined,
-        provider: providerBuilderFixture,
-        scope: bindingScopeValues.Singleton,
-        serviceIdentifier: serviceIdentifierFixture,
-        type: bindingTypeValues.Provider,
       }),
       BindWhenOnFluentSyntaxImplementation,
     ],
