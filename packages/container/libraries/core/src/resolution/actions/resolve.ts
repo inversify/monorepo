@@ -23,7 +23,6 @@ import { resolveInstanceBindingConstructorParams as curryResolveInstanceBindingC
 import { resolveInstanceBindingNode as curryResolveInstanceBindingNode } from './resolveInstanceBindingNode';
 import { resolveInstanceBindingNodeAsyncFromConstructorParams } from './resolveInstanceBindingNodeAsyncFromConstructorParams';
 import { resolveInstanceBindingNodeFromConstructorParams } from './resolveInstanceBindingNodeFromConstructorParams';
-import { resolveProviderBinding } from './resolveProviderBinding';
 import { resolveResolvedValueBindingNode as curryResolveResolvedValueBindingNode } from './resolveResolvedValueBindingNode';
 import { resolveResolvedValueBindingParams as curryResolveResolvedValueBindingParams } from './resolveResolvedValueBindingParams';
 import { resolveScopedInstanceBindingNode as curryResolveScopedInstanceBindingNode } from './resolveScopedInstanceBindingNode';
@@ -111,8 +110,6 @@ function resolveBindingNode<TActivated>(
         params,
         planBindingNode as InstanceBindingNode<InstanceBinding<TActivated>>,
       );
-    case bindingTypeValues.Provider:
-      return resolveProviderBinding(params, planBindingNode.binding);
     case bindingTypeValues.ResolvedValue:
       return resolveScopedResolvedValueBindingNode<TActivated>(
         params,

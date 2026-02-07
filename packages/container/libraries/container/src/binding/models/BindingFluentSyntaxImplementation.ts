@@ -22,8 +22,6 @@ import {
   InstanceBinding,
   MetadataName,
   MetadataTag,
-  Provider,
-  ProviderBinding,
   ResolutionContext,
   Resolved,
   ResolvedValueBinding,
@@ -261,40 +259,6 @@ export class BindToFluentSyntaxImplementation<
       scope: bindingScopeValues.Singleton,
       serviceIdentifier: this.#serviceIdentifier,
       type: bindingTypeValues.Factory,
-    };
-
-    this.#callback(binding as Binding as Binding<T>);
-
-    return new BindWhenOnFluentSyntaxImplementation<T>(
-      binding as Writable<ScopedBinding<BindingType, BindingScope, T>>,
-    );
-  }
-
-  /**
-   * @deprecated Use `toFactory()` instead. Providers will be removed in v8.
-   * Providers exist for historical reasons from v5 when async dependencies weren't supported.
-   * Factories are more flexible and can handle both sync and async operations.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-deprecated
-  public toProvider<T extends Provider<unknown, any>>(
-    this: BindToFluentSyntaxImplementation<T>,
-    provider: (context: ResolutionContext) => T,
-  ): BindWhenOnFluentSyntax<T> {
-    // eslint-disable-next-line @typescript-eslint/no-deprecated
-    const binding: ProviderBinding<Provider<unknown>> = {
-      cache: {
-        isRight: false,
-        value: undefined,
-      },
-      id: getBindingId(),
-      isSatisfiedBy: BindingConstraintUtils.always,
-      moduleId: this.#containerModuleId,
-      onActivation: undefined,
-      onDeactivation: undefined,
-      provider,
-      scope: bindingScopeValues.Singleton,
-      serviceIdentifier: this.#serviceIdentifier,
-      type: bindingTypeValues.Provider,
     };
 
     this.#callback(binding as Binding as Binding<T>);
