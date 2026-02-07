@@ -29,7 +29,7 @@
     "express4": "npm:express@4.22.1",
     "fastify": "5.7.4",
     "glob": "13.0.1",
-    "hono": "4.11.7",
+    "hono": "4.11.8",
     "inversify": "7.11.0",
     "multer": "2.0.2",
     "prettier": "3.8.1",
