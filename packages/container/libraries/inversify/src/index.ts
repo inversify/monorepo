@@ -48,8 +48,6 @@ export {
   MetadataTag,
   MultiInjectOptions,
   OptionalGetOptions,
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  Provider,
   ResolutionContext,
   bindingScopeValues,
   bindingTypeValues,

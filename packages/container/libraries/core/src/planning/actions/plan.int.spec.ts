@@ -12,8 +12,6 @@ import { DynamicValueBinding } from '../../binding/models/DynamicValueBinding';
 import { Factory } from '../../binding/models/Factory';
 import { FactoryBinding } from '../../binding/models/FactoryBinding';
 import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { Provider } from '../../binding/models/Provider';
-import { ProviderBinding } from '../../binding/models/ProviderBinding';
 import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
 import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
 import { BindingService } from '../../binding/services/BindingService';
@@ -40,7 +38,6 @@ enum ServiceIds {
   factory = 'factory-service-id',
   instance = 'instance-service-id',
   nonExistent = 'non-existent-service-id',
-  provider = 'provider-service-id',
   resolvedValue = 'resolved-value-service-id',
   serviceRedirection = 'service-redirection-service-id',
   serviceRedirectionToNonExistent = 'service-redirection-to-non-existent-service-id',
@@ -60,8 +57,7 @@ function buildLeafBindingPlanResult(
   binding:
     | ConstantValueBinding<unknown>
     | DynamicValueBinding<unknown>
-    | FactoryBinding<Factory<unknown>>
-    | ProviderBinding<Provider<unknown>>, // eslint-disable-line @typescript-eslint/no-deprecated
+    | FactoryBinding<Factory<unknown>>,
 ): PlanResult {
   const planServiceNode: PlanServiceNode = {
     bindings: [],
@@ -86,16 +82,13 @@ function buildSimpleInstancePlanResult(
   constructorParameterBinding:
     | ConstantValueBinding<unknown>
     | DynamicValueBinding<unknown>
-    | FactoryBinding<Factory<unknown>>
-    | ProviderBinding<Provider<unknown>>, // eslint-disable-line @typescript-eslint/no-deprecated
+    | FactoryBinding<Factory<unknown>>,
   propertyKeyBindingPair: [
     string | symbol,
     (
       | ConstantValueBinding<unknown>
       | DynamicValueBinding<unknown>
       | FactoryBinding<Factory<unknown>>
-      // eslint-disable-next-line @typescript-eslint/no-deprecated
-      | ProviderBinding<Provider<unknown>>
     ),
   ],
   instanceBinding: InstanceBinding<unknown>,
@@ -133,8 +126,6 @@ function buildSimpleInstancePlanResult(
       | ConstantValueBinding<unknown>
       | DynamicValueBinding<unknown>
       | FactoryBinding<Factory<unknown>>
-      // eslint-disable-next-line @typescript-eslint/no-deprecated
-      | ProviderBinding<Provider<unknown>>
     ),
   ] = propertyKeyBindingPair;
 
@@ -168,8 +159,7 @@ function buildSimpleResolvedValuePlanResult(
   parameterBinding:
     | ConstantValueBinding<unknown>
     | DynamicValueBinding<unknown>
-    | FactoryBinding<Factory<unknown>>
-    | ProviderBinding<Provider<unknown>>, // eslint-disable-line @typescript-eslint/no-deprecated
+    | FactoryBinding<Factory<unknown>>,
   resolvedValueBinding: ResolvedValueBinding<unknown>,
 ): PlanResult {
   const planServiceNode: PlanServiceNode = {
@@ -212,8 +202,7 @@ function buildServiceRedirectionToLeafBindingPlanResult(
   leafBinding:
     | ConstantValueBinding<unknown>
     | DynamicValueBinding<unknown>
-    | FactoryBinding<Factory<unknown>>
-    | ProviderBinding<Provider<unknown>>, // eslint-disable-line @typescript-eslint/no-deprecated
+    | FactoryBinding<Factory<unknown>>,
   serviceRedirectionBinding: ServiceRedirectionBinding<unknown>,
 ): PlanResult {
   const planServiceNode: PlanServiceNode = {
@@ -248,7 +237,6 @@ describe(plan, () => {
   let dynamicValueBinding: DynamicValueBinding<unknown>;
   let factoryBinding: FactoryBinding<Factory<unknown>>;
   let instanceBinding: InstanceBinding<unknown>;
-  let providerBinding: ProviderBinding<Provider<unknown>>; // eslint-disable-line @typescript-eslint/no-deprecated
   let resolvedValueBinding: ResolvedValueBinding<unknown>;
   let serviceRedirectionBinding: ServiceRedirectionBinding<unknown>;
   let serviceRedirectionToNonExistentBinding: ServiceRedirectionBinding<unknown>;
@@ -322,22 +310,6 @@ describe(plan, () => {
       type: bindingTypeValues.Instance,
     };
 
-    providerBinding = {
-      cache: {
-        isRight: false,
-        value: undefined,
-      },
-      id: 4,
-      isSatisfiedBy: () => true,
-      moduleId: undefined,
-      onActivation: undefined,
-      onDeactivation: undefined,
-      provider: () => async () => Symbol(),
-      scope: bindingScopeValues.Singleton,
-      serviceIdentifier: ServiceIds.provider,
-      type: bindingTypeValues.Provider,
-    };
-
     resolvedValueBinding = {
       cache: {
         isRight: true,
@@ -389,7 +361,6 @@ describe(plan, () => {
     bindingService.set(dynamicValueBinding);
     bindingService.set(factoryBinding);
     bindingService.set(instanceBinding);
-    bindingService.set(providerBinding);
     bindingService.set(resolvedValueBinding);
     bindingService.set(serviceRedirectionBinding);
     bindingService.set(serviceRedirectionToNonExistentBinding);
@@ -438,14 +409,6 @@ describe(plan, () => {
           ['property', dynamicValueBinding],
           instanceBinding,
         ),
-    ],
-    [
-      'with provider bound service',
-      {
-        isMultiple: false,
-        serviceIdentifier: ServiceIds.provider,
-      },
-      () => buildLeafBindingPlanResult(providerBinding),
     ],
     [
       'with resolved value bound service',

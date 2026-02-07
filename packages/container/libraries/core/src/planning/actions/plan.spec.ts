@@ -9,8 +9,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../calculations/buildGetPlanOptionsFromPlanParams');
-vitest.mock('./curryBuildPlanServiceNode', () => {
+vitest.mock(import('../calculations/buildGetPlanOptionsFromPlanParams.js'));
+vitest.mock(import('./curryBuildPlanServiceNode.js'), () => {
   const buildPlanServiceNode: Mock<(params: PlanParams) => PlanServiceNode> =
     vitest.fn();
 
