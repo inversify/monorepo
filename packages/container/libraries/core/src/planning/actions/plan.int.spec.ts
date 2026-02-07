@@ -38,7 +38,6 @@ enum ServiceIds {
   factory = 'factory-service-id',
   instance = 'instance-service-id',
   nonExistent = 'non-existent-service-id',
-  provider = 'provider-service-id',
   resolvedValue = 'resolved-value-service-id',
   serviceRedirection = 'service-redirection-service-id',
   serviceRedirectionToNonExistent = 'service-redirection-to-non-existent-service-id',
