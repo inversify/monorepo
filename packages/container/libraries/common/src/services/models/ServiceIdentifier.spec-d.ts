@@ -20,6 +20,7 @@ describe('ServiceIdentifier', () => {
     }
 
     it('should be a valid ServiceIdentifier', () => {
+      // @ts-expect-error :: Type 'typeof AbstractFoo' is not assignable to type 'ServiceIdentifier'.
       const identifier: ServiceIdentifier = AbstractFoo;
 
       expect(identifier).toBeInstanceOf(Function);
@@ -42,6 +43,7 @@ describe('ServiceIdentifier', () => {
     }
 
     it('should be a valid ServiceIdentifier', () => {
+      // @ts-expect-error :: Type 'typeof Foo' is not assignable to type 'ServiceIdentifier'.
       const identifier: ServiceIdentifier = Foo;
 
       expect(identifier).toBeInstanceOf(Function);

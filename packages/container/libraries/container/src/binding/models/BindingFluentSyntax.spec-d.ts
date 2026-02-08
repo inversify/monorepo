@@ -140,7 +140,9 @@ describe('BindToFluentSyntax', () => {
 
         expectTypeOf(
           bindToFluentSyntaxMock.toResolvedValue(factoryFixture, [
+            // @ts-expect-error :: 'ServiceIdentifier<number>' is not assignable to type 'ResolvedValueInjectOptions<string>'
             firstServiceIdentifier,
+            // @ts-expect-error :: 'Newable<object>' is not assignable to type 'ResolvedValueInjectOptions<number>'
             secondServiceIdentifier,
           ]),
         ).toEqualTypeOf<BindInWhenOnFluentSyntax<unknown>>();
@@ -212,7 +214,7 @@ describe('BindToFluentSyntax', () => {
         factoryFixture = (arg1: string[]): unknown => arg1;
       });
 
-      it('when called, with as many "wrong" resolve value inject options as function parameters, should not throw a syntax error', () => {
+      it('when called, with as many "wrong" resolve value inject options as function parameters, should throw a syntax error', () => {
         const firstServiceIdentifier: ResolvedValueMetadataInjectOptions<
           string[]
         > = {
@@ -252,6 +254,7 @@ describe('BindToFluentSyntax', () => {
 
         assertType(
           bindToFluentSyntaxMock.toResolvedValue(factoryFixture, [
+            // @ts-expect-error :: Type 'OptionalResolvedValueMetadataInjectOptions<string[] | undefined>' is not assignable to type 'ResolvedValueInjectOptions<string[]>'
             secondServiceIdentifier,
           ]),
         );
