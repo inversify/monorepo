@@ -10,7 +10,7 @@ import { InstanceBinding } from '../models/InstanceBinding';
 
 export function buildInstanceBinding<TResolved = unknown>(
   autobindOptions: AutobindOptions,
-  serviceIdentifier: Newable,
+  serviceIdentifier: Newable<TResolved>,
 ): InstanceBinding<TResolved> {
   const classMetadata: ClassMetadata = getClassMetadata(serviceIdentifier);
   const scope: BindingScope = classMetadata.scope ?? autobindOptions.scope;
@@ -21,7 +21,7 @@ export function buildInstanceBinding<TResolved = unknown>(
       value: undefined,
     },
     id: getBindingId(),
-    implementationType: serviceIdentifier as Newable<TResolved>,
+    implementationType: serviceIdentifier,
     isSatisfiedBy: () => true,
     moduleId: undefined,
     onActivation: undefined,

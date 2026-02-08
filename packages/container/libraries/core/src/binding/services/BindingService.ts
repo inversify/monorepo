@@ -217,7 +217,7 @@ export class BindingService implements Cloneable<BindingService> {
 
     const binding: InstanceBinding<TResolved> = buildInstanceBinding(
       this.#autobindOptions,
-      serviceIdentifier as Newable,
+      serviceIdentifier as Newable<TResolved>,
     );
 
     this.set(binding);
