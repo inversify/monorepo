@@ -7,7 +7,7 @@
   "devDependencies": {
     "@types/node": "24.10.13",
     "@vitest/coverage-v8": "4.0.18",
-    "eslint": "9.39.2",
+    "eslint": "10.0.0",
     "prettier": "3.8.1",
     "reflect-metadata": "0.2.2",
     "rimraf": "6.1.2",
