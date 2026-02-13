@@ -157,12 +157,12 @@ export class Container {
     return this.#bindingManager.isCurrentBound(serviceIdentifier, options);
   }
 
-  public async load(...modules: ContainerModule[]): Promise<void> {
-    return this.#containerModuleManager.load(...modules);
+  public async loadAsync(...modules: ContainerModule[]): Promise<void> {
+    return this.#containerModuleManager.loadAsync(...modules);
   }
 
-  public loadSync(...modules: ContainerModule[]): void {
-    this.#containerModuleManager.loadSync(...modules);
+  public load(...modules: ContainerModule[]): void {
+    this.#containerModuleManager.load(...modules);
   }
 
   public onActivation<T>(

@@ -78,7 +78,7 @@ describe(ContainerModuleManager, () => {
     > as Mocked<ServiceReferenceManager>;
   });
 
-  describe('.load', () => {
+  describe('.loadAsync', () => {
     let asyncContainerModuleMock: Mocked<ContainerModule>;
     let syncContainerModuleMock: Mocked<ContainerModule>;
 
@@ -102,7 +102,7 @@ describe(ContainerModuleManager, () => {
           defaultScopeFixture,
           planResultCacheManagerMock,
           serviceReferenceManagerMock,
-        ).load(asyncContainerModuleMock);
+        ).loadAsync(asyncContainerModuleMock);
       });
 
       afterAll(() => {
@@ -160,7 +160,7 @@ describe(ContainerModuleManager, () => {
           defaultScopeFixture,
           planResultCacheManagerMock,
           serviceReferenceManagerMock,
-        ).load(syncContainerModuleMock);
+        ).loadAsync(syncContainerModuleMock);
       });
 
       afterAll(() => {
@@ -209,7 +209,7 @@ describe(ContainerModuleManager, () => {
     });
   });
 
-  describe('.loadSync', () => {
+  describe('.load', () => {
     let syncContainerModuleMock: Mocked<ContainerModule>;
     let asyncContainerModuleMock: Mocked<ContainerModule>;
 
@@ -233,7 +233,7 @@ describe(ContainerModuleManager, () => {
           defaultScopeFixture,
           planResultCacheManagerMock,
           serviceReferenceManagerMock,
-        ).loadSync(syncContainerModuleMock);
+        ).load(syncContainerModuleMock);
       });
 
       afterAll(() => {
@@ -292,7 +292,7 @@ describe(ContainerModuleManager, () => {
             defaultScopeFixture,
             planResultCacheManagerMock,
             serviceReferenceManagerMock,
-          ).loadSync(asyncContainerModuleMock);
+          ).load(asyncContainerModuleMock);
         } catch (error: unknown) {
           result = error;
         }
@@ -342,7 +342,7 @@ describe(ContainerModuleManager, () => {
         const expectedErrorProperties: Partial<InversifyContainerError> = {
           kind: InversifyContainerErrorKind.invalidOperation,
           message:
-            'Unexpected asynchronous module load. Consider using Container.load() instead.',
+            'Unexpected asynchronous module load. Consider using container.loadAsync() instead.',
         };
 
         expect(result).toBeInstanceOf(InversifyContainerError);

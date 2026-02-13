@@ -42,19 +42,19 @@ export class ContainerModuleManager {
     this.#serviceReferenceManager = serviceReferenceManager;
   }
 
-  public async load(...modules: ContainerModule[]): Promise<void> {
+  public async loadAsync(...modules: ContainerModule[]): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/await-thenable
     await Promise.all(this.#load(...modules));
   }
 
-  public loadSync(...modules: ContainerModule[]): void {
+  public load(...modules: ContainerModule[]): void {
     const results: (void | Promise<void>)[] = this.#load(...modules);
 
     for (const result of results) {
       if (result !== undefined) {
         throw new InversifyContainerError(
           InversifyContainerErrorKind.invalidOperation,
-          'Unexpected asynchronous module load. Consider using Container.load() instead.',
+          'Unexpected asynchronous module load. Consider using container.loadAsync() instead.',
         );
       }
     }
