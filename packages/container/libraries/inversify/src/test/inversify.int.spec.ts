@@ -400,7 +400,7 @@ describe('InversifyJS', () => {
     const container: Container = new Container();
 
     // load
-    await container.load(warriors, weapons);
+    await container.loadAsync(warriors, weapons);
 
     const ninja: Ninja = container.get('Ninja');
 

@@ -157,7 +157,7 @@ Binding constraints:
             },
           );
 
-          await container.load(module);
+          await container.loadAsync(module);
 
           // Second call to get Arsenal
           arsenal = container.get(Arsenal);
@@ -188,7 +188,7 @@ Binding constraints:
             },
           );
 
-          await container.load(module);
+          await container.loadAsync(module);
 
           // Second call to get Arsenal
           arsenal = container.get(Arsenal);
@@ -202,7 +202,7 @@ Binding constraints:
         });
       });
 
-      describe('when container.get is called twice and gun binding is added using a ContainerModule with loadSync in the middle', () => {
+      describe('when container.get is called twice and gun binding is added using a ContainerModule with load in the middle', () => {
         let container: Container;
         let arsenal: Arsenal;
 
@@ -221,7 +221,7 @@ Binding constraints:
             },
           );
 
-          container.loadSync(module);
+          container.load(module);
 
           // Second call to get Arsenal
           arsenal = container.get(Arsenal);
@@ -235,7 +235,7 @@ Binding constraints:
         });
       });
 
-      describe('when Container.loadSync() is called and Container.unloadSync() is called to remove a module', () => {
+      describe('when Container.load() is called and Container.unloadSync() is called to remove a module', () => {
         let container: Container;
         let arsenal: Arsenal;
         let module: ContainerModule;
@@ -252,7 +252,7 @@ Binding constraints:
             },
           );
 
-          container.loadSync(module);
+          container.load(module);
 
           // First call to get Arsenal
           arsenal = container.get(Arsenal);

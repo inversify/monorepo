@@ -136,7 +136,7 @@ describe(Container, () => {
     } as Partial<Mocked<BindingService>> as Mocked<BindingService>;
     containerModuleManagerMock = {
       load: vitest.fn(),
-      loadSync: vitest.fn(),
+      loadAsync: vitest.fn(),
       unload: vitest.fn(),
       unloadSync: vitest.fn(),
     } as Partial<
@@ -145,10 +145,10 @@ describe(Container, () => {
     containerModuleManagerClassMock = class implements Partial<
       Mocked<ContainerModuleManager>
     > {
+      public loadAsync: Mocked<ContainerModuleManager>['loadAsync'] =
+        containerModuleManagerMock.loadAsync;
       public load: Mocked<ContainerModuleManager>['load'] =
         containerModuleManagerMock.load;
-      public loadSync: Mocked<ContainerModuleManager>['loadSync'] =
-        containerModuleManagerMock.loadSync;
       public unload: Mocked<ContainerModuleManager>['unload'] =
         containerModuleManagerMock.unload;
       public unloadSync: Mocked<ContainerModuleManager>['unloadSync'] =
@@ -847,6 +847,38 @@ describe(Container, () => {
     });
   });
 
+  describe('.loadAsync', () => {
+    let containerModuleMock: Mocked<ContainerModule>;
+
+    beforeAll(() => {
+      containerModuleMock = {
+        loadAsync: vitest.fn().mockReturnValue(undefined),
+      } as Partial<Mocked<ContainerModule>> as Mocked<ContainerModule>;
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(async () => {
+        result = await new Container().loadAsync(containerModuleMock);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call containerModuleManager.load', () => {
+        expect(
+          containerModuleManagerMock.loadAsync,
+        ).toHaveBeenCalledExactlyOnceWith(containerModuleMock);
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+  });
+
   describe('.load', () => {
     let containerModuleMock: Mocked<ContainerModule>;
 
@@ -859,8 +891,8 @@ describe(Container, () => {
     describe('when called', () => {
       let result: unknown;
 
-      beforeAll(async () => {
-        result = await new Container().load(containerModuleMock);
+      beforeAll(() => {
+        result = new Container().load(containerModuleMock);
       });
 
       afterAll(() => {
@@ -871,38 +903,6 @@ describe(Container, () => {
         expect(containerModuleManagerMock.load).toHaveBeenCalledExactlyOnceWith(
           containerModuleMock,
         );
-      });
-
-      it('should return undefined', () => {
-        expect(result).toBeUndefined();
-      });
-    });
-  });
-
-  describe('.loadSync', () => {
-    let containerModuleMock: Mocked<ContainerModule>;
-
-    beforeAll(() => {
-      containerModuleMock = {
-        load: vitest.fn().mockReturnValue(undefined),
-      } as Partial<Mocked<ContainerModule>> as Mocked<ContainerModule>;
-    });
-
-    describe('when called', () => {
-      let result: unknown;
-
-      beforeAll(() => {
-        result = new Container().loadSync(containerModuleMock);
-      });
-
-      afterAll(() => {
-        vitest.clearAllMocks();
-      });
-
-      it('should call containerModuleManager.loadSync', () => {
-        expect(
-          containerModuleManagerMock.loadSync,
-        ).toHaveBeenCalledExactlyOnceWith(containerModuleMock);
       });
 
       it('should return undefined', () => {

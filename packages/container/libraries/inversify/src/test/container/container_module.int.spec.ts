@@ -45,7 +45,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(warriors);
+    await container.loadAsync(warriors);
 
     expect(container.get<string>('A')).to.eql('2');
     expect(container.get<string>('B')).to.eql('3');
@@ -67,7 +67,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(warriors);
+    await container.loadAsync(warriors);
   });
 
   it('Should be able to override a binding using rebind within a container module', async () => {
@@ -92,7 +92,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(module1);
+    await container.loadAsync(module1);
 
     const values1: unknown[] = container.getAll(TYPES.someType);
 
@@ -100,7 +100,7 @@ describe(ContainerModule, () => {
 
     expect(values1[1]).to.eq(2);
 
-    await container.load(module2);
+    await container.loadAsync(module2);
 
     const values2: unknown[] = container.getAll(TYPES.someType);
 
@@ -134,7 +134,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(moduleOne, moduleTwo);
+    await container.loadAsync(moduleOne, moduleTwo);
 
     const aIsBound: boolean = container.isBound(A);
 
@@ -161,7 +161,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(module);
+    await container.loadAsync(module);
 
     expect(container.get<string>('A')).to.eql('B');
     expect(container.get('B')).to.eql('C');
@@ -180,7 +180,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(warriors);
+    await container.loadAsync(warriors);
     container.get('A');
     await container.unbind('A');
 
@@ -201,7 +201,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(warriors);
+    await container.loadAsync(warriors);
 
     container.get('A');
 
@@ -229,7 +229,7 @@ describe(ContainerModule, () => {
 
     container.get(serviceIdentifier);
 
-    await container.load(containerModule);
+    await container.loadAsync(containerModule);
     await container.unbind(serviceIdentifier);
 
     expect(onActivationHandlerMock).toHaveBeenCalledTimes(2);
@@ -245,7 +245,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(module);
+    await container.loadAsync(module);
 
     expect(container.getAll(sid)).toStrictEqual(['Not module', 'Module']);
 
@@ -273,7 +273,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(module);
+    await container.loadAsync(module);
 
     container.get(sid);
 
@@ -316,7 +316,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(module);
+    await container.loadAsync(module);
     await container.unload(module);
 
     container.get(sid);
@@ -342,7 +342,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(module);
+    await container.loadAsync(module);
     let values: unknown[] = container.getAll(sid);
 
     expect(values).toStrictEqual(['Not module', 'Module']);
@@ -373,7 +373,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(module);
+    await container.loadAsync(module);
     container.get(sid);
 
     await container.unload(module);
@@ -416,7 +416,7 @@ describe(ContainerModule, () => {
       },
     );
 
-    await container.load(module);
+    await container.loadAsync(module);
     await container.unload(module);
 
     container.get(sid);
@@ -448,7 +448,7 @@ describe(ContainerModule, () => {
     });
 
     container.getAll(sid);
-    await container.load(module);
+    await container.loadAsync(module);
 
     expect(deactivated).toStrictEqual(['Value', 'Value2']);
     //bindings removed
