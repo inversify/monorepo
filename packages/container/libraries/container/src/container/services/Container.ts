@@ -231,12 +231,12 @@ export class Container {
     this.#bindingManager.unbindSync(identifier);
   }
 
-  public async unload(...modules: ContainerModule[]): Promise<void> {
-    return this.#containerModuleManager.unload(...modules);
+  public async unloadAsync(...modules: ContainerModule[]): Promise<void> {
+    return this.#containerModuleManager.unloadAsync(...modules);
   }
 
-  public unloadSync(...modules: ContainerModule[]): void {
-    this.#containerModuleManager.unloadSync(...modules);
+  public unload(...modules: ContainerModule[]): void {
+    this.#containerModuleManager.unload(...modules);
   }
 
   #buildAutobindOptions(

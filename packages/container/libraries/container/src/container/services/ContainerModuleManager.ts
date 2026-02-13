@@ -60,7 +60,7 @@ export class ContainerModuleManager {
     }
   }
 
-  public async unload(...modules: ContainerModule[]): Promise<void> {
+  public async unloadAsync(...modules: ContainerModule[]): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/await-thenable
     await Promise.all(this.#unload(...modules));
 
@@ -75,14 +75,14 @@ export class ContainerModuleManager {
     this.#clearAfterUnloadModules(modules);
   }
 
-  public unloadSync(...modules: ContainerModule[]): void {
+  public unload(...modules: ContainerModule[]): void {
     const results: (void | Promise<void>)[] = this.#unload(...modules);
 
     for (const result of results) {
       if (result !== undefined) {
         throw new InversifyContainerError(
           InversifyContainerErrorKind.invalidOperation,
-          'Unexpected asynchronous module unload. Consider using Container.unload() instead.',
+          'Unexpected asynchronous module unload. Consider using container.unloadAsync() instead.',
         );
       }
     }

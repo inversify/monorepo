@@ -138,7 +138,7 @@ describe(Container, () => {
       load: vitest.fn(),
       loadAsync: vitest.fn(),
       unload: vitest.fn(),
-      unloadSync: vitest.fn(),
+      unloadAsync: vitest.fn(),
     } as Partial<
       Mocked<ContainerModuleManager>
     > as Mocked<ContainerModuleManager>;
@@ -149,10 +149,10 @@ describe(Container, () => {
         containerModuleManagerMock.loadAsync;
       public load: Mocked<ContainerModuleManager>['load'] =
         containerModuleManagerMock.load;
+      public unloadAsync: Mocked<ContainerModuleManager>['unloadAsync'] =
+        containerModuleManagerMock.unloadAsync;
       public unload: Mocked<ContainerModuleManager>['unload'] =
         containerModuleManagerMock.unload;
-      public unloadSync: Mocked<ContainerModuleManager>['unloadSync'] =
-        containerModuleManagerMock.unloadSync;
     } as Newable<Partial<Mocked<ContainerModuleManager>>> as Newable<
       Mocked<ContainerModuleManager>
     >;
@@ -1258,7 +1258,7 @@ describe(Container, () => {
     });
   });
 
-  describe('.unload', () => {
+  describe('.unloadAsync', () => {
     let containerModuleFixture: ContainerModule;
 
     beforeAll(() => {
@@ -1271,16 +1271,16 @@ describe(Container, () => {
       let result: unknown;
 
       beforeAll(async () => {
-        result = await new Container().unload(containerModuleFixture);
+        result = await new Container().unloadAsync(containerModuleFixture);
       });
 
       afterAll(() => {
         vitest.clearAllMocks();
       });
 
-      it('should call containerModuleManager.unload()', () => {
+      it('should call containerModuleManager.unloadAsync()', () => {
         expect(
-          containerModuleManagerMock.unload,
+          containerModuleManagerMock.unloadAsync,
         ).toHaveBeenCalledExactlyOnceWith(containerModuleFixture);
       });
 
@@ -1290,7 +1290,7 @@ describe(Container, () => {
     });
   });
 
-  describe('.unloadSync', () => {
+  describe('.unload', () => {
     let containerModuleFixture: ContainerModule;
 
     beforeAll(() => {
@@ -1303,16 +1303,16 @@ describe(Container, () => {
       let result: unknown;
 
       beforeAll(() => {
-        result = new Container().unloadSync(containerModuleFixture);
+        result = new Container().unload(containerModuleFixture);
       });
 
       afterAll(() => {
         vitest.clearAllMocks();
       });
 
-      it('should call containerModuleManager.unloadSync()', () => {
+      it('should call containerModuleManager.unload()', () => {
         expect(
-          containerModuleManagerMock.unloadSync,
+          containerModuleManagerMock.unload,
         ).toHaveBeenCalledExactlyOnceWith(containerModuleFixture);
       });
 
