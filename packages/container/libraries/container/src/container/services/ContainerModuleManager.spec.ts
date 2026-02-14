@@ -51,10 +51,10 @@ describe(ContainerModuleManager, () => {
       isBound: vitest.fn(),
       isCurrentBound: vitest.fn(),
       rebind: vitest.fn(),
-      rebindSync: vitest.fn(),
+      rebindAsync: vitest.fn(),
       unbind: vitest.fn(),
       unbindAll: vitest.fn(),
-      unbindSync: vitest.fn(),
+      unbindAsync: vitest.fn(),
     } as Partial<Mocked<BindingManager>> as Mocked<BindingManager>;
     deactivationParamsFixture = Symbol() as unknown as DeactivationParams;
     defaultScopeFixture = bindingScopeValues.Singleton;
@@ -135,16 +135,16 @@ describe(ContainerModuleManager, () => {
           ) => void,
           rebind: expect.any(Function) as unknown as <T>(
             serviceIdentifier: ServiceIdentifier<T>,
-          ) => Promise<BindToFluentSyntax<T>>,
-          rebindSync: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
           ) => BindToFluentSyntax<T>,
+          rebindAsync: expect.any(Function) as unknown as <T>(
+            serviceIdentifier: ServiceIdentifier<T>,
+          ) => Promise<BindToFluentSyntax<T>>,
           unbind: expect.any(Function) as unknown as (
             serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => Promise<void>,
-          unbindSync: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
           ) => void,
+          unbindAsync: expect.any(Function) as unknown as (
+            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
+          ) => Promise<void>,
         };
 
         expect(asyncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
@@ -193,16 +193,16 @@ describe(ContainerModuleManager, () => {
           ) => void,
           rebind: expect.any(Function) as unknown as <T>(
             serviceIdentifier: ServiceIdentifier<T>,
-          ) => Promise<BindToFluentSyntax<T>>,
-          rebindSync: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
           ) => BindToFluentSyntax<T>,
+          rebindAsync: expect.any(Function) as unknown as <T>(
+            serviceIdentifier: ServiceIdentifier<T>,
+          ) => Promise<BindToFluentSyntax<T>>,
           unbind: expect.any(Function) as unknown as (
             serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => Promise<void>,
-          unbindSync: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
           ) => void,
+          unbindAsync: expect.any(Function) as unknown as (
+            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
+          ) => Promise<void>,
         };
 
         expect(syncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
@@ -266,16 +266,16 @@ describe(ContainerModuleManager, () => {
           ) => void,
           rebind: expect.any(Function) as unknown as <T>(
             serviceIdentifier: ServiceIdentifier<T>,
-          ) => Promise<BindToFluentSyntax<T>>,
-          rebindSync: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
           ) => BindToFluentSyntax<T>,
+          rebindAsync: expect.any(Function) as unknown as <T>(
+            serviceIdentifier: ServiceIdentifier<T>,
+          ) => Promise<BindToFluentSyntax<T>>,
           unbind: expect.any(Function) as unknown as (
             serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => Promise<void>,
-          unbindSync: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
           ) => void,
+          unbindAsync: expect.any(Function) as unknown as (
+            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
+          ) => Promise<void>,
         };
 
         expect(syncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
@@ -328,16 +328,16 @@ describe(ContainerModuleManager, () => {
           ) => void,
           rebind: expect.any(Function) as unknown as <T>(
             serviceIdentifier: ServiceIdentifier<T>,
-          ) => Promise<BindToFluentSyntax<T>>,
-          rebindSync: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
           ) => BindToFluentSyntax<T>,
+          rebindAsync: expect.any(Function) as unknown as <T>(
+            serviceIdentifier: ServiceIdentifier<T>,
+          ) => Promise<BindToFluentSyntax<T>>,
           unbind: expect.any(Function) as unknown as (
             serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => Promise<void>,
-          unbindSync: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
           ) => void,
+          unbindAsync: expect.any(Function) as unknown as (
+            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
+          ) => Promise<void>,
         };
 
         expect(asyncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(

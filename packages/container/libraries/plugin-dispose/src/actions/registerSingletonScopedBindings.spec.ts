@@ -13,8 +13,8 @@ import {
   ResolvedValueBindingNode,
 } from '@inversifyjs/core';
 
-vitest.mock('./getPluginDisposeBinding');
-vitest.mock('./setPluginDisposeBinding');
+vitest.mock(import('./getPluginDisposeBinding.js'));
+vitest.mock(import('./setPluginDisposeBinding.js'));
 
 import { BindingDisposeMetadata } from '../models/BindingDisposeMetadata';
 import { SingletonScopedBinding } from '../models/SingletonScopedBinding';

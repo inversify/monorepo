@@ -140,9 +140,9 @@ export class ContainerModuleManager {
         );
       },
       rebind: this.#bindingManager.rebind.bind(this.#bindingManager),
-      rebindSync: this.#bindingManager.rebindSync.bind(this.#bindingManager),
+      rebindAsync: this.#bindingManager.rebindAsync.bind(this.#bindingManager),
       unbind: this.#bindingManager.unbind.bind(this.#bindingManager),
-      unbindSync: this.#bindingManager.unbindSync.bind(this.#bindingManager),
+      unbindAsync: this.#bindingManager.unbindAsync.bind(this.#bindingManager),
     };
   }
 

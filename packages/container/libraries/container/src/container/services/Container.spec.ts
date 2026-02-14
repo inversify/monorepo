@@ -102,11 +102,11 @@ describe(Container, () => {
       isBound: vitest.fn(),
       isCurrentBound: vitest.fn(),
       rebind: vitest.fn(),
-      rebindSync: vitest.fn(),
+      rebindAsync: vitest.fn(),
       unbind: vitest.fn(),
       unbindAll: vitest.fn(),
       unbindAllSync: vitest.fn(),
-      unbindSync: vitest.fn(),
+      unbindAsync: vitest.fn(),
     } as Partial<Mocked<BindingManager>> as Mocked<BindingManager>;
     bindingManagerClassMock = class implements Partial<Mocked<BindingManager>> {
       public bind: Mocked<BindingManager>['bind'] = bindingManagerMock.bind;
@@ -114,18 +114,18 @@ describe(Container, () => {
         bindingManagerMock.isBound;
       public isCurrentBound: Mocked<BindingManager>['isCurrentBound'] =
         bindingManagerMock.isCurrentBound;
+      public rebindAsync: Mocked<BindingManager>['rebindAsync'] =
+        bindingManagerMock.rebindAsync;
       public rebind: Mocked<BindingManager>['rebind'] =
         bindingManagerMock.rebind;
-      public rebindSync: Mocked<BindingManager>['rebindSync'] =
-        bindingManagerMock.rebindSync;
-      public unbind: Mocked<BindingManager>['unbind'] =
-        bindingManagerMock.unbind;
+      public unbindAsync: Mocked<BindingManager>['unbindAsync'] =
+        bindingManagerMock.unbindAsync;
       public unbindAll: Mocked<BindingManager>['unbindAll'] =
         bindingManagerMock.unbindAll;
       public unbindAllSync: Mocked<BindingManager>['unbindAllSync'] =
         bindingManagerMock.unbindAllSync;
-      public unbindSync: Mocked<BindingManager>['unbindSync'] =
-        bindingManagerMock.unbindSync;
+      public unbind: Mocked<BindingManager>['unbind'] =
+        bindingManagerMock.unbind;
     } as Newable<Partial<Mocked<BindingManager>>> as Newable<
       Mocked<BindingManager>
     >;
@@ -991,7 +991,7 @@ describe(Container, () => {
     });
   });
 
-  describe('.rebind', () => {
+  describe('.rebindAsync', () => {
     describe('when called', () => {
       let bindToFluentSyntaxFixture: BindToFluentSyntax<unknown>;
       let serviceIdentifierFixture: ServiceIdentifier;
@@ -1004,18 +1004,18 @@ describe(Container, () => {
         serviceIdentifierFixture = 'service-id';
 
         vitest
-          .mocked(bindingManagerMock.rebind)
+          .mocked(bindingManagerMock.rebindAsync)
           .mockResolvedValueOnce(bindToFluentSyntaxFixture);
 
-        result = await new Container().rebind(serviceIdentifierFixture);
+        result = await new Container().rebindAsync(serviceIdentifierFixture);
       });
 
       afterAll(() => {
         vitest.clearAllMocks();
       });
 
-      it('should call bindingManager.rebind()', () => {
-        expect(bindingManagerMock.rebind).toHaveBeenCalledExactlyOnceWith(
+      it('should call bindingManager.rebindAsync()', () => {
+        expect(bindingManagerMock.rebindAsync).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -1026,7 +1026,7 @@ describe(Container, () => {
     });
   });
 
-  describe('.rebindSync', () => {
+  describe('.rebind', () => {
     describe('when called', () => {
       let bindToFluentSyntaxFixture: BindToFluentSyntax<unknown>;
       let serviceIdentifierFixture: ServiceIdentifier;
@@ -1039,18 +1039,18 @@ describe(Container, () => {
         serviceIdentifierFixture = 'service-id';
 
         vitest
-          .mocked(bindingManagerMock.rebindSync)
+          .mocked(bindingManagerMock.rebind)
           .mockReturnValueOnce(bindToFluentSyntaxFixture);
 
-        result = new Container().rebindSync(serviceIdentifierFixture);
+        result = new Container().rebind(serviceIdentifierFixture);
       });
 
       afterAll(() => {
         vitest.clearAllMocks();
       });
 
-      it('should call bindingManager.rebindSync()', () => {
-        expect(bindingManagerMock.rebindSync).toHaveBeenCalledExactlyOnceWith(
+      it('should call bindingManager.rebind()', () => {
+        expect(bindingManagerMock.rebind).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -1144,7 +1144,7 @@ describe(Container, () => {
     });
   });
 
-  describe('.unbind', () => {
+  describe('.unbindAsync', () => {
     let serviceIdentifierFixture: ServiceIdentifier;
 
     beforeAll(() => {
@@ -1155,17 +1155,17 @@ describe(Container, () => {
       let result: unknown;
 
       beforeAll(async () => {
-        bindingManagerMock.unbind.mockResolvedValueOnce(undefined);
+        bindingManagerMock.unbindAsync.mockResolvedValueOnce(undefined);
 
-        result = await new Container().unbind(serviceIdentifierFixture);
+        result = await new Container().unbindAsync(serviceIdentifierFixture);
       });
 
       afterAll(() => {
         vitest.clearAllMocks();
       });
 
-      it('should call bindingManager.unbind()', () => {
-        expect(bindingManagerMock.unbind).toHaveBeenCalledExactlyOnceWith(
+      it('should call bindingManager.unbindAsync()', () => {
+        expect(bindingManagerMock.unbindAsync).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });
@@ -1176,7 +1176,7 @@ describe(Container, () => {
     });
   });
 
-  describe('unbindSync', () => {
+  describe('unbind', () => {
     let serviceIdentifierFixture: ServiceIdentifier;
 
     beforeAll(() => {
@@ -1187,17 +1187,17 @@ describe(Container, () => {
       let result: unknown;
 
       beforeAll(() => {
-        bindingManagerMock.unbindSync.mockReturnValueOnce(undefined);
+        bindingManagerMock.unbind.mockReturnValueOnce(undefined);
 
-        result = new Container().unbindSync(serviceIdentifierFixture);
+        result = new Container().unbind(serviceIdentifierFixture);
       });
 
       afterAll(() => {
         vitest.clearAllMocks();
       });
 
-      it('should call bindingManager.unbindSync()', () => {
-        expect(bindingManagerMock.unbindSync).toHaveBeenCalledExactlyOnceWith(
+      it('should call bindingManager.unbind()', () => {
+        expect(bindingManagerMock.unbind).toHaveBeenCalledExactlyOnceWith(
           serviceIdentifierFixture,
         );
       });

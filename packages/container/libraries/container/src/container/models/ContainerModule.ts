@@ -46,10 +46,10 @@ export interface ContainerModuleLoadOptions {
   isBound: IsBound;
   onActivation: OnActivation;
   onDeactivation: OnDeactivation;
-  rebind: Rebind;
-  rebindSync: RebindSync;
-  unbind: Unbind;
-  unbindSync: UnbindSync;
+  rebindAsync: Rebind;
+  rebind: RebindSync;
+  unbindAsync: Unbind;
+  unbind: UnbindSync;
 }
 
 export class ContainerModule {

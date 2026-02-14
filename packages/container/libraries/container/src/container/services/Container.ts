@@ -197,26 +197,26 @@ export class Container {
     this.#snapshotManager.restore();
   }
 
-  public async rebind<T>(
+  public async rebindAsync<T>(
     serviceIdentifier: ServiceIdentifier<T>,
   ): Promise<BindToFluentSyntax<T>> {
-    return this.#bindingManager.rebind(serviceIdentifier);
+    return this.#bindingManager.rebindAsync(serviceIdentifier);
   }
 
-  public rebindSync<T>(
+  public rebind<T>(
     serviceIdentifier: ServiceIdentifier<T>,
   ): BindToFluentSyntax<T> {
-    return this.#bindingManager.rebindSync(serviceIdentifier);
+    return this.#bindingManager.rebind(serviceIdentifier);
   }
 
   public snapshot(): void {
     this.#snapshotManager.snapshot();
   }
 
-  public async unbind(
+  public async unbindAsync(
     identifier: BindingIdentifier | ServiceIdentifier,
   ): Promise<void> {
-    await this.#bindingManager.unbind(identifier);
+    await this.#bindingManager.unbindAsync(identifier);
   }
 
   public async unbindAll(): Promise<void> {
@@ -227,8 +227,8 @@ export class Container {
     this.#bindingManager.unbindAllSync();
   }
 
-  public unbindSync(identifier: BindingIdentifier | ServiceIdentifier): void {
-    this.#bindingManager.unbindSync(identifier);
+  public unbind(identifier: BindingIdentifier | ServiceIdentifier): void {
+    this.#bindingManager.unbind(identifier);
   }
 
   public async unloadAsync(...modules: ContainerModule[]): Promise<void> {

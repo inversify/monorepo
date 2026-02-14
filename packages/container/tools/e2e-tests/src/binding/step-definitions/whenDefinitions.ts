@@ -50,7 +50,7 @@ async function whenServiceBindingsAreUnbound(
 
   await getContainerOrFail
     .bind(this)(parsedContainerAlias)
-    .unbind(parsedServiceAlias);
+    .unbindAsync(parsedServiceAlias);
 }
 
 async function whenBindingByIdIsUnbound(
@@ -63,7 +63,7 @@ async function whenBindingByIdIsUnbound(
 
   await getContainerOrFail
     .bind(this)(parsedContainerAlias)
-    .unbind(
+    .unbindAsync(
       getBindingIdentifierOrFail.bind(this)(parsedBindingAlias).identifier,
     );
 }

@@ -10,8 +10,8 @@ import {
 
 import { BindingConstraints } from '@inversifyjs/core';
 
-vitest.mock('./isBindingConstraintsWithServiceId');
-vitest.mock('./isNoAncestorBindingConstraints');
+vitest.mock(import('./isBindingConstraintsWithServiceId.js'));
+vitest.mock(import('./isNoAncestorBindingConstraints.js'));
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 

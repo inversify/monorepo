@@ -37,9 +37,9 @@ describe('Issue 1416', () => {
     container.get(Test3);
 
     await Promise.all([
-      container.unbind(Test1),
-      container.unbind(Test2),
-      container.unbind(Test3),
+      container.unbindAsync(Test1),
+      container.unbindAsync(Test2),
+      container.unbindAsync(Test3),
     ]);
 
     expect(test1.onDestroyMock).toHaveBeenCalledTimes(1);

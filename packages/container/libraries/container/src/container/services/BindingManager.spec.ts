@@ -488,7 +488,7 @@ describe(BindingManager, () => {
     });
   });
 
-  describe('.rebind', () => {
+  describe('.rebindAsync', () => {
     describe('when called', () => {
       let bindingFixture: Binding<unknown>;
       let serviceIdentifierFixture: ServiceIdentifier;
@@ -508,7 +508,7 @@ describe(BindingManager, () => {
           defaultScopeFixture,
           planResultCacheManagerMock,
           serviceReferenceManagerMock,
-        ).rebind(serviceIdentifierFixture);
+        ).rebindAsync(serviceIdentifierFixture);
       });
 
       afterAll(() => {
@@ -573,7 +573,7 @@ describe(BindingManager, () => {
     });
   });
 
-  describe('.rebindSync', () => {
+  describe('.rebind', () => {
     describe('when called', () => {
       let bindingFixture: Binding<unknown>;
       let serviceIdentifierFixture: ServiceIdentifier;
@@ -593,7 +593,7 @@ describe(BindingManager, () => {
           defaultScopeFixture,
           planResultCacheManagerMock,
           serviceReferenceManagerMock,
-        ).rebindSync(serviceIdentifierFixture);
+        ).rebind(serviceIdentifierFixture);
       });
 
       afterAll(() => {
@@ -658,7 +658,7 @@ describe(BindingManager, () => {
     });
   });
 
-  describe('.unbind', () => {
+  describe('.unbindAsync', () => {
     describe('having a ServiceIdentifier', () => {
       let serviceIdentifierFixture: ServiceIdentifier;
 
@@ -682,7 +682,7 @@ describe(BindingManager, () => {
             defaultScopeFixture,
             planResultCacheManagerMock,
             serviceReferenceManagerMock,
-          ).unbind(serviceIdentifierFixture);
+          ).unbindAsync(serviceIdentifierFixture);
         });
 
         afterAll(() => {
@@ -758,7 +758,7 @@ describe(BindingManager, () => {
             defaultScopeFixture,
             planResultCacheManagerMock,
             serviceReferenceManagerMock,
-          ).unbind(serviceIdentifierFixture);
+          ).unbindAsync(serviceIdentifierFixture);
         });
 
         afterAll(() => {
@@ -855,7 +855,7 @@ describe(BindingManager, () => {
             defaultScopeFixture,
             planResultCacheManagerMock,
             serviceReferenceManagerMock,
-          ).unbind(bindingIdentifierFixture);
+          ).unbindAsync(bindingIdentifierFixture);
         });
 
         afterAll(() => {
@@ -931,7 +931,7 @@ describe(BindingManager, () => {
             defaultScopeFixture,
             planResultCacheManagerMock,
             serviceReferenceManagerMock,
-          ).unbind(bindingIdentifierFixture);
+          ).unbindAsync(bindingIdentifierFixture);
         });
 
         afterAll(() => {

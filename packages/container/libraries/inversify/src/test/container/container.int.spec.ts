@@ -10,7 +10,7 @@ import {
 } from '../..';
 
 describe(Container, () => {
-  it('Should unbind a binding when requested', async () => {
+  it('Should unbindAsync a binding when requested', async () => {
     @injectable()
     class Ninja {}
     const ninjaId: string = 'Ninja';
@@ -18,12 +18,12 @@ describe(Container, () => {
     const container: Container = new Container();
     container.bind<Ninja>(ninjaId).to(Ninja);
 
-    await container.unbind(ninjaId);
+    await container.unbindAsync(ninjaId);
 
     expect(container.isBound(ninjaId)).toBe(false);
   });
 
-  it('Should unbind a binding when requested and avoid unbinding a binding when not requested', async () => {
+  it('Should unbindAsync a binding when requested and avoid unbinding a binding when not requested', async () => {
     @injectable()
     class Ninja {}
 
@@ -40,7 +40,7 @@ describe(Container, () => {
     expect(container.isBound(ninjaId)).toBe(true);
     expect(container.isBound(samuraiId)).toBe(true);
 
-    await container.unbind(ninjaId);
+    await container.unbindAsync(ninjaId);
 
     expect(container.isBound(ninjaId)).toBe(false);
     expect(container.isBound(samuraiId)).toBe(true);
@@ -148,7 +148,7 @@ Binding constraints:
 
     container.snapshot(); // snapshot container = v1
 
-    await container.unbind(Ninja);
+    await container.unbindAsync(Ninja);
 
     expect(container.get(Samurai)).toBeInstanceOf(Samurai);
     expect(() => container.get(Ninja))
@@ -242,7 +242,7 @@ Binding constraints:
     container.restore();
 
     container.get(sid);
-    await container.unbind(sid);
+    await container.unbindAsync(sid);
 
     expect(activated).to.equal(false);
     expect(deactivated).to.equal(false);
@@ -791,7 +791,7 @@ Binding constraints:
     ).toBe(true);
   });
 
-  it('Should be able to override a binding using rebind', async () => {
+  it('Should be able to override a binding using rebindAsync', async () => {
     // eslint-disable-next-line @typescript-eslint/typedef
     const TYPES = {
       someType: 'someType',
@@ -808,7 +808,7 @@ Binding constraints:
 
     expect(values1[1]).toBe(2);
 
-    await container.unbind(TYPES.someType);
+    await container.unbindAsync(TYPES.someType);
 
     container.bind<number>(TYPES.someType).toConstantValue(3);
     const values2: unknown[] = container.getAll(TYPES.someType);

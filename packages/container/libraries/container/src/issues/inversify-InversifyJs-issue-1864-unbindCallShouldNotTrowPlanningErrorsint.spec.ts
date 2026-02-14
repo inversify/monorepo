@@ -7,7 +7,7 @@ import { inject, multiInject } from '@inversifyjs/core';
 import { Container } from '../container/services/Container';
 
 describe('inversify/InversifyJS#1864', () => {
-  it('Container unbind request should not throw planning errors', () => {
+  it('Container unbindAsync request should not throw planning errors', () => {
     class Foo {
       constructor(@inject('bar') _bar: string) {}
     }
@@ -19,9 +19,9 @@ describe('inversify/InversifyJS#1864', () => {
     container.get(Foo);
 
     expect(() => {
-      container.unbindSync('bar');
-      container.unbindSync(Foo);
-      container.unbindSync(Foo);
+      container.unbind('bar');
+      container.unbind(Foo);
+      container.unbind(Foo);
     }).not.toThrowError();
   });
 
