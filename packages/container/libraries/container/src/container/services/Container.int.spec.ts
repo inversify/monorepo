@@ -83,7 +83,7 @@ describe(Container, () => {
           container.get(Arsenal);
 
           // Unbind all bindings
-          await container.unbindAll();
+          await container.unbindAllAsync();
 
           // Second call to get Arsenal
           try {

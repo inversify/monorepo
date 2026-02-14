@@ -99,17 +99,17 @@ export class BindingManager {
     await this.#unbindAsync(identifier);
   }
 
-  public async unbindAll(): Promise<void> {
+  public async unbindAllAsync(): Promise<void> {
     await this.#unbindAll();
   }
 
-  public unbindAllSync(): void {
+  public unbindAll(): void {
     const result: void | Promise<void> = this.#unbindAll();
 
     if (result !== undefined) {
       throw new InversifyContainerError(
         InversifyContainerErrorKind.invalidOperation,
-        'Unexpected asynchronous deactivation when unbinding all services. Consider using Container.unbindAll() instead.',
+        'Unexpected asynchronous deactivation when unbinding all services. Consider using Container.unbindAllAsync() instead.',
       );
     }
   }

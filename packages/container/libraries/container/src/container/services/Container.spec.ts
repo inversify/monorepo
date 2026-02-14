@@ -105,7 +105,7 @@ describe(Container, () => {
       rebindAsync: vitest.fn(),
       unbind: vitest.fn(),
       unbindAll: vitest.fn(),
-      unbindAllSync: vitest.fn(),
+      unbindAllAsync: vitest.fn(),
       unbindAsync: vitest.fn(),
     } as Partial<Mocked<BindingManager>> as Mocked<BindingManager>;
     bindingManagerClassMock = class implements Partial<Mocked<BindingManager>> {
@@ -120,10 +120,10 @@ describe(Container, () => {
         bindingManagerMock.rebind;
       public unbindAsync: Mocked<BindingManager>['unbindAsync'] =
         bindingManagerMock.unbindAsync;
+      public unbindAllAsync: Mocked<BindingManager>['unbindAllAsync'] =
+        bindingManagerMock.unbindAllAsync;
       public unbindAll: Mocked<BindingManager>['unbindAll'] =
         bindingManagerMock.unbindAll;
-      public unbindAllSync: Mocked<BindingManager>['unbindAllSync'] =
-        bindingManagerMock.unbindAllSync;
       public unbind: Mocked<BindingManager>['unbind'] =
         bindingManagerMock.unbind;
     } as Newable<Partial<Mocked<BindingManager>>> as Newable<
@@ -1208,14 +1208,14 @@ describe(Container, () => {
     });
   });
 
-  describe('.unbindAll', () => {
+  describe('.unbindAllAsync', () => {
     describe('when called', () => {
       let result: unknown;
 
       beforeAll(async () => {
-        bindingManagerMock.unbindAll.mockResolvedValueOnce(undefined);
+        bindingManagerMock.unbindAllAsync.mockResolvedValueOnce(undefined);
 
-        result = await new Container().unbindAll();
+        result = await new Container().unbindAllAsync();
       });
 
       afterAll(() => {
@@ -1223,7 +1223,9 @@ describe(Container, () => {
       });
 
       it('should call bindingManager.unbindAll()', () => {
-        expect(bindingManagerMock.unbindAll).toHaveBeenCalledExactlyOnceWith();
+        expect(
+          bindingManagerMock.unbindAllAsync,
+        ).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {
@@ -1232,14 +1234,14 @@ describe(Container, () => {
     });
   });
 
-  describe('.unbindAllSync', () => {
+  describe('.unbindAll', () => {
     describe('when called', () => {
       let result: unknown;
 
       beforeAll(() => {
-        bindingManagerMock.unbindAllSync.mockReturnValueOnce(undefined);
+        bindingManagerMock.unbindAll.mockReturnValueOnce(undefined);
 
-        result = new Container().unbindAllSync();
+        result = new Container().unbindAll();
       });
 
       afterAll(() => {
@@ -1247,9 +1249,7 @@ describe(Container, () => {
       });
 
       it('should call bindingManager.unbindAllSync()', () => {
-        expect(
-          bindingManagerMock.unbindAllSync,
-        ).toHaveBeenCalledExactlyOnceWith();
+        expect(bindingManagerMock.unbindAll).toHaveBeenCalledExactlyOnceWith();
       });
 
       it('should return undefined', () => {
