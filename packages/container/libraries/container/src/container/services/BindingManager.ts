@@ -77,26 +77,26 @@ export class BindingManager {
     return this.#isAnyValidBinding(serviceIdentifier, bindings, options);
   }
 
-  public async rebind<T>(
+  public async rebindAsync<T>(
     serviceIdentifier: ServiceIdentifier<T>,
   ): Promise<BindToFluentSyntax<T>> {
-    await this.unbind(serviceIdentifier);
+    await this.unbindAsync(serviceIdentifier);
 
     return this.bind(serviceIdentifier);
   }
 
-  public rebindSync<T>(
+  public rebind<T>(
     serviceIdentifier: ServiceIdentifier<T>,
   ): BindToFluentSyntax<T> {
-    this.unbindSync(serviceIdentifier);
+    this.unbind(serviceIdentifier);
 
     return this.bind(serviceIdentifier);
   }
 
-  public async unbind(
+  public async unbindAsync(
     identifier: BindingIdentifier | ServiceIdentifier,
   ): Promise<void> {
-    await this.#unbind(identifier);
+    await this.#unbindAsync(identifier);
   }
 
   public async unbindAll(): Promise<void> {
@@ -114,8 +114,8 @@ export class BindingManager {
     }
   }
 
-  public unbindSync(identifier: BindingIdentifier | ServiceIdentifier): void {
-    const result: void | Promise<void> = this.#unbind(identifier);
+  public unbind(identifier: BindingIdentifier | ServiceIdentifier): void {
+    const result: void | Promise<void> = this.#unbindAsync(identifier);
 
     if (result !== undefined) {
       this.#throwUnexpectedAsyncUnbindOperation(identifier);
@@ -144,12 +144,12 @@ export class BindingManager {
 
       if (bindingServiceIdentifier === undefined) {
         errorMessage =
-          'Unexpected asynchronous deactivation when unbinding binding identifier. Consider using Container.unbind() instead.';
+          'Unexpected asynchronous deactivation when unbinding binding identifier. Consider using Container.unbindAsync() instead.';
       } else {
-        errorMessage = `Unexpected asynchronous deactivation when unbinding "${stringifyServiceIdentifier(bindingServiceIdentifier)}" binding. Consider using Container.unbind() instead.`;
+        errorMessage = `Unexpected asynchronous deactivation when unbinding "${stringifyServiceIdentifier(bindingServiceIdentifier)}" binding. Consider using Container.unbindAsync() instead.`;
       }
     } else {
-      errorMessage = `Unexpected asynchronous deactivation when unbinding "${stringifyServiceIdentifier(identifier)}" service. Consider using Container.unbind() instead.`;
+      errorMessage = `Unexpected asynchronous deactivation when unbinding "${stringifyServiceIdentifier(identifier)}" service. Consider using Container.unbindAsync() instead.`;
     }
 
     throw new InversifyContainerError(
@@ -158,7 +158,7 @@ export class BindingManager {
     );
   }
 
-  #unbind(
+  #unbindAsync(
     identifier: BindingIdentifier | ServiceIdentifier,
   ): void | Promise<void> {
     if (isBindingIdentifier(identifier)) {

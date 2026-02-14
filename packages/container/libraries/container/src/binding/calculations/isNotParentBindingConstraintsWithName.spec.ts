@@ -10,8 +10,8 @@ import {
 
 import { BindingConstraints, MetadataName } from '@inversifyjs/core';
 
-vitest.mock('./isBindingConstraintsWithName');
-vitest.mock('./isNotParentBindingConstraints');
+vitest.mock(import('./isBindingConstraintsWithName.js'));
+vitest.mock(import('./isNotParentBindingConstraints.js'));
 
 import { isBindingConstraintsWithName } from './isBindingConstraintsWithName';
 import { isNotParentBindingConstraints } from './isNotParentBindingConstraints';

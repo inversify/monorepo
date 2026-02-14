@@ -1,12 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/framework-core');
+vitest.mock(import('@inversifyjs/framework-core'));
 
-vitest.mock('./getControllerMethodParameterMetadataList');
-vitest.mock('./getControllerMethodStatusCodeMetadata');
-vitest.mock('./getControllerMethodHeaderMetadata');
-vitest.mock('./getControllerMethodUseNativeHandlerMetadata');
-vitest.mock('./buildErrorTypeToErrorFilterMap');
+vitest.mock(import('./getControllerMethodParameterMetadataList.js'));
+vitest.mock(import('./getControllerMethodStatusCodeMetadata.js'));
+vitest.mock(import('./getControllerMethodHeaderMetadata.js'));
+vitest.mock(import('./getControllerMethodUseNativeHandlerMetadata.js'));
+vitest.mock(import('./buildErrorTypeToErrorFilterMap.js'));
 
 import {
   buildMiddlewareOptionsFromApplyMiddlewareOptions,

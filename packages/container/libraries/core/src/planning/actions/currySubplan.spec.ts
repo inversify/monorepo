@@ -9,12 +9,12 @@ import {
 } from 'vitest';
 
 vitest.mock(
-  '../calculations/tryBuildGetPlanOptionsFromManagedClassElementMetadata',
+  import('../calculations/tryBuildGetPlanOptionsFromManagedClassElementMetadata.js'),
 );
 vitest.mock(
-  '../calculations/tryBuildGetPlanOptionsFromResolvedValueElementMetadata',
+  import('../calculations/tryBuildGetPlanOptionsFromResolvedValueElementMetadata.js'),
 );
-vitest.mock('./cacheNonRootPlanServiceNode');
+vitest.mock(import('./cacheNonRootPlanServiceNode.js'));
 
 import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures';
 import { ResolvedValueBindingFixtures } from '../../binding/fixtures/ResolvedValueBindingFixtures';

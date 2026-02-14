@@ -10,8 +10,8 @@ import {
 
 import { Newable } from '@inversifyjs/common';
 
-vitest.mock('../../binding/actions/getBindingId');
-vitest.mock('../../metadata/calculations/getClassMetadata');
+vitest.mock(import('../../binding/actions/getBindingId.js'));
+vitest.mock(import('../../metadata/calculations/getClassMetadata.js'));
 
 import { getBindingId } from '../../binding/actions/getBindingId';
 import { Binding } from '../../binding/models/Binding';

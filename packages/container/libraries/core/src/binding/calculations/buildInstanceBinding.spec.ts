@@ -2,8 +2,8 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 import { Newable } from '@inversifyjs/common';
 
-vitest.mock('../../metadata/calculations/getClassMetadata');
-vitest.mock('../actions/getBindingId');
+vitest.mock(import('../../metadata/calculations/getClassMetadata.js'));
+vitest.mock(import('../actions/getBindingId.js'));
 
 import { getClassMetadata } from '../../metadata/calculations/getClassMetadata';
 import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures';

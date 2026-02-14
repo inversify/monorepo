@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it, Mocked, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/framework-core');
+vitest.mock(import('@inversifyjs/framework-core'));
 
 import {
   ErrorFilter,

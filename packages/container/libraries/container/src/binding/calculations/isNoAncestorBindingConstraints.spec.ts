@@ -10,7 +10,7 @@ import {
 
 import { BindingConstraints } from '@inversifyjs/core';
 
-vitest.mock('./isAnyAncestorBindingConstraints');
+vitest.mock(import('./isAnyAncestorBindingConstraints.js'));
 
 import { isAnyAncestorBindingConstraints } from './isAnyAncestorBindingConstraints';
 import { isNoAncestorBindingConstraints } from './isNoAncestorBindingConstraints';

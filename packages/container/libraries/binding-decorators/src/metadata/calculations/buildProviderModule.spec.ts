@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { getReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { ContainerModuleLoadOptions } from 'inversify';

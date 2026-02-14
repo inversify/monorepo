@@ -14,7 +14,7 @@ describe('inversify/InversifyJS#1857', () => {
     parent.snapshot();
     parent.restore();
 
-    parent.rebindSync<string>('weapon').toConstantValue('Shuriken');
+    parent.rebind<string>('weapon').toConstantValue('Shuriken');
 
     expect(parent.get<string>('weapon')).to.equal('Shuriken');
     expect(container.get<string>('weapon')).to.equal('Shuriken');

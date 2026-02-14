@@ -8,13 +8,13 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/http-core');
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/http-core'));
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 vitest.mock(
-  '../../metadata/actions/mergeOpenApiPathItemObjectIntoOpenApiPaths',
+  import('../../metadata/actions/mergeOpenApiPathItemObjectIntoOpenApiPaths.js'),
 );
-vitest.mock('../actions/mergeOpenApiTypeSchema');
-vitest.mock('../calculations/buildSwaggerUiController');
+vitest.mock(import('../actions/mergeOpenApiTypeSchema.js'));
+vitest.mock(import('../calculations/buildSwaggerUiController.js'));
 
 import {
   buildNormalizedPath,

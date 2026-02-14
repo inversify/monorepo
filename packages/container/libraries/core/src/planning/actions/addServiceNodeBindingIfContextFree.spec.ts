@@ -9,8 +9,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../../error/calculations/isStackOverflowError');
-vitest.mock('./curryBuildServiceNodeBindings', () => {
+vitest.mock(import('../../error/calculations/isStackOverflowError.js'));
+vitest.mock(import('./curryBuildServiceNodeBindings.js'), () => {
   const buildServiceNodeBindingsMock: Mock<
     (
       params: BasePlanParams,
@@ -27,10 +27,14 @@ vitest.mock('./curryBuildServiceNodeBindings', () => {
       .mockReturnValue(buildServiceNodeBindingsMock),
   };
 });
-vitest.mock('./curryLazyBuildPlanServiceNodeFromClassElementMetadata');
-vitest.mock('./curryLazyBuildPlanServiceNodeFromResolvedValueElementMetadata');
-vitest.mock('./currySubplan');
-vitest.mock('./plan');
+vitest.mock(
+  import('./curryLazyBuildPlanServiceNodeFromClassElementMetadata.js'),
+);
+vitest.mock(
+  import('./curryLazyBuildPlanServiceNodeFromResolvedValueElementMetadata.js'),
+);
+vitest.mock(import('./currySubplan.js'));
+vitest.mock(import('./plan.js'));
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 

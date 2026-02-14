@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 import { Left } from '@inversifyjs/common';
 
-vitest.mock('./cloneBindingCache');
+vitest.mock(import('./cloneBindingCache.js'));
 
 import { bindingScopeValues } from '../models/BindingScope';
 import { bindingTypeValues } from '../models/BindingType';

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('./concatenateHeaders');
+vitest.mock(import('./concatenateHeaders.js'));
 
 import { buildSetHeaderMetadata } from './buildSetHeaderMetadata';
 import { concatenateHeaders } from './concatenateHeaders';

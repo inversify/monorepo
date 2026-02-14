@@ -10,11 +10,14 @@ import {
 
 import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
 
-vitest.mock('./buildClassElementMetadataFromMaybeClassElementMetadata', () => ({
-  buildClassElementMetadataFromMaybeClassElementMetadata: vitest
-    .fn()
-    .mockReturnValue(vitest.fn()),
-}));
+vitest.mock(
+  import('./buildClassElementMetadataFromMaybeClassElementMetadata.js'),
+  () => ({
+    buildClassElementMetadataFromMaybeClassElementMetadata: vitest
+      .fn()
+      .mockReturnValue(vitest.fn()),
+  }),
+);
 
 import { ClassElementMetadata } from '../models/ClassElementMetadata';
 import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';

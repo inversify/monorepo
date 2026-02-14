@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
 
-vitest.mock('./assertMetadataFromTypescriptIfManaged');
+vitest.mock(import('./assertMetadataFromTypescriptIfManaged.js'));
 
 import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
 import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';

@@ -10,7 +10,7 @@ import {
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 
-vitest.mock('./resolveBindingsDeactivations');
+vitest.mock(import('./resolveBindingsDeactivations.js'));
 
 import { DeactivationParams } from '../models/DeactivationParams';
 import { resolveBindingsDeactivations } from './resolveBindingsDeactivations';

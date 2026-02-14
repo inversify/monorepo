@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('./getControllerMethodMetadataList');
-vitest.mock('./buildRouterExplorerControllerMethodMetadataList');
+vitest.mock(import('./getControllerMethodMetadataList.js'));
+vitest.mock(import('./buildRouterExplorerControllerMethodMetadataList.js'));
 
 import { Logger } from '@inversifyjs/logger';
 

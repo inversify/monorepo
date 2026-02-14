@@ -9,7 +9,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../calculations/buildFilteredServiceBindings');
+vitest.mock(import('../calculations/buildFilteredServiceBindings.js'));
 
 import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures';
 import { ResolvedValueBindingFixtures } from '../../binding/fixtures/ResolvedValueBindingFixtures';

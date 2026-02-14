@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('./buildOrGetOperationObject');
+vitest.mock(import('./buildOrGetOperationObject.js'));
 
 import {
   OpenApi3Dot1OperationObject,

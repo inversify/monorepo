@@ -9,7 +9,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/core');
+vitest.mock(import('@inversifyjs/core'));
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 import {

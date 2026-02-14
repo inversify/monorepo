@@ -8,8 +8,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./getControllerMetadataList');
-vitest.mock('./buildRouterExplorerControllerMetadata');
+vitest.mock(import('./getControllerMetadataList.js'));
+vitest.mock(import('./buildRouterExplorerControllerMetadata.js'));
 
 import { Logger } from '@inversifyjs/logger';
 import { Container } from 'inversify';

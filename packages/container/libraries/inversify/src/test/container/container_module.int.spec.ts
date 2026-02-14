@@ -29,7 +29,7 @@ describe(ContainerModule, () => {
 
     const warriors: ContainerModule = new ContainerModule(
       async (options: ContainerModuleLoadOptions) => {
-        await options.unbind('A');
+        await options.unbindAsync('A');
 
         expect(() => {
           container.get<string>('A');
@@ -61,7 +61,7 @@ describe(ContainerModule, () => {
       async (options: ContainerModuleLoadOptions) => {
         expect(options.isBound('A')).toBe(true);
 
-        await options.unbind('A');
+        await options.unbindAsync('A');
 
         expect(options.isBound('A')).toBe(false);
       },
@@ -70,7 +70,7 @@ describe(ContainerModule, () => {
     await container.loadAsync(warriors);
   });
 
-  it('Should be able to override a binding using rebind within a container module', async () => {
+  it('Should be able to override a binding using rebindAsync within a container module', async () => {
     // eslint-disable-next-line @typescript-eslint/typedef
     const TYPES = {
       someType: 'someType',
@@ -87,7 +87,7 @@ describe(ContainerModule, () => {
 
     const module2: ContainerModule = new ContainerModule(
       async (options: ContainerModuleLoadOptions) => {
-        await options.unbind(TYPES.someType);
+        await options.unbindAsync(TYPES.someType);
         options.bind<number>(TYPES.someType).toConstantValue(3);
       },
     );
@@ -182,7 +182,7 @@ describe(ContainerModule, () => {
 
     await container.loadAsync(warriors);
     container.get('A');
-    await container.unbind('A');
+    await container.unbindAsync('A');
 
     expect(deact).toBe(true);
   });
@@ -205,7 +205,7 @@ describe(ContainerModule, () => {
 
     container.get('A');
 
-    await container.unbind('A');
+    await container.unbindAsync('A');
 
     expect(deact).toBe(true);
   });
@@ -230,7 +230,7 @@ describe(ContainerModule, () => {
     container.get(serviceIdentifier);
 
     await container.loadAsync(containerModule);
-    await container.unbind(serviceIdentifier);
+    await container.unbindAsync(serviceIdentifier);
 
     expect(onActivationHandlerMock).toHaveBeenCalledTimes(2);
   });
@@ -320,7 +320,7 @@ describe(ContainerModule, () => {
     await container.unloadAsync(module);
 
     container.get(sid);
-    await container.unbind(sid);
+    await container.unbindAsync(sid);
 
     expect(activationCount).toBe(0);
     expect(deactivationCount).toBe(0);
@@ -420,7 +420,7 @@ describe(ContainerModule, () => {
     await container.unloadAsync(module);
 
     container.get(sid);
-    await container.unbind(sid);
+    await container.unbindAsync(sid);
 
     expect(activationCount).toBe(0);
     expect(deactivationCount).toBe(0);
@@ -435,7 +435,7 @@ describe(ContainerModule, () => {
     const container: Container = new Container();
     const module: ContainerModule = new ContainerModule(
       async (options: ContainerModuleLoadOptions) => {
-        await options.unbind(sid);
+        await options.unbindAsync(sid);
       },
     );
 

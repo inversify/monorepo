@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('./assertMetadataFromTypescriptIfManaged');
-vitest.mock('./buildDefaultUnmanagedMetadata');
+vitest.mock(import('./assertMetadataFromTypescriptIfManaged.js'));
+vitest.mock(import('./buildDefaultUnmanagedMetadata.js'));
 
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';

@@ -26,7 +26,7 @@ describe('Container.get should should return right instance when parent binding 
 
     childContainer.get(serviceIdentifier);
 
-    container.unbindSync(serviceIdentifier);
+    container.unbind(serviceIdentifier);
     container.bind(serviceIdentifier).toConstantValue(expectedValue);
 
     result = childContainer.get(serviceIdentifier);

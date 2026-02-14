@@ -11,9 +11,9 @@ import {
 import { ServiceIdentifier } from '@inversifyjs/common';
 
 vitest.mock(
-  '../calculations/buildManagedMetadataFromMaybeClassElementMetadata',
+  import('../calculations/buildManagedMetadataFromMaybeClassElementMetadata.js'),
 );
-vitest.mock('./injectBase');
+vitest.mock(import('./injectBase.js'));
 
 import { decrementPendingClassMetadataCount } from '../actions/decrementPendingClassMetadataCount';
 import { buildManagedMetadataFromMaybeClassElementMetadata } from '../calculations/buildManagedMetadataFromMaybeClassElementMetadata';

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('../calculations/nativeRequestParam');
+vitest.mock(import('../calculations/nativeRequestParam.js'));
 
 import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
 import { nativeRequestParam } from '../calculations/nativeRequestParam';

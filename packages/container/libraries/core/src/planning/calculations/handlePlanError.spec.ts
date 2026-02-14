@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('../../error/calculations/isStackOverflowError');
+vitest.mock(import('../../error/calculations/isStackOverflowError.js'));
 
 import { isStackOverflowError } from '../../error/calculations/isStackOverflowError';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError';

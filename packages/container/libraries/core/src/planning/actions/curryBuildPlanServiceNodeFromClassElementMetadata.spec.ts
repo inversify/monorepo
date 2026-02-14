@@ -8,8 +8,10 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../calculations/buildFilteredServiceBindings');
-vitest.mock('../calculations/checkServiceNodeSingleInjectionBindings');
+vitest.mock(import('../calculations/buildFilteredServiceBindings.js'));
+vitest.mock(
+  import('../calculations/checkServiceNodeSingleInjectionBindings.js'),
+);
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 

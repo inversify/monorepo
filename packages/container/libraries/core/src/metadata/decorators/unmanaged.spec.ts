@@ -9,9 +9,9 @@ import {
 } from 'vitest';
 
 vitest.mock(
-  '../calculations/buildUnmanagedMetadataFromMaybeClassElementMetadata',
+  import('../calculations/buildUnmanagedMetadataFromMaybeClassElementMetadata.js'),
 );
-vitest.mock('./injectBase');
+vitest.mock(import('./injectBase.js'));
 
 import { decrementPendingClassMetadataCount } from '../actions/decrementPendingClassMetadataCount';
 import { buildUnmanagedMetadataFromMaybeClassElementMetadata } from '../calculations/buildUnmanagedMetadataFromMaybeClassElementMetadata';

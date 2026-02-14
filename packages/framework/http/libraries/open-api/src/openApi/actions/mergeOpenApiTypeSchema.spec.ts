@@ -18,10 +18,12 @@ import { SchemaMetadata } from '../../metadata/models/SchemaMetadata';
 import { getSchemaMetadata } from '../calculations/getSchemaMetadata';
 import { mergeOpenApiTypeSchema } from './mergeOpenApiTypeSchema';
 
-vitest.mock('@inversifyjs/json-schema-pointer');
-vitest.mock('@inversifyjs/reflect-metadata-utils');
-vitest.mock('../../metadata/calculations/tryBuildSchemaFromWellKnownType');
-vitest.mock('../calculations/getSchemaMetadata');
+vitest.mock(import('@inversifyjs/json-schema-pointer'));
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
+vitest.mock(
+  import('../../metadata/calculations/tryBuildSchemaFromWellKnownType.js'),
+);
+vitest.mock(import('../calculations/getSchemaMetadata.js'));
 
 describe(mergeOpenApiTypeSchema, () => {
   let escapeJsonPointerFragmentsMock: MockedFunction<

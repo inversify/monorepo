@@ -8,11 +8,13 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('../actions/updateControllerOpenApiMetadataOperationArrayProperty');
+vitest.mock(
+  import('../actions/updateControllerOpenApiMetadataOperationArrayProperty.js'),
+);
 
 import { OpenApi3Dot1SecurityRequirementObject } from '@inversifyjs/open-api-types/v3Dot1';
 

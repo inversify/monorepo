@@ -8,12 +8,12 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/prototype-utils');
+vitest.mock(import('@inversifyjs/prototype-utils'));
 
 import { Newable } from '@inversifyjs/common';
 import { getBaseType } from '@inversifyjs/prototype-utils';
 
-vitest.mock('./injectFrom');
+vitest.mock(import('./injectFrom.js'));
 
 import { InjectFromHierarchyOptions } from '../models/InjectFromHierarchyOptions';
 import { InjectFromOptions } from '../models/InjectFromOptions';

@@ -9,8 +9,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../calculations/buildPlanBindingConstraintsList');
-vitest.mock('./addServiceNodeBindingIfContextFree');
+vitest.mock(import('../calculations/buildPlanBindingConstraintsList.js'));
+vitest.mock(import('./addServiceNodeBindingIfContextFree.js'));
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 

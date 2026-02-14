@@ -8,12 +8,12 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('../actions/updateMaybeClassMetadataPreDestroy');
-vitest.mock('../calculations/handleInjectionError');
+vitest.mock(import('../actions/updateMaybeClassMetadataPreDestroy.js'));
+vitest.mock(import('../calculations/handleInjectionError.js'));
 
 import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
 import { updateMaybeClassMetadataPreDestroy } from '../actions/updateMaybeClassMetadataPreDestroy';

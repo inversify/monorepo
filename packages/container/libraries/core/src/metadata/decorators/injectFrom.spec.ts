@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { Newable } from '@inversifyjs/common';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('../calculations/getClassMetadata');
+vitest.mock(import('../calculations/getClassMetadata.js'));
 
 import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
 import { getClassMetadata } from '../calculations/getClassMetadata';

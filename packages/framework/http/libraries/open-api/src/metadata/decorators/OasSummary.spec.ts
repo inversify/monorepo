@@ -8,11 +8,11 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('../actions/updateControllerOpenApiMetadataSummary');
+vitest.mock(import('../actions/updateControllerOpenApiMetadataSummary.js'));
 
 import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
 import { updateControllerOpenApiMetadataSummary } from '../actions/updateControllerOpenApiMetadataSummary';

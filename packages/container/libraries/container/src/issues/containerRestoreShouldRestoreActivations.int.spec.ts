@@ -28,7 +28,7 @@ describe('Container restore should restore activations', () => {
     container.restore();
 
     container.get(sid);
-    await container.unbind(sid);
+    await container.unbindAsync(sid);
 
     expect(activated).to.equal(false);
     expect(deactivated).to.equal(false);

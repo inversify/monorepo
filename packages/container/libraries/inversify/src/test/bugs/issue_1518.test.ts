@@ -10,7 +10,7 @@ describe('Issue 1518', () => {
 
     console.log(container.get(symbol));
 
-    await container.unbind('foo');
+    await container.unbindAsync('foo');
 
     expect(() => {}).not.toThrow();
   });

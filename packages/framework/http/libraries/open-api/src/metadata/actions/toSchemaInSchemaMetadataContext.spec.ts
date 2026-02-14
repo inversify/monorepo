@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./toSchema');
+vitest.mock(import('./toSchema.js'));
 
 import { toSchema } from './toSchema';
 import { toSchemaInSchemaMetadataContext } from './toSchemaInSchemaMetadataContext';

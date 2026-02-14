@@ -588,7 +588,7 @@ Binding constraints:
 
     expect(subject1.doSomething()).not.toBe(subject2.doSomething());
 
-    await container.unbind('Symbol');
+    await container.unbindAsync('Symbol');
     container.bind<symbol>('Symbol').toConstantValue(Symbol());
 
     const subject3: UseSymbol = container.get('UseSymbol');

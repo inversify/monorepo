@@ -57,7 +57,7 @@ describe(Container, () => {
           container.get(Arsenal);
 
           // Unbind Gun
-          await container.unbind(Gun);
+          await container.unbindAsync(Gun);
 
           // Second call to get Arsenal
           arsenal = container.get(Arsenal);
@@ -150,10 +150,10 @@ Binding constraints:
           // First call to get Arsenal
           container.get(Arsenal);
 
-          // Create and load a ContainerModule to unbind Gun
+          // Create and load a ContainerModule to unbindAsync Gun
           const module: ContainerModule = new ContainerModule(
-            async ({ unbind }: ContainerModuleLoadOptions) => {
-              await unbind(Gun);
+            async ({ unbindAsync }: ContainerModuleLoadOptions) => {
+              await unbindAsync(Gun);
             },
           );
 
@@ -306,7 +306,7 @@ Binding constraints:
         describe('when called container.snapshot() and Ninja is unbound', () => {
           beforeAll(async () => {
             container.snapshot();
-            await container.unbind(Ninja);
+            await container.unbindAsync(Ninja);
           });
 
           it('should not be able to resolve Ninja', () => {

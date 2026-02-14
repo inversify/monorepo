@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
-vitest.mock('../calculations/buildSetHeaderMetadata');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
+vitest.mock(import('../calculations/buildSetHeaderMetadata.js'));
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
