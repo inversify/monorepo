@@ -55,7 +55,7 @@
   },
   "name": "@inversifyjs/ajv-validation",
   "peerDependencies": {
-    "ajv": "^8.17.1"
+    "ajv": "^8.18.0"
   },
   "publishConfig": {
     "access": "public"
