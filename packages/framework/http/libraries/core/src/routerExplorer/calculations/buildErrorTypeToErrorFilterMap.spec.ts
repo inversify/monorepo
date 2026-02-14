@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/framework-core');
-vitest.mock('../../http/actions/setErrorFilterToErrorFilterMap');
+vitest.mock(import('@inversifyjs/framework-core'));
+vitest.mock(import('../../http/actions/setErrorFilterToErrorFilterMap.js'));
 
 import {
   ErrorFilter,

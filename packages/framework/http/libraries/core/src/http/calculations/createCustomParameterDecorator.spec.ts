@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('./requestParam');
+vitest.mock(import('./requestParam.js'));
 
 import { Pipe } from '@inversifyjs/framework-core';
 import { ServiceIdentifier } from 'inversify';

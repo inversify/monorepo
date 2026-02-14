@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
-vitest.mock('../calculations/updateAjvValidationMetadata');
+vitest.mock(import('../calculations/updateAjvValidationMetadata.js'));
 
 import {
   buildEmptyArrayMetadata,

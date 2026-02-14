@@ -9,9 +9,9 @@ import {
 } from 'vitest';
 
 vitest.mock(
-  '../calculations/buildMaybeClassElementMetadataFromMaybeClassElementMetadata',
+  import('../calculations/buildMaybeClassElementMetadataFromMaybeClassElementMetadata.js'),
 );
-vitest.mock('./injectBase');
+vitest.mock(import('./injectBase.js'));
 
 import { incrementPendingClassMetadataCount } from '../actions/incrementPendingClassMetadataCount';
 import { buildMaybeClassElementMetadataFromMaybeClassElementMetadata } from '../calculations/buildMaybeClassElementMetadataFromMaybeClassElementMetadata';

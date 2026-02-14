@@ -9,7 +9,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./resolvePostConstruct');
+vitest.mock(import('./resolvePostConstruct.js'));
 
 import { bindingScopeValues } from '../../binding/models/BindingScope';
 import { bindingTypeValues } from '../../binding/models/BindingType';

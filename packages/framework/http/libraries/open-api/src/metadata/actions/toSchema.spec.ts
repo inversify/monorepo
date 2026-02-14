@@ -8,9 +8,9 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/json-schema-pointer');
-vitest.mock('@inversifyjs/reflect-metadata-utils');
-vitest.mock('../calculations/tryBuildSchemaFromWellKnownType');
+vitest.mock(import('@inversifyjs/json-schema-pointer'));
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
+vitest.mock(import('../calculations/tryBuildSchemaFromWellKnownType.js'));
 
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';

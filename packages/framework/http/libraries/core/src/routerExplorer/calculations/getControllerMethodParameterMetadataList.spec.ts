@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/prototype-utils');
+vitest.mock(import('@inversifyjs/prototype-utils'));
 
 import { findInPrototypeChain } from '@inversifyjs/prototype-utils';
 

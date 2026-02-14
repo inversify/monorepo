@@ -8,8 +8,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../../common/calculations/chain');
-vitest.mock('../../common/models/OneToManyMapStar');
+vitest.mock(import('../../common/calculations/chain.js'));
+vitest.mock(import('../../common/models/OneToManyMapStar.js'));
 
 import { ServiceIdentifier } from '@inversifyjs/common';
 

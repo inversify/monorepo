@@ -9,8 +9,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./cacheResolvedValue');
-vitest.mock('./resolveBindingActivations');
+vitest.mock(import('./cacheResolvedValue.js'));
+vitest.mock(import('./resolveBindingActivations.js'));
 
 import { Right } from '@inversifyjs/common';
 

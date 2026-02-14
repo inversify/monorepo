@@ -10,17 +10,20 @@ import {
 
 import 'reflect-metadata/lite';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
-vitest.mock('../actions/updateMaybeClassMetadataConstructorArgument', () => ({
-  updateMaybeClassMetadataConstructorArgument: vitest.fn(),
-}));
+vitest.mock(
+  import('../actions/updateMaybeClassMetadataConstructorArgument.js'),
+  () => ({
+    updateMaybeClassMetadataConstructorArgument: vitest.fn(),
+  }),
+);
 
-vitest.mock('../actions/updateMaybeClassMetadataProperty', () => ({
+vitest.mock(import('../actions/updateMaybeClassMetadataProperty.js'), () => ({
   updateMaybeClassMetadataProperty: vitest.fn(),
 }));
 
-vitest.mock('../calculations/handleInjectionError');
+vitest.mock(import('../calculations/handleInjectionError.js'));
 
 import { Newable } from '@inversifyjs/common';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';

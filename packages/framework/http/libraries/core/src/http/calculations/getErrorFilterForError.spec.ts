@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/prototype-utils');
+vitest.mock(import('@inversifyjs/prototype-utils'));
 
 import { ErrorFilter } from '@inversifyjs/framework-core';
 import { getBaseType } from '@inversifyjs/prototype-utils';

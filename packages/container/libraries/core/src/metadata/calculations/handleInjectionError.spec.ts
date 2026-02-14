@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('../../decorator/calculations/getDecoratorInfo');
-vitest.mock('../../decorator/calculations/stringifyDecoratorInfo');
+vitest.mock(import('../../decorator/calculations/getDecoratorInfo.js'));
+vitest.mock(import('../../decorator/calculations/stringifyDecoratorInfo.js'));
 
 import { getDecoratorInfo } from '../../decorator/calculations/getDecoratorInfo';
 import { stringifyDecoratorInfo } from '../../decorator/calculations/stringifyDecoratorInfo';

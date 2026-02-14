@@ -1,11 +1,13 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('../actions/setIsInjectableFlag');
-vitest.mock('../actions/updateClassMetadataWithTypescriptParameterTypes');
+vitest.mock(import('../actions/setIsInjectableFlag.js'));
+vitest.mock(
+  import('../actions/updateClassMetadataWithTypescriptParameterTypes.js'),
+);
 
 import {
   BindingScope,

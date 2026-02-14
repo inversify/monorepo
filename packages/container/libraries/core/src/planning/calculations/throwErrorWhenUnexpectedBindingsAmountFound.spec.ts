@@ -1,10 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/common');
+vitest.mock(import('@inversifyjs/common'));
 
 import { stringifyServiceIdentifier } from '@inversifyjs/common';
 
-vitest.mock('../../binding/calculations/stringifyBinding');
+vitest.mock(import('../../binding/calculations/stringifyBinding.js'));
 
 import { stringifyBinding } from '../../binding/calculations/stringifyBinding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';

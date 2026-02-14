@@ -8,9 +8,9 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
-vitest.mock('inversify');
-vitest.mock('../calculations/buildNormalizedPath');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
+vitest.mock(import('inversify'));
+vitest.mock(import('../calculations/buildNormalizedPath.js'));
 
 import {
   buildArrayMetadataWithElement,

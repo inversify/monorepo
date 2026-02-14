@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./curryBuildPlanServiceNodeFromClassElementMetadata');
+vitest.mock(import('./curryBuildPlanServiceNodeFromClassElementMetadata.js'));
 
 import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';

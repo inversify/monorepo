@@ -8,8 +8,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./resolveBindingPreDestroy');
-vitest.mock('./resolveBindingServiceDeactivations');
+vitest.mock(import('./resolveBindingPreDestroy.js'));
+vitest.mock(import('./resolveBindingServiceDeactivations.js'));
 
 import { Right } from '@inversifyjs/common';
 

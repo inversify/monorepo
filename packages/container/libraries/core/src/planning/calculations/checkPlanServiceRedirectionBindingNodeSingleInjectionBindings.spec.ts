@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('./isPlanServiceRedirectionBindingNode');
-vitest.mock('./throwErrorWhenUnexpectedBindingsAmountFound');
+vitest.mock(import('./isPlanServiceRedirectionBindingNode.js'));
+vitest.mock(import('./throwErrorWhenUnexpectedBindingsAmountFound.js'));
 
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
 import { bindingScopeValues } from '../../binding/models/BindingScope';

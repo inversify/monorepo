@@ -9,8 +9,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../actions/addRootServiceNodeBindingIfContextFree');
-vitest.mock('../actions/addServiceNodeBindingIfContextFree');
+vitest.mock(import('../actions/addRootServiceNodeBindingIfContextFree.js'));
+vitest.mock(import('../actions/addServiceNodeBindingIfContextFree.js'));
 
 import { Binding } from '../../binding/models/Binding';
 import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';

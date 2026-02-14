@@ -10,7 +10,7 @@ import {
 
 import { bindingScopeValues, bindingTypeValues } from '@inversifyjs/core';
 
-vitest.mock('./getPluginDisposeBindingMap');
+vitest.mock(import('./getPluginDisposeBindingMap.js'));
 
 import { BindingDisposeMetadata } from '../models/BindingDisposeMetadata';
 import { SingletonScopedBinding } from '../models/SingletonScopedBinding';

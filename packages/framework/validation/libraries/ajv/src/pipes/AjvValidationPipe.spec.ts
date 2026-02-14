@@ -8,8 +8,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
-vitest.mock('../calculations/stringifyAjvErrors');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
+vitest.mock(import('../calculations/stringifyAjvErrors.js'));
 
 import { PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';

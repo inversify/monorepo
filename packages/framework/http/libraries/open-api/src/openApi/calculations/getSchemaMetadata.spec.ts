@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('../../metadata/calculations/buildDefaultSchemaMetadata');
+vitest.mock(
+  import('../../metadata/calculations/buildDefaultSchemaMetadata.js'),
+);
 
 import { buildDefaultSchemaMetadata } from '../../metadata/calculations/buildDefaultSchemaMetadata';
 import { SchemaMetadata } from '../../metadata/models/SchemaMetadata';

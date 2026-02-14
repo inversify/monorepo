@@ -1,16 +1,16 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('./getDefaultClassMetadata');
+vitest.mock(import('./getDefaultClassMetadata.js'));
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { Newable } from '@inversifyjs/common';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('./getDefaultClassMetadata');
-vitest.mock('./isPendingClassMetadata');
-vitest.mock('./throwAtInvalidClassMetadata');
-vitest.mock('./validateConstructorMetadataArray');
+vitest.mock(import('./getDefaultClassMetadata.js'));
+vitest.mock(import('./isPendingClassMetadata.js'));
+vitest.mock(import('./throwAtInvalidClassMetadata.js'));
+vitest.mock(import('./validateConstructorMetadataArray.js'));
 
 import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
 import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures';

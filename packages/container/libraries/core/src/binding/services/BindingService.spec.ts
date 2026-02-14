@@ -8,8 +8,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../calculations/buildInstanceBinding');
-vitest.mock('../../common/models/OneToManyMapStar');
+vitest.mock(import('../calculations/buildInstanceBinding.js'));
+vitest.mock(import('../../common/models/OneToManyMapStar.js'));
 
 import { Newable, ServiceIdentifier } from '@inversifyjs/common';
 

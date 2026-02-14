@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('./resolveBindingDeactivations');
+vitest.mock(import('./resolveBindingDeactivations.js'));
 
 import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures';
 import { Binding } from '../../binding/models/Binding';

@@ -8,9 +8,11 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../calculations/buildFilteredServiceBindings');
-vitest.mock('../calculations/buildPlanBindingConstraintsList');
-vitest.mock('../calculations/checkServiceNodeSingleInjectionBindings');
+vitest.mock(import('../calculations/buildFilteredServiceBindings.js'));
+vitest.mock(import('../calculations/buildPlanBindingConstraintsList.js'));
+vitest.mock(
+  import('../calculations/checkServiceNodeSingleInjectionBindings.js'),
+);
 
 import { Binding } from '../../binding/models/Binding';
 import {

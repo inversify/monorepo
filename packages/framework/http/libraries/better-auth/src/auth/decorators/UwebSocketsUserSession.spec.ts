@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/http-core');
+vitest.mock(import('@inversifyjs/http-core'));
 
 import { createCustomParameterDecorator } from '@inversifyjs/http-core';
 

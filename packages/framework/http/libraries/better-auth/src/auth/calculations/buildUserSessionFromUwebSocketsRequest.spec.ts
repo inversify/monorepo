@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../calculations/getBetterAuthFromRequest');
+vitest.mock(import('../calculations/getBetterAuthFromRequest.js'));
 
 import { BetterAuthOptions } from 'better-auth';
 import { HttpRequest } from 'uWebSockets.js';

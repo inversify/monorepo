@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it, Mock, vitest } from 'vitest';
 
-vitest.mock('../actions/getContainerModuleId');
+vitest.mock(import('../actions/getContainerModuleId.js'));
 
 import { getContainerModuleId } from '../actions/getContainerModuleId';
 import { ContainerModule, ContainerModuleLoadOptions } from './ContainerModule';

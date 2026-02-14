@@ -1,8 +1,10 @@
 import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
-vitest.mock('../calculations/updateStandardSchemaValidationMetadata');
+vitest.mock(
+  import('../calculations/updateStandardSchemaValidationMetadata.js'),
+);
 
 import {
   buildEmptyArrayMetadata,

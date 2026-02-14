@@ -8,7 +8,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../actions/getFirstIteratorResult');
+vitest.mock(import('../actions/getFirstIteratorResult.js'));
 
 import { getFirstIteratorResult } from '../actions/getFirstIteratorResult';
 import { getFirstIterableResult } from './getFirstIterableResult';

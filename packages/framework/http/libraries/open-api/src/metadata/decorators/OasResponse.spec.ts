@@ -8,13 +8,13 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-vitest.mock('../actions/toSchemaInControllerMetadataContext');
+vitest.mock(import('../actions/toSchemaInControllerMetadataContext.js'));
 vitest.mock(
-  '../actions/updateControllerOpenApiMetadataOperationRecordProperty',
+  import('../actions/updateControllerOpenApiMetadataOperationRecordProperty.js'),
 );
 
 import { HttpStatusCode } from '@inversifyjs/http-core';

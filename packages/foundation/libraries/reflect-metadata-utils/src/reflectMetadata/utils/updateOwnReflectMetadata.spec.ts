@@ -10,7 +10,7 @@ import {
 
 import 'reflect-metadata/lite';
 
-vitest.mock('./getOwnReflectMetadata');
+vitest.mock(import('./getOwnReflectMetadata.js'));
 
 import { getOwnReflectMetadata } from './getOwnReflectMetadata';
 import { updateOwnReflectMetadata } from './updateOwnReflectMetadata';

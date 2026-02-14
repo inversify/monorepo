@@ -8,8 +8,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('@inversifyjs/reflect-metadata-utils');
-vitest.mock('../actions/updateMetadataMap');
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
+vitest.mock(import('../actions/updateMetadataMap.js'));
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {

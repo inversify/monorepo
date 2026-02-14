@@ -8,9 +8,9 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock('../calculations/buildCatchErrorMetadata');
-vitest.mock('@inversifyjs/reflect-metadata-utils');
-vitest.mock('inversify');
+vitest.mock(import('../calculations/buildCatchErrorMetadata.js'));
+vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
+vitest.mock(import('inversify'));
 
 import {
   buildEmptySetMetadata,
