@@ -249,7 +249,7 @@ describe(ContainerModule, () => {
 
     expect(container.getAll(sid)).toStrictEqual(['Not module', 'Module']);
 
-    await container.unload(module);
+    await container.unloadAsync(module);
 
     expect(container.getAll(sid)).toStrictEqual(['Not module']);
   });
@@ -277,7 +277,7 @@ describe(ContainerModule, () => {
 
     container.get(sid);
 
-    await container.unload(module);
+    await container.unloadAsync(module);
 
     expect(moduleBindingDeactivated).to.equal('Module');
     expect(containerDeactivated).to.equal('Module');
@@ -317,7 +317,7 @@ describe(ContainerModule, () => {
     );
 
     await container.loadAsync(module);
-    await container.unload(module);
+    await container.unloadAsync(module);
 
     container.get(sid);
     await container.unbind(sid);
@@ -347,7 +347,7 @@ describe(ContainerModule, () => {
 
     expect(values).toStrictEqual(['Not module', 'Module']);
 
-    await container.unload(module);
+    await container.unloadAsync(module);
     values = container.getAll(sid);
 
     expect(values).toStrictEqual(['Not module']);
@@ -376,7 +376,7 @@ describe(ContainerModule, () => {
     await container.loadAsync(module);
     container.get(sid);
 
-    await container.unload(module);
+    await container.unloadAsync(module);
 
     expect(moduleBindingDeactivated).toBe('Module');
     expect(containerDeactivated).toBe('Module');
@@ -417,7 +417,7 @@ describe(ContainerModule, () => {
     );
 
     await container.loadAsync(module);
-    await container.unload(module);
+    await container.unloadAsync(module);
 
     container.get(sid);
     await container.unbind(sid);

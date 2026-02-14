@@ -235,7 +235,7 @@ Binding constraints:
         });
       });
 
-      describe('when Container.load() is called and Container.unloadSync() is called to remove a module', () => {
+      describe('when Container.load() is called and Container.unload() is called to remove a module', () => {
         let container: Container;
         let arsenal: Arsenal;
         let module: ContainerModule;
@@ -259,7 +259,7 @@ Binding constraints:
           arsenalGunsBeforeUnload = arsenal.guns;
 
           // Unload the module
-          container.unloadSync(module);
+          container.unload(module);
 
           // Second call to get Arsenal
           arsenal = container.get(Arsenal);

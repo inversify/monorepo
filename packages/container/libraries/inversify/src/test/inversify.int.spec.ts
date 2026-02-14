@@ -418,7 +418,7 @@ describe('InversifyJS', () => {
     };
 
     // unload
-    await container.unload(warriors);
+    await container.unloadAsync(warriors);
 
     expect(tryGetNinja).toThrowError(`No bindings found for service: "Ninja".
 
@@ -430,7 +430,7 @@ Binding constraints:
     expect(tryGetKatana).not.toThrowError();
     expect(tryGetShuruken).not.toThrowError();
 
-    await container.unload(weapons);
+    await container.unloadAsync(weapons);
 
     expect(tryGetNinja).toThrowError(`No bindings found for service: "Ninja".
 

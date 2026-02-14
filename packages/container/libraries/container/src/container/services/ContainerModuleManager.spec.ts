@@ -8,6 +8,8 @@ import {
   vitest,
 } from 'vitest';
 
+vitest.mock(import('@inversifyjs/core'));
+
 import { ServiceIdentifier } from '@inversifyjs/common';
 import {
   ActivationsService,
@@ -19,6 +21,7 @@ import {
   DeactivationParams,
   DeactivationsService,
   PlanResultCacheService,
+  resolveModuleDeactivations,
 } from '@inversifyjs/core';
 
 import { BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax';
@@ -61,16 +64,20 @@ describe(ContainerModuleManager, () => {
       Mocked<PlanResultCacheManager>
     > as Mocked<PlanResultCacheManager>;
     serviceReferenceManagerMock = {
-      activationService: {} as Partial<
-        Mocked<ActivationsService>
-      > as Mocked<ActivationsService>,
-      bindingService: {} as Partial<
-        Mocked<BindingService>
-      > as Mocked<BindingService>,
-      deactivationService: {} as Partial<
+      activationService: {
+        removeAllByModuleId: vitest.fn(),
+      } as Partial<Mocked<ActivationsService>> as Mocked<ActivationsService>,
+      bindingService: {
+        removeAllByModuleId: vitest.fn(),
+      } as Partial<Mocked<BindingService>> as Mocked<BindingService>,
+      deactivationService: {
+        removeAllByModuleId: vitest.fn(),
+      } as Partial<
         Mocked<DeactivationsService>
       > as Mocked<DeactivationsService>,
-      planResultCacheService: {} as Partial<
+      planResultCacheService: {
+        clearCache: vitest.fn(),
+      } as Partial<
         Mocked<PlanResultCacheService>
       > as Mocked<PlanResultCacheService>,
     } as Partial<
@@ -109,7 +116,7 @@ describe(ContainerModuleManager, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call containerModule.load', () => {
+      it('should call containerModule.load()', () => {
         const options: ContainerModuleLoadOptions = {
           bind: expect.any(Function) as unknown as <T>(
             serviceIdentifier: ServiceIdentifier<T>,
@@ -167,7 +174,7 @@ describe(ContainerModuleManager, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call containerModule.load', () => {
+      it('should call containerModule.load()', () => {
         const options: ContainerModuleLoadOptions = {
           bind: expect.any(Function) as unknown as <T>(
             serviceIdentifier: ServiceIdentifier<T>,
@@ -240,7 +247,7 @@ describe(ContainerModuleManager, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call containerModule.load', () => {
+      it('should call containerModule.load()', () => {
         const options: ContainerModuleLoadOptions = {
           bind: expect.any(Function) as unknown as <T>(
             serviceIdentifier: ServiceIdentifier<T>,
@@ -302,7 +309,7 @@ describe(ContainerModuleManager, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call containerModule.load', () => {
+      it('should call containerModule.load()', () => {
         const options: ContainerModuleLoadOptions = {
           bind: expect.any(Function) as unknown as <T>(
             serviceIdentifier: ServiceIdentifier<T>,
@@ -343,6 +350,253 @@ describe(ContainerModuleManager, () => {
           kind: InversifyContainerErrorKind.invalidOperation,
           message:
             'Unexpected asynchronous module load. Consider using container.loadAsync() instead.',
+        };
+
+        expect(result).toBeInstanceOf(InversifyContainerError);
+        expect(result).toStrictEqual(
+          expect.objectContaining(expectedErrorProperties),
+        );
+      });
+    });
+  });
+
+  describe('.unloadAsync', () => {
+    let syncContainerModuleMock: Mocked<ContainerModule>;
+    let asyncContainerModuleMock: Mocked<ContainerModule>;
+
+    beforeAll(() => {
+      syncContainerModuleMock = {
+        id: 1,
+        load: vitest.fn().mockReturnValue(undefined),
+      } as Partial<Mocked<ContainerModule>> as Mocked<ContainerModule>;
+
+      asyncContainerModuleMock = {
+        id: 2,
+        load: vitest.fn().mockResolvedValue(undefined),
+      } as Partial<Mocked<ContainerModule>> as Mocked<ContainerModule>;
+    });
+
+    describe('when called with a sync module', () => {
+      let result: unknown;
+
+      beforeAll(async () => {
+        vitest.mocked(resolveModuleDeactivations).mockReturnValue(undefined);
+
+        result = await new ContainerModuleManager(
+          bindingManagerMock,
+          deactivationParamsFixture,
+          defaultScopeFixture,
+          planResultCacheManagerMock,
+          serviceReferenceManagerMock,
+        ).unloadAsync(syncContainerModuleMock);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call resolveModuleDeactivations()', () => {
+        expect(resolveModuleDeactivations).toHaveBeenCalledExactlyOnceWith(
+          deactivationParamsFixture,
+          syncContainerModuleMock.id,
+        );
+      });
+
+      it('should call activationService.removeAllByModuleId()', () => {
+        expect(
+          serviceReferenceManagerMock.activationService.removeAllByModuleId,
+        ).toHaveBeenCalledExactlyOnceWith(syncContainerModuleMock.id);
+      });
+
+      it('should call bindingService.removeAllByModuleId()', () => {
+        expect(
+          serviceReferenceManagerMock.bindingService.removeAllByModuleId,
+        ).toHaveBeenCalledExactlyOnceWith(syncContainerModuleMock.id);
+      });
+
+      it('should call deactivationService.removeAllByModuleId()', () => {
+        expect(
+          serviceReferenceManagerMock.deactivationService.removeAllByModuleId,
+        ).toHaveBeenCalledExactlyOnceWith(syncContainerModuleMock.id);
+      });
+
+      it('should call planResultCacheService.clearCache()', () => {
+        expect(
+          serviceReferenceManagerMock.planResultCacheService.clearCache,
+        ).toHaveBeenCalledExactlyOnceWith();
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+
+    describe('when called with an async module', () => {
+      let result: unknown;
+
+      beforeAll(async () => {
+        vitest
+          .mocked(resolveModuleDeactivations)
+          .mockResolvedValue(undefined as never);
+
+        result = await new ContainerModuleManager(
+          bindingManagerMock,
+          deactivationParamsFixture,
+          defaultScopeFixture,
+          planResultCacheManagerMock,
+          serviceReferenceManagerMock,
+        ).unloadAsync(asyncContainerModuleMock);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call resolveModuleDeactivations()', () => {
+        expect(resolveModuleDeactivations).toHaveBeenCalledExactlyOnceWith(
+          deactivationParamsFixture,
+          asyncContainerModuleMock.id,
+        );
+      });
+
+      it('should call activationService.removeAllByModuleId()', () => {
+        expect(
+          serviceReferenceManagerMock.activationService.removeAllByModuleId,
+        ).toHaveBeenCalledExactlyOnceWith(asyncContainerModuleMock.id);
+      });
+
+      it('should call bindingService.removeAllByModuleId()', () => {
+        expect(
+          serviceReferenceManagerMock.bindingService.removeAllByModuleId,
+        ).toHaveBeenCalledExactlyOnceWith(asyncContainerModuleMock.id);
+      });
+
+      it('should call deactivationService.removeAllByModuleId()', () => {
+        expect(
+          serviceReferenceManagerMock.deactivationService.removeAllByModuleId,
+        ).toHaveBeenCalledExactlyOnceWith(asyncContainerModuleMock.id);
+      });
+
+      it('should call planResultCacheService.clearCache()', () => {
+        expect(
+          serviceReferenceManagerMock.planResultCacheService.clearCache,
+        ).toHaveBeenCalledExactlyOnceWith();
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe('.unload', () => {
+    let syncContainerModuleMock: Mocked<ContainerModule>;
+    let asyncContainerModuleMock: Mocked<ContainerModule>;
+
+    beforeAll(() => {
+      syncContainerModuleMock = {
+        id: 1,
+        load: vitest.fn().mockReturnValue(undefined),
+      } as Partial<Mocked<ContainerModule>> as Mocked<ContainerModule>;
+
+      asyncContainerModuleMock = {
+        id: 2,
+        load: vitest.fn().mockResolvedValue(undefined),
+      } as Partial<Mocked<ContainerModule>> as Mocked<ContainerModule>;
+    });
+
+    describe('when called with a sync module', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        vitest.mocked(resolveModuleDeactivations).mockReturnValue(undefined);
+
+        result = new ContainerModuleManager(
+          bindingManagerMock,
+          deactivationParamsFixture,
+          defaultScopeFixture,
+          planResultCacheManagerMock,
+          serviceReferenceManagerMock,
+        ).unload(syncContainerModuleMock);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call resolveModuleDeactivations()', () => {
+        expect(resolveModuleDeactivations).toHaveBeenCalledExactlyOnceWith(
+          deactivationParamsFixture,
+          syncContainerModuleMock.id,
+        );
+      });
+
+      it('should call activationService.removeAllByModuleId()', () => {
+        expect(
+          serviceReferenceManagerMock.activationService.removeAllByModuleId,
+        ).toHaveBeenCalledExactlyOnceWith(syncContainerModuleMock.id);
+      });
+
+      it('should call bindingService.removeAllByModuleId()', () => {
+        expect(
+          serviceReferenceManagerMock.bindingService.removeAllByModuleId,
+        ).toHaveBeenCalledExactlyOnceWith(syncContainerModuleMock.id);
+      });
+
+      it('should call deactivationService.removeAllByModuleId()', () => {
+        expect(
+          serviceReferenceManagerMock.deactivationService.removeAllByModuleId,
+        ).toHaveBeenCalledExactlyOnceWith(syncContainerModuleMock.id);
+      });
+
+      it('should call planResultCacheService.clearCache()', () => {
+        expect(
+          serviceReferenceManagerMock.planResultCacheService.clearCache,
+        ).toHaveBeenCalledExactlyOnceWith();
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+
+    describe('when called with an async module', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        vitest
+          .mocked(resolveModuleDeactivations)
+          .mockResolvedValue(undefined as never);
+
+        try {
+          new ContainerModuleManager(
+            bindingManagerMock,
+            deactivationParamsFixture,
+            defaultScopeFixture,
+            planResultCacheManagerMock,
+            serviceReferenceManagerMock,
+          ).unload(asyncContainerModuleMock);
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call resolveModuleDeactivations()', () => {
+        expect(resolveModuleDeactivations).toHaveBeenCalledExactlyOnceWith(
+          deactivationParamsFixture,
+          asyncContainerModuleMock.id,
+        );
+      });
+
+      it('should throw an InversifyContainerError', () => {
+        const expectedErrorProperties: Partial<InversifyContainerError> = {
+          kind: InversifyContainerErrorKind.invalidOperation,
+          message:
+            'Unexpected asynchronous module unload. Consider using container.unloadAsync() instead.',
         };
 
         expect(result).toBeInstanceOf(InversifyContainerError);
