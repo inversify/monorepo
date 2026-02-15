@@ -63,7 +63,7 @@ describe(Container, () => {
     expect(container.isBound(ninjaId)).toBe(true);
     expect(container.isBound(samuraiId)).toBe(true);
 
-    await container.unbindAll();
+    await container.unbindAllAsync();
 
     expect(container.isBound(ninjaId)).toBe(false);
     expect(container.isBound(samuraiId)).toBe(false);
@@ -594,7 +594,7 @@ Binding constraints:
 
     expect(container.isBound(zero)).toBe(true);
 
-    await container.unbindAll();
+    await container.unbindAllAsync();
 
     expect(container.isBound(zero)).toBe(false);
 
@@ -712,7 +712,7 @@ Binding constraints:
 
     expect(container.isBound(zero)).toBe(true);
 
-    await container.unbindAll();
+    await container.unbindAllAsync();
 
     expect(container.isBound(zero)).toBe(false);
 
