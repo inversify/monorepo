@@ -988,7 +988,7 @@ describe(BindingManager, () => {
           defaultScopeFixture,
           planResultCacheManagerMock,
           serviceReferenceManagerMock,
-        ).unbindAll();
+        ).unbindAllAsync();
       });
 
       afterAll(() => {
@@ -1076,7 +1076,7 @@ describe(BindingManager, () => {
           defaultScopeFixture,
           planResultCacheManagerMock,
           serviceReferenceManagerMock,
-        ).unbindAll();
+        ).unbindAllAsync();
       });
 
       afterAll(() => {
@@ -1163,7 +1163,7 @@ describe(BindingManager, () => {
           defaultScopeFixture,
           planResultCacheManagerMock,
           serviceReferenceManagerMock,
-        ).unbindAllSync();
+        ).unbindAll();
       });
 
       afterAll(() => {
@@ -1257,7 +1257,7 @@ describe(BindingManager, () => {
               defaultScopeFixture,
               planResultCacheManagerMock,
               serviceReferenceManagerMock,
-            ).unbindAllSync();
+            ).unbindAll();
           } catch (e) {
             error = e;
           }
@@ -1271,7 +1271,7 @@ describe(BindingManager, () => {
           const expected: Partial<InversifyContainerError> = {
             kind: InversifyContainerErrorKind.invalidOperation,
             message:
-              'Unexpected asynchronous deactivation when unbinding all services. Consider using Container.unbindAll() instead.',
+              'Unexpected asynchronous deactivation when unbinding all services. Consider using Container.unbindAllAsync() instead.',
           };
 
           expect(error).toBeInstanceOf(InversifyContainerError);

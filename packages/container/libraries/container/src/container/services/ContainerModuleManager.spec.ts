@@ -53,7 +53,7 @@ describe(ContainerModuleManager, () => {
       rebind: vitest.fn(),
       rebindAsync: vitest.fn(),
       unbind: vitest.fn(),
-      unbindAll: vitest.fn(),
+      unbindAllAsync: vitest.fn(),
       unbindAsync: vitest.fn(),
     } as Partial<Mocked<BindingManager>> as Mocked<BindingManager>;
     deactivationParamsFixture = Symbol() as unknown as DeactivationParams;

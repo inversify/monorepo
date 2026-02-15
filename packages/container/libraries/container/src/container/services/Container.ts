@@ -219,12 +219,12 @@ export class Container {
     await this.#bindingManager.unbindAsync(identifier);
   }
 
-  public async unbindAll(): Promise<void> {
-    await this.#bindingManager.unbindAll();
+  public async unbindAllAsync(): Promise<void> {
+    await this.#bindingManager.unbindAllAsync();
   }
 
-  public unbindAllSync(): void {
-    this.#bindingManager.unbindAllSync();
+  public unbindAll(): void {
+    this.#bindingManager.unbindAll();
   }
 
   public unbind(identifier: BindingIdentifier | ServiceIdentifier): void {
