@@ -179,6 +179,6 @@ export class InversifyCurrentGetComplexServiceInTransientScope extends Inversify
   }
 
   public override async tearDown(): Promise<void> {
-    await this._container.unbindAll();
+    await this._container.unbindAllAsync();
   }
 }

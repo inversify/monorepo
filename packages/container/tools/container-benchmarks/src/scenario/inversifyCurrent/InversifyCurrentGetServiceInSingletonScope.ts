@@ -33,6 +33,6 @@ export class InversifyCurrentGetServiceInSingletonScope extends InversifyCurrent
   }
 
   public override async tearDown(): Promise<void> {
-    await this._container.unbindAll();
+    await this._container.unbindAllAsync();
   }
 }
