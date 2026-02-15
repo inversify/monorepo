@@ -1248,7 +1248,7 @@ describe(Container, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call bindingManager.unbindAllSync()', () => {
+      it('should call bindingManager.unbindAll()', () => {
         expect(bindingManagerMock.unbindAll).toHaveBeenCalledExactlyOnceWith();
       });
 
