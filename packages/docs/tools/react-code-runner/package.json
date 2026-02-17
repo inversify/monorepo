@@ -23,7 +23,7 @@
     "eslint": "9.39.2",
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-simple-import-sort": "12.1.1",
-    "glob": "13.0.3",
+    "glob": "13.0.5",
     "inversify": "7.11.0",
     "prettier": "3.8.1",
     "rimraf": "6.1.3",

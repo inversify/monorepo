@@ -18,7 +18,7 @@
     "@mdx-js/react": "3.1.1",
     "@swc/wasm-web": "1.15.11",
     "clsx": "2.1.1",
-    "mermaid": "^11.12.2",
+    "mermaid": "^11.12.3",
     "monaco-editor": "0.55.1",
     "prism-react-renderer": "2.4.1",
     "react": "19.2.4",
