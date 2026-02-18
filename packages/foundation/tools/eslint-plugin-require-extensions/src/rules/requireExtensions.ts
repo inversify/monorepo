@@ -516,7 +516,10 @@ export const requireIndex: Rule.RuleModule = createRule(
       : `${sourceValue}/index${extension}`;
 
     context.report({
-      fix(fixer: Rule.RuleFixer): Rule.Fix {
+      fix(fixer: Rule.RuleFixer): Rule.Fix | null {
+        if (sourceValue.includes('?')) {
+          return null;
+        }
         return fixer.replaceText(node, buildReplacementText(node, newValue));
       },
       message: `Directory imports must end with /index${extension}`,

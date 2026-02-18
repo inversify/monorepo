@@ -524,6 +524,13 @@ describe('requireIndex', () => {
       expectedFix: "import foo from './nested/deep/utils/index.js';",
       files: ['nested/deep/utils/index.ts'],
     },
+    {
+      code: "import foo from './utils?query';",
+      description: 'directory import with query string (no fix applied)',
+      directories: ['utils'],
+      expectedErrors: 1,
+      files: ['utils/index.ts'],
+    },
   ])(
     'having $description',
     ({
