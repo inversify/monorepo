@@ -22,6 +22,7 @@ export default [
     },
     rules: {
       'require-extensions/require-extensions': 'error',
+      'require-extensions/require-index': 'error',
     },
   },
 ];
@@ -32,6 +33,12 @@ export default [
 ### require-extensions
 
 Enforces that all relative imports and exports include a file extension.
+
+### require-index
+
+Enforces that directory imports and exports include an index file (e.g., `./foo` becomes `./foo/index.js`). This rule ensures that when importing from a directory, the path explicitly ends with `/index.js` (or the appropriate extension).
+
+This rule is auto-fixable and accepts no configuration options.
 
 ## License
 
