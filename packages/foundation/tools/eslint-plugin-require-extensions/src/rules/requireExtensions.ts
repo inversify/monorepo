@@ -375,7 +375,7 @@ function buildExportNamedDeclarationText(
   const typePrefix: string = exportKind === 'type' ? 'type ' : '';
 
   if (specifiers.length === 0) {
-    return `export {} from '${newSourceValue}';`;
+    return `export ${typePrefix}{} from '${newSourceValue}';`;
   }
 
   const specifierTexts: string[] = specifiers.map(formatExportSpecifier);

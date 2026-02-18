@@ -310,6 +310,20 @@ describe('requireExtensions', () => {
       expectedFix: "export { type Foo as RenamedFoo } from './foo.js';",
       files: ['foo.ts'],
     },
+    {
+      code: "export type {} from './foo';",
+      description: 'empty type export missing extension',
+      expectedErrors: 1,
+      expectedFix: "export type {} from './foo.js';",
+      files: ['foo.ts'],
+    },
+    {
+      code: "export {} from './foo';",
+      description: 'empty value export missing extension',
+      expectedErrors: 1,
+      expectedFix: "export {} from './foo.js';",
+      files: ['foo.ts'],
+    },
   ])(
     'having $description',
     ({
