@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { isPromise } from './isPromise';
+import { isPromise } from './isPromise.js';
 
 describe(isPromise, () => {
   describe.each<[string, unknown, boolean]>([

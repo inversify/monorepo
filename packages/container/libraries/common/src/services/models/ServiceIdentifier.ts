@@ -1,5 +1,5 @@
-import { AbstractNewable } from './AbstractNewable';
-import { Newable } from './Newable';
+import type { AbstractNewable } from './AbstractNewable.js';
+import type { Newable } from './Newable.js';
 
 export type ServiceIdentifier<TInstance = unknown> =
   | string

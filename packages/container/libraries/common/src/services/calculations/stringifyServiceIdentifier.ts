@@ -1,4 +1,4 @@
-import { ServiceIdentifier } from '../models/ServiceIdentifier';
+import type { ServiceIdentifier } from '../models/ServiceIdentifier.js';
 
 export function stringifyServiceIdentifier(
   serviceIdentifier: ServiceIdentifier,

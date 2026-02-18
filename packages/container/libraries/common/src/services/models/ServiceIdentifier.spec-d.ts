@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import type { ServiceIdentifier } from './ServiceIdentifier';
+import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
 // eslint-disable-next-line vitest/prefer-describe-function-title
 describe('ServiceIdentifier', () => {

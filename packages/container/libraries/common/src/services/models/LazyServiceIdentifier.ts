@@ -1,4 +1,4 @@
-import { ServiceIdentifier } from './ServiceIdentifier';
+import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
 const islazyServiceIdentifierSymbol: unique symbol = Symbol.for(
   '@inversifyjs/common/islazyServiceIdentifier',
