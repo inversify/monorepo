@@ -1,6 +1,6 @@
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
-import { Prototype } from '../models/Prototype';
+import { type Prototype } from '../models/Prototype.js';
 
 export function getBaseType<TInstance, TArgs extends unknown[]>(
   type: Newable<TInstance, TArgs>,

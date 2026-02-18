@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { updateSetMetadataWithList } from './updateSetMetadataWithList';
+import { updateSetMetadataWithList } from './updateSetMetadataWithList.js';
 
 describe(updateSetMetadataWithList, () => {
   describe('when called', () => {

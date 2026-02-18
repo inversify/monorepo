@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { getReflectMetadata } from './getReflectMetadata';
+import { getReflectMetadata } from './getReflectMetadata.js';
 
 describe(getReflectMetadata, () => {
   describe('having no property key', () => {

@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { buildArrayMetadataWithElement } from './buildArrayMetadataWithElement';
+import { buildArrayMetadataWithElement } from './buildArrayMetadataWithElement.js';
 
 describe(buildArrayMetadataWithElement, () => {
   describe('when called', () => {

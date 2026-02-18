@@ -1,4 +1,4 @@
-import { getOwnReflectMetadata } from './getOwnReflectMetadata';
+import { getOwnReflectMetadata } from './getOwnReflectMetadata.js';
 
 export function updateOwnReflectMetadata<TMetadata>(
   target: object,

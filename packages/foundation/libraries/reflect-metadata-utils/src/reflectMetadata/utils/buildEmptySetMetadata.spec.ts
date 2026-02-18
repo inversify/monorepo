@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { buildEmptySetMetadata } from './buildEmptySetMetadata';
+import { buildEmptySetMetadata } from './buildEmptySetMetadata.js';
 
 describe(buildEmptySetMetadata, () => {
   describe('when called', () => {

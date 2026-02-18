@@ -1,6 +1,6 @@
 import { type Newable } from '@inversifyjs/common';
 
-import { getBaseType } from './getBaseType';
+import { getBaseType } from './getBaseType.js';
 
 export function findInPrototypeChain<T>(
   type: Newable,
