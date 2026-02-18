@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { type Newable } from '@inversifyjs/common';
 
-import { findInPrototypeChain } from './findInPrototypeChain';
+import { findInPrototypeChain } from './findInPrototypeChain.js';
 
 describe(findInPrototypeChain, () => {
   describe('having a prototype chain with a value in the base type', () => {

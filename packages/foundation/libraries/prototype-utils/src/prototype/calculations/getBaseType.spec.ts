@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
-import { getBaseType } from './getBaseType';
+import { getBaseType } from './getBaseType.js';
 
 describe(getBaseType, () => {
   describe('having a type with base type', () => {
