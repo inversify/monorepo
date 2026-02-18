@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { buildArrayMetadataWithIndex } from './buildArrayMetadataWithIndex';
+import { buildArrayMetadataWithIndex } from './buildArrayMetadataWithIndex.js';
 
 describe(buildArrayMetadataWithIndex, () => {
   describe('when called', () => {

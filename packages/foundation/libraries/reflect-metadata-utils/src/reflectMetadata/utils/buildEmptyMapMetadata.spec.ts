@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { buildEmptyMapMetadata } from './buildEmptyMapMetadata';
+import { buildEmptyMapMetadata } from './buildEmptyMapMetadata.js';
 
 describe(buildEmptyMapMetadata, () => {
   describe('when called', () => {

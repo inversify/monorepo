@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -12,8 +12,8 @@ import 'reflect-metadata/lite';
 
 vitest.mock(import('./getReflectMetadata.js'));
 
-import { getReflectMetadata } from './getReflectMetadata';
-import { updateReflectMetadata } from './updateReflectMetadata';
+import { getReflectMetadata } from './getReflectMetadata.js';
+import { updateReflectMetadata } from './updateReflectMetadata.js';
 
 describe(updateReflectMetadata, () => {
   describe('having no property key', () => {

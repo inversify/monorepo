@@ -1,15 +1,15 @@
-import { buildArrayMetadataWithArray } from './reflectMetadata/utils/buildArrayMetadataWithArray';
-import { buildArrayMetadataWithElement } from './reflectMetadata/utils/buildArrayMetadataWithElement';
-import { buildArrayMetadataWithIndex } from './reflectMetadata/utils/buildArrayMetadataWithIndex';
-import { buildEmptyArrayMetadata } from './reflectMetadata/utils/buildEmptyArrayMetadata';
-import { buildEmptyMapMetadata } from './reflectMetadata/utils/buildEmptyMapMetadata';
-import { buildEmptySetMetadata } from './reflectMetadata/utils/buildEmptySetMetadata';
-import { getOwnReflectMetadata } from './reflectMetadata/utils/getOwnReflectMetadata';
-import { getReflectMetadata } from './reflectMetadata/utils/getReflectMetadata';
-import { setReflectMetadata } from './reflectMetadata/utils/setReflectMetadata';
-import { updateOwnReflectMetadata } from './reflectMetadata/utils/updateOwnReflectMetadata';
-import { updateReflectMetadata } from './reflectMetadata/utils/updateReflectMetadata';
-import { updateSetMetadataWithList } from './reflectMetadata/utils/updateSetMetadataWithList';
+import { buildArrayMetadataWithArray } from './reflectMetadata/utils/buildArrayMetadataWithArray.js';
+import { buildArrayMetadataWithElement } from './reflectMetadata/utils/buildArrayMetadataWithElement.js';
+import { buildArrayMetadataWithIndex } from './reflectMetadata/utils/buildArrayMetadataWithIndex.js';
+import { buildEmptyArrayMetadata } from './reflectMetadata/utils/buildEmptyArrayMetadata.js';
+import { buildEmptyMapMetadata } from './reflectMetadata/utils/buildEmptyMapMetadata.js';
+import { buildEmptySetMetadata } from './reflectMetadata/utils/buildEmptySetMetadata.js';
+import { getOwnReflectMetadata } from './reflectMetadata/utils/getOwnReflectMetadata.js';
+import { getReflectMetadata } from './reflectMetadata/utils/getReflectMetadata.js';
+import { setReflectMetadata } from './reflectMetadata/utils/setReflectMetadata.js';
+import { updateOwnReflectMetadata } from './reflectMetadata/utils/updateOwnReflectMetadata.js';
+import { updateReflectMetadata } from './reflectMetadata/utils/updateReflectMetadata.js';
+import { updateSetMetadataWithList } from './reflectMetadata/utils/updateSetMetadataWithList.js';
 
 export {
   buildArrayMetadataWithArray,
