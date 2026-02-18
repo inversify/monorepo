@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 import { Linter } from 'eslint';
+import tseslint from 'typescript-eslint';
 
 import { requireExtensions, requireIndex } from './requireExtensions.js';
 
@@ -53,6 +54,7 @@ describe('requireExtensions', () => {
           files: ['**/*.ts'],
           languageOptions: {
             ecmaVersion: 2022,
+            parser: tseslint.parser,
             sourceType: 'module',
           },
           plugins: {
@@ -82,6 +84,7 @@ describe('requireExtensions', () => {
           files: ['**/*.ts'],
           languageOptions: {
             ecmaVersion: 2022,
+            parser: tseslint.parser,
             sourceType: 'module',
           },
           plugins: {
@@ -265,6 +268,48 @@ describe('requireExtensions', () => {
       expectedErrors: 1,
       expectedFix: "import foo from '../sibling.js';",
     },
+    {
+      code: "import { type Foo } from './foo';",
+      description: 'per-specifier type import missing extension',
+      expectedErrors: 1,
+      expectedFix: "import { type Foo } from './foo.js';",
+      files: ['foo.ts'],
+    },
+    {
+      code: "import { type Foo, Bar } from './foo';",
+      description: 'mixed type and value imports missing extension',
+      expectedErrors: 1,
+      expectedFix: "import { type Foo, Bar } from './foo.js';",
+      files: ['foo.ts'],
+    },
+    {
+      code: "import { type Foo as RenamedFoo } from './foo';",
+      description: 'renamed per-specifier type import missing extension',
+      expectedErrors: 1,
+      expectedFix: "import { type Foo as RenamedFoo } from './foo.js';",
+      files: ['foo.ts'],
+    },
+    {
+      code: "export { type Foo } from './foo';",
+      description: 'per-specifier type export missing extension',
+      expectedErrors: 1,
+      expectedFix: "export { type Foo } from './foo.js';",
+      files: ['foo.ts'],
+    },
+    {
+      code: "export { type Foo, Bar } from './foo';",
+      description: 'mixed type and value exports missing extension',
+      expectedErrors: 1,
+      expectedFix: "export { type Foo, Bar } from './foo.js';",
+      files: ['foo.ts'],
+    },
+    {
+      code: "export { type Foo as RenamedFoo } from './foo';",
+      description: 'renamed per-specifier type export missing extension',
+      expectedErrors: 1,
+      expectedFix: "export { type Foo as RenamedFoo } from './foo.js';",
+      files: ['foo.ts'],
+    },
   ])(
     'having $description',
     ({
@@ -341,6 +386,7 @@ describe('requireIndex', () => {
           files: ['**/*.ts'],
           languageOptions: {
             ecmaVersion: 2022,
+            parser: tseslint.parser,
             sourceType: 'module',
           },
           plugins: {
@@ -370,6 +416,7 @@ describe('requireIndex', () => {
           files: ['**/*.ts'],
           languageOptions: {
             ecmaVersion: 2022,
+            parser: tseslint.parser,
             sourceType: 'module',
           },
           plugins: {

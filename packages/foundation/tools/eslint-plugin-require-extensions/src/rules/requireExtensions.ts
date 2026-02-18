@@ -24,6 +24,7 @@ interface StringLiteral {
  */
 interface ImportSpecifier {
   imported: Identifier;
+  importKind?: 'type' | 'value';
   local: Identifier;
   type: 'ImportSpecifier';
 }
@@ -49,6 +50,7 @@ interface ImportNamespaceSpecifier {
  */
 interface ExportSpecifier {
   exported: Identifier;
+  exportKind?: 'type' | 'value';
   local: Identifier;
   type: 'ExportSpecifier';
 }
@@ -353,11 +355,12 @@ function buildImportDeclarationText(
 function formatImportSpecifier(specifier: ImportSpecifier): string {
   const importedName: string = specifier.imported.name;
   const localName: string = specifier.local.name;
+  const typePrefix: string = specifier.importKind === 'type' ? 'type ' : '';
 
   if (importedName !== localName) {
-    return `${importedName} as ${localName}`;
+    return `${typePrefix}${importedName} as ${localName}`;
   }
-  return localName;
+  return `${typePrefix}${localName}`;
 }
 
 /**
@@ -385,11 +388,12 @@ function buildExportNamedDeclarationText(
 function formatExportSpecifier(specifier: ExportSpecifier): string {
   const localName: string = specifier.local.name;
   const exportedName: string = specifier.exported.name;
+  const typePrefix: string = specifier.exportKind === 'type' ? 'type ' : '';
 
   if (localName !== exportedName) {
-    return `${localName} as ${exportedName}`;
+    return `${typePrefix}${localName} as ${exportedName}`;
   }
-  return localName;
+  return `${typePrefix}${localName}`;
 }
 
 /**
