@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Newable } from '../models/Newable';
-import { ServiceIdentifier } from '../models/ServiceIdentifier';
-import { stringifyServiceIdentifier } from './stringifyServiceIdentifier';
+import { type Newable } from '../models/Newable.js';
+import { type ServiceIdentifier } from '../models/ServiceIdentifier.js';
+import { stringifyServiceIdentifier } from './stringifyServiceIdentifier.js';
 
 describe(stringifyServiceIdentifier, () => {
   describe('having a string', () => {

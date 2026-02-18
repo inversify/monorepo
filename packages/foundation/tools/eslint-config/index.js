@@ -162,28 +162,45 @@ function buildBaseConfig() {
   };
 }
 
-export function buildDefaultConfig() {
-  const baseRules = buildBaseConfig();
+/**
+ * @param {Record<string, import('@eslint/config-helpers').RuleConfig>} sourceRulesOverride
+ * @param {Record<string, import('@eslint/config-helpers').Plugin>} pluginsOverride
+ */
+export function buildDefaultConfig(
+  sourceRulesOverride = {},
+  pluginsOverride = {},
+) {
+  const baseConfig = buildBaseConfig();
 
   const vitestPlugin = /** @type {import('@eslint/config-helpers').Plugin} */ (
     /** @type {unknown} */ (vitest)
   );
 
+  const overridenPlugins = {
+    ...baseConfig.plugins,
+    ...pluginsOverride,
+  };
+
+  const overridenRules = {
+    ...baseConfig.rules,
+    ...sourceRulesOverride,
+  };
+
   return defineConfig(
     {
-      ...baseRules,
+      ...baseConfig,
+      plugins: overridenPlugins,
+      rules: overridenRules,
       files: ['**/*.{cjs,mts,ts,tsx}'],
       ignores: ['**/*.spec.{cjs,mts,ts,tsx}'],
     },
     {
-      ...baseRules,
-      extends: [...(baseRules.extends ?? [])],
+      ...baseConfig,
+      extends: [...(baseConfig.extends ?? [])],
       files: ['**/*.spec.{cjs,mts,ts,tsx}'],
-      plugins: {
-        ...(baseRules.plugins ?? {}),
-      },
+      plugins: overridenPlugins,
       rules: {
-        ...(baseRules.rules ?? {}),
+        ...overridenRules,
         '@typescript-eslint/no-confusing-void-expression': 'off',
         '@typescript-eslint/unbound-method': 'off',
         '@typescript-eslint/no-magic-numbers': 'off',

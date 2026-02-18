@@ -19,5 +19,4 @@ vitest.workspace.mjs
 prettier.config.mjs
 stryker.config.mjs
 tsconfig.esm.json
-tsconfig.esm.tsbuildinfo
 tsconfig.json

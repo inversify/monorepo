@@ -4,12 +4,12 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { LazyServiceIdentifier } from './LazyServiceIdentifier';
-import { ServiceIdentifier } from './ServiceIdentifier';
+import { LazyServiceIdentifier } from './LazyServiceIdentifier.js';
+import { type ServiceIdentifier } from './ServiceIdentifier.js';
 
 describe(LazyServiceIdentifier, () => {
   let buildServiceIdMock: Mock<() => ServiceIdentifier<unknown>>;

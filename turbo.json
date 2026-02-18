@@ -94,20 +94,20 @@
       "outputs": ["build/**"]
     },
     "format": {
-      "inputs": ["src/**/*.{cts,mts,ts}"],
+      "inputs": ["src/**/*.{cts,mts,ts}", "prettier.config.{cjs,mjs,js,json}"],
       "outputs": ["src/**/*.{cts,mts,ts}"]
     },
     "@inversifyjs/foundation-vitest-config#format": {
-      "inputs": ["lib/**/*.{cjs,mjs,js}"],
+      "inputs": ["lib/**/*.{cjs,mjs,js}", "prettier.config.{cjs,mjs,js,json}"],
       "outputs": ["lib/**/*.{cjs,mjs,js}"]
     },
     "@inversifyjs/foundation-rollup-config#format": {
-      "inputs": ["lib/**/*.{cjs,mjs,js}"],
+      "inputs": ["lib/**/*.{cjs,mjs,js}", "prettier.config.{cjs,mjs,js,json}"],
       "outputs": ["lib/**/*.{cjs,mjs,js}"]
     },
     "lint": {
       "dependsOn": ["^build"],
-      "inputs": ["src/**/*.{cts,mts,ts}"]
+      "inputs": ["src/**/*.{cts,mts,ts}", "eslint.config.{cjs,mjs,js,json}"]
     },
     "test": {
       "dependsOn": ["^build"],

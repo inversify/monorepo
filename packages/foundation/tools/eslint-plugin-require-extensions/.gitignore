@@ -2,7 +2,6 @@
 /lib/**
 
 /tsconfig.tsbuildinfo
-/tsconfig.esm.tsbuildinfo
 
 # Test coverage report
 /coverage
@@ -15,4 +14,3 @@
 
 # Turborepo files
 .turbo/
-
