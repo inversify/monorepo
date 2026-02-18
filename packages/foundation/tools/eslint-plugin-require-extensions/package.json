@@ -1,0 +1,60 @@
+{
+  "name": "@inversifyjs/eslint-plugin-require-extensions",
+  "version": "0.1.0",
+  "description": "ESLint plugin to enforce file extensions in ESM imports and exports",
+  "type": "module",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "keywords": [
+    "eslint",
+    "eslint-plugin",
+    "esm",
+    "extensions",
+    "imports",
+    "exports",
+    "typescript"
+  ],
+  "author": "Roberto Pintos López",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.13",
+    "@vitest/coverage-v8": "4.0.18",
+    "eslint": "9.39.2",
+    "prettier": "3.8.1",
+    "rimraf": "6.1.3",
+    "tslib": "2.8.1",
+    "typescript": "5.9.3",
+    "vitest": "4.0.18"
+  },
+  "devEngines": {
+    "node": "^24.10.0",
+    "pnpm": "^10.13.1"
+  },
+  "homepage": "https://inversify.io",
+  "peerDependencies": {
+    "eslint": "^9.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:clean": "rimraf lib",
+    "format": "prettier --write ./src",
+    "lint": "eslint ./src",
+    "prebuild": "pnpm run build:clean",
+    "test": "vitest run",
+    "test:integration": "pnpm run test --project Integration",
+    "test:coverage": "pnpm run test:unit --coverage",
+    "test:uncommitted": "pnpm run test --changed=HEAD",
+    "test:unit": "pnpm run test --project Unit"
+  }
+}
