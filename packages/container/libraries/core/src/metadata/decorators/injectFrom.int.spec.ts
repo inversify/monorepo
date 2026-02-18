@@ -2,18 +2,18 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ClassMetadata } from '../models/ClassMetadata';
-import { inject } from './inject';
-import { injectFrom } from './injectFrom';
-import { postConstruct } from './postConstruct';
-import { preDestroy } from './preDestroy';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { inject } from './inject.js';
+import { injectFrom } from './injectFrom.js';
+import { postConstruct } from './postConstruct.js';
+import { preDestroy } from './preDestroy.js';
 
 describe(injectFrom, () => {
   describe('having a options with extendConstructorArguments false and extendProperties false', () => {

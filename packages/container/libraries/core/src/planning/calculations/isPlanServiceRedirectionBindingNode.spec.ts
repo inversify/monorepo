@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode';
-import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode';
+import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { type PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode.js';
+import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode.js';
 
 describe(isPlanServiceRedirectionBindingNode, () => {
   describe('having a PlanServiceRedirectionBindingNode', () => {

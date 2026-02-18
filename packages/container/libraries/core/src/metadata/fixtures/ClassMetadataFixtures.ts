@@ -1,5 +1,5 @@
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ClassMetadata } from '../models/ClassMetadata';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
 
 export class ClassMetadataFixtures {
   public static get any(): ClassMetadata {

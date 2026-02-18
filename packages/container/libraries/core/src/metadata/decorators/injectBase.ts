@@ -1,13 +1,13 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { updateMaybeClassMetadataConstructorArgument } from '../actions/updateMaybeClassMetadataConstructorArgument';
-import { updateMaybeClassMetadataProperty } from '../actions/updateMaybeClassMetadataProperty';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { handleInjectionError } from '../calculations/handleInjectionError';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { updateMaybeClassMetadataConstructorArgument } from '../actions/updateMaybeClassMetadataConstructorArgument.js';
+import { updateMaybeClassMetadataProperty } from '../actions/updateMaybeClassMetadataProperty.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { handleInjectionError } from '../calculations/handleInjectionError.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
 
 export function injectBase(
   updateMetadata: (

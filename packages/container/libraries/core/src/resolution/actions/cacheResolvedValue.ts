@@ -1,9 +1,9 @@
 import { isPromise } from '@inversifyjs/common';
 
-import { BindingScope } from '../../binding/models/BindingScope';
-import { BindingType } from '../../binding/models/BindingType';
-import { ScopedBinding } from '../../binding/models/ScopedBinding';
-import { Resolved, SyncResolved } from '../models/Resolved';
+import { type BindingScope } from '../../binding/models/BindingScope.js';
+import { type BindingType } from '../../binding/models/BindingType.js';
+import { type ScopedBinding } from '../../binding/models/ScopedBinding.js';
+import { type Resolved, type SyncResolved } from '../models/Resolved.js';
 
 export function cacheResolvedValue<
   TActivated,

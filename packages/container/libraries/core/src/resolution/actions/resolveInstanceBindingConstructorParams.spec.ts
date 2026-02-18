@@ -4,15 +4,15 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
-import { PlanServiceNode } from '../../planning/models/PlanServiceNode';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolveInstanceBindingConstructorParams } from './resolveInstanceBindingConstructorParams';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
+import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveInstanceBindingConstructorParams } from './resolveInstanceBindingConstructorParams.js';
 
 describe(resolveInstanceBindingConstructorParams, () => {
   describe('having InstanceBindingNode with constructor param with undefined value', () => {

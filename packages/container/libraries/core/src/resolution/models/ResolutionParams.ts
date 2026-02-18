@@ -1,8 +1,8 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { BindingActivation } from '../../binding/models/BindingActivation';
-import { PlanResult } from '../../planning/models/PlanResult';
-import { ResolutionContext } from './ResolutionContext';
+import { type BindingActivation } from '../../binding/models/BindingActivation.js';
+import { type PlanResult } from '../../planning/models/PlanResult.js';
+import { type ResolutionContext } from './ResolutionContext.js';
 
 export interface ResolutionParams {
   context: ResolutionContext;

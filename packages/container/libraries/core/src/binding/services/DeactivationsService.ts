@@ -1,9 +1,9 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { chain } from '../../common/calculations/chain';
-import { Cloneable } from '../../common/models/Cloneable';
-import { OneToManyMapStar } from '../../common/models/OneToManyMapStar';
-import { BindingDeactivation } from '../models/BindingDeactivation';
+import { chain } from '../../common/calculations/chain.js';
+import { type Cloneable } from '../../common/models/Cloneable.js';
+import { OneToManyMapStar } from '../../common/models/OneToManyMapStar.js';
+import { type BindingDeactivation } from '../models/BindingDeactivation.js';
 
 enum DeactivationRelationKind {
   moduleId = 'moduleId',

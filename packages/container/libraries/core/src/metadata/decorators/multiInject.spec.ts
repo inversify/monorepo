@@ -4,25 +4,25 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
 vitest.mock(
   import('../calculations/buildManagedMetadataFromMaybeClassElementMetadata.js'),
 );
 vitest.mock(import('./injectBase.js'));
 
-import { decrementPendingClassMetadataCount } from '../actions/decrementPendingClassMetadataCount';
-import { buildManagedMetadataFromMaybeClassElementMetadata } from '../calculations/buildManagedMetadataFromMaybeClassElementMetadata';
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MultiInjectOptions } from '../models/MultiInjectOptions';
-import { injectBase } from './injectBase';
-import { multiInject } from './multiInject';
+import { decrementPendingClassMetadataCount } from '../actions/decrementPendingClassMetadataCount.js';
+import { buildManagedMetadataFromMaybeClassElementMetadata } from '../calculations/buildManagedMetadataFromMaybeClassElementMetadata.js';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MultiInjectOptions } from '../models/MultiInjectOptions.js';
+import { injectBase } from './injectBase.js';
+import { multiInject } from './multiInject.js';
 
 describe(multiInject, () => {
   let serviceIdentifierFixture: ServiceIdentifier;

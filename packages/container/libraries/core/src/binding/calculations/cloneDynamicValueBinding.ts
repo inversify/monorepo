@@ -1,5 +1,5 @@
-import { DynamicValueBinding } from '../models/DynamicValueBinding';
-import { cloneBindingCache } from './cloneBindingCache';
+import { type DynamicValueBinding } from '../models/DynamicValueBinding.js';
+import { cloneBindingCache } from './cloneBindingCache.js';
 
 /**
  * Clones a DynamicValueBinding

@@ -1,5 +1,5 @@
-import { MetadataName } from '../../metadata/models/MetadataName';
-import { GetOptionsTagConstraint } from './GetOptionsTagConstraint';
+import { type MetadataName } from '../../metadata/models/MetadataName.js';
+import { type GetOptionsTagConstraint } from './GetOptionsTagConstraint.js';
 
 export interface GetOptions {
   autobind?: boolean;

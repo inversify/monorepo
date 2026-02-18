@@ -1,30 +1,30 @@
-import { Binding } from '../../binding/models/Binding';
-import { BindingConstraints } from '../../binding/models/BindingConstraints';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type BindingConstraints } from '../../binding/models/BindingConstraints.js';
 import {
   BindingConstraintsImplementation,
-  InternalBindingConstraints,
-} from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { isStackOverflowError } from '../../error/calculations/isStackOverflowError';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
-import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
-import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
-import { BasePlanParams } from '../models/BasePlanParams';
-import { BindingNodeParent } from '../models/BindingNodeParent';
-import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { SubplanParams } from '../models/SubplanParams';
-import { curryBuildServiceNodeBindings } from './curryBuildServiceNodeBindings';
-import { curryLazyBuildPlanServiceNodeFromClassElementMetadata } from './curryLazyBuildPlanServiceNodeFromClassElementMetadata';
-import { curryLazyBuildPlanServiceNodeFromResolvedValueElementMetadata } from './curryLazyBuildPlanServiceNodeFromResolvedValueElementMetadata';
-import { currySubplan } from './currySubplan';
+  type InternalBindingConstraints,
+} from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { isStackOverflowError } from '../../error/calculations/isStackOverflowError.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata.js';
+import { type PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult.js';
+import { type ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata.js';
+import { type BasePlanParams } from '../models/BasePlanParams.js';
+import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { type SubplanParams } from '../models/SubplanParams.js';
+import { curryBuildServiceNodeBindings } from './curryBuildServiceNodeBindings.js';
+import { curryLazyBuildPlanServiceNodeFromClassElementMetadata } from './curryLazyBuildPlanServiceNodeFromClassElementMetadata.js';
+import { curryLazyBuildPlanServiceNodeFromResolvedValueElementMetadata } from './curryLazyBuildPlanServiceNodeFromResolvedValueElementMetadata.js';
+import { currySubplan } from './currySubplan.js';
 import {
   buildPlanServiceNodeFromClassElementMetadata,
   buildPlanServiceNodeFromResolvedValueElementMetadata,
-} from './plan';
+} from './plan.js';
 
 const subplan: (
   params: SubplanParams,

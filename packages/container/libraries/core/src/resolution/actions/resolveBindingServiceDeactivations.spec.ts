@@ -4,16 +4,16 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { BindingDeactivation } from '../../binding/models/BindingDeactivation';
-import { DeactivationParams } from '../models/DeactivationParams';
-import { resolveBindingServiceDeactivations } from './resolveBindingServiceDeactivations';
+import { type BindingDeactivation } from '../../binding/models/BindingDeactivation.js';
+import { type DeactivationParams } from '../models/DeactivationParams.js';
+import { resolveBindingServiceDeactivations } from './resolveBindingServiceDeactivations.js';
 
 describe(resolveBindingServiceDeactivations, () => {
   describe('having a non promise value', () => {

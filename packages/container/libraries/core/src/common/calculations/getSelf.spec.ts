@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { getSelf } from './getSelf';
+import { getSelf } from './getSelf.js';
 
 describe(getSelf, () => {
   let value: unknown;

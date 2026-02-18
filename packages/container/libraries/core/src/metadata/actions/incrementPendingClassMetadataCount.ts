@@ -1,8 +1,8 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { pendingClassMetadataCountReflectKey } from '../../reflectMetadata/data/pendingClassMetadataCountReflectKey';
-import { getDefaultPendingClassMetadataCount } from '../calculations/getDefaultPendingClassMetadataCount';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
+import { pendingClassMetadataCountReflectKey } from '../../reflectMetadata/data/pendingClassMetadataCountReflectKey.js';
+import { getDefaultPendingClassMetadataCount } from '../calculations/getDefaultPendingClassMetadataCount.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
 
 export function incrementPendingClassMetadataCount(
   type: object,

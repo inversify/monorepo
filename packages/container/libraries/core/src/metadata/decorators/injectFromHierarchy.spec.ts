@@ -4,21 +4,21 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/prototype-utils'));
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import { getBaseType } from '@inversifyjs/prototype-utils';
 
 vitest.mock(import('./injectFrom.js'));
 
-import { InjectFromHierarchyOptions } from '../models/InjectFromHierarchyOptions';
-import { InjectFromOptions } from '../models/InjectFromOptions';
-import { injectFrom } from './injectFrom';
-import { injectFromHierarchy } from './injectFromHierarchy';
+import { type InjectFromHierarchyOptions } from '../models/InjectFromHierarchyOptions.js';
+import { type InjectFromOptions } from '../models/InjectFromOptions.js';
+import { injectFrom } from './injectFrom.js';
+import { injectFromHierarchy } from './injectFromHierarchy.js';
 
 describe(injectFromHierarchy, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

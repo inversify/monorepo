@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -13,12 +13,12 @@ vitest.mock(
 );
 vitest.mock(import('./injectBase.js'));
 
-import { decrementPendingClassMetadataCount } from '../actions/decrementPendingClassMetadataCount';
-import { buildUnmanagedMetadataFromMaybeClassElementMetadata } from '../calculations/buildUnmanagedMetadataFromMaybeClassElementMetadata';
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { injectBase } from './injectBase';
-import { unmanaged } from './unmanaged';
+import { decrementPendingClassMetadataCount } from '../actions/decrementPendingClassMetadataCount.js';
+import { buildUnmanagedMetadataFromMaybeClassElementMetadata } from '../calculations/buildUnmanagedMetadataFromMaybeClassElementMetadata.js';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { injectBase } from './injectBase.js';
+import { unmanaged } from './unmanaged.js';
 
 describe(unmanaged, () => {
   describe('when called', () => {

@@ -1,8 +1,11 @@
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  type LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
-import { BaseClassElementMetadata } from './BaseClassElementMetadata';
-import { MetadataName } from './MetadataName';
-import { MetadataTag } from './MetadataTag';
+import { type BaseClassElementMetadata } from './BaseClassElementMetadata.js';
+import { type MetadataName } from './MetadataName.js';
+import { type MetadataTag } from './MetadataTag.js';
 
 export interface BaseManagedClassElementMetadata<
   TKind,

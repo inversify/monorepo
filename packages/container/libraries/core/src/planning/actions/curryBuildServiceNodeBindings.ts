@@ -1,26 +1,26 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { Binding } from '../../binding/models/Binding';
-import { BindingConstraints } from '../../binding/models/BindingConstraints';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type BindingConstraints } from '../../binding/models/BindingConstraints.js';
 import {
   BindingConstraintsImplementation,
-  InternalBindingConstraints,
-} from '../../binding/models/BindingConstraintsImplementation';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
-import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
-import { isPlanServiceRedirectionBindingNode } from '../calculations/isPlanServiceRedirectionBindingNode';
-import { BasePlanParams } from '../models/BasePlanParams';
-import { BindingNodeParent } from '../models/BindingNodeParent';
-import { InstanceBindingNode } from '../models/InstanceBindingNode';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode';
-import { ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode';
-import { SubplanParams } from '../models/SubplanParams';
+  type InternalBindingConstraints,
+} from '../../binding/models/BindingConstraintsImplementation.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
+import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
+import { isPlanServiceRedirectionBindingNode } from '../calculations/isPlanServiceRedirectionBindingNode.js';
+import { type BasePlanParams } from '../models/BasePlanParams.js';
+import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode.js';
+import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
+import { type SubplanParams } from '../models/SubplanParams.js';
 
 export function curryBuildServiceNodeBindings(
   subplan: (

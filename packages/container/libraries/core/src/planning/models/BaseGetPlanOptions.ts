@@ -1,7 +1,7 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { MetadataName } from '../../metadata/models/MetadataName';
-import { GetPlanOptionsTagConstraint } from './GetPlanOptionsTagConstraint';
+import { type MetadataName } from '../../metadata/models/MetadataName.js';
+import { type GetPlanOptionsTagConstraint } from './GetPlanOptionsTagConstraint.js';
 
 export interface BaseGetPlanOptions {
   serviceIdentifier: ServiceIdentifier;

@@ -1,5 +1,5 @@
-import { BaseResolvedValueElementMetadata } from './BaseResolvedValueElementMetadata';
-import { ResolvedValueElementMetadataKind } from './ResolvedValueElementMetadataKind';
+import { type BaseResolvedValueElementMetadata } from './BaseResolvedValueElementMetadata.js';
+import { type ResolvedValueElementMetadataKind } from './ResolvedValueElementMetadataKind.js';
 
 export type SingleInjectionResolvedValueElementMetadata =
   BaseResolvedValueElementMetadata<ResolvedValueElementMetadataKind.singleInjection>;

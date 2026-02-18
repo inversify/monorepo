@@ -1,6 +1,6 @@
-import { MethodDecoratorInfo } from './MethodDecoratorInfo';
-import { ParameterDecoratorInfo } from './ParameterDecoratorInfo';
-import { PropertyDecoratorInfo } from './PropertyDecoratorInfo';
+import { type MethodDecoratorInfo } from './MethodDecoratorInfo.js';
+import { type ParameterDecoratorInfo } from './ParameterDecoratorInfo.js';
+import { type PropertyDecoratorInfo } from './PropertyDecoratorInfo.js';
 
 export type DecoratorInfo =
   | MethodDecoratorInfo

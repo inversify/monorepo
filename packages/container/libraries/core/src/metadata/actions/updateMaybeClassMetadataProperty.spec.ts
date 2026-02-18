@@ -4,16 +4,16 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { MaybeClassMetadataFixtures } from '../fixtures/MaybeClassMetadataFixtures';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
-import { updateMaybeClassMetadataProperty } from './updateMaybeClassMetadataProperty';
+import { MaybeClassMetadataFixtures } from '../fixtures/MaybeClassMetadataFixtures.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
+import { updateMaybeClassMetadataProperty } from './updateMaybeClassMetadataProperty.js';
 
 describe(updateMaybeClassMetadataProperty, () => {
   let updateMetadataMock: Mock<

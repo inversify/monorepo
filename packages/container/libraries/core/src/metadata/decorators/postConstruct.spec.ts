@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -15,12 +15,12 @@ import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 vitest.mock(import('../actions/updateMaybeClassMetadataPostConstructor.js'));
 vitest.mock(import('../calculations/handleInjectionError.js'));
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { updateMaybeClassMetadataPostConstructor } from '../actions/updateMaybeClassMetadataPostConstructor';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { handleInjectionError } from '../calculations/handleInjectionError';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
-import { postConstruct } from './postConstruct';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { updateMaybeClassMetadataPostConstructor } from '../actions/updateMaybeClassMetadataPostConstructor.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { handleInjectionError } from '../calculations/handleInjectionError.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
+import { postConstruct } from './postConstruct.js';
 
 describe(postConstruct, () => {
   let targetFixture: object;

@@ -1,7 +1,7 @@
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { DecoratorInfo } from '../models/DecoratorInfo';
-import { DecoratorInfoKind } from '../models/DecoratorInfoKind';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type DecoratorInfo } from '../models/DecoratorInfo.js';
+import { DecoratorInfoKind } from '../models/DecoratorInfoKind.js';
 
 export function getDecoratorInfo(
   target: object,

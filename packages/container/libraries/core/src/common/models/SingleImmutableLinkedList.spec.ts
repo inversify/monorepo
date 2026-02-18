@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { SingleImmutableLinkedList } from './SingleImmutableLinkedList';
+import { SingleImmutableLinkedList } from './SingleImmutableLinkedList.js';
 
 describe(SingleImmutableLinkedList, () => {
   let singleImmutableLinkedListFixture: SingleImmutableLinkedList<unknown>;

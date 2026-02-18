@@ -1,7 +1,7 @@
-import { Resolved } from '../../resolution/models/Resolved';
-import { bindingScopeValues } from './BindingScope';
-import { bindingTypeValues } from './BindingType';
-import { ScopedBinding } from './ScopedBinding';
+import { type Resolved } from '../../resolution/models/Resolved.js';
+import { type bindingScopeValues } from './BindingScope.js';
+import { type bindingTypeValues } from './BindingType.js';
+import { type ScopedBinding } from './ScopedBinding.js';
 
 export interface ConstantValueBinding<TActivated> extends ScopedBinding<
   typeof bindingTypeValues.ConstantValue,

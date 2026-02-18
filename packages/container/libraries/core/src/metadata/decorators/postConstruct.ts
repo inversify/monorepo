@@ -1,9 +1,9 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { updateMaybeClassMetadataPostConstructor } from '../actions/updateMaybeClassMetadataPostConstructor';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { handleInjectionError } from '../calculations/handleInjectionError';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { updateMaybeClassMetadataPostConstructor } from '../actions/updateMaybeClassMetadataPostConstructor.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { handleInjectionError } from '../calculations/handleInjectionError.js';
 
 export function postConstruct(): MethodDecorator {
   return <T>(

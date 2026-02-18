@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ClassMetadata } from '../models/ClassMetadata';
-import { InjectFromOptions } from '../models/InjectFromOptions';
-import { getExtendedConstructorArguments } from './getExtendedConstructorArguments';
+import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { type InjectFromOptions } from '../models/InjectFromOptions.js';
+import { getExtendedConstructorArguments } from './getExtendedConstructorArguments.js';
 
 describe(getExtendedConstructorArguments, () => {
   describe('having options with no extendConstructorArguments', () => {

@@ -1,5 +1,5 @@
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { UnmanagedClassElementMetadata } from '../models/UnmanagedClassElementMetadata';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type UnmanagedClassElementMetadata } from '../models/UnmanagedClassElementMetadata.js';
 
 export function buildDefaultUnmanagedMetadata(): UnmanagedClassElementMetadata {
   return {

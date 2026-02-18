@@ -8,7 +8,7 @@ import {
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { getBindingId } from './getBindingId';
+import { getBindingId } from './getBindingId.js';
 
 describe(getBindingId, () => {
   describe('when called, and getOwnReflectMetadata() returns undefined', () => {

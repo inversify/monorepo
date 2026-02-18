@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -25,19 +25,19 @@ vitest.mock(import('../actions/updateMaybeClassMetadataProperty.js'), () => ({
 
 vitest.mock(import('../calculations/handleInjectionError.js'));
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { updateMaybeClassMetadataConstructorArgument } from '../actions/updateMaybeClassMetadataConstructorArgument';
-import { updateMaybeClassMetadataProperty } from '../actions/updateMaybeClassMetadataProperty';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { handleInjectionError } from '../calculations/handleInjectionError';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
-import { injectBase } from './injectBase';
+import { type InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { updateMaybeClassMetadataConstructorArgument } from '../actions/updateMaybeClassMetadataConstructorArgument.js';
+import { updateMaybeClassMetadataProperty } from '../actions/updateMaybeClassMetadataProperty.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { handleInjectionError } from '../calculations/handleInjectionError.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
+import { injectBase } from './injectBase.js';
 
 describe(injectBase, () => {
   let updateMetadataMock: Mock<

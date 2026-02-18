@@ -2,17 +2,17 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('../../error/calculations/isStackOverflowError.js'));
 
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { isStackOverflowError } from '../../error/calculations/isStackOverflowError';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ResolutionParams } from '../../resolution/models/ResolutionParams';
-import { InstanceBindingNode } from '../models/InstanceBindingNode';
-import { PlanResult } from '../models/PlanResult';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode';
-import { ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode';
-import { handleResolveError } from './handleResolveError';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { isStackOverflowError } from '../../error/calculations/isStackOverflowError.js';
+import { type InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
+import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
+import { type PlanResult } from '../models/PlanResult.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { type PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode.js';
+import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
+import { handleResolveError } from './handleResolveError.js';
 
 function buildInstanceBindingNode(
   constructorChildren: (PlanServiceNode | undefined)[],

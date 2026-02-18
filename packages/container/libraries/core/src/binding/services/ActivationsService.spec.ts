@@ -4,23 +4,23 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('../../common/models/OneToManyMapStar.js'));
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
 vitest.mock(import('../../common/calculations/chain.js'));
 
-import { chain } from '../../common/calculations/chain';
-import { OneToManyMapStar } from '../../common/models/OneToManyMapStar';
-import { BindingActivation } from '../models/BindingActivation';
+import { chain } from '../../common/calculations/chain.js';
+import { OneToManyMapStar } from '../../common/models/OneToManyMapStar.js';
+import { type BindingActivation } from '../models/BindingActivation.js';
 import {
   ActivationsService,
-  BindingActivationRelation,
-} from './ActivationsService';
+  type BindingActivationRelation,
+} from './ActivationsService.js';
 
 describe(ActivationsService, () => {
   let activationMapsMock: Mocked<

@@ -1,15 +1,15 @@
-import { isPromise, Right } from '@inversifyjs/common';
+import { isPromise, type Right } from '@inversifyjs/common';
 
-import { Binding } from '../../binding/models/Binding';
-import { bindingScopeValues } from '../../binding/models/BindingScope';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type bindingScopeValues } from '../../binding/models/BindingScope.js';
 import {
-  BindingType,
+  type BindingType,
   bindingTypeValues,
-} from '../../binding/models/BindingType';
-import { ScopedBinding } from '../../binding/models/ScopedBinding';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { DeactivationParams } from '../models/DeactivationParams';
-import { Resolved } from '../models/Resolved';
+} from '../../binding/models/BindingType.js';
+import { type ScopedBinding } from '../../binding/models/ScopedBinding.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { type DeactivationParams } from '../models/DeactivationParams.js';
+import { type Resolved } from '../models/Resolved.js';
 
 const CACHE_KEY_TYPE: keyof ScopedBinding<
   BindingType,

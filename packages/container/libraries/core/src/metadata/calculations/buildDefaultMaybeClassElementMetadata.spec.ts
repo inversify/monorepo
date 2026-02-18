@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind';
-import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';
-import { buildDefaultMaybeClassElementMetadata } from './buildDefaultMaybeClassElementMetadata';
+import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind.js';
+import { type MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata.js';
+import { buildDefaultMaybeClassElementMetadata } from './buildDefaultMaybeClassElementMetadata.js';
 
 describe(buildDefaultMaybeClassElementMetadata, () => {
   describe('when called', () => {

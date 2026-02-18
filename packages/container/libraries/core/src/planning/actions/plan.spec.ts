@@ -4,8 +4,8 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
@@ -21,21 +21,21 @@ vitest.mock(import('./curryBuildPlanServiceNode.js'), () => {
   };
 });
 
-import { Binding } from '../../binding/models/Binding';
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { buildGetPlanOptionsFromPlanParams } from '../calculations/buildGetPlanOptionsFromPlanParams';
-import { BasePlanParams } from '../models/BasePlanParams';
-import { BindingNodeParent } from '../models/BindingNodeParent';
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanParams } from '../models/PlanParams';
-import { PlanParamsConstraint } from '../models/PlanParamsConstraint';
-import { PlanParamsOperations } from '../models/PlanParamsOperations';
-import { PlanResult } from '../models/PlanResult';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { curryBuildPlanServiceNode } from './curryBuildPlanServiceNode';
-import { plan } from './plan';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { buildGetPlanOptionsFromPlanParams } from '../calculations/buildGetPlanOptionsFromPlanParams.js';
+import { type BasePlanParams } from '../models/BasePlanParams.js';
+import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanParams } from '../models/PlanParams.js';
+import { type PlanParamsConstraint } from '../models/PlanParamsConstraint.js';
+import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
+import { type PlanResult } from '../models/PlanResult.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { curryBuildPlanServiceNode } from './curryBuildPlanServiceNode.js';
+import { plan } from './plan.js';
 
 describe(plan, () => {
   let paramsFixture: Mocked<PlanParams>;

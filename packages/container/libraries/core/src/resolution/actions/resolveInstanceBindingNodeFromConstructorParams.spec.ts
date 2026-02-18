@@ -4,23 +4,23 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('./resolvePostConstruct.js'));
 
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
-import { PlanServiceNode } from '../../planning/models/PlanServiceNode';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved, SyncResolved } from '../models/Resolved';
-import { resolveInstanceBindingNodeFromConstructorParams } from './resolveInstanceBindingNodeFromConstructorParams';
-import { resolvePostConstruct } from './resolvePostConstruct';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
+import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved, type SyncResolved } from '../models/Resolved.js';
+import { resolveInstanceBindingNodeFromConstructorParams } from './resolveInstanceBindingNodeFromConstructorParams.js';
+import { resolvePostConstruct } from './resolvePostConstruct.js';
 
 describe(resolveInstanceBindingNodeFromConstructorParams, () => {
   let setInstancePropertiesMock: Mock<

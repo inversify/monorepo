@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { PlanParams } from '../models/PlanParams';
-import { buildGetPlanOptionsFromPlanParams } from './buildGetPlanOptionsFromPlanParams';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { type PlanParams } from '../models/PlanParams.js';
+import { buildGetPlanOptionsFromPlanParams } from './buildGetPlanOptionsFromPlanParams.js';
 
 describe(buildGetPlanOptionsFromPlanParams, () => {
   describe('having PlanParams with rootConstraints.isMultiple false', () => {

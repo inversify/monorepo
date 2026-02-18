@@ -1,8 +1,11 @@
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  type LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
-import { MultiInjectOptions } from '../models/MultiInjectOptions';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
+import { type MultiInjectOptions } from '../models/MultiInjectOptions.js';
 
 export function buildDefaultManagedMetadata(
   kind: ClassElementMetadataKind.singleInjection,

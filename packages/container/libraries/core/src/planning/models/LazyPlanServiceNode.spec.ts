@@ -4,15 +4,15 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { LazyPlanServiceNode } from './LazyPlanServiceNode';
-import { PlanBindingNode } from './PlanBindingNode';
-import { PlanServiceNode } from './PlanServiceNode';
+import { LazyPlanServiceNode } from './LazyPlanServiceNode.js';
+import { type PlanBindingNode } from './PlanBindingNode.js';
+import { type PlanServiceNode } from './PlanServiceNode.js';
 
 class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
   readonly #buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;

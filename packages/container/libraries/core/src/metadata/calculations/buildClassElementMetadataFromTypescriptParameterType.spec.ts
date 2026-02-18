@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { buildClassElementMetadataFromTypescriptParameterType } from './buildClassElementMetadataFromTypescriptParameterType';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { buildClassElementMetadataFromTypescriptParameterType } from './buildClassElementMetadataFromTypescriptParameterType.js';
 
 describe(buildClassElementMetadataFromTypescriptParameterType, () => {
   describe('when called', () => {

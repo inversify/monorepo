@@ -7,10 +7,10 @@ import {
   setReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { classIsInjectableFlagReflectKey } from '../../reflectMetadata/data/classIsInjectableFlagReflectKey';
-import { setIsInjectableFlag } from './setIsInjectableFlag';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { classIsInjectableFlagReflectKey } from '../../reflectMetadata/data/classIsInjectableFlagReflectKey.js';
+import { setIsInjectableFlag } from './setIsInjectableFlag.js';
 
 describe(setIsInjectableFlag, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

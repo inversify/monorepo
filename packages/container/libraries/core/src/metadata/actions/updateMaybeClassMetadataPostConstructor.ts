@@ -1,6 +1,6 @@
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
 
 export function updateMaybeClassMetadataPostConstructor(
   methodName: string | symbol,

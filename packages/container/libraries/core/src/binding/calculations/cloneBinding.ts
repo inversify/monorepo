@@ -1,13 +1,13 @@
-import { Binding } from '../models/Binding';
-import { bindingTypeValues } from '../models/BindingType';
-import { Factory } from '../models/Factory';
-import { FactoryBinding } from '../models/FactoryBinding';
-import { cloneConstantValueBinding } from './cloneConstantValueBinding';
-import { cloneDynamicValueBinding } from './cloneDynamicValueBinding';
-import { cloneFactoryBinding } from './cloneFactoryBinding';
-import { cloneInstanceBinding } from './cloneInstanceBinding';
-import { cloneResolvedValueBinding } from './cloneResolvedValueBinding';
-import { cloneServiceRedirectionBinding } from './cloneServiceRedirectionBinding';
+import { type Binding } from '../models/Binding.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type Factory } from '../models/Factory.js';
+import { type FactoryBinding } from '../models/FactoryBinding.js';
+import { cloneConstantValueBinding } from './cloneConstantValueBinding.js';
+import { cloneDynamicValueBinding } from './cloneDynamicValueBinding.js';
+import { cloneFactoryBinding } from './cloneFactoryBinding.js';
+import { cloneInstanceBinding } from './cloneInstanceBinding.js';
+import { cloneResolvedValueBinding } from './cloneResolvedValueBinding.js';
+import { cloneServiceRedirectionBinding } from './cloneServiceRedirectionBinding.js';
 
 /**
  * Creates a deep clone of a binding.

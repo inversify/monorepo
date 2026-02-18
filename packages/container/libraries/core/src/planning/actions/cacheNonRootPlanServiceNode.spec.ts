@@ -4,20 +4,20 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { GetPlanOptionsFixtures } from '../fixtures/GetPlanOptionsFixtures';
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
-import { NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext';
-import { PlanParamsOperations } from '../models/PlanParamsOperations';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { cacheNonRootPlanServiceNode } from './cacheNonRootPlanServiceNode';
+import { GetPlanOptionsFixtures } from '../fixtures/GetPlanOptionsFixtures.js';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
+import { type NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext.js';
+import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { cacheNonRootPlanServiceNode } from './cacheNonRootPlanServiceNode.js';
 
 class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
   readonly #buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;

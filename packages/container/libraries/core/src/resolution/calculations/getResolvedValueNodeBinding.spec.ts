@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
-import { ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode';
-import { getResolvedValueNodeBinding } from './getResolvedValueNodeBinding';
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
+import { type ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode.js';
+import { getResolvedValueNodeBinding } from './getResolvedValueNodeBinding.js';
 
 describe(getResolvedValueNodeBinding, () => {
   let nodeFixture: ResolvedValueBindingNode<ResolvedValueBinding<unknown>>;

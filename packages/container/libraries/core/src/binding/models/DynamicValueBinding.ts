@@ -1,7 +1,7 @@
-import { BindingScope } from './BindingScope';
-import { bindingTypeValues } from './BindingType';
-import { DynamicValueBuilder } from './DynamicValueBuilder';
-import { ScopedBinding } from './ScopedBinding';
+import { type BindingScope } from './BindingScope.js';
+import { type bindingTypeValues } from './BindingType.js';
+import { type DynamicValueBuilder } from './DynamicValueBuilder.js';
+import { type ScopedBinding } from './ScopedBinding.js';
 
 export interface DynamicValueBinding<TActivated> extends ScopedBinding<
   typeof bindingTypeValues.DynamicValue,

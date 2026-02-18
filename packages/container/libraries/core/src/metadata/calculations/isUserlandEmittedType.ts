@@ -1,4 +1,4 @@
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
 const NON_USERLAND_TYPES: unknown[] = [
   Array,

@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Right } from '@inversifyjs/common';
+import { type Right } from '@inversifyjs/common';
 
-import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures';
-import { BindingScope } from '../../binding/models/BindingScope';
-import { BindingType } from '../../binding/models/BindingType';
-import { ScopedBinding } from '../../binding/models/ScopedBinding';
-import { cacheResolvedValue } from './cacheResolvedValue';
+import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures.js';
+import { type BindingScope } from '../../binding/models/BindingScope.js';
+import { type BindingType } from '../../binding/models/BindingType.js';
+import { type ScopedBinding } from '../../binding/models/ScopedBinding.js';
+import { cacheResolvedValue } from './cacheResolvedValue.js';
 
 describe(cacheResolvedValue, () => {
   describe('having a non promise resolved value', () => {

@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { bindingTypeValues } from '../models/BindingType';
-import { ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding';
-import { cloneServiceRedirectionBinding } from './cloneServiceRedirectionBinding';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding.js';
+import { cloneServiceRedirectionBinding } from './cloneServiceRedirectionBinding.js';
 
 describe(cloneServiceRedirectionBinding, () => {
   let serviceRedirectionBindingFixture: ServiceRedirectionBinding<unknown>;

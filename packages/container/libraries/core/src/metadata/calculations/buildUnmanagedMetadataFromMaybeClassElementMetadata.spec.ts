@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -17,9 +17,9 @@ vitest.mock(
   }),
 );
 
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { buildUnmanagedMetadataFromMaybeClassElementMetadata } from './buildUnmanagedMetadataFromMaybeClassElementMetadata';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { buildUnmanagedMetadataFromMaybeClassElementMetadata } from './buildUnmanagedMetadataFromMaybeClassElementMetadata.js';
 
 describe(buildUnmanagedMetadataFromMaybeClassElementMetadata, () => {
   describe('when called', () => {

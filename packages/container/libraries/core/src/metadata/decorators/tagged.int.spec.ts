@@ -4,10 +4,10 @@ import 'reflect-metadata/lite';
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
-import { tagged } from './tagged';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
+import { tagged } from './tagged.js';
 
 describe(tagged, () => {
   describe('when called', () => {

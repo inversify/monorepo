@@ -2,17 +2,17 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 vitest.mock(import('../calculations/getClassMetadata.js'));
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { getClassMetadata } from '../calculations/getClassMetadata';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures';
-import { InjectFromOptions } from '../models/InjectFromOptions';
-import { injectFrom } from './injectFrom';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { getClassMetadata } from '../calculations/getClassMetadata.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures.js';
+import { type InjectFromOptions } from '../models/InjectFromOptions.js';
+import { injectFrom } from './injectFrom.js';
 
 describe(injectFrom, () => {
   describe('when called, and getClassMetadata() returns metadata', () => {

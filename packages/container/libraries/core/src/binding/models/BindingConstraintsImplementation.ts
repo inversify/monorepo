@@ -1,9 +1,9 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
-import { MetadataName } from '../../metadata/models/MetadataName';
-import { MetadataTag } from '../../metadata/models/MetadataTag';
-import { BindingConstraints } from './BindingConstraints';
+import { type SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList.js';
+import { type MetadataName } from '../../metadata/models/MetadataName.js';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
+import { type BindingConstraints } from './BindingConstraints.js';
 
 export interface InternalBindingConstraints {
   getAncestorsCalled: boolean;

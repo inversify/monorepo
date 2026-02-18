@@ -1,8 +1,8 @@
-import { ResolutionContext } from '../../resolution/models/ResolutionContext';
-import { bindingScopeValues } from './BindingScope';
-import { bindingTypeValues } from './BindingType';
-import { Factory } from './Factory';
-import { ScopedBinding } from './ScopedBinding';
+import { type ResolutionContext } from '../../resolution/models/ResolutionContext.js';
+import { type bindingScopeValues } from './BindingScope.js';
+import { type bindingTypeValues } from './BindingType.js';
+import { type Factory } from './Factory.js';
+import { type ScopedBinding } from './ScopedBinding.js';
 
 export interface FactoryBinding<
   TActivated extends Factory<unknown>,

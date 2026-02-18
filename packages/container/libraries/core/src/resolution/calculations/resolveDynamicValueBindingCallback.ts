@@ -1,6 +1,6 @@
-import { DynamicValueBinding } from '../../binding/models/DynamicValueBinding';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved } from '../models/Resolved';
+import { type DynamicValueBinding } from '../../binding/models/DynamicValueBinding.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved } from '../models/Resolved.js';
 
 export function resolveDynamicValueBindingCallback<TActivated>(
   params: ResolutionParams,

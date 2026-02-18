@@ -1,10 +1,10 @@
-import { BindingScope } from '../../binding/models/BindingScope';
-import { BindingType } from '../../binding/models/BindingType';
-import { ScopedBinding } from '../../binding/models/ScopedBinding';
-import { getSelf } from '../../common/calculations/getSelf';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved } from '../models/Resolved';
-import { resolveScoped } from './resolveScoped';
+import { type BindingScope } from '../../binding/models/BindingScope.js';
+import { type BindingType } from '../../binding/models/BindingType.js';
+import { type ScopedBinding } from '../../binding/models/ScopedBinding.js';
+import { getSelf } from '../../common/calculations/getSelf.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved } from '../models/Resolved.js';
+import { resolveScoped } from './resolveScoped.js';
 
 export const resolveScopedBinding: <
   TActivated,

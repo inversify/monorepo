@@ -1,6 +1,6 @@
-import { ConstantValueBinding } from '../../binding/models/ConstantValueBinding';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved } from '../models/Resolved';
+import { type ConstantValueBinding } from '../../binding/models/ConstantValueBinding.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved } from '../models/Resolved.js';
 
 export function resolveConstantValueBindingCallback<TActivated>(
   _params: ResolutionParams,

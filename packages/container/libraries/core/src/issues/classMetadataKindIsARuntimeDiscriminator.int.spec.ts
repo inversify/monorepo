@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ClassElementMetadataKind } from '../metadata/models/ClassElementMetadataKind';
-import { MaybeClassElementMetadataKind } from '../metadata/models/MaybeClassElementMetadataKind';
+import { ClassElementMetadataKind } from '../metadata/models/ClassElementMetadataKind.js';
+import { MaybeClassElementMetadataKind } from '../metadata/models/MaybeClassElementMetadataKind.js';
 
 describe('MaybeClassElementMetadata kind is a runtime discriminator', () => {
   let metadataKindValues: unknown[];

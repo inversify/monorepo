@@ -1,7 +1,7 @@
-import { chain } from '../../common/calculations/chain';
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { ClassMetadata } from '../models/ClassMetadata';
-import { InjectFromOptions } from '../models/InjectFromOptions';
+import { chain } from '../../common/calculations/chain.js';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { type InjectFromOptions } from '../models/InjectFromOptions.js';
 
 export function getExtendedProperties(
   options: InjectFromOptions,

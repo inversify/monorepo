@@ -4,25 +4,25 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { Right } from '@inversifyjs/common';
+import { type Right } from '@inversifyjs/common';
 
-import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures';
-import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures';
-import { Binding } from '../../binding/models/Binding';
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { BindingType } from '../../binding/models/BindingType';
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { ScopedBinding } from '../../binding/models/ScopedBinding';
-import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { DeactivationParams } from '../models/DeactivationParams';
-import { Resolved } from '../models/Resolved';
-import { resolveBindingPreDestroy } from './resolveBindingPreDestroy';
+import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures.js';
+import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures.js';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { type BindingType } from '../../binding/models/BindingType.js';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type ScopedBinding } from '../../binding/models/ScopedBinding.js';
+import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { type DeactivationParams } from '../models/DeactivationParams.js';
+import { type Resolved } from '../models/Resolved.js';
+import { resolveBindingPreDestroy } from './resolveBindingPreDestroy.js';
 
 const CACHE_KEY_TYPE: keyof ScopedBinding<
   BindingType,

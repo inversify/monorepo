@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures';
-import { ClassMetadata } from '../models/ClassMetadata';
-import { ClassMetadataLifecycle } from '../models/ClassMetadataLifecycle';
-import { InjectFromOptions } from '../models/InjectFromOptions';
-import { getExtendedLifecycle } from './getExtendedLifecycle';
+import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures.js';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { type ClassMetadataLifecycle } from '../models/ClassMetadataLifecycle.js';
+import { type InjectFromOptions } from '../models/InjectFromOptions.js';
+import { getExtendedLifecycle } from './getExtendedLifecycle.js';
 
 describe(getExtendedLifecycle, () => {
   describe('having options with no lifecycle configuration', () => {

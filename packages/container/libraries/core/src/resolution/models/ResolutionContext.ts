@@ -1,7 +1,7 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { GetOptions } from './GetOptions';
-import { OptionalGetOptions } from './OptionalGetOptions';
+import { type GetOptions } from './GetOptions.js';
+import { type OptionalGetOptions } from './OptionalGetOptions.js';
 
 export interface ResolutionContext {
   get<TActivated>(

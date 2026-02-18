@@ -2,40 +2,44 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { isPromise, Newable, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  isPromise,
+  type Newable,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { BindingActivation } from '../../binding/models/BindingActivation';
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { ConstantValueBinding } from '../../binding/models/ConstantValueBinding';
-import { DynamicValueBinding } from '../../binding/models/DynamicValueBinding';
-import { Factory } from '../../binding/models/Factory';
-import { FactoryBinding } from '../../binding/models/FactoryBinding';
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
-import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { ActivationsService } from '../../binding/services/ActivationsService';
-import { BindingService } from '../../binding/services/BindingService';
-import { Writable } from '../../common/models/Writable';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { getDefaultClassMetadata } from '../../metadata/calculations/getDefaultClassMetadata';
-import { inject } from '../../metadata/decorators/inject';
-import { optional } from '../../metadata/decorators/optional';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
-import { plan } from '../../planning/actions/plan';
-import { PlanParams } from '../../planning/models/PlanParams';
-import { PlanParamsConstraint } from '../../planning/models/PlanParamsConstraint';
-import { PlanResult } from '../../planning/models/PlanResult';
-import { PlanResultCacheService } from '../../planning/services/PlanResultCacheService';
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { GetOptions } from '../models/GetOptions';
-import { OptionalGetOptions } from '../models/OptionalGetOptions';
-import { ResolutionContext } from '../models/ResolutionContext';
-import { Resolved } from '../models/Resolved';
-import { resolve } from './resolve';
+import { type BindingActivation } from '../../binding/models/BindingActivation.js';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type ConstantValueBinding } from '../../binding/models/ConstantValueBinding.js';
+import { type DynamicValueBinding } from '../../binding/models/DynamicValueBinding.js';
+import { type Factory } from '../../binding/models/Factory.js';
+import { type FactoryBinding } from '../../binding/models/FactoryBinding.js';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
+import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { ActivationsService } from '../../binding/services/ActivationsService.js';
+import { BindingService } from '../../binding/services/BindingService.js';
+import { type Writable } from '../../common/models/Writable.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { getDefaultClassMetadata } from '../../metadata/calculations/getDefaultClassMetadata.js';
+import { inject } from '../../metadata/decorators/inject.js';
+import { optional } from '../../metadata/decorators/optional.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
+import { plan } from '../../planning/actions/plan.js';
+import { type PlanParams } from '../../planning/models/PlanParams.js';
+import { type PlanParamsConstraint } from '../../planning/models/PlanParamsConstraint.js';
+import { type PlanResult } from '../../planning/models/PlanResult.js';
+import { PlanResultCacheService } from '../../planning/services/PlanResultCacheService.js';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { type GetOptions } from '../models/GetOptions.js';
+import { type OptionalGetOptions } from '../models/OptionalGetOptions.js';
+import { type ResolutionContext } from '../models/ResolutionContext.js';
+import { type Resolved } from '../models/Resolved.js';
+import { resolve } from './resolve.js';
 
 enum ServiceIds {
   constantValue = 'constant-value-service-id',

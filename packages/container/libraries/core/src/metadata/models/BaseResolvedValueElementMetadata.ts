@@ -1,7 +1,10 @@
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  type LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
-import { MetadataName } from './MetadataName';
-import { MetadataTag } from './MetadataTag';
+import { type MetadataName } from './MetadataName.js';
+import { type MetadataTag } from './MetadataTag.js';
 
 export interface BaseResolvedValueElementMetadata<TKind> {
   kind: TKind;

@@ -3,9 +3,9 @@ import {
   setReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { classIsInjectableFlagReflectKey } from '../../reflectMetadata/data/classIsInjectableFlagReflectKey';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { classIsInjectableFlagReflectKey } from '../../reflectMetadata/data/classIsInjectableFlagReflectKey.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function setIsInjectableFlag(target: Function): void {

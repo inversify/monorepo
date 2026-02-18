@@ -1,15 +1,15 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures';
-import { ClassMetadata } from '../models/ClassMetadata';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
-import { throwAtInvalidClassMetadata } from './throwAtInvalidClassMetadata';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures.js';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
+import { throwAtInvalidClassMetadata } from './throwAtInvalidClassMetadata.js';
 
 describe(throwAtInvalidClassMetadata, () => {
   describe('having valid class metadata', () => {

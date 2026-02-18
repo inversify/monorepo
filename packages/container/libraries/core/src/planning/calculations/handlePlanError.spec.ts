@@ -2,11 +2,11 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('../../error/calculations/isStackOverflowError.js'));
 
-import { isStackOverflowError } from '../../error/calculations/isStackOverflowError';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { PlanParams } from '../models/PlanParams';
-import { handlePlanError } from './handlePlanError';
+import { isStackOverflowError } from '../../error/calculations/isStackOverflowError.js';
+import { type InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type PlanParams } from '../models/PlanParams.js';
+import { handlePlanError } from './handlePlanError.js';
 
 describe(handlePlanError, () => {
   let errorFixture: unknown;

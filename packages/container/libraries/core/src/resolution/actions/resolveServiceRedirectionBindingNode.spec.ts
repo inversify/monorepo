@@ -1,13 +1,13 @@
-import { beforeAll, describe, expect, it, Mock, vitest } from 'vitest';
+import { beforeAll, describe, expect, it, type Mock, vitest } from 'vitest';
 
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { LeafBindingNode } from '../../planning/models/LeafBindingNode';
-import { PlanBindingNode } from '../../planning/models/PlanBindingNode';
-import { PlanServiceNodeParent } from '../../planning/models/PlanServiceNodeParent';
-import { PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolveServiceRedirectionBindingNode } from './resolveServiceRedirectionBindingNode';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type LeafBindingNode } from '../../planning/models/LeafBindingNode.js';
+import { type PlanBindingNode } from '../../planning/models/PlanBindingNode.js';
+import { type PlanServiceNodeParent } from '../../planning/models/PlanServiceNodeParent.js';
+import { type PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveServiceRedirectionBindingNode } from './resolveServiceRedirectionBindingNode.js';
 
 describe(resolveServiceRedirectionBindingNode, () => {
   describe('having PlanServiceRedirectionBindingNode with PlanServiceRedirectionBindingNode redirection with binding node redirection', () => {

@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { getDefaultPendingClassMetadataCount } from './getDefaultPendingClassMetadataCount';
+import { getDefaultPendingClassMetadataCount } from './getDefaultPendingClassMetadataCount.js';
 
 describe(getDefaultPendingClassMetadataCount, () => {
   describe('when called', () => {

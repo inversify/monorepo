@@ -1,6 +1,6 @@
-import { BindingScope } from '../../binding/models/BindingScope';
-import { ClassElementMetadata } from './ClassElementMetadata';
-import { ClassMetadataLifecycle } from './ClassMetadataLifecycle';
+import { type BindingScope } from '../../binding/models/BindingScope.js';
+import { type ClassElementMetadata } from './ClassElementMetadata.js';
+import { type ClassMetadataLifecycle } from './ClassMetadataLifecycle.js';
 
 export interface ClassMetadata {
   constructorArguments: ClassElementMetadata[];

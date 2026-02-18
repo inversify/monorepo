@@ -1,4 +1,4 @@
-import { ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding';
+import { type ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding.js';
 
 /**
  * Clones a ServiceRedirectionBinding

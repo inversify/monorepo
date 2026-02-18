@@ -4,11 +4,11 @@ vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { pendingClassMetadataCountReflectKey } from '../../reflectMetadata/data/pendingClassMetadataCountReflectKey';
-import { getDefaultPendingClassMetadataCount } from '../calculations/getDefaultPendingClassMetadataCount';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { incrementPendingClassMetadataCount } from './incrementPendingClassMetadataCount';
+import { pendingClassMetadataCountReflectKey } from '../../reflectMetadata/data/pendingClassMetadataCountReflectKey.js';
+import { getDefaultPendingClassMetadataCount } from '../calculations/getDefaultPendingClassMetadataCount.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { incrementPendingClassMetadataCount } from './incrementPendingClassMetadataCount.js';
 
 describe(incrementPendingClassMetadataCount, () => {
   let typeFixture: object;

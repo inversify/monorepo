@@ -1,14 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { Left } from '@inversifyjs/common';
+import { type Left } from '@inversifyjs/common';
 
 vitest.mock(import('./cloneBindingCache.js'));
 
-import { bindingScopeValues } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
-import { ResolvedValueBinding } from '../models/ResolvedValueBinding';
-import { cloneBindingCache } from './cloneBindingCache';
-import { cloneResolvedValueBinding } from './cloneResolvedValueBinding';
+import { bindingScopeValues } from '../models/BindingScope.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type ResolvedValueBinding } from '../models/ResolvedValueBinding.js';
+import { cloneBindingCache } from './cloneBindingCache.js';
+import { cloneResolvedValueBinding } from './cloneResolvedValueBinding.js';
 
 describe(cloneResolvedValueBinding, () => {
   let resolvedValueBindingFixture: ResolvedValueBinding<unknown>;

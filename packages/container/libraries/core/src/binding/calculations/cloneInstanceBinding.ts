@@ -1,5 +1,5 @@
-import { InstanceBinding } from '../models/InstanceBinding';
-import { cloneBindingCache } from './cloneBindingCache';
+import { type InstanceBinding } from '../models/InstanceBinding.js';
+import { cloneBindingCache } from './cloneBindingCache.js';
 
 /**
  * Clones an InstanceBinding

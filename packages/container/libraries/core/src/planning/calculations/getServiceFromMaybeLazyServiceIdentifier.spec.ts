@@ -1,8 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
-import { getServiceFromMaybeLazyServiceIdentifier } from './getServiceFromMaybeLazyServiceIdentifier';
+import { getServiceFromMaybeLazyServiceIdentifier } from './getServiceFromMaybeLazyServiceIdentifier.js';
 
 describe(getServiceFromMaybeLazyServiceIdentifier, () => {
   describe('having LazyServiceIdentifier', () => {

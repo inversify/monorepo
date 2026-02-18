@@ -1,12 +1,12 @@
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
-import { getClassMetadata } from '../../metadata/calculations/getClassMetadata';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { getBindingId } from '../actions/getBindingId';
-import { AutobindOptions } from '../models/AutobindOptions';
-import { BindingScope } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
-import { InstanceBinding } from '../models/InstanceBinding';
+import { getClassMetadata } from '../../metadata/calculations/getClassMetadata.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { getBindingId } from '../actions/getBindingId.js';
+import { type AutobindOptions } from '../models/AutobindOptions.js';
+import { type BindingScope } from '../models/BindingScope.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type InstanceBinding } from '../models/InstanceBinding.js';
 
 export function buildInstanceBinding<TResolved = unknown>(
   autobindOptions: AutobindOptions,

@@ -1,4 +1,4 @@
-import { GetPlanOptions } from '../models/GetPlanOptions';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
 
 export class GetPlanOptionsFixtures {
   public static get any(): GetPlanOptions {

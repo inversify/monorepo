@@ -1,10 +1,13 @@
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
-import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
-import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
-import { MetadataTag } from '../../metadata/models/MetadataTag';
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { GetPlanOptionsTagConstraint } from '../models/GetPlanOptionsTagConstraint';
+import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind.js';
+import { type ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata.js';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { type GetPlanOptionsTagConstraint } from '../models/GetPlanOptionsTagConstraint.js';
 
 export function tryBuildGetPlanOptionsFromManagedClassElementMetadata(
   elementMetadata: ManagedClassElementMetadata,

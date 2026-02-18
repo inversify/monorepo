@@ -1,8 +1,8 @@
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import { getBaseType } from '@inversifyjs/prototype-utils';
 
-import { InjectFromHierarchyOptions } from '../models/InjectFromHierarchyOptions';
-import { injectFrom } from './injectFrom';
+import { type InjectFromHierarchyOptions } from '../models/InjectFromHierarchyOptions.js';
+import { injectFrom } from './injectFrom.js';
 
 export function injectFromHierarchy(
   options?: InjectFromHierarchyOptions,

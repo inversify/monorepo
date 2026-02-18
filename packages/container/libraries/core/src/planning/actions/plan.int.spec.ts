@@ -2,35 +2,35 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { ConstantValueBinding } from '../../binding/models/ConstantValueBinding';
-import { DynamicValueBinding } from '../../binding/models/DynamicValueBinding';
-import { Factory } from '../../binding/models/Factory';
-import { FactoryBinding } from '../../binding/models/FactoryBinding';
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
-import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { BindingService } from '../../binding/services/BindingService';
-import { Writable } from '../../common/models/Writable';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { getDefaultClassMetadata } from '../../metadata/calculations/getDefaultClassMetadata';
-import { inject } from '../../metadata/decorators/inject';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { InstanceBindingNode } from '../models/InstanceBindingNode';
-import { PlanParamsConstraint } from '../models/PlanParamsConstraint';
-import { PlanResult } from '../models/PlanResult';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode';
-import { ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode';
-import { PlanResultCacheService } from '../services/PlanResultCacheService';
-import { plan } from './plan';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type ConstantValueBinding } from '../../binding/models/ConstantValueBinding.js';
+import { type DynamicValueBinding } from '../../binding/models/DynamicValueBinding.js';
+import { type Factory } from '../../binding/models/Factory.js';
+import { type FactoryBinding } from '../../binding/models/FactoryBinding.js';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
+import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { BindingService } from '../../binding/services/BindingService.js';
+import { type Writable } from '../../common/models/Writable.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { getDefaultClassMetadata } from '../../metadata/calculations/getDefaultClassMetadata.js';
+import { inject } from '../../metadata/decorators/inject.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
+import { type PlanParamsConstraint } from '../models/PlanParamsConstraint.js';
+import { type PlanResult } from '../models/PlanResult.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { type PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode.js';
+import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
+import { PlanResultCacheService } from '../services/PlanResultCacheService.js';
+import { plan } from './plan.js';
 
 enum ServiceIds {
   constantValue = 'constant-value-service-id',

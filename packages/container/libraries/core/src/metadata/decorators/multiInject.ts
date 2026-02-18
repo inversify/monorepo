@@ -1,12 +1,15 @@
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  type LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
-import { decrementPendingClassMetadataCount } from '../actions/decrementPendingClassMetadataCount';
-import { buildManagedMetadataFromMaybeClassElementMetadata } from '../calculations/buildManagedMetadataFromMaybeClassElementMetadata';
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MultiInjectOptions } from '../models/MultiInjectOptions';
-import { injectBase } from './injectBase';
+import { decrementPendingClassMetadataCount } from '../actions/decrementPendingClassMetadataCount.js';
+import { buildManagedMetadataFromMaybeClassElementMetadata } from '../calculations/buildManagedMetadataFromMaybeClassElementMetadata.js';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MultiInjectOptions } from '../models/MultiInjectOptions.js';
+import { injectBase } from './injectBase.js';
 
 export function multiInject(
   serviceIdentifier: ServiceIdentifier | LazyServiceIdentifier,

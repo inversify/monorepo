@@ -4,29 +4,29 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('../calculations/buildPlanBindingConstraintsList.js'));
 vitest.mock(import('./addServiceNodeBindingIfContextFree.js'));
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { Binding } from '../../binding/models/Binding';
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
-import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
-import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
-import { PlanParams } from '../models/PlanParams';
-import { PlanParamsOperations } from '../models/PlanParamsOperations';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { addRootServiceNodeBindingIfContextFree } from './addRootServiceNodeBindingIfContextFree';
-import { addServiceNodeBindingIfContextFree } from './addServiceNodeBindingIfContextFree';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { type PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult.js';
+import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList.js';
+import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
+import { type PlanParams } from '../models/PlanParams.js';
+import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { addRootServiceNodeBindingIfContextFree } from './addRootServiceNodeBindingIfContextFree.js';
+import { addServiceNodeBindingIfContextFree } from './addServiceNodeBindingIfContextFree.js';
 
 class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
   readonly #buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;

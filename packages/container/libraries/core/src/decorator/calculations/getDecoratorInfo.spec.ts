@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { DecoratorInfo } from '../models/DecoratorInfo';
-import { DecoratorInfoKind } from '../models/DecoratorInfoKind';
-import { getDecoratorInfo } from './getDecoratorInfo';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type DecoratorInfo } from '../models/DecoratorInfo.js';
+import { DecoratorInfoKind } from '../models/DecoratorInfoKind.js';
+import { getDecoratorInfo } from './getDecoratorInfo.js';
 
 describe(getDecoratorInfo, () => {
   describe('having a propertyKey undefined and parameterIndex undefined', () => {

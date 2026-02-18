@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { validateConstructorMetadataArray } from './validateConstructorMetadataArray';
+import { type InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { validateConstructorMetadataArray } from './validateConstructorMetadataArray.js';
 
 describe(validateConstructorMetadataArray, () => {
   describe('having an array with no empty values', () => {

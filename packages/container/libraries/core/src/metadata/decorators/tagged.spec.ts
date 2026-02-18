@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -13,13 +13,13 @@ vitest.mock(
 );
 vitest.mock(import('./injectBase.js'));
 
-import { incrementPendingClassMetadataCount } from '../actions/incrementPendingClassMetadataCount';
-import { buildMaybeClassElementMetadataFromMaybeClassElementMetadata } from '../calculations/buildMaybeClassElementMetadataFromMaybeClassElementMetadata';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';
-import { injectBase } from './injectBase';
-import { tagged } from './tagged';
+import { incrementPendingClassMetadataCount } from '../actions/incrementPendingClassMetadataCount.js';
+import { buildMaybeClassElementMetadataFromMaybeClassElementMetadata } from '../calculations/buildMaybeClassElementMetadataFromMaybeClassElementMetadata.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata.js';
+import { injectBase } from './injectBase.js';
+import { tagged } from './tagged.js';
 
 describe(tagged, () => {
   let keyFixture: string;

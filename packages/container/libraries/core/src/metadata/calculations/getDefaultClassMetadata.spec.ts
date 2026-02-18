@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ClassMetadata } from '../models/ClassMetadata';
-import { getDefaultClassMetadata } from './getDefaultClassMetadata';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { getDefaultClassMetadata } from './getDefaultClassMetadata.js';
 
 describe(getDefaultClassMetadata, () => {
   describe('when called', () => {

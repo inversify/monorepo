@@ -1,4 +1,4 @@
-import { Cloneable } from './Cloneable';
+import { type Cloneable } from './Cloneable.js';
 
 const NOT_FOUND_INDEX: number = -1;
 

@@ -4,17 +4,17 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { BindingActivation } from '../../binding/models/BindingActivation';
-import { ResolutionContext } from '../models/ResolutionContext';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolveBindingServiceActivations } from './resolveBindingServiceActivations';
+import { type BindingActivation } from '../../binding/models/BindingActivation.js';
+import { type ResolutionContext } from '../models/ResolutionContext.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveBindingServiceActivations } from './resolveBindingServiceActivations.js';
 
 describe(resolveBindingServiceActivations, () => {
   describe('having a non promise value', () => {

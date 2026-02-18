@@ -1,10 +1,13 @@
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
-import { MetadataTag } from '../../metadata/models/MetadataTag';
-import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
-import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { GetPlanOptionsTagConstraint } from '../models/GetPlanOptionsTagConstraint';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
+import { type ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata.js';
+import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { type GetPlanOptionsTagConstraint } from '../models/GetPlanOptionsTagConstraint.js';
 
 export function tryBuildGetPlanOptionsFromResolvedValueElementMetadata(
   resolvedValueElementMetadata: ResolvedValueElementMetadata,

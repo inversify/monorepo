@@ -1,7 +1,7 @@
-import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
-import { bindingScopeValues } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
-import { ResolvedValueBinding } from '../models/ResolvedValueBinding';
+import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
+import { bindingScopeValues } from '../models/BindingScope.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type ResolvedValueBinding } from '../models/ResolvedValueBinding.js';
 
 export class ResolvedValueBindingFixtures {
   public static get any(): ResolvedValueBinding<unknown> {

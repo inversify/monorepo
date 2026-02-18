@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { MaybeClassMetadataFixtures } from '../fixtures/MaybeClassMetadataFixtures';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
-import { updateMaybeClassMetadataPostConstructor } from './updateMaybeClassMetadataPostConstructor';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { MaybeClassMetadataFixtures } from '../fixtures/MaybeClassMetadataFixtures.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
+import { updateMaybeClassMetadataPostConstructor } from './updateMaybeClassMetadataPostConstructor.js';
 
 describe(updateMaybeClassMetadataPostConstructor, () => {
   describe('having metadata with no postConstructorMethodNames', () => {

@@ -1,14 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { Left } from '@inversifyjs/common';
+import { type Left } from '@inversifyjs/common';
 
 vitest.mock(import('./cloneBindingCache.js'));
 
-import { bindingScopeValues } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
-import { DynamicValueBinding } from '../models/DynamicValueBinding';
-import { cloneBindingCache } from './cloneBindingCache';
-import { cloneDynamicValueBinding } from './cloneDynamicValueBinding';
+import { bindingScopeValues } from '../models/BindingScope.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type DynamicValueBinding } from '../models/DynamicValueBinding.js';
+import { cloneBindingCache } from './cloneBindingCache.js';
+import { cloneDynamicValueBinding } from './cloneDynamicValueBinding.js';
 
 describe(cloneDynamicValueBinding, () => {
   let dynamicValueBindingFixture: DynamicValueBinding<unknown>;

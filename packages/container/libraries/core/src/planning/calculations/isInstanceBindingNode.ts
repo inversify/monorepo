@@ -1,6 +1,6 @@
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { InstanceBindingNode } from '../models/InstanceBindingNode';
-import { PlanServiceNodeParent } from '../models/PlanServiceNodeParent';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
+import { type PlanServiceNodeParent } from '../models/PlanServiceNodeParent.js';
 
 export function isInstanceBindingNode(
   node: PlanServiceNodeParent,

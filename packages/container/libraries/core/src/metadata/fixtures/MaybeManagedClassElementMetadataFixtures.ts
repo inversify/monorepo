@@ -1,5 +1,5 @@
-import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind';
-import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';
+import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind.js';
+import { type MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata.js';
 
 export class MaybeManagedClassElementMetadataFixtures {
   public static get any(): MaybeManagedClassElementMetadata {

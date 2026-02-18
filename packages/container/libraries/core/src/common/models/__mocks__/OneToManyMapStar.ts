@@ -1,4 +1,4 @@
-import { Mock, vitest } from 'vitest';
+import { type Mock, vitest } from 'vitest';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const addMock: Mock<any> = vitest.fn();

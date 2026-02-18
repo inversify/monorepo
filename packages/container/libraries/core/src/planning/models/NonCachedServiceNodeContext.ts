@@ -1,5 +1,5 @@
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 
 export interface NonCachedServiceNodeContext {
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>;

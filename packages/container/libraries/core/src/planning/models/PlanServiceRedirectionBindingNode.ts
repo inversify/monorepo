@@ -1,6 +1,6 @@
-import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { BaseBindingNode } from './BaseBindingNode';
-import { PlanBindingNode } from './PlanBindingNode';
+import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { type BaseBindingNode } from './BaseBindingNode.js';
+import { type PlanBindingNode } from './PlanBindingNode.js';
 
 export interface PlanServiceRedirectionBindingNode<
   TBinding extends

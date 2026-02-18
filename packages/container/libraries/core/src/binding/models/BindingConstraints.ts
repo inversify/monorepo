@@ -1,7 +1,7 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { MetadataName } from '../../metadata/models/MetadataName';
-import { MetadataTag } from '../../metadata/models/MetadataTag';
+import { type MetadataName } from '../../metadata/models/MetadataName.js';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
 
 export interface BindingConstraints {
   readonly name: MetadataName | undefined;

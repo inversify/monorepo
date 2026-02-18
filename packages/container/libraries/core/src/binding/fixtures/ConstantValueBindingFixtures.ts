@@ -1,6 +1,6 @@
-import { bindingScopeValues } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
-import { ConstantValueBinding } from '../models/ConstantValueBinding';
+import { bindingScopeValues } from '../models/BindingScope.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type ConstantValueBinding } from '../models/ConstantValueBinding.js';
 
 export class ConstantValueBindingFixtures {
   public static get any(): ConstantValueBinding<unknown> {
