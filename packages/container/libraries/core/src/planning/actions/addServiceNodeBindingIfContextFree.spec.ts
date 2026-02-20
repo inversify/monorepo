@@ -47,7 +47,7 @@ import { bindingScopeValues } from '../../binding/models/BindingScope.js';
 import { bindingTypeValues } from '../../binding/models/BindingType.js';
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { isStackOverflowError } from '../../error/calculations/isStackOverflowError.js';
-import { type InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
 import { type PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
@@ -198,6 +198,82 @@ describe(addServiceNodeBindingIfContextFree, () => {
         expect(
           vitest.mocked(isStackOverflowError),
         ).toHaveBeenCalledExactlyOnceWith(expect.any(Error));
+      });
+
+      it('should return expected value', () => {
+        const expected: PlanServiceNodeBindingAddedResult = {
+          isContextFreeBinding: false,
+          shouldInvalidateServiceNode: true,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+
+    describe('when called, and binding.isSatisfiedBy() returns true, and buildServiceNodeBindings throws a planningMaxDepthExceeded error', () => {
+      let errorFixture: InversifyCoreError;
+      let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        errorFixture = new InversifyCoreError(
+          InversifyCoreErrorKind.planningMaxDepthExceeded,
+          'Max depth exceeded',
+        );
+        lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
+          {
+            bindings: undefined,
+            isContextFree: true,
+            serviceIdentifier: serviceIdentifierFixture,
+          },
+          serviceIdentifierFixture,
+          vitest.fn(),
+        );
+
+        bindingMock.isSatisfiedBy.mockReturnValueOnce(true);
+
+        buildServiceNodeBindingsMock.mockImplementationOnce((): never => {
+          throw errorFixture;
+        });
+
+        vitest.mocked(isStackOverflowError).mockReturnValueOnce(false);
+
+        result = addServiceNodeBindingIfContextFree(
+          paramsFixture,
+          lazyPlanServiceNodeFixture,
+          bindingMock,
+          bindingConstraintsListFixture,
+          chainedBindings,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call binding.isSatisfiedBy()', () => {
+        expect(bindingMock.isSatisfiedBy).toHaveBeenCalledExactlyOnceWith(
+          new BindingConstraintsImplementation(
+            bindingConstraintsListFixture.last,
+          ),
+        );
+      });
+
+      it('should call buildServiceNodeBindings()', () => {
+        expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
+          paramsFixture,
+          bindingConstraintsListFixture,
+          [bindingMock],
+          lazyPlanServiceNodeFixture,
+          chainedBindings,
+        );
+      });
+
+      it('should call isStackOverflowError()', () => {
+        expect(
+          vitest.mocked(isStackOverflowError),
+        ).toHaveBeenCalledExactlyOnceWith(errorFixture);
       });
 
       it('should return expected value', () => {

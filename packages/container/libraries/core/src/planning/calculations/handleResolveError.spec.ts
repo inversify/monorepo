@@ -4,7 +4,7 @@ vitest.mock(import('../../error/calculations/isStackOverflowError.js'));
 
 import { bindingTypeValues } from '../../binding/models/BindingType.js';
 import { isStackOverflowError } from '../../error/calculations/isStackOverflowError.js';
-import { type InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
@@ -136,6 +136,43 @@ describe(handleResolveError, () => {
         expect(result).toStrictEqual(
           expect.objectContaining<Partial<InversifyCoreError>>({
             cause: errorFixture,
+            kind: InversifyCoreErrorKind.planning,
+            message: 'Circular dependency found: (No dependency trace)',
+          }),
+        );
+      });
+    });
+
+    describe('when called, and isStackOverflowError() returns false, and error is a planningMaxDepthExceeded error', () => {
+      let planningMaxDepthExceededErrorFixture: InversifyCoreError;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        planningMaxDepthExceededErrorFixture = new InversifyCoreError(
+          InversifyCoreErrorKind.planningMaxDepthExceeded,
+          'Max depth exceeded',
+        );
+
+        vitest.mocked(isStackOverflowError).mockReturnValueOnce(false);
+        try {
+          handleResolveError(
+            paramsFixture,
+            planningMaxDepthExceededErrorFixture,
+          );
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should throw an InversifyCoreError with no dependency trace', () => {
+        expect(result).toStrictEqual(
+          expect.objectContaining<Partial<InversifyCoreError>>({
+            cause: planningMaxDepthExceededErrorFixture,
             kind: InversifyCoreErrorKind.planning,
             message: 'Circular dependency found: (No dependency trace)',
           }),

@@ -20,7 +20,13 @@ export function handleResolveError(
   params: ResolutionParams,
   error: unknown,
 ): never {
-  if (isStackOverflowError(error)) {
+  if (
+    isStackOverflowError(error) ||
+    InversifyCoreError.isErrorOfKind(
+      error,
+      InversifyCoreErrorKind.planningMaxDepthExceeded,
+    )
+  ) {
     const stringifiedCircularDependencies: string =
       stringifyServiceIdentifierTrace(extractLikelyCircularDependency(params));
 

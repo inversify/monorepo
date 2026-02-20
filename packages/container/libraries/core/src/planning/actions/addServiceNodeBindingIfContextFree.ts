@@ -150,7 +150,13 @@ function addServiceNodeSatisfiedBindingIfContextFree(
       chainedBindings,
     ) as [PlanBindingNode];
   } catch (error: unknown) {
-    if (isStackOverflowError(error)) {
+    if (
+      isStackOverflowError(error) ||
+      InversifyCoreError.isErrorOfKind(
+        error,
+        InversifyCoreErrorKind.planningMaxDepthExceeded,
+      )
+    ) {
       /**
        * We could potentially detect if we managed to traverse at least one iteration of the circular dependency loop.
        * If so, the binding is context free if and only if bindingConstraintsList.last.elem.getAncestorsCalled is false.
