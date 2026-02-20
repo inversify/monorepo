@@ -1,5 +1,5 @@
-import { PluginApi } from './PluginApi';
-import { PluginContext } from './PluginContext';
+import { type PluginApi } from './PluginApi.js';
+import { type PluginContext } from './PluginContext.js';
 
 export const isPlugin: unique symbol = Symbol.for(
   '@inversifyjs/plugin/isPlugin',

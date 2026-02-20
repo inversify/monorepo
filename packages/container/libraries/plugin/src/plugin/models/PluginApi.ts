@@ -1,4 +1,4 @@
-import { GetPlanOptions, PlanResult } from '@inversifyjs/core';
+import { type GetPlanOptions, type PlanResult } from '@inversifyjs/core';
 
 export interface PluginApi {
   define(
