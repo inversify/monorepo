@@ -4,13 +4,19 @@ export interface SingleImmutableLinkedListNode<T> {
 }
 
 export class SingleImmutableLinkedList<T> implements Iterable<T> {
-  constructor(public readonly last: SingleImmutableLinkedListNode<T>) {}
+  constructor(
+    public readonly last: SingleImmutableLinkedListNode<T>,
+    public readonly length: number,
+  ) {}
 
   public concat(elem: T): SingleImmutableLinkedList<T> {
-    return new SingleImmutableLinkedList({
-      elem,
-      previous: this.last,
-    });
+    return new SingleImmutableLinkedList(
+      {
+        elem,
+        previous: this.last,
+      },
+      this.length + 1,
+    );
   }
 
   public [Symbol.iterator](): Iterator<T> {

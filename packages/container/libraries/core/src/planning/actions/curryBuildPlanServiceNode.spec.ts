@@ -71,10 +71,13 @@ describe(curryBuildPlanServiceNode, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         bindingsFixture = [Symbol() as unknown as Binding<unknown>];
         planBindingNodesFixture = [Symbol() as unknown as PlanBindingNode];
@@ -170,10 +173,13 @@ describe(curryBuildPlanServiceNode, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         bindingsFixture = [Symbol() as unknown as Binding<unknown>];
         planBindingNodeFixture = Symbol() as unknown as PlanBindingNode;

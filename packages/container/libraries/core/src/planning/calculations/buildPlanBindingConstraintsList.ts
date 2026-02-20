@@ -12,13 +12,16 @@ export function buildPlanBindingConstraintsList(
     tags.set(params.rootConstraints.tag.key, params.rootConstraints.tag.value);
   }
 
-  return new SingleImmutableLinkedList({
-    elem: {
-      getAncestorsCalled: false,
-      name: params.rootConstraints.name,
-      serviceIdentifier: params.rootConstraints.serviceIdentifier,
-      tags,
+  return new SingleImmutableLinkedList(
+    {
+      elem: {
+        getAncestorsCalled: false,
+        name: params.rootConstraints.name,
+        serviceIdentifier: params.rootConstraints.serviceIdentifier,
+        tags,
+      },
+      previous: undefined,
     },
-    previous: undefined,
-  });
+    1,
+  );
 }

@@ -66,10 +66,13 @@ describe(curryBuildServiceNodeBindings, () => {
       instanceBindingFixture = InstanceBindingFixtures.any;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: Symbol() as unknown as InternalBindingConstraints,
-          previous: undefined,
-        });
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          },
+          1,
+        );
 
       parentNodeFixture = {
         bindings: [],
@@ -160,10 +163,13 @@ describe(curryBuildServiceNodeBindings, () => {
       resolvedValueBindingFixture = ResolvedValueBindingFixtures.any;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: Symbol() as unknown as InternalBindingConstraints,
-          previous: undefined,
-        });
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          },
+          1,
+        );
 
       parentNodeFixture = {
         bindings: [],
@@ -238,10 +244,13 @@ describe(curryBuildServiceNodeBindings, () => {
       serviceRedirectionBindingFixture = ServiceRedirectionBindingFixtures.any;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: Symbol() as unknown as InternalBindingConstraints,
-          previous: undefined,
-        });
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          },
+          1,
+        );
 
       parentNodeFixture = {
         bindings: [],

@@ -1,5 +1,7 @@
 import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
 import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
 import { type ClassElementMetadata } from '../../metadata/models/ClassElementMetadata.js';
 import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
@@ -20,6 +22,8 @@ import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
 import { type SubplanParams } from '../models/SubplanParams.js';
 import { cacheNonRootPlanServiceNode } from './cacheNonRootPlanServiceNode.js';
+
+const MAX_PLAN_DEPTH: number = 500;
 
 class LazyManagedClassMetadataPlanServiceNode extends LazyPlanServiceNode {
   readonly #params: SubplanParams;
@@ -304,6 +308,13 @@ function curryHandlePlanServiceNodeBuildFromClassElementMetadata(
   ): PlanServiceNode | undefined => {
     if (elementMetadata.kind === ClassElementMetadataKind.unmanaged) {
       return undefined;
+    }
+
+    if (bindingConstraintsList.length > MAX_PLAN_DEPTH) {
+      throw new InversifyCoreError(
+        InversifyCoreErrorKind.planningMaxDepthExceeded,
+        'Maximum plan depth exceeded. This is likely caused by a circular dependency.',
+      );
     }
 
     const getPlanOptions: GetPlanOptions | undefined =

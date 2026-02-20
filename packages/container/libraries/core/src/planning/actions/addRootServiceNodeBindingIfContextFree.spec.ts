@@ -137,10 +137,13 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
       let result: unknown;
 
       beforeAll(() => {
-        buildPlanBindingConstraintsListFixture = new SingleImmutableLinkedList({
-          elem: Symbol() as unknown as InternalBindingConstraints,
-          previous: undefined,
-        });
+        buildPlanBindingConstraintsListFixture = new SingleImmutableLinkedList(
+          {
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          },
+          1,
+        );
 
         planServiceNodeBindingAddedResultFixture = {
           isContextFreeBinding: true,

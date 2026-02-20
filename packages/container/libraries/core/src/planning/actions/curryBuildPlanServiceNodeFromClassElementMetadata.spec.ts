@@ -59,10 +59,13 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as SubplanParams;
-      bindingConstraintsListFixture = new SingleImmutableLinkedList({
-        elem: Symbol() as unknown as InternalBindingConstraints,
-        previous: undefined,
-      });
+      bindingConstraintsListFixture = new SingleImmutableLinkedList(
+        {
+          elem: Symbol() as unknown as InternalBindingConstraints,
+          previous: undefined,
+        },
+        1,
+      );
       elementMetadataFixture =
         MultipleInjectionManagedClassElementMetadataFixtures.any;
     });
@@ -111,15 +114,18 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
 
         expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
-          new SingleImmutableLinkedList({
-            elem: {
-              getAncestorsCalled: false,
-              name: elementMetadataFixture.name,
-              serviceIdentifier: expectedServiceNode.serviceIdentifier,
-              tags: elementMetadataFixture.tags,
+          new SingleImmutableLinkedList(
+            {
+              elem: {
+                getAncestorsCalled: false,
+                name: elementMetadataFixture.name,
+                serviceIdentifier: expectedServiceNode.serviceIdentifier,
+                tags: elementMetadataFixture.tags,
+              },
+              previous: bindingConstraintsListFixture.last,
             },
-            previous: bindingConstraintsListFixture.last,
-          }),
+            2,
+          ),
           bindingsFixture,
           expectedServiceNode,
           elementMetadataFixture.chained,
@@ -145,10 +151,13 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as SubplanParams;
-      bindingConstraintsListFixture = new SingleImmutableLinkedList({
-        elem: Symbol() as unknown as InternalBindingConstraints,
-        previous: undefined,
-      });
+      bindingConstraintsListFixture = new SingleImmutableLinkedList(
+        {
+          elem: Symbol() as unknown as InternalBindingConstraints,
+          previous: undefined,
+        },
+        1,
+      );
       elementMetadataFixture =
         SingleInjectionManagedClassElementMetadataFixtures.any;
     });
@@ -197,15 +206,18 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
 
         expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
-          new SingleImmutableLinkedList({
-            elem: {
-              getAncestorsCalled: false,
-              name: elementMetadataFixture.name,
-              serviceIdentifier: expectedServiceNode.serviceIdentifier,
-              tags: elementMetadataFixture.tags,
+          new SingleImmutableLinkedList(
+            {
+              elem: {
+                getAncestorsCalled: false,
+                name: elementMetadataFixture.name,
+                serviceIdentifier: expectedServiceNode.serviceIdentifier,
+                tags: elementMetadataFixture.tags,
+              },
+              previous: bindingConstraintsListFixture.last,
             },
-            previous: bindingConstraintsListFixture.last,
-          }),
+            2,
+          ),
           bindingsFixture,
           expectedServiceNode,
           false,

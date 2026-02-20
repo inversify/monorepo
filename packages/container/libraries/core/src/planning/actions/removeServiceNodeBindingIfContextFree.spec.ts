@@ -115,15 +115,18 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier: serviceIdentifierFixture,
-            tags: new Map(),
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: {
+              getAncestorsCalled: false,
+              name: undefined,
+              serviceIdentifier: serviceIdentifierFixture,
+              tags: new Map(),
+            },
+            previous: undefined,
           },
-          previous: undefined,
-        });
+          1,
+        );
 
       optionalBindings = false;
     });
@@ -273,15 +276,18 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       };
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: true,
-            name: undefined,
-            serviceIdentifier,
-            tags: new Map(),
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: {
+              getAncestorsCalled: true,
+              name: undefined,
+              serviceIdentifier,
+              tags: new Map(),
+            },
+            previous: undefined,
           },
-          previous: undefined,
-        });
+          1,
+        );
 
       optionalBindings = false;
     });
@@ -355,15 +361,18 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier: serviceIdentifierFixture,
-            tags: new Map(),
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: {
+              getAncestorsCalled: false,
+              name: undefined,
+              serviceIdentifier: serviceIdentifierFixture,
+              tags: new Map(),
+            },
+            previous: undefined,
           },
-          previous: undefined,
-        });
+          1,
+        );
 
       optionalBindings = false;
     });
@@ -453,15 +462,18 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier: serviceIdentifierFixture,
-            tags: new Map(),
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: {
+              getAncestorsCalled: false,
+              name: undefined,
+              serviceIdentifier: serviceIdentifierFixture,
+              tags: new Map(),
+            },
+            previous: undefined,
           },
-          previous: undefined,
-        });
+          1,
+        );
 
       optionalBindings = false;
     });
@@ -549,15 +561,18 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier: serviceIdentifierFixture,
-            tags: new Map(),
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: {
+              getAncestorsCalled: false,
+              name: undefined,
+              serviceIdentifier: serviceIdentifierFixture,
+              tags: new Map(),
+            },
+            previous: undefined,
           },
-          previous: undefined,
-        });
+          1,
+        );
 
       optionalBindings = true;
     });

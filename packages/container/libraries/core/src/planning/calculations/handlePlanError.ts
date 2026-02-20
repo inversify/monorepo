@@ -36,7 +36,13 @@ function extractLikelyCircularDependency(
 }
 
 export function handlePlanError(params: PlanParams, error: unknown): never {
-  if (isStackOverflowError(error)) {
+  if (
+    isStackOverflowError(error) ||
+    InversifyCoreError.isErrorOfKind(
+      error,
+      InversifyCoreErrorKind.planningMaxDepthExceeded,
+    )
+  ) {
     const stringifiedCircularDependencies: string =
       stringifyServiceIdentifierTrace(extractLikelyCircularDependency(params));
 

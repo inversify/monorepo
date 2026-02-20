@@ -20,6 +20,8 @@ import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingF
 import { ResolvedValueBindingFixtures } from '../../binding/fixtures/ResolvedValueBindingFixtures.js';
 import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
 import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures.js';
 import { type ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata.js';
 import { type ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata.js';
@@ -104,10 +106,13 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         result = currySubplan(
           buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
@@ -123,6 +128,73 @@ describe(currySubplan, () => {
 
       it('should return PlanBindingNode', () => {
         expect(result).toBe(instanceBindingNodeFixture);
+      });
+    });
+  });
+
+  describe('having bindingConstraintsList with length exceeding MAX_PLAN_DEPTH', () => {
+    let instanceBindingNodeFixture: InstanceBindingNode;
+
+    let subplanParamsMock: SubplanParams;
+
+    let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
+
+    beforeAll(() => {
+      instanceBindingNodeFixture = {
+        binding: InstanceBindingFixtures.any,
+        classMetadata:
+          ClassMetadataFixtures.withSingleInjectionConstructorArguments,
+        constructorParams: [],
+        propertyParams: new Map(),
+      };
+
+      subplanParamsMock = {
+        autobindOptions: undefined,
+        node: instanceBindingNodeFixture,
+        operations: {
+          getPlan: vitest.fn(),
+        } as Partial<PlanParamsOperations> as PlanParamsOperations,
+        servicesBranch: [],
+      };
+
+      bindingConstraintsListFixture =
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          },
+          501,
+        );
+    });
+
+    describe('when called, and bindingConstraintsList length exceeds MAX_PLAN_DEPTH', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        try {
+          currySubplan(
+            buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
+            buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
+            buildPlanServiceNodeFromClassElementMetadataMock,
+            buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          )(subplanParamsMock, bindingConstraintsListFixture);
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should throw InversifyCoreError', () => {
+        expect(result).toBeInstanceOf(InversifyCoreError);
+        expect((result as InversifyCoreError).kind).toBe(
+          InversifyCoreErrorKind.planningMaxDepthExceeded,
+        );
+        expect((result as InversifyCoreError).message).toBe(
+          'Maximum plan depth exceeded. This is likely caused by a circular dependency.',
+        );
       });
     });
   });
@@ -158,10 +230,13 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         vitest
           .mocked(tryBuildGetPlanOptionsFromManagedClassElementMetadata)
@@ -223,10 +298,13 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
 
@@ -297,10 +375,13 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
 
@@ -372,10 +453,13 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
 
@@ -482,10 +566,13 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         vitest
           .mocked(tryBuildGetPlanOptionsFromManagedClassElementMetadata)
@@ -555,10 +642,13 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
 
@@ -637,10 +727,13 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
 
@@ -716,10 +809,13 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
 
@@ -832,10 +928,13 @@ describe(currySubplan, () => {
 
       beforeAll(() => {
         bindingConstraintsListFixture =
-          new SingleImmutableLinkedList<InternalBindingConstraints>({
-            elem: Symbol() as unknown as InternalBindingConstraints,
-            previous: undefined,
-          });
+          new SingleImmutableLinkedList<InternalBindingConstraints>(
+            {
+              elem: Symbol() as unknown as InternalBindingConstraints,
+              previous: undefined,
+            },
+            1,
+          );
 
         vitest
           .mocked(tryBuildGetPlanOptionsFromResolvedValueElementMetadata)

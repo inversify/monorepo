@@ -170,7 +170,7 @@ Keeping the default newest-first direction optimizes for the primary internal us
 ## Example (TypeScript)
 
 ```ts
-const first = new SingleImmutableLinkedList({ elem: "A", previous: undefined });
+const first = new SingleImmutableLinkedList({ elem: "A", previous: undefined }, 1);
 const second = first.concat("B"); // B -> A
 const third = second.concat("C"); // C -> B -> A
 
