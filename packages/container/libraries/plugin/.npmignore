@@ -2,14 +2,14 @@
 /coverage
 /reports
 
+**/*.ts
 **/*.spec.js
 **/*.spec.js.map
-**/*.ts
-!lib/cjs/**/*.d.ts
-lib/cjs/**/fixtures/**
-lib/esm/**/*.d.ts.map
-!lib/esm/index.d.ts
-!lib/esm/index.d.ts.map
+**/*.spec.d.ts.map
+**/*.spec-d.js
+**/*.spec-d.js.map
+**/*.spec-d.d.ts.map
+!lib/**/*.d.ts
 
 .lintstagedrc.json
 eslint.config.mjs
@@ -17,10 +17,7 @@ vitest.config.mjs
 vitest.config.stryker.mjs
 vitest.workspace.mjs
 prettier.config.mjs
-rollup.config.mjs
 stryker.config.mjs
-tsconfig.cjs.json
-tsconfig.cjs.tsbuildinfo
 tsconfig.esm.json
 tsconfig.esm.tsbuildinfo
 tsconfig.json
