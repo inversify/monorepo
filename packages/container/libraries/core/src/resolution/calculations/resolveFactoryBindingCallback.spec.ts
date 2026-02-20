@@ -1,11 +1,11 @@
-import { beforeAll, describe, expect, it, Mocked, vitest } from 'vitest';
+import { beforeAll, describe, expect, it, type Mocked, vitest } from 'vitest';
 
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { Factory } from '../../binding/models/Factory';
-import { FactoryBinding } from '../../binding/models/FactoryBinding';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolveFactoryBindingCallback } from './resolveFactoryBindingCallback';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type Factory } from '../../binding/models/Factory.js';
+import { type FactoryBinding } from '../../binding/models/FactoryBinding.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveFactoryBindingCallback } from './resolveFactoryBindingCallback.js';
 
 describe(resolveFactoryBindingCallback, () => {
   let resolutionParamsFixture: ResolutionParams;

@@ -1,6 +1,6 @@
-import { ClassMetadata } from '../models/ClassMetadata';
-import { ClassMetadataLifecycle } from '../models/ClassMetadataLifecycle';
-import { InjectFromOptions } from '../models/InjectFromOptions';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { type ClassMetadataLifecycle } from '../models/ClassMetadataLifecycle.js';
+import { type InjectFromOptions } from '../models/InjectFromOptions.js';
 
 function getLifecycleSetUnion<T>(
   extend: boolean,

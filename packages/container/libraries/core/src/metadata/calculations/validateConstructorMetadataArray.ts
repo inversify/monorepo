@@ -1,8 +1,8 @@
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
 
 export function validateConstructorMetadataArray(
   type: Newable,

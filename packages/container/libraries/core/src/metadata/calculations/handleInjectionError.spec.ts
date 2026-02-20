@@ -3,13 +3,13 @@ import { beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('../../decorator/calculations/getDecoratorInfo.js'));
 vitest.mock(import('../../decorator/calculations/stringifyDecoratorInfo.js'));
 
-import { getDecoratorInfo } from '../../decorator/calculations/getDecoratorInfo';
-import { stringifyDecoratorInfo } from '../../decorator/calculations/stringifyDecoratorInfo';
-import { DecoratorInfo } from '../../decorator/models/DecoratorInfo';
-import { DecoratorInfoKind } from '../../decorator/models/DecoratorInfoKind';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { handleInjectionError } from './handleInjectionError';
+import { getDecoratorInfo } from '../../decorator/calculations/getDecoratorInfo.js';
+import { stringifyDecoratorInfo } from '../../decorator/calculations/stringifyDecoratorInfo.js';
+import { type DecoratorInfo } from '../../decorator/models/DecoratorInfo.js';
+import { DecoratorInfoKind } from '../../decorator/models/DecoratorInfoKind.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { handleInjectionError } from './handleInjectionError.js';
 
 describe(handleInjectionError, () => {
   describe('having an InversifyCoreError of kind injectionDecoratorConflict', () => {

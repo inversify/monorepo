@@ -1,10 +1,10 @@
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
-import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';
-import { UnmanagedClassElementMetadata } from '../models/UnmanagedClassElementMetadata';
-import { assertMetadataFromTypescriptIfManaged } from './assertMetadataFromTypescriptIfManaged';
-import { buildDefaultUnmanagedMetadata } from './buildDefaultUnmanagedMetadata';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
+import { type MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata.js';
+import { type UnmanagedClassElementMetadata } from '../models/UnmanagedClassElementMetadata.js';
+import { assertMetadataFromTypescriptIfManaged } from './assertMetadataFromTypescriptIfManaged.js';
+import { buildDefaultUnmanagedMetadata } from './buildDefaultUnmanagedMetadata.js';
 
 export function buildUnmanagedMetadataFromMaybeManagedMetadata(
   metadata: MaybeManagedClassElementMetadata | ManagedClassElementMetadata,

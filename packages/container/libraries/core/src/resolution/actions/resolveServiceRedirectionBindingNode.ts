@@ -1,8 +1,8 @@
-import { isPlanServiceRedirectionBindingNode } from '../../planning/calculations/isPlanServiceRedirectionBindingNode';
-import { LeafBindingNode } from '../../planning/models/LeafBindingNode';
-import { PlanServiceNodeParent } from '../../planning/models/PlanServiceNodeParent';
-import { PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode';
-import { ResolutionParams } from '../models/ResolutionParams';
+import { isPlanServiceRedirectionBindingNode } from '../../planning/calculations/isPlanServiceRedirectionBindingNode.js';
+import { type LeafBindingNode } from '../../planning/models/LeafBindingNode.js';
+import { type PlanServiceNodeParent } from '../../planning/models/PlanServiceNodeParent.js';
+import { type PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
 
 export function resolveServiceRedirectionBindingNode(
   resolveBindingNode: (

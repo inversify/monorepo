@@ -1,12 +1,12 @@
 import { isPromise } from '@inversifyjs/common';
 
-import { BindingActivation } from '../../binding/models/BindingActivation';
-import { BindingScope } from '../../binding/models/BindingScope';
-import { BindingType } from '../../binding/models/BindingType';
-import { ScopedBinding } from '../../binding/models/ScopedBinding';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved, SyncResolved } from '../models/Resolved';
-import { resolveBindingServiceActivations } from './resolveBindingServiceActivations';
+import { type BindingActivation } from '../../binding/models/BindingActivation.js';
+import { type BindingScope } from '../../binding/models/BindingScope.js';
+import { type BindingType } from '../../binding/models/BindingType.js';
+import { type ScopedBinding } from '../../binding/models/ScopedBinding.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved, type SyncResolved } from '../models/Resolved.js';
+import { resolveBindingServiceActivations } from './resolveBindingServiceActivations.js';
 
 export function resolveBindingActivations<TActivated>(
   params: ResolutionParams,

@@ -1,19 +1,22 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
 vitest.mock(import('../../metadata/calculations/getClassMetadata.js'));
 vitest.mock(import('../actions/getBindingId.js'));
 
-import { getClassMetadata } from '../../metadata/calculations/getClassMetadata';
-import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { getBindingId } from '../actions/getBindingId';
-import { AutobindOptions } from '../models/AutobindOptions';
-import { BindingScope, bindingScopeValues } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
-import { InstanceBinding } from '../models/InstanceBinding';
-import { buildInstanceBinding } from './buildInstanceBinding';
+import { getClassMetadata } from '../../metadata/calculations/getClassMetadata.js';
+import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { getBindingId } from '../actions/getBindingId.js';
+import { type AutobindOptions } from '../models/AutobindOptions.js';
+import {
+  type BindingScope,
+  bindingScopeValues,
+} from '../models/BindingScope.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type InstanceBinding } from '../models/InstanceBinding.js';
+import { buildInstanceBinding } from './buildInstanceBinding.js';
 
 describe(buildInstanceBinding, () => {
   let autobindOptionsFixture: AutobindOptions;

@@ -1,4 +1,4 @@
-import { InjectFromHierarchyOptionsLifecycle } from './InjectFromHierarchyOptionsLifecycle';
+import { type InjectFromHierarchyOptionsLifecycle } from './InjectFromHierarchyOptionsLifecycle.js';
 
 export interface InjectFromHierarchyOptions {
   extendConstructorArguments?: boolean | undefined;

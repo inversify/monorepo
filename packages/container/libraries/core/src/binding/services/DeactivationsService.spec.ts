@@ -4,22 +4,22 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('../../common/calculations/chain.js'));
 vitest.mock(import('../../common/models/OneToManyMapStar.js'));
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { chain } from '../../common/calculations/chain';
-import { OneToManyMapStar } from '../../common/models/OneToManyMapStar';
-import { BindingDeactivation } from '../models/BindingDeactivation';
+import { chain } from '../../common/calculations/chain.js';
+import { OneToManyMapStar } from '../../common/models/OneToManyMapStar.js';
+import { type BindingDeactivation } from '../models/BindingDeactivation.js';
 import {
-  BindingDeactivationRelation,
+  type BindingDeactivationRelation,
   DeactivationsService,
-} from './DeactivationsService';
+} from './DeactivationsService.js';
 
 describe(DeactivationsService, () => {
   let deactivationMapsMock: Mocked<

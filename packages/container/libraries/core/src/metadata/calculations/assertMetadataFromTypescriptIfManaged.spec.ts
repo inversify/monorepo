@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ManagedClassElementMetadataFixtures } from '../fixtures/ManagedClassElementMetadataFixtures';
-import { MaybeManagedClassElementMetadataFixtures } from '../fixtures/MaybeManagedClassElementMetadataFixtures';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
-import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';
-import { assertMetadataFromTypescriptIfManaged } from './assertMetadataFromTypescriptIfManaged';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { ManagedClassElementMetadataFixtures } from '../fixtures/ManagedClassElementMetadataFixtures.js';
+import { MaybeManagedClassElementMetadataFixtures } from '../fixtures/MaybeManagedClassElementMetadataFixtures.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
+import { type MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata.js';
+import { assertMetadataFromTypescriptIfManaged } from './assertMetadataFromTypescriptIfManaged.js';
 
 describe(assertMetadataFromTypescriptIfManaged, () => {
   describe.each<

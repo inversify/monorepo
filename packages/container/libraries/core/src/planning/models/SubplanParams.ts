@@ -1,5 +1,5 @@
-import { BasePlanParams } from './BasePlanParams';
-import { PlanServiceNodeParent } from './PlanServiceNodeParent';
+import { type BasePlanParams } from './BasePlanParams.js';
+import { type PlanServiceNodeParent } from './PlanServiceNodeParent.js';
 
 export interface SubplanParams extends BasePlanParams {
   node: PlanServiceNodeParent;

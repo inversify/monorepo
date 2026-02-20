@@ -2,8 +2,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { pendingClassMetadataCountReflectKey } from '../../reflectMetadata/data/pendingClassMetadataCountReflectKey';
-import { isPendingClassMetadata } from './isPendingClassMetadata';
+import { pendingClassMetadataCountReflectKey } from '../../reflectMetadata/data/pendingClassMetadataCountReflectKey.js';
+import { isPendingClassMetadata } from './isPendingClassMetadata.js';
 
 describe(isPendingClassMetadata, () => {
   describe('having no metadata', () => {

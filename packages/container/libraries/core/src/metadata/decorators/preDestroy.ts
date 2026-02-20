@@ -1,9 +1,9 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { updateMaybeClassMetadataPreDestroy } from '../actions/updateMaybeClassMetadataPreDestroy';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { handleInjectionError } from '../calculations/handleInjectionError';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { updateMaybeClassMetadataPreDestroy } from '../actions/updateMaybeClassMetadataPreDestroy.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { handleInjectionError } from '../calculations/handleInjectionError.js';
 
 export function preDestroy(): MethodDecorator {
   return <T>(

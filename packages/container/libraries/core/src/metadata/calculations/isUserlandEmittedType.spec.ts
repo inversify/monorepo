@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
-import { isUserlandEmittedType } from './isUserlandEmittedType';
+import { isUserlandEmittedType } from './isUserlandEmittedType.js';
 
 describe(isUserlandEmittedType, () => {
   describe.each<[string, Newable, boolean]>([

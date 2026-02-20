@@ -1,12 +1,12 @@
-import { Binding } from '../../binding/models/Binding';
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult';
-import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
-import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
-import { PlanParams } from '../models/PlanParams';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { removeServiceNodeBindingIfContextFree } from './removeServiceNodeBindingIfContextFree';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { type PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult.js';
+import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList.js';
+import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
+import { type PlanParams } from '../models/PlanParams.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { removeServiceNodeBindingIfContextFree } from './removeServiceNodeBindingIfContextFree.js';
 
 /**
  * Detach a binding to the root service node if it is context-free.

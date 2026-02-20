@@ -1,8 +1,8 @@
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
 
-import { Binding } from '../../binding/models/Binding';
-import { BindingDeactivation } from '../../binding/models/BindingDeactivation';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type BindingDeactivation } from '../../binding/models/BindingDeactivation.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
 
 export interface DeactivationParams {
   getBindings: <TInstance>(

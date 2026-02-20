@@ -1,9 +1,9 @@
 import { isPromise } from '@inversifyjs/common';
 
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { Resolved, SyncResolved } from '../models/Resolved';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type Resolved, type SyncResolved } from '../models/Resolved.js';
 
 export function resolvePostConstruct<TActivated>(
   instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,

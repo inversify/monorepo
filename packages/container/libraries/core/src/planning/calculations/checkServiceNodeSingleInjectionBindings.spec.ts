@@ -6,17 +6,17 @@ vitest.mock(
 vitest.mock(import('./isPlanServiceRedirectionBindingNode.js'));
 vitest.mock(import('./throwErrorWhenUnexpectedBindingsAmountFound.js'));
 
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
-import { MetadataTag } from '../../metadata/models/MetadataTag';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { checkPlanServiceRedirectionBindingNodeSingleInjectionBindings } from './checkPlanServiceRedirectionBindingNodeSingleInjectionBindings';
-import { checkServiceNodeSingleInjectionBindings } from './checkServiceNodeSingleInjectionBindings';
-import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode';
-import { throwErrorWhenUnexpectedBindingsAmountFound } from './throwErrorWhenUnexpectedBindingsAmountFound';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { type SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList.js';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { checkPlanServiceRedirectionBindingNodeSingleInjectionBindings } from './checkPlanServiceRedirectionBindingNodeSingleInjectionBindings.js';
+import { checkServiceNodeSingleInjectionBindings } from './checkServiceNodeSingleInjectionBindings.js';
+import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode.js';
+import { throwErrorWhenUnexpectedBindingsAmountFound } from './throwErrorWhenUnexpectedBindingsAmountFound.js';
 
 describe(checkServiceNodeSingleInjectionBindings, () => {
   describe('having a PlanServiceNode with no bindings', () => {

@@ -1,5 +1,5 @@
-import { DecoratorInfo } from '../models/DecoratorInfo';
-import { DecoratorInfoKind } from '../models/DecoratorInfoKind';
+import { type DecoratorInfo } from '../models/DecoratorInfo.js';
+import { DecoratorInfoKind } from '../models/DecoratorInfoKind.js';
 
 export function stringifyDecoratorInfo(
   decoratorTargetInfo: DecoratorInfo,

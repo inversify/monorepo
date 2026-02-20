@@ -1,5 +1,5 @@
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
 
 export function updateMaybeClassMetadataConstructorArgument(
   updateMetadata: (

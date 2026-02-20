@@ -4,32 +4,32 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
 vitest.mock(import('../../binding/actions/getBindingId.js'));
 vitest.mock(import('../../metadata/calculations/getClassMetadata.js'));
 
-import { getBindingId } from '../../binding/actions/getBindingId';
-import { Binding } from '../../binding/models/Binding';
-import { BindingConstraints } from '../../binding/models/BindingConstraints';
+import { getBindingId } from '../../binding/actions/getBindingId.js';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type BindingConstraints } from '../../binding/models/BindingConstraints.js';
 import {
-  BindingScope,
+  type BindingScope,
   bindingScopeValues,
-} from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { getClassMetadata } from '../../metadata/calculations/getClassMetadata';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { BasePlanParams } from '../models/BasePlanParams';
-import { PlanParamsOperations } from '../models/PlanParamsOperations';
+} from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { getClassMetadata } from '../../metadata/calculations/getClassMetadata.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { type BasePlanParams } from '../models/BasePlanParams.js';
+import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
 import {
   buildFilteredServiceBindings,
-  BuildFilteredServiceBindingsOptions,
-} from './buildFilteredServiceBindings';
+  type BuildFilteredServiceBindingsOptions,
+} from './buildFilteredServiceBindings.js';
 
 describe(buildFilteredServiceBindings, () => {
   describe('having no options', () => {

@@ -6,16 +6,16 @@ import { stringifyServiceIdentifier } from '@inversifyjs/common';
 
 vitest.mock(import('../../binding/calculations/stringifyBinding.js'));
 
-import { stringifyBinding } from '../../binding/calculations/stringifyBinding';
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { MetadataTag } from '../../metadata/models/MetadataTag';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { throwErrorWhenUnexpectedBindingsAmountFound } from './throwErrorWhenUnexpectedBindingsAmountFound';
+import { stringifyBinding } from '../../binding/calculations/stringifyBinding.js';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { throwErrorWhenUnexpectedBindingsAmountFound } from './throwErrorWhenUnexpectedBindingsAmountFound.js';
 
 describe(throwErrorWhenUnexpectedBindingsAmountFound, () => {
   describe('having undefined bindings and isOptional false', () => {

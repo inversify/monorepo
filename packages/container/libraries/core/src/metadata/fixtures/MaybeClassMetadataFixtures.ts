@@ -1,4 +1,4 @@
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
 
 export class MaybeClassMetadataFixtures {
   public static get any(): MaybeClassMetadata {

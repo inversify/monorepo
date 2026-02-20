@@ -1,5 +1,5 @@
-import { ResolvedValueBinding } from '../models/ResolvedValueBinding';
-import { cloneBindingCache } from './cloneBindingCache';
+import { type ResolvedValueBinding } from '../models/ResolvedValueBinding.js';
+import { cloneBindingCache } from './cloneBindingCache.js';
 
 /**
  * Clones a ResolvedValueBinding

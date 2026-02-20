@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { InstanceBindingNode } from '../models/InstanceBindingNode';
-import { PlanServiceNodeParent } from '../models/PlanServiceNodeParent';
-import { isInstanceBindingNode } from './isInstanceBindingNode';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
+import { type PlanServiceNodeParent } from '../models/PlanServiceNodeParent.js';
+import { isInstanceBindingNode } from './isInstanceBindingNode.js';
 
 describe(isInstanceBindingNode, () => {
   let node: PlanServiceNodeParent;

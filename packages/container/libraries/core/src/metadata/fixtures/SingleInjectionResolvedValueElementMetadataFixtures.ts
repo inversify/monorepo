@@ -1,5 +1,5 @@
-import { ResolvedValueElementMetadataKind } from '../models/ResolvedValueElementMetadataKind';
-import { SingleInjectionResolvedValueElementMetadata } from '../models/SingleInjectionResolvedValueElementMetadata';
+import { ResolvedValueElementMetadataKind } from '../models/ResolvedValueElementMetadataKind.js';
+import { type SingleInjectionResolvedValueElementMetadata } from '../models/SingleInjectionResolvedValueElementMetadata.js';
 
 export class SingleInjectionResolvedValueElementMetadataFixtures {
   public static get any(): SingleInjectionResolvedValueElementMetadata {

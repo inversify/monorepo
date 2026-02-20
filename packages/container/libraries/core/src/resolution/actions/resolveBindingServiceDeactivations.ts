@@ -1,8 +1,8 @@
-import { isPromise, ServiceIdentifier } from '@inversifyjs/common';
+import { isPromise, type ServiceIdentifier } from '@inversifyjs/common';
 
-import { BindingDeactivation } from '../../binding/models/BindingDeactivation';
-import { DeactivationParams } from '../models/DeactivationParams';
-import { Resolved, SyncResolved } from '../models/Resolved';
+import { type BindingDeactivation } from '../../binding/models/BindingDeactivation.js';
+import { type DeactivationParams } from '../models/DeactivationParams.js';
+import { type Resolved, type SyncResolved } from '../models/Resolved.js';
 
 export function resolveBindingServiceDeactivations<TActivated>(
   params: DeactivationParams,

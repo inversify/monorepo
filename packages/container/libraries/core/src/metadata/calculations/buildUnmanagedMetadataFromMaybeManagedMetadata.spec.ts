@@ -3,15 +3,15 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('./assertMetadataFromTypescriptIfManaged.js'));
 vitest.mock(import('./buildDefaultUnmanagedMetadata.js'));
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind';
-import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';
-import { UnmanagedClassElementMetadata } from '../models/UnmanagedClassElementMetadata';
-import { assertMetadataFromTypescriptIfManaged } from './assertMetadataFromTypescriptIfManaged';
-import { buildDefaultUnmanagedMetadata } from './buildDefaultUnmanagedMetadata';
-import { buildUnmanagedMetadataFromMaybeManagedMetadata } from './buildUnmanagedMetadataFromMaybeManagedMetadata';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind.js';
+import { type MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata.js';
+import { type UnmanagedClassElementMetadata } from '../models/UnmanagedClassElementMetadata.js';
+import { assertMetadataFromTypescriptIfManaged } from './assertMetadataFromTypescriptIfManaged.js';
+import { buildDefaultUnmanagedMetadata } from './buildDefaultUnmanagedMetadata.js';
+import { buildUnmanagedMetadataFromMaybeManagedMetadata } from './buildUnmanagedMetadataFromMaybeManagedMetadata.js';
 
 describe(buildUnmanagedMetadataFromMaybeManagedMetadata, () => {
   describe.each<[string, MaybeManagedClassElementMetadata]>([

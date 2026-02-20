@@ -1,12 +1,15 @@
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  type LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MultiInjectOptions } from '../models/MultiInjectOptions';
-import { buildClassElementMetadataFromMaybeClassElementMetadata } from './buildClassElementMetadataFromMaybeClassElementMetadata';
-import { buildDefaultManagedMetadata } from './buildDefaultManagedMetadata';
-import { buildManagedMetadataFromMaybeManagedMetadata } from './buildManagedMetadataFromMaybeManagedMetadata';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { type ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MultiInjectOptions } from '../models/MultiInjectOptions.js';
+import { buildClassElementMetadataFromMaybeClassElementMetadata } from './buildClassElementMetadataFromMaybeClassElementMetadata.js';
+import { buildDefaultManagedMetadata } from './buildDefaultManagedMetadata.js';
+import { buildManagedMetadataFromMaybeManagedMetadata } from './buildManagedMetadataFromMaybeManagedMetadata.js';
 
 export const buildManagedMetadataFromMaybeClassElementMetadata: ((
   kind: ClassElementMetadataKind.singleInjection,

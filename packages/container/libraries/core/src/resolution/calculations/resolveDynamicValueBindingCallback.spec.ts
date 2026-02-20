@@ -1,10 +1,10 @@
-import { beforeAll, describe, expect, it, Mocked, vitest } from 'vitest';
+import { beforeAll, describe, expect, it, type Mocked, vitest } from 'vitest';
 
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { DynamicValueBinding } from '../../binding/models/DynamicValueBinding';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolveDynamicValueBindingCallback } from './resolveDynamicValueBindingCallback';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type DynamicValueBinding } from '../../binding/models/DynamicValueBinding.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveDynamicValueBindingCallback } from './resolveDynamicValueBindingCallback.js';
 
 describe(resolveDynamicValueBindingCallback, () => {
   let resolutionParamsFixture: ResolutionParams;

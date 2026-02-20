@@ -4,13 +4,13 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { decorate } from './decorate';
+import { decorate } from './decorate.js';
 
 describe(decorate, () => {
   describe('having ClassDecorator decorator', () => {

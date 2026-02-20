@@ -4,9 +4,9 @@ import 'reflect-metadata/lite';
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { ClassMetadata } from '../models/ClassMetadata';
-import { postConstruct } from './postConstruct';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { postConstruct } from './postConstruct.js';
 
 describe(postConstruct, () => {
   describe('when called', () => {

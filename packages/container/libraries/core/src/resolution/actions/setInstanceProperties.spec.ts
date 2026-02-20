@@ -4,18 +4,18 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
-import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
-import { PlanBindingNode } from '../../planning/models/PlanBindingNode';
-import { PlanServiceNode } from '../../planning/models/PlanServiceNode';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { setInstanceProperties } from './setInstanceProperties';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind.js';
+import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
+import { type PlanBindingNode } from '../../planning/models/PlanBindingNode.js';
+import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { setInstanceProperties } from './setInstanceProperties.js';
 
 describe(setInstanceProperties, () => {
   describe('having node with properties and no metadata', () => {

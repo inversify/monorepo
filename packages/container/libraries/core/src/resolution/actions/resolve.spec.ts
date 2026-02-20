@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -58,32 +58,32 @@ vitest.mock(import('./setInstanceProperties.js'), () => ({
   setInstanceProperties: vitest.fn().mockReturnValue(vitest.fn()),
 }));
 
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { ConstantValueBinding } from '../../binding/models/ConstantValueBinding';
-import { DynamicValueBinding } from '../../binding/models/DynamicValueBinding';
-import { Factory } from '../../binding/models/Factory';
-import { FactoryBinding } from '../../binding/models/FactoryBinding';
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
-import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { Writable } from '../../common/models/Writable';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
-import { PlanBindingNode } from '../../planning/models/PlanBindingNode';
-import { PlanServiceNode } from '../../planning/models/PlanServiceNode';
-import { PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode';
-import { ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolve } from './resolve';
-import { resolveConstantValueBinding } from './resolveConstantValueBinding';
-import { resolveDynamicValueBinding } from './resolveDynamicValueBinding';
-import { resolveFactoryBinding } from './resolveFactoryBinding';
-import { resolveScopedInstanceBindingNode } from './resolveScopedInstanceBindingNode';
-import { resolveScopedResolvedValueBindingNode } from './resolveScopedResolvedValueBindingNode';
-import { resolveServiceRedirectionBindingNode } from './resolveServiceRedirectionBindingNode';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type ConstantValueBinding } from '../../binding/models/ConstantValueBinding.js';
+import { type DynamicValueBinding } from '../../binding/models/DynamicValueBinding.js';
+import { type Factory } from '../../binding/models/Factory.js';
+import { type FactoryBinding } from '../../binding/models/FactoryBinding.js';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
+import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { type Writable } from '../../common/models/Writable.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
+import { type PlanBindingNode } from '../../planning/models/PlanBindingNode.js';
+import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
+import { type PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode.js';
+import { type ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolve } from './resolve.js';
+import { resolveConstantValueBinding } from './resolveConstantValueBinding.js';
+import { resolveDynamicValueBinding } from './resolveDynamicValueBinding.js';
+import { resolveFactoryBinding } from './resolveFactoryBinding.js';
+import { resolveScopedInstanceBindingNode } from './resolveScopedInstanceBindingNode.js';
+import { resolveScopedResolvedValueBindingNode } from './resolveScopedResolvedValueBindingNode.js';
+import { resolveServiceRedirectionBindingNode } from './resolveServiceRedirectionBindingNode.js';
 
 describe(resolve, () => {
   let resolveScopedInstanceBindingNodeMock: Mock<

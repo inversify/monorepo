@@ -1,10 +1,10 @@
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';
-import { buildDefaultMaybeClassElementMetadata } from './buildDefaultMaybeClassElementMetadata';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata.js';
+import { buildDefaultMaybeClassElementMetadata } from './buildDefaultMaybeClassElementMetadata.js';
 
 export function buildMaybeClassElementMetadataFromMaybeClassElementMetadata(
   updateMetadata: (

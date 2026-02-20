@@ -1,11 +1,11 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode';
-import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode';
-import { throwErrorWhenUnexpectedBindingsAmountFound } from './throwErrorWhenUnexpectedBindingsAmountFound';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode.js';
+import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode.js';
+import { throwErrorWhenUnexpectedBindingsAmountFound } from './throwErrorWhenUnexpectedBindingsAmountFound.js';
 
 const SINGLE_INJECTION_BINDINGS: number = 1;
 

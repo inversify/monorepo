@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { OneToManyMapStar } from './OneToManyMapStar';
+import { OneToManyMapStar } from './OneToManyMapStar.js';
 
 enum RelationKey {
   bar = 'bar',

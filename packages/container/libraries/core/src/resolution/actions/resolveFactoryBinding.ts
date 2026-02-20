@@ -1,10 +1,10 @@
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { Factory } from '../../binding/models/Factory';
-import { FactoryBinding } from '../../binding/models/FactoryBinding';
-import { resolveFactoryBindingCallback } from '../calculations/resolveFactoryBindingCallback';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved } from '../models/Resolved';
-import { resolveSingletonScopedBinding } from './resolveSingletonScopedBinding';
+import { type bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type Factory } from '../../binding/models/Factory.js';
+import { type FactoryBinding } from '../../binding/models/FactoryBinding.js';
+import { resolveFactoryBindingCallback } from '../calculations/resolveFactoryBindingCallback.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved } from '../models/Resolved.js';
+import { resolveSingletonScopedBinding } from './resolveSingletonScopedBinding.js';
 
 export const resolveFactoryBinding: <TActivated extends Factory<unknown>>(
   params: ResolutionParams,

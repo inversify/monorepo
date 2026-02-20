@@ -1,8 +1,8 @@
 import {
-  Binding,
-  BindingScope,
-  BindingType,
-  ScopedBinding,
+  type Binding,
+  type BindingScope,
+  type BindingType,
+  type ScopedBinding,
 } from '@inversifyjs/core';
 
 export function isScopedBinding<T>(

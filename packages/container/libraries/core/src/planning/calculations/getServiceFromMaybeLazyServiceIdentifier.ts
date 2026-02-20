@@ -1,4 +1,7 @@
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
 export function getServiceFromMaybeLazyServiceIdentifier<T>(
   serviceIdentifier: ServiceIdentifier<T> | LazyServiceIdentifier<T>,

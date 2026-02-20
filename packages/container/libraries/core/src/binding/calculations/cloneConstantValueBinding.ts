@@ -1,5 +1,5 @@
-import { ConstantValueBinding } from '../models/ConstantValueBinding';
-import { cloneBindingCache } from './cloneBindingCache';
+import { type ConstantValueBinding } from '../models/ConstantValueBinding.js';
+import { cloneBindingCache } from './cloneBindingCache.js';
 
 /**
  * Clones a ConstantValueBinding

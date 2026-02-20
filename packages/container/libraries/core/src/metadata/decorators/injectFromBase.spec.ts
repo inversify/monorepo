@@ -4,23 +4,23 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/prototype-utils'));
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import { getBaseType } from '@inversifyjs/prototype-utils';
 
 vitest.mock(import('./injectFrom.js'));
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { InjectFromBaseOptions } from '../models/InjectFromBaseOptions';
-import { InjectFromOptions } from '../models/InjectFromOptions';
-import { injectFrom } from './injectFrom';
-import { injectFromBase } from './injectFromBase';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type InjectFromBaseOptions } from '../models/InjectFromBaseOptions.js';
+import { type InjectFromOptions } from '../models/InjectFromOptions.js';
+import { injectFrom } from './injectFrom.js';
+import { injectFromBase } from './injectFromBase.js';
 
 describe(injectFromBase, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

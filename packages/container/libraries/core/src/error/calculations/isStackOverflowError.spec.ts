@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { isStackOverflowError } from './isStackOverflowError';
+import { isStackOverflowError } from './isStackOverflowError.js';
 
 class InternalError extends Error {
   constructor(message?: string, options?: ErrorOptions) {

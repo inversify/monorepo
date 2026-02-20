@@ -1,15 +1,18 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { SingleImmutableLinkedList } from './SingleImmutableLinkedList';
+import { SingleImmutableLinkedList } from './SingleImmutableLinkedList.js';
 
 describe(SingleImmutableLinkedList, () => {
   let singleImmutableLinkedListFixture: SingleImmutableLinkedList<unknown>;
 
   beforeAll(() => {
-    singleImmutableLinkedListFixture = new SingleImmutableLinkedList({
-      elem: Symbol(),
-      previous: undefined,
-    });
+    singleImmutableLinkedListFixture = new SingleImmutableLinkedList(
+      {
+        elem: Symbol(),
+        previous: undefined,
+      },
+      1,
+    );
   });
 
   describe('.concat', () => {
@@ -30,6 +33,7 @@ describe(SingleImmutableLinkedList, () => {
             elem: elementFixture,
             previous: singleImmutableLinkedListFixture.last,
           },
+          length: 2,
         };
 
         expect(result).toStrictEqual(expect.objectContaining(expected));

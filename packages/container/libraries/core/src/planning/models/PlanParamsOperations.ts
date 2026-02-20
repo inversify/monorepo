@@ -1,11 +1,11 @@
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
 
-import { Binding } from '../../binding/models/Binding';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { GetPlanOptions } from './GetPlanOptions';
-import { NonCachedServiceNodeContext } from './NonCachedServiceNodeContext';
-import { PlanResult } from './PlanResult';
-import { PlanServiceNode } from './PlanServiceNode';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { type GetPlanOptions } from './GetPlanOptions.js';
+import { type NonCachedServiceNodeContext } from './NonCachedServiceNodeContext.js';
+import { type PlanResult } from './PlanResult.js';
+import { type PlanServiceNode } from './PlanServiceNode.js';
 
 export interface PlanParamsOperations {
   getBindings: <TInstance>(

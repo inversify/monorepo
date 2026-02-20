@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Left, Right } from '@inversifyjs/common';
+import { type Left, type Right } from '@inversifyjs/common';
 
-import { cloneBindingCache } from './cloneBindingCache';
+import { cloneBindingCache } from './cloneBindingCache.js';
 
 describe(cloneBindingCache, () => {
   describe('having a left cache', () => {

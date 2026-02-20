@@ -4,23 +4,23 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('../calculations/buildInstanceBinding.js'));
 vitest.mock(import('../../common/models/OneToManyMapStar.js'));
 
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
 
-import { OneToManyMapStar } from '../../common/models/OneToManyMapStar';
-import { buildInstanceBinding } from '../calculations/buildInstanceBinding';
-import { ConstantValueBindingFixtures } from '../fixtures/ConstantValueBindingFixtures';
-import { AutobindOptions } from '../models/AutobindOptions';
-import { Binding } from '../models/Binding';
-import { bindingScopeValues } from '../models/BindingScope';
-import { InstanceBinding } from '../models/InstanceBinding';
-import { BindingRelation, BindingService } from './BindingService';
+import { OneToManyMapStar } from '../../common/models/OneToManyMapStar.js';
+import { buildInstanceBinding } from '../calculations/buildInstanceBinding.js';
+import { ConstantValueBindingFixtures } from '../fixtures/ConstantValueBindingFixtures.js';
+import { type AutobindOptions } from '../models/AutobindOptions.js';
+import { type Binding } from '../models/Binding.js';
+import { bindingScopeValues } from '../models/BindingScope.js';
+import { type InstanceBinding } from '../models/InstanceBinding.js';
+import { type BindingRelation, BindingService } from './BindingService.js';
 
 describe(BindingService, () => {
   let bindingMapsMock: Mocked<

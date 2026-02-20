@@ -1,16 +1,16 @@
-import { Binding } from '../../binding/models/Binding';
-import { BindingConstraints } from '../../binding/models/BindingConstraints';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type BindingConstraints } from '../../binding/models/BindingConstraints.js';
 import {
   BindingConstraintsImplementation,
-  InternalBindingConstraints,
-} from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult';
-import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanServiceNode } from '../models/PlanServiceNode';
+  type InternalBindingConstraints,
+} from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult.js';
+import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 
 /**
  * Detach a binding to the root service node if it is context-free.

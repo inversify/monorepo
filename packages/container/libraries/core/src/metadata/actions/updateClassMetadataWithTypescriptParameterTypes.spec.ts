@@ -2,16 +2,16 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import {
   getOwnReflectMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { typescriptParameterTypesReflectKey } from '../../reflectMetadata/data/typescriptDesignParameterTypesReflectKey';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { updateClassMetadataWithTypescriptParameterTypes } from './updateClassMetadataWithTypescriptParameterTypes';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { typescriptParameterTypesReflectKey } from '../../reflectMetadata/data/typescriptDesignParameterTypesReflectKey.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { updateClassMetadataWithTypescriptParameterTypes } from './updateClassMetadataWithTypescriptParameterTypes.js';
 
 describe(updateClassMetadataWithTypescriptParameterTypes, () => {
   describe('when called, and getOwnReflectMetadata() returns undefined', () => {

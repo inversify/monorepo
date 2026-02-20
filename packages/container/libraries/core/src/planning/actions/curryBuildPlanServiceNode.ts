@@ -1,18 +1,18 @@
-import { Binding } from '../../binding/models/Binding';
-import { BindingConstraints } from '../../binding/models/BindingConstraints';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type BindingConstraints } from '../../binding/models/BindingConstraints.js';
 import {
   BindingConstraintsImplementation,
-  InternalBindingConstraints,
-} from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
-import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList';
-import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings';
-import { BasePlanParams } from '../models/BasePlanParams';
-import { BindingNodeParent } from '../models/BindingNodeParent';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanParams } from '../models/PlanParams';
-import { PlanServiceNode } from '../models/PlanServiceNode';
+  type InternalBindingConstraints,
+} from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
+import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList.js';
+import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings.js';
+import { type BasePlanParams } from '../models/BasePlanParams.js';
+import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanParams } from '../models/PlanParams.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 
 export function curryBuildPlanServiceNode(
   buildServiceNodeBindings: (

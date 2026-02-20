@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { ConstantValueBinding } from '../../binding/models/ConstantValueBinding';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolveConstantValueBindingCallback } from './resolveConstantValueBindingCallback';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type ConstantValueBinding } from '../../binding/models/ConstantValueBinding.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveConstantValueBindingCallback } from './resolveConstantValueBindingCallback.js';
 
 describe(resolveConstantValueBindingCallback, () => {
   let resolutionParamsFixture: ResolutionParams;

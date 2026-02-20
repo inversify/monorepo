@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { BindingConstraints } from './BindingConstraints';
+import { type BindingConstraints } from './BindingConstraints.js';
 import {
   BindingConstraintsImplementation,
-  InternalBindingConstraints,
-} from './BindingConstraintsImplementation';
+  type InternalBindingConstraints,
+} from './BindingConstraintsImplementation.js';
 
 describe(BindingConstraintsImplementation, () => {
   let internalBindingConstraintsFixture: InternalBindingConstraints;

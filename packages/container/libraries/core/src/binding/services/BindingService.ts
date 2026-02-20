@@ -1,15 +1,15 @@
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
 
-import { Cloneable } from '../../common/models/Cloneable';
+import { type Cloneable } from '../../common/models/Cloneable.js';
 import {
   OneToManyMapStar,
-  OneToManyMapStartSpec,
-} from '../../common/models/OneToManyMapStar';
-import { buildInstanceBinding } from '../calculations/buildInstanceBinding';
-import { cloneBinding } from '../calculations/cloneBinding';
-import { AutobindOptions } from '../models/AutobindOptions';
-import { Binding } from '../models/Binding';
-import { InstanceBinding } from '../models/InstanceBinding';
+  type OneToManyMapStartSpec,
+} from '../../common/models/OneToManyMapStar.js';
+import { buildInstanceBinding } from '../calculations/buildInstanceBinding.js';
+import { cloneBinding } from '../calculations/cloneBinding.js';
+import { type AutobindOptions } from '../models/AutobindOptions.js';
+import { type Binding } from '../models/Binding.js';
+import { type InstanceBinding } from '../models/InstanceBinding.js';
 
 enum BindingRelationKind {
   id = 'id',

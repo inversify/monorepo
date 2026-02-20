@@ -1,9 +1,9 @@
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
-import { NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext';
-import { PlanParamsOperations } from '../models/PlanParamsOperations';
-import { PlanResult } from '../models/PlanResult';
-import { PlanServiceNode } from '../models/PlanServiceNode';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
+import { type NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext.js';
+import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
+import { type PlanResult } from '../models/PlanResult.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 
 export function cacheNonRootPlanServiceNode(
   getPlanOptions: GetPlanOptions | undefined,

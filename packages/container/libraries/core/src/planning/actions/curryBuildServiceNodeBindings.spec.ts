@@ -4,35 +4,35 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('../calculations/buildFilteredServiceBindings.js'));
 
-import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures';
-import { ResolvedValueBindingFixtures } from '../../binding/fixtures/ResolvedValueBindingFixtures';
-import { ServiceRedirectionBindingFixtures } from '../../binding/fixtures/ServiceRedirectionBindingFixtures';
-import { BindingConstraints } from '../../binding/models/BindingConstraints';
+import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures.js';
+import { ResolvedValueBindingFixtures } from '../../binding/fixtures/ResolvedValueBindingFixtures.js';
+import { ServiceRedirectionBindingFixtures } from '../../binding/fixtures/ServiceRedirectionBindingFixtures.js';
+import { type BindingConstraints } from '../../binding/models/BindingConstraints.js';
 import {
   BindingConstraintsImplementation,
-  InternalBindingConstraints,
-} from '../../binding/models/BindingConstraintsImplementation';
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
-import { ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
-import { BasePlanParams } from '../models/BasePlanParams';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanParamsOperations } from '../models/PlanParamsOperations';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { SubplanParams } from '../models/SubplanParams';
-import { curryBuildServiceNodeBindings } from './curryBuildServiceNodeBindings';
+  type InternalBindingConstraints,
+} from '../../binding/models/BindingConstraintsImplementation.js';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
+import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
+import { type BasePlanParams } from '../models/BasePlanParams.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { type SubplanParams } from '../models/SubplanParams.js';
+import { curryBuildServiceNodeBindings } from './curryBuildServiceNodeBindings.js';
 
 describe(curryBuildServiceNodeBindings, () => {
   let subplanMock: Mock<
@@ -66,10 +66,13 @@ describe(curryBuildServiceNodeBindings, () => {
       instanceBindingFixture = InstanceBindingFixtures.any;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: Symbol() as unknown as InternalBindingConstraints,
-          previous: undefined,
-        });
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          },
+          1,
+        );
 
       parentNodeFixture = {
         bindings: [],
@@ -160,10 +163,13 @@ describe(curryBuildServiceNodeBindings, () => {
       resolvedValueBindingFixture = ResolvedValueBindingFixtures.any;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: Symbol() as unknown as InternalBindingConstraints,
-          previous: undefined,
-        });
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          },
+          1,
+        );
 
       parentNodeFixture = {
         bindings: [],
@@ -238,10 +244,13 @@ describe(curryBuildServiceNodeBindings, () => {
       serviceRedirectionBindingFixture = ServiceRedirectionBindingFixtures.any;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: Symbol() as unknown as InternalBindingConstraints,
-          previous: undefined,
-        });
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: Symbol() as unknown as InternalBindingConstraints,
+            previous: undefined,
+          },
+          1,
+        );
 
       parentNodeFixture = {
         bindings: [],

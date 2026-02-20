@@ -1,4 +1,4 @@
-import { InjectFromBaseOptionsLifecycle } from './InjectFromBaseOptionsLifecycle';
+import { type InjectFromBaseOptionsLifecycle } from './InjectFromBaseOptionsLifecycle.js';
 
 export interface InjectFromBaseOptions {
   extendConstructorArguments?: boolean | undefined;

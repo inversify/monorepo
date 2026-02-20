@@ -1,9 +1,9 @@
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { DynamicValueBinding } from '../../binding/models/DynamicValueBinding';
-import { resolveDynamicValueBindingCallback } from '../calculations/resolveDynamicValueBindingCallback';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved } from '../models/Resolved';
-import { resolveScopedBinding } from './resolveScopedBinding';
+import { type bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type DynamicValueBinding } from '../../binding/models/DynamicValueBinding.js';
+import { resolveDynamicValueBindingCallback } from '../calculations/resolveDynamicValueBindingCallback.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved } from '../models/Resolved.js';
+import { resolveScopedBinding } from './resolveScopedBinding.js';
 
 export const resolveDynamicValueBinding: <TActivated>(
   params: ResolutionParams,

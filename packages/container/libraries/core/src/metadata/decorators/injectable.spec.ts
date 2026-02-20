@@ -10,14 +10,14 @@ vitest.mock(
 );
 
 import {
-  BindingScope,
+  type BindingScope,
   bindingScopeValues,
-} from '../../binding/models/BindingScope';
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { setIsInjectableFlag } from '../actions/setIsInjectableFlag';
-import { updateClassMetadataWithTypescriptParameterTypes } from '../actions/updateClassMetadataWithTypescriptParameterTypes';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { injectable } from './injectable';
+} from '../../binding/models/BindingScope.js';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { setIsInjectableFlag } from '../actions/setIsInjectableFlag.js';
+import { updateClassMetadataWithTypescriptParameterTypes } from '../actions/updateClassMetadataWithTypescriptParameterTypes.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { injectable } from './injectable.js';
 
 describe(injectable, () => {
   describe('having undefined binding scope', () => {

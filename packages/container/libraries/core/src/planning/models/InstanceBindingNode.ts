@@ -1,7 +1,7 @@
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { BaseBindingNode } from './BaseBindingNode';
-import { PlanServiceNode } from './PlanServiceNode';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { type BaseBindingNode } from './BaseBindingNode.js';
+import { type PlanServiceNode } from './PlanServiceNode.js';
 
 export interface InstanceBindingNode<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,10 +1,10 @@
 import { isPromise } from '@inversifyjs/common';
 
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved, SyncResolved } from '../models/Resolved';
-import { resolvePostConstruct } from './resolvePostConstruct';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved, type SyncResolved } from '../models/Resolved.js';
+import { resolvePostConstruct } from './resolvePostConstruct.js';
 
 function resolveAllPostConstructMethods<TActivated>(
   instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,

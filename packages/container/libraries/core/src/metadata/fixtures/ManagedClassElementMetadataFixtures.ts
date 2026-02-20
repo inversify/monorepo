@@ -1,5 +1,5 @@
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
 
 export class ManagedClassElementMetadataFixtures {
   public static get any(): ManagedClassElementMetadata {

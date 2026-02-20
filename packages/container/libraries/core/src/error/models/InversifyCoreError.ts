@@ -1,4 +1,4 @@
-import { InversifyCoreErrorKind } from './InversifyCoreErrorKind';
+import { type InversifyCoreErrorKind } from './InversifyCoreErrorKind.js';
 
 const isAppErrorSymbol: unique symbol = Symbol.for(
   '@inversifyjs/core/InversifyCoreError',

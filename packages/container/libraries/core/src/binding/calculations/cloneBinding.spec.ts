@@ -1,20 +1,20 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { bindingTypeValues } from '../models/BindingType';
-import { ConstantValueBinding } from '../models/ConstantValueBinding';
-import { DynamicValueBinding } from '../models/DynamicValueBinding';
-import { Factory } from '../models/Factory';
-import { FactoryBinding } from '../models/FactoryBinding';
-import { InstanceBinding } from '../models/InstanceBinding';
-import { ResolvedValueBinding } from '../models/ResolvedValueBinding';
-import { ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding';
-import { cloneBinding } from './cloneBinding';
-import { cloneConstantValueBinding } from './cloneConstantValueBinding';
-import { cloneDynamicValueBinding } from './cloneDynamicValueBinding';
-import { cloneFactoryBinding } from './cloneFactoryBinding';
-import { cloneInstanceBinding } from './cloneInstanceBinding';
-import { cloneResolvedValueBinding } from './cloneResolvedValueBinding';
-import { cloneServiceRedirectionBinding } from './cloneServiceRedirectionBinding';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type ConstantValueBinding } from '../models/ConstantValueBinding.js';
+import { type DynamicValueBinding } from '../models/DynamicValueBinding.js';
+import { type Factory } from '../models/Factory.js';
+import { type FactoryBinding } from '../models/FactoryBinding.js';
+import { type InstanceBinding } from '../models/InstanceBinding.js';
+import { type ResolvedValueBinding } from '../models/ResolvedValueBinding.js';
+import { type ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding.js';
+import { cloneBinding } from './cloneBinding.js';
+import { cloneConstantValueBinding } from './cloneConstantValueBinding.js';
+import { cloneDynamicValueBinding } from './cloneDynamicValueBinding.js';
+import { cloneFactoryBinding } from './cloneFactoryBinding.js';
+import { cloneInstanceBinding } from './cloneInstanceBinding.js';
+import { cloneResolvedValueBinding } from './cloneResolvedValueBinding.js';
+import { cloneServiceRedirectionBinding } from './cloneServiceRedirectionBinding.js';
 
 // Mock all clone functions
 vitest.mock(import('./cloneConstantValueBinding.js'));

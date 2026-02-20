@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { PlanParams } from '../models/PlanParams';
-import { PlanParamsTagConstraint } from '../models/PlanParamsTagConstraint';
-import { buildPlanBindingConstraintsList } from './buildPlanBindingConstraintsList';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { type PlanParams } from '../models/PlanParams.js';
+import { type PlanParamsTagConstraint } from '../models/PlanParamsTagConstraint.js';
+import { buildPlanBindingConstraintsList } from './buildPlanBindingConstraintsList.js';
 
 describe(buildPlanBindingConstraintsList, () => {
   describe('having PlanParams with rootConstraints with no tags', () => {

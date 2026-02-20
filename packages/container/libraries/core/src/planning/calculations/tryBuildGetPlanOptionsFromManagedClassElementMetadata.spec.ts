@@ -1,13 +1,16 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
-import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
-import { MetadataTag } from '../../metadata/models/MetadataTag';
-import { MultipleInjectionManagedClassElementMetadata } from '../../metadata/models/MultipleInjectionManagedClassElementMetadata';
-import { SingleInjectionManagedClassElementMetadata } from '../../metadata/models/SingleInjectionManagedClassElementMetadata';
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { tryBuildGetPlanOptionsFromManagedClassElementMetadata } from './tryBuildGetPlanOptionsFromManagedClassElementMetadata';
+import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind.js';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
+import { type MultipleInjectionManagedClassElementMetadata } from '../../metadata/models/MultipleInjectionManagedClassElementMetadata.js';
+import { type SingleInjectionManagedClassElementMetadata } from '../../metadata/models/SingleInjectionManagedClassElementMetadata.js';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { tryBuildGetPlanOptionsFromManagedClassElementMetadata } from './tryBuildGetPlanOptionsFromManagedClassElementMetadata.js';
 
 describe(tryBuildGetPlanOptionsFromManagedClassElementMetadata, () => {
   describe('having ManagedClassElementMetadata with LazyServiceIdentifier', () => {

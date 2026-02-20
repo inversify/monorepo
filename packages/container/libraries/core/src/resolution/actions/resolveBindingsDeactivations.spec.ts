@@ -4,17 +4,17 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('./resolveBindingDeactivations.js'));
 
-import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures';
-import { Binding } from '../../binding/models/Binding';
-import { DeactivationParams } from '../models/DeactivationParams';
-import { resolveBindingDeactivations } from './resolveBindingDeactivations';
-import { resolveBindingsDeactivations } from './resolveBindingsDeactivations';
+import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures.js';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type DeactivationParams } from '../models/DeactivationParams.js';
+import { resolveBindingDeactivations } from './resolveBindingDeactivations.js';
+import { resolveBindingsDeactivations } from './resolveBindingsDeactivations.js';
 
 describe(resolveBindingsDeactivations, () => {
   let paramsMock: Mocked<DeactivationParams>;

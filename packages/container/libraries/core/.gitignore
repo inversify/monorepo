@@ -2,7 +2,6 @@
 /lib/**
 
 /tsconfig.tsbuildinfo
-/tsconfig.cjs.tsbuildinfo
 /tsconfig.esm.tsbuildinfo
 
 # Test coverage report

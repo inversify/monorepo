@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { getDescription } from './getDescription';
+import { getDescription } from './getDescription.js';
 
 describe(getDescription, () => {
   describe.each<[string, symbol, string]>([

@@ -1,7 +1,7 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { MetadataName } from '../../metadata/models/MetadataName';
-import { PlanParamsTagConstraint } from './PlanParamsTagConstraint';
+import { type MetadataName } from '../../metadata/models/MetadataName.js';
+import { type PlanParamsTagConstraint } from './PlanParamsTagConstraint.js';
 
 export interface SingleBindingPlanParamsConstraint {
   name?: MetadataName;

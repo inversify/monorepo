@@ -1,5 +1,5 @@
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { PlanParams } from '../models/PlanParams';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { type PlanParams } from '../models/PlanParams.js';
 
 export function buildGetPlanOptionsFromPlanParams(
   params: PlanParams,

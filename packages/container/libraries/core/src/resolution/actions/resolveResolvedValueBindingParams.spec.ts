@@ -4,15 +4,15 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
-import { PlanServiceNode } from '../../planning/models/PlanServiceNode';
-import { ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolveResolvedValueBindingParams } from './resolveResolvedValueBindingParams';
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
+import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
+import { type ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveResolvedValueBindingParams } from './resolveResolvedValueBindingParams.js';
 
 describe(resolveResolvedValueBindingParams, () => {
   describe('having ResolvedValueBindingNode with constructor param with PlanServiceNode value', () => {

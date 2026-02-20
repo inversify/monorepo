@@ -1,5 +1,5 @@
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { MultipleInjectionManagedClassElementMetadata } from '../models/MultipleInjectionManagedClassElementMetadata';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type MultipleInjectionManagedClassElementMetadata } from '../models/MultipleInjectionManagedClassElementMetadata.js';
 
 export class MultipleInjectionManagedClassElementMetadataFixtures {
   public static get any(): MultipleInjectionManagedClassElementMetadata {

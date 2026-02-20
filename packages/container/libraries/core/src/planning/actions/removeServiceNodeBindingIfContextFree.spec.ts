@@ -4,28 +4,28 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { Binding } from '../../binding/models/Binding';
+import { type Binding } from '../../binding/models/Binding.js';
 import {
   BindingConstraintsImplementation,
-  InternalBindingConstraints,
-} from '../../binding/models/BindingConstraintsImplementation';
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult';
-import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { removeServiceNodeBindingIfContextFree } from './removeServiceNodeBindingIfContextFree';
+  type InternalBindingConstraints,
+} from '../../binding/models/BindingConstraintsImplementation.js';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { type InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult.js';
+import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { removeServiceNodeBindingIfContextFree } from './removeServiceNodeBindingIfContextFree.js';
 
 class LazyPlanServiceNodeTest extends LazyPlanServiceNode {
   readonly #buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;
@@ -115,15 +115,18 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier: serviceIdentifierFixture,
-            tags: new Map(),
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: {
+              getAncestorsCalled: false,
+              name: undefined,
+              serviceIdentifier: serviceIdentifierFixture,
+              tags: new Map(),
+            },
+            previous: undefined,
           },
-          previous: undefined,
-        });
+          1,
+        );
 
       optionalBindings = false;
     });
@@ -273,15 +276,18 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       };
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: true,
-            name: undefined,
-            serviceIdentifier,
-            tags: new Map(),
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: {
+              getAncestorsCalled: true,
+              name: undefined,
+              serviceIdentifier,
+              tags: new Map(),
+            },
+            previous: undefined,
           },
-          previous: undefined,
-        });
+          1,
+        );
 
       optionalBindings = false;
     });
@@ -355,15 +361,18 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier: serviceIdentifierFixture,
-            tags: new Map(),
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: {
+              getAncestorsCalled: false,
+              name: undefined,
+              serviceIdentifier: serviceIdentifierFixture,
+              tags: new Map(),
+            },
+            previous: undefined,
           },
-          previous: undefined,
-        });
+          1,
+        );
 
       optionalBindings = false;
     });
@@ -453,15 +462,18 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier: serviceIdentifierFixture,
-            tags: new Map(),
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: {
+              getAncestorsCalled: false,
+              name: undefined,
+              serviceIdentifier: serviceIdentifierFixture,
+              tags: new Map(),
+            },
+            previous: undefined,
           },
-          previous: undefined,
-        });
+          1,
+        );
 
       optionalBindings = false;
     });
@@ -549,15 +561,18 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
-        new SingleImmutableLinkedList<InternalBindingConstraints>({
-          elem: {
-            getAncestorsCalled: false,
-            name: undefined,
-            serviceIdentifier: serviceIdentifierFixture,
-            tags: new Map(),
+        new SingleImmutableLinkedList<InternalBindingConstraints>(
+          {
+            elem: {
+              getAncestorsCalled: false,
+              name: undefined,
+              serviceIdentifier: serviceIdentifierFixture,
+              tags: new Map(),
+            },
+            previous: undefined,
           },
-          previous: undefined,
-        });
+          1,
+        );
 
       optionalBindings = true;
     });

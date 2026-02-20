@@ -1,10 +1,10 @@
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata.js';
 
 type Or<T extends unknown[]> = T extends [infer First, ...infer Rest]
   ? First | Or<Rest>

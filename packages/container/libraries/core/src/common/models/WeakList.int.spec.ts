@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { WeakList } from './WeakList';
+import { WeakList } from './WeakList.js';
 
 describe(WeakList, () => {
   describe('.push', () => {

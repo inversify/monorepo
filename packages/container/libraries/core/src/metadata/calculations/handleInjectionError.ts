@@ -1,8 +1,8 @@
-import { getDecoratorInfo } from '../../decorator/calculations/getDecoratorInfo';
-import { stringifyDecoratorInfo } from '../../decorator/calculations/stringifyDecoratorInfo';
-import { DecoratorInfo } from '../../decorator/models/DecoratorInfo';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
+import { getDecoratorInfo } from '../../decorator/calculations/getDecoratorInfo.js';
+import { stringifyDecoratorInfo } from '../../decorator/calculations/stringifyDecoratorInfo.js';
+import { type DecoratorInfo } from '../../decorator/models/DecoratorInfo.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
 
 export function handleInjectionError<T>(
   target: object,

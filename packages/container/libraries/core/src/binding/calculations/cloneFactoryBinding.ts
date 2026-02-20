@@ -1,6 +1,6 @@
-import { Factory } from '../models/Factory';
-import { FactoryBinding } from '../models/FactoryBinding';
-import { cloneBindingCache } from './cloneBindingCache';
+import { type Factory } from '../models/Factory.js';
+import { type FactoryBinding } from '../models/FactoryBinding.js';
+import { cloneBindingCache } from './cloneBindingCache.js';
 
 /**
  * Clones a FactoryBinding

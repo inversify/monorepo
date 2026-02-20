@@ -4,29 +4,29 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('./cacheResolvedValue.js'));
 vitest.mock(import('./resolveBindingActivations.js'));
 
-import { Right } from '@inversifyjs/common';
+import { type Right } from '@inversifyjs/common';
 
 import {
-  BindingScope,
+  type BindingScope,
   bindingScopeValues,
-} from '../../binding/models/BindingScope';
+} from '../../binding/models/BindingScope.js';
 import {
-  BindingType,
+  type BindingType,
   bindingTypeValues,
-} from '../../binding/models/BindingType';
-import { ScopedBinding } from '../../binding/models/ScopedBinding';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { cacheResolvedValue } from './cacheResolvedValue';
-import { resolveBindingActivations } from './resolveBindingActivations';
-import { resolveScoped } from './resolveScoped';
+} from '../../binding/models/BindingType.js';
+import { type ScopedBinding } from '../../binding/models/ScopedBinding.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { cacheResolvedValue } from './cacheResolvedValue.js';
+import { resolveBindingActivations } from './resolveBindingActivations.js';
+import { resolveScoped } from './resolveScoped.js';
 
 describe(resolveScoped, () => {
   let getBindingMock: Mock<

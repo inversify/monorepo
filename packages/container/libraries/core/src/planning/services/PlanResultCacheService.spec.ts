@@ -4,35 +4,35 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('../actions/addRootServiceNodeBindingIfContextFree.js'));
 vitest.mock(import('../actions/addServiceNodeBindingIfContextFree.js'));
 
-import { Binding } from '../../binding/models/Binding';
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
-import { PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult';
-import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
-import { addRootServiceNodeBindingIfContextFree } from '../actions/addRootServiceNodeBindingIfContextFree';
-import { addServiceNodeBindingIfContextFree } from '../actions/addServiceNodeBindingIfContextFree';
-import { BasePlanParams } from '../models/BasePlanParams';
-import { CacheBindingInvalidation } from '../models/CacheBindingInvalidation';
-import { CacheBindingInvalidationKind } from '../models/CacheBindingInvalidationKind';
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
-import { NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext';
-import { PlanParams } from '../models/PlanParams';
-import { PlanParamsOperations } from '../models/PlanParamsOperations';
-import { PlanResult } from '../models/PlanResult';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { PlanResultCacheService } from './PlanResultCacheService';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind.js';
+import { type PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult.js';
+import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
+import { addRootServiceNodeBindingIfContextFree } from '../actions/addRootServiceNodeBindingIfContextFree.js';
+import { addServiceNodeBindingIfContextFree } from '../actions/addServiceNodeBindingIfContextFree.js';
+import { type BasePlanParams } from '../models/BasePlanParams.js';
+import { type CacheBindingInvalidation } from '../models/CacheBindingInvalidation.js';
+import { CacheBindingInvalidationKind } from '../models/CacheBindingInvalidationKind.js';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
+import { type NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext.js';
+import { type PlanParams } from '../models/PlanParams.js';
+import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
+import { type PlanResult } from '../models/PlanResult.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { PlanResultCacheService } from './PlanResultCacheService.js';
 
 class LazyPlanServiceNodeMock extends LazyPlanServiceNode {
   public readonly buildPlanServiceNodeMock: Mock<() => PlanServiceNode>;

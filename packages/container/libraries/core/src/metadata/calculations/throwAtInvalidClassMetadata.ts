@@ -1,10 +1,10 @@
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
 
 export function throwAtInvalidClassMetadata(
   type: Newable,

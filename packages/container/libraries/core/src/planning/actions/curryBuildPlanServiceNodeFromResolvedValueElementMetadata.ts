@@ -1,22 +1,22 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { Binding } from '../../binding/models/Binding';
-import { BindingConstraints } from '../../binding/models/BindingConstraints';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type BindingConstraints } from '../../binding/models/BindingConstraints.js';
 import {
   BindingConstraintsImplementation,
-  InternalBindingConstraints,
-} from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
-import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
-import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings';
-import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings';
-import { getServiceFromMaybeLazyServiceIdentifier } from '../calculations/getServiceFromMaybeLazyServiceIdentifier';
-import { BasePlanParams } from '../models/BasePlanParams';
-import { BindingNodeParent } from '../models/BindingNodeParent';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { SubplanParams } from '../models/SubplanParams';
+  type InternalBindingConstraints,
+} from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { type ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata.js';
+import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
+import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
+import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings.js';
+import { getServiceFromMaybeLazyServiceIdentifier } from '../calculations/getServiceFromMaybeLazyServiceIdentifier.js';
+import { type BasePlanParams } from '../models/BasePlanParams.js';
+import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { type SubplanParams } from '../models/SubplanParams.js';
 
 export function curryBuildPlanServiceNodeFromResolvedValueElementMetadata(
   buildServiceNodeBindings: (

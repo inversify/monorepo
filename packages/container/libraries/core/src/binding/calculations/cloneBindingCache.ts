@@ -1,6 +1,6 @@
-import { Either } from '@inversifyjs/common';
+import { type Either } from '@inversifyjs/common';
 
-import { Resolved } from '../../resolution/models/Resolved';
+import { type Resolved } from '../../resolution/models/Resolved.js';
 
 export function cloneBindingCache<TActivated>(
   cache: Either<undefined, Resolved<TActivated>>,

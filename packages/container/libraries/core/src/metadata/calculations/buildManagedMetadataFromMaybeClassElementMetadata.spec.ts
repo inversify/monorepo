@@ -4,11 +4,14 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  type LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
 vitest.mock(
   import('./buildClassElementMetadataFromMaybeClassElementMetadata.js'),
@@ -19,11 +22,11 @@ vitest.mock(
   }),
 );
 
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MultiInjectOptions } from '../models/MultiInjectOptions';
-import { buildManagedMetadataFromMaybeClassElementMetadata } from './buildManagedMetadataFromMaybeClassElementMetadata';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MultiInjectOptions } from '../models/MultiInjectOptions.js';
+import { buildManagedMetadataFromMaybeClassElementMetadata } from './buildManagedMetadataFromMaybeClassElementMetadata.js';
 
 describe(buildManagedMetadataFromMaybeClassElementMetadata, () => {
   describe('having single injection kind', () => {

@@ -1,6 +1,6 @@
-import { Factory } from '../../binding/models/Factory';
-import { FactoryBinding } from '../../binding/models/FactoryBinding';
-import { ResolutionParams } from '../models/ResolutionParams';
+import { type Factory } from '../../binding/models/Factory.js';
+import { type FactoryBinding } from '../../binding/models/FactoryBinding.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
 
 export function resolveFactoryBindingCallback<
   TActivated extends Factory<unknown>,

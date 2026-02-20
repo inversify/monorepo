@@ -1,6 +1,6 @@
-import { BindingScope } from '../../binding/models/BindingScope';
-import { ClassMetadataLifecycle } from './ClassMetadataLifecycle';
-import { MaybeClassElementMetadata } from './MaybeClassElementMetadata';
+import { type BindingScope } from '../../binding/models/BindingScope.js';
+import { type ClassMetadataLifecycle } from './ClassMetadataLifecycle.js';
+import { type MaybeClassElementMetadata } from './MaybeClassElementMetadata.js';
 
 export interface MaybeClassMetadata {
   constructorArguments: MaybeClassElementMetadata[];

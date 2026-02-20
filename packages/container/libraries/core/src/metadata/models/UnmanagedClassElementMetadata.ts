@@ -1,5 +1,5 @@
-import { BaseClassElementMetadata } from './BaseClassElementMetadata';
-import { ClassElementMetadataKind } from './ClassElementMetadataKind';
+import { type BaseClassElementMetadata } from './BaseClassElementMetadata.js';
+import { type ClassElementMetadataKind } from './ClassElementMetadataKind.js';
 
 export type UnmanagedClassElementMetadata =
   BaseClassElementMetadata<ClassElementMetadataKind.unmanaged>;

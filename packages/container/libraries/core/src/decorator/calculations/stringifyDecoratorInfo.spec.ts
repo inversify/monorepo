@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { DecoratorInfoKind } from '../models/DecoratorInfoKind';
-import { MethodDecoratorInfo } from '../models/MethodDecoratorInfo';
-import { ParameterDecoratorInfo } from '../models/ParameterDecoratorInfo';
-import { PropertyDecoratorInfo } from '../models/PropertyDecoratorInfo';
-import { stringifyDecoratorInfo } from './stringifyDecoratorInfo';
+import { DecoratorInfoKind } from '../models/DecoratorInfoKind.js';
+import { type MethodDecoratorInfo } from '../models/MethodDecoratorInfo.js';
+import { type ParameterDecoratorInfo } from '../models/ParameterDecoratorInfo.js';
+import { type PropertyDecoratorInfo } from '../models/PropertyDecoratorInfo.js';
+import { stringifyDecoratorInfo } from './stringifyDecoratorInfo.js';
 
 describe(stringifyDecoratorInfo, () => {
   describe('having decoratorTargetInfo with kind method', () => {

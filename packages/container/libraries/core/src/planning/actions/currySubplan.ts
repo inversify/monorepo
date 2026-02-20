@@ -1,25 +1,29 @@
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { ClassElementMetadata } from '../../metadata/models/ClassElementMetadata';
-import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
-import { ClassMetadata } from '../../metadata/models/ClassMetadata';
-import { ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata';
-import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
-import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
-import { ResolvedValueMetadata } from '../../metadata/models/ResolvedValueMetadata';
-import { getServiceFromMaybeLazyServiceIdentifier } from '../calculations/getServiceFromMaybeLazyServiceIdentifier';
-import { isInstanceBindingNode } from '../calculations/isInstanceBindingNode';
-import { tryBuildGetPlanOptionsFromManagedClassElementMetadata } from '../calculations/tryBuildGetPlanOptionsFromManagedClassElementMetadata';
-import { tryBuildGetPlanOptionsFromResolvedValueElementMetadata } from '../calculations/tryBuildGetPlanOptionsFromResolvedValueElementMetadata';
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { InstanceBindingNode } from '../models/InstanceBindingNode';
-import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanResult } from '../models/PlanResult';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode';
-import { SubplanParams } from '../models/SubplanParams';
-import { cacheNonRootPlanServiceNode } from './cacheNonRootPlanServiceNode';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type ClassElementMetadata } from '../../metadata/models/ClassElementMetadata.js';
+import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind.js';
+import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { type ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata.js';
+import { type ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata.js';
+import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
+import { type ResolvedValueMetadata } from '../../metadata/models/ResolvedValueMetadata.js';
+import { getServiceFromMaybeLazyServiceIdentifier } from '../calculations/getServiceFromMaybeLazyServiceIdentifier.js';
+import { isInstanceBindingNode } from '../calculations/isInstanceBindingNode.js';
+import { tryBuildGetPlanOptionsFromManagedClassElementMetadata } from '../calculations/tryBuildGetPlanOptionsFromManagedClassElementMetadata.js';
+import { tryBuildGetPlanOptionsFromResolvedValueElementMetadata } from '../calculations/tryBuildGetPlanOptionsFromResolvedValueElementMetadata.js';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
+import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanResult } from '../models/PlanResult.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
+import { type SubplanParams } from '../models/SubplanParams.js';
+import { cacheNonRootPlanServiceNode } from './cacheNonRootPlanServiceNode.js';
+
+const MAX_PLAN_DEPTH: number = 500;
 
 class LazyManagedClassMetadataPlanServiceNode extends LazyPlanServiceNode {
   readonly #params: SubplanParams;
@@ -304,6 +308,13 @@ function curryHandlePlanServiceNodeBuildFromClassElementMetadata(
   ): PlanServiceNode | undefined => {
     if (elementMetadata.kind === ClassElementMetadataKind.unmanaged) {
       return undefined;
+    }
+
+    if (bindingConstraintsList.length > MAX_PLAN_DEPTH) {
+      throw new InversifyCoreError(
+        InversifyCoreErrorKind.planningMaxDepthExceeded,
+        'Maximum plan depth exceeded. This is likely caused by a circular dependency.',
+      );
     }
 
     const getPlanOptions: GetPlanOptions | undefined =

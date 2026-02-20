@@ -1,13 +1,13 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { getClassMetadata } from '../calculations/getClassMetadata';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { getExtendedConstructorArguments } from '../calculations/getExtendedConstructorArguments';
-import { getExtendedLifecycle } from '../calculations/getExtendedLifecycle';
-import { getExtendedProperties } from '../calculations/getExtendedProperties';
-import { ClassMetadata } from '../models/ClassMetadata';
-import { InjectFromOptions } from '../models/InjectFromOptions';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { getClassMetadata } from '../calculations/getClassMetadata.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { getExtendedConstructorArguments } from '../calculations/getExtendedConstructorArguments.js';
+import { getExtendedLifecycle } from '../calculations/getExtendedLifecycle.js';
+import { getExtendedProperties } from '../calculations/getExtendedProperties.js';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { type InjectFromOptions } from '../models/InjectFromOptions.js';
 
 export function injectFrom(options: InjectFromOptions): ClassDecorator {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

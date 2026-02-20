@@ -1,15 +1,15 @@
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import {
   getOwnReflectMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { typescriptParameterTypesReflectKey } from '../../reflectMetadata/data/typescriptDesignParameterTypesReflectKey';
-import { buildClassElementMetadataFromTypescriptParameterType } from '../calculations/buildClassElementMetadataFromTypescriptParameterType';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { isUserlandEmittedType } from '../calculations/isUserlandEmittedType';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { typescriptParameterTypesReflectKey } from '../../reflectMetadata/data/typescriptDesignParameterTypesReflectKey.js';
+import { buildClassElementMetadataFromTypescriptParameterType } from '../calculations/buildClassElementMetadataFromTypescriptParameterType.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { isUserlandEmittedType } from '../calculations/isUserlandEmittedType.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
 
 export function updateClassMetadataWithTypescriptParameterTypes(
   target: object,

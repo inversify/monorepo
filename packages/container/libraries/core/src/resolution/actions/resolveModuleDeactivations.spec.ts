@@ -4,15 +4,15 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('./resolveBindingsDeactivations.js'));
 
-import { DeactivationParams } from '../models/DeactivationParams';
-import { resolveBindingsDeactivations } from './resolveBindingsDeactivations';
-import { resolveModuleDeactivations } from './resolveModuleDeactivations';
+import { type DeactivationParams } from '../models/DeactivationParams.js';
+import { resolveBindingsDeactivations } from './resolveBindingsDeactivations.js';
+import { resolveModuleDeactivations } from './resolveModuleDeactivations.js';
 
 describe(resolveModuleDeactivations, () => {
   let paramsMock: Mocked<DeactivationParams>;

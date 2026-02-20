@@ -1,10 +1,10 @@
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import { getBaseType } from '@inversifyjs/prototype-utils';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { InjectFromBaseOptions } from '../models/InjectFromBaseOptions';
-import { injectFrom } from './injectFrom';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type InjectFromBaseOptions } from '../models/InjectFromBaseOptions.js';
+import { injectFrom } from './injectFrom.js';
 
 export function injectFromBase(
   options?: InjectFromBaseOptions,

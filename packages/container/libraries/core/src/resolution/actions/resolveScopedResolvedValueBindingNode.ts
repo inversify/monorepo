@@ -1,9 +1,9 @@
-import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
-import { ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode';
-import { getResolvedValueNodeBinding } from '../calculations/getResolvedValueNodeBinding';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved } from '../models/Resolved';
-import { resolveScoped } from './resolveScoped';
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
+import { type ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode.js';
+import { getResolvedValueNodeBinding } from '../calculations/getResolvedValueNodeBinding.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved } from '../models/Resolved.js';
+import { resolveScoped } from './resolveScoped.js';
 
 export const resolveScopedResolvedValueBindingNode: <TActivated>(
   resolve: (

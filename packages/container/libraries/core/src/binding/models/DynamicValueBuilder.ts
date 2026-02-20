@@ -1,5 +1,5 @@
-import { ResolutionContext } from '../../resolution/models/ResolutionContext';
-import { Resolved } from '../../resolution/models/Resolved';
+import { type ResolutionContext } from '../../resolution/models/ResolutionContext.js';
+import { type Resolved } from '../../resolution/models/Resolved.js';
 
 export type DynamicValueBuilder<T> = (
   context: ResolutionContext,

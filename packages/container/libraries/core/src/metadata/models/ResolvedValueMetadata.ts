@@ -1,4 +1,4 @@
-import { ResolvedValueElementMetadata } from './ResolvedValueElementMetadata';
+import { type ResolvedValueElementMetadata } from './ResolvedValueElementMetadata.js';
 
 export interface ResolvedValueMetadata {
   arguments: ResolvedValueElementMetadata[];

@@ -4,19 +4,19 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('./resolveBindingServiceActivations.js'));
 
-import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures';
-import { ConstantValueBinding } from '../../binding/models/ConstantValueBinding';
-import { ResolutionContext } from '../models/ResolutionContext';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolveBindingActivations } from './resolveBindingActivations';
-import { resolveBindingServiceActivations } from './resolveBindingServiceActivations';
+import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures.js';
+import { type ConstantValueBinding } from '../../binding/models/ConstantValueBinding.js';
+import { type ResolutionContext } from '../models/ResolutionContext.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveBindingActivations } from './resolveBindingActivations.js';
+import { resolveBindingServiceActivations } from './resolveBindingServiceActivations.js';
 
 describe(resolveBindingActivations, () => {
   describe('having a binding with no activation', () => {

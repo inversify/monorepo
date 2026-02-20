@@ -4,25 +4,25 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('./resolveBindingPreDestroy.js'));
 vitest.mock(import('./resolveBindingServiceDeactivations.js'));
 
-import { Right } from '@inversifyjs/common';
+import { type Right } from '@inversifyjs/common';
 
-import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures';
-import { Binding } from '../../binding/models/Binding';
-import { bindingScopeValues } from '../../binding/models/BindingScope';
-import { BindingType } from '../../binding/models/BindingType';
-import { ScopedBinding } from '../../binding/models/ScopedBinding';
-import { DeactivationParams } from '../models/DeactivationParams';
-import { Resolved } from '../models/Resolved';
-import { resolveBindingDeactivations } from './resolveBindingDeactivations';
-import { resolveBindingPreDestroy } from './resolveBindingPreDestroy';
-import { resolveBindingServiceDeactivations } from './resolveBindingServiceDeactivations';
+import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures.js';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { type BindingType } from '../../binding/models/BindingType.js';
+import { type ScopedBinding } from '../../binding/models/ScopedBinding.js';
+import { type DeactivationParams } from '../models/DeactivationParams.js';
+import { type Resolved } from '../models/Resolved.js';
+import { resolveBindingDeactivations } from './resolveBindingDeactivations.js';
+import { resolveBindingPreDestroy } from './resolveBindingPreDestroy.js';
+import { resolveBindingServiceDeactivations } from './resolveBindingServiceDeactivations.js';
 
 const CACHE_KEY_TYPE: keyof ScopedBinding<
   BindingType,

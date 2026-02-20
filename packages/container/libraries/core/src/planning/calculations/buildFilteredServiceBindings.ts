@@ -1,10 +1,10 @@
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
 
-import { buildInstanceBinding } from '../../binding/calculations/buildInstanceBinding';
-import { Binding } from '../../binding/models/Binding';
-import { BindingConstraints } from '../../binding/models/BindingConstraints';
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { BasePlanParams } from '../models/BasePlanParams';
+import { buildInstanceBinding } from '../../binding/calculations/buildInstanceBinding.js';
+import { type Binding } from '../../binding/models/Binding.js';
+import { type BindingConstraints } from '../../binding/models/BindingConstraints.js';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type BasePlanParams } from '../models/BasePlanParams.js';
 
 export interface BuildFilteredServiceBindingsOptions {
   customServiceIdentifier?: ServiceIdentifier;

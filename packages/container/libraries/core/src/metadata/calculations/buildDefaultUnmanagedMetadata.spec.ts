@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { UnmanagedClassElementMetadata } from '../models/UnmanagedClassElementMetadata';
-import { buildDefaultUnmanagedMetadata } from './buildDefaultUnmanagedMetadata';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type UnmanagedClassElementMetadata } from '../models/UnmanagedClassElementMetadata.js';
+import { buildDefaultUnmanagedMetadata } from './buildDefaultUnmanagedMetadata.js';
 
 describe(buildDefaultUnmanagedMetadata, () => {
   describe('when called', () => {

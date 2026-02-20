@@ -1,6 +1,6 @@
-import { bindingScopeValues } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
-import { InstanceBinding } from '../models/InstanceBinding';
+import { bindingScopeValues } from '../models/BindingScope.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type InstanceBinding } from '../models/InstanceBinding.js';
 
 export class InstanceBindingFixtures {
   public static get any(): InstanceBinding<unknown> {

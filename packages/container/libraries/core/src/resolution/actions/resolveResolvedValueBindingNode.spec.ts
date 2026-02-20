@@ -4,15 +4,15 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
-import { ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolveResolvedValueBindingNode } from './resolveResolvedValueBindingNode';
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
+import { type ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveResolvedValueBindingNode } from './resolveResolvedValueBindingNode.js';
 
 describe(resolveResolvedValueBindingNode, () => {
   let resolveResolvedValueBindingParamsMock: Mock<

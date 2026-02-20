@@ -1,12 +1,12 @@
 import {
-  ServiceIdentifier,
+  type ServiceIdentifier,
   stringifyServiceIdentifier,
 } from '@inversifyjs/common';
 
-import { isStackOverflowError } from '../../error/calculations/isStackOverflowError';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { PlanParams } from '../models/PlanParams';
+import { isStackOverflowError } from '../../error/calculations/isStackOverflowError.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type PlanParams } from '../models/PlanParams.js';
 
 /**
  * Extracts a likely circular dependency asuming a service asociated to a
@@ -36,7 +36,13 @@ function extractLikelyCircularDependency(
 }
 
 export function handlePlanError(params: PlanParams, error: unknown): never {
-  if (isStackOverflowError(error)) {
+  if (
+    isStackOverflowError(error) ||
+    InversifyCoreError.isErrorOfKind(
+      error,
+      InversifyCoreErrorKind.planningMaxDepthExceeded,
+    )
+  ) {
     const stringifiedCircularDependencies: string =
       stringifyServiceIdentifierTrace(extractLikelyCircularDependency(params));
 

@@ -1,13 +1,13 @@
 import {
-  BindingScope,
+  type BindingScope,
   bindingScopeValues,
-} from '../../binding/models/BindingScope';
-import { BindingType } from '../../binding/models/BindingType';
-import { ScopedBinding } from '../../binding/models/ScopedBinding';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved } from '../models/Resolved';
-import { cacheResolvedValue } from './cacheResolvedValue';
-import { resolveBindingActivations } from './resolveBindingActivations';
+} from '../../binding/models/BindingScope.js';
+import { type BindingType } from '../../binding/models/BindingType.js';
+import { type ScopedBinding } from '../../binding/models/ScopedBinding.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved } from '../models/Resolved.js';
+import { cacheResolvedValue } from './cacheResolvedValue.js';
+import { resolveBindingActivations } from './resolveBindingActivations.js';
 
 export function resolveScoped<
   TActivated,

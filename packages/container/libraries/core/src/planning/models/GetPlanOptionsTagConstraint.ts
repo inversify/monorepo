@@ -1,4 +1,4 @@
-import { MetadataTag } from '../../metadata/models/MetadataTag';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
 
 export interface GetPlanOptionsTagConstraint {
   key: MetadataTag;

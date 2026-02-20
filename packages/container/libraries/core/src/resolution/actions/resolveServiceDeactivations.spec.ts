@@ -4,17 +4,17 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
 vitest.mock(import('./resolveBindingsDeactivations.js'));
 
-import { DeactivationParams } from '../models/DeactivationParams';
-import { resolveBindingsDeactivations } from './resolveBindingsDeactivations';
-import { resolveServiceDeactivations } from './resolveServiceDeactivations';
+import { type DeactivationParams } from '../models/DeactivationParams.js';
+import { resolveBindingsDeactivations } from './resolveBindingsDeactivations.js';
+import { resolveServiceDeactivations } from './resolveServiceDeactivations.js';
 
 describe(resolveServiceDeactivations, () => {
   let paramsMock: Mocked<DeactivationParams>;

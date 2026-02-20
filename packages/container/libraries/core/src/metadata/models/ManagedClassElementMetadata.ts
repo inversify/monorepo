@@ -1,5 +1,5 @@
-import { MultipleInjectionManagedClassElementMetadata } from './MultipleInjectionManagedClassElementMetadata';
-import { SingleInjectionManagedClassElementMetadata } from './SingleInjectionManagedClassElementMetadata';
+import { type MultipleInjectionManagedClassElementMetadata } from './MultipleInjectionManagedClassElementMetadata.js';
+import { type SingleInjectionManagedClassElementMetadata } from './SingleInjectionManagedClassElementMetadata.js';
 
 export type ManagedClassElementMetadata =
   | SingleInjectionManagedClassElementMetadata

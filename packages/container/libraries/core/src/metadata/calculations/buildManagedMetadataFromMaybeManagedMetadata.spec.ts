@@ -1,16 +1,19 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  type LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
 vitest.mock(import('./assertMetadataFromTypescriptIfManaged.js'));
 
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
-import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind';
-import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';
-import { MultiInjectOptions } from '../models/MultiInjectOptions';
-import { assertMetadataFromTypescriptIfManaged } from './assertMetadataFromTypescriptIfManaged';
-import { buildManagedMetadataFromMaybeManagedMetadata } from './buildManagedMetadataFromMaybeManagedMetadata';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
+import { MaybeClassElementMetadataKind } from '../models/MaybeClassElementMetadataKind.js';
+import { type MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata.js';
+import { type MultiInjectOptions } from '../models/MultiInjectOptions.js';
+import { assertMetadataFromTypescriptIfManaged } from './assertMetadataFromTypescriptIfManaged.js';
+import { buildManagedMetadataFromMaybeManagedMetadata } from './buildManagedMetadataFromMaybeManagedMetadata.js';
 
 describe(buildManagedMetadataFromMaybeManagedMetadata, () => {
   describe('having single injection kind', () => {

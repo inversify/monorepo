@@ -1,5 +1,5 @@
-import { ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding';
-import { ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode';
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
+import { type ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode.js';
 
 export function getResolvedValueNodeBinding<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,

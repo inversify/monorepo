@@ -1,9 +1,9 @@
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { ConstantValueBinding } from '../../binding/models/ConstantValueBinding';
-import { resolveConstantValueBindingCallback } from '../calculations/resolveConstantValueBindingCallback';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { Resolved } from '../models/Resolved';
-import { resolveSingletonScopedBinding } from './resolveSingletonScopedBinding';
+import { type bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type ConstantValueBinding } from '../../binding/models/ConstantValueBinding.js';
+import { resolveConstantValueBindingCallback } from '../calculations/resolveConstantValueBindingCallback.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { type Resolved } from '../models/Resolved.js';
+import { resolveSingletonScopedBinding } from './resolveSingletonScopedBinding.js';
 
 export const resolveConstantValueBinding: <TActivated>(
   params: ResolutionParams,

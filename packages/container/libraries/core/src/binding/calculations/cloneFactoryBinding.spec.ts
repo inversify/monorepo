@@ -1,15 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { Left } from '@inversifyjs/common';
+import { type Left } from '@inversifyjs/common';
 
 vitest.mock(import('./cloneBindingCache.js'));
 
-import { bindingScopeValues } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
-import { Factory } from '../models/Factory';
-import { FactoryBinding } from '../models/FactoryBinding';
-import { cloneBindingCache } from './cloneBindingCache';
-import { cloneFactoryBinding } from './cloneFactoryBinding';
+import { bindingScopeValues } from '../models/BindingScope.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type Factory } from '../models/Factory.js';
+import { type FactoryBinding } from '../models/FactoryBinding.js';
+import { cloneBindingCache } from './cloneBindingCache.js';
+import { cloneFactoryBinding } from './cloneFactoryBinding.js';
 
 describe(cloneFactoryBinding, () => {
   let factoryBindingFixture: FactoryBinding<Factory<unknown>>;

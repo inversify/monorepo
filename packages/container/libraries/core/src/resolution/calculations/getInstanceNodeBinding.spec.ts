@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { InstanceBinding } from '../../binding/models/InstanceBinding';
-import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
-import { getInstanceNodeBinding } from './getInstanceNodeBinding';
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
+import { getInstanceNodeBinding } from './getInstanceNodeBinding.js';
 
 describe(getInstanceNodeBinding, () => {
   let nodeFixture: InstanceBindingNode<InstanceBinding<unknown>>;

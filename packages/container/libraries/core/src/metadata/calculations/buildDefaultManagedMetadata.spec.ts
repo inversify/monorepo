@@ -1,11 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
-import { MultiInjectOptions } from '../models/MultiInjectOptions';
-import { buildDefaultManagedMetadata } from './buildDefaultManagedMetadata';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
+import { type MultiInjectOptions } from '../models/MultiInjectOptions.js';
+import { buildDefaultManagedMetadata } from './buildDefaultManagedMetadata.js';
 
 describe(buildDefaultManagedMetadata, () => {
   describe('having a single injection kind', () => {

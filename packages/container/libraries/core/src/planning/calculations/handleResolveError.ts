@@ -1,18 +1,18 @@
 import {
-  ServiceIdentifier,
+  type ServiceIdentifier,
   stringifyServiceIdentifier,
 } from '@inversifyjs/common';
 
-import { bindingTypeValues } from '../../binding/models/BindingType';
-import { isStackOverflowError } from '../../error/calculations/isStackOverflowError';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ResolutionParams } from '../../resolution/models/ResolutionParams';
-import { InstanceBindingNode } from '../models/InstanceBindingNode';
-import { PlanBindingNode } from '../models/PlanBindingNode';
-import { PlanServiceNode } from '../models/PlanServiceNode';
-import { ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode';
-import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode';
+import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { isStackOverflowError } from '../../error/calculations/isStackOverflowError.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
+import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
+import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode.js';
 
 const INDEX_NOT_FOUND: number = -1;
 
@@ -20,7 +20,13 @@ export function handleResolveError(
   params: ResolutionParams,
   error: unknown,
 ): never {
-  if (isStackOverflowError(error)) {
+  if (
+    isStackOverflowError(error) ||
+    InversifyCoreError.isErrorOfKind(
+      error,
+      InversifyCoreErrorKind.planningMaxDepthExceeded,
+    )
+  ) {
     const stringifiedCircularDependencies: string =
       stringifyServiceIdentifierTrace(extractLikelyCircularDependency(params));
 

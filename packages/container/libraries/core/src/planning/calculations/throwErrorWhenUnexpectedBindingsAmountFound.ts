@@ -1,15 +1,15 @@
 import {
-  ServiceIdentifier,
+  type ServiceIdentifier,
   stringifyServiceIdentifier,
 } from '@inversifyjs/common';
 
-import { stringifyBinding } from '../../binding/calculations/stringifyBinding';
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList';
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { MetadataTag } from '../../metadata/models/MetadataTag';
-import { PlanBindingNode } from '../models/PlanBindingNode';
+import { stringifyBinding } from '../../binding/calculations/stringifyBinding.js';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { type SingleImmutableLinkedListNode } from '../../common/models/SingleImmutableLinkedList.js';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
+import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 
 export function throwErrorWhenUnexpectedBindingsAmountFound(
   bindingNodes: PlanBindingNode[] | PlanBindingNode | undefined,

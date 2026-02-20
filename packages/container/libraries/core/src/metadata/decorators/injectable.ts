@@ -1,11 +1,11 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { BindingScope } from '../../binding/models/BindingScope';
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { setIsInjectableFlag } from '../actions/setIsInjectableFlag';
-import { updateClassMetadataWithTypescriptParameterTypes } from '../actions/updateClassMetadataWithTypescriptParameterTypes';
-import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
+import { type BindingScope } from '../../binding/models/BindingScope.js';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { setIsInjectableFlag } from '../actions/setIsInjectableFlag.js';
+import { updateClassMetadataWithTypescriptParameterTypes } from '../actions/updateClassMetadataWithTypescriptParameterTypes.js';
+import { getDefaultClassMetadata } from '../calculations/getDefaultClassMetadata.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
 
 export function injectable(scope?: BindingScope): ClassDecorator {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

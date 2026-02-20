@@ -1,5 +1,5 @@
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { SingleInjectionManagedClassElementMetadata } from '../models/SingleInjectionManagedClassElementMetadata';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type SingleInjectionManagedClassElementMetadata } from '../models/SingleInjectionManagedClassElementMetadata.js';
 
 export class SingleInjectionManagedClassElementMetadataFixtures {
   public static get any(): SingleInjectionManagedClassElementMetadata {

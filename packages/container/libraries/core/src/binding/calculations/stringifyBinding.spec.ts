@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Binding } from '../models/Binding';
-import { bindingScopeValues } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
-import { stringifyBinding } from './stringifyBinding';
+import { type Binding } from '../models/Binding.js';
+import { bindingScopeValues } from '../models/BindingScope.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { stringifyBinding } from './stringifyBinding.js';
 
 describe(stringifyBinding, () => {
   describe.each<[string, Binding<unknown>, string]>([

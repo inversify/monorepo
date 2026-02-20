@@ -4,13 +4,13 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
-import { ResolutionParams } from '../models/ResolutionParams';
-import { resolveInstanceBindingNode } from './resolveInstanceBindingNode';
+import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveInstanceBindingNode } from './resolveInstanceBindingNode.js';
 
 describe(resolveInstanceBindingNode, () => {
   let resolveInstanceBindingConstructorParamsMock: Mock<

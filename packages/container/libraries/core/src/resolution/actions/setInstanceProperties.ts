@@ -1,12 +1,12 @@
 import { isPromise } from '@inversifyjs/common';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { ClassElementMetadata } from '../../metadata/models/ClassElementMetadata';
-import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind';
-import { InstanceBindingNode } from '../../planning/models/InstanceBindingNode';
-import { PlanServiceNode } from '../../planning/models/PlanServiceNode';
-import { ResolutionParams } from '../models/ResolutionParams';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type ClassElementMetadata } from '../../metadata/models/ClassElementMetadata.js';
+import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind.js';
+import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
+import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
+import { type ResolutionParams } from '../models/ResolutionParams.js';
 
 export function setInstanceProperties(
   resolveServiceNode: (

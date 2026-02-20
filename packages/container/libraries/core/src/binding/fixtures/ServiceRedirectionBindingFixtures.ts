@@ -1,5 +1,5 @@
-import { bindingTypeValues } from '../models/BindingType';
-import { ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding.js';
 
 export class ServiceRedirectionBindingFixtures {
   public static get any(): ServiceRedirectionBinding<unknown> {

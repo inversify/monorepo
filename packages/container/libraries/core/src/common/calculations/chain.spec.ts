@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { chain } from './chain';
+import { chain } from './chain.js';
 
 describe(chain, () => {
   describe('when called', () => {

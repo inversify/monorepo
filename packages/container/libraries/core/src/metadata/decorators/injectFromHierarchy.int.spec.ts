@@ -4,11 +4,11 @@ import 'reflect-metadata/lite';
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind';
-import { ClassMetadata } from '../models/ClassMetadata';
-import { inject } from './inject';
-import { injectFromHierarchy } from './injectFromHierarchy';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { ClassElementMetadataKind } from '../models/ClassElementMetadataKind.js';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { inject } from './inject.js';
+import { injectFromHierarchy } from './injectFromHierarchy.js';
 
 describe(injectFromHierarchy, () => {
   describe('having a base class with constructor arguments', () => {

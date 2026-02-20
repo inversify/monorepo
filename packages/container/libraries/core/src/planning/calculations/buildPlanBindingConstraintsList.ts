@@ -1,7 +1,7 @@
-import { InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation';
-import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList';
-import { MetadataTag } from '../../metadata/models/MetadataTag';
-import { PlanParams } from '../models/PlanParams';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
+import { type PlanParams } from '../models/PlanParams.js';
 
 export function buildPlanBindingConstraintsList(
   params: PlanParams,
@@ -12,13 +12,16 @@ export function buildPlanBindingConstraintsList(
     tags.set(params.rootConstraints.tag.key, params.rootConstraints.tag.value);
   }
 
-  return new SingleImmutableLinkedList({
-    elem: {
-      getAncestorsCalled: false,
-      name: params.rootConstraints.name,
-      serviceIdentifier: params.rootConstraints.serviceIdentifier,
-      tags,
+  return new SingleImmutableLinkedList(
+    {
+      elem: {
+        getAncestorsCalled: false,
+        name: params.rootConstraints.name,
+        serviceIdentifier: params.rootConstraints.serviceIdentifier,
+        tags,
+      },
+      previous: undefined,
     },
-    previous: undefined,
-  });
+    1,
+  );
 }

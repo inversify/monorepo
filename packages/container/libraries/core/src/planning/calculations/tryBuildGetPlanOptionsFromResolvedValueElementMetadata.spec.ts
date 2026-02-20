@@ -1,14 +1,17 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
+import {
+  LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
 
-import { MetadataTag } from '../../metadata/models/MetadataTag';
-import { MultipleInjectionResolvedValueElementMetadata } from '../../metadata/models/MultipleInjectionResolvedValueElementMetadata';
-import { ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata';
-import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind';
-import { SingleInjectionResolvedValueElementMetadata } from '../../metadata/models/SingleInjectionResolvedValueElementMetadata';
-import { GetPlanOptions } from '../models/GetPlanOptions';
-import { tryBuildGetPlanOptionsFromResolvedValueElementMetadata } from './tryBuildGetPlanOptionsFromResolvedValueElementMetadata';
+import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
+import { type MultipleInjectionResolvedValueElementMetadata } from '../../metadata/models/MultipleInjectionResolvedValueElementMetadata.js';
+import { type ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata.js';
+import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
+import { type SingleInjectionResolvedValueElementMetadata } from '../../metadata/models/SingleInjectionResolvedValueElementMetadata.js';
+import { type GetPlanOptions } from '../models/GetPlanOptions.js';
+import { tryBuildGetPlanOptionsFromResolvedValueElementMetadata } from './tryBuildGetPlanOptionsFromResolvedValueElementMetadata.js';
 
 describe(tryBuildGetPlanOptionsFromResolvedValueElementMetadata, () => {
   describe('having ResolvedValueElementMetadata with LazyServiceIdentifier', () => {

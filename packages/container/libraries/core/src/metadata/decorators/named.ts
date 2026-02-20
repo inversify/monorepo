@@ -1,11 +1,11 @@
-import { incrementPendingClassMetadataCount } from '../actions/incrementPendingClassMetadataCount';
-import { updateMetadataName } from '../actions/updateMetadataName';
-import { buildMaybeClassElementMetadataFromMaybeClassElementMetadata } from '../calculations/buildMaybeClassElementMetadataFromMaybeClassElementMetadata';
-import { ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata';
-import { MetadataName } from '../models/MetadataName';
-import { injectBase } from './injectBase';
+import { incrementPendingClassMetadataCount } from '../actions/incrementPendingClassMetadataCount.js';
+import { updateMetadataName } from '../actions/updateMetadataName.js';
+import { buildMaybeClassElementMetadataFromMaybeClassElementMetadata } from '../calculations/buildMaybeClassElementMetadataFromMaybeClassElementMetadata.js';
+import { type ManagedClassElementMetadata } from '../models/ManagedClassElementMetadata.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { type MaybeManagedClassElementMetadata } from '../models/MaybeManagedClassElementMetadata.js';
+import { type MetadataName } from '../models/MetadataName.js';
+import { injectBase } from './injectBase.js';
 
 export function named(
   name: MetadataName,

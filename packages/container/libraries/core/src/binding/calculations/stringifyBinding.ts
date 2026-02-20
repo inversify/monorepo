@@ -1,7 +1,7 @@
 import { stringifyServiceIdentifier } from '@inversifyjs/common';
 
-import { Binding } from '../models/Binding';
-import { bindingTypeValues } from '../models/BindingType';
+import { type Binding } from '../models/Binding.js';
+import { bindingTypeValues } from '../models/BindingType.js';
 
 export function stringifyBinding(binding: Binding): string {
   switch (binding.type) {

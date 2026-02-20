@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { bindingScopeValues } from '../models/BindingScope';
-import { bindingTypeValues } from '../models/BindingType';
-import { ConstantValueBinding } from '../models/ConstantValueBinding';
-import { ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding';
-import { isScopedBinding } from './isScopedBinding';
+import { bindingScopeValues } from '../models/BindingScope.js';
+import { bindingTypeValues } from '../models/BindingType.js';
+import { type ConstantValueBinding } from '../models/ConstantValueBinding.js';
+import { type ServiceRedirectionBinding } from '../models/ServiceRedirectionBinding.js';
+import { isScopedBinding } from './isScopedBinding.js';
 
 describe(isScopedBinding, () => {
   describe('having a ServiceRedirectionBinding', () => {

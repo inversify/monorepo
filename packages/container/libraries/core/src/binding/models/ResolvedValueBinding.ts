@@ -1,7 +1,7 @@
-import { ResolvedValueMetadata } from '../../metadata/models/ResolvedValueMetadata';
-import { BindingScope } from './BindingScope';
-import { bindingTypeValues } from './BindingType';
-import { ScopedBinding } from './ScopedBinding';
+import { type ResolvedValueMetadata } from '../../metadata/models/ResolvedValueMetadata.js';
+import { type BindingScope } from './BindingScope.js';
+import { type bindingTypeValues } from './BindingType.js';
+import { type ScopedBinding } from './ScopedBinding.js';
 
 export interface ResolvedValueBinding<TActivated> extends ScopedBinding<
   typeof bindingTypeValues.ResolvedValue,

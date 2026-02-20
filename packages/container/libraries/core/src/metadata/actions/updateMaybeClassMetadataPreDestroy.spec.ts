@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { InversifyCoreError } from '../../error/models/InversifyCoreError';
-import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind';
-import { MaybeClassMetadata } from '../models/MaybeClassMetadata';
-import { updateMaybeClassMetadataPreDestroy } from './updateMaybeClassMetadataPreDestroy';
+import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
+import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
+import { type MaybeClassMetadata } from '../models/MaybeClassMetadata.js';
+import { updateMaybeClassMetadataPreDestroy } from './updateMaybeClassMetadataPreDestroy.js';
 
 describe(updateMaybeClassMetadataPreDestroy, () => {
   describe('having metadata with no preDestroyMethodNames', () => {

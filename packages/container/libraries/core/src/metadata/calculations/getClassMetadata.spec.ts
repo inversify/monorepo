@@ -4,7 +4,7 @@ vitest.mock(import('./getDefaultClassMetadata.js'));
 
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 vitest.mock(import('./getDefaultClassMetadata.js'));
@@ -12,14 +12,14 @@ vitest.mock(import('./isPendingClassMetadata.js'));
 vitest.mock(import('./throwAtInvalidClassMetadata.js'));
 vitest.mock(import('./validateConstructorMetadataArray.js'));
 
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey';
-import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures';
-import { ClassMetadata } from '../models/ClassMetadata';
-import { getClassMetadata } from './getClassMetadata';
-import { getDefaultClassMetadata } from './getDefaultClassMetadata';
-import { isPendingClassMetadata } from './isPendingClassMetadata';
-import { throwAtInvalidClassMetadata } from './throwAtInvalidClassMetadata';
-import { validateConstructorMetadataArray } from './validateConstructorMetadataArray';
+import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { ClassMetadataFixtures } from '../fixtures/ClassMetadataFixtures.js';
+import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { getClassMetadata } from './getClassMetadata.js';
+import { getDefaultClassMetadata } from './getDefaultClassMetadata.js';
+import { isPendingClassMetadata } from './isPendingClassMetadata.js';
+import { throwAtInvalidClassMetadata } from './throwAtInvalidClassMetadata.js';
+import { validateConstructorMetadataArray } from './validateConstructorMetadataArray.js';
 
 describe(getClassMetadata, () => {
   let typeFixture: Newable;

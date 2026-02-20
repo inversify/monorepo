@@ -1,8 +1,8 @@
-import { ClassElementMetadata } from '../models/ClassElementMetadata';
-import { MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata';
-import { buildClassElementMetadataFromMaybeClassElementMetadata } from './buildClassElementMetadataFromMaybeClassElementMetadata';
-import { buildDefaultUnmanagedMetadata } from './buildDefaultUnmanagedMetadata';
-import { buildUnmanagedMetadataFromMaybeManagedMetadata } from './buildUnmanagedMetadataFromMaybeManagedMetadata';
+import { type ClassElementMetadata } from '../models/ClassElementMetadata.js';
+import { type MaybeClassElementMetadata } from '../models/MaybeClassElementMetadata.js';
+import { buildClassElementMetadataFromMaybeClassElementMetadata } from './buildClassElementMetadataFromMaybeClassElementMetadata.js';
+import { buildDefaultUnmanagedMetadata } from './buildDefaultUnmanagedMetadata.js';
+import { buildUnmanagedMetadataFromMaybeManagedMetadata } from './buildUnmanagedMetadataFromMaybeManagedMetadata.js';
 
 export const buildUnmanagedMetadataFromMaybeClassElementMetadata: () => (
   metadata: MaybeClassElementMetadata | undefined,

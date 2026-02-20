@@ -1,7 +1,7 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { BindingConstraints } from './BindingConstraints';
-import { BindingType } from './BindingType';
+import { type BindingConstraints } from './BindingConstraints.js';
+import { type BindingType } from './BindingType.js';
 
 export interface BaseBinding<TType extends BindingType, TActivated> {
   readonly id: number;
