@@ -4,14 +4,14 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('../actions/getFirstIteratorResult.js'));
 
-import { getFirstIteratorResult } from '../actions/getFirstIteratorResult';
-import { getFirstIterableResult } from './getFirstIterableResult';
+import { getFirstIteratorResult } from '../actions/getFirstIteratorResult.js';
+import { getFirstIterableResult } from './getFirstIterableResult.js';
 
 describe(getFirstIterableResult, () => {
   describe('having undefined value', () => {

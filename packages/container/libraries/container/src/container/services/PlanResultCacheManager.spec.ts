@@ -4,21 +4,21 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 import {
-  Binding,
+  type Binding,
   CacheBindingInvalidationKind,
-  PlanParamsOperations,
-  PlanResultCacheService,
+  type PlanParamsOperations,
+  type PlanResultCacheService,
 } from '@inversifyjs/core';
 
-import { CacheBindingInvalidation } from '../models/CacheBindingInvalidation';
-import { PlanParamsOperationsManager } from './PlanParamsOperationsManager';
-import { PlanResultCacheManager } from './PlanResultCacheManager';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
+import { type CacheBindingInvalidation } from '../models/CacheBindingInvalidation.js';
+import { type PlanParamsOperationsManager } from './PlanParamsOperationsManager.js';
+import { PlanResultCacheManager } from './PlanResultCacheManager.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 
 describe(PlanResultCacheManager, () => {
   let planParamsOperationsManagerFixture: PlanParamsOperationsManager;
@@ -34,9 +34,7 @@ describe(PlanResultCacheManager, () => {
     serviceReferenceManagerMock = {
       planResultCacheService: {
         invalidateServiceBinding: vitest.fn(),
-      } as Partial<
-        Mocked<PlanResultCacheService>
-      > as Mocked<PlanResultCacheService>,
+      } as Partial<PlanResultCacheService>,
     } as Partial<ServiceReferenceManager> as Mocked<ServiceReferenceManager>;
 
     planResultCacheManager = new PlanResultCacheManager(

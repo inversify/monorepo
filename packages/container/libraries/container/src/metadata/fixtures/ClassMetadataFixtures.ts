@@ -1,4 +1,4 @@
-import { bindingScopeValues, ClassMetadata } from '@inversifyjs/core';
+import { bindingScopeValues, type ClassMetadata } from '@inversifyjs/core';
 
 export class ClassMetadataFixtures {
   public static get any(): ClassMetadata {

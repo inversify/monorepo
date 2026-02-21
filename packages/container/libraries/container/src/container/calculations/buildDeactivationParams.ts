@@ -1,6 +1,6 @@
-import { DeactivationParams, getClassMetadata } from '@inversifyjs/core';
+import { type DeactivationParams, getClassMetadata } from '@inversifyjs/core';
 
-import { ServiceReferenceManager } from '../services/ServiceReferenceManager';
+import { type ServiceReferenceManager } from '../services/ServiceReferenceManager.js';
 
 export function buildDeactivationParams(
   serviceReferenceManager: ServiceReferenceManager,

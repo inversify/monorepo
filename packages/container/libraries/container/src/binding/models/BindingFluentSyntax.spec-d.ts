@@ -4,19 +4,19 @@ import {
   describe,
   expectTypeOf,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
-import { Factory } from '@inversifyjs/core';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
+import { type Factory } from '@inversifyjs/core';
 
 import {
-  BindInWhenOnFluentSyntax,
-  BindToFluentSyntax,
-  BindWhenOnFluentSyntax,
-} from './BindingFluentSyntax';
-import { ResolvedValueMetadataInjectOptions } from './ResolvedValueInjectOptions';
+  type BindInWhenOnFluentSyntax,
+  type BindToFluentSyntax,
+  type BindWhenOnFluentSyntax,
+} from './BindingFluentSyntax.js';
+import { type ResolvedValueMetadataInjectOptions } from './ResolvedValueInjectOptions.js';
 
 // eslint-disable-next-line vitest/prefer-describe-function-title
 describe('BindToFluentSyntax', () => {

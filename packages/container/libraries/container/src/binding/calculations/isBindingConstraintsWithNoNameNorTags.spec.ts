@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { BindingConstraints } from '@inversifyjs/core';
+import { type BindingConstraints } from '@inversifyjs/core';
 
-import { isBindingConstraintsWithNoNameNorTags } from './isBindingConstraintsWithNoNameNorTags';
+import { isBindingConstraintsWithNoNameNorTags } from './isBindingConstraintsWithNoNameNorTags.js';
 
 describe(isBindingConstraintsWithNoNameNorTags, () => {
   describe('having a BindingConstraints with name', () => {

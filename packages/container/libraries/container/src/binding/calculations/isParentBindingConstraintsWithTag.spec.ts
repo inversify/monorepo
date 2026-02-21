@@ -4,18 +4,18 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { BindingConstraints, MetadataTag } from '@inversifyjs/core';
+import { type BindingConstraints, type MetadataTag } from '@inversifyjs/core';
 
 vitest.mock(import('./isBindingConstraintsWithTag.js'));
 vitest.mock(import('./isParentBindingConstraints.js'));
 
-import { isBindingConstraintsWithTag } from './isBindingConstraintsWithTag';
-import { isParentBindingConstraints } from './isParentBindingConstraints';
-import { isParentBindingConstraintsWithTag } from './isParentBindingConstraintsWithTag';
+import { isBindingConstraintsWithTag } from './isBindingConstraintsWithTag.js';
+import { isParentBindingConstraints } from './isParentBindingConstraints.js';
+import { isParentBindingConstraintsWithTag } from './isParentBindingConstraintsWithTag.js';
 
 describe(isParentBindingConstraintsWithTag, () => {
   let tagFixture: MetadataTag;

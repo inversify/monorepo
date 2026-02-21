@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { ResolutionContext } from '@inversifyjs/core';
+import { type ResolutionContext } from '@inversifyjs/core';
 
-import { Container } from '../container/services/Container';
+import { Container } from '../container/services/Container.js';
 
 describe('Container restore should restore activations', () => {
   it('Should save and restore the container activations and deactivations when snapshot and restore', async () => {

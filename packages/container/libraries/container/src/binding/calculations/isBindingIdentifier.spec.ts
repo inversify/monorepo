@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { isBindingIdentifier } from './isBindingIdentifier';
+import { isBindingIdentifier } from './isBindingIdentifier.js';
 
 describe(isBindingIdentifier, () => {
   describe.each<[string, unknown, boolean]>([

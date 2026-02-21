@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { Container } from '../container/services/Container';
+import { Container } from '../container/services/Container.js';
 
 describe('inversify/InversifyJS#1744', () => {
   it('container.get() should not complain about false circular dependencies', () => {

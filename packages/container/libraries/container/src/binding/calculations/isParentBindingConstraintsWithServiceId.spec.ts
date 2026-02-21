@@ -4,20 +4,20 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { BindingConstraints } from '@inversifyjs/core';
+import { type BindingConstraints } from '@inversifyjs/core';
 
 vitest.mock(import('./isBindingConstraintsWithServiceId.js'));
 vitest.mock(import('./isParentBindingConstraints.js'));
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { isBindingConstraintsWithServiceId } from './isBindingConstraintsWithServiceId';
-import { isParentBindingConstraints } from './isParentBindingConstraints';
-import { isParentBindingConstraintsWithServiceId } from './isParentBindingConstraintsWithServiceId';
+import { isBindingConstraintsWithServiceId } from './isBindingConstraintsWithServiceId.js';
+import { isParentBindingConstraints } from './isParentBindingConstraints.js';
+import { isParentBindingConstraintsWithServiceId } from './isParentBindingConstraintsWithServiceId.js';
 
 describe(isParentBindingConstraintsWithServiceId, () => {
   let serviceIdFixture: ServiceIdentifier;

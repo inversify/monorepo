@@ -1,4 +1,4 @@
-import { getFirstIteratorResult } from '../actions/getFirstIteratorResult';
+import { getFirstIteratorResult } from '../actions/getFirstIteratorResult.js';
 
 export function getFirstIterableResult<T>(
   iterable: Iterable<T> | undefined,

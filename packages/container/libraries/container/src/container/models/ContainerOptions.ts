@@ -1,6 +1,6 @@
-import { BindingScope } from '@inversifyjs/core';
+import { type BindingScope } from '@inversifyjs/core';
 
-import { Container } from '../services/Container';
+import { type Container } from '../services/Container.js';
 
 export interface ContainerOptions {
   autobind?: true;

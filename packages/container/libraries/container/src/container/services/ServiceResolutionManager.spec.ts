@@ -4,40 +4,40 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/core'));
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 import {
-  ActivationsService,
-  BindingActivation,
-  BindingScope,
+  type ActivationsService,
+  type BindingActivation,
+  type BindingScope,
   bindingScopeValues,
-  BindingService,
-  DeactivationsService,
-  GetAllOptions,
-  GetOptions,
-  GetOptionsTagConstraint,
-  GetPlanOptions,
+  type BindingService,
+  type DeactivationsService,
+  type GetAllOptions,
+  type GetOptions,
+  type GetOptionsTagConstraint,
+  type GetPlanOptions,
   plan,
-  PlanParams,
-  PlanParamsOperations,
-  PlanResult,
-  PlanResultCacheService,
-  ResolutionContext,
-  ResolutionParams,
+  type PlanParams,
+  type PlanParamsOperations,
+  type PlanResult,
+  type PlanResultCacheService,
+  type ResolutionContext,
+  type ResolutionParams,
   resolve,
 } from '@inversifyjs/core';
 
-import { InversifyContainerError } from '../../error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
-import { PlanParamsOperationsManager } from './PlanParamsOperationsManager';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
-import { ServiceResolutionManager } from './ServiceResolutionManager';
+import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
+import { type PlanParamsOperationsManager } from './PlanParamsOperationsManager.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
+import { ServiceResolutionManager } from './ServiceResolutionManager.js';
 
 describe(ServiceResolutionManager, () => {
   let autobindFixture: boolean;
@@ -52,24 +52,18 @@ describe(ServiceResolutionManager, () => {
       planParamsOperations: Symbol() as unknown as PlanParamsOperations,
     } as Partial<PlanParamsOperationsManager> as PlanParamsOperationsManager;
     serviceReferenceManagerMock = {
-      activationService: {} as Partial<
-        Mocked<ActivationsService>
-      > as Mocked<ActivationsService>,
+      activationService: {} as ActivationsService,
       bindingService: {
         get: vitest.fn(),
         getChained: vitest.fn(),
-      } as Partial<Mocked<BindingService>> as Mocked<BindingService>,
-      deactivationService: {} as Partial<
-        Mocked<DeactivationsService>
-      > as Mocked<DeactivationsService>,
+      } as Partial<BindingService> as BindingService,
+      deactivationService: {} as DeactivationsService,
       onReset: vitest.fn(),
       planResultCacheService: {
         get: vitest.fn(),
         set: vitest.fn(),
         setNonCachedServiceNode: vitest.fn(),
-      } as Partial<
-        Mocked<PlanResultCacheService>
-      > as Mocked<PlanResultCacheService>,
+      } as Partial<PlanResultCacheService> as PlanResultCacheService,
     } as Partial<
       Mocked<ServiceReferenceManager>
     > as Mocked<ServiceReferenceManager>;

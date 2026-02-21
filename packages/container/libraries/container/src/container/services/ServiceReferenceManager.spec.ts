@@ -4,18 +4,18 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 import {
-  ActivationsService,
-  BindingService,
-  DeactivationsService,
-  PlanResultCacheService,
+  type ActivationsService,
+  type BindingService,
+  type DeactivationsService,
+  type PlanResultCacheService,
 } from '@inversifyjs/core';
 
-import { ServiceReferenceManager } from './ServiceReferenceManager';
+import { ServiceReferenceManager } from './ServiceReferenceManager.js';
 
 describe(ServiceReferenceManager, () => {
   let activationServiceMock: Mocked<ActivationsService>;
@@ -24,23 +24,15 @@ describe(ServiceReferenceManager, () => {
   let planResultCacheServiceMock: Mocked<PlanResultCacheService>;
 
   beforeAll(() => {
-    activationServiceMock = {} as Partial<
-      Mocked<ActivationsService>
-    > as Mocked<ActivationsService>;
+    activationServiceMock = {} as Mocked<ActivationsService>;
 
-    bindingServiceMock = {} as Partial<
-      Mocked<BindingService>
-    > as Mocked<BindingService>;
+    bindingServiceMock = {} as Mocked<BindingService>;
 
-    deactivationServiceMock = {} as Partial<
-      Mocked<DeactivationsService>
-    > as Mocked<DeactivationsService>;
+    deactivationServiceMock = {} as Mocked<DeactivationsService>;
 
     planResultCacheServiceMock = {
-      clearCache: vitest.fn(),
-    } as Partial<
-      Mocked<PlanResultCacheService>
-    > as Mocked<PlanResultCacheService>;
+      clearCache: vitest.fn() as unknown,
+    } as Mocked<PlanResultCacheService>;
   });
 
   describe('resetComputedProperties', () => {
@@ -49,17 +41,11 @@ describe(ServiceReferenceManager, () => {
     let newDeactivationServiceMock: Mocked<DeactivationsService>;
 
     beforeAll(() => {
-      newActivationServiceMock = {} as Partial<
-        Mocked<ActivationsService>
-      > as Mocked<ActivationsService>;
+      newActivationServiceMock = {} as Mocked<ActivationsService>;
 
-      newBindingServiceMock = {} as Partial<
-        Mocked<BindingService>
-      > as Mocked<BindingService>;
+      newBindingServiceMock = {} as Mocked<BindingService>;
 
-      newDeactivationServiceMock = {} as Partial<
-        Mocked<DeactivationsService>
-      > as Mocked<DeactivationsService>;
+      newDeactivationServiceMock = {} as Mocked<DeactivationsService>;
     });
 
     describe('when called', () => {

@@ -1,22 +1,22 @@
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import {
-  ActivationsService,
-  BindingService,
-  DeactivationsService,
-  PlanResultCacheService,
+  type ActivationsService,
+  type BindingService,
+  type DeactivationsService,
+  type PlanResultCacheService,
 } from '@inversifyjs/core';
 import {
   isPlugin,
-  Plugin,
-  PluginApi,
-  PluginContext,
+  type Plugin,
+  type PluginApi,
+  type PluginContext,
 } from '@inversifyjs/plugin';
 
-import { InversifyContainerError } from '../../error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
-import type { Container } from './Container';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
-import { ServiceResolutionManager } from './ServiceResolutionManager';
+import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
+import type { Container } from './Container.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
+import { type ServiceResolutionManager } from './ServiceResolutionManager.js';
 
 export class PluginManager {
   readonly #pluginApi: PluginApi;
@@ -44,14 +44,20 @@ export class PluginManager {
       this.#pluginContext,
     ) as Partial<Plugin<Container>>;
 
-    if (pluginInstance[isPlugin] !== true) {
+    this.#assertIsPlugin(pluginInstance);
+
+    pluginInstance.load(this.#pluginApi);
+  }
+
+  #assertIsPlugin(
+    value: Partial<Plugin<Container>>,
+  ): asserts value is Plugin<Container> {
+    if (value[isPlugin] !== true) {
       throw new InversifyContainerError(
         InversifyContainerErrorKind.invalidOperation,
         'Invalid plugin. The plugin must extend the Plugin class',
       );
     }
-
-    (pluginInstance as Plugin<Container>).load(this.#pluginApi);
   }
 
   #buildPluginApi(container: Container): PluginApi {

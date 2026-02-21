@@ -1,8 +1,8 @@
 import {
-  ActivationsService,
-  BindingService,
-  DeactivationsService,
-  PlanResultCacheService,
+  type ActivationsService,
+  type BindingService,
+  type DeactivationsService,
+  type PlanResultCacheService,
 } from '@inversifyjs/core';
 
 /**

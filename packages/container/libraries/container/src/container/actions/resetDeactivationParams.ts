@@ -1,6 +1,6 @@
-import { DeactivationParams } from '@inversifyjs/core';
+import { type DeactivationParams } from '@inversifyjs/core';
 
-import { ServiceReferenceManager } from '../services/ServiceReferenceManager';
+import { type ServiceReferenceManager } from '../services/ServiceReferenceManager.js';
 
 export function resetDeactivationParams(
   serviceReferenceManager: ServiceReferenceManager,

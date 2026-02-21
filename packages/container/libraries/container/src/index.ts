@@ -1,38 +1,38 @@
 import 'reflect-metadata/lite';
 
 import {
-  BindInFluentSyntax,
-  BindInWhenOnFluentSyntax,
-  BindOnFluentSyntax,
-  BindToFluentSyntax,
-  BindWhenFluentSyntax,
-  BindWhenOnFluentSyntax,
-  BoundServiceSyntax,
-} from './binding/models/BindingFluentSyntax';
-import { BindingIdentifier } from './binding/models/BindingIdentifier';
-import { MapToResolvedValueInjectOptions } from './binding/models/MapToResolvedValueInjectOptions';
+  type BindInFluentSyntax,
+  type BindInWhenOnFluentSyntax,
+  type BindOnFluentSyntax,
+  type BindToFluentSyntax,
+  type BindWhenFluentSyntax,
+  type BindWhenOnFluentSyntax,
+  type BoundServiceSyntax,
+} from './binding/models/BindingFluentSyntax.js';
+import { type BindingIdentifier } from './binding/models/BindingIdentifier.js';
+import { type MapToResolvedValueInjectOptions } from './binding/models/MapToResolvedValueInjectOptions.js';
 import {
-  ResolvedValueInjectOptions,
-  ResolvedValueMetadataInjectOptions,
-  ResolvedValueMetadataInjectTagOptions,
-} from './binding/models/ResolvedValueInjectOptions';
+  type ResolvedValueInjectOptions,
+  type ResolvedValueMetadataInjectOptions,
+  type ResolvedValueMetadataInjectTagOptions,
+} from './binding/models/ResolvedValueInjectOptions.js';
 import {
-  Bind,
+  type Bind,
   ContainerModule,
-  ContainerModuleLoadOptions,
-  IsBound,
-  OnActivation,
-  OnDeactivation,
-  Rebind,
-  RebindSync,
-  Unbind,
-  UnbindSync,
-} from './container/models/ContainerModule';
-import { ContainerOptions } from './container/models/ContainerOptions';
-import { IsBoundOptions } from './container/models/isBoundOptions';
-import { Container } from './container/services/Container';
-import { InversifyContainerError } from './error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from './error/models/InversifyContainerErrorKind';
+  type ContainerModuleLoadOptions,
+  type IsBound,
+  type OnActivation,
+  type OnDeactivation,
+  type Rebind,
+  type RebindSync,
+  type Unbind,
+  type UnbindSync,
+} from './container/models/ContainerModule.js';
+import { type ContainerOptions } from './container/models/ContainerOptions.js';
+import { type IsBoundOptions } from './container/models/isBoundOptions.js';
+import { Container } from './container/services/Container.js';
+import { InversifyContainerError } from './error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from './error/models/InversifyContainerErrorKind.js';
 
 export type {
   Bind,

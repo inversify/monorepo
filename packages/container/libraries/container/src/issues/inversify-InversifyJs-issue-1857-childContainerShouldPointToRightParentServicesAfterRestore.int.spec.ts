@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { Container } from '../container/services/Container';
+import { Container } from '../container/services/Container.js';
 
 describe('inversify/InversifyJS#1857', () => {
   it('Child container should point to the right parent services after restore', () => {

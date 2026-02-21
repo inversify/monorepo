@@ -4,8 +4,8 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
@@ -13,21 +13,21 @@ vitest.mock(import('@inversifyjs/core'));
 
 vitest.mock(import('../../common/calculations/getFirstIterableResult.js'));
 
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
 import {
   ActivationsService,
-  AutobindOptions,
-  BindingActivation,
-  BindingActivationRelation,
-  BindingDeactivation,
-  BindingDeactivationRelation,
-  BindingScope,
+  type AutobindOptions,
+  type BindingActivation,
+  type BindingActivationRelation,
+  type BindingDeactivation,
+  type BindingDeactivationRelation,
+  type BindingScope,
   bindingScopeValues,
   BindingService,
-  DeactivationParams,
+  type DeactivationParams,
   DeactivationsService,
-  GetOptions,
-  GetOptionsTagConstraint,
+  type GetOptions,
+  type GetOptionsTagConstraint,
   PlanResultCacheService,
 } from '@inversifyjs/core';
 
@@ -41,20 +41,20 @@ vitest.mock(import('./ServiceReferenceManager.js'));
 vitest.mock(import('./ServiceResolutionManager.js'));
 vitest.mock(import('./SnapshotManager.js'));
 
-import { Plugin, PluginContext } from '@inversifyjs/plugin';
+import { type Plugin, type PluginContext } from '@inversifyjs/plugin';
 
-import { BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax';
-import { ContainerModule } from '../models/ContainerModule';
-import { BindingManager } from './BindingManager';
-import { Container } from './Container';
-import { ContainerModuleManager } from './ContainerModuleManager';
-import { DeactivationParamsManager } from './DeactivationParamsManager';
-import { PlanParamsOperationsManager } from './PlanParamsOperationsManager';
-import { PlanResultCacheManager } from './PlanResultCacheManager';
-import { PluginManager } from './PluginManager';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
-import { ServiceResolutionManager } from './ServiceResolutionManager';
-import { SnapshotManager } from './SnapshotManager';
+import { type BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax.js';
+import { type ContainerModule } from '../models/ContainerModule.js';
+import { BindingManager } from './BindingManager.js';
+import { Container } from './Container.js';
+import { ContainerModuleManager } from './ContainerModuleManager.js';
+import { DeactivationParamsManager } from './DeactivationParamsManager.js';
+import { PlanParamsOperationsManager } from './PlanParamsOperationsManager.js';
+import { PlanResultCacheManager } from './PlanResultCacheManager.js';
+import { PluginManager } from './PluginManager.js';
+import { ServiceReferenceManager } from './ServiceReferenceManager.js';
+import { ServiceResolutionManager } from './ServiceResolutionManager.js';
+import { SnapshotManager } from './SnapshotManager.js';
 
 describe(Container, () => {
   let activationServiceMock: Mocked<ActivationsService>;
@@ -225,9 +225,7 @@ describe(Container, () => {
         planResultCacheServiceMock.set;
       public subscribe: Mocked<PlanResultCacheService>['subscribe'] =
         planResultCacheServiceMock.subscribe;
-    } as Newable<Partial<Mocked<PlanResultCacheService>>> as Newable<
-      Mocked<PlanResultCacheService>
-    >;
+    } as Newable<Mocked<PlanResultCacheService>>;
     pluginManagerMock = {
       register: vitest.fn(),
     } as Partial<Mocked<PluginManager>> as Mocked<PluginManager>;

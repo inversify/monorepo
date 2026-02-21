@@ -1,9 +1,12 @@
-import { beforeAll, describe, expect, it, Mock, vitest } from 'vitest';
+import { beforeAll, describe, expect, it, type Mock, vitest } from 'vitest';
 
 vitest.mock(import('../actions/getContainerModuleId.js'));
 
-import { getContainerModuleId } from '../actions/getContainerModuleId';
-import { ContainerModule, ContainerModuleLoadOptions } from './ContainerModule';
+import { getContainerModuleId } from '../actions/getContainerModuleId.js';
+import {
+  ContainerModule,
+  type ContainerModuleLoadOptions,
+} from './ContainerModule.js';
 
 describe(ContainerModule, () => {
   let containerModuleIdfixture: number;

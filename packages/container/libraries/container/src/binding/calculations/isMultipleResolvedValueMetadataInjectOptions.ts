@@ -1,7 +1,7 @@
 import {
-  MultipleResolvedValueMetadataInjectOptions,
-  ResolvedValueInjectOptions,
-} from '../models/ResolvedValueInjectOptions';
+  type MultipleResolvedValueMetadataInjectOptions,
+  type ResolvedValueInjectOptions,
+} from '../models/ResolvedValueInjectOptions.js';
 
 export function isMultipleResolvedValueMetadataInjectOptions<T>(
   options: ResolvedValueInjectOptions<T>,

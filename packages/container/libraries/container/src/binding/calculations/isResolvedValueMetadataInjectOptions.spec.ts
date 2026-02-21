@@ -2,8 +2,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { LazyServiceIdentifier } from '@inversifyjs/common';
 
-import { ResolvedValueInjectOptions } from '../models/ResolvedValueInjectOptions';
-import { isResolvedValueMetadataInjectOptions } from './isResolvedValueMetadataInjectOptions';
+import { type ResolvedValueInjectOptions } from '../models/ResolvedValueInjectOptions.js';
+import { isResolvedValueMetadataInjectOptions } from './isResolvedValueMetadataInjectOptions.js';
 
 describe(isResolvedValueMetadataInjectOptions, () => {
   describe.each<[string, ResolvedValueInjectOptions<unknown>, boolean]>([

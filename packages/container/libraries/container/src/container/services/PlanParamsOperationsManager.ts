@@ -1,11 +1,11 @@
 import {
-  Binding,
+  type Binding,
   CacheBindingInvalidationKind,
   getClassMetadata,
-  PlanParamsOperations,
+  type PlanParamsOperations,
 } from '@inversifyjs/core';
 
-import { ServiceReferenceManager } from './ServiceReferenceManager';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 
 export class PlanParamsOperationsManager {
   public readonly planParamsOperations: PlanParamsOperations;

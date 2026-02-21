@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { getFirstIteratorResult } from './getFirstIteratorResult';
+import { getFirstIteratorResult } from './getFirstIteratorResult.js';
 
 describe(getFirstIteratorResult, () => {
   describe.each<[string, Iterator<unknown> | undefined, unknown]>([

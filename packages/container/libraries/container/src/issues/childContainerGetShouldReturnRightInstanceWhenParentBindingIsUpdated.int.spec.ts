@@ -2,9 +2,9 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { Container } from '../container/services/Container';
+import { Container } from '../container/services/Container.js';
 
 describe('Container.get should should return right instance when parent binding is updated', () => {
   let expectedValue: string;

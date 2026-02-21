@@ -4,18 +4,18 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { BindingConstraints, MetadataName } from '@inversifyjs/core';
+import { type BindingConstraints, type MetadataName } from '@inversifyjs/core';
 
 vitest.mock(import('./isBindingConstraintsWithName.js'));
 vitest.mock(import('./isNoAncestorBindingConstraints.js'));
 
-import { isBindingConstraintsWithName } from './isBindingConstraintsWithName';
-import { isNoAncestorBindingConstraints } from './isNoAncestorBindingConstraints';
-import { isNoAncestorBindingConstraintsWithName } from './isNoAncestorBindingConstraintsWithName';
+import { isBindingConstraintsWithName } from './isBindingConstraintsWithName.js';
+import { isNoAncestorBindingConstraints } from './isNoAncestorBindingConstraints.js';
+import { isNoAncestorBindingConstraintsWithName } from './isNoAncestorBindingConstraintsWithName.js';
 
 describe(isNoAncestorBindingConstraintsWithName, () => {
   let nameFixture: MetadataName;

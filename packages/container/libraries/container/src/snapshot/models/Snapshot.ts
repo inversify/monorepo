@@ -1,7 +1,7 @@
 import {
-  ActivationsService,
-  BindingService,
-  DeactivationsService,
+  type ActivationsService,
+  type BindingService,
+  type DeactivationsService,
 } from '@inversifyjs/core';
 
 export interface Snapshot {

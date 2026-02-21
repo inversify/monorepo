@@ -4,14 +4,14 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { BindingConstraints } from '@inversifyjs/core';
+import { type BindingConstraints } from '@inversifyjs/core';
 
-import { isParentBindingConstraints } from './isParentBindingConstraints';
+import { isParentBindingConstraints } from './isParentBindingConstraints.js';
 
 describe(isParentBindingConstraints, () => {
   let conditionMock: Mock<(constraints: BindingConstraints) => boolean>;

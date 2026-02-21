@@ -1,9 +1,9 @@
-import { BaseBinding, BindingType } from '@inversifyjs/core';
+import { type BaseBinding, type BindingType } from '@inversifyjs/core';
 
 import {
-  BindingIdentifier,
+  type BindingIdentifier,
   bindingIdentifierSymbol,
-} from '../models/BindingIdentifier';
+} from '../models/BindingIdentifier.js';
 
 export function buildBindingIdentifier(
   binding: BaseBinding<BindingType, unknown>,
