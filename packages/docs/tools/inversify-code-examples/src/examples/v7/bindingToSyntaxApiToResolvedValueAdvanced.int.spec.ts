@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  Arsenal,
+  type Arsenal,
   arsenal,
   Katana,
-} from './bindingToSyntaxApiToResolvedValueAdvanced';
+} from './bindingToSyntaxApiToResolvedValueAdvanced.js';
 
 describe('BindingToSyntax API (toResolvedValue, advanced)', () => {
   it('should provide a weapon with right damage', () => {

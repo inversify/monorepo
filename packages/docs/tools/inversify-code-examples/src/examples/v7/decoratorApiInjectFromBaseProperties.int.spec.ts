@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { soldier } from './decoratorApiInjectFromBaseProperties';
+import { soldier } from './decoratorApiInjectFromBaseProperties.js';
 
 describe('Decorator API (inject)', () => {
   it('should provide a ninja with a weapon with right damage', () => {

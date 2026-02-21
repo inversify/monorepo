@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 // Is-inversify-import-example
-import { Container, injectable, interfaces } from 'inversify';
+import { Container, injectable, interfaces } from 'inversify6';
 
 // Begin-example
 const container: Container = new Container();

@@ -4,7 +4,7 @@ import {
   Katana,
   notSoPowerfulGoldKatana,
   powerfulGoldKatana,
-} from './bindingToSyntaxApiToProvider';
+} from './bindingToSyntaxApiToProvider.js';
 
 describe('BindingToSyntax API (toFactory)', () => {
   it('should provide a provider able to provide a katanas', async () => {

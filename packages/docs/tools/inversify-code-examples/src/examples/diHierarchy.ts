@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { Container } from 'inversify';
+import { Container } from 'inversify6';
 
 const weaponIdentifier: symbol = Symbol.for('Weapon');
 

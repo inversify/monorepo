@@ -5,8 +5,8 @@ import {
   fourthUserService,
   secondUserService,
   thirdUserService,
-  UserService,
-} from './serviceIdentifierApi';
+  type UserService,
+} from './serviceIdentifierApi.js';
 
 describe('Service Identifier', () => {
   it('should resolve services using different identifiers', () => {

@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { Container, inject, injectable, interfaces } from 'inversify';
+import { Container, inject, injectable, interfaces } from 'inversify6';
 
 export interface Engine {
   displacement: number;

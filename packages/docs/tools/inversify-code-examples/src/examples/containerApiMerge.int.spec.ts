@@ -8,7 +8,7 @@ import {
   Samurai,
   SAMURAI_EXPANSION_TYPES,
   Shuriken,
-} from './containerApiMerge';
+} from './containerApiMerge.js';
 
 describe('Container API (merge)', () => {
   it('should provide expected services', () => {

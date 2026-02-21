@@ -4,16 +4,15 @@
     "url": "https://github.com/inversify/monorepo/issues"
   },
   "description": "InversifyJs docs code examples package",
-  "dependencies": {
-    "inversify": "6.2.2",
-    "inversify7": "npm:inversify@7.11.0"
-  },
   "devDependencies": {
     "@inversifyjs/code-examples-devkit": "workspace:*",
+    "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@types/node": "24.10.13",
     "@vitest/coverage-v8": "4.0.18",
     "eslint": "9.39.3",
     "glob": "13.0.6",
+    "inversify6": "npm:inversify@6.2.2",
+    "inversify7": "npm:inversify@7.11.0",
     "prettier": "3.8.1",
     "reflect-metadata": "0.2.2",
     "rimraf": "6.1.3",
@@ -38,6 +37,7 @@
   },
   "license": "MIT",
   "name": "@inversifyjs/code-examples",
+  "type": "module",
   "private": true,
   "publishConfig": {
     "access": "public"
@@ -47,11 +47,10 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "build": "pnpm run build:cjs && pnpm run generate:examples",
-    "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
+    "build": "tsc && pnpm run generate:examples",
     "build:clean": "rimraf generated lib",
     "format": "prettier --write ./src",
-    "generate:examples": "node ./lib/cjs/scripts/generateExamples/index.mjs",
+    "generate:examples": "node ./lib/scripts/generateExamples/index.js",
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean",
     "test": "vitest run",

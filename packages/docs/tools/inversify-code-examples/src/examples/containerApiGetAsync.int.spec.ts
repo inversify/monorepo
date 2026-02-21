@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Level1, level1 } from './containerApiGetAsync';
+import { Level1, level1 } from './containerApiGetAsync.js';
 
 describe('Container API (getAsync)', () => {
   it('should provide async service', async () => {

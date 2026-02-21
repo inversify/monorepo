@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { Container, inject } from 'inversify';
+import { Container, inject } from 'inversify6';
 
 interface Weapon {
   damage: number;

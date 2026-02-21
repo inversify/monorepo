@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { es, fr } from './containerApiGetAllTagged';
+import { es, fr } from './containerApiGetAllTagged.js';
 
 describe('Container API (getAllTagged)', () => {
   it('should provide translations', () => {

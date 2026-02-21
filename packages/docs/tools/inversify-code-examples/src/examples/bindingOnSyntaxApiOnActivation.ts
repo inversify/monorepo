@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { Container, injectable, interfaces } from 'inversify';
+import { Container, injectable, interfaces } from 'inversify6';
 
 const container: Container = new Container();
 

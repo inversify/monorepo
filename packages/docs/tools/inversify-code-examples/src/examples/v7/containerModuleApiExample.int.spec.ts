@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Ninja, ninjaPromise, Shuriken } from './containerModuleApiExample';
+import { Ninja, ninjaPromise, Shuriken } from './containerModuleApiExample.js';
 
 describe('ContainerModule API', () => {
   it('should provide expected service', async () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ninjaDamage } from './bindingWhenSyntaxApiWhen';
+import { ninjaDamage } from './bindingWhenSyntaxApiWhen.js';
 
 describe('BindingWhenSyntax API (when)', () => {
   it('should bind right ninja weapon', () => {

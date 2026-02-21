@@ -5,7 +5,7 @@ import {
   Katana,
   notAllWeapons,
   Shuriken,
-} from './containerApiGetAllAsyncEnforced';
+} from './containerApiGetAllAsyncEnforced.js';
 
 describe('Container API (getAllAsync)', () => {
   it('should provide weapons', async () => {

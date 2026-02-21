@@ -6,7 +6,7 @@ import {
   injectable,
   interfaces,
   named,
-} from 'inversify';
+} from 'inversify6';
 
 interface Weapon {
   damage: number;

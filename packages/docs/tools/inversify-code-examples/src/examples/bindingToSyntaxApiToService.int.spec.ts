@@ -4,7 +4,7 @@ import {
   cardCatalogProviders,
   LorcanaCardCatalogProvider,
   MtgCardCatalogProvider,
-} from './bindingToSyntaxApiToService';
+} from './bindingToSyntaxApiToService.js';
 
 describe('BindingToSyntax API (toService)', () => {
   it('should bind catalog providers', () => {

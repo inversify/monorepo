@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ninja } from './containerApiResolve';
+import { ninja } from './containerApiResolve.js';
 
 describe('Container API (resolve)', () => {
   it('should resolve unbound service', async () => {

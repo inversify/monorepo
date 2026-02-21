@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 // Is-inversify-import-example
-import { Container, postConstruct } from 'inversify';
+import { Container, postConstruct } from 'inversify6';
 
 // Begin-example
 interface Weapon {

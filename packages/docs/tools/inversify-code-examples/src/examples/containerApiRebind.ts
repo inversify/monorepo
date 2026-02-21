@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 // Is-inversify-import-example
-import { Container } from 'inversify';
+import { Container } from 'inversify6';
 
 // Begin-example
 const serviceId: string = 'serviceId';

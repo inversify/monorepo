@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { Container } from 'inversify';
+import { Container } from 'inversify6';
 
 interface CardCatalogProvider<TCard> {
   fetch(limit: number, offset: number): Promise<TCard[]>;

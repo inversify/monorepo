@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { Container, Newable } from 'inversify7';
+import { Container, type Newable } from 'inversify7';
 
 interface Weapon {
   damage: number;
