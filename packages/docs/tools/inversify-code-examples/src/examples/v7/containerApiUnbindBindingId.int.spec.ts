@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { container, scriptExecution } from './containerApiUnbindBindingId';
+import { container, scriptExecution } from './containerApiUnbindBindingId.js';
 
 describe('ContainerAPI (unbind)', () => {
   it('should provide expected service', async () => {

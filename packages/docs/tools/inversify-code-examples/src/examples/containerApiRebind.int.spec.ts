@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { valuesAfterRebind, valuesBeforeRebind } from './containerApiRebind';
+import { valuesAfterRebind, valuesBeforeRebind } from './containerApiRebind.js';
 
 describe('Container API (rebind)', () => {
   it('should rebind service bindings', async () => {

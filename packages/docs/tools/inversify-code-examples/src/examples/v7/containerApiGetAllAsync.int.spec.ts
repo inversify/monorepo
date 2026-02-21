@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Katana, Shuriken, weapons } from './containerApiGetAllAsync';
+import { Katana, Shuriken, weapons } from './containerApiGetAllAsync.js';
 
 describe('Container API (getAllAsync)', () => {
   it('should provide weapons', async () => {

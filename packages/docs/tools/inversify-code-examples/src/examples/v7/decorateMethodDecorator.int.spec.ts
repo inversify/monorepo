@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { katana } from './decorateMethodDecorator';
+import { katana } from './decorateMethodDecorator.js';
 
 describe('decorate API (MethodDecorator)', () => {
   it('should apply postConstruct decorator to method', () => {

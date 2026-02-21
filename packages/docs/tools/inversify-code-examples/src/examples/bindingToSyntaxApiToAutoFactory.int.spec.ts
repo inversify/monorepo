@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { container, Ninja } from './bindingToSyntaxApiToAutoFactory';
+import { container, Ninja } from './bindingToSyntaxApiToAutoFactory.js';
 
 describe('BindingToSyntax API (toAutoFactory)', () => {
   it('should provide ninja', () => {

@@ -5,7 +5,7 @@ import {
   isKatanaSymbolBound,
   isNinjaBound,
   isWarriorSymbolBound,
-} from './containerApiIsBound';
+} from './containerApiIsBound.js';
 
 describe('Container API (isBound)', () => {
   it('should detect bound and not bound services', async () => {

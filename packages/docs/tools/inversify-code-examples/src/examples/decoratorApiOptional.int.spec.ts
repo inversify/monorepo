@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ninja } from './decoratorApiOptional';
+import { ninja } from './decoratorApiOptional.js';
 
 describe('Decorator API (optional)', () => {
   it('should provide a ninja with right weapons', () => {

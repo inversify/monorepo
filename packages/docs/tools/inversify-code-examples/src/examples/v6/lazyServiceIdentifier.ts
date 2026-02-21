@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { inject, injectable, LazyServiceIdentifier } from 'inversify';
+import { inject, injectable, LazyServiceIdentifier } from 'inversify6';
 
 @injectable()
 export class Service {

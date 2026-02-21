@@ -5,7 +5,7 @@ import {
   katana,
   Shuriken,
   shuriken,
-} from './containerApiGetNamedAsync';
+} from './containerApiGetNamedAsync.js';
 
 describe('Container API (getNamed)', () => {
   it('should provide Katana weapon', async () => {

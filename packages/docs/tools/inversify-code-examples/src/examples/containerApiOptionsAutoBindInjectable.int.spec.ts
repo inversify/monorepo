@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   isBoundAfterGet,
   isBoundBeforeGet,
-} from './containerApiOptionsAutoBindInjectable';
+} from './containerApiOptionsAutoBindInjectable.js';
 
 describe('Container API options (autoBindInjectable)', () => {
   it('should auto bind ninja', () => {

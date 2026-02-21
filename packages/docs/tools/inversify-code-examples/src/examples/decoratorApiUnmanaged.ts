@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { Container, injectable, unmanaged } from 'inversify';
+import { Container, injectable, unmanaged } from 'inversify6';
 
 @injectable()
 class Base {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { katana } from './decoratorApiPostConstruct';
+import { katana } from './decoratorApiPostConstruct.js';
 
 describe('Decorator API (postConstruct)', () => {
   it('should provide activated service', () => {
