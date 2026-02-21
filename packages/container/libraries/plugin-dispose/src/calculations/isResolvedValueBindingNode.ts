@@ -1,8 +1,8 @@
 import {
   bindingTypeValues,
-  LeafBindingNode,
-  PlanServiceNodeParent,
-  ResolvedValueBindingNode,
+  type LeafBindingNode,
+  type PlanServiceNodeParent,
+  type ResolvedValueBindingNode,
 } from '@inversifyjs/core';
 
 export function isResolvedValueBindingNode(

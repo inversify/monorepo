@@ -1,6 +1,6 @@
 import {
-  PlanBindingNode,
-  PlanServiceRedirectionBindingNode,
+  type PlanBindingNode,
+  type PlanServiceRedirectionBindingNode,
 } from '@inversifyjs/core';
 
 export function isPlanServiceRedirectionBindingNode(

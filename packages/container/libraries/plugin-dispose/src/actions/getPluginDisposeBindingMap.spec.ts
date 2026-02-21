@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { BindingDisposeMetadata } from '../models/BindingDisposeMetadata';
-import { SingletonScopedBinding } from '../models/SingletonScopedBinding';
-import { getPluginDisposeBindingMap } from './getPluginDisposeBindingMap';
+import { type BindingDisposeMetadata } from '../models/BindingDisposeMetadata.js';
+import { type SingletonScopedBinding } from '../models/SingletonScopedBinding.js';
+import { getPluginDisposeBindingMap } from './getPluginDisposeBindingMap.js';
 
 describe(getPluginDisposeBindingMap, () => {
   describe('when called, and the map is not defined', () => {

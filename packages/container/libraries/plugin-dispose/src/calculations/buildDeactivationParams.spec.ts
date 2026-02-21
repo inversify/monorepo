@@ -4,21 +4,21 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/core'));
 
 import {
-  BindingService,
-  DeactivationParams,
-  DeactivationsService,
+  type BindingService,
+  type DeactivationParams,
+  type DeactivationsService,
   getClassMetadata,
 } from '@inversifyjs/core';
-import { PluginContext } from '@inversifyjs/plugin';
+import { type PluginContext } from '@inversifyjs/plugin';
 
-import { buildDeactivationParams } from './buildDeactivationParams';
+import { buildDeactivationParams } from './buildDeactivationParams.js';
 
 describe(buildDeactivationParams, () => {
   let pluginContextMock: PluginContext;

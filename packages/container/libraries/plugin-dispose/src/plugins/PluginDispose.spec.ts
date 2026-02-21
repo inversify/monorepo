@@ -4,14 +4,14 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { Container } from '@inversifyjs/container';
-import { PluginApi, PluginContext } from '@inversifyjs/plugin';
+import { type Container } from '@inversifyjs/container';
+import { type PluginApi, type PluginContext } from '@inversifyjs/plugin';
 
-import { PluginDispose } from './PluginDispose';
+import { PluginDispose } from './PluginDispose.js';
 
 describe(PluginDispose, () => {
   let containerMock: Mocked<Container>;

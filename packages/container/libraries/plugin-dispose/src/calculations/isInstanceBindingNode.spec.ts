@@ -2,11 +2,11 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
   bindingTypeValues,
-  InstanceBindingNode,
-  PlanServiceNodeParent,
+  type InstanceBindingNode,
+  type PlanServiceNodeParent,
 } from '@inversifyjs/core';
 
-import { isInstanceBindingNode } from './isInstanceBindingNode';
+import { isInstanceBindingNode } from './isInstanceBindingNode.js';
 
 describe(isInstanceBindingNode, () => {
   let node: PlanServiceNodeParent;

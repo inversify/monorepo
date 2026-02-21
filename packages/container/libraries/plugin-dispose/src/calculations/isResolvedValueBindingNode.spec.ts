@@ -2,11 +2,11 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
   bindingTypeValues,
-  LeafBindingNode,
-  PlanServiceNodeParent,
+  type LeafBindingNode,
+  type PlanServiceNodeParent,
 } from '@inversifyjs/core';
 
-import { isResolvedValueBindingNode } from './isResolvedValueBindingNode';
+import { isResolvedValueBindingNode } from './isResolvedValueBindingNode.js';
 
 describe(isResolvedValueBindingNode, () => {
   describe.each<[string, PlanServiceNodeParent | LeafBindingNode, boolean]>([

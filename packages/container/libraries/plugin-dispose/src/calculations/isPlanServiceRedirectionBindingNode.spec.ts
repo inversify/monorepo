@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { PlanBindingNode } from '@inversifyjs/core';
+import { type PlanBindingNode } from '@inversifyjs/core';
 
-import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode';
+import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode.js';
 
 describe(isPlanServiceRedirectionBindingNode, () => {
   describe.each<[string, PlanBindingNode, boolean]>([
