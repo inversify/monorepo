@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { BindingMap } from './container';
+import type { BindingMap } from './container.js';
 
 type TypedDecorator<T> = <TTarget, TKey, TIndex>(
   target: TTarget extends new (...args: any[]) => any

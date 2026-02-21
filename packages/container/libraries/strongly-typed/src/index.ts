@@ -6,9 +6,9 @@ export {
   Rebind,
   RebindSync,
   UnbindSync,
-} from './container';
-export type { TypedInject, TypedMultiInject } from './inject';
+} from './container.js';
+export type { TypedInject, TypedMultiInject } from './inject.js';
 export {
   TypedContainerModule,
   TypedContainerModuleLoadOptions,
-} from './module';
+} from './module.js';

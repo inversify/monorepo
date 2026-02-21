@@ -6,7 +6,7 @@ import 'reflect-metadata/lite';
 
 import { Container, injectable } from 'inversify';
 
-import { TypedContainer } from './index';
+import { TypedContainer } from './index.js';
 
 describe('interfaces', () => {
   @injectable()

@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
-  BindingActivation,
-  BindingDeactivation,
+  type BindingActivation,
+  type BindingDeactivation,
   ContainerModule,
 } from 'inversify';
 
 import {
-  Bind,
-  BindingMap,
-  ContainerBinding,
-  IsBound,
-  MappedServiceIdentifier,
-  Rebind,
-  RebindSync,
-  Unbind,
-  UnbindSync,
-} from './container';
+  type Bind,
+  type BindingMap,
+  type ContainerBinding,
+  type IsBound,
+  type MappedServiceIdentifier,
+  type Rebind,
+  type RebindSync,
+  type Unbind,
+  type UnbindSync,
+} from './container.js';
 
 export interface TypedContainerModuleLoadOptions<T extends BindingMap = any> {
   readonly bind: Bind<T>;
