@@ -1,5 +1,5 @@
-import { DeactivationParams, getClassMetadata } from '@inversifyjs/core';
-import { PluginContext } from '@inversifyjs/plugin';
+import { type DeactivationParams, getClassMetadata } from '@inversifyjs/core';
+import { type PluginContext } from '@inversifyjs/plugin';
 
 export function buildDeactivationParams(
   pluginContext: PluginContext,

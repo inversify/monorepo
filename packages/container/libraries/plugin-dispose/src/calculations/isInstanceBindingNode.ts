@@ -1,8 +1,8 @@
 import {
   bindingTypeValues,
-  InstanceBindingNode,
-  LeafBindingNode,
-  PlanServiceNodeParent,
+  type InstanceBindingNode,
+  type LeafBindingNode,
+  type PlanServiceNodeParent,
 } from '@inversifyjs/core';
 
 export function isInstanceBindingNode(

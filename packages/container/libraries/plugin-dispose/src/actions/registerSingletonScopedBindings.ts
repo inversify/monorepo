@@ -1,18 +1,18 @@
 import {
   bindingScopeValues,
-  GetPlanOptions,
-  PlanBindingNode,
-  PlanResult,
-  PlanServiceNode,
+  type GetPlanOptions,
+  type PlanBindingNode,
+  type PlanResult,
+  type PlanServiceNode,
 } from '@inversifyjs/core';
 
-import { isInstanceBindingNode } from '../calculations/isInstanceBindingNode';
-import { isPlanServiceRedirectionBindingNode } from '../calculations/isPlanServiceRedirectionBindingNode';
-import { isResolvedValueBindingNode } from '../calculations/isResolvedValueBindingNode';
-import { BindingDisposeMetadata } from '../models/BindingDisposeMetadata';
-import { SingletonScopedBinding } from '../models/SingletonScopedBinding';
-import { getPluginDisposeBinding } from './getPluginDisposeBinding';
-import { setPluginDisposeBinding } from './setPluginDisposeBinding';
+import { isInstanceBindingNode } from '../calculations/isInstanceBindingNode.js';
+import { isPlanServiceRedirectionBindingNode } from '../calculations/isPlanServiceRedirectionBindingNode.js';
+import { isResolvedValueBindingNode } from '../calculations/isResolvedValueBindingNode.js';
+import { type BindingDisposeMetadata } from '../models/BindingDisposeMetadata.js';
+import { type SingletonScopedBinding } from '../models/SingletonScopedBinding.js';
+import { getPluginDisposeBinding } from './getPluginDisposeBinding.js';
+import { setPluginDisposeBinding } from './setPluginDisposeBinding.js';
 
 export function registerSingletonScopedBindings(
   _options: GetPlanOptions,

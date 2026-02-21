@@ -1,19 +1,23 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
-import { Container } from '@inversifyjs/container';
+import { type ServiceIdentifier } from '@inversifyjs/common';
+import { type Container } from '@inversifyjs/container';
 import {
-  Binding,
+  type Binding,
   bindingScopeValues,
   bindingTypeValues,
-  DeactivationParams,
+  type DeactivationParams,
   resolveBindingsDeactivations,
 } from '@inversifyjs/core';
-import { Plugin, PluginApi, PluginContext } from '@inversifyjs/plugin';
+import {
+  Plugin,
+  type PluginApi,
+  type PluginContext,
+} from '@inversifyjs/plugin';
 
-import { getPluginDisposeBinding } from '../actions/getPluginDisposeBinding';
-import { registerSingletonScopedBindings } from '../actions/registerSingletonScopedBindings';
-import { buildDeactivationParams } from '../calculations/buildDeactivationParams';
-import { BindingDisposeMetadata } from '../models/BindingDisposeMetadata';
-import { SingletonScopedBinding } from '../models/SingletonScopedBinding';
+import { getPluginDisposeBinding } from '../actions/getPluginDisposeBinding.js';
+import { registerSingletonScopedBindings } from '../actions/registerSingletonScopedBindings.js';
+import { buildDeactivationParams } from '../calculations/buildDeactivationParams.js';
+import { type BindingDisposeMetadata } from '../models/BindingDisposeMetadata.js';
+import { type SingletonScopedBinding } from '../models/SingletonScopedBinding.js';
 
 export class PluginDispose extends Plugin<Container> {
   public load(api: PluginApi): void {

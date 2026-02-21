@@ -1,6 +1,6 @@
-import { BindingDisposeMetadata } from '../models/BindingDisposeMetadata';
-import { SingletonScopedBinding } from '../models/SingletonScopedBinding';
-import { getPluginDisposeBindingMap } from './getPluginDisposeBindingMap';
+import { type BindingDisposeMetadata } from '../models/BindingDisposeMetadata.js';
+import { type SingletonScopedBinding } from '../models/SingletonScopedBinding.js';
+import { getPluginDisposeBindingMap } from './getPluginDisposeBindingMap.js';
 
 export function setPluginDisposeBinding(
   binding: SingletonScopedBinding,

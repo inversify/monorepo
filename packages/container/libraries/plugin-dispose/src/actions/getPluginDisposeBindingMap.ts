@@ -1,5 +1,5 @@
-import { BindingDisposeMetadata } from '../models/BindingDisposeMetadata';
-import { SingletonScopedBinding } from '../models/SingletonScopedBinding';
+import { type BindingDisposeMetadata } from '../models/BindingDisposeMetadata.js';
+import { type SingletonScopedBinding } from '../models/SingletonScopedBinding.js';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention

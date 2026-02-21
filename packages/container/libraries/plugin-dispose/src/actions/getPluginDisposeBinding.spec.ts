@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
@@ -12,10 +12,10 @@ import { bindingScopeValues, bindingTypeValues } from '@inversifyjs/core';
 
 vitest.mock(import('./getPluginDisposeBindingMap.js'));
 
-import { BindingDisposeMetadata } from '../models/BindingDisposeMetadata';
-import { SingletonScopedBinding } from '../models/SingletonScopedBinding';
-import { getPluginDisposeBinding } from './getPluginDisposeBinding';
-import { getPluginDisposeBindingMap } from './getPluginDisposeBindingMap';
+import { type BindingDisposeMetadata } from '../models/BindingDisposeMetadata.js';
+import { type SingletonScopedBinding } from '../models/SingletonScopedBinding.js';
+import { getPluginDisposeBinding } from './getPluginDisposeBinding.js';
+import { getPluginDisposeBindingMap } from './getPluginDisposeBindingMap.js';
 
 describe(getPluginDisposeBinding, () => {
   let bindingFixture: SingletonScopedBinding;

@@ -4,14 +4,14 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 import { Container } from '@inversifyjs/container';
 
-import { PluginDispose } from './PluginDispose';
+import { PluginDispose } from './PluginDispose.js';
 
 describe(PluginDispose, () => {
   describe('having a container with a single singleton scoped binding with sync deactivation', () => {

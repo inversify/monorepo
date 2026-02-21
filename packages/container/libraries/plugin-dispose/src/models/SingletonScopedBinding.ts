@@ -1,8 +1,8 @@
 import {
-  Binding,
-  bindingScopeValues,
-  BindingType,
-  ScopedBinding,
+  type Binding,
+  type bindingScopeValues,
+  type BindingType,
+  type ScopedBinding,
 } from '@inversifyjs/core';
 
 export type SingletonScopedBinding = Binding &

@@ -3,25 +3,25 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 import {
   bindingScopeValues,
   bindingTypeValues,
-  ClassMetadata,
-  GetPlanOptions,
-  InstanceBindingNode,
-  LeafBindingNode,
-  PlanResult,
-  PlanServiceNode,
-  PlanServiceRedirectionBindingNode,
-  ResolvedValueBindingNode,
+  type ClassMetadata,
+  type GetPlanOptions,
+  type InstanceBindingNode,
+  type LeafBindingNode,
+  type PlanResult,
+  type PlanServiceNode,
+  type PlanServiceRedirectionBindingNode,
+  type ResolvedValueBindingNode,
 } from '@inversifyjs/core';
 
 vitest.mock(import('./getPluginDisposeBinding.js'));
 vitest.mock(import('./setPluginDisposeBinding.js'));
 
-import { BindingDisposeMetadata } from '../models/BindingDisposeMetadata';
-import { SingletonScopedBinding } from '../models/SingletonScopedBinding';
-import { Writable } from '../models/Writable';
-import { getPluginDisposeBinding } from './getPluginDisposeBinding';
-import { registerSingletonScopedBindings } from './registerSingletonScopedBindings';
-import { setPluginDisposeBinding } from './setPluginDisposeBinding';
+import { type BindingDisposeMetadata } from '../models/BindingDisposeMetadata.js';
+import { type SingletonScopedBinding } from '../models/SingletonScopedBinding.js';
+import { type Writable } from '../models/Writable.js';
+import { getPluginDisposeBinding } from './getPluginDisposeBinding.js';
+import { registerSingletonScopedBindings } from './registerSingletonScopedBindings.js';
+import { setPluginDisposeBinding } from './setPluginDisposeBinding.js';
 
 describe(registerSingletonScopedBindings, () => {
   describe('having a PlanResult with no bindings', () => {

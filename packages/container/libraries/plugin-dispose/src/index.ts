@@ -2,7 +2,7 @@
 import type {} from '@inversifyjs/container';
 import type {} from 'inversify';
 
-import { PluginDispose } from './plugins/PluginDispose';
+import { PluginDispose } from './plugins/PluginDispose.js';
 
 declare module '@inversifyjs/container' {
   interface Container {
