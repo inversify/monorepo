@@ -53,6 +53,10 @@
       "versioning": "semver-coerced"
     },
     {
+      "matchDepTypes": ["engines"],
+      "enabled": true
+    },
+    {
       "description": "Quarantine packages with current known issues",
       "enabled": false,
       "matchPackageNames": ["hono"]
