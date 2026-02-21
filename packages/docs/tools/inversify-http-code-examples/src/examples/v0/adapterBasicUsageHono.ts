@@ -1,7 +1,7 @@
 // Shift-line-spaces-2
 import { serve } from '@hono/node-server';
 import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
-import { Hono } from 'hono';
+import { type Hono } from 'hono';
 import { Container } from 'inversify';
 
 export async function adapterBasicUsageHono(): Promise<void> {

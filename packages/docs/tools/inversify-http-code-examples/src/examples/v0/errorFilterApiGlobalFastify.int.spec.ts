@@ -1,16 +1,16 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { AddressInfo } from 'node:net';
+import { type AddressInfo } from 'node:net';
 
 import { InversifyFastifyHttpAdapter } from '@inversifyjs/http-fastify';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import { Container } from 'inversify';
 
-import { Server } from '../../server/models/Server';
+import { type Server } from '../../server/models/Server.js';
 import {
   DemoController,
   GlobalErrorFilter,
-} from './errorFilterApiGlobalFastify';
+} from './errorFilterApiGlobalFastify.js';
 
 describe('Error Filter API (Global - Fastify)', () => {
   let server: Server;

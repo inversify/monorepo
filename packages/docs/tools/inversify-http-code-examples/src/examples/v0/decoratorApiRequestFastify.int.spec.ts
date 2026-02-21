@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
-import { Server } from '../../server/models/Server';
-import { RequestFastifyController } from './decoratorApiRequestFastify';
+import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
+import { type Server } from '../../server/models/Server.js';
+import { RequestFastifyController } from './decoratorApiRequestFastify.js';
 
 describe('Decorator API (Request - Fastify)', () => {
   let server: Server;

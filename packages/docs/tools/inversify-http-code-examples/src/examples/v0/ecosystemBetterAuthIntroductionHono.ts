@@ -2,11 +2,11 @@
 // Shift-line-spaces-2
 import { serve } from '@hono/node-server';
 import {
-  BetterAuth,
+  type BetterAuth,
   BetterAuthHonoContainerModule,
 } from '@inversifyjs/http-better-auth';
 import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
-import { betterAuth, BetterAuthOptions } from 'better-auth';
+import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
 import { Container } from 'inversify';
 

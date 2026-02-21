@@ -1,4 +1,8 @@
-import { ConsoleLogger, LoggerOptions, LogLevel } from '@inversifyjs/logger';
+import {
+  ConsoleLogger,
+  type LoggerOptions,
+  LogLevel,
+} from '@inversifyjs/logger';
 
 // Logger with custom options
 const options: LoggerOptions = {

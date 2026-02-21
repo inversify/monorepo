@@ -1,5 +1,5 @@
-import { ExpressInterceptor } from '@inversifyjs/http-express';
-import { Request, Response } from 'express';
+import { type ExpressInterceptor } from '@inversifyjs/http-express';
+import { type Request, type Response } from 'express';
 
 // Begin-example
 const METRICS: Record<string, number> = {};

@@ -1,8 +1,8 @@
 import { InversifyUwebSocketsHttpAdapter } from '@inversifyjs/http-uwebsockets';
-import { Container } from 'inversify';
+import { type Container } from 'inversify';
 import { us_socket_local_port } from 'uWebSockets.js';
 
-import { Server } from '../../../models/Server';
+import { type Server } from '../../../models/Server.js';
 
 export async function buildUwebSocketsJsServer(
   container: Container,

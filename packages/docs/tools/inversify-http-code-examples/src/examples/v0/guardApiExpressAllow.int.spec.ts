@@ -3,9 +3,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Controller, Get, UseGuard } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../server/models/Server';
-import { ExpressAllowGuard } from './guardApiExpressAllow';
+import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
+import { Server } from '../../server/models/Server.js';
+import { ExpressAllowGuard } from './guardApiExpressAllow.js';
 
 describe('Guard API (Express 5)', () => {
   let server: Server;

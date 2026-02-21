@@ -1,6 +1,6 @@
 import { Container } from 'inversify';
 
-import { MessagesController } from './controllerApiBasics';
+import { MessagesController } from './controllerApiBasics.js';
 
 // Begin-example
 const container: Container = new Container();

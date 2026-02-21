@@ -1,5 +1,5 @@
-import fastify, { FastifyInstance } from 'fastify';
-import mercurius from 'mercurius';
+import fastify, { type FastifyInstance } from 'fastify';
+import mercurius, { type IResolvers, type MercuriusContext } from 'mercurius';
 
 const app: FastifyInstance = fastify();
 
@@ -9,7 +9,7 @@ const schema: string = `
   }
 `;
 
-const resolvers: mercurius.IResolvers<unknown, mercurius.MercuriusContext> = {
+const resolvers: IResolvers<unknown, MercuriusContext> = {
   Query: {
     add: async (_: unknown, { x, y }: { x: number; y: number }) => x + y,
   },

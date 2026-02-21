@@ -3,12 +3,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Controller, Get, Params, Query } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
-import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server';
-import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
-import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
-import { Server } from '../../server/models/Server';
-import { ParseNumberPipe } from './pipeApiParseNumber';
+import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
+import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server.js';
+import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
+import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
+import { Server } from '../../server/models/Server.js';
+import { ParseNumberPipe } from './pipeApiParseNumber.js';
 
 interface SumResult {
   sum: number;

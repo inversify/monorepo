@@ -8,6 +8,7 @@
     "@inversifyjs/apollo-core": "0.6.0",
     "@inversifyjs/apollo-express": "0.7.0",
     "@inversifyjs/code-examples-devkit": "workspace:*",
+    "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-core": "4.10.2",
     "@inversifyjs/http-express": "4.10.2",
     "@apollo/server": "5.4.0",
@@ -42,6 +43,7 @@
   },
   "license": "MIT",
   "name": "@inversifyjs/graphql-code-examples",
+  "type": "module",
   "private": true,
   "publishConfig": {
     "access": "public"
@@ -51,11 +53,10 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "build": "pnpm run build:cjs && pnpm run generate:examples",
-    "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
+    "build": "tsc && pnpm run generate:examples",
     "build:clean": "rimraf generated lib",
     "format": "prettier --write ./src",
-    "generate:examples": "node ./lib/cjs/scripts/generateExamples/index.mjs",
+    "generate:examples": "node ./lib/scripts/generateExamples/index.js",
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean",
     "test": "vitest run",

@@ -2,12 +2,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
-import { Server } from '../../server/models/Server';
+import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
+import { type Server } from '../../server/models/Server.js';
 import {
   BodyMultipartHonoController,
-  UploadResult,
-} from './decoratorApiBodyMultipartHono';
+  type UploadResult,
+} from './decoratorApiBodyMultipartHono.js';
 
 describe('Decorator API (Body Multipart Hono)', () => {
   let server: Server;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ninjaPromise } from './gettingStartedWithBindingDecorators';
+import { ninjaPromise } from './gettingStartedWithBindingDecorators.js';
 
 interface Ninja {
   katana: {

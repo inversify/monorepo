@@ -1,4 +1,4 @@
-import { UwebSocketsInterceptor } from '@inversifyjs/http-uwebsockets';
+import { type UwebSocketsInterceptor } from '@inversifyjs/http-uwebsockets';
 import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 // Begin-example

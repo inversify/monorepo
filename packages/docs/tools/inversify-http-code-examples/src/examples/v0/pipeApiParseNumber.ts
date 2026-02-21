@@ -1,4 +1,4 @@
-import { BadRequestHttpResponse, Pipe } from '@inversifyjs/http-core';
+import { BadRequestHttpResponse, type Pipe } from '@inversifyjs/http-core';
 
 // Begin-example
 export class ParseNumberPipe implements Pipe<unknown, number> {

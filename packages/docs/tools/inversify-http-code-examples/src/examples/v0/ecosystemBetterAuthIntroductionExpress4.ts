@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/typedef */
 // Shift-line-spaces-2
 import {
-  BetterAuth,
+  type BetterAuth,
   BetterAuthExpress4ContainerModule,
 } from '@inversifyjs/http-better-auth';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express-v4';
-import { betterAuth, BetterAuthOptions } from 'better-auth';
+import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
-import express from 'express4';
+import type express from 'express4';
 import { Container } from 'inversify';
 
 export async function run(): Promise<void> {

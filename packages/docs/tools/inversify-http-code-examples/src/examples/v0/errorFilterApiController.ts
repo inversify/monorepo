@@ -1,7 +1,7 @@
 import { Controller, Get, UseErrorFilter } from '@inversifyjs/http-core';
 
-import { InvalidOperationError } from './errorFilterApiInvalidOperationError';
-import { InvalidOperationErrorFilter } from './errorFilterApiInvalidOperationErrorFilter';
+import { InvalidOperationError } from './errorFilterApiInvalidOperationError.js';
+import { InvalidOperationErrorFilter } from './errorFilterApiInvalidOperationErrorFilter.js';
 
 // Begin-example
 @Controller('/products')

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/typedef */
 // Shift-line-spaces-2
-import { BetterAuth } from '@inversifyjs/http-better-auth';
-import { betterAuth, BetterAuthOptions } from 'better-auth';
+import { type BetterAuth } from '@inversifyjs/http-better-auth';
+import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
 
 export async function run(): Promise<void> {

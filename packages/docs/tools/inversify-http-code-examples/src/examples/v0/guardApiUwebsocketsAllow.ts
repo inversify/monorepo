@@ -1,4 +1,4 @@
-import { UwebSocketsGuard } from '@inversifyjs/http-uwebsockets';
+import { type UwebSocketsGuard } from '@inversifyjs/http-uwebsockets';
 import { type HttpRequest } from 'uWebSockets.js';
 
 // Begin-example

@@ -1,6 +1,6 @@
 // Shift-line-spaces-2
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
-import express from 'express';
+import type express from 'express';
 import { Container } from 'inversify';
 
 export async function setupExpressServer(): Promise<void> {

@@ -3,9 +3,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Controller, Get, UseGuard } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
-import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
-import { Server } from '../../server/models/Server';
-import { FastifyDenyGuard } from './guardApiFastifyDeny';
+import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
+import { Server } from '../../server/models/Server.js';
+import { FastifyDenyGuard } from './guardApiFastifyDeny.js';
 
 describe('Guard API deny (Fastify)', () => {
   let server: Server;

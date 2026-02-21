@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/typedef */
 // Shift-line-spaces-2
 import {
-  BetterAuth,
+  type BetterAuth,
   BetterAuthExpressContainerModule,
 } from '@inversifyjs/http-better-auth';
-import { betterAuth, BetterAuthOptions } from 'better-auth';
+import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
 import { Container } from 'inversify';
 

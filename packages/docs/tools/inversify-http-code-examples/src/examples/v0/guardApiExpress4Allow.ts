@@ -1,5 +1,5 @@
-import { ExpressGuard } from '@inversifyjs/http-express-v4';
-import { Request } from 'express4';
+import { type ExpressGuard } from '@inversifyjs/http-express-v4';
+import { type Request } from 'express4';
 
 // Begin-example
 export class Express4AllowGuard implements ExpressGuard {

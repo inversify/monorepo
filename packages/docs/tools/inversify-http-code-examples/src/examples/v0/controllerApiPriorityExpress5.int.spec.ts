@@ -2,15 +2,15 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../server/models/Server';
+import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
+import { type Server } from '../../server/models/Server.js';
 import {
-  CreateMessageRequest,
+  type CreateMessageRequest,
   FallbackController,
   HealthController,
-  Message,
+  type Message,
   MessagesController,
-} from './controllerApiPriorityExpress5';
+} from './controllerApiPriorityExpress5.js';
 
 describe.each<[(container: Container) => Promise<Server>]>([
   [buildExpressServer],

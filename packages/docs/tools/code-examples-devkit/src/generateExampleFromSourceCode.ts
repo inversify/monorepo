@@ -5,7 +5,7 @@ import ts from 'typescript';
 
 import findRelevantCommentPositions from './findRelevantCommentPositions.js';
 import transformSourceFile from './transformSourceFile.js';
-import { RelevantCommentPositions } from './types.js';
+import { type RelevantCommentPositions } from './types.js';
 
 export default async function generateExampleFromSourceCode(
   sourcePath: string,

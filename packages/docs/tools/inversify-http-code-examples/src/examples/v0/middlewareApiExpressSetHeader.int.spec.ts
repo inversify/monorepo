@@ -3,9 +3,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../server/models/Server';
-import { ExpressCustomHeaderMiddleware } from './middlewareApiExpressSetHeader';
+import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
+import { Server } from '../../server/models/Server.js';
+import { ExpressCustomHeaderMiddleware } from './middlewareApiExpressSetHeader.js';
 
 describe('Middleware API (Express 5)', () => {
   let server: Server;

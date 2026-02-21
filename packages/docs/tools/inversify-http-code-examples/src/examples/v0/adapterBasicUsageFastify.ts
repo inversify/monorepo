@@ -1,6 +1,6 @@
 // Shift-line-spaces-2
 import { InversifyFastifyHttpAdapter } from '@inversifyjs/http-fastify';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import { Container } from 'inversify';
 
 export async function adapterBasicUsageFastify(): Promise<void> {

@@ -1,14 +1,17 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { AddressInfo } from 'node:net';
+import { type AddressInfo } from 'node:net';
 
-import { serve, ServerType } from '@hono/node-server';
+import { serve, type ServerType } from '@hono/node-server';
 import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
-import { Hono } from 'hono';
+import { type Hono } from 'hono';
 import { Container } from 'inversify';
 
-import { Server } from '../../server/models/Server';
-import { DemoController, GlobalErrorFilter } from './errorFilterApiGlobalHono';
+import { type Server } from '../../server/models/Server.js';
+import {
+  DemoController,
+  GlobalErrorFilter,
+} from './errorFilterApiGlobalHono.js';
 
 describe('Error Filter API (Global - Hono)', () => {
   let server: Server;

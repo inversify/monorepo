@@ -1,4 +1,4 @@
-import { FastifyInterceptor } from '@inversifyjs/http-fastify';
+import { type FastifyInterceptor } from '@inversifyjs/http-fastify';
 import { type FastifyReply, type FastifyRequest } from 'fastify';
 
 // Begin-example

@@ -11,7 +11,7 @@ import {
 } from '@inversifyjs/http-core';
 import { inject, injectable } from 'inversify';
 
-import { FooService } from './migrationServerSetupFooService';
+import { FooService } from './migrationServerSetupFooService.js';
 
 interface CreateFooDto {
   name: string;

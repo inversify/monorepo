@@ -15,12 +15,12 @@ import {
 import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../../server/models/Server';
+import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer.js';
+import { Server } from '../../../server/models/Server.js';
 import {
   BaseSchema,
   ExtendedSchema,
-} from './decoratorApiOasExtendingClassSchemas';
+} from './decoratorApiOasExtendingClassSchemas.js';
 
 @Controller('/extended-schemas')
 export class ExtendedSchemaController {

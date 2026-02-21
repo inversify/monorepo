@@ -2,12 +2,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
-import { Server } from '../../server/models/Server';
+import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
+import { type Server } from '../../server/models/Server.js';
 import {
   BodyMultipartFastifyController,
-  UploadResult,
-} from './decoratorApiBodyMultipartFastify';
+  type UploadResult,
+} from './decoratorApiBodyMultipartFastify.js';
 
 describe('Decorator API (Body Multipart Fastify)', () => {
   let server: Server;

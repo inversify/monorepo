@@ -3,9 +3,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Controller, Get, UseGuard } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
-import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer';
-import { Server } from '../../server/models/Server';
-import { UwebsocketsAllowGuard } from './guardApiUwebsocketsAllow';
+import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer.js';
+import { Server } from '../../server/models/Server.js';
+import { UwebsocketsAllowGuard } from './guardApiUwebsocketsAllow.js';
 
 describe('Guard API (uWebSockets.js)', () => {
   let server: Server;
