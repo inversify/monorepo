@@ -16,7 +16,7 @@
     "prettier": "3.8.1"
   },
   "peerDependencies": {
-    "@eslint/js": "^9.39.3"
+    "@eslint/js": "^10.0.1"
   },
   "exports": {
     ".": "./index.js"
