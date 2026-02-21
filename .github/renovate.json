@@ -47,6 +47,12 @@
       "matchManagers": ["github-actions"]
     },
     {
+      "description": "Updates for uWebSockets.js",
+      "matchDatasources": ["github-tags", "github-releases"],
+      "matchPackageNames": ["uNetworking/uWebSockets.js"],
+      "versioning": "semver-coerced"
+    },
+    {
       "description": "Quarantine packages with current known issues",
       "enabled": false,
       "matchPackageNames": []
