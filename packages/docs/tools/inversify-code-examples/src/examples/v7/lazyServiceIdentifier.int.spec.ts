@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify7';
 
-import { AnotherService, Service } from './lazyServiceIdentifier';
+import { AnotherService, Service } from './lazyServiceIdentifier.js';
 
 describe('getting started', () => {
   it('should resolve services', () => {

@@ -4,7 +4,7 @@ import {
   container,
   Ninja,
   warriorServiceId,
-} from './containerApiOptionsDefaultScope';
+} from './containerApiOptionsDefaultScope.js';
 
 describe('Container API options (defaultScope)', () => {
   it('should provide a container with ninja binding in transient scope', () => {

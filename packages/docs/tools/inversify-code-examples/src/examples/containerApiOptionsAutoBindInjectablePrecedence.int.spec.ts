@@ -4,7 +4,7 @@ import {
   container,
   Ninja,
   NinjaMaster,
-} from './containerApiOptionsAutoBindInjectablePrecedence';
+} from './containerApiOptionsAutoBindInjectablePrecedence.js';
 
 describe('Container API options (autoBindInjectable, precedence)', () => {
   it('should provide ninja according to manual binding', () => {

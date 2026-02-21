@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 // Is-inversify-import-example
-import { Container, ResolutionContext } from 'inversify7';
+import { Container, type ResolutionContext } from 'inversify7';
 
 // Begin-example
 interface Weapon {

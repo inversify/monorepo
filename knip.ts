@@ -70,7 +70,7 @@ export default {
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-code-examples": {
-      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },

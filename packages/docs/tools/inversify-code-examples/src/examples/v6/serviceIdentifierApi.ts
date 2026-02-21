@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/typedef */
-import { Container, interfaces } from 'inversify';
+import { Container, type interfaces } from 'inversify6';
 
 class UserService {}
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { container, Ninja } from './migrationToAutoFactory';
+import { container, Ninja } from './migrationToAutoFactory.js';
 
 describe('Migration (toAutoFactory)', () => {
   it('should provide ninja', () => {

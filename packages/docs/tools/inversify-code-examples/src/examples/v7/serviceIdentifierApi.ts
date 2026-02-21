@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/typedef */
-import { Container, ServiceIdentifier } from 'inversify7';
+import { Container, type ServiceIdentifier } from 'inversify7';
 
 class UserService {}
 

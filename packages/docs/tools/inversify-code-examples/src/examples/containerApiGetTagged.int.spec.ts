@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Katana, katana, Shuriken, shuriken } from './containerApiGetTagged';
+import { Katana, katana, Shuriken, shuriken } from './containerApiGetTagged.js';
 
 describe('Container API (getTagged)', () => {
   it('should provide weapon services', () => {

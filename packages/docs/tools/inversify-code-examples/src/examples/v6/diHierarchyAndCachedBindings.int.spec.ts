@@ -4,7 +4,7 @@ import {
   LegendaryKatana,
   Samurai,
   samurai,
-} from './diHierarchyAndCachedBindings';
+} from './diHierarchyAndCachedBindings.js';
 
 describe('DI Hierarchy', () => {
   it('should provide a Katana', () => {
