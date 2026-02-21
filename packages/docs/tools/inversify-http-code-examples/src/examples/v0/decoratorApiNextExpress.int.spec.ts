@@ -2,12 +2,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../server/models/Server';
+import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
+import { type Server } from '../../server/models/Server.js';
 import {
   ExpressNextInterceptor,
   NextExpressController,
-} from './decoratorApiNextExpress';
+} from './decoratorApiNextExpress.js';
 
 describe('Decorator API (Next - Express 5)', () => {
   let server: Server;

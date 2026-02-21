@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
-import express from 'express';
+import type express from 'express';
 import { Container } from 'inversify';
 
-import { FooController } from './migrationServerSetupFooController';
-import { FooService } from './migrationServerSetupFooService';
+import { FooController } from './migrationServerSetupFooController.js';
+import { FooService } from './migrationServerSetupFooService.js';
 
 export async function migrationServerSetup(): Promise<void> {
   // Begin-example

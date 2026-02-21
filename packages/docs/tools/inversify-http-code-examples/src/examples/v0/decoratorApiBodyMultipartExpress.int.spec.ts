@@ -2,13 +2,13 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildExpressServerWithMulter } from '../../server/adapter/express/actions/buildExpressServerWithMulter';
-import { buildExpress4ServerWithMulter } from '../../server/adapter/express4/actions/buildExpress4ServerWithMulter';
-import { Server } from '../../server/models/Server';
+import { buildExpressServerWithMulter } from '../../server/adapter/express/actions/buildExpressServerWithMulter.js';
+import { buildExpress4ServerWithMulter } from '../../server/adapter/express4/actions/buildExpress4ServerWithMulter.js';
+import { type Server } from '../../server/models/Server.js';
 import {
   MultipartExpressController,
-  MultipartResult,
-} from './decoratorApiBodyMultipartExpress';
+  type MultipartResult,
+} from './decoratorApiBodyMultipartExpress.js';
 
 describe.each<[(container: Container) => Promise<Server>]>([
   [buildExpress4ServerWithMulter],

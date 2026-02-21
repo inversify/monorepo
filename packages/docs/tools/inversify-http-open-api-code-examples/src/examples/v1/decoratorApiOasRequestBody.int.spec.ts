@@ -1,15 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import {
-  OpenApi3Dot1Object,
-  OpenApi3Dot1ReferenceObject,
-  OpenApi3Dot1RequestBodyObject,
+  type OpenApi3Dot1Object,
+  type OpenApi3Dot1ReferenceObject,
+  type OpenApi3Dot1RequestBodyObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../server/models/Server';
-import { BodyController } from './decoratorApiOasRequestBody';
+import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
+import { type Server } from '../../server/models/Server.js';
+import { BodyController } from './decoratorApiOasRequestBody.js';
 
 describe.each<[(container: Container) => Promise<Server>]>([
   [buildExpressServer],

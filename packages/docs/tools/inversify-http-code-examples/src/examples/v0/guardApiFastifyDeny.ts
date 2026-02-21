@@ -1,5 +1,5 @@
 import { ForbiddenHttpResponse } from '@inversifyjs/http-core';
-import { FastifyGuard } from '@inversifyjs/http-fastify';
+import { type FastifyGuard } from '@inversifyjs/http-fastify';
 import { type FastifyRequest } from 'fastify';
 
 // Begin-example

@@ -3,9 +3,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Controller, Get, UseGuard } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
-import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
-import { Server } from '../../server/models/Server';
-import { HonoDenyGuard } from './guardApiHonoDeny';
+import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
+import { Server } from '../../server/models/Server.js';
+import { HonoDenyGuard } from './guardApiHonoDeny.js';
 
 describe('Guard API deny (Hono)', () => {
   let server: Server;

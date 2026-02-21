@@ -6,6 +6,7 @@
   "description": "InversifyJS HTTP OpenAPI docs code examples package",
   "devDependencies": {
     "@inversifyjs/code-examples-devkit": "workspace:*",
+    "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-open-api": "workspace:*",
@@ -30,17 +31,17 @@
   },
   "license": "MIT",
   "name": "@inversifyjs/http-open-api-code-examples",
+  "type": "module",
   "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "build": "pnpm run build:cjs && pnpm run generate:examples",
-    "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
+    "build": "tsc && pnpm run generate:examples",
     "build:clean": "rimraf generated lib",
     "format": "prettier --write ./src",
-    "generate:examples": "node ./lib/cjs/scripts/generateExamples/index.mjs",
+    "generate:examples": "node ./lib/scripts/generateExamples/index.js",
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean",
     "test": "vitest run",

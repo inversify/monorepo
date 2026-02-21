@@ -4,9 +4,9 @@ import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';
 import { StandardSchemaValidationPipe } from '@inversifyjs/standard-schema-validation';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../../server/models/Server';
-import { MessageController } from './gettingStarted';
+import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer.js';
+import { type Server } from '../../../server/models/Server.js';
+import { MessageController } from './gettingStarted.js';
 
 describe('Getting started', () => {
   describe('having a StandardSchemaValidationPipe in an HTTP server with validated endpoints', () => {

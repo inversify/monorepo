@@ -2,8 +2,8 @@ import ts from 'typescript';
 
 import {
   RelevantCommentKind,
-  RelevantCommentPosition,
-  RelevantCommentPositions,
+  type RelevantCommentPosition,
+  type RelevantCommentPositions,
 } from './types.js';
 
 const BEGIN_EXAMPLE_COMMENT: string = '// Begin-example';

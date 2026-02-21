@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer';
-import { Server } from '../../server/models/Server';
-import { ResponseUwebsocketsController } from './decoratorApiResponseUwebsockets';
+import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer.js';
+import { type Server } from '../../server/models/Server.js';
+import { ResponseUwebsocketsController } from './decoratorApiResponseUwebsockets.js';
 
 describe('Decorator API (Response - uWebSockets.js)', () => {
   let server: Server;

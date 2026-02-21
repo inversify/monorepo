@@ -2,7 +2,7 @@ import { Controller, Get } from '@inversifyjs/http-core';
 import { type Request, type Response } from 'express';
 import { injectable } from 'inversify';
 
-import { httpContextStorage } from './migrationHttpContextMiddleware';
+import { httpContextStorage } from './migrationHttpContextMiddleware.js';
 
 interface HttpContext {
   request: Request;

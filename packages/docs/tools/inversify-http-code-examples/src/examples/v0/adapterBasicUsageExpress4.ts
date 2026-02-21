@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express-v4';
-import express from 'express4';
+import type express from 'express4';
 import { Container } from 'inversify';
 
 export async function adapterBasicUsageExpress4(): Promise<void> {

@@ -6,9 +6,9 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../../server/models/Server';
-import { UserController } from './apiValidateAjvSchema';
+import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer.js';
+import { type Server } from '../../../server/models/Server.js';
+import { UserController } from './apiValidateAjvSchema.js';
 
 describe('ValidateAjvSchema API', () => {
   describe('having an AjvValidationPipe in an HTTP server with ValidateAjvSchema decorated endpoints', () => {

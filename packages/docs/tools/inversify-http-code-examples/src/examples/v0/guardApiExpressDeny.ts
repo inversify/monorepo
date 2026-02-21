@@ -1,6 +1,6 @@
 import { ForbiddenHttpResponse } from '@inversifyjs/http-core';
-import { ExpressGuard } from '@inversifyjs/http-express';
-import { Request } from 'express';
+import { type ExpressGuard } from '@inversifyjs/http-express';
+import { type Request } from 'express';
 
 // Begin-example
 export class ExpressDenyGuard implements ExpressGuard {

@@ -1,4 +1,4 @@
-import { HonoGuard } from '@inversifyjs/http-hono';
+import { type HonoGuard } from '@inversifyjs/http-hono';
 import { type HonoRequest } from 'hono';
 
 // Begin-example

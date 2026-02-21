@@ -1,10 +1,10 @@
-import ts from 'typescript';
+import type ts from 'typescript';
 
 import {
   RelevantCommentKind,
-  RelevantCommentPosition,
-  RelevantCommentPositions,
-  ReplaceRange,
+  type RelevantCommentPosition,
+  type RelevantCommentPositions,
+  type ReplaceRange,
 } from './types.js';
 
 const NODE_IMPORT_REXEP: RegExp = /^(.*)(import.*)(['"])([^'"]+)(['"])(.*)$/gms;

@@ -2,12 +2,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
-import { Server } from '../../server/models/Server';
+import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
+import { type Server } from '../../server/models/Server.js';
 import {
   MyMiddleware,
   PingController,
-} from './decoratorApiApplyMiddlewareRoute';
+} from './decoratorApiApplyMiddlewareRoute.js';
 
 describe('Decorator API (ApplyMiddleware)', () => {
   let server: Server;

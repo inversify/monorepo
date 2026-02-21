@@ -4,11 +4,11 @@ import { InversifyUwebSocketsHttpAdapter } from '@inversifyjs/http-uwebsockets';
 import { Container } from 'inversify';
 import { us_socket_local_port } from 'uWebSockets.js';
 
-import { Server } from '../../server/models/Server';
+import { type Server } from '../../server/models/Server.js';
 import {
   DemoController,
   GlobalErrorFilter,
-} from './errorFilterApiGlobalUwebsockets';
+} from './errorFilterApiGlobalUwebsockets.js';
 
 describe('Error Filter API (Global - uWebSockets.js)', () => {
   let server: Server;

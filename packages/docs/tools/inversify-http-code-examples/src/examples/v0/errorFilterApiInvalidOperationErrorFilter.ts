@@ -4,7 +4,7 @@ import {
   UnprocessableEntityHttpResponse,
 } from '@inversifyjs/http-core';
 
-import { InvalidOperationError } from './errorFilterApiInvalidOperationError';
+import { InvalidOperationError } from './errorFilterApiInvalidOperationError.js';
 
 // Begin-example
 @CatchError(InvalidOperationError)

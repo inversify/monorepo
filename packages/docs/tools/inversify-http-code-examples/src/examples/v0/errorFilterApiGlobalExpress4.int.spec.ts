@@ -1,17 +1,17 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import http, { RequestListener } from 'node:http';
-import { AddressInfo } from 'node:net';
+import http, { type RequestListener } from 'node:http';
+import { type AddressInfo } from 'node:net';
 
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express-v4';
-import express4 from 'express4';
+import type express4 from 'express4';
 import { Container } from 'inversify';
 
-import { Server } from '../../server/models/Server';
+import { type Server } from '../../server/models/Server.js';
 import {
   DemoController,
   GlobalErrorFilter,
-} from './errorFilterApiGlobalExpress4';
+} from './errorFilterApiGlobalExpress4.js';
 
 describe('Error Filter API (Global - Express 4)', () => {
   let server: Server;

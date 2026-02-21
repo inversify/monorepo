@@ -1,11 +1,11 @@
-import http, { RequestListener } from 'node:http';
-import { AddressInfo } from 'node:net';
+import http, { type RequestListener } from 'node:http';
+import { type AddressInfo } from 'node:net';
 
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
-import express from 'express';
-import { Container } from 'inversify';
+import type express from 'express';
+import { type Container } from 'inversify';
 
-import { Server } from '../../../models/Server';
+import { type Server } from '../../../models/Server.js';
 
 export async function buildExpressServer(
   container: Container,

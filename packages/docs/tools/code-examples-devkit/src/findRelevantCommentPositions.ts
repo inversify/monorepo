@@ -1,6 +1,6 @@
-import ts from 'typescript';
+import type ts from 'typescript';
 
-import { RelevantCommentKind, RelevantCommentPositions } from './types.js';
+import { RelevantCommentKind, type RelevantCommentPositions } from './types.js';
 import visitRelevantCommentPositions from './visitRelevantCommentPositions.js';
 
 export default function findRelevantCommentPositions(

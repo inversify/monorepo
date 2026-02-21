@@ -2,12 +2,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server';
-import { Server } from '../../server/models/Server';
+import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server.js';
+import { type Server } from '../../server/models/Server.js';
 import {
   Express4NextInterceptor,
   NextExpress4Controller,
-} from './decoratorApiNextExpress4';
+} from './decoratorApiNextExpress4.js';
 
 describe('Decorator API (Next - Express 4)', () => {
   let server: Server;

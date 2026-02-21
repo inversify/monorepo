@@ -1,4 +1,4 @@
-import { HonoInterceptor } from '@inversifyjs/http-hono';
+import { type HonoInterceptor } from '@inversifyjs/http-hono';
 import { type Context, type HonoRequest } from 'hono';
 
 // Begin-example

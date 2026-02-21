@@ -1,4 +1,4 @@
-import { FastifyMiddleware } from '@inversifyjs/http-fastify';
+import { type FastifyMiddleware } from '@inversifyjs/http-fastify';
 import { type FastifyReply, type FastifyRequest } from 'fastify';
 
 // Begin-example

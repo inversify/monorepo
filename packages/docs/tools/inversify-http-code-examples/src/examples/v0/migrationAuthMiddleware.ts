@@ -2,7 +2,7 @@ import { ExpressMiddleware } from '@inversifyjs/http-express';
 import { type NextFunction, type Request, type Response } from 'express';
 import { inject, injectable } from 'inversify';
 
-import { httpContextStorage } from './migrationHttpContextMiddleware';
+import { httpContextStorage } from './migrationHttpContextMiddleware.js';
 
 interface HttpContext {
   request: Request;

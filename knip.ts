@@ -65,7 +65,7 @@ export default {
     },
     "packages/docs/tools/*": defaultWorkspaceProjectConfig,
     "packages/docs/tools/binding-decorators-code-examples": {
-      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
@@ -77,28 +77,28 @@ export default {
     "packages/docs/tools/inversify-graphql-code-examples": {
       entry: [
         "src/examples/**/*.{mts,ts}",
-        "src/scripts/generateExamples/index.mts",
+        "src/scripts/generateExamples/index.ts",
       ],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-http-code-examples": {
-      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-http-open-api-code-examples": {
-      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-logger-code-examples": {
-      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-validation-code-examples": {
-      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.mts"],
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },

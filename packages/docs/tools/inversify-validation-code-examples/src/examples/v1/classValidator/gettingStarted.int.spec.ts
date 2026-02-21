@@ -9,9 +9,9 @@ import {
 import { InversifyValidationError } from '@inversifyjs/validation-common';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../../server/models/Server';
-import { MessageController } from './gettingStarted';
+import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer.js';
+import { Server } from '../../../server/models/Server.js';
+import { MessageController } from './gettingStarted.js';
 
 @CatchError(InversifyValidationError)
 class ValidationErrorFilter implements ErrorFilter<InversifyValidationError> {

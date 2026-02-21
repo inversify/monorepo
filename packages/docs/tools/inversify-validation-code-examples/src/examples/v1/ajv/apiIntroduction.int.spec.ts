@@ -6,9 +6,9 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../../server/models/Server';
-import { UserController } from './apiIntroduction';
+import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer.js';
+import { type Server } from '../../../server/models/Server.js';
+import { UserController } from './apiIntroduction.js';
 
 describe('API Introduction (AJV)', () => {
   describe('having an AjvValidationPipe in an HTTP server with Quick Start user validation', () => {

@@ -1,11 +1,11 @@
-import ts from 'typescript';
+import type ts from 'typescript';
 
 import getReplaceRanges from './getReplaceRanges.js';
 import shift from './shift.js';
 import {
   RelevantCommentKind,
-  RelevantCommentPositions,
-  ReplaceRange,
+  type RelevantCommentPositions,
+  type ReplaceRange,
 } from './types.js';
 
 const SHIFT_LINES_SPACES_2_OFFSET: number = 2;

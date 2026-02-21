@@ -1,5 +1,5 @@
-import { UwebSocketsMiddleware } from '@inversifyjs/http-uwebsockets';
-import { HttpRequest, HttpResponse } from 'uWebSockets.js';
+import { type UwebSocketsMiddleware } from '@inversifyjs/http-uwebsockets';
+import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 // Begin-example
 export class UwebsocketsCustomHeaderMiddleware implements UwebSocketsMiddleware {
