@@ -6,7 +6,7 @@ import 'reflect-metadata/lite';
 
 import { inject, injectable, multiInject } from 'inversify';
 
-import type { TypedInject, TypedMultiInject } from './inject';
+import type { TypedInject, TypedMultiInject } from './inject.js';
 
 describe(inject, () => {
   @injectable()

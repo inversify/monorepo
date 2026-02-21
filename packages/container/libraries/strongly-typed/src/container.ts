@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
-  BindingActivation,
-  BindingDeactivation,
-  BindToFluentSyntax,
+  type BindingActivation,
+  type BindingDeactivation,
+  type BindToFluentSyntax,
   Container,
-  ContainerOptions,
-  GetOptions,
-  IsBoundOptions,
-  Newable,
-  ServiceIdentifier,
+  type ContainerOptions,
+  type GetOptions,
+  type IsBoundOptions,
+  type Newable,
+  type ServiceIdentifier,
 } from 'inversify';
 
-import { TypedContainerModule } from './module';
+import { type TypedContainerModule } from './module.js';
 
 type IfAny<T, TYes, TNo> = 0 extends 1 & T ? TYes : TNo;
 
