@@ -4,8 +4,8 @@ import {
   decorate,
   inject,
   LazyServiceIdentifier,
-  ServiceIdentifier,
-} from '../..';
+  type ServiceIdentifier,
+} from '../../index.js';
 
 class Katana {}
 class Shuriken {}

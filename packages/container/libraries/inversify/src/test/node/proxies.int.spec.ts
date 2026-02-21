@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable, ResolutionContext } from '../..';
+import {
+  Container,
+  inject,
+  injectable,
+  ResolutionContext,
+} from '../../index.js';
 
 describe('InversifyJS', () => {
   it('Should support the injection of proxied objects', () => {

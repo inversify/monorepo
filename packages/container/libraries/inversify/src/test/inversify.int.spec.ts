@@ -15,7 +15,7 @@ import {
   Newable,
   ResolutionContext,
   tagged,
-} from '..';
+} from '../index.js';
 
 describe('InversifyJS', () => {
   it('Should be able to resolve and inject dependencies', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable, named, optional } from '../../index';
+import { Container, inject, injectable, named, optional } from '../../index.js';
 
 describe('Issue 1190', () => {
   it('should inject a katana as default weapon to ninja', () => {

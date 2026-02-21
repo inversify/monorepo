@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable, optional } from '../..';
+import { Container, inject, injectable, optional } from '../../index.js';
 
 describe(optional, () => {
   it('Should allow to flag dependencies as optional', () => {

@@ -10,7 +10,7 @@ import {
   optional,
   tagged,
   unmanaged,
-} from '../..';
+} from '../../index.js';
 
 describe('Property Injection', () => {
   it('Should be able to inject a property', () => {

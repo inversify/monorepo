@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable } from '../..';
+import { Container, inject, injectable } from '../../index.js';
 
 describe('Node', () => {
   it('Should throw if circular dependencies found', () => {

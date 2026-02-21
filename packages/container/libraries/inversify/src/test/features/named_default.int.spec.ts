@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable, named } from '../..';
+import { Container, inject, injectable, named } from '../../index.js';
 
 describe('Named default', () => {
   it('Should be able to inject a default to avoid ambiguous binding exceptions', () => {

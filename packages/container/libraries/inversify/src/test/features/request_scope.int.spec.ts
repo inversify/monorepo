@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { performance } from 'node:perf_hooks';
 
-import { Container, inject, injectable, named } from '../..';
+import { Container, inject, injectable, named } from '../../index.js';
 
 describe('inRequestScope', () => {
   it('Should support request scope in basic bindings', () => {

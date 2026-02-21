@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, injectable } from '../..';
+import { Container, injectable } from '../../index.js';
 
 describe('Error message when resolving fails', () => {
   @injectable()

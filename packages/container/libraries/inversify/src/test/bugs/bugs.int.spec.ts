@@ -12,7 +12,7 @@ import {
   ServiceIdentifier,
   tagged,
   unmanaged,
-} from '../..';
+} from '../../index.js';
 
 describe('Bugs', () => {
   it('Should not throw when args length of base and derived class match (property setter)', () => {

@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable, Newable, optional } from '../..';
+import {
+  Container,
+  inject,
+  injectable,
+  Newable,
+  optional,
+} from '../../index.js';
 
 describe('Issue 928', () => {
   it('should inject the right instances', () => {

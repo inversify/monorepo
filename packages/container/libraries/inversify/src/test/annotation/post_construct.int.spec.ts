@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { postConstruct } from '../..';
+import { postConstruct } from '../../index.js';
 
 describe('@postConstruct', () => {
   it('Should throw when applied multiple times', () => {
