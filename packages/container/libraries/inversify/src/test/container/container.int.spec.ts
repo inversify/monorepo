@@ -7,7 +7,7 @@ import {
   injectable,
   postConstruct,
   ResolutionContext,
-} from '../..';
+} from '../../index.js';
 
 describe(Container, () => {
   it('Should unbindAsync a binding when requested', async () => {

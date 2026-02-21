@@ -1,11 +1,11 @@
-import { describe, expect, expectTypeOf, it, Mock, vitest } from 'vitest';
+import { describe, expect, expectTypeOf, it, type Mock, vitest } from 'vitest';
 
 import {
   Container,
   ContainerModule,
-  ContainerModuleLoadOptions,
-  ResolutionContext,
-} from '../..';
+  type ContainerModuleLoadOptions,
+  type ResolutionContext,
+} from '../../index.js';
 
 describe(ContainerModule, () => {
   it('Should be able to set the registry of a container module', () => {

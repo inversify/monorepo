@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable } from '../../index';
+import { Container, inject, injectable } from '../../index.js';
 
 describe('Issue 543', () => {
   it('Should throw correct circular dependency path', () => {

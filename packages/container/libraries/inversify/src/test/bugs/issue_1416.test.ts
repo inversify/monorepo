@@ -1,6 +1,11 @@
 import { describe, expect, it, Mock, vitest } from 'vitest';
 
-import { bindingScopeValues, Container, injectable, preDestroy } from '../..';
+import {
+  bindingScopeValues,
+  Container,
+  injectable,
+  preDestroy,
+} from '../../index.js';
 
 describe('Issue 1416', () => {
   it('should allow providing default values on optional bindings', async () => {

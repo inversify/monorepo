@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { bindingScopeValues, Container, injectable } from '../..';
+import { bindingScopeValues, Container, injectable } from '../../index.js';
 
 describe('Issue 706', () => {
   it('Should expose BindingScopeEnum as part of the public API', () => {

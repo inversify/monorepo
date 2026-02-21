@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { decorate, injectable } from '../..';
+import { decorate, injectable } from '../../index.js';
 
 describe(injectable, () => {
   it('Should throw when applied multiple times', () => {

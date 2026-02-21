@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable } from '../..';
+import { Container, inject, injectable } from '../../index.js';
 
 describe('Issue 1564', () => {
   it('should not throw on getting async services bound using "toService"', async () => {

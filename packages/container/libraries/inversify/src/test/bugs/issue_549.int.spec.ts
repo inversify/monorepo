@@ -12,7 +12,7 @@ import {
   injectable,
   ResolutionContext,
   ServiceIdentifier,
-} from '../..';
+} from '../../index.js';
 
 describe('Issue 549', () => {
   describe('having a circular dependency', () => {

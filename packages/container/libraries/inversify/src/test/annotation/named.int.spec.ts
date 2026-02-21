@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { decorate, named } from '../..';
+import { decorate, named } from '../../index.js';
 
 type Weapon = unknown;
 

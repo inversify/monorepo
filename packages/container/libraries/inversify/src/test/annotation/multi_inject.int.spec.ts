@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { decorate, multiInject } from '../..';
+import { decorate, multiInject } from '../../index.js';
 
 type Weapon = object;
 
