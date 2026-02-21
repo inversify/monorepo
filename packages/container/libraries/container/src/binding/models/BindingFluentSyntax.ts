@@ -1,17 +1,17 @@
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
 import {
-  BindingActivation,
-  BindingConstraints,
-  BindingDeactivation,
-  DynamicValueBuilder,
-  Factory,
-  MetadataName,
-  MetadataTag,
-  ResolutionContext,
+  type BindingActivation,
+  type BindingConstraints,
+  type BindingDeactivation,
+  type DynamicValueBuilder,
+  type Factory,
+  type MetadataName,
+  type MetadataTag,
+  type ResolutionContext,
 } from '@inversifyjs/core';
 
-import { BindingIdentifier } from './BindingIdentifier';
-import { MapToResolvedValueInjectOptions } from './MapToResolvedValueInjectOptions';
+import { type BindingIdentifier } from './BindingIdentifier.js';
+import { type MapToResolvedValueInjectOptions } from './MapToResolvedValueInjectOptions.js';
 
 export interface BoundServiceSyntax {
   getIdentifier(): BindingIdentifier;

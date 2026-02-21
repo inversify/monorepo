@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { BindingConstraints, MetadataName } from '@inversifyjs/core';
+import { type BindingConstraints, type MetadataName } from '@inversifyjs/core';
 
-import { isBindingConstraintsWithName } from './isBindingConstraintsWithName';
+import { isBindingConstraintsWithName } from './isBindingConstraintsWithName.js';
 
 describe(isBindingConstraintsWithName, () => {
   describe('having a BindingConstraints with same name as name', () => {

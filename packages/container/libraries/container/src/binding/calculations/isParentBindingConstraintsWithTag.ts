@@ -1,7 +1,7 @@
-import { BindingConstraints, MetadataTag } from '@inversifyjs/core';
+import { type BindingConstraints, type MetadataTag } from '@inversifyjs/core';
 
-import { isBindingConstraintsWithTag } from './isBindingConstraintsWithTag';
-import { isParentBindingConstraints } from './isParentBindingConstraints';
+import { isBindingConstraintsWithTag } from './isBindingConstraintsWithTag.js';
+import { isParentBindingConstraints } from './isParentBindingConstraints.js';
 
 export function isParentBindingConstraintsWithTag(
   tag: MetadataTag,

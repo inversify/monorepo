@@ -1,7 +1,7 @@
-import { BindingConstraints, MetadataName } from '@inversifyjs/core';
+import { type BindingConstraints, type MetadataName } from '@inversifyjs/core';
 
-import { isBindingConstraintsWithName } from './isBindingConstraintsWithName';
-import { isNotParentBindingConstraints } from './isNotParentBindingConstraints';
+import { isBindingConstraintsWithName } from './isBindingConstraintsWithName.js';
+import { isNotParentBindingConstraints } from './isNotParentBindingConstraints.js';
 
 export function isNotParentBindingConstraintsWithName(
   name: MetadataName,

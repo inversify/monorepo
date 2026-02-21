@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { BindingConstraints } from '@inversifyjs/core';
+import { type BindingConstraints } from '@inversifyjs/core';
 
-import { BindingConstraintUtils } from './BindingConstraintUtils';
+import { BindingConstraintUtils } from './BindingConstraintUtils.js';
 
 describe(BindingConstraintUtils, () => {
   describe('.allways', () => {

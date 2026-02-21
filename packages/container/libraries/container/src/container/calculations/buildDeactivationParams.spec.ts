@@ -4,21 +4,21 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/core'));
 
 import {
-  BindingService,
-  DeactivationParams,
-  DeactivationsService,
+  type BindingService,
+  type DeactivationParams,
+  type DeactivationsService,
   getClassMetadata,
 } from '@inversifyjs/core';
 
-import { ServiceReferenceManager } from '../services/ServiceReferenceManager';
-import { buildDeactivationParams } from './buildDeactivationParams';
+import { type ServiceReferenceManager } from '../services/ServiceReferenceManager.js';
+import { buildDeactivationParams } from './buildDeactivationParams.js';
 
 describe(buildDeactivationParams, () => {
   let serviceReferenceManagerMock: ServiceReferenceManager;
@@ -28,12 +28,10 @@ describe(buildDeactivationParams, () => {
       bindingService: {
         get: vitest.fn(),
         getByModuleId: vitest.fn(),
-      } as Partial<Mocked<BindingService>> as Mocked<BindingService>,
+      } as Partial<BindingService>,
       deactivationService: {
         get: vitest.fn(),
-      } as Partial<
-        Mocked<DeactivationsService>
-      > as Mocked<DeactivationsService>,
+      } as Partial<DeactivationsService>,
     } as Partial<
       Mocked<ServiceReferenceManager>
     > as Mocked<ServiceReferenceManager>;

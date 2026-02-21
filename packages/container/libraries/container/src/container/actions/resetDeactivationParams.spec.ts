@@ -1,16 +1,16 @@
 import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 import {
-  Binding,
-  BindingDeactivation,
-  BindingService,
-  DeactivationParams,
-  DeactivationsService,
+  type Binding,
+  type BindingDeactivation,
+  type BindingService,
+  type DeactivationParams,
+  type DeactivationsService,
 } from '@inversifyjs/core';
 
-import { ServiceReferenceManager } from '../services/ServiceReferenceManager';
-import { resetDeactivationParams } from './resetDeactivationParams';
+import { type ServiceReferenceManager } from '../services/ServiceReferenceManager.js';
+import { resetDeactivationParams } from './resetDeactivationParams.js';
 
 describe(resetDeactivationParams, () => {
   let serviceReferenceManager: ServiceReferenceManager;
@@ -20,10 +20,10 @@ describe(resetDeactivationParams, () => {
       bindingService: {
         get: vitest.fn(),
         getByModuleId: vitest.fn(),
-      } as Partial<BindingService> as BindingService,
+      } as Partial<BindingService>,
       deactivationService: {
         get: vitest.fn(),
-      } as Partial<DeactivationsService> as DeactivationsService,
+      } as Partial<DeactivationsService>,
     } as Partial<ServiceReferenceManager> as ServiceReferenceManager;
   });
 

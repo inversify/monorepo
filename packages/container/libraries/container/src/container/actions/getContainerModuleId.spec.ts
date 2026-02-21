@@ -8,7 +8,7 @@ import {
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { getContainerModuleId } from './getContainerModuleId';
+import { getContainerModuleId } from './getContainerModuleId.js';
 
 describe(getContainerModuleId, () => {
   describe('when called, and getOwnReflectMetadata() returns undefined', () => {

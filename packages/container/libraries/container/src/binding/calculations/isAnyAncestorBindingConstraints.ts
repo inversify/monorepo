@@ -1,4 +1,4 @@
-import { BindingConstraints } from '@inversifyjs/core';
+import { type BindingConstraints } from '@inversifyjs/core';
 
 export function isAnyAncestorBindingConstraints(
   condition: (constraints: BindingConstraints) => boolean,

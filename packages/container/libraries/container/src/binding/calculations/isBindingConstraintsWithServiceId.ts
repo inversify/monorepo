@@ -1,5 +1,5 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
-import { BindingConstraints } from '@inversifyjs/core';
+import { type ServiceIdentifier } from '@inversifyjs/common';
+import { type BindingConstraints } from '@inversifyjs/core';
 
 export function isBindingConstraintsWithServiceId(
   serviceId: ServiceIdentifier,

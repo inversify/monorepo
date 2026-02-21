@@ -1,10 +1,13 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
-import { BindingActivation, BindingDeactivation } from '@inversifyjs/core';
+import { type ServiceIdentifier } from '@inversifyjs/common';
+import {
+  type BindingActivation,
+  type BindingDeactivation,
+} from '@inversifyjs/core';
 
-import { BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax';
-import { BindingIdentifier } from '../../binding/models/BindingIdentifier';
-import { getContainerModuleId } from '../actions/getContainerModuleId';
-import { IsBoundOptions } from './isBoundOptions';
+import { type BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax.js';
+import { type BindingIdentifier } from '../../binding/models/BindingIdentifier.js';
+import { getContainerModuleId } from '../actions/getContainerModuleId.js';
+import { type IsBoundOptions } from './isBoundOptions.js';
 
 export type Bind = <T>(
   serviceIdentifier: ServiceIdentifier<T>,

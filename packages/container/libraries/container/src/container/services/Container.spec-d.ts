@@ -1,8 +1,15 @@
-import { beforeAll, describe, expectTypeOf, it, Mocked, vitest } from 'vitest';
+import {
+  beforeAll,
+  describe,
+  expectTypeOf,
+  it,
+  type Mocked,
+  vitest,
+} from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { Container } from './Container';
+import { type Container } from './Container.js';
 
 describe('BindToFluentSyntax', () => {
   let containerMock: Mocked<Container>;

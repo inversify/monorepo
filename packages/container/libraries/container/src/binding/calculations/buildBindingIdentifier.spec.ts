@@ -1,8 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { BaseBinding, BindingType, bindingTypeValues } from '@inversifyjs/core';
+import {
+  type BaseBinding,
+  type BindingType,
+  bindingTypeValues,
+} from '@inversifyjs/core';
 
-import { buildBindingIdentifier } from './buildBindingIdentifier';
+import { buildBindingIdentifier } from './buildBindingIdentifier.js';
 
 describe(buildBindingIdentifier, () => {
   let bindingFixture: BaseBinding<BindingType, unknown>;

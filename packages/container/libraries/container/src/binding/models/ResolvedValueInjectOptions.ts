@@ -1,5 +1,8 @@
-import { LazyServiceIdentifier, ServiceIdentifier } from '@inversifyjs/common';
-import { MetadataName, MetadataTag } from '@inversifyjs/core';
+import {
+  type LazyServiceIdentifier,
+  type ServiceIdentifier,
+} from '@inversifyjs/common';
+import { type MetadataName, type MetadataTag } from '@inversifyjs/core';
 
 export type ResolvedValueInjectOptions<T> =
   | LazyServiceIdentifier<T>

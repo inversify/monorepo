@@ -4,7 +4,7 @@ import 'reflect-metadata/lite';
 
 import { inject, injectable } from '@inversifyjs/core';
 
-import { Container } from '../container/services/Container';
+import { Container } from '../container/services/Container.js';
 
 describe('Container.get should throw on ambiguous binding match', () => {
   @injectable()

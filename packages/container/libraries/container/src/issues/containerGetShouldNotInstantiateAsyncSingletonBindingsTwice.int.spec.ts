@@ -4,7 +4,7 @@ import 'reflect-metadata/lite';
 
 import { bindingScopeValues, inject, injectable } from '@inversifyjs/core';
 
-import { Container } from '../container/services/Container';
+import { Container } from '../container/services/Container.js';
 
 class AsyncDependency {
   public static async create(): Promise<AsyncDependency> {

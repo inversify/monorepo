@@ -1,8 +1,8 @@
-import { DeactivationParams } from '@inversifyjs/core';
+import { type DeactivationParams } from '@inversifyjs/core';
 
-import { resetDeactivationParams } from '../actions/resetDeactivationParams';
-import { buildDeactivationParams } from '../calculations/buildDeactivationParams';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
+import { resetDeactivationParams } from '../actions/resetDeactivationParams.js';
+import { buildDeactivationParams } from '../calculations/buildDeactivationParams.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 
 export class DeactivationParamsManager {
   public readonly deactivationParams: DeactivationParams;

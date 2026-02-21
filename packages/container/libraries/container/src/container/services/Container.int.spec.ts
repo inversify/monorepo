@@ -6,9 +6,9 @@ import { injectable, multiInject } from '@inversifyjs/core';
 
 import {
   ContainerModule,
-  ContainerModuleLoadOptions,
-} from '../models/ContainerModule';
-import { Container } from './Container';
+  type ContainerModuleLoadOptions,
+} from '../models/ContainerModule.js';
+import { Container } from './Container.js';
 
 @injectable()
 class Gun {}

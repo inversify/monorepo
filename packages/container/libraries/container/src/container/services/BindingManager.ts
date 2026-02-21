@@ -1,28 +1,28 @@
 import {
   isPromise,
-  ServiceIdentifier,
+  type ServiceIdentifier,
   stringifyServiceIdentifier,
 } from '@inversifyjs/common';
 import {
-  Binding,
-  BindingConstraints,
-  BindingScope,
+  type Binding,
+  type BindingConstraints,
+  type BindingScope,
   CacheBindingInvalidationKind,
-  DeactivationParams,
+  type DeactivationParams,
   resolveBindingsDeactivations,
   resolveServiceDeactivations,
 } from '@inversifyjs/core';
 
-import { isBindingIdentifier } from '../../binding/calculations/isBindingIdentifier';
-import { BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax';
-import { BindToFluentSyntaxImplementation } from '../../binding/models/BindingFluentSyntaxImplementation';
-import { BindingIdentifier } from '../../binding/models/BindingIdentifier';
-import { getFirstIterableResult } from '../../common/calculations/getFirstIterableResult';
-import { InversifyContainerError } from '../../error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
-import { IsBoundOptions } from '../models/isBoundOptions';
-import { PlanResultCacheManager } from './PlanResultCacheManager';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
+import { isBindingIdentifier } from '../../binding/calculations/isBindingIdentifier.js';
+import { type BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax.js';
+import { BindToFluentSyntaxImplementation } from '../../binding/models/BindingFluentSyntaxImplementation.js';
+import { type BindingIdentifier } from '../../binding/models/BindingIdentifier.js';
+import { getFirstIterableResult } from '../../common/calculations/getFirstIterableResult.js';
+import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
+import { type IsBoundOptions } from '../models/isBoundOptions.js';
+import { type PlanResultCacheManager } from './PlanResultCacheManager.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 
 export class BindingManager {
   readonly #deactivationParams: DeactivationParams;

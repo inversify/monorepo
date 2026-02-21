@@ -1,4 +1,7 @@
-import { GetOptionsTagConstraint, MetadataName } from '@inversifyjs/core';
+import {
+  type GetOptionsTagConstraint,
+  type MetadataName,
+} from '@inversifyjs/core';
 
 export interface IsBoundOptions {
   name?: MetadataName;

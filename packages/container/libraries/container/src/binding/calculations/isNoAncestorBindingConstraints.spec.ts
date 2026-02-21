@@ -4,16 +4,16 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { BindingConstraints } from '@inversifyjs/core';
+import { type BindingConstraints } from '@inversifyjs/core';
 
 vitest.mock(import('./isAnyAncestorBindingConstraints.js'));
 
-import { isAnyAncestorBindingConstraints } from './isAnyAncestorBindingConstraints';
-import { isNoAncestorBindingConstraints } from './isNoAncestorBindingConstraints';
+import { isAnyAncestorBindingConstraints } from './isAnyAncestorBindingConstraints.js';
+import { isNoAncestorBindingConstraints } from './isNoAncestorBindingConstraints.js';
 
 describe(isNoAncestorBindingConstraints, () => {
   let conditionMock: Mock<(constraints: BindingConstraints) => boolean>;

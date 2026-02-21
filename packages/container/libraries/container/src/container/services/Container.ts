@@ -1,33 +1,33 @@
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
 import {
   ActivationsService,
-  AutobindOptions,
-  BindingActivation,
-  BindingDeactivation,
-  BindingScope,
+  type AutobindOptions,
+  type BindingActivation,
+  type BindingDeactivation,
+  type BindingScope,
   bindingScopeValues,
   BindingService,
   DeactivationsService,
-  GetAllOptions,
-  GetOptions,
-  OptionalGetOptions,
+  type GetAllOptions,
+  type GetOptions,
+  type OptionalGetOptions,
   PlanResultCacheService,
 } from '@inversifyjs/core';
 
-import { BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax';
-import { BindingIdentifier } from '../../binding/models/BindingIdentifier';
-import { ContainerModule } from '../models/ContainerModule';
-import { ContainerOptions } from '../models/ContainerOptions';
-import { IsBoundOptions } from '../models/isBoundOptions';
-import { BindingManager } from './BindingManager';
-import { ContainerModuleManager } from './ContainerModuleManager';
-import { DeactivationParamsManager } from './DeactivationParamsManager';
-import { PlanParamsOperationsManager } from './PlanParamsOperationsManager';
-import { PlanResultCacheManager } from './PlanResultCacheManager';
-import { PluginManager } from './PluginManager';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
-import { ServiceResolutionManager } from './ServiceResolutionManager';
-import { SnapshotManager } from './SnapshotManager';
+import { type BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax.js';
+import { type BindingIdentifier } from '../../binding/models/BindingIdentifier.js';
+import { type ContainerModule } from '../models/ContainerModule.js';
+import { type ContainerOptions } from '../models/ContainerOptions.js';
+import { type IsBoundOptions } from '../models/isBoundOptions.js';
+import { BindingManager } from './BindingManager.js';
+import { ContainerModuleManager } from './ContainerModuleManager.js';
+import { DeactivationParamsManager } from './DeactivationParamsManager.js';
+import { PlanParamsOperationsManager } from './PlanParamsOperationsManager.js';
+import { PlanResultCacheManager } from './PlanResultCacheManager.js';
+import { PluginManager } from './PluginManager.js';
+import { ServiceReferenceManager } from './ServiceReferenceManager.js';
+import { ServiceResolutionManager } from './ServiceResolutionManager.js';
+import { SnapshotManager } from './SnapshotManager.js';
 
 const DEFAULT_DEFAULT_SCOPE: BindingScope = bindingScopeValues.Transient;
 

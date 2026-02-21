@@ -1,7 +1,7 @@
 import {
-  BindingIdentifier,
+  type BindingIdentifier,
   bindingIdentifierSymbol,
-} from '../models/BindingIdentifier';
+} from '../models/BindingIdentifier.js';
 
 export function isBindingIdentifier(
   value: unknown,

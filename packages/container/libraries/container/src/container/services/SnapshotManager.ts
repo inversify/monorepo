@@ -1,7 +1,7 @@
-import { InversifyContainerError } from '../../error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
-import { Snapshot } from '../../snapshot/models/Snapshot';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
+import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
+import { type Snapshot } from '../../snapshot/models/Snapshot.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 
 export class SnapshotManager {
   readonly #serviceReferenceManager: ServiceReferenceManager;

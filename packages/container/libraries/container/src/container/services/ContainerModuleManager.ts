@@ -1,25 +1,25 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 import {
-  Binding,
-  BindingActivation,
-  BindingDeactivation,
-  BindingScope,
+  type Binding,
+  type BindingActivation,
+  type BindingDeactivation,
+  type BindingScope,
   CacheBindingInvalidationKind,
-  DeactivationParams,
+  type DeactivationParams,
   resolveModuleDeactivations,
 } from '@inversifyjs/core';
 
-import { BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax';
-import { BindToFluentSyntaxImplementation } from '../../binding/models/BindingFluentSyntaxImplementation';
-import { InversifyContainerError } from '../../error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
+import { type BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax.js';
+import { BindToFluentSyntaxImplementation } from '../../binding/models/BindingFluentSyntaxImplementation.js';
+import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
 import {
-  ContainerModule,
-  ContainerModuleLoadOptions,
-} from '../models/ContainerModule';
-import { BindingManager } from './BindingManager';
-import { PlanResultCacheManager } from './PlanResultCacheManager';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
+  type ContainerModule,
+  type ContainerModuleLoadOptions,
+} from '../models/ContainerModule.js';
+import { type BindingManager } from './BindingManager.js';
+import { type PlanResultCacheManager } from './PlanResultCacheManager.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 
 export class ContainerModuleManager {
   readonly #bindingManager: BindingManager;

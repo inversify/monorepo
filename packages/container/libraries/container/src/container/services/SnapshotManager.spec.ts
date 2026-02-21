@@ -4,21 +4,21 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 import {
-  ActivationsService,
-  BindingService,
-  DeactivationsService,
-  PlanResultCacheService,
+  type ActivationsService,
+  type BindingService,
+  type DeactivationsService,
+  type PlanResultCacheService,
 } from '@inversifyjs/core';
 
-import { InversifyContainerError } from '../../error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
-import { SnapshotManager } from './SnapshotManager';
+import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
+import { SnapshotManager } from './SnapshotManager.js';
 
 describe(SnapshotManager, () => {
   let serviceReferenceManagerMock: Mocked<ServiceReferenceManager>;
@@ -27,18 +27,14 @@ describe(SnapshotManager, () => {
     serviceReferenceManagerMock = {
       activationService: {
         clone: vitest.fn(),
-      } as Partial<Mocked<ActivationsService>> as Mocked<ActivationsService>,
+      } as Partial<ActivationsService> as ActivationsService,
       bindingService: {
         clone: vitest.fn(),
-      } as Partial<Mocked<BindingService>> as Mocked<BindingService>,
+      } as Partial<BindingService> as BindingService,
       deactivationService: {
         clone: vitest.fn(),
-      } as Partial<
-        Mocked<DeactivationsService>
-      > as Mocked<DeactivationsService>,
-      planResultCacheService: {} as Partial<
-        Mocked<PlanResultCacheService>
-      > as Mocked<PlanResultCacheService>,
+      } as Partial<DeactivationsService> as DeactivationsService,
+      planResultCacheService: {} as PlanResultCacheService,
       reset: vitest.fn(),
     } as Partial<
       Mocked<ServiceReferenceManager>

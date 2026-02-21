@@ -4,7 +4,7 @@ import 'reflect-metadata/lite';
 
 import { inject, multiInject } from '@inversifyjs/core';
 
-import { Container } from '../container/services/Container';
+import { Container } from '../container/services/Container.js';
 
 describe('inversify/InversifyJS#1864', () => {
   it('Container unbindAsync request should not throw planning errors', () => {

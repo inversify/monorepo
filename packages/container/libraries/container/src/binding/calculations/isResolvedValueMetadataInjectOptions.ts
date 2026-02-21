@@ -1,9 +1,9 @@
 import { LazyServiceIdentifier } from '@inversifyjs/common';
 
 import {
-  ResolvedValueInjectOptions,
-  ResolvedValueMetadataInjectOptions,
-} from '../models/ResolvedValueInjectOptions';
+  type ResolvedValueInjectOptions,
+  type ResolvedValueMetadataInjectOptions,
+} from '../models/ResolvedValueInjectOptions.js';
 
 export function isResolvedValueMetadataInjectOptions<T>(
   options: ResolvedValueInjectOptions<T>,

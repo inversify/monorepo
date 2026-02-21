@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ServiceIdentifier } from '@inversifyjs/common';
-import { BindingConstraints } from '@inversifyjs/core';
+import { type ServiceIdentifier } from '@inversifyjs/common';
+import { type BindingConstraints } from '@inversifyjs/core';
 
-import { isBindingConstraintsWithServiceId } from './isBindingConstraintsWithServiceId';
+import { isBindingConstraintsWithServiceId } from './isBindingConstraintsWithServiceId.js';
 
 describe(isBindingConstraintsWithServiceId, () => {
   describe('having a BindingConstraints with same serviceId', () => {

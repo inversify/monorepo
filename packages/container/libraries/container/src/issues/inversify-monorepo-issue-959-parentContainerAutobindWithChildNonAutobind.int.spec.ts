@@ -4,7 +4,7 @@ import 'reflect-metadata/lite';
 
 import { injectable } from '@inversifyjs/core';
 
-import { Container } from '../container/services/Container';
+import { Container } from '../container/services/Container.js';
 
 describe('inversify/monorepo#959', () => {
   describe('Parent container autobind with child non-autobind', () => {

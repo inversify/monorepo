@@ -1,29 +1,29 @@
 import {
   isPromise,
-  ServiceIdentifier,
+  type ServiceIdentifier,
   stringifyServiceIdentifier,
 } from '@inversifyjs/common';
 import {
-  BindingActivation,
-  BindingScope,
-  GetAllOptions,
-  GetOptions,
-  GetOptionsTagConstraint,
-  GetPlanOptions,
-  MetadataName,
-  OptionalGetOptions,
+  type BindingActivation,
+  type BindingScope,
+  type GetAllOptions,
+  type GetOptions,
+  type GetOptionsTagConstraint,
+  type GetPlanOptions,
+  type MetadataName,
+  type OptionalGetOptions,
   plan,
-  PlanParams,
-  PlanParamsConstraint,
-  PlanResult,
-  ResolutionContext,
+  type PlanParams,
+  type PlanParamsConstraint,
+  type PlanResult,
+  type ResolutionContext,
   resolve,
 } from '@inversifyjs/core';
 
-import { InversifyContainerError } from '../../error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
-import { PlanParamsOperationsManager } from './PlanParamsOperationsManager';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
+import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
+import { type PlanParamsOperationsManager } from './PlanParamsOperationsManager.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 
 export class ServiceResolutionManager {
   readonly #autobind: boolean;
@@ -174,8 +174,7 @@ export class ServiceResolutionManager {
 
     if (isMultiple) {
       return {
-        chained:
-          (options as Partial<GetAllOptions> | undefined)?.chained ?? false,
+        chained: (options as GetAllOptions | undefined)?.chained ?? false,
         isMultiple,
         name,
         optional,
@@ -226,8 +225,7 @@ export class ServiceResolutionManager {
   ): PlanParamsConstraint {
     if (isMultiple) {
       return {
-        chained:
-          (options as Partial<GetAllOptions> | undefined)?.chained ?? false,
+        chained: (options as GetAllOptions | undefined)?.chained ?? false,
         isMultiple,
         serviceIdentifier,
       };
@@ -312,7 +310,7 @@ export class ServiceResolutionManager {
 
     if (planParams.rootConstraints.isMultiple) {
       planParams.rootConstraints.chained =
-        (options as Partial<GetAllOptions> | undefined)?.chained ?? false;
+        (options as GetAllOptions | undefined)?.chained ?? false;
     }
   }
 }

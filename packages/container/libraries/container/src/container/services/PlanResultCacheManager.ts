@@ -1,6 +1,6 @@
-import { CacheBindingInvalidation } from '../models/CacheBindingInvalidation';
-import { PlanParamsOperationsManager } from './PlanParamsOperationsManager';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
+import { type CacheBindingInvalidation } from '../models/CacheBindingInvalidation.js';
+import { type PlanParamsOperationsManager } from './PlanParamsOperationsManager.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 
 export class PlanResultCacheManager {
   readonly #planParamsOperationsManager: PlanParamsOperationsManager;

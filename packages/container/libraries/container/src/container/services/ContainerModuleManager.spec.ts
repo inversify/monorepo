@@ -4,39 +4,39 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/core'));
 
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 import {
-  ActivationsService,
-  BindingActivation,
-  BindingDeactivation,
-  BindingScope,
+  type ActivationsService,
+  type BindingActivation,
+  type BindingDeactivation,
+  type BindingScope,
   bindingScopeValues,
-  BindingService,
-  DeactivationParams,
-  DeactivationsService,
-  PlanResultCacheService,
+  type BindingService,
+  type DeactivationParams,
+  type DeactivationsService,
+  type PlanResultCacheService,
   resolveModuleDeactivations,
 } from '@inversifyjs/core';
 
-import { BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax';
-import { BindingIdentifier } from '../../binding/models/BindingIdentifier';
-import { InversifyContainerError } from '../../error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
+import { type BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax.js';
+import { type BindingIdentifier } from '../../binding/models/BindingIdentifier.js';
+import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
 import {
-  ContainerModule,
-  ContainerModuleLoadOptions,
-} from '../models/ContainerModule';
-import { IsBoundOptions } from '../models/isBoundOptions';
-import { BindingManager } from './BindingManager';
-import { ContainerModuleManager } from './ContainerModuleManager';
-import { PlanResultCacheManager } from './PlanResultCacheManager';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
+  type ContainerModule,
+  type ContainerModuleLoadOptions,
+} from '../models/ContainerModule.js';
+import { type IsBoundOptions } from '../models/isBoundOptions.js';
+import { type BindingManager } from './BindingManager.js';
+import { ContainerModuleManager } from './ContainerModuleManager.js';
+import { type PlanResultCacheManager } from './PlanResultCacheManager.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 
 describe(ContainerModuleManager, () => {
   let bindingManagerMock: Mocked<BindingManager>;
@@ -66,20 +66,16 @@ describe(ContainerModuleManager, () => {
     serviceReferenceManagerMock = {
       activationService: {
         removeAllByModuleId: vitest.fn(),
-      } as Partial<Mocked<ActivationsService>> as Mocked<ActivationsService>,
+      } as Partial<ActivationsService>,
       bindingService: {
         removeAllByModuleId: vitest.fn(),
-      } as Partial<Mocked<BindingService>> as Mocked<BindingService>,
+      } as Partial<BindingService>,
       deactivationService: {
         removeAllByModuleId: vitest.fn(),
-      } as Partial<
-        Mocked<DeactivationsService>
-      > as Mocked<DeactivationsService>,
+      } as Partial<DeactivationsService>,
       planResultCacheService: {
         clearCache: vitest.fn(),
-      } as Partial<
-        Mocked<PlanResultCacheService>
-      > as Mocked<PlanResultCacheService>,
+      } as Partial<PlanResultCacheService>,
     } as Partial<
       Mocked<ServiceReferenceManager>
     > as Mocked<ServiceReferenceManager>;

@@ -4,30 +4,30 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import {
-  ActivationsService,
-  BindingService,
-  DeactivationsService,
-  PlanResultCacheService,
+  type ActivationsService,
+  type BindingService,
+  type DeactivationsService,
+  type PlanResultCacheService,
 } from '@inversifyjs/core';
 import {
   isPlugin,
-  Plugin,
-  PluginApi,
-  PluginContext,
+  type Plugin,
+  type PluginApi,
+  type PluginContext,
 } from '@inversifyjs/plugin';
 
-import { InversifyContainerError } from '../../error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
-import type { Container } from './Container';
-import { PluginManager } from './PluginManager';
-import { ServiceReferenceManager } from './ServiceReferenceManager';
-import { ServiceResolutionManager } from './ServiceResolutionManager';
+import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
+import type { Container } from './Container.js';
+import { PluginManager } from './PluginManager.js';
+import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
+import { type ServiceResolutionManager } from './ServiceResolutionManager.js';
 
 describe(PluginManager, () => {
   let containerFixture: Container;
@@ -37,13 +37,10 @@ describe(PluginManager, () => {
   beforeAll(() => {
     containerFixture = Symbol() as unknown as Container;
     serviceReferenceManagerFixture = {
-      activationService:
-        {} as Partial<ActivationsService> as ActivationsService,
-      bindingService: {} as Partial<BindingService> as BindingService,
-      deactivationService:
-        {} as Partial<DeactivationsService> as DeactivationsService,
-      planResultCacheService:
-        {} as Partial<PlanResultCacheService> as PlanResultCacheService,
+      activationService: {} as Partial<ActivationsService>,
+      bindingService: {} as Partial<BindingService>,
+      deactivationService: {} as Partial<DeactivationsService>,
+      planResultCacheService: {} as Partial<PlanResultCacheService>,
     } as Partial<ServiceReferenceManager> as ServiceReferenceManager;
     serviceResolutionManagerMock = {
       onPlan: vitest.fn(),

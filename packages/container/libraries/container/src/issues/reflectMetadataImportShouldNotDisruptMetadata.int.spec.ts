@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import '../index';
+import '../index.js';
 
 import {
   getOwnReflectMetadata,

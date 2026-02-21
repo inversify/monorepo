@@ -1,79 +1,79 @@
 import {
-  Newable,
-  ServiceIdentifier,
+  type Newable,
+  type ServiceIdentifier,
   stringifyServiceIdentifier,
 } from '@inversifyjs/common';
 import {
-  Binding,
-  BindingActivation,
-  BindingConstraints,
-  BindingDeactivation,
-  BindingScope,
+  type Binding,
+  type BindingActivation,
+  type BindingConstraints,
+  type BindingDeactivation,
+  type BindingScope,
   bindingScopeValues,
-  BindingType,
+  type BindingType,
   bindingTypeValues,
-  ClassMetadata,
-  ConstantValueBinding,
-  DynamicValueBinding,
-  DynamicValueBuilder,
-  Factory,
-  FactoryBinding,
+  type ClassMetadata,
+  type ConstantValueBinding,
+  type DynamicValueBinding,
+  type DynamicValueBuilder,
+  type Factory,
+  type FactoryBinding,
   getClassMetadata,
-  InstanceBinding,
-  MetadataName,
-  MetadataTag,
-  ResolutionContext,
-  Resolved,
-  ResolvedValueBinding,
-  ResolvedValueElementMetadata,
+  type InstanceBinding,
+  type MetadataName,
+  type MetadataTag,
+  type ResolutionContext,
+  type Resolved,
+  type ResolvedValueBinding,
+  type ResolvedValueElementMetadata,
   ResolvedValueElementMetadataKind,
-  ResolvedValueMetadata,
-  ScopedBinding,
-  ServiceRedirectionBinding,
+  type ResolvedValueMetadata,
+  type ScopedBinding,
+  type ServiceRedirectionBinding,
 } from '@inversifyjs/core';
 import { getBindingId } from '@inversifyjs/core';
 
-import { Writable } from '../../common/models/Writable';
-import { BindingConstraintUtils } from '../../container/binding/utils/BindingConstraintUtils';
-import { InversifyContainerError } from '../../error/models/InversifyContainerError';
-import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind';
-import { buildBindingIdentifier } from '../calculations/buildBindingIdentifier';
-import { isAnyAncestorBindingConstraints } from '../calculations/isAnyAncestorBindingConstraints';
-import { isAnyAncestorBindingConstraintsWithName } from '../calculations/isAnyAncestorBindingConstraintsWithName';
-import { isAnyAncestorBindingConstraintsWithServiceId } from '../calculations/isAnyAncestorBindingConstraintsWithServiceId';
-import { isAnyAncestorBindingConstraintsWithTag } from '../calculations/isAnyAncestorBindingConstraintsWithTag';
-import { isBindingConstraintsWithName } from '../calculations/isBindingConstraintsWithName';
-import { isBindingConstraintsWithNoNameNorTags } from '../calculations/isBindingConstraintsWithNoNameNorTags';
-import { isBindingConstraintsWithTag } from '../calculations/isBindingConstraintsWithTag';
-import { isMultipleResolvedValueMetadataInjectOptions } from '../calculations/isMultipleResolvedValueMetadataInjectOptions';
-import { isNoAncestorBindingConstraints } from '../calculations/isNoAncestorBindingConstraints';
-import { isNoAncestorBindingConstraintsWithName } from '../calculations/isNoAncestorBindingConstraintsWithName';
-import { isNoAncestorBindingConstraintsWithServiceId } from '../calculations/isNoAncestorBindingConstraintsWithServiceId';
-import { isNoAncestorBindingConstraintsWithTag } from '../calculations/isNoAncestorBindingConstraintsWithTag';
-import { isNotParentBindingConstraints } from '../calculations/isNotParentBindingConstraints';
-import { isNotParentBindingConstraintsWithName } from '../calculations/isNotParentBindingConstraintsWithName';
-import { isNotParentBindingConstraintsWithServiceId } from '../calculations/isNotParentBindingConstraintsWithServiceId';
-import { isNotParentBindingConstraintsWithTag } from '../calculations/isNotParentBindingConstraintsWithTag';
-import { isParentBindingConstraints } from '../calculations/isParentBindingConstraints';
-import { isParentBindingConstraintsWithName } from '../calculations/isParentBindingConstraintsWithName';
-import { isParentBindingConstraintsWithServiceId } from '../calculations/isParentBindingConstraintsWithServiceId';
-import { isParentBindingConstraintsWithTag } from '../calculations/isParentBindingConstraintsWithTag';
-import { isResolvedValueMetadataInjectOptions } from '../calculations/isResolvedValueMetadataInjectOptions';
+import { type Writable } from '../../common/models/Writable.js';
+import { BindingConstraintUtils } from '../../container/binding/utils/BindingConstraintUtils.js';
+import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
+import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
+import { buildBindingIdentifier } from '../calculations/buildBindingIdentifier.js';
+import { isAnyAncestorBindingConstraints } from '../calculations/isAnyAncestorBindingConstraints.js';
+import { isAnyAncestorBindingConstraintsWithName } from '../calculations/isAnyAncestorBindingConstraintsWithName.js';
+import { isAnyAncestorBindingConstraintsWithServiceId } from '../calculations/isAnyAncestorBindingConstraintsWithServiceId.js';
+import { isAnyAncestorBindingConstraintsWithTag } from '../calculations/isAnyAncestorBindingConstraintsWithTag.js';
+import { isBindingConstraintsWithName } from '../calculations/isBindingConstraintsWithName.js';
+import { isBindingConstraintsWithNoNameNorTags } from '../calculations/isBindingConstraintsWithNoNameNorTags.js';
+import { isBindingConstraintsWithTag } from '../calculations/isBindingConstraintsWithTag.js';
+import { isMultipleResolvedValueMetadataInjectOptions } from '../calculations/isMultipleResolvedValueMetadataInjectOptions.js';
+import { isNoAncestorBindingConstraints } from '../calculations/isNoAncestorBindingConstraints.js';
+import { isNoAncestorBindingConstraintsWithName } from '../calculations/isNoAncestorBindingConstraintsWithName.js';
+import { isNoAncestorBindingConstraintsWithServiceId } from '../calculations/isNoAncestorBindingConstraintsWithServiceId.js';
+import { isNoAncestorBindingConstraintsWithTag } from '../calculations/isNoAncestorBindingConstraintsWithTag.js';
+import { isNotParentBindingConstraints } from '../calculations/isNotParentBindingConstraints.js';
+import { isNotParentBindingConstraintsWithName } from '../calculations/isNotParentBindingConstraintsWithName.js';
+import { isNotParentBindingConstraintsWithServiceId } from '../calculations/isNotParentBindingConstraintsWithServiceId.js';
+import { isNotParentBindingConstraintsWithTag } from '../calculations/isNotParentBindingConstraintsWithTag.js';
+import { isParentBindingConstraints } from '../calculations/isParentBindingConstraints.js';
+import { isParentBindingConstraintsWithName } from '../calculations/isParentBindingConstraintsWithName.js';
+import { isParentBindingConstraintsWithServiceId } from '../calculations/isParentBindingConstraintsWithServiceId.js';
+import { isParentBindingConstraintsWithTag } from '../calculations/isParentBindingConstraintsWithTag.js';
+import { isResolvedValueMetadataInjectOptions } from '../calculations/isResolvedValueMetadataInjectOptions.js';
 import {
-  BindInFluentSyntax,
-  BindInWhenOnFluentSyntax,
-  BindOnFluentSyntax,
-  BindToFluentSyntax,
-  BindWhenFluentSyntax,
-  BindWhenOnFluentSyntax,
-} from './BindingFluentSyntax';
-import { BindingIdentifier } from './BindingIdentifier';
-import { MapToResolvedValueInjectOptions } from './MapToResolvedValueInjectOptions';
+  type BindInFluentSyntax,
+  type BindInWhenOnFluentSyntax,
+  type BindOnFluentSyntax,
+  type BindToFluentSyntax,
+  type BindWhenFluentSyntax,
+  type BindWhenOnFluentSyntax,
+} from './BindingFluentSyntax.js';
+import { type BindingIdentifier } from './BindingIdentifier.js';
+import { type MapToResolvedValueInjectOptions } from './MapToResolvedValueInjectOptions.js';
 import {
-  OptionalResolvedValueMetadataInjectOptions,
-  ResolvedValueInjectOptions,
-  ResolvedValueMetadataInjectTagOptions,
-} from './ResolvedValueInjectOptions';
+  type OptionalResolvedValueMetadataInjectOptions,
+  type ResolvedValueInjectOptions,
+  type ResolvedValueMetadataInjectTagOptions,
+} from './ResolvedValueInjectOptions.js';
 
 export class BindInFluentSyntaxImplementation<
   T,
