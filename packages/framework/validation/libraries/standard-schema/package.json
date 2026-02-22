@@ -6,7 +6,7 @@
   "description": "InversifyJs http Standard Schema validation package",
   "dependencies": {
     "@inversifyjs/framework-core": "workspace:*",
-    "@inversifyjs/reflect-metadata-utils": "workspace:*",
+    "@inversifyjs/reflect-metadata-utils": "1.4.1",
     "@inversifyjs/validation-common": "workspace:*"
   },
   "devDependencies": {

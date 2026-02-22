@@ -5,9 +5,9 @@
   },
   "description": "InversifyJs http ajv validation package",
   "dependencies": {
-    "@inversifyjs/common": "workspace:*",
+    "@inversifyjs/common": "1.5.2",
     "@inversifyjs/framework-core": "workspace:*",
-    "@inversifyjs/reflect-metadata-utils": "workspace:*",
+    "@inversifyjs/reflect-metadata-utils": "1.4.1",
     "@inversifyjs/validation-common": "workspace:*"
   },
   "devDependencies": {
