@@ -1,5 +1,5 @@
-import { Plugin, PluginApi } from '@inversifyjs/plugin';
-import { Container } from 'inversify';
+import { Plugin, type PluginApi } from '@inversifyjs/plugin';
+import { type Container } from 'inversify';
 
 export const pluginExample: unique symbol = Symbol.for(
   '@inversifyjs/plugin-example',

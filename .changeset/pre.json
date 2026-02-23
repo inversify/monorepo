@@ -2,7 +2,6 @@
   "mode": "pre",
   "tag": "beta",
   "initialVersions": {
-    "@inversifyjs/plugin-example": "1.0.2",
     "@inversifyjs/plugin-usage-example": "1.0.2",
     "@inversifyjs/binding-decorators": "1.1.5",
     "@inversifyjs/common": "1.5.2",
