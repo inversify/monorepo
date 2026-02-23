@@ -40,9 +40,6 @@
   "name": "@inversifyjs/plugin-example",
   "type": "module",
   "private": true,
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inversify/monorepo.git"
