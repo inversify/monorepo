@@ -1,5 +1,35 @@
 # inversify
 
+## 8.0.0-beta.0
+
+### Major Changes
+
+- Renamed `Container.unbind` to `unbindAsync`
+- Renamed `Container.unbindSync` to `unbind`
+- Renamed `Container.rebind` to `rebindAsync`
+- Renamed `Container.rebindSync` to `rebind`
+- Renamed `ContainerModuleLoadOptions.unbind` to `unbindAsync`
+- Renamed `ContainerModuleLoadOptions.unbindSync` to `unbind`
+- Renamed `ContainerModuleLoadOptions.rebind` to `rebindAsync`
+- Renamed `ContainerModuleLoadOptions.rebindSync` to `rebind`
+- Updated package to be ESM only
+- Renamed `Container.load` to `loadAsync`
+- Renamed `Container.loadSync` to `load`
+- Updated `ServiceIdentifier` type. Now, a `Function` is a valid `ServiceIdentifier<T>` if and only if it satisfies `AbstractNewable<T> | Newable<T>`
+- Renamed `Container.unload` to `unloadAsync`
+- Renamed `Container.unloadSync` to `unload`
+- Renamed `Container.unbindAll` to `Container.unbindAllAsync`
+- Renamed `Container.unbindAllSync` to `Container.unbindAll`
+- Remove `Provider`
+- Remove `ProviderBinding`
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/container@2.0.0-beta.0
+  - @inversifyjs/common@2.0.0-beta.0
+  - @inversifyjs/core@10.0.0-beta.0
+
 ## 7.11.0
 
 ### Minor Changes

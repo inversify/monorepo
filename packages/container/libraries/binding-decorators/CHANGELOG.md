@@ -1,5 +1,17 @@
 # @inversifyjs/binding-decorators
 
+## 2.0.0-beta.0
+
+### Major Changes
+
+- Updated package to be ESM only
+
+### Patch Changes
+
+- Updated dependencies
+  - inversify@8.0.0-beta.0
+  - @inversifyjs/reflect-metadata-utils@1.5.0-beta.0
+
 ## 1.1.5
 
 ### Patch Changes

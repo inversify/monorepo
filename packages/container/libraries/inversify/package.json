@@ -62,5 +62,5 @@
     "test:unit": "pnpm run test --project Unit"
   },
   "sideEffects": true,
-  "version": "7.11.0"
+  "version": "8.0.0-beta.0"
 }

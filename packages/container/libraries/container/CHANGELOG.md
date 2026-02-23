@@ -1,5 +1,34 @@
 # @inversifyjs/container
 
+## 2.0.0-beta.0
+
+### Major Changes
+
+- Renamed `Container.unbind` to `unbindAsync`
+- Renamed `Container.unbindSync` to `unbind`
+- Renamed `Container.rebind` to `rebindAsync`
+- Renamed `Container.rebindSync` to `rebind`
+- Renamed `ContainerModuleLoadOptions.unbind` to `unbindAsync`
+- Renamed `ContainerModuleLoadOptions.unbindSync` to `unbind`
+- Renamed `ContainerModuleLoadOptions.rebind` to `rebindAsync`
+- Renamed `ContainerModuleLoadOptions.rebindSync` to `rebind`
+- Renamed `Container.load` to `loadAsync`
+- Renamed `Container.loadSync` to `load`
+- Updated package to be ESM only
+- Removed `BindingToFluentSyntax.toProvider`
+- Renamed `Container.unload` to `unloadAsync`
+- Renamed `Container.unloadSync` to `unload`
+- Renamed `Container.unbindAll` to `Container.unbindAllAsync`
+- Renamed `Container.unbindAllSync` to `Container.unbindAll`
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/common@2.0.0-beta.0
+  - @inversifyjs/reflect-metadata-utils@1.5.0-beta.0
+  - @inversifyjs/plugin@0.3.0-beta.0
+  - @inversifyjs/core@10.0.0-beta.0
+
 ## 1.15.0
 
 ### Minor Changes

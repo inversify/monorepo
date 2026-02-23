@@ -1,5 +1,23 @@
 # @inversifyjs/core
 
+## 10.0.0-beta.0
+
+### Major Changes
+
+- Remove `Provider`
+- Remove `ProviderBinding`
+
+### Minor Changes
+
+- Updated core package to be ESM only
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/common@2.0.0-beta.0
+  - @inversifyjs/reflect-metadata-utils@1.5.0-beta.0
+  - @inversifyjs/prototype-utils@0.2.0-beta.0
+
 ## 9.2.0
 
 ### Minor Changes

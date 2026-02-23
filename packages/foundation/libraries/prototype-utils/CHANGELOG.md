@@ -1,5 +1,16 @@
 # @inversifyjs/prototype-utils
 
+## 0.2.0-beta.0
+
+### Minor Changes
+
+- Updated package to be ESM only
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/common@2.0.0-beta.0
+
 ## 0.1.3
 
 ### Patch Changes

@@ -41,5 +41,23 @@
     "@inversifyjs/logger": "1.1.0",
     "@inversifyjs/open-api-types": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "beige-mugs-sit",
+    "calm-rivers-arrive",
+    "deep-groups-mix",
+    "fiery-pigs-make",
+    "gold-deer-wink",
+    "lovely-hotels-enjoy",
+    "short-mice-yell",
+    "silent-ravens-retire",
+    "small-readers-raise",
+    "smooth-crews-sin",
+    "swift-modules-drop",
+    "tall-cameras-wave",
+    "tiny-zebras-stay",
+    "twenty-towns-dance",
+    "vast-dancers-exist",
+    "wet-pants-cheer",
+    "witty-turtles-juggle"
+  ]
 }
