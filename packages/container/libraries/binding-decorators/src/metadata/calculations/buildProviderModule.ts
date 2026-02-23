@@ -1,8 +1,8 @@
 import { getReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { ContainerModule, ContainerModuleLoadOptions } from 'inversify';
+import { ContainerModule, type ContainerModuleLoadOptions } from 'inversify';
 
-import { bindingMetadataMapReflectKey } from '../../reflectMetadata/data/bindingMetadataMapReflectKey';
-import { BindingMetadataMap } from '../models/BindingMetadataMap';
+import { bindingMetadataMapReflectKey } from '../../reflectMetadata/data/bindingMetadataMapReflectKey.js';
+import { type BindingMetadataMap } from '../models/BindingMetadataMap.js';
 
 export function buildProviderModule(): ContainerModule {
   return new ContainerModule((options: ContainerModuleLoadOptions): void => {

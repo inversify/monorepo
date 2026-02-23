@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { buildDefaultBindingMetadataMap } from './buildDefaultBindingMetadataMap';
+import { buildDefaultBindingMetadataMap } from './buildDefaultBindingMetadataMap.js';
 
 describe(buildDefaultBindingMetadataMap, () => {
   describe('when called', () => {

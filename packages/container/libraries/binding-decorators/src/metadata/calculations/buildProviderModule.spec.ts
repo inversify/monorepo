@@ -4,18 +4,18 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { getReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { ContainerModuleLoadOptions } from 'inversify';
+import { type ContainerModuleLoadOptions } from 'inversify';
 
-import { bindingMetadataMapReflectKey } from '../../reflectMetadata/data/bindingMetadataMapReflectKey';
-import { BindingMetadata } from '../models/BindingMetadata';
-import { buildProviderModule } from './buildProviderModule';
+import { bindingMetadataMapReflectKey } from '../../reflectMetadata/data/bindingMetadataMapReflectKey.js';
+import { type BindingMetadata } from '../models/BindingMetadata.js';
+import { buildProviderModule } from './buildProviderModule.js';
 
 describe(buildProviderModule, () => {
   let optionsFixture: ContainerModuleLoadOptions;

@@ -1,4 +1,4 @@
-import { BindToFluentSyntax, ServiceIdentifier } from 'inversify';
+import { type BindToFluentSyntax, type ServiceIdentifier } from 'inversify';
 
 type BindAction<T> = (
   bind: (serviceIdentifier: ServiceIdentifier<T>) => BindToFluentSyntax<T>,
