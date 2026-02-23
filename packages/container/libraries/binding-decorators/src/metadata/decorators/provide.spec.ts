@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
@@ -13,16 +13,16 @@ vitest.mock(import('../actions/updateMetadataMap.js'));
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
-  BindInWhenOnFluentSyntax,
-  BindToFluentSyntax,
-  ServiceIdentifier,
+  type BindInWhenOnFluentSyntax,
+  type BindToFluentSyntax,
+  type ServiceIdentifier,
 } from 'inversify';
 
-import { bindingMetadataMapReflectKey } from '../../reflectMetadata/data/bindingMetadataMapReflectKey';
-import { updateMetadataMap } from '../actions/updateMetadataMap';
-import { buildDefaultBindingMetadataMap } from '../calculations/buildDefaultBindingMetadataMap';
-import { BindingMetadataMap } from '../models/BindingMetadataMap';
-import { provide } from './provide';
+import { bindingMetadataMapReflectKey } from '../../reflectMetadata/data/bindingMetadataMapReflectKey.js';
+import { updateMetadataMap } from '../actions/updateMetadataMap.js';
+import { buildDefaultBindingMetadataMap } from '../calculations/buildDefaultBindingMetadataMap.js';
+import { type BindingMetadataMap } from '../models/BindingMetadataMap.js';
+import { provide } from './provide.js';
 
 describe(provide, () => {
   describe('having no service identifier', () => {

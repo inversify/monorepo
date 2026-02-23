@@ -33,6 +33,8 @@
     "@inversifyjs/http-openapi-example",
     "@inversifyjs/inversify-docs-site",
     "@inversifyjs/logger-code-examples",
+    "@inversifyjs/plugin-example",
+    "@inversifyjs/plugin-usage-example",
     "@inversifyjs/react-code-runner",
     "@inversifyjs/validation-code-examples"
   ],

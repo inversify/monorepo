@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Newable } from 'inversify';
+import { type Newable } from 'inversify';
 
-import { BindingMetadata } from '../models/BindingMetadata';
-import { BindingMetadataMap } from '../models/BindingMetadataMap';
-import { updateMetadataMap } from './updateMetadataMap';
+import { type BindingMetadata } from '../models/BindingMetadata.js';
+import { type BindingMetadataMap } from '../models/BindingMetadataMap.js';
+import { updateMetadataMap } from './updateMetadataMap.js';
 
 describe(updateMetadataMap, () => {
   describe('having empty bindingMetadataMap', () => {

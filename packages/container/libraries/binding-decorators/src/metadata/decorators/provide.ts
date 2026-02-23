@@ -1,16 +1,16 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
-  BindInWhenOnFluentSyntax,
-  BindToFluentSyntax,
-  Newable,
-  ServiceIdentifier,
+  type BindInWhenOnFluentSyntax,
+  type BindToFluentSyntax,
+  type Newable,
+  type ServiceIdentifier,
 } from 'inversify';
 
-import { bindingMetadataMapReflectKey } from '../../reflectMetadata/data/bindingMetadataMapReflectKey';
-import { updateMetadataMap } from '../actions/updateMetadataMap';
-import { buildDefaultBindingMetadataMap } from '../calculations/buildDefaultBindingMetadataMap';
-import { BindingMetadata } from '../models/BindingMetadata';
-import { BindingMetadataMap } from '../models/BindingMetadataMap';
+import { bindingMetadataMapReflectKey } from '../../reflectMetadata/data/bindingMetadataMapReflectKey.js';
+import { updateMetadataMap } from '../actions/updateMetadataMap.js';
+import { buildDefaultBindingMetadataMap } from '../calculations/buildDefaultBindingMetadataMap.js';
+import { type BindingMetadata } from '../models/BindingMetadata.js';
+import { type BindingMetadataMap } from '../models/BindingMetadataMap.js';
 
 export function provide<T>(
   serviceIdentifier?: ServiceIdentifier<T> | undefined,

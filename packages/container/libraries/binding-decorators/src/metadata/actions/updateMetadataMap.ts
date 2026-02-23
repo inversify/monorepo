@@ -1,7 +1,7 @@
-import { Newable } from 'inversify';
+import { type Newable } from 'inversify';
 
-import { BindingMetadata } from '../models/BindingMetadata';
-import { BindingMetadataMap } from '../models/BindingMetadataMap';
+import { type BindingMetadata } from '../models/BindingMetadata.js';
+import { type BindingMetadataMap } from '../models/BindingMetadataMap.js';
 
 export function updateMetadataMap(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
