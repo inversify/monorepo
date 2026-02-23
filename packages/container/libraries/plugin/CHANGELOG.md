@@ -1,5 +1,11 @@
 # @inversifyjs/plugin
 
+## 0.3.0-beta.0
+
+### Minor Changes
+
+- Updated package to be ESM only
+
 ## 0.2.0
 
 ### Minor Changes

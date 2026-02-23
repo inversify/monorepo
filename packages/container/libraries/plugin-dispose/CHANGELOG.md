@@ -1,5 +1,18 @@
 # @inversifyjs/plugin-dispose
 
+## 0.3.0-beta.0
+
+### Minor Changes
+
+- Updated package to be ESM only
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/container@2.0.0-beta.0
+  - inversify@8.0.0-beta.0
+  - @inversifyjs/plugin@0.3.0-beta.0
+
 ## 0.2.23
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @inversifyjs/common
 
+## 2.0.0-beta.0
+
+### Major Changes
+
+- Updated `ServiceIdentifier` type. Now, a `Function` is a valid `ServiceIdentifier<T>` if and only if it satisfies `AbstractNewable<T> | Newable<T>`
+- Updated package to be ESM only
+
 ## 1.5.2
 
 ### Patch Changes

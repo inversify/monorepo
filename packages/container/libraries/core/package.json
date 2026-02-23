@@ -65,5 +65,5 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "version": "9.2.0"
+  "version": "10.0.0-beta.0"
 }
