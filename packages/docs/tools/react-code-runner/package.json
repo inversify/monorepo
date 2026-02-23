@@ -12,7 +12,7 @@
     "@inversifyjs/container": "workspace:*",
     "@inversifyjs/core": "workspace:*",
     "@inversifyjs/plugin": "0.2.0",
-    "@microsoft/api-extractor": "7.57.2",
+    "@microsoft/api-extractor": "7.57.3",
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-terser": "0.4.4",
     "@rollup/plugin-typescript": "12.3.0",
@@ -31,14 +31,14 @@
     "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.56.0",
+    "typescript-eslint": "8.56.1",
     "vite": "7.3.1",
     "vite-plugin-dts": "4.5.4",
     "vite-plugin-lib-inject-css": "2.2.2"
   },
   "peerDependencies": {
     "@babel/standalone": "^7.29.1",
-    "@swc/wasm-web": "^1.15.11",
+    "@swc/wasm-web": "^1.15.13",
     "monaco-editor": "~0.55.1",
     "react": "19.2.4"
   },
