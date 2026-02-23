@@ -48,6 +48,5 @@
     "format": "prettier --write ./src",
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean"
-  },
-  "version": "1.0.2"
+  }
 }
