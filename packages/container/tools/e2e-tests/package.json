@@ -5,7 +5,7 @@
   },
   "description": "InversifyJs E2E tests package",
   "dependencies": {
-    "@cucumber/cucumber": "12.6.0",
+    "@cucumber/cucumber": "12.7.0",
     "@inversifyjs/common": "workspace:*",
     "@inversifyjs/container": "workspace:*",
     "@inversifyjs/core": "workspace:*"
