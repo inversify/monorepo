@@ -20,7 +20,7 @@
     "ajv": "8.18.0",
     "ajv-formats": "3.0.1",
     "class-transformer": "~0.5.1",
-    "class-validator": "~0.14.3",
+    "class-validator": "~0.14.4",
     "eslint": "9.39.3",
     "express": "5.2.1",
     "glob": "13.0.6",
