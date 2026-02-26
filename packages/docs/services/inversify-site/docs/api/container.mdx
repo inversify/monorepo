@@ -2,18 +2,18 @@
 sidebar_position: 2
 title: Container
 ---
-import containerApiGetAllSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAll.ts.txt';
-import containerApiGetAllAsyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAllAsync.ts.txt';
-import containerApiGetAsyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAsync.ts.txt';
-import containerApiGetSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGet.ts.txt';
-import containerApiIsBoundSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiIsBound.ts.txt';
-import containerApiIsCurrentBoundSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiIsCurrentBound.ts.txt';
-import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiOnActivation.ts.txt';
-import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiOnDeactivation.ts.txt';
-import containerApiUnbindBindingIdSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiUnbindBindingId.ts.txt';
-import containerApiUnbindSyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiUnbindSync.ts.txt';
-import containerApiRebindSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiRebind.ts.txt';
-import containerApiRebindSyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiRebindSync.ts.txt';
+import containerApiGetAllSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAll.ts.txt';
+import containerApiGetAllAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllAsync.ts.txt';
+import containerApiGetAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAsync.ts.txt';
+import containerApiGetSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGet.ts.txt';
+import containerApiIsBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsBound.ts.txt';
+import containerApiIsCurrentBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsCurrentBound.ts.txt';
+import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnActivation.ts.txt';
+import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnDeactivation.ts.txt';
+import containerApiUnbindBindingIdSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiUnbindBindingId.ts.txt';
+import containerApiUnbindSyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiUnbindSync.ts.txt';
+import containerApiRebindSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiRebind.ts.txt';
+import containerApiRebindSyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiRebindSync.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 # Container
@@ -133,18 +133,18 @@ You can use the `isCurrentBound` method to check if there are registered binding
 ## load
 
 ```ts
-load(...modules: ContainerModule[]): Promise<void>;
+load(...modules: ContainerModule[]): void;
 ```
 
-Calls the registration method of each module. See [ContainerModule API docs](./container-module.mdx).
+Calls the registration method of each module synchronously. Will throw an error if any module loading would be asynchronous. See [ContainerModule API docs](./container-module.mdx).
 
-## loadSync
+## loadAsync
 
 ```ts
-loadSync(...modules: ContainerModule[]): void;
+loadAsync(...modules: ContainerModule[]): Promise<void>;
 ```
 
-Synchronous version of `load`. Calls the registration method of each module. Will throw an error if any module loading would be asynchronous. See [ContainerModule API docs](./container-module.mdx).
+Asynchronous version of `load`. Calls the registration method of each module. See [ContainerModule API docs](./container-module.mdx).
 
 ## onActivation
 
@@ -169,22 +169,22 @@ Adds a deactivation handler for a service identifier.
 ## rebind
 
 ```ts
-async rebind<T>(serviceIdentifier: ServiceIdentifier<T>): Promise<BindToFluentSyntax<T>>;
+rebind<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>;
 ```
 
-Convenience method that unbinds a service identifier and then creates a new binding for it. This is equivalent to calling `await container.unbind(serviceId)` followed by `container.bind(serviceId)`, but in a single method. Returns a binding builder to continue configuring the new binding.
-
-<CodeBlock language="ts">{containerApiRebindSource}</CodeBlock>
-
-## rebindSync
-
-```ts
-rebindSync<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>;
-```
-
-Synchronous version of `rebind`. Unbinds a service identifier synchronously and then creates a new binding for it. Will throw an error if the unbind operation would be asynchronous. Returns a binding builder to continue configuring the new binding.
+Convenience method that unbinds a service identifier synchronously and then creates a new binding for it. This is equivalent to calling `container.unbind(serviceId)` followed by `container.bind(serviceId)`, but in a single method. Returns a binding builder to continue configuring the new binding.
 
 <CodeBlock language="ts">{containerApiRebindSyncSource}</CodeBlock>
+
+## rebindAsync
+
+```ts
+rebindAsync<T>(serviceIdentifier: ServiceIdentifier<T>): Promise<BindToFluentSyntax<T>>;
+```
+
+Asynchronous version of `rebind`. Unbinds a service identifier and then creates a new binding for it. Returns a binding builder to continue configuring the new binding.
+
+<CodeBlock language="ts">{containerApiRebindSource}</CodeBlock>
 
 ## register
 
@@ -213,61 +213,65 @@ Save the state of the container to be later restored with the restore method. Re
 ## unbind
 
 ```ts
-unbind(identifier: BindingIdentifier | ServiceIdentifier): Promise<void>;
+unbind(identifier: BindingIdentifier | ServiceIdentifier): void;
 ```
 
-Removes bindings from the container. When passed:
+Removes bindings from the container synchronously. When passed:
 - A service identifier: removes all bindings bound to that service identifier
 - A binding identifier: removes the specific binding associated with that identifier
 
 This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
 
+<CodeBlock language="ts">{containerApiUnbindSyncSource}</CodeBlock>
+
 ### Example: Unbind a binding by its identifier
 
 <CodeBlock language="ts">{containerApiUnbindBindingIdSource}</CodeBlock>
 
+## unbindAsync
+
+```ts
+unbindAsync(identifier: BindingIdentifier | ServiceIdentifier): Promise<void>;
+```
+
+Asynchronous version of `unbind`. Removes bindings from the container. When passed:
+- A service identifier: removes all bindings bound to that service identifier
+- A binding identifier: removes the specific binding associated with that identifier
+
+This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+
 ## unbindAll
 
 ```ts
-unbindAll(): Promise<void>;
+unbindAll(): void;
 ```
 
-Remove all bindings binded in this container.  This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+Removes all bindings in this container synchronously. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
 
-## unbindAllSync
+## unbindAllAsync
 
 ```ts
-unbindAllSync(): void;
+unbindAllAsync(): Promise<void>;
 ```
 
-Synchronous version of `unbindAll`. Remove all bindings binded in this container. Will throw an error if any unbinding operation would be asynchronous. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
-
-## unbindSync
-
-```ts
-unbindSync(identifier: BindingIdentifier | ServiceIdentifier): void;
-```
-
-Removes bindings from the container synchronously. This method works like `unbind` but does not return a Promise. If the unbinding operation would be asynchronous (e.g., due to deactivation handlers), it will throw an error. Use this method when you know the operation won't involve async deactivations.
-
-<CodeBlock language="ts">{containerApiUnbindSyncSource}</CodeBlock>
+Asynchronous version of `unbindAll`. Removes all bindings in this container. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
 
 ## unload
 
 ```ts
-unload(...modules: ContainerModule[]): Promise<void>;
+unload(...modules: ContainerModule[]): void;
 ```
 
-Removes bindings and handlers added by the modules. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+Removes bindings and handlers added by the modules synchronously. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
 See [ContainerModule API docs](./container-module.mdx).
 
-## unloadSync
+## unloadAsync
 
 ```ts
-unloadSync(...modules: ContainerModule[]): void;
+unloadAsync(...modules: ContainerModule[]): Promise<void>;
 ```
 
-Synchronous version of `unload`. Removes bindings and handlers added by the modules. Will throw an error if any module unloading would be asynchronous. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+Asynchronous version of `unload`. Removes bindings and handlers added by the modules. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
 See [ContainerModule API docs](./container-module.mdx).
 
 ## GetOptions

@@ -13,6 +13,7 @@
     "glob": "13.0.6",
     "inversify6": "npm:inversify@6.2.2",
     "inversify7": "npm:inversify@7.11.0",
+    "inversify8": "npm:inversify@8.0.0-beta.0",
     "prettier": "3.8.1",
     "reflect-metadata": "0.2.2",
     "rimraf": "6.1.3",
