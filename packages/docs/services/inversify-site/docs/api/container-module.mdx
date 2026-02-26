@@ -2,7 +2,7 @@
 sidebar_position: 3
 title: Container Module
 ---
-import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v7/containerModuleApiExample.ts.txt';
+import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v8/containerModuleApiExample.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 # ContainerModule
@@ -22,7 +22,7 @@ The constructor argument for `ContainerModule` is a load callback with function 
 #### load
 
 ```ts
-load(options: ContainerModuleLoadOptions): Promise<void>
+load(options: ContainerModuleLoadOptions): void | Promise<void>
 ```
 
 Loads the container module with the provided options.
@@ -63,21 +63,37 @@ onDeactivation: <T>(serviceIdentifier: ServiceIdentifier<T>, deactivation: Bindi
 
 Refer to the [docs](./container.mdx#ondeactivation) for more information.
 
+### rebind
+
+```ts
+rebind: <T>(serviceIdentifier: ServiceIdentifier<T>) => BindToFluentSyntax<T>
+```
+
+Refer to the [docs](./container.mdx#rebind) for more information.
+
+### rebindAsync
+
+```ts
+rebindAsync: <T>(serviceIdentifier: ServiceIdentifier<T>) => Promise<BindToFluentSyntax<T>>
+```
+
+Refer to the [docs](./container.mdx#rebindasync) for more information.
+
 ### unbind
 
 ```ts
-unbind: (serviceIdentifier: ServiceIdentifier) => Promise<void>
+unbind: (identifier: BindingIdentifier | ServiceIdentifier) => void
 ```
 
 Refer to the [docs](./container.mdx#unbind) for more information.
 
-### unbindSync
+### unbindAsync
 
 ```ts
-unbindSync: (identifier: BindingIdentifier | ServiceIdentifier) => void
+unbindAsync: (identifier: BindingIdentifier | ServiceIdentifier) => Promise<void>
 ```
 
-Refer to the [docs](./container.mdx#unbindsync) for more information.
+Refer to the [docs](./container.mdx#unbindasync) for more information.
 
 ## Example: binding services through ContainerModule API
 

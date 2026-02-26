@@ -2,18 +2,17 @@
 sidebar_position: 1
 title: Binding Syntax
 ---
-import bindingOnSyntaxApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v7/bindingOnSyntaxApiOnActivation.ts.txt';
-import bindingToSyntaxApiToSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiTo.ts.txt';
-import bindingToSyntaxApiToConstantValueSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToConstantValue.ts.txt';
-import bindingToSyntaxApiToDynamicValueSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToDynamicValue.ts.txt';
-import bindingToSyntaxApiToFactorySource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToFactory.ts.txt';
-import bindingToSyntaxApiToProviderSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToProvider.ts.txt';
-import bindingToSyntaxApiToResolvedValueSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToResolvedValue.ts.txt';
-import bindingToSyntaxApiToResolvedValueAdvancedSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToResolvedValueAdvanced.ts.txt';
-import bindingToSyntaxApiToSelfSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToSelf.ts.txt';
-import bindingToSyntaxApiToServiceSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToService.ts.txt';
-import bindingSyntaxApiGetIdentifierSource from '@inversifyjs/code-examples/generated/examples/v7/bindingSyntaxApiGetIdentifier.ts.txt';
-import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/v7/bindingWhenSyntaxApiWhen.ts.txt';
+import bindingOnSyntaxApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/bindingOnSyntaxApiOnActivation.ts.txt';
+import bindingToSyntaxApiToSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiTo.ts.txt';
+import bindingToSyntaxApiToConstantValueSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToConstantValue.ts.txt';
+import bindingToSyntaxApiToDynamicValueSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToDynamicValue.ts.txt';
+import bindingToSyntaxApiToFactorySource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToFactory.ts.txt';
+import bindingToSyntaxApiToResolvedValueSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToResolvedValue.ts.txt';
+import bindingToSyntaxApiToResolvedValueAdvancedSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToResolvedValueAdvanced.ts.txt';
+import bindingToSyntaxApiToSelfSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToSelf.ts.txt';
+import bindingToSyntaxApiToServiceSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToService.ts.txt';
+import bindingSyntaxApiGetIdentifierSource from '@inversifyjs/code-examples/generated/examples/v8/bindingSyntaxApiGetIdentifier.ts.txt';
+import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/v8/bindingWhenSyntaxApiWhen.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 # Binding Syntax
@@ -117,28 +116,6 @@ toFactory(
 Binds a factory to the given service identifier. Whenever the service is resolved, the factory will be passed as the resolved value.
 
 <CodeBlock language="ts">{bindingToSyntaxApiToFactorySource}</CodeBlock>
-
-### toProvider
-
-:::warning Deprecated
-
-`toProvider()` is deprecated and will be removed in v8. Use `toFactory()` instead.
-
-Providers exist for historical reasons from v5 when async dependencies weren't supported. In v6+, async dependencies are supported, making providers obsolete. Factories are more flexible and can handle both synchronous and asynchronous operations.
-
-:::
-
-```ts
-toProvider(
-  provider: T extends Provider<unknown, any>
-    ? (context: ResolutionContext) => T
-    : never,
-): BindWhenOnFluentSyntax<T>;
-```
-
-Binds a provider of services associated with a target service identifier to the given service identifier. A provider is just an asynchronous factory.
-
-<CodeBlock language="ts">{bindingToSyntaxApiToProviderSource}</CodeBlock>
 
 ### toResolvedValue
 
