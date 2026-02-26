@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { soldier } from './decoratorApiInjectFromBaseProperties.js';
 
 describe('Decorator API (inject)', () => {
-  it('should provide a ninja with a weapon with right damage', () => {
+  it('should provide a soldier with a weapon with right damage', () => {
     expect(soldier.weapon).toBe('sword');
   });
 });
