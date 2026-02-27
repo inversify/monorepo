@@ -16,7 +16,7 @@
     "@stryker-mutator/typescript-checker": "9.5.1",
     "@stryker-mutator/vitest-runner": "9.5.1",
     "@types/express": "5.0.6",
-    "@types/node": "24.10.13",
+    "@types/node": "24.10.15",
     "@vitest/coverage-v8": "4.0.18",
     "eslint": "9.39.3",
     "inversify": "^7.11.0",
@@ -55,7 +55,7 @@
   "name": "@inversifyjs/class-validation",
   "peerDependencies": {
     "class-transformer": "~0.5.1",
-    "class-validator": "~0.14.4"
+    "class-validator": "~0.15.1"
   },
   "publishConfig": {
     "access": "public"
