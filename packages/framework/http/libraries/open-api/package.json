@@ -9,7 +9,7 @@
     "@inversifyjs/json-schema-pointer": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "1.4.1",
     "mime-types": "^3.0.2",
-    "swagger-ui-dist": "^5.31.2"
+    "swagger-ui-dist": "^5.32.0"
   },
   "devDependencies": {
     "@hono/node-server": "1.19.9",
@@ -25,7 +25,7 @@
     "@types/express": "5.0.6",
     "@types/express4": "npm:@types/express@4.17.25",
     "@types/mime-types": "3.0.1",
-    "@types/node": "24.10.13",
+    "@types/node": "24.10.15",
     "@types/swagger-ui-dist": "3.30.6",
     "@vitest/coverage-v8": "4.0.18",
     "eslint": "9.39.3",

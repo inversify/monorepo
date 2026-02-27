@@ -13,7 +13,7 @@
     "@inversifyjs/http-express": "4.10.2",
     "@apollo/server": "5.4.0",
     "@types/express": "5.0.6",
-    "@types/node": "24.10.13",
+    "@types/node": "24.10.15",
     "@vitest/coverage-v8": "4.0.18",
     "eslint": "9.39.3",
     "fastify": "5.7.4",
