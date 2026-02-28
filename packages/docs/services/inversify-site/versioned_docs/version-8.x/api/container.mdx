@@ -1,0 +1,331 @@
+---
+sidebar_position: 2
+title: Container
+---
+import containerApiGetAllSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAll.ts.txt';
+import containerApiGetAllAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllAsync.ts.txt';
+import containerApiGetAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAsync.ts.txt';
+import containerApiGetSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGet.ts.txt';
+import containerApiIsBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsBound.ts.txt';
+import containerApiIsCurrentBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsCurrentBound.ts.txt';
+import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnActivation.ts.txt';
+import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnDeactivation.ts.txt';
+import containerApiUnbindBindingIdSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiUnbindBindingId.ts.txt';
+import containerApiUnbindSyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiUnbindSync.ts.txt';
+import containerApiRebindSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiRebind.ts.txt';
+import containerApiRebindSyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiRebindSync.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Container
+
+The InversifyJS container is where dependencies are first configured through binding and, possibly later, reconfigured and removed. The container can be worked on directly in this regard or container modules can be utilized.
+You can query the configuration and resolve configured dependencies with the `get` methods.
+You can react to resolutions with container activation handlers and unbinding with container deactivation handlers.
+You can create container hierarchies where container ascendants can supply the dependencies for descendants.
+For testing, state can be saved as a snapshot on a stack and later restored.
+
+## Container Options
+
+Container options can be passed to the Container constructor, and defaults will be provided if you do not or if you do but omit an option.
+Options can be changed after construction and will be shared by child containers created from the Container if you do not provide options for them.
+
+### autobind
+
+```ts
+autobind?: true;
+```
+
+Option to automatically bind unbound class services to themselves. Whenever an instance is resolved, the container attempts to add a binding if no binding is found for the requested service.
+
+### parent
+
+```ts
+parent?: Container | undefined;
+```
+
+The parent container, if any. Refer to the [container hierarchy docs](../fundamentals/di-hierarchy.mdx) for more information.
+
+### defaultScope
+
+```ts
+defaultScope?: BindingScope | undefined;
+```
+
+The default scope for bindings.
+
+## bind
+
+```ts
+bind<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>
+```
+
+Sets a new binding.
+
+:::info
+
+Unless specified otherwise, binding scopes are [transient](fundamentals/binding.mdx#transient) by default.
+
+:::
+
+## get
+
+```ts
+get<T>(serviceIdentifier: ServiceIdentifier<T>, options: OptionalGetOptions): T | undefined;
+get<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetOptions): T;
+```
+
+Resolves a dependency by its runtime identifier. The runtime identifier must be associated with only one binding and the binding must be synchronously resolved, otherwise an error is thrown.
+
+<CodeBlock language="ts">{containerApiGetSource}</CodeBlock>
+
+## getAsync
+
+```ts
+getAsync<T>(serviceIdentifier: ServiceIdentifier<T>, options: OptionalGetOptions): Promise<T | undefined>;
+getAsync<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetOptions): Promise<T>;
+```
+
+Resolves a dependency by its runtime identifier. The runtime identifier must be associated with only one binding, otherwise an error is thrown.
+
+<CodeBlock language="ts">{containerApiGetAsyncSource}</CodeBlock>
+
+## getAll
+
+```ts
+getAll<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetAllOptions): T[];
+```
+
+Get all available bindings for a given identifier. All the bindings must be synchronously resolved, otherwise an error is thrown:
+
+<CodeBlock language="ts">{containerApiGetAllSource}</CodeBlock>
+
+## getAllAsync
+
+```ts
+getAllAsync<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetAllOptions): Promise<T[]>
+```
+
+Get all available bindings for a given identifier:
+
+<CodeBlock language="ts">{containerApiGetAllAsyncSource}</CodeBlock>
+
+## isBound
+
+```ts
+isBound(serviceIdentifier: ServiceIdentifier<unknown>, options?: IsBoundOptions): boolean;
+```
+
+You can use the `isBound` method to check if there are registered bindings for a given service identifier.
+
+<CodeBlock language="ts">{containerApiIsBoundSource}</CodeBlock>
+
+
+## isCurrentBound
+
+```ts
+isCurrentBound(serviceIdentifier: ServiceIdentifier<unknown>, options?: IsBoundOptions): boolean;
+```
+
+You can use the `isCurrentBound` method to check if there are registered bindings for a given service identifier only in the current container.
+
+<CodeBlock language="ts">{containerApiIsCurrentBoundSource}</CodeBlock>
+
+## load
+
+```ts
+load(...modules: ContainerModule[]): void;
+```
+
+Calls the registration method of each module synchronously. Will throw an error if any module loading would be asynchronous. See [ContainerModule API docs](./container-module.mdx).
+
+## loadAsync
+
+```ts
+loadAsync(...modules: ContainerModule[]): Promise<void>;
+```
+
+Asynchronous version of `load`. Calls the registration method of each module. See [ContainerModule API docs](./container-module.mdx).
+
+## onActivation
+
+```ts
+onActivation<T>(serviceIdentifier: ServiceIdentifier<T>, onActivation: BindingActivation<T>): void;
+```
+
+Adds an activation handler for all services associated to the service identifier.
+
+<CodeBlock language="ts">{containerApiOnActivationSource}</CodeBlock>
+
+## onDeactivation
+
+```ts
+onDeactivation<T>(serviceIdentifier: ServiceIdentifier<T>, onDeactivation: BindingDeactivation<T>): void;
+```
+
+Adds a deactivation handler for a service identifier.
+
+<CodeBlock language="ts">{containerApiOnDeactivationSource}</CodeBlock>
+
+## rebind
+
+```ts
+rebind<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>;
+```
+
+Convenience method that unbinds a service identifier synchronously and then creates a new binding for it. This is equivalent to calling `container.unbind(serviceId)` followed by `container.bind(serviceId)`, but in a single method. Returns a binding builder to continue configuring the new binding.
+
+<CodeBlock language="ts">{containerApiRebindSyncSource}</CodeBlock>
+
+## rebindAsync
+
+```ts
+rebindAsync<T>(serviceIdentifier: ServiceIdentifier<T>): Promise<BindToFluentSyntax<T>>;
+```
+
+Asynchronous version of `rebind`. Unbinds a service identifier and then creates a new binding for it. Returns a binding builder to continue configuring the new binding.
+
+<CodeBlock language="ts">{containerApiRebindSource}</CodeBlock>
+
+## register
+
+```ts
+register(pluginConstructor: Newable): void;
+```
+
+Registers a plugin to extend the container's functionality. The plugin must extend the `Plugin` class from `@inversifyjs/plugin` and respect its constructor signature. Refer to the [plugin docs](../fundamentals/plugins.mdx) for more information.
+
+## restore
+
+```ts
+restore(): void;
+```
+
+Restore container state to last snapshot. Refer to the [docs](../fundamentals/snapshot.mdx) for more information.
+
+## snapshot
+
+```ts
+snapshot(): void;
+```
+
+Save the state of the container to be later restored with the restore method. Refer to the [docs](../fundamentals/snapshot.mdx) for more information.
+
+## unbind
+
+```ts
+unbind(identifier: BindingIdentifier | ServiceIdentifier): void;
+```
+
+Removes bindings from the container synchronously. When passed:
+- A service identifier: removes all bindings bound to that service identifier
+- A binding identifier: removes the specific binding associated with that identifier
+
+This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+
+<CodeBlock language="ts">{containerApiUnbindSyncSource}</CodeBlock>
+
+### Example: Unbind a binding by its identifier
+
+<CodeBlock language="ts">{containerApiUnbindBindingIdSource}</CodeBlock>
+
+## unbindAsync
+
+```ts
+unbindAsync(identifier: BindingIdentifier | ServiceIdentifier): Promise<void>;
+```
+
+Asynchronous version of `unbind`. Removes bindings from the container. When passed:
+- A service identifier: removes all bindings bound to that service identifier
+- A binding identifier: removes the specific binding associated with that identifier
+
+This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+
+## unbindAll
+
+```ts
+unbindAll(): void;
+```
+
+Removes all bindings in this container synchronously. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+
+## unbindAllAsync
+
+```ts
+unbindAllAsync(): Promise<void>;
+```
+
+Asynchronous version of `unbindAll`. Removes all bindings in this container. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+
+## unload
+
+```ts
+unload(...modules: ContainerModule[]): void;
+```
+
+Removes bindings and handlers added by the modules synchronously. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+See [ContainerModule API docs](./container-module.mdx).
+
+## unloadAsync
+
+```ts
+unloadAsync(...modules: ContainerModule[]): Promise<void>;
+```
+
+Asynchronous version of `unload`. Removes bindings and handlers added by the modules. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+See [ContainerModule API docs](./container-module.mdx).
+
+## GetOptions
+
+Options that can be passed to the `get`, `getAll`, `getAsync`, and `getAllAsync` methods.
+
+```ts
+interface GetOptions {
+  autobind?: boolean;
+  name?: MetadataName;
+  optional?: boolean;
+  tag?: GetOptionsTagConstraint;
+}
+```
+
+- `autobind` (boolean): Option to automatically bind unbound class services to themselves.
+- `name` (MetadataName): The name metadata to match bindings.
+- `optional` (boolean): If true, the method will return `undefined` or empty array if no binding is found.
+- `tag` (GetOptionsTagConstraint): The tag metadata to match bindings.
+
+## OptionalGetOptions
+
+Options that can be passed to the `get` and `getAsync` methods when the result is optional.
+
+```ts
+interface OptionalGetOptions extends GetOptions {
+  optional: true;
+}
+```
+
+- `optional` (true): Indicates that the result is optional and the method will return `undefined` if no binding is found.
+
+## IsBoundOptions
+
+Options that can be passed to the `isBound` and `isCurrentBound` methods.
+
+```ts
+interface IsBoundOptions {
+  name?: MetadataName;
+  tag?: GetOptionsTagConstraint;
+}
+```
+
+- `name` (MetadataName): The name metadata to match bindings.
+- `tag` (GetOptionsTagConstraint): The tag metadata to match bindings.
+
+## GetAllOptions
+
+Options that can be passed to the `getAll` and `getAllAsync` methods.
+
+```ts
+interface GetAllOptions extends GetOptions {
+  chained?: boolean;
+}
+```
+
+- `chained` (boolean): Option to enable chained resolution across container hierarchies. Refer to the [docs](../fundamentals/di-hierarchy.mdx#chained-resolution-mode) for more information.

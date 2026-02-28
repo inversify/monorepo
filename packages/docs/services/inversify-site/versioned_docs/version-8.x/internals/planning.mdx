@@ -1,0 +1,116 @@
+---
+sidebar_position: 1
+title: Planning phase
+---
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import DocusaurusInversifyCodeEditor from '@site/src/components/DocusaurusInversifyCodeEditor';
+
+# Planning Phase
+
+The planning phase is a critical step that occurs every time you request a service from an InversifyJS container. Before any instances are created or values are resolved, InversifyJS builds a comprehensive **plan tree** that maps out exactly how to satisfy your dependency request.
+
+## What is a Plan Tree?
+
+A plan tree is a hierarchical data structure that describes the complete resolution strategy for a service. It captures:
+
+- Which [bindings](../fundamentals/binding.mdx) will be used to resolve each service
+- What dependencies each service requires (constructor parameters and properties)
+- The order in which services must be resolved
+- Metadata about each binding and its resolution requirements
+
+Think of it as a blueprint that the container follows during the resolution phase to construct and wire together your dependency graph.
+
+## How Planning Works
+
+When you call `container.get()` or `container.getAll()`, InversifyJS performs the following steps:
+
+### 1. Cache Check
+
+First, the container checks if a plan already exists in its cache for the requested service identifier and constraints (name, tags, etc.). If a matching plan is found, it's reused immediately, avoiding redundant planning work.
+
+### 2. Building the Service Node
+
+If no cached plan exists, InversifyJS builds a **service node** for the requested service:
+
+1. **Constraint Building**: The container builds a constraint list from your request parameters (service identifier, name, tags, optional/multiple flags)
+2. **Binding Filtering**: All [bindings](../fundamentals/binding.mdx) for the service identifier are filtered based on these constraints using each binding's `isSatisfiedBy()` method
+3. **Autobinding**: If no bindings are found and autobinding is enabled, a new instance binding is automatically created for the service
+
+### 3. Processing Each Binding
+
+For each matching binding, InversifyJS creates a **binding node** based on the binding type:
+
+- **Instance Bindings**: Creates an `InstanceBindingNode` that includes the class metadata and recursively plans all constructor parameters and property injections
+- **Resolved Value Bindings**: Creates a `ResolvedValueBindingNode` that recursively plans all parameters required by the factory function
+- **Service Redirection Bindings**: Creates a `PlanServiceRedirectionBindingNode` that redirects to another service identifier
+- **Leaf Bindings** (Constant, Dynamic Value, Factory, Provider): Creates a `LeafBindingNode` with no child dependencies
+
+### 4. Recursive Dependency Planning
+
+For bindings with dependencies (instance and resolved value bindings), InversifyJS recursively builds plan nodes for each dependency. This creates a tree structure where:
+
+- Each service node represents a service to be resolved
+- Each binding node represents how that service will be resolved
+- Child nodes represent the dependencies required by that resolution strategy
+
+### 5. Lazy Evaluation
+
+To optimize performance, some parts of the plan tree use **lazy evaluation**. Child dependency nodes are wrapped in `LazyPlanServiceNode` instances that defer their full planning until actually needed during resolution. This avoids planning unused branches in scenarios with optional dependencies or conditional logic.
+
+### 6. Validation
+
+After building the tree, InversifyJS validates it:
+
+- For single injections (`container.get()`), ensures exactly one binding was found (or zero for optional injections)
+- Detects circular dependencies by tracking the service branch during planning and throwing descriptive errors
+- Validates that all required constraints are satisfied
+
+### 7. Caching
+
+The completed plan tree is stored in the container's plan cache, indexed by the service identifier and constraint options. Subsequent requests for the same service with the same constraints will reuse this cached plan, making repeated resolutions much faster.
+
+## Context-Free vs Context-Dependent Plans
+
+Plan trees track whether they are **context-free** or **context-dependent**:
+
+- **Context-free plans**: Don't depend on ancestor services (no usage of ancestor-based constraints). These can be safely cached and reused across different resolution contexts.
+- **Context-dependent plans**: Use ancestor-based constraints (e.g., filtering by parent service). These are still cached but marked as context-dependent.
+
+## Plan Tree Structure
+
+A complete plan result contains:
+
+```typescript
+interface PlanResult {
+  tree: {
+    root: PlanServiceNode
+  }
+}
+```
+
+Each `PlanServiceNode` includes:
+- `serviceIdentifier`: The service being resolved
+- `bindings`: One or more binding nodes describing how to resolve it
+- `isContextFree`: Whether this node depends on resolution context
+
+Each binding node contains:
+- `binding`: The actual binding instance
+- Type-specific metadata (class metadata, parameters, property injections, etc.)
+- Child service nodes for dependencies
+
+## Visualizing Plan Trees
+
+Use the interactive code editor below to experiment with different binding configurations and see the generated plan trees. The editor allows you to write InversifyJS code and visualizes the resulting plan structure, helping you understand how the container resolves your dependencies.
+
+<DocusaurusInversifyCodeEditor style={{ height: 500 }} />
+
+## Performance Considerations
+
+The planning phase is designed to be efficient:
+
+- **Caching**: Plans are cached and reused for identical requests
+- **Lazy evaluation**: Unnecessary branches aren't fully evaluated
+- **Immutable data structures**: Uses immutable linked lists for efficient constraint list management
+- **Early validation**: Catches configuration errors during planning rather than during resolution
+
+Most of the computational cost happens during the first request for a service. Subsequent requests benefit from the cached plan, making them significantly faster.

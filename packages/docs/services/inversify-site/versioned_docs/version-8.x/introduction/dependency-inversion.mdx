@@ -1,0 +1,20 @@
+---
+sidebar_position: 2
+title: Dependency inversion
+---
+import CodeBlock from '@theme/CodeBlock';
+import dependencyInversionSource from '@inversifyjs/code-examples/generated/examples/v8/dependencyInversion.ts.txt';
+
+# Dependency inversion
+
+To apply the dependency inversion principle, you can use injection symbols:
+
+<CodeBlock language="ts">{dependencyInversionSource}</CodeBlock>
+
+By using symbols, you can provide interface implementations in a way that the dependent class is not aware of the dependency implementation details.
+
+:::note
+
+Although symbols are recommended for this purpose, InversifyJS also supports using Classes and string literals as service identifiers.
+
+:::

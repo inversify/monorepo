@@ -1,0 +1,429 @@
+---
+sidebar_position: 1
+title: 绑定语法
+---
+import bindingOnSyntaxApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/bindingOnSyntaxApiOnActivation.ts.txt';
+import bindingToSyntaxApiToSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiTo.ts.txt';
+import bindingToSyntaxApiToConstantValueSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToConstantValue.ts.txt';
+import bindingToSyntaxApiToDynamicValueSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToDynamicValue.ts.txt';
+import bindingToSyntaxApiToFactorySource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToFactory.ts.txt';
+import bindingToSyntaxApiToResolvedValueSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToResolvedValue.ts.txt';
+import bindingToSyntaxApiToResolvedValueAdvancedSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToResolvedValueAdvanced.ts.txt';
+import bindingToSyntaxApiToSelfSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToSelf.ts.txt';
+import bindingToSyntaxApiToServiceSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToService.ts.txt';
+import bindingSyntaxApiGetIdentifierSource from '@inversifyjs/code-examples/generated/examples/v8/bindingSyntaxApiGetIdentifier.ts.txt';
+import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/v8/bindingWhenSyntaxApiWhen.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 绑定语法
+
+绑定语法是使用 [容器 API](./container.mdx#bind) 或 [容器模块 API](./container-module.mdx#bind) 产生的流畅接口。
+
+## BoundServiceSyntax
+
+```ts
+interface BoundServiceSyntax {
+  getIdentifier(): BindingIdentifier;
+}
+```
+
+所有绑定语法接口实现的基础接口。提供对绑定唯一标识符的访问。
+
+### getIdentifier
+
+```ts
+getIdentifier(): BindingIdentifier;
+```
+
+返回此特定绑定的唯一标识符。此标识符可与 `container.unbind()` 一起使用，以仅删除此绑定，而不是删除服务的所有绑定。
+
+示例：
+
+<CodeBlock language="ts">{bindingSyntaxApiGetIdentifierSource}</CodeBlock>
+
+## BindToFluentSyntax
+
+```ts
+interface BindToFluentSyntax<T> {
+  // ...
+}
+```
+
+表示给定服务标识符的服务绑定。
+
+```ts
+const bindingToSyntax = container.bind('service-id');
+```
+
+进一步的文档将此服务标识符称为“给定服务标识符”。
+
+### to
+
+```ts
+to(type: Newable<T>): BindInWhenOnFluentSyntax<T>;
+```
+
+将类实例化绑定到给定的服务绑定。每当解析服务时，都会调用类构造函数来构建解析值。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToSource}</CodeBlock>
+
+### toSelf
+
+```ts
+toSelf(): BindInWhenOnFluentSyntax<T>;
+```
+
+如果给定的服务标识符是一个类，则建立到该类的类型绑定。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToSelfSource}</CodeBlock>
+
+### toConstantValue
+
+```ts
+toConstantValue(value: T): BindWhenOnFluentSyntax<T>;
+```
+
+将单例作用域中的值绑定到给定的服务标识符。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToConstantValueSource}</CodeBlock>
+
+### toDynamicValue
+
+```ts
+toDynamicValue(builder: DynamicValueBuilder<T>): BindInWhenOnFluentSyntax<T>;
+```
+
+将函数绑定到给定的服务标识符。每当解析服务时，都会调用传递的函数来构建解析值。
+
+:::info
+
+请记住，如果服务缓存在当前作用域中，则不会解析该服务。
+
+:::
+
+<CodeBlock language="ts">{bindingToSyntaxApiToDynamicValueSource}</CodeBlock>
+
+### toFactory
+
+```ts
+toFactory(
+  factory: T extends Factory<unknown, any>
+    ? (context: ResolutionContext) => T | Promise<T>
+    : never,
+): BindWhenOnFluentSyntax<T>;
+```
+
+将工厂绑定到给定的服务标识符。每当解析服务时，工厂将作为解析值传递。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToFactorySource}</CodeBlock>
+
+### toResolvedValue
+
+```ts
+toResolvedValue(factory: () => T | Promise<T>): BindInWhenOnFluentSyntax<T>;
+toResolvedValue<TArgs extends unknown[] = any[]>(
+  factory: (...args: TArgs) => T | Promise<T>,
+  injectOptions: MapToResolvedValueInjectOptions<TArgs>,
+): BindInWhenOnFluentSyntax<T>;
+```
+
+将值绑定到服务标识符。此值是在接收解析服务的函数之上生成的。你可以通过将服务标识符作为参数传递来指定要解析的服务：
+
+<CodeBlock language="ts">{bindingToSyntaxApiToResolvedValueSource}</CodeBlock>
+
+你还可以提供更详细的选项以接收解析的服务：
+
+<CodeBlock language="ts">{bindingToSyntaxApiToResolvedValueAdvancedSource}</CodeBlock>
+
+### toService
+
+```ts
+toService(service: ServiceIdentifier<T>): void;
+```
+
+将绑定到目标服务标识符的服务绑定到给定的服务标识符。
+
+<CodeBlock language="ts">{bindingToSyntaxApiToServiceSource}</CodeBlock>
+
+## BindInFluentSyntax
+
+```ts
+interface BindInFluentSyntax<T> extends BoundServiceSyntax {
+  // ...
+}
+```
+
+表示给定服务标识符和服务解析（如构造函数、工厂或提供者）的服务绑定。实现 `BoundServiceSyntax` 以提供对绑定唯一标识符的访问。
+
+### inSingletonScope
+
+```ts
+inSingletonScope(): BindWhenOnFluentSyntax<T>;
+```
+
+将绑定作用域设置为单例。有关更多信息，请参阅 [文档](../fundamentals/binding.mdx#单例-singleton)。
+
+### inTransientScope
+
+```ts
+inTransientScope(): BindWhenOnFluentSyntax<T>;
+```
+
+将绑定作用域设置为瞬态。有关更多信息，请参阅 [文档](../fundamentals/binding.mdx#瞬态-transient)。
+
+### inRequestScope
+
+```ts
+inRequestScope(): BindWhenOnFluentSyntax<T>;
+```
+
+将绑定作用域设置为请求。有关更多信息，请参阅 [文档](../fundamentals/binding.mdx#请求-request)。
+
+## BindOnFluentSyntax
+
+```ts
+interface BindOnFluentSyntax<T> extends BoundServiceSyntax {
+  // ...
+}
+```
+
+允许设置绑定激活和停用处理程序。实现 `BoundServiceSyntax` 以提供对绑定唯一标识符的访问。
+
+### onActivation
+
+```ts
+onActivation(activation: BindingActivation<T>): BindWhenFluentSyntax<T>;
+```
+
+设置绑定激活处理程序。激活处理程序在依赖项解析之后且添加到作用域缓存之前调用。如果依赖项取自作用域缓存，则不会调用激活处理程序。
+
+<CodeBlock language="ts">{bindingOnSyntaxApiOnActivationSource}</CodeBlock>
+
+### onDeactivation
+
+```ts
+onDeactivation(deactivation: BindingDeactivation<T>): BindWhenFluentSyntax<T>;
+```
+
+在单例作用域绑定上设置绑定停用处理程序。当绑定从容器中解绑时，将调用停用处理程序。
+
+:::warning
+
+只有单例作用域绑定可以具有停用处理程序。如果你尝试向非单例绑定添加停用处理程序，则会抛出错误。
+
+:::
+
+## BindWhenFluentSyntax
+
+```ts
+interface BindWhenFluentSyntax<T> extends BoundServiceSyntax {
+  // ...
+}
+```
+
+允许设置绑定约束。实现 `BoundServiceSyntax` 以提供对绑定唯一标识符的访问。
+
+### when
+
+为当前绑定设置约束。
+
+```ts
+when(
+  constraint: (metadata: BindingConstraints) => boolean,
+): BindOnFluentSyntax<T>;
+```
+
+<CodeBlock language="ts">{bindingWhenSyntaxApiWhenSource}</CodeBlock>
+
+在前面的示例中，实现了一个自定义约束，以便当且仅当目标名称为特定名称时才使用绑定。
+
+### whenAnyAncestor
+
+```ts
+whenAnyAncestor(
+  constraint: (metadata: BindingConstraints) => boolean,
+): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定约束的情况下，任何祖先服务匹配给定约束时使用。
+
+### whenAnyAncestorIs
+
+```ts
+whenAnyAncestorIs(
+  serviceIdentifier: ServiceIdentifier,
+): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定服务标识符的情况下，使用给定标识符请求任何祖先服务时使用。
+
+### whenAnyAncestorNamed
+
+```ts
+whenAnyAncestorNamed(name: MetadataName): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定名称的情况下，使用给定名称请求命名父服务时使用。
+
+### whenAnyAncestorTagged
+
+```ts
+whenAnyAncestorTagged(
+  tag: MetadataTag,
+  tagValue: unknown,
+): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定标签的情况下，使用给定标签请求标记的父服务时使用。
+
+### whenDefault
+
+```ts
+whenDefault(): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在未使用任何名称或标签请求服务时使用。
+
+### whenNamed
+
+约束绑定仅在给定名称的情况下，使用给定名称请求命名服务时使用。
+
+```ts
+whenNamed(name: MetadataName): BindOnFluentSyntax<T>;
+```
+
+### whenNoAncestor
+
+```ts
+whenNoAncestor(
+  constraint: (metadata: BindingConstraints) => boolean,
+): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定约束的情况下，没有祖先服务匹配给定约束时使用。
+
+### whenNoAncestorIs
+
+```ts
+whenNoAncestorIs(serviceIdentifier: ServiceIdentifier): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定服务标识符的情况下，没有使用给定标识符请求祖先服务时使用。
+
+### whenNoAncestorNamed
+
+```ts
+whenNoAncestorNamed(name: MetadataName): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定名称的情况下，没有使用给定名称请求祖先服务时使用。
+
+### whenNoAncestorTagged
+
+```ts
+whenNoAncestorTagged(
+  tag: MetadataTag,
+  tagValue: unknown,
+): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定标签的情况下，没有使用给定标签请求祖先服务时使用。
+
+### whenNoParent
+
+```ts
+whenNoParent(
+  constraint: (metadata: BindingConstraints) => boolean,
+): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定约束的情况下，没有父服务匹配给定约束时使用。
+
+### whenNoParentIs
+
+```ts
+whenNoParentIs(serviceIdentifier: ServiceIdentifier): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定服务标识符的情况下，没有使用给定标识符请求父服务时使用。
+
+### whenNoParentNamed
+
+```ts
+whenNoParentNamed(name: MetadataName): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定名称的情况下，没有使用给定名称请求父服务时使用。
+
+### whenNoParentTagged
+
+```ts
+whenNoParentTagged(
+  tag: MetadataTag,
+  tagValue: unknown,
+): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定标签的情况下，没有使用给定标签请求父服务时使用。
+
+### whenParent
+
+```ts
+whenParent(
+  constraint: (metadata: BindingConstraints) => boolean,
+): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定约束的情况下，父服务匹配给定约束时使用。
+
+### whenParentIs
+
+```ts
+whenParentIs(serviceIdentifier: ServiceIdentifier): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定服务标识符的情况下，使用给定标识符请求父服务时使用。
+
+### whenParentNamed
+
+```ts
+whenParentNamed(name: MetadataName): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定名称的情况下，使用给定名称请求父服务时使用。
+
+### whenParentTagged
+
+```ts
+whenParentTagged(tag: MetadataTag, tagValue: unknown): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定标签的情况下，使用给定标签请求父服务时使用。
+
+### whenTagged
+
+```ts
+whenTagged(tag: MetadataTag, tagValue: unknown): BindOnFluentSyntax<T>;
+```
+
+约束绑定仅在给定标签的情况下，使用给定标签请求标记的服务时使用。
+
+## BindWhenOnFluentSyntax
+
+[BindWhenFluentSyntax](#bindwhenfluentsyntax) 和 [BindOnFluentSyntax](#bindonfluentsyntax) 的联合。
+
+```ts
+export interface BindWhenOnFluentSyntax<T>
+  extends BindWhenFluentSyntax<T>,
+    BindOnFluentSyntax<T> {}
+```
+
+## BindInWhenOnFluentSyntax
+
+[BindInFluentSyntax](#bindinfluentsyntax) 和 [BindWhenOnFluentSyntax](#bindwhenonfluentsyntax) 的联合。
+
+```ts
+export interface BindInWhenOnFluentSyntax<T>
+  extends BindInFluentSyntax<T>,
+    BindWhenOnFluentSyntax<T> {}
+```

@@ -1,0 +1,113 @@
+---
+sidebar_position: 5
+title: decorate
+---
+import decorateClassDecoratorSource from '@inversifyjs/code-examples/generated/examples/v8/decorateClassDecorator.ts.txt';
+import decorateParameterDecoratorSource from '@inversifyjs/code-examples/generated/examples/v8/decorateParameterDecorator.ts.txt';
+import decoratePropertyDecoratorSource from '@inversifyjs/code-examples/generated/examples/v8/decoratePropertyDecorator.ts.txt';
+import decorateMethodDecoratorSource from '@inversifyjs/code-examples/generated/examples/v8/decorateMethodDecorator.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# decorate
+
+## 概述
+
+`decorate` 函数是一个实用程序，允许你以编程方式将装饰器应用于类、方法、属性和构造函数参数，而无需使用装饰器语法 (`@decorator`)。这在以下情况下特别有用：
+
+1. 你无法修改原始类以添加装饰器
+2. 你正在使用第三方类
+3. 你想有条件地应用装饰器
+4. 你处于装饰器语法不可用的环境中
+
+## API 参考
+
+`decorate` 函数有多个重载来处理不同的装饰器类型：
+
+```typescript
+function decorate(
+  decorators: ClassDecorator | ClassDecorator[],
+  target: Function
+): void;
+
+function decorate(
+  decorators: ParameterDecorator | ParameterDecorator[],
+  target: Function,
+  parameterIndex: number
+): void;
+
+function decorate(
+  decorators: MethodDecorator | PropertyDecorator | MethodDecorator[] | PropertyDecorator[],
+  target: Function,
+  property: string | symbol
+): void;
+
+export function decorate(
+  decorators: ParameterDecorator | ParameterDecorator[],
+  target: Function,
+  methodName: string | symbol,
+  parameterIndex: number,
+): void;
+```
+
+## 示例
+
+### 应用 ClassDecorator
+
+使用此方法应用类级装饰器，如 `@injectable()`：
+
+<CodeBlock language="ts">{decorateClassDecoratorSource}</CodeBlock>
+
+### 应用 ParameterDecorator
+
+使用此方法将装饰器应用于构造函数参数，如 `@inject()`：
+
+<CodeBlock language="ts">{decorateParameterDecoratorSource}</CodeBlock>
+
+### 应用 PropertyDecorator
+
+使用此方法将装饰器应用于类属性，如 `@inject()`：
+
+<CodeBlock language="ts">{decoratePropertyDecoratorSource}</CodeBlock>
+
+### 应用 MethodDecorator
+
+使用此方法将装饰器应用于类方法：
+
+<CodeBlock language="ts">{decorateMethodDecoratorSource}</CodeBlock>
+
+## 用例
+
+### 使用第三方类
+
+当你需要使第三方类可注入但无法修改其源代码时：
+
+```typescript
+import { decorate, injectable } from 'inversify';
+import { SomeThirdPartyClass } from 'some-library';
+
+// Make the third-party class injectable
+decorate(injectable(), SomeThirdPartyClass);
+```
+
+### 条件装饰
+
+根据运行时条件应用装饰器：
+
+```typescript
+import { decorate, injectable } from 'inversify';
+
+class MyService {
+  // Implementation
+}
+
+// Conditionally make it injectable
+if (process.env.NODE_ENV === 'production') {
+  decorate(injectable(), MyService);
+}
+```
+
+## 重要说明
+
+- 必须在容器绑定中使用类之前调用 `decorate` 函数
+- 对于 ParameterDecorator，参数索引是从 0 开始的（第一个参数 = 0，第二个 = 1，依此类推）
+- 你可以传递单个装饰器或装饰器数组

@@ -1,0 +1,68 @@
+---
+sidebar_position: 2
+title: DI Hierarchy
+---
+import containerApiGetAllChainedSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllChained.ts.txt';
+import containerApiGetAllChainedFalseSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllChainedFalse.ts.txt';
+import diHierarchySource from '@inversifyjs/code-examples/generated/examples/v8/diHierarchy.ts.txt';
+import diHierarchyAndCachedBindingsSource from '@inversifyjs/code-examples/generated/examples/v8/diHierarchyAndCachedBindings.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# DI Hierarchy
+
+InversifyJS is a popular library for implementing inversion of control (IoC) and dependency injection (DI) in TypeScript applications. It supports hierarchical dependency injection, which can be a powerful tool in complex applications.
+
+With InversifyJS's hierarchical injection system, you can create a hierarchy of containers where each container can have a parent container. This allows for better organization and separation of concerns in your application.
+
+When a dependency needs to be injected, InversifyJS starts by looking in the current container for a binding. If the binding is not found, it moves up the hierarchy to the parent container and continues the search. This process continues until a binding is found or the top-level parent container is reached.
+
+:::warning[Binding overrides]
+
+Found bindings might override ancestor bindings even if their constraints are not met. For example, if a named binding is found in the child container for the requested service, that binding overrides parent bindings even if this binding is later discarded in a non-named resolution request.
+
+:::
+
+:::warning[DI hierarchies and cached bindings]
+
+When using hierarchical injection, be aware that cached bindings from the first resolution will be used for subsequent resolution, even if the call comes from another child container.
+
+<CodeBlock language="ts">{diHierarchyAndCachedBindingsSource}</CodeBlock>
+
+If this behaviour is unwanted, consider using `ContainerModule` instead. This way, you can load it in both containers. Different containers will have different binding and therefore different cached values.
+
+:::
+
+By using InversifyJS's hierarchical injection system, you can easily manage complex dependencies and keep your code clean and modular. It provides a flexible and scalable solution for handling dependencies in your TypeScript applications.
+
+<CodeBlock language="ts">{diHierarchySource}</CodeBlock>
+
+## Chained Resolution Mode
+
+InversifyJS supports two different resolution modes when working with container hierarchies: **standard resolution** and **chained resolution**.
+
+### Standard Resolution Mode
+
+In standard resolution mode (the default behavior), InversifyJS follows a **first-found** approach:
+
+1. First, it searches for bindings in the current container
+2. If bindings are found in the current container, those bindings are used exclusively
+3. If no bindings are found in the current container, it moves up to the parent container
+4. This process continues until bindings are found or the top-level container is reached
+
+This means that if a child container has any bindings for a service, the parent container's bindings for that same service will be ignored entirely:
+
+<CodeBlock language="ts">{containerApiGetAllChainedFalseSource}</CodeBlock>
+
+### Chained Resolution Mode
+
+Chained resolution mode allows you to collect bindings from **all levels** of the container hierarchy. When using `getAll()` or `getAllAsync()` with the `chained: true` option:
+
+1. Bindings are collected from the current container
+2. Then bindings are collected from the parent container  
+3. This continues recursively up the entire hierarchy
+4. All collected bindings are combined and returned
+
+This is particularly useful when you want to aggregate services from different layers of your application (e.g., core services from a parent container and feature-specific services from child containers).
+
+<CodeBlock language="ts">{containerApiGetAllChainedSource}</CodeBlock>
+

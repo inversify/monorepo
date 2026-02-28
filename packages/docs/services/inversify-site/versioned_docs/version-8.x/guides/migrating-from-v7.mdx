@@ -1,0 +1,175 @@
+---
+sidebar_position: 2
+title: Migrating from v7
+---
+import migrationV7LoadV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7Load.ts.txt';
+import migrationV7LoadV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7Load.ts.txt';
+import migrationV7UnbindV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7Unbind.ts.txt';
+import migrationV7UnbindV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7Unbind.ts.txt';
+import migrationV7UnbindAllV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7UnbindAll.ts.txt';
+import migrationV7UnbindAllV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7UnbindAll.ts.txt';
+import migrationV7RebindV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7Rebind.ts.txt';
+import migrationV7RebindV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7Rebind.ts.txt';
+import migrationV7UnloadV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7Unload.ts.txt';
+import migrationV7UnloadV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7Unload.ts.txt';
+import migrationV7ContainerModuleOptionsV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7ContainerModuleOptions.ts.txt';
+import migrationV7ContainerModuleOptionsV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7ContainerModuleOptions.ts.txt';
+import migrationV7ToProviderV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7ToProvider.ts.txt';
+import migrationV7ToProviderV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7ToProvider.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Migrating from v7
+
+InversifyJS v8 introduces several breaking changes from v7. This guide will help you migrate your existing InversifyJS v7 code to v8.
+
+## Overview of Changes
+
+The following table summarizes the key changes from v7 to v8:
+
+| v7                                      | v8                                       | Comment                                                                          |
+|-----------------------------------------|------------------------------------------|----------------------------------------------------------------------------------|
+| `container.load(...)`                   | `container.loadAsync(...)`               | Async load renamed to `loadAsync`                                                |
+| `container.loadSync(...)`               | `container.load(...)`                    | Sync load becomes the default `load`                                             |
+| `container.unbind(...)`                 | `container.unbindAsync(...)`             | Async unbind renamed to `unbindAsync`                                            |
+| `container.unbindSync(...)`             | `container.unbind(...)`                  | Sync unbind becomes the default `unbind`                                         |
+| `container.unbindAll()`                 | `container.unbindAllAsync()`             | Async unbindAll renamed to `unbindAllAsync`                                      |
+| `container.unbindAllSync()`             | `container.unbindAll()`                  | Sync unbindAll becomes the default `unbindAll`                                   |
+| `container.rebind(...)`                 | `container.rebindAsync(...)`             | Async rebind renamed to `rebindAsync`                                            |
+| `container.rebindSync(...)`             | `container.rebind(...)`                  | Sync rebind becomes the default `rebind`                                         |
+| `container.unload(...)`                 | `container.unloadAsync(...)`             | Async unload renamed to `unloadAsync`                                            |
+| `container.unloadSync(...)`             | `container.unload(...)`                  | Sync unload becomes the default `unload`                                         |
+| `options.unbind` (async)                | `options.unbindAsync`                    | `ContainerModuleLoadOptions` async unbind renamed                                |
+| `options.unbindSync`                    | `options.unbind`                         | `ContainerModuleLoadOptions` sync unbind becomes default                         |
+| `options.rebind` (async)               | `options.rebindAsync`                    | `ContainerModuleLoadOptions` async rebind renamed                                |
+| `options.rebindSync`                    | `options.rebind`                         | `ContainerModuleLoadOptions` sync rebind becomes default                         |
+| `ServiceIdentifier` accepts `Function`  | `ServiceIdentifier` requires `Newable` or `AbstractNewable` | Stricter type for class-based service identifiers            |
+| `.toProvider(...)`                      | `.toFactory(...)` with async function    | `Provider` type and `toProvider` binding removed; use `toFactory` instead        |
+| CJS/ESM dual package                    | ESM only                                 | Package is now ESM only; Node.js LTS supports `require(esm)`                    |
+
+## Package Format
+
+InversifyJS v8 is now an ESM-only package. For most users this is a non-breaking change: all active Node.js LTS versions (20.x and above) support `require(esm)`, meaning CommonJS projects can still consume the package without any changes.
+
+Refer to the [Migrating the ecosystem to ES modules](https://e18e.dev/blog/migrating-the-ecosystem-to-esm.html) blog post for a broader overview of the CJS → ESM migration landscape.
+
+## Container API
+
+### Method Renames: Sync-First Convention
+
+The most significant change in v8 is the adoption of a **sync-first naming convention**. In v7, the default method names (e.g., `load`, `unbind`, `rebind`, `unload`) were asynchronous and returned promises, while synchronous variants had a `Sync` suffix. In v8, this is reversed: the default names are now synchronous, and asynchronous variants have an `Async` suffix.
+
+#### `load` / `loadAsync`
+
+In v7, `container.load` was asynchronous. In v8, the synchronous version is the default:
+
+**v7:**
+
+<CodeBlock language="ts">{migrationV7LoadV7Source}</CodeBlock>
+
+**v8:**
+
+<CodeBlock language="ts">{migrationV7LoadV8Source}</CodeBlock>
+
+#### `unbind` / `unbindAsync`
+
+In v7, `container.unbindSync` was the synchronous variant. In v8, it becomes the default `unbind`:
+
+**v7:**
+
+<CodeBlock language="ts">{migrationV7UnbindV7Source}</CodeBlock>
+
+**v8:**
+
+<CodeBlock language="ts">{migrationV7UnbindV8Source}</CodeBlock>
+
+#### `unbindAll` / `unbindAllAsync`
+
+In v7, `container.unbindAllSync` was the synchronous variant. In v8, it becomes the default `unbindAll`:
+
+**v7:**
+
+<CodeBlock language="ts">{migrationV7UnbindAllV7Source}</CodeBlock>
+
+**v8:**
+
+<CodeBlock language="ts">{migrationV7UnbindAllV8Source}</CodeBlock>
+
+#### `rebind` / `rebindAsync`
+
+In v7, `container.rebindSync` was the synchronous variant. In v8, it becomes the default `rebind`:
+
+**v7:**
+
+<CodeBlock language="ts">{migrationV7RebindV7Source}</CodeBlock>
+
+**v8:**
+
+<CodeBlock language="ts">{migrationV7RebindV8Source}</CodeBlock>
+
+#### `unload` / `unloadAsync`
+
+In v7, `container.unloadSync` was the synchronous variant. In v8, it becomes the default `unload`:
+
+**v7:**
+
+<CodeBlock language="ts">{migrationV7UnloadV7Source}</CodeBlock>
+
+**v8:**
+
+<CodeBlock language="ts">{migrationV7UnloadV8Source}</CodeBlock>
+
+:::tip
+
+If your codebase predominantly uses the synchronous variants (e.g., `loadSync`, `unbindSync`, `rebindSync`, `unloadSync`), the migration is straightforward: simply remove the `Sync` suffix.
+
+If you mainly use the async variants, rename them by adding the `Async` suffix (e.g., `load` → `loadAsync`, `unbind` → `unbindAsync`).
+
+:::
+
+### `ContainerModuleLoadOptions`
+
+The same sync-first convention applies to `ContainerModuleLoadOptions`:
+
+**v7:**
+
+<CodeBlock language="ts">{migrationV7ContainerModuleOptionsV7Source}</CodeBlock>
+
+**v8:**
+
+<CodeBlock language="ts">{migrationV7ContainerModuleOptionsV8Source}</CodeBlock>
+
+## `ServiceIdentifier` Type
+
+In v7, `ServiceIdentifier` accepted any `Function` as a valid service identifier. In v8, the type has been tightened: a `Function` is only valid if it satisfies `Newable<T>` or `AbstractNewable<T>`. This provides better type safety and ensures that only constructable classes can be used as class-based service identifiers.
+
+```ts
+// v7 — any function was accepted
+type ServiceIdentifier<T> = string | symbol | Newable<T> | Function;
+
+// v8 — only constructable classes are accepted
+type ServiceIdentifier<T> = string | symbol | Newable<T> | AbstractNewable<T>;
+```
+
+In practice, this change is transparent for most codebases since service identifiers are typically classes, strings, or symbols. If you were using a plain function as a service identifier, you will need to switch to a string or symbol identifier instead.
+
+## Removed `toProvider` Binding and `Provider` Type
+
+The `toProvider` binding method and the `Provider` type have been removed in v8. Providers were factories that returned a `Promise<T>`, so the same behavior can be achieved with `toFactory` using an async function:
+
+**v7:**
+
+<CodeBlock language="ts">{migrationV7ToProviderV7Source}</CodeBlock>
+
+**v8:**
+
+<CodeBlock language="ts">{migrationV7ToProviderV8Source}</CodeBlock>
+
+## Quick Migration Checklist
+
+1. **Update async method calls**: Rename `load` → `loadAsync`, `unbind` → `unbindAsync`, `rebind` → `rebindAsync`, `unload` → `unloadAsync`, `unbindAll` → `unbindAllAsync` where you use the async versions.
+2. **Update sync method calls**: Remove the `Sync` suffix from `loadSync`, `unbindSync`, `rebindSync`, `unloadSync`, `unbindAllSync`.
+3. **Update `ContainerModuleLoadOptions` usage**: Apply the same renaming for `unbind`/`unbindSync` → `unbindAsync`/`unbind` and `rebind`/`rebindSync` → `rebindAsync`/`rebind`.
+4. **Replace `toProvider` with `toFactory`**: Use `toFactory` with an async function instead.
+5. **Remove `Provider` type imports**: Replace with a custom type or use `Factory` instead.
+6. **Check `ServiceIdentifier` usage**: Ensure you are not using plain functions as service identifiers.
+7. **Verify ESM compatibility**: Ensure your project can consume ESM packages (Node.js 20.x+ supports `require(esm)`).

@@ -1,0 +1,18 @@
+---
+sidebar_position: 2
+title: Deactivation
+---
+import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnDeactivation.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+Whenever a singleton scoped service is unbound, the deactivation event is dispatched. A deactivation handler receives a resolved value and returns nothing.
+
+<CodeBlock language="ts">{containerApiOnDeactivationSource}</CodeBlock>
+
+It's possible to add a deactivation handler in multiple ways
+
+- Adding the handler to the [container](../../api/container.mdx#ondeactivation).
+- Adding the handler to a [binding](../../api/binding-syntax.mdx#ondeactivation).
+- Adding the handler to the class through the [preDestroy decorator](../../api/decorator.mdx#predestroy).
+
+Handlers added to the container are the first ones to be resolved. Any handler added to a child container is called before the ones added to their parent. Relevant bindings from the container are called next and finally the `preDestroy` method is called. In the example above, relevant bindings are those bindings bound to the unbinded "Destroyable" service identifier.

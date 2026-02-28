@@ -1,0 +1,45 @@
+---
+sidebar_position: 2
+title: Using bundlers
+---
+
+# Using bundlers
+
+InversifyJS can be used with any bundler that supports transpiling TypeScript legacy decorators and emitting TypeScript class metadata.
+
+If your bundler does not transpile TypeScript legacy decorators, you won't be able to use InversifyJS without a plugin that does it.
+
+If your bundler does not emit TypeScript class metadata, InversifyJS won't be able to provide the following features:
+
+- [Autobinding](../fundamentals/binding.mdx#autobinding).
+- Class constructor parameters or properties without the need to include an `@inject` decorator.
+
+## esbuild
+
+esbuild does not support transpiling TypeScript legacy decorators as explained in [this issue](https://github.com/evanw/esbuild/issues/257).
+
+## Rollup
+
+You can use the `@rollup/plugin-typescript` plugin to successfully transpile TypeScript code with legacy decorators.
+
+## Vite
+
+Vite uses esbuild under the hood, so it also does not support transpiling TypeScript legacy decorators. However, you can use the `unplugin-swc` plugin to transpile TypeScript legacy decorators.
+
+```ts title="vite.config.ts"
+import swc from "unplugin-swc";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    // Vite plugin
+    swc.vite(),
+  ],
+});
+```
+
+Refer to [this issue](https://github.com/inversify/InversifyJS/issues/1710) for more information.
+
+## Webpack
+
+You can use the `ts-loader` plugin to successfully transpile TypeScript code with legacy decorators.

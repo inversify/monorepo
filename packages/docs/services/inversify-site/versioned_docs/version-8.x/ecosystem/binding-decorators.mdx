@@ -1,0 +1,33 @@
+---
+sidebar_position: 1
+title: Binding Decorators
+---
+import DocumentationButton from '@site/src/components/DocumentationButton';
+
+# Inversify binding decorators
+
+The `@inversifyjs/binding-decorators` package provides a set of handy decorators that streamline configuring bindings in your InversifyJS Container. Instead of manually calling `bind` for each service, you can use decorators like `@provide()` to declare and organize dependencies close to their implementation.
+
+## When to use it
+
+Use binding decorators when you prefer annotation-driven configuration that:
+
+- Reduces container setup boilerplate
+- Keeps bindings co-located with class definitions
+- Improves discoverability of services in larger codebases
+
+If you need fully programmatic or dynamic binding logic, traditional module / container binding code may still be more appropriate.
+
+## Key features
+
+- `@provide()` decorator to auto-register classes
+- Support for named and tagged bindings
+- Layered on top of the core container so it stays optional
+
+## Documentation
+
+You can find the full documentation, examples, and usage guidance here:
+
+<DocumentationButton href="https://inversify.io/binding-decorators/" target="_blank">
+  <span>View Full Documentation</span>
+</DocumentationButton>

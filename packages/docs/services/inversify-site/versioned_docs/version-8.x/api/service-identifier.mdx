@@ -1,0 +1,60 @@
+---
+sidebar_position: 7
+title: ServiceIdentifier
+---
+import serviceIdentifierApiSource from '@inversifyjs/code-examples/generated/examples/v8/serviceIdentifierApi.ts.txt'
+import CodeBlock from '@theme/CodeBlock';
+
+# ServiceIdentifier
+
+## Overview
+
+`ServiceIdentifier` is a fundamental type that identifies services within the InversifyJS dependency injection container. It serves as a key for registering, locating, and retrieving services, acting as a bridge between service registration and resolution.
+
+## Definition
+
+`ServiceIdentifier` is a union type that can be one of:
+
+```typescript
+type ServiceIdentifier<TInstance = unknown> =
+  | string
+  | symbol
+  | Newable<TInstance>
+  | AbstractNewable<TInstance>;
+```
+
+Where `Newable` is defined as:
+
+```typescript
+type Newable<
+  TInstance = unknown,
+  TArgs extends unknown[] = any[],
+> = new (...args: TArgs) => TInstance;
+```
+
+## Usage
+
+`ServiceIdentifier` is used throughout the InversifyJS API for:
+
+1. **Service Registration**: Binding services to the container
+2. **Service Resolution**: Retrieving services from the container
+3. **Service Configuration**: Setting activation/deactivation handlers
+
+### Examples
+
+<CodeBlock language="ts">{serviceIdentifierApiSource}</CodeBlock>
+
+:::info[Type Inference support]
+
+When using generics with `ServiceIdentifier<T>`, TypeScript can infer the resolved type. In the example above, `firstUserService` is automatically typed as `UserService` because `UserService` is inferred as `ServiceIdentifier<UserService>`.
+
+:::
+
+:::warning[Assignment reduced type]
+
+In TypeScript, when a variable annotated with a union is assigned, the actual initial type of that variable becomes "an assignment reduced type".
+
+In the example above, `userServiceId` is automatically reduced as `symbol` and therefore, `firstUserService` is typed as `unknown`.
+Using a casting prevents this reduction and maintains the original type. Consider `fourthUserService` as an example.
+
+:::

@@ -1,0 +1,62 @@
+---
+sidebar_position: 6
+title: LazyServiceIdentifier
+---
+import CodeBlock from '@theme/CodeBlock';
+import lazyServiceIdentifierSource from '@inversifyjs/code-examples/generated/examples/v8/lazyServiceIdentifier.ts.txt';
+
+# LazyServiceIdentifier
+
+## Overview
+
+The `LazyServiceIdentifier` class is a utility that delays the resolution of service identifiers until they're actually needed during dependency injection. Its primary purpose is to prevent accessing class service identifiers before they're fully initialized.
+
+## Problem: Accessing Class Service Identifiers Prematurely
+
+In TypeScript/JavaScript applications, when you directly reference a class as a service identifier before the class is fully defined, you might encounter initialization issues:
+
+```typescript
+// ServiceModule.ts
+import { injectable, inject } from 'inversify';
+
+@injectable()
+export class Service {
+  // Potential issue - Service class used before fully defined
+  constructor(@inject(AnotherService) private dependency: AnotherService) {}
+}
+
+class AnotherService {
+  // Implementation
+}
+```
+
+This can lead to several issues:
+
+1. TypeScript errors about using variables before they're declared
+2. Runtime errors as the class might not be fully initialized when used as a service identifier
+
+## Solution: LazyServiceIdentifier
+
+`LazyServiceIdentifier` solves this problem by deferring the service identifier resolution until the injection process actually requires it:
+
+<CodeBlock language="ts">{lazyServiceIdentifierSource}</CodeBlock>
+
+## API Reference
+
+### Constructor
+
+```typescript
+constructor(buildServiceId: () => ServiceIdentifier<TInstance>)
+```
+
+- `buildServiceId`: A function that returns a `ServiceIdentifier`. This function is called only when the service identifier is actually needed.
+
+### Methods
+
+#### unwrap(): ServiceIdentifier\<TInstance>
+
+Returns the resolved service identifier by calling the function provided in the constructor.
+
+#### static is\<TInstance>(value: unknown): value is LazyServiceIdentifier\<TInstance>
+
+Checks if a value is an instance of `LazyServiceIdentifier`.
