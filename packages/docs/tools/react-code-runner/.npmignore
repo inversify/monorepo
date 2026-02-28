@@ -5,6 +5,8 @@
 **/*.ts
 lib/**
 
+AGENTS.md
+CHANGELOG.md
 .lintstagedrc.json
 eslint.config.mjs
 prettier.config.mjs

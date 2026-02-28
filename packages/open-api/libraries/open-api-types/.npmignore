@@ -14,6 +14,8 @@ lib/esm/**/*.d.ts.map
 !lib/esm/openApi/v3Dot1/index.d.ts
 !lib/esm/openApi/v3Dot1/index.d.ts.map
 
+AGENTS.md
+CHANGELOG.md
 .lintstagedrc.json
 eslint.config.mjs
 vitest.config.mjs

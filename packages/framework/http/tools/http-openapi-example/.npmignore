@@ -8,6 +8,8 @@ lib/esm/**/*.d.ts.map
 !lib/esm/index.d.ts
 !lib/esm/index.d.ts.map
 
+AGENTS.md
+CHANGELOG.md
 .lintstagedrc.json
 eslint.config.mjs
 prettier.config.mjs
