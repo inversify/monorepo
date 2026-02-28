@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-assignment */
 // Begin-example
 import { ValidateAjvSchema } from '@inversifyjs/ajv-validation';
 import { Body, Controller, Post } from '@inversifyjs/http-core';

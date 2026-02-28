@@ -1103,7 +1103,7 @@ describe(Container, () => {
       let result: unknown;
 
       beforeAll(() => {
-        new Container().restore();
+        result = new Container().restore();
       });
 
       afterAll(() => {
@@ -1125,7 +1125,7 @@ describe(Container, () => {
       let result: unknown;
 
       beforeAll(() => {
-        new Container().snapshot();
+        result = new Container().snapshot();
       });
 
       afterAll(() => {
