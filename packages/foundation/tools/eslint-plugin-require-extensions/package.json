@@ -25,7 +25,7 @@
     "url": "https://github.com/inversify/monorepo/issues"
   },
   "devDependencies": {
-    "@types/node": "24.10.15",
+    "@types/node": "24.11.0",
     "@vitest/coverage-v8": "4.0.18",
     "eslint": "9.39.3",
     "prettier": "3.8.1",

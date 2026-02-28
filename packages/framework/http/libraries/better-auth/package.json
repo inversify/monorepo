@@ -20,7 +20,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/express": "5.0.6",
     "@types/express4": "npm:@types/express@4.17.25",
-    "@types/node": "24.10.15",
+    "@types/node": "24.11.0",
     "@vitest/coverage-v8": "4.0.18",
     "better-sqlite3": "^12.6.2",
     "eslint": "9.39.3",
@@ -61,7 +61,7 @@
   },
   "name": "@inversifyjs/http-better-auth",
   "peerDependencies": {
-    "better-auth": "^1.4.19",
+    "better-auth": "^1.4.20",
     "inversify": "^7.11.0"
   },
   "publishConfig": {
