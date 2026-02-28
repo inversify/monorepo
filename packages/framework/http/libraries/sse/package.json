@@ -26,7 +26,7 @@
     "express": "5.2.1",
     "express4": "npm:express@4.22.1",
     "fastify": "5.7.4",
-    "hono": "4.11.10",
+    "hono": "4.12.3",
     "inversify": "7.11.0",
     "prettier": "3.8.1",
     "rimraf": "6.1.3",
