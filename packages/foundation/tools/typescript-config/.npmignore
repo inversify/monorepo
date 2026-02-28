@@ -1,0 +1,6 @@
+/.turbo
+
+AGENTS.md
+CHANGELOG.md
+.lintstagedrc.json
+prettier.config.mjs

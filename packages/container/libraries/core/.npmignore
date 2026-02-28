@@ -12,6 +12,8 @@
 **/*.spec-d.d.ts.map
 !lib/**/*.d.ts
 
+AGENTS.md
+CHANGELOG.md
 .lintstagedrc.json
 eslint.config.mjs
 vitest.config.mjs
