@@ -2,18 +2,17 @@
 sidebar_position: 1
 title: 绑定语法
 ---
-import bindingOnSyntaxApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v7/bindingOnSyntaxApiOnActivation.ts.txt';
-import bindingToSyntaxApiToSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiTo.ts.txt';
-import bindingToSyntaxApiToConstantValueSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToConstantValue.ts.txt';
-import bindingToSyntaxApiToDynamicValueSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToDynamicValue.ts.txt';
-import bindingToSyntaxApiToFactorySource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToFactory.ts.txt';
-import bindingToSyntaxApiToProviderSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToProvider.ts.txt';
-import bindingToSyntaxApiToResolvedValueSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToResolvedValue.ts.txt';
-import bindingToSyntaxApiToResolvedValueAdvancedSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToResolvedValueAdvanced.ts.txt';
-import bindingToSyntaxApiToSelfSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToSelf.ts.txt';
-import bindingToSyntaxApiToServiceSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToService.ts.txt';
-import bindingSyntaxApiGetIdentifierSource from '@inversifyjs/code-examples/generated/examples/v7/bindingSyntaxApiGetIdentifier.ts.txt';
-import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/v7/bindingWhenSyntaxApiWhen.ts.txt';
+import bindingOnSyntaxApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/bindingOnSyntaxApiOnActivation.ts.txt';
+import bindingToSyntaxApiToSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiTo.ts.txt';
+import bindingToSyntaxApiToConstantValueSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToConstantValue.ts.txt';
+import bindingToSyntaxApiToDynamicValueSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToDynamicValue.ts.txt';
+import bindingToSyntaxApiToFactorySource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToFactory.ts.txt';
+import bindingToSyntaxApiToResolvedValueSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToResolvedValue.ts.txt';
+import bindingToSyntaxApiToResolvedValueAdvancedSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToResolvedValueAdvanced.ts.txt';
+import bindingToSyntaxApiToSelfSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToSelf.ts.txt';
+import bindingToSyntaxApiToServiceSource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToService.ts.txt';
+import bindingSyntaxApiGetIdentifierSource from '@inversifyjs/code-examples/generated/examples/v8/bindingSyntaxApiGetIdentifier.ts.txt';
+import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/v8/bindingWhenSyntaxApiWhen.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 # 绑定语法
@@ -45,12 +44,12 @@ getIdentifier(): BindingIdentifier;
 ## BindToFluentSyntax
 
 ```ts
-interface BindToFluentSyntax<T> extends BoundServiceSyntax {
+interface BindToFluentSyntax<T> {
   // ...
 }
 ```
 
-表示给定服务标识符的服务绑定。实现 `BoundServiceSyntax` 以提供对绑定唯一标识符的访问。
+表示给定服务标识符的服务绑定。
 
 ```ts
 const bindingToSyntax = container.bind('service-id');
@@ -109,7 +108,7 @@ toDynamicValue(builder: DynamicValueBuilder<T>): BindInWhenOnFluentSyntax<T>;
 ```ts
 toFactory(
   factory: T extends Factory<unknown, any>
-    ? (context: ResolutionContext) => T
+    ? (context: ResolutionContext) => T | Promise<T>
     : never,
 ): BindWhenOnFluentSyntax<T>;
 ```
@@ -118,35 +117,13 @@ toFactory(
 
 <CodeBlock language="ts">{bindingToSyntaxApiToFactorySource}</CodeBlock>
 
-### toProvider
-
-:::warning 已弃用
-
-`toProvider()` 已弃用，将在 v8 中删除。请改用 `toFactory()`。
-
-提供者的存在是由于 v5 的历史原因，当时不支持异步依赖项。在 v6+ 中，支持异步依赖项，使提供者过时。工厂更灵活，可以处理同步和异步操作。
-
-:::
-
-```ts
-toProvider(
-  provider: T extends Provider<unknown, any>
-    ? (context: ResolutionContext) => T
-    : never,
-): BindWhenOnFluentSyntax<T>;
-```
-
-将与目标服务标识符关联的服务提供者绑定到给定的服务标识符。提供者只是一个异步工厂。
-
-<CodeBlock language="ts">{bindingToSyntaxApiToProviderSource}</CodeBlock>
-
 ### toResolvedValue
 
 ```ts
-toResolvedValue(factory: () => T): BindInWhenOnFluentSyntax<T>;
+toResolvedValue(factory: () => T | Promise<T>): BindInWhenOnFluentSyntax<T>;
 toResolvedValue<TArgs extends unknown[] = any[]>(
-  factory: (...args: TArgs) => T,
-  injectOptions?: MapToResolvedValueInjectOptions<TArgs>,
+  factory: (...args: TArgs) => T | Promise<T>,
+  injectOptions: MapToResolvedValueInjectOptions<TArgs>,
 ): BindInWhenOnFluentSyntax<T>;
 ```
 

@@ -44,12 +44,12 @@ Example:
 ## BindToFluentSyntax
 
 ```ts
-interface BindToFluentSyntax<T> extends BoundServiceSyntax {
+interface BindToFluentSyntax<T> {
   // ...
 }
 ```
 
-Represents a service binding given a service identifier. Implements `BoundServiceSyntax` to provide access to the binding's unique identifier.
+Represents a service binding given a service identifier.
 
 ```ts
 const bindingToSyntax = container.bind('service-id');
@@ -108,7 +108,7 @@ Keep in mind a service is not resolved if it's cached in the current scope.
 ```ts
 toFactory(
   factory: T extends Factory<unknown, any>
-    ? (context: ResolutionContext) => T
+    ? (context: ResolutionContext) => T | Promise<T>
     : never,
 ): BindWhenOnFluentSyntax<T>;
 ```
@@ -120,10 +120,10 @@ Binds a factory to the given service identifier. Whenever the service is resolve
 ### toResolvedValue
 
 ```ts
-toResolvedValue(factory: () => T): BindInWhenOnFluentSyntax<T>;
+toResolvedValue(factory: () => T | Promise<T>): BindInWhenOnFluentSyntax<T>;
 toResolvedValue<TArgs extends unknown[] = any[]>(
-  factory: (...args: TArgs) => T,
-  injectOptions?: MapToResolvedValueInjectOptions<TArgs>,
+  factory: (...args: TArgs) => T | Promise<T>,
+  injectOptions: MapToResolvedValueInjectOptions<TArgs>,
 ): BindInWhenOnFluentSyntax<T>;
 ```
 
