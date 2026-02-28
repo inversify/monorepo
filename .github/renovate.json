@@ -55,7 +55,7 @@
     {
       "description": "Quarantine packages with current known issues",
       "enabled": false,
-      "matchPackageNames": ["hono"]
+      "matchPackageNames": []
     }
   ],
   "rangeStrategy": "bump",
