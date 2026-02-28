@@ -1,0 +1,113 @@
+---
+sidebar_position: 5
+title: decorate
+---
+import decorateClassDecoratorSource from '@inversifyjs/code-examples/generated/examples/v8/decorateClassDecorator.ts.txt';
+import decorateParameterDecoratorSource from '@inversifyjs/code-examples/generated/examples/v8/decorateParameterDecorator.ts.txt';
+import decoratePropertyDecoratorSource from '@inversifyjs/code-examples/generated/examples/v8/decoratePropertyDecorator.ts.txt';
+import decorateMethodDecoratorSource from '@inversifyjs/code-examples/generated/examples/v8/decorateMethodDecorator.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# decorate
+
+## Overview
+
+The `decorate` function is a utility that allows you to apply decorators programmatically to classes, methods, properties, and constructor parameters without using the decorator syntax (`@decorator`). This is particularly useful when:
+
+1. You can't modify the original class to add decorators
+2. You're working with third-party classes
+3. You want to conditionally apply decorators
+4. You're in an environment where decorator syntax is not available
+
+## API Reference
+
+The `decorate` function has multiple overloads to handle different decorator types:
+
+```typescript
+function decorate(
+  decorators: ClassDecorator | ClassDecorator[],
+  target: Function
+): void;
+
+function decorate(
+  decorators: ParameterDecorator | ParameterDecorator[],
+  target: Function,
+  parameterIndex: number
+): void;
+
+function decorate(
+  decorators: MethodDecorator | PropertyDecorator | MethodDecorator[] | PropertyDecorator[],
+  target: Function,
+  property: string | symbol
+): void;
+
+export function decorate(
+  decorators: ParameterDecorator | ParameterDecorator[],
+  target: Function,
+  methodName: string | symbol,
+  parameterIndex: number,
+): void;
+```
+
+## Examples
+
+### Applying ClassDecorator
+
+Use this to apply class-level decorators like `@injectable()`:
+
+<CodeBlock language="ts">{decorateClassDecoratorSource}</CodeBlock>
+
+### Applying ParameterDecorator
+
+Use this to apply decorators to constructor parameters like `@inject()`:
+
+<CodeBlock language="ts">{decorateParameterDecoratorSource}</CodeBlock>
+
+### Applying PropertyDecorator
+
+Use this to apply decorators to class properties like `@inject()`:
+
+<CodeBlock language="ts">{decoratePropertyDecoratorSource}</CodeBlock>
+
+### Applying MethodDecorator
+
+Use this to apply decorators to class methods:
+
+<CodeBlock language="ts">{decorateMethodDecoratorSource}</CodeBlock>
+
+## Use Cases
+
+### Working with Third-Party Classes
+
+When you need to make a third-party class injectable but cannot modify its source code:
+
+```typescript
+import { decorate, injectable } from 'inversify';
+import { SomeThirdPartyClass } from 'some-library';
+
+// Make the third-party class injectable
+decorate(injectable(), SomeThirdPartyClass);
+```
+
+### Conditional Decoration
+
+Apply decorators based on runtime conditions:
+
+```typescript
+import { decorate, injectable } from 'inversify';
+
+class MyService {
+  // Implementation
+}
+
+// Conditionally make it injectable
+if (process.env.NODE_ENV === 'production') {
+  decorate(injectable(), MyService);
+}
+```
+
+## Important Notes
+
+- The `decorate` function must be called before the class is used in container bindings
+- For ParameterDecorator, the parameter index is 0-based (first parameter = 0, second = 1, etc.)
+- You can pass either a single decorator or an array of decorators

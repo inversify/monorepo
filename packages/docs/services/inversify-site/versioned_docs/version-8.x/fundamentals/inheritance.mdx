@@ -1,0 +1,53 @@
+---
+sidebar_position: 4
+title: Inheritance
+---
+# Inheritance
+
+Inheritance can be achieved relying on the `@injectFromBase` decorator. This decorator allows you to inject dependencies from the base class. Refer to the [API documentation](../api/decorator.mdx#injectfrombase) for more information.
+
+Previous versions of inversify used to provide implicitly injection inheritance. However, this approach was deprecated in favor of the `@injectFromBase` decorator.
+
+## Motivation
+Decorators are not designed to be inherited. Class inheritance doesn't play well with the former approach. The `@injectFromBase` decorator allows the developer whether or not decoration inheritance should be provided.
+
+In exchange of implicit inheritance, previous inversify versions performed multiple checks to ensure every class argument was injected. Some edge case scenarios forced to declare unmanaged parent constructor arguments so inversify could bypass these checks.
+
+- It makes no sense to declare parent constructor argument injections in cases in which the child class requires no injection at all:
+
+```ts
+class BaseShape {
+  kind: string;
+
+  // We should not inject the kind in the parent class
+  constructor(kind: string) {
+    this.kind = kind;
+  }
+}
+
+class SquareShape extends BaseShape {
+  constructor() {
+    super('square');
+  }
+}
+```
+
+- It makes no sense to declare parent constructor argument injections in cases in which the child class arguments don't match the parent class arguments:
+
+```ts
+class BaseShape {
+  // We should not inject kind nor sides, for they are likely to be in the wrong order in the child class
+  constructor(
+    public readonly kind: string,
+    public readonly sides: number,
+  ) {}
+}
+
+class RegularPolygonShape extends BaseShape {
+  constructor(sides: number) {
+    super('RegularPolygon', sides);
+  }
+}
+```
+
+The current approach allows the developer to decide whether or not to inherit the parent class injections relying on the `@injectFromBase` decorator.

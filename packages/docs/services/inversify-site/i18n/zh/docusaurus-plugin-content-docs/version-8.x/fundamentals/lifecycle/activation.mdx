@@ -1,0 +1,18 @@
+---
+sidebar_position: 1
+title: 激活
+---
+import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnActivation.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+每当解析服务时，都会分发激活事件。激活处理程序接收上下文和解析值，并返回处理后的解析值。
+
+<CodeBlock language="ts">{containerApiOnActivationSource}</CodeBlock>
+
+有多种方法可以提供激活处理程序：
+
+- 将处理程序添加到[容器](../../api/container.mdx#onactivation)。
+- 将处理程序添加到[绑定](../../api/binding-syntax.mdx#onactivation)。
+- 通过 [postConstruct 装饰器](../../api/decorator.mdx#postconstruct)将处理程序添加到类。
+
+当多个激活处理程序绑定到一个服务标识符时，`postConstruct` 处理程序会在任何其他处理程序之前被调用。之后，调用绑定处理程序。然后，调用容器处理程序，从根容器开始，向下到后代容器，在具有绑定的容器处停止。

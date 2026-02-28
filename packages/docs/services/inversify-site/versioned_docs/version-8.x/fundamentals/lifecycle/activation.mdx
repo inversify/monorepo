@@ -1,0 +1,19 @@
+---
+sidebar_position: 1
+title: Activation
+---
+import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnActivation.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+Whenever a service is resolved, the activation event is dispatched. An activation handler receives a context and a resolved value and returns the handled resolved value.
+
+<CodeBlock language="ts">{containerApiOnActivationSource}</CodeBlock>
+
+There are multiple ways to provide an activation handler
+
+- Adding the handler to the [container](../../api/container.mdx#onactivation).
+- Adding the handler to the [binding](../../api/binding-syntax.mdx#onactivation).
+- Adding the handler to the class through the [postConstruct decorator](../../api/decorator.mdx#postconstruct).
+
+When multiple activation handlers are binded to a service identifier, the `postConstruct` handler is called before any others. After that, the binding handler is called. Then, container handlers are called, starting at the root container and descending the descendant containers stopping at the container with the binding.
+

@@ -1,0 +1,84 @@
+---
+sidebar_position: 1
+title: Binding
+---
+import bindingScopeRequestSource from '@inversifyjs/code-examples/generated/examples/v8/bindingScopeRequest.ts.txt';
+import bindingScopeSingletonSource from '@inversifyjs/code-examples/generated/examples/v8/bindingScopeSingleton.ts.txt';
+import bindingScopeTransientSource from '@inversifyjs/code-examples/generated/examples/v8/bindingScopeTransient.ts.txt';
+import bindingToSyntaxApiToResolvedValueForDbRepositorySource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToResolvedValueForDbRepository.ts.txt';
+import fundamentalsBindingExampleSource from '@inversifyjs/code-examples/generated/examples/v8/fundamentalsBindingExample.ts.txt';
+import fundamentalsBindingFromClassMetadataSource from '@inversifyjs/code-examples/generated/examples/v8/fundamentalsBindingFromClassMetadata.ts.txt';
+import fundamentalsAutobindingSource from '@inversifyjs/code-examples/generated/examples/v8/fundamentalsAutobinding.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Binding
+
+A binding represents the relationship between a service identifier and its resolution. Bindings are added to a container to configure it to provide services.
+
+<CodeBlock language="ts">{fundamentalsBindingExampleSource}</CodeBlock>
+
+When the binding is added to the container, the container is configured to provide a resolved value for the service identifier `Weapon` by resolving the `Katana` class. `container.bind` creates a new binding with certain properties, which are explained below.
+
+## Relying on emitted class metadata
+
+When using TypeScript, you can rely on the emitted class metadata to avoid having to manually specify the service identifier. This is done by using the `@injectable` decorator from `inversify` on the class you want to bind. You need to enable the `emitDecoratorMetadata` TypeScript compiler option.
+
+<CodeBlock language="ts">{fundamentalsBindingFromClassMetadataSource}</CodeBlock>
+
+## Autobinding
+
+InversifyJS provides a feature called autobinding that allows you to automatically bind classes. Whenever a class service is being resolved and no bindings are found in the planning phase, the container adds a type binding to the requested class before proceeding with the planning phase. This feature is disabled by default. To enable it, you need to pass the `autobind` option to the container or pass an `autobind` option when calling `container.get`.
+
+<CodeBlock language="ts">{fundamentalsAutobindingSource}</CodeBlock>
+
+## Asynchronously resolved bindings
+
+Whenever a promise-like value is resolved from a binding, the container will wait for the promise to resolve before returning the resolved value to their dependent services:
+
+<CodeBlock language="ts">{bindingToSyntaxApiToResolvedValueForDbRepositorySource}</CodeBlock>
+
+In the example, the `dbConnectionSymbol` database connection is resolved asynchronously. The container waits for promises to be resolved, passing an `AwesomeDbDriverConnection` instance to the resolve value factory instead of a `Promise<AwesomeDbDriverConnection>` one.
+
+:::warning
+
+Keep in mind async bindings require the use of `Container.getAsync` or `Container.getAllAsync` to resolve any related service.
+
+:::
+
+## Binding properties
+
+A binding has the following properties:
+
+### Service identifier
+
+The identifier of the service for which a resolution is provided.
+
+### Scope
+
+The scope determines the caching strategy used to decide whether the service should be resolved or a cached value should be provided.
+
+#### Request
+
+When the service is resolved within the same `container.get` request, the same resolved value will be used.
+
+<CodeBlock language="ts">{bindingScopeRequestSource}</CodeBlock>
+
+#### Singleton
+
+When the service is resolved, the same cached resolved value will be used.
+
+<CodeBlock language="ts">{bindingScopeSingletonSource}</CodeBlock>
+
+#### Transient
+
+When the service is resolved, a new resolved value will be used each time.
+
+<CodeBlock language="ts">{bindingScopeTransientSource}</CodeBlock>
+
+### Constraint
+
+Specifies whether the binding is used to provide a resolved value for the given service identifier. Refer to the [API docs](../api/binding-syntax.mdx#bindwhenfluentsyntax) for more information.
+
+### Lifecycle handlers
+
+Handlers that are called after a resolved value is provided or a singleton-scoped binding is deactivated. Refer to the [API docs](../api/binding-syntax.mdx#bindonfluentsyntax) for more information.

@@ -1,0 +1,18 @@
+---
+sidebar_position: 2
+title: 停用
+---
+import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnDeactivation.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+每当单例作用域服务被解绑时，都会分发停用事件。停用处理程序接收解析值并且不返回任何内容。
+
+<CodeBlock language="ts">{containerApiOnDeactivationSource}</CodeBlock>
+
+可以通过多种方式添加停用处理程序：
+
+- 将处理程序添加到[容器](../../api/container.mdx#ondeactivation)。
+- 将处理程序添加到[绑定](../../api/binding-syntax.mdx#ondeactivation)。
+- 通过 [preDestroy 装饰器](../../api/decorator.mdx#predestroy)将处理程序添加到类。
+
+添加到容器的处理程序是最先被解析的。添加到子容器的任何处理程序都在添加到其父容器的处理程序之前被调用。接下来调用容器中的相关绑定，最后调用 `preDestroy` 方法。在上面的示例中，相关绑定是绑定到未绑定的 "Destroyable" 服务标识符的那些绑定。

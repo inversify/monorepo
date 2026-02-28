@@ -1,0 +1,331 @@
+---
+sidebar_position: 2
+title: 容器
+---
+import containerApiGetAllSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAll.ts.txt';
+import containerApiGetAllAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllAsync.ts.txt';
+import containerApiGetAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAsync.ts.txt';
+import containerApiGetSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGet.ts.txt';
+import containerApiIsBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsBound.ts.txt';
+import containerApiIsCurrentBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsCurrentBound.ts.txt';
+import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnActivation.ts.txt';
+import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnDeactivation.ts.txt';
+import containerApiUnbindBindingIdSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiUnbindBindingId.ts.txt';
+import containerApiUnbindSyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiUnbindSync.ts.txt';
+import containerApiRebindSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiRebind.ts.txt';
+import containerApiRebindSyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiRebindSync.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 容器
+
+InversifyJS 容器是首先通过绑定配置依赖项，然后可能重新配置和删除依赖项的地方。在这方面，可以直接在容器上工作，也可以利用容器模块。
+你可以使用 `get` 方法查询配置并解析配置的依赖项。
+你可以使用容器激活处理程序对解析做出反应，并使用容器停用处理程序对解绑做出反应。
+你可以创建容器层级结构，其中容器祖先可以为后代提供依赖项。
+为了进行测试，可以将状态作为快照保存在堆栈上，并在以后恢复。
+
+## 容器选项
+
+可以将容器选项传递给 Container 构造函数，如果你不提供或提供但省略了选项，则将提供默认值。
+选项可以在构造后更改，如果你不为从 Container 创建的子容器提供选项，则这些选项将由子容器共享。
+
+### autobind
+
+```ts
+autobind?: true;
+```
+
+自动将未绑定的类服务绑定到自身的选项。每当解析实例时，如果未找到请求服务的绑定，容器将尝试添加绑定。
+
+### parent
+
+```ts
+parent?: Container | undefined;
+```
+
+父容器（如果有）。有关更多信息，请参阅 [容器层级结构文档](../fundamentals/di-hierarchy.mdx)。
+
+### defaultScope
+
+```ts
+defaultScope?: BindingScope | undefined;
+```
+
+绑定的默认作用域。
+
+## bind
+
+```ts
+bind<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>
+```
+
+设置一个新的绑定。
+
+:::info
+
+除非另有说明，否则绑定作用域默认为 [瞬态](fundamentals/binding.mdx#瞬态-transient)。
+
+:::
+
+## get
+
+```ts
+get<T>(serviceIdentifier: ServiceIdentifier<T>, options: OptionalGetOptions): T | undefined;
+get<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetOptions): T;
+```
+
+通过其运行时标识符解析依赖项。运行时标识符必须仅与一个绑定关联，并且绑定必须同步解析，否则将抛出错误。
+
+<CodeBlock language="ts">{containerApiGetSource}</CodeBlock>
+
+## getAsync
+
+```ts
+getAsync<T>(serviceIdentifier: ServiceIdentifier<T>, options: OptionalGetOptions): Promise<T | undefined>;
+getAsync<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetOptions): Promise<T>;
+```
+
+通过其运行时标识符解析依赖项。运行时标识符必须仅与一个绑定关联，否则将抛出错误。
+
+<CodeBlock language="ts">{containerApiGetAsyncSource}</CodeBlock>
+
+## getAll
+
+```ts
+getAll<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetAllOptions): T[];
+```
+
+获取给定标识符的所有可用绑定。所有绑定必须同步解析，否则将抛出错误：
+
+<CodeBlock language="ts">{containerApiGetAllSource}</CodeBlock>
+
+## getAllAsync
+
+```ts
+getAllAsync<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetAllOptions): Promise<T[]>
+```
+
+获取给定标识符的所有可用绑定：
+
+<CodeBlock language="ts">{containerApiGetAllAsyncSource}</CodeBlock>
+
+## isBound
+
+```ts
+isBound(serviceIdentifier: ServiceIdentifier<unknown>, options?: IsBoundOptions): boolean;
+```
+
+你可以使用 `isBound` 方法检查给定服务标识符是否有已注册的绑定。
+
+<CodeBlock language="ts">{containerApiIsBoundSource}</CodeBlock>
+
+
+## isCurrentBound
+
+```ts
+isCurrentBound(serviceIdentifier: ServiceIdentifier<unknown>, options?: IsBoundOptions): boolean;
+```
+
+你可以使用 `isCurrentBound` 方法检查给定服务标识符是否仅在当前容器中有已注册的绑定。
+
+<CodeBlock language="ts">{containerApiIsCurrentBoundSource}</CodeBlock>
+
+## load
+
+```ts
+load(...modules: ContainerModule[]): void;
+```
+
+同步调用每个模块的注册方法。如果任何模块加载是异步的，将抛出错误。请参阅 [ContainerModule API 文档](./container-module.mdx)。
+
+## loadAsync
+
+```ts
+loadAsync(...modules: ContainerModule[]): Promise<void>;
+```
+
+`load` 的异步版本。调用每个模块的注册方法。请参阅 [ContainerModule API 文档](./container-module.mdx)。
+
+## onActivation
+
+```ts
+onActivation<T>(serviceIdentifier: ServiceIdentifier<T>, onActivation: BindingActivation<T>): void;
+```
+
+为与服务标识符关联的所有服务添加激活处理程序。
+
+<CodeBlock language="ts">{containerApiOnActivationSource}</CodeBlock>
+
+## onDeactivation
+
+```ts
+onDeactivation<T>(serviceIdentifier: ServiceIdentifier<T>, onDeactivation: BindingDeactivation<T>): void;
+```
+
+为服务标识符添加停用处理程序。
+
+<CodeBlock language="ts">{containerApiOnDeactivationSource}</CodeBlock>
+
+## rebind
+
+```ts
+rebind<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>;
+```
+
+同步解绑服务标识符然后为其创建新绑定的便捷方法。这相当于调用 `container.unbind(serviceId)` 然后调用 `container.bind(serviceId)`，但在单个方法中。返回绑定构建器以继续配置新绑定。
+
+<CodeBlock language="ts">{containerApiRebindSyncSource}</CodeBlock>
+
+## rebindAsync
+
+```ts
+rebindAsync<T>(serviceIdentifier: ServiceIdentifier<T>): Promise<BindToFluentSyntax<T>>;
+```
+
+`rebind` 的异步版本。解绑服务标识符，然后为其创建新绑定。返回绑定构建器以继续配置新绑定。
+
+<CodeBlock language="ts">{containerApiRebindSource}</CodeBlock>
+
+## register
+
+```ts
+register(pluginConstructor: Newable): void;
+```
+
+注册插件以扩展容器的功能。插件必须扩展 `@inversifyjs/plugin` 中的 `Plugin` 类并遵守其构造函数签名。有关更多信息，请参阅 [插件文档](../fundamentals/plugins.mdx)。
+
+## restore
+
+```ts
+restore(): void;
+```
+
+将容器状态恢复到上一个快照。有关更多信息，请参阅 [文档](../fundamentals/snapshot.mdx)。
+
+## snapshot
+
+```ts
+snapshot(): void;
+```
+
+保存容器的状态以便稍后使用 restore 方法恢复。有关更多信息，请参阅 [文档](../fundamentals/snapshot.mdx)。
+
+## unbind
+
+```ts
+unbind(identifier: BindingIdentifier | ServiceIdentifier): void;
+```
+
+同步地从容器中删除绑定。当传递：
+- 服务标识符：删除绑定到该服务标识符的所有绑定
+- 绑定标识符：删除与该标识符关联的特定绑定
+
+这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+
+<CodeBlock language="ts">{containerApiUnbindSyncSource}</CodeBlock>
+
+### 示例：通过标识符解绑绑定
+
+<CodeBlock language="ts">{containerApiUnbindBindingIdSource}</CodeBlock>
+
+## unbindAsync
+
+```ts
+unbindAsync(identifier: BindingIdentifier | ServiceIdentifier): Promise<void>;
+```
+
+`unbind` 的异步版本。从容器中删除绑定。当传递：
+- 服务标识符：删除绑定到该服务标识符的所有绑定
+- 绑定标识符：删除与该标识符关联的特定绑定
+
+这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+
+## unbindAll
+
+```ts
+unbindAll(): void;
+```
+
+同步删除此容器中的所有绑定。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+
+## unbindAllAsync
+
+```ts
+unbindAllAsync(): Promise<void>;
+```
+
+`unbindAll` 的异步版本。删除此容器中的所有绑定。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+
+## unload
+
+```ts
+unload(...modules: ContainerModule[]): void;
+```
+
+同步删除模块添加的绑定和处理程序。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+请参阅 [ContainerModule API 文档](./container-module.mdx)。
+
+## unloadAsync
+
+```ts
+unloadAsync(...modules: ContainerModule[]): Promise<void>;
+```
+
+`unload` 的异步版本。删除模块添加的绑定和处理程序。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+请参阅 [ContainerModule API 文档](./container-module.mdx)。
+
+## GetOptions
+
+可以传递给 `get`、`getAll`、`getAsync` 和 `getAllAsync` 方法的选项。
+
+```ts
+interface GetOptions {
+  autobind?: boolean;
+  name?: MetadataName;
+  optional?: boolean;
+  tag?: GetOptionsTagConstraint;
+}
+```
+
+- `autobind` (boolean)：自动将未绑定的类服务绑定到自身的选项。
+- `name` (MetadataName)：用于匹配绑定的名称元数据。
+- `optional` (boolean)：如果为 true，则如果未找到绑定，该方法将返回 `undefined` 或空数组。
+- `tag` (GetOptionsTagConstraint)：用于匹配绑定的标签元数据。
+
+## OptionalGetOptions
+
+当结果是可选时，可以传递给 `get` 和 `getAsync` 方法的选项。
+
+```ts
+interface OptionalGetOptions extends GetOptions {
+  optional: true;
+}
+```
+
+- `optional` (true)：指示结果是可选的，如果未找到绑定，该方法将返回 `undefined`。
+
+## IsBoundOptions
+
+可以传递给 `isBound` 和 `isCurrentBound` 方法的选项。
+
+```ts
+interface IsBoundOptions {
+  name?: MetadataName;
+  tag?: GetOptionsTagConstraint;
+}
+```
+
+- `name` (MetadataName)：用于匹配绑定的名称元数据。
+- `tag` (GetOptionsTagConstraint)：用于匹配绑定的标签元数据。
+
+## GetAllOptions
+
+可以传递给 `getAll` 和 `getAllAsync` 方法的选项。
+
+```ts
+interface GetAllOptions extends GetOptions {
+  chained?: boolean;
+}
+```
+
+- `chained` (boolean)：启用跨容器层级结构的链式解析的选项。有关更多信息，请参阅 [文档](../fundamentals/di-hierarchy.mdx#链式解析模式)。

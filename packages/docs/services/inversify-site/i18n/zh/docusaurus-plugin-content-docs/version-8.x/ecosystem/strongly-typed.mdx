@@ -1,0 +1,305 @@
+---
+sidebar_position: 3
+title: 强类型容器
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 强类型容器
+
+`@inversifyjs/strongly-typed` 包添加了 TypeScript 类型定义，为你的 InversifyJS 容器和 `@inject()` 装饰器带来编译时类型安全。使用此包，你可以定义一个绑定映射，作为容器的契约，确保绑定、检索和注入都在编译时进行类型检查。
+
+## 何时使用
+
+当你想要在编译时而不是运行时捕获绑定和注入错误时，请使用强类型容器。你将获得服务标识符的 IDE 自动完成功能，并确保整个依赖注入设置的类型安全。绑定映射充当可用服务的实时文档，并防止意外注入错误类型。
+
+如果你更喜欢最大的灵活性或正在处理高度动态的绑定场景，标准容器可能更合适。
+
+## 主要特性
+
+### 类型安全绑定
+
+使用编译时验证绑定服务，确保你为每个服务标识符注册了正确的类型。
+
+### 类型安全检索
+
+通过自动类型推断获取服务，以便你的 IDE 确切知道你正在使用的类型。
+
+### 类型安全注入
+
+对构造函数和属性注入使用强类型 `@inject()` 装饰器，验证注入的类型是否与参数或属性类型匹配。
+
+### Promise 支持
+
+在类型级别区分同步和异步绑定，确保你使用正确的检索方法。
+
+### 零运行时开销
+
+所有类型检查都在编译时进行，因此生产中没有性能损失。
+
+### 灵活使用
+
+可以用作直接导入或类型断言，以使库不出现在最终的依赖树中。
+
+## 安装
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+npm install @inversifyjs/strongly-typed
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm add @inversifyjs/strongly-typed
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn add @inversifyjs/strongly-typed
+```
+
+  </TabItem>
+</Tabs>
+
+## 快速开始
+
+### 定义你的绑定映射
+
+首先定义一个绑定映射，描述容器将提供的所有服务：
+
+```typescript
+interface Foo {
+  foo: string;
+}
+
+interface Bar {
+  bar: string;
+}
+
+interface BindingMap {
+  foo: Foo;
+  bar: Bar;
+}
+```
+
+### 创建类型化容器
+
+你可以直接实例化 `TypedContainer`：
+
+```typescript
+import { TypedContainer } from '@inversifyjs/strongly-typed';
+
+const container = new TypedContainer<BindingMap>();
+```
+
+或者使用类型断言将库保留在依赖树之外：
+
+```typescript
+import { Container } from 'inversify';
+import type { TypedContainer } from '@inversifyjs/strongly-typed';
+
+const container = new Container() as TypedContainer<BindingMap>;
+```
+
+### 类型安全绑定
+
+所有绑定现在都经过类型检查：
+
+```typescript
+// ✅ Valid - correct type
+container.bind('foo').toConstantValue({ foo: 'abc' });
+
+// ❌ Compilation error - wrong type
+container.rebind('foo').toConstantValue({ unknown: 'uh-oh' });
+
+// ❌ Compilation error - unknown identifier
+container.bind('unknown').toConstantValue({ foo: 'xyz' });
+```
+
+### 类型安全检索
+
+服务检索经过完全类型检查，具有自动类型推断：
+
+```typescript
+// ✅ Valid - inferred type is Foo
+const foo = container.get('foo');
+
+// ❌ Compilation error - bar is not assignable to Foo
+const wrongType: Foo = container.get('bar');
+
+// ❌ Compilation error - unknown identifier
+const invalid = container.get('unknown-identifier');
+```
+
+## 强类型注入
+
+要使用强类型装饰器，请使用类型断言重新导出 `inject` 和 `multiInject` 装饰器：
+
+```typescript
+import { inject, multiInject } from 'inversify';
+import type { TypedInject, TypedMultiInject } from '@inversifyjs/strongly-typed';
+
+export const $inject = inject as TypedInject<BindingMap>;
+export const $multiInject = multiInject as TypedMultiInject<BindingMap>;
+```
+
+### 构造函数注入
+
+对构造函数参数使用类型化装饰器：
+
+```typescript
+import { injectable } from 'inversify';
+
+@injectable()
+class MyService {
+  constructor(
+    @$inject('foo') // ✅ Valid
+    foo: Foo,
+
+    @$inject('foo') // ❌ Compilation error - foo is not assignable to Bar
+    bar: Bar,
+  ) {}
+}
+```
+
+### 属性注入
+
+属性注入适用于 **public** 属性：
+
+```typescript
+@injectable()
+class MyService {
+  @$inject('foo') // ✅ Valid
+  public foo: Foo;
+
+  @$inject('foo') // ❌ Compilation error - wrong type
+  public bar: Bar;
+}
+```
+
+:::note
+由于 TypeScript 装饰器的限制，私有属性不能是强类型的。使用公共属性（可选择带下划线前缀）或回退到常规 `@inject()` 装饰器用于私有属性。
+:::
+
+## 高级用法
+
+### Promise 绑定
+
+InversifyJS 允许绑定 Promise，但必须使用 `getAsync()` 检索它们。类型系统强制执行此操作：
+
+```typescript
+interface BindingMap {
+  number: number;
+  asyncNumber: Promise<number>;
+}
+
+const container = new TypedContainer<BindingMap>();
+
+// ✅ Valid - sync binding with sync method
+const num = container.get('number'); // number
+
+// ❌ Compilation error - can't use get() for Promise bindings
+const asyncNum = container.get('asyncNumber');
+
+// ✅ Valid - async binding with async method
+const asyncNumCorrect = await container.getAsync('asyncNumber'); // number
+```
+
+### 容器层级结构
+
+创建具有父容器的子容器时，手动合并绑定映射：
+
+```typescript
+type ParentMap = {
+  parentService: ParentService;
+};
+
+type ChildMap = {
+  childService: ChildService;
+};
+
+const parent = new TypedContainer<ParentMap>();
+const child = new TypedContainer<ParentMap & ChildMap>({ parent });
+
+// Child can access both parent and child bindings
+const parentSvc = child.get('parentService');
+const childSvc = child.get('childService');
+```
+
+### 容器模块
+
+创建强类型容器模块：
+
+```typescript
+import { TypedContainerModule } from '@inversifyjs/strongly-typed';
+
+const myModule = new TypedContainerModule<BindingMap>(
+  (bind) => {
+    bind('foo').toConstantValue({ foo: 'value' });
+    bind('bar').toConstantValue({ bar: 'value' });
+  }
+);
+
+await container.load(myModule);
+```
+
+## 已知限制
+
+### 私有属性
+
+由于 TypeScript 装饰器的限制，私有属性不能使用注入装饰器进行强类型化：
+
+```typescript
+@injectable()
+class MyService {
+  @$inject('foo')
+  private foo: Foo; // ❌ Compilation error
+}
+```
+
+你可以通过将属性设为公共（考虑使用下划线前缀作为约定，如 `public _foo`）或对私有属性使用 `inversify` 中的常规 `@inject()` 装饰器来解决此问题。
+
+### 构造函数错误消息
+
+当构造函数注入类型不正确时，TypeScript 会生成通用错误消息，例如：
+
+```
+Unable to resolve signature of parameter decorator when called as an expression.
+  Argument of type '2' is not assignable to parameter of type 'undefined'.
+```
+
+这表明索引 `2` 处的构造函数参数对于注入的标识符具有错误的类型。
+
+## 优势
+
+### 更早的错误检测
+
+在开发期间而不是生产中捕获类型不匹配。TypeScript 编译器成为你抵御注入错误的第一道防线。
+
+### 更好的 IDE 支持
+
+获得服务标识符的自动完成和自动类型推断。你的编辑器确切知道哪些类型可用以及每个服务返回什么。
+
+### 自文档化
+
+绑定映射充当可用服务的文档。新团队成员可以查看类型定义以了解容器提供的服务。
+
+### 重构安全
+
+类型系统在重构时捕获断开的引用。重命名服务标识符，编译器将向你显示所有需要更新的地方。
+
+### 零运行时成本
+
+所有好处都来自编译时类型检查。运行时没有生成额外的 JavaScript，也没有性能开销。
+
+## 包信息
+
+- **npm**: [`@inversifyjs/strongly-typed`](https://www.npmjs.com/package/@inversifyjs/strongly-typed)
+- **GitHub**: [inversify/monorepo](https://github.com/inversify/monorepo)
+- **License**: MIT

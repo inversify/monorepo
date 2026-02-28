@@ -1,0 +1,104 @@
+---
+sidebar_position: 3
+title: Container Module
+---
+import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v8/containerModuleApiExample.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# ContainerModule
+
+Container modules help manage the complexity of bindings in large applications.
+
+## Constructor
+
+```ts
+constructor(load: (options: ContainerModuleLoadOptions) => void | Promise<void>)
+```
+
+The constructor argument for `ContainerModule` is a load callback with function parameters to manage bindings within the scope of the container module.
+
+### Methods
+
+#### load
+
+```ts
+load(options: ContainerModuleLoadOptions): void | Promise<void>
+```
+
+Loads the container module with the provided options.
+
+## ContainerModuleLoadOptions
+
+Options to be passed to the load callback. It contains the following properties:
+
+### bind
+
+```ts
+bind: <T>(serviceIdentifier: ServiceIdentifier<T>) => BindToFluentSyntax<T>
+```
+
+Refer to the [docs](./container.mdx#bind) for more information.
+
+### isBound
+
+```ts
+isBound: (serviceIdentifier: ServiceIdentifier, options?: IsBoundOptions) => boolean
+```
+
+Refer to the [docs](./container.mdx#isbound) for more information.
+
+### onActivation
+
+```ts
+onActivation: <T>(serviceIdentifier: ServiceIdentifier<T>, activation: BindingActivation<T>) => void
+```
+
+Refer to the [docs](./container.mdx#onactivation) for more information.
+
+### onDeactivation
+
+```ts
+onDeactivation: <T>(serviceIdentifier: ServiceIdentifier<T>, deactivation: BindingDeactivation<T>) => void
+```
+
+Refer to the [docs](./container.mdx#ondeactivation) for more information.
+
+### rebind
+
+```ts
+rebind: <T>(serviceIdentifier: ServiceIdentifier<T>) => BindToFluentSyntax<T>
+```
+
+Refer to the [docs](./container.mdx#rebind) for more information.
+
+### rebindAsync
+
+```ts
+rebindAsync: <T>(serviceIdentifier: ServiceIdentifier<T>) => Promise<BindToFluentSyntax<T>>
+```
+
+Refer to the [docs](./container.mdx#rebindasync) for more information.
+
+### unbind
+
+```ts
+unbind: (identifier: BindingIdentifier | ServiceIdentifier) => void
+```
+
+Refer to the [docs](./container.mdx#unbind) for more information.
+
+### unbindAsync
+
+```ts
+unbindAsync: (identifier: BindingIdentifier | ServiceIdentifier) => Promise<void>
+```
+
+Refer to the [docs](./container.mdx#unbindasync) for more information.
+
+## Example: binding services through ContainerModule API
+
+When a container module is loaded into a Container, the load callback is invoked. This is the opportunity for the container module to register bindings and handlers.
+
+When a container module is unloaded from a Container, the bindings added by that container will be removed, and the [deactivation process](../fundamentals/lifecycle/deactivation.mdx) will occur for each of them. Container deactivation and [activation handlers](../fundamentals/lifecycle/activation.mdx) will also be removed.
+
+<CodeBlock language="ts">{containerModuleApiExampleSource}</CodeBlock>

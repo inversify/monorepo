@@ -1,0 +1,214 @@
+---
+sidebar_position: 4
+title: Decorator
+---
+import decoratorApiInjectConstructorArgumentSource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiInjectConstructorArgument.ts.txt';
+import decoratorApiInjectFromBaseConstructorArgumentSource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiInjectFromBaseConstructorArguments.ts.txt';
+import decoratorApiInjectFromBasePropertiesSource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiInjectFromBaseProperties.ts.txt';
+import decoratorApiInjectFromHierarchyConstructorArgumentSource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiInjectFromHierarchyConstructorArguments.ts.txt';
+import decoratorApiInjectFromHierarchyPropertiesSource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiInjectFromHierarchyProperties.ts.txt';
+import decoratorApiInjectPropertySource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiInjectProperty.ts.txt';
+import decoratorApiMultiInjectPropertySource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiMultiInjectProperty.ts.txt';
+import decoratorApiNamedSource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiNamed.ts.txt';
+import decoratorApiOptionalSource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiOptional.ts.txt';
+import decoratorApiPostConstructSource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiPostConstruct.ts.txt';
+import decoratorApiPreDestroySource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiPreDestroy.ts.txt';
+import decoratorApiTaggedSource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiTagged.ts.txt';
+import decoratorApiUnmanagedSource from '@inversifyjs/code-examples/generated/examples/v8/decoratorApiUnmanaged.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Decorators
+
+This section covers Inversify decorators used to provide class metadata.
+
+## injectable
+
+Decorator used to set class metadata so containers can receive class-emitted metadata.
+
+It's highly recommended to annotate every class provided as a service with the `@injectable` decorator. However, it's not mandatory in every single case.
+
+### Parameters
+
+The `injectable` decorator accepts an optional `scope` parameter that allows you to define the lifecycle of the bound instance:
+
+```ts
+@injectable('Singleton') // or 'Transient' or 'Request'
+class MyService {
+  // ...
+}
+```
+
+Valid scope values are:
+- `'Singleton'`: The container will create only one instance and will return that instance for all requests.
+- `'Transient'`: The container will create a new instance for each request.
+- `'Request'`: The container will create an instance for each unique request (useful in web applications with request scoping).
+
+### When is injectable mandatory?
+
+Whenever class-emitted metadata is expected.
+
+Consider the following sample code:
+
+```ts
+import { injectable } from 'inversify';
+
+@injectable()
+class B {
+  readonly foo: string = 'foo';
+}
+
+@injectable()
+class A {
+  constructor(public readonly b: B) {}
+}
+```
+
+A CommonJS transpilation with the [emitDecoratorMetadata](https://www.typescriptlang.org/tsconfig/#emitDecoratorMetadata) option enabled might look like this:
+
+```js
+Object.defineProperty(exports, "__esModule", { value: true });
+const inversify_1 = require("inversify");
+let B = class B {
+    foo = 'foo';
+};
+B = __decorate([
+    (0, inversify_1.injectable)()
+], B);
+let A = class A {
+    b;
+    constructor(b) {
+        this.b = b;
+    }
+};
+A = __decorate([
+    (0, inversify_1.injectable)(),
+    __metadata("design:paramtypes", [B])
+], A);
+```
+
+TypeScript emits class metadata if and only if there are any class decorators applied to the target class. If we remove the `@injectable` from `A`, the transpiled code looks very different:
+
+```js
+Object.defineProperty(exports, "__esModule", { value: true });
+class B {
+    foo = 'foo';
+}
+class A {
+    b;
+    constructor(b) {
+        this.b = b;
+    }
+}
+```
+
+This time, no class metadata is emitted even if the `emitDecoratorMetadata` TypeScript option is enabled, causing trouble at execution time.
+
+## inject
+
+Decorator used to establish a relation between a constructor argument or a class property and a service ID.
+
+When resolving an instance of the class, the target constructor argument or property will be resolved in the same way [container.get](./container.mdx#get) behaves.
+
+### Example: decorating a class constructor argument
+
+<CodeBlock language="ts">{decoratorApiInjectConstructorArgumentSource}</CodeBlock>
+
+### Example: decorating a property
+
+<CodeBlock language="ts">{decoratorApiInjectPropertySource}</CodeBlock>
+
+## injectFromBase
+
+Decorator used to inject dependencies from a base class. Child class injections take precedence over base class injections.
+
+### Parameters
+
+The `injectFromBase` decorator accepts an optional `InjectFromBaseOptions` object with the following properties:
+
+- `extendConstructorArguments` (boolean, defaults to true): If true, constructor arguments from the base class will be injected.
+- `extendProperties` (boolean, defaults to true): If true, properties from the base class will be injected.
+- `lifecycle` (object, optional): Lifecycle options for extending lifecycle methods from the base class:
+  - `extendPostConstructMethods` (boolean, defaults to true): If true, post-construct methods from the base class will be extended.
+  - `extendPreDestroyMethods` (boolean, defaults to true): If true, pre-destroy methods from the base class will be extended.
+
+### Example: decorating base class constructor arguments
+
+<CodeBlock language="ts">{decoratorApiInjectFromBaseConstructorArgumentSource}</CodeBlock>
+
+### Example: decorating base class properties
+
+<CodeBlock language="ts">{decoratorApiInjectFromBasePropertiesSource}</CodeBlock>
+
+## injectFromHierarchy
+
+Decorator used to inject dependencies from the full class hierarchy (all ancestors). The injection is applied top-down (from the farthest ancestor to the closest base).
+
+### Parameters
+
+The `injectFromHierarchy` decorator accepts an optional `InjectFromHierarchyOptions` object with the following properties:
+
+- `extendConstructorArguments` (boolean, defaults to true): If true, constructor arguments from all ancestors will be injected.
+- `extendProperties` (boolean, defaults to true): If true, properties from all ancestors will be injected.
+- `lifecycle` (object, optional): Lifecycle options for extending lifecycle methods from the hierarchy:
+  - `extendPostConstructMethods` (boolean, defaults to true): If true, post-construct methods from all ancestors will be extended.
+  - `extendPreDestroyMethods` (boolean, defaults to true): If true, pre-destroy methods from all ancestors will be extended.
+
+### Example: decorating hierarchy constructor arguments
+
+<CodeBlock language="ts">{decoratorApiInjectFromHierarchyConstructorArgumentSource}</CodeBlock>
+
+### Example: decorating hierarchy properties
+
+<CodeBlock language="ts">{decoratorApiInjectFromHierarchyPropertiesSource}</CodeBlock>
+
+## multiInject
+
+Decorator used to establish a relation between a constructor argument or a class property and a service ID.
+
+When resolving an instance of the class, the target constructor argument or property will be resolved in the same way [container.getAll](./container.mdx#getall) behaves.
+
+### Parameters
+
+The `multiInject` decorator accepts an optional `MultiInjectOptions` object with the following properties:
+
+- `chained` (boolean): Option to enable chained resolution across container hierarchies. Refer to the [docs](../fundamentals/di-hierarchy.mdx#chained-resolution-mode) for more information.
+
+### Example: decorating a property
+
+<CodeBlock language="ts">{decoratorApiMultiInjectPropertySource}</CodeBlock>
+
+## named
+
+Decorator used to establish a relation between a constructor argument or a class property and a metadata name.
+
+<CodeBlock language="ts">{decoratorApiNamedSource}</CodeBlock>
+
+## optional
+
+Decorator used to establish that a target constructor argument or property is optional and, therefore, it shall not be resolved if no bindings are found for the associated service ID.
+
+<CodeBlock language="ts">{decoratorApiOptionalSource}</CodeBlock>
+
+## postConstruct
+
+Decorator used to establish an activation handler for the target class. Refer to the [docs](../fundamentals/lifecycle/activation.mdx) for more information.
+
+<CodeBlock language="ts">{decoratorApiPostConstructSource}</CodeBlock>
+
+## preDestroy
+
+Decorator used to establish a deactivation handler for the target class. Refer to the [docs](../fundamentals/lifecycle/deactivation.mdx) for more information.
+
+<CodeBlock language="ts">{decoratorApiPreDestroySource}</CodeBlock>
+
+## tagged
+
+Decorator used to establish a relation between a constructor argument or a class property and a metadata tag.
+
+<CodeBlock language="ts">{decoratorApiTaggedSource}</CodeBlock>
+
+## unmanaged
+
+Decorator used to establish that Inversify should not inject the target constructor argument or property whatsoever.
+
+<CodeBlock language="ts">{decoratorApiUnmanagedSource}</CodeBlock>

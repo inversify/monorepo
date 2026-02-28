@@ -1,0 +1,104 @@
+---
+sidebar_position: 3
+title: 容器模块
+---
+import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v8/containerModuleApiExample.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 容器模块
+
+容器模块有助于管理大型应用程序中绑定的复杂性。
+
+## 构造函数
+
+```ts
+constructor(load: (options: ContainerModuleLoadOptions) => void | Promise<void>)
+```
+
+`ContainerModule` 的构造函数参数是一个加载回调，带有用于管理容器模块范围内绑定的函数参数。
+
+### 方法
+
+#### load
+
+```ts
+load(options: ContainerModuleLoadOptions): void | Promise<void>
+```
+
+使用提供的选项加载容器模块。
+
+## ContainerModuleLoadOptions
+
+要传递给加载回调的选项。它包含以下属性：
+
+### bind
+
+```ts
+bind: <T>(serviceIdentifier: ServiceIdentifier<T>) => BindToFluentSyntax<T>
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#bind)。
+
+### isBound
+
+```ts
+isBound: (serviceIdentifier: ServiceIdentifier, options?: IsBoundOptions) => boolean
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#isbound)。
+
+### onActivation
+
+```ts
+onActivation: <T>(serviceIdentifier: ServiceIdentifier<T>, activation: BindingActivation<T>) => void
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#onactivation)。
+
+### onDeactivation
+
+```ts
+onDeactivation: <T>(serviceIdentifier: ServiceIdentifier<T>, deactivation: BindingDeactivation<T>) => void
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#ondeactivation)。
+
+### rebind
+
+```ts
+rebind: <T>(serviceIdentifier: ServiceIdentifier<T>) => BindToFluentSyntax<T>
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#rebind)。
+
+### rebindAsync
+
+```ts
+rebindAsync: <T>(serviceIdentifier: ServiceIdentifier<T>) => Promise<BindToFluentSyntax<T>>
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#rebindasync)。
+
+### unbind
+
+```ts
+unbind: (identifier: BindingIdentifier | ServiceIdentifier) => void
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#unbind)。
+
+### unbindAsync
+
+```ts
+unbindAsync: (identifier: BindingIdentifier | ServiceIdentifier) => Promise<void>
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#unbindasync)。
+
+## 示例：通过 ContainerModule API 绑定服务
+
+当容器模块加载到容器中时，将调用加载回调。这是容器模块注册绑定和处理程序的机会。
+
+当容器模块从容器中卸载时，该容器添加的绑定将被删除，并且每个绑定都将发生 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。容器停用和 [激活处理程序](../fundamentals/lifecycle/activation.mdx) 也将被删除。
+
+<CodeBlock language="ts">{containerModuleApiExampleSource}</CodeBlock>

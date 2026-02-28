@@ -1,0 +1,256 @@
+---
+sidebar_position: 4
+title: Suites
+---
+
+import DocumentationButton from '@site/src/components/DocumentationButton';
+
+# Suites
+
+依赖注入系统中的单元测试通常涉及重复的设置和脆弱的模拟连接。Suites 是一个单元测试框架，它通过单个声明性调用创建隔离的测试环境，帮助开发人员专注于测试逻辑，而不是基础设施、样板代码和设置。
+
+## 何时使用
+
+在以下情况下使用 Suites：
+- 需要为 InversifyJS 类进行快速、可维护的单元测试
+- 想要所有模拟依赖项的编译时类型安全
+- 需要消除重复的模拟设置样板代码
+- 想要测试具有隔离和选择性协作的类
+- 需要具有清晰、结构化模式的 AI 辅助测试
+
+:::info
+如果你需要具有真实依赖项和实际 InversifyJS 容器的完整集成测试，传统的容器配置可能更合适。
+:::
+
+## 核心特性
+
+- **自动生成类型安全模拟** - 所有依赖项都变成完全类型化的 `Mocked<T>` 实例，具有编译时验证
+- **独立和社交测试** - 在完全隔离的情况下测试类，或启用业务逻辑之间的选择性协作
+- **InversifyJS 感知** - 自动识别 `@injectable`、`@inject`、`@multiInject`、`@tagged` 和 `@named` 装饰器
+- **虚拟 DI 容器** - 不需要实际的 InversifyJS 容器 - 分析类并仅创建所需的模拟
+- **令牌自动模拟** - 令牌注入的依赖项始终被模拟，确保测试保持单元测试
+- **框架集成** - 开箱即用地与 Jest、Vitest 和 Sinon 配合使用
+
+## 安装
+
+对于 InversifyJS 6.x：
+
+```bash
+npm install -D @suites/unit @suites/di.inversify@^3.0.0 @suites/doubles.jest
+```
+
+:::info
+如果你使用的是 Vitest 或 Sinon 而不是 Jest，请使用 `@suites/doubles.vitest` 或 `@suites/doubles.sinon`。
+:::
+
+将类型引用添加到 `global.d.ts`：
+
+```typescript
+/// <reference types="@suites/doubles.jest/unit" />
+/// <reference types="@suites/di.inversify" />
+```
+
+## 快速示例
+
+### 独立测试
+
+在完全隔离的情况下测试一个类，所有依赖项都会自动模拟：
+
+```typescript title="order.service.ts"
+@injectable()
+class OrderService {
+  constructor(
+    private readonly paymentGateway: PaymentGateway,
+    private readonly inventoryService: InventoryService
+  ) {}
+
+  async processOrder(orderId: string) {
+    const inventory = await this.inventoryService.checkStock(orderId);
+    return this.paymentGateway.charge(inventory.total);
+  }
+}
+```
+
+```typescript title="order.service.spec.ts"
+import { TestBed, type Mocked } from '@suites/unit';
+import { injectable } from 'inversify';
+
+describe('Order Service Unit Spec', () => {
+  let orderService: OrderService;
+  let paymentGateway: Mocked<PaymentGateway>;
+  let inventoryService: Mocked<InventoryService>;
+
+  beforeAll(async () => {
+    const { unit, unitRef } = await TestBed.solitary(OrderService).compile();
+
+    orderService = unit;
+    paymentGateway = unitRef.get(PaymentGateway);
+    inventoryService = unitRef.get(InventoryService);
+  });
+
+  it('should process order with payment', async () => {
+    inventoryService.checkStock.mockResolvedValue({ total: 100 });
+    paymentGateway.charge.mockResolvedValue({ success: true });
+
+    const result = await orderService.processOrder('123');
+
+    expect(result.success).toBe(true);
+    expect(paymentGateway.charge).toHaveBeenCalledWith(100);
+  });
+});
+```
+
+### 具有协作的社交测试
+
+在模拟外部边界的同时，使用其真正的协作者测试类：
+
+```typescript
+@injectable()
+class PriceCalculator {
+  calculateTotal(items: Item[]): number {
+    return items.reduce((sum, item) => sum + item.price, 0);
+  }
+}
+```
+
+```typescript
+@injectable()
+class OrderService {
+  constructor(
+    private calculator: PriceCalculator,
+    private paymentGateway: PaymentGateway
+  ) {}
+
+  async processOrder(items: Item[]) {
+    const total = this.calculator.calculateTotal(items);
+    return this.paymentGateway.charge(total);
+  }
+}
+```
+
+```typescript
+import { TestBed, type Mocked } from '@suites/unit';
+
+describe('Order Service Sociable Unit Spec', () => {
+  let orderService: OrderService;
+  let paymentGateway: Mocked<PaymentGateway>;
+
+  beforeAll(async () => {
+    const { unit, unitRef } = await TestBed.sociable(OrderService)
+      .collaborate()                    // All business logic collaborates
+      .exclude([PaymentGateway])        // Exclude external services
+      .compile();
+
+    orderService = unit;
+    paymentGateway = unitRef.get(PaymentGateway);
+  });
+
+  it('should calculate and charge correct total', async () => {
+    paymentGateway.charge.mockResolvedValue({ success: true });
+
+    await orderService.processOrder([
+      { price: 10 },
+      { price: 20 }
+    ]);
+
+    // Real calculator logic executed, only gateway is mocked
+    expect(paymentGateway.charge).toHaveBeenCalledWith(30);
+  });
+});
+```
+
+### 令牌依赖项
+
+令牌注入的依赖项始终自动模拟（阅读有关 [依赖倒置](/docs/introduction/dependency-inversion/) 的更多信息）：
+
+```typescript
+@injectable()
+class PaymentService {
+  constructor(
+    private validator: PaymentValidator,              // Class dependency
+    @inject('DATABASE') private database: Database,   // Token dependency
+  ) {}
+}
+
+describe('PaymentService', () => {
+  let service: PaymentService;
+  let validator: Mocked<PaymentValidator>;
+  let database: Mocked<Database>;
+
+  beforeAll(async () => {
+    const { unit, unitRef } = await TestBed.solitary(PaymentService).compile();
+
+    service = unit;
+    validator = unitRef.get(PaymentValidator);      // By class
+    database = unitRef.get<Database>('DATABASE');   // By token
+  });
+});
+```
+
+### InversifyJS 元数据支持
+
+Suites 完全支持标记和命名绑定的 InversifyJS 元数据模式：
+
+```typescript
+@injectable()
+class Ninja {
+  constructor(
+    @inject('Weapon') @tagged('canThrow', false) private katana: Weapon,
+    @inject('Weapon') @tagged('canThrow', true) private shuriken: Weapon
+  ) {}
+}
+
+describe('Ninja', () => {
+  let ninja: Ninja;
+  let katana: Mocked<Weapon>;
+  let shuriken: Mocked<Weapon>;
+
+  beforeAll(async () => {
+    const { unit, unitRef } = await TestBed.solitary(Ninja).compile();
+
+    ninja = unit;
+
+    // Access mocks by tag metadata
+    katana = unitRef.get<Weapon>('Weapon', { canThrow: false });
+    shuriken = unitRef.get<Weapon>('Weapon', { canThrow: true });
+  });
+
+  it('should use correct weapons', () => {
+    // Both mocks are fully typed and independent
+    expect(katana).toBeDefined();
+    expect(shuriken).toBeDefined();
+  });
+});
+```
+
+你还可以在编译前使用元数据配置模拟：
+
+```typescript
+await TestBed.solitary(Ninja)
+  .mock<Weapon>('Weapon', { canThrow: true })
+  .impl(stub => ({
+    attack: stub.mockReturnValue('shuriken attack!')
+  }))
+  .compile();
+```
+
+## 它是如何工作的
+
+Suites 使用一个 **虚拟 DI 容器**，它分析 Inversify 的类而不初始化实际的容器。
+
+它：
+
+1. 自动检测 `@injectable` 和 `@inject` 装饰器
+2. 为所有依赖项创建类型安全模拟
+3. 将它们连接在一起，没有框架开销
+4. 确保令牌依赖项始终被模拟（保持测试为单元测试，而不是集成测试）
+
+这意味着你获得了 DI 框架的测试人体工程学，而没有初始化成本或复杂性。
+
+## 文档
+
+包含指南、API 参考和示例的完整文档：
+
+<DocumentationButton href="https://suites.dev" target="_blank">
+  <span>查看完整文档</span>
+</DocumentationButton>

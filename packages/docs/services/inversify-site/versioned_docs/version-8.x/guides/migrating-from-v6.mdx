@@ -1,0 +1,166 @@
+---
+sidebar_position: 1
+title: Migrating from v6
+---
+import bindingOnSyntaxApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/bindingOnSyntaxApiOnActivation.ts.txt';
+import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/v8/bindingWhenSyntaxApiWhen.ts.txt';
+import containerApiGetAllWithNamedBindingsSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllWithNamedBindings.ts.txt';
+import containerApiGetNamedSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetNamed.ts.txt';
+import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v8/containerModuleApiExample.ts.txt';
+import diHierarchySource from '@inversifyjs/code-examples/generated/examples/v8/diHierarchy.ts.txt';
+import fundamentalsAutobindingSource from '@inversifyjs/code-examples/generated/examples/v8/fundamentalsAutobinding.ts.txt';
+import migrationToAutoFactorySource from '@inversifyjs/code-examples/generated/examples/v8/migrationToAutoFactory.ts.txt';
+import migrationToAutoNamedFactorySource from '@inversifyjs/code-examples/generated/examples/v8/migrationToAutoNamedFactory.ts.txt';
+import migrationToConstructorSource from '@inversifyjs/code-examples/generated/examples/v8/migrationToConstructor.ts.txt';
+import migrationToFunctionSource from '@inversifyjs/code-examples/generated/examples/v8/migrationToFunction.ts.txt';
+import migrationToProviderSource from '@inversifyjs/code-examples/generated/examples/v8/migrationToProvider.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Migrating from v6
+
+InversifyJS v8 introduces several breaking changes. This guide will help you migrate your existing InversifyJS v6 code to v8.
+
+## Overview of Changes
+
+The following table summarizes the key changes from v6 to v8:
+
+| v6                                    | v8                                       | Comment                                                          |
+|---------------------------------------|------------------------------------------|------------------------------------------------------------------|
+| `autoBindInjectable` option           | `autobind` option                        | Renamed container constructor option                             |
+| `container.resolve(X)`                | `container.get(X, { autobind: true })`   | `resolve` replaced by `get` with `autobind` option               |
+| Custom metadata and middlewares       | No direct replacement                    | Removed to simplify the library and avoid exposing internal data structures |
+| `container.isBoundNamed`              | `container.isBound(X, { name: ... })`    | Merged all `isBound` variants with an options parameter          |
+| `container.isBoundTagged`             | `container.isBound(X, { tag: ... })`     | Merged all `isBound` variants with an options parameter          |
+| `container.getNamed`                  | `container.get(X, { name: ... })`        | Merged all `get` variants with an options parameter              |
+| `container.getTagged`                 | `container.get(X, { tag: ... })`         | Merged all `get` variants with an options parameter              |
+| `container.tryGet`                    | `container.get(X, { optional: true })`   | Added `optional` flag for optional `get`                         |
+| `container.tryGetNamed`               | `container.get(X, { name: ..., optional: true })` | Combined named and optional parameters                  |
+| `container.tryGetTagged`              | `container.get(X, { tag: ..., optional: true })`  | Combined tagged and optional parameters                 |
+| `container.createChild()`             | `new Container({ parent: container })`   | Child containers created via constructor                         |
+| `.toAutoFactory(X)`                   | `.toFactory((ctx) => () => ctx.get(X))`  | Use `toFactory` with `ResolutionContext.get()`                   |
+| `.toAutoNamedFactory(X)`              | `.toFactory((ctx) => (name) => ctx.get(X, { name }))` | Use `toFactory` with named resolution         |
+| `.toConstructor(X)`                   | `.toConstantValue(X)`                    | Bind constructors as constant values                             |
+| `.toFunction(fn)`                     | `.toConstantValue(fn)`                   | Bind functions as constant values                                |
+| `interfaces.Context`                  | `ResolutionContext`                      | Updated context parameter type in the binding API                |
+| `interfaces.Request`                  | `BindingConstraints`                     | Updated binding constraint parameter type                        |
+| `interfaces.Provider<T>`              | Removed                                  | Use `Factory<T>` with `toFactory` and async functions instead    |
+| `interfaces.Factory<T>`               | `Factory<T>`                             | Directly exported, no longer under `interfaces` namespace        |
+| `interfaces.Newable<T>`               | `Newable<T>`                             | Directly exported, no longer under `interfaces` namespace        |
+| Implicit injection inheritance        | `@injectFromBase` decorator              | Explicit inheritance with a decorator                            |
+| `import { interfaces } from "inversify";` | `import { ... } from "inversify";`   | Removed `interfaces` namespace, use direct imports               |
+| CJS/ESM dual package                  | ESM only                                 | Package is now ESM only; Node.js LTS supports `require(esm)`    |
+| `.toProvider(...)`                    | `.toFactory(...)` with async function    | `Provider` type and `toProvider` binding removed; use `toFactory` instead |
+
+## Package Format
+
+InversifyJS v8 is now an ESM-only package. For most users this is a non-breaking change: all active Node.js LTS versions (20.x and above) support `require(esm)`, meaning CommonJS projects can still consume the package without any changes.
+
+Refer to the [Migrating the ecosystem to ES modules](https://e18e.dev/blog/migrating-the-ecosystem-to-esm.html) blog post for a broader overview of the CJS → ESM migration landscape.
+
+## Container API
+
+### Autobinding
+
+In v6, autobinding was enabled by passing the `autoBindInjectable` option to the container constructor. In v8, this option has been renamed to `autobind` and can be passed either as part of the `Container` constructor options or `Container.get` options.
+
+In v6, `container.resolve` automatically bound the resolved service to the container. In v8, this behavior has been removed. To enable it, pass the `autobind` option.
+
+<CodeBlock language="ts">{fundamentalsAutobindingSource}</CodeBlock>
+
+### Custom Metadata and Middlewares
+
+This feature has been removed in v8 with no direct replacement. It was not widely used and contributed to the library's complexity. A better API may be introduced in the future.
+
+### `isBound`-like Methods
+
+Methods like `Container.isBoundNamed` and `Container.isBoundTagged` have been replaced by `Container.isBound` with an optional `isBoundOptions` parameter to handle named and tagged bindings.
+
+Refer to the API documentation for [isBound](../../api/container#isbound) and [isCurrentBound](../../api/container#iscurrentbound) for more details.
+
+### `get`-like Methods
+
+The `Container.getNamed`, `Container.getTagged`, `Container.tryGet`, `Container.tryGetNamed`, and `Container.tryGetTagged` methods have been replaced by `Container.get` with an `OptionalGetOptions` parameter.
+
+Similarly, `Container.getAll`, `Container.getAllAsync`, and `Container.getAsync` now accept a `GetOptions` object to specify names or tags.
+
+<CodeBlock language="ts">{containerApiGetNamedSource}</CodeBlock>
+
+Additionally, `Container.getAll` and `Container.getAllAsync` now enforce binding constraints. For example:
+
+<CodeBlock language="ts">{containerApiGetAllWithNamedBindingsSource}</CodeBlock>
+
+In v6, `container.getAll` returned all bindings matching the service identifier. In v8, it only returns bindings that match both the service identifier and binding constraints.
+
+:::info
+
+If you need to simulate the old behavior, you can use custom constraints to accomplish this. Refer to this [issue](https://github.com/inversify/InversifyJS/issues/1796#issuecomment-2842402397) for more information.
+
+:::
+
+### Parent and Child Containers
+
+In v6, child containers were created using the `createChild` method. In v8, this method has been removed. Instead, pass the parent container to the constructor of the child container.
+
+<CodeBlock language="ts">{diHierarchySource}</CodeBlock>
+
+## ContainerModule API
+
+Container module load options are now passed as an object.
+
+<CodeBlock language="ts">{containerModuleApiExampleSource}</CodeBlock>
+
+## BindingFluentSyntax API
+
+### `ResolutionContext` Instead of `interfaces.Context`
+
+The `Context` class has been replaced by `ResolutionContext` to simplify the API and hide internal data structures.
+
+<CodeBlock language="ts">{bindingOnSyntaxApiOnActivationSource}</CodeBlock>
+
+### `BindingConstraints` Instead of `interfaces.Request`
+
+The `Request` object has been replaced by `BindingConstraints` to simplify the API and hide internal data structures.
+
+<CodeBlock language="ts">{bindingWhenSyntaxApiWhenSource}</CodeBlock>
+
+### Removed Binding Methods
+
+Several binding methods have been removed in v8 to simplify the API. Here's how to migrate each one:
+
+#### `toAutoFactory`
+
+The `toAutoFactory` method has been removed. Use `toFactory` with `ResolutionContext.get()` instead:
+
+<CodeBlock language="ts">{migrationToAutoFactorySource}</CodeBlock>
+
+#### `toAutoNamedFactory`
+
+Similarly, `toAutoNamedFactory` has been removed. Use `toFactory` with named resolution:
+
+<CodeBlock language="ts">{migrationToAutoNamedFactorySource}</CodeBlock>
+
+#### `toConstructor`
+
+The `toConstructor` method has been removed. Since a constructor is just a value (a callable one), use `toConstantValue` instead:
+
+<CodeBlock language="ts">{migrationToConstructorSource}</CodeBlock>
+
+#### `toFunction`
+
+The `toFunction` method has been removed. Since a function is just a value, use `toConstantValue` instead:
+
+<CodeBlock language="ts">{migrationToFunctionSource}</CodeBlock>
+
+#### `toProvider`
+
+The `toProvider` binding method and the `Provider` type have been removed. Providers were factories that returned a `Promise<T>`, so the same behavior can be achieved with `toFactory` using an async function:
+
+<CodeBlock language="ts">{migrationToProviderSource}</CodeBlock>
+
+## Decorators API
+
+### Inheritance
+
+Injection inheritance is now explicit using the `@injectFromBase` decorator. This provides more control and avoids edge cases related to constructor argument mismatches.
+
+For more details, refer to the [Inheritance documentation](../../fundamentals/inheritance).
