@@ -11,7 +11,7 @@
     "@stryker-mutator/typescript-checker": "9.6.0",
     "@types/node": "24.11.0",
     "@vitest/coverage-v8": "4.0.18",
-    "eslint": "9.39.3",
+    "eslint": "10.0.2",
     "prettier": "3.8.1",
     "rimraf": "6.1.3",
     "rollup": "4.59.0",
