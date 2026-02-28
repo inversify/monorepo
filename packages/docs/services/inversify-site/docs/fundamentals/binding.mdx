@@ -27,7 +27,7 @@ When using TypeScript, you can rely on the emitted class metadata to avoid havin
 
 ## Autobinding
 
-InversifyJS provides a feature called autobinding that allows you to automatically bind classes. Whenever a class service is being resolved and no bindings are found in the planning phase, the container adds a type binding to the requested class before proceeding with the planning phase. This feature is disabled by default. To enable it, you need to pass the `autoBind` option to the container or pass an `autobind` option when calling `container.get`.
+InversifyJS provides a feature called autobinding that allows you to automatically bind classes. Whenever a class service is being resolved and no bindings are found in the planning phase, the container adds a type binding to the requested class before proceeding with the planning phase. This feature is disabled by default. To enable it, you need to pass the `autobind` option to the container or pass an `autobind` option when calling `container.get`.
 
 <CodeBlock language="ts">{fundamentalsAutobindingSource}</CodeBlock>
 

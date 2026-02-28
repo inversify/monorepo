@@ -2,18 +2,18 @@
 sidebar_position: 2
 title: 容器
 ---
-import containerApiGetAllSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAll.ts.txt';
-import containerApiGetAllAsyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAllAsync.ts.txt';
-import containerApiGetAsyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAsync.ts.txt';
-import containerApiGetSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGet.ts.txt';
-import containerApiIsBoundSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiIsBound.ts.txt';
-import containerApiIsCurrentBoundSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiIsCurrentBound.ts.txt';
-import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiOnActivation.ts.txt';
-import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiOnDeactivation.ts.txt';
-import containerApiUnbindBindingIdSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiUnbindBindingId.ts.txt';
-import containerApiUnbindSyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiUnbindSync.ts.txt';
-import containerApiRebindSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiRebind.ts.txt';
-import containerApiRebindSyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiRebindSync.ts.txt';
+import containerApiGetAllSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAll.ts.txt';
+import containerApiGetAllAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllAsync.ts.txt';
+import containerApiGetAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAsync.ts.txt';
+import containerApiGetSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGet.ts.txt';
+import containerApiIsBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsBound.ts.txt';
+import containerApiIsCurrentBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsCurrentBound.ts.txt';
+import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnActivation.ts.txt';
+import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnDeactivation.ts.txt';
+import containerApiUnbindBindingIdSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiUnbindBindingId.ts.txt';
+import containerApiUnbindSyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiUnbindSync.ts.txt';
+import containerApiRebindSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiRebind.ts.txt';
+import containerApiRebindSyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiRebindSync.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 # 容器
@@ -133,18 +133,18 @@ isCurrentBound(serviceIdentifier: ServiceIdentifier<unknown>, options?: IsBoundO
 ## load
 
 ```ts
-load(...modules: ContainerModule[]): Promise<void>;
+load(...modules: ContainerModule[]): void;
 ```
 
-调用每个模块的注册方法。请参阅 [ContainerModule API 文档](./container-module.mdx)。
+同步调用每个模块的注册方法。如果任何模块加载是异步的，将抛出错误。请参阅 [ContainerModule API 文档](./container-module.mdx)。
 
-## loadSync
+## loadAsync
 
 ```ts
-loadSync(...modules: ContainerModule[]): void;
+loadAsync(...modules: ContainerModule[]): Promise<void>;
 ```
 
-`load` 的同步版本。调用每个模块的注册方法。如果任何模块加载是异步的，将抛出错误。请参阅 [ContainerModule API 文档](./container-module.mdx)。
+`load` 的异步版本。调用每个模块的注册方法。请参阅 [ContainerModule API 文档](./container-module.mdx)。
 
 ## onActivation
 
@@ -169,22 +169,22 @@ onDeactivation<T>(serviceIdentifier: ServiceIdentifier<T>, onDeactivation: Bindi
 ## rebind
 
 ```ts
-async rebind<T>(serviceIdentifier: ServiceIdentifier<T>): Promise<BindToFluentSyntax<T>>;
+rebind<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>;
 ```
 
-解绑服务标识符然后为其创建新绑定的便捷方法。这相当于调用 `await container.unbind(serviceId)` 然后调用 `container.bind(serviceId)`，但在单个方法中。返回绑定构建器以继续配置新绑定。
-
-<CodeBlock language="ts">{containerApiRebindSource}</CodeBlock>
-
-## rebindSync
-
-```ts
-rebindSync<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>;
-```
-
-`rebind` 的同步版本。同步解绑服务标识符，然后为其创建新绑定。如果解绑操作是异步的，将抛出错误。返回绑定构建器以继续配置新绑定。
+同步解绑服务标识符然后为其创建新绑定的便捷方法。这相当于调用 `container.unbind(serviceId)` 然后调用 `container.bind(serviceId)`，但在单个方法中。返回绑定构建器以继续配置新绑定。
 
 <CodeBlock language="ts">{containerApiRebindSyncSource}</CodeBlock>
+
+## rebindAsync
+
+```ts
+rebindAsync<T>(serviceIdentifier: ServiceIdentifier<T>): Promise<BindToFluentSyntax<T>>;
+```
+
+`rebind` 的异步版本。解绑服务标识符，然后为其创建新绑定。返回绑定构建器以继续配置新绑定。
+
+<CodeBlock language="ts">{containerApiRebindSource}</CodeBlock>
 
 ## register
 
@@ -213,61 +213,65 @@ snapshot(): void;
 ## unbind
 
 ```ts
-unbind(identifier: BindingIdentifier | ServiceIdentifier): Promise<void>;
+unbind(identifier: BindingIdentifier | ServiceIdentifier): void;
 ```
 
-从容器中删除绑定。当传递：
+同步地从容器中删除绑定。当传递：
 - 服务标识符：删除绑定到该服务标识符的所有绑定
 - 绑定标识符：删除与该标识符关联的特定绑定
 
 这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
 
+<CodeBlock language="ts">{containerApiUnbindSyncSource}</CodeBlock>
+
 ### 示例：通过标识符解绑绑定
 
 <CodeBlock language="ts">{containerApiUnbindBindingIdSource}</CodeBlock>
 
+## unbindAsync
+
+```ts
+unbindAsync(identifier: BindingIdentifier | ServiceIdentifier): Promise<void>;
+```
+
+`unbind` 的异步版本。从容器中删除绑定。当传递：
+- 服务标识符：删除绑定到该服务标识符的所有绑定
+- 绑定标识符：删除与该标识符关联的特定绑定
+
+这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+
 ## unbindAll
 
 ```ts
-unbindAll(): Promise<void>;
+unbindAll(): void;
 ```
 
-删除此容器中绑定的所有绑定。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+同步删除此容器中的所有绑定。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
 
-## unbindAllSync
+## unbindAllAsync
 
 ```ts
-unbindAllSync(): void;
+unbindAllAsync(): Promise<void>;
 ```
 
-`unbindAll` 的同步版本。删除此容器中绑定的所有绑定。如果任何解绑操作是异步的，将抛出错误。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
-
-## unbindSync
-
-```ts
-unbindSync(identifier: BindingIdentifier | ServiceIdentifier): void;
-```
-
-同步地从容器中删除绑定。此方法的工作方式类似于 `unbind`，但不返回 Promise。如果解绑操作是异步的（例如，由于停用处理程序），它将抛出错误。当你确信操作不涉及异步停用时，请使用此方法。
-
-<CodeBlock language="ts">{containerApiUnbindSyncSource}</CodeBlock>
+`unbindAll` 的异步版本。删除此容器中的所有绑定。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
 
 ## unload
 
 ```ts
-unload(...modules: ContainerModule[]): Promise<void>;
+unload(...modules: ContainerModule[]): void;
 ```
 
-删除模块添加的绑定和处理程序。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+同步删除模块添加的绑定和处理程序。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
 请参阅 [ContainerModule API 文档](./container-module.mdx)。
 
-## unloadSync
+## unloadAsync
 
 ```ts
-unloadSync(...modules: ContainerModule[]): void;
+unloadAsync(...modules: ContainerModule[]): Promise<void>;
 ```
 
-`unload` 的同步版本。删除模块添加的绑定和处理程序。如果任何模块卸载是异步的，将抛出错误。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+`unload` 的异步版本。删除模块添加的绑定和处理程序。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
 请参阅 [ContainerModule API 文档](./container-module.mdx)。
 
 ## GetOptions

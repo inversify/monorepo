@@ -36,7 +36,6 @@ The following table summarizes the key changes from v6 to v8:
 | `container.tryGet`                    | `container.get(X, { optional: true })`   | Added `optional` flag for optional `get`                         |
 | `container.tryGetNamed`               | `container.get(X, { name: ..., optional: true })` | Combined named and optional parameters                  |
 | `container.tryGetTagged`              | `container.get(X, { tag: ..., optional: true })`  | Combined tagged and optional parameters                 |
-| `container.load`                      | `await container.load`                   | Now returns a Promise                                            |
 | `container.createChild()`             | `new Container({ parent: container })`   | Child containers created via constructor                         |
 | `.toAutoFactory(X)`                   | `.toFactory((ctx) => () => ctx.get(X))`  | Use `toFactory` with `ResolutionContext.get()`                   |
 | `.toAutoNamedFactory(X)`              | `.toFactory((ctx) => (name) => ctx.get(X, { name }))` | Use `toFactory` with named resolution         |
@@ -44,7 +43,7 @@ The following table summarizes the key changes from v6 to v8:
 | `.toFunction(fn)`                     | `.toConstantValue(fn)`                   | Bind functions as constant values                                |
 | `interfaces.Context`                  | `ResolutionContext`                      | Updated context parameter type in the binding API                |
 | `interfaces.Request`                  | `BindingConstraints`                     | Updated binding constraint parameter type                        |
-| `interfaces.Provider<T>`              | `Provider<T>`                            | Directly exported, no longer under `interfaces` namespace        |
+| `interfaces.Provider<T>`              | Removed                                  | Use `Factory<T>` with `toFactory` and async functions instead    |
 | `interfaces.Factory<T>`               | `Factory<T>`                             | Directly exported, no longer under `interfaces` namespace        |
 | `interfaces.Newable<T>`               | `Newable<T>`                             | Directly exported, no longer under `interfaces` namespace        |
 | Implicit injection inheritance        | `@injectFromBase` decorator              | Explicit inheritance with a decorator                            |

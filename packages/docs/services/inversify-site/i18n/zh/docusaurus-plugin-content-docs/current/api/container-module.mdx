@@ -2,7 +2,7 @@
 sidebar_position: 3
 title: 容器模块
 ---
-import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v7/containerModuleApiExample.ts.txt';
+import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v8/containerModuleApiExample.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 # 容器模块
@@ -22,7 +22,7 @@ constructor(load: (options: ContainerModuleLoadOptions) => void | Promise<void>)
 #### load
 
 ```ts
-load(options: ContainerModuleLoadOptions): Promise<void>
+load(options: ContainerModuleLoadOptions): void | Promise<void>
 ```
 
 使用提供的选项加载容器模块。
@@ -63,21 +63,37 @@ onDeactivation: <T>(serviceIdentifier: ServiceIdentifier<T>, deactivation: Bindi
 
 有关更多信息，请参阅 [文档](./container.mdx#ondeactivation)。
 
+### rebind
+
+```ts
+rebind: <T>(serviceIdentifier: ServiceIdentifier<T>) => BindToFluentSyntax<T>
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#rebind)。
+
+### rebindAsync
+
+```ts
+rebindAsync: <T>(serviceIdentifier: ServiceIdentifier<T>) => Promise<BindToFluentSyntax<T>>
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#rebindasync)。
+
 ### unbind
 
 ```ts
-unbind: (serviceIdentifier: ServiceIdentifier) => Promise<void>
+unbind: (identifier: BindingIdentifier | ServiceIdentifier) => void
 ```
 
 有关更多信息，请参阅 [文档](./container.mdx#unbind)。
 
-### unbindSync
+### unbindAsync
 
 ```ts
-unbindSync: (identifier: BindingIdentifier | ServiceIdentifier) => void
+unbindAsync: (identifier: BindingIdentifier | ServiceIdentifier) => Promise<void>
 ```
 
-有关更多信息，请参阅 [文档](./container.mdx#unbindsync)。
+有关更多信息，请参阅 [文档](./container.mdx#unbindasync)。
 
 ## 示例：通过 ContainerModule API 绑定服务
 
