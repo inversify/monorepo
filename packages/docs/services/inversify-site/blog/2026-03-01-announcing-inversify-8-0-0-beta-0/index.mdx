@@ -65,15 +65,15 @@ InversifyJS 8 ships as an **ES module only** package and no longer provides a Co
 
 The main historical blocker for ESM-only packages was that `require()` could not load an ES module, forcing many packages to maintain dual CJS/ESM builds. That blocker is essentially gone:
 
-- Node.js 22 (current LTS) and Node.js 20 ship `require(esm)` — the ability to `require()` an ES module from a CommonJS file — enabled by default.
-- Node.js 18 reached end-of-life in April 2025 and is the only active LTS line that does not have `require(esm)`.
+- Node.js versions with `require(esm)` enabled by default (Node.js 20.19.0 and later, or any Node.js 22+ release) support loading ES modules via `require()` from CommonJS files without any extra flags.
+- Node.js 18 reached end-of-life in April 2025 and does not include `require(esm)` support.
 - All major browsers, Deno, and Bun have supported ES modules natively for years.
 
 The e18e community has been [driving the ecosystem-wide migration to ES modules](https://e18e.dev/blog/migrating-the-ecosystem-to-esm.html) and many high-profile packages — `chai`, `vueuse`, numerous ESLint plugins, and others — have already made the switch. InversifyJS 8 joins that movement.
 
 ### What this means for you
 
-If you are on Node.js **20 or 22**, nothing changes on the consumption side — `require('inversify')` will continue to work thanks to `require(esm)`.
+If you are on a Node.js version **with `require(esm)` enabled by default** (Node.js 20.19.0+ or Node.js 22+), nothing changes on the consumption side — `require('inversify')` will continue to work thanks to `require(esm)`.
 
 If you are on Node.js **18 or earlier**, you have two options:
 
