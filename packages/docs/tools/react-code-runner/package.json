@@ -38,7 +38,7 @@
   },
   "peerDependencies": {
     "@babel/standalone": "^7.29.1",
-    "@swc/wasm-web": "^1.15.17",
+    "@swc/wasm-web": "^1.15.18",
     "monaco-editor": "~0.55.1",
     "react": "19.2.4"
   },
