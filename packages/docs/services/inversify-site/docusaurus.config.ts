@@ -97,7 +97,7 @@ const config: Config = {
     },
     announcementBar: {
       content:
-        'Your feedback is important to us! Please take a moment to read the <a target="_blank" rel="noopener noreferrer" href="/blog/planning-inversify-8-0-0/">v8 announcement</a>',
+        'Your feedback is important to us! Please take a moment to read the <a target="_blank" rel="noopener noreferrer" href="/blog/announcing-inversify-8-0-0-beta-0/">v8 beta announcement</a>',
       id: 'announcing_v8',
       isCloseable: true,
     },
