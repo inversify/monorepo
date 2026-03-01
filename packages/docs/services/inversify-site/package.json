@@ -16,7 +16,7 @@
     "@inversifyjs/common": "workspace:*",
     "@inversifyjs/core": "workspace:*",
     "@mdx-js/react": "3.1.1",
-    "@swc/wasm-web": "1.15.17",
+    "@swc/wasm-web": "1.15.18",
     "clsx": "2.1.1",
     "mermaid": "^11.12.3",
     "monaco-editor": "0.55.1",
