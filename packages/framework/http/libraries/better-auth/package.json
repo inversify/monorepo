@@ -23,7 +23,7 @@
     "@types/node": "24.11.0",
     "@vitest/coverage-v8": "4.0.18",
     "better-sqlite3": "^12.6.2",
-    "eslint": "9.39.3",
+    "eslint": "10.0.2",
     "fastify": "5.7.4",
     "hono": "4.12.3",
     "prettier": "3.8.1",

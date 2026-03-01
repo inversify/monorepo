@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-assignment */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';

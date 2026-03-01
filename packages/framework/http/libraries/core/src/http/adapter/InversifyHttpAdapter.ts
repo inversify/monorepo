@@ -670,11 +670,9 @@ export abstract class InversifyHttpAdapter<
       ]);
 
       if (errorFilter === undefined) {
-        let httpResponse: HttpResponse | undefined = undefined;
-
         this.#printError(error);
 
-        httpResponse = new InternalServerErrorHttpResponse(
+        const httpResponse: HttpResponse = new InternalServerErrorHttpResponse(
           undefined,
           undefined,
           {
@@ -720,8 +718,7 @@ export abstract class InversifyHttpAdapter<
   ): TResult | Promise<TResult> {
     let httpStatusCode: HttpStatusCode | undefined = statusCode;
     let headers: Record<string, string> | undefined = undefined;
-    let body: object | string | number | boolean | Readable | undefined =
-      undefined;
+    let body: object | string | number | boolean | Readable | undefined;
 
     if (isHttpResponse(value)) {
       httpStatusCode = value.statusCode;
