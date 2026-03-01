@@ -1,6 +1,22 @@
 .frameworkBanner {
   background: linear-gradient(
     135deg,
+    color-mix(in srgb, var(--ifm-color-primary) 5%, white 95%) 0%,
+    color-mix(in srgb, var(--ifm-color-primary-dark) 10%, white 90%) 100%
+  );
+  position: relative;
+  overflow: hidden;
+  border-top: 3px solid var(--ifm-color-primary);
+  border-bottom: 3px solid var(--ifm-color-primary);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -1px rgb(0 0 0 / 0.06),
+    inset 0 1px 0 0 rgb(255 255 255 / 0.1);
+}
+
+[data-theme='dark'] .frameworkBanner {
+  background: linear-gradient(
+    135deg,
     color-mix(
         in srgb,
         var(--ifm-color-primary) 5%,
@@ -14,14 +30,6 @@
       )
       100%
   );
-  position: relative;
-  overflow: hidden;
-  border-top: 3px solid var(--ifm-color-primary);
-  border-bottom: 3px solid var(--ifm-color-primary);
-  box-shadow:
-    0 4px 6px -1px rgb(0 0 0 / 0.1),
-    0 2px 4px -1px rgb(0 0 0 / 0.06),
-    inset 0 1px 0 0 rgb(255 255 255 / 0.1);
 }
 
 .frameworkBanner::after {
