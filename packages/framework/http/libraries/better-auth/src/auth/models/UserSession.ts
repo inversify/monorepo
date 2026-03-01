@@ -1,6 +1,6 @@
-import { BetterAuthOptions, InferSession, InferUser } from 'better-auth';
+import { BetterAuthOptions, Session, User } from 'better-auth';
 
 export interface UserSession<TOptions extends BetterAuthOptions> {
-  session: InferSession<TOptions>;
-  user: InferUser<TOptions>;
+  session: Session<TOptions>;
+  user: User<TOptions>;
 }

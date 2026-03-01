@@ -1,5 +1,5 @@
 import { BetterAuthOptions } from 'better-auth';
-import { getMigrations } from 'better-auth/db';
+import { getMigrations } from 'better-auth/db/migration';
 
 export async function generateAndRunBetterAuthMigrations(
   options: BetterAuthOptions,
