@@ -18,7 +18,7 @@
     "@mdx-js/react": "3.1.1",
     "@swc/wasm-web": "1.15.18",
     "clsx": "2.1.1",
-    "mermaid": "^11.12.3",
+    "mermaid": "^11.13.0",
     "monaco-editor": "0.55.1",
     "prism-react-renderer": "2.4.1",
     "react": "19.2.4",
@@ -38,7 +38,7 @@
     "monaco-editor-webpack-plugin": "7.1.1",
     "prettier": "3.8.1",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.56.1"
+    "typescript-eslint": "8.57.0"
   },
   "homepage": "https://inversify.io",
   "keywords": [
