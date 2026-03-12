@@ -120,7 +120,7 @@ describe(updateMaybeClassMetadataPreDestroy, () => {
           updateMaybeClassMetadataPreDestroy(methodNameFixture)(
             metadataFixture,
           );
-        }).toThrowError(
+        }).toThrow(
           new InversifyCoreError(
             InversifyCoreErrorKind.injectionDecoratorConflict,
             `Unexpected duplicated preDestroy method ${methodNameFixture.toString()}`,

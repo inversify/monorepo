@@ -264,7 +264,7 @@ describe(BaseOasSchemaProperty, () => {
             targetObjectFixture,
             symbolPropertyKeyFixture,
           );
-        }).toThrowError(
+        }).toThrow(
           'Cannot apply SchemaProperty decorator to "TestClass.Symbol(testSymbol)" symbol property',
         );
       });

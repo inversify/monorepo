@@ -171,7 +171,7 @@ describe('Bugs', () => {
       });
     };
 
-    expect(f).toThrowError(`Ambiguous bindings found for service: "Intl".
+    expect(f).toThrow(`Ambiguous bindings found for service: "Intl".
 
 Registered bindings:
 
@@ -287,7 +287,7 @@ Binding constraints:
 
 Trying to resolve bindings for "Weapon (Root service)"`;
 
-    expect(throws).toThrowError(error);
+    expect(throws).toThrow(error);
   });
 
   it('Should throw a friendly error when binding a non-class using toSelf', () => {
@@ -296,7 +296,7 @@ Trying to resolve bindings for "Weapon (Root service)"`;
       container.bind('testId').toSelf();
     };
 
-    expect(throws).toThrowError(
+    expect(throws).toThrow(
       'function can only be applied when a newable function is used as service identifier',
     );
   });
@@ -606,6 +606,6 @@ Trying to resolve bindings for "Weapon (Root service)"`;
       container.get<Ninja>('Ninja');
     };
 
-    expect(tryGet).not.toThrowError();
+    expect(tryGet).not.toThrow();
   });
 });
