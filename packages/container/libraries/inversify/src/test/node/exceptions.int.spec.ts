@@ -44,8 +44,6 @@ describe('Node', () => {
       return a;
     }
 
-    expect(willThrow).toThrowError(
-      'Circular dependency found: A -> C -> D -> A',
-    );
+    expect(willThrow).toThrow('Circular dependency found: A -> C -> D -> A');
   });
 });

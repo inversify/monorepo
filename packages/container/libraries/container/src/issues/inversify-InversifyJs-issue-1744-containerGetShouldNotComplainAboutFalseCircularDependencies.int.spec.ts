@@ -45,7 +45,7 @@ describe('inversify/InversifyJS#1744', () => {
 
     expect(() => {
       container.get(serviceIdentifier);
-    }).toThrowError(
+    }).toThrow(
       'Circular dependency found: Symbol(serviceIdentifier) -> Symbol(serviceIdentifier)',
     );
   });

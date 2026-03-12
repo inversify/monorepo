@@ -11,7 +11,7 @@ describe(injectable, () => {
       decorate([injectable(), injectable()], Test);
     };
 
-    expect(useDecoratorMoreThanOnce).toThrowError(
+    expect(useDecoratorMoreThanOnce).toThrow(
       'Cannot apply @injectable decorator multiple times',
     );
   });

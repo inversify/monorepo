@@ -53,7 +53,7 @@ Details
 
 [class: "InvalidDecoratorUsageWarrior", index: "0"]`;
 
-    expect(useDecoratorMoreThanOnce).toThrowError(msg);
+    expect(useDecoratorMoreThanOnce).toThrow(msg);
   });
 
   it('Should unwrap LazyServiceIdentifier', () => {

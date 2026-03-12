@@ -420,34 +420,33 @@ describe('InversifyJS', () => {
     // unload
     await container.unloadAsync(warriors);
 
-    expect(tryGetNinja).toThrowError(`No bindings found for service: "Ninja".
+    expect(tryGetNinja).toThrow(`No bindings found for service: "Ninja".
 
 Trying to resolve bindings for "Ninja (Root service)".
 
 Binding constraints:
 - service identifier: Ninja
 - name: -`);
-    expect(tryGetKatana).not.toThrowError();
-    expect(tryGetShuruken).not.toThrowError();
+    expect(tryGetKatana).not.toThrow();
+    expect(tryGetShuruken).not.toThrow();
 
     await container.unloadAsync(weapons);
 
-    expect(tryGetNinja).toThrowError(`No bindings found for service: "Ninja".
+    expect(tryGetNinja).toThrow(`No bindings found for service: "Ninja".
 
 Trying to resolve bindings for "Ninja (Root service)".
 
 Binding constraints:
 - service identifier: Ninja
 - name: -`);
-    expect(tryGetKatana).toThrowError(`No bindings found for service: "Katana".
+    expect(tryGetKatana).toThrow(`No bindings found for service: "Katana".
 
 Trying to resolve bindings for "Katana (Root service)".
 
 Binding constraints:
 - service identifier: Katana
 - name: -`);
-    expect(tryGetShuruken)
-      .toThrowError(`No bindings found for service: "Shuriken".
+    expect(tryGetShuruken).toThrow(`No bindings found for service: "Shuriken".
 
 Trying to resolve bindings for "Shuriken (Root service)".
 
@@ -2650,6 +2649,6 @@ Binding constraints:
       return container.get<Warrior>(SYMBOLS.SamuraiMaster);
     }
 
-    expect(notThrows).not.toThrowError();
+    expect(notThrows).not.toThrow();
   });
 });
