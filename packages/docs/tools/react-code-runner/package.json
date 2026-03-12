@@ -19,7 +19,7 @@
     "@types/babel__core": "7.20.5",
     "@types/babel__standalone": "7.1.9",
     "@types/react": "19.2.14",
-    "@vitejs/plugin-react": "5.2.0",
+    "@vitejs/plugin-react": "6.0.0",
     "eslint": "10.0.3",
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-simple-import-sort": "12.1.1",
