@@ -22,7 +22,7 @@ jobs:
       - name: Compile source files
         run: pnpm run build --filter @inversifyjs/framework-docs-site
 
-      - uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+      - uses: webfactory/ssh-agent@e83874834305fe9a4a2997156cb26c5de65a8555 # v0.10.0
         with:
           ssh-private-key: ${{ secrets.INVERSIFY_FRAMEWORK_DOC_PAGES_DEPLOYMENT_PRIVATE_KEY }}
       - name: Deploy to GitHub Pages
