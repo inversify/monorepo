@@ -30,9 +30,8 @@ export type ContainerBinding<
   ? TBindingMap[TKey]
   : TKey extends Newable<infer C>
     ? C
-    : // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-      TKey extends Function
-      ? any
+    : TKey extends abstract new (...args: any[]) => infer C
+      ? C
       : never;
 
 type NeverPromise<T> = T extends Promise<any> ? never : T;
@@ -69,10 +68,10 @@ interface ContainerOverrides<T extends BindingMap = any> {
   ) => Promise<Awaited<TBound>[]>;
   isBound: IsBound<T>;
   isCurrentBound: IsBound<T>;
-  rebind: Rebind<T>;
-  rebindSync: RebindSync<T>;
-  unbind: Unbind<T>;
-  unbindSync: UnbindSync<T>;
+  rebind: RebindSync<T>;
+  rebindAsync: Rebind<T>;
+  unbind: UnbindSync<T>;
+  unbindAsync: Unbind<T>;
   onActivation<
     TBound extends ContainerBinding<T, TKey>,
     TKey extends MappedServiceIdentifier<T> = any,
@@ -87,8 +86,8 @@ interface ContainerOverrides<T extends BindingMap = any> {
     serviceIdentifier: TKey,
     onDeactivation: BindingDeactivation<TBound>,
   ): void;
-  load(module: TypedContainerModule<T>): Promise<void>;
-  loadSync(module: TypedContainerModule<T>): void;
+  load(module: TypedContainerModule<T>): void;
+  loadAsync(module: TypedContainerModule<T>): Promise<void>;
 }
 
 export type Bind<T extends BindingMap = any> = <

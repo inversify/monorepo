@@ -37,7 +37,7 @@ describe('interfaces', () => {
       describe('.load()', () => {
         it('can load a module', () => {
           const container = new TypedContainer();
-          container.loadSync(module);
+          container.load(module);
 
           expect(container.isBound('foo')).toBe(true);
         });
@@ -90,7 +90,7 @@ describe('interfaces', () => {
             options.bind('foo').to(Foo);
           });
 
-          container.loadSync(module);
+          container.load(module);
 
           expect(container.isBound('foo')).toBe(true);
           expect(container.get('foo')).toBeInstanceOf(Foo);
@@ -105,7 +105,7 @@ describe('interfaces', () => {
             });
           });
 
-          container.loadSync(module);
+          container.load(module);
 
           const instance = container.get('foo');
 
@@ -120,12 +120,12 @@ describe('interfaces', () => {
             });
           });
 
-          container.loadSync(module);
+          container.load(module);
 
           expect(container.isBound('foo')).toBe(true);
         });
 
-        it('supports rebind using async load', async () => {
+        it('supports rebindAsync using async load', async () => {
           // First bind foo to Foo
           container.bind('foo').to(Foo);
 
@@ -133,14 +133,14 @@ describe('interfaces', () => {
           const module = new TypedContainerModule<BindingMap>(
             async (options) => {
               if (options.isBound('foo')) {
-                const rebindResult = await options.rebind('foo');
+                const rebindResult = await options.rebindAsync('foo');
                 // @ts-expect-error :: Expect error when setting wrong type
                 rebindResult.to(Bar);
               }
             },
           );
 
-          await container.load(module);
+          await container.loadAsync(module);
 
           expect(() => {
             // @ts-expect-error :: Expect error when getting wrong type
@@ -153,7 +153,7 @@ describe('interfaces', () => {
           expect(result).toBeInstanceOf(Bar);
         });
 
-        it('supports rebindSync', () => {
+        it('supports rebind', () => {
           // First bind bar to Bar
           container.bind('bar').to(Bar);
 
@@ -162,13 +162,13 @@ describe('interfaces', () => {
             if (options.isBound('bar')) {
               const barInstance = new Bar();
               barInstance.bar = 'reboundSync';
-              options.rebindSync('bar').toConstantValue(barInstance);
+              options.rebind('bar').toConstantValue(barInstance);
             }
             // @ts-expect-error :: unknown service identifier
-            options.rebindSync('unknown');
+            options.rebind('unknown');
           });
 
-          container.loadSync(module);
+          container.load(module);
 
           const result = container.get('bar');
 
@@ -176,7 +176,7 @@ describe('interfaces', () => {
           expect(result.bar).toBe('reboundSync');
         });
 
-        it('supports unbind using async load', async () => {
+        it('supports unbindAsync using async load', async () => {
           // First bind foo to Foo
           container.bind('foo').to(Foo);
 
@@ -184,38 +184,38 @@ describe('interfaces', () => {
           const module = new TypedContainerModule<BindingMap>(
             async (options) => {
               if (options.isBound('foo')) {
-                await options.unbind('foo');
+                await options.unbindAsync('foo');
               }
               // @ts-expect-error :: unknown service identifier
-              await options.unbind('unknown');
+              await options.unbindAsync('unknown');
 
               // @ts-expect-error :: incorrect type of target
               options.bind('foo').to(Bar);
             },
           );
 
-          await container.load(module);
+          await container.loadAsync(module);
 
           expect(container.get('foo')).toBeInstanceOf(Bar);
         });
 
-        it('supports unbindSync', () => {
+        it('supports unbind', () => {
           // First bind foo to Foo
           container.bind('foo').to(Foo);
 
           // Then use module to unbind it synchronously and bind to Bar
           const module = new TypedContainerModule<BindingMap>((options) => {
             if (options.isBound('foo')) {
-              options.unbindSync('foo');
+              options.unbind('foo');
             }
             // @ts-expect-error :: unknown service identifier
-            options.unbindSync('unknown');
+            options.unbind('unknown');
 
             // @ts-expect-error :: incorrect type of target
             options.bind('foo').to(Bar);
           });
 
-          container.loadSync(module);
+          container.load(module);
 
           expect(container.get('foo')).toBeInstanceOf(Bar);
         });

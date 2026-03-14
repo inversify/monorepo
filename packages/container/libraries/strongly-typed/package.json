@@ -38,7 +38,7 @@
   "type": "module",
   "name": "@inversifyjs/strongly-typed",
   "peerDependencies": {
-    "inversify": "^7.11.0"
+    "inversify": "^8.0.0"
   },
   "publishConfig": {
     "access": "public"
