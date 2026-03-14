@@ -5,6 +5,12 @@ import plugin from '@inversifyjs/eslint-plugin-require-extensions';
 export default [
   ...buildDefaultConfig(
     {
+      '@typescript-eslint/consistent-type-exports': [
+        'error',
+        {
+          fixMixedExportsWithInlineTypeSpecifier: true,
+        },
+      ],
       '@typescript-eslint/consistent-type-imports': [
         'error',
         {

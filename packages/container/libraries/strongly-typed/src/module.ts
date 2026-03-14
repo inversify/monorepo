@@ -21,10 +21,10 @@ import {
 export interface TypedContainerModuleLoadOptions<T extends BindingMap = any> {
   readonly bind: Bind<T>;
   readonly isBound: IsBound<T>;
-  readonly rebind: Rebind<T>;
-  readonly rebindSync: RebindSync<T>;
-  readonly unbind: Unbind<T>;
-  readonly unbindSync: UnbindSync<T>;
+  readonly rebind: RebindSync<T>;
+  readonly rebindAsync: Rebind<T>;
+  readonly unbind: UnbindSync<T>;
+  readonly unbindAsync: Unbind<T>;
 
   onActivation<
     TBound extends ContainerBinding<T, TKey>,

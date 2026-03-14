@@ -88,54 +88,54 @@ describe('interfaces', () => {
       });
 
       describe('rebind()', () => {
-        it('binds without a type argument', async () => {
-          (await container.rebind('foo')).to(Foo);
-          (await container.rebind(Foo)).to(Foo);
-        });
-
-        it('checks bindings with an explicit type argument', async () => {
-          (await container.rebind<Foo>('foo')).to(Foo);
-          // @ts-expect-error :: can't bind Bar to Foo
-          (await container.rebind<Foo>('foo')).to(Bar);
-        });
-
-        it('binds a class as a service identifier', async () => {
-          (await container.rebind(Foo)).to(Foo);
-          // @ts-expect-error :: can't bind Bar to Foo
-          (await container.rebind(Foo)).to(Bar);
-        });
-      });
-
-      describe('rebindSync()', () => {
         it('binds without a type argument', () => {
-          container.rebindSync('foo').to(Foo);
-          container.rebindSync(Foo).to(Foo);
+          container.rebind('foo').to(Foo);
+          container.rebind(Foo).to(Foo);
         });
 
         it('checks bindings with an explicit type argument', () => {
-          container.rebindSync<Foo>('foo').to(Foo);
+          container.rebind<Foo>('foo').to(Foo);
           // @ts-expect-error :: can't bind Bar to Foo
-          container.rebindSync<Foo>('foo').to(Bar);
+          container.rebind<Foo>('foo').to(Bar);
         });
 
         it('binds a class as a service identifier', () => {
-          container.rebindSync(Foo).to(Foo);
+          container.rebind(Foo).to(Foo);
           // @ts-expect-error :: can't bind Bar to Foo
-          container.rebindSync(Foo).to(Bar);
+          container.rebind(Foo).to(Bar);
+        });
+      });
+
+      describe('rebindAsync()', () => {
+        it('binds without a type argument', async () => {
+          (await container.rebindAsync('foo')).to(Foo);
+          (await container.rebindAsync(Foo)).to(Foo);
+        });
+
+        it('checks bindings with an explicit type argument', async () => {
+          (await container.rebindAsync<Foo>('foo')).to(Foo);
+          // @ts-expect-error :: can't bind Bar to Foo
+          (await container.rebindAsync<Foo>('foo')).to(Bar);
+        });
+
+        it('binds a class as a service identifier', async () => {
+          (await container.rebindAsync(Foo)).to(Foo);
+          // @ts-expect-error :: can't bind Bar to Foo
+          (await container.rebindAsync(Foo)).to(Bar);
         });
       });
 
       describe('unbind()', () => {
-        it('binds without a type argument', async () => {
-          await container.unbind('foo');
-          await container.unbind(Foo);
+        it('binds without a type argument', () => {
+          container.unbind('foo');
+          container.unbind(Foo);
         });
       });
 
-      describe('unbindSync()', () => {
-        it('binds without a type argument', () => {
-          container.unbindSync('foo');
-          container.unbindSync(Foo);
+      describe('unbindAsync()', () => {
+        it('binds without a type argument', async () => {
+          await container.unbindAsync('foo');
+          await container.unbindAsync(Foo);
         });
       });
     });
@@ -261,38 +261,38 @@ describe('interfaces', () => {
       });
 
       describe('rebind()', () => {
-        it('enforces strict bindings', async () => {
-          (await container.rebind('foo')).to(Foo);
+        it('enforces strict bindings', () => {
+          container.rebind('foo').to(Foo);
           // @ts-expect-error :: can't bind Bar to Foo
-          (await container.rebind('foo')).to(Bar);
+          container.rebind('foo').to(Bar);
           // @ts-expect-error :: unknown service identifier
-          (await container.rebind('unknown')).to(Foo);
+          container.rebind('unknown').to(Foo);
         });
       });
 
-      describe('rebindSync()', () => {
-        it('enforces strict bindings', () => {
-          container.rebindSync('foo').to(Foo);
+      describe('rebindAsync()', () => {
+        it('enforces strict bindings', async () => {
+          (await container.rebindAsync('foo')).to(Foo);
           // @ts-expect-error :: can't bind Bar to Foo
-          container.rebindSync('foo').to(Bar);
+          (await container.rebindAsync('foo')).to(Bar);
           // @ts-expect-error :: unknown service identifier
-          container.rebindSync('unknown').to(Foo);
+          (await container.rebindAsync('unknown')).to(Foo);
         });
       });
 
       describe('unbind()', () => {
-        it('enforces strict bindings', async () => {
-          await container.unbind('foo');
+        it('enforces strict bindings', () => {
+          container.unbind('foo');
           // @ts-expect-error :: unknown service identifier
-          await container.unbind('unknown');
+          container.unbind('unknown');
         });
       });
 
-      describe('unbindSync()', () => {
-        it('enforces strict bindings', () => {
-          container.unbindSync('foo');
+      describe('unbindAsync()', () => {
+        it('enforces strict bindings', async () => {
+          await container.unbindAsync('foo');
           // @ts-expect-error :: unknown service identifier
-          container.unbindSync('unknown');
+          await container.unbindAsync('unknown');
         });
       });
     });
