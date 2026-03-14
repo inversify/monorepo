@@ -1,5 +1,11 @@
 # @inversifyjs/reflect-metadata-utils
 
+## 1.5.0
+
+### Minor Changes
+
+- Updated package to be ESM only
+
 ## 1.5.0-beta.0
 
 ### Minor Changes
