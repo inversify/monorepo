@@ -3,7 +3,6 @@ export type BindingType =
   | 'DynamicValue'
   | 'Factory'
   | 'Instance'
-  | 'Provider'
   | 'ResolvedValue'
   | 'ServiceRedirection';
 
@@ -12,7 +11,6 @@ export const bindingTypeValues: { [TKey in BindingType]: TKey } = {
   DynamicValue: 'DynamicValue',
   Factory: 'Factory',
   Instance: 'Instance',
-  Provider: 'Provider',
   ResolvedValue: 'ResolvedValue',
   ServiceRedirection: 'ServiceRedirection',
 };
