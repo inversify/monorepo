@@ -36,6 +36,13 @@ const config: Config = {
     (_context: LoadContext): Plugin<unknown> => ({
       configureWebpack(_config: unknown, _isServer: boolean) {
         return {
+          ignoreWarnings: [
+            {
+              message:
+                /Critical dependency: require function is used in a way in which dependencies cannot be statically extracted/,
+              module: /vscode-languageserver-types/,
+            },
+          ],
           module: {
             rules: [
               {
