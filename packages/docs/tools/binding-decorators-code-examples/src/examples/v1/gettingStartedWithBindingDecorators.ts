@@ -30,7 +30,7 @@ const scriptExecution: Promise<void> = (async () => {
     ninjaType = Ninja;
   }
 
-  await container.load(buildProviderModule());
+  await container.loadAsync(buildProviderModule());
 
   const ninja: Ninja = container.get(Ninja);
 
