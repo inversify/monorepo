@@ -19,7 +19,7 @@ export function provide<T>(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return (target: Function): void => {
     const bindingServiceIdentifier: ServiceIdentifier<T> =
-      serviceIdentifier ?? target;
+      serviceIdentifier ?? (target as ServiceIdentifier<T>);
 
     const bindAction: (
       bindService: (
