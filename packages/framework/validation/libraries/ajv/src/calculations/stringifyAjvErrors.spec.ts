@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ErrorObject } from 'ajv';
+import { type ErrorObject } from 'ajv';
 
-import { stringifyAjvErrors } from './stringifyAjvErrors';
+import { stringifyAjvErrors } from './stringifyAjvErrors.js';
 
 describe(stringifyAjvErrors, () => {
   describe('having empty errors', () => {

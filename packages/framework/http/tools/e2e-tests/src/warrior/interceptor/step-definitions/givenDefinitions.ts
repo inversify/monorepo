@@ -1,6 +1,6 @@
 import { Given } from '@cucumber/cucumber';
 import { Interceptor } from '@inversifyjs/http-core';
-import { Container, ServiceIdentifier } from 'inversify';
+import { Container, Newable, ServiceIdentifier } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -65,7 +65,7 @@ import { WarriorRouteUwebSocketsInterceptor } from '../interceptors/uwebsockets/
 
 function getMethodWarriorExpressInterceptorController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteExpressInterceptorController;
@@ -84,7 +84,7 @@ function getMethodWarriorExpressInterceptorController(
 
 function getMethodWarriorExpress4InterceptorController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteExpress4InterceptorController;
@@ -103,7 +103,7 @@ function getMethodWarriorExpress4InterceptorController(
 
 function getMethodWarriorFastifyInterceptorController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteFastifyInterceptorController;
@@ -122,7 +122,7 @@ function getMethodWarriorFastifyInterceptorController(
 
 function getMethodWarriorHonoInterceptorController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteHonoInterceptorController;
@@ -141,7 +141,7 @@ function getMethodWarriorHonoInterceptorController(
 
 function getMethodWarriorUwebSocketsInterceptorController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteUwebSocketsInterceptorController;
@@ -169,7 +169,7 @@ function givenWarriorInterceptorControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  let getMethodWarriorController: (method: HttpMethod) => NewableFunction;
+  let getMethodWarriorController: (method: HttpMethod) => Newable;
 
   switch (serverKind) {
     case ServerKind.express:
@@ -191,9 +191,9 @@ function givenWarriorInterceptorControllerForContainer(
       break;
   }
 
-  const controller: NewableFunction = getMethodWarriorController(method);
+  const controller: Newable = getMethodWarriorController(method);
 
-  let interceptor: NewableFunction;
+  let interceptor: Newable;
   switch (serverKind) {
     case ServerKind.express:
       interceptor = WarriorRouteExpressInterceptor;
@@ -218,7 +218,7 @@ function givenWarriorInterceptorControllerForContainer(
 
 function getMethodWarriorExpressGlobalInterceptorController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteExpressGlobalInterceptorController;
@@ -237,7 +237,7 @@ function getMethodWarriorExpressGlobalInterceptorController(
 
 function getMethodWarriorExpress4GlobalInterceptorController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteExpress4GlobalInterceptorController;
@@ -256,7 +256,7 @@ function getMethodWarriorExpress4GlobalInterceptorController(
 
 function getMethodWarriorFastifyGlobalInterceptorController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteFastifyGlobalInterceptorController;
@@ -275,7 +275,7 @@ function getMethodWarriorFastifyGlobalInterceptorController(
 
 function getMethodWarriorHonoGlobalInterceptorController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteHonoGlobalInterceptorController;
@@ -294,7 +294,7 @@ function getMethodWarriorHonoGlobalInterceptorController(
 
 function getMethodWarriorUwebSocketsGlobalInterceptorController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteUwebSocketsGlobalInterceptorController;
@@ -322,7 +322,7 @@ function givenWarriorGlobalInterceptorControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  let getMethodWarriorController: (method: HttpMethod) => NewableFunction;
+  let getMethodWarriorController: (method: HttpMethod) => Newable;
 
   switch (serverKind) {
     case ServerKind.express:
@@ -347,9 +347,9 @@ function givenWarriorGlobalInterceptorControllerForContainer(
       break;
   }
 
-  const controller: NewableFunction = getMethodWarriorController(method);
+  const controller: Newable = getMethodWarriorController(method);
 
-  let interceptor: NewableFunction;
+  let interceptor: Newable<Interceptor>;
   switch (serverKind) {
     case ServerKind.express:
       interceptor = WarriorRouteExpressInterceptor;

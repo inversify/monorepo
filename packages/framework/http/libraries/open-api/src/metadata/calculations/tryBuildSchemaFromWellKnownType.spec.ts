@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { JsonSchema } from '@inversifyjs/json-schema-types/2020-12';
+import { type JsonSchema } from '@inversifyjs/json-schema-types/2020-12';
 
-import { tryBuildSchemaFromWellKnownType } from './tryBuildSchemaFromWellKnownType';
+import { tryBuildSchemaFromWellKnownType } from './tryBuildSchemaFromWellKnownType.js';
 
 describe(tryBuildSchemaFromWellKnownType, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

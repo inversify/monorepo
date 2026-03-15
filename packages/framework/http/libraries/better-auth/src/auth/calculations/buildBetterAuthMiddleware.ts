@@ -1,9 +1,9 @@
-import { Middleware } from '@inversifyjs/http-core';
-import { BetterAuthOptions } from 'better-auth';
-import { Newable } from 'inversify';
+import { type Middleware } from '@inversifyjs/http-core';
+import { type BetterAuthOptions } from 'better-auth';
+import { type Newable } from 'inversify';
 
-import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthProperty } from '../models/betterAuthProperty';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { betterAuthProperty } from '../models/betterAuthProperty.js';
 
 export function buildBetterAuthMiddleware<TOptions extends BetterAuthOptions>(
   auth: BetterAuth<TOptions>,

@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { toArrayBuffer } from './toArrayBuffer';
+import { toArrayBuffer } from './toArrayBuffer.js';
 
 describe(toArrayBuffer, () => {
   describe('having an empty Buffer', () => {

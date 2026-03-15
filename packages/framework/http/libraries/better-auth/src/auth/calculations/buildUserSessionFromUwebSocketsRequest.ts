@@ -1,9 +1,9 @@
-import { BetterAuthOptions } from 'better-auth';
-import { HttpRequest } from 'uWebSockets.js';
+import { type BetterAuthOptions } from 'better-auth';
+import { type HttpRequest } from 'uWebSockets.js';
 
-import { BetterAuth } from '../models/BetterAuth';
-import { UserSession } from '../models/UserSession';
-import { getBetterAuthFromRequest } from './getBetterAuthFromRequest';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { type UserSession } from '../models/UserSession.js';
+import { getBetterAuthFromRequest } from './getBetterAuthFromRequest.js';
 
 export async function buildUserSessionFromUwebSocketsRequest(
   request: HttpRequest,

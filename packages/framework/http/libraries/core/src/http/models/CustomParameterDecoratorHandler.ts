@@ -1,4 +1,4 @@
-import { CustomParameterDecoratorHandlerOptions } from './CustomParameterDecoratorHandlerOptions';
+import { type CustomParameterDecoratorHandlerOptions } from './CustomParameterDecoratorHandlerOptions.js';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type CustomParameterDecoratorHandler<

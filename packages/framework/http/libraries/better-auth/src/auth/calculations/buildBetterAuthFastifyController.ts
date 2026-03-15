@@ -9,12 +9,12 @@ import {
   Request as InversifyRequest,
   Response as InversifyResponse,
 } from '@inversifyjs/http-core';
-import { BetterAuthOptions } from 'better-auth';
-import { FastifyReply, FastifyRequest } from 'fastify';
-import { inject, Newable } from 'inversify';
+import { type BetterAuthOptions } from 'better-auth';
+import { type FastifyReply, type FastifyRequest } from 'fastify';
+import { inject, type Newable } from 'inversify';
 
-import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier.js';
 
 export function buildBetterAuthFastifyController(
   basePath: string,

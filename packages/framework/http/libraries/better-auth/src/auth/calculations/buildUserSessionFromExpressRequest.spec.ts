@@ -4,19 +4,19 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('../calculations/getBetterAuthFromRequest.js'));
 
-import { BetterAuthOptions } from 'better-auth';
-import express from 'express';
+import { type BetterAuthOptions } from 'better-auth';
+import type express from 'express';
 
-import { getBetterAuthFromRequest } from '../calculations/getBetterAuthFromRequest';
-import { BetterAuth } from '../models/BetterAuth';
-import { UserSession } from '../models/UserSession';
-import { buildUserSessionFromExpressRequest } from './buildUserSessionFromExpressRequest';
+import { getBetterAuthFromRequest } from '../calculations/getBetterAuthFromRequest.js';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { type UserSession } from '../models/UserSession.js';
+import { buildUserSessionFromExpressRequest } from './buildUserSessionFromExpressRequest.js';
 
 describe(buildUserSessionFromExpressRequest, () => {
   describe('having a request with no cookie', () => {

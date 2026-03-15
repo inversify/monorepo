@@ -1,4 +1,4 @@
-import { ControllerResponse } from './ControllerResponse';
+import { type ControllerResponse } from './ControllerResponse.js';
 
 export type ControllerFunction = (
   ...args: unknown[]

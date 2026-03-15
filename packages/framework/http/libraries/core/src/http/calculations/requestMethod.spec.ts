@@ -9,10 +9,10 @@ import {
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
-import { RequestMethodType } from '../models/RequestMethodType';
-import { buildNormalizedPath } from './buildNormalizedPath';
-import { requestMethod } from './requestMethod';
+import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey.js';
+import { RequestMethodType } from '../models/RequestMethodType.js';
+import { buildNormalizedPath } from './buildNormalizedPath.js';
+import { requestMethod } from './requestMethod.js';
 
 describe(requestMethod, () => {
   describe('having a path undefined', () => {

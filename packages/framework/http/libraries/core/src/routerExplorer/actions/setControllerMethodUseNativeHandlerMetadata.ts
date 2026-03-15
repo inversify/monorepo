@@ -1,6 +1,6 @@
 import { setReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
+import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey.js';
 
 export function setControllerMethodUseNativeHandlerMetadata(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

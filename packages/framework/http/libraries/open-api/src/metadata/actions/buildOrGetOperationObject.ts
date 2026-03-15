@@ -1,6 +1,6 @@
-import { OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
 
 export function buildOrGetOperationObject(
   controllerMetadata: ControllerOpenApiMetadata,

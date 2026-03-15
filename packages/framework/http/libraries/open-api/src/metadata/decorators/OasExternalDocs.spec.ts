@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -16,13 +16,13 @@ vitest.mock(
   import('../actions/updateControllerOpenApiMetadataOperationProperty.js'),
 );
 
-import { OpenApi3Dot1ExternalDocumentationObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1ExternalDocumentationObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
-import { updateControllerOpenApiMetadataOperationProperty } from '../actions/updateControllerOpenApiMetadataOperationProperty';
-import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { OasExternalDocs } from './OasExternalDocs';
+import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { updateControllerOpenApiMetadataOperationProperty } from '../actions/updateControllerOpenApiMetadataOperationProperty.js';
+import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata.js';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { OasExternalDocs } from './OasExternalDocs.js';
 
 describe(OasExternalDocs, () => {
   describe('having a prototype target, key and type descriptor', () => {

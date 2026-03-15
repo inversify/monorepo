@@ -1,51 +1,55 @@
 import { Readable } from 'node:stream';
 
 import {
-  ApplyMiddlewareOptions,
+  type ApplyMiddlewareOptions,
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
-  ErrorFilter,
-  Guard,
-  Interceptor,
+  type ErrorFilter,
+  type Guard,
+  type Interceptor,
   isPipe,
-  Middleware,
-  MiddlewareOptions,
-  Pipe,
-  PipeMetadata,
+  type Middleware,
+  type MiddlewareOptions,
+  type Pipe,
+  type PipeMetadata,
 } from '@inversifyjs/framework-core';
-import { ConsoleLogger, Logger } from '@inversifyjs/logger';
-import { Container, Newable, ServiceIdentifier } from 'inversify';
+import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
+import {
+  type Container,
+  type Newable,
+  type ServiceIdentifier,
+} from 'inversify';
 
-import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
-import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
-import { isHttpResponse } from '../../httpResponse/calculations/isHttpResponse';
-import { ErrorHttpResponse } from '../../httpResponse/models/ErrorHttpResponse';
-import { ForbiddenHttpResponse } from '../../httpResponse/models/ForbiddenHttpResponse';
-import { HttpResponse } from '../../httpResponse/models/HttpResponse';
-import { InternalServerErrorHttpResponse } from '../../httpResponse/models/InternalServerErrorHttpResponse';
-import { buildRouterExplorerControllerMetadataList } from '../../routerExplorer/calculations/buildRouterExplorerControllerMetadataList';
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata';
-import { RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata';
-import { setErrorFilterToErrorFilterMap } from '../actions/setErrorFilterToErrorFilterMap';
-import { areAllParamsSync } from '../calculations/areAllParamsSync';
-import { buildHttpResponseErrorFilter } from '../calculations/buildHttpResponseErrorFilter';
-import { buildInterceptedHandler } from '../calculations/buildInterceptedHandler';
-import { buildSyncCallRouteHandler } from '../calculations/buildSyncCallRouteHandler';
-import { getErrorFilterForError } from '../calculations/getErrorFilterForError';
-import { Controller } from '../models/Controller';
-import { ControllerFunction } from '../models/ControllerFunction';
-import { ControllerResponse } from '../models/ControllerResponse';
-import { CustomNativeParameterDecoratorHandlerOptions } from '../models/CustomNativeParameterDecoratorHandlerOptions';
-import { CustomParameterDecoratorHandlerOptions } from '../models/CustomParameterDecoratorHandlerOptions';
-import { HttpAdapterOptions } from '../models/HttpAdapterOptions';
-import { httpApplicationServiceIdentifier } from '../models/httpApplicationServiceIdentifier';
-import { HttpStatusCode } from '../models/HttpStatusCode';
-import { MiddlewareHandler } from '../models/MiddlewareHandler';
-import { RequestHandler } from '../models/RequestHandler';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { RequiredOptions } from '../models/RequiredOptions';
-import { RouteParams } from '../models/RouteParams';
-import { RouterParams } from '../models/RouterParams';
+import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError.js';
+import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind.js';
+import { isHttpResponse } from '../../httpResponse/calculations/isHttpResponse.js';
+import { ErrorHttpResponse } from '../../httpResponse/models/ErrorHttpResponse.js';
+import { ForbiddenHttpResponse } from '../../httpResponse/models/ForbiddenHttpResponse.js';
+import { type HttpResponse } from '../../httpResponse/models/HttpResponse.js';
+import { InternalServerErrorHttpResponse } from '../../httpResponse/models/InternalServerErrorHttpResponse.js';
+import { buildRouterExplorerControllerMetadataList } from '../../routerExplorer/calculations/buildRouterExplorerControllerMetadataList.js';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { type RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata.js';
+import { type RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata.js';
+import { setErrorFilterToErrorFilterMap } from '../actions/setErrorFilterToErrorFilterMap.js';
+import { areAllParamsSync } from '../calculations/areAllParamsSync.js';
+import { buildHttpResponseErrorFilter } from '../calculations/buildHttpResponseErrorFilter.js';
+import { buildInterceptedHandler } from '../calculations/buildInterceptedHandler.js';
+import { buildSyncCallRouteHandler } from '../calculations/buildSyncCallRouteHandler.js';
+import { getErrorFilterForError } from '../calculations/getErrorFilterForError.js';
+import { type Controller } from '../models/Controller.js';
+import { type ControllerFunction } from '../models/ControllerFunction.js';
+import { type ControllerResponse } from '../models/ControllerResponse.js';
+import { type CustomNativeParameterDecoratorHandlerOptions } from '../models/CustomNativeParameterDecoratorHandlerOptions.js';
+import { type CustomParameterDecoratorHandlerOptions } from '../models/CustomParameterDecoratorHandlerOptions.js';
+import { type HttpAdapterOptions } from '../models/HttpAdapterOptions.js';
+import { httpApplicationServiceIdentifier } from '../models/httpApplicationServiceIdentifier.js';
+import { type HttpStatusCode } from '../models/HttpStatusCode.js';
+import { type MiddlewareHandler } from '../models/MiddlewareHandler.js';
+import { type RequestHandler } from '../models/RequestHandler.js';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
+import { type RequiredOptions } from '../models/RequiredOptions.js';
+import { type RouteParams } from '../models/RouteParams.js';
+import { type RouterParams } from '../models/RouterParams.js';
 
 const DEFAULT_ERROR_MESSAGE: string = 'An unexpected error occurred';
 
@@ -82,10 +86,10 @@ export abstract class InversifyHttpAdapter<
   >[];
   readonly #globalPipeList: (ServiceIdentifier<Pipe> | Pipe)[];
   readonly #postHandlerMiddlewareList: ServiceIdentifier<
-    MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>
+    Middleware<TRequest, TResponse, TNextFunction, TResult>
   >[];
   readonly #preHandlerMiddlewareList: ServiceIdentifier<
-    MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>
+    Middleware<TRequest, TResponse, TNextFunction, TResult>
   >[];
   #isBuilt: boolean;
   public abstract readonly id: string | symbol;
@@ -448,7 +452,9 @@ export abstract class InversifyHttpAdapter<
     if (controllerMethodParameterMetadataList.length === 0) {
       return async (): Promise<ControllerResponse> => {
         const controller: Controller =
-          await this.#container.getAsync<Controller>(serviceIdentifier);
+          await this.#container.getAsync<Controller>(
+            serviceIdentifier as ServiceIdentifier<Controller>,
+          );
 
         return (controller[controllerMethodKey] as ControllerFunction)();
       };
@@ -608,8 +614,9 @@ export abstract class InversifyHttpAdapter<
         ),
       );
 
-      const controller: Controller =
-        await this.#container.getAsync<Controller>(serviceIdentifier);
+      const controller: Controller = await this.#container.getAsync<Controller>(
+        serviceIdentifier as ServiceIdentifier<Controller>,
+      );
 
       return (controller[controllerMethodKey] as ControllerFunction)(...params);
     };

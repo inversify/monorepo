@@ -1,10 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { Newable } from 'inversify';
+import { type Newable } from 'inversify';
 
-import { InversifyFrameworkCoreError } from '../../error/models/InversifyFrameworkCoreError';
-import { InversifyFrameworkCoreErrorKind } from '../../error/models/InversifyFrameworkCoreErrorKind';
-import { buildCatchErrorMetadata } from './buildCatchErrorMetadata';
+import { InversifyFrameworkCoreError } from '../../error/models/InversifyFrameworkCoreError.js';
+import { InversifyFrameworkCoreErrorKind } from '../../error/models/InversifyFrameworkCoreErrorKind.js';
+import { buildCatchErrorMetadata } from './buildCatchErrorMetadata.js';
 
 describe(buildCatchErrorMetadata, () => {
   describe('when called', () => {

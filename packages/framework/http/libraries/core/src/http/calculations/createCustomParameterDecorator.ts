@@ -1,9 +1,9 @@
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { CustomParameterDecoratorHandler } from '../models/CustomParameterDecoratorHandler';
-import { buildCustomControllerMethodParameterMetadata } from './buildCustomControllerMethodParameterMetadata';
-import { requestParam } from './requestParam';
+import { type CustomParameterDecoratorHandler } from '../models/CustomParameterDecoratorHandler.js';
+import { buildCustomControllerMethodParameterMetadata } from './buildCustomControllerMethodParameterMetadata.js';
+import { requestParam } from './requestParam.js';
 
 export function createCustomParameterDecorator<TRequest, TResponse, TResult>(
   handler: CustomParameterDecoratorHandler<TRequest, TResponse, TResult>,

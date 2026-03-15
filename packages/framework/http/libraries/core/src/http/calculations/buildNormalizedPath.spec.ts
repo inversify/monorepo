@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { buildNormalizedPath } from './buildNormalizedPath';
+import { buildNormalizedPath } from './buildNormalizedPath.js';
 
 describe(buildNormalizedPath, () => {
   describe.each<[string, string]>([

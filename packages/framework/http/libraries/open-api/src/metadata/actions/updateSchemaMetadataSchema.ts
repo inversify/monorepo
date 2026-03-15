@@ -1,6 +1,6 @@
-import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { SchemaMetadata } from '../models/SchemaMetadata';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
 
 export function updateSchemaMetadataSchema(
   schema: OpenApi3Dot1SchemaObject | undefined,

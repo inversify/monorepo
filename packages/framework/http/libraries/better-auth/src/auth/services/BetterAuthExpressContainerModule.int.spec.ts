@@ -4,21 +4,21 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { betterAuth, BetterAuthOptions } from 'better-auth';
+import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
-import { Container, Newable } from 'inversify';
+import { Container, type Newable } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
-import { Server } from '../../server/models/Server';
-import { createDirectory } from '../../test/actions/createDirectory';
-import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations';
-import { removeFileIfExists } from '../../test/actions/removeFileIfExists';
-import { BetterAuth } from '../models/BetterAuth';
-import { BetterAuthExpressContainerModule } from './BetterAuthExpressContainerModule';
+import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
+import { type Server } from '../../server/models/Server.js';
+import { createDirectory } from '../../test/actions/createDirectory.js';
+import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations.js';
+import { removeFileIfExists } from '../../test/actions/removeFileIfExists.js';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { BetterAuthExpressContainerModule } from './BetterAuthExpressContainerModule.js';
 
 describe(BetterAuthExpressContainerModule, () => {
   let db: BetterSqlite3.Database;
@@ -70,7 +70,7 @@ describe(BetterAuthExpressContainerModule, () => {
         betterAuthInstance,
       );
 
-      await container.load(betterAuthExpressContainerModule);
+      await container.loadAsync(betterAuthExpressContainerModule);
 
       server = await buildExpressServer(container);
     });
@@ -135,7 +135,7 @@ describe(BetterAuthExpressContainerModule, () => {
         transformMock,
       );
 
-      await container.load(betterAuthExpressContainerModule);
+      await container.loadAsync(betterAuthExpressContainerModule);
 
       server = await buildExpressServer(container);
     });

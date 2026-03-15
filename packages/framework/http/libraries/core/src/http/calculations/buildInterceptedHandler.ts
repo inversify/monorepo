@@ -1,11 +1,11 @@
 import {
-  Interceptor,
-  InterceptorTransformObject,
+  type Interceptor,
+  type InterceptorTransformObject,
 } from '@inversifyjs/framework-core';
-import { Container, ServiceIdentifier } from 'inversify';
+import { type Container, type ServiceIdentifier } from 'inversify';
 
-import { ControllerResponse } from '../models/ControllerResponse';
-import { RequestHandler } from '../models/RequestHandler';
+import { type ControllerResponse } from '../models/ControllerResponse.js';
+import { type RequestHandler } from '../models/RequestHandler.js';
 
 export function buildInterceptedHandler<
   TRequest,

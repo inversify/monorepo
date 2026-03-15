@@ -1,6 +1,6 @@
-import { MiddlewareHandler } from './MiddlewareHandler';
-import { RequestHandler } from './RequestHandler';
-import { RequestMethodType } from './RequestMethodType';
+import { type MiddlewareHandler } from './MiddlewareHandler.js';
+import { type RequestHandler } from './RequestHandler.js';
+import { type RequestMethodType } from './RequestMethodType.js';
 
 export interface RouteParams<TRequest, TResponse, TNextFunction, TResult> {
   guardList: MiddlewareHandler<

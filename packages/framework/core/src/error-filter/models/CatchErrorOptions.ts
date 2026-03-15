@@ -1,4 +1,4 @@
-import { BindingScope, Newable } from 'inversify';
+import { type BindingScope, type Newable } from 'inversify';
 
 export interface CatchErrorOptions {
   error?: Newable<Error>;

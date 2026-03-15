@@ -5,12 +5,12 @@ vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { getBaseType } from '@inversifyjs/prototype-utils';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { type Newable } from 'inversify';
 
-import { RequestMethodType } from '../../http/models/RequestMethodType';
-import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
-import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
-import { getControllerMethodMetadataList } from './getControllerMethodMetadataList';
+import { RequestMethodType } from '../../http/models/RequestMethodType.js';
+import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey.js';
+import { type ControllerMethodMetadata } from '../model/ControllerMethodMetadata.js';
+import { getControllerMethodMetadataList } from './getControllerMethodMetadataList.js';
 
 describe(getControllerMethodMetadataList, () => {
   describe('when called, and getOwnReflectMetadata() returns undefined', () => {

@@ -1,7 +1,7 @@
-export { InversifyExpressHttpAdapter } from './adapter/InversifyExpressHttpAdapter';
+export { InversifyExpressHttpAdapter } from './adapter/InversifyExpressHttpAdapter.js';
 
-export type { ExpressErrorFilter } from './models/ExpressErrorFilter';
-export type { ExpressGuard } from './models/ExpressGuard';
-export type { ExpressHttpAdapterOptions } from './models/ExpressHttpAdapterOptions';
-export type { ExpressInterceptor } from './models/ExpressInterceptor';
-export type { ExpressMiddleware } from './models/ExpressMiddleware';
+export type { ExpressErrorFilter } from './models/ExpressErrorFilter.js';
+export type { ExpressGuard } from './models/ExpressGuard.js';
+export type { ExpressHttpAdapterOptions } from './models/ExpressHttpAdapterOptions.js';
+export type { ExpressInterceptor } from './models/ExpressInterceptor.js';
+export type { ExpressMiddleware } from './models/ExpressMiddleware.js';

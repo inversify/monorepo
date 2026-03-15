@@ -2,8 +2,8 @@ import { findInPrototypeChain } from '@inversifyjs/prototype-utils';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import type { Newable } from 'inversify';
 
-import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey';
-import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
+import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey.js';
+import { type ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata.js';
 
 export function getControllerMethodParameterMetadataList(
   controllerConstructor: NewableFunction,

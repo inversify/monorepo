@@ -1,16 +1,16 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
-import { Context, Hono } from 'hono';
-import { ClientRequest, ClientRequestOptions } from 'hono/client';
+import { type Context, type Hono } from 'hono';
+import { type ClientRequest, type ClientRequestOptions } from 'hono/client';
 import { testClient } from 'hono/testing';
-import { BlankEnv } from 'hono/types';
-import { ContentfulStatusCode } from 'hono/utils/http-status';
+import { type BlankEnv } from 'hono/types';
+import { type ContentfulStatusCode } from 'hono/utils/http-status';
 import { Container } from 'inversify';
 
-import { InversifyHonoHttpAdapter } from '../adapter/InversifyHonoHttpAdapter';
-import { Context as HonoContext } from '../index';
-import { CorsMiddleware } from './CorsMiddleware';
+import { InversifyHonoHttpAdapter } from '../adapter/InversifyHonoHttpAdapter.js';
+import { Context as HonoContext } from '../index.js';
+import { CorsMiddleware } from './CorsMiddleware.js';
 
 interface TestClient {
   messages: ClientRequest<

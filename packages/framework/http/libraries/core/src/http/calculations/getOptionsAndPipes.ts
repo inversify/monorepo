@@ -1,7 +1,7 @@
-import { isPipe, Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { isPipe, type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { RouteParamOptions } from '../models/RouteParamOptions';
+import { type RouteParamOptions } from '../models/RouteParamOptions.js';
 
 export function getOptionsAndPipes(
   optionsOrPipe:

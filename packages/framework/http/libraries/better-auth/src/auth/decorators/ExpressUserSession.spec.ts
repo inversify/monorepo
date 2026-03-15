@@ -4,7 +4,7 @@ vitest.mock(import('@inversifyjs/http-core'));
 
 import { createCustomParameterDecorator } from '@inversifyjs/http-core';
 
-import { ExpressUserSession } from './ExpressUserSession';
+import { ExpressUserSession } from './ExpressUserSession.js';
 
 describe(ExpressUserSession, () => {
   describe('when called', () => {

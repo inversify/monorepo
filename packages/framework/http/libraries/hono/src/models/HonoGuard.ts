@@ -1,4 +1,4 @@
-import { Guard } from '@inversifyjs/http-core';
-import { HonoRequest } from 'hono';
+import { type Guard } from '@inversifyjs/http-core';
+import { type HonoRequest } from 'hono';
 
 export type HonoGuard = Guard<HonoRequest>;

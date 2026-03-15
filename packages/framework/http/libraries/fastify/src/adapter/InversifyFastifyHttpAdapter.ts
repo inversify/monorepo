@@ -1,33 +1,33 @@
-import http from 'node:http';
-import http2 from 'node:http2';
-import { Readable } from 'node:stream';
+import type http from 'node:http';
+import type http2 from 'node:http2';
+import { type Readable } from 'node:stream';
 
-import cookie, { FastifyCookieOptions } from '@fastify/cookie';
+import cookie, { type FastifyCookieOptions } from '@fastify/cookie';
 import fastifyFormbody from '@fastify/formbody';
 import fastifyMultipart from '@fastify/multipart';
 import {
   buildNormalizedPath,
   handleMiddlewareList,
-  HttpStatusCode,
+  type HttpStatusCode,
   InversifyHttpAdapter,
-  MiddlewareHandler,
+  type MiddlewareHandler,
   RequestMethodParameterType,
   RequestMethodType,
-  RouterParams,
+  type RouterParams,
 } from '@inversifyjs/http-core';
 import {
   fastify,
-  FastifyInstance,
-  FastifyPluginCallback,
-  FastifyReply,
-  FastifyRequest,
-  RouteGenericInterface,
-  RouteHandlerMethod,
+  type FastifyInstance,
+  type FastifyPluginCallback,
+  type FastifyReply,
+  type FastifyRequest,
+  type RouteGenericInterface,
+  type RouteHandlerMethod,
 } from 'fastify';
-import { HttpHeader } from 'fastify/types/utils';
-import { Container } from 'inversify';
+import { type HttpHeader } from 'fastify/types/utils';
+import { type Container } from 'inversify';
 
-import { FastifyHttpAdapterOptions } from '../models/FastifyHttpAdapterOptions';
+import { type FastifyHttpAdapterOptions } from '../models/FastifyHttpAdapterOptions.js';
 
 const ADAPTER_ID: unique symbol = Symbol.for(
   '@inversifyjs/http-fastify/InversifyFastifyHttpAdapter',

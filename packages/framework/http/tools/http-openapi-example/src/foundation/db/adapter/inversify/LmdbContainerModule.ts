@@ -1,7 +1,7 @@
-import { ContainerModule, ContainerModuleLoadOptions } from 'inversify';
+import { ContainerModule, type ContainerModuleLoadOptions } from 'inversify';
 import { open } from 'lmdb';
 
-import { lmdbDbServiceIdentifier } from '../../domain/models/lmdbDbServiceIdentifier';
+import { lmdbDbServiceIdentifier } from '../../domain/models/lmdbDbServiceIdentifier.js';
 
 export class LmdbContainerModule extends ContainerModule {
   constructor() {

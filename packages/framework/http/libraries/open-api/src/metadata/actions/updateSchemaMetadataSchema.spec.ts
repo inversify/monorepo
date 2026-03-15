@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { SchemaMetadata } from '../models/SchemaMetadata';
-import { updateSchemaMetadataSchema } from './updateSchemaMetadataSchema';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
+import { updateSchemaMetadataSchema } from './updateSchemaMetadataSchema.js';
 
 describe(updateSchemaMetadataSchema, () => {
   let schemaFixture: OpenApi3Dot1SchemaObject;

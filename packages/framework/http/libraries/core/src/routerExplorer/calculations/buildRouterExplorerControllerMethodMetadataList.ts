@@ -1,9 +1,9 @@
-import { Logger } from '@inversifyjs/logger';
+import { type Logger } from '@inversifyjs/logger';
 
-import { ControllerMetadata } from '../model/ControllerMetadata';
-import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
-import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
-import { buildRouterExplorerControllerMethodMetadata } from './buildRouterExplorerControllerMethodMetadata';
+import { type ControllerMetadata } from '../model/ControllerMetadata.js';
+import { type ControllerMethodMetadata } from '../model/ControllerMethodMetadata.js';
+import { type RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata.js';
+import { buildRouterExplorerControllerMethodMetadata } from './buildRouterExplorerControllerMethodMetadata.js';
 
 export function buildRouterExplorerControllerMethodMetadataList<
   TRequest,

@@ -4,21 +4,21 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { betterAuth, BetterAuthOptions } from 'better-auth';
+import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
-import { Container, Newable } from 'inversify';
+import { Container, type Newable } from 'inversify';
 
-import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
-import { Server } from '../../server/models/Server';
-import { createDirectory } from '../../test/actions/createDirectory';
-import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations';
-import { removeFileIfExists } from '../../test/actions/removeFileIfExists';
-import { BetterAuth } from '../models/BetterAuth';
-import { BetterAuthFastifyContainerModule } from './BetterAuthFastifyContainerModule';
+import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
+import { type Server } from '../../server/models/Server.js';
+import { createDirectory } from '../../test/actions/createDirectory.js';
+import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations.js';
+import { removeFileIfExists } from '../../test/actions/removeFileIfExists.js';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { BetterAuthFastifyContainerModule } from './BetterAuthFastifyContainerModule.js';
 
 describe(BetterAuthFastifyContainerModule, () => {
   let db: BetterSqlite3.Database;
@@ -70,7 +70,7 @@ describe(BetterAuthFastifyContainerModule, () => {
         betterAuthInstance,
       );
 
-      await container.load(betterAuthFastifyContainerModule);
+      await container.loadAsync(betterAuthFastifyContainerModule);
 
       server = await buildFastifyServer(container);
     });
@@ -135,7 +135,7 @@ describe(BetterAuthFastifyContainerModule, () => {
         transformMock,
       );
 
-      await container.load(betterAuthFastifyContainerModule);
+      await container.loadAsync(betterAuthFastifyContainerModule);
 
       server = await buildFastifyServer(container);
     });

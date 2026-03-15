@@ -3,11 +3,11 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { classMethodInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classMethodInterceptorMetadataReflectKey';
-import { Interceptor } from '../models/Interceptor';
-import { getClassMethodInterceptorList } from './getClassMethodInterceptorList';
+import { classMethodInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classMethodInterceptorMetadataReflectKey.js';
+import { type Interceptor } from '../models/Interceptor.js';
+import { getClassMethodInterceptorList } from './getClassMethodInterceptorList.js';
 
 describe(getClassMethodInterceptorList, () => {
   describe('when called, and getOwnReflectMetadata() returns undefined', () => {

@@ -1,5 +1,5 @@
 import { Given } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -21,7 +21,7 @@ import { WarriorsPostQueryNamedController } from '../controllers/WarriorsPostQue
 import { WarriorsPutQueryController } from '../controllers/WarriorsPutQueryController';
 import { WarriorsPutQueryNamedController } from '../controllers/WarriorsPutQueryNamedController';
 
-function getMethodWarriorQueryController(method: HttpMethod): NewableFunction {
+function getMethodWarriorQueryController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteQueryController;
@@ -38,9 +38,7 @@ function getMethodWarriorQueryController(method: HttpMethod): NewableFunction {
   }
 }
 
-function getMethodWarriorQueryNamedController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorQueryNamedController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteQueryNamedController;
@@ -100,7 +98,7 @@ function givenWarriorQueryControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction = getMethodWarriorQueryController(method);
+  const controller: Newable = getMethodWarriorQueryController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }
@@ -115,8 +113,7 @@ function givenWarriorQueryNamedControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction =
-    getMethodWarriorQueryNamedController(method);
+  const controller: Newable = getMethodWarriorQueryNamedController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }

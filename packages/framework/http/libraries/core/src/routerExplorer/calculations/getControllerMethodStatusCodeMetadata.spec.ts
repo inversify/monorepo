@@ -4,8 +4,8 @@ vitest.mock(import('@inversifyjs/prototype-utils'));
 
 import { findInPrototypeChain } from '@inversifyjs/prototype-utils';
 
-import { HttpStatusCode } from '../../http/models/HttpStatusCode';
-import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata';
+import { HttpStatusCode } from '../../http/models/HttpStatusCode.js';
+import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata.js';
 
 describe(getControllerMethodStatusCodeMetadata, () => {
   describe('when called, and findInPrototypeChain() returns a status code', () => {

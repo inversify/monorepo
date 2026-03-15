@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
@@ -12,16 +12,16 @@ vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 vitest.mock(import('class-validator'));
 vitest.mock(import('class-transformer'));
 
-import { PipeMetadata } from '@inversifyjs/framework-core';
+import { type PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
   InversifyValidationError,
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
 import { plainToInstance } from 'class-transformer';
-import { validate, ValidationError } from 'class-validator';
+import { validate, type ValidationError } from 'class-validator';
 
-import { ClassValidationPipe } from './ClassValidationPipe';
+import { ClassValidationPipe } from './ClassValidationPipe.js';
 
 describe(ClassValidationPipe, () => {
   let classValidationPipe: ClassValidationPipe;

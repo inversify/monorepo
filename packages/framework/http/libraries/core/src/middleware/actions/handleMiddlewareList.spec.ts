@@ -4,11 +4,11 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { handleMiddlewareList } from './handleMiddlewareList';
+import { handleMiddlewareList } from './handleMiddlewareList.js';
 
 describe(handleMiddlewareList, () => {
   describe('having no middleware handlers', () => {

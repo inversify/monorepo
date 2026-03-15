@@ -4,9 +4,9 @@ vitest.mock(import('@inversifyjs/prototype-utils'));
 
 import { findInPrototypeChain } from '@inversifyjs/prototype-utils';
 
-import { RequestMethodParameterType } from '../../http/models/RequestMethodParameterType';
-import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
-import { getControllerMethodParameterMetadataList } from './getControllerMethodParameterMetadataList';
+import { RequestMethodParameterType } from '../../http/models/RequestMethodParameterType.js';
+import { type ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata.js';
+import { getControllerMethodParameterMetadataList } from './getControllerMethodParameterMetadataList.js';
 
 describe(getControllerMethodParameterMetadataList, () => {
   describe('when called, and findInPrototypeChain() returns undefined', () => {

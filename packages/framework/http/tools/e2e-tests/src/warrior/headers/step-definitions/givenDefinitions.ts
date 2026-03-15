@@ -1,5 +1,5 @@
 import { Given } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -21,9 +21,7 @@ import { WarriorsPostHeadersNamedController } from '../controllers/WarriorsPostH
 import { WarriorsPutHeadersController } from '../controllers/WarriorsPutHeadersController';
 import { WarriorsPutHeadersNamedController } from '../controllers/WarriorsPutHeadersNamedController';
 
-function getMethodWarriorHeadersController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorHeadersController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteHeadersController;
@@ -40,9 +38,7 @@ function getMethodWarriorHeadersController(
   }
 }
 
-function getMethodWarriorHeadersNamedController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorHeadersNamedController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteHeadersNamedController;
@@ -97,7 +93,7 @@ function givenWarriorHeadersControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction = getMethodWarriorHeadersController(method);
+  const controller: Newable = getMethodWarriorHeadersController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }
@@ -112,8 +108,7 @@ function givenWarriorHeadersNamedControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction =
-    getMethodWarriorHeadersNamedController(method);
+  const controller: Newable = getMethodWarriorHeadersNamedController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }

@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -18,18 +18,18 @@ vitest.mock(
 );
 
 import {
-  OpenApi3Dot1ReferenceObject,
-  OpenApi3Dot1RequestBodyObject,
+  type OpenApi3Dot1ReferenceObject,
+  type OpenApi3Dot1RequestBodyObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
-import { toSchemaInControllerOpenApiMetadataContext } from '../actions/toSchemaInControllerMetadataContext';
-import { updateControllerOpenApiMetadataOperationProperty } from '../actions/updateControllerOpenApiMetadataOperationProperty';
-import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
-import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { ToSchemaFunction } from '../models/ToSchemaFunction';
-import { OasRequestBody } from './OasRequestBody';
+import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { toSchemaInControllerOpenApiMetadataContext } from '../actions/toSchemaInControllerMetadataContext.js';
+import { updateControllerOpenApiMetadataOperationProperty } from '../actions/updateControllerOpenApiMetadataOperationProperty.js';
+import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata.js';
+import { type BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction.js';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { type ToSchemaFunction } from '../models/ToSchemaFunction.js';
+import { OasRequestBody } from './OasRequestBody.js';
 
 describe(OasRequestBody, () => {
   describe('having a request body object parameter', () => {

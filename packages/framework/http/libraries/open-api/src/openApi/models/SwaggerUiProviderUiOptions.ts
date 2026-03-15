@@ -1,4 +1,4 @@
-import { SwaggerUiOptions } from './SwaggerUiOptions';
+import { type SwaggerUiOptions } from './SwaggerUiOptions.js';
 
 export interface SwaggerUiProviderUiOptions {
   customCss?: string;

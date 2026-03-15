@@ -8,12 +8,12 @@ import {
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
-import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
-import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey';
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { requestParam } from './requestParam';
+import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError.js';
+import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind.js';
+import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey.js';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
+import { requestParam } from './requestParam.js';
 
 describe(requestParam, () => {
   describe('having an undefined key', () => {

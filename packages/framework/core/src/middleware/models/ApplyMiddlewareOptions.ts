@@ -1,7 +1,7 @@
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { Middleware } from './Middleware';
-import { MiddlewarePhase } from './MiddlewarePhase';
+import { type Middleware } from './Middleware.js';
+import { type MiddlewarePhase } from './MiddlewarePhase.js';
 
 export interface ApplyMiddlewareOptions {
   phase: MiddlewarePhase;

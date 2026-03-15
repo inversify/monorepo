@@ -5,9 +5,9 @@ vitest.mock(import('../calculations/buildSetHeaderMetadata.js'));
 
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey';
-import { buildSetHeaderMetadata } from '../calculations/buildSetHeaderMetadata';
-import { SetHeader } from './SetHeader';
+import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey.js';
+import { buildSetHeaderMetadata } from '../calculations/buildSetHeaderMetadata.js';
+import { SetHeader } from './SetHeader.js';
 
 describe(SetHeader, () => {
   describe('when called', () => {

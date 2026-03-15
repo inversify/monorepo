@@ -1,23 +1,23 @@
-import { Readable } from 'node:stream';
+import { type Readable } from 'node:stream';
 
 import {
   buildNormalizedPath,
-  HttpStatusCode,
+  type HttpStatusCode,
   InversifyHttpAdapter,
-  MiddlewareHandler,
-  RouterParams,
+  type MiddlewareHandler,
+  type RouterParams,
 } from '@inversifyjs/http-core';
 import cookieParser from 'cookie-parser';
 import express, {
-  Application,
-  NextFunction,
-  Request,
-  RequestHandler as ExpressRequestHandler,
-  Response,
+  type Application,
+  type NextFunction,
+  type Request,
+  type RequestHandler as ExpressRequestHandler,
+  type Response,
 } from 'express';
-import { Container } from 'inversify';
+import { type Container } from 'inversify';
 
-import { ExpressHttpAdapterOptions } from '../models/ExpressHttpAdapterOptions';
+import { type ExpressHttpAdapterOptions } from '../models/ExpressHttpAdapterOptions.js';
 
 const ADAPTER_ID: unique symbol = Symbol.for(
   '@inversifyjs/http-express/InversifyExpressHttpAdapter',

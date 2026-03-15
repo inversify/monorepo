@@ -1,7 +1,7 @@
-import { ContainerModule, ContainerModuleLoadOptions } from 'inversify';
+import { ContainerModule, type ContainerModuleLoadOptions } from 'inversify';
 
-import { userPersistenceServiceServiceIdentifier } from '../../domain/models/userPersistenceServiceServiceIdentifier';
-import { LmdbUserRepository } from '../lmdb/repositories/LmdbUserRepository';
+import { userPersistenceServiceServiceIdentifier } from '../../domain/models/userPersistenceServiceServiceIdentifier.js';
+import { LmdbUserRepository } from '../lmdb/repositories/LmdbUserRepository.js';
 
 export class UserLmdbContainerModule extends ContainerModule {
   constructor() {

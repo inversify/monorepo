@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -18,16 +18,16 @@ vitest.mock(
 );
 
 import { HttpStatusCode } from '@inversifyjs/http-core';
-import { OpenApi3Dot1ResponseObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1ResponseObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
-import { toSchemaInControllerOpenApiMetadataContext } from '../actions/toSchemaInControllerMetadataContext';
-import { updateControllerOpenApiMetadataOperationRecordProperty } from '../actions/updateControllerOpenApiMetadataOperationRecordProperty';
-import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
-import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { ToSchemaFunction } from '../models/ToSchemaFunction';
-import { OasResponse } from './OasResponse';
+import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { toSchemaInControllerOpenApiMetadataContext } from '../actions/toSchemaInControllerMetadataContext.js';
+import { updateControllerOpenApiMetadataOperationRecordProperty } from '../actions/updateControllerOpenApiMetadataOperationRecordProperty.js';
+import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata.js';
+import { type BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction.js';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { type ToSchemaFunction } from '../models/ToSchemaFunction.js';
+import { OasResponse } from './OasResponse.js';
 
 describe(OasResponse, () => {
   describe('having a response object parameter', () => {

@@ -1,7 +1,7 @@
-export { InversifyFastifyHttpAdapter } from './adapter/InversifyFastifyHttpAdapter';
+export { InversifyFastifyHttpAdapter } from './adapter/InversifyFastifyHttpAdapter.js';
 
-export type { FastifyErrorFilter } from './models/FastifyErrorFilter';
-export type { FastifyGuard } from './models/FastifyGuard';
-export type { FastifyHttpAdapterOptions } from './models/FastifyHttpAdapterOptions';
-export type { FastifyInterceptor } from './models/FastifyInterceptor';
-export type { FastifyMiddleware } from './models/FastifyMiddleware';
+export type { FastifyErrorFilter } from './models/FastifyErrorFilter.js';
+export type { FastifyGuard } from './models/FastifyGuard.js';
+export type { FastifyHttpAdapterOptions } from './models/FastifyHttpAdapterOptions.js';
+export type { FastifyInterceptor } from './models/FastifyInterceptor.js';
+export type { FastifyMiddleware } from './models/FastifyMiddleware.js';

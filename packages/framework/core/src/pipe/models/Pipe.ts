@@ -1,4 +1,4 @@
-import { PipeMetadata } from './PipeMetadata';
+import { type PipeMetadata } from './PipeMetadata.js';
 
 export interface Pipe<TInput = unknown, TOutput = unknown> {
   execute(input: TInput, metadata: PipeMetadata): Promise<TOutput> | TOutput;

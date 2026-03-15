@@ -1,8 +1,8 @@
-import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
-import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
-import { setControllerMethodParameterMetadata } from '../../routerExplorer/actions/setControllerMethodParameterMetadata';
-import { setControllerMethodUseNativeHandlerMetadata } from '../../routerExplorer/actions/setControllerMethodUseNativeHandlerMetadata';
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
+import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError.js';
+import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind.js';
+import { setControllerMethodParameterMetadata } from '../../routerExplorer/actions/setControllerMethodParameterMetadata.js';
+import { setControllerMethodUseNativeHandlerMetadata } from '../../routerExplorer/actions/setControllerMethodUseNativeHandlerMetadata.js';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
 
 export function nativeRequestParam(
   controllerMethodParameterMetadata: ControllerMethodParameterMetadata,

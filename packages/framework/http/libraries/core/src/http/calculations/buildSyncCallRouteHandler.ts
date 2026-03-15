@@ -1,12 +1,12 @@
-import { Container, ServiceIdentifier } from 'inversify';
+import { type Container, type ServiceIdentifier } from 'inversify';
 
-import { Controller } from '../models/Controller';
-import { ControllerFunction } from '../models/ControllerFunction';
-import { ControllerResponse } from '../models/ControllerResponse';
+import { type Controller } from '../models/Controller.js';
+import { type ControllerFunction } from '../models/ControllerFunction.js';
+import { type ControllerResponse } from '../models/ControllerResponse.js';
 
 export function buildSyncCallRouteHandler<TRequest, TResponse, TNextFunction>(
   container: Container,
-  serviceIdentifier: ServiceIdentifier<Controller>,
+  serviceIdentifier: ServiceIdentifier,
   controllerMethodKey: string | symbol,
   paramBuilders: (
     | ((request: TRequest, response: TResponse, next: TNextFunction) => unknown)
@@ -22,7 +22,9 @@ export function buildSyncCallRouteHandler<TRequest, TResponse, TNextFunction>(
     response: TResponse,
     next: TNextFunction,
   ): Promise<ControllerResponse> => {
-    const controller: Controller = await container.getAsync(serviceIdentifier);
+    const controller: Controller = await container.getAsync(
+      serviceIdentifier as ServiceIdentifier<Controller>,
+    );
 
     const params: unknown[] = new Array(paramBuilders.length);
 

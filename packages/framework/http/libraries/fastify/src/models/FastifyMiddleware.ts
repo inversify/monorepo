@@ -1,5 +1,5 @@
-import { Middleware } from '@inversifyjs/http-core';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { type Middleware } from '@inversifyjs/http-core';
+import { type FastifyReply, type FastifyRequest } from 'fastify';
 
 export type FastifyMiddleware = Middleware<
   FastifyRequest,

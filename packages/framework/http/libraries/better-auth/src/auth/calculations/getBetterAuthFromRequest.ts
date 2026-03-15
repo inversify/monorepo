@@ -1,8 +1,8 @@
 import { InternalServerErrorHttpResponse } from '@inversifyjs/http-core';
-import { BetterAuthOptions } from 'better-auth';
+import { type BetterAuthOptions } from 'better-auth';
 
-import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthProperty } from '../models/betterAuthProperty';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { betterAuthProperty } from '../models/betterAuthProperty.js';
 
 export function getBetterAuthFromRequest<TOptions extends BetterAuthOptions>(
   request: object,

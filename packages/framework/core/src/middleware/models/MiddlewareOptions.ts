@@ -1,6 +1,6 @@
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { Middleware } from './Middleware';
+import { type Middleware } from './Middleware.js';
 
 export interface MiddlewareOptions {
   postHandlerMiddlewareList: ServiceIdentifier<Middleware>[];

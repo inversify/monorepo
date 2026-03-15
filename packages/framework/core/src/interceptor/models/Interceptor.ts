@@ -1,4 +1,4 @@
-import { InterceptorTransformObject } from './InterceptorTransformObject';
+import { type InterceptorTransformObject } from './InterceptorTransformObject.js';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Interceptor<TRequest = any, TResponse = any> {

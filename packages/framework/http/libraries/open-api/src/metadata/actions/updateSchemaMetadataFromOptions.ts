@@ -1,5 +1,5 @@
-import { OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions';
-import { SchemaMetadata } from '../models/SchemaMetadata';
+import { type OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions.js';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
 
 export function updateSchemaMetadataFromOptions(
   options: OasSchemaDecoratorOptions | undefined,

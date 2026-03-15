@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -16,18 +16,18 @@ vitest.mock(import('../actions/toSchemaInSchemaMetadataContext.js'));
 vitest.mock(import('../actions/updateSchemaMetadataFromOptions.js'));
 vitest.mock(import('../actions/updateSchemaMetadataSchema.js'));
 
-import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext';
-import { updateSchemaMetadataFromOptions } from '../actions/updateSchemaMetadataFromOptions';
-import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema';
-import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
-import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
-import { OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions';
-import { SchemaMetadata } from '../models/SchemaMetadata';
-import { ToSchemaFunction } from '../models/ToSchemaFunction';
-import { OasSchema } from './OasSchema';
+import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext.js';
+import { updateSchemaMetadataFromOptions } from '../actions/updateSchemaMetadataFromOptions.js';
+import { updateSchemaMetadataSchema } from '../actions/updateSchemaMetadataSchema.js';
+import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata.js';
+import { type BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction.js';
+import { type OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions.js';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
+import { type ToSchemaFunction } from '../models/ToSchemaFunction.js';
+import { OasSchema } from './OasSchema.js';
 
 describe(OasSchema, () => {
   describe('having no schema parameter', () => {

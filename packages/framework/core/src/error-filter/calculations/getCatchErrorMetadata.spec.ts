@@ -3,10 +3,10 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { type Newable } from 'inversify';
 
-import { catchErrorMetadataReflectKey } from '../../reflectMetadata/data/catchErrorMetadataReflectKey';
-import { getCatchErrorMetadata } from './getCatchErrorMetadata';
+import { catchErrorMetadataReflectKey } from '../../reflectMetadata/data/catchErrorMetadataReflectKey.js';
+import { getCatchErrorMetadata } from './getCatchErrorMetadata.js';
 
 describe(getCatchErrorMetadata, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

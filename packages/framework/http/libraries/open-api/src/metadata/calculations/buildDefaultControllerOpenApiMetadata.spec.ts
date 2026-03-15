@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { buildDefaultControllerOpenApiMetadata } from './buildDefaultControllerOpenApiMetadata';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { buildDefaultControllerOpenApiMetadata } from './buildDefaultControllerOpenApiMetadata.js';
 
 describe(buildDefaultControllerOpenApiMetadata, () => {
   describe('when called', () => {

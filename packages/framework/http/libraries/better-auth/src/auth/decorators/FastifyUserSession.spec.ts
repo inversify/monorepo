@@ -4,7 +4,7 @@ vitest.mock(import('@inversifyjs/http-core'));
 
 import { createCustomParameterDecorator } from '@inversifyjs/http-core';
 
-import { FastifyUserSession } from './FastifyUserSession';
+import { FastifyUserSession } from './FastifyUserSession.js';
 
 describe(FastifyUserSession, () => {
   describe('when called', () => {

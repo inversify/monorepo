@@ -1,4 +1,4 @@
-import { Guard } from '@inversifyjs/http-core';
-import { HttpRequest } from 'uWebSockets.js';
+import { type Guard } from '@inversifyjs/http-core';
+import { type HttpRequest } from 'uWebSockets.js';
 
 export type UwebSocketsGuard = Guard<HttpRequest>;

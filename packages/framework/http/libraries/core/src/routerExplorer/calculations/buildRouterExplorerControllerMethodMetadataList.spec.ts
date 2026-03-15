@@ -2,13 +2,13 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('./buildRouterExplorerControllerMethodMetadata.js'));
 
-import { Logger } from '@inversifyjs/logger';
+import { type Logger } from '@inversifyjs/logger';
 
-import { ControllerMetadata } from '../model/ControllerMetadata';
-import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
-import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
-import { buildRouterExplorerControllerMethodMetadata } from './buildRouterExplorerControllerMethodMetadata';
-import { buildRouterExplorerControllerMethodMetadataList } from './buildRouterExplorerControllerMethodMetadataList';
+import { type ControllerMetadata } from '../model/ControllerMetadata.js';
+import { type ControllerMethodMetadata } from '../model/ControllerMethodMetadata.js';
+import { type RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata.js';
+import { buildRouterExplorerControllerMethodMetadata } from './buildRouterExplorerControllerMethodMetadata.js';
+import { buildRouterExplorerControllerMethodMetadataList } from './buildRouterExplorerControllerMethodMetadataList.js';
 
 describe(buildRouterExplorerControllerMethodMetadataList, () => {
   let loggerFixture: Logger;

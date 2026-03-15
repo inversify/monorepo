@@ -1,31 +1,31 @@
 import {
-  ApplyMiddlewareOptions,
+  type ApplyMiddlewareOptions,
   buildMiddlewareOptionsFromApplyMiddlewareOptions,
-  ErrorFilter,
+  type ErrorFilter,
   getClassGuardList,
   getClassInterceptorList,
   getClassMethodGuardList,
   getClassMethodInterceptorList,
   getClassMethodMiddlewareList,
   getClassMiddlewareList,
-  Guard,
-  Interceptor,
-  Middleware,
-  MiddlewareOptions,
+  type Guard,
+  type Interceptor,
+  type Middleware,
+  type MiddlewareOptions,
 } from '@inversifyjs/framework-core';
-import { Logger } from '@inversifyjs/logger';
-import { Newable, ServiceIdentifier } from 'inversify';
+import { type Logger } from '@inversifyjs/logger';
+import { type Newable, type ServiceIdentifier } from 'inversify';
 
-import { HttpStatusCode } from '../../http/models/HttpStatusCode';
-import { ControllerMetadata } from '../model/ControllerMetadata';
-import { ControllerMethodMetadata } from '../model/ControllerMethodMetadata';
-import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
-import { RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata';
-import { buildErrorTypeToErrorFilterMap } from './buildErrorTypeToErrorFilterMap';
-import { getControllerMethodHeaderMetadata } from './getControllerMethodHeaderMetadata';
-import { getControllerMethodParameterMetadataList } from './getControllerMethodParameterMetadataList';
-import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata';
-import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata';
+import { type HttpStatusCode } from '../../http/models/HttpStatusCode.js';
+import { type ControllerMetadata } from '../model/ControllerMetadata.js';
+import { type ControllerMethodMetadata } from '../model/ControllerMethodMetadata.js';
+import { type ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata.js';
+import { type RouterExplorerControllerMethodMetadata } from '../model/RouterExplorerControllerMethodMetadata.js';
+import { buildErrorTypeToErrorFilterMap } from './buildErrorTypeToErrorFilterMap.js';
+import { getControllerMethodHeaderMetadata } from './getControllerMethodHeaderMetadata.js';
+import { getControllerMethodParameterMetadataList } from './getControllerMethodParameterMetadataList.js';
+import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata.js';
+import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata.js';
 
 export function buildRouterExplorerControllerMethodMetadata<
   TRequest,

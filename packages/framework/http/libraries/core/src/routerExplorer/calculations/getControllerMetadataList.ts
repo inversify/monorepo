@@ -1,7 +1,7 @@
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
-import { ControllerMetadata } from '../model/ControllerMetadata';
+import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey.js';
+import { type ControllerMetadata } from '../model/ControllerMetadata.js';
 
 export function getControllerMetadataList(): ControllerMetadata[] | undefined {
   const controllerMetadataList: ControllerMetadata[] | undefined =

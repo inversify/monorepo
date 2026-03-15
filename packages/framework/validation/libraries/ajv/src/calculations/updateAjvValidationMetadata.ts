@@ -1,4 +1,4 @@
-import { AnySchema } from 'ajv';
+import { type AnySchema } from 'ajv';
 
 export function updateAjvValidationMetadata(
   typeList: AnySchema[],

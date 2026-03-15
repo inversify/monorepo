@@ -1,14 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
-import { Container } from 'inversify';
+import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
+import { Container, type Newable } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
-import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server';
-import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
-import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
-import { Server } from '../../server/models/Server';
-import { buildSwaggerUiController } from './buildSwaggerUiController';
+import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
+import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server.js';
+import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
+import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
+import { type Server } from '../../server/models/Server.js';
+import { type BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController.js';
+import { buildSwaggerUiController } from './buildSwaggerUiController.js';
 
 describe(buildSwaggerUiController, () => {
   describe.each<[string, (container: Container) => Promise<Server>]>([
@@ -35,12 +36,13 @@ describe(buildSwaggerUiController, () => {
         };
 
         const container: Container = new Container();
-        const controller: NewableFunction = buildSwaggerUiController({
-          api: {
-            openApiObject: specFixture,
-            path: apiPathFixture,
-          },
-        });
+        const controller: Newable<BaseSwaggerUiController> =
+          buildSwaggerUiController({
+            api: {
+              openApiObject: specFixture,
+              path: apiPathFixture,
+            },
+          });
 
         container.bind(controller).toSelf().inSingletonScope();
 

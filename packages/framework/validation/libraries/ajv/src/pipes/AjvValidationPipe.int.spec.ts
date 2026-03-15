@@ -1,9 +1,13 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import http, { RequestListener } from 'node:http';
-import { AddressInfo } from 'node:net';
+import http, { type RequestListener } from 'node:http';
+import { type AddressInfo } from 'node:net';
 
-import { CatchError, ErrorFilter, Pipe } from '@inversifyjs/framework-core';
+import {
+  CatchError,
+  type ErrorFilter,
+  type Pipe,
+} from '@inversifyjs/framework-core';
 import {
   BadRequestHttpResponse,
   Body,
@@ -13,11 +17,11 @@ import {
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { InversifyValidationError } from '@inversifyjs/validation-common';
 import Ajv from 'ajv/dist/2020';
-import express from 'express';
-import { Container, Newable } from 'inversify';
+import type express from 'express';
+import { Container, type Newable } from 'inversify';
 
-import { ValidateAjvSchema } from '../decorators/ValidateAjvSchema';
-import { AjvValidationPipe } from './AjvValidationPipe';
+import { ValidateAjvSchema } from '../decorators/ValidateAjvSchema.js';
+import { AjvValidationPipe } from './AjvValidationPipe.js';
 
 export interface Server {
   host: string;

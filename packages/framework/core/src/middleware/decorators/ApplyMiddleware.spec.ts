@@ -7,12 +7,12 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { classMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey';
-import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey';
-import { Middleware } from '../models/Middleware';
-import { ApplyMiddleware } from './ApplyMiddleware';
+import { classMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey.js';
+import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey.js';
+import { type Middleware } from '../models/Middleware.js';
+import { ApplyMiddleware } from './ApplyMiddleware.js';
 
 describe(ApplyMiddleware, () => {
   describe('having a ClassDecorator', () => {

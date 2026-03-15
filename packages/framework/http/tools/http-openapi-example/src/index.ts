@@ -1,3 +1,3 @@
-import { bootstrap } from './app/bootstrap';
+import { bootstrap } from './app/bootstrap.js';
 
 await bootstrap();

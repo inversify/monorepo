@@ -1,17 +1,17 @@
 import { Readable } from 'node:stream';
 
-import { Pipe } from '@inversifyjs/framework-core';
+import { type Pipe } from '@inversifyjs/framework-core';
 import {
   createCustomNativeParameterDecorator,
-  CustomNativeParameterDecoratorHandlerOptions,
+  type CustomNativeParameterDecoratorHandlerOptions,
   HttpStatusCode,
 } from '@inversifyjs/http-core';
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { SseStream } from '../../stream/models/SseStream';
-import { stringifyMessageEvent } from '../calculations/stringifyMessageEvent';
-import { MessageEvent } from '../models/MessageEvent';
-import { SsePublisherOptions } from '../models/SsePublisherOptions';
+import { SseStream } from '../../stream/models/SseStream.js';
+import { stringifyMessageEvent } from '../calculations/stringifyMessageEvent.js';
+import { type MessageEvent } from '../models/MessageEvent.js';
+import { type SsePublisherOptions } from '../models/SsePublisherOptions.js';
 
 async function* mapMessageEventAsyncIterable(
   events: AsyncIterable<MessageEvent>,

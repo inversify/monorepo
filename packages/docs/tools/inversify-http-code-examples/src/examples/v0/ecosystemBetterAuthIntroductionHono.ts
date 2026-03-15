@@ -31,7 +31,7 @@ export async function run(): Promise<void> {
     betterAuthInstance,
   );
 
-  await container.load(betterAuthHonoContainerModule);
+  await container.loadAsync(betterAuthHonoContainerModule);
 
   const adapter: InversifyHonoHttpAdapter = new InversifyHonoHttpAdapter(
     container,

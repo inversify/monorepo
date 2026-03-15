@@ -1,5 +1,5 @@
 import { Given } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -11,7 +11,7 @@ import { NotImplementedOperationErrorFilter } from '../error-filters/NotImplemen
 
 function getMethodWarriorControllerWithErrorFilter(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
     case HttpMethod.get:
@@ -33,8 +33,7 @@ function givenWarriorControllerWithErrorFilterForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction =
-    getMethodWarriorControllerWithErrorFilter(method);
+  const controller: Newable = getMethodWarriorControllerWithErrorFilter(method);
 
   container
     .bind(NotImplementedOperationErrorFilter)

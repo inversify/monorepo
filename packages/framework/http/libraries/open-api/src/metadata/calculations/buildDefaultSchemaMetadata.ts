@@ -1,4 +1,4 @@
-import { SchemaMetadata } from '../models/SchemaMetadata';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
 
 export function buildDefaultSchemaMetadata(): SchemaMetadata {
   return {

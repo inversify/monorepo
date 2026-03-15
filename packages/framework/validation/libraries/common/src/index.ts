@@ -1,2 +1,2 @@
-export { InversifyValidationError } from './error/models/InversifyValidationError';
-export { InversifyValidationErrorKind } from './error/models/InversifyValidationErrorKind';
+export { InversifyValidationError } from './error/models/InversifyValidationError.js';
+export { InversifyValidationErrorKind } from './error/models/InversifyValidationErrorKind.js';

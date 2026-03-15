@@ -8,10 +8,10 @@ vitest.mock(
   import('../../metadata/calculations/buildDefaultSchemaMetadata.js'),
 );
 
-import { buildDefaultSchemaMetadata } from '../../metadata/calculations/buildDefaultSchemaMetadata';
-import { SchemaMetadata } from '../../metadata/models/SchemaMetadata';
-import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { getSchemaMetadata } from './getSchemaMetadata';
+import { buildDefaultSchemaMetadata } from '../../metadata/calculations/buildDefaultSchemaMetadata.js';
+import { type SchemaMetadata } from '../../metadata/models/SchemaMetadata.js';
+import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { getSchemaMetadata } from './getSchemaMetadata.js';
 
 describe(getSchemaMetadata, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

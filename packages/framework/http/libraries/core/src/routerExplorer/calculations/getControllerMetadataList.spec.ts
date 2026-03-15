@@ -3,10 +3,11 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { type ServiceIdentifier } from 'inversify';
 
-import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
-import { ControllerMetadata } from '../model/ControllerMetadata';
-import { getControllerMetadataList } from './getControllerMetadataList';
+import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey.js';
+import { type ControllerMetadata } from '../model/ControllerMetadata.js';
+import { getControllerMetadataList } from './getControllerMetadataList.js';
 
 describe(getControllerMetadataList, () => {
   describe('when called, and no metadata exists', () => {
@@ -40,10 +41,10 @@ describe(getControllerMetadataList, () => {
   });
 
   describe('when called, and metadata exists with different priorities', () => {
-    let lowControllerClass: NewableFunction;
-    let highControllerClass: NewableFunction;
-    let defaultControllerClass: NewableFunction;
-    let mediumControllerClass: NewableFunction;
+    let lowControllerClass: NewableFunction & ServiceIdentifier;
+    let highControllerClass: NewableFunction & ServiceIdentifier;
+    let defaultControllerClass: NewableFunction & ServiceIdentifier;
+    let mediumControllerClass: NewableFunction & ServiceIdentifier;
     let controllerMetadataListFixture: ControllerMetadata[];
     let result: unknown;
 

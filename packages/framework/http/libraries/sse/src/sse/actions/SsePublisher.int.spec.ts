@@ -3,16 +3,16 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Controller, Get, HttpStatusCode } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
-import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer';
-import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server';
-import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer';
-import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
-import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer';
-import { Server } from '../../server/models/Server';
-import { SseStream } from '../../stream/models/SseStream';
-import { MessageEvent } from '../models/MessageEvent';
-import { SsePublisherOptions } from '../models/SsePublisherOptions';
-import { SsePublisher } from './SsePublisher';
+import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
+import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server.js';
+import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
+import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
+import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer.js';
+import { type Server } from '../../server/models/Server.js';
+import { SseStream } from '../../stream/models/SseStream.js';
+import { type MessageEvent } from '../models/MessageEvent.js';
+import { type SsePublisherOptions } from '../models/SsePublisherOptions.js';
+import { SsePublisher } from './SsePublisher.js';
 
 describe(SsePublisher, () => {
   describe.each<[(container: Container) => Promise<Server>]>([

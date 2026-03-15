@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -15,16 +15,16 @@ import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 vitest.mock(import('../actions/toSchemaInSchemaMetadataContext.js'));
 vitest.mock(import('../actions/updateSchemaMetadataProperty.js'));
 
-import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext';
-import { updateSchemaMetadataProperty } from '../actions/updateSchemaMetadataProperty';
-import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
-import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
-import { SchemaMetadata } from '../models/SchemaMetadata';
-import { ToSchemaFunction } from '../models/ToSchemaFunction';
-import { BaseOasSchemaProperty } from './BaseOasSchemaProperty';
+import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext.js';
+import { updateSchemaMetadataProperty } from '../actions/updateSchemaMetadataProperty.js';
+import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata.js';
+import { type BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction.js';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
+import { type ToSchemaFunction } from '../models/ToSchemaFunction.js';
+import { BaseOasSchemaProperty } from './BaseOasSchemaProperty.js';
 
 describe(BaseOasSchemaProperty, () => {
   describe('having no schema parameter', () => {

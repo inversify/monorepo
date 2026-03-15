@@ -1,12 +1,12 @@
-import { Pipe, PipeMetadata } from '@inversifyjs/framework-core';
+import { type Pipe, type PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
   InversifyValidationError,
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
-import { StandardSchemaV1 } from '@standard-schema/spec';
+import { type StandardSchemaV1 } from '@standard-schema/spec';
 
-import { standardSchemaValidationMetadataReflectKey } from '../reflectMetadata/models/standardSchemaValidationMetadataReflectKey';
+import { standardSchemaValidationMetadataReflectKey } from '../reflectMetadata/models/standardSchemaValidationMetadataReflectKey.js';
 
 export class StandardSchemaValidationPipe implements Pipe {
   readonly #schemaList: StandardSchemaV1[];

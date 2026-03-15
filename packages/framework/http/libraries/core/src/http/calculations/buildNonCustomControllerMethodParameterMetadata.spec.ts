@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { RouteParamOptions } from '../models/RouteParamOptions';
-import { buildNonCustomControllerMethodParameterMetadata } from './buildNonCustomControllerMethodParameterMetadata';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
+import { type RouteParamOptions } from '../models/RouteParamOptions.js';
+import { buildNonCustomControllerMethodParameterMetadata } from './buildNonCustomControllerMethodParameterMetadata.js';
 
 describe(buildNonCustomControllerMethodParameterMetadata, () => {
   describe('having options with a name', () => {

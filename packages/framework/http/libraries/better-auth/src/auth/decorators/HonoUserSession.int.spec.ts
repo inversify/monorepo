@@ -6,20 +6,20 @@ import {
   Get,
   HttpStatusCode,
 } from '@inversifyjs/http-core';
-import { betterAuth, BetterAuthOptions } from 'better-auth';
+import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
 import { Container } from 'inversify';
 
-import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
-import { Server } from '../../server/models/Server';
-import { createDirectory } from '../../test/actions/createDirectory';
-import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations';
-import { removeFileIfExists } from '../../test/actions/removeFileIfExists';
-import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier';
-import { UserSession } from '../models/UserSession';
-import { BetterAuthHonoContainerModule } from '../services/BetterAuthHonoContainerModule';
-import { HonoUserSession } from './HonoUserSession';
+import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
+import { type Server } from '../../server/models/Server.js';
+import { createDirectory } from '../../test/actions/createDirectory.js';
+import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations.js';
+import { removeFileIfExists } from '../../test/actions/removeFileIfExists.js';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier.js';
+import { type UserSession } from '../models/UserSession.js';
+import { BetterAuthHonoContainerModule } from '../services/BetterAuthHonoContainerModule.js';
+import { HonoUserSession } from './HonoUserSession.js';
 
 @Controller('/api')
 class SessionTestController {
@@ -71,7 +71,7 @@ describe(HonoUserSession, () => {
         betterAuthInstance,
       );
 
-      await container.load(betterAuthHonoContainerModule);
+      await container.loadAsync(betterAuthHonoContainerModule);
 
       // Register the session test controller
       container.bind(SessionTestController).toSelf();

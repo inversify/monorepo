@@ -4,7 +4,7 @@ vitest.mock(import('@inversifyjs/prototype-utils'));
 
 import { findInPrototypeChain } from '@inversifyjs/prototype-utils';
 
-import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata';
+import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata.js';
 
 describe(getControllerMethodUseNativeHandlerMetadata, () => {
   describe('when called, and findInPrototypeChain() returns undefined', () => {

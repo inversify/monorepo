@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -16,12 +16,12 @@ import {
   buildEmptySetMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { injectable, Newable } from 'inversify';
+import { injectable, type Newable } from 'inversify';
 
-import { catchErrorMetadataReflectKey } from '../../reflectMetadata/data/catchErrorMetadataReflectKey';
-import { buildCatchErrorMetadata } from '../calculations/buildCatchErrorMetadata';
-import { CatchErrorOptions } from '../models/CatchErrorOptions';
-import { CatchError } from './CatchError';
+import { catchErrorMetadataReflectKey } from '../../reflectMetadata/data/catchErrorMetadataReflectKey.js';
+import { buildCatchErrorMetadata } from '../calculations/buildCatchErrorMetadata.js';
+import { type CatchErrorOptions } from '../models/CatchErrorOptions.js';
+import { CatchError } from './CatchError.js';
 
 class TestError extends Error {}
 

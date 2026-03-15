@@ -1,30 +1,30 @@
-import { Readable } from 'node:stream';
-import { URLSearchParamsIterator } from 'node:url';
+import { type Readable } from 'node:stream';
+import { type URLSearchParamsIterator } from 'node:url';
 
 import {
   buildNormalizedPath,
   handleMiddlewareList,
-  HttpStatusCode,
+  type HttpStatusCode,
   InversifyHttpAdapter,
-  MiddlewareHandler,
+  type MiddlewareHandler,
   RequestMethodParameterType,
   RequestMethodType,
-  RouterParams,
+  type RouterParams,
 } from '@inversifyjs/http-core';
-import { Container } from 'inversify';
+import { type Container } from 'inversify';
 import {
   App,
   getParts,
-  HttpRequest,
-  HttpResponse,
-  RecognizedString,
-  TemplatedApp,
+  type HttpRequest,
+  type HttpResponse,
+  type RecognizedString,
+  type TemplatedApp,
 } from 'uWebSockets.js';
 
-import { pipeStreamOverResponse } from '../actions/pipeStreamOverResponse';
-import { abortedSymbol } from '../data/abortedSymbol';
-import { CustomHttpResponse } from '../models/CustomHttpResponse';
-import { UwebSocketsHttpAdapterOptions } from '../models/UwebSocketsHttpAdapterOptions';
+import { pipeStreamOverResponse } from '../actions/pipeStreamOverResponse.js';
+import { abortedSymbol } from '../data/abortedSymbol.js';
+import { type CustomHttpResponse } from '../models/CustomHttpResponse.js';
+import { type UwebSocketsHttpAdapterOptions } from '../models/UwebSocketsHttpAdapterOptions.js';
 
 const ADAPTER_ID: unique symbol = Symbol.for(
   '@inversifyjs/http-uwebsockets/InversifyUwebSocketsHttpAdapter',

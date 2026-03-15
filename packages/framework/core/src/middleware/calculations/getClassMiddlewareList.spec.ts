@@ -3,11 +3,11 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey';
-import { Middleware } from '../models/Middleware';
-import { getClassMiddlewareList } from './getClassMiddlewareList';
+import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey.js';
+import { type Middleware } from '../models/Middleware.js';
+import { getClassMiddlewareList } from './getClassMiddlewareList.js';
 
 describe(getClassMiddlewareList, () => {
   describe('when called, and getOwnReflectMetadata() returns undefined', () => {

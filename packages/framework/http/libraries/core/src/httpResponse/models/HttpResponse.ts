@@ -1,6 +1,6 @@
 import type { Stream } from 'node:stream';
 
-import { HttpStatusCode } from '../../http/models/HttpStatusCode';
+import { type HttpStatusCode } from '../../http/models/HttpStatusCode.js';
 
 export const isHttpResponse: unique symbol = Symbol.for(
   '@inversifyjs/http-core/HttpResponse',

@@ -1,7 +1,7 @@
 import type { Stream } from 'node:stream';
 
-import { HttpStatusCode } from '../../http/models/HttpStatusCode';
-import { ErrorHttpResponse } from './ErrorHttpResponse';
+import { HttpStatusCode } from '../../http/models/HttpStatusCode.js';
+import { ErrorHttpResponse } from './ErrorHttpResponse.js';
 
 export class LoopDetectedHttpResponse extends ErrorHttpResponse {
   constructor(

@@ -1,11 +1,11 @@
 import { Response } from '@inversifyjs/http-core';
 
-import { InversifyHonoHttpAdapter } from './adapter/InversifyHonoHttpAdapter';
-import { CorsMiddleware } from './middlewares/CorsMiddleware';
+import { InversifyHonoHttpAdapter } from './adapter/InversifyHonoHttpAdapter.js';
+import { CorsMiddleware } from './middlewares/CorsMiddleware.js';
 
-export type { HonoErrorFilter } from './models/HonoErrorFilter';
-export type { HonoGuard } from './models/HonoGuard';
-export type { HonoInterceptor } from './models/HonoInterceptor';
-export type { HonoMiddleware } from './models/HonoMiddleware';
+export type { HonoErrorFilter } from './models/HonoErrorFilter.js';
+export type { HonoGuard } from './models/HonoGuard.js';
+export type { HonoInterceptor } from './models/HonoInterceptor.js';
+export type { HonoMiddleware } from './models/HonoMiddleware.js';
 
 export { Response as Context, CorsMiddleware, InversifyHonoHttpAdapter };

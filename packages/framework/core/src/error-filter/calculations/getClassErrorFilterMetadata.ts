@@ -1,8 +1,8 @@
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { type Newable } from 'inversify';
 
-import { classErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classErrorFilterMetadataReflectKey';
-import { ErrorFilter } from '../models/ErrorFilter';
+import { classErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classErrorFilterMetadataReflectKey.js';
+import { type ErrorFilter } from '../models/ErrorFilter.js';
 
 export function getClassErrorFilterMetadata(
   classConstructor: NewableFunction,

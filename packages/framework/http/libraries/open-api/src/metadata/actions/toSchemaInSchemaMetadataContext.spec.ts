@@ -4,14 +4,14 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('./toSchema.js'));
 
-import { toSchema } from './toSchema';
-import { toSchemaInSchemaMetadataContext } from './toSchemaInSchemaMetadataContext';
+import { toSchema } from './toSchema.js';
+import { toSchemaInSchemaMetadataContext } from './toSchemaInSchemaMetadataContext.js';
 
 describe(toSchemaInSchemaMetadataContext, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

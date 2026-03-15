@@ -3,15 +3,15 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('../calculations/requestParam.js'));
 vitest.mock(import('../calculations/getOptionsAndPipes.js'));
 
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { getOptionsAndPipes } from '../calculations/getOptionsAndPipes';
-import { requestParam } from '../calculations/requestParam';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { RouteParamOptions } from '../models/RouteParamOptions';
-import { Headers } from './Headers';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { getOptionsAndPipes } from '../calculations/getOptionsAndPipes.js';
+import { requestParam } from '../calculations/requestParam.js';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
+import { type RouteParamOptions } from '../models/RouteParamOptions.js';
+import { Headers } from './Headers.js';
 
 describe(Headers, () => {
   describe('when called', () => {

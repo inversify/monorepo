@@ -1,6 +1,6 @@
 import { createCustomParameterDecorator } from '@inversifyjs/http-core';
 
-import { buildUserSessionFromHonoRequest } from '../calculations/buildUserSessionFromHonoRequest';
+import { buildUserSessionFromHonoRequest } from '../calculations/buildUserSessionFromHonoRequest.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function HonoUserSession(): ParameterDecorator {

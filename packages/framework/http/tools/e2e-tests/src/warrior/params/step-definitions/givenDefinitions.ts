@@ -1,5 +1,5 @@
 import { Given } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -19,7 +19,7 @@ import { WarriorsPostParamsNamedController } from '../controllers/WarriorsPostPa
 import { WarriorsPutParamsController } from '../controllers/WarriorsPutParamsController';
 import { WarriorsPutParamsNamedController } from '../controllers/WarriorsPutParamsNamedController';
 
-function getMethodWarriorParamsController(method: HttpMethod): NewableFunction {
+function getMethodWarriorParamsController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteParamsController;
@@ -36,9 +36,7 @@ function getMethodWarriorParamsController(method: HttpMethod): NewableFunction {
   }
 }
 
-function getMethodWarriorParamsNamedController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorParamsNamedController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteParamsNamedController;
@@ -93,7 +91,7 @@ function givenWarriorParamsControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction = getMethodWarriorParamsController(method);
+  const controller: Newable = getMethodWarriorParamsController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }
@@ -107,8 +105,7 @@ function givenWarriorParamsNamedControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction =
-    getMethodWarriorParamsNamedController(method);
+  const controller: Newable = getMethodWarriorParamsNamedController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }

@@ -1,5 +1,5 @@
-import { Middleware } from '@inversifyjs/http-core';
-import express from 'express';
+import { type Middleware } from '@inversifyjs/http-core';
+import type express from 'express';
 
 export type ExpressMiddleware = Middleware<
   express.Request,

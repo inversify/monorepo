@@ -1,7 +1,7 @@
 import {
-  HttpResponse,
+  type HttpResponse,
   isHttpResponse as isHttpResponseSymbol,
-} from '../models/HttpResponse';
+} from '../models/HttpResponse.js';
 
 export function isHttpResponse(value: unknown): value is HttpResponse {
   return (

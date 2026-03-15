@@ -4,10 +4,10 @@ import {
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey';
-import { ControllerMethodMetadata } from '../../routerExplorer/model/ControllerMethodMetadata';
-import { RequestMethodType } from '../models/RequestMethodType';
-import { buildNormalizedPath } from './buildNormalizedPath';
+import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey.js';
+import { type ControllerMethodMetadata } from '../../routerExplorer/model/ControllerMethodMetadata.js';
+import { type RequestMethodType } from '../models/RequestMethodType.js';
+import { buildNormalizedPath } from './buildNormalizedPath.js';
 
 export function requestMethod(
   requestMethodType: RequestMethodType,

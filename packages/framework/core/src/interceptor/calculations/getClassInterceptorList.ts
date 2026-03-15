@@ -1,8 +1,8 @@
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { classInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classInterceptorMetadataReflectKey';
-import { Interceptor } from '../models/Interceptor';
+import { classInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classInterceptorMetadataReflectKey.js';
+import { type Interceptor } from '../models/Interceptor.js';
 
 export function getClassInterceptorList(
   classConstructor: NewableFunction,

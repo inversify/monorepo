@@ -1,10 +1,10 @@
 import type { Stream } from 'node:stream';
 
-import { HttpStatusCode } from '../../http/models/HttpStatusCode';
+import { type HttpStatusCode } from '../../http/models/HttpStatusCode.js';
 import {
-  HttpResponse,
+  type HttpResponse,
   isHttpResponse as isHttpResponseSymbol,
-} from '../models/HttpResponse';
+} from '../models/HttpResponse.js';
 
 export class SuccessHttpResponse implements HttpResponse {
   public [isHttpResponseSymbol]: true;

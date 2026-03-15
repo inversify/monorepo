@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Pipe } from '@inversifyjs/framework-core';
+import { type Pipe } from '@inversifyjs/framework-core';
 
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { areAllParamsSync } from './areAllParamsSync';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
+import { areAllParamsSync } from './areAllParamsSync.js';
 
 const pipeStub: Pipe = {
   execute: () => undefined,

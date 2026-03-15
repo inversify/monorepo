@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { MessageEvent } from '../../sse/models/MessageEvent';
-import { SseStream } from './SseStream';
+import { type MessageEvent } from '../../sse/models/MessageEvent.js';
+import { SseStream } from './SseStream.js';
 
 describe(SseStream, () => {
   describe('.writeMessageEvent', () => {

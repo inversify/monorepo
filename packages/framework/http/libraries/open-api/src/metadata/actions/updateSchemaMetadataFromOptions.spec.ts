@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions';
-import { SchemaMetadata } from '../models/SchemaMetadata';
-import { updateSchemaMetadataFromOptions } from './updateSchemaMetadataFromOptions';
+import { type OasSchemaDecoratorOptions } from '../models/OasSchemaDecoratorOptions.js';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
+import { updateSchemaMetadataFromOptions } from './updateSchemaMetadataFromOptions.js';
 
 describe(updateSchemaMetadataFromOptions, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

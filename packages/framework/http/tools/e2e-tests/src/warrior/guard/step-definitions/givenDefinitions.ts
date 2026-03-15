@@ -1,5 +1,5 @@
 import { Given } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -22,7 +22,7 @@ import { UnsuccessfulGuard } from '../guards/UnsuccessfulGuard';
 
 function getMethodWarriorSuccessfulGuardController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteSuccessfulGuardController;
@@ -41,7 +41,7 @@ function getMethodWarriorSuccessfulGuardController(
 
 function getMethodWarriorUnsuccessfulGuardController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteUnsuccessfulGuardController;
@@ -67,8 +67,7 @@ function givenWarriorSuccessfulGuardControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction =
-    getMethodWarriorSuccessfulGuardController(method);
+  const controller: Newable = getMethodWarriorSuccessfulGuardController(method);
 
   container.bind(SuccessfulGuard).toSelf().inSingletonScope();
   container.bind(controller).toSelf().inSingletonScope();
@@ -83,7 +82,7 @@ function givenWarriorUnsuccessfulGuardControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction =
+  const controller: Newable =
     getMethodWarriorUnsuccessfulGuardController(method);
 
   container.bind(UnsuccessfulGuard).toSelf().inSingletonScope();

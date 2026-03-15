@@ -1,10 +1,10 @@
-import { AddressInfo } from 'node:net';
+import { type AddressInfo } from 'node:net';
 
 import { InversifyFastifyHttpAdapter } from '@inversifyjs/http-fastify';
-import { FastifyInstance } from 'fastify';
-import { Container } from 'inversify';
+import { type FastifyInstance } from 'fastify';
+import { type Container } from 'inversify';
 
-import { Server } from '../../../models/Server';
+import { type Server } from '../../../models/Server.js';
 
 export async function buildFastifyServer(
   container: Container,

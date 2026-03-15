@@ -1,28 +1,28 @@
-import http from 'node:http';
-import http2 from 'node:http2';
+import type http from 'node:http';
+import type http2 from 'node:http2';
 import { Readable } from 'node:stream';
 
 import { type Http2Bindings, type HttpBindings } from '@hono/node-server';
 import {
-  HttpAdapterOptions,
-  HttpStatusCode,
+  type HttpAdapterOptions,
+  type HttpStatusCode,
   InversifyHttpAdapter,
-  MiddlewareHandler,
-  RequestHandler,
+  type MiddlewareHandler,
+  type RequestHandler,
   RequestMethodParameterType,
-  RouterParams,
+  type RouterParams,
 } from '@inversifyjs/http-core';
 import {
-  Context,
-  Handler,
+  type Context,
+  type Handler,
   Hono,
-  HonoRequest,
-  MiddlewareHandler as HonoMiddlewareHandler,
-  Next,
+  type HonoRequest,
+  type MiddlewareHandler as HonoMiddlewareHandler,
+  type Next,
 } from 'hono';
 import { getCookie } from 'hono/cookie';
-import { StatusCode } from 'hono/utils/http-status';
-import { Container } from 'inversify';
+import { type StatusCode } from 'hono/utils/http-status';
+import { type Container } from 'inversify';
 
 const ADAPTER_ID: unique symbol = Symbol.for(
   '@inversifyjs/http-hono/InversifyHonoHttpAdapter',

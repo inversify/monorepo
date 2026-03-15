@@ -1,10 +1,10 @@
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
-import { Middleware } from '../models/Middleware';
-import { MiddlewareOptions } from '../models/MiddlewareOptions';
-import { MiddlewarePhase } from '../models/MiddlewarePhase';
-import { isApplyMiddlewareOptions } from '../typeguard/isApplyMiddlewareOptions';
+import { type ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions.js';
+import { type Middleware } from '../models/Middleware.js';
+import { type MiddlewareOptions } from '../models/MiddlewareOptions.js';
+import { MiddlewarePhase } from '../models/MiddlewarePhase.js';
+import { isApplyMiddlewareOptions } from '../typeguard/isApplyMiddlewareOptions.js';
 
 export function buildMiddlewareOptionsFromApplyMiddlewareOptions(
   applyMiddlewareOptionsList: (

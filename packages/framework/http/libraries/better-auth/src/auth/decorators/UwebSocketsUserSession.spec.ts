@@ -4,7 +4,7 @@ vitest.mock(import('@inversifyjs/http-core'));
 
 import { createCustomParameterDecorator } from '@inversifyjs/http-core';
 
-import { UwebSocketsUserSession } from './UwebSocketsUserSession';
+import { UwebSocketsUserSession } from './UwebSocketsUserSession.js';
 
 describe(UwebSocketsUserSession, () => {
   describe('when called', () => {

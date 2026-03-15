@@ -1,7 +1,7 @@
-import { ContainerModule, ContainerModuleLoadOptions } from 'inversify';
+import { ContainerModule, type ContainerModuleLoadOptions } from 'inversify';
 
-import { UserController } from '../../api/controllers/UserController';
-import { UserService } from '../../domain/services/UserService';
+import { UserController } from '../../api/controllers/UserController.js';
+import { UserService } from '../../domain/services/UserService.js';
 
 export class UserContainerModule extends ContainerModule {
   constructor() {

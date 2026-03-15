@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { OpenApi3Dot1ResponseObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1ResponseObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { updateControllerOpenApiMetadataOperationRecordProperty } from './updateControllerOpenApiMetadataOperationRecordProperty';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { updateControllerOpenApiMetadataOperationRecordProperty } from './updateControllerOpenApiMetadataOperationRecordProperty.js';
 
 describe(updateControllerOpenApiMetadataOperationRecordProperty, () => {
   describe('having metadata with defined key property value', () => {

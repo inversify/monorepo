@@ -2,8 +2,8 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('./concatenateHeaders.js'));
 
-import { buildSetHeaderMetadata } from './buildSetHeaderMetadata';
-import { concatenateHeaders } from './concatenateHeaders';
+import { buildSetHeaderMetadata } from './buildSetHeaderMetadata.js';
+import { concatenateHeaders } from './concatenateHeaders.js';
 
 describe(buildSetHeaderMetadata, () => {
   describe('having empty header metadata', () => {

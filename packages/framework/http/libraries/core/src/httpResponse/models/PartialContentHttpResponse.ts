@@ -1,5 +1,5 @@
-import { HttpStatusCode } from '../../http/models/HttpStatusCode';
-import { SuccessHttpResponse } from './SuccessHttpResponse';
+import { HttpStatusCode } from '../../http/models/HttpStatusCode.js';
+import { SuccessHttpResponse } from './SuccessHttpResponse.js';
 
 export class PartialContentHttpResponse extends SuccessHttpResponse {
   constructor(

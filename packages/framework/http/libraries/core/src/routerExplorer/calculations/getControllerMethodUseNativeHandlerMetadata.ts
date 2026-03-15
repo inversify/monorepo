@@ -2,7 +2,7 @@ import { findInPrototypeChain } from '@inversifyjs/prototype-utils';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import type { Newable } from 'inversify';
 
-import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
+import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey.js';
 
 export function getControllerMethodUseNativeHandlerMetadata(
   controllerConstructor: NewableFunction,

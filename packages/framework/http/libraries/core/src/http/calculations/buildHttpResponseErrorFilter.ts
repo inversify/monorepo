@@ -1,8 +1,8 @@
-import { ErrorFilter } from '@inversifyjs/framework-core';
+import { type ErrorFilter } from '@inversifyjs/framework-core';
 
-import { ErrorHttpResponse } from '../../httpResponse/models/ErrorHttpResponse';
-import { ControllerResponse } from '../models/ControllerResponse';
-import { HttpStatusCode } from '../models/HttpStatusCode';
+import { type ErrorHttpResponse } from '../../httpResponse/models/ErrorHttpResponse.js';
+import { type ControllerResponse } from '../models/ControllerResponse.js';
+import { type HttpStatusCode } from '../models/HttpStatusCode.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function buildHttpResponseErrorFilter<TRequest, TResponse, TResult>(

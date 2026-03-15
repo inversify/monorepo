@@ -1,4 +1,4 @@
-import { JsonSchema } from '@inversifyjs/json-schema-types/2020-12';
+import { type JsonSchema } from '@inversifyjs/json-schema-types/2020-12';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 const WELL_KNOWN_TYPE_TO_JSON_SCHEMA_MAP: Map<Function, JsonSchema> = new Map<

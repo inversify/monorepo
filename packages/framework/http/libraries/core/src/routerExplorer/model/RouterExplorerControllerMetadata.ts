@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { RouterExplorerControllerMethodMetadata } from './RouterExplorerControllerMethodMetadata';
+import { type RouterExplorerControllerMethodMetadata } from './RouterExplorerControllerMethodMetadata.js';
 
 export interface RouterExplorerControllerMetadata<
   TRequest = any,

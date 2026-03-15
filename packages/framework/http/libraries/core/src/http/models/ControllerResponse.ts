@@ -1,6 +1,6 @@
-import { Readable } from 'node:stream';
+import { type Readable } from 'node:stream';
 
-import { HttpResponse } from '../../httpResponse/models/HttpResponse';
+import { type HttpResponse } from '../../httpResponse/models/HttpResponse.js';
 
 export type ControllerResponse =
   | HttpResponse

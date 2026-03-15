@@ -2,11 +2,11 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('./buildOrGetOperationObject.js'));
 
-import { OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { buildOrGetOperationObject } from './buildOrGetOperationObject';
-import { updateControllerOpenApiMetadataSummary } from './updateControllerOpenApiMetadataSummary';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { buildOrGetOperationObject } from './buildOrGetOperationObject.js';
+import { updateControllerOpenApiMetadataSummary } from './updateControllerOpenApiMetadataSummary.js';
 
 describe(updateControllerOpenApiMetadataSummary, () => {
   let summaryFixture: string;

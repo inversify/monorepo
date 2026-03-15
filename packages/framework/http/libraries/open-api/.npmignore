@@ -2,15 +2,15 @@
 /coverage
 /reports
 
+**/*.ts
+!lib/**/*.d.ts
+**/*.spec.d.ts
 **/*.spec.js
 **/*.spec.js.map
-**/*.ts
-!lib/cjs/**/*.d.ts
-lib/cjs/server
-lib/esm/**/*.d.ts.map
-!lib/esm/index.d.ts
-!lib/esm/index.d.ts.map
-lib/esm/server
+**/*.spec.d.ts.map
+**/*.spec-d.js
+**/*.spec-d.js.map
+**/*.spec-d.d.ts.map
 
 AGENTS.md
 CHANGELOG.md
@@ -20,10 +20,7 @@ vitest.config.mjs
 vitest.config.stryker.mjs
 vitest.workspace.mjs
 prettier.config.mjs
-rollup.config.mjs
 stryker.config.mjs
-tsconfig.cjs.json
-tsconfig.cjs.tsbuildinfo
 tsconfig.esm.json
 tsconfig.esm.tsbuildinfo
 tsconfig.json

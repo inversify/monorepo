@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { concatenateHeaders } from './concatenateHeaders';
+import { concatenateHeaders } from './concatenateHeaders.js';
 
 describe(concatenateHeaders, () => {
   describe('having lf separated lowercase headers', () => {
