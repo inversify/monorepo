@@ -1,5 +1,6 @@
 import { Given } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { Middleware } from '@inversifyjs/http-core';
+import { Container, Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -79,7 +80,7 @@ import { UnsuccessfulUwebSocketsMiddleware } from '../middlewares/uwebsockets/Un
 
 function getMethodWarriorSuccessfulExpressMiddlewareController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteSuccessfulExpressMiddlewareController;
@@ -98,7 +99,7 @@ function getMethodWarriorSuccessfulExpressMiddlewareController(
 
 function getMethodWarriorSuccessfulExpressV4MiddlewareController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteSuccessfulExpressV4MiddlewareController;
@@ -117,7 +118,7 @@ function getMethodWarriorSuccessfulExpressV4MiddlewareController(
 
 function getMethodWarriorSuccessfulFastifyMiddlewareController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteSuccessfulFastifyMiddlewareController;
@@ -136,7 +137,7 @@ function getMethodWarriorSuccessfulFastifyMiddlewareController(
 
 function getMethodWarriorSuccessfulHonoMiddlewareController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteSuccessfulHonoMiddlewareController;
@@ -155,7 +156,7 @@ function getMethodWarriorSuccessfulHonoMiddlewareController(
 
 function getMethodWarriorSuccessfulUwebSocketsMiddlewareController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteSuccessfulUwebSocketsMiddlewareController;
@@ -174,7 +175,7 @@ function getMethodWarriorSuccessfulUwebSocketsMiddlewareController(
 
 function getMethodWarriorUnsuccessfulExpressMiddlewareController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteUnsuccessfulExpressMiddlewareController;
@@ -193,7 +194,7 @@ function getMethodWarriorUnsuccessfulExpressMiddlewareController(
 
 function getMethodWarriorUnsuccessfulExpressV4MiddlewareController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteUnsuccessfulExpressV4MiddlewareController;
@@ -212,7 +213,7 @@ function getMethodWarriorUnsuccessfulExpressV4MiddlewareController(
 
 function getMethodWarriorUnsuccessfulFastifyMiddlewareController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteUnsuccessfulFastifyMiddlewareController;
@@ -231,7 +232,7 @@ function getMethodWarriorUnsuccessfulFastifyMiddlewareController(
 
 function getMethodWarriorUnsuccessfulHonoMiddlewareController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteUnsuccessfulHonoMiddlewareController;
@@ -250,7 +251,7 @@ function getMethodWarriorUnsuccessfulHonoMiddlewareController(
 
 function getMethodWarriorUnsuccessfulUwebSocketsMiddlewareController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteUnsuccessfulUwebSocketsMiddlewareController;
@@ -278,9 +279,7 @@ function givenWarriorSuccessfulMiddlewareControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  let getMethodWarriorSuccessfulController: (
-    method: HttpMethod,
-  ) => NewableFunction;
+  let getMethodWarriorSuccessfulController: (method: HttpMethod) => Newable;
 
   switch (serverKind) {
     case ServerKind.express:
@@ -304,10 +303,9 @@ function givenWarriorSuccessfulMiddlewareControllerForContainer(
         getMethodWarriorSuccessfulUwebSocketsMiddlewareController;
   }
 
-  const controller: NewableFunction =
-    getMethodWarriorSuccessfulController(method);
+  const controller: Newable = getMethodWarriorSuccessfulController(method);
 
-  let middleware: NewableFunction;
+  let middleware: Newable<Middleware>;
   switch (serverKind) {
     case ServerKind.express:
       middleware = SuccessfulExpressMiddleware;
@@ -341,9 +339,7 @@ function givenWarriorUnsuccessfulMiddlewareControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  let getMethodWarriorUnsuccessfulController: (
-    method: HttpMethod,
-  ) => NewableFunction;
+  let getMethodWarriorUnsuccessfulController: (method: HttpMethod) => Newable;
 
   switch (serverKind) {
     case ServerKind.express:
@@ -368,10 +364,9 @@ function givenWarriorUnsuccessfulMiddlewareControllerForContainer(
       break;
   }
 
-  const controller: NewableFunction =
-    getMethodWarriorUnsuccessfulController(method);
+  const controller: Newable = getMethodWarriorUnsuccessfulController(method);
 
-  let successfulMiddleware: NewableFunction;
+  let successfulMiddleware: Newable<Middleware>;
 
   switch (serverKind) {
     case ServerKind.express:
@@ -391,7 +386,7 @@ function givenWarriorUnsuccessfulMiddlewareControllerForContainer(
       break;
   }
 
-  let unsuccessfulMiddleware: NewableFunction;
+  let unsuccessfulMiddleware: Newable<Middleware>;
 
   switch (serverKind) {
     case ServerKind.express:

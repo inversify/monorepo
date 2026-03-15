@@ -16,7 +16,7 @@ import { IsString } from 'class-validator';
 import express from 'express';
 import { Container, Newable } from 'inversify';
 
-import { ClassValidationPipe } from './ClassValidationPipe';
+import { ClassValidationPipe } from './ClassValidationPipe.js';
 
 export interface Server {
   host: string;

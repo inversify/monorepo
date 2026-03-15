@@ -1,6 +1,6 @@
 import { createCustomParameterDecorator } from '@inversifyjs/http-core';
 
-import { buildUserSessionFromExpressRequest } from '../calculations/buildUserSessionFromExpressRequest';
+import { buildUserSessionFromExpressRequest } from '../calculations/buildUserSessionFromExpressRequest.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function ExpressUserSession(): ParameterDecorator {

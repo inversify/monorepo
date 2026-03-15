@@ -1,9 +1,9 @@
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { CustomParameterDecoratorHandler } from '../models/CustomParameterDecoratorHandler';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { type CustomParameterDecoratorHandler } from '../models/CustomParameterDecoratorHandler.js';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
 
 export function buildCustomControllerMethodParameterMetadata(
   parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[],

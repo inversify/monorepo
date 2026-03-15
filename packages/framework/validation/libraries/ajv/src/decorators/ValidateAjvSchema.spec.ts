@@ -8,11 +8,11 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { AnySchema } from 'ajv';
+import { type AnySchema } from 'ajv';
 
-import { updateAjvValidationMetadata } from '../calculations/updateAjvValidationMetadata';
-import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey';
-import { ValidateAjvSchema } from './ValidateAjvSchema';
+import { updateAjvValidationMetadata } from '../calculations/updateAjvValidationMetadata.js';
+import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey.js';
+import { ValidateAjvSchema } from './ValidateAjvSchema.js';
 
 describe(ValidateAjvSchema, () => {
   let schemaFixture: AnySchema;

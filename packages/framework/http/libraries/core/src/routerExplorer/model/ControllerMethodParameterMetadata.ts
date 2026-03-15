@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { CustomNativeParameterDecoratorHandler } from '../../http/models/CustomNativeParameterDecoratorHandler';
-import { CustomParameterDecoratorHandler } from '../../http/models/CustomParameterDecoratorHandler';
+import { type CustomNativeParameterDecoratorHandler } from '../../http/models/CustomNativeParameterDecoratorHandler.js';
+import { type CustomParameterDecoratorHandler } from '../../http/models/CustomParameterDecoratorHandler.js';
 import {
-  NonCustomRequestMethodParameterType,
-  RequestMethodParameterType,
-} from '../../http/models/RequestMethodParameterType';
+  type NonCustomRequestMethodParameterType,
+  type RequestMethodParameterType,
+} from '../../http/models/RequestMethodParameterType.js';
 
 interface BaseControllerMethodParameterMetadata<
   TParamType extends RequestMethodParameterType,

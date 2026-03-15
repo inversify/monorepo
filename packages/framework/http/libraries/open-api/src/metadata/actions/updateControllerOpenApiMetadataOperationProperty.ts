@@ -1,8 +1,8 @@
-import { OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { OpenApi3Dot1OperationNonArrayNonRecordKeys } from '../models/OpenApi3Dot1OperationKeys';
-import { buildOrGetOperationObject } from './buildOrGetOperationObject';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { type OpenApi3Dot1OperationNonArrayNonRecordKeys } from '../models/OpenApi3Dot1OperationKeys.js';
+import { buildOrGetOperationObject } from './buildOrGetOperationObject.js';
 
 export function updateControllerOpenApiMetadataOperationProperty<
   TKey extends OpenApi3Dot1OperationNonArrayNonRecordKeys,

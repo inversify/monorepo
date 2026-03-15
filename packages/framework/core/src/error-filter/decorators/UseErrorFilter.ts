@@ -3,11 +3,11 @@ import {
   updateOwnReflectMetadata,
   updateSetMetadataWithList,
 } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { type Newable } from 'inversify';
 
-import { classErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classErrorFilterMetadataReflectKey';
-import { classMethodErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodErrorFilterMetadataReflectKey';
-import { ErrorFilter } from '../models/ErrorFilter';
+import { classErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classErrorFilterMetadataReflectKey.js';
+import { classMethodErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodErrorFilterMetadataReflectKey.js';
+import { type ErrorFilter } from '../models/ErrorFilter.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function UseErrorFilter(

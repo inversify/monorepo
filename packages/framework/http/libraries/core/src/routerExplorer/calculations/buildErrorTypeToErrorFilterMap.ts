@@ -1,12 +1,12 @@
 import {
-  ErrorFilter,
+  type ErrorFilter,
   getClassErrorFilterMetadata,
   getClassMethodErrorFilterMetadata,
 } from '@inversifyjs/framework-core';
-import { Logger } from '@inversifyjs/logger';
-import { Newable } from 'inversify';
+import { type Logger } from '@inversifyjs/logger';
+import { type Newable } from 'inversify';
 
-import { setErrorFilterToErrorFilterMap } from '../../http/actions/setErrorFilterToErrorFilterMap';
+import { setErrorFilterToErrorFilterMap } from '../../http/actions/setErrorFilterToErrorFilterMap.js';
 
 export function buildErrorTypeToErrorFilterMap(
   logger: Logger,

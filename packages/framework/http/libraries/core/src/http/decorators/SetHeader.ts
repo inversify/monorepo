@@ -1,7 +1,7 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey';
-import { buildSetHeaderMetadata } from '../calculations/buildSetHeaderMetadata';
+import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey.js';
+import { buildSetHeaderMetadata } from '../calculations/buildSetHeaderMetadata.js';
 
 function buildEmptyObjectMetadata(): Record<string, string> {
   return {};

@@ -31,7 +31,7 @@ export async function run(): Promise<void> {
     betterAuthInstance,
   );
 
-  await container.load(betterAuthExpress4ContainerModule);
+  await container.loadAsync(betterAuthExpress4ContainerModule);
 
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
     container,

@@ -33,7 +33,7 @@ export async function run(): Promise<void> {
     betterAuthInstance,
   );
 
-  await container.load(betterAuthModule);
+  await container.loadAsync(betterAuthModule);
 
   // 3. Create a controller that uses authentication
   @Controller('/api')

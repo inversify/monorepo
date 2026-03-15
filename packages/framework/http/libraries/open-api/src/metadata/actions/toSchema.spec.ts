@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -15,10 +15,10 @@ vitest.mock(import('../calculations/tryBuildSchemaFromWellKnownType.js'));
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { tryBuildSchemaFromWellKnownType } from '../calculations/tryBuildSchemaFromWellKnownType';
-import { SchemaMetadata } from '../models/SchemaMetadata';
-import { toSchema } from './toSchema';
+import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { tryBuildSchemaFromWellKnownType } from '../calculations/tryBuildSchemaFromWellKnownType.js';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
+import { toSchema } from './toSchema.js';
 
 describe(toSchema, () => {
   let updateMetadataReferencesMock: Mock;

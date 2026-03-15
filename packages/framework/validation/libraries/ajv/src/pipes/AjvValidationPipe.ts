@@ -1,14 +1,14 @@
 import { isPromise } from '@inversifyjs/common';
-import { Pipe, PipeMetadata } from '@inversifyjs/framework-core';
+import { type Pipe, type PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
   InversifyValidationError,
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
-import Ajv, { AnySchema } from 'ajv';
+import Ajv, { type AnySchema } from 'ajv';
 
-import { stringifyAjvErrors } from '../calculations/stringifyAjvErrors';
-import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey';
+import { stringifyAjvErrors } from '../calculations/stringifyAjvErrors.js';
+import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey.js';
 
 export class AjvValidationPipe implements Pipe {
   protected readonly _ajv: Ajv;

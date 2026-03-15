@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -14,11 +14,11 @@ import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 vitest.mock(import('../actions/updateControllerOpenApiMetadataSummary.js'));
 
-import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
-import { updateControllerOpenApiMetadataSummary } from '../actions/updateControllerOpenApiMetadataSummary';
-import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { OasSummary } from './OasSummary';
+import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { updateControllerOpenApiMetadataSummary } from '../actions/updateControllerOpenApiMetadataSummary.js';
+import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata.js';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { OasSummary } from './OasSummary.js';
 
 describe(OasSummary, () => {
   let summaryFixture: string;

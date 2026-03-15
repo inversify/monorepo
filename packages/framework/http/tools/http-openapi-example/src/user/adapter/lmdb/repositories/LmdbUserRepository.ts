@@ -3,10 +3,10 @@ import { randomUUID } from 'node:crypto';
 import { inject, injectable } from 'inversify';
 import { type RootDatabase } from 'lmdb';
 
-import { lmdbDbServiceIdentifier } from '../../../../foundation/db/domain/models/lmdbDbServiceIdentifier';
-import { UserPersistenceService } from '../../../domain/services/UserPersistenceService';
-import { UserCreateQueryDb } from '../models/UserCreateQueryDb';
-import { UserDb } from '../models/UserDb';
+import { lmdbDbServiceIdentifier } from '../../../../foundation/db/domain/models/lmdbDbServiceIdentifier.js';
+import { UserPersistenceService } from '../../../domain/services/UserPersistenceService.js';
+import { UserCreateQueryDb } from '../models/UserCreateQueryDb.js';
+import { UserDb } from '../models/UserDb.js';
 
 @injectable()
 export class LmdbUserRepository implements UserPersistenceService {

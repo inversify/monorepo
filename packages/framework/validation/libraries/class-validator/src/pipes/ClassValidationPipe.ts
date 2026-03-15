@@ -1,11 +1,11 @@
-import { Pipe, PipeMetadata } from '@inversifyjs/framework-core';
+import { type Pipe, type PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
   InversifyValidationError,
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
-import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { validate, ValidationError } from 'class-validator';
+import { type ClassConstructor, plainToInstance } from 'class-transformer';
+import { validate, type ValidationError } from 'class-validator';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 const ALLOW_NULLISH_VALUE_TYPES_LIST: (Function | undefined)[] = [

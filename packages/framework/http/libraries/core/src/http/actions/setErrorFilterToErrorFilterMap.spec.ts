@@ -1,15 +1,15 @@
-import { beforeAll, describe, expect, it, Mocked, vitest } from 'vitest';
+import { beforeAll, describe, expect, it, type Mocked, vitest } from 'vitest';
 
 vitest.mock(import('@inversifyjs/framework-core'));
 
 import {
-  ErrorFilter,
+  type ErrorFilter,
   getCatchErrorMetadata,
 } from '@inversifyjs/framework-core';
-import { Logger } from '@inversifyjs/logger';
-import { Newable } from 'inversify';
+import { type Logger } from '@inversifyjs/logger';
+import { type Newable } from 'inversify';
 
-import { setErrorFilterToErrorFilterMap } from './setErrorFilterToErrorFilterMap';
+import { setErrorFilterToErrorFilterMap } from './setErrorFilterToErrorFilterMap.js';
 
 describe(setErrorFilterToErrorFilterMap, () => {
   let loggerMock: Mocked<Logger>;
@@ -17,7 +17,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
   beforeAll(() => {
     loggerMock = {
       warn: vitest.fn(),
-    } as Partial<Mocked<Logger>> as Mocked<Logger>;
+    } as unknown as Mocked<Logger>;
   });
 
   describe('when called', () => {

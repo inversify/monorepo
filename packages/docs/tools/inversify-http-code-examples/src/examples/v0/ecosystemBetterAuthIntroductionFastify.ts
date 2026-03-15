@@ -30,7 +30,7 @@ export async function run(): Promise<void> {
     betterAuthInstance,
   );
 
-  await container.load(betterAuthFastifyContainerModule);
+  await container.loadAsync(betterAuthFastifyContainerModule);
 
   const adapter: InversifyFastifyHttpAdapter = new InversifyFastifyHttpAdapter(
     container,

@@ -1,8 +1,8 @@
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { type RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
 
 export function areAllParamsSync(
   awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>,

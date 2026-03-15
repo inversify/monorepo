@@ -3,10 +3,10 @@ import {
   InversifyValidationError,
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
-import Ajv, { AnySchema, ValidateFunction } from 'ajv';
+import Ajv, { type AnySchema, type ValidateFunction } from 'ajv';
 
-import { stringifyAjvErrors } from '../calculations/stringifyAjvErrors';
-import { AjvValidationPipe } from './AjvValidationPipe';
+import { stringifyAjvErrors } from '../calculations/stringifyAjvErrors.js';
+import { AjvValidationPipe } from './AjvValidationPipe.js';
 
 export class AjvCompiledValidationPipe extends AjvValidationPipe {
   protected override async _validate(

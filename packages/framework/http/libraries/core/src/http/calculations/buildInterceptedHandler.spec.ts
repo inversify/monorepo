@@ -4,20 +4,24 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 import {
-  Interceptor,
-  InterceptorTransformObject,
+  type Interceptor,
+  type InterceptorTransformObject,
 } from '@inversifyjs/framework-core';
-import { Container, Newable, ServiceIdentifier } from 'inversify';
+import {
+  type Container,
+  type Newable,
+  type ServiceIdentifier,
+} from 'inversify';
 
-import { ControllerResponse } from '../models/ControllerResponse';
-import { RequestHandler } from '../models/RequestHandler';
-import { buildInterceptedHandler } from './buildInterceptedHandler';
+import { type ControllerResponse } from '../models/ControllerResponse.js';
+import { type RequestHandler } from '../models/RequestHandler.js';
+import { buildInterceptedHandler } from './buildInterceptedHandler.js';
 
 describe(buildInterceptedHandler, () => {
   let containerMock: Mocked<Container>;

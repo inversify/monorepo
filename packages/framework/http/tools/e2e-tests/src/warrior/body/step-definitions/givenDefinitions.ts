@@ -1,5 +1,5 @@
 import { Given } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -57,9 +57,7 @@ import { WarriorsPutUrlEncodedBodyController } from '../controllers/WarriorsPutU
 import { WarriorCreationResponseType } from '../models/WarriorCreationResponseType';
 import { WarriorRequest } from '../models/WarriorRequest';
 
-function getMethodWarriorJsonBodyController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorJsonBodyController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteJsonBodyController;
@@ -76,9 +74,7 @@ function getMethodWarriorJsonBodyController(
   }
 }
 
-function getMethodWarriorJsonBodyNamedController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorJsonBodyNamedController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteJsonBodyNamedController;
@@ -95,9 +91,7 @@ function getMethodWarriorJsonBodyNamedController(
   }
 }
 
-function getMethodWarriorStringBodyController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorStringBodyController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteStringBodyController;
@@ -114,9 +108,7 @@ function getMethodWarriorStringBodyController(
   }
 }
 
-function getMethodWarriorUrlEncodedBodyController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorUrlEncodedBodyController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteUrlEncodedBodyController;
@@ -136,7 +128,7 @@ function getMethodWarriorUrlEncodedBodyController(
 function getMethodWarriorMultipartBodyController(
   method: HttpMethod,
   serverKind: ServerKind,
-): NewableFunction {
+): Newable {
   switch (serverKind) {
     case ServerKind.express: {
       switch (method) {
@@ -398,8 +390,7 @@ function givenWarriorBodyControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction =
-    getMethodWarriorJsonBodyController(method);
+  const controller: Newable = getMethodWarriorJsonBodyController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }
@@ -413,8 +404,7 @@ function givenWarriorBodyNamedControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction =
-    getMethodWarriorJsonBodyNamedController(method);
+  const controller: Newable = getMethodWarriorJsonBodyNamedController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }
@@ -428,8 +418,7 @@ function givenWarriorStringBodyControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction =
-    getMethodWarriorStringBodyController(method);
+  const controller: Newable = getMethodWarriorStringBodyController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }
@@ -443,8 +432,7 @@ function givenWarriorUrlEncodedBodyControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction =
-    getMethodWarriorUrlEncodedBodyController(method);
+  const controller: Newable = getMethodWarriorUrlEncodedBodyController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }
@@ -459,7 +447,7 @@ function givenWarriorMultipartBodyControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction = getMethodWarriorMultipartBodyController(
+  const controller: Newable = getMethodWarriorMultipartBodyController(
     method,
     serverKind,
   );

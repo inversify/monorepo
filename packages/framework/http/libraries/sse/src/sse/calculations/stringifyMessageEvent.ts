@@ -1,4 +1,4 @@
-import { MessageEvent } from '../models/MessageEvent';
+import { type MessageEvent } from '../models/MessageEvent.js';
 
 function stringifyData(data: string | string[]): string {
   if (Array.isArray(data)) {

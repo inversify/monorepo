@@ -1,4 +1,4 @@
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
 export interface ControllerMetadata {
   path: string;

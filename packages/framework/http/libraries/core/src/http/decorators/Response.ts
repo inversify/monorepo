@@ -1,9 +1,9 @@
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { buildNonCustomControllerMethodParameterMetadata } from '../calculations/buildNonCustomControllerMethodParameterMetadata';
-import { nativeRequestParam } from '../calculations/nativeRequestParam';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
+import { buildNonCustomControllerMethodParameterMetadata } from '../calculations/buildNonCustomControllerMethodParameterMetadata.js';
+import { nativeRequestParam } from '../calculations/nativeRequestParam.js';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function Response(

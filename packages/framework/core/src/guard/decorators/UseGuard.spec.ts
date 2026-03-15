@@ -7,12 +7,12 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { classGuardMetadataReflectKey } from '../../reflectMetadata/data/classGuardMetadataReflectKey';
-import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/classMethodGuardMetadataReflectKey';
-import { Guard } from '../models/Guard';
-import { UseGuard } from './UseGuard';
+import { classGuardMetadataReflectKey } from '../../reflectMetadata/data/classGuardMetadataReflectKey.js';
+import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/classMethodGuardMetadataReflectKey.js';
+import { type Guard } from '../models/Guard.js';
+import { UseGuard } from './UseGuard.js';
 
 describe(UseGuard, () => {
   describe('having a ClassDecorator', () => {

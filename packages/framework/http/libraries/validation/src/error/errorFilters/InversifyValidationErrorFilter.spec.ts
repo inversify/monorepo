@@ -6,7 +6,7 @@ import {
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
 
-import { InversifyValidationErrorFilter } from './InversifyValidationErrorFilter';
+import { InversifyValidationErrorFilter } from './InversifyValidationErrorFilter.js';
 
 describe(InversifyValidationErrorFilter, () => {
   let inversifyValidationErrorFilter: InversifyValidationErrorFilter;

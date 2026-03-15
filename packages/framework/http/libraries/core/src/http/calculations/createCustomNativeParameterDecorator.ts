@@ -1,9 +1,9 @@
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { CustomNativeParameterDecoratorHandler } from '../models/CustomNativeParameterDecoratorHandler';
-import { buildCustomNativeControllerMethodParameterMetadata } from './buildCustomNativeControllerMethodParameterMetadata';
-import { nativeRequestParam } from './nativeRequestParam';
+import { type CustomNativeParameterDecoratorHandler } from '../models/CustomNativeParameterDecoratorHandler.js';
+import { buildCustomNativeControllerMethodParameterMetadata } from './buildCustomNativeControllerMethodParameterMetadata.js';
+import { nativeRequestParam } from './nativeRequestParam.js';
 
 export function createCustomNativeParameterDecorator<
   TRequest,

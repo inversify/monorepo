@@ -1,14 +1,14 @@
 import {
-  OpenApi3Dot1ParameterObject,
-  OpenApi3Dot1ReferenceObject,
+  type OpenApi3Dot1ParameterObject,
+  type OpenApi3Dot1ReferenceObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
-import { toSchemaInControllerOpenApiMetadataContext } from '../actions/toSchemaInControllerMetadataContext';
-import { updateControllerOpenApiMetadataOperationArrayProperty } from '../actions/updateControllerOpenApiMetadataOperationArrayProperty';
-import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
-import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
+import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { toSchemaInControllerOpenApiMetadataContext } from '../actions/toSchemaInControllerMetadataContext.js';
+import { updateControllerOpenApiMetadataOperationArrayProperty } from '../actions/updateControllerOpenApiMetadataOperationArrayProperty.js';
+import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata.js';
+import { type BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function OasParameter(

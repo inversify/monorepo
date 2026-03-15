@@ -1,5 +1,6 @@
 import { Given } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { Middleware } from '@inversifyjs/http-core';
+import { Container, Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -45,7 +46,7 @@ import { NextUwebSocketsMiddleware } from '../middlewares/NextUwebSocketsMiddlew
 function getWarriorNextController(
   method: HttpMethod,
   serverKind: ServerKind,
-): NewableFunction {
+): Newable {
   switch (serverKind) {
     case ServerKind.express:
       switch (method) {
@@ -139,7 +140,7 @@ function getWarriorNextController(
   }
 }
 
-function getWarriorNextMiddleware(serverKind: ServerKind): NewableFunction {
+function getWarriorNextMiddleware(serverKind: ServerKind): Newable<Middleware> {
   switch (serverKind) {
     case ServerKind.express:
       return NextExpressMiddleware;
@@ -165,11 +166,8 @@ function givenWarriorNextControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction = getWarriorNextController(
-    method,
-    serverKind,
-  );
-  const middleware: NewableFunction | undefined =
+  const controller: Newable = getWarriorNextController(method, serverKind);
+  const middleware: Newable<Middleware> | undefined =
     getWarriorNextMiddleware(serverKind);
 
   container.bind(controller).toSelf().inSingletonScope();

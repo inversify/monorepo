@@ -29,6 +29,6 @@ export async function run(): Promise<void> {
     betterAuthInstance,
   );
 
-  await container.load(containerModule);
+  await container.loadAsync(containerModule);
   // End-example
 }

@@ -1,9 +1,9 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
-import { updateControllerOpenApiMetadataSummary } from '../actions/updateControllerOpenApiMetadataSummary';
-import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
+import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { updateControllerOpenApiMetadataSummary } from '../actions/updateControllerOpenApiMetadataSummary.js';
+import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata.js';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function OasSummary(summary: string): ClassDecorator & MethodDecorator {

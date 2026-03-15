@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('../calculations/requestMethod.js'));
 
-import { requestMethod } from '../calculations/requestMethod';
-import { RequestMethodType } from '../models/RequestMethodType';
-import { All } from './All';
+import { requestMethod } from '../calculations/requestMethod.js';
+import { RequestMethodType } from '../models/RequestMethodType.js';
+import { All } from './All.js';
 
 describe(All, () => {
   describe('when called', () => {

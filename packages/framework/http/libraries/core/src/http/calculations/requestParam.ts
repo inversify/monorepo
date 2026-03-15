@@ -1,7 +1,7 @@
-import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
-import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
-import { setControllerMethodParameterMetadata } from '../../routerExplorer/actions/setControllerMethodParameterMetadata';
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
+import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError.js';
+import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind.js';
+import { setControllerMethodParameterMetadata } from '../../routerExplorer/actions/setControllerMethodParameterMetadata.js';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
 
 export function requestParam(
   controllerMethodParameterMetadata: ControllerMethodParameterMetadata,

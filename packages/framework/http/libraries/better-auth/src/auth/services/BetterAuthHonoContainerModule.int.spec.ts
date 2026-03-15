@@ -4,21 +4,21 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { betterAuth, BetterAuthOptions } from 'better-auth';
+import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
-import { Container, Newable } from 'inversify';
+import { Container, type Newable } from 'inversify';
 
-import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer';
-import { Server } from '../../server/models/Server';
-import { createDirectory } from '../../test/actions/createDirectory';
-import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations';
-import { removeFileIfExists } from '../../test/actions/removeFileIfExists';
-import { BetterAuth } from '../models/BetterAuth';
-import { BetterAuthHonoContainerModule } from './BetterAuthHonoContainerModule';
+import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
+import { type Server } from '../../server/models/Server.js';
+import { createDirectory } from '../../test/actions/createDirectory.js';
+import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations.js';
+import { removeFileIfExists } from '../../test/actions/removeFileIfExists.js';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { BetterAuthHonoContainerModule } from './BetterAuthHonoContainerModule.js';
 
 describe(BetterAuthHonoContainerModule, () => {
   let db: BetterSqlite3.Database;
@@ -70,7 +70,7 @@ describe(BetterAuthHonoContainerModule, () => {
         betterAuthInstance,
       );
 
-      await container.load(betterAuthHonoContainerModule);
+      await container.loadAsync(betterAuthHonoContainerModule);
 
       server = await buildHonoServer(container);
     });
@@ -135,7 +135,7 @@ describe(BetterAuthHonoContainerModule, () => {
         transformMock,
       );
 
-      await container.load(betterAuthHonoContainerModule);
+      await container.loadAsync(betterAuthHonoContainerModule);
 
       server = await buildHonoServer(container);
     });

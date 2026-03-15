@@ -1,4 +1,4 @@
-import { MiddlewareHandler } from '../../http/models/MiddlewareHandler';
+import { type MiddlewareHandler } from '../../http/models/MiddlewareHandler.js';
 
 const noop: () => void = (): void => undefined;
 

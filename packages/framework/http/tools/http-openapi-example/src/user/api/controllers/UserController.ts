@@ -14,9 +14,9 @@ import {
 } from '@inversifyjs/open-api-types/v3Dot1';
 import { inject } from 'inversify';
 
-import { UserService } from '../../domain/services/UserService';
-import { User, UserType } from '../models/User';
-import { UserCreateQuery } from '../models/UserCreateQuery';
+import { UserService } from '../../domain/services/UserService.js';
+import { User, UserType } from '../models/User.js';
+import { UserCreateQuery } from '../models/UserCreateQuery.js';
 
 @Controller('/users')
 @OasSummary('User management routes')

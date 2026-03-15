@@ -1,7 +1,7 @@
-import { HttpStatusCode } from '@inversifyjs/http-core';
+import { type HttpStatusCode } from '@inversifyjs/http-core';
 
-import { SseStream } from '../../stream/models/SseStream';
-import { MessageEvent } from './MessageEvent';
+import { type SseStream } from '../../stream/models/SseStream.js';
+import { type MessageEvent } from './MessageEvent.js';
 
 export interface SsePublisherOptions {
   events: AsyncIterable<MessageEvent> | SseStream;

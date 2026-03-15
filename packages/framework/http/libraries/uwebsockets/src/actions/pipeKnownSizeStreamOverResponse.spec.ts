@@ -4,17 +4,17 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { Readable } from 'node:stream';
+import { type Readable } from 'node:stream';
 
-import { Logger } from '@inversifyjs/logger';
+import { type Logger } from '@inversifyjs/logger';
 
-import { abortedSymbol } from '../data/abortedSymbol';
-import { CustomHttpResponse } from '../models/CustomHttpResponse';
-import { pipeKnownSizeStreamOverResponse } from './pipeKnownSizeStreamOverResponse';
+import { abortedSymbol } from '../data/abortedSymbol.js';
+import { type CustomHttpResponse } from '../models/CustomHttpResponse.js';
+import { pipeKnownSizeStreamOverResponse } from './pipeKnownSizeStreamOverResponse.js';
 
 describe(pipeKnownSizeStreamOverResponse, () => {
   describe('having a stream', () => {

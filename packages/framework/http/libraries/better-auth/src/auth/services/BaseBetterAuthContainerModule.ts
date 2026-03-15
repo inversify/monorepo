@@ -1,15 +1,15 @@
-import { BetterAuthOptions } from 'better-auth';
+import { type BetterAuthOptions } from 'better-auth';
 import {
   ContainerModule,
-  ContainerModuleLoadOptions,
-  Newable,
-  ResolvedValueInjectOptions,
+  type ContainerModuleLoadOptions,
+  type Newable,
+  type ResolvedValueInjectOptions,
 } from 'inversify';
 
-import { buildBetterAuthMiddleware } from '../calculations/buildBetterAuthMiddleware';
-import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier';
-import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier';
+import { buildBetterAuthMiddleware } from '../calculations/buildBetterAuthMiddleware.js';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier.js';
+import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier.js';
 
 type MapToResolvedValueInjectOptions<TArgs extends unknown[]> = {
   [K in keyof TArgs]-?: ResolvedValueInjectOptions<TArgs[K]>;

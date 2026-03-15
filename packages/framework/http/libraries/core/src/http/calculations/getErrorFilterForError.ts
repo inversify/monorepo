@@ -1,6 +1,6 @@
-import { ErrorFilter } from '@inversifyjs/framework-core';
+import { type ErrorFilter } from '@inversifyjs/framework-core';
 import { getBaseType } from '@inversifyjs/prototype-utils';
-import { Container, Newable } from 'inversify';
+import { type Container, type Newable } from 'inversify';
 
 function* getErrorBaseTypeChain(
   error: unknown,

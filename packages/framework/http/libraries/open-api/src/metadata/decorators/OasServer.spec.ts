@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -14,13 +14,13 @@ import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 vitest.mock(import('../actions/updateControllerOpenApiMetadataServer.js'));
 
-import { OpenApi3Dot1ServerObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1ServerObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
-import { updateControllerOpenApiMetadataServer } from '../actions/updateControllerOpenApiMetadataServer';
-import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { OasServer } from './OasServer';
+import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { updateControllerOpenApiMetadataServer } from '../actions/updateControllerOpenApiMetadataServer.js';
+import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata.js';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { OasServer } from './OasServer.js';
 
 describe(OasServer, () => {
   let serverFixture: OpenApi3Dot1ServerObject;

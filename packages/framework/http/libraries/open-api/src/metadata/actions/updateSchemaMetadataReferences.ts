@@ -1,4 +1,4 @@
-import { SchemaReferencesMetadata } from '../models/SchemaReferencesMetadata';
+import { type SchemaReferencesMetadata } from '../models/SchemaReferencesMetadata.js';
 
 export function updateSchemaMetadataReferences<
   TMetadata extends SchemaReferencesMetadata,

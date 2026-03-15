@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { CustomNativeParameterDecoratorHandler } from '../models/CustomNativeParameterDecoratorHandler';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { buildCustomNativeControllerMethodParameterMetadata } from './buildCustomNativeControllerMethodParameterMetadata';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { type CustomNativeParameterDecoratorHandler } from '../models/CustomNativeParameterDecoratorHandler.js';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
+import { buildCustomNativeControllerMethodParameterMetadata } from './buildCustomNativeControllerMethodParameterMetadata.js';
 
 describe(buildCustomNativeControllerMethodParameterMetadata, () => {
   describe('having a handler and pipes', () => {

@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { updateControllerOpenApiMetadataOperationProperty } from './updateControllerOpenApiMetadataOperationProperty';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { updateControllerOpenApiMetadataOperationProperty } from './updateControllerOpenApiMetadataOperationProperty.js';
 
 describe(updateControllerOpenApiMetadataOperationProperty, () => {
   describe('having metadata with defined property value', () => {

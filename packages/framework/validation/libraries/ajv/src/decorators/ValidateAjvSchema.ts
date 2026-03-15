@@ -2,10 +2,10 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { AnySchema } from 'ajv';
+import { type AnySchema } from 'ajv';
 
-import { updateAjvValidationMetadata } from '../calculations/updateAjvValidationMetadata';
-import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey';
+import { updateAjvValidationMetadata } from '../calculations/updateAjvValidationMetadata.js';
+import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function ValidateAjvSchema(

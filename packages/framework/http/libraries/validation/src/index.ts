@@ -1,1 +1,1 @@
-export { InversifyValidationErrorFilter } from './error/errorFilters/InversifyValidationErrorFilter';
+export { InversifyValidationErrorFilter } from './error/errorFilters/InversifyValidationErrorFilter.js';

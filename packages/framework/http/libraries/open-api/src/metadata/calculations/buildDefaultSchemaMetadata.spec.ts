@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { SchemaMetadata } from '../models/SchemaMetadata';
-import { buildDefaultSchemaMetadata } from './buildDefaultSchemaMetadata';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
+import { buildDefaultSchemaMetadata } from './buildDefaultSchemaMetadata.js';
 
 describe(buildDefaultSchemaMetadata, () => {
   describe('when called', () => {

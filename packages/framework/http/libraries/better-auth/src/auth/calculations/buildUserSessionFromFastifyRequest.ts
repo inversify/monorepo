@@ -1,9 +1,9 @@
-import { BetterAuthOptions } from 'better-auth';
-import { FastifyRequest } from 'fastify';
+import { type BetterAuthOptions } from 'better-auth';
+import { type FastifyRequest } from 'fastify';
 
-import { BetterAuth } from '../models/BetterAuth';
-import { UserSession } from '../models/UserSession';
-import { getBetterAuthFromRequest } from './getBetterAuthFromRequest';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { type UserSession } from '../models/UserSession.js';
+import { getBetterAuthFromRequest } from './getBetterAuthFromRequest.js';
 
 export async function buildUserSessionFromFastifyRequest(
   request: FastifyRequest,

@@ -4,8 +4,8 @@ import {
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey';
-import { ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata';
+import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey.js';
+import { type ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata.js';
 
 export function setControllerMethodParameterMetadata(
   controllerMethodParameterMetadata: ControllerMethodParameterMetadata,

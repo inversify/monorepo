@@ -1,11 +1,11 @@
-import { AddressInfo } from 'node:net';
+import { type AddressInfo } from 'node:net';
 
-import { serve, ServerType } from '@hono/node-server';
+import { serve, type ServerType } from '@hono/node-server';
 import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
-import { Hono } from 'hono';
-import { Container } from 'inversify';
+import { type Hono } from 'hono';
+import { type Container } from 'inversify';
 
-import { Server } from '../../../models/Server';
+import { type Server } from '../../../models/Server.js';
 
 export async function buildHonoServer(container: Container): Promise<Server> {
   const adapter: InversifyHonoHttpAdapter = new InversifyHonoHttpAdapter(

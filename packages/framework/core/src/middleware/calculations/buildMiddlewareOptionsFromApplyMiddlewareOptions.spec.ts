@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Newable, ServiceIdentifier } from 'inversify';
+import { type Newable, type ServiceIdentifier } from 'inversify';
 
-import { ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions';
-import { Middleware } from '../models/Middleware';
-import { MiddlewareOptions } from '../models/MiddlewareOptions';
-import { MiddlewarePhase } from '../models/MiddlewarePhase';
-import { buildMiddlewareOptionsFromApplyMiddlewareOptions } from './buildMiddlewareOptionsFromApplyMiddlewareOptions';
+import { type ApplyMiddlewareOptions } from '../models/ApplyMiddlewareOptions.js';
+import { type Middleware } from '../models/Middleware.js';
+import { type MiddlewareOptions } from '../models/MiddlewareOptions.js';
+import { MiddlewarePhase } from '../models/MiddlewarePhase.js';
+import { buildMiddlewareOptionsFromApplyMiddlewareOptions } from './buildMiddlewareOptionsFromApplyMiddlewareOptions.js';
 
 describe(buildMiddlewareOptionsFromApplyMiddlewareOptions, () => {
   describe('having applyMiddlewareOptionsList with ServiceIdentifier<Middleware>', () => {
@@ -14,8 +14,10 @@ describe(buildMiddlewareOptionsFromApplyMiddlewareOptions, () => {
     let secondApplyMiddlewareOptionsFixture: ServiceIdentifier<Middleware>;
 
     beforeAll(() => {
-      firstApplyMiddlewareOptionsFixture = class FirstMiddlewareFixture {};
-      secondApplyMiddlewareOptionsFixture = class SecondMiddlewareFixture {};
+      firstApplyMiddlewareOptionsFixture =
+        class FirstMiddlewareFixture {} as ServiceIdentifier<Middleware>;
+      secondApplyMiddlewareOptionsFixture =
+        class SecondMiddlewareFixture {} as ServiceIdentifier<Middleware>;
     });
 
     describe('when called', () => {

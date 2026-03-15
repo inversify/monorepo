@@ -1,9 +1,9 @@
-import { BetterAuthOptions } from 'better-auth';
-import { Newable } from 'inversify';
+import { type BetterAuthOptions } from 'better-auth';
+import { type Newable } from 'inversify';
 
-import { buildBetterAuthExpress4Controller } from '../calculations/buildBetterAuthExpress4Controller';
-import { BetterAuth } from '../models/BetterAuth';
-import { BaseBetterAuthContainerModule } from './BaseBetterAuthContainerModule';
+import { buildBetterAuthExpress4Controller } from '../calculations/buildBetterAuthExpress4Controller.js';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { BaseBetterAuthContainerModule } from './BaseBetterAuthContainerModule.js';
 
 export class BetterAuthExpress4ContainerModule<
   TOptions extends BetterAuthOptions,

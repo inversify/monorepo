@@ -1,11 +1,11 @@
-import { Readable } from 'node:stream';
+import { type Readable } from 'node:stream';
 
 import { type Logger } from '@inversifyjs/logger';
-import { HttpResponse } from 'uWebSockets.js';
+import { type HttpResponse } from 'uWebSockets.js';
 
-import { toArrayBuffer } from '../calculations/toArrayBuffer';
-import { abortedSymbol } from '../data/abortedSymbol';
-import { CustomHttpResponse } from '../models/CustomHttpResponse';
+import { toArrayBuffer } from '../calculations/toArrayBuffer.js';
+import { abortedSymbol } from '../data/abortedSymbol.js';
+import { type CustomHttpResponse } from '../models/CustomHttpResponse.js';
 
 /**
  * Pipes a Node.js Readable stream over a uWebSockets.js HTTP response with proper

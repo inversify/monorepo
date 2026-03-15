@@ -1,5 +1,5 @@
-import { ControllerResponse } from './ControllerResponse';
-import { CustomParameterDecoratorHandlerOptions } from './CustomParameterDecoratorHandlerOptions';
+import { type ControllerResponse } from './ControllerResponse.js';
+import { type CustomParameterDecoratorHandlerOptions } from './CustomParameterDecoratorHandlerOptions.js';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface CustomNativeParameterDecoratorHandlerOptions<

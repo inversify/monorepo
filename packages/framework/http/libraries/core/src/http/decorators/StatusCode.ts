@@ -1,7 +1,7 @@
 import { setReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMethodStatusCodeMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodStatusCodeMetadataReflectKey';
-import { HttpStatusCode } from '../models/HttpStatusCode';
+import { controllerMethodStatusCodeMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodStatusCodeMetadataReflectKey.js';
+import { type HttpStatusCode } from '../models/HttpStatusCode.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function StatusCode(statusCode: HttpStatusCode): MethodDecorator {

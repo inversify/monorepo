@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -16,11 +16,11 @@ vitest.mock(
   import('../actions/updateControllerOpenApiMetadataOperationProperty.js'),
 );
 
-import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
-import { updateControllerOpenApiMetadataOperationProperty } from '../actions/updateControllerOpenApiMetadataOperationProperty';
-import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata';
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { OasDeprecated } from './OasDeprecated';
+import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { updateControllerOpenApiMetadataOperationProperty } from '../actions/updateControllerOpenApiMetadataOperationProperty.js';
+import { buildDefaultControllerOpenApiMetadata } from '../calculations/buildDefaultControllerOpenApiMetadata.js';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { OasDeprecated } from './OasDeprecated.js';
 
 describe(OasDeprecated, () => {
   describe('having a prototype target, key and type descriptor', () => {

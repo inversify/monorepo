@@ -1,4 +1,4 @@
-import { Logger } from '@inversifyjs/logger';
+import { type Logger } from '@inversifyjs/logger';
 
 export interface HttpAdapterOptions {
   logger?: boolean | Logger;

@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { AnySchema } from 'ajv';
+import { type AnySchema } from 'ajv';
 
-import { updateAjvValidationMetadata } from './updateAjvValidationMetadata';
+import { updateAjvValidationMetadata } from './updateAjvValidationMetadata.js';
 
 describe(updateAjvValidationMetadata, () => {
   describe('having empty metadata', () => {

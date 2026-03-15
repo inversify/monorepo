@@ -4,17 +4,17 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/prototype-utils'));
 
-import { ErrorFilter } from '@inversifyjs/framework-core';
+import { type ErrorFilter } from '@inversifyjs/framework-core';
 import { getBaseType } from '@inversifyjs/prototype-utils';
-import { Container, Newable } from 'inversify';
+import { type Container, type Newable } from 'inversify';
 
-import { getErrorFilterForError } from './getErrorFilterForError';
+import { getErrorFilterForError } from './getErrorFilterForError.js';
 
 describe(getErrorFilterForError, () => {
   let containerMock: Mocked<Container>;

@@ -1,4 +1,4 @@
-import { InversifyValidationErrorKind } from './InversifyValidationErrorKind';
+import { type InversifyValidationErrorKind } from './InversifyValidationErrorKind.js';
 
 const isAppErrorSymbol: unique symbol = Symbol.for(
   '@inversifyjs/validation-common/InversifyValidationError',

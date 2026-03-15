@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { MessageEvent } from '../models/MessageEvent';
-import { stringifyMessageEvent } from './stringifyMessageEvent';
+import { type MessageEvent } from '../models/MessageEvent.js';
+import { stringifyMessageEvent } from './stringifyMessageEvent.js';
 
 describe(stringifyMessageEvent, () => {
   describe('.build', () => {

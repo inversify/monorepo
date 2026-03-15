@@ -1,4 +1,4 @@
-import { concatenateHeaders } from './concatenateHeaders';
+import { concatenateHeaders } from './concatenateHeaders.js';
 
 export function buildSetHeaderMetadata(
   headerKey: string,

@@ -1,11 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { InternalServerErrorHttpResponse } from '@inversifyjs/http-core';
-import { BetterAuthOptions } from 'better-auth';
+import { type BetterAuthOptions } from 'better-auth';
 
-import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthProperty } from '../models/betterAuthProperty';
-import { getBetterAuthFromRequest } from './getBetterAuthFromRequest';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { betterAuthProperty } from '../models/betterAuthProperty.js';
+import { getBetterAuthFromRequest } from './getBetterAuthFromRequest.js';
 
 describe(getBetterAuthFromRequest, () => {
   describe('having a request with no betterAuthProperty', () => {

@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { StandardSchemaV1 } from '@standard-schema/spec';
+import { type StandardSchemaV1 } from '@standard-schema/spec';
 
-import { updateStandardSchemaValidationMetadata } from './updateStandardSchemaValidationMetadata';
+import { updateStandardSchemaValidationMetadata } from './updateStandardSchemaValidationMetadata.js';
 
 describe(updateStandardSchemaValidationMetadata, () => {
   let typeFixture: StandardSchemaV1;

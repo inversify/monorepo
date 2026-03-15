@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -17,18 +17,23 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { bindingScopeValues, injectable, ServiceIdentifier } from 'inversify';
+import {
+  bindingScopeValues,
+  injectable,
+  type ServiceIdentifier,
+} from 'inversify';
 
-import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
-import { ControllerMetadata } from '../../routerExplorer/model/ControllerMetadata';
-import { buildNormalizedPath } from '../calculations/buildNormalizedPath';
-import { ControllerOptions } from '../models/ControllerOptions';
-import { Controller } from './Controller';
+import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey.js';
+import { type ControllerMetadata } from '../../routerExplorer/model/ControllerMetadata.js';
+import { buildNormalizedPath } from '../calculations/buildNormalizedPath.js';
+import { type Controller } from '../models/Controller.js';
+import { type ControllerOptions } from '../models/ControllerOptions.js';
+import { Controller as ControllerDecorator } from './Controller.js';
 
-describe(Controller, () => {
+describe(ControllerDecorator, () => {
   describe('having a path', () => {
     let pathFixture: string;
-    let targetFixture: NewableFunction;
+    let targetFixture: NewableFunction & ServiceIdentifier;
 
     beforeAll(() => {
       pathFixture = '/api';
@@ -55,7 +60,7 @@ describe(Controller, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        Controller(pathFixture)(targetFixture);
+        ControllerDecorator(pathFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -104,7 +109,7 @@ describe(Controller, () => {
 
   describe('having ControllerOptions', () => {
     let optionsFixture: ControllerOptions;
-    let targetFixture: NewableFunction;
+    let targetFixture: NewableFunction & ServiceIdentifier;
 
     beforeAll(() => {
       optionsFixture = {
@@ -135,7 +140,7 @@ describe(Controller, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        Controller(optionsFixture)(targetFixture);
+        ControllerDecorator(optionsFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -174,7 +179,7 @@ describe(Controller, () => {
 
   describe('having ControllerOptions with scope', () => {
     let optionsFixture: ControllerOptions;
-    let targetFixture: NewableFunction;
+    let targetFixture: NewableFunction & ServiceIdentifier;
 
     beforeAll(() => {
       optionsFixture = {
@@ -206,7 +211,7 @@ describe(Controller, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        Controller(optionsFixture)(targetFixture);
+        ControllerDecorator(optionsFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -291,7 +296,7 @@ describe(Controller, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        Controller(optionsFixture)(targetFixture);
+        ControllerDecorator(optionsFixture)(targetFixture);
       });
 
       afterAll(() => {
@@ -319,7 +324,7 @@ describe(Controller, () => {
           path: normalizedPathFixture,
           priority: 0,
           serviceIdentifier:
-            optionsFixture.serviceIdentifier as ServiceIdentifier,
+            optionsFixture.serviceIdentifier as ServiceIdentifier<Controller>,
           target: targetFixture,
         };
 
@@ -341,7 +346,7 @@ describe(Controller, () => {
 
   describe('having ControllerOptions with priority', () => {
     let optionsFixture: ControllerOptions;
-    let targetFixture: NewableFunction;
+    let targetFixture: NewableFunction & ServiceIdentifier;
 
     beforeAll(() => {
       optionsFixture = {
@@ -373,7 +378,7 @@ describe(Controller, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        Controller(optionsFixture)(targetFixture);
+        ControllerDecorator(optionsFixture)(targetFixture);
       });
 
       afterAll(() => {

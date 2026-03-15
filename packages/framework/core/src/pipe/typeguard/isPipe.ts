@@ -1,4 +1,4 @@
-import { Pipe } from '../models/Pipe';
+import { type Pipe } from '../models/Pipe.js';
 
 export function isPipe(value: unknown): value is Pipe {
   const pipe: Partial<Pipe> = value as Partial<Pipe>;

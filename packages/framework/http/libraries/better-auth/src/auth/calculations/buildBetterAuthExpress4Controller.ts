@@ -1,13 +1,13 @@
-import { IncomingMessage, ServerResponse } from 'node:http';
+import { type IncomingMessage, type ServerResponse } from 'node:http';
 
 import { All, Controller, Request, Response } from '@inversifyjs/http-core';
-import { BetterAuthOptions } from 'better-auth';
+import { type BetterAuthOptions } from 'better-auth';
 import { toNodeHandler } from 'better-auth/node';
-import express from 'express4';
-import { inject, Newable } from 'inversify';
+import type express from 'express4';
+import { inject, type Newable } from 'inversify';
 
-import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier.js';
 
 export function buildBetterAuthExpress4Controller(
   basePath: string,

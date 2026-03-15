@@ -1,8 +1,13 @@
-import { Context, HonoRequest, MiddlewareHandler, Next } from 'hono';
+import {
+  type Context,
+  type HonoRequest,
+  type MiddlewareHandler,
+  type Next,
+} from 'hono';
 import { cors } from 'hono/cors';
 import { injectable } from 'inversify';
 
-import { HonoMiddleware } from '../models/HonoMiddleware';
+import { type HonoMiddleware } from '../models/HonoMiddleware.js';
 
 type CorsOptions = Parameters<typeof cors>[0];
 

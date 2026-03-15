@@ -1,14 +1,14 @@
 import {
-  ErrorFilter,
-  Guard,
-  Interceptor,
-  Middleware,
+  type ErrorFilter,
+  type Guard,
+  type Interceptor,
+  type Middleware,
 } from '@inversifyjs/framework-core';
-import { Newable, ServiceIdentifier } from 'inversify';
+import { type Newable, type ServiceIdentifier } from 'inversify';
 
-import { HttpStatusCode } from '../../http/models/HttpStatusCode';
-import { RequestMethodType } from '../../http/models/RequestMethodType';
-import { ControllerMethodParameterMetadata } from './ControllerMethodParameterMetadata';
+import { type HttpStatusCode } from '../../http/models/HttpStatusCode.js';
+import { type RequestMethodType } from '../../http/models/RequestMethodType.js';
+import { type ControllerMethodParameterMetadata } from './ControllerMethodParameterMetadata.js';
 
 export interface RouterExplorerControllerMethodMetadata<
   TRequest = unknown,

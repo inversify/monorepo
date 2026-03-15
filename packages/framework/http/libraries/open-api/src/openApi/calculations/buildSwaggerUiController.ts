@@ -2,15 +2,15 @@ import {
   buildNormalizedPath,
   Controller,
   Get,
-  HttpResponse,
+  type HttpResponse,
   Params,
   SetHeader,
 } from '@inversifyjs/http-core';
-import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
-import { Newable } from 'inversify';
+import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
+import { type Newable } from 'inversify';
 
-import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
-import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
+import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController.js';
+import { type SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions.js';
 
 export function buildSwaggerUiController(
   options: SwaggerUiProviderOptions,

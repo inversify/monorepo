@@ -4,22 +4,22 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
-import { PipeMetadata } from '@inversifyjs/framework-core';
+import { type PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
   InversifyValidationError,
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
-import { StandardSchemaV1 } from '@standard-schema/spec';
+import { type StandardSchemaV1 } from '@standard-schema/spec';
 
-import { standardSchemaValidationMetadataReflectKey } from '../reflectMetadata/models/standardSchemaValidationMetadataReflectKey';
-import { StandardSchemaValidationPipe } from './StandardSchemaValidationPipe';
+import { standardSchemaValidationMetadataReflectKey } from '../reflectMetadata/models/standardSchemaValidationMetadataReflectKey.js';
+import { StandardSchemaValidationPipe } from './StandardSchemaValidationPipe.js';
 
 describe(StandardSchemaValidationPipe, () => {
   describe('.execute', () => {

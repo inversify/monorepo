@@ -4,15 +4,15 @@ import {
   describe,
   expect,
   it,
-  Mock,
-  Mocked,
+  type Mock,
+  type Mocked,
   vitest,
 } from 'vitest';
 
-import { Container, ServiceIdentifier } from 'inversify';
+import { type Container, type ServiceIdentifier } from 'inversify';
 
-import { Controller } from '../models/Controller';
-import { buildSyncCallRouteHandler } from './buildSyncCallRouteHandler';
+import { type Controller } from '../models/Controller.js';
+import { buildSyncCallRouteHandler } from './buildSyncCallRouteHandler.js';
 
 describe(buildSyncCallRouteHandler, () => {
   let containerMock: Mocked<Container>;

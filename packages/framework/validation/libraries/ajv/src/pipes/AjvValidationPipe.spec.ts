@@ -4,24 +4,24 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 vitest.mock(import('../calculations/stringifyAjvErrors.js'));
 
-import { PipeMetadata } from '@inversifyjs/framework-core';
+import { type PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
   InversifyValidationError,
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
-import Ajv, { AnySchema, ValidationError } from 'ajv';
+import Ajv, { type AnySchema, type ValidationError } from 'ajv';
 
-import { stringifyAjvErrors } from '../calculations/stringifyAjvErrors';
-import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey';
-import { AjvValidationPipe } from './AjvValidationPipe';
+import { stringifyAjvErrors } from '../calculations/stringifyAjvErrors.js';
+import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey.js';
+import { AjvValidationPipe } from './AjvValidationPipe.js';
 
 describe(AjvValidationPipe, () => {
   let ajvMock: Mocked<Ajv>;

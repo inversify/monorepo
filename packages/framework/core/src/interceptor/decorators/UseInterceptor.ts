@@ -3,11 +3,11 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { classInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classInterceptorMetadataReflectKey';
-import { classMethodInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classMethodInterceptorMetadataReflectKey';
-import { Interceptor } from '../models/Interceptor';
+import { classInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classInterceptorMetadataReflectKey.js';
+import { classMethodInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classMethodInterceptorMetadataReflectKey.js';
+import { type Interceptor } from '../models/Interceptor.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function UseInterceptor(

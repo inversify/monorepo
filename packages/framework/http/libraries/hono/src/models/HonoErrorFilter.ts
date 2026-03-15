@@ -1,5 +1,5 @@
-import { ErrorFilter } from '@inversifyjs/http-core';
-import { Context, HonoRequest } from 'hono';
+import { type ErrorFilter } from '@inversifyjs/http-core';
+import { type Context, type HonoRequest } from 'hono';
 
 export type HonoErrorFilter<TError = unknown> = ErrorFilter<
   TError,

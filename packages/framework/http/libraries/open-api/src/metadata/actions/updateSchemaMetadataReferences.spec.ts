@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { SchemaReferencesMetadata } from '../models/SchemaReferencesMetadata';
-import { updateSchemaMetadataReferences } from './updateSchemaMetadataReferences';
+import { type SchemaReferencesMetadata } from '../models/SchemaReferencesMetadata.js';
+import { updateSchemaMetadataReferences } from './updateSchemaMetadataReferences.js';
 
 describe(updateSchemaMetadataReferences, () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

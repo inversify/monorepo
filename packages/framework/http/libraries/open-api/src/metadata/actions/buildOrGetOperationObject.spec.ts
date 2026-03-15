@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
-  OpenApi3Dot1OperationObject,
-  OpenApi3Dot1PathItemObject,
+  type OpenApi3Dot1OperationObject,
+  type OpenApi3Dot1PathItemObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
-import { buildOrGetOperationObject } from './buildOrGetOperationObject';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
+import { buildOrGetOperationObject } from './buildOrGetOperationObject.js';
 
 describe(buildOrGetOperationObject, () => {
   describe('having ControllerOpenApiMetadata with empty pathToPathItemObjectMap', () => {

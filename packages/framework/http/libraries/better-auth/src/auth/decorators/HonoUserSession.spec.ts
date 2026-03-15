@@ -4,7 +4,7 @@ vitest.mock(import('@inversifyjs/http-core'));
 
 import { createCustomParameterDecorator } from '@inversifyjs/http-core';
 
-import { HonoUserSession } from './HonoUserSession';
+import { HonoUserSession } from './HonoUserSession.js';
 
 describe(HonoUserSession, () => {
   describe('when called', () => {

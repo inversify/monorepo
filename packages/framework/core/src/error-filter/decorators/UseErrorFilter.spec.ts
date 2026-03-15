@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
@@ -15,12 +15,12 @@ import {
   updateOwnReflectMetadata,
   updateSetMetadataWithList,
 } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { type Newable } from 'inversify';
 
-import { classErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classErrorFilterMetadataReflectKey';
-import { classMethodErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodErrorFilterMetadataReflectKey';
-import { ErrorFilter } from '../models/ErrorFilter';
-import { UseErrorFilter } from './UseErrorFilter';
+import { classErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classErrorFilterMetadataReflectKey.js';
+import { classMethodErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodErrorFilterMetadataReflectKey.js';
+import { type ErrorFilter } from '../models/ErrorFilter.js';
+import { UseErrorFilter } from './UseErrorFilter.js';
 
 describe(UseErrorFilter, () => {
   describe('having a target', () => {

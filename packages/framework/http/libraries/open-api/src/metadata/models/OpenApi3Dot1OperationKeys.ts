@@ -1,6 +1,6 @@
-import { OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { FilteredByValueType } from '../../common/models/FilteredByValueType';
+import { type FilteredByValueType } from '../../common/models/FilteredByValueType.js';
 
 type OpenApi3Dot1OperationKeys = keyof OpenApi3Dot1OperationObject;
 

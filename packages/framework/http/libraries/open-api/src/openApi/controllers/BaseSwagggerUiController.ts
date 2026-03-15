@@ -3,18 +3,18 @@ import path from 'node:path';
 
 import {
   buildNormalizedPath,
-  HttpResponse,
+  type HttpResponse,
   NotFoundHttpResponse,
   OkHttpResponse,
 } from '@inversifyjs/http-core';
-import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import mime from 'mime-types';
 import { getAbsoluteFSPath } from 'swagger-ui-dist';
 
-import { htmlTemplateString, jsTemplateString } from '../data/constants';
-import { SwaggerUiInitOptions } from '../models/SwaggerUiInitOptions';
-import { SwaggerUiOptions } from '../models/SwaggerUiOptions';
-import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
+import { htmlTemplateString, jsTemplateString } from '../data/constants.js';
+import { type SwaggerUiInitOptions } from '../models/SwaggerUiInitOptions.js';
+import { type SwaggerUiOptions } from '../models/SwaggerUiOptions.js';
+import { type SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions.js';
 
 export abstract class BaseSwaggerUiController {
   protected _basePath: string;

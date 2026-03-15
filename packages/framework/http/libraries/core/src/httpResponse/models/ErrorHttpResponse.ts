@@ -1,10 +1,10 @@
 import type { Stream } from 'node:stream';
 
-import { HttpStatusCode } from '../../http/models/HttpStatusCode';
+import { type HttpStatusCode } from '../../http/models/HttpStatusCode.js';
 import {
-  HttpResponse,
+  type HttpResponse,
   isHttpResponse as isHttpResponseSymbol,
-} from './HttpResponse';
+} from './HttpResponse.js';
 
 export class ErrorHttpResponse extends Error implements HttpResponse {
   public readonly [isHttpResponseSymbol]: true;

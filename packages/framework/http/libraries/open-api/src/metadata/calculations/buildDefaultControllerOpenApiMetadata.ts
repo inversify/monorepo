@@ -1,4 +1,4 @@
-import { ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata';
+import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
 
 export function buildDefaultControllerOpenApiMetadata(): ControllerOpenApiMetadata {
   return {

@@ -1,5 +1,5 @@
 import { Given } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -37,9 +37,7 @@ import { WarriorsPutRequestFastifyController } from '../controllers/WarriorsPutR
 import { WarriorsPutRequestHonoController } from '../controllers/WarriorsPutRequestHonoController';
 import { WarriorsPutRequestUwebSocketsController } from '../controllers/WarriorsPutRequestUwebSocketsController';
 
-function getMethodWarriorRequestExpressController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorRequestExpressController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteRequestExpressController;
@@ -58,7 +56,7 @@ function getMethodWarriorRequestExpressController(
 
 function getMethodWarriorRequestExpressV4Controller(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteRequestExpressV4Controller;
@@ -75,9 +73,7 @@ function getMethodWarriorRequestExpressV4Controller(
   }
 }
 
-function getMethodWarriorRequestFastifyController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorRequestFastifyController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteRequestFastifyController;
@@ -94,9 +90,7 @@ function getMethodWarriorRequestFastifyController(
   }
 }
 
-function getMethodWarriorRequestHonoController(
-  method: HttpMethod,
-): NewableFunction {
+function getMethodWarriorRequestHonoController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteRequestHonoController;
@@ -115,7 +109,7 @@ function getMethodWarriorRequestHonoController(
 
 function getMethodWarriorRequestUwebSocketsController(
   method: HttpMethod,
-): NewableFunction {
+): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteRequestUwebSocketsController;
@@ -143,9 +137,7 @@ function givenWarriorRequestControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  let getMethodWarriorRequestController: (
-    method: HttpMethod,
-  ) => NewableFunction;
+  let getMethodWarriorRequestController: (method: HttpMethod) => Newable;
 
   switch (serverKind) {
     case ServerKind.express:
@@ -169,7 +161,7 @@ function givenWarriorRequestControllerForContainer(
       break;
   }
 
-  const controller: NewableFunction = getMethodWarriorRequestController(method);
+  const controller: Newable = getMethodWarriorRequestController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }

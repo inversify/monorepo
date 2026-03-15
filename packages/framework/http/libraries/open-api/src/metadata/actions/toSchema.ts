@@ -1,12 +1,12 @@
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
-import { JsonSchema } from '@inversifyjs/json-schema-types/2020-12';
-import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type JsonSchema } from '@inversifyjs/json-schema-types/2020-12';
+import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { tryBuildSchemaFromWellKnownType } from '../calculations/tryBuildSchemaFromWellKnownType';
-import { SchemaMetadata } from '../models/SchemaMetadata';
-import { ToSchemaFunction } from '../models/ToSchemaFunction';
+import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { tryBuildSchemaFromWellKnownType } from '../calculations/tryBuildSchemaFromWellKnownType.js';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
+import { type ToSchemaFunction } from '../models/ToSchemaFunction.js';
 
 export function toSchema(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

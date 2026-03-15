@@ -1,18 +1,18 @@
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { SwaggerUiProvider } from '@inversifyjs/http-open-api';
-import express from 'express';
+import type express from 'express';
 import { Container } from 'inversify';
 
-import { LmdbContainerModule } from '../foundation/db/adapter/inversify/LmdbContainerModule';
-import { UserContainerModule } from '../user/adapter/inversify/UserContainerModule';
-import { UserLmdbContainerModule } from '../user/adapter/inversify/UserLmdbContainerModule';
+import { LmdbContainerModule } from '../foundation/db/adapter/inversify/LmdbContainerModule.js';
+import { UserContainerModule } from '../user/adapter/inversify/UserContainerModule.js';
+import { UserLmdbContainerModule } from '../user/adapter/inversify/UserLmdbContainerModule.js';
 
 const PORT: number = 3000;
 
 export async function bootstrap(): Promise<void> {
   const container: Container = new Container();
 
-  await container.load(
+  await container.loadAsync(
     new LmdbContainerModule(),
     new UserContainerModule(),
     new UserLmdbContainerModule(),

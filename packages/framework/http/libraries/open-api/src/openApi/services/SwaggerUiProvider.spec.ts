@@ -4,7 +4,7 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
@@ -18,29 +18,33 @@ vitest.mock(import('../calculations/buildSwaggerUiController.js'));
 
 import {
   buildNormalizedPath,
-  ControllerMetadata,
-  ControllerMethodMetadata,
+  type ControllerMetadata,
+  type ControllerMethodMetadata,
   getControllerMetadataList,
   getControllerMethodMetadataList,
   RequestMethodType,
 } from '@inversifyjs/http-core';
 import {
-  OpenApi3Dot1Object,
-  OpenApi3Dot1OperationObject,
-  OpenApi3Dot1PathItemObject,
+  type OpenApi3Dot1Object,
+  type OpenApi3Dot1OperationObject,
+  type OpenApi3Dot1PathItemObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { BindToFluentSyntax, Container, Newable } from 'inversify';
+import {
+  type BindToFluentSyntax,
+  type Container,
+  type Newable,
+} from 'inversify';
 
-import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from '../../metadata/actions/mergeOpenApiPathItemObjectIntoOpenApiPaths';
-import { ControllerOpenApiMetadata } from '../../metadata/models/ControllerOpenApiMetadata';
-import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey';
-import { mergeOpenApiTypeSchema } from '../actions/mergeOpenApiTypeSchema';
-import { buildSwaggerUiController } from '../calculations/buildSwaggerUiController';
-import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController';
-import { SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions';
-import { SwaggerUiProviderUiOptions } from '../models/SwaggerUiProviderUiOptions';
-import { SwaggerUiProvider } from './SwaggerUiProvider';
+import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from '../../metadata/actions/mergeOpenApiPathItemObjectIntoOpenApiPaths.js';
+import { type ControllerOpenApiMetadata } from '../../metadata/models/ControllerOpenApiMetadata.js';
+import { controllerOpenApiMetadataReflectKey } from '../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { mergeOpenApiTypeSchema } from '../actions/mergeOpenApiTypeSchema.js';
+import { buildSwaggerUiController } from '../calculations/buildSwaggerUiController.js';
+import { type BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController.js';
+import { type SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions.js';
+import { type SwaggerUiProviderUiOptions } from '../models/SwaggerUiProviderUiOptions.js';
+import { SwaggerUiProvider } from './SwaggerUiProvider.js';
 
 describe(SwaggerUiProvider, () => {
   let optionsFixture: SwaggerUiProviderOptions;

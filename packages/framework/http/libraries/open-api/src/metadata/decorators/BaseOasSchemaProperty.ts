@@ -1,12 +1,12 @@
-import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey';
-import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext';
-import { updateSchemaMetadataProperty } from '../actions/updateSchemaMetadataProperty';
-import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata';
-import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
-import { SchemaMetadata } from '../models/SchemaMetadata';
+import { schemaOpenApiMetadataReflectKey } from '../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { toSchemaInSchemaMetadataContext } from '../actions/toSchemaInSchemaMetadataContext.js';
+import { updateSchemaMetadataProperty } from '../actions/updateSchemaMetadataProperty.js';
+import { buildDefaultSchemaMetadata } from '../calculations/buildDefaultSchemaMetadata.js';
+import { type BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction.js';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function BaseOasSchemaProperty(

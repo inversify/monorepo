@@ -4,8 +4,8 @@ vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { setReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey';
-import { setControllerMethodUseNativeHandlerMetadata } from './setControllerMethodUseNativeHandlerMetadata';
+import { controllerMethodUseNativeHandlerMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodUseNativeHandlerMetadataReflectKey.js';
+import { setControllerMethodUseNativeHandlerMetadata } from './setControllerMethodUseNativeHandlerMetadata.js';
 
 describe(setControllerMethodUseNativeHandlerMetadata, () => {
   describe('having a string method name', () => {

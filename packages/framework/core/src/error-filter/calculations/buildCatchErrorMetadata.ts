@@ -1,7 +1,7 @@
-import { Newable } from 'inversify';
+import { type Newable } from 'inversify';
 
-import { InversifyFrameworkCoreError } from '../../error/models/InversifyFrameworkCoreError';
-import { InversifyFrameworkCoreErrorKind } from '../../error/models/InversifyFrameworkCoreErrorKind';
+import { InversifyFrameworkCoreError } from '../../error/models/InversifyFrameworkCoreError.js';
+import { InversifyFrameworkCoreErrorKind } from '../../error/models/InversifyFrameworkCoreErrorKind.js';
 
 export function buildCatchErrorMetadata(
   errorType: Newable<Error> | null,

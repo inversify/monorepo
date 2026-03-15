@@ -2,10 +2,10 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('../calculations/nativeRequestParam.js'));
 
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { nativeRequestParam } from '../calculations/nativeRequestParam';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { Next } from './Next';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { nativeRequestParam } from '../calculations/nativeRequestParam.js';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
+import { Next } from './Next.js';
 
 describe(Next, () => {
   describe('when called', () => {

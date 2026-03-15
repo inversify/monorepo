@@ -1,10 +1,10 @@
 import { All, Controller, Response } from '@inversifyjs/http-core';
-import { BetterAuthOptions } from 'better-auth';
-import { Context } from 'hono';
-import { inject, Newable } from 'inversify';
+import { type BetterAuthOptions } from 'better-auth';
+import { type Context } from 'hono';
+import { inject, type Newable } from 'inversify';
 
-import { BetterAuth } from '../models/BetterAuth';
-import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier.js';
 
 export function buildBetterAuthHonoController(
   basePath: string,

@@ -1,4 +1,4 @@
-import { HttpStatusCode } from './HttpStatusCode';
+import { type HttpStatusCode } from './HttpStatusCode.js';
 
 export interface CustomParameterDecoratorHandlerOptions<TRequest, TResponse> {
   getBody: (

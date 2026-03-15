@@ -3,12 +3,17 @@ import {
   buildEmptyArrayMetadata,
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
-import { BindingScope, injectable } from 'inversify';
+import {
+  type BindingScope,
+  injectable,
+  type ServiceIdentifier,
+} from 'inversify';
 
-import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey';
-import { ControllerMetadata } from '../../routerExplorer/model/ControllerMetadata';
-import { buildNormalizedPath } from '../calculations/buildNormalizedPath';
-import { ControllerOptions } from '../models/ControllerOptions';
+import { controllerMetadataReflectKey } from '../../reflectMetadata/data/controllerMetadataReflectKey.js';
+import { type ControllerMetadata } from '../../routerExplorer/model/ControllerMetadata.js';
+import { buildNormalizedPath } from '../calculations/buildNormalizedPath.js';
+import { type Controller as ControllerModel } from '../models/Controller.js';
+import { type ControllerOptions } from '../models/ControllerOptions.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function Controller(
@@ -18,7 +23,7 @@ export function Controller(
     const controllerMetadata: ControllerMetadata = {
       path: '/',
       priority: 0,
-      serviceIdentifier: target,
+      serviceIdentifier: target as ServiceIdentifier<ControllerModel>,
       target,
     };
 
@@ -38,7 +43,7 @@ export function Controller(
 
         if (pathOrOptions.serviceIdentifier !== undefined) {
           controllerMetadata.serviceIdentifier =
-            pathOrOptions.serviceIdentifier;
+            pathOrOptions.serviceIdentifier as ServiceIdentifier<ControllerModel>;
         }
 
         scope = pathOrOptions.scope;

@@ -1,7 +1,7 @@
 import { Readable } from 'node:stream';
 
-import { stringifyMessageEvent } from '../../sse/calculations/stringifyMessageEvent';
-import { MessageEvent } from '../../sse/models/MessageEvent';
+import { stringifyMessageEvent } from '../../sse/calculations/stringifyMessageEvent.js';
+import { type MessageEvent } from '../../sse/models/MessageEvent.js';
 
 const isSseStreamSymbol: unique symbol = Symbol.for(
   '@inversifyjs/http-sse/SseStream',

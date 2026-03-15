@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { HttpStatusCode } from '../../http/models/HttpStatusCode';
-import { isHttpResponse } from '../models/HttpResponse';
-import { SuccessHttpResponse } from './SuccessHttpResponse';
+import { HttpStatusCode } from '../../http/models/HttpStatusCode.js';
+import { isHttpResponse } from '../models/HttpResponse.js';
+import { SuccessHttpResponse } from './SuccessHttpResponse.js';
 
 describe(SuccessHttpResponse, () => {
   describe('.constructor', () => {

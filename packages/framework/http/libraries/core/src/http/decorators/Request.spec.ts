@@ -2,13 +2,13 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('../calculations/requestParam.js'));
 
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { requestParam } from '../calculations/requestParam';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { Request } from './Request';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { requestParam } from '../calculations/requestParam.js';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
+import { Request } from './Request.js';
 
 describe(Request, () => {
   describe('when called', () => {

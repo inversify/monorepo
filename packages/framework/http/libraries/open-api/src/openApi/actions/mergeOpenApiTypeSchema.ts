@@ -1,14 +1,14 @@
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import {
-  JsonSchema,
-  JsonSchemaObject,
+  type JsonSchema,
+  type JsonSchemaObject,
 } from '@inversifyjs/json-schema-types/2020-12';
-import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { tryBuildSchemaFromWellKnownType } from '../../metadata/calculations/tryBuildSchemaFromWellKnownType';
-import { SchemaMetadata } from '../../metadata/models/SchemaMetadata';
-import { getSchemaMetadata } from '../calculations/getSchemaMetadata';
+import { tryBuildSchemaFromWellKnownType } from '../../metadata/calculations/tryBuildSchemaFromWellKnownType.js';
+import { type SchemaMetadata } from '../../metadata/models/SchemaMetadata.js';
+import { getSchemaMetadata } from '../calculations/getSchemaMetadata.js';
 
 export function mergeOpenApiTypeSchema(
   schemasObject: Record<string, OpenApi3Dot1SchemaObject>,

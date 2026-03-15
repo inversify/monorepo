@@ -1,8 +1,8 @@
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { ServiceIdentifier } from 'inversify';
+import { type ServiceIdentifier } from 'inversify';
 
-import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/classMethodGuardMetadataReflectKey';
-import { Guard } from '../models/Guard';
+import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/classMethodGuardMetadataReflectKey.js';
+import { type Guard } from '../models/Guard.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getClassMethodGuardList<TRequest = any>(

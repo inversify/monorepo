@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Pipe } from '../models/Pipe';
-import { isPipe } from './isPipe';
+import { type Pipe } from '../models/Pipe.js';
+import { isPipe } from './isPipe.js';
 
 describe(isPipe, () => {
   describe.each([

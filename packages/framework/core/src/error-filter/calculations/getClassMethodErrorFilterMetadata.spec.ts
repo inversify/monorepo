@@ -3,11 +3,11 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { Newable } from 'inversify';
+import { type Newable } from 'inversify';
 
-import { classMethodErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodErrorFilterMetadataReflectKey';
-import { ErrorFilter } from '../models/ErrorFilter';
-import { getClassMethodErrorFilterMetadata } from './getClassMethodErrorFilterMetadata';
+import { classMethodErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodErrorFilterMetadataReflectKey.js';
+import { type ErrorFilter } from '../models/ErrorFilter.js';
+import { getClassMethodErrorFilterMetadata } from './getClassMethodErrorFilterMetadata.js';
 
 describe(getClassMethodErrorFilterMetadata, () => {
   describe('when called, and getOwnReflectMetadata() returns undefined', () => {

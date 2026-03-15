@@ -4,17 +4,17 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('./BaseOasSchemaProperty.js'));
 
-import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction';
-import { BaseOasSchemaProperty } from './BaseOasSchemaProperty';
-import { OasSchemaOptionalProperty } from './OasSchemaOptionalProperty';
+import { type BuildOpenApiBlockFunction } from '../models/BuildOpenApiBlockFunction.js';
+import { BaseOasSchemaProperty } from './BaseOasSchemaProperty.js';
+import { OasSchemaOptionalProperty } from './OasSchemaOptionalProperty.js';
 
 describe(OasSchemaOptionalProperty, () => {
   describe('when called', () => {

@@ -3,6 +3,7 @@ import { AddressInfo } from 'node:net';
 
 import { Given } from '@cucumber/cucumber';
 import { serve, ServerType } from '@hono/node-server';
+import { Interceptor } from '@inversifyjs/http-core';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { InversifyExpressHttpAdapter as InversifyExpress4HttpAdapter } from '@inversifyjs/http-express-v4';
 import { InversifyFastifyHttpAdapter } from '@inversifyjs/http-fastify';
@@ -24,7 +25,7 @@ import { ServerKind } from '../models/ServerKind';
 
 async function buildExpressServer(
   container: Container,
-  globalInterceptors?: ServiceIdentifier<unknown>[],
+  globalInterceptors?: ServiceIdentifier<Interceptor>[],
 ): Promise<Server> {
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
     container,
@@ -78,7 +79,7 @@ async function buildExpressServer(
 
 async function buildExpress4Server(
   container: Container,
-  globalInterceptors?: ServiceIdentifier<unknown>[],
+  globalInterceptors?: ServiceIdentifier<Interceptor>[],
 ): Promise<Server> {
   const adapter: InversifyExpress4HttpAdapter =
     new InversifyExpress4HttpAdapter(container, {
@@ -135,7 +136,7 @@ async function buildExpress4Server(
 
 async function buildHonoServer(
   container: Container,
-  globalInterceptors?: ServiceIdentifier<unknown>[],
+  globalInterceptors?: ServiceIdentifier<Interceptor>[],
 ): Promise<Server> {
   const adapter: InversifyHonoHttpAdapter = new InversifyHonoHttpAdapter(
     container,
@@ -187,7 +188,7 @@ async function buildHonoServer(
 
 async function buildFastifyServer(
   container: Container,
-  globalInterceptors?: ServiceIdentifier<unknown>[],
+  globalInterceptors?: ServiceIdentifier<Interceptor>[],
 ): Promise<Server> {
   const adapter: InversifyFastifyHttpAdapter = new InversifyFastifyHttpAdapter(
     container,
@@ -238,7 +239,7 @@ async function buildFastifyServer(
 
 async function buildUwebSocketsJsServer(
   container: Container,
-  globalInterceptors?: ServiceIdentifier<unknown>[],
+  globalInterceptors?: ServiceIdentifier<Interceptor>[],
 ): Promise<Server> {
   const adapter: InversifyUwebSocketsHttpAdapter =
     new InversifyUwebSocketsHttpAdapter(container, {
@@ -282,7 +283,7 @@ async function givenServer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const globalInterceptors: ServiceIdentifier<unknown>[] | undefined =
+  const globalInterceptors: ServiceIdentifier<Interceptor>[] | undefined =
     this.globalInterceptors.get(parsedContainerAlias);
 
   let server: Server;

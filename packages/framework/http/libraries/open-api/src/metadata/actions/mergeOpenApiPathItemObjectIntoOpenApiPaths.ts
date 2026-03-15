@@ -1,7 +1,10 @@
-import { JsonValue, JsonValueObject } from '@inversifyjs/json-schema-types';
 import {
-  OpenApi3Dot1Object,
-  OpenApi3Dot1PathItemObject,
+  type JsonValue,
+  type JsonValueObject,
+} from '@inversifyjs/json-schema-types';
+import {
+  type OpenApi3Dot1Object,
+  type OpenApi3Dot1PathItemObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 
 export function mergeOpenApiPathItemObjectIntoOpenApiPaths(

@@ -1,4 +1,4 @@
-import { CatchError, ErrorFilter } from '@inversifyjs/framework-core';
+import { CatchError, type ErrorFilter } from '@inversifyjs/framework-core';
 import { BadRequestHttpResponse } from '@inversifyjs/http-core';
 import {
   InversifyValidationError,

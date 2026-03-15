@@ -1,5 +1,5 @@
 import { Given } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { Container, Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias';
 import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
@@ -12,7 +12,7 @@ import { WarriorsPatchStreamController } from '../controllers/WarriorsPatchStrea
 import { WarriorsPostStreamController } from '../controllers/WarriorsPostStreamController';
 import { WarriorsPutStreamController } from '../controllers/WarriorsPutStreamController';
 
-function getMethodWarriorStreamController(method: HttpMethod): NewableFunction {
+function getMethodWarriorStreamController(method: HttpMethod): Newable {
   switch (method) {
     case HttpMethod.delete:
       return WarriorsDeleteStreamController;
@@ -38,7 +38,7 @@ function givenWarriorStreamControllerForContainer(
   const container: Container =
     getContainerOrFail.bind(this)(parsedContainerAlias);
 
-  const controller: NewableFunction = getMethodWarriorStreamController(method);
+  const controller: Newable = getMethodWarriorStreamController(method);
 
   container.bind(controller).toSelf().inSingletonScope();
 }

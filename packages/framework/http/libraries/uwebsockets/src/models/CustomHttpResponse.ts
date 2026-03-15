@@ -1,6 +1,6 @@
-import { HttpResponse } from 'uWebSockets.js';
+import { type HttpResponse } from 'uWebSockets.js';
 
-import { abortedSymbol } from '../data/abortedSymbol';
+import { type abortedSymbol } from '../data/abortedSymbol.js';
 
 export interface CustomHttpResponse extends HttpResponse {
   [abortedSymbol]?: boolean;

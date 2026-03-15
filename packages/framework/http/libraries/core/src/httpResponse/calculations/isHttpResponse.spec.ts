@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { isHttpResponse as isHttpResponseSymbol } from '../models/HttpResponse';
-import { isHttpResponse } from './isHttpResponse';
+import { isHttpResponse as isHttpResponseSymbol } from '../models/HttpResponse.js';
+import { isHttpResponse } from './isHttpResponse.js';
 
 describe.each<[string, unknown, boolean]>([
   [

@@ -1,9 +1,9 @@
-import { BetterAuthOptions } from 'better-auth';
-import { Newable } from 'inversify';
+import { type BetterAuthOptions } from 'better-auth';
+import { type Newable } from 'inversify';
 
-import { buildBetterAuthUwebSocketsController } from '../calculations/buildBetterAuthUwebSocketsController';
-import { BetterAuth } from '../models/BetterAuth';
-import { BaseBetterAuthContainerModule } from './BaseBetterAuthContainerModule';
+import { buildBetterAuthUwebSocketsController } from '../calculations/buildBetterAuthUwebSocketsController.js';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { BaseBetterAuthContainerModule } from './BaseBetterAuthContainerModule.js';
 
 export class BetterAuthUwebSocketsContainerModule<
   TOptions extends BetterAuthOptions,

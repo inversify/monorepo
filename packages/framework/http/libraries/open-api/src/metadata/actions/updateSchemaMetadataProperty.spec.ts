@@ -1,10 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-import { OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { SchemaMetadata } from '../models/SchemaMetadata';
-import { SchemaPropertyMetadata } from '../models/SchemaPropertyMetadata';
-import { updateSchemaMetadataProperty } from './updateSchemaMetadataProperty';
+import { type SchemaMetadata } from '../models/SchemaMetadata.js';
+import { type SchemaPropertyMetadata } from '../models/SchemaPropertyMetadata.js';
+import { updateSchemaMetadataProperty } from './updateSchemaMetadataProperty.js';
 
 describe(updateSchemaMetadataProperty, () => {
   describe('having propertyKey and undefined schema', () => {

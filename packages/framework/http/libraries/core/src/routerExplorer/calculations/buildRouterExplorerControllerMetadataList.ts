@@ -1,12 +1,12 @@
-import { Logger } from '@inversifyjs/logger';
-import { Container } from 'inversify';
+import { type Logger } from '@inversifyjs/logger';
+import { type Container } from 'inversify';
 
-import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError';
-import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind';
-import { ControllerMetadata } from '../model/ControllerMetadata';
-import { RouterExplorerControllerMetadata } from '../model/RouterExplorerControllerMetadata';
-import { buildRouterExplorerControllerMetadata } from './buildRouterExplorerControllerMetadata';
-import { getControllerMetadataList } from './getControllerMetadataList';
+import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError.js';
+import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind.js';
+import { type ControllerMetadata } from '../model/ControllerMetadata.js';
+import { type RouterExplorerControllerMetadata } from '../model/RouterExplorerControllerMetadata.js';
+import { buildRouterExplorerControllerMetadata } from './buildRouterExplorerControllerMetadata.js';
+import { getControllerMetadataList } from './getControllerMetadataList.js';
 
 export function buildRouterExplorerControllerMetadataList<
   TRequest,

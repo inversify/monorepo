@@ -4,19 +4,19 @@ import {
   describe,
   expect,
   it,
-  Mocked,
+  type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('../calculations/getBetterAuthFromRequest.js'));
 
-import { BetterAuthOptions } from 'better-auth';
-import { HttpRequest } from 'uWebSockets.js';
+import { type BetterAuthOptions } from 'better-auth';
+import { type HttpRequest } from 'uWebSockets.js';
 
-import { BetterAuth } from '../models/BetterAuth';
-import { UserSession } from '../models/UserSession';
-import { buildUserSessionFromUwebSocketsRequest } from './buildUserSessionFromUwebSocketsRequest';
-import { getBetterAuthFromRequest } from './getBetterAuthFromRequest';
+import { type BetterAuth } from '../models/BetterAuth.js';
+import { type UserSession } from '../models/UserSession.js';
+import { buildUserSessionFromUwebSocketsRequest } from './buildUserSessionFromUwebSocketsRequest.js';
+import { getBetterAuthFromRequest } from './getBetterAuthFromRequest.js';
 
 describe(buildUserSessionFromUwebSocketsRequest, () => {
   let requestMock: Mocked<HttpRequest>;

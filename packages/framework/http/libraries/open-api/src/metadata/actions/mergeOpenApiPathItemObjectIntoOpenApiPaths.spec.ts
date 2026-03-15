@@ -1,11 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
-  OpenApi3Dot1Object,
-  OpenApi3Dot1PathItemObject,
+  type OpenApi3Dot1Object,
+  type OpenApi3Dot1PathItemObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from './mergeOpenApiPathItemObjectIntoOpenApiPaths';
+import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from './mergeOpenApiPathItemObjectIntoOpenApiPaths.js';
 
 describe.each<
   [

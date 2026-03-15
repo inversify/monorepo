@@ -1,1 +1,1 @@
-export { ClassValidationPipe } from './pipes/ClassValidationPipe';
+export { ClassValidationPipe } from './pipes/ClassValidationPipe.js';

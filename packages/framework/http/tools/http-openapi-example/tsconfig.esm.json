@@ -4,7 +4,7 @@
   "compilerOptions": {
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "outDir": "./lib/esm",
+    "outDir": "./lib",
     "rootDir": "./src",
     "tsBuildInfoFile": "tsconfig.esm.tsbuildinfo"
   },

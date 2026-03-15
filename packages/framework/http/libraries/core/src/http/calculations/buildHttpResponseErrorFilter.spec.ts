@@ -1,10 +1,10 @@
-import { beforeAll, describe, expect, it, Mock, vitest } from 'vitest';
+import { beforeAll, describe, expect, it, type Mock, vitest } from 'vitest';
 
-import { ErrorFilter } from '@inversifyjs/framework-core';
+import { type ErrorFilter } from '@inversifyjs/framework-core';
 
-import { ControllerResponse } from '../models/ControllerResponse';
-import { HttpStatusCode } from '../models/HttpStatusCode';
-import { buildHttpResponseErrorFilter } from './buildHttpResponseErrorFilter';
+import { type ControllerResponse } from '../models/ControllerResponse.js';
+import { type HttpStatusCode } from '../models/HttpStatusCode.js';
+import { buildHttpResponseErrorFilter } from './buildHttpResponseErrorFilter.js';
 
 describe(buildHttpResponseErrorFilter, () => {
   let replyFixture: Mock<

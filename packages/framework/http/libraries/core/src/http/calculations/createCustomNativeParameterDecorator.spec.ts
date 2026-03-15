@@ -2,14 +2,14 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('./nativeRequestParam.js'));
 
-import { Pipe } from '@inversifyjs/framework-core';
-import { ServiceIdentifier } from 'inversify';
+import { type Pipe } from '@inversifyjs/framework-core';
+import { type ServiceIdentifier } from 'inversify';
 
-import { ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata';
-import { CustomNativeParameterDecoratorHandler } from '../models/CustomNativeParameterDecoratorHandler';
-import { RequestMethodParameterType } from '../models/RequestMethodParameterType';
-import { createCustomNativeParameterDecorator } from './createCustomNativeParameterDecorator';
-import { nativeRequestParam } from './nativeRequestParam';
+import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { type CustomNativeParameterDecoratorHandler } from '../models/CustomNativeParameterDecoratorHandler.js';
+import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
+import { createCustomNativeParameterDecorator } from './createCustomNativeParameterDecorator.js';
+import { nativeRequestParam } from './nativeRequestParam.js';
 
 describe(createCustomNativeParameterDecorator, () => {
   describe('when called', () => {

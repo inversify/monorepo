@@ -1,5 +1,5 @@
-import { ErrorFilter } from '@inversifyjs/http-core';
-import { HttpRequest, HttpResponse } from 'uWebSockets.js';
+import { type ErrorFilter } from '@inversifyjs/http-core';
+import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 export type UwebSocketsErrorFilter<TError = unknown> = ErrorFilter<
   TError,
