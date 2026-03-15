@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
+    "@inversifyjs/logger": "^2.0.0",
     "@stryker-mutator/core": "9.6.0",
     "@stryker-mutator/vitest-runner": "9.6.0",
     "@stryker-mutator/typescript-checker": "9.6.0",
@@ -43,7 +44,6 @@
   },
   "name": "@inversifyjs/http-uwebsockets",
   "peerDependencies": {
-    "@inversifyjs/logger": "^2.0.0",
     "inversify": "^8.1.0"
   },
   "publishConfig": {
