@@ -9,7 +9,7 @@
     "@inversifyjs/apollo-express": "0.7.0",
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "@inversifyjs/http-core": "4.10.2",
+    "@inversifyjs/http-core": "5.0.1",
     "@inversifyjs/http-express": "4.10.2",
     "@apollo/server": "5.4.0",
     "@types/express": "5.0.6",
