@@ -4,13 +4,13 @@ import {
   describe,
   expect,
   it,
-  Mock,
+  type Mock,
   vitest,
 } from 'vitest';
 
-import { LogLevel } from '../../model/LogLevel';
-import { ContextMetadata } from '../models/ContextMetadata';
-import { LoggerAdapter } from './LoggerAdapter';
+import { LogLevel } from '../../model/LogLevel.js';
+import { type ContextMetadata } from '../models/ContextMetadata.js';
+import { LoggerAdapter } from './LoggerAdapter.js';
 
 class LoggerAdapterMock extends LoggerAdapter {
   readonly #printLogMock: Mock<

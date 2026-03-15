@@ -4,8 +4,8 @@ import stream from 'node:stream';
 
 import { createLogger, transports } from 'winston';
 
-import { LogLevel } from '../../../../model/LogLevel';
-import { WinstonLoggerAdapter } from './WinstonLoggerAdapter';
+import { LogLevel } from '../../../../model/LogLevel.js';
+import { WinstonLoggerAdapter } from './WinstonLoggerAdapter.js';
 
 class TestStream extends stream.Writable {
   public chunks: unknown[];

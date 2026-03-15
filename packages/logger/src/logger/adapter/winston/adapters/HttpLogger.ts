@@ -2,8 +2,8 @@ import { URL } from 'node:url';
 
 import { createLogger, transports } from 'winston';
 
-import { LoggerOptions } from '../../../../model/LoggerOptions';
-import { WinstonLoggerAdapter } from './WinstonLoggerAdapter';
+import { type LoggerOptions } from '../../../../model/LoggerOptions.js';
+import { WinstonLoggerAdapter } from './WinstonLoggerAdapter.js';
 
 export class HttpLogger extends WinstonLoggerAdapter {
   constructor(
