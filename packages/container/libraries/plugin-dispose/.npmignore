@@ -9,6 +9,7 @@
 **/*.spec.js.map
 **/*.spec.d.ts.map
 **/*.spec-d.js
+**/*.spec-d.d.ts
 **/*.spec-d.js.map
 **/*.spec-d.d.ts.map
 
