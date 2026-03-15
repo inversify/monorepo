@@ -2,8 +2,6 @@
 sidebar_position: 1
 title: Planning phase
 ---
-import BrowserOnly from '@docusaurus/BrowserOnly';
-import DocusaurusInversifyCodeEditor from '@site/src/components/DocusaurusInversifyCodeEditor';
 
 # Planning Phase
 
@@ -97,12 +95,6 @@ Each binding node contains:
 - `binding`: The actual binding instance
 - Type-specific metadata (class metadata, parameters, property injections, etc.)
 - Child service nodes for dependencies
-
-## Visualizing Plan Trees
-
-Use the interactive code editor below to experiment with different binding configurations and see the generated plan trees. The editor allows you to write InversifyJS code and visualizes the resulting plan structure, helping you understand how the container resolves your dependencies.
-
-<DocusaurusInversifyCodeEditor style={{ height: 500 }} />
 
 ## Performance Considerations
 
