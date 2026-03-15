@@ -1,5 +1,14 @@
 # @inversifyjs/core
 
+## 10.0.1
+
+### Patch Changes
+
+- Ignored test typings from published package
+- Updated dependencies
+  - @inversifyjs/common@2.0.1
+  - @inversifyjs/prototype-utils@0.2.1
+
 ## 10.0.0
 
 ### Major Changes

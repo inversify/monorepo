@@ -1,5 +1,11 @@
 # @inversifyjs/foundation-eslint-config
 
+## 0.2.0
+
+### Minor Changes
+
+- Bumped `eslint` to 10.X
+
 ## 0.1.3
 
 ### Patch Changes
