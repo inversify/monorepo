@@ -1,5 +1,5 @@
-import { LogLevel } from '../../model/LogLevel';
-import { ContextMetadata } from './ContextMetadata';
+import { type LogLevel } from '../../model/LogLevel.js';
+import { type ContextMetadata } from './ContextMetadata.js';
 
 export interface Logger {
   log(logType: LogLevel, message: string, context?: ContextMetadata): void;

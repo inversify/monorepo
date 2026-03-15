@@ -1,7 +1,7 @@
-import { LoggerOptions } from '../../model/LoggerOptions';
-import { LogLevel } from '../../model/LogLevel';
-import { ContextMetadata } from '../models/ContextMetadata';
-import { Logger } from '../models/Logger';
+import { type LoggerOptions } from '../../model/LoggerOptions.js';
+import { LogLevel } from '../../model/LogLevel.js';
+import { type ContextMetadata } from '../models/ContextMetadata.js';
+import { type Logger } from '../models/Logger.js';
 
 type InternalLoggerOptions = Required<LoggerOptions>;
 

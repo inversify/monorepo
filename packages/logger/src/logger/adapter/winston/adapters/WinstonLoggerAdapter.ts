@@ -1,10 +1,10 @@
-import { Format, TransformableInfo } from 'logform';
-import { format, Logger } from 'winston';
+import { type Format, type TransformableInfo } from 'logform';
+import { format, type Logger } from 'winston';
 
-import { LoggerOptions } from '../../../../model/LoggerOptions';
-import { LogLevel } from '../../../../model/LogLevel';
-import { ContextMetadata } from '../../../models/ContextMetadata';
-import { LoggerAdapter } from '../../../modules/LoggerAdapter';
+import { type LoggerOptions } from '../../../../model/LoggerOptions.js';
+import { type LogLevel } from '../../../../model/LogLevel.js';
+import { type ContextMetadata } from '../../../models/ContextMetadata.js';
+import { LoggerAdapter } from '../../../modules/LoggerAdapter.js';
 
 export class WinstonLoggerAdapter extends LoggerAdapter {
   readonly #logger: Logger;
