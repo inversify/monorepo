@@ -2,8 +2,6 @@
 sidebar_position: 7
 title: 规划阶段
 ---
-import BrowserOnly from '@docusaurus/BrowserOnly';
-import DocusaurusInversifyCodeEditor from '@site/src/components/DocusaurusInversifyCodeEditor';
 
 # 规划阶段
 
@@ -97,12 +95,6 @@ interface PlanResult {
 - `binding`：实际的绑定实例
 - 特定于类型的元数据（类元数据、参数、属性注入等）
 - 依赖项的子服务节点
-
-## 可视化规划树
-
-使用下面的交互式代码编辑器尝试不同的绑定配置并查看生成的规划树。编辑器允许你编写 InversifyJS 代码并可视化生成的规划结构，帮助你了解容器如何解析你的依赖项。
-
-<DocusaurusInversifyCodeEditor style={{ height: 500 }} />
 
 ## 性能考虑
 

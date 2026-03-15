@@ -78,7 +78,11 @@ export default function DocusaurusInversifyCodeEditor({
             </TabItem>
             <TabItem value="graph" label="Graph">
               {graphEntries.length === 0 ? (
-                <p>Run the code to generate a dependency graph.</p>
+                <p>
+                  No graph yet. Go to the <strong>Editor</strong> tab, write
+                  your code, and press <strong>Run</strong> to generate the
+                  dependency graph.
+                </p>
               ) : (
                 <div style={{ marginBottom: '1rem', marginTop: '1rem' }}>
                   <label
