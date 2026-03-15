@@ -1,5 +1,17 @@
 # @inversifyjs/framework-core
 
+## 2.0.0
+
+### Major Changes
+
+- Updated packages to be ESM only
+- Updated inversify peer dependency to `8.x`
+
+### Patch Changes
+
+- Updated dependencies
+  - inversify@8.1.0
+
 ## 1.0.1
 
 ### Patch Changes

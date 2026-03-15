@@ -1,5 +1,15 @@
 # @inversifyjs/container
 
+## 2.0.1
+
+### Patch Changes
+
+- Ignored test typings from published package
+- Updated dependencies
+  - @inversifyjs/common@2.0.1
+  - @inversifyjs/core@10.0.1
+  - @inversifyjs/plugin@0.3.1
+
 ## 2.0.0
 
 ### Major Changes

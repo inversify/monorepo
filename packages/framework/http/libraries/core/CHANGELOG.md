@@ -1,5 +1,20 @@
 # @inversifyjs/http-core
 
+## 5.0.0
+
+### Major Changes
+
+- Updated packages to be ESM only
+- Updated inversify peer dependency to `8.x`
+
+### Patch Changes
+
+- Updated dependencies
+  - inversify@8.1.0
+  - @inversifyjs/framework-core@2.0.0
+  - @inversifyjs/logger@2.0.0
+  - @inversifyjs/prototype-utils@0.2.1
+
 ## 4.10.2
 
 ## 4.10.1

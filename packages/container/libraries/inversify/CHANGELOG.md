@@ -1,5 +1,19 @@
 # inversify
 
+## 8.1.0
+
+### Minor Changes
+
+- Export `AbstractNewable` type for use in abstract class bindings
+
+### Patch Changes
+
+- Ignored test typings from published package
+- Updated dependencies
+  - @inversifyjs/common@2.0.1
+  - @inversifyjs/container@2.0.1
+  - @inversifyjs/core@10.0.1
+
 ## 8.0.0
 
 ### Major Changes

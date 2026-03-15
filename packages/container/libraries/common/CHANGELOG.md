@@ -1,5 +1,11 @@
 # @inversifyjs/common
 
+## 2.0.1
+
+### Patch Changes
+
+- Ignored test typings from published package
+
 ## 2.0.0
 
 ### Major Changes

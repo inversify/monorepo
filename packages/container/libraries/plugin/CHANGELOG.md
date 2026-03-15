@@ -1,5 +1,11 @@
 # @inversifyjs/plugin
 
+## 0.3.1
+
+### Patch Changes
+
+- Ignored test typings from published package
+
 ## 0.3.0
 
 ### Minor Changes

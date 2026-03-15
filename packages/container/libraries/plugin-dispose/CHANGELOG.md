@@ -1,5 +1,19 @@
 # @inversifyjs/plugin-dispose
 
+## 0.4.0
+
+### Minor Changes
+
+- Updated inversify peer dependency to `8.x`
+
+### Patch Changes
+
+- Ignored test typings from published package
+- Updated dependencies
+  - @inversifyjs/container@2.0.1
+  - inversify@8.1.0
+  - @inversifyjs/plugin@0.3.1
+
 ## 0.3.0
 
 ### Minor Changes

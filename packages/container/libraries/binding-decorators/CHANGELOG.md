@@ -1,5 +1,17 @@
 # @inversifyjs/binding-decorators
 
+## 3.0.0
+
+### Major Changes
+
+- Updated inversify peer dependency to `8.x`
+
+### Patch Changes
+
+- Ignored test typings from published package
+- Updated dependencies
+  - inversify@8.1.0
+
 ## 2.0.0
 
 ### Major Changes
