@@ -4,13 +4,15 @@
 /reports
 
 **/*.ts
+!lib/**/*.d.ts
+**/*.spec.d.ts
 **/*.spec.js
 **/*.spec.js.map
 **/*.spec.d.ts.map
 **/*.spec-d.js
+**/*.spec-d.d.ts
 **/*.spec-d.js.map
 **/*.spec-d.d.ts.map
-!lib/**/*.d.ts
 
 AGENTS.md
 CHANGELOG.md
