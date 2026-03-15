@@ -43,7 +43,7 @@
   },
   "name": "@inversifyjs/http-uwebsockets",
   "peerDependencies": {
-    "@inversifyjs/logger": "^1.1.0",
+    "@inversifyjs/logger": "^2.0.0",
     "inversify": "^8.1.0"
   },
   "publishConfig": {
