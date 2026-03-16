@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type http from 'node:http';
 
+import type { IResolvers } from '@graphql-tools/utils';
 import {
   type InversifyApolloProvider,
   inversifyApolloProviderServiceIdentifier,
@@ -19,7 +20,9 @@ class QueryResolvers {
 }
 
 @injectable()
-class AppResolvers {
+class AppResolvers implements IResolvers {
+  [x: string]: IResolvers[string];
+
   // eslint-disable-next-line @typescript-eslint/naming-convention
   public readonly Query: QueryResolvers;
 
@@ -36,7 +39,7 @@ const typeDefs: string = `
 
 const container: Container = new Container();
 
-await container.load(
+await container.loadAsync(
   ApolloExpressServerContainerModule.graphServerFromOptions(
     {
       controllerOptions: {
