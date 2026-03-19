@@ -56,7 +56,7 @@ jobs:
       - name: Commit changes
         id: commit
         run: |
-          if git diff --quiet; then
+          if [ -z "$(git status --porcelain --untracked-files=all)" ]; then
             echo "No changes to sponsors wall"
             echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
