@@ -1,20 +1,19 @@
-import { defineConfig, presets } from "sponsorkit";
+import { defineConfig, tierPresets } from "sponsorkit";
 
 export default defineConfig({
   // Sponsor providers
   // - GitHub Sponsors: requires SPONSORKIT_GITHUB_TOKEN (PAT with read:user + read:org scopes)
   // - OpenCollective: requires SPONSORKIT_OPENCOLLECTIVE_KEY (https://opencollective.com/applications)
-  providers: [
-    {
-      name: "github",
-      login: "inversify",
-      type: "organization",
-    },
-    {
-      name: "opencollective",
-      slug: "inversifyjs",
-    },
-  ],
+  providers: ["github", "opencollective"],
+
+  github: {
+    login: "inversify",
+    type: "organization",
+  },
+
+  opencollective: {
+    slug: "inversifyjs",
+  },
 
   formats: ["svg"],
   outputDir: "./assets",
@@ -26,27 +25,26 @@ export default defineConfig({
     {
       title: "Gold Sponsors",
       monthlyDollars: 100,
-      preset: presets.gold,
+      preset: tierPresets.gold,
     },
     {
       title: "Silver Sponsors",
       monthlyDollars: 50,
-      preset: presets.medium,
+      preset: tierPresets.medium,
     },
     {
       title: "Bronze Sponsors",
       monthlyDollars: 5,
-      preset: presets.base,
+      preset: tierPresets.base,
     },
     {
       title: "Backers",
       monthlyDollars: 1,
-      preset: presets.small,
+      preset: tierPresets.small,
     },
     {
       title: "Past Sponsors",
-      monthlyDollars: -1,
-      preset: presets.xs,
+      preset: tierPresets.xs,
     },
   ],
 });

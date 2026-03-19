@@ -30,3 +30,4 @@ onlyBuiltDependencies:
   - esbuild
   - oxc-resolver
   - prisma
+  - sharp
