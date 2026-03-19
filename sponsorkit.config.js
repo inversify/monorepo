@@ -44,7 +44,6 @@ export default defineConfig({
     },
     {
       title: "Past Sponsors",
-      monthlyDollars: -1,
       preset: tierPresets.xs,
     },
   ],
