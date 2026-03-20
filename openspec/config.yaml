@@ -1,0 +1,22 @@
+schema: spec-driven
+
+context: |
+  Tech stack: TypeScript, pnpm monorepo, Vitest, Rollup, Turbo
+  Language: TypeScript strict mode throughout
+  Testing: Vitest with unit (.spec.ts), integration (.int.spec.ts), and type (.spec-d.ts) tests
+  Formatting: Prettier via @inversifyjs/foundation-prettier-config
+  Linting: ESLint via @inversifyjs/foundation-eslint-config
+  Commits: Conventional commits (commitlint enforced)
+  Domain: Dependency injection library ecosystem (InversifyJS)
+  Internal deps: Use workspace:* protocol
+  Build outputs: Mostly ESM at /lib, some packages have dual CJS/ESM via lib/cjs/ and lib/esm/
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours

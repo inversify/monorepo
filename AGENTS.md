@@ -12,6 +12,10 @@ This is the InversifyJS monorepo - a TypeScript dependency injection library eco
 - **JSON Schema packages**: Schema validation utilities
 - **Open API packages**: OpenAPI integration
 
+## Tooling Notes
+
+- **openspec** is installed as a local dev dependency. Always invoke it via `pnpm openspec <command>` — never use a bare `openspec` command or `npx`/`dlx`.
+
 ## Build and Test Commands
 
 ### Setup
@@ -110,15 +114,14 @@ pnpm run test:coverage
 ## Package Types and Structure
 
 ### Core Library Packages
-Main implementation packages with dual CJS/ESM builds:
+Main implementation packages with ESM-only builds:
 - `/packages/framework/core/` - Framework core
 - `/packages/container/libraries/` - Container implementations
 - `/packages/logger/` - Logging utilities
 
 **Standard structure:**
 - `src/` - TypeScript source code
-- `lib/cjs/` - CommonJS build output
-- `lib/esm/` - ES Module build output
+- `lib/` - ES Module build output (`"type": "module"`)
 - `vitest.config.mjs` - Test configuration
 - Standard scripts: `build`, `test`, `lint`, `format`
 
@@ -143,8 +146,7 @@ Docusaurus-based documentation sites:
 - **Dependency Management**: Workspace protocol for internal dependencies
 
 ### Build System
-- **TypeScript**: Multiple tsconfig files for different output formats
-- **Rollup**: ES module builds
+- **TypeScript**: `tsc` compiles directly to `lib/` as ESM (`"type": "module"`)
 - **SWC**: Fast TypeScript compilation for tests
 - **Turbo**: Cached, parallelized builds
 
