@@ -136,6 +136,7 @@ export default {
     "packages/framework/http/tools/http-benchmarks": {
       entry: [
         "src/bin/run.ts",
+        "src/index.ts",
         "src/k6/scenario/*.ts",
         "src/scenario-setups/*/*.ts",
       ],
