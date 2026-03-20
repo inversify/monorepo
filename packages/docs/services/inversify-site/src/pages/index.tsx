@@ -4,6 +4,7 @@ import FixedBottomContainer from '@site/src/components/FixedBottomContainer';
 import FrameworkBanner from '@site/src/components/FrameworkBanner';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import HomepageHeader from '@site/src/components/HomepageHeader';
+import HomepageSponsors from '@site/src/components/HomepageSponsors';
 import Layout from '@theme/Layout';
 import React from 'react';
 
@@ -17,6 +18,7 @@ export default function Home(): React.JSX.Element {
       <HomepageHeader />
       <main>
         <HomepageFeatures />
+        <HomepageSponsors />
       </main>
       <FixedBottomContainer>
         <FrameworkBanner />

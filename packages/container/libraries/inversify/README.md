@@ -49,6 +49,12 @@ InversifyJS has been developed with 4 main goals:
 **[Michel Weststrate](https://twitter.com/mweststrate)** - Author of [MobX](https://github.com/mobxjs/mobx)
 > *Dependency injection like InversifyJS works nicely*
 
+## Sponsors
+
+Thanks to all our sponsors! [Become a sponsor](https://github.com/sponsors/inversify).
+
+![Sponsors](https://raw.githubusercontent.com/inversify/monorepo/refs/heads/main/assets/sponsors.svg)
+
 ## Some companies using InversifyJS
 
 [<img src="https://avatars0.githubusercontent.com/u/6154722?s=200&v=4" width="100" alt="Microsoft logo" />](https://opensource.microsoft.com/)
