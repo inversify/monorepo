@@ -32,7 +32,7 @@
     "@rspack/core": "1.7.9",
     "@types/babel__standalone": "7.1.9",
     "@types/react": "19.2.14",
-    "eslint": "10.0.3",
+    "eslint": "10.1.0",
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "monaco-editor-webpack-plugin": "7.1.1",
