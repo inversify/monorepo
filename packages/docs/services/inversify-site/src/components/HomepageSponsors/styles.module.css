@@ -1,0 +1,16 @@
+.sponsorsContainer {
+  padding: 2rem 0;
+  text-align: center;
+  background-color: #ffffff;
+}
+
+.sponsorsTitle:not(#\#):not(#\#) {
+  color: #000000;
+  margin-bottom: 0.5rem;
+}
+
+.sponsorsSubtitle {
+  color: #444444;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}

@@ -85,6 +85,7 @@ const config: Config = {
           includeCurrentVersion: true,
           sidebarPath: './sidebars.ts',
         },
+        svgr: false,
         theme: {
           customCss: './src/css/custom.css',
         },
