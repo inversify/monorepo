@@ -51,7 +51,7 @@ Depending on what the user brings, you might:
 - Recommend a path (if asked)
 
 **Visualize**
-```
+```text
 ┌─────────────────────────────────────────┐
 │     Use ASCII diagrams liberally        │
 ├─────────────────────────────────────────┤
@@ -83,7 +83,7 @@ You have full context of the OpenSpec system. Use it naturally, don't force it.
 
 At the start, quickly check what exists:
 ```bash
-openspec list --json
+pnpm openspec list --json
 ```
 
 This tells you:

@@ -31,7 +31,10 @@ export default {
   workspaces: {
     ".": {
       entry: [],
-      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      ignoreDependencies: [
+        ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        "@fission-ai/openspec",
+      ],
       project: [],
     },
     "packages/container/examples/*": defaultWorkspaceProjectConfig,
