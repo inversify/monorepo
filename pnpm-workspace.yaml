@@ -21,6 +21,7 @@ ignoredBuiltDependencies:
 
 onlyBuiltDependencies:
   - '@apollo/protobufjs'
+  - '@fission-ai/openspec'
   - '@nestjs/core'
   - '@prisma/engines'
   - '@swc/core'
