@@ -7,6 +7,7 @@ import DocumentationButton from '@site/src/components/DocumentationButton';
 import FeatureCard from '@site/src/components/FeatureCard';
 import { CodeSnippet } from '@site/src/components/FloatingCodeSnippet';
 import HomeFloatingCodeSnippets from '@site/src/components/HomeFloatingCodeSnippets';
+import HomepageSponsors from '@site/src/components/HomepageSponsors';
 import StatsCounter from '@site/src/components/StatsCounter';
 import Heading from '@theme/Heading';
 import Layout from '@theme/Layout';
@@ -166,6 +167,7 @@ export default function Home(): React.JSX.Element {
       <HomepageHeader />
       <main>
         <HomepageFeatures />
+        <HomepageSponsors />
       </main>
     </Layout>
   );
