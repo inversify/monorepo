@@ -18,6 +18,7 @@ export default function HomepageSponsors(): React.JSX.Element {
         data={SponsorsSvg}
         type="image/svg+xml"
         aria-label="Sponsors"
+        className={styles.sponsorsObject}
       ></object>
     </div>
   );
