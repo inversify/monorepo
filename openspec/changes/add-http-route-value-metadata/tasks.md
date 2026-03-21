@@ -22,40 +22,26 @@
 
 ## 4. Express adapter (`@inversifyjs/http-express`)
 
-- [ ] 4.1 Override `_getRouteValueMetadataHandler` in `InversifyExpressHttpAdapter` to return a middleware that sets `req[routeValueMetadataSymbol]` to the metadata map
-- [ ] 4.2 Create `createExpressRouteValueMetadataUtils<T>(key: string | symbol)` factory function returning `[decorator, getter]` tuple
-- [ ] 4.3 Add unit tests for the Express route value metadata handler middleware
-- [ ] 4.4 Add unit tests for `createExpressRouteValueMetadataUtils` (decorator sets metadata, getter retrieves value, getter returns undefined for missing metadata)
-- [ ] 4.5 Export `createExpressRouteValueMetadataUtils` from the Express package index
+- [x] 4.1 Override `_getRouteValueMetadataHandler` in `InversifyExpressHttpAdapter` to return a middleware that sets `req[routeValueMetadataSymbol]` to the metadata map
+- [x] 4.2 Create `createExpressRouteValueMetadataUtils<T>(key: string | symbol)` factory function returning `[decorator, getter]` tuple
+- [x] 4.3 Add unit tests for `createExpressRouteValueMetadataUtils` (decorator sets metadata, getter retrieves value, getter returns undefined for missing metadata)
+- [x] 4.4 Export `createExpressRouteValueMetadataUtils` from the Express package index
 
 ## 5. Express v4 adapter (`@inversifyjs/http-express-v4`)
 
-- [ ] 5.1 Override `_getRouteValueMetadataHandler` in `InversifyExpressHttpAdapter` (v4) to return a middleware that sets `req[routeValueMetadataSymbol]`
-- [ ] 5.2 Create `createExpressV4RouteValueMetadataUtils<T>(key: string | symbol)` factory function
-- [ ] 5.3 Add unit tests for the Express v4 route value metadata handler and factory
-- [ ] 5.4 Export `createExpressV4RouteValueMetadataUtils` from the Express v4 package index
+- [x] 5.1 Override `_getRouteValueMetadataHandler` in `InversifyExpressHttpAdapter` (v4) to return a middleware that sets `req[routeValueMetadataSymbol]`
 
 ## 6. Fastify adapter (`@inversifyjs/http-fastify`)
 
 - [ ] 6.1 Override `_getRouteValueMetadataHandler` in `InversifyFastifyHttpAdapter` to return a middleware that sets `request[routeValueMetadataSymbol]`
-- [ ] 6.2 Create `createFastifyRouteValueMetadataUtils<T>(key: string | symbol)` factory function
-- [ ] 6.3 Add unit tests for the Fastify route value metadata handler and factory
-- [ ] 6.4 Export `createFastifyRouteValueMetadataUtils` from the Fastify package index
 
 ## 7. Hono adapter (`@inversifyjs/http-hono`)
 
 - [ ] 7.1 Override `_getRouteValueMetadataHandler` in `InversifyHonoHttpAdapter` to return a middleware that stores metadata in the Hono context via `c.set()`
-- [ ] 7.2 Create `createHonoRouteValueMetadataUtils<T>(key: string | symbol)` factory function (getter reads from Hono `Context` via `c.get()`)
-- [ ] 7.3 Add unit tests for the Hono route value metadata handler and factory
-- [ ] 7.4 Export `createHonoRouteValueMetadataUtils` from the Hono package index
 
 ## 8. uWebSockets adapter (`@inversifyjs/http-uwebsockets`)
 
 - [ ] 8.1 Override `_getRouteValueMetadataHandler` in `InversifyUwebsocketsHttpAdapter` to return a middleware that sets `req[routeValueMetadataSymbol]` to the metadata map
-- [ ] 8.2 Create `createUwebsocketsRouteValueMetadataUtils<T>(key: string | symbol)` factory function returning `[decorator, getter]` tuple
-- [ ] 8.3 Add unit tests for the uWebSockets route value metadata handler middleware
-- [ ] 8.4 Add unit tests for `createUwebsocketsRouteValueMetadataUtils`
-- [ ] 8.5 Export `createUwebsocketsRouteValueMetadataUtils` from the uWebSockets package index
 
 ## 9. E2E tests (`@inversifyjs/http-e2e-tests`)
 

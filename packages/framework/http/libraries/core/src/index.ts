@@ -97,6 +97,7 @@ import { getControllerMetadataList } from './routerExplorer/calculations/getCont
 import { getControllerMethodMetadataList } from './routerExplorer/calculations/getControllerMethodMetadataList.js';
 import { type ControllerMetadata } from './routerExplorer/model/ControllerMetadata.js';
 import { type ControllerMethodMetadata } from './routerExplorer/model/ControllerMethodMetadata.js';
+import { createRouteValueMetadataUtils } from './valueMetadata/calculations/createRouteValueMetadataUtils.js';
 
 export type {
   CatchErrorOptions,
@@ -140,6 +141,7 @@ export {
   Cookies,
   createCustomNativeParameterDecorator,
   createCustomParameterDecorator,
+  createRouteValueMetadataUtils,
   CreatedHttpResponse,
   Delete,
   ErrorHttpResponse,

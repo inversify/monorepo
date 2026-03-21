@@ -23,10 +23,10 @@ The `InversifyExpressHttpAdapter` SHALL override `_getRouteValueMetadataHandler`
 - **THEN** the request object SHALL have a property at `routeValueMetadataSymbol` containing the route's metadata map before any user middleware executes
 
 ### Requirement: Express v4 route value metadata utils factory
-The `@inversifyjs/http-express-v4` package SHALL export a `createExpressV4RouteValueMetadataUtils<T>(key: string | symbol)` function with the same behavior as the Express factory.
+The `@inversifyjs/http-express-v4` package SHALL export a `createExpressRouteValueMetadataUtils<T>(key: string | symbol)` function with the same behavior as the Express factory.
 
 #### Scenario: Factory returns decorator and getter
-- **WHEN** `createExpressV4RouteValueMetadataUtils<string[]>('ROLES')` is called
+- **WHEN** `createExpressRouteValueMetadataUtils<string[]>('ROLES')` is called
 - **THEN** it SHALL return a tuple where the first element is a method decorator and the second element is a function that accepts an Express v4 `Request` and returns `T | undefined`
 
 #### Scenario: Getter retrieves metadata set by decorator
