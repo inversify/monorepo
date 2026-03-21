@@ -7,10 +7,10 @@
 
 ## 2. Router explorer integration (`@inversifyjs/http-core`)
 
-- [ ] 2.1 Add optional `routeValueMetadataMap?: Map<string | symbol, unknown>` field to `RouterExplorerControllerMethodMetadata` (optional at this stage to avoid breaking existing code)
-- [ ] 2.2 Create a getter function (e.g., `getControllerMethodRouteValueMetadata`) to extract route value metadata for a specific method from the controller constructor
-- [ ] 2.3 Update `buildRouterExplorerControllerMethodMetadata` to call the getter and populate the new field
-- [ ] 2.4 Add unit tests for route value metadata extraction in the router explorer (with metadata, without metadata)
+- [x] 2.1 Add optional `routeValueMetadataMap?: Map<string | symbol, unknown>` field to `RouterExplorerControllerMethodMetadata` (optional at this stage to avoid breaking existing code)
+- [x] 2.2 Create a getter function (e.g., `getControllerMethodRouteValueMetadata`) to extract route value metadata for a specific method from the controller constructor
+- [x] 2.3 Update `buildRouterExplorerControllerMethodMetadata` to call the getter and populate the new field
+- [x] 2.4 Add unit tests for route value metadata extraction in the router explorer (with metadata, without metadata)
 
 ## 3. RouteParams and base adapter (`@inversifyjs/http-core`)
 

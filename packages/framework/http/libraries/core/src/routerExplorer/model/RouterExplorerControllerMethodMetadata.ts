@@ -39,6 +39,7 @@ export interface RouterExplorerControllerMethodMetadata<
     Middleware<TRequest, TResponse, any, TResult>
   >[];
   readonly requestMethodType: RequestMethodType;
+  readonly routeValueMetadataMap?: Map<string | symbol, unknown> | undefined;
   readonly statusCode: HttpStatusCode | undefined;
   readonly useNativeHandler: boolean;
 }
