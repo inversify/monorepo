@@ -7,7 +7,6 @@ Currently, there is no mechanism for users to attach custom key-value metadata t
 ### Key constraints
 
 - Five adapters exist: Express, Express v4, Fastify, Hono, uWebSockets.
-- uWebSockets does not expose the matched route on the request object, so it cannot support route value metadata retrieval.
 - Each adapter registers routes differently (Express uses `app.get(path, ...handlers)`, Fastify uses `app.get(path, handler)`, Hono uses nested routers, etc.).
 - Existing metadata storage uses `reflect-metadata` via `@inversifyjs/reflect-metadata-utils`.
 
@@ -16,11 +15,10 @@ Currently, there is no mechanism for users to attach custom key-value metadata t
 **Goals:**
 - Allow users to create decorator/getter pairs for arbitrary route-level metadata via a simple factory function.
 - Plumb route value metadata through the existing router explorer → `RouteParams` → `_buildRouter` pipeline.
-- Each supported adapter (Express, Express v4, Fastify, Hono) can populate the metadata on the request so it is available in middleware.
+- Each supported adapter (Express, Express v4, Fastify, Hono, uWebSockets) can populate the metadata on the request so it is available in middleware.
 - Provide type-safe retrieval: `getRoles(request)` returns `string[] | undefined`.
 
 **Non-Goals:**
-- Support for uWebSockets (route not available in request).
 - Runtime metadata mutation (metadata is set at registration time, read-only at request time).
 - Controller-class-level metadata (only method-level; class metadata can be composed separately).
 
@@ -54,7 +52,7 @@ protected _getRouteValueMetadataHandler(
 
 The default implementation returns `undefined` (no-op). Each adapter overrides it to return a middleware that populates the metadata on the request object. The base adapter prepends this middleware to the route's pre-handler list when the map is non-empty.
 
-**Rationale:** This keeps `_buildRouter` unchanged and lets each adapter opt-in to route value metadata support. Adapters that don't support it (uWebSockets) simply don't override the method.
+**Rationale:** This keeps `_buildRouter` unchanged and lets each adapter opt-in to route value metadata support.
 
 **Alternatives considered:**
 - Passing metadata through `RouteParams` and letting each `_buildRouter` handle it: viable but would require modifying all five `_buildRouter` implementations and the `RouteParams` interface. The middleware approach is less invasive.
@@ -69,6 +67,7 @@ The default implementation returns `undefined` (no-op). Each adapter overrides i
 **Express/Express v4:** `req[routeValueMetadataSymbol] = metadataMap`
 **Fastify:** `request[routeValueMetadataSymbol] = metadataMap`
 **Hono:** Context-based storage using Hono's `c.set()` / `c.get()` pattern, with the getter adapted to read from the Hono context.
+**uWebSockets:** `req[routeValueMetadataSymbol] = metadataMap` (attached to the request wrapper/object passed through the pipeline)
 
 ### 5. Public API: adapter-specific factory functions
 
@@ -80,6 +79,9 @@ const [Roles, getRoles] = createExpressRouteValueMetadataUtils<string[]>('ROLES'
 
 // Fastify
 const [Roles, getRoles] = createFastifyRouteValueMetadataUtils<string[]>('ROLES');
+
+// uWebSockets
+const [Roles, getRoles] = createUwebsocketsRouteValueMetadataUtils<string[]>('ROLES');
 ```
 
 The decorator is framework-agnostic (it only sets reflect-metadata). The getter function is framework-specific (it reads from the framework's request type).
@@ -100,7 +102,5 @@ The decorator is framework-agnostic (it only sets reflect-metadata). The getter 
 - **[Symbol property on request objects]** → Some frameworks may seal/freeze request objects in future versions. Mitigation: the symbol approach is widely used in the Express/Fastify ecosystem and is unlikely to break. Hono uses its native context API instead.
 
 - **[Metadata only available after middleware injection]** → If a custom parameter decorator or native handler accesses the request before the route value metadata middleware runs, the metadata won't be available. Mitigation: the metadata middleware is prepended to the pre-handler list, so it runs before any user-defined middleware, guards, or the handler.
-
-- **[uWebSockets not supported]** → Users of uWebSockets cannot use route value metadata. Mitigation: document this limitation. uWebSockets is a niche adapter for extreme performance use cases where such features are typically handled differently.
 
 - **[Breaking type change on RouteParams]** → Adding a mandatory `routeValueMetadataMap` to `RouteParams` will break custom adapters that construct `RouteParams` manually. Mitigation: this is an internal interface, not part of the public API. Custom adapter authors must add the field (set to `undefined` if unsupported).
