@@ -1,9 +1,9 @@
 ## 1. Core metadata infrastructure (`@inversifyjs/http-core`)
 
-- [ ] 1.1 Add `routeValueMetadataReflectKey` to `packages/framework/http/libraries/core/src/reflectMetadata/data/`
-- [ ] 1.2 Create the route value metadata decorator function that stores metadata on the controller constructor using `updateOwnReflectMetadata` with the structure `Map<string | symbol, Map<string | symbol, unknown>>`
-- [ ] 1.3 Add unit tests for the route value metadata decorator (single decorator, multiple decorators on same method, decorators on different methods)
-- [ ] 1.4 Create `routeValueMetadataSymbol` symbol and export it from `@inversifyjs/http-core`
+- [x] 1.1 Add `routeValueMetadataReflectKey` to `packages/framework/http/libraries/core/src/reflectMetadata/data/`
+- [x] 1.2 Create the route value metadata decorator function that stores metadata on the controller constructor using `updateOwnReflectMetadata` with the structure `Map<string | symbol, Map<string | symbol, unknown>>`
+- [x] 1.3 Add unit tests for the route value metadata decorator (single decorator, multiple decorators on same method, decorators on different methods)
+- [x] 1.4 Create `routeValueMetadataSymbol` symbol and export it from `@inversifyjs/http-core`
 
 ## 2. Router explorer integration (`@inversifyjs/http-core`)
 

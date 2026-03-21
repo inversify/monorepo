@@ -36,6 +36,7 @@ import { Put } from './http/decorators/Put.js';
 import { Query } from './http/decorators/Query.js';
 import { Request } from './http/decorators/Request.js';
 import { Response } from './http/decorators/Response.js';
+import { routeValueMetadata } from './http/decorators/routeValueMetadata.js';
 import { SetHeader } from './http/decorators/SetHeader.js';
 import { StatusCode } from './http/decorators/StatusCode.js';
 import { type ControllerOptions } from './http/models/ControllerOptions.js';
@@ -55,6 +56,7 @@ import { type RequiredOptions } from './http/models/RequiredOptions.js';
 import { type RouteParamOptions } from './http/models/RouteParamOptions.js';
 import { type RouteParams } from './http/models/RouteParams.js';
 import { type RouterParams } from './http/models/RouterParams.js';
+import { routeValueMetadataSymbol } from './http/models/routeValueMetadataSymbol.js';
 import { isHttpResponse } from './httpResponse/calculations/isHttpResponse.js';
 import { AcceptedHttpResponse } from './httpResponse/models/AcceptedHttpResponse.js';
 import { AlreadyReportedHttpResponse } from './httpResponse/models/AlreadyReportedHttpResponse.js';
@@ -183,6 +185,8 @@ export {
   RequestMethodType,
   ResetContentHttpResponse,
   Response,
+  routeValueMetadata,
+  routeValueMetadataSymbol,
   ServiceUnavailableHttpResponse,
   SetHeader,
   SuccessHttpResponse,
