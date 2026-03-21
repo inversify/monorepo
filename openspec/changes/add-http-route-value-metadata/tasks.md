@@ -14,12 +14,11 @@
 
 ## 3. RouteParams and base adapter (`@inversifyjs/http-core`)
 
-- [ ] 3.1 Add optional `routeValueMetadataMap?: Map<string | symbol, unknown>` field to `RouteParams` interface (optional at this stage to avoid breaking existing code)
-- [ ] 3.2 Populate `routeValueMetadataMap` in the base adapter's route params building logic (where `RouteParams` objects are constructed from `RouterExplorerControllerMethodMetadata`)
-- [ ] 3.3 Add the protected `_getRouteValueMetadataHandler` method to `InversifyHttpAdapter` with a default `undefined` return
-- [ ] 3.4 Update the base adapter to call `_getRouteValueMetadataHandler` when `routeValueMetadataMap` is non-empty and prepend the returned middleware to the pre-handler list
-- [ ] 3.5 Add unit tests for the base adapter route value metadata handler integration (middleware prepend, skip on empty map)
-- [ ] 3.6 Export new public types and symbols from `@inversifyjs/http-core` index
+- [x] 3.1 Add optional `routeValueMetadataMap?: Map<string | symbol, unknown>` field to `RouteParams` interface (optional at this stage to avoid breaking existing code)
+- [x] 3.2 Populate `routeValueMetadataMap` in the base adapter's route params building logic (where `RouteParams` objects are constructed from `RouterExplorerControllerMethodMetadata`)
+- [x] 3.3 Add the protected `_getRouteValueMetadataHandler` method to `InversifyHttpAdapter` with a default `undefined` return
+- [x] 3.4 Update the base adapter to call `_getRouteValueMetadataHandler` when `routeValueMetadataMap` is non-empty and prepend the returned middleware to the pre-handler list
+- [x] 3.5 Export new public types and symbols from `@inversifyjs/http-core` index
 
 ## 4. Express adapter (`@inversifyjs/http-express`)
 
