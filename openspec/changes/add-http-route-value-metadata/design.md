@@ -69,33 +69,28 @@ The default implementation returns `undefined` (no-op). Each adapter overrides i
 **Hono:** Context-based storage using Hono's `c.set()` / `c.get()` pattern, with the getter adapted to read from the Hono context.
 **uWebSockets:** `req[routeValueMetadataSymbol] = metadataMap` (attached to the request wrapper/object passed through the pipeline)
 
-### 5. Public API: adapter-specific factory functions
+### 5. Public API: single core factory function
 
-**Decision:** Each adapter package exports a `create<Framework>RouteValueMetadataUtils<T>(key: string | symbol)` function that returns a `[decorator, getter]` tuple.
+**Decision:** The `@inversifyjs/http-core` package exports a single `createRouteValueMetadataUtils<T>(key: string | symbol)` function that returns a `[decorator, getter]` tuple.
 
 ```ts
-// Express
-const [Roles, getRoles] = createExpressRouteValueMetadataUtils<string[]>('ROLES');
+import { createRouteValueMetadataUtils } from '@inversifyjs/http-core';
 
-// Fastify
-const [Roles, getRoles] = createFastifyRouteValueMetadataUtils<string[]>('ROLES');
-
-// uWebSockets
-const [Roles, getRoles] = createUwebsocketsRouteValueMetadataUtils<string[]>('ROLES');
+const [Roles, getRoles] = createRouteValueMetadataUtils<string[]>('ROLES');
 ```
 
-The decorator is framework-agnostic (it only sets reflect-metadata). The getter function is framework-specific (it reads from the framework's request type).
+The decorator is framework-agnostic (it only sets reflect-metadata). The getter reads from the request object using `routeValueMetadataSymbol`, which every adapter's `_getRouteValueMetadataHandler` middleware is responsible for setting.
 
-**Rationale:** Framework-specific getters provide correct typings (`express.Request` vs `FastifyRequest`). The decorator is identical across frameworks but is bundled with the getter in the same factory for ergonomic usage.
+**Rationale:** Since every adapter's middleware stores metadata on the request object via the same well-known symbol, a single generic getter in core works across all adapters. This avoids duplicating near-identical factory functions in each adapter package and gives users a single import location.
 
 **Alternatives considered:**
-- A single generic factory in core with adapter-provided getter: this would require users to import from two packages and manually wire them, reducing ergonomics.
+- Per-adapter factory functions (`createExpressRouteValueMetadataUtils`, etc.): discarded because the decorator is identical across adapters and the getter logic (read from `request[routeValueMetadataSymbol]`) is also the same. The only adapter-specific part is the middleware that sets the symbol, which is already handled by `_getRouteValueMetadataHandler`.
 
-### 6. Hono adapter uses context variables instead of request symbol
+### 6. Hono adapter uses context variables for middleware storage
 
-**Decision:** Hono's request object (`HonoRequest`) is a thin wrapper that doesn't support arbitrary properties as cleanly. Instead, the Hono adapter uses Hono's built-in `c.set(key, value)` / `c.get(key)` context variable API. The Hono getter function takes a `Context` instead of `HonoRequest`.
+**Decision:** Hono's request object (`HonoRequest`) is a thin wrapper that doesn't support arbitrary properties as cleanly. The Hono adapter's `_getRouteValueMetadataHandler` middleware uses Hono's built-in `c.set(key, value)` API to store the metadata map in the Hono context. The core getter function still reads from the request object via `routeValueMetadataSymbol`, so the Hono middleware must also set the symbol property on the request object to remain compatible with the single core getter.
 
-**Rationale:** Hono's `Context` is the idiomatic way to pass per-request data. This aligns with Hono conventions and existing Hono adapter patterns.
+**Rationale:** Hono's `Context` is the idiomatic way to pass per-request data, but the core getter needs a uniform access path. The Hono middleware bridges both approaches by setting the symbol on the request object.
 
 ## Risks / Trade-offs
 

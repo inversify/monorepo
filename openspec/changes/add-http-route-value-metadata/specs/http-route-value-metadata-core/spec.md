@@ -65,3 +65,18 @@ The `InversifyHttpAdapter` base class SHALL provide a protected method `_getRout
 #### Scenario: Undefined metadata map skips middleware
 - **WHEN** a route has an `undefined` `routeValueMetadataMap`
 - **THEN** the base adapter SHALL NOT call `_getRouteValueMetadataHandler` or prepend any middleware
+
+### Requirement: Route value metadata utils factory
+The `@inversifyjs/http-core` package SHALL export a `createRouteValueMetadataUtils<T>(key: string | symbol)` function that returns a tuple `[decorator, getter]`. The decorator sets metadata on the controller method. The getter retrieves the metadata value from a request object by reading from `routeValueMetadataSymbol`.
+
+#### Scenario: Factory returns decorator and getter
+- **WHEN** `createRouteValueMetadataUtils<string[]>('ROLES')` is called
+- **THEN** it SHALL return a tuple where the first element is a method decorator and the second element is a function that accepts a request-like object and returns `T | undefined`
+
+#### Scenario: Getter retrieves metadata set by adapter middleware
+- **WHEN** a controller method is decorated with the decorator passing value `['admin']`, and an adapter's `_getRouteValueMetadataHandler` middleware has set `request[routeValueMetadataSymbol]` to the route's metadata map
+- **THEN** calling the getter with that request SHALL return `['admin']`
+
+#### Scenario: Getter returns undefined when no metadata is present
+- **WHEN** a request does not have `routeValueMetadataSymbol` set, or the metadata map does not contain the requested key
+- **THEN** calling the getter SHALL return `undefined`

@@ -19,13 +19,11 @@
 - [x] 3.3 Add the protected `_getRouteValueMetadataHandler` method to `InversifyHttpAdapter` with a default `undefined` return
 - [x] 3.4 Update the base adapter to call `_getRouteValueMetadataHandler` when `routeValueMetadataMap` is non-empty and prepend the returned middleware to the pre-handler list
 - [x] 3.5 Export new public types and symbols from `@inversifyjs/http-core` index
+- [x] 3.6 Create `createRouteValueMetadataUtils<T>(key: string | symbol)` factory function in `@inversifyjs/http-core` that returns a `[decorator, getter]` tuple (single core factory — no per-adapter factories needed)
 
 ## 4. Express adapter (`@inversifyjs/http-express`)
 
 - [x] 4.1 Override `_getRouteValueMetadataHandler` in `InversifyExpressHttpAdapter` to return a middleware that sets `req[routeValueMetadataSymbol]` to the metadata map
-- [x] 4.2 Create `createExpressRouteValueMetadataUtils<T>(key: string | symbol)` factory function returning `[decorator, getter]` tuple
-- [x] 4.3 Add unit tests for `createExpressRouteValueMetadataUtils` (decorator sets metadata, getter retrieves value, getter returns undefined for missing metadata)
-- [x] 4.4 Export `createExpressRouteValueMetadataUtils` from the Express package index
 
 ## 5. Express v4 adapter (`@inversifyjs/http-express-v4`)
 
