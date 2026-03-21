@@ -215,6 +215,14 @@ export abstract class InversifyHttpAdapter<
     this.#globalPipeList.push(...pipeList);
   }
 
+  protected _getRouteValueMetadataHandler(
+    _routeValueMetadataMap: Map<string | symbol, unknown> | undefined,
+  ):
+    | MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>
+    | undefined {
+    return undefined;
+  }
+
   async #appendHandlerParam(
     params: unknown[],
     index: number,
@@ -258,182 +266,6 @@ export abstract class InversifyHttpAdapter<
     this.#container
       .bind<TApp>(httpApplicationServiceIdentifier)
       .toConstantValue(this._app);
-  }
-
-  #buildCustomParameterDecoratorHandlerOptions(): CustomParameterDecoratorHandlerOptions<
-    TRequest,
-    TResponse
-  > {
-    return {
-      getBody: this._getBody.bind(this),
-      getCookies: this._getCookies.bind(this),
-      getHeaders: this._getHeaders.bind(this),
-      getParams: this._getParams.bind(this),
-      getQuery: this._getQuery.bind(this),
-      setHeader: this._setHeader.bind(this),
-      setStatus: this._setStatus.bind(this),
-    };
-  }
-
-  #buildCustomNativeParameterDecoratorHandlerOptions(): CustomNativeParameterDecoratorHandlerOptions<
-    TRequest,
-    TResponse
-  > {
-    return {
-      getBody: this._getBody.bind(this),
-      getCookies: this._getCookies.bind(this),
-      getHeaders: this._getHeaders.bind(this),
-      getParams: this._getParams.bind(this),
-      getQuery: this._getQuery.bind(this),
-      send: this.#reply.bind(this),
-      sendBodySeparator: this._sendBodySeparator.bind(this),
-      setHeader: this._setHeader.bind(this),
-      setStatus: this._setStatus.bind(this),
-    };
-  }
-
-  #buildLogger(httpAdapterOptions: RequiredOptions<TOptions>): Logger {
-    if (typeof httpAdapterOptions.logger === 'boolean') {
-      return new ConsoleLogger();
-    }
-
-    return httpAdapterOptions.logger;
-  }
-
-  #builRouteParamdHandlerList(
-    routerExplorerControllerMetadata: RouterExplorerControllerMetadata<
-      TRequest,
-      TResponse,
-      TResult
-    >,
-  ): RouteParams<TRequest, TResponse, TNextFunction, TResult>[] {
-    return routerExplorerControllerMetadata.controllerMethodMetadataList.map(
-      (
-        routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
-          TRequest,
-          TResponse,
-          TResult
-        >,
-      ) => ({
-        guardList: [
-          ...this.#getGuardHandlerFromMetadata(
-            this.#globalGuardList,
-            routerExplorerControllerMethodMetadata,
-          ),
-          ...this.#getGuardHandlerFromMetadata(
-            routerExplorerControllerMethodMetadata.guardList,
-            routerExplorerControllerMethodMetadata,
-          ),
-        ],
-        handler: this.#buildHandler(
-          routerExplorerControllerMetadata.serviceIdentifier,
-          routerExplorerControllerMetadata.target,
-          routerExplorerControllerMethodMetadata,
-        ),
-        path: routerExplorerControllerMethodMetadata.path,
-        postHandlerMiddlewareList: [
-          ...this.#getMiddlewareHandlerFromMetadata(
-            routerExplorerControllerMethodMetadata,
-            this.#postHandlerMiddlewareList,
-          ),
-          ...this.#getMiddlewareHandlerFromMetadata(
-            routerExplorerControllerMethodMetadata,
-            routerExplorerControllerMethodMetadata.postHandlerMiddlewareList,
-          ),
-        ],
-        preHandlerMiddlewareList: [
-          ...this.#getMiddlewareHandlerFromMetadata(
-            routerExplorerControllerMethodMetadata,
-            this.#preHandlerMiddlewareList,
-          ),
-          ...this.#getMiddlewareHandlerFromMetadata(
-            routerExplorerControllerMethodMetadata,
-            routerExplorerControllerMethodMetadata.preHandlerMiddlewareList,
-          ),
-        ],
-        requestMethodType:
-          routerExplorerControllerMethodMetadata.requestMethodType,
-      }),
-    );
-  }
-
-  #buildHandler(
-    serviceIdentifier: ServiceIdentifier,
-    targetClass: NewableFunction,
-    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
-      TRequest,
-      TResponse,
-      TResult
-    >,
-  ): RequestHandler<TRequest, TResponse, TNextFunction, TResult> {
-    const buildCallRouteHandler: (
-      request: TRequest,
-      response: TResponse,
-      next: TNextFunction,
-    ) => Promise<ControllerResponse> = this.#buildCallRouteHandler(
-      targetClass,
-      routerExplorerControllerMethodMetadata.methodKey,
-      routerExplorerControllerMethodMetadata.parameterMetadataList,
-      serviceIdentifier,
-    );
-
-    let reply: (
-      req: TRequest,
-      res: TResponse,
-      value: ControllerResponse,
-    ) => TResult | Promise<TResult>;
-
-    if (routerExplorerControllerMethodMetadata.useNativeHandler) {
-      reply = (req: TRequest, res: TResponse, value: ControllerResponse) => {
-        if (routerExplorerControllerMethodMetadata.statusCode !== undefined) {
-          this._setStatus(
-            req,
-            res,
-            routerExplorerControllerMethodMetadata.statusCode,
-          );
-        }
-
-        this.#setHeaders(
-          req,
-          res,
-          routerExplorerControllerMethodMetadata.headerMetadataList,
-        );
-
-        return value as TResult;
-      };
-    } else {
-      reply = (
-        req: TRequest,
-        res: TResponse,
-        value: ControllerResponse,
-      ): TResult | Promise<TResult> =>
-        this.#reply(
-          req,
-          res,
-          value,
-          routerExplorerControllerMethodMetadata.statusCode,
-          routerExplorerControllerMethodMetadata.headerMetadataList,
-        );
-    }
-
-    const handleError: (
-      request: TRequest,
-      response: TResponse,
-      error: unknown,
-    ) => Promise<TResult> = this.#buildHandleError(
-      routerExplorerControllerMethodMetadata,
-    );
-
-    return buildInterceptedHandler(
-      [
-        ...routerExplorerControllerMethodMetadata.interceptorList,
-        ...this.#globalInterceptorList,
-      ],
-      this.#container,
-      buildCallRouteHandler,
-      handleError,
-      reply,
-    );
   }
 
   #buildCallRouteHandler(
@@ -620,6 +452,229 @@ export abstract class InversifyHttpAdapter<
 
       return (controller[controllerMethodKey] as ControllerFunction)(...params);
     };
+  }
+
+  #buildCustomParameterDecoratorHandlerOptions(): CustomParameterDecoratorHandlerOptions<
+    TRequest,
+    TResponse
+  > {
+    return {
+      getBody: this._getBody.bind(this),
+      getCookies: this._getCookies.bind(this),
+      getHeaders: this._getHeaders.bind(this),
+      getParams: this._getParams.bind(this),
+      getQuery: this._getQuery.bind(this),
+      setHeader: this._setHeader.bind(this),
+      setStatus: this._setStatus.bind(this),
+    };
+  }
+
+  #buildCustomNativeParameterDecoratorHandlerOptions(): CustomNativeParameterDecoratorHandlerOptions<
+    TRequest,
+    TResponse
+  > {
+    return {
+      getBody: this._getBody.bind(this),
+      getCookies: this._getCookies.bind(this),
+      getHeaders: this._getHeaders.bind(this),
+      getParams: this._getParams.bind(this),
+      getQuery: this._getQuery.bind(this),
+      send: this.#reply.bind(this),
+      sendBodySeparator: this._sendBodySeparator.bind(this),
+      setHeader: this._setHeader.bind(this),
+      setStatus: this._setStatus.bind(this),
+    };
+  }
+
+  #buildHandler(
+    serviceIdentifier: ServiceIdentifier,
+    targetClass: NewableFunction,
+    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >,
+  ): RequestHandler<TRequest, TResponse, TNextFunction, TResult> {
+    const buildCallRouteHandler: (
+      request: TRequest,
+      response: TResponse,
+      next: TNextFunction,
+    ) => Promise<ControllerResponse> = this.#buildCallRouteHandler(
+      targetClass,
+      routerExplorerControllerMethodMetadata.methodKey,
+      routerExplorerControllerMethodMetadata.parameterMetadataList,
+      serviceIdentifier,
+    );
+
+    let reply: (
+      req: TRequest,
+      res: TResponse,
+      value: ControllerResponse,
+    ) => TResult | Promise<TResult>;
+
+    if (routerExplorerControllerMethodMetadata.useNativeHandler) {
+      reply = (req: TRequest, res: TResponse, value: ControllerResponse) => {
+        if (routerExplorerControllerMethodMetadata.statusCode !== undefined) {
+          this._setStatus(
+            req,
+            res,
+            routerExplorerControllerMethodMetadata.statusCode,
+          );
+        }
+
+        this.#setHeaders(
+          req,
+          res,
+          routerExplorerControllerMethodMetadata.headerMetadataList,
+        );
+
+        return value as TResult;
+      };
+    } else {
+      reply = (
+        req: TRequest,
+        res: TResponse,
+        value: ControllerResponse,
+      ): TResult | Promise<TResult> =>
+        this.#reply(
+          req,
+          res,
+          value,
+          routerExplorerControllerMethodMetadata.statusCode,
+          routerExplorerControllerMethodMetadata.headerMetadataList,
+        );
+    }
+
+    const handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult> = this.#buildHandleError(
+      routerExplorerControllerMethodMetadata,
+    );
+
+    return buildInterceptedHandler(
+      [
+        ...routerExplorerControllerMethodMetadata.interceptorList,
+        ...this.#globalInterceptorList,
+      ],
+      this.#container,
+      buildCallRouteHandler,
+      handleError,
+      reply,
+    );
+  }
+
+  #buildLogger(httpAdapterOptions: RequiredOptions<TOptions>): Logger {
+    if (typeof httpAdapterOptions.logger === 'boolean') {
+      return new ConsoleLogger();
+    }
+
+    return httpAdapterOptions.logger;
+  }
+
+  #buildRouteParamHandlerList(
+    routerExplorerControllerMetadata: RouterExplorerControllerMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >,
+  ): RouteParams<TRequest, TResponse, TNextFunction, TResult>[] {
+    return routerExplorerControllerMetadata.controllerMethodMetadataList.map(
+      (
+        routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+          TRequest,
+          TResponse,
+          TResult
+        >,
+      ): RouteParams<TRequest, TResponse, TNextFunction, TResult> => {
+        return {
+          guardList: [
+            ...this.#getGuardHandlerFromMetadata(
+              this.#globalGuardList,
+              routerExplorerControllerMethodMetadata,
+            ),
+            ...this.#getGuardHandlerFromMetadata(
+              routerExplorerControllerMethodMetadata.guardList,
+              routerExplorerControllerMethodMetadata,
+            ),
+          ],
+          handler: this.#buildHandler(
+            routerExplorerControllerMetadata.serviceIdentifier,
+            routerExplorerControllerMetadata.target,
+            routerExplorerControllerMethodMetadata,
+          ),
+          path: routerExplorerControllerMethodMetadata.path,
+          postHandlerMiddlewareList: this.#buildRoutePostMiddlewareList(
+            routerExplorerControllerMethodMetadata,
+          ),
+          preHandlerMiddlewareList: this.#buildRoutePreMiddlewareList(
+            routerExplorerControllerMethodMetadata,
+          ),
+          requestMethodType:
+            routerExplorerControllerMethodMetadata.requestMethodType,
+          routeValueMetadataMap:
+            routerExplorerControllerMethodMetadata.routeValueMetadataMap,
+        };
+      },
+    );
+  }
+
+  #buildRoutePostMiddlewareList(
+    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >,
+  ): MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>[] {
+    return [
+      ...this.#getMiddlewareHandlerFromMetadata(
+        routerExplorerControllerMethodMetadata,
+        this.#postHandlerMiddlewareList,
+      ),
+      ...this.#getMiddlewareHandlerFromMetadata(
+        routerExplorerControllerMethodMetadata,
+        routerExplorerControllerMethodMetadata.postHandlerMiddlewareList,
+      ),
+    ];
+  }
+
+  #buildRoutePreMiddlewareList(
+    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >,
+  ): MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>[] {
+    const preHandlerMiddlewareList: MiddlewareHandler<
+      TRequest,
+      TResponse,
+      TNextFunction,
+      TResult
+    >[] = [];
+
+    const routeValueMetadataHandler:
+      | MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>
+      | undefined = this._getRouteValueMetadataHandler(
+      routerExplorerControllerMethodMetadata.routeValueMetadataMap,
+    );
+
+    if (routeValueMetadataHandler !== undefined) {
+      preHandlerMiddlewareList.push(routeValueMetadataHandler);
+    }
+
+    preHandlerMiddlewareList.push(
+      ...this.#getMiddlewareHandlerFromMetadata(
+        routerExplorerControllerMethodMetadata,
+        this.#preHandlerMiddlewareList,
+      ),
+      ...this.#getMiddlewareHandlerFromMetadata(
+        routerExplorerControllerMethodMetadata,
+        routerExplorerControllerMethodMetadata.preHandlerMiddlewareList,
+      ),
+    );
+
+    return preHandlerMiddlewareList;
   }
 
   async #applyPipeList(
@@ -913,7 +968,7 @@ export abstract class InversifyHttpAdapter<
     for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
       await this._buildRouter({
         path: routerExplorerControllerMetadata.path,
-        routeParamsList: this.#builRouteParamdHandlerList(
+        routeParamsList: this.#buildRouteParamHandlerList(
           routerExplorerControllerMetadata,
         ),
       });

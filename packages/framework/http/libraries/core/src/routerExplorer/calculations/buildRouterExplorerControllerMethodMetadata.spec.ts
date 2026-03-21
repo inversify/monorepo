@@ -6,6 +6,7 @@ vitest.mock(import('./getControllerMethodParameterMetadataList.js'));
 vitest.mock(import('./getControllerMethodStatusCodeMetadata.js'));
 vitest.mock(import('./getControllerMethodHeaderMetadata.js'));
 vitest.mock(import('./getControllerMethodUseNativeHandlerMetadata.js'));
+vitest.mock(import('./getControllerMethodRouteValueMetadata.js'));
 vitest.mock(import('./buildErrorTypeToErrorFilterMap.js'));
 
 import {
@@ -34,6 +35,7 @@ import { buildErrorTypeToErrorFilterMap } from './buildErrorTypeToErrorFilterMap
 import { buildRouterExplorerControllerMethodMetadata } from './buildRouterExplorerControllerMethodMetadata.js';
 import { getControllerMethodHeaderMetadata } from './getControllerMethodHeaderMetadata.js';
 import { getControllerMethodParameterMetadataList } from './getControllerMethodParameterMetadataList.js';
+import { getControllerMethodRouteValueMetadata } from './getControllerMethodRouteValueMetadata.js';
 import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata.js';
 import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata.js';
 
@@ -80,6 +82,9 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       Newable<Error> | null,
       Newable<ErrorFilter>
     >;
+    let controllerMethodRouteValueMetadataMapFixture:
+      | Map<string | symbol, unknown>
+      | undefined;
     let result: unknown;
 
     beforeAll(() => {
@@ -114,6 +119,9 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       headerMetadataFixture = {};
       useNativeHandlerFixture = false;
       errorTypeToErrorFilterMapFixture = new Map();
+      controllerMethodRouteValueMetadataMapFixture = new Map([
+        ['test-metadata-key', 'test-metadata-value'],
+      ]);
 
       vitest
         .mocked(getControllerMethodParameterMetadataList)
@@ -163,6 +171,10 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       vitest
         .mocked(buildErrorTypeToErrorFilterMap)
         .mockReturnValueOnce(errorTypeToErrorFilterMapFixture);
+
+      vitest
+        .mocked(getControllerMethodRouteValueMetadata)
+        .mockReturnValueOnce(controllerMethodRouteValueMetadataMapFixture);
 
       result = buildRouterExplorerControllerMethodMetadata(
         loggerFixture,
@@ -268,6 +280,15 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       );
     });
 
+    it('should call getControllerMethodRouteValueMetadata()', () => {
+      expect(
+        getControllerMethodRouteValueMetadata,
+      ).toHaveBeenCalledExactlyOnceWith(
+        controllerMetadataFixture.target,
+        controllerMethodMetadataFixture.methodKey,
+      );
+    });
+
     it('should return RouterExplorerControllerMethodMetadata', () => {
       const expected: RouterExplorerControllerMethodMetadata = {
         errorTypeToErrorFilterMap: errorTypeToErrorFilterMapFixture,
@@ -286,6 +307,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
           ...controllerMethodMiddlewareOptionsFixture.preHandlerMiddlewareList,
         ],
         requestMethodType: controllerMethodMetadataFixture.requestMethodType,
+        routeValueMetadataMap: controllerMethodRouteValueMetadataMapFixture,
         statusCode: controllerMethodStatusCodeMetadataFixture,
         useNativeHandler: useNativeHandlerFixture,
       };
