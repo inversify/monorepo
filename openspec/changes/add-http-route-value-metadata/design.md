@@ -69,32 +69,42 @@ The default implementation returns `undefined` (no-op). Each adapter overrides i
 **Hono:** Context-based storage using Hono's `c.set()` / `c.get()` pattern, with the getter adapted to read from the Hono context.
 **uWebSockets:** `req[routeValueMetadataSymbol] = metadataMap` (attached to the request wrapper/object passed through the pipeline)
 
-### 5. Public API: single core factory function
+### 5. Public API: per-adapter factory functions
 
-**Decision:** The `@inversifyjs/http-core` package exports a single `createRouteValueMetadataUtils<T>(key: string | symbol)` function that returns a `[decorator, getter]` tuple.
+**Decision:** Each adapter package exports its own `createRouteValueMetadataUtils` function that returns a `[decorator, getter]` tuple. The `@inversifyjs/http-core` package exports a base implementation whose getter reads from `request[routeValueMetadataSymbol]`. Adapters that store metadata on the request object (Express, Express v4, Fastify, uWebSockets) re-export the core function as-is. Adapters that use a different storage mechanism (Hono uses `Context`) provide a custom implementation with a getter tailored to their storage.
 
 ```ts
-import { createRouteValueMetadataUtils } from '@inversifyjs/http-core';
+// Express / Express v4 / Fastify / uWebSockets — re-export of core
+import { createRouteValueMetadataUtils } from '@inversifyjs/http-express';
 
-const [Roles, getRoles] = createRouteValueMetadataUtils<string[]>('ROLES');
+const [Roles, getRoles] = createRouteValueMetadataUtils<Request, string[]>('ROLES');
+// getRoles(req) reads from req[routeValueMetadataSymbol]
 ```
 
-The decorator is framework-agnostic (it only sets reflect-metadata). The getter reads from the request object using `routeValueMetadataSymbol`, which every adapter's `_getRouteValueMetadataHandler` middleware is responsible for setting.
+```ts
+// Hono — custom implementation
+import { createRouteValueMetadataUtils } from '@inversifyjs/http-hono';
 
-**Rationale:** Since every adapter's middleware stores metadata on the request object via the same well-known symbol, a single generic getter in core works across all adapters. This avoids duplicating near-identical factory functions in each adapter package and gives users a single import location.
+const [Roles, getRoles] = createRouteValueMetadataUtils<string[]>('ROLES');
+// getRoles(context) reads from context.get(routeValueMetadataSymbol)
+```
+
+The decorator returned by all variants is identical and framework-agnostic (it only sets reflect-metadata).
+
+**Rationale:** Most adapters store metadata on the request object via the same well-known symbol, so a shared getter in core works for them. However, Hono stores metadata on its `Context` object using `c.set()` / `c.get()`, making a request-based getter incompatible. Per-adapter exports give each adapter control over its getter while keeping the decorator uniform.
 
 **Alternatives considered:**
-- Per-adapter factory functions (`createExpressRouteValueMetadataUtils`, etc.): discarded because the decorator is identical across adapters and the getter logic (read from `request[routeValueMetadataSymbol]`) is also the same. The only adapter-specific part is the middleware that sets the symbol, which is already handled by `_getRouteValueMetadataHandler`.
+- Single core factory for all adapters: discarded because Hono's context-based storage is incompatible with a request-based getter. Forcing Hono to also set the symbol on the request object would be a workaround rather than a proper design.
 
-### 6. Hono adapter uses context variables for middleware storage
+### 6. Hono adapter uses context variables exclusively
 
-**Decision:** Hono's request object (`HonoRequest`) is a thin wrapper that doesn't support arbitrary properties as cleanly. The Hono adapter's `_getRouteValueMetadataHandler` middleware uses Hono's built-in `c.set(key, value)` API to store the metadata map in the Hono context. The core getter function still reads from the request object via `routeValueMetadataSymbol`, so the Hono middleware must also set the symbol property on the request object to remain compatible with the single core getter.
+**Decision:** Hono's request object (`HonoRequest`) is a thin wrapper that doesn't support arbitrary properties as cleanly. The Hono adapter's `_getRouteValueMetadataHandler` middleware uses Hono's built-in `c.set(key, value)` API to store the metadata map in the Hono context. The Hono-specific `createRouteValueMetadataUtils` getter reads from the Hono context via `context.get(routeValueMetadataSymbol)`. The Hono adapter does **not** set the symbol on the request object.
 
-**Rationale:** Hono's `Context` is the idiomatic way to pass per-request data, but the core getter needs a uniform access path. The Hono middleware bridges both approaches by setting the symbol on the request object.
+**Rationale:** Hono's `Context` is the idiomatic way to pass per-request data. Since Hono has its own `createRouteValueMetadataUtils` with a context-aware getter, there is no need to bridge to the request-based approach.
 
 ## Risks / Trade-offs
 
-- **[Symbol property on request objects]** → Some frameworks may seal/freeze request objects in future versions. Mitigation: the symbol approach is widely used in the Express/Fastify ecosystem and is unlikely to break. Hono uses its native context API instead.
+- **[Symbol property on request objects]** → Some frameworks may seal/freeze request objects in future versions. Mitigation: the symbol approach is widely used in the Express/Fastify ecosystem and is unlikely to break. Hono avoids this entirely by using its native context API.
 
 - **[Metadata only available after middleware injection]** → If a custom parameter decorator or native handler accesses the request before the route value metadata middleware runs, the metadata won't be available. Mitigation: the metadata middleware is prepended to the pre-handler list, so it runs before any user-defined middleware, guards, or the handler.
 

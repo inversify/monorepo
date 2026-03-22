@@ -11,6 +11,7 @@ import {
   type RequestHandler,
   RequestMethodParameterType,
   type RouterParams,
+  routeValueMetadataSymbol,
 } from '@inversifyjs/http-core';
 import {
   type Context,
@@ -23,6 +24,12 @@ import {
 import { getCookie } from 'hono/cookie';
 import { type StatusCode } from 'hono/utils/http-status';
 import { type Container } from 'inversify';
+
+declare module 'hono' {
+  interface ContextVariableMap {
+    [routeValueMetadataSymbol]: Map<string | symbol, unknown>;
+  }
+}
 
 const ADAPTER_ID: unique symbol = Symbol.for(
   '@inversifyjs/http-hono/InversifyHonoHttpAdapter',
@@ -247,6 +254,28 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     value: string,
   ): void {
     response.header(key, value);
+  }
+
+  protected override _getRouteValueMetadataHandler(
+    routeValueMetadataMap: Map<string | symbol, unknown> | undefined,
+  ):
+    | MiddlewareHandler<HonoRequest, Context, Next, Response | undefined>
+    | undefined {
+    if (routeValueMetadataMap === undefined) {
+      return undefined;
+    }
+
+    return async (
+      _request: HonoRequest,
+      c: Context,
+      next: Next,
+    ): Promise<Response | undefined> => {
+      c.set(routeValueMetadataSymbol, routeValueMetadataMap);
+
+      await next();
+
+      return undefined;
+    };
   }
 
   #buildHonoHandler(

@@ -19,7 +19,7 @@
 - [x] 3.3 Add the protected `_getRouteValueMetadataHandler` method to `InversifyHttpAdapter` with a default `undefined` return
 - [x] 3.4 Update the base adapter to call `_getRouteValueMetadataHandler` when `routeValueMetadataMap` is non-empty and prepend the returned middleware to the pre-handler list
 - [x] 3.5 Export new public types and symbols from `@inversifyjs/http-core` index
-- [x] 3.6 Create `createRouteValueMetadataUtils<T>(key: string | symbol)` factory function in `@inversifyjs/http-core` that returns a `[decorator, getter]` tuple (single core factory — no per-adapter factories needed)
+- [x] 3.6 Create `createRouteValueMetadataUtils<TRequest, T>(key: string | symbol)` factory function in `@inversifyjs/http-core` that returns a `[decorator, getter]` tuple (base implementation for request-based adapters)
 
 ## 4. Express adapter (`@inversifyjs/http-express`)
 
@@ -31,34 +31,44 @@
 
 ## 6. Fastify adapter (`@inversifyjs/http-fastify`)
 
-- [ ] 6.1 Override `_getRouteValueMetadataHandler` in `InversifyFastifyHttpAdapter` to return a middleware that sets `request[routeValueMetadataSymbol]`
+- [x] 6.1 Override `_getRouteValueMetadataHandler` in `InversifyFastifyHttpAdapter` to return a middleware that sets `request[routeValueMetadataSymbol]`
 
 ## 7. Hono adapter (`@inversifyjs/http-hono`)
 
-- [ ] 7.1 Override `_getRouteValueMetadataHandler` in `InversifyHonoHttpAdapter` to return a middleware that stores metadata in the Hono context via `c.set()`
+- [x] 7.1 Override `_getRouteValueMetadataHandler` in `InversifyHonoHttpAdapter` to return a middleware that stores metadata in the Hono context via `c.set()` (context-only, does NOT set on request)
 
 ## 8. uWebSockets adapter (`@inversifyjs/http-uwebsockets`)
 
-- [ ] 8.1 Override `_getRouteValueMetadataHandler` in `InversifyUwebsocketsHttpAdapter` to return a middleware that sets `req[routeValueMetadataSymbol]` to the metadata map
+- [x] 8.1 Override `_getRouteValueMetadataHandler` in `InversifyUwebsocketsHttpAdapter` to return a middleware that sets `req[routeValueMetadataSymbol]` to the metadata map
 
-## 9. E2E tests (`@inversifyjs/http-e2e-tests`)
+## 9. Per-adapter `createRouteValueMetadataUtils` exports
 
-- [ ] 9.1 Create a `routeValueMetadata.feature` Gherkin feature file with a scenario outline testing that middleware can read route value metadata, parameterized by adapter (express, express4, fastify, hono, uwebsockets)
-- [ ] 9.2 Create per-adapter middleware classes that read route value metadata via the getter and set a response header with the retrieved value (e.g., `x-route-roles`)
-- [ ] 9.3 Create per-adapter controller classes that apply the route value metadata decorator and the middleware from 9.2
-- [ ] 9.4 Add step definitions wiring controllers and middleware into the container and asserting the response header contains the expected metadata value
-- [ ] 9.5 Run the e2e test suite to verify all five adapters pass
+- [ ] 9.1 Re-export `createRouteValueMetadataUtils` from `@inversifyjs/http-express` (alias of core)
+- [ ] 9.2 Re-export `createRouteValueMetadataUtils` from `@inversifyjs/http-express-v4` (alias of core)
+- [ ] 9.3 Re-export `createRouteValueMetadataUtils` from `@inversifyjs/http-fastify` (alias of core)
+- [ ] 9.4 Create custom `createRouteValueMetadataUtils<T>(key)` in `@inversifyjs/http-hono` with a getter that reads from the Hono `Context` via `context.get(routeValueMetadataSymbol)` instead of the request object
+- [ ] 9.5 Add unit tests for the Hono-specific `createRouteValueMetadataUtils` (getter reads from context, returns undefined when not set)
+- [ ] 9.6 Re-export `createRouteValueMetadataUtils` from `@inversifyjs/http-uwebsockets` (alias of core)
+- [ ] 9.7 Export `createRouteValueMetadataUtils` in each adapter's `index.ts` barrel file
 
-## 10. Make route value metadata fields mandatory
+## 10. E2E tests (`@inversifyjs/http-e2e-tests`)
 
-- [ ] 10.1 Change `routeValueMetadataMap` from optional to mandatory in `RouterExplorerControllerMethodMetadata` (type: `Map<string | symbol, unknown>`)
-- [ ] 10.2 Change `routeValueMetadataMap` from optional to mandatory in `RouteParams` (type: `Map<string | symbol, unknown> | undefined`)
-- [ ] 10.3 Fix all resulting compilation errors across http-core, adapters, and their tests
+- [ ] 10.1 Create a `routeValueMetadata.feature` Gherkin feature file with a scenario outline testing that middleware can read route value metadata, parameterized by adapter (express, express4, fastify, hono, uwebsockets)
+- [ ] 10.2 Create per-adapter middleware classes that read route value metadata via the adapter-specific getter and set a response header with the retrieved value (e.g., `x-route-roles`)
+- [ ] 10.3 Create per-adapter controller classes that apply the route value metadata decorator and the middleware from 10.2
+- [ ] 10.4 Add step definitions wiring controllers and middleware into the container and asserting the response header contains the expected metadata value
+- [ ] 10.5 Run the e2e test suite to verify all five adapters pass
 
-## 11. Verification
+## 11. Make route value metadata fields mandatory
 
-- [ ] 11.1 Run full test suite across all modified packages (`pnpm run --filter "@inversifyjs/http-core" test && pnpm run --filter "@inversifyjs/http-express" test && pnpm run --filter "@inversifyjs/http-express-v4" test && pnpm run --filter "@inversifyjs/http-fastify" test && pnpm run --filter "@inversifyjs/http-hono" test && pnpm run --filter "@inversifyjs/http-uwebsockets" test`)
-- [ ] 11.2 Run linter and formatter on modified packages
-- [ ] 11.3 Run e2e tests (`pnpm run --filter "@inversifyjs/http-e2e-tests" test`)
-- [ ] 11.4 Verify build succeeds for all modified packages
+- [ ] 11.1 Change `routeValueMetadataMap` from optional to mandatory in `RouterExplorerControllerMethodMetadata` (type: `Map<string | symbol, unknown>`)
+- [ ] 11.2 Change `routeValueMetadataMap` from optional to mandatory in `RouteParams` (type: `Map<string | symbol, unknown> | undefined`)
+- [ ] 11.3 Fix all resulting compilation errors across http-core, adapters, and their tests
+
+## 12. Verification
+
+- [ ] 12.1 Run full test suite across all modified packages (`pnpm run --filter "@inversifyjs/http-core" test && pnpm run --filter "@inversifyjs/http-express" test && pnpm run --filter "@inversifyjs/http-express-v4" test && pnpm run --filter "@inversifyjs/http-fastify" test && pnpm run --filter "@inversifyjs/http-hono" test && pnpm run --filter "@inversifyjs/http-uwebsockets" test`)
+- [ ] 12.2 Run linter and formatter on modified packages
+- [ ] 12.3 Run e2e tests (`pnpm run --filter "@inversifyjs/http-e2e-tests" test`)
+- [ ] 12.4 Verify build succeeds for all modified packages
 

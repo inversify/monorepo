@@ -10,6 +10,7 @@ import {
   RequestMethodParameterType,
   RequestMethodType,
   type RouterParams,
+  routeValueMetadataSymbol,
 } from '@inversifyjs/http-core';
 import { type Container } from 'inversify';
 import {
@@ -169,6 +170,32 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     response.cork((): void => {
       response.writeHeader(key, value);
     });
+  }
+
+  protected override _getRouteValueMetadataHandler(
+    routeValueMetadataMap: Map<string | symbol, unknown> | undefined,
+  ):
+    | MiddlewareHandler<HttpRequest, HttpResponse, () => void, void>
+    | undefined {
+    if (routeValueMetadataMap === undefined) {
+      return undefined;
+    }
+
+    return (
+      request: HttpRequest,
+      _response: HttpResponse,
+      next: () => void,
+    ): void => {
+      (
+        request as HttpRequest & {
+          [routeValueMetadataSymbol]?:
+            | Map<string | symbol, unknown>
+            | undefined;
+        }
+      )[routeValueMetadataSymbol] = routeValueMetadataMap;
+
+      next();
+    };
   }
 
   protected async _getBody(
