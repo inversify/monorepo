@@ -53,11 +53,11 @@
 
 ## 10. E2E tests (`@inversifyjs/http-e2e-tests`)
 
-- [ ] 10.1 Create a `routeValueMetadata.feature` Gherkin feature file with a scenario outline testing that middleware can read route value metadata, parameterized by adapter (express, express4, fastify, hono, uwebsockets)
-- [ ] 10.2 Create per-adapter middleware classes that read route value metadata via the adapter-specific getter and set a response header with the retrieved value (e.g., `x-route-roles`)
-- [ ] 10.3 Create per-adapter controller classes that apply the route value metadata decorator and the middleware from 10.2
-- [ ] 10.4 Add step definitions wiring controllers and middleware into the container and asserting the response header contains the expected metadata value
-- [ ] 10.5 Run the e2e test suite to verify all five adapters pass
+- [x] 10.1 Create a `routeValueMetadata.feature` Gherkin feature file with a scenario outline testing that middleware can read route value metadata, parameterized by adapter (express, express4, fastify, hono, uwebsockets)
+- [x] 10.2 Create per-adapter middleware classes that read route value metadata via the adapter-specific getter and set a response header with the retrieved value (e.g., `x-route-roles`)
+- [x] 10.3 Create per-adapter controller classes that apply the route value metadata decorator and the middleware from 10.2
+- [x] 10.4 Add step definitions wiring controllers and middleware into the container and asserting the response header contains the expected metadata value
+- [x] 10.5 Run the e2e test suite to verify all five adapters pass
 
 ## 11. Make route value metadata fields mandatory
 
