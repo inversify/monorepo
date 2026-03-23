@@ -67,8 +67,8 @@
 
 ## 12. Verification
 
-- [ ] 12.1 Run full test suite across all modified packages (`pnpm run --filter "@inversifyjs/http-core" test && pnpm run --filter "@inversifyjs/http-express" test && pnpm run --filter "@inversifyjs/http-express-v4" test && pnpm run --filter "@inversifyjs/http-fastify" test && pnpm run --filter "@inversifyjs/http-hono" test && pnpm run --filter "@inversifyjs/http-uwebsockets" test`)
-- [ ] 12.2 Run linter and formatter on modified packages
-- [ ] 12.3 Run e2e tests (`pnpm run --filter "@inversifyjs/http-e2e-tests" test`)
-- [ ] 12.4 Verify build succeeds for all modified packages
+- [x] 12.1 Run full test suite across all modified packages (`pnpm run --filter "@inversifyjs/http-core" test && pnpm run --filter "@inversifyjs/http-express" test && pnpm run --filter "@inversifyjs/http-express-v4" test && pnpm run --filter "@inversifyjs/http-fastify" test && pnpm run --filter "@inversifyjs/http-hono" test && pnpm run --filter "@inversifyjs/http-uwebsockets" test`)
+- [x] 12.2 Run linter and formatter on modified packages
+- [x] 12.3 Run e2e tests (`pnpm run --filter "@inversifyjs/http-e2e-tests" test`)
+- [x] 12.4 Verify build succeeds for all modified packages
 
