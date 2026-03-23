@@ -14,6 +14,7 @@ import {
   RequestMethodParameterType,
   RequestMethodType,
   type RouterParams,
+  routeValueMetadataSymbol,
 } from '@inversifyjs/http-core';
 import {
   fastify,
@@ -258,6 +259,37 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     value: string,
   ): void {
     response.header(key, value);
+  }
+
+  protected override _getRouteValueMetadataHandler(
+    routeValueMetadataMap: Map<string | symbol, unknown>,
+  ):
+    | MiddlewareHandler<
+        InversifyFastifyRequest,
+        InversifyFastifyReply,
+        () => void,
+        void
+      >
+    | undefined {
+    if (routeValueMetadataMap.size === 0) {
+      return undefined;
+    }
+
+    return (
+      request: InversifyFastifyRequest,
+      _response: InversifyFastifyReply,
+      next: () => void,
+    ): void => {
+      (
+        request as InversifyFastifyRequest & {
+          [routeValueMetadataSymbol]?:
+            | Map<string | symbol, unknown>
+            | undefined;
+        }
+      )[routeValueMetadataSymbol] = routeValueMetadataMap;
+
+      next();
+    };
   }
 
   protected _buildRouter(

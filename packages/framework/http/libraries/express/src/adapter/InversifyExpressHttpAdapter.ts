@@ -6,6 +6,7 @@ import {
   InversifyHttpAdapter,
   type MiddlewareHandler,
   type RouterParams,
+  routeValueMetadataSymbol,
 } from '@inversifyjs/http-core';
 import cookieParser from 'cookie-parser';
 import express, {
@@ -164,6 +165,30 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     value: string,
   ): void {
     response.setHeader(key, value);
+  }
+
+  protected override _getRouteValueMetadataHandler(
+    routeValueMetadataMap: Map<string | symbol, unknown>,
+  ): MiddlewareHandler<Request, Response, NextFunction, void> | undefined {
+    if (routeValueMetadataMap.size === 0) {
+      return undefined;
+    }
+
+    return (
+      request: Request,
+      _response: Response,
+      next: NextFunction,
+    ): void => {
+      (
+        request as Request & {
+          [routeValueMetadataSymbol]?:
+            | Map<string | symbol, unknown>
+            | undefined;
+        }
+      )[routeValueMetadataSymbol] = routeValueMetadataMap;
+
+      next();
+    };
   }
 
   protected _getBody(

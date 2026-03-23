@@ -6,3 +6,5 @@ export type { UwebSocketsGuard } from './models/UwebSocketsGuard.js';
 export type { UwebSocketsHttpAdapterOptions } from './models/UwebSocketsHttpAdapterOptions.js';
 export type { UwebSocketsInterceptor } from './models/UwebSocketsInterceptor.js';
 export type { UwebSocketsMiddleware } from './models/UwebSocketsMiddleware.js';
+
+export { createRouteValueMetadataUtils } from './valueMetadata/calculations/createRouteValueMetadataUtils.js';

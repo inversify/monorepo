@@ -66,40 +66,49 @@ The default implementation returns `undefined` (no-op). Each adapter overrides i
 
 **Express/Express v4:** `req[routeValueMetadataSymbol] = metadataMap`
 **Fastify:** `request[routeValueMetadataSymbol] = metadataMap`
-**Hono:** Context-based storage using Hono's `c.set()` / `c.get()` pattern, with the getter adapted to read from the Hono context.
+**Hono:** `request[routeValueMetadataSymbol] = metadataMap` (attached to the `HonoRequest` object, same approach as other adapters)
 **uWebSockets:** `req[routeValueMetadataSymbol] = metadataMap` (attached to the request wrapper/object passed through the pipeline)
 
-### 5. Public API: adapter-specific factory functions
+### 5. Public API: per-adapter factory functions
 
-**Decision:** Each adapter package exports a `create<Framework>RouteValueMetadataUtils<T>(key: string | symbol)` function that returns a `[decorator, getter]` tuple.
+**Decision:** Each adapter package exports its own `createRouteValueMetadataUtils` function that returns a `[decorator, getter]` tuple. The `@inversifyjs/http-core` package exports a base implementation whose getter reads from `request[routeValueMetadataSymbol]`. Adapters that store metadata on the request object (Express, Express v4, Fastify, uWebSockets) re-export the core function as-is. Hono provides a thin wrapper that delegates to the core implementation and types the getter to accept `HonoRequest`.
 
 ```ts
-// Express
-const [Roles, getRoles] = createExpressRouteValueMetadataUtils<string[]>('ROLES');
+// Express / Express v4 / Fastify / uWebSockets — re-export of core
+import { createRouteValueMetadataUtils } from '@inversifyjs/http-express';
 
-// Fastify
-const [Roles, getRoles] = createFastifyRouteValueMetadataUtils<string[]>('ROLES');
-
-// uWebSockets
-const [Roles, getRoles] = createUwebsocketsRouteValueMetadataUtils<string[]>('ROLES');
+const [Roles, getRoles] = createRouteValueMetadataUtils<Request, string[]>('ROLES');
+// getRoles(req) reads from req[routeValueMetadataSymbol]
 ```
 
-The decorator is framework-agnostic (it only sets reflect-metadata). The getter function is framework-specific (it reads from the framework's request type).
+```ts
+// Hono — thin wrapper typing the getter for HonoRequest
+import { createRouteValueMetadataUtils } from '@inversifyjs/http-hono';
 
-**Rationale:** Framework-specific getters provide correct typings (`express.Request` vs `FastifyRequest`). The decorator is identical across frameworks but is bundled with the getter in the same factory for ergonomic usage.
+const [Roles, getRoles] = createRouteValueMetadataUtils<string[]>('ROLES');
+// getRoles(request) reads from request[routeValueMetadataSymbol]
+```
+
+The decorator returned by all variants is identical and framework-agnostic (it only sets reflect-metadata).
+
+**Rationale:** All adapters store metadata on the request object via the same well-known symbol, so a shared getter in core works for all of them. Hono's wrapper simply narrows the generic `TRequest` type to `HonoRequest` for ergonomics, avoiding the need for users to specify the request type parameter.
 
 **Alternatives considered:**
-- A single generic factory in core with adapter-provided getter: this would require users to import from two packages and manually wire them, reducing ergonomics.
+- Single core factory for all adapters: viable, but requiring Hono users to write `createRouteValueMetadataUtils<HonoRequest, string[]>(key)` is less ergonomic than the wrapper that infers the request type.
+- Context-based getter for Hono: discarded because Hono guards do not receive the Hono `Context`, only the `HonoRequest`. Using request-based storage ensures guards can access route value metadata, which is a key use case.
 
-### 6. Hono adapter uses context variables instead of request symbol
+### 6. Hono adapter uses request-based storage
 
-**Decision:** Hono's request object (`HonoRequest`) is a thin wrapper that doesn't support arbitrary properties as cleanly. Instead, the Hono adapter uses Hono's built-in `c.set(key, value)` / `c.get(key)` context variable API. The Hono getter function takes a `Context` instead of `HonoRequest`.
+**Decision:** The Hono adapter's `_getRouteValueMetadataHandler` middleware sets `request[routeValueMetadataSymbol] = metadataMap` on the `HonoRequest` object, the same approach used by all other adapters. The Hono-specific `createRouteValueMetadataUtils` is a thin wrapper that delegates to the core implementation with `HonoRequest` as the request type parameter.
 
-**Rationale:** Hono's `Context` is the idiomatic way to pass per-request data. This aligns with Hono conventions and existing Hono adapter patterns.
+**Rationale:** Hono guards receive `HonoRequest` but do **not** receive the Hono `Context`. If metadata were stored on the context (via `c.set()`/`c.get()`), guards would be unable to read route value metadata — defeating a key use case. Storing on the request makes metadata uniformly accessible to middleware, guards, and interceptors. While `Context` is Hono's idiomatic per-request data channel, the `HonoRequest` object supports arbitrary symbol properties, and using the same symbol-based approach as other adapters keeps the implementation simple and consistent.
+
+**Alternatives considered:**
+- Context-based storage via `c.set()` / `c.get()`: discarded because guards do not receive the Hono `Context`, making metadata inaccessible in guard `canActivate` methods.
 
 ## Risks / Trade-offs
 
-- **[Symbol property on request objects]** → Some frameworks may seal/freeze request objects in future versions. Mitigation: the symbol approach is widely used in the Express/Fastify ecosystem and is unlikely to break. Hono uses its native context API instead.
+- **[Symbol property on request objects]** → Some frameworks may seal/freeze request objects in future versions. Mitigation: the symbol approach is widely used in the Express/Fastify ecosystem and is unlikely to break. Hono's `HonoRequest` also supports symbol properties for this purpose.
 
 - **[Metadata only available after middleware injection]** → If a custom parameter decorator or native handler accesses the request before the route value metadata middleware runs, the metadata won't be available. Mitigation: the metadata middleware is prepended to the pre-handler list, so it runs before any user-defined middleware, guards, or the handler.
 

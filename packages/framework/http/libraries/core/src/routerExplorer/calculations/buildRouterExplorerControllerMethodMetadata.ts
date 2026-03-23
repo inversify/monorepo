@@ -24,6 +24,7 @@ import { type RouterExplorerControllerMethodMetadata } from '../model/RouterExpl
 import { buildErrorTypeToErrorFilterMap } from './buildErrorTypeToErrorFilterMap.js';
 import { getControllerMethodHeaderMetadata } from './getControllerMethodHeaderMetadata.js';
 import { getControllerMethodParameterMetadataList } from './getControllerMethodParameterMetadataList.js';
+import { getControllerMethodRouteValueMetadata } from './getControllerMethodRouteValueMetadata.js';
 import { getControllerMethodStatusCodeMetadata } from './getControllerMethodStatusCodeMetadata.js';
 import { getControllerMethodUseNativeHandlerMetadata } from './getControllerMethodUseNativeHandlerMetadata.js';
 
@@ -111,6 +112,12 @@ export function buildRouterExplorerControllerMethodMetadata<
     controllerMethodMetadata.methodKey,
   );
 
+  const controllerMethodRouteValueMetadataMap: Map<string | symbol, unknown> =
+    getControllerMethodRouteValueMetadata(
+      controllerMetadata.target,
+      controllerMethodMetadata.methodKey,
+    ) ?? new Map<string | symbol, unknown>();
+
   return {
     errorTypeToErrorFilterMap,
     guardList: controllerMethodGuardList,
@@ -128,6 +135,7 @@ export function buildRouterExplorerControllerMethodMetadata<
       ...controllerMethodMiddlewareOptions.preHandlerMiddlewareList,
     ],
     requestMethodType: controllerMethodMetadata.requestMethodType,
+    routeValueMetadataMap: controllerMethodRouteValueMetadataMap,
     statusCode: controllerMethodStatusCode,
     useNativeHandler,
   };

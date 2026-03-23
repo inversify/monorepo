@@ -11,6 +11,7 @@ import {
   type RequestHandler,
   RequestMethodParameterType,
   type RouterParams,
+  routeValueMetadataSymbol,
 } from '@inversifyjs/http-core';
 import {
   type Context,
@@ -247,6 +248,32 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     value: string,
   ): void {
     response.header(key, value);
+  }
+
+  protected override _getRouteValueMetadataHandler(
+    routeValueMetadataMap: Map<string | symbol, unknown>,
+  ):
+    | MiddlewareHandler<HonoRequest, Context, Next, Response | undefined>
+    | undefined {
+    if (routeValueMetadataMap.size === 0) {
+      return undefined;
+    }
+
+    return async (
+      request: HonoRequest,
+      _context: Context,
+      next: Next,
+    ): Promise<Response | undefined> => {
+      (
+        request as HonoRequest & {
+          [routeValueMetadataSymbol]?: Map<string | symbol, unknown>;
+        }
+      )[routeValueMetadataSymbol] = routeValueMetadataMap;
+
+      await next();
+
+      return undefined;
+    };
   }
 
   #buildHonoHandler(
