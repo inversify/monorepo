@@ -216,7 +216,7 @@ export abstract class InversifyHttpAdapter<
   }
 
   protected _getRouteValueMetadataHandler(
-    _routeValueMetadataMap: Map<string | symbol, unknown> | undefined,
+    _routeValueMetadataMap: Map<string | symbol, unknown>,
   ):
     | MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>
     | undefined {

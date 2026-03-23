@@ -262,7 +262,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected override _getRouteValueMetadataHandler(
-    routeValueMetadataMap: Map<string | symbol, unknown> | undefined,
+    routeValueMetadataMap: Map<string | symbol, unknown>,
   ):
     | MiddlewareHandler<
         InversifyFastifyRequest,
@@ -271,7 +271,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
         void
       >
     | undefined {
-    if (routeValueMetadataMap === undefined) {
+    if (routeValueMetadataMap.size === 0) {
       return undefined;
     }
 

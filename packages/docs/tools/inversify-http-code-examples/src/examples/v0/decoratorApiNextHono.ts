@@ -17,7 +17,10 @@ export class HonoNextInterceptor implements HonoInterceptor {
     context.header('next-was-called', 'true');
     const transform: InterceptorTransformObject = await next();
 
-    transform.push(() => context.body('ok'));
+    transform.push(() => {
+      context.res = new Response('ok');
+      return context.res;
+    });
   }
 }
 

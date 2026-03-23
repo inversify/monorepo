@@ -251,11 +251,11 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected override _getRouteValueMetadataHandler(
-    routeValueMetadataMap: Map<string | symbol, unknown> | undefined,
+    routeValueMetadataMap: Map<string | symbol, unknown>,
   ):
     | MiddlewareHandler<HonoRequest, Context, Next, Response | undefined>
     | undefined {
-    if (routeValueMetadataMap === undefined) {
+    if (routeValueMetadataMap.size === 0) {
       return undefined;
     }
 
