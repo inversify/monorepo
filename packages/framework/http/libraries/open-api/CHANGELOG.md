@@ -1,5 +1,13 @@
 # @inversifyjs/http-open-api
 
+## 5.1.0
+
+### Patch Changes
+
+- Updated `SwaggerUiProvider` to properly traverse property schema metadata
+- Updated dependencies
+  - @inversifyjs/http-core@5.1.0
+
 ## 5.0.1
 
 ### Patch Changes
