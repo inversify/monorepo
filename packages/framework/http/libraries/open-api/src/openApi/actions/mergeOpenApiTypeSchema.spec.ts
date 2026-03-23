@@ -876,6 +876,77 @@ describe(mergeOpenApiTypeSchema, () => {
           expect(schemasObjectFixture).toStrictEqual(expectedTypes);
         });
       });
+
+      describe('when called, and getSchemaMetadata() returns SchemaMetadata with references', () => {
+        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+        let referencedTypeFixture: Function;
+        let schemaMetadataFixture: SchemaMetadata;
+        let referencedSchemaMetadataFixture: SchemaMetadata;
+
+        beforeAll(() => {
+          schemasObjectFixture = {};
+          referencedTypeFixture = class ReferencedType {};
+
+          schemaMetadataFixture = {
+            customAttributes: undefined,
+            name: 'TypeWithReferences',
+            properties: new Map(),
+            references: new Set([referencedTypeFixture]),
+            schema: undefined,
+          };
+
+          referencedSchemaMetadataFixture = {
+            customAttributes: undefined,
+            name: 'ReferencedType',
+            properties: new Map(),
+            references: new Set(),
+            schema: undefined,
+          };
+
+          getSchemaMetadataMock
+            .mockReturnValueOnce(schemaMetadataFixture)
+            .mockReturnValueOnce(referencedSchemaMetadataFixture);
+
+          mergeOpenApiTypeSchema(schemasObjectFixture, typeFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call getSchemaMetadata() twice', () => {
+          expect(getSchemaMetadataMock).toHaveBeenCalledTimes(2);
+          expect(getSchemaMetadataMock).toHaveBeenNthCalledWith(1, typeFixture);
+          expect(getSchemaMetadataMock).toHaveBeenNthCalledWith(
+            2,
+            referencedTypeFixture,
+          );
+        });
+
+        it('should add both schemas to schemasObject', () => {
+          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+            ReferencedType: {
+              properties: {},
+              type: 'object',
+            },
+            TypeWithReferences: {
+              properties: {},
+              type: 'object',
+            },
+          };
+
+          expect(schemasObjectFixture).toStrictEqual(expectedTypes);
+        });
+
+        it('should not call getOwnReflectMetadata()', () => {
+          expect(getOwnReflectMetadataMock).not.toHaveBeenCalled();
+        });
+
+        it('should not call tryBuildSchemaFromWellKnownType()', () => {
+          expect(tryBuildSchemaFromWellKnownTypeMock).not.toHaveBeenCalled();
+        });
+      });
     });
   });
 });

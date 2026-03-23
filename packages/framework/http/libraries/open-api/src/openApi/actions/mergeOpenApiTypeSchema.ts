@@ -80,6 +80,10 @@ export function mergeOpenApiTypeSchema(
   if (requiredProperties.length > 0 && typeof jsonSchema === 'object') {
     jsonSchema.required = requiredProperties;
   }
+
+  for (const reference of schemaMetadata.references) {
+    mergeOpenApiTypeSchema(schemasObject, reference);
+  }
 }
 
 function initializeJsonSchema(
