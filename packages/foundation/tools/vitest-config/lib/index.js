@@ -1,4 +1,3 @@
-import swc from 'unplugin-swc';
 import { defineConfig } from 'vitest/config';
 
 export const defaultConfig = defineConfig({
@@ -9,11 +8,6 @@ export const defaultConfig = defineConfig({
     passWithNoTests: true,
     projects: [
       {
-        plugins: [
-          swc.vite({
-            tsconfigFile: 'tsconfig.esm.json',
-          }),
-        ],
         test: {
           exclude: ['src/**/*.int.spec.ts'],
           include: ['src/**/*.spec.ts'],
@@ -21,22 +15,12 @@ export const defaultConfig = defineConfig({
         },
       },
       {
-        plugins: [
-          swc.vite({
-            tsconfigFile: 'tsconfig.esm.json',
-          }),
-        ],
         test: {
           include: ['src/**/*.int.spec.ts'],
           name: 'Integration',
         },
       },
       {
-        plugins: [
-          swc.vite({
-            tsconfigFile: 'tsconfig.esm.json',
-          }),
-        ],
         test: {
           include: ['src/**/*.spec-d.ts'],
           name: 'Type',
@@ -50,11 +34,6 @@ export const defaultConfig = defineConfig({
 });
 
 export const strykerConfig = defineConfig({
-  plugins: [
-    swc.vite({
-      tsconfigFile: 'tsconfig.esm.json',
-    }),
-  ],
   test: {
     exclude: ['src/**/*.int.spec.ts'],
     include: ['src/**/*.spec.ts'],

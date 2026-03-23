@@ -24,7 +24,6 @@ onlyBuiltDependencies:
   - '@fission-ai/openspec'
   - '@nestjs/core'
   - '@prisma/engines'
-  - '@swc/core'
   - better-sqlite3
   - core-js
   - core-js-pure
