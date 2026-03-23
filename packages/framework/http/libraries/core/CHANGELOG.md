@@ -1,5 +1,14 @@
 # @inversifyjs/http-core
 
+## 5.1.0
+
+### Minor Changes
+
+- Added `createRouteValueMetadataUtils`
+- Added `createRouteValueMetadataUtils`.
+- Added `routeValueMetadata`.
+- Added `routeValueMetadataSymbol`.
+
 ## 5.0.1
 
 ## 5.0.0
