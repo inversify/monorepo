@@ -16,3 +16,6 @@
 /package-lock.json
 /pnpm-lock.yaml
 /yarn.lock
+
+### Sponsorkit cache
+assets/.cache.json
