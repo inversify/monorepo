@@ -4,7 +4,8 @@
   "compilerOptions": {
     "outDir": "./lib",
     "rootDir": "./src",
-    "tsBuildInfoFile": "tsconfig.esm.tsbuildinfo"
+    "tsBuildInfoFile": "tsconfig.esm.tsbuildinfo",
+    "types": ["node"]
   },
   "include": ["src"]
 }

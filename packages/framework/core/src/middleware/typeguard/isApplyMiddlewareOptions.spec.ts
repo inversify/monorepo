@@ -8,7 +8,7 @@ import { MiddlewarePhase } from '../models/MiddlewarePhase.js';
 import { isApplyMiddlewareOptions } from './isApplyMiddlewareOptions.js';
 
 class TestMiddleware implements Middleware {
-  public execute(_request: Request, _response: Response): void {
+  public execute(_request: unknown, _response: unknown): void {
     throw new Error('Method not implemented.');
   }
 }
