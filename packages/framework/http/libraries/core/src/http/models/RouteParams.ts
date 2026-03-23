@@ -24,5 +24,5 @@ export interface RouteParams<TRequest, TResponse, TNextFunction, TResult> {
     TResult
   >[];
   requestMethodType: RequestMethodType;
-  routeValueMetadataMap?: Map<string | symbol, unknown> | undefined;
+  routeValueMetadataMap: Map<string | symbol, unknown> | undefined;
 }

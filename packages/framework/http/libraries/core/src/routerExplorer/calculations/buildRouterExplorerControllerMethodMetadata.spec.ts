@@ -82,9 +82,10 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       Newable<Error> | null,
       Newable<ErrorFilter>
     >;
-    let controllerMethodRouteValueMetadataMapFixture:
-      | Map<string | symbol, unknown>
-      | undefined;
+    let controllerMethodRouteValueMetadataMapFixture: Map<
+      string | symbol,
+      unknown
+    >;
     let result: unknown;
 
     beforeAll(() => {

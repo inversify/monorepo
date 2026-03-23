@@ -112,12 +112,11 @@ export function buildRouterExplorerControllerMethodMetadata<
     controllerMethodMetadata.methodKey,
   );
 
-  const controllerMethodRouteValueMetadataMap:
-    | Map<string | symbol, unknown>
-    | undefined = getControllerMethodRouteValueMetadata(
-    controllerMetadata.target,
-    controllerMethodMetadata.methodKey,
-  );
+  const controllerMethodRouteValueMetadataMap: Map<string | symbol, unknown> =
+    getControllerMethodRouteValueMetadata(
+      controllerMetadata.target,
+      controllerMethodMetadata.methodKey,
+    ) ?? new Map<string | symbol, unknown>();
 
   return {
     errorTypeToErrorFilterMap,

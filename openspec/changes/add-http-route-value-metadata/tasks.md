@@ -61,9 +61,9 @@
 
 ## 11. Make route value metadata fields mandatory
 
-- [ ] 11.1 Change `routeValueMetadataMap` from optional to mandatory in `RouterExplorerControllerMethodMetadata` (type: `Map<string | symbol, unknown>`)
-- [ ] 11.2 Change `routeValueMetadataMap` from optional to mandatory in `RouteParams` (type: `Map<string | symbol, unknown> | undefined`)
-- [ ] 11.3 Fix all resulting compilation errors across http-core, adapters, and their tests
+- [x] 11.1 Change `routeValueMetadataMap` from optional to mandatory in `RouterExplorerControllerMethodMetadata` (type: `Map<string | symbol, unknown>`)
+- [x] 11.2 Change `routeValueMetadataMap` from optional to mandatory in `RouteParams` (type: `Map<string | symbol, unknown> | undefined`)
+- [x] 11.3 Fix all resulting compilation errors across http-core, adapters, and their tests
 
 ## 12. Verification
 
