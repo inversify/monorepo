@@ -1,11 +1,9 @@
-import FloatingCodeSnippet, {
-  CodeSnippet,
-} from '@site/src/components/FloatingCodeSnippet';
-import useHomeFloatingCodeSnippets, {
-  DEFAULT_Z_INDEX_LOW,
-} from '@site/src/hooks/useHomeFloatingCodeSnippets';
 import React from 'react';
 
+import useHomeFloatingCodeSnippets, {
+  DEFAULT_Z_INDEX_LOW,
+} from '../../hooks/useHomeFloatingCodeSnippets';
+import FloatingCodeSnippet, { CodeSnippet } from '../FloatingCodeSnippet';
 import styles from './styles.module.css';
 
 interface HomeFloatingCodeSnippetsProps {

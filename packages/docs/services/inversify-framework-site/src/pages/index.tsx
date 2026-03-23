@@ -3,17 +3,17 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import controllerApiBasicsSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiBasics.ts.txt';
 import homeAuthMiddlewareSource from '@inversifyjs/http-code-examples/generated/examples/v0/homeAuthMiddleware.ts.txt';
 import homeServerSetupSource from '@inversifyjs/http-code-examples/generated/examples/v0/homeServerSetup.ts.txt';
-import DocumentationButton from '@site/src/components/DocumentationButton';
-import FeatureCard from '@site/src/components/FeatureCard';
-import { CodeSnippet } from '@site/src/components/FloatingCodeSnippet';
-import HomeFloatingCodeSnippets from '@site/src/components/HomeFloatingCodeSnippets';
-import HomepageSponsors from '@site/src/components/HomepageSponsors';
-import StatsCounter from '@site/src/components/StatsCounter';
 import Heading from '@theme/Heading';
 import Layout from '@theme/Layout';
 import React from 'react';
 
+import DocumentationButton from '../components/DocumentationButton';
+import FeatureCard from '../components/FeatureCard';
+import { CodeSnippet } from '../components/FloatingCodeSnippet';
 import floatingCodeSnippetStyles from '../components/FloatingCodeSnippet/styles.module.css';
+import HomeFloatingCodeSnippets from '../components/HomeFloatingCodeSnippets';
+import HomepageSponsors from '../components/HomepageSponsors';
+import StatsCounter from '../components/StatsCounter';
 import styles from './index.module.css';
 
 const codeSnippets: CodeSnippet[] = [

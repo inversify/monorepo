@@ -5,7 +5,8 @@
     "emitDecoratorMetadata": true,
     "outDir": "./lib/cjs",
     "rootDir": "./src",
-    "tsBuildInfoFile": "tsconfig.cjs.tsbuildinfo"
+    "tsBuildInfoFile": "tsconfig.cjs.tsbuildinfo",
+    "types": ["node"]
   },
   "include": ["src"]
 }

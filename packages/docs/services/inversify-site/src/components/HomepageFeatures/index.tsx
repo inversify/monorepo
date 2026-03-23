@@ -1,11 +1,11 @@
 import Translate from '@docusaurus/Translate';
-import jsSrc from '@site/static/img/js.png';
-import plugSrc from '@site/static/img/plug.jpg';
-import tsSrc from '@site/static/img/ts.png';
 import Heading from '@theme/Heading';
 import clsx from 'clsx';
 import React from 'react';
 
+import jsSrc from '../../../static/img/js.png';
+import plugSrc from '../../../static/img/plug.jpg';
+import tsSrc from '../../../static/img/ts.png';
 import styles from './styles.module.css';
 
 interface FeatureItem {

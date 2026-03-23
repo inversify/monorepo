@@ -1,12 +1,13 @@
 import { DocusaurusContext } from '@docusaurus/types';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import FixedBottomContainer from '@site/src/components/FixedBottomContainer';
-import FrameworkBanner from '@site/src/components/FrameworkBanner';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import HomepageHeader from '@site/src/components/HomepageHeader';
-import HomepageSponsors from '@site/src/components/HomepageSponsors';
 import Layout from '@theme/Layout';
 import React from 'react';
+
+import FixedBottomContainer from '../components/FixedBottomContainer';
+import FrameworkBanner from '../components/FrameworkBanner';
+import HomepageFeatures from '../components/HomepageFeatures';
+import HomepageHeader from '../components/HomepageHeader';
+import HomepageSponsors from '../components/HomepageSponsors';
 
 export default function Home(): React.JSX.Element {
   const { siteConfig }: DocusaurusContext = useDocusaurusContext();

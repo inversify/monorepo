@@ -1,7 +1,7 @@
-import SponsorsSvg from '@site/static/img/sponsors.svg';
 import Heading from '@theme/Heading';
 import React from 'react';
 
+import SponsorsSvg from '../../../static/img/sponsors.svg';
 import styles from './styles.module.css';
 
 export default function HomepageSponsors(): React.JSX.Element {

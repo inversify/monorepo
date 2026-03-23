@@ -1,5 +1,6 @@
-import { usePathTracker } from '@site/src/client/pathTracker';
 import type { ReactNode } from 'react';
+
+import { usePathTracker } from '../client/pathTracker';
 
 interface RootProps {
   readonly children: ReactNode;
