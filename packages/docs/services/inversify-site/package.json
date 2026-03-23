@@ -37,7 +37,7 @@
     "eslint-plugin-simple-import-sort": "12.1.1",
     "monaco-editor-webpack-plugin": "7.1.1",
     "prettier": "3.8.1",
-    "typescript": "5.9.3",
+    "typescript": "6.0.2",
     "typescript-eslint": "8.57.2"
   },
   "homepage": "https://inversify.io",
