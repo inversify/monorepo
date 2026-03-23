@@ -35,7 +35,7 @@
 
 ## 7. Hono adapter (`@inversifyjs/http-hono`)
 
-- [x] 7.1 Override `_getRouteValueMetadataHandler` in `InversifyHonoHttpAdapter` to return a middleware that stores metadata in the Hono context via `c.set()` (context-only, does NOT set on request)
+- [x] 7.1 Override `_getRouteValueMetadataHandler` in `InversifyHonoHttpAdapter` to return a middleware that sets `request[routeValueMetadataSymbol]` to the metadata map on the `HonoRequest` object
 
 ## 8. uWebSockets adapter (`@inversifyjs/http-uwebsockets`)
 
@@ -46,8 +46,8 @@
 - [x] 9.1 Re-export `createRouteValueMetadataUtils` from `@inversifyjs/http-express` (alias of core)
 - [x] 9.2 Re-export `createRouteValueMetadataUtils` from `@inversifyjs/http-express-v4` (alias of core)
 - [x] 9.3 Re-export `createRouteValueMetadataUtils` from `@inversifyjs/http-fastify` (alias of core)
-- [x] 9.4 Create custom `createRouteValueMetadataUtils<T>(key)` in `@inversifyjs/http-hono` with a getter that reads from the Hono `Context` via `context.get(routeValueMetadataSymbol)` instead of the request object
-- [x] 9.5 Add unit tests for the Hono-specific `createRouteValueMetadataUtils` (getter reads from context, returns undefined when not set)
+- [x] 9.4 Create `createRouteValueMetadataUtils<T>(key)` wrapper in `@inversifyjs/http-hono` that delegates to the core implementation with `HonoRequest` as the request type, typing the getter to accept `HonoRequest`
+- [x] 9.5 Add unit tests for the Hono-specific `createRouteValueMetadataUtils` (getter reads from request, returns undefined when not set)
 - [x] 9.6 Re-export `createRouteValueMetadataUtils` from `@inversifyjs/http-uwebsockets` (alias of core)
 - [x] 9.7 Export `createRouteValueMetadataUtils` in each adapter's `index.ts` barrel file
 

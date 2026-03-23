@@ -22,11 +22,11 @@ The `InversifyFastifyHttpAdapter` SHALL override `_getRouteValueMetadataHandler`
 - **THEN** the request object SHALL have a property at `routeValueMetadataSymbol` containing the route's metadata map before any user middleware executes
 
 ### Requirement: Hono adapter overrides route value metadata handler
-The `InversifyHonoHttpAdapter` SHALL override `_getRouteValueMetadataHandler` to return a middleware that stores the metadata map in the Hono context using Hono's `c.set()` API. The Hono adapter SHALL NOT set `request[routeValueMetadataSymbol]` on the request object.
+The `InversifyHonoHttpAdapter` SHALL override `_getRouteValueMetadataHandler` to return a middleware that sets `request[routeValueMetadataSymbol]` to the provided metadata map on the `HonoRequest` object.
 
-#### Scenario: Middleware sets metadata on Hono context only
+#### Scenario: Middleware sets metadata on Hono request
 - **WHEN** a route has route value metadata and the Hono adapter processes a matching request
-- **THEN** the Hono context SHALL contain the route's metadata map retrievable via `c.get()` before any user middleware executes
+- **THEN** the `HonoRequest` object SHALL have a property at `routeValueMetadataSymbol` containing the route's metadata map before any user middleware executes
 
 ### Requirement: uWebSockets adapter overrides route value metadata handler
 The `InversifyUwebsocketsHttpAdapter` SHALL override `_getRouteValueMetadataHandler` to return a middleware that sets `req[routeValueMetadataSymbol]` to the provided metadata map.
@@ -67,15 +67,15 @@ The `@inversifyjs/http-fastify` package SHALL export a `createRouteValueMetadata
 - **WHEN** `createRouteValueMetadataUtils` is imported from `@inversifyjs/http-fastify`
 - **THEN** it SHALL be the same function as the one exported by `@inversifyjs/http-core`
 
-### Requirement: Hono adapter exports createRouteValueMetadataUtils with context-based getter
-The `@inversifyjs/http-hono` package SHALL export a `createRouteValueMetadataUtils<T>(key: string | symbol)` function that returns a `[decorator, getter]` tuple. The decorator SHALL be the same framework-agnostic decorator as the core implementation. The getter SHALL accept a Hono `Context` object and retrieve the metadata value by calling `context.get(routeValueMetadataSymbol)` and reading the key from the returned map.
+### Requirement: Hono adapter exports createRouteValueMetadataUtils with HonoRequest-typed getter
+The `@inversifyjs/http-hono` package SHALL export a `createRouteValueMetadataUtils<T>(key: string | symbol)` function that returns a `[decorator, getter]` tuple. The function SHALL delegate to the core `createRouteValueMetadataUtils` with `HonoRequest` as the request type parameter. The decorator SHALL be the same framework-agnostic decorator as the core implementation. The getter SHALL accept a `HonoRequest` object and retrieve the metadata value by reading from `request[routeValueMetadataSymbol]`.
 
-#### Scenario: Hono factory returns context-based getter
+#### Scenario: Hono factory returns HonoRequest-based getter
 - **WHEN** `createRouteValueMetadataUtils<string[]>('ROLES')` is called using the Hono export
-- **THEN** the getter SHALL accept a Hono `Context` and return the metadata value stored via `c.set()` by the adapter middleware
+- **THEN** the getter SHALL accept a `HonoRequest` and return the metadata value stored on the request by the adapter middleware
 
 #### Scenario: Hono getter returns undefined when no metadata is present
-- **WHEN** a Hono `Context` does not have the metadata key set
+- **WHEN** a `HonoRequest` does not have the metadata key set
 - **THEN** calling the getter SHALL return `undefined`
 
 ### Requirement: uWebSockets adapter exports createRouteValueMetadataUtils

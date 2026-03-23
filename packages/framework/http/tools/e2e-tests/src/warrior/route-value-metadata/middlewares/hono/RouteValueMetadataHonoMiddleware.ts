@@ -7,11 +7,11 @@ import { getRoles } from '../../decorators/honoRoles';
 @injectable()
 export class RouteValueMetadataHonoMiddleware implements HonoMiddleware {
   public async execute(
-    _request: HonoRequest,
+    request: HonoRequest,
     context: Context,
     next: Next,
   ): Promise<undefined> {
-    const roles: string[] | undefined = getRoles(context);
+    const roles: string[] | undefined = getRoles(request);
 
     if (roles !== undefined) {
       context.header('x-route-roles', roles.join(','));
