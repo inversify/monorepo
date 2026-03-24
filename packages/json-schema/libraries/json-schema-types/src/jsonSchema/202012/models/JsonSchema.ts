@@ -1,4 +1,4 @@
-import { JsonValue } from '../../../json/models/JsonValue';
+import { type JsonValue } from '../../../json/models/JsonValue.js';
 
 type NonEmptyArray<T> = [T, ...T[]];
 
