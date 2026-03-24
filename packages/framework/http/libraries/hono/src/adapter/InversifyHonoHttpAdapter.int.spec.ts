@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { type AddressInfo } from 'node:net';
 
@@ -101,6 +101,10 @@ describe(InversifyHonoHttpAdapter, () => {
       container.bind(TestController).toSelf().inSingletonScope();
 
       server = await buildHonoServer(container);
+    });
+
+    afterAll(async () => {
+      await server.shutdown();
     });
 
     describe('when sending a GET request to the endpoint', () => {
