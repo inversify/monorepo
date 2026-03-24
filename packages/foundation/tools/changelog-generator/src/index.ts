@@ -1,8 +1,8 @@
 import {
-  ChangelogFunctions,
-  ModCompWithPackage,
-  NewChangesetWithCommit,
-  VersionType,
+  type ChangelogFunctions,
+  type ModCompWithPackage,
+  type NewChangesetWithCommit,
+  type VersionType,
 } from '@changesets/types';
 
 async function getReleaseLine(

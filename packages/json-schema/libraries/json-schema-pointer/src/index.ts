@@ -1,2 +1,2 @@
-export { escapeJsonPointerFragments } from './escapeJsonPointerFragments';
-export { resolveJsonPointer } from './resolveJsonPointer';
+export { escapeJsonPointerFragments } from './escapeJsonPointerFragments.js';
+export { resolveJsonPointer } from './resolveJsonPointer.js';
