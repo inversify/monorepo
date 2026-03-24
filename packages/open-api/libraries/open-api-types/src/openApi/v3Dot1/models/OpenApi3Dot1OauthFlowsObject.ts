@@ -1,7 +1,7 @@
-import { OpenApi3Dot1OauthFlowObjectAuthorizationCode } from './OpenApi3Dot1OauthFlowObjectAuthorizationCode';
-import { OpenApi3Dot1OauthFlowObjectClientCredentials } from './OpenApi3Dot1OauthFlowObjectClientCredentials';
-import { OpenApi3Dot1OauthFlowObjectImplicit } from './OpenApi3Dot1OauthFlowObjectImplicit';
-import { OpenApi3Dot1OauthFlowObjectPassword } from './OpenApi3Dot1OauthFlowObjectPassword';
+import { type OpenApi3Dot1OauthFlowObjectAuthorizationCode } from './OpenApi3Dot1OauthFlowObjectAuthorizationCode.js';
+import { type OpenApi3Dot1OauthFlowObjectClientCredentials } from './OpenApi3Dot1OauthFlowObjectClientCredentials.js';
+import { type OpenApi3Dot1OauthFlowObjectImplicit } from './OpenApi3Dot1OauthFlowObjectImplicit.js';
+import { type OpenApi3Dot1OauthFlowObjectPassword } from './OpenApi3Dot1OauthFlowObjectPassword.js';
 
 // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#oauthFlowsObject
 export interface OpenApi3Dot1OauthFlowsObject {

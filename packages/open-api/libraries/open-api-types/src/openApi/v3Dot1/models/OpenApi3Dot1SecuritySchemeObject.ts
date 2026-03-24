@@ -1,7 +1,7 @@
-import { OpenApi3Dot1SecuritySchemeObjectApiKey } from './OpenApi3Dot1SecuritySchemeObjectApiKey';
-import { OpenApi3Dot1SecuritySchemeObjectHttp } from './OpenApi3Dot1SecuritySchemeObjectHttp';
-import { OpenApi3Dot1SecuritySchemeObjectMutualTls } from './OpenApi3Dot1SecuritySchemeObjectMutualTls';
-import { OpenApi3Dot1SecuritySchemeObjectOpenIdConnect } from './OpenApi3Dot1SecuritySchemeObjectOpenIdConnect';
+import { type OpenApi3Dot1SecuritySchemeObjectApiKey } from './OpenApi3Dot1SecuritySchemeObjectApiKey.js';
+import { type OpenApi3Dot1SecuritySchemeObjectHttp } from './OpenApi3Dot1SecuritySchemeObjectHttp.js';
+import { type OpenApi3Dot1SecuritySchemeObjectMutualTls } from './OpenApi3Dot1SecuritySchemeObjectMutualTls.js';
+import { type OpenApi3Dot1SecuritySchemeObjectOpenIdConnect } from './OpenApi3Dot1SecuritySchemeObjectOpenIdConnect.js';
 
 // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#securitySchemeObject
 export type OpenApi3Dot1SecuritySchemeObject =

@@ -1,7 +1,7 @@
-import { OpenApi3Dot1OperationObject } from './OpenApi3Dot1OperationObject';
-import { OpenApi3Dot1ParameterObject } from './OpenApi3Dot1ParameterObject';
-import { OpenApi3Dot1ReferenceObject } from './OpenApi3Dot1ReferenceObject';
-import { OpenApi3Dot1ServerObject } from './OpenApi3Dot1ServerObject';
+import { type OpenApi3Dot1OperationObject } from './OpenApi3Dot1OperationObject.js';
+import { type OpenApi3Dot1ParameterObject } from './OpenApi3Dot1ParameterObject.js';
+import { type OpenApi3Dot1ReferenceObject } from './OpenApi3Dot1ReferenceObject.js';
+import { type OpenApi3Dot1ServerObject } from './OpenApi3Dot1ServerObject.js';
 
 // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#pathItemObject
 export interface OpenApi3Dot1PathItemObject {
