@@ -1,5 +1,12 @@
 # @inversifyjs/http-open-api
 
+## 5.1.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.1.1
+
 ## 5.1.0
 
 ### Patch Changes
