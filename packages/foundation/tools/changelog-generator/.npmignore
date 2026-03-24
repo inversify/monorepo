@@ -3,23 +3,22 @@
 /docs
 /reports
 
+**/*.ts
+!lib/**/*.d.ts
+**/*.spec.d.ts
 **/*.spec.js
 **/*.spec.js.map
-**/*.ts
-!lib/cjs/**/*.d.ts
-lib/cjs/**/fixtures/**
-lib/esm/**/*.d.ts.map
-!lib/esm/index.d.ts
-!lib/esm/index.d.ts.map
+**/*.spec.d.ts.map
+**/*.spec-d.js
+**/*.spec-d.d.ts
+**/*.spec-d.js.map
+**/*.spec-d.d.ts.map
 
 AGENTS.md
 CHANGELOG.md
 .lintstagedrc.json
 eslint.config.mjs
 prettier.config.mjs
-rollup.config.mjs
-tsconfig.cjs.json
-tsconfig.cjs.tsbuildinfo
 tsconfig.esm.json
 tsconfig.esm.tsbuildinfo
 tsconfig.json
