@@ -1,5 +1,13 @@
 # @inversifyjs/http-hono
 
+## 5.1.1
+
+### Patch Changes
+
+- Updated `InversifyHonoHttpAdapter` to no longer apply middlewares to unexpected routes on edge cases.
+- Updated dependencies
+  - @inversifyjs/http-core@5.1.1
+
 ## 5.1.0
 
 ### Minor Changes
