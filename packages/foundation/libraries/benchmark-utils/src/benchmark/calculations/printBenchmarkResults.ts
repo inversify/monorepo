@@ -1,4 +1,9 @@
-import { Bench, Task, TaskResult, TaskResultCompleted } from 'tinybench';
+import {
+  type Bench,
+  type Task,
+  type TaskResult,
+  type TaskResultCompleted,
+} from 'tinybench';
 
 const FIXED_DECIMALS: number = 3;
 

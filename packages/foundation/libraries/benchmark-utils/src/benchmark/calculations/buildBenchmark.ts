@@ -1,6 +1,6 @@
-import { Bench, BenchOptions } from 'tinybench';
+import { Bench, type BenchOptions } from 'tinybench';
 
-import { Scenario } from '../../scenario/models/Scenario';
+import { type Scenario } from '../../scenario/models/Scenario.js';
 
 interface BuildBenchmarkOptions {
   benchOptions?: BenchOptions;
