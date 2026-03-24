@@ -1,4 +1,4 @@
-import { JsonValue } from '@inversifyjs/json-schema-types';
+import { type JsonValue } from '@inversifyjs/json-schema-types';
 
 const SEPARATOR: string = '/';
 const SEPARATOR_ENCODED: string = '~1';

@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { JsonValue } from '@inversifyjs/json-schema-types';
+import { type JsonValue } from '@inversifyjs/json-schema-types';
 
-import { resolveJsonPointer } from './resolveJsonPointer';
+import { resolveJsonPointer } from './resolveJsonPointer.js';
 
 describe(resolveJsonPointer, () => {
   describe.each<[string, JsonValue, JsonValue | undefined]>([
