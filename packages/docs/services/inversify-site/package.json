@@ -29,7 +29,7 @@
     "@docusaurus/types": "3.9.2",
     "@eslint/config-helpers": "0.5.3",
     "@eslint/js": "10.0.1",
-    "@rspack/core": "1.7.9",
+    "@rspack/core": "1.7.10",
     "@types/babel__standalone": "7.1.9",
     "@types/react": "19.2.14",
     "eslint": "10.1.0",
