@@ -21,4 +21,4 @@ export type {
   JsonSchemaUnevaluatedLocationProperties,
   JsonSchemaUnknownProperties,
   WellKnownVocabulary,
-} from './models/JsonSchema';
+} from './models/JsonSchema.js';
