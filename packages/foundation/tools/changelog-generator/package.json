@@ -5,12 +5,11 @@
   },
   "description": "Inversify changesets changelog generator",
   "devDependencies": {
+    "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@changesets/types": "6.1.0",
     "eslint": "10.1.0",
     "prettier": "3.8.1",
     "rimraf": "6.1.3",
-    "rollup": "4.60.0",
-    "ts-loader": "9.5.4",
     "tslib": "2.8.1",
     "typescript": "6.0.2"
   },
@@ -20,13 +19,8 @@
     "pnpm": "^10.13.1"
   },
   "license": "MIT",
-  "main": "lib/cjs/index.js",
-  "module": "lib/esm/index.js",
   "exports": {
-    ".": {
-      "import": "./lib/esm/index.js",
-      "require": "./lib/cjs/index.js"
-    }
+    ".": "./lib/index.js"
   },
   "name": "@inversifyjs/foundation-changelog-generator",
   "publishConfig": {
@@ -37,13 +31,12 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "build": "pnpm run build:cjs && pnpm run build:esm",
-    "build:cjs": "tsc --build tsconfig.cjs.json && pnpm exec foundation-ts-package-cjs ./lib/cjs",
-    "build:esm": "rollup -c ./rollup.config.mjs && pnpm exec foundation-ts-package-esm ./lib/esm",
+    "build": "tsc",
     "build:clean": "rimraf lib",
     "format": "prettier --write ./src",
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean"
   },
-  "version": "0.1.1"
+  "version": "0.1.1",
+  "type": "module"
 }
