@@ -1,0 +1,76 @@
+---
+sidebar_position: 3
+title: Utils
+---
+import createRouteValueMetadataUtilsExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/createRouteValueMetadataUtilsExpress4.ts.txt';
+import createRouteValueMetadataUtilsExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/createRouteValueMetadataUtilsExpress.ts.txt';
+import createRouteValueMetadataUtilsFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/createRouteValueMetadataUtilsFastify.ts.txt';
+import createRouteValueMetadataUtilsHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/createRouteValueMetadataUtilsHono.ts.txt';
+import createRouteValueMetadataUtilsUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/createRouteValueMetadataUtilsUwebsockets.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Utils
+
+## createRouteValueMetadataUtils
+
+`createRouteValueMetadataUtils` is a factory function that creates a `[decorator, getter]` pair for attaching custom key-value metadata to routes and reading it from the request at runtime. This is useful for scenarios like role-based access control, rate limiting, feature flags, or any custom per-route configuration that middleware or guards need to access.
+
+Each adapter package exports its own `createRouteValueMetadataUtils` with a getter typed to the adapter's native request type.
+
+```ts
+function createRouteValueMetadataUtils<T>(
+  key: string | symbol,
+): [
+  decorator: (value: T) => MethodDecorator,
+  getter: (request: Request) => T | undefined,
+]
+```
+
+**Parameters**
+
+- `key`: A unique string or symbol that identifies the metadata entry. Each metadata key should be unique across your application to avoid collisions.
+
+**Returns**
+
+A tuple with two elements:
+
+- `decorator`: A method decorator factory. Call it with a value to create a decorator that attaches that value as metadata on a controller method.
+- `getter`: A function that retrieves the metadata value from the request object. Returns `undefined` if the metadata is not present on the current route.
+
+:::info How it works
+
+The `decorator` stores metadata on the controller class using `reflect-metadata`. At request time, the adapter's internal middleware populates the metadata on the request object before any user-defined middleware, guards, or interceptors execute. The `getter` reads from this request-level storage.
+
+:::
+
+### Example
+
+The following example demonstrates creating a `Roles` decorator and `getRoles` getter, then using them in a middleware to read route-level role metadata and set a response header.
+
+<Tabs>
+  <TabItem value="express4" label="Express 4">
+    <CodeBlock language="ts">{createRouteValueMetadataUtilsExpress4Source}</CodeBlock>
+  </TabItem>
+  <TabItem value="express5" label="Express 5">
+    <CodeBlock language="ts">{createRouteValueMetadataUtilsExpressSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="fastify" label="Fastify">
+    <CodeBlock language="ts">{createRouteValueMetadataUtilsFastifySource}</CodeBlock>
+  </TabItem>
+  <TabItem value="hono" label="Hono">
+    <CodeBlock language="ts">{createRouteValueMetadataUtilsHonoSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="uwebsockets" label="uWebSockets.js">
+    <CodeBlock language="ts">{createRouteValueMetadataUtilsUwebsocketsSource}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+:::note
+
+- Route value metadata is **read-only at request time** — it is set once at route registration and cannot be mutated during request handling.
+- Metadata is only available at the **method level**. To share metadata across all routes in a controller, apply the decorator to each method individually.
+- The metadata middleware is prepended before any user-defined middleware, so the getter is available in `@ApplyMiddleware` handlers, guards, and interceptors.
+
+:::
