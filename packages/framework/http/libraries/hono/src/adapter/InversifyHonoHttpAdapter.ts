@@ -80,9 +80,16 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
         ),
       ];
 
-      router.use(routeParams.path, ...routeHonoMiddlewareList);
+      const httpMethod: string = this.#convertRequestMethodType(
+        routeParams.requestMethodType,
+      );
+
+      for (const routeHonoMiddleware of routeHonoMiddlewareList) {
+        router.on(httpMethod, routeParams.path, routeHonoMiddleware);
+      }
+
       router.on(
-        this.#convertRequestMethodType(routeParams.requestMethodType),
+        httpMethod,
         routeParams.path,
         this.#buildHonoHandler(routeParams.handler),
       );
