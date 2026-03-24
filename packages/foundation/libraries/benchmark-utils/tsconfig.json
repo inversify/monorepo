@@ -1,7 +1,4 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-  "extends": "./tsconfig.cjs.json",
-  "compilerOptions": {
-    "types": ["node"]
-  }
+  "extends": "./tsconfig.esm.json"
 }
