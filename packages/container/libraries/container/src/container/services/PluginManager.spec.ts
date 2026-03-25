@@ -117,7 +117,8 @@ describe(PluginManager, () => {
         } as Partial<Mocked<Plugin<Container>>> as Mocked<Plugin<Container>>;
         pluginClassMock = class implements Partial<Mocked<Plugin<Container>>> {
           public [isPlugin]: true = true as const;
-          public load: Mocked<Plugin<Container>>['load'] = pluginMock.load;
+          public load: Mocked<Plugin<Container>>['load'] =
+            pluginMock.load.bind(pluginMock);
         } as Newable<Mocked<Plugin<Container>>>;
 
         pluginType = vitest

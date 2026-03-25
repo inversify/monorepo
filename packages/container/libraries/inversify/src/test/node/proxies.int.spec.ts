@@ -54,7 +54,7 @@ describe('InversifyJS', () => {
             log.push(`Finished: ${new Date().getTime().toString()}`);
           },
         };
-        weapon.use = new Proxy(weapon.use, handler);
+        weapon.use = new Proxy(weapon.use.bind(weapon), handler);
         return weapon;
       });
 
