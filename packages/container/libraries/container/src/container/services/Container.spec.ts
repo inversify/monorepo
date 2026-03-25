@@ -109,23 +109,24 @@ describe(Container, () => {
       unbindAsync: vitest.fn(),
     } as Partial<Mocked<BindingManager>> as Mocked<BindingManager>;
     bindingManagerClassMock = class implements Partial<Mocked<BindingManager>> {
-      public bind: Mocked<BindingManager>['bind'] = bindingManagerMock.bind;
+      public bind: Mocked<BindingManager>['bind'] =
+        bindingManagerMock.bind.bind(bindingManagerMock);
       public isBound: Mocked<BindingManager>['isBound'] =
-        bindingManagerMock.isBound;
+        bindingManagerMock.isBound.bind(bindingManagerMock);
       public isCurrentBound: Mocked<BindingManager>['isCurrentBound'] =
-        bindingManagerMock.isCurrentBound;
+        bindingManagerMock.isCurrentBound.bind(bindingManagerMock);
       public rebindAsync: Mocked<BindingManager>['rebindAsync'] =
-        bindingManagerMock.rebindAsync;
+        bindingManagerMock.rebindAsync.bind(bindingManagerMock);
       public rebind: Mocked<BindingManager>['rebind'] =
-        bindingManagerMock.rebind;
+        bindingManagerMock.rebind.bind(bindingManagerMock);
       public unbindAsync: Mocked<BindingManager>['unbindAsync'] =
-        bindingManagerMock.unbindAsync;
+        bindingManagerMock.unbindAsync.bind(bindingManagerMock);
       public unbindAllAsync: Mocked<BindingManager>['unbindAllAsync'] =
-        bindingManagerMock.unbindAllAsync;
+        bindingManagerMock.unbindAllAsync.bind(bindingManagerMock);
       public unbindAll: Mocked<BindingManager>['unbindAll'] =
-        bindingManagerMock.unbindAll;
+        bindingManagerMock.unbindAll.bind(bindingManagerMock);
       public unbind: Mocked<BindingManager>['unbind'] =
-        bindingManagerMock.unbind;
+        bindingManagerMock.unbind.bind(bindingManagerMock);
     } as Newable<Partial<Mocked<BindingManager>>> as Newable<
       Mocked<BindingManager>
     >;
@@ -146,13 +147,13 @@ describe(Container, () => {
       Mocked<ContainerModuleManager>
     > {
       public loadAsync: Mocked<ContainerModuleManager>['loadAsync'] =
-        containerModuleManagerMock.loadAsync;
+        containerModuleManagerMock.loadAsync.bind(containerModuleManagerMock);
       public load: Mocked<ContainerModuleManager>['load'] =
-        containerModuleManagerMock.load;
+        containerModuleManagerMock.load.bind(containerModuleManagerMock);
       public unloadAsync: Mocked<ContainerModuleManager>['unloadAsync'] =
-        containerModuleManagerMock.unloadAsync;
+        containerModuleManagerMock.unloadAsync.bind(containerModuleManagerMock);
       public unload: Mocked<ContainerModuleManager>['unload'] =
-        containerModuleManagerMock.unload;
+        containerModuleManagerMock.unload.bind(containerModuleManagerMock);
     } as Newable<Partial<Mocked<ContainerModuleManager>>> as Newable<
       Mocked<ContainerModuleManager>
     >;
@@ -205,7 +206,9 @@ describe(Container, () => {
       Mocked<PlanResultCacheManager>
     > {
       public invalidateService: Mocked<PlanResultCacheManager>['invalidateService'] =
-        planResultCacheManagerMock.invalidateService;
+        planResultCacheManagerMock.invalidateService.bind(
+          planResultCacheManagerMock,
+        );
     } as Newable<Partial<Mocked<PlanResultCacheManager>>> as Newable<
       Mocked<PlanResultCacheManager>
     >;
@@ -220,18 +223,18 @@ describe(Container, () => {
       Mocked<PlanResultCacheService>
     > {
       public get: Mocked<PlanResultCacheService>['get'] =
-        planResultCacheServiceMock.get;
+        planResultCacheServiceMock.get.bind(planResultCacheServiceMock);
       public set: Mocked<PlanResultCacheService>['set'] =
-        planResultCacheServiceMock.set;
+        planResultCacheServiceMock.set.bind(planResultCacheServiceMock);
       public subscribe: Mocked<PlanResultCacheService>['subscribe'] =
-        planResultCacheServiceMock.subscribe;
+        planResultCacheServiceMock.subscribe.bind(planResultCacheServiceMock);
     } as Newable<Mocked<PlanResultCacheService>>;
     pluginManagerMock = {
       register: vitest.fn(),
     } as Partial<Mocked<PluginManager>> as Mocked<PluginManager>;
     pluginManagerClassMock = class implements Partial<Mocked<PluginManager>> {
       public register: Mocked<PluginManager>['register'] =
-        pluginManagerMock.register;
+        pluginManagerMock.register.bind(pluginManagerMock);
     } as Newable<Partial<Mocked<PluginManager>>> as Newable<
       Mocked<PluginManager>
     >;
@@ -254,7 +257,7 @@ describe(Container, () => {
       public deactivationService: Mocked<ServiceReferenceManager>['deactivationService'] =
         serviceReferenceManagerMock.deactivationService;
       public onReset: Mocked<ServiceReferenceManager>['onReset'] =
-        serviceReferenceManagerMock.onReset;
+        serviceReferenceManagerMock.onReset.bind(serviceReferenceManagerMock);
       public planResultCacheService: Mocked<ServiceReferenceManager>['planResultCacheService'] =
         serviceReferenceManagerMock.planResultCacheService;
     } as Newable<Partial<Mocked<ServiceReferenceManager>>> as Newable<
@@ -272,13 +275,17 @@ describe(Container, () => {
       Mocked<ServiceResolutionManager>
     > {
       public get: Mocked<ServiceResolutionManager>['get'] =
-        serviceResolutionManagerMock.get;
+        serviceResolutionManagerMock.get.bind(serviceResolutionManagerMock);
       public getAll: Mocked<ServiceResolutionManager>['getAll'] =
-        serviceResolutionManagerMock.getAll;
+        serviceResolutionManagerMock.getAll.bind(serviceResolutionManagerMock);
       public getAllAsync: Mocked<ServiceResolutionManager>['getAllAsync'] =
-        serviceResolutionManagerMock.getAllAsync;
+        serviceResolutionManagerMock.getAllAsync.bind(
+          serviceResolutionManagerMock,
+        );
       public getAsync: Mocked<ServiceResolutionManager>['getAsync'] =
-        serviceResolutionManagerMock.getAsync;
+        serviceResolutionManagerMock.getAsync.bind(
+          serviceResolutionManagerMock,
+        );
     } as Newable<Partial<Mocked<ServiceResolutionManager>>> as Newable<
       Mocked<ServiceResolutionManager>
     >;
@@ -290,9 +297,9 @@ describe(Container, () => {
       Mocked<SnapshotManager>
     > {
       public restore: Mocked<SnapshotManager>['restore'] =
-        snapshotManagerMock.restore;
+        snapshotManagerMock.restore.bind(snapshotManagerMock);
       public snapshot: Mocked<SnapshotManager>['snapshot'] =
-        snapshotManagerMock.snapshot;
+        snapshotManagerMock.snapshot.bind(snapshotManagerMock);
     } as Newable<Partial<Mocked<SnapshotManager>>> as Newable<
       Mocked<SnapshotManager>
     >;
