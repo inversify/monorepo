@@ -1,6 +1,6 @@
-import { JsonValue } from '@inversifyjs/json-schema-types';
+import { type JsonValue } from '@inversifyjs/json-schema-types';
 
-import { OpenApi3Dot1ServerObject } from './OpenApi3Dot1ServerObject';
+import { type OpenApi3Dot1ServerObject } from './OpenApi3Dot1ServerObject.js';
 
 // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#linkObject
 export interface OpenApi3Dot1LinkObject {

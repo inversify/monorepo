@@ -1,5 +1,5 @@
-import { OpenApi3Dot1ReferenceObject } from './OpenApi3Dot1ReferenceObject';
-import { OpenApi3Dot1ResponseObject } from './OpenApi3Dot1ResponseObject';
+import { type OpenApi3Dot1ReferenceObject } from './OpenApi3Dot1ReferenceObject.js';
+import { type OpenApi3Dot1ResponseObject } from './OpenApi3Dot1ResponseObject.js';
 
 type Digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 type HttpFirstDigit = '1' | '2' | '3' | '4' | '5';

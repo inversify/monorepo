@@ -1,12 +1,12 @@
-import { OpenApi3Dot1ComponentsObject } from './OpenApi3Dot1ComponentsObject';
-import { OpenApi3Dot1ExternalDocumentationObject } from './OpenApi3Dot1ExternalDocumentationObject';
-import { OpenApi3Dot1InfoObject } from './OpenApi3Dot1InfoObject';
-import { OpenApi3Dot1PathItemObject } from './OpenApi3Dot1PathItemObject';
-import { OpenApi3Dot1PathsObject } from './OpenApi3Dot1PathsObject';
-import { OpenApi3Dot1ReferenceObject } from './OpenApi3Dot1ReferenceObject';
-import { OpenApi3Dot1SecurityRequirementObject } from './OpenApi3Dot1SecurityRequirementObject';
-import { OpenApi3Dot1ServerObject } from './OpenApi3Dot1ServerObject';
-import { OpenApi3Dot1TagObject } from './OpenApi3Dot1TagObject';
+import { type OpenApi3Dot1ComponentsObject } from './OpenApi3Dot1ComponentsObject.js';
+import { type OpenApi3Dot1ExternalDocumentationObject } from './OpenApi3Dot1ExternalDocumentationObject.js';
+import { type OpenApi3Dot1InfoObject } from './OpenApi3Dot1InfoObject.js';
+import { type OpenApi3Dot1PathItemObject } from './OpenApi3Dot1PathItemObject.js';
+import { type OpenApi3Dot1PathsObject } from './OpenApi3Dot1PathsObject.js';
+import { type OpenApi3Dot1ReferenceObject } from './OpenApi3Dot1ReferenceObject.js';
+import { type OpenApi3Dot1SecurityRequirementObject } from './OpenApi3Dot1SecurityRequirementObject.js';
+import { type OpenApi3Dot1ServerObject } from './OpenApi3Dot1ServerObject.js';
+import { type OpenApi3Dot1TagObject } from './OpenApi3Dot1TagObject.js';
 
 // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#openapi-object
 export interface OpenApi3Dot1Object {
