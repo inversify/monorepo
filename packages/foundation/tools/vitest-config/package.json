@@ -5,7 +5,7 @@
   },
   "description": "Common vitest config for inversify monorepo packages",
   "dependencies": {
-    "vitest": "4.1.1"
+    "vitest": "4.1.2"
   },
   "devDependencies": {
     "prettier": "3.8.1"
