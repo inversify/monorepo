@@ -7,7 +7,7 @@ import { type OpenApi3Dot1ResponsesObject } from './OpenApi3Dot1ResponsesObject.
 import { type OpenApi3Dot1SecurityRequirementObject } from './OpenApi3Dot1SecurityRequirementObject.js';
 import { type OpenApi3Dot1ServerObject } from './OpenApi3Dot1ServerObject.js';
 
-// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#operationObject
+// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#operationObject
 export interface OpenApi3Dot1OperationObject {
   callbacks?: Record<
     string,

@@ -6,10 +6,11 @@ import { type OpenApi3Dot1ParameterObject } from './OpenApi3Dot1ParameterObject.
 import { type OpenApi3Dot1PathItemObject } from './OpenApi3Dot1PathItemObject.js';
 import { type OpenApi3Dot1ReferenceObject } from './OpenApi3Dot1ReferenceObject.js';
 import { type OpenApi3Dot1RequestBodyObject } from './OpenApi3Dot1RequestBodyObject.js';
+import { type OpenApi3Dot1ResponseObject } from './OpenApi3Dot1ResponseObject.js';
 import { type OpenApi3Dot1SchemaObject } from './OpenApi3Dot1SchemaObject.js';
 import { type OpenApi3Dot1SecuritySchemeObject } from './OpenApi3Dot1SecuritySchemeObject.js';
 
-// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#componentsObject
+// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#componentsObject
 export interface OpenApi3Dot1ComponentsObject {
   callbacks?: Record<
     string,
@@ -35,6 +36,10 @@ export interface OpenApi3Dot1ComponentsObject {
   requestBodies?: Record<
     string,
     OpenApi3Dot1RequestBodyObject | OpenApi3Dot1ReferenceObject
+  >;
+  responses?: Record<
+    string,
+    OpenApi3Dot1ResponseObject | OpenApi3Dot1ReferenceObject
   >;
   schemas?: Record<string, OpenApi3Dot1SchemaObject>;
   securitySchemes?: Record<

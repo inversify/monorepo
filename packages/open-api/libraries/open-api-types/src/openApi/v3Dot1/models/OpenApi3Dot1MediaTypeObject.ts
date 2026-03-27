@@ -5,7 +5,7 @@ import { type OpenApi3Dot1ExampleObject } from './OpenApi3Dot1ExampleObject.js';
 import { type OpenApi3Dot1ReferenceObject } from './OpenApi3Dot1ReferenceObject.js';
 import { type OpenApi3Dot1SchemaObject } from './OpenApi3Dot1SchemaObject.js';
 
-// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#mediaTypeObject
+// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#mediaTypeObject
 export interface OpenApi3Dot1MediaTypeObject {
   encoding?: Record<string, OpenApi3Dot1EncodingObject>;
   example?: JsonValue;
