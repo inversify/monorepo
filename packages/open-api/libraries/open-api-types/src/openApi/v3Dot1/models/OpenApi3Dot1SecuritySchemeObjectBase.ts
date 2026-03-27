@@ -1,6 +1,6 @@
 import { type OpenApi3Dot1SecuritySchemeObjectType } from './OpenApi3Dot1SecuritySchemeObjectType.js';
 
-// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#securitySchemeObject
+// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#securitySchemeObject
 export interface OpenApi3Dot1SecuritySchemeObjectBase<
   TType extends OpenApi3Dot1SecuritySchemeObjectType,
 > {

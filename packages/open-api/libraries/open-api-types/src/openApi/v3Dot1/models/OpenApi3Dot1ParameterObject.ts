@@ -6,7 +6,7 @@ import { type OpenApi3Dot1ParameterObjectIn } from './OpenApi3Dot1ParameterObjec
 import { type OpenApi3Dot1ReferenceObject } from './OpenApi3Dot1ReferenceObject.js';
 import { type OpenApi3Dot1SchemaObject } from './OpenApi3Dot1SchemaObject.js';
 
-// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#parameterObject
+// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#parameterObject
 export interface OpenApi3Dot1ParameterObject {
   allowEmptyValue?: boolean;
   allowReserved?: boolean;

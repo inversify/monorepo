@@ -8,7 +8,7 @@ import { type OpenApi3Dot1SecurityRequirementObject } from './OpenApi3Dot1Securi
 import { type OpenApi3Dot1ServerObject } from './OpenApi3Dot1ServerObject.js';
 import { type OpenApi3Dot1TagObject } from './OpenApi3Dot1TagObject.js';
 
-// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#openapi-object
+// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#openapi-object
 export interface OpenApi3Dot1Object {
   components?: OpenApi3Dot1ComponentsObject;
   externalDocs?: OpenApi3Dot1ExternalDocumentationObject;

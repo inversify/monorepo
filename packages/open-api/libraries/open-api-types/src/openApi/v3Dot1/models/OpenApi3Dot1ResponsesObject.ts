@@ -9,7 +9,7 @@ export type HttpStatusCode = `${HttpFirstDigit}${Digit}${Digit}`;
 export type HttpStatusCodeWildCard =
   `${HttpFirstDigit}${HttpWildcardDigit}${HttpWildcardDigit}`;
 
-// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#responsesObject
+// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#responsesObject
 export type OpenApi3Dot1ResponsesObject = {
   [statusCode in HttpStatusCode | HttpStatusCodeWildCard]?:
     | OpenApi3Dot1ReferenceObject

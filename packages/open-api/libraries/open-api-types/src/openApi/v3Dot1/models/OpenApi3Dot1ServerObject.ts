@@ -1,6 +1,6 @@
 import { type OpenApi3Dot1ServerVariableObject } from './OpenApi3Dot1ServerVariableObject.js';
 
-// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#serverObject
+// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#serverObject
 export interface OpenApi3Dot1ServerObject {
   description?: string;
   url: string;

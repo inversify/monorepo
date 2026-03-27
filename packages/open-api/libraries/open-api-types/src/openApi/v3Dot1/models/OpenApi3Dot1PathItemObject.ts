@@ -3,7 +3,7 @@ import { type OpenApi3Dot1ParameterObject } from './OpenApi3Dot1ParameterObject.
 import { type OpenApi3Dot1ReferenceObject } from './OpenApi3Dot1ReferenceObject.js';
 import { type OpenApi3Dot1ServerObject } from './OpenApi3Dot1ServerObject.js';
 
-// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#pathItemObject
+// https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#pathItemObject
 export interface OpenApi3Dot1PathItemObject {
   $ref?: string;
   delete?: OpenApi3Dot1OperationObject;
