@@ -153,6 +153,11 @@ describe('interfaces', () => {
         container = new Container() as TypedContainer<BindingMap>;
       });
 
+      it('can be cast to Container', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const castContainer: Container = container as Container;
+      });
+
       describe('bind()', () => {
         it('enforces strict bindings', () => {
           container.bind('foo').to(Foo);
