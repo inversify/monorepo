@@ -30,7 +30,8 @@
   },
   "license": "MIT",
   "exports": {
-    "./v3Dot1": "./lib/openApi/v3Dot1/index.js"
+    "./v3Dot1": "./lib/openApi/v3Dot1/index.js",
+    "./v3Dot2": "./lib/openApi/v3Dot2/index.js"
   },
   "name": "@inversifyjs/open-api-types",
   "publishConfig": {
