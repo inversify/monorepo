@@ -36,6 +36,7 @@ export type { OpenApi3Dot2SchemaObjectBaseVocabulary } from './models/OpenApi3Do
 export type { OpenApi3Dot2SecurityRequirementObject } from './models/OpenApi3Dot2SecurityRequirementObject.js';
 export type { OpenApi3Dot2SecuritySchemeObject } from './models/OpenApi3Dot2SecuritySchemeObject.js';
 export type { OpenApi3Dot2SecuritySchemeObjectApiKey } from './models/OpenApi3Dot2SecuritySchemeObjectApiKey.js';
+export type { OpenApi3Dot2SecuritySchemeObjectApiKeyIn } from './models/OpenApi3Dot2SecuritySchemeObjectApiKeyIn.js';
 export type { OpenApi3Dot2SecuritySchemeObjectBase } from './models/OpenApi3Dot2SecuritySchemeObjectBase.js';
 export type { OpenApi3Dot2SecuritySchemeObjectHttp } from './models/OpenApi3Dot2SecuritySchemeObjectHttp.js';
 export type { OpenApi3Dot2SecuritySchemeObjectMutualTls } from './models/OpenApi3Dot2SecuritySchemeObjectMutualTls.js';
