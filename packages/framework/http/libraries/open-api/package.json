@@ -12,7 +12,7 @@
     "swagger-ui-dist": "^5.32.1"
   },
   "devDependencies": {
-    "@hono/node-server": "1.19.11",
+    "@hono/node-server": "1.19.12",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-express-v4": "workspace:*",
