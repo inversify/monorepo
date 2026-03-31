@@ -1,6 +1,6 @@
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { type BaseSwaggerUiProviderOptions } from '../SwaggerUiProviderOptions.js';
+import { type BaseSwaggerUiProviderApiOptions } from '../BaseSwaggerUiProviderApiOptions.js';
 
 export type SwaggerUiProviderApiOptions =
-  BaseSwaggerUiProviderOptions<OpenApi3Dot1Object>;
+  BaseSwaggerUiProviderApiOptions<OpenApi3Dot1Object>;
