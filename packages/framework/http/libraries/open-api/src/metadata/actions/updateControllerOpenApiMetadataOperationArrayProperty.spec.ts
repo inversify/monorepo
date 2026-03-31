@@ -1,119 +1,103 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vitest,
+} from 'vitest';
 
-import { type OpenApi3Dot1ServerObject } from '@inversifyjs/open-api-types/v3Dot1';
-
-import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
 import { updateControllerOpenApiMetadataOperationArrayProperty } from './updateControllerOpenApiMetadataOperationArrayProperty.js';
 
 describe(updateControllerOpenApiMetadataOperationArrayProperty, () => {
-  describe('having metadata with defined property value', () => {
-    let keyFixture: 'servers';
-    let methodKeyFixture: string | symbol;
-    let valueFixture: OpenApi3Dot1ServerObject;
+  let buildOrGetOperationObjectMock: Mock<
+    (
+      metadata: Record<string | symbol, unknown[] | undefined>,
+      methodKey: string | symbol,
+    ) => Record<string | symbol, unknown[]>
+  >;
 
-    let metadataFixture: ControllerOpenApiMetadata;
+  let keyFixture: string;
+  let metadataFixture: Record<string | symbol, unknown[] | undefined>;
+  let methodKeyFixture: string | symbol;
+  let valueFixture: unknown;
+
+  beforeAll(() => {
+    buildOrGetOperationObjectMock = vitest.fn();
+
+    keyFixture = 'servers';
+    metadataFixture = {};
+    methodKeyFixture = 'getUsers';
+    valueFixture = Symbol();
+  });
+
+  describe('when called, and buildOrGetOperationObject() returns an empty metadata object', () => {
+    let operationObjectFixture: Record<string | symbol, unknown[]>;
+
+    let result: unknown;
 
     beforeAll(() => {
-      keyFixture = 'servers';
-      methodKeyFixture = 'getUsers';
-      valueFixture = {
-        description: 'Production server',
-        url: 'https://api.example.com/users',
-      };
+      operationObjectFixture = {};
 
-      metadataFixture = {
-        methodToPathItemObjectMap: new Map([
-          [
-            methodKeyFixture,
-            {
-              [keyFixture]: [valueFixture],
-            },
-          ],
-        ]),
-        references: new Set(),
-        servers: undefined,
-        summary: undefined,
-      };
+      buildOrGetOperationObjectMock.mockReturnValueOnce(operationObjectFixture);
+
+      result = updateControllerOpenApiMetadataOperationArrayProperty(
+        buildOrGetOperationObjectMock,
+      )(
+        valueFixture,
+        methodKeyFixture,
+        keyFixture,
+      )(metadataFixture);
     });
 
-    describe('when called', () => {
-      let result: unknown;
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
 
-      beforeAll(() => {
-        result = updateControllerOpenApiMetadataOperationArrayProperty(
-          valueFixture,
-          methodKeyFixture,
-          keyFixture,
-        )(metadataFixture);
-      });
+    it('should set property value', () => {
+      expect(operationObjectFixture[keyFixture]).toStrictEqual([valueFixture]);
+    });
 
-      it('should return expected result', () => {
-        const expected: ControllerOpenApiMetadata = {
-          ...metadataFixture,
-          methodToPathItemObjectMap: new Map([
-            [
-              methodKeyFixture,
-              {
-                [keyFixture]: [valueFixture, valueFixture],
-              },
-            ],
-          ]),
-        };
-
-        expect(result).toStrictEqual(expected);
-      });
+    it('should return expected result', () => {
+      expect(result).toBe(metadataFixture);
     });
   });
 
-  describe('having metadata with undefined property value', () => {
-    let keyFixture: 'servers';
-    let methodKeyFixture: string | symbol;
-    let valueFixture: OpenApi3Dot1ServerObject;
+  describe('when called, and buildOrGetOperationObject() returns a metadata object with defined property value', () => {
+    let operationObjectFixture: Record<string | symbol, unknown[]>;
 
-    let metadataFixture: ControllerOpenApiMetadata;
+    let result: unknown;
 
     beforeAll(() => {
-      keyFixture = 'servers';
-      methodKeyFixture = 'getUsers';
-      valueFixture = {
-        description: 'Production server',
-        url: 'https://api.example.com/users',
+      operationObjectFixture = {
+        [keyFixture]: [Symbol()],
       };
 
-      metadataFixture = {
-        methodToPathItemObjectMap: new Map(),
-        references: new Set(),
-        servers: undefined,
-        summary: undefined,
-      };
+      buildOrGetOperationObjectMock.mockReturnValueOnce(operationObjectFixture);
+
+      result = updateControllerOpenApiMetadataOperationArrayProperty(
+        buildOrGetOperationObjectMock,
+      )(
+        valueFixture,
+        methodKeyFixture,
+        keyFixture,
+      )(metadataFixture);
     });
 
-    describe('when called', () => {
-      let result: unknown;
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
 
-      beforeAll(() => {
-        result = updateControllerOpenApiMetadataOperationArrayProperty(
-          valueFixture,
-          methodKeyFixture,
-          keyFixture,
-        )(metadataFixture);
-      });
+    it('should add property value to existing array', () => {
+      expect(operationObjectFixture[keyFixture]).toStrictEqual([
+        ...(operationObjectFixture[keyFixture]?.slice(0, -1) ?? []),
+        valueFixture,
+      ]);
+    });
 
-      it('should return expected result', () => {
-        const expected: ControllerOpenApiMetadata = {
-          ...metadataFixture,
-          methodToPathItemObjectMap: new Map([
-            [
-              methodKeyFixture,
-              {
-                [keyFixture]: [valueFixture],
-              },
-            ],
-          ]),
-        };
-
-        expect(result).toStrictEqual(expected);
-      });
+    it('should return expected result', () => {
+      expect(result).toBe(metadataFixture);
     });
   });
 });

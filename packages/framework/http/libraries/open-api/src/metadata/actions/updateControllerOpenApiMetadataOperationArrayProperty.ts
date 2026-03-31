@@ -1,31 +1,38 @@
-import { type OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
-
 import { type ArrayValue } from '../../common/models/ArrayValue.js';
-import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
-import { type OpenApi3Dot1OperationArrayKeys } from '../models/OpenApi3Dot1OperationKeys.js';
-import { buildOrGetOperationObject } from './buildOrGetOperationObject.js';
 
 export function updateControllerOpenApiMetadataOperationArrayProperty<
-  TKey extends OpenApi3Dot1OperationArrayKeys,
+  TKey extends keyof TOperationObject,
+  TMetadata,
+  TOperationObject extends { [K in TKey]?: unknown[] | undefined },
 >(
-  value: ArrayValue<OpenApi3Dot1OperationObject[TKey]>,
+  buildOrGetOperationObject: (
+    metadata: TMetadata,
+    methodKey: string | symbol,
+  ) => TOperationObject,
+): (
+  value: ArrayValue<TOperationObject[TKey]>,
   methodKey: string | symbol,
   propertyKey: TKey,
-): (metadata: ControllerOpenApiMetadata) => ControllerOpenApiMetadata {
-  return (metadata: ControllerOpenApiMetadata): ControllerOpenApiMetadata => {
-    const operationObject: OpenApi3Dot1OperationObject =
-      buildOrGetOperationObject(metadata, methodKey);
+) => (metadata: TMetadata) => TMetadata {
+  return (
+      value: ArrayValue<TOperationObject[TKey]>,
+      methodKey: string | symbol,
+      propertyKey: TKey,
+    ) =>
+    (metadata: TMetadata): TMetadata => {
+      const operationObject: TOperationObject = buildOrGetOperationObject(
+        metadata,
+        methodKey,
+      );
 
-    if (operationObject[propertyKey] === undefined) {
-      operationObject[propertyKey] = [];
-    }
+      if (operationObject[propertyKey] === undefined) {
+        operationObject[propertyKey] = [] as unknown as TOperationObject[TKey];
+      }
 
-    (
-      operationObject[propertyKey] as ArrayValue<
-        OpenApi3Dot1OperationObject[TKey]
-      >[]
-    ).push(value);
+      (
+        operationObject[propertyKey] as ArrayValue<TOperationObject[TKey]>[]
+      ).push(value);
 
-    return metadata;
-  };
+      return metadata;
+    };
 }

@@ -1,116 +1,110 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vitest,
+} from 'vitest';
 
-import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
 import { updateControllerOpenApiMetadataOperationProperty } from './updateControllerOpenApiMetadataOperationProperty.js';
 
 describe(updateControllerOpenApiMetadataOperationProperty, () => {
-  describe('having metadata with defined property value', () => {
-    let keyFixture: 'summary';
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    let targetFixture: Function;
-    let methodKeyFixture: string | symbol;
-    let valueFixture: string;
+  let buildOrGetOperationObjectMock: Mock<
+    (
+      metadata: Record<string | symbol, unknown>,
+      methodKey: string | symbol,
+    ) => Record<string | symbol, unknown>
+  >;
 
-    let metadataFixture: ControllerOpenApiMetadata;
+  let keyFixture: string;
+  let metadataFixture: Record<string | symbol, unknown>;
+  let methodKeyFixture: string | symbol;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  let targetFixture: Function;
+  let valueFixture: unknown;
+
+  beforeAll(() => {
+    buildOrGetOperationObjectMock = vitest.fn();
+
+    keyFixture = 'requestBody';
+    metadataFixture = {};
+    methodKeyFixture = 'getUsers';
+    targetFixture = class {};
+    valueFixture = Symbol();
+  });
+
+  describe('when called, and buildOrGetOperationObject() returns an empty metadata object', () => {
+    let operationObjectFixture: Record<string | symbol, unknown>;
+
+    let result: unknown;
 
     beforeAll(() => {
-      keyFixture = 'summary';
-      targetFixture = class UsersController {};
-      methodKeyFixture = 'getUsers';
-      valueFixture = 'Get all users';
+      operationObjectFixture = {};
 
-      metadataFixture = {
-        methodToPathItemObjectMap: new Map([
-          [
-            methodKeyFixture,
-            {
-              [keyFixture]: valueFixture,
-            },
-          ],
-        ]),
-        references: new Set(),
-        servers: undefined,
-        summary: undefined,
-      };
+      buildOrGetOperationObjectMock.mockReturnValueOnce(operationObjectFixture);
+
+      result = updateControllerOpenApiMetadataOperationProperty(
+        buildOrGetOperationObjectMock,
+      )(
+        valueFixture,
+        targetFixture,
+        methodKeyFixture,
+        keyFixture,
+      )(metadataFixture);
     });
 
-    describe('when called', () => {
-      let result: unknown;
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
 
-      beforeAll(() => {
-        try {
-          updateControllerOpenApiMetadataOperationProperty(
-            valueFixture,
-            targetFixture,
-            methodKeyFixture,
-            keyFixture,
-          )(metadataFixture);
-        } catch (error: unknown) {
-          result = error;
-        }
-      });
+    it('should set property value', () => {
+      expect(operationObjectFixture[keyFixture]).toBe(valueFixture);
+    });
 
-      it('should throw an error', () => {
-        const expectedErrorProperties: Partial<Error> = {
-          message: `Cannot define ${targetFixture.name}.${methodKeyFixture.toString()} ${keyFixture} more than once`,
-        };
-
-        expect(result).toBeInstanceOf(Error);
-        expect(result).toMatchObject(expectedErrorProperties);
-      });
+    it('should return expected result', () => {
+      expect(result).toBe(metadataFixture);
     });
   });
 
-  describe('having metadata with undefined property value', () => {
-    let keyFixture: 'summary';
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    let targetFixture: Function;
-    let methodKeyFixture: string | symbol;
-    let valueFixture: string;
+  describe('when called, and buildOrGetOperationObject() returns a metadata object with defined property value', () => {
+    let operationObjectFixture: Record<string | symbol, unknown>;
 
-    let metadataFixture: ControllerOpenApiMetadata;
+    let result: unknown;
 
     beforeAll(() => {
-      keyFixture = 'summary';
-      targetFixture = class UsersController {};
-      methodKeyFixture = 'getUsers';
-      valueFixture = 'Get all users';
-
-      metadataFixture = {
-        methodToPathItemObjectMap: new Map(),
-        references: new Set(),
-        servers: undefined,
-        summary: undefined,
+      operationObjectFixture = {
+        [keyFixture]: Symbol(),
       };
-    });
 
-    describe('when called', () => {
-      let result: unknown;
+      buildOrGetOperationObjectMock.mockReturnValueOnce(operationObjectFixture);
 
-      beforeAll(() => {
-        result = updateControllerOpenApiMetadataOperationProperty(
+      try {
+        updateControllerOpenApiMetadataOperationProperty(
+          buildOrGetOperationObjectMock,
+        )(
           valueFixture,
           targetFixture,
           methodKeyFixture,
           keyFixture,
         )(metadataFixture);
-      });
+      } catch (error: unknown) {
+        result = error;
+      }
+    });
 
-      it('should return expected result', () => {
-        const expected: ControllerOpenApiMetadata = {
-          ...metadataFixture,
-          methodToPathItemObjectMap: new Map([
-            [
-              methodKeyFixture,
-              {
-                [keyFixture]: valueFixture,
-              },
-            ],
-          ]),
-        };
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
 
-        expect(result).toStrictEqual(expected);
-      });
+    it('should throw an Error', () => {
+      const expectedErrorProperties: Partial<Error> = {
+        message: `Cannot define ${targetFixture.name}.${methodKeyFixture.toString()} ${keyFixture} more than once`,
+      };
+
+      expect(result).toBeInstanceOf(Error);
+      expect(result).toMatchObject(expectedErrorProperties);
     });
   });
 });

@@ -1,0 +1,24 @@
+import { type OpenApi3Dot1SecurityRequirementObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+
+import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { updateControllerOpenApiMetadataOperationArrayProperty } from '../../actions/v3Dot1/updateControllerOpenApiMetadataOperationArrayProperty.js';
+import { buildDefaultControllerOpenApiMetadata } from '../../calculations/v3Dot1/buildDefaultControllerOpenApiMetadata.js';
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export function OasSecurity(
+  content: OpenApi3Dot1SecurityRequirementObject,
+): MethodDecorator {
+  return (target: object, key: string | symbol): void => {
+    updateOwnReflectMetadata(
+      target.constructor,
+      controllerOpenApiMetadataReflectKey,
+      buildDefaultControllerOpenApiMetadata,
+      updateControllerOpenApiMetadataOperationArrayProperty(
+        content,
+        key,
+        'security',
+      ),
+    );
+  };
+}

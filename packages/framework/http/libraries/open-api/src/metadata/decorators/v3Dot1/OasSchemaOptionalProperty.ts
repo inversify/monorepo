@@ -1,0 +1,13 @@
+import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+
+import { type BuildOpenApiBlockFunction } from '../../models/v3Dot1/BuildOpenApiBlockFunction.js';
+import { BaseOasSchemaProperty } from './BaseOasSchemaProperty.js';
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export function OasSchemaOptionalProperty(
+  schema?:
+    | OpenApi3Dot1SchemaObject
+    | BuildOpenApiBlockFunction<OpenApi3Dot1SchemaObject>,
+): PropertyDecorator {
+  return BaseOasSchemaProperty(false)(schema);
+}
