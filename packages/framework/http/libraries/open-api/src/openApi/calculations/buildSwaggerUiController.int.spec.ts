@@ -36,7 +36,7 @@ describe(buildSwaggerUiController, () => {
         };
 
         const container: Container = new Container();
-        const controller: Newable<BaseSwaggerUiController> =
+        const controller: Newable<BaseSwaggerUiController<OpenApi3Dot1Object>> =
           buildSwaggerUiController({
             api: {
               openApiObject: specFixture,
