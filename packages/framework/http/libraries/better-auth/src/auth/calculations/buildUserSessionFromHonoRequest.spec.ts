@@ -102,6 +102,7 @@ describe(buildUserSessionFromHonoRequest, () => {
       cookieValueFixture = 'cookie=value; another-cookie=another-value';
 
       vitest
+        // eslint-disable-next-line vitest/unbound-method
         .mocked(requestMock.header as (name: string) => string | undefined)
         .mockReturnValueOnce(cookieValueFixture);
 
