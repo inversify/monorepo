@@ -1,7 +1,7 @@
 import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/schemaOpenApiMetadataReflectKey.js';
 import { toSchemaInSchemaMetadataContext } from '../../actions/v3Dot1/toSchemaInSchemaMetadataContext.js';
 import { updateSchemaMetadataProperty } from '../../actions/v3Dot1/updateSchemaMetadataProperty.js';
 import { buildDefaultSchemaMetadata } from '../../calculations/v3Dot1/buildDefaultSchemaMetadata.js';

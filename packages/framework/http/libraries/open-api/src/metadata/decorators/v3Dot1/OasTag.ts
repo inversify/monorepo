@@ -1,6 +1,6 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/controllerOpenApiMetadataReflectKey.js';
 import { updateControllerOpenApiMetadataOperationArrayProperty } from '../../actions/v3Dot1/updateControllerOpenApiMetadataOperationArrayProperty.js';
 import { buildDefaultControllerOpenApiMetadata } from '../../calculations/v3Dot1/buildDefaultControllerOpenApiMetadata.js';
 

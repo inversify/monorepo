@@ -18,7 +18,7 @@ vitest.mock(
 
 import { type OpenApi3Dot1SecurityRequirementObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/controllerOpenApiMetadataReflectKey.js';
 import { updateControllerOpenApiMetadataOperationArrayProperty } from '../../actions/v3Dot1/updateControllerOpenApiMetadataOperationArrayProperty.js';
 import { buildDefaultControllerOpenApiMetadata } from '../../calculations/v3Dot1/buildDefaultControllerOpenApiMetadata.js';
 import { type ControllerOpenApiMetadata } from '../../models/v3Dot1/ControllerOpenApiMetadata.js';

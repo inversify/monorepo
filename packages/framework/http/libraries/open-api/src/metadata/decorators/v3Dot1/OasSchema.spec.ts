@@ -18,7 +18,7 @@ vitest.mock(import('../../actions/v3Dot1/updateSchemaMetadataSchema.js'));
 
 import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/schemaOpenApiMetadataReflectKey.js';
 import { toSchemaInSchemaMetadataContext } from '../../actions/v3Dot1/toSchemaInSchemaMetadataContext.js';
 import { updateSchemaMetadataFromOptions } from '../../actions/v3Dot1/updateSchemaMetadataFromOptions.js';
 import { updateSchemaMetadataSchema } from '../../actions/v3Dot1/updateSchemaMetadataSchema.js';

@@ -22,7 +22,7 @@ vitest.mock(
 import { HttpStatusCode } from '@inversifyjs/http-core';
 import { type OpenApi3Dot1ResponseObject } from '@inversifyjs/open-api-types/v3Dot1';
 
-import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/controllerOpenApiMetadataReflectKey.js';
 import { toSchemaInControllerOpenApiMetadataContext } from '../../actions/v3Dot1/toSchemaInControllerMetadataContext.js';
 import { updateControllerOpenApiMetadataOperationRecordProperty } from '../../actions/v3Dot1/updateControllerOpenApiMetadataOperationRecordProperty.js';
 import { buildDefaultControllerOpenApiMetadata } from '../../calculations/v3Dot1/buildDefaultControllerOpenApiMetadata.js';

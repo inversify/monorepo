@@ -16,7 +16,7 @@ vitest.mock(
   import('../../actions/v3Dot1/updateControllerOpenApiMetadataOperationProperty.js'),
 );
 
-import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/controllerOpenApiMetadataReflectKey.js';
 import { updateControllerOpenApiMetadataOperationProperty } from '../../actions/v3Dot1/updateControllerOpenApiMetadataOperationProperty.js';
 import { buildDefaultControllerOpenApiMetadata } from '../../calculations/v3Dot1/buildDefaultControllerOpenApiMetadata.js';
 import { type ControllerOpenApiMetadata } from '../../models/v3Dot1/ControllerOpenApiMetadata.js';
