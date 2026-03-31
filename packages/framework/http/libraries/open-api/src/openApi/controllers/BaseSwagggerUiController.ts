@@ -12,9 +12,9 @@ import mime from 'mime-types';
 import { getAbsoluteFSPath } from 'swagger-ui-dist';
 
 import { htmlTemplateString, jsTemplateString } from '../data/constants.js';
-import { type SwaggerUiInitOptions } from '../models/SwaggerUiInitOptions.js';
 import { type SwaggerUiOptions } from '../models/SwaggerUiOptions.js';
-import { type SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions.js';
+import { type SwaggerUiInitOptions } from '../models/v3Dot1/SwaggerUiInitOptions.js';
+import { type SwaggerUiProviderOptions } from '../models/v3Dot1/SwaggerUiProviderOptions.js';
 
 export abstract class BaseSwaggerUiController {
   protected _basePath: string;

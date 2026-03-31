@@ -10,7 +10,7 @@ import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { type Newable } from 'inversify';
 
 import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController.js';
-import { type SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions.js';
+import { type SwaggerUiProviderOptions } from '../models/v3Dot1/SwaggerUiProviderOptions.js';
 
 export function buildSwaggerUiController(
   options: SwaggerUiProviderOptions,

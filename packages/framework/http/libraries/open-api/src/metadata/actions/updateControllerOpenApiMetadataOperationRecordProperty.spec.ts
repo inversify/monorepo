@@ -1,244 +1,124 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vitest,
+} from 'vitest';
 
-import { type OpenApi3Dot1ResponseObject } from '@inversifyjs/open-api-types/v3Dot1';
-
-import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
 import { updateControllerOpenApiMetadataOperationRecordProperty } from './updateControllerOpenApiMetadataOperationRecordProperty.js';
 
 describe(updateControllerOpenApiMetadataOperationRecordProperty, () => {
-  describe('having metadata with defined key property value', () => {
-    let keyFixture: string;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    let targetFixture: Function;
-    let propertyKeyFixture: 'responses';
-    let methodKeyFixture: string | symbol;
-    let valueFixture: OpenApi3Dot1ResponseObject;
+  let buildOrGetOperationObjectMock: Mock<
+    (
+      metadata: Record<string | symbol, Record<string, unknown>>,
+      methodKey: string | symbol,
+    ) => Record<string | symbol, Record<string, unknown>>
+  >;
 
-    let metadataFixture: ControllerOpenApiMetadata;
+  let keyFixture: string;
+  let metadataFixture: Record<string | symbol, Record<string, unknown>>;
+  let methodKeyFixture: string | symbol;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  let targetFixture: Function;
+  let propertyKeyFixture: string;
+  let valueFixture: unknown;
+
+  beforeAll(() => {
+    buildOrGetOperationObjectMock = vitest.fn();
+
+    keyFixture = 'sample-content-type';
+    metadataFixture = {};
+    methodKeyFixture = 'getUsers';
+    propertyKeyFixture = 'responses';
+    targetFixture = class {};
+    valueFixture = Symbol();
+  });
+
+  describe('when called, and buildOrGetOperationObject() returns an empty metadata object', () => {
+    let operationObjectFixture: Record<
+      string | symbol,
+      Record<string, unknown>
+    >;
+
+    let result: unknown;
 
     beforeAll(() => {
-      keyFixture = '200';
-      targetFixture = class UsersController {};
-      propertyKeyFixture = 'responses';
-      methodKeyFixture = 'getUsers';
-      valueFixture = {
-        content: {
-          'application/json': {
-            schema: {
-              items: {
-                properties: {
-                  id: { type: 'string' },
-                  name: { type: 'string' },
-                },
-                required: ['id', 'name'],
-                type: 'object',
-              },
-              type: 'array',
-            },
-          },
-        },
-        description: 'A list of users.',
-      };
+      operationObjectFixture = {};
 
-      metadataFixture = {
-        methodToPathItemObjectMap: new Map([
-          [
-            methodKeyFixture,
-            {
-              [propertyKeyFixture]: {
-                [keyFixture]: valueFixture,
-              },
-            },
-          ],
-        ]),
-        references: new Set(),
-        servers: undefined,
-        summary: undefined,
-      };
+      buildOrGetOperationObjectMock.mockReturnValueOnce(operationObjectFixture);
+
+      result = updateControllerOpenApiMetadataOperationRecordProperty(
+        buildOrGetOperationObjectMock,
+      )(
+        keyFixture,
+        valueFixture,
+        targetFixture,
+        methodKeyFixture,
+        propertyKeyFixture,
+      )(metadataFixture);
     });
 
-    describe('when called', () => {
-      let result: unknown;
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
 
-      beforeAll(() => {
-        try {
-          updateControllerOpenApiMetadataOperationRecordProperty(
-            keyFixture,
-            valueFixture,
-            targetFixture,
-            methodKeyFixture,
-            propertyKeyFixture,
-          )(metadataFixture);
-        } catch (error: unknown) {
-          result = error;
-        }
+    it('should set property value', () => {
+      expect(operationObjectFixture[propertyKeyFixture]).toStrictEqual({
+        [keyFixture]: valueFixture,
       });
+    });
 
-      it('should throw an error', () => {
-        const expectedErrorProperties: Partial<Error> = {
-          message: `Cannot define ${targetFixture.name}.${methodKeyFixture.toString()} ${propertyKeyFixture} (${keyFixture}) more than once`,
-        };
-
-        expect(result).toBeInstanceOf(Error);
-        expect(result).toMatchObject(expectedErrorProperties);
-      });
+    it('should return expected result', () => {
+      expect(result).toBe(metadataFixture);
     });
   });
 
-  describe('having metadata with defined property value', () => {
-    let keyFixture: string;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    let targetFixture: Function;
-    let propertyKeyFixture: 'responses';
-    let methodKeyFixture: string | symbol;
-    let valueFixture: OpenApi3Dot1ResponseObject;
+  describe('when called, and buildOrGetOperationObject() returns a metadata object with defined property value', () => {
+    let operationObjectFixture: Record<
+      string | symbol,
+      Record<string, unknown>
+    >;
 
-    let metadataFixture: ControllerOpenApiMetadata;
+    let result: unknown;
 
     beforeAll(() => {
-      keyFixture = '200';
-      targetFixture = class UsersController {};
-      propertyKeyFixture = 'responses';
-      methodKeyFixture = 'getUsers';
-      valueFixture = {
-        content: {
-          'application/json': {
-            schema: {
-              items: {
-                properties: {
-                  id: { type: 'string' },
-                  name: { type: 'string' },
-                },
-                required: ['id', 'name'],
-                type: 'object',
-              },
-              type: 'array',
-            },
-          },
+      operationObjectFixture = {
+        [propertyKeyFixture]: {
+          [keyFixture]: Symbol(),
         },
-        description: 'A list of users.',
       };
 
-      metadataFixture = {
-        methodToPathItemObjectMap: new Map([
-          [
-            methodKeyFixture,
-            {
-              [propertyKeyFixture]: {},
-            },
-          ],
-        ]),
-        references: new Set(),
-        servers: undefined,
-        summary: undefined,
-      };
-    });
+      buildOrGetOperationObjectMock.mockReturnValueOnce(operationObjectFixture);
 
-    describe('when called', () => {
-      let result: unknown;
-
-      beforeAll(() => {
-        result = updateControllerOpenApiMetadataOperationRecordProperty(
+      try {
+        updateControllerOpenApiMetadataOperationRecordProperty(
+          buildOrGetOperationObjectMock,
+        )(
           keyFixture,
           valueFixture,
           targetFixture,
           methodKeyFixture,
           propertyKeyFixture,
         )(metadataFixture);
-      });
-
-      it('should return expected result', () => {
-        const expected: ControllerOpenApiMetadata = {
-          ...metadataFixture,
-          methodToPathItemObjectMap: new Map([
-            [
-              methodKeyFixture,
-              {
-                [propertyKeyFixture]: {
-                  [keyFixture]: valueFixture,
-                },
-              },
-            ],
-          ]),
-        };
-
-        expect(result).toStrictEqual(expected);
-      });
-    });
-  });
-
-  describe('having metadata with undefined property value', () => {
-    let keyFixture: string;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    let targetFixture: Function;
-    let propertyKeyFixture: 'responses';
-    let methodKeyFixture: string | symbol;
-    let valueFixture: OpenApi3Dot1ResponseObject;
-
-    let metadataFixture: ControllerOpenApiMetadata;
-
-    beforeAll(() => {
-      keyFixture = '200';
-      targetFixture = class UsersController {};
-      propertyKeyFixture = 'responses';
-      methodKeyFixture = 'getUsers';
-      valueFixture = {
-        content: {
-          'application/json': {
-            schema: {
-              items: {
-                properties: {
-                  id: { type: 'string' },
-                  name: { type: 'string' },
-                },
-                required: ['id', 'name'],
-                type: 'object',
-              },
-              type: 'array',
-            },
-          },
-        },
-        description: 'A list of users.',
-      };
-
-      metadataFixture = {
-        methodToPathItemObjectMap: new Map(),
-        references: new Set(),
-        servers: undefined,
-        summary: undefined,
-      };
+      } catch (error: unknown) {
+        result = error;
+      }
     });
 
-    describe('when called', () => {
-      let result: unknown;
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
 
-      beforeAll(() => {
-        result = updateControllerOpenApiMetadataOperationRecordProperty(
-          keyFixture,
-          valueFixture,
-          targetFixture,
-          methodKeyFixture,
-          propertyKeyFixture,
-        )(metadataFixture);
-      });
+    it('should throw an Error', () => {
+      const expectedErrorProperties: Partial<Error> = {
+        message: `Cannot define ${targetFixture.name}.${methodKeyFixture.toString()} ${propertyKeyFixture} (${keyFixture}) more than once`,
+      };
 
-      it('should return expected result', () => {
-        const expected: ControllerOpenApiMetadata = {
-          ...metadataFixture,
-          methodToPathItemObjectMap: new Map([
-            [
-              methodKeyFixture,
-              {
-                [propertyKeyFixture]: {
-                  [keyFixture]: valueFixture,
-                },
-              },
-            ],
-          ]),
-        };
-
-        expect(result).toStrictEqual(expected);
-      });
+      expect(result).toBeInstanceOf(Error);
+      expect(result).toMatchObject(expectedErrorProperties);
     });
   });
 });

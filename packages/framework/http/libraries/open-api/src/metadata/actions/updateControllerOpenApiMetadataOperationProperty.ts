@@ -1,30 +1,40 @@
-import { type OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
-
-import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
-import { type OpenApi3Dot1OperationNonArrayNonRecordKeys } from '../models/OpenApi3Dot1OperationKeys.js';
-import { buildOrGetOperationObject } from './buildOrGetOperationObject.js';
-
 export function updateControllerOpenApiMetadataOperationProperty<
-  TKey extends OpenApi3Dot1OperationNonArrayNonRecordKeys,
+  TKey extends keyof TOperationObject,
+  TMetadata,
+  TOperationObject extends { [K in TKey]?: unknown },
 >(
-  value: OpenApi3Dot1OperationObject[TKey],
+  buildOrGetOperationObject: (
+    metadata: TMetadata,
+    methodKey: string | symbol,
+  ) => TOperationObject,
+): (
+  value: TOperationObject[TKey],
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   target: Function,
   methodKey: string | symbol,
   propertyKey: TKey,
-): (metadata: ControllerOpenApiMetadata) => ControllerOpenApiMetadata {
-  return (metadata: ControllerOpenApiMetadata): ControllerOpenApiMetadata => {
-    const operationObject: OpenApi3Dot1OperationObject =
-      buildOrGetOperationObject(metadata, methodKey);
-
-    if (operationObject[propertyKey] !== undefined) {
-      throw new Error(
-        `Cannot define ${target.name}.${methodKey.toString()} ${propertyKey} more than once`,
+) => (metadata: TMetadata) => TMetadata {
+  return (
+      value: TOperationObject[TKey],
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+      target: Function,
+      methodKey: string | symbol,
+      propertyKey: TKey,
+    ) =>
+    (metadata: TMetadata): TMetadata => {
+      const operationObject: TOperationObject = buildOrGetOperationObject(
+        metadata,
+        methodKey,
       );
-    }
 
-    operationObject[propertyKey] = value;
+      if (operationObject[propertyKey] !== undefined) {
+        throw new Error(
+          `Cannot define ${target.name}.${methodKey.toString()} ${propertyKey.toString()} more than once`,
+        );
+      }
 
-    return metadata;
-  };
+      operationObject[propertyKey] = value;
+
+      return metadata;
+    };
 }
