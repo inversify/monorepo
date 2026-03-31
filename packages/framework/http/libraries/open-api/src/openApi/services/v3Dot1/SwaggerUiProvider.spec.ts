@@ -51,7 +51,9 @@ import { SwaggerUiProvider } from './SwaggerUiProvider.js';
 describe(SwaggerUiProvider, () => {
   let optionsFixture: SwaggerUiProviderOptions;
 
-  let controllerTypeFixture: Newable<BaseSwaggerUiController>;
+  let controllerTypeFixture: Newable<
+    BaseSwaggerUiController<OpenApi3Dot1Object>
+  >;
 
   beforeAll(() => {
     optionsFixture = {
@@ -61,8 +63,9 @@ describe(SwaggerUiProvider, () => {
       },
       ui: Symbol() as unknown as SwaggerUiProviderUiOptions,
     };
-    controllerTypeFixture =
-      Symbol() as unknown as Newable<BaseSwaggerUiController>;
+    controllerTypeFixture = Symbol() as unknown as Newable<
+      BaseSwaggerUiController<OpenApi3Dot1Object>
+    >;
   });
 
   describe('.provide', () => {

@@ -85,7 +85,7 @@ export class SwaggerUiProvider {
       metadataTuple,
     );
 
-    const controllerType: Newable<BaseSwaggerUiController> =
+    const controllerType: Newable<BaseSwaggerUiController<OpenApi3Dot1Object>> =
       this.#buildControllerType(this.#options);
 
     container.bind(controllerType).toSelf();
@@ -95,7 +95,7 @@ export class SwaggerUiProvider {
 
   #buildControllerType(
     options: SwaggerUiProviderOptions,
-  ): Newable<BaseSwaggerUiController> {
+  ): Newable<BaseSwaggerUiController<OpenApi3Dot1Object>> {
     return buildSwaggerUiController(options);
   }
 
