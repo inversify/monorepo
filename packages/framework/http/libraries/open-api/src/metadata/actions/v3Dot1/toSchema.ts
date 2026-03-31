@@ -3,7 +3,7 @@ import { type JsonSchema } from '@inversifyjs/json-schema-types/2020-12';
 import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/schemaOpenApiMetadataReflectKey.js';
 import { tryBuildSchemaFromWellKnownType } from '../../calculations/tryBuildSchemaFromWellKnownType.js';
 import { type OpenApiSchemaMetadata } from '../../models/v3Dot1/OpenApiSchemaMetadata.js';
 import { type ToSchemaFunction } from '../../models/v3Dot1/ToSchemaFunction.js';

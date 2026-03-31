@@ -15,7 +15,7 @@ vitest.mock(import('../../calculations/tryBuildSchemaFromWellKnownType.js'));
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/schemaOpenApiMetadataReflectKey.js';
 import { tryBuildSchemaFromWellKnownType } from '../../calculations/tryBuildSchemaFromWellKnownType.js';
 import { type OpenApiSchemaMetadata } from '../../models/v3Dot1/OpenApiSchemaMetadata.js';
 import { toSchema } from './toSchema.js';

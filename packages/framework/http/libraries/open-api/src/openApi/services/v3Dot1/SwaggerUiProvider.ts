@@ -19,7 +19,7 @@ import { type Container, type Newable } from 'inversify';
 import { type FilteredByValueType } from '../../../common/models/FilteredByValueType.js';
 import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from '../../../metadata/actions/v3Dot1/mergeOpenApiPathItemObjectIntoOpenApiPaths.js';
 import { type ControllerOpenApiMetadata } from '../../../metadata/models/v3Dot1/ControllerOpenApiMetadata.js';
-import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/controllerOpenApiMetadataReflectKey.js';
+import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/controllerOpenApiMetadataReflectKey.js';
 import { mergeOpenApiTypeSchema } from '../../actions/v3Dot1/mergeOpenApiTypeSchema.js';
 import { buildSwaggerUiController } from '../../calculations/buildSwaggerUiController.js';
 import { type BaseSwaggerUiController } from '../../controllers/BaseSwagggerUiController.js';

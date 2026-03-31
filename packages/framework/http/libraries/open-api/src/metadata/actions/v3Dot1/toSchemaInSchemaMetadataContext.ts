@@ -1,6 +1,6 @@
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
-import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/schemaOpenApiMetadataReflectKey.js';
+import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/schemaOpenApiMetadataReflectKey.js';
 import { buildDefaultSchemaMetadata } from '../../calculations/v3Dot1/buildDefaultSchemaMetadata.js';
 import { type ToSchemaFunction } from '../../models/v3Dot1/ToSchemaFunction.js';
 import { updateSchemaMetadataReferences } from '../updateSchemaMetadataReferences.js';
