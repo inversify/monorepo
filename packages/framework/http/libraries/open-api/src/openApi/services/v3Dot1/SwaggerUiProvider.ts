@@ -233,6 +233,12 @@ export class SwaggerUiProvider {
       const openApi3Dot1PathItemObject: OpenApi3Dot1PathItemObject =
         this.#buildOrGetPathItemObject(pathToPathItemObjectMap, path);
 
+      if (controllerOpenApiMetadata.servers !== undefined) {
+        openApi3Dot1PathItemObject.servers = [
+          ...controllerOpenApiMetadata.servers,
+        ];
+      }
+
       if (controllerOpenApiMetadata.summary !== undefined) {
         openApi3Dot1PathItemObject.summary = controllerOpenApiMetadata.summary;
       }

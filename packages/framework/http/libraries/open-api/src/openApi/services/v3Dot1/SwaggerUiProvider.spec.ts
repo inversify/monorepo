@@ -366,7 +366,11 @@ describe(SwaggerUiProvider, () => {
             ['testMethod', operationObjectFixture],
           ]),
           references: new Set(),
-          servers: undefined,
+          servers: [
+            {
+              url: 'https://example.com/api',
+            },
+          ],
           summary: 'Test controller summary',
         };
 
@@ -437,6 +441,11 @@ describe(SwaggerUiProvider, () => {
           '/api/test-method',
           expect.objectContaining({
             get: operationObjectFixture,
+            servers: [
+              {
+                url: 'https://example.com/api',
+              },
+            ],
             summary: 'Test controller summary',
           }),
         );
@@ -457,7 +466,7 @@ describe(SwaggerUiProvider, () => {
       });
 
       it('should call mergeOpenApiTypeSchema() for each reference', () => {
-        expect(mergeOpenApiTypeSchema).toHaveBeenCalledTimes(0);
+        expect(mergeOpenApiTypeSchema).not.toHaveBeenCalled();
       });
     });
 
