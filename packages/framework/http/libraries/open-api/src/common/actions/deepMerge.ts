@@ -47,7 +47,7 @@ export function deepMerge(
     return deepMergeNonArrayObjects(target, source);
   }
 
-  return source;
+  return deepCloneJsonValue(source);
 }
 
 function deepMergeArray(target: JsonValue[], source: JsonValue): JsonValue[] {
