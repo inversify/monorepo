@@ -3,7 +3,36 @@ import {
   type JsonValueObject,
 } from '@inversifyjs/json-schema-types';
 
-export function deepMerge(target: JsonValue, source: JsonValue): JsonValue {
+const DANGEROUS_KEYS: Set<string> = new Set([
+  '__proto__',
+  'prototype',
+  'constructor',
+]);
+
+export function deepCloneJsonValue(value: JsonValue): JsonValue {
+  if (value === null || typeof value !== 'object') {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(deepCloneJsonValue);
+  }
+
+  const clone: JsonValueObject = {};
+
+  for (const [key, valueValue] of Object.entries(value)) {
+    if (!DANGEROUS_KEYS.has(key)) {
+      clone[key] = deepCloneJsonValue(valueValue);
+    }
+  }
+
+  return clone;
+}
+
+export function deepMerge(
+  target: JsonValue | undefined,
+  source: JsonValue,
+): JsonValue {
   if (Array.isArray(target)) {
     return deepMergeArray(target, source);
   }
@@ -23,9 +52,9 @@ export function deepMerge(target: JsonValue, source: JsonValue): JsonValue {
 
 function deepMergeArray(target: JsonValue[], source: JsonValue): JsonValue[] {
   if (Array.isArray(source)) {
-    target.push(...source);
+    target.push(...source.map(deepCloneJsonValue));
   } else {
-    target.push(source);
+    target.push(deepCloneJsonValue(source));
   }
 
   return target;
@@ -35,17 +64,15 @@ function deepMergeNonArrayObjects(
   target: JsonValueObject,
   source: JsonValueObject,
 ): JsonValueObject {
-  for (const key of Object.keys(source)) {
-    const sourceValue: JsonValue | undefined = source[key];
+  for (const [key, sourceValue] of Object.entries(source)) {
+    if (DANGEROUS_KEYS.has(key)) {
+      continue;
+    }
 
-    if (sourceValue !== undefined) {
-      const targetValue: JsonValue | undefined = target[key];
-
-      if (targetValue !== undefined) {
-        target[key] = deepMerge(targetValue, sourceValue);
-      } else {
-        target[key] = sourceValue;
-      }
+    if (Object.prototype.hasOwnProperty.call(target, key)) {
+      target[key] = deepMerge(target[key], sourceValue);
+    } else {
+      target[key] = deepCloneJsonValue(sourceValue);
     }
   }
 
