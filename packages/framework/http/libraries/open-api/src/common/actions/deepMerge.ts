@@ -9,7 +9,7 @@ const DANGEROUS_KEYS: Set<string> = new Set([
   'constructor',
 ]);
 
-export function deepCloneJsonValue(value: JsonValue): JsonValue {
+function deepCloneJsonValue(value: JsonValue): JsonValue {
   if (value === null || typeof value !== 'object') {
     return value;
   }
