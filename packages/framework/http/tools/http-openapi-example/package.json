@@ -10,7 +10,7 @@
     "@inversifyjs/http-open-api": "workspace:*",
     "express": "^5.2.1",
     "inversify": "^8.1.0",
-    "lmdb": "^3.5.2"
+    "lmdb": "^3.5.3"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
