@@ -68,7 +68,7 @@ export function mergeOpenApiTypeSchema(
           $ref: `#/components/schemas/${escapeJsonPointerFragments(propertySchemaName)}`,
         };
 
-        return;
+        continue;
       }
 
       jsonSchemaProperties[propertyKey] = schemaFromWellKnownType;
