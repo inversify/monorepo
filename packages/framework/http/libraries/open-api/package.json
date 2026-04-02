@@ -57,7 +57,9 @@
   ],
   "license": "MIT",
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./v3Dot1": "./lib/index.js",
+    "./v3Dot2": "./lib/v3Dot2.js"
   },
   "name": "@inversifyjs/http-open-api",
   "peerDependencies": {
