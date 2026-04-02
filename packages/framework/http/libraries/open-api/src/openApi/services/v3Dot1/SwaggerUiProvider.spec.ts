@@ -362,7 +362,7 @@ describe(SwaggerUiProvider, () => {
         } as OpenApi3Dot1OperationObject;
 
         controllerOpenApiMetadataFixture = {
-          methodToPathItemObjectMap: new Map([
+          methodToOperationObjectMap: new Map([
             ['testMethod', operationObjectFixture],
           ]),
           references: new Set(),
@@ -484,7 +484,7 @@ describe(SwaggerUiProvider, () => {
         } as OpenApi3Dot1OperationObject;
 
         controllerOpenApiMetadataFixture = {
-          methodToPathItemObjectMap: new Map([
+          methodToOperationObjectMap: new Map([
             ['testMethod', operationObjectFixture],
           ]),
           references: new Set(),
@@ -573,7 +573,7 @@ describe(SwaggerUiProvider, () => {
 
       beforeAll(() => {
         controllerOpenApiMetadataFixture = {
-          methodToPathItemObjectMap: new Map(),
+          methodToOperationObjectMap: new Map(),
           references: new Set(),
           servers: undefined,
           summary: undefined,
@@ -663,7 +663,7 @@ describe(SwaggerUiProvider, () => {
         } as OpenApi3Dot1OperationObject;
 
         controllerOpenApiMetadataFixture = {
-          methodToPathItemObjectMap: new Map([
+          methodToOperationObjectMap: new Map([
             ['deleteMethod', operationObjectFixture1],
             ['putMethod', operationObjectFixture2],
             ['allMethod', operationObjectFixture3],
@@ -811,7 +811,7 @@ describe(SwaggerUiProvider, () => {
         } as OpenApi3Dot1OperationObject;
 
         controllerOpenApiMetadataFixture = {
-          methodToPathItemObjectMap: new Map([
+          methodToOperationObjectMap: new Map([
             ['method1', operationObjectFixture],
             ['method2', operationObjectFixture],
           ]),
@@ -900,7 +900,7 @@ describe(SwaggerUiProvider, () => {
         typeFixture2 = Symbol() as unknown as NewableFunction;
 
         controllerOpenApiMetadataFixture = {
-          methodToPathItemObjectMap: new Map(),
+          methodToOperationObjectMap: new Map(),
           references: new Set([typeFixture1, typeFixture2]),
           servers: undefined,
           summary: undefined,
@@ -977,7 +977,7 @@ describe(SwaggerUiProvider, () => {
 
       beforeAll(() => {
         controllerOpenApiMetadataFixture = {
-          methodToPathItemObjectMap: new Map(),
+          methodToOperationObjectMap: new Map(),
           references: new Set(),
           servers: undefined,
           summary: undefined,

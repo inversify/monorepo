@@ -6,7 +6,7 @@ import {
 import { type SchemaReferencesMetadata } from '../SchemaReferencesMetadata.js';
 
 export interface ControllerOpenApiMetadata extends SchemaReferencesMetadata {
-  methodToPathItemObjectMap: Map<string | symbol, OpenApi3Dot1OperationObject>;
+  methodToOperationObjectMap: Map<string | symbol, OpenApi3Dot1OperationObject>;
   servers: OpenApi3Dot1ServerObject[] | undefined;
   summary: string | undefined;
 }

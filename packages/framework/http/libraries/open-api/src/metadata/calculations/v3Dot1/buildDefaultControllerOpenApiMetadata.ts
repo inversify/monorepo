@@ -2,7 +2,7 @@ import { type ControllerOpenApiMetadata } from '../../models/v3Dot1/ControllerOp
 
 export function buildDefaultControllerOpenApiMetadata(): ControllerOpenApiMetadata {
   return {
-    methodToPathItemObjectMap: new Map(),
+    methodToOperationObjectMap: new Map(),
     references: new Set(),
     servers: undefined,
     summary: undefined,
