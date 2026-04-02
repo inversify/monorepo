@@ -222,7 +222,7 @@ describe(updateSchemaMetadataProperty, () => {
           properties: new Map([
             [
               propertyKeyFixture,
-              { required: requiredFixture, schema: existingSchemaFixture },
+              { required: true, schema: existingSchemaFixture },
             ],
           ]),
           references: new Set(),

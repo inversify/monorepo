@@ -275,4 +275,247 @@ describe(OasParameter, () => {
       });
     });
   });
+
+  describe('having a function target and a parameter object parameter', () => {
+    let parameterFixture: OpenApi3Dot1ParameterObject;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    let targetTypeFixture: Function;
+    let keyFixture: string;
+
+    beforeAll(() => {
+      parameterFixture = {
+        description: 'Number of items to return',
+        in: 'query',
+        name: 'limit',
+        required: false,
+        schema: {
+          maximum: 100,
+          minimum: 1,
+          type: 'integer',
+        },
+      };
+      targetTypeFixture = function testController() {};
+      keyFixture = 'testMethod';
+    });
+
+    describe('when called', () => {
+      let updateControllerOpenApiMetadataOperationArrayPropertyResultMock: Mock<
+        (metadata: ControllerOpenApiMetadata) => ControllerOpenApiMetadata
+      >;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        updateControllerOpenApiMetadataOperationArrayPropertyResultMock =
+          vitest.fn();
+
+        vitest
+          .mocked(updateControllerOpenApiMetadataOperationArrayProperty)
+          .mockReturnValueOnce(
+            updateControllerOpenApiMetadataOperationArrayPropertyResultMock,
+          );
+
+        result = OasParameter(parameterFixture)(
+          targetTypeFixture,
+          keyFixture,
+          Symbol() as unknown as TypedPropertyDescriptor<unknown>,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call updateControllerOpenApiMetadataOperationArrayProperty()', () => {
+        expect(
+          updateControllerOpenApiMetadataOperationArrayProperty,
+        ).toHaveBeenCalledExactlyOnceWith(
+          parameterFixture,
+          keyFixture,
+          'parameters',
+        );
+      });
+
+      it('should call updateOwnReflectMetadata()', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+          targetTypeFixture,
+          controllerOpenApiMetadataReflectKey,
+          buildDefaultControllerOpenApiMetadata,
+          updateControllerOpenApiMetadataOperationArrayPropertyResultMock,
+        );
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe('having a function target and a reference object parameter', () => {
+    let referenceFixture: OpenApi3Dot1ReferenceObject;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    let targetTypeFixture: Function;
+    let keyFixture: string;
+
+    beforeAll(() => {
+      referenceFixture = {
+        $ref: '#/components/parameters/LimitParam',
+      };
+      targetTypeFixture = function testController() {};
+      keyFixture = 'testMethod';
+    });
+
+    describe('when called', () => {
+      let updateControllerOpenApiMetadataOperationArrayPropertyResultMock: Mock<
+        (metadata: ControllerOpenApiMetadata) => ControllerOpenApiMetadata
+      >;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        updateControllerOpenApiMetadataOperationArrayPropertyResultMock =
+          vitest.fn();
+
+        vitest
+          .mocked(updateControllerOpenApiMetadataOperationArrayProperty)
+          .mockReturnValueOnce(
+            updateControllerOpenApiMetadataOperationArrayPropertyResultMock,
+          );
+
+        result = OasParameter(referenceFixture)(
+          targetTypeFixture,
+          keyFixture,
+          Symbol() as unknown as TypedPropertyDescriptor<unknown>,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call updateControllerOpenApiMetadataOperationArrayProperty()', () => {
+        expect(
+          updateControllerOpenApiMetadataOperationArrayProperty,
+        ).toHaveBeenCalledExactlyOnceWith(
+          referenceFixture,
+          keyFixture,
+          'parameters',
+        );
+      });
+
+      it('should call updateOwnReflectMetadata()', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+          targetTypeFixture,
+          controllerOpenApiMetadataReflectKey,
+          buildDefaultControllerOpenApiMetadata,
+          updateControllerOpenApiMetadataOperationArrayPropertyResultMock,
+        );
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe('having a function target and a build function parameter', () => {
+    let buildFunctionFixture: BuildOpenApiBlockFunction<
+      OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject
+    >;
+    let toSchemaFunctionMock: Mock<ToSchemaFunction>;
+    let builtParameterFixture: OpenApi3Dot1ParameterObject;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    let targetTypeFixture: Function;
+    let keyFixture: string;
+
+    beforeAll(() => {
+      builtParameterFixture = {
+        description: 'Resource identifier',
+        in: 'path',
+        name: 'id',
+        required: true,
+        schema: {
+          format: 'uuid',
+          type: 'string',
+        },
+      };
+
+      toSchemaFunctionMock = vitest.fn();
+
+      buildFunctionFixture = vitest
+        .fn()
+        .mockReturnValueOnce(builtParameterFixture);
+
+      targetTypeFixture = function testController() {};
+      keyFixture = 'getMethod';
+
+      vitest
+        .mocked(toSchemaInControllerOpenApiMetadataContext)
+        .mockReturnValueOnce(toSchemaFunctionMock);
+    });
+
+    describe('when called', () => {
+      let updateControllerOpenApiMetadataOperationArrayPropertyResultMock: Mock<
+        (metadata: ControllerOpenApiMetadata) => ControllerOpenApiMetadata
+      >;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        updateControllerOpenApiMetadataOperationArrayPropertyResultMock =
+          vitest.fn();
+
+        vitest
+          .mocked(updateControllerOpenApiMetadataOperationArrayProperty)
+          .mockReturnValueOnce(
+            updateControllerOpenApiMetadataOperationArrayPropertyResultMock,
+          );
+
+        result = OasParameter(buildFunctionFixture)(
+          targetTypeFixture,
+          keyFixture,
+          Symbol() as unknown as TypedPropertyDescriptor<unknown>,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call toSchemaInControllerOpenApiMetadataContext()', () => {
+        expect(
+          toSchemaInControllerOpenApiMetadataContext,
+        ).toHaveBeenCalledExactlyOnceWith(targetTypeFixture);
+      });
+
+      it('should call build function with toSchema result', () => {
+        expect(buildFunctionFixture).toHaveBeenCalledExactlyOnceWith(
+          toSchemaFunctionMock,
+        );
+      });
+
+      it('should call updateControllerOpenApiMetadataOperationArrayProperty()', () => {
+        expect(
+          updateControllerOpenApiMetadataOperationArrayProperty,
+        ).toHaveBeenCalledExactlyOnceWith(
+          builtParameterFixture,
+          keyFixture,
+          'parameters',
+        );
+      });
+
+      it('should call updateOwnReflectMetadata()', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+          targetTypeFixture,
+          controllerOpenApiMetadataReflectKey,
+          buildDefaultControllerOpenApiMetadata,
+          updateControllerOpenApiMetadataOperationArrayPropertyResultMock,
+        );
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+  });
 });

@@ -221,7 +221,7 @@ export class SwaggerUiProvider {
     pathToPathItemObjectMap: Map<string, OpenApi3Dot1PathItemObject>,
   ): void {
     const operationObject: OpenApi3Dot1PathItemObject | undefined =
-      controllerOpenApiMetadata.methodToPathItemObjectMap.get(
+      controllerOpenApiMetadata.methodToOperationObjectMap.get(
         methodMetadata.methodKey,
       );
 

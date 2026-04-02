@@ -29,7 +29,7 @@ describe(updateControllerOpenApiMetadataServer, () => {
 
       beforeAll(() => {
         metadataFixture = {
-          methodToPathItemObjectMap: new Map(),
+          methodToOperationObjectMap: new Map(),
           references: new Set(),
           servers: undefined,
           summary: undefined,
@@ -69,7 +69,7 @@ describe(updateControllerOpenApiMetadataServer, () => {
         };
 
         metadataFixture = {
-          methodToPathItemObjectMap: new Map(),
+          methodToOperationObjectMap: new Map(),
           references: new Set(),
           servers: [existingServerFixture],
           summary: undefined,
@@ -109,7 +109,7 @@ describe(updateControllerOpenApiMetadataServer, () => {
       beforeAll(() => {
         keyFixture = 'testMethod';
         metadataFixture = {
-          methodToPathItemObjectMap: new Map(),
+          methodToOperationObjectMap: new Map(),
           references: new Set(),
           servers: undefined,
           summary: undefined,
@@ -156,7 +156,7 @@ describe(updateControllerOpenApiMetadataServer, () => {
     beforeAll(() => {
       keyFixture = 'testMethod';
       metadataFixture = {
-        methodToPathItemObjectMap: new Map(),
+        methodToOperationObjectMap: new Map(),
         references: new Set(),
         servers: undefined,
         summary: undefined,

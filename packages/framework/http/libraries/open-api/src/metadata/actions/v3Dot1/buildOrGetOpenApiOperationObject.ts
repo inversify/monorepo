@@ -7,12 +7,12 @@ export function buildOrGetOpenApiOperationObject(
   methodName: string | symbol,
 ): OpenApi3Dot1OperationObject {
   let operationObject: OpenApi3Dot1OperationObject | undefined =
-    controllerMetadata.methodToPathItemObjectMap.get(methodName);
+    controllerMetadata.methodToOperationObjectMap.get(methodName);
 
   if (operationObject === undefined) {
     operationObject = {};
 
-    controllerMetadata.methodToPathItemObjectMap.set(
+    controllerMetadata.methodToOperationObjectMap.set(
       methodName,
       operationObject,
     );

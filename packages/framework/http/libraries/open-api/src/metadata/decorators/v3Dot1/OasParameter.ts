@@ -20,17 +20,19 @@ export function OasParameter(
       >,
 ): MethodDecorator {
   return (target: object, key: string | symbol): void => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    const typeTarget: Function =
+      typeof target === 'function' ? target : target.constructor;
+
     const parameterResult:
       | OpenApi3Dot1ParameterObject
       | OpenApi3Dot1ReferenceObject =
       typeof parameter === 'function'
-        ? parameter(
-            toSchemaInControllerOpenApiMetadataContext(target.constructor),
-          )
+        ? parameter(toSchemaInControllerOpenApiMetadataContext(typeTarget))
         : parameter;
 
     updateOwnReflectMetadata(
-      target.constructor,
+      typeTarget,
       controllerOpenApiMetadataReflectKey,
       buildDefaultControllerOpenApiMetadata,
       updateControllerOpenApiMetadataOperationArrayProperty(

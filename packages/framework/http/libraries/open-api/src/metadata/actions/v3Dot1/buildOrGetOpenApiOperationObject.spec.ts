@@ -23,7 +23,7 @@ describe(buildOrGetOpenApiOperationObject, () => {
 
       beforeAll(() => {
         controllerOpenApiMetadataFixture = {
-          methodToPathItemObjectMap: new Map(),
+          methodToOperationObjectMap: new Map(),
           references: new Set(),
           servers: undefined,
           summary: undefined,
@@ -61,7 +61,7 @@ describe(buildOrGetOpenApiOperationObject, () => {
           Symbol() as unknown as OpenApi3Dot1PathItemObject;
 
         controllerOpenApiMetadataFixture = {
-          methodToPathItemObjectMap: new Map([
+          methodToOperationObjectMap: new Map([
             [pathFixture, pathItemObjectFixture],
           ]),
           references: new Set(),

@@ -7,13 +7,17 @@ import { buildDefaultControllerOpenApiMetadata } from '../../calculations/v3Dot2
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function OasDescription(content: string): MethodDecorator {
   return (target: object, key: string | symbol): void => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    const typeTarget: Function =
+      typeof target === 'function' ? target : target.constructor;
+
     updateOwnReflectMetadata(
-      target.constructor,
+      typeTarget,
       controllerOpenApiMetadataReflectKey,
       buildDefaultControllerOpenApiMetadata,
       updateControllerOpenApiMetadataOperationProperty(
         content,
-        target.constructor,
+        typeTarget,
         key,
         'description',
       ),

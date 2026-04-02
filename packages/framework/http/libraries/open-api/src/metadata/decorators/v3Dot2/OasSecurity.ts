@@ -10,8 +10,12 @@ export function OasSecurity(
   content: OpenApi3Dot2SecurityRequirementObject,
 ): MethodDecorator {
   return (target: object, key: string | symbol): void => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    const typeTarget: Function =
+      typeof target === 'function' ? target : target.constructor;
+
     updateOwnReflectMetadata(
-      target.constructor,
+      typeTarget,
       controllerOpenApiMetadataReflectKey,
       buildDefaultControllerOpenApiMetadata,
       updateControllerOpenApiMetadataOperationArrayProperty(
