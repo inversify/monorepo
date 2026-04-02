@@ -12,8 +12,12 @@ export { OasSecurity } from './metadata/decorators/v3Dot2/OasSecurity.js';
 export { OasServer } from './metadata/decorators/v3Dot2/OasServer.js';
 export { OasSummary } from './metadata/decorators/v3Dot2/OasSummary.js';
 export { OasTag } from './metadata/decorators/v3Dot2/OasTag.js';
+export { SwaggerUiProvider } from './openApi/services/v3Dot2/SwaggerUiProvider.js';
+export { BaseSwaggerUiController } from './openApi/controllers/BaseSwagggerUiController.js';
 
 export type { BuildOpenApiBlockFunction } from './metadata/models/v3Dot2/BuildOpenApiBlockFunction.js';
 export type { OasSchemaDecoratorOptions } from './metadata/models/v3Dot2/OasSchemaDecoratorOptions.js';
+export type { SwaggerUiProviderApiOptions } from './openApi/models/v3Dot2/SwaggerUiProviderApiOptions.js';
+export type { SwaggerUiProviderOptions } from './openApi/models/v3Dot2/SwaggerUiProviderOptions.js';
 export type { SwaggerUiProviderUiOptions } from './openApi/models/SwaggerUiProviderUiOptions.js';
 export type { ToSchemaFunction } from './metadata/models/v3Dot2/ToSchemaFunction.js';
