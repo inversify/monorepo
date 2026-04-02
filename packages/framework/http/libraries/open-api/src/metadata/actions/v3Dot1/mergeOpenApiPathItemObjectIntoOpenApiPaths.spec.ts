@@ -7,85 +7,34 @@ import {
 
 import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from './mergeOpenApiPathItemObjectIntoOpenApiPaths.js';
 
-describe.each<
-  [
-    string,
-    OpenApi3Dot1Object,
-    string,
-    OpenApi3Dot1PathItemObject,
-    OpenApi3Dot1Object,
-  ]
->([
-  [
-    'empty paths',
-    {
+class OpenApi3Dot1ObjectFixtures {
+  public static get withNoPaths(): OpenApi3Dot1Object {
+    return {
       info: {
         title: 'My awesome API',
         version: '1.0.0',
       },
       openapi: '3.1.0',
-    },
-    '/path',
-    { get: {} },
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
-      paths: { '/path': { get: {} } },
-    },
-  ],
-  [
-    'empty path entry',
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
+    };
+  }
+
+  public static get withEmptyPaths(): OpenApi3Dot1Object {
+    return {
+      ...OpenApi3Dot1ObjectFixtures.withNoPaths,
       paths: {},
-    },
-    '/path',
-    { get: {} },
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
-      paths: { '/path': { get: {} } },
-    },
-  ],
-  [
-    'existing path entry',
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
+    };
+  }
+
+  public static get withExistingPathEntry(): OpenApi3Dot1Object {
+    return {
+      ...OpenApi3Dot1ObjectFixtures.withNoPaths,
       paths: { '/path': { get: { summary: 'summary' } } },
-    },
-    '/path',
-    { post: {} },
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
-      paths: { '/path': { get: { summary: 'summary' }, post: {} } },
-    },
-  ],
-  [
-    'existing path entry with overlapping methods',
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
+    };
+  }
+
+  public static get withOverlappingMethods(): OpenApi3Dot1Object {
+    return {
+      ...OpenApi3Dot1ObjectFixtures.withNoPaths,
       paths: {
         '/path': {
           get: {
@@ -94,39 +43,12 @@ describe.each<
           },
         },
       },
-    },
-    '/path',
-    {
-      get: {
-        description: 'new description',
-      },
-      post: {},
-    },
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
-      paths: {
-        '/path': {
-          get: {
-            description: 'new description',
-            summary: 'summary',
-          },
-          post: {},
-        },
-      },
-    },
-  ],
-  [
-    'existing path entry with array merging (tags)',
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
+    };
+  }
+
+  public static get withArrayTags(): OpenApi3Dot1Object {
+    return {
+      ...OpenApi3Dot1ObjectFixtures.withNoPaths,
       paths: {
         '/path': {
           get: {
@@ -134,36 +56,12 @@ describe.each<
           },
         },
       },
-    },
-    '/path',
-    {
-      get: {
-        tags: ['tag3', 'tag4'],
-      },
-    },
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
-      paths: {
-        '/path': {
-          get: {
-            tags: ['tag1', 'tag2', 'tag3', 'tag4'],
-          },
-        },
-      },
-    },
-  ],
-  [
-    'existing path entry with nested object merging',
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
+    };
+  }
+
+  public static get withNestedResponses(): OpenApi3Dot1Object {
+    return {
+      ...OpenApi3Dot1ObjectFixtures.withNoPaths,
       paths: {
         '/path': {
           get: {
@@ -182,80 +80,12 @@ describe.each<
           },
         },
       },
-    },
-    '/path',
-    {
-      get: {
-        responses: {
-          '200': {
-            content: {
-              'application/json': {
-                schema: {
-                  properties: {
-                    id: { type: 'string' },
-                  },
-                  type: 'object',
-                },
-              },
-              'application/xml': {
-                schema: {
-                  type: 'string',
-                },
-              },
-            },
-            description: 'Success with extended content',
-          },
-          '400': {
-            description: 'Bad Request',
-          },
-        },
-      },
-    },
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
-      paths: {
-        '/path': {
-          get: {
-            responses: {
-              '200': {
-                content: {
-                  'application/json': {
-                    schema: {
-                      properties: {
-                        id: { type: 'string' },
-                      },
-                      type: 'object',
-                    },
-                  },
-                  'application/xml': {
-                    schema: {
-                      type: 'string',
-                    },
-                  },
-                },
-                description: 'Success with extended content',
-              },
-              '400': {
-                description: 'Bad Request',
-              },
-            },
-          },
-        },
-      },
-    },
-  ],
-  [
-    'existing path entry with mixed array and object operations',
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
+    };
+  }
+
+  public static get withMixedArrayAndObjectOperations(): OpenApi3Dot1Object {
+    return {
+      ...OpenApi3Dot1ObjectFixtures.withNoPaths,
       paths: {
         '/path': {
           get: {
@@ -276,99 +106,322 @@ describe.each<
           },
         },
       },
-    },
-    '/path',
-    {
-      get: {
-        parameters: [
-          {
-            in: 'query',
-            name: 'filter',
-            required: false,
-            schema: { type: 'string' },
-          },
-        ],
-        responses: {
-          '200': {
-            content: {
-              'application/json': {
-                schema: { type: 'object' },
-              },
-            },
-            description: 'Success with content',
-          },
-          '404': {
-            description: 'Not Found',
-          },
-        },
-        tags: ['new1', 'new2'],
-      },
-    },
-    {
-      info: {
-        title: 'My awesome API',
-        version: '1.0.0',
-      },
-      openapi: '3.1.0',
-      paths: {
-        '/path': {
-          get: {
-            parameters: [
-              {
-                in: 'path',
-                name: 'id',
-                required: true,
-                schema: { type: 'string' },
-              },
-              {
-                in: 'query',
-                name: 'filter',
-                required: false,
-                schema: { type: 'string' },
-              },
-            ],
-            responses: {
-              '200': {
-                content: {
-                  'application/json': {
-                    schema: { type: 'object' },
-                  },
-                },
-                description: 'Success with content',
-              },
-              '404': {
-                description: 'Not Found',
-              },
-            },
-            tags: ['existing', 'new1', 'new2'],
-          },
-        },
-      },
-    },
-  ],
-])(
-  'having OpenApi3Dot1Object with %s',
-  (
-    _: string,
-    openApi3Dot1ObjectFixture: OpenApi3Dot1Object,
-    pathFixture: string,
-    pathItemObjectFixture: OpenApi3Dot1PathItemObject,
-    expectedResult: OpenApi3Dot1Object,
-  ) => {
-    describe('when called', () => {
-      let result: unknown;
+    };
+  }
+}
 
-      beforeAll(() => {
-        result = mergeOpenApiPathItemObjectIntoOpenApiPaths(
-          openApi3Dot1ObjectFixture,
-          pathFixture,
-          pathItemObjectFixture,
-        );
-      });
+describe(mergeOpenApiPathItemObjectIntoOpenApiPaths, () => {
+  describe('.mergeOpenApiPathItemObjectIntoOpenApiPaths', () => {
+    describe('having an OpenApi3Dot1Object with no paths', () => {
+      describe('when called', () => {
+        let result: unknown;
 
-      it('should return expected result', () => {
-        expect(result).toStrictEqual(expectedResult);
+        beforeAll(() => {
+          result = mergeOpenApiPathItemObjectIntoOpenApiPaths(
+            OpenApi3Dot1ObjectFixtures.withNoPaths,
+            '/path',
+            { get: {} },
+          );
+        });
+
+        it('should return expected result', () => {
+          expect(result).toStrictEqual({
+            info: {
+              title: 'My awesome API',
+              version: '1.0.0',
+            },
+            openapi: '3.1.0',
+            paths: { '/path': { get: {} } },
+          });
+        });
       });
     });
-  },
-);
+
+    describe('having an OpenApi3Dot1Object with empty paths', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = mergeOpenApiPathItemObjectIntoOpenApiPaths(
+            OpenApi3Dot1ObjectFixtures.withEmptyPaths,
+            '/path',
+            { get: {} },
+          );
+        });
+
+        it('should return expected result', () => {
+          expect(result).toStrictEqual({
+            info: {
+              title: 'My awesome API',
+              version: '1.0.0',
+            },
+            openapi: '3.1.0',
+            paths: { '/path': { get: {} } },
+          });
+        });
+      });
+    });
+
+    describe('having an OpenApi3Dot1Object with existing path entry', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = mergeOpenApiPathItemObjectIntoOpenApiPaths(
+            OpenApi3Dot1ObjectFixtures.withExistingPathEntry,
+            '/path',
+            { post: {} },
+          );
+        });
+
+        it('should return expected result', () => {
+          expect(result).toStrictEqual({
+            info: {
+              title: 'My awesome API',
+              version: '1.0.0',
+            },
+            openapi: '3.1.0',
+            paths: { '/path': { get: { summary: 'summary' }, post: {} } },
+          });
+        });
+      });
+    });
+
+    describe('having an OpenApi3Dot1Object with overlapping methods', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          const pathItemObjectFixture: OpenApi3Dot1PathItemObject = {
+            get: {
+              description: 'new description',
+            },
+            post: {},
+          };
+
+          result = mergeOpenApiPathItemObjectIntoOpenApiPaths(
+            OpenApi3Dot1ObjectFixtures.withOverlappingMethods,
+            '/path',
+            pathItemObjectFixture,
+          );
+        });
+
+        it('should return expected result', () => {
+          expect(result).toStrictEqual({
+            info: {
+              title: 'My awesome API',
+              version: '1.0.0',
+            },
+            openapi: '3.1.0',
+            paths: {
+              '/path': {
+                get: {
+                  description: 'new description',
+                  summary: 'summary',
+                },
+                post: {},
+              },
+            },
+          });
+        });
+      });
+    });
+
+    describe('having an OpenApi3Dot1Object with array merging (tags)', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = mergeOpenApiPathItemObjectIntoOpenApiPaths(
+            OpenApi3Dot1ObjectFixtures.withArrayTags,
+            '/path',
+            {
+              get: {
+                tags: ['tag3', 'tag4'],
+              },
+            },
+          );
+        });
+
+        it('should return expected result', () => {
+          expect(result).toStrictEqual({
+            info: {
+              title: 'My awesome API',
+              version: '1.0.0',
+            },
+            openapi: '3.1.0',
+            paths: {
+              '/path': {
+                get: {
+                  tags: ['tag1', 'tag2', 'tag3', 'tag4'],
+                },
+              },
+            },
+          });
+        });
+      });
+    });
+
+    describe('having an OpenApi3Dot1Object with nested object merging', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = mergeOpenApiPathItemObjectIntoOpenApiPaths(
+            OpenApi3Dot1ObjectFixtures.withNestedResponses,
+            '/path',
+            {
+              get: {
+                responses: {
+                  '200': {
+                    content: {
+                      'application/json': {
+                        schema: {
+                          properties: {
+                            id: { type: 'string' },
+                          },
+                          type: 'object',
+                        },
+                      },
+                      'application/xml': {
+                        schema: {
+                          type: 'string',
+                        },
+                      },
+                    },
+                    description: 'Success with extended content',
+                  },
+                  '400': {
+                    description: 'Bad Request',
+                  },
+                },
+              },
+            },
+          );
+        });
+
+        it('should return expected result', () => {
+          expect(result).toStrictEqual({
+            info: {
+              title: 'My awesome API',
+              version: '1.0.0',
+            },
+            openapi: '3.1.0',
+            paths: {
+              '/path': {
+                get: {
+                  responses: {
+                    '200': {
+                      content: {
+                        'application/json': {
+                          schema: {
+                            properties: {
+                              id: { type: 'string' },
+                            },
+                            type: 'object',
+                          },
+                        },
+                        'application/xml': {
+                          schema: {
+                            type: 'string',
+                          },
+                        },
+                      },
+                      description: 'Success with extended content',
+                    },
+                    '400': {
+                      description: 'Bad Request',
+                    },
+                  },
+                },
+              },
+            },
+          });
+        });
+      });
+    });
+
+    describe('having an OpenApi3Dot1Object with mixed array and object operations', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = mergeOpenApiPathItemObjectIntoOpenApiPaths(
+            OpenApi3Dot1ObjectFixtures.withMixedArrayAndObjectOperations,
+            '/path',
+            {
+              get: {
+                parameters: [
+                  {
+                    in: 'query',
+                    name: 'filter',
+                    required: false,
+                    schema: { type: 'string' },
+                  },
+                ],
+                responses: {
+                  '200': {
+                    content: {
+                      'application/json': {
+                        schema: { type: 'object' },
+                      },
+                    },
+                    description: 'Success with content',
+                  },
+                  '404': {
+                    description: 'Not Found',
+                  },
+                },
+                tags: ['new1', 'new2'],
+              },
+            },
+          );
+        });
+
+        it('should return expected result', () => {
+          expect(result).toStrictEqual({
+            info: {
+              title: 'My awesome API',
+              version: '1.0.0',
+            },
+            openapi: '3.1.0',
+            paths: {
+              '/path': {
+                get: {
+                  parameters: [
+                    {
+                      in: 'path',
+                      name: 'id',
+                      required: true,
+                      schema: { type: 'string' },
+                    },
+                    {
+                      in: 'query',
+                      name: 'filter',
+                      required: false,
+                      schema: { type: 'string' },
+                    },
+                  ],
+                  responses: {
+                    '200': {
+                      content: {
+                        'application/json': {
+                          schema: { type: 'object' },
+                        },
+                      },
+                      description: 'Success with content',
+                    },
+                    '404': {
+                      description: 'Not Found',
+                    },
+                  },
+                  tags: ['existing', 'new1', 'new2'],
+                },
+              },
+            },
+          });
+        });
+      });
+    });
+  });
+});

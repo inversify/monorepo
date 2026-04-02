@@ -16,7 +16,7 @@ export function mergeOpenApiPathItemObjectIntoOpenApiPaths(
   }
 
   if (target.paths[path] === undefined) {
-    target.paths[path] = openApiPathItemObject;
+    target.paths[path] = structuredClone(openApiPathItemObject);
   } else {
     target.paths[path] = deepMerge(
       target.paths[path] as JsonValueObject,
