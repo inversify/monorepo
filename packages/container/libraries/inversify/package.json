@@ -13,7 +13,7 @@
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@types/node": "24.12.2",
     "@vitest/coverage-v8": "4.1.2",
-    "eslint": "10.1.0",
+    "eslint": "10.2.0",
     "prettier": "3.8.1",
     "reflect-metadata": "0.2.2",
     "rimraf": "6.1.3",

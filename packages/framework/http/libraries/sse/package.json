@@ -23,7 +23,7 @@
     "@types/express4": "npm:@types/express@4.17.25",
     "@types/node": "24.12.2",
     "@vitest/coverage-v8": "4.1.2",
-    "eslint": "10.1.0",
+    "eslint": "10.2.0",
     "express": "5.2.1",
     "express4": "npm:express@4.22.1",
     "fastify": "5.8.4",
