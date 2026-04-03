@@ -6,7 +6,7 @@
   "description": "InversifyJS bundles package",
   "devDependencies": {
     "@babel/types": "7.29.0",
-    "@eslint/config-helpers": "0.5.3",
+    "@eslint/config-helpers": "0.5.4",
     "@eslint/js": "10.0.1",
     "@inversifyjs/common": "workspace:*",
     "@inversifyjs/container": "workspace:*",
@@ -20,7 +20,7 @@
     "@types/babel__standalone": "7.1.9",
     "@types/react": "19.2.14",
     "@vitejs/plugin-react": "6.0.1",
-    "eslint": "10.1.0",
+    "eslint": "10.2.0",
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "glob": "13.0.6",

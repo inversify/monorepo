@@ -9,7 +9,7 @@
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@types/node": "24.12.2",
     "@vitest/coverage-v8": "4.1.2",
-    "eslint": "10.1.0",
+    "eslint": "10.2.0",
     "glob": "13.0.6",
     "inversify6": "npm:inversify@6.2.2",
     "inversify7": "npm:inversify@7.11.0",
