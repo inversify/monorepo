@@ -1,5 +1,20 @@
 # @inversifyjs/open-api-types
 
+## 2.0.0
+
+### Major Changes
+
+- Updated package to be ESM only
+
+### Minor Changes
+
+- Added `v3Dot2` types
+
+### Patch Changes
+
+- Updated v3Dot1 with right security types
+- Updated v3Dot1 with right header object types
+
 ## 1.0.1
 
 ### Patch Changes

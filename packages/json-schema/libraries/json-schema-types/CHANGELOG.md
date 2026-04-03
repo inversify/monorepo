@@ -1,5 +1,11 @@
 # @inversifyjs/json-schema-types
 
+## 2.0.0
+
+### Major Changes
+
+- Updated package to be ESM only
+
 ## 1.0.1
 
 ### Patch Changes
