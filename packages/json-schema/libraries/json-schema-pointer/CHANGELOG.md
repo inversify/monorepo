@@ -1,5 +1,11 @@
 # @inversifyjs/json-schema-pointer
 
+## 2.0.0
+
+### Major Changes
+
+- Updated package to be ESM only
+
 ## 1.0.0
 
 ### Major Changes

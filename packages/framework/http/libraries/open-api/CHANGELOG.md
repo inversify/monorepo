@@ -1,5 +1,20 @@
 # @inversifyjs/http-open-api
 
+## 5.2.0
+
+### Minor Changes
+
+- Added 3.2 `SwaggerUiProvider`
+- Added OpenApi 3.2 decorators
+
+### Patch Changes
+
+- Updated `SwaggerUiProvider` to properly provide operation-level server metadata
+- Updated `mergeOpenApiTypeSchema` to properly handle property schema metadata edge case
+- Updated dependencies
+  - @inversifyjs/json-schema-pointer@2.0.0
+  - @inversifyjs/http-core@5.2.0
+
 ## 5.1.1
 
 ### Patch Changes
