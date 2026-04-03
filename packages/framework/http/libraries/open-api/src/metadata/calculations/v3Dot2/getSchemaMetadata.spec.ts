@@ -6,8 +6,8 @@ import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 vitest.mock(import('./buildDefaultSchemaMetadata.js'));
 
-import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/schemaOpenApiMetadataReflectKey.js';
-import { type OpenApiSchemaMetadata } from '../../models/v3Dot1/OpenApiSchemaMetadata.js';
+import { schemaOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot2/schemaOpenApiMetadataReflectKey.js';
+import { type OpenApiSchemaMetadata } from '../../models/v3Dot2/OpenApiSchemaMetadata.js';
 import { buildDefaultSchemaMetadata } from './buildDefaultSchemaMetadata.js';
 import { getSchemaMetadata } from './getSchemaMetadata.js';
 

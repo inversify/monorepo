@@ -3,15 +3,15 @@ import {
   type JsonSchema,
   type JsonSchemaObject,
 } from '@inversifyjs/json-schema-types/2020-12';
-import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot2SchemaObject } from '@inversifyjs/open-api-types/v3Dot2';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { tryBuildSchemaFromWellKnownType } from '../../../metadata/calculations/tryBuildSchemaFromWellKnownType.js';
-import { getSchemaMetadata } from '../../../metadata/calculations/v3Dot1/getSchemaMetadata.js';
-import { type OpenApiSchemaMetadata } from '../../../metadata/models/v3Dot1/OpenApiSchemaMetadata.js';
+import { getSchemaMetadata } from '../../../metadata/calculations/v3Dot2/getSchemaMetadata.js';
+import { type OpenApiSchemaMetadata } from '../../../metadata/models/v3Dot2/OpenApiSchemaMetadata.js';
 
 export function mergeOpenApiTypeSchema(
-  schemasObject: Record<string, OpenApi3Dot1SchemaObject>,
+  schemasObject: Record<string, OpenApi3Dot2SchemaObject>,
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   type: Function,
 ): void {

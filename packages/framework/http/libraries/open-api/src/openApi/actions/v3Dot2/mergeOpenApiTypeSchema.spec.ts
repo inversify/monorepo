@@ -13,12 +13,12 @@ import {
   type JsonSchema,
   type JsonSchemaObject,
 } from '@inversifyjs/json-schema-types/2020-12';
-import { type OpenApi3Dot1SchemaObject } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot2SchemaObject } from '@inversifyjs/open-api-types/v3Dot2';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { tryBuildSchemaFromWellKnownType } from '../../../metadata/calculations/tryBuildSchemaFromWellKnownType.js';
-import { getSchemaMetadata } from '../../../metadata/calculations/v3Dot1/getSchemaMetadata.js';
-import { type OpenApiSchemaMetadata } from '../../../metadata/models/v3Dot1/OpenApiSchemaMetadata.js';
+import { getSchemaMetadata } from '../../../metadata/calculations/v3Dot2/getSchemaMetadata.js';
+import { type OpenApiSchemaMetadata } from '../../../metadata/models/v3Dot2/OpenApiSchemaMetadata.js';
 import { mergeOpenApiTypeSchema } from './mergeOpenApiTypeSchema.js';
 
 vitest.mock(import('@inversifyjs/json-schema-pointer'));
@@ -27,7 +27,7 @@ vitest.mock(
   import('../../../metadata/calculations/tryBuildSchemaFromWellKnownType.js'),
 );
 vitest.mock(
-  import('../../../metadata/calculations/v3Dot1/getSchemaMetadata.js'),
+  import('../../../metadata/calculations/v3Dot2/getSchemaMetadata.js'),
 );
 
 describe(mergeOpenApiTypeSchema, () => {
@@ -59,7 +59,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with no schema nor properties and existing name in schemas object', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
 
         beforeAll(() => {
@@ -104,7 +104,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with no schema nor properties', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
 
         beforeAll(() => {
@@ -139,7 +139,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should modify schemasObject', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             NewType: {
               properties: {},
               type: 'object',
@@ -155,7 +155,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with no name nor schema nor properties', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
 
         beforeAll(() => {
@@ -200,8 +200,8 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with no schema nor properties and customAttributes', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
-        let customAttributesFixture: OpenApi3Dot1SchemaObject;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
+        let customAttributesFixture: OpenApi3Dot2SchemaObject;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
 
         beforeAll(() => {
@@ -236,7 +236,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with merged customAttributes', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             TypeWithCustomAttributes: {
               description: 'A custom type with attributes',
               example: 'custom-example',
@@ -258,7 +258,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with schema and no properties', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         let schemaFixture: JsonSchema;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
 
@@ -294,7 +294,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject using the schema directly', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             TypeWithSchemaOnly: schemaFixture,
           };
 
@@ -313,7 +313,7 @@ describe(mergeOpenApiTypeSchema, () => {
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with schema and no properties and customAttributes', () => {
         let customAttributesFixture: JsonSchemaObject;
         let customAttributesAllOfFixture: [JsonSchema];
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         let schemaFixture: JsonSchema;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
 
@@ -359,7 +359,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject using the schema directly', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             TypeWithSchemaOnly: {
               ...customAttributesFixture,
               allOf: [...customAttributesAllOfFixture, schemaFixture],
@@ -379,7 +379,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with schema and properties', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         let schemaFixture: JsonSchema;
         let propertySchemaFixture: JsonSchema;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
@@ -429,7 +429,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with allOf structure', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             TypeWithSchemaAndProperties: {
               allOf: [schemaFixture],
               properties: {
@@ -452,7 +452,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with defined name and properties', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         let propertySchemaFixture: JsonSchema;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
 
@@ -496,7 +496,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with defined property schemas', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             TypeWithDefinedSchemas: {
               properties: {
                 stringProperty: propertySchemaFixture,
@@ -518,7 +518,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with no schema and required property', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         let propertySchemaFixture: JsonSchema;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
 
@@ -568,7 +568,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with required properties array', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             TypeWithRequiredProperty: {
               properties: {
                 optionalProperty: propertySchemaFixture,
@@ -592,7 +592,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with properties with undefined schemas and getOwnReflectMetadata() returns undefined', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
 
         let result: unknown;
@@ -657,7 +657,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadataMock() returns SchemaMetadata with property with no schema and tryBuildSchemaFromWellKnownType() returns a schema', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         let propertyTypeFixture: Function;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
@@ -719,7 +719,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with well-known type schema', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             TypeWithWellKnownProperties: {
               properties: {
                 stringProperty: wellKnownSchemaFixture,
@@ -737,7 +737,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with properties with no schema and tryBuildSchemaFromWellKnownType returns undefined', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         let propertyTypeFixture: Function;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
@@ -824,7 +824,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with property reference', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             CustomPropertyType: {
               properties: {},
               type: 'object',
@@ -844,7 +844,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with properties with no schema and later SchemaMetadata with no name and tryBuildSchemaFromWellKnownType returns undefined', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         let propertyTypeFixture: Function;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
@@ -931,7 +931,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add schema to schemasObject with property reference using propertyType.name', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             CustomPropertyType: {
               properties: {},
               type: 'object',
@@ -951,7 +951,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with references', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         let referencedTypeFixture: Function;
         let schemaMetadataFixture: OpenApiSchemaMetadata;
@@ -998,7 +998,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add both schemas to schemasObject', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             ReferencedType: {
               properties: {},
               type: 'object',
@@ -1022,7 +1022,7 @@ describe(mergeOpenApiTypeSchema, () => {
       });
 
       describe('when called, and getSchemaMetadata() returns SchemaMetadata with multiple properties including non-well-known types and references', () => {
-        let schemasObjectFixture: Record<string, OpenApi3Dot1SchemaObject>;
+        let schemasObjectFixture: Record<string, OpenApi3Dot2SchemaObject>;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         let customPropertyTypeFixture: Function;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -1152,7 +1152,7 @@ describe(mergeOpenApiTypeSchema, () => {
         });
 
         it('should add all schemas to schemasObject with required properties, references, and mixed property types', () => {
-          const expectedTypes: Record<string, OpenApi3Dot1SchemaObject> = {
+          const expectedTypes: Record<string, OpenApi3Dot2SchemaObject> = {
             CustomType: {
               properties: {},
               type: 'object',
