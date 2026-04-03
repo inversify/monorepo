@@ -78,7 +78,11 @@ export function mergeOpenApiTypeSchema(
   }
 
   if (requiredProperties.length > 0 && typeof jsonSchema === 'object') {
-    jsonSchema.required = requiredProperties;
+    if (jsonSchema.required === undefined) {
+      jsonSchema.required = [];
+    }
+
+    jsonSchema.required.push(...requiredProperties);
   }
 
   for (const reference of schemaMetadata.references) {
@@ -91,25 +95,10 @@ function initializeJsonSchema(
 ): [JsonSchema, Record<string, JsonSchema>] {
   const jsonSchemaProperties: Record<string, JsonSchema> = {};
 
-  let jsonSchema: JsonSchema;
-
-  if (schemaMetadata.schema === undefined) {
-    jsonSchema = initializeJsonSchemaPropertiesObject(
-      schemaMetadata,
-      jsonSchemaProperties,
-    );
-  } else {
-    if (schemaMetadata.properties.size === 0) {
-      jsonSchema = schemaMetadata.schema;
-    } else {
-      jsonSchema = initializeJsonSchemaPropertiesObject(
-        schemaMetadata,
-        jsonSchemaProperties,
-      );
-
-      jsonSchema.allOf = [schemaMetadata.schema];
-    }
-  }
+  const jsonSchema: JsonSchema = initializeJsonSchemaPropertiesObject(
+    schemaMetadata,
+    jsonSchemaProperties,
+  );
 
   return [jsonSchema, jsonSchemaProperties];
 }
@@ -117,18 +106,41 @@ function initializeJsonSchema(
 function initializeJsonSchemaPropertiesObject(
   schemaMetadata: OpenApiSchemaMetadata,
   jsonSchemaProperties: Record<string, JsonSchema>,
-): JsonSchemaObject {
-  const jsonSchemaObject: JsonSchema = {
-    properties: jsonSchemaProperties,
-    type: 'object',
-  };
+): JsonSchema {
+  const jsonSchemas: JsonSchemaObject[] = [];
 
   if (typeof schemaMetadata.customAttributes === 'object') {
-    return {
-      ...schemaMetadata.customAttributes,
-      ...jsonSchemaObject,
-    };
+    jsonSchemas.push(schemaMetadata.customAttributes);
+  }
+
+  if (
+    schemaMetadata.schema === undefined ||
+    schemaMetadata.properties.size > 0
+  ) {
+    jsonSchemas.push({
+      properties: jsonSchemaProperties,
+      type: 'object',
+    });
+  }
+
+  const jsonSchema: JsonSchemaObject = Object.assign(
+    {},
+    ...jsonSchemas,
+  ) as JsonSchemaObject;
+
+  if (schemaMetadata.schema === undefined) {
+    return jsonSchema;
   } else {
-    return jsonSchemaObject;
+    if (jsonSchemas.length === 0) {
+      return schemaMetadata.schema;
+    } else {
+      if (jsonSchema.allOf === undefined) {
+        jsonSchema.allOf = [schemaMetadata.schema];
+      } else {
+        jsonSchema.allOf.push(schemaMetadata.schema);
+      }
+
+      return jsonSchema;
+    }
   }
 }

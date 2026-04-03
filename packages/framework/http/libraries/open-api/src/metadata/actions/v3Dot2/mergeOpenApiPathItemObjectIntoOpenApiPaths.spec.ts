@@ -14,7 +14,7 @@ class OpenApi3Dot2ObjectFixtures {
         title: 'My awesome API',
         version: '1.0.0',
       },
-      openapi: '3.1.0',
+      openapi: '3.2.0',
     };
   }
 
@@ -130,7 +130,7 @@ describe(mergeOpenApiPathItemObjectIntoOpenApiPaths, () => {
               title: 'My awesome API',
               version: '1.0.0',
             },
-            openapi: '3.1.0',
+            openapi: '3.2.0',
             paths: { '/path': { get: {} } },
           });
         });
@@ -155,7 +155,7 @@ describe(mergeOpenApiPathItemObjectIntoOpenApiPaths, () => {
               title: 'My awesome API',
               version: '1.0.0',
             },
-            openapi: '3.1.0',
+            openapi: '3.2.0',
             paths: { '/path': { get: {} } },
           });
         });
@@ -180,7 +180,7 @@ describe(mergeOpenApiPathItemObjectIntoOpenApiPaths, () => {
               title: 'My awesome API',
               version: '1.0.0',
             },
-            openapi: '3.1.0',
+            openapi: '3.2.0',
             paths: { '/path': { get: { summary: 'summary' }, post: {} } },
           });
         });
@@ -212,7 +212,7 @@ describe(mergeOpenApiPathItemObjectIntoOpenApiPaths, () => {
               title: 'My awesome API',
               version: '1.0.0',
             },
-            openapi: '3.1.0',
+            openapi: '3.2.0',
             paths: {
               '/path': {
                 get: {
@@ -249,7 +249,7 @@ describe(mergeOpenApiPathItemObjectIntoOpenApiPaths, () => {
               title: 'My awesome API',
               version: '1.0.0',
             },
-            openapi: '3.1.0',
+            openapi: '3.2.0',
             paths: {
               '/path': {
                 get: {
@@ -306,7 +306,7 @@ describe(mergeOpenApiPathItemObjectIntoOpenApiPaths, () => {
               title: 'My awesome API',
               version: '1.0.0',
             },
-            openapi: '3.1.0',
+            openapi: '3.2.0',
             paths: {
               '/path': {
                 get: {
@@ -384,7 +384,7 @@ describe(mergeOpenApiPathItemObjectIntoOpenApiPaths, () => {
               title: 'My awesome API',
               version: '1.0.0',
             },
-            openapi: '3.1.0',
+            openapi: '3.2.0',
             paths: {
               '/path': {
                 get: {
