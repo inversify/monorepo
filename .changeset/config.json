@@ -20,6 +20,7 @@
       "@inversifyjs/http-fastify",
       "@inversifyjs/http-hono",
       "@inversifyjs/http-open-api",
+      "@inversifyjs/http-openapi-validation",
       "@inversifyjs/http-uwebsockets",
       "@inversifyjs/http-validation"
     ]
