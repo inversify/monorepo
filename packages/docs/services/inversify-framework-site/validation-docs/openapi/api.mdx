@@ -1,0 +1,82 @@
+---
+sidebar_position: 2
+title: API
+---
+import apiOpenApiValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiOpenApiValidationPipe.ts.txt';
+import apiValidateDecoratorSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiValidateDecorator.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+## OpenApiValidationPipe
+
+Validates incoming request bodies against the schemas defined in your OpenAPI specification. The pipe uses Ajv for JSON Schema validation and supports format validation via `ajv-formats`.
+
+```ts
+constructor(
+  openApiObject: OpenApi3Dot1Object,
+  requestContentTypeProvider?: () => string | undefined,
+)
+```
+
+Parameters
+
+- **openApiObject** (`OpenApi3Dot1Object` or `OpenApi3Dot2Object`): The populated OpenAPI document. Use `SwaggerUiProvider.openApiObject` to get a fully populated spec after calling `provide(container)`.
+- **requestContentTypeProvider** (optional `() => string | undefined`): A function that returns the `Content-Type` header of the current request. When omitted, the pipe falls back to the single declared content type in the OpenAPI spec.
+
+### Schema resolution
+
+The pipe constructs a JSON pointer to locate the schema for each request:
+
+```
+<spec-id>#/paths/<path>/<method>/requestBody/content/<content-type>/schema
+```
+
+The path and method are resolved from the controller metadata. The content type is resolved using the following strategy:
+
+1. If a `requestContentTypeProvider` is given and returns a value, use it.
+2. If the operation declares exactly one content type, use it as the fallback.
+3. Otherwise, throw an error — the content type is ambiguous.
+
+### Lazy initialization
+
+The Ajv instance is created on the first call to `execute()`. This avoids compilation overhead during application bootstrap and ensures the OpenAPI spec is fully populated before schema compilation.
+
+### Example: register an OpenApiValidationPipe globally
+
+<CodeBlock language="ts">{apiOpenApiValidationPipeSource}</CodeBlock>
+
+## Validate
+
+Marks a controller method parameter for OpenAPI schema validation. Only parameters decorated with `@Validate()` are validated by the `OpenApiValidationPipe`.
+
+```ts
+Validate(): ParameterDecorator
+```
+
+Apply `@Validate()` alongside `@Body()` on the parameter you want to validate:
+
+```ts
+@Post('/')
+public createUser(@Validate() @Body() user: User): string {
+  return `Created user: ${user.name}`;
+}
+```
+
+The `@Validate()` decorator stores a boolean marker on the parameter index. During request processing, the `OpenApiValidationPipe` checks for this marker and skips parameters that aren't decorated.
+
+### Example: validate request body with OpenAPI schema
+
+<CodeBlock language="ts">{apiValidateDecoratorSource}</CodeBlock>
+
+### Error Handling
+
+When validation fails, the pipe throws an `InversifyValidationError` with a detailed message containing:
+- The JSON Schema path where validation failed
+- The instance path in the request body
+- The validation error message from Ajv
+
+For example:
+```
+[schema: #/properties/email/format, instance: /email]: "must match format \"email\""
+```
+
+Use `InversifyValidationErrorFilter` (from `@inversifyjs/http-validation`) or a custom `@CatchError(InversifyValidationError)` filter to convert these errors into HTTP 400 responses.
