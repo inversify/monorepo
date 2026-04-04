@@ -68,6 +68,24 @@ describe(SwaggerUiProvider, () => {
     >;
   });
 
+  describe('.openApiObject', () => {
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        const swaggerUiProvider: SwaggerUiProvider = new SwaggerUiProvider(
+          optionsFixture,
+        );
+
+        result = swaggerUiProvider.openApiObject;
+      });
+
+      it('should return the openApiObject from options', () => {
+        expect(result).toBe(optionsFixture.api.openApiObject);
+      });
+    });
+  });
+
   describe('.provide', () => {
     let bindToFluentSyntaxMock: Mocked<BindToFluentSyntax<unknown>>;
     let containerMock: Mocked<Container>;

@@ -67,6 +67,10 @@ export class SwaggerUiProvider {
     this.#provided = false;
   }
 
+  public get openApiObject(): OpenApi3Dot1Object {
+    return this.#options.api.openApiObject;
+  }
+
   public provide(container: Container): void {
     if (this.#provided) {
       throw new Error('Cannot provide docs more than once');
