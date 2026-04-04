@@ -12,7 +12,7 @@
     "@inversifyjs/container": "workspace:*",
     "@inversifyjs/core": "workspace:*",
     "@inversifyjs/plugin": "0.3.1",
-    "@microsoft/api-extractor": "7.58.0",
+    "@microsoft/api-extractor": "7.58.1",
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-terser": "1.0.0",
     "@rollup/plugin-typescript": "12.3.0",
@@ -38,7 +38,7 @@
   },
   "peerDependencies": {
     "@babel/standalone": "^7.29.2",
-    "@swc/wasm-web": "^1.15.21",
+    "@swc/wasm-web": "^1.15.24",
     "monaco-editor": "~0.55.1",
     "react": "19.2.4"
   },
