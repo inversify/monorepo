@@ -1,7 +1,7 @@
-import { type SwaggerUiProviderApiOptions } from './SwaggerUiProviderApiOptions.js';
+import { type BaseSwaggerUiProviderApiOptions } from './BaseSwaggerUiProviderApiOptions.js';
 import { type SwaggerUiProviderUiOptions } from './SwaggerUiProviderUiOptions.js';
 
-export interface SwaggerUiProviderOptions {
-  api: SwaggerUiProviderApiOptions;
+export interface BaseSwaggerUiProviderOptions<TOpenApiObject> {
+  api: BaseSwaggerUiProviderApiOptions<TOpenApiObject>;
   ui?: SwaggerUiProviderUiOptions;
 }

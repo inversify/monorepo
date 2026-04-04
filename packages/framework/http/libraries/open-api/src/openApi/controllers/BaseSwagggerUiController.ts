@@ -7,23 +7,22 @@ import {
   NotFoundHttpResponse,
   OkHttpResponse,
 } from '@inversifyjs/http-core';
-import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import mime from 'mime-types';
 import { getAbsoluteFSPath } from 'swagger-ui-dist';
 
 import { htmlTemplateString, jsTemplateString } from '../data/constants.js';
 import { type SwaggerUiInitOptions } from '../models/SwaggerUiInitOptions.js';
 import { type SwaggerUiOptions } from '../models/SwaggerUiOptions.js';
-import { type SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions.js';
+import { type BaseSwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions.js';
 
-export abstract class BaseSwaggerUiController {
+export abstract class BaseSwaggerUiController<TOpenApiObject> {
   protected _basePath: string;
 
-  readonly #options: SwaggerUiProviderOptions;
+  readonly #options: BaseSwaggerUiProviderOptions<TOpenApiObject>;
   readonly #swaggerUiHtml: string;
   readonly #swaggerUiInitJs: string;
 
-  constructor(options: SwaggerUiProviderOptions) {
+  constructor(options: BaseSwaggerUiProviderOptions<TOpenApiObject>) {
     this._basePath = buildNormalizedPath(options.api.path);
     this.#options = options;
     this.#swaggerUiHtml = this.#buildSwaggerUiHtml(options);
@@ -33,7 +32,7 @@ export abstract class BaseSwaggerUiController {
     );
   }
 
-  public getOpenApiObject(): OpenApi3Dot1Object {
+  public getOpenApiObject(): TOpenApiObject {
     return this.#options.api.openApiObject;
   }
 
@@ -51,7 +50,9 @@ export abstract class BaseSwaggerUiController {
     return this.#sendFile(rootPath, resource);
   }
 
-  #buildJsInitOptions(initOptions: SwaggerUiInitOptions): string {
+  #buildJsInitOptions(
+    initOptions: SwaggerUiInitOptions<TOpenApiObject>,
+  ): string {
     const functionPlaceholder: string = '____FUNCTION_PLACEHOLDER____';
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     const fns: Function[] = [];
@@ -75,10 +76,10 @@ export abstract class BaseSwaggerUiController {
   }
 
   #buildSwaggerInitJs(
-    openApiObject: OpenApi3Dot1Object,
+    openApiObject: TOpenApiObject,
     swaggerUiOptions: SwaggerUiOptions = {},
   ): string {
-    const swaggerInitOptions: SwaggerUiInitOptions = {
+    const swaggerInitOptions: SwaggerUiInitOptions<TOpenApiObject> = {
       openApiObject,
       swaggerUiOptions,
       swaggerUrl: undefined,
@@ -89,7 +90,9 @@ export abstract class BaseSwaggerUiController {
     return jsTemplateString.replace('<% swaggerOptions %>', jsInitOptions);
   }
 
-  #buildSwaggerUiHtml(options: SwaggerUiProviderOptions): string {
+  #buildSwaggerUiHtml(
+    options: BaseSwaggerUiProviderOptions<TOpenApiObject>,
+  ): string {
     const explorerEnabled: boolean = options.ui?.explorerEnabled === true;
 
     const explorerCss: string = explorerEnabled

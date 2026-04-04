@@ -1,5 +1,12 @@
 # @inversifyjs/http-fastify
 
+## 5.2.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.2.0
+
 ## 5.1.1
 
 ### Patch Changes

@@ -145,6 +145,7 @@ describe(AjvValidationPipe, () => {
       beforeAll(async () => {
         vitest
           .mocked(
+            // eslint-disable-next-line vitest/unbound-method
             ajvMock.validate as (
               schemaKeyRef: AnySchema | string,
               data: unknown,

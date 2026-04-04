@@ -6,17 +6,16 @@ import {
   Params,
   SetHeader,
 } from '@inversifyjs/http-core';
-import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { type Newable } from 'inversify';
 
 import { BaseSwaggerUiController } from '../controllers/BaseSwagggerUiController.js';
-import { type SwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions.js';
+import { type BaseSwaggerUiProviderOptions } from '../models/SwaggerUiProviderOptions.js';
 
-export function buildSwaggerUiController(
-  options: SwaggerUiProviderOptions,
-): Newable<BaseSwaggerUiController> {
+export function buildSwaggerUiController<TOpenApiObject>(
+  options: BaseSwaggerUiProviderOptions<TOpenApiObject>,
+): Newable<BaseSwaggerUiController<TOpenApiObject>> {
   @Controller(buildNormalizedPath(options.api.path))
-  class SwaggerUiController extends BaseSwaggerUiController {
+  class SwaggerUiController extends BaseSwaggerUiController<TOpenApiObject> {
     constructor() {
       super(options);
     }
@@ -28,7 +27,7 @@ export function buildSwaggerUiController(
     }
 
     @Get('/spec')
-    public override getOpenApiObject(): OpenApi3Dot1Object {
+    public override getOpenApiObject(): TOpenApiObject {
       return super.getOpenApiObject();
     }
 

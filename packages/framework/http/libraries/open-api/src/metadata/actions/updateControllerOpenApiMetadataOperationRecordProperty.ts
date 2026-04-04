@@ -1,48 +1,62 @@
-import { type OpenApi3Dot1OperationObject } from '@inversifyjs/open-api-types/v3Dot1';
-
 import { type StringRecordValue } from '../../common/models/StringRecordValue.js';
-import { type ControllerOpenApiMetadata } from '../models/ControllerOpenApiMetadata.js';
-import { type OpenApi3Dot1OperationRecordKeys } from '../models/OpenApi3Dot1OperationKeys.js';
-import { buildOrGetOperationObject } from './buildOrGetOperationObject.js';
 
 export function updateControllerOpenApiMetadataOperationRecordProperty<
-  TKey extends OpenApi3Dot1OperationRecordKeys,
+  TKey extends keyof TOperationObject,
+  TMetadata,
+  TOperationObject extends {
+    [K in TKey]?: Record<string | symbol, unknown> | undefined;
+  },
 >(
+  buildOrGetOperationObject: (
+    metadata: TMetadata,
+    methodKey: string | symbol,
+  ) => TOperationObject,
+): (
   key: string,
-  value: StringRecordValue<OpenApi3Dot1OperationObject[TKey]>,
+  value: StringRecordValue<TOperationObject[TKey]>,
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   target: Function,
   methodKey: string | symbol,
   propertyKey: TKey,
-): (metadata: ControllerOpenApiMetadata) => ControllerOpenApiMetadata {
-  return (metadata: ControllerOpenApiMetadata): ControllerOpenApiMetadata => {
-    const operationObject: OpenApi3Dot1OperationObject =
-      buildOrGetOperationObject(metadata, methodKey);
+) => (metadata: TMetadata) => TMetadata {
+  return (
+      key: string,
+      value: StringRecordValue<TOperationObject[TKey]>,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+      target: Function,
+      methodKey: string | symbol,
+      propertyKey: TKey,
+    ) =>
+    (metadata: TMetadata): TMetadata => {
+      const operationObject: TOperationObject = buildOrGetOperationObject(
+        metadata,
+        methodKey,
+      );
 
-    if (operationObject[propertyKey] === undefined) {
-      operationObject[propertyKey] = {};
-    }
+      if (operationObject[propertyKey] === undefined) {
+        operationObject[propertyKey] = {} as unknown as TOperationObject[TKey];
+      }
 
-    if (
+      if (
+        (
+          operationObject[propertyKey] as Record<
+            string,
+            StringRecordValue<TOperationObject[TKey]>
+          >
+        )[key] !== undefined
+      ) {
+        throw new Error(
+          `Cannot define ${target.name}.${methodKey.toString()} ${propertyKey.toString()} (${key}) more than once`,
+        );
+      }
+
       (
         operationObject[propertyKey] as Record<
           string,
-          StringRecordValue<OpenApi3Dot1OperationObject[TKey]>
+          StringRecordValue<TOperationObject[TKey]>
         >
-      )[key] !== undefined
-    ) {
-      throw new Error(
-        `Cannot define ${target.name}.${methodKey.toString()} ${propertyKey} (${key}) more than once`,
-      );
-    }
+      )[key] = value;
 
-    (
-      operationObject[propertyKey] as Record<
-        string,
-        StringRecordValue<OpenApi3Dot1OperationObject[TKey]>
-      >
-    )[key] = value;
-
-    return metadata;
-  };
+      return metadata;
+    };
 }

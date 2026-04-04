@@ -12,7 +12,7 @@
     "swagger-ui-dist": "^5.32.1"
   },
   "devDependencies": {
-    "@hono/node-server": "1.19.11",
+    "@hono/node-server": "1.19.12",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-express-v4": "workspace:*",
@@ -26,14 +26,14 @@
     "@types/express": "5.0.6",
     "@types/express4": "npm:@types/express@4.17.25",
     "@types/mime-types": "3.0.1",
-    "@types/node": "24.12.0",
+    "@types/node": "24.12.2",
     "@types/swagger-ui-dist": "3.30.6",
     "@vitest/coverage-v8": "4.1.2",
-    "eslint": "10.1.0",
+    "eslint": "10.2.0",
     "express": "5.2.1",
     "express4": "npm:express@4.22.1",
     "fastify": "5.8.4",
-    "hono": "4.12.9",
+    "hono": "4.12.10",
     "prettier": "3.8.1",
     "rimraf": "6.1.3",
     "tslib": "2.8.1",
@@ -57,7 +57,9 @@
   ],
   "license": "MIT",
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./v3Dot1": "./lib/index.js",
+    "./v3Dot2": "./lib/v3Dot2.js"
   },
   "name": "@inversifyjs/http-open-api",
   "peerDependencies": {
@@ -83,6 +85,6 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "version": "5.1.1",
+  "version": "5.2.0",
   "type": "module"
 }
