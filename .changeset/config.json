@@ -9,6 +9,7 @@
     [
       "@inversifyjs/ajv-validation",
       "@inversifyjs/class-validation",
+      "@inversifyjs/http-openapi-validation",
       "@inversifyjs/standard-schema-validation",
       "@inversifyjs/validation-common"
     ],
@@ -20,7 +21,6 @@
       "@inversifyjs/http-fastify",
       "@inversifyjs/http-hono",
       "@inversifyjs/http-open-api",
-      "@inversifyjs/http-openapi-validation",
       "@inversifyjs/http-uwebsockets",
       "@inversifyjs/http-validation"
     ]
