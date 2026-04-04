@@ -95,14 +95,17 @@ import { UnprocessableEntityHttpResponse } from './httpResponse/models/Unprocess
 import { handleMiddlewareList } from './middleware/actions/handleMiddlewareList.js';
 import { getControllerMetadataList } from './routerExplorer/calculations/getControllerMetadataList.js';
 import { getControllerMethodMetadataList } from './routerExplorer/calculations/getControllerMethodMetadataList.js';
+import { getControllerMethodParameterMetadataList } from './routerExplorer/calculations/getControllerMethodParameterMetadataList.js';
 import { type ControllerMetadata } from './routerExplorer/model/ControllerMetadata.js';
 import { type ControllerMethodMetadata } from './routerExplorer/model/ControllerMethodMetadata.js';
+import { type ControllerMethodParameterMetadata } from './routerExplorer/model/ControllerMethodParameterMetadata.js';
 import { createRouteValueMetadataUtils } from './valueMetadata/calculations/createRouteValueMetadataUtils.js';
 
 export type {
   CatchErrorOptions,
   ControllerMetadata,
   ControllerMethodMetadata,
+  ControllerMethodParameterMetadata,
   ControllerOptions,
   ControllerResponse,
   CustomNativeParameterDecoratorHandler,
@@ -150,6 +153,7 @@ export {
   Get,
   getControllerMetadataList,
   getControllerMethodMetadataList,
+  getControllerMethodParameterMetadataList,
   GoneHttpResponse,
   handleMiddlewareList,
   Head,
