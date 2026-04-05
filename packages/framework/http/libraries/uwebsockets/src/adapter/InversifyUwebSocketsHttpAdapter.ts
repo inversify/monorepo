@@ -218,6 +218,16 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     return (body as Record<string, unknown>)[parameterName];
   }
 
+  protected _getMethod(request: HttpRequest): string {
+    return request.getMethod().toUpperCase();
+  }
+
+  protected _getUrl(request: HttpRequest): string {
+    const query: string = request.getQuery();
+
+    return query === '' ? request.getUrl() : `${request.getUrl()}?${query}`;
+  }
+
   protected _getParams(request: HttpRequest): Record<string, string>;
   protected _getParams(
     request: HttpRequest,
