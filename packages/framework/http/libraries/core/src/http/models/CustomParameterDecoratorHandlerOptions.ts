@@ -12,8 +12,10 @@ export interface CustomParameterDecoratorHandlerOptions<TRequest, TResponse> {
     parameterName?: string,
   ) => unknown;
   getHeaders: (request: TRequest, parameterName?: string) => unknown;
+  getMethod: (request: TRequest) => string;
   getParams: (request: TRequest, parameterName?: string) => unknown;
   getQuery: (request: TRequest, parameterName?: string) => unknown;
+  getUrl: (request: TRequest) => string;
   setHeader(
     request: TRequest,
     response: TResponse,
