@@ -462,8 +462,10 @@ export abstract class InversifyHttpAdapter<
       getBody: this._getBody.bind(this),
       getCookies: this._getCookies.bind(this),
       getHeaders: this._getHeaders.bind(this),
+      getMethod: this._getMethod.bind(this),
       getParams: this._getParams.bind(this),
       getQuery: this._getQuery.bind(this),
+      getUrl: this._getUrl.bind(this),
       setHeader: this._setHeader.bind(this),
       setStatus: this._setStatus.bind(this),
     };
@@ -477,8 +479,10 @@ export abstract class InversifyHttpAdapter<
       getBody: this._getBody.bind(this),
       getCookies: this._getCookies.bind(this),
       getHeaders: this._getHeaders.bind(this),
+      getMethod: this._getMethod.bind(this),
       getParams: this._getParams.bind(this),
       getQuery: this._getQuery.bind(this),
+      getUrl: this._getUrl.bind(this),
       send: this.#reply.bind(this),
       sendBodySeparator: this._sendBodySeparator.bind(this),
       setHeader: this._setHeader.bind(this),
@@ -1004,6 +1008,8 @@ export abstract class InversifyHttpAdapter<
     parameterName?: string,
   ): unknown;
 
+  protected abstract _getMethod(request: TRequest): string;
+
   protected abstract _getParams(request: TRequest): TParams;
   protected abstract _getParams(
     request: TRequest,
@@ -1045,6 +1051,8 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     parameterName?: string,
   ): unknown;
+
+  protected abstract _getUrl(request: TRequest): string;
 
   protected abstract _replyText(
     request: TRequest,

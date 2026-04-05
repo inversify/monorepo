@@ -130,6 +130,16 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
       : (body as Record<string, unknown>)[parameterName];
   }
 
+  protected _getMethod(request: HonoRequest): string {
+    return request.method;
+  }
+
+  protected _getUrl(request: HonoRequest): string {
+    const url: URL = new URL(request.url);
+
+    return url.pathname + url.search;
+  }
+
   protected _getParams(request: HonoRequest): Record<string, string>;
   protected _getParams(
     request: HonoRequest,

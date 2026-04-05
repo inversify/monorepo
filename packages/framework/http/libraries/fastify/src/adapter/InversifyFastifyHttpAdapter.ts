@@ -123,6 +123,14 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     }
   }
 
+  protected _getMethod(request: InversifyFastifyRequest): string {
+    return request.method;
+  }
+
+  protected _getUrl(request: InversifyFastifyRequest): string {
+    return request.url;
+  }
+
   protected _getParams(
     request: InversifyFastifyRequest,
   ): Record<string, string>;

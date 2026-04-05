@@ -493,6 +493,20 @@ Parameters
 - `handler` (optional): Parameter decorator handler. It takes a `request`, a `response` and `CustomParameterDecoratorHandlerOptions` that can be used to read request values or write response status code or headers.
 - `parameterPipeList` (optional): List of pipes to be applied.
 
+`CustomParameterDecoratorHandlerOptions` provides the following methods:
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `getBody` | `(request, response, parameterName?) => unknown` | Reads the request body, optionally by parameter name. |
+| `getCookies` | `(request, response, parameterName?) => unknown` | Reads cookies, optionally by parameter name. |
+| `getHeaders` | `(request, parameterName?) => unknown` | Reads headers, optionally by parameter name. |
+| `getMethod` | `(request) => string` | Returns the HTTP method (e.g. `GET`, `POST`). |
+| `getParams` | `(request, parameterName?) => unknown` | Reads route parameters, optionally by parameter name. |
+| `getQuery` | `(request, parameterName?) => unknown` | Reads query parameters, optionally by parameter name. |
+| `getUrl` | `(request) => string` | Returns the request URL path including query string (e.g. `/users?page=1`). |
+| `setHeader` | `(request, response, key, value) => void` | Sets a response header. |
+| `setStatus` | `(request, response, statusCode) => void` | Sets the response status code. |
+
 #### Example: user custom decorator
 
 Assuming an auth middleware lets user details in a `user` property of a given `request`, we can easily create a custom decorator to provide such user details as follows:
@@ -528,6 +542,13 @@ Parameters
 
 - `handler` (optional): Parameter decorator handler. It takes a `request`, a `response` and `CustomNativeParameterDecoratorHandlerOptions` that can be used to read request values or write response status code, headers or body.
 - `parameterPipeList` (optional): List of pipes to be applied.
+
+`CustomNativeParameterDecoratorHandlerOptions` extends `CustomParameterDecoratorHandlerOptions` with additional methods:
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `send` | `(request, response, value) => TResult \| Promise<TResult>` | Sends a response body directly. |
+| `sendBodySeparator` | `(request, response) => void \| Promise<void>` | Flushes response headers before streaming body chunks. |
 
 #### Example: uWebSockets file stream decorator
 

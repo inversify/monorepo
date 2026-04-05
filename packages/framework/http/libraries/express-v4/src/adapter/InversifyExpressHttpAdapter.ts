@@ -196,6 +196,14 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
         request.body[parameterName];
   }
 
+  protected _getMethod(request: express.Request): string {
+    return request.method;
+  }
+
+  protected _getUrl(request: express.Request): string {
+    return request.originalUrl;
+  }
+
   protected _getParams(request: express.Request): Record<string, string>;
   protected _getParams(
     request: express.Request,
