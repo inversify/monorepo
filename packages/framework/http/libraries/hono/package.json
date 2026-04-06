@@ -43,7 +43,7 @@
   },
   "name": "@inversifyjs/http-hono",
   "peerDependencies": {
-    "hono": "^4.12.10",
+    "hono": "^4.12.11",
     "inversify": "^8.1.0"
   },
   "publishConfig": {
