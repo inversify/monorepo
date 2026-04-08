@@ -13,14 +13,12 @@ Validates incoming request bodies against the schemas defined in your OpenAPI sp
 ```ts
 constructor(
   openApiObject: OpenApi3Dot1Object,
-  requestContentTypeProvider?: () => string | undefined,
 )
 ```
 
 Parameters
 
 - **openApiObject** (`OpenApi3Dot1Object` or `OpenApi3Dot2Object`): The populated OpenAPI document. Use `SwaggerUiProvider.openApiObject` to get a fully populated spec after calling `provide(container)`.
-- **requestContentTypeProvider** (optional `() => string | undefined`): A function that returns the `Content-Type` header of the current request. When omitted, the pipe falls back to the single declared content type in the OpenAPI spec.
 
 ### Schema resolution
 
@@ -30,9 +28,9 @@ The pipe constructs a JSON pointer to locate the schema for each request:
 <spec-id>#/paths/<path>/<method>/requestBody/content/<content-type>/schema
 ```
 
-The path and method are resolved from the controller metadata. The content type is resolved using the following strategy:
+The path and method are resolved from the `BodyValidationInputParam` provided by `@ValidatedBody()`. The content type is resolved using the following strategy:
 
-1. If a `requestContentTypeProvider` is given and returns a value, use it.
+1. If the request has a `Content-Type` header (extracted by `@ValidatedBody()`), use its base MIME type.
 2. If the operation declares exactly one content type, use it as the fallback.
 3. Otherwise, throw an error — the content type is ambiguous.
 
@@ -44,24 +42,24 @@ The Ajv instance is created on the first call to `execute()`. This avoids compil
 
 <CodeBlock language="ts">{apiOpenApiValidationPipeSource}</CodeBlock>
 
-## Validate
+## ValidatedBody
 
-Marks a controller method parameter for OpenAPI schema validation. Only parameters decorated with `@Validate()` are validated by the `OpenApiValidationPipe`.
+A custom parameter decorator that extracts the request body along with HTTP method, URL, and Content-Type, and marks the parameter for OpenAPI schema validation.
 
 ```ts
-Validate(): ParameterDecorator
+ValidatedBody(): ParameterDecorator
 ```
 
-Apply `@Validate()` alongside `@Body()` on the parameter you want to validate:
+Apply `@ValidatedBody()` to any controller method parameter you want to validate against the OpenAPI spec:
 
 ```ts
 @Post('/')
-public createUser(@Validate() @Body() user: User): string {
+public createUser(@ValidatedBody() user: User): string {
   return `Created user: ${user.name}`;
 }
 ```
 
-The `@Validate()` decorator stores a boolean marker on the parameter index. During request processing, the `OpenApiValidationPipe` checks for this marker and skips parameters that aren't decorated.
+`@ValidatedBody()` is built with `createCustomParameterDecorator` from `@inversifyjs/http-core`. It stores a boolean validation marker on the parameter index and provides a handler that extracts the body, HTTP method, URL, and Content-Type from the request at runtime. The `OpenApiValidationPipe` checks for this marker and uses the extracted request context to validate the body against the OpenAPI schema.
 
 ### Example: validate request body with OpenAPI schema
 

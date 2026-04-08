@@ -31,7 +31,7 @@ Here's a complete working example — from defining the controller to wiring up 
 
 <CodeBlock language="ts">{apiIntroductionSource}</CodeBlock>
 
-That's it. The `@OasRequestBody` decorator defines the contract. The `@Validate()` decorator opts a parameter into validation. And `OpenApiValidationPipe` bridges the two by resolving schemas from the populated OpenAPI document.
+That's it. The `@OasRequestBody` decorator defines the contract. The `@ValidatedBody()` decorator extracts the body along with request context and marks it for validation. And `OpenApiValidationPipe` bridges the two by resolving schemas from the populated OpenAPI document.
 
 When a request body doesn't match the spec, the pipe throws an `InversifyValidationError` with detailed Ajv error messages. The `InversifyValidationErrorFilter` catches it and responds with a `400 Bad Request` — exactly what your clients expect.
 
@@ -52,11 +52,14 @@ The whole pipeline adds negligible overhead to your request cycle — Ajv is one
 Both OpenAPI versions are supported through dedicated subpath exports:
 
 ```typescript
-// OpenAPI 3.1
-import { OpenApiValidationPipe, Validate } from '@inversifyjs/http-openapi-validation';
+// ValidatedBody decorator (version-agnostic)
+import { ValidatedBody } from '@inversifyjs/http-openapi-validation';
 
-// OpenAPI 3.2
-import { OpenApiValidationPipe, Validate } from '@inversifyjs/http-openapi-validation/v3Dot2';
+// OpenAPI 3.1 pipe
+import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot1';
+
+// OpenAPI 3.2 pipe
+import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot2';
 ```
 
 The API is identical across versions — only the underlying OpenAPI types differ.
@@ -66,7 +69,7 @@ The API is identical across versions — only the underlying OpenAPI types diffe
 - **Single source of truth** — Your OpenAPI spec **is** your runtime validation. No duplication.
 - **Automatic consistency** — Change an `@OasRequestBody` decorator, and validation updates instantly. No second file to remember.
 - **Battle-tested validation engine** — Powered by Ajv with `ajv-formats`, supporting `email`, `uri`, `date-time`, and dozens more string formats out of the box.
-- **Gradual adoption** — Add `@Validate()` to the parameters you want validated. Everything else stays untouched.
+- **Gradual adoption** — Add `@ValidatedBody()` to the parameters you want validated. Everything else stays untouched.
 - **Framework-agnostic** — Works with Express, Fastify, Hono, uWebSockets.js, and any adapter supported by InversifyJS HTTP.
 
 ## Getting Started
