@@ -5,9 +5,9 @@
   },
   "description": "InversifyJs docs site package",
   "dependencies": {
-    "@docusaurus/core": "3.9.2",
-    "@docusaurus/faster": "3.9.2",
-    "@docusaurus/preset-classic": "3.9.2",
+    "@docusaurus/core": "3.10.0",
+    "@docusaurus/faster": "3.10.0",
+    "@docusaurus/preset-classic": "3.10.0",
     "@inversifyjs/binding-decorators-code-examples": "workspace:*",
     "@mdx-js/react": "3.1.1",
     "clsx": "2.1.1",
@@ -16,8 +16,8 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.9.2",
-    "@docusaurus/types": "3.9.2",
+    "@docusaurus/module-type-aliases": "3.10.0",
+    "@docusaurus/types": "3.10.0",
     "@eslint/js": "10.0.1",
     "@types/react": "19.2.14",
     "eslint": "10.2.0",
@@ -25,7 +25,7 @@
     "eslint-plugin-simple-import-sort": "12.1.1",
     "prettier": "3.8.1",
     "typescript": "6.0.2",
-    "typescript-eslint": "8.58.0"
+    "typescript-eslint": "8.58.1"
   },
   "homepage": "https://inversify.io",
   "keywords": [

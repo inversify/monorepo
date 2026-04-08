@@ -6,10 +6,10 @@
   "description": "InversifyJs docs site package",
   "dependencies": {
     "@babel/standalone": "7.29.2",
-    "@docusaurus/core": "3.9.2",
-    "@docusaurus/faster": "3.9.2",
-    "@docusaurus/plugin-content-docs": "3.9.2",
-    "@docusaurus/preset-classic": "3.9.2",
+    "@docusaurus/core": "3.10.0",
+    "@docusaurus/faster": "3.10.0",
+    "@docusaurus/plugin-content-docs": "3.10.0",
+    "@docusaurus/preset-classic": "3.10.0",
     "@iconify/react": "^6.0.2",
     "@inversifyjs/react-code-runner": "workspace:*",
     "@inversifyjs/code-examples": "workspace:*",
@@ -25,9 +25,9 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.9.2",
-    "@docusaurus/types": "3.9.2",
-    "@eslint/config-helpers": "0.5.4",
+    "@docusaurus/module-type-aliases": "3.10.0",
+    "@docusaurus/types": "3.10.0",
+    "@eslint/config-helpers": "0.5.5",
     "@eslint/js": "10.0.1",
     "@rspack/core": "1.7.11",
     "@types/babel__standalone": "7.1.9",
@@ -38,7 +38,7 @@
     "monaco-editor-webpack-plugin": "7.1.1",
     "prettier": "3.8.1",
     "typescript": "6.0.2",
-    "typescript-eslint": "8.58.0"
+    "typescript-eslint": "8.58.1"
   },
   "homepage": "https://inversify.io",
   "keywords": [
