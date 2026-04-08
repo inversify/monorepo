@@ -7,7 +7,7 @@ tags: [releases]
 
 It's been a while since the last time `inversify` released a major version. Some exciting changes are on their way, and we are announcing them in a prerelease so you can participate and [discuss](https://github.com/inversify/InversifyJS/discussions/1712) them before it's finally released.
 
-<!-- truncate -->
+{/* truncate */}
 
 Feel free to check out the [next version docs](/docs/next/introduction/getting-started).
 

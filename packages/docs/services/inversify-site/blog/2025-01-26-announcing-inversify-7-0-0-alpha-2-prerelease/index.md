@@ -7,7 +7,7 @@ tags: [releases]
 
 In this version, we are announcing significant performance improvements! Let's see how caches can assist us in accomplishing such a feat!
 
-<!-- truncate -->
+{/* truncate */}
 
 ## Context
 

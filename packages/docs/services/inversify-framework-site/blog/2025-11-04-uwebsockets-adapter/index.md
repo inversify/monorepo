@@ -7,7 +7,7 @@ tags: [adapter]
 
 Remember when you started optimizing your API and realized the framework itself was the bottleneck? Yeah, us too.
 
-<!-- truncate -->
+{/* truncate */}
 
 ![Speed banner](./speed-banner.jpg)
 
