@@ -1,7 +1,7 @@
 // Begin-example
-import { Body, Controller, Post } from '@inversifyjs/http-core';
+import { Controller, Post } from '@inversifyjs/http-core';
 import { OasRequestBody } from '@inversifyjs/http-open-api';
-import { Validate } from '@inversifyjs/http-openapi-validation';
+import { ValidatedBody } from '@inversifyjs/http-openapi-validation';
 
 interface Product {
   name: string;
@@ -26,7 +26,7 @@ export class ProductController {
     },
   })
   @Post('/')
-  public createProduct(@Validate() @Body() product: Product): string {
+  public createProduct(@ValidatedBody() product: Product): string {
     return `Created product: ${product.name}`;
   }
 }

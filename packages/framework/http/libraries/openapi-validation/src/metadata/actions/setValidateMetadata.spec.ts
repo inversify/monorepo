@@ -7,10 +7,10 @@ import {
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
-import { openApiValidationMetadataReflectKey } from '../reflectMetadata/openApiValidationMetadataReflectKey.js';
-import { Validate } from './Validate.js';
+import { openApiValidationMetadataReflectKey } from '../models/openApiValidationMetadataReflectKey.js';
+import { setValidateMetadata } from './setValidateMetadata.js';
 
-describe(Validate, () => {
+describe(setValidateMetadata, () => {
   describe('when called as a parameter decorator', () => {
     let targetFixture: object;
     let keyFixture: string;
@@ -21,7 +21,7 @@ describe(Validate, () => {
       keyFixture = 'methodFixture';
       indexFixture = 0;
 
-      Validate()(targetFixture, keyFixture, indexFixture);
+      setValidateMetadata(targetFixture, keyFixture, indexFixture);
     });
 
     afterAll(() => {

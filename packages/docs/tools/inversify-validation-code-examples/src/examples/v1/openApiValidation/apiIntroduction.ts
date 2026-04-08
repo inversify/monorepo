@@ -1,11 +1,9 @@
 // Begin-example
-import { Body, Controller, Post } from '@inversifyjs/http-core';
+import { Controller, Post } from '@inversifyjs/http-core';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { OasRequestBody, SwaggerUiProvider } from '@inversifyjs/http-open-api';
-import {
-  OpenApiValidationPipe,
-  Validate,
-} from '@inversifyjs/http-openapi-validation';
+import { ValidatedBody } from '@inversifyjs/http-openapi-validation';
+import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot1';
 import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { Container } from 'inversify';
@@ -49,7 +47,7 @@ export class UserController {
     },
   })
   @Post('/')
-  public createUser(@Validate() @Body() user: User): string {
+  public createUser(@ValidatedBody() user: User): string {
     return `Created user: ${user.name}`;
   }
 }

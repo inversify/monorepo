@@ -14,7 +14,6 @@ export { OasSummary } from './metadata/decorators/v3Dot1/OasSummary.js';
 export { OasTag } from './metadata/decorators/v3Dot1/OasTag.js';
 export { SwaggerUiProvider } from './openApi/services/v3Dot1/SwaggerUiProvider.js';
 export { BaseSwaggerUiController } from './openApi/controllers/BaseSwagggerUiController.js';
-export { getControllerOpenApiMetadata } from './metadata/calculations/v3Dot1/getControllerOpenApiMetadata.js';
 export { controllerOpenApiMetadataReflectKey } from './reflectMetadata/data/v3Dot1/controllerOpenApiMetadataReflectKey.js';
 
 export type { BuildOpenApiBlockFunction } from './metadata/models/v3Dot1/BuildOpenApiBlockFunction.js';

@@ -15,6 +15,7 @@
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
+    "@inversifyjs/json-schema-types": "workspace:*",
     "@inversifyjs/open-api-types": "workspace:*",
     "@stryker-mutator/core": "9.6.0",
     "@stryker-mutator/typescript-checker": "9.6.0",
@@ -50,7 +51,7 @@
   "license": "MIT",
   "exports": {
     ".": "./lib/index.js",
-    "./v3Dot1": "./lib/index.js",
+    "./v3Dot1": "./lib/v3Dot1.js",
     "./v3Dot2": "./lib/v3Dot2.js"
   },
   "name": "@inversifyjs/http-openapi-validation",

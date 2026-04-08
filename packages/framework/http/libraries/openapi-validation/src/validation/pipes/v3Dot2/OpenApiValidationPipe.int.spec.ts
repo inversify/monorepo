@@ -10,7 +10,6 @@ import {
 } from '@inversifyjs/framework-core';
 import {
   BadRequestHttpResponse,
-  Body,
   Controller,
   Post,
 } from '@inversifyjs/http-core';
@@ -24,7 +23,7 @@ import { InversifyValidationError } from '@inversifyjs/validation-common';
 import type express from 'express';
 import { Container, type Newable } from 'inversify';
 
-import { Validate } from '../../common/decorators/Validate.js';
+import { ValidatedBody } from '../../../metadata/decorators/ValidatedBody.js';
 import { OpenApiValidationPipe } from './OpenApiValidationPipe.js';
 
 interface Server {
@@ -126,7 +125,7 @@ describe(OpenApiValidationPipe, () => {
       })
       @Post()
       public async createMessage(
-        @Body() @Validate() message: Message,
+        @ValidatedBody() message: Message,
       ): Promise<Message> {
         return message;
       }
@@ -154,14 +153,10 @@ describe(OpenApiValidationPipe, () => {
 
       swaggerProvider.provide(container);
 
-      const pipe: OpenApiValidationPipe = new OpenApiValidationPipe(
-        swaggerProvider.openApiObject,
-      );
-
       server = await buildExpressServer(
         container,
         [ValidationErrorFilter],
-        [pipe],
+        [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
       );
     });
 
@@ -218,6 +213,179 @@ describe(OpenApiValidationPipe, () => {
         );
         await expect(response.json()).resolves.toStrictEqual({
           message: expect.stringContaining('additionalProperties'),
+        });
+      });
+    });
+  });
+
+  describe('having an OpenApiValidationPipe (v3.2) with content-type fallback', () => {
+    interface User {
+      name: string;
+    }
+
+    @Controller('/users')
+    class UserController {
+      @OasRequestBody({
+        content: {
+          'application/json': {
+            schema: {
+              additionalProperties: false,
+              properties: { name: { type: 'string' } },
+              required: ['name'],
+              type: 'object',
+            },
+          },
+        },
+      })
+      @Post()
+      public async createUser(@ValidatedBody() user: User): Promise<User> {
+        return user;
+      }
+    }
+
+    let server: Server;
+
+    beforeAll(async () => {
+      const container: Container = new Container();
+
+      container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+      container.bind(UserController).toSelf().inSingletonScope();
+
+      const openApiObject: OpenApi3Dot2Object = {
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.2.0',
+      };
+
+      const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+        api: {
+          openApiObject,
+          path: '/docs',
+        },
+      });
+
+      swaggerProvider.provide(container);
+
+      server = await buildExpressServer(
+        container,
+        [ValidationErrorFilter],
+        [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+      );
+    });
+
+    afterAll(async () => {
+      await server.shutdown();
+    });
+
+    describe('when a valid POST /users request is made with single content type and no Content-Type header', () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/users`,
+          {
+            body: JSON.stringify({ name: 'Alice' }),
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+          },
+        );
+      });
+
+      it('should return expected Response', async () => {
+        expect(response.status).toBe(200);
+        await expect(response.json()).resolves.toStrictEqual({
+          name: 'Alice',
+        });
+      });
+    });
+  });
+
+  describe('having an OpenApiValidationPipe (v3.2) with content-type ambiguity', () => {
+    interface Item {
+      label: string;
+    }
+
+    @Controller('/items')
+    class ItemController {
+      @OasRequestBody({
+        content: {
+          'application/json': {
+            schema: {
+              properties: { label: { type: 'string' } },
+              required: ['label'],
+              type: 'object',
+            },
+          },
+          'application/xml': {
+            schema: {
+              properties: { label: { type: 'string' } },
+              required: ['label'],
+              type: 'object',
+            },
+          },
+        },
+      })
+      @Post()
+      public async createItem(@ValidatedBody() item: Item): Promise<Item> {
+        return item;
+      }
+    }
+
+    let server: Server;
+
+    beforeAll(async () => {
+      const container: Container = new Container();
+
+      container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+      container.bind(ItemController).toSelf().inSingletonScope();
+
+      const openApiObject: OpenApi3Dot2Object = {
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.2.0',
+      };
+
+      const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+        api: {
+          openApiObject,
+          path: '/docs',
+        },
+      });
+
+      swaggerProvider.provide(container);
+
+      server = await buildExpressServer(
+        container,
+        [ValidationErrorFilter],
+        [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+      );
+    });
+
+    afterAll(async () => {
+      await server.shutdown();
+    });
+
+    describe('when a POST /items request is made with no Content-Type header', () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/items`,
+          {
+            /*
+             * Trick to send a body without a Content-Type header since fetch silently
+             * adds 'Content-Type: text/plain;charset=UTF-8' otherwise
+             */
+            body: new TextEncoder().encode(
+              JSON.stringify({ label: 'My Item' }),
+            ),
+            method: 'POST',
+          },
+        );
+      });
+
+      it('should return expected Response', async () => {
+        expect(response.status).toBe(400);
+        await expect(response.json()).resolves.toStrictEqual({
+          message: expect.stringContaining('Cannot determine content type'),
         });
       });
     });
