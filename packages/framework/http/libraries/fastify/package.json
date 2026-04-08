@@ -7,7 +7,7 @@
   "dependencies": {
     "@fastify/cookie": "11.0.2",
     "@fastify/formbody": "8.0.2",
-    "@fastify/multipart": "9.4.0",
+    "@fastify/multipart": "10.0.0",
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
