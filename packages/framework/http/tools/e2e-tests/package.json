@@ -16,12 +16,12 @@
     "express": "^5.2.1",
     "express4": "npm:express@4.22.1",
     "fastify": "^5.8.4",
-    "hono": "^4.12.11",
+    "hono": "^4.12.12",
     "inversify": "8.1.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
   },
   "devDependencies": {
-    "@fastify/multipart": "9.4.0",
+    "@fastify/multipart": "10.0.0",
     "@types/express": "5.0.6",
     "@types/express4": "npm:@types/express@4.17.25",
     "eslint": "10.2.0",

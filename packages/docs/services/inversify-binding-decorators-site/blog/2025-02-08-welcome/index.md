@@ -7,7 +7,7 @@ tags: []
 
 Welcome to the new documentation pages! We are rebuilding our docs on top of [Docusaurus](https://docusaurus.io/) to provide a better developer experience.
 
-<!-- truncate -->
+{/* truncate */}
 
 ![Docusaurus Plushie](./docusaurus-plushie-banner.jpeg)
 
