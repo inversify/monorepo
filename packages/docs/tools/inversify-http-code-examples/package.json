@@ -5,7 +5,7 @@
   },
   "description": "InversifyJS HTTP docs code examples package",
   "devDependencies": {
-    "@hono/node-server": "1.19.12",
+    "@hono/node-server": "1.19.13",
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-better-auth": "workspace:*",
