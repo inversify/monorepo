@@ -21,8 +21,8 @@
     "mermaid": "^11.14.0",
     "monaco-editor": "0.55.1",
     "prism-react-renderer": "2.4.1",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react": "19.2.5",
+    "react-dom": "19.2.5"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.10.0",
