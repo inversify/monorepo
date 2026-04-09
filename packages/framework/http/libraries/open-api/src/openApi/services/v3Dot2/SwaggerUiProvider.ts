@@ -68,6 +68,12 @@ export class SwaggerUiProvider {
   }
 
   public get openApiObject(): OpenApi3Dot2Object {
+    if (!this.#provided) {
+      throw new Error(
+        'Cannot get OpenAPI object before providing docs, consider calling provide() first',
+      );
+    }
+
     return this.#options.api.openApiObject;
   }
 
