@@ -9,6 +9,7 @@ import {
 } from '@inversifyjs/validation-common';
 
 import { getPathItemObject } from './getPathItemObject.js';
+import { isOpenApiMethod } from './isOpenApiMethod.js';
 
 export function getOperationObject(
   openApiObject: OpenApi3Dot2Object,
@@ -20,9 +21,15 @@ export function getOperationObject(
     path,
   );
 
-  const operationObject: OpenApi3Dot2OperationObject | undefined = (
-    pathItemObject as Record<string, OpenApi3Dot2OperationObject>
-  )[method];
+  if (!isOpenApiMethod(method)) {
+    throw new InversifyValidationError(
+      InversifyValidationErrorKind.validationFailed,
+      `Method ${method} is not a valid OpenAPI method`,
+    );
+  }
+
+  const operationObject: OpenApi3Dot2OperationObject | undefined =
+    pathItemObject[method];
 
   if (operationObject === undefined) {
     throw new InversifyValidationError(
