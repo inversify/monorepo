@@ -4,6 +4,8 @@ import { getPath } from './getPath.js';
 
 describe(getPath, () => {
   describe.each<[string, string, string]>([
+    ['empty url', '', '/'],
+    ['absolute url with no path', 'http://example.com', '/'],
     ['url with no query', '/users', '/users'],
     ['url with query', '/users?name=John', '/users'],
   ])('having %s', (_: string, url: string, expected: string) => {
