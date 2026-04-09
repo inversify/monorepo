@@ -1,0 +1,85 @@
+---
+sidebar_position: 1
+title: Introduction
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import apiIntroductionSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiIntroduction.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+The OpenAPI Validation package validates incoming request bodies against your existing [OpenAPI](https://www.openapis.org/) specification — no extra schema definitions needed. If you already document your API with `@OasRequestBody` decorators, this package reuses those schemas at runtime to ensure that every request matches the contract.
+
+It uses [Ajv](https://ajv.js.org/) under the hood for fast, standards-compliant JSON Schema validation and supports both OpenAPI v3.1 and v3.2.
+
+## Install dependencies
+
+Install the package along with its peer dependencies:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+npm install ajv ajv-formats @inversifyjs/http-openapi-validation
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn add ajv ajv-formats @inversifyjs/http-openapi-validation
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm install ajv ajv-formats @inversifyjs/http-openapi-validation
+```
+
+  </TabItem>
+</Tabs>
+
+## Quick Start
+
+Here's a complete example showing OpenAPI-driven body validation:
+
+<CodeBlock language="ts">{apiIntroductionSource}</CodeBlock>
+
+This example:
+
+1. Defines an OpenAPI request body schema using `@OasRequestBody` on the controller method.
+2. Uses `@ValidatedBody()` to extract and mark the body parameter for validation.
+3. Uses `SwaggerUiProvider` to populate the OpenAPI spec from controller metadata.
+4. Creates an `OpenApiValidationPipe` from the populated spec and registers it globally.
+
+When a request arrives, the pipe validates the body against the OpenAPI schema. Invalid requests are rejected with an `InversifyValidationError`, which the `InversifyValidationErrorFilter` converts into a 400 Bad Request response.
+
+## How It Works
+
+The validation flow:
+
+1. **Schema discovery** — `SwaggerUiProvider.provide(container)` reads all `@OasRequestBody` decorators and populates the OpenAPI document with paths and schemas.
+2. **Pipe initialization** — `OpenApiValidationPipe` receives the populated OpenAPI document and lazily initializes an Ajv instance with the full spec on first use.
+3. **Request validation** — For each request, the pipe:
+   - Checks if the parameter is decorated with `@ValidatedBody()`.
+   - Resolves the content type (extracted from the request by `@ValidatedBody()`, or falls back to a single declared type).
+   - Locates the matching schema using JSON pointer navigation.
+   - Validates the body against the schema using Ajv.
+4. **Error handling** — Validation failures throw `InversifyValidationError` with detailed error information.
+
+## OpenAPI Version Support
+
+The package supports both OpenAPI v3.1 and v3.2 through subpath exports:
+
+```ts
+// ValidatedBody decorator (version-agnostic)
+import { ValidatedBody } from '@inversifyjs/http-openapi-validation';
+
+// OpenAPI v3.1 pipe
+import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot1';
+
+// OpenAPI v3.2 pipe
+import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot2';
+```
+
+`ValidatedBody` is shared across versions — import it from the root. The `OpenApiValidationPipe` is version-specific — import it from the matching subpath. Use the matching OpenAPI decorators and types from `@inversifyjs/http-open-api` or `@inversifyjs/http-open-api/v3Dot2`.

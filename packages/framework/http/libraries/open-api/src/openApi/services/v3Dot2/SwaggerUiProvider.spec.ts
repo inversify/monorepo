@@ -68,6 +68,77 @@ describe(SwaggerUiProvider, () => {
     >;
   });
 
+  describe('.openApiObject', () => {
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        const swaggerUiProvider: SwaggerUiProvider = new SwaggerUiProvider(
+          optionsFixture,
+        );
+
+        try {
+          void swaggerUiProvider.openApiObject;
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        const expectedErrorProperties: Partial<Error> = {
+          message:
+            'Cannot get OpenAPI object before providing docs, consider calling provide() first',
+        };
+
+        expect(result).toBeInstanceOf(Error);
+        expect(result).toMatchObject(expectedErrorProperties);
+      });
+    });
+
+    describe('when called, after provide() has been called', () => {
+      let bindToFluentSyntaxMock: Mocked<BindToFluentSyntax<unknown>>;
+      let containerMock: Mocked<Container>;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        const swaggerUiProvider: SwaggerUiProvider = new SwaggerUiProvider(
+          optionsFixture,
+        );
+
+        bindToFluentSyntaxMock = {
+          toSelf: vitest.fn(),
+        } as Partial<Mocked<BindToFluentSyntax<unknown>>> as Mocked<
+          BindToFluentSyntax<unknown>
+        >;
+        containerMock = {
+          bind: vitest.fn(),
+          isBound: vitest.fn(),
+        } as Partial<Mocked<Container>> as Mocked<Container>;
+
+        vitest
+          .mocked(buildSwaggerUiController)
+          .mockReturnValueOnce(controllerTypeFixture);
+
+        vitest.mocked(getControllerMetadataList).mockReturnValueOnce(undefined);
+
+        containerMock.bind.mockReturnValueOnce(bindToFluentSyntaxMock);
+
+        swaggerUiProvider.provide(containerMock);
+
+        result = swaggerUiProvider.openApiObject;
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should return the openApiObject from options', () => {
+        expect(result).toBe(optionsFixture.api.openApiObject);
+      });
+    });
+  });
+
   describe('.provide', () => {
     let bindToFluentSyntaxMock: Mocked<BindToFluentSyntax<unknown>>;
     let containerMock: Mocked<Container>;

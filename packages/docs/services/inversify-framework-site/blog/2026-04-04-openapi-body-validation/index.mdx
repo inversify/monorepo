@@ -1,0 +1,89 @@
+---
+slug: openapi-body-validation-zero-extra-schemas
+title: "OpenAPI Body Validation — Your Spec Is Your Schema"
+authors: [notaphplover]
+tags: [features]
+---
+import apiIntroductionSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiIntroduction.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+Raise your hand if you've ever copy-pasted a JSON schema from your OpenAPI spec into a validation layer. Now keep it raised if the two drifted apart within a week.
+
+Yeah, we've been there too.
+
+{/* truncate */}
+
+## The Problem Nobody Talks About
+
+Every validation library asks you to define schemas. Ajv wants JSON Schema objects. Class-validator wants decorated classes. Zod wants its own DSL. And then your OpenAPI spec describes the **exact same shape** in `requestBody`. You end up maintaining two copies of the truth — and they inevitably disagree.
+
+The result? Your Swagger UI happily shows one contract while your server enforces a completely different one. Bugs sneak in, clients get confused, and you spend Friday afternoon figuring out which version is "right."
+
+## What If Your OpenAPI Spec Was Enough?
+
+That's the idea behind `@inversifyjs/http-openapi-validation`. If you're already decorating your controllers with `@OasRequestBody`, you've already written your validation schema — you just didn't know it.
+
+This package reads the OpenAPI schemas you defined through `@inversifyjs/http-open-api`, compiles them with [Ajv](https://ajv.js.org/), and validates incoming request bodies automatically. **Zero extra schema definitions. Zero drift.**
+
+## See It in Action
+
+Here's a complete working example — from defining the controller to wiring up validation:
+
+<CodeBlock language="ts">{apiIntroductionSource}</CodeBlock>
+
+That's it. The `@OasRequestBody` decorator defines the contract. The `@ValidatedBody()` decorator extracts the body along with request context and marks it for validation. And `OpenApiValidationPipe` bridges the two by resolving schemas from the populated OpenAPI document.
+
+When a request body doesn't match the spec, the pipe throws an `InversifyValidationError` with detailed Ajv error messages. The `InversifyValidationErrorFilter` catches it and responds with a `400 Bad Request` — exactly what your clients expect.
+
+## How It Works Under the Hood
+
+1. **Schema extraction** — When you call `swaggerProvider.provide(container)`, the `@OasRequestBody` metadata is merged into the OpenAPI document. `OpenApiValidationPipe` receives the fully populated spec.
+
+2. **JSON Pointer resolution** — For each request, the pipe resolves the matching operation, finds the `content` entry for the incoming `Content-Type`, and walks to the `schema` property using a JSON Pointer.
+
+3. **Lazy Ajv compilation** — Schemas are compiled into Ajv validators on first use and cached. Subsequent requests with the same schema skip compilation entirely.
+
+4. **Validation** — The compiled validator runs against the request body. On failure, an `InversifyValidationError` is thrown with all Ajv error details.
+
+The whole pipeline adds negligible overhead to your request cycle — Ajv is one of the fastest JSON Schema validators available, and lazy compilation means cold starts don't pay the full cost upfront.
+
+## OpenAPI 3.1 and 3.2
+
+Both OpenAPI versions are supported through dedicated subpath exports:
+
+```typescript
+// ValidatedBody decorator (version-agnostic)
+import { ValidatedBody } from '@inversifyjs/http-openapi-validation';
+
+// OpenAPI 3.1 pipe
+import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot1';
+
+// OpenAPI 3.2 pipe
+import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot2';
+```
+
+The API is identical across versions — only the underlying OpenAPI types differ.
+
+## Why This Matters
+
+- **Single source of truth** — Your OpenAPI spec **is** your runtime validation. No duplication.
+- **Automatic consistency** — Change an `@OasRequestBody` decorator, and validation updates instantly. No second file to remember.
+- **Battle-tested validation engine** — Powered by Ajv with `ajv-formats`, supporting `email`, `uri`, `date-time`, and dozens more string formats out of the box.
+- **Gradual adoption** — Add `@ValidatedBody()` to the parameters you want validated. Everything else stays untouched.
+- **Framework-agnostic** — Works with Express, Fastify, Hono, uWebSockets.js, and any adapter supported by InversifyJS HTTP.
+
+## Getting Started
+
+Install the package alongside its peer dependency:
+
+```bash
+npm install @inversifyjs/http-openapi-validation ajv ajv-formats
+```
+
+Then head over to the [OpenAPI Validation documentation](../../validation/openapi/introduction) for a detailed walkthrough, API reference, and more examples.
+
+If you're already using `@inversifyjs/http-open-api` to document your API, adding body validation is a five-minute change. And you'll never need to maintain a separate set of schemas again.
+
+---
+
+Have questions or feedback? Open an issue on [GitHub](https://github.com/inversify/monorepo) or join the conversation on Discord. We'd love to hear how you're using it.

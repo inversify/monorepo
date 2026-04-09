@@ -67,6 +67,16 @@ export class SwaggerUiProvider {
     this.#provided = false;
   }
 
+  public get openApiObject(): OpenApi3Dot1Object {
+    if (!this.#provided) {
+      throw new Error(
+        'Cannot get OpenAPI object before providing docs, consider calling provide() first',
+      );
+    }
+
+    return this.#options.api.openApiObject;
+  }
+
   public provide(container: Container): void {
     if (this.#provided) {
       throw new Error('Cannot provide docs more than once');
