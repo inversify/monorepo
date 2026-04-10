@@ -9,27 +9,41 @@ type DiscriminatorValidationHandlerPair<
   TValidatedDecoratorResult extends ValidationInputParam & {
     type: TDiscriminatorValue;
   },
+  TValidationCacheEntry,
 > = [
   TDiscriminatorValue,
-  ValidationHandler<TOpenApiObject, TValidatedDecoratorResult>,
+  ValidationHandler<
+    TOpenApiObject,
+    TValidatedDecoratorResult,
+    TValidationCacheEntry
+  >,
 ];
 
-export function buildCompositeValidationHandler<TOpenApiObject>(
+export function buildCompositeValidationHandler<
+  TOpenApiObject,
+  TValidationCacheEntry,
+>(
   discriminatorHandlerPairs: DiscriminatorValidationHandlerPair<
     symbol,
     TOpenApiObject,
-    ValidationInputParam
+    ValidationInputParam,
+    TValidationCacheEntry
   >[],
 ) {
   const handlerMap: Map<
     symbol,
-    ValidationHandler<TOpenApiObject, ValidationInputParam>
+    ValidationHandler<
+      TOpenApiObject,
+      ValidationInputParam,
+      TValidationCacheEntry
+    >
   > = new Map(discriminatorHandlerPairs);
 
   return (
     ajv: Ajv,
     openApiObject: TOpenApiObject,
     inputParam: unknown,
+    getEntry: (path: string, method: string) => TValidationCacheEntry,
   ): unknown => {
     if (inputParam === null || typeof inputParam !== 'object') {
       return inputParam;
@@ -40,11 +54,20 @@ export function buildCompositeValidationHandler<TOpenApiObject>(
     ).type;
 
     const handler:
-      | ValidationHandler<TOpenApiObject, ValidationInputParam>
+      | ValidationHandler<
+          TOpenApiObject,
+          ValidationInputParam,
+          TValidationCacheEntry
+        >
       | undefined = handlerMap.get(discriminatorValue as symbol);
     if (handler === undefined) {
       return inputParam;
     }
-    return handler(ajv, openApiObject, inputParam as ValidationInputParam);
+    return handler(
+      ajv,
+      openApiObject,
+      inputParam as ValidationInputParam,
+      getEntry,
+    );
   };
 }

@@ -7,7 +7,12 @@ export type DiscriminatorValidationHandlerPair<
   TValidatedDecoratorResult extends ValidationInputParam & {
     type: TDiscriminatorValue;
   },
+  TValidationCacheEntry = unknown,
 > = [
   TDiscriminatorValue,
-  ValidationHandler<TOpenApiObject, TValidatedDecoratorResult>,
+  ValidationHandler<
+    TOpenApiObject,
+    TValidatedDecoratorResult,
+    TValidationCacheEntry
+  >,
 ];

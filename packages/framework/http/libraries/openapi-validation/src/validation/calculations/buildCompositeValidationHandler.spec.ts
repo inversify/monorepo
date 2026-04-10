@@ -31,6 +31,7 @@ describe(buildCompositeValidationHandler, () => {
           Symbol() as unknown as Ajv,
           Symbol(),
           inputParam,
+          vitest.fn(),
         );
       });
 
@@ -55,6 +56,7 @@ describe(buildCompositeValidationHandler, () => {
           Symbol() as unknown as Ajv,
           Symbol(),
           inputParam,
+          vitest.fn(),
         );
       });
 
@@ -79,6 +81,7 @@ describe(buildCompositeValidationHandler, () => {
           Symbol() as unknown as Ajv,
           Symbol(),
           inputParam,
+          vitest.fn(),
         );
       });
 
@@ -100,9 +103,11 @@ describe(buildCompositeValidationHandler, () => {
         unknown,
         ValidationInputParam & {
           type: symbol;
-        }
+        },
+        unknown
       >
     >;
+    let getEntryMock: Mock;
     let inputParam: unknown;
     let openApiObjectFixture: unknown;
 
@@ -112,6 +117,7 @@ describe(buildCompositeValidationHandler, () => {
       handlerMock = vitest.fn();
       discriminatorHandlerPair = [discriminatorValue, handlerMock];
       ajvFixture = Symbol() as unknown as Ajv;
+      getEntryMock = vitest.fn();
       inputParam = {
         type: discriminatorValue,
       };
@@ -132,6 +138,7 @@ describe(buildCompositeValidationHandler, () => {
           ajvFixture,
           openApiObjectFixture,
           inputParam,
+          getEntryMock,
         );
       });
 
@@ -144,6 +151,7 @@ describe(buildCompositeValidationHandler, () => {
           ajvFixture,
           openApiObjectFixture,
           inputParam,
+          getEntryMock,
         );
       });
 

@@ -13,20 +13,19 @@ import { type ErrorObject, type ValidateFunction } from 'ajv';
 
 import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
 import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
+import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
 import { getPath } from '../getPath.js';
 import { getOperationObject } from './getOperationObject.js';
 import { getRequestBodyObject } from './getRequestBodyObject.js';
 import { inferContentType } from './inferContentType.js';
 
-export function handleBodyValidation(
+function getValidateFunction(
   ajv: Ajv,
   openApiObject: OpenApi3Dot2Object,
-  inputParam: BodyValidationInputParam<unknown>,
-): unknown {
-  const path: string = getPath(inputParam.url);
-  const method: string = inputParam.method.toLowerCase();
-  const contentType: string | undefined = inputParam.contentType;
-
+  path: string,
+  method: string,
+  contentType: string | undefined,
+): ValidateFunction {
   const operationObject: OpenApi3Dot2OperationObject = getOperationObject(
     openApiObject,
     method,
@@ -56,6 +55,36 @@ export function handleBodyValidation(
       InversifyValidationErrorKind.validationFailed,
       `Unable to find schema for pointer: ${schemaPointer}`,
     );
+  }
+
+  return validate;
+}
+
+export function handleBodyValidation(
+  ajv: Ajv,
+  openApiObject: OpenApi3Dot2Object,
+  inputParam: BodyValidationInputParam<unknown>,
+  getEntry: (path: string, method: string) => ValidationCacheEntry,
+): unknown {
+  const path: string = getPath(inputParam.url);
+  const method: string = inputParam.method.toLowerCase();
+  const contentType: string | undefined = inputParam.contentType;
+
+  const validationCacheEntry: ValidationCacheEntry = getEntry(path, method);
+
+  let validate: ValidateFunction | undefined =
+    validationCacheEntry.body.get(contentType);
+
+  if (validate === undefined) {
+    validate = getValidateFunction(
+      ajv,
+      openApiObject,
+      path,
+      method,
+      contentType,
+    );
+
+    validationCacheEntry.body.set(contentType, validate);
   }
 
   const valid: boolean = validate(inputParam.body);
