@@ -38,7 +38,7 @@ A PoC validated that `ajv` (with `ajv-formats`) can load an entire OpenAPI 3.1/3
 
 ## Decisions
 
-### 1. New package: `@inversifyjs/http-openapi-validation` with multi-version subpath exports
+### 1. New package: `@inversifyjs/open-api-validation` with multi-version subpath exports
 
 **Decision**: Create a new package at `packages/framework/http/libraries/openapi-validation/` with subpath exports: `"."` exports the shared `ValidatedBody` decorator, `"./v3Dot1"` exports the v3.1 `OpenApiValidationPipe`, and `"./v3Dot2"` exports the v3.2 `OpenApiValidationPipe`.
 

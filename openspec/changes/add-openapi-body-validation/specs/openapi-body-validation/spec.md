@@ -33,7 +33,7 @@ The `@ValidatedBody()` decorator SHALL be a custom parameter decorator (built wi
 3. Parses the Content-Type header to extract the base MIME type (stripping parameters like `charset=utf-8`).
 4. Returns a `BodyValidationInputParam` object containing the body, method, URL, content type, and a `type` discriminator symbol (`validatedInputParamBodyType`).
 
-The decorator is version-agnostic and exported from the package's root (`@inversifyjs/http-openapi-validation`).
+The decorator is version-agnostic and exported from the package's root (`@inversifyjs/open-api-validation`).
 
 #### Scenario: ValidatedBody applied to a controller method parameter
 - **WHEN** `@ValidatedBody()` is applied to a controller method parameter
@@ -143,16 +143,16 @@ The `OpenApiValidationPipe` SHALL throw `InversifyValidationError` with kind `va
 - **THEN** the HTTP response SHALL have status code 400 and contain the validation error message
 
 ### Requirement: Subpath exports for http-openapi-validation package
-The `@inversifyjs/http-openapi-validation` package SHALL provide subpath exports: `"."` for the shared `ValidatedBody` decorator, `"./v3Dot1"` for the v3.1 `OpenApiValidationPipe`, and `"./v3Dot2"` for the v3.2 `OpenApiValidationPipe`.
+The `@inversifyjs/open-api-validation` package SHALL provide subpath exports: `"."` for the shared `ValidatedBody` decorator, `"./v3Dot1"` for the v3.1 `OpenApiValidationPipe`, and `"./v3Dot2"` for the v3.2 `OpenApiValidationPipe`.
 
 #### Scenario: Importing ValidatedBody (root export)
-- **WHEN** a consumer imports `{ ValidatedBody }` from `@inversifyjs/http-openapi-validation`
+- **WHEN** a consumer imports `{ ValidatedBody }` from `@inversifyjs/open-api-validation`
 - **THEN** `ValidatedBody` SHALL be the shared custom parameter decorator
 
 #### Scenario: Importing v3.1 pipe
-- **WHEN** a consumer imports `{ OpenApiValidationPipe }` from `@inversifyjs/http-openapi-validation/v3Dot1`
+- **WHEN** a consumer imports `{ OpenApiValidationPipe }` from `@inversifyjs/open-api-validation/v3Dot1`
 - **THEN** `OpenApiValidationPipe` SHALL be the v3.1 validation pipe
 
 #### Scenario: Importing v3.2 pipe
-- **WHEN** a consumer imports `{ OpenApiValidationPipe }` from `@inversifyjs/http-openapi-validation/v3Dot2`
+- **WHEN** a consumer imports `{ OpenApiValidationPipe }` from `@inversifyjs/open-api-validation/v3Dot2`
 - **THEN** `OpenApiValidationPipe` SHALL be the v3.2 validation pipe

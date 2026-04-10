@@ -1,7 +1,7 @@
 // Begin-example
 import { Controller, Post } from '@inversifyjs/http-core';
 import { OasRequestBody } from '@inversifyjs/http-open-api';
-import { ValidatedBody } from '@inversifyjs/http-openapi-validation';
+import { ValidatedBody } from '@inversifyjs/open-api-validation';
 
 interface Product {
   name: string;

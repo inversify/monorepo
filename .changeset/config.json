@@ -9,7 +9,7 @@
     [
       "@inversifyjs/ajv-validation",
       "@inversifyjs/class-validation",
-      "@inversifyjs/http-openapi-validation",
+      "@inversifyjs/open-api-validation",
       "@inversifyjs/standard-schema-validation",
       "@inversifyjs/validation-common"
     ],

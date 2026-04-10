@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { SwaggerUiProvider } from '@inversifyjs/http-open-api';
-import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot1';
 import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
+import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot1';
 import { Container } from 'inversify';
 
 import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer.js';

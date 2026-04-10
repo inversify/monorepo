@@ -1,9 +1,9 @@
 // Begin-example
 import { Controller, Post } from '@inversifyjs/http-core';
 import { OasRequestBody, SwaggerUiProvider } from '@inversifyjs/http-open-api';
-import { ValidatedBody } from '@inversifyjs/http-openapi-validation';
-import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot1';
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
+import { ValidatedBody } from '@inversifyjs/open-api-validation';
+import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot1';
 import { Container } from 'inversify';
 
 const container: Container = new Container();

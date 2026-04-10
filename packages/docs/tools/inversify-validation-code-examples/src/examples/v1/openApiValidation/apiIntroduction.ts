@@ -2,10 +2,10 @@
 import { Controller, Post } from '@inversifyjs/http-core';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { OasRequestBody, SwaggerUiProvider } from '@inversifyjs/http-open-api';
-import { ValidatedBody } from '@inversifyjs/http-openapi-validation';
-import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot1';
 import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
+import { ValidatedBody } from '@inversifyjs/open-api-validation';
+import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot1';
 import { Container } from 'inversify';
 
 const container: Container = new Container();

@@ -21,7 +21,7 @@ The result? Your Swagger UI happily shows one contract while your server enforce
 
 ## What If Your OpenAPI Spec Was Enough?
 
-That's the idea behind `@inversifyjs/http-openapi-validation`. If you're already decorating your controllers with `@OasRequestBody`, you've already written your validation schema — you just didn't know it.
+That's the idea behind `@inversifyjs/open-api-validation`. If you're already decorating your controllers with `@OasRequestBody`, you've already written your validation schema — you just didn't know it.
 
 This package reads the OpenAPI schemas you defined through `@inversifyjs/http-open-api`, compiles them with [Ajv](https://ajv.js.org/), and validates incoming request bodies automatically. **Zero extra schema definitions. Zero drift.**
 
@@ -53,13 +53,13 @@ Both OpenAPI versions are supported through dedicated subpath exports:
 
 ```typescript
 // ValidatedBody decorator (version-agnostic)
-import { ValidatedBody } from '@inversifyjs/http-openapi-validation';
+import { ValidatedBody } from '@inversifyjs/open-api-validation';
 
 // OpenAPI 3.1 pipe
-import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot1';
+import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot1';
 
 // OpenAPI 3.2 pipe
-import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot2';
+import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot2';
 ```
 
 The API is identical across versions — only the underlying OpenAPI types differ.
@@ -77,7 +77,7 @@ The API is identical across versions — only the underlying OpenAPI types diffe
 Install the package alongside its peer dependency:
 
 ```bash
-npm install @inversifyjs/http-openapi-validation ajv ajv-formats
+npm install @inversifyjs/open-api-validation ajv ajv-formats
 ```
 
 Then head over to the [OpenAPI Validation documentation](../../validation/openapi/introduction) for a detailed walkthrough, API reference, and more examples.
