@@ -54,7 +54,7 @@
     "./v3Dot1": "./lib/v3Dot1.js",
     "./v3Dot2": "./lib/v3Dot2.js"
   },
-  "name": "@inversifyjs/http-openapi-validation",
+  "name": "@inversifyjs/open-api-validation",
   "peerDependencies": {
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1"

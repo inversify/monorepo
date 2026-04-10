@@ -19,7 +19,7 @@
 - [x] 3.5 Add unit tests for `getControllerOpenApiMetadata` (both versions)
 - [x] 3.6 Verify the build succeeds (`pnpm run --filter "@inversifyjs/http-open-api" build && pnpm run --filter "@inversifyjs/http-open-api" test`)
 
-## 4. Scaffold `@inversifyjs/http-openapi-validation` package
+## 4. Scaffold `@inversifyjs/open-api-validation` package
 
 - [x] 4.1 Create directory structure at `packages/framework/http/libraries/openapi-validation/` with `src/`, `src/metadata/`, `src/validation/`, `package.json`, `tsconfig.json`, `tsconfig.esm.json`, `eslint.config.mjs`, `prettier.config.mjs`, `vitest.config.mjs`
 - [x] 4.2 Configure `package.json` with: dependencies on `@inversifyjs/http-core`, `@inversifyjs/framework-core`, `@inversifyjs/validation-common`, `@inversifyjs/reflect-metadata-utils`, `@inversifyjs/json-schema-pointer`, `@inversifyjs/json-schema-types`, `@inversifyjs/open-api-types`; peer dependencies on `ajv@^8` and `ajv-formats`; standard scripts (build, test, lint, format); subpath exports: `"."` → `./lib/index.js`, `"./v3Dot1"` → `./lib/v3Dot1.js`, `"./v3Dot2"` → `./lib/v3Dot2.js`
@@ -66,7 +66,7 @@
 - [x] 9.1 Create `src/index.ts` exporting `ValidatedBody` (from metadata/decorators)
 - [x] 9.2 Create `src/v3Dot1.ts` exporting `OpenApiValidationPipe` (from v3.1 pipe)
 - [x] 9.3 Create `src/v3Dot2.ts` exporting `OpenApiValidationPipe` (from v3.2 pipe)
-- [x] 9.4 Verify the package builds successfully (`pnpm run --filter "@inversifyjs/http-openapi-validation" build`)
+- [x] 9.4 Verify the package builds successfully (`pnpm run --filter "@inversifyjs/open-api-validation" build`)
 
 ## 10. Integration testing
 
@@ -75,8 +75,8 @@
 
 ## 11. Verification
 
-- [x] 11.1 Run the full test suite for the new package (`pnpm run --filter "@inversifyjs/http-openapi-validation" test`)
-- [x] 11.2 Run linter and formatter (`pnpm run --filter "@inversifyjs/http-openapi-validation" lint && pnpm run --filter "@inversifyjs/http-openapi-validation" format`)
+- [x] 11.1 Run the full test suite for the new package (`pnpm run --filter "@inversifyjs/open-api-validation" test`)
+- [x] 11.2 Run linter and formatter (`pnpm run --filter "@inversifyjs/open-api-validation" lint && pnpm run --filter "@inversifyjs/open-api-validation" format`)
 - [x] 11.3 Verify `@inversifyjs/http-core` build and tests still pass
 - [x] 11.4 Verify `@inversifyjs/http-open-api` build and tests still pass
 - [x] 11.5 Verify the full build succeeds (`pnpm run build`)

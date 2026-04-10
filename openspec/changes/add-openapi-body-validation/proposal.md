@@ -6,7 +6,7 @@ Developers using both `@inversifyjs/http-open-api` decorators and validation mus
 
 - **Expose the OpenAPI object from `SwaggerUiProvider`** (both v3.1 and v3.2 versions) via a public `openApiObject` getter so consumers (including validation pipes) can access the fully populated spec after `provide()` completes.
 - **Export OpenAPI metadata utilities from `@inversifyjs/http-open-api`** per version subpath: export `controllerOpenApiMetadataReflectKey`, the `ControllerOpenApiMetadata` type, and a `getControllerOpenApiMetadata(target)` helper function. These allow the validation pipe (and other consumers) to read the OpenAPI metadata stored by OAS decorators on controller classes.
-- **Create a new `@inversifyjs/http-openapi-validation` package** (at `packages/framework/http/libraries/openapi-validation/`) providing OpenAPI-driven body validation with **multi-version support** via subpath exports (`./v3Dot1`, `./v3Dot2` for pipes, `"."` for the shared decorator).
+- **Create a new `@inversifyjs/open-api-validation` package** (at `packages/framework/http/libraries/openapi-validation/`) providing OpenAPI-driven body validation with **multi-version support** via subpath exports (`./v3Dot1`, `./v3Dot2` for pipes, `"."` for the shared decorator).
 - Provide a shared `@ValidatedBody()` custom parameter decorator (version-agnostic) that:
   - Stores a validation marker in reflect metadata (using a dedicated key).
   - Uses `createCustomParameterDecorator` from `@inversifyjs/http-core` to extract the body, HTTP method, URL, and Content-Type header from the request, packaging them into a `BodyValidationInputParam` object.
@@ -30,7 +30,7 @@ Developers using both `@inversifyjs/http-open-api` decorators and validation mus
 
 ## Impact
 
-- **New package**: `@inversifyjs/http-openapi-validation` with dependencies on `@inversifyjs/http-core`, `@inversifyjs/framework-core`, `@inversifyjs/validation-common`, `@inversifyjs/reflect-metadata-utils`, `@inversifyjs/json-schema-pointer`, `@inversifyjs/json-schema-types`, and `@inversifyjs/open-api-types`; peer dependencies on `ajv@^8` and `ajv-formats`. The package provides subpath exports: `"."` for the shared `ValidatedBody` decorator, `"./v3Dot1"` for the v3.1 pipe, and `"./v3Dot2"` for the v3.2 pipe.
+- **New package**: `@inversifyjs/open-api-validation` with dependencies on `@inversifyjs/http-core`, `@inversifyjs/framework-core`, `@inversifyjs/validation-common`, `@inversifyjs/reflect-metadata-utils`, `@inversifyjs/json-schema-pointer`, `@inversifyjs/json-schema-types`, and `@inversifyjs/open-api-types`; peer dependencies on `ajv@^8` and `ajv-formats`. The package provides subpath exports: `"."` for the shared `ValidatedBody` decorator, `"./v3Dot1"` for the v3.1 pipe, and `"./v3Dot2"` for the v3.2 pipe.
 - **Modified package**: `@inversifyjs/http-core` — new public export of `getControllerMethodParameterMetadataList` (non-breaking addition).
 - **Modified package**: `@inversifyjs/http-open-api` — `SwaggerUiProvider` gains a public `openApiObject` getter (both versions). New public exports: `controllerOpenApiMetadataReflectKey`, `ControllerOpenApiMetadata` type, and `getControllerOpenApiMetadata` helper per version subpath (non-breaking additions).
 - **Adapter-agnostic**: Works with any HTTP adapter (Express, Fastify, Hono, uWebSockets) because it operates at the `Pipe` level, which is adapter-independent.

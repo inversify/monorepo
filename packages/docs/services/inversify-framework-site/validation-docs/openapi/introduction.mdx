@@ -19,21 +19,21 @@ Install the package along with its peer dependencies:
   <TabItem value="npm" label="npm">
 
 ```bash
-npm install ajv ajv-formats @inversifyjs/http-openapi-validation
+npm install ajv ajv-formats @inversifyjs/open-api-validation
 ```
 
   </TabItem>
   <TabItem value="yarn" label="yarn">
 
 ```bash
-yarn add ajv ajv-formats @inversifyjs/http-openapi-validation
+yarn add ajv ajv-formats @inversifyjs/open-api-validation
 ```
 
   </TabItem>
   <TabItem value="pnpm" label="pnpm">
 
 ```bash
-pnpm install ajv ajv-formats @inversifyjs/http-openapi-validation
+pnpm install ajv ajv-formats @inversifyjs/open-api-validation
 ```
 
   </TabItem>
@@ -73,13 +73,13 @@ The package supports both OpenAPI v3.1 and v3.2 through subpath exports:
 
 ```ts
 // ValidatedBody decorator (version-agnostic)
-import { ValidatedBody } from '@inversifyjs/http-openapi-validation';
+import { ValidatedBody } from '@inversifyjs/open-api-validation';
 
 // OpenAPI v3.1 pipe
-import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot1';
+import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot1';
 
 // OpenAPI v3.2 pipe
-import { OpenApiValidationPipe } from '@inversifyjs/http-openapi-validation/v3Dot2';
+import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot2';
 ```
 
 `ValidatedBody` is shared across versions — import it from the root. The `OpenApiValidationPipe` is version-specific — import it from the matching subpath. Use the matching OpenAPI decorators and types from `@inversifyjs/http-open-api` or `@inversifyjs/http-open-api/v3Dot2`.
