@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "@stryker-mutator/core": "9.6.0",
-    "@stryker-mutator/vitest-runner": "9.6.0",
-    "@stryker-mutator/typescript-checker": "9.6.0",
+    "@stryker-mutator/core": "9.6.1",
+    "@stryker-mutator/vitest-runner": "9.6.1",
+    "@stryker-mutator/typescript-checker": "9.6.1",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
     "@types/node": "24.12.2",
