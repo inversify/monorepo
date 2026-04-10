@@ -4,6 +4,7 @@ import {
   describe,
   expect,
   it,
+  type Mock,
   type Mocked,
   vitest,
 } from 'vitest';
@@ -29,6 +30,7 @@ import { type ValidateFunction } from 'ajv';
 
 import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
 import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
+import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
 import { getPath } from '../getPath.js';
 import { getOperationObject } from './getOperationObject.js';
 import { getRequestBodyObject } from './getRequestBodyObject.js';
@@ -69,8 +71,12 @@ describe(handleBodyValidation, () => {
       escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
     });
 
-    describe('when called, and ajv.getSchema() returns undefined', () => {
+    describe('when called, and getEntry() returns empty entry and ajv.getSchema() returns undefined', () => {
       let ajvMock: Mocked<Ajv>;
+      let getEntryMock: Mock<
+        (path: string, method: string) => ValidationCacheEntry
+      >;
+      let validationCacheEntryFixture: ValidationCacheEntry;
       let schemaPointerFixture: string;
       let result: unknown;
 
@@ -80,6 +86,14 @@ describe(handleBodyValidation, () => {
         } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
         schemaPointerFixture = `${SCHEMA_ID}#/${escapedPointerFixture}`;
+
+        validationCacheEntryFixture = {
+          body: new Map(),
+        };
+
+        getEntryMock = vitest
+          .fn<(path: string, method: string) => ValidationCacheEntry>()
+          .mockReturnValueOnce(validationCacheEntryFixture);
 
         vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
         vitest
@@ -97,6 +111,7 @@ describe(handleBodyValidation, () => {
             ajvMock,
             openApiObjectFixture,
             inputParamFixture,
+            getEntryMock,
           );
         } catch (error: unknown) {
           result = error;
@@ -109,6 +124,13 @@ describe(handleBodyValidation, () => {
 
       it('should call getPath()', () => {
         expect(getPath).toHaveBeenCalledExactlyOnceWith(inputParamFixture.url);
+      });
+
+      it('should call getEntry()', () => {
+        expect(getEntryMock).toHaveBeenCalledExactlyOnceWith(
+          pathFixture,
+          methodFixture,
+        );
       });
 
       it('should call getOperationObject()', () => {
@@ -161,8 +183,12 @@ describe(handleBodyValidation, () => {
       });
     });
 
-    describe('when called, and validation succeeds', () => {
+    describe('when called, and getEntry() returns empty entry and validation succeeds', () => {
       let ajvMock: Mocked<Ajv>;
+      let getEntryMock: Mock<
+        (path: string, method: string) => ValidationCacheEntry
+      >;
+      let validationCacheEntryFixture: ValidationCacheEntry;
       let result: unknown;
 
       beforeAll(() => {
@@ -174,6 +200,14 @@ describe(handleBodyValidation, () => {
         ajvMock = {
           getSchema: vitest.fn().mockReturnValueOnce(validateMock),
         } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
+
+        validationCacheEntryFixture = {
+          body: new Map(),
+        };
+
+        getEntryMock = vitest
+          .fn<(path: string, method: string) => ValidationCacheEntry>()
+          .mockReturnValueOnce(validationCacheEntryFixture);
 
         vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
         vitest
@@ -190,6 +224,7 @@ describe(handleBodyValidation, () => {
           ajvMock,
           openApiObjectFixture,
           inputParamFixture,
+          getEntryMock,
         );
       });
 
@@ -199,6 +234,13 @@ describe(handleBodyValidation, () => {
 
       it('should call getPath()', () => {
         expect(getPath).toHaveBeenCalledExactlyOnceWith(inputParamFixture.url);
+      });
+
+      it('should call getEntry()', () => {
+        expect(getEntryMock).toHaveBeenCalledExactlyOnceWith(
+          pathFixture,
+          methodFixture,
+        );
       });
 
       it('should call getOperationObject()', () => {
@@ -223,8 +265,12 @@ describe(handleBodyValidation, () => {
       });
     });
 
-    describe('when called, and validation fails', () => {
+    describe('when called, and getEntry() returns empty entry and validation fails', () => {
       let ajvMock: Mocked<Ajv>;
+      let getEntryMock: Mock<
+        (path: string, method: string) => ValidationCacheEntry
+      >;
+      let validationCacheEntryFixture: ValidationCacheEntry;
       let result: unknown;
 
       beforeAll(() => {
@@ -248,6 +294,14 @@ describe(handleBodyValidation, () => {
           getSchema: vitest.fn().mockReturnValueOnce(validateMock),
         } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
+        validationCacheEntryFixture = {
+          body: new Map(),
+        };
+
+        getEntryMock = vitest
+          .fn<(path: string, method: string) => ValidationCacheEntry>()
+          .mockReturnValueOnce(validationCacheEntryFixture);
+
         vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
         vitest
           .mocked(getOperationObject)
@@ -264,6 +318,7 @@ describe(handleBodyValidation, () => {
             ajvMock,
             openApiObjectFixture,
             inputParamFixture,
+            getEntryMock,
           );
         } catch (error: unknown) {
           result = error;
@@ -275,19 +330,14 @@ describe(handleBodyValidation, () => {
       });
 
       it('should throw an InversifyValidationError', () => {
+        const expectedErrorProperties: Partial<InversifyValidationError> = {
+          kind: InversifyValidationErrorKind.validationFailed,
+          message:
+            '[schema: #/properties/name/type, instance: /name]: "must be string"',
+        };
+
         expect(result).toBeInstanceOf(InversifyValidationError);
-      });
-
-      it('should throw an error with validationFailed kind', () => {
-        expect((result as InversifyValidationError).kind).toBe(
-          InversifyValidationErrorKind.validationFailed,
-        );
-      });
-
-      it('should throw an error with expected message', () => {
-        expect((result as InversifyValidationError).message).toBe(
-          '[schema: #/properties/name/type, instance: /name]: "must be string"',
-        );
+        expect(result).toMatchObject(expectedErrorProperties);
       });
     });
   });
@@ -319,8 +369,12 @@ describe(handleBodyValidation, () => {
       escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${inferredContentTypeFixture}/schema`;
     });
 
-    describe('when called, and validation succeeds', () => {
+    describe('when called, and getEntry() returns empty entry and validation succeeds', () => {
       let ajvMock: Mocked<Ajv>;
+      let getEntryMock: Mock<
+        (path: string, method: string) => ValidationCacheEntry
+      >;
+      let validationCacheEntryFixture: ValidationCacheEntry;
       let result: unknown;
 
       beforeAll(() => {
@@ -332,6 +386,14 @@ describe(handleBodyValidation, () => {
         ajvMock = {
           getSchema: vitest.fn().mockReturnValueOnce(validateMock),
         } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
+
+        validationCacheEntryFixture = {
+          body: new Map(),
+        };
+
+        getEntryMock = vitest
+          .fn<(path: string, method: string) => ValidationCacheEntry>()
+          .mockReturnValueOnce(validationCacheEntryFixture);
 
         vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
         vitest
@@ -351,6 +413,7 @@ describe(handleBodyValidation, () => {
           ajvMock,
           openApiObjectFixture,
           inputParamFixture,
+          getEntryMock,
         );
       });
 

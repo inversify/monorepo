@@ -12,23 +12,29 @@ import { openApiValidationMetadataReflectKey } from '../../../metadata/models/op
 import { buildCompositeValidationHandler } from '../../calculations/buildCompositeValidationHandler.js';
 import { handleBodyValidation } from '../../calculations/v3Dot1/handleBodyValidation.js';
 import { SCHEMA_ID } from '../../models/v3Dot1/schemaId.js';
+import { type ValidationCacheEntry } from '../../models/v3Dot1/ValidationCacheEntry.js';
 import { validatedInputParamBodyType } from '../../models/validatedInputParamTypes.js';
+import { ValidationCache } from '../../services/v3Dot1/ValidationCache.js';
 
 const handler: (
   ajv: Ajv,
   openApiObject: OpenApi3Dot1Object,
   inputParam: unknown,
-) => unknown = buildCompositeValidationHandler<OpenApi3Dot1Object>([
-  [validatedInputParamBodyType, handleBodyValidation],
-]);
+  getEntry: (path: string, method: string) => ValidationCacheEntry,
+) => unknown = buildCompositeValidationHandler<
+  OpenApi3Dot1Object,
+  ValidationCacheEntry
+>([[validatedInputParamBodyType, handleBodyValidation]]);
 
 export class OpenApiValidationPipe implements Pipe {
   readonly #openApiObject: OpenApi3Dot1Object;
+  readonly #validationCache: ValidationCache;
 
   #ajv: Ajv | undefined;
 
   constructor(openApiObject: OpenApi3Dot1Object) {
     this.#openApiObject = openApiObject;
+    this.#validationCache = new ValidationCache();
     this.#ajv = undefined;
   }
 
@@ -72,7 +78,12 @@ export class OpenApiValidationPipe implements Pipe {
 
     const ajv: Ajv = this.#getOrInitAjv();
 
-    return handler(ajv, this.#openApiObject, awaitedInput);
+    return handler(
+      ajv,
+      this.#openApiObject,
+      awaitedInput,
+      this.#validationCache.getOrCreate.bind(this.#validationCache),
+    );
   }
 
   #getOrInitAjv(): Ajv {
