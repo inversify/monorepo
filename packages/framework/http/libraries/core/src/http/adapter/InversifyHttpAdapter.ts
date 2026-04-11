@@ -103,9 +103,11 @@ export abstract class InversifyHttpAdapter<
       | undefined,
     customApp?: TApp,
   ) {
-    this.#awaitableRequestMethodParamTypes = new Set(
-      awaitableRequestMethodParamTypes,
-    );
+    this.#awaitableRequestMethodParamTypes = new Set([
+      ...(awaitableRequestMethodParamTypes ?? []),
+      RequestMethodParameterType.Custom,
+      RequestMethodParameterType.CustomNative,
+    ]);
     this.#container = container;
     this.#customParameterDecoratorHandlerOptions =
       this.#buildCustomParameterDecoratorHandlerOptions();
