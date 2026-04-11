@@ -11,7 +11,7 @@ import { type TraverseJsonSchemaParams } from '../models/TraverseJsonSchemaParam
 type JsonRootSchemaSchemaProperty =
   | JsonSchema
   | JsonSchema[]
-  | Record<string, JsonRootSchemaObject>;
+  | Record<string, JsonSchema>;
 
 type JsonRootSchemaSchemaPropertyHandler = (
   params: TraverseJsonSchemaCallbackParams,
