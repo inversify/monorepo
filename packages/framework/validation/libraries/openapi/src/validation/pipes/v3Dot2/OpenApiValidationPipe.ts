@@ -42,9 +42,6 @@ export class OpenApiValidationPipe implements Pipe {
     input: unknown,
     metadata: PipeMetadata,
   ): Promise<unknown> {
-    // TODO: Implement async custom decorators, then remove this workaround
-    const awaitedInput: unknown = await input;
-
     const parameterMetadataList: (
       | ControllerMethodParameterMetadata
       | undefined
@@ -57,7 +54,7 @@ export class OpenApiValidationPipe implements Pipe {
       parameterMetadataList[metadata.parameterIndex];
 
     if (parameterMetadata === undefined) {
-      return awaitedInput;
+      return input;
     }
 
     const validateMarkers: boolean[] | undefined = getOwnReflectMetadata<
@@ -69,11 +66,11 @@ export class OpenApiValidationPipe implements Pipe {
     );
 
     if (validateMarkers?.[metadata.parameterIndex] !== true) {
-      return awaitedInput;
+      return input;
     }
 
-    if (awaitedInput === null || typeof awaitedInput !== 'object') {
-      return awaitedInput;
+    if (input === null || typeof input !== 'object') {
+      return input;
     }
 
     const ajv: Ajv = this.#getOrInitAjv();
@@ -81,7 +78,7 @@ export class OpenApiValidationPipe implements Pipe {
     return handler(
       ajv,
       this.#openApiObject,
-      awaitedInput,
+      input,
       this.#validationCache.getOrCreate.bind(this.#validationCache),
     );
   }
