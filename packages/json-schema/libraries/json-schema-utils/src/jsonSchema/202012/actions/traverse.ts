@@ -132,7 +132,7 @@ function traverseDirectChildSchemaMap(
   for (const [mapKey, schema] of Object.entries(schemasMap)) {
     const traverseChildSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
       {
-        jsonPointer: `${params.jsonPointer}/${escapeJsonPointerFragments(key)}/${mapKey}`,
+        jsonPointer: `${params.jsonPointer}/${escapeJsonPointerFragments(key, mapKey)}`,
         parentJsonPointer: params.jsonPointer,
         parentSchema: params.schema,
         schema,
