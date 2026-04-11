@@ -209,7 +209,7 @@ automatic control (null)`,
     };
   }
 
-  public static get withProperyNames(): JsonRootSchemaObject {
+  public static get withPropertyNames(): JsonRootSchemaObject {
     return {
       ...JsonRootSchemaFixtures.any,
       propertyNames: { maxLength: 3 },

@@ -176,7 +176,7 @@ describe(traverse, () => {
     ['if', JsonRootSchemaFixtures.withIf],
     ['items', JsonRootSchemaFixtures.withItems],
     ['not', JsonRootSchemaFixtures.withNot],
-    ['propertyNames', JsonRootSchemaFixtures.withProperyNames],
+    ['propertyNames', JsonRootSchemaFixtures.withPropertyNames],
     ['then', JsonRootSchemaFixtures.withThen],
     ['unevaluatedItems', JsonRootSchemaFixtures.withUnevaluatedItems],
     ['unevaluatedProperties', JsonRootSchemaFixtures.withUnevaluatedProperties],
