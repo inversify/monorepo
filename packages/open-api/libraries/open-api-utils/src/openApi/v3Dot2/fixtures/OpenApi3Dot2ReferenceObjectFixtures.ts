@@ -1,0 +1,9 @@
+import { type OpenApi3Dot2ReferenceObject } from '@inversifyjs/open-api-types/v3Dot2';
+
+export class OpenApi3Dot2ReferenceObjectFixtures {
+  public static get any(): OpenApi3Dot2ReferenceObject {
+    return {
+      $ref: '#/components/schemas/schema',
+    };
+  }
+}
