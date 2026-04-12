@@ -20,6 +20,12 @@ coverage:
       '@inversifyjs/core':
         flags:
           - '@inversifyjs/core'
+      '@inversifyjs/eslint-plugin-require-extensions':
+        flags:
+          - '@inversifyjs/eslint-plugin-require-extensions'
+      '@inversifyjs/framework-core':
+        flags:
+          - '@inversifyjs/framework-core'
       '@inversifyjs/http-better-auth':
         flags:
           - '@inversifyjs/http-better-auth'
@@ -29,12 +35,30 @@ coverage:
       '@inversifyjs/http-open-api':
         flags:
           - '@inversifyjs/http-open-api'
+      '@inversifyjs/http-sse':
+        flags:
+          - '@inversifyjs/http-sse'
+      '@inversifyjs/http-uwebsockets':
+        flags:
+          - '@inversifyjs/http-uwebsockets'
       '@inversifyjs/http-validation':
         flags:
           - '@inversifyjs/http-validation'
+      '@inversifyjs/json-schema-pointer':
+        flags:
+          - '@inversifyjs/json-schema-pointer'
+      '@inversifyjs/json-schema-utils':
+        flags:
+          - '@inversifyjs/json-schema-utils'
       '@inversifyjs/logger':
         flags:
           - '@inversifyjs/logger'
+      '@inversifyjs/open-api-utils':
+        flags:
+          - '@inversifyjs/open-api-utils'
+      '@inversifyjs/open-api-validation':
+        flags:
+          - '@inversifyjs/open-api-validation'
       '@inversifyjs/plugin-dispose':
         flags:
           - '@inversifyjs/plugin-dispose'
@@ -44,12 +68,12 @@ coverage:
       '@inversifyjs/reflect-metadata-utils':
         flags:
           - '@inversifyjs/reflect-metadata-utils'
-      '@inversifyjs/http-sse':
-        flags:
-          - '@inversifyjs/http-sse'
       '@inversifyjs/standard-schema-validation':
         flags:
           - '@inversifyjs/standard-schema-validation'
+      '@inversifyjs/strongly-typed':
+        flags:
+          - '@inversifyjs/strongly-typed'
 flags:
   '@inversifyjs/ajv-validation':
     paths:
@@ -69,6 +93,9 @@ flags:
   '@inversifyjs/core':
     paths:
       - packages/container/libraries/core/
+  '@inversifyjs/eslint-plugin-require-extensions':
+    paths:
+      - packages/foundation/tools/eslint-plugin-require-extensions
   '@inversifyjs/framework-core':
     paths:
       - packages/framework/core
@@ -84,12 +111,27 @@ flags:
   '@inversifyjs/http-sse':
     paths:
       - packages/framework/http/libraries/sse
+  '@inversifyjs/http-uwebsockets':
+    paths:
+      - packages/framework/http/libraries/uwebsockets
   '@inversifyjs/http-validation':
     paths:
       - packages/framework/http/libraries/validation
+  '@inversifyjs/json-schema-pointer':
+    paths:
+      - packages/json-schema/libraries/json-schema-pointer
+  '@inversifyjs/json-schema-utils':
+    paths:
+      - packages/json-schema/libraries/json-schema-utils
   '@inversifyjs/logger':
     paths:
       - packages/logger
+  '@inversifyjs/open-api-utils':
+    paths:
+      - packages/open-api/libraries/open-api-utils
+  '@inversifyjs/open-api-validation':
+    paths:
+      - packages/framework/validation/libraries/openapi
   '@inversifyjs/plugin-dispose':
     paths:
       - packages/container/libraries/plugin-dispose
@@ -102,3 +144,6 @@ flags:
   '@inversifyjs/standard-schema-validation':
     paths:
       - packages/framework/validation/libraries/standard-schema
+  '@inversifyjs/strongly-typed':
+    paths:
+      - packages/container/libraries/strongly-typed
