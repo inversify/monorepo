@@ -220,6 +220,7 @@ export function traverseOpenApi3Dot1PathItemObjectJsonSchemas(
     options: traverseOpenApi3Dot1OperationObjectJsonSchemas,
     patch: traverseOpenApi3Dot1OperationObjectJsonSchemas,
     post: traverseOpenApi3Dot1OperationObjectJsonSchemas,
+    put: traverseOpenApi3Dot1OperationObjectJsonSchemas,
     trace: traverseOpenApi3Dot1OperationObjectJsonSchemas,
   };
 
