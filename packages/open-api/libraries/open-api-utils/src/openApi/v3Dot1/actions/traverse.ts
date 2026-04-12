@@ -9,13 +9,13 @@ import {
   type OpenApi3Dot1MediaTypeObject,
   type OpenApi3Dot1Object,
   type OpenApi3Dot1OperationObject,
+  type OpenApi3Dot1ParameterObject,
   type OpenApi3Dot1PathItemObject,
   type OpenApi3Dot1PathsObject,
   type OpenApi3Dot1ReferenceObject,
   type OpenApi3Dot1RequestBodyObject,
   type OpenApi3Dot1ResponseObject,
   type OpenApi3Dot1ResponsesObject,
-  type OpenApi3Dot1SchemaObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 
 export function traverseOpenApiObjectJsonSchemas(
@@ -34,12 +34,9 @@ export function traverseOpenApiObjectJsonSchemas(
   }
 
   if (openApiObject.webhooks !== undefined) {
-    for (const key of Object.keys(openApiObject.webhooks)) {
+    for (const pathItem of Object.values(openApiObject.webhooks)) {
       // Consider OpenApi3Dot1PathItemObject as a superset of OpenApi3Dot1ReferenceObject
-      traverseOpenApi3Dot1PathItemObjectJsonSchemas(
-        openApiObject.webhooks[key] as OpenApi3Dot1PathItemObject,
-        callback,
-      );
+      traverseOpenApi3Dot1PathItemObjectJsonSchemas(pathItem, callback);
     }
   }
 }
@@ -63,15 +60,25 @@ export function traverseOpenApi3Dot1ComponentsObjectJsonSchemas(
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
   if (openApi3Dot1ComponentsObject.callbacks !== undefined) {
-    for (const key of Object.keys(openApi3Dot1ComponentsObject.callbacks)) {
-      const openApi3Dot1CallbackOrReferenceObject:
-        | OpenApi3Dot1CallbackObject
-        | OpenApi3Dot1ReferenceObject
-        | undefined = openApi3Dot1ComponentsObject.callbacks[key];
-
-      if (isOpenApi3Dot1CallbackObject(openApi3Dot1CallbackOrReferenceObject)) {
+    for (const componentsCallback of Object.values(
+      openApi3Dot1ComponentsObject.callbacks,
+    )) {
+      if (isOpenApi3Dot1CallbackObject(componentsCallback)) {
         traverseOpenApi3Dot1CallbackObjectJsonSchemas(
-          openApi3Dot1CallbackOrReferenceObject,
+          componentsCallback,
+          callback,
+        );
+      }
+    }
+  }
+
+  if (openApi3Dot1ComponentsObject.parameters !== undefined) {
+    for (const componentsParameter of Object.values(
+      openApi3Dot1ComponentsObject.parameters,
+    )) {
+      if (isOpenApi3Dot1ParameterObject(componentsParameter)) {
+        traverseOpenApi3Dot1ParameterObjectJsonSchemas(
+          componentsParameter,
           callback,
         );
       }
@@ -79,24 +86,21 @@ export function traverseOpenApi3Dot1ComponentsObjectJsonSchemas(
   }
 
   if (openApi3Dot1ComponentsObject.pathItems !== undefined) {
-    for (const key of Object.keys(openApi3Dot1ComponentsObject.pathItems)) {
+    for (const componentsPathItem of Object.values(
+      openApi3Dot1ComponentsObject.pathItems,
+    )) {
       // Consider OpenApi3Dot1PathItemObject as a superset of OpenApi3Dot1ReferenceObject
       traverseOpenApi3Dot1PathItemObjectJsonSchemas(
-        openApi3Dot1ComponentsObject.pathItems[
-          key
-        ] as OpenApi3Dot1PathItemObject,
+        componentsPathItem,
         callback,
       );
     }
   }
 
   if (openApi3Dot1ComponentsObject.requestBodies !== undefined) {
-    for (const key of Object.keys(openApi3Dot1ComponentsObject.requestBodies)) {
-      const requestBody:
-        | OpenApi3Dot1RequestBodyObject
-        | OpenApi3Dot1ReferenceObject
-        | undefined = openApi3Dot1ComponentsObject.requestBodies[key];
-
+    for (const requestBody of Object.values(
+      openApi3Dot1ComponentsObject.requestBodies,
+    )) {
       if (isOpenApi3Dot1RequestBodyObject(requestBody)) {
         traverseOpenApi3Dot1RequestBodyObjectJsonSchemas(requestBody, callback);
       }
@@ -104,15 +108,27 @@ export function traverseOpenApi3Dot1ComponentsObjectJsonSchemas(
   }
 
   if (openApi3Dot1ComponentsObject.schemas !== undefined) {
-    for (const key of Object.keys(openApi3Dot1ComponentsObject.schemas)) {
+    for (const schema of Object.values(openApi3Dot1ComponentsObject.schemas)) {
       const params: TraverseJsonSchemaParams = {
         jsonPointer: '',
-        schema: openApi3Dot1ComponentsObject.schemas[
-          key
-        ] as OpenApi3Dot1SchemaObject,
+        schema,
       };
 
       traverse(params, callback);
+    }
+  }
+}
+
+export function traverseOpenApi3Dot1ParameterObjectJsonSchemas(
+  param: OpenApi3Dot1ParameterObject,
+  callback: (params: TraverseJsonSchemaCallbackParams) => void,
+): void {
+  if (param.schema !== undefined) {
+    traverse({ jsonPointer: '', schema: param.schema }, callback);
+  }
+  if (param.content !== undefined) {
+    for (const mediaTypeObject of Object.values(param.content)) {
+      traverseOpenApi3Dot1MediaTypeObjectJsonSchemas(mediaTypeObject, callback);
     }
   }
 }
@@ -121,11 +137,10 @@ export function traverseOpenApi3Dot1RequestBodyObjectJsonSchemas(
   openApi3Dot1RequestBodyObject: OpenApi3Dot1RequestBodyObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
-  for (const key of Object.keys(openApi3Dot1RequestBodyObject.content)) {
-    traverseOpenApi3Dot1MediaTypeObjectJsonSchemas(
-      openApi3Dot1RequestBodyObject.content[key] as OpenApi3Dot1MediaTypeObject,
-      callback,
-    );
+  for (const mediaTypeObject of Object.values(
+    openApi3Dot1RequestBodyObject.content,
+  )) {
+    traverseOpenApi3Dot1MediaTypeObjectJsonSchemas(mediaTypeObject, callback);
   }
 }
 
@@ -136,13 +151,10 @@ export function traverseOpenApi3Dot1ResponseObjectJsonSchemas(
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
   if (isOpenApi3Dot1ResponseObjectWithContent(openApi3Dot1ResponseBodyObject)) {
-    for (const key of Object.keys(openApi3Dot1ResponseBodyObject.content)) {
-      traverseOpenApi3Dot1MediaTypeObjectJsonSchemas(
-        openApi3Dot1ResponseBodyObject.content[
-          key
-        ] as OpenApi3Dot1MediaTypeObject,
-        callback,
-      );
+    for (const mediaTypeObject of Object.values(
+      openApi3Dot1ResponseBodyObject.content,
+    )) {
+      traverseOpenApi3Dot1MediaTypeObjectJsonSchemas(mediaTypeObject, callback);
     }
   }
 }
@@ -152,15 +164,12 @@ export function traverseOpenApi3Dot1OperationObjectJsonSchemas(
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
   if (openApi3Dot1OperationObject.callbacks !== undefined) {
-    for (const key of Object.keys(openApi3Dot1OperationObject.callbacks)) {
-      const openApi3Dot1CallbackOrReferenceObject:
-        | OpenApi3Dot1CallbackObject
-        | OpenApi3Dot1ReferenceObject
-        | undefined = openApi3Dot1OperationObject.callbacks[key];
-
-      if (isOpenApi3Dot1CallbackObject(openApi3Dot1CallbackOrReferenceObject)) {
+    for (const operationCallback of Object.values(
+      openApi3Dot1OperationObject.callbacks,
+    )) {
+      if (isOpenApi3Dot1CallbackObject(operationCallback)) {
         traverseOpenApi3Dot1CallbackObjectJsonSchemas(
-          openApi3Dot1CallbackOrReferenceObject,
+          operationCallback,
           callback,
         );
       }
@@ -220,6 +229,14 @@ export function traverseOpenApi3Dot1PathItemObjectJsonSchemas(
     trace: traverseOpenApi3Dot1OperationObjectJsonSchemas,
   };
 
+  if (openApi3Dot1PathItemObject.parameters !== undefined) {
+    for (const param of openApi3Dot1PathItemObject.parameters) {
+      if (isOpenApi3Dot1ParameterObject(param)) {
+        traverseOpenApi3Dot1ParameterObjectJsonSchemas(param, callback);
+      }
+    }
+  }
+
   for (const key of Object.keys(
     openApi3Dot1PathItemObject,
   ) as (keyof OpenApi3Dot1PathItemObject)[]) {
@@ -243,12 +260,9 @@ export function traverseOpenApi3Dot1CallbackObjectJsonSchemas(
   openApi3Dot1CallbackObject: OpenApi3Dot1CallbackObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
-  for (const key of Object.keys(openApi3Dot1CallbackObject)) {
+  for (const pathItem of Object.values(openApi3Dot1CallbackObject)) {
     // Consider OpenApi3Dot1PathItemObject as a superset of OpenApi3Dot1ReferenceObject
-    traverseOpenApi3Dot1PathItemObjectJsonSchemas(
-      openApi3Dot1CallbackObject[key] as OpenApi3Dot1PathItemObject,
-      callback,
-    );
+    traverseOpenApi3Dot1PathItemObjectJsonSchemas(pathItem, callback);
   }
 }
 
@@ -256,37 +270,28 @@ export function traverseOpenApi3Dot1PathsObjectJsonSchemas(
   openApi3Dot1PathsObject: OpenApi3Dot1PathsObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
-  for (const key of Object.keys(openApi3Dot1PathsObject)) {
+  for (const pathItem of Object.values(openApi3Dot1PathsObject)) {
     // Consider OpenApi3Dot1PathItemObject as a superset of OpenApi3Dot1ReferenceObject
-    traverseOpenApi3Dot1PathItemObjectJsonSchemas(
-      openApi3Dot1PathsObject[key] as OpenApi3Dot1PathItemObject,
-      callback,
-    );
+    traverseOpenApi3Dot1PathItemObjectJsonSchemas(pathItem, callback);
   }
-}
-
-function isOpenApi3Dot1ResponseObjectWithContent(
-  openApi3Dot1ResponseObject:
-    | OpenApi3Dot1ReferenceObject
-    | OpenApi3Dot1ResponseObject,
-): openApi3Dot1ResponseObject is OpenApi3Dot1ResponseObject & {
-  content: Required<OpenApi3Dot1ResponseObject>['content'];
-} {
-  return (
-    (openApi3Dot1ResponseObject as Partial<OpenApi3Dot1ResponseObject>)
-      .content !== undefined
-  );
 }
 
 function isOpenApi3Dot1CallbackObject(
   openApi3Dot1CallbackObject:
     | OpenApi3Dot1CallbackObject
-    | OpenApi3Dot1ReferenceObject
-    | undefined,
+    | OpenApi3Dot1ReferenceObject,
 ): openApi3Dot1CallbackObject is OpenApi3Dot1CallbackObject {
+  return typeof openApi3Dot1CallbackObject.$ref !== 'string';
+}
+
+function isOpenApi3Dot1ParameterObject(
+  openApi3Dot1ParameterObject:
+    | OpenApi3Dot1ReferenceObject
+    | OpenApi3Dot1ParameterObject,
+): openApi3Dot1ParameterObject is OpenApi3Dot1ParameterObject {
   return (
-    openApi3Dot1CallbackObject !== undefined &&
-    typeof openApi3Dot1CallbackObject.$ref !== 'string'
+    (openApi3Dot1ParameterObject as Partial<OpenApi3Dot1ReferenceObject>)
+      .$ref === undefined
   );
 }
 
@@ -301,5 +306,18 @@ function isOpenApi3Dot1RequestBodyObject(
     (
       openApi3Dot1RequestBodyOrReferenceObject as Partial<OpenApi3Dot1RequestBodyObject>
     ).content !== undefined
+  );
+}
+
+function isOpenApi3Dot1ResponseObjectWithContent(
+  openApi3Dot1ResponseObject:
+    | OpenApi3Dot1ReferenceObject
+    | OpenApi3Dot1ResponseObject,
+): openApi3Dot1ResponseObject is OpenApi3Dot1ResponseObject & {
+  content: Required<OpenApi3Dot1ResponseObject>['content'];
+} {
+  return (
+    (openApi3Dot1ResponseObject as Partial<OpenApi3Dot1ResponseObject>)
+      .content !== undefined
   );
 }
