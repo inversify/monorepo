@@ -6,6 +6,7 @@ import {
 import {
   type OpenApi3Dot1CallbackObject,
   type OpenApi3Dot1ComponentsObject,
+  type OpenApi3Dot1HeaderObject,
   type OpenApi3Dot1MediaTypeObject,
   type OpenApi3Dot1Object,
   type OpenApi3Dot1OperationObject,
@@ -41,6 +42,28 @@ export function traverseOpenApiObjectJsonSchemas(
   }
 }
 
+export function traverseOpenApi3Dot1HeaderObjectJsonSchemas(
+  openApi3Dot1HeaderObject: OpenApi3Dot1HeaderObject,
+  callback: (params: TraverseJsonSchemaCallbackParams) => void,
+): void {
+  if (openApi3Dot1HeaderObject.content !== undefined) {
+    for (const mediaTypeObject of Object.values(
+      openApi3Dot1HeaderObject.content,
+    )) {
+      traverseOpenApi3Dot1MediaTypeObjectJsonSchemas(mediaTypeObject, callback);
+    }
+  }
+
+  if (openApi3Dot1HeaderObject.schema !== undefined) {
+    const params: TraverseJsonSchemaParams = {
+      jsonPointer: '',
+      schema: openApi3Dot1HeaderObject.schema,
+    };
+
+    traverse(params, callback);
+  }
+}
+
 export function traverseOpenApi3Dot1MediaTypeObjectJsonSchemas(
   openApi3Dot1MediaTypeObject: OpenApi3Dot1MediaTypeObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
@@ -63,7 +86,7 @@ export function traverseOpenApi3Dot1ComponentsObjectJsonSchemas(
     for (const componentsCallback of Object.values(
       openApi3Dot1ComponentsObject.callbacks,
     )) {
-      if (isOpenApi3Dot1CallbackObject(componentsCallback)) {
+      if (isNotReferenceObject(componentsCallback)) {
         traverseOpenApi3Dot1CallbackObjectJsonSchemas(
           componentsCallback,
           callback,
@@ -72,11 +95,20 @@ export function traverseOpenApi3Dot1ComponentsObjectJsonSchemas(
     }
   }
 
+  if (openApi3Dot1ComponentsObject.headers !== undefined) {
+    for (const componentsHeader of Object.values(
+      openApi3Dot1ComponentsObject.headers,
+    )) {
+      // Consider OpenApi3Dot1HeaderObject as a superset of OpenApi3Dot1ReferenceObject
+      traverseOpenApi3Dot1HeaderObjectJsonSchemas(componentsHeader, callback);
+    }
+  }
+
   if (openApi3Dot1ComponentsObject.parameters !== undefined) {
     for (const componentsParameter of Object.values(
       openApi3Dot1ComponentsObject.parameters,
     )) {
-      if (isOpenApi3Dot1ParameterObject(componentsParameter)) {
+      if (isNotReferenceObject(componentsParameter)) {
         traverseOpenApi3Dot1ParameterObjectJsonSchemas(
           componentsParameter,
           callback,
@@ -123,13 +155,14 @@ export function traverseOpenApi3Dot1ParameterObjectJsonSchemas(
   param: OpenApi3Dot1ParameterObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
-  if (param.schema !== undefined) {
-    traverse({ jsonPointer: '', schema: param.schema }, callback);
-  }
   if (param.content !== undefined) {
     for (const mediaTypeObject of Object.values(param.content)) {
       traverseOpenApi3Dot1MediaTypeObjectJsonSchemas(mediaTypeObject, callback);
     }
+  }
+
+  if (param.schema !== undefined) {
+    traverse({ jsonPointer: '', schema: param.schema }, callback);
   }
 }
 
@@ -145,16 +178,23 @@ export function traverseOpenApi3Dot1RequestBodyObjectJsonSchemas(
 }
 
 export function traverseOpenApi3Dot1ResponseObjectJsonSchemas(
-  openApi3Dot1ResponseBodyObject:
-    | OpenApi3Dot1ReferenceObject
-    | OpenApi3Dot1ResponseObject,
+  openApi3Dot1ResponseBodyObject: OpenApi3Dot1ResponseObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
-  if (isOpenApi3Dot1ResponseObjectWithContent(openApi3Dot1ResponseBodyObject)) {
+  if (openApi3Dot1ResponseBodyObject.content !== undefined) {
     for (const mediaTypeObject of Object.values(
       openApi3Dot1ResponseBodyObject.content,
     )) {
       traverseOpenApi3Dot1MediaTypeObjectJsonSchemas(mediaTypeObject, callback);
+    }
+  }
+
+  if (openApi3Dot1ResponseBodyObject.headers !== undefined) {
+    for (const headerObject of Object.values(
+      openApi3Dot1ResponseBodyObject.headers,
+    )) {
+      // Consider OpenApi3Dot1HeaderObject as a superset of OpenApi3Dot1ReferenceObject
+      traverseOpenApi3Dot1HeaderObjectJsonSchemas(headerObject, callback);
     }
   }
 }
@@ -167,7 +207,7 @@ export function traverseOpenApi3Dot1OperationObjectJsonSchemas(
     for (const operationCallback of Object.values(
       openApi3Dot1OperationObject.callbacks,
     )) {
-      if (isOpenApi3Dot1CallbackObject(operationCallback)) {
+      if (isNotReferenceObject(operationCallback)) {
         traverseOpenApi3Dot1CallbackObjectJsonSchemas(
           operationCallback,
           callback,
@@ -201,7 +241,9 @@ export function traverseOpenApi3Dot1ResponsesObjectJsonSchemas(
     for (const responseObject of Object.values(
       openApi3Dot1ResponsesBodyObject,
     )) {
-      traverseOpenApi3Dot1ResponseObjectJsonSchemas(responseObject, callback);
+      if (isNotReferenceObject(responseObject)) {
+        traverseOpenApi3Dot1ResponseObjectJsonSchemas(responseObject, callback);
+      }
     }
   }
 }
@@ -231,7 +273,7 @@ export function traverseOpenApi3Dot1PathItemObjectJsonSchemas(
 
   if (openApi3Dot1PathItemObject.parameters !== undefined) {
     for (const param of openApi3Dot1PathItemObject.parameters) {
-      if (isOpenApi3Dot1ParameterObject(param)) {
+      if (isNotReferenceObject(param)) {
         traverseOpenApi3Dot1ParameterObjectJsonSchemas(param, callback);
       }
     }
@@ -276,23 +318,10 @@ export function traverseOpenApi3Dot1PathsObjectJsonSchemas(
   }
 }
 
-function isOpenApi3Dot1CallbackObject(
-  openApi3Dot1CallbackObject:
-    | OpenApi3Dot1CallbackObject
-    | OpenApi3Dot1ReferenceObject,
-): openApi3Dot1CallbackObject is OpenApi3Dot1CallbackObject {
-  return typeof openApi3Dot1CallbackObject.$ref !== 'string';
-}
-
-function isOpenApi3Dot1ParameterObject(
-  openApi3Dot1ParameterObject:
-    | OpenApi3Dot1ReferenceObject
-    | OpenApi3Dot1ParameterObject,
-): openApi3Dot1ParameterObject is OpenApi3Dot1ParameterObject {
-  return (
-    (openApi3Dot1ParameterObject as Partial<OpenApi3Dot1ReferenceObject>)
-      .$ref === undefined
-  );
+function isNotReferenceObject<T>(
+  value: T | OpenApi3Dot1ReferenceObject,
+): value is T {
+  return (value as Partial<OpenApi3Dot1ReferenceObject>).$ref === undefined;
 }
 
 function isOpenApi3Dot1RequestBodyObject(
@@ -306,18 +335,5 @@ function isOpenApi3Dot1RequestBodyObject(
     (
       openApi3Dot1RequestBodyOrReferenceObject as Partial<OpenApi3Dot1RequestBodyObject>
     ).content !== undefined
-  );
-}
-
-function isOpenApi3Dot1ResponseObjectWithContent(
-  openApi3Dot1ResponseObject:
-    | OpenApi3Dot1ReferenceObject
-    | OpenApi3Dot1ResponseObject,
-): openApi3Dot1ResponseObject is OpenApi3Dot1ResponseObject & {
-  content: Required<OpenApi3Dot1ResponseObject>['content'];
-} {
-  return (
-    (openApi3Dot1ResponseObject as Partial<OpenApi3Dot1ResponseObject>)
-      .content !== undefined
   );
 }
