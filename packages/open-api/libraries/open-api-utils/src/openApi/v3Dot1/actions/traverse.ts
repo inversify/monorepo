@@ -252,10 +252,10 @@ export function traverseOpenApi3Dot1OperationObjectJsonSchemas(
 }
 
 export function traverseOpenApi3Dot1ResponsesObjectJsonSchemas(
-  openApi3Dot1ResponsesBodyObject: OpenApi3Dot1ResponsesObject,
+  openApi3Dot1ResponsesObject: OpenApi3Dot1ResponsesObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
-  for (const responseObject of Object.values(openApi3Dot1ResponsesBodyObject)) {
+  for (const responseObject of Object.values(openApi3Dot1ResponsesObject)) {
     if (isNotReferenceObject(responseObject)) {
       traverseOpenApi3Dot1ResponseObjectJsonSchemas(responseObject, callback);
     }

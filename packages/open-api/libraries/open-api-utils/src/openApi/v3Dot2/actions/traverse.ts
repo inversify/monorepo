@@ -73,6 +73,15 @@ export function traverseOpenApi3Dot2MediaTypeObjectJsonSchemas(
   openApi3Dot2MediaTypeObject: OpenApi3Dot2MediaTypeObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
+  if (openApi3Dot2MediaTypeObject.itemSchema !== undefined) {
+    const params: TraverseJsonSchemaParams = {
+      jsonPointer: '',
+      schema: openApi3Dot2MediaTypeObject.itemSchema,
+    };
+
+    traverse(params, callback);
+  }
+
   if (openApi3Dot2MediaTypeObject.schema !== undefined) {
     const params: TraverseJsonSchemaParams = {
       jsonPointer: '',
@@ -106,6 +115,16 @@ export function traverseOpenApi3Dot2ComponentsObjectJsonSchemas(
     )) {
       // Consider OpenApi3Dot2HeaderObject as a superset of OpenApi3Dot2ReferenceObject
       traverseOpenApi3Dot2HeaderObjectJsonSchemas(componentsHeader, callback);
+    }
+  }
+
+  if (openApi3Dot2ComponentsObject.mediaTypes !== undefined) {
+    for (const mediaType of Object.values(
+      openApi3Dot2ComponentsObject.mediaTypes,
+    )) {
+      if (isNotReferenceObject(mediaType)) {
+        traverseOpenApi3Dot2MediaTypeObjectJsonSchemas(mediaType, callback);
+      }
     }
   }
 
@@ -269,10 +288,10 @@ export function traverseOpenApi3Dot2OperationObjectJsonSchemas(
 }
 
 export function traverseOpenApi3Dot2ResponsesObjectJsonSchemas(
-  openApi3Dot2ResponsesBodyObject: OpenApi3Dot2ResponsesObject,
+  openApi3Dot2ResponsesObject: OpenApi3Dot2ResponsesObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
-  for (const responseObject of Object.values(openApi3Dot2ResponsesBodyObject)) {
+  for (const responseObject of Object.values(openApi3Dot2ResponsesObject)) {
     if (isNotReferenceObject(responseObject)) {
       traverseOpenApi3Dot2ResponseObjectJsonSchemas(responseObject, callback);
     }
