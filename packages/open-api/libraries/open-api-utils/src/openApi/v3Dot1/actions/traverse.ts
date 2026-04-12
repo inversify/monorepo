@@ -4,8 +4,6 @@ import {
   type TraverseJsonSchemaParams,
 } from '@inversifyjs/json-schema-utils/2020-12';
 import {
-  type HttpStatusCode,
-  type HttpStatusCodeWildCard,
   type OpenApi3Dot1CallbackObject,
   type OpenApi3Dot1ComponentsObject,
   type OpenApi3Dot1MediaTypeObject,
@@ -132,10 +130,12 @@ export function traverseOpenApi3Dot1RequestBodyObjectJsonSchemas(
 }
 
 export function traverseOpenApi3Dot1ResponseObjectJsonSchemas(
-  openApi3Dot1ResponseBodyObject: OpenApi3Dot1ResponseObject,
+  openApi3Dot1ResponseBodyObject:
+    | OpenApi3Dot1ReferenceObject
+    | OpenApi3Dot1ResponseObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
-  if (openApi3Dot1ResponseBodyObject.content !== undefined) {
+  if (isOpenApi3Dot1ResponseObjectWithContent(openApi3Dot1ResponseBodyObject)) {
     for (const key of Object.keys(openApi3Dot1ResponseBodyObject.content)) {
       traverseOpenApi3Dot1MediaTypeObjectJsonSchemas(
         openApi3Dot1ResponseBodyObject.content[
@@ -189,14 +189,10 @@ export function traverseOpenApi3Dot1ResponsesObjectJsonSchemas(
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
   if (openApi3Dot1ResponsesBodyObject !== undefined) {
-    for (const key of Object.keys(openApi3Dot1ResponsesBodyObject) as (
-      | HttpStatusCode
-      | HttpStatusCodeWildCard
-    )[]) {
-      traverseOpenApi3Dot1ResponseObjectJsonSchemas(
-        openApi3Dot1ResponsesBodyObject[key] as OpenApi3Dot1ResponseObject,
-        callback,
-      );
+    for (const responseObject of Object.values(
+      openApi3Dot1ResponsesBodyObject,
+    )) {
+      traverseOpenApi3Dot1ResponseObjectJsonSchemas(responseObject, callback);
     }
   }
 }
@@ -267,6 +263,19 @@ export function traverseOpenApi3Dot1PathsObjectJsonSchemas(
       callback,
     );
   }
+}
+
+function isOpenApi3Dot1ResponseObjectWithContent(
+  openApi3Dot1ResponseObject:
+    | OpenApi3Dot1ReferenceObject
+    | OpenApi3Dot1ResponseObject,
+): openApi3Dot1ResponseObject is OpenApi3Dot1ResponseObject & {
+  content: Required<OpenApi3Dot1ResponseObject>['content'];
+} {
+  return (
+    (openApi3Dot1ResponseObject as Partial<OpenApi3Dot1ResponseObject>)
+      .content !== undefined
+  );
 }
 
 function isOpenApi3Dot1CallbackObject(
