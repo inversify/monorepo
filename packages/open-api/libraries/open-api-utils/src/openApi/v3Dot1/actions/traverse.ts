@@ -139,6 +139,16 @@ export function traverseOpenApi3Dot1ComponentsObjectJsonSchemas(
     }
   }
 
+  if (openApi3Dot1ComponentsObject.responses !== undefined) {
+    for (const response of Object.values(
+      openApi3Dot1ComponentsObject.responses,
+    )) {
+      if (isNotReferenceObject(response)) {
+        traverseOpenApi3Dot1ResponseObjectJsonSchemas(response, callback);
+      }
+    }
+  }
+
   if (openApi3Dot1ComponentsObject.schemas !== undefined) {
     for (const schema of Object.values(openApi3Dot1ComponentsObject.schemas)) {
       const params: TraverseJsonSchemaParams = {
