@@ -2,6 +2,7 @@ import { type OpenApi3Dot2ComponentsObject } from '@inversifyjs/open-api-types/v
 
 import { OpenApi3Dot2CallbackObjectFixtures } from './OpenApi3Dot2CallbackObjectFixtures.js';
 import { OpenApi3Dot2HeaderObjectFixtures } from './OpenApi3Dot2HeaderObjectFixtures.js';
+import { OpenApi3Dot2MediaTypeObjectFixtures } from './OpenApi3Dot2MediaTypeObjectFixtures.js';
 import { OpenApi3Dot2ParameterObjectFixtures } from './OpenApi3Dot2ParameterObjectFixtures.js';
 import { OpenApi3Dot2PathItemObjectFixtures } from './OpenApi3Dot2PathItemObjectFixtures.js';
 import { OpenApi3Dot2ReferenceObjectFixtures } from './OpenApi3Dot2ReferenceObjectFixtures.js';
@@ -30,6 +31,22 @@ export class OpenApi3Dot2ComponentsObjectFixtures {
     return {
       headers: {
         header: OpenApi3Dot2HeaderObjectFixtures.withSchemaOnly,
+      },
+    };
+  }
+
+  public static get withMediaTypes(): OpenApi3Dot2ComponentsObject {
+    return {
+      mediaTypes: {
+        mediaType: OpenApi3Dot2MediaTypeObjectFixtures.withSchema,
+      },
+    };
+  }
+
+  public static get withReferenceMediaTypes(): OpenApi3Dot2ComponentsObject {
+    return {
+      mediaTypes: {
+        mediaType: OpenApi3Dot2ReferenceObjectFixtures.any,
       },
     };
   }

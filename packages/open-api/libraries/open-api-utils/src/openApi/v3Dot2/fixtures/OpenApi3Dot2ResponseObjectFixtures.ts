@@ -2,6 +2,7 @@ import { type OpenApi3Dot2ResponseObject } from '@inversifyjs/open-api-types/v3D
 
 import { OpenApi3Dot2HeaderObjectFixtures } from './OpenApi3Dot2HeaderObjectFixtures.js';
 import { OpenApi3Dot2MediaTypeObjectFixtures } from './OpenApi3Dot2MediaTypeObjectFixtures.js';
+import { OpenApi3Dot2ReferenceObjectFixtures } from './OpenApi3Dot2ReferenceObjectFixtures.js';
 
 export class OpenApi3Dot2ResponseObjectFixtures {
   public static get withContentAndHeaders(): OpenApi3Dot2ResponseObject {
@@ -27,6 +28,18 @@ export class OpenApi3Dot2ResponseObjectFixtures {
 
   public static get withHeadersOnly(): OpenApi3Dot2ResponseObject {
     return {
+      description: 'description',
+      headers: {
+        header: OpenApi3Dot2HeaderObjectFixtures.withSchemaOnly,
+      },
+    };
+  }
+
+  public static get withReferenceContentAndHeaders(): OpenApi3Dot2ResponseObject {
+    return {
+      content: {
+        'application/json': OpenApi3Dot2ReferenceObjectFixtures.any,
+      },
       description: 'description',
       headers: {
         header: OpenApi3Dot2HeaderObjectFixtures.withSchemaOnly,

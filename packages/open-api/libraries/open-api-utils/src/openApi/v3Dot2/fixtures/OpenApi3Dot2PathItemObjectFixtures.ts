@@ -32,7 +32,16 @@ export class OpenApi3Dot2PathItemObjectFixtures {
       patch: OpenApi3Dot2OperationObjectFixtures.empty,
       post: OpenApi3Dot2OperationObjectFixtures.empty,
       put: OpenApi3Dot2OperationObjectFixtures.empty,
+      query: OpenApi3Dot2OperationObjectFixtures.empty,
       trace: OpenApi3Dot2OperationObjectFixtures.empty,
+    };
+  }
+
+  public static get withAdditionalOperations(): OpenApi3Dot2PathItemObject {
+    return {
+      additionalOperations: {
+        customOp: OpenApi3Dot2OperationObjectFixtures.withParametersOnly,
+      },
     };
   }
 

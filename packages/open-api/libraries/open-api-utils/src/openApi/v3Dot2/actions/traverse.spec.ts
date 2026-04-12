@@ -104,6 +104,82 @@ describe(traverseOpenApi3Dot2MediaTypeObjectJsonSchemas, () => {
       expect(traverse).not.toHaveBeenCalled();
     });
   });
+
+  describe('having a media type object with itemSchema', () => {
+    let mediaTypeObjectFixture: OpenApi3Dot2MediaTypeObject;
+    let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
+
+    beforeAll(() => {
+      mediaTypeObjectFixture =
+        OpenApi3Dot2MediaTypeObjectFixtures.withItemSchema;
+      callbackMock = vitest.fn();
+
+      traverseOpenApi3Dot2MediaTypeObjectJsonSchemas(
+        mediaTypeObjectFixture,
+        callbackMock,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call traverse()', () => {
+      expect(traverse).toHaveBeenCalledExactlyOnceWith(
+        {
+          jsonPointer: '',
+          schema: mediaTypeObjectFixture.itemSchema,
+        },
+        callbackMock,
+      );
+    });
+  });
+
+  describe('having a media type object with itemSchema and schema', () => {
+    let mediaTypeObjectFixture: OpenApi3Dot2MediaTypeObject;
+    let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
+
+    beforeAll(() => {
+      mediaTypeObjectFixture =
+        OpenApi3Dot2MediaTypeObjectFixtures.withItemSchemaAndSchema;
+      callbackMock = vitest.fn();
+
+      traverseOpenApi3Dot2MediaTypeObjectJsonSchemas(
+        mediaTypeObjectFixture,
+        callbackMock,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call traverse() for both itemSchema and schema', () => {
+      expect(traverse).toHaveBeenCalledTimes(2);
+    });
+
+    it('should call traverse() with the itemSchema', () => {
+      expect(traverse).toHaveBeenNthCalledWith(
+        1,
+        {
+          jsonPointer: '',
+          schema: mediaTypeObjectFixture.itemSchema,
+        },
+        callbackMock,
+      );
+    });
+
+    it('should call traverse() with the schema', () => {
+      expect(traverse).toHaveBeenNthCalledWith(
+        2,
+        {
+          jsonPointer: '',
+          schema: mediaTypeObjectFixture.schema,
+        },
+        callbackMock,
+      );
+    });
+  });
 });
 
 describe(traverseOpenApi3Dot2HeaderObjectJsonSchemas, () => {
@@ -209,6 +285,36 @@ describe(traverseOpenApi3Dot2HeaderObjectJsonSchemas, () => {
     });
 
     it('should call traverse() once for the header schema', () => {
+      expect(traverse).toHaveBeenCalledExactlyOnceWith(
+        {
+          jsonPointer: '',
+          schema: headerObjectFixture.schema,
+        },
+        callbackMock,
+      );
+    });
+  });
+
+  describe('having a header object with reference content and schema', () => {
+    let headerObjectFixture: OpenApi3Dot2HeaderObject;
+    let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
+
+    beforeAll(() => {
+      headerObjectFixture =
+        OpenApi3Dot2HeaderObjectFixtures.withReferenceContentAndSchema;
+      callbackMock = vitest.fn();
+
+      traverseOpenApi3Dot2HeaderObjectJsonSchemas(
+        headerObjectFixture,
+        callbackMock,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call traverse() only for the header schema', () => {
       expect(traverse).toHaveBeenCalledExactlyOnceWith(
         {
           jsonPointer: '',
@@ -356,6 +462,36 @@ describe(traverseOpenApi3Dot2ParameterObjectJsonSchemas, () => {
     });
   });
 
+  describe('having a parameter object with reference content and schema', () => {
+    let parameterObjectFixture: OpenApi3Dot2ParameterObject;
+    let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
+
+    beforeAll(() => {
+      parameterObjectFixture =
+        OpenApi3Dot2ParameterObjectFixtures.withReferenceContentAndSchema;
+      callbackMock = vitest.fn();
+
+      traverseOpenApi3Dot2ParameterObjectJsonSchemas(
+        parameterObjectFixture,
+        callbackMock,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call traverse() only for the parameter schema', () => {
+      expect(traverse).toHaveBeenCalledExactlyOnceWith(
+        {
+          jsonPointer: '',
+          schema: parameterObjectFixture.schema,
+        },
+        callbackMock,
+      );
+    });
+  });
+
   describe('having a parameter object without content and schema', () => {
     let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
 
@@ -409,6 +545,27 @@ describe(traverseOpenApi3Dot2RequestBodyObjectJsonSchemas, () => {
         },
         callbackMock,
       );
+    });
+  });
+
+  describe('having a request body object with reference content', () => {
+    let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
+
+    beforeAll(() => {
+      callbackMock = vitest.fn();
+
+      traverseOpenApi3Dot2RequestBodyObjectJsonSchemas(
+        OpenApi3Dot2RequestBodyObjectFixtures.withReferenceContent,
+        callbackMock,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should not call traverse()', () => {
+      expect(traverse).not.toHaveBeenCalled();
     });
   });
 });
@@ -523,6 +680,41 @@ describe(traverseOpenApi3Dot2ResponseObjectJsonSchemas, () => {
     });
 
     it('should call traverse() once for the header schema', () => {
+      const headerObject: OpenApi3Dot2HeaderObject | undefined =
+        responseObjectFixture.headers?.['header'] as
+          | OpenApi3Dot2HeaderObject
+          | undefined;
+
+      expect(traverse).toHaveBeenCalledExactlyOnceWith(
+        {
+          jsonPointer: '',
+          schema: headerObject?.schema,
+        },
+        callbackMock,
+      );
+    });
+  });
+
+  describe('having a response object with reference content and headers', () => {
+    let responseObjectFixture: OpenApi3Dot2ResponseObject;
+    let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
+
+    beforeAll(() => {
+      responseObjectFixture =
+        OpenApi3Dot2ResponseObjectFixtures.withReferenceContentAndHeaders;
+      callbackMock = vitest.fn();
+
+      traverseOpenApi3Dot2ResponseObjectJsonSchemas(
+        responseObjectFixture,
+        callbackMock,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call traverse() only for the header schema', () => {
       const headerObject: OpenApi3Dot2HeaderObject | undefined =
         responseObjectFixture.headers?.['header'] as
           | OpenApi3Dot2HeaderObject
@@ -935,6 +1127,33 @@ describe(traverseOpenApi3Dot2PathItemObjectJsonSchemas, () => {
     });
   });
 
+  describe('having a path item object with additional operations', () => {
+    let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
+
+    beforeAll(() => {
+      callbackMock = vitest.fn();
+
+      traverseOpenApi3Dot2PathItemObjectJsonSchemas(
+        OpenApi3Dot2PathItemObjectFixtures.withAdditionalOperations,
+        callbackMock,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call traverse() for schemas in the additional operations', () => {
+      expect(traverse).toHaveBeenCalledExactlyOnceWith(
+        {
+          jsonPointer: '',
+          schema: OpenApi3Dot2ParameterObjectFixtures.withSchemaOnly.schema,
+        },
+        callbackMock,
+      );
+    });
+  });
+
   describe('having an empty path item object', () => {
     let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
 
@@ -1053,6 +1272,57 @@ describe(traverseOpenApi3Dot2ComponentsObjectJsonSchemas, () => {
         },
         callbackMock,
       );
+    });
+  });
+
+  describe('having a components object with media types', () => {
+    let componentsObjectFixture: OpenApi3Dot2ComponentsObject;
+    let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
+
+    beforeAll(() => {
+      componentsObjectFixture =
+        OpenApi3Dot2ComponentsObjectFixtures.withMediaTypes;
+      callbackMock = vitest.fn();
+
+      traverseOpenApi3Dot2ComponentsObjectJsonSchemas(
+        componentsObjectFixture,
+        callbackMock,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call traverse() for the media type schema', () => {
+      expect(traverse).toHaveBeenCalledExactlyOnceWith(
+        {
+          jsonPointer: '',
+          schema: OpenApi3Dot2MediaTypeObjectFixtures.withSchema.schema,
+        },
+        callbackMock,
+      );
+    });
+  });
+
+  describe('having a components object with reference media types', () => {
+    let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
+
+    beforeAll(() => {
+      callbackMock = vitest.fn();
+
+      traverseOpenApi3Dot2ComponentsObjectJsonSchemas(
+        OpenApi3Dot2ComponentsObjectFixtures.withReferenceMediaTypes,
+        callbackMock,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should not call traverse()', () => {
+      expect(traverse).not.toHaveBeenCalled();
     });
   });
 
