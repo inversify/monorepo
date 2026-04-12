@@ -226,6 +226,14 @@ export function traverseOpenApi3Dot1OperationObjectJsonSchemas(
     }
   }
 
+  if (openApi3Dot1OperationObject.parameters !== undefined) {
+    for (const param of openApi3Dot1OperationObject.parameters) {
+      if (isNotReferenceObject(param)) {
+        traverseOpenApi3Dot1ParameterObjectJsonSchemas(param, callback);
+      }
+    }
+  }
+
   if (
     isOpenApi3Dot1RequestBodyObject(openApi3Dot1OperationObject.requestBody)
   ) {
@@ -244,16 +252,12 @@ export function traverseOpenApi3Dot1OperationObjectJsonSchemas(
 }
 
 export function traverseOpenApi3Dot1ResponsesObjectJsonSchemas(
-  openApi3Dot1ResponsesBodyObject: OpenApi3Dot1ResponsesObject | undefined,
+  openApi3Dot1ResponsesBodyObject: OpenApi3Dot1ResponsesObject,
   callback: (params: TraverseJsonSchemaCallbackParams) => void,
 ): void {
-  if (openApi3Dot1ResponsesBodyObject !== undefined) {
-    for (const responseObject of Object.values(
-      openApi3Dot1ResponsesBodyObject,
-    )) {
-      if (isNotReferenceObject(responseObject)) {
-        traverseOpenApi3Dot1ResponseObjectJsonSchemas(responseObject, callback);
-      }
+  for (const responseObject of Object.values(openApi3Dot1ResponsesBodyObject)) {
+    if (isNotReferenceObject(responseObject)) {
+      traverseOpenApi3Dot1ResponseObjectJsonSchemas(responseObject, callback);
     }
   }
 }
