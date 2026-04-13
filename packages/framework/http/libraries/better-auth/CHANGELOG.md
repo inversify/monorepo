@@ -1,5 +1,13 @@
 # @inversifyjs/http-better-auth
 
+## 5.3.0
+
+### Patch Changes
+
+- Updated build with emitted decorator metadata
+- Updated dependencies
+  - @inversifyjs/http-core@5.3.0
+
 ## 5.2.0
 
 ### Patch Changes

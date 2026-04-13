@@ -1,5 +1,17 @@
 # @inversifyjs/http-open-api
 
+## 5.3.0
+
+### Minor Changes
+
+Add `openApiObject` getter to `SwaggerUiProvider` (v3.1 and v3.2) to expose the populated OpenAPI spec object. Export `getControllerOpenApiMetadata`, `controllerOpenApiMetadataReflectKey`, and `ControllerOpenApiMetadata` from both version subpaths.
+
+### Patch Changes
+
+- Updated build with emitted decorator metadata
+- Updated dependencies
+  - @inversifyjs/http-core@5.3.0
+
 ## 5.2.0
 
 ### Minor Changes

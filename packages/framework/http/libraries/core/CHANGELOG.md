@@ -1,5 +1,16 @@
 # @inversifyjs/http-core
 
+## 5.3.0
+
+### Minor Changes
+
+Added `getMethod` and `getUrl` methods to `CustomParameterDecoratorHandlerOptions` interface (and by extension `CustomNativeParameterDecoratorHandlerOptions`). These methods allow custom parameter decorators to access the HTTP method and request URL in a framework-agnostic way.
+Export `getControllerMethodParameterMetadataList` function and `ControllerMethodParameterMetadata` type from the public API.
+
+### Patch Changes
+
+- Updated `InversifyHttpAdapter` to properly await for custom decorator params
+
 ## 5.2.0
 
 ## 5.1.1
