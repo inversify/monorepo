@@ -2,6 +2,7 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "@inversifyjs/foundation-typescript-config/tsconfig.base.esm.json",
   "compilerOptions": {
+    "emitDecoratorMetadata": true,
     "outDir": "./lib",
     "rootDir": "./src",
     "tsBuildInfoFile": "tsconfig.esm.tsbuildinfo"
