@@ -1,5 +1,14 @@
 # @inversifyjs/http-validation
 
+## 5.3.0
+
+### Patch Changes
+
+- Updated `InversifyValidationErrorFilter` to avoid infinite loop when config validation error is thrown.
+- Updated dependencies
+  - @inversifyjs/http-core@5.3.0
+  - @inversifyjs/validation-common@3.1.0
+
 ## 5.2.0
 
 ### Patch Changes
