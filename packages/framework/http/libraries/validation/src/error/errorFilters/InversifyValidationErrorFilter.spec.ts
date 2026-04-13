@@ -16,35 +16,70 @@ describe(InversifyValidationErrorFilter, () => {
   });
 
   describe('.catch', () => {
-    let errorFixture: InversifyValidationError;
-
-    beforeAll(() => {
-      errorFixture = new InversifyValidationError(
-        InversifyValidationErrorKind.validationFailed,
-        'message',
-      );
-    });
-
-    describe('when called', () => {
-      let result: unknown;
+    describe('having an InversifyValidationError with kind "validationFailed"', () => {
+      let errorFixture: InversifyValidationError;
 
       beforeAll(() => {
-        try {
-          inversifyValidationErrorFilter.catch(errorFixture);
-        } catch (error: unknown) {
-          result = error;
-        }
+        errorFixture = new InversifyValidationError(
+          InversifyValidationErrorKind.validationFailed,
+          'message',
+        );
       });
 
-      it('should throw a BadRequestHttpResponse', () => {
-        const expectedErrorProperties: Partial<BadRequestHttpResponse> = {
-          cause: errorFixture,
+      describe('when called', () => {
+        let result: unknown;
 
-          message: errorFixture.message,
-        };
+        beforeAll(() => {
+          try {
+            inversifyValidationErrorFilter.catch(errorFixture);
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
 
-        expect(result).toBeInstanceOf(BadRequestHttpResponse);
-        expect(result).toMatchObject(expectedErrorProperties);
+        it('should throw a BadRequestHttpResponse', () => {
+          const expectedErrorProperties: Partial<BadRequestHttpResponse> = {
+            cause: errorFixture,
+
+            message: errorFixture.message,
+          };
+
+          expect(result).toBeInstanceOf(BadRequestHttpResponse);
+          expect(result).toMatchObject(expectedErrorProperties);
+        });
+      });
+    });
+
+    describe('having an InversifyValidationError with kind "unknown"', () => {
+      let errorFixture: InversifyValidationError;
+
+      beforeAll(() => {
+        errorFixture = new InversifyValidationError(
+          InversifyValidationErrorKind.unknown,
+          'message',
+        );
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          try {
+            inversifyValidationErrorFilter.catch(errorFixture);
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
+
+        it('should throw an Error', () => {
+          const expectedErrorProperties: Partial<Error> = {
+            cause: errorFixture,
+            message: errorFixture.message,
+          };
+
+          expect(result).toBeInstanceOf(Error);
+          expect(result).toMatchObject(expectedErrorProperties);
+        });
       });
     });
   });
