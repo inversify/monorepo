@@ -9,6 +9,8 @@
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-open-api": "workspace:*",
     "@inversifyjs/json-schema-pointer": "workspace:*",
+    "@inversifyjs/json-schema-utils": "workspace:*",
+    "@inversifyjs/open-api-utils": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "1.5.0",
     "@inversifyjs/validation-common": "workspace:*"
   },

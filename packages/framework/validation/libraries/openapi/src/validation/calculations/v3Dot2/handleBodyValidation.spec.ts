@@ -10,7 +10,6 @@ import {
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/json-schema-pointer'));
-vitest.mock(import('../getPath.js'));
 vitest.mock(import('./getOperationObject.js'));
 vitest.mock(import('./getRequestBodyObject.js'));
 vitest.mock(import('./inferContentType.js'));
@@ -31,7 +30,7 @@ import { type ValidateFunction } from 'ajv';
 import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
 import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
-import { getPath } from '../getPath.js';
+import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { getOperationObject } from './getOperationObject.js';
 import { getRequestBodyObject } from './getRequestBodyObject.js';
 import { handleBodyValidation } from './handleBodyValidation.js';
@@ -39,9 +38,11 @@ import { inferContentType } from './inferContentType.js';
 
 describe(handleBodyValidation, () => {
   let openApiObjectFixture: OpenApi3Dot2Object;
+  let openApiResolverFixture: OpenApiResolver;
 
   beforeAll(() => {
     openApiObjectFixture = Symbol() as unknown as OpenApi3Dot2Object;
+    openApiResolverFixture = Symbol() as unknown as OpenApiResolver;
   });
 
   describe('having an inputParam with contentType', () => {
@@ -60,9 +61,9 @@ describe(handleBodyValidation, () => {
       inputParamFixture = {
         body: { name: 'test' },
         contentType: contentTypeFixture,
-        method: 'POST',
+        method: methodFixture,
+        path: pathFixture,
         type: Symbol() as unknown as BodyValidationInputParam<unknown>['type'],
-        url: '/users?page=1',
       };
       operationObjectFixture =
         Symbol() as unknown as OpenApi3Dot2OperationObject;
@@ -95,7 +96,6 @@ describe(handleBodyValidation, () => {
           .fn<(path: string, method: string) => ValidationCacheEntry>()
           .mockReturnValueOnce(validationCacheEntryFixture);
 
-        vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
         vitest
           .mocked(getOperationObject)
           .mockReturnValueOnce(operationObjectFixture);
@@ -110,6 +110,7 @@ describe(handleBodyValidation, () => {
           handleBodyValidation(
             ajvMock,
             openApiObjectFixture,
+            openApiResolverFixture,
             inputParamFixture,
             getEntryMock,
           );
@@ -120,10 +121,6 @@ describe(handleBodyValidation, () => {
 
       afterAll(() => {
         vitest.clearAllMocks();
-      });
-
-      it('should call getPath()', () => {
-        expect(getPath).toHaveBeenCalledExactlyOnceWith(inputParamFixture.url);
       });
 
       it('should call getEntry()', () => {
@@ -143,10 +140,9 @@ describe(handleBodyValidation, () => {
 
       it('should call getRequestBodyObject()', () => {
         expect(getRequestBodyObject).toHaveBeenCalledExactlyOnceWith(
-          openApiObjectFixture,
+          openApiResolverFixture,
           operationObjectFixture,
-          methodFixture,
-          pathFixture,
+          inputParamFixture,
         );
       });
 
@@ -209,7 +205,6 @@ describe(handleBodyValidation, () => {
           .fn<(path: string, method: string) => ValidationCacheEntry>()
           .mockReturnValueOnce(validationCacheEntryFixture);
 
-        vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
         vitest
           .mocked(getOperationObject)
           .mockReturnValueOnce(operationObjectFixture);
@@ -223,6 +218,7 @@ describe(handleBodyValidation, () => {
         result = handleBodyValidation(
           ajvMock,
           openApiObjectFixture,
+          openApiResolverFixture,
           inputParamFixture,
           getEntryMock,
         );
@@ -230,10 +226,6 @@ describe(handleBodyValidation, () => {
 
       afterAll(() => {
         vitest.clearAllMocks();
-      });
-
-      it('should call getPath()', () => {
-        expect(getPath).toHaveBeenCalledExactlyOnceWith(inputParamFixture.url);
       });
 
       it('should call getEntry()', () => {
@@ -253,10 +245,9 @@ describe(handleBodyValidation, () => {
 
       it('should call getRequestBodyObject()', () => {
         expect(getRequestBodyObject).toHaveBeenCalledExactlyOnceWith(
-          openApiObjectFixture,
+          openApiResolverFixture,
           operationObjectFixture,
-          methodFixture,
-          pathFixture,
+          inputParamFixture,
         );
       });
 
@@ -302,7 +293,6 @@ describe(handleBodyValidation, () => {
           .fn<(path: string, method: string) => ValidationCacheEntry>()
           .mockReturnValueOnce(validationCacheEntryFixture);
 
-        vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
         vitest
           .mocked(getOperationObject)
           .mockReturnValueOnce(operationObjectFixture);
@@ -317,6 +307,7 @@ describe(handleBodyValidation, () => {
           handleBodyValidation(
             ajvMock,
             openApiObjectFixture,
+            openApiResolverFixture,
             inputParamFixture,
             getEntryMock,
           );
@@ -358,9 +349,9 @@ describe(handleBodyValidation, () => {
       inputParamFixture = {
         body: { name: 'test' },
         contentType: undefined,
-        method: 'POST',
+        method: methodFixture,
+        path: pathFixture,
         type: Symbol() as unknown as BodyValidationInputParam<unknown>['type'],
-        url: '/users',
       };
       operationObjectFixture =
         Symbol() as unknown as OpenApi3Dot2OperationObject;
@@ -395,7 +386,6 @@ describe(handleBodyValidation, () => {
           .fn<(path: string, method: string) => ValidationCacheEntry>()
           .mockReturnValueOnce(validationCacheEntryFixture);
 
-        vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
         vitest
           .mocked(getOperationObject)
           .mockReturnValueOnce(operationObjectFixture);
@@ -412,6 +402,7 @@ describe(handleBodyValidation, () => {
         result = handleBodyValidation(
           ajvMock,
           openApiObjectFixture,
+          openApiResolverFixture,
           inputParamFixture,
           getEntryMock,
         );

@@ -14,7 +14,7 @@ import { type ErrorObject, type ValidateFunction } from 'ajv';
 import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
 import { SCHEMA_ID } from '../../models/v3Dot1/schemaId.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot1/ValidationCacheEntry.js';
-import { getPath } from '../getPath.js';
+import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { getOperationObject } from './getOperationObject.js';
 import { getRequestBodyObject } from './getRequestBodyObject.js';
 import { inferContentType } from './inferContentType.js';
@@ -22,26 +22,26 @@ import { inferContentType } from './inferContentType.js';
 function getValidateFunction(
   ajv: Ajv,
   openApiObject: OpenApi3Dot1Object,
-  path: string,
-  method: string,
-  contentType: string | undefined,
+  openApiResolver: OpenApiResolver,
+  inputParam: BodyValidationInputParam<unknown>,
 ): ValidateFunction {
   const operationObject: OpenApi3Dot1OperationObject = getOperationObject(
     openApiObject,
-    method,
-    path,
+    inputParam.method,
+    inputParam.path,
   );
 
   const openApi3Dot1RequestBodyObject: OpenApi3Dot1RequestBodyObject =
-    getRequestBodyObject(openApiObject, operationObject, method, path);
+    getRequestBodyObject(openApiResolver, operationObject, inputParam);
 
   const inferredContentType: string =
-    contentType ?? inferContentType(openApi3Dot1RequestBodyObject, method);
+    inputParam.contentType ??
+    inferContentType(openApi3Dot1RequestBodyObject, inputParam.method);
 
   const schemaPointer: string = `${SCHEMA_ID}#/${escapeJsonPointerFragments(
     'paths',
-    path,
-    method,
+    inputParam.path,
+    inputParam.method,
     'requestBody',
     'content',
     inferredContentType,
@@ -63,14 +63,16 @@ function getValidateFunction(
 export function handleBodyValidation(
   ajv: Ajv,
   openApiObject: OpenApi3Dot1Object,
+  openApiResolver: OpenApiResolver,
   inputParam: BodyValidationInputParam<unknown>,
   getEntry: (path: string, method: string) => ValidationCacheEntry,
 ): unknown {
-  const path: string = getPath(inputParam.url);
-  const method: string = inputParam.method.toLowerCase();
   const contentType: string | undefined = inputParam.contentType;
 
-  const validationCacheEntry: ValidationCacheEntry = getEntry(path, method);
+  const validationCacheEntry: ValidationCacheEntry = getEntry(
+    inputParam.path,
+    inputParam.method,
+  );
 
   let validate: ValidateFunction | undefined =
     validationCacheEntry.body.get(contentType);
@@ -79,9 +81,8 @@ export function handleBodyValidation(
     validate = getValidateFunction(
       ajv,
       openApiObject,
-      path,
-      method,
-      contentType,
+      openApiResolver,
+      inputParam,
     );
 
     validationCacheEntry.body.set(contentType, validate);

@@ -1,10 +1,8 @@
-import { resolveJsonPointer } from '@inversifyjs/json-schema-pointer';
 import {
   type JsonValue,
   type JsonValueObject,
 } from '@inversifyjs/json-schema-types';
 import {
-  type OpenApi3Dot1Object,
   type OpenApi3Dot1OperationObject,
   type OpenApi3Dot1ReferenceObject,
   type OpenApi3Dot1RequestBodyObject,
@@ -14,11 +12,13 @@ import {
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
 
+import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
+import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
+
 export function getRequestBodyObject(
-  openApiObject: OpenApi3Dot1Object,
+  openApiResolver: OpenApiResolver,
   operationObject: OpenApi3Dot1OperationObject,
-  method: string,
-  path: string,
+  inputParam: BodyValidationInputParam<unknown>,
 ): OpenApi3Dot1RequestBodyObject {
   const requestBodyObject:
     | OpenApi3Dot1RequestBodyObject
@@ -28,22 +28,20 @@ export function getRequestBodyObject(
   if (requestBodyObject === undefined) {
     throw new InversifyValidationError(
       InversifyValidationErrorKind.validationFailed,
-      `No requestBody found for method ${method} for path ${path}`,
+      `No requestBody found for method ${inputParam.method} for path ${inputParam.path}`,
     );
   }
 
-  let ref: string | undefined = (
+  const ref: string | undefined = (
     requestBodyObject as Partial<OpenApi3Dot1ReferenceObject>
   ).$ref;
 
   let derreferencedRequestBodyObject: JsonValueObject | undefined =
     requestBodyObject as unknown as JsonValueObject;
 
-  while (ref !== undefined) {
-    const resolvedRef: JsonValue | undefined = resolveJsonPointer(
-      openApiObject as unknown as JsonValue,
-      ref,
-    );
+  if (ref !== undefined) {
+    const resolvedRef: JsonValue | undefined =
+      openApiResolver.deepResolveReference(ref);
 
     if (resolvedRef === undefined) {
       throw new InversifyValidationError(
@@ -64,10 +62,6 @@ export function getRequestBodyObject(
     }
 
     derreferencedRequestBodyObject = resolvedRef;
-
-    ref = (
-      derreferencedRequestBodyObject as Partial<OpenApi3Dot1ReferenceObject>
-    ).$ref;
   }
 
   return derreferencedRequestBodyObject as unknown as OpenApi3Dot1RequestBodyObject;

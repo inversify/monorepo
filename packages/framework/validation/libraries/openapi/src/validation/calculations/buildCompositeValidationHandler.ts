@@ -2,6 +2,7 @@ import type Ajv from 'ajv';
 
 import { type ValidationInputParam } from '../models/ValidatedDecoratorResult.js';
 import { type ValidationHandler } from '../models/ValidationHandler.js';
+import { type OpenApiResolver } from '../services/OpenApiResolver.js';
 
 type DiscriminatorValidationHandlerPair<
   TDiscriminatorValue extends symbol,
@@ -42,6 +43,7 @@ export function buildCompositeValidationHandler<
   return (
     ajv: Ajv,
     openApiObject: TOpenApiObject,
+    openApiResolver: OpenApiResolver,
     inputParam: unknown,
     getEntry: (path: string, method: string) => TValidationCacheEntry,
   ): unknown => {
@@ -66,6 +68,7 @@ export function buildCompositeValidationHandler<
     return handler(
       ajv,
       openApiObject,
+      openApiResolver,
       inputParam as ValidationInputParam,
       getEntry,
     );

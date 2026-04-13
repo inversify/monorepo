@@ -4,6 +4,7 @@ import {
 } from '@inversifyjs/http-core';
 
 import { getMimeType } from '../../validation/calculations/getMimeType.js';
+import { getPath } from '../../validation/calculations/getPath.js';
 import { type BodyValidationInputParam } from '../../validation/models/BodyValidationInputParam.js';
 import { validatedInputParamBodyType } from '../../validation/models/validatedInputParamTypes.js';
 import { setValidateMetadata } from '../actions/setValidateMetadata.js';
@@ -30,7 +31,7 @@ export function ValidatedBody(): ParameterDecorator {
 
         const body: unknown = await options.getBody(request, response);
 
-        const method: string = options.getMethod(request);
+        const method: string = options.getMethod(request).toLowerCase();
         const url: string = options.getUrl(request);
 
         const contentType: string | undefined =
@@ -46,8 +47,8 @@ export function ValidatedBody(): ParameterDecorator {
           body,
           contentType,
           method,
+          path: getPath(url),
           type: validatedInputParamBodyType,
-          url,
         };
       },
     )(target, key, index);
