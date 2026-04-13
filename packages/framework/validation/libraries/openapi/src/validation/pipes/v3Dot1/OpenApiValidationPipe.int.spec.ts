@@ -309,4 +309,100 @@ describe(OpenApiValidationPipe, () => {
       });
     });
   });
+
+  describe('having an OpenApiValidationPipe (v3.1) with content-type ambiguity and schema id references', () => {
+    interface Item {
+      label: string;
+    }
+
+    @Controller('/items')
+    class ItemController {
+      @OasRequestBody({
+        content: {
+          'application/json': {
+            schema: {
+              $ref: 'https://example.com/schemas/Item.json',
+            },
+          },
+          'application/xml': {
+            schema: {
+              $ref: 'https://example.com/schemas/Item.json',
+            },
+          },
+        },
+      })
+      @Post()
+      public async createItem(@ValidatedBody() item: Item): Promise<Item> {
+        return item;
+      }
+    }
+
+    let server: Server;
+
+    beforeAll(async () => {
+      const container: Container = new Container();
+
+      container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+      container.bind(ItemController).toSelf().inSingletonScope();
+
+      const openApiObject: OpenApi3Dot1Object = {
+        components: {
+          schemas: {
+            Item: {
+              $id: 'https://example.com/schemas/Item.json',
+              properties: { label: { type: 'string' } },
+              required: ['label'],
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.1.0',
+      };
+
+      const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+        api: {
+          openApiObject,
+          path: '/docs',
+        },
+      });
+
+      swaggerProvider.provide(container);
+
+      server = await buildExpressServer(
+        container,
+        [ValidationErrorFilter],
+        [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+      );
+    });
+
+    afterAll(async () => {
+      await server.shutdown();
+    });
+
+    describe('when a POST /items request is made with Content-Type header', () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/items`,
+          {
+            body: JSON.stringify({ label: 'My Item' }),
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+          },
+        );
+      });
+
+      it('should return expected Response', async () => {
+        expect(response.status).toBe(200);
+        expect(response.headers.get('content-type')).toStrictEqual(
+          expect.stringContaining('application/json'),
+        );
+        await expect(response.json()).resolves.toStrictEqual({
+          label: 'My Item',
+        });
+      });
+    });
+  });
 });

@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('@inversifyjs/http-core'));
 vitest.mock(import('../actions/setValidateMetadata.js'));
 vitest.mock(import('../../validation/calculations/getMimeType.js'));
+vitest.mock(import('../../validation/calculations/getPath.js'));
 
 import {
   createCustomParameterDecorator,
@@ -10,6 +11,7 @@ import {
 } from '@inversifyjs/http-core';
 
 import { getMimeType } from '../../validation/calculations/getMimeType.js';
+import { getPath } from '../../validation/calculations/getPath.js';
 import { type BodyValidationInputParam } from '../../validation/models/BodyValidationInputParam.js';
 import { validatedInputParamBodyType } from '../../validation/models/validatedInputParamTypes.js';
 import { setValidateMetadata } from '../actions/setValidateMetadata.js';
@@ -113,6 +115,7 @@ describe(ValidatedBody, () => {
       let bodyFixture: object;
       let methodFixture: string;
       let urlFixture: string;
+      let pathFixture: string;
       let mimeTypeFixture: string;
       let result: unknown;
 
@@ -122,9 +125,11 @@ describe(ValidatedBody, () => {
         bodyFixture = { name: 'test' };
         methodFixture = 'POST';
         urlFixture = '/users';
+        pathFixture = '/users';
         mimeTypeFixture = 'application/json';
 
         vitest.mocked(getMimeType).mockReturnValueOnce(mimeTypeFixture);
+        vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
 
         result = await handler(requestFixture, responseFixture, {
           getBody: vitest.fn().mockResolvedValueOnce(bodyFixture),
@@ -153,9 +158,9 @@ describe(ValidatedBody, () => {
         const expected: BodyValidationInputParam<unknown> = {
           body: bodyFixture,
           contentType: mimeTypeFixture,
-          method: methodFixture,
+          method: methodFixture.toLowerCase(),
+          path: pathFixture,
           type: validatedInputParamBodyType,
-          url: urlFixture,
         };
 
         expect(result).toStrictEqual(expected);
@@ -168,6 +173,7 @@ describe(ValidatedBody, () => {
       let bodyFixture: object;
       let methodFixture: string;
       let urlFixture: string;
+      let pathFixture: string;
       let mimeTypeFixture: string;
       let result: unknown;
 
@@ -177,9 +183,11 @@ describe(ValidatedBody, () => {
         bodyFixture = { name: 'test' };
         methodFixture = 'PUT';
         urlFixture = '/items';
+        pathFixture = '/items';
         mimeTypeFixture = 'text/plain';
 
         vitest.mocked(getMimeType).mockReturnValueOnce(mimeTypeFixture);
+        vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
 
         result = await handler(requestFixture, responseFixture, {
           getBody: vitest.fn().mockResolvedValueOnce(bodyFixture),
@@ -204,9 +212,9 @@ describe(ValidatedBody, () => {
         const expected: BodyValidationInputParam<unknown> = {
           body: bodyFixture,
           contentType: mimeTypeFixture,
-          method: methodFixture,
+          method: methodFixture.toLowerCase(),
+          path: pathFixture,
           type: validatedInputParamBodyType,
-          url: urlFixture,
         };
 
         expect(result).toStrictEqual(expected);
@@ -219,6 +227,7 @@ describe(ValidatedBody, () => {
       let bodyFixture: object;
       let methodFixture: string;
       let urlFixture: string;
+      let pathFixture: string;
       let result: unknown;
 
       beforeAll(async () => {
@@ -227,6 +236,9 @@ describe(ValidatedBody, () => {
         bodyFixture = { name: 'test' };
         methodFixture = 'PATCH';
         urlFixture = '/items/1';
+        pathFixture = '/items/1';
+
+        vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
 
         result = await handler(requestFixture, responseFixture, {
           getBody: vitest.fn().mockResolvedValueOnce(bodyFixture),
@@ -251,9 +263,9 @@ describe(ValidatedBody, () => {
         const expected: BodyValidationInputParam<unknown> = {
           body: bodyFixture,
           contentType: undefined,
-          method: methodFixture,
+          method: methodFixture.toLowerCase(),
+          path: pathFixture,
           type: validatedInputParamBodyType,
-          url: urlFixture,
         };
 
         expect(result).toStrictEqual(expected);
@@ -266,6 +278,7 @@ describe(ValidatedBody, () => {
       let bodyFixture: object;
       let methodFixture: string;
       let urlFixture: string;
+      let pathFixture: string;
       let result: unknown;
 
       beforeAll(async () => {
@@ -274,6 +287,9 @@ describe(ValidatedBody, () => {
         bodyFixture = { name: 'test' };
         methodFixture = 'DELETE';
         urlFixture = '/items/2';
+        pathFixture = '/items/2';
+
+        vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
 
         result = await handler(requestFixture, responseFixture, {
           getBody: vitest.fn().mockResolvedValueOnce(bodyFixture),
@@ -298,9 +314,9 @@ describe(ValidatedBody, () => {
         const expected: BodyValidationInputParam<unknown> = {
           body: bodyFixture,
           contentType: undefined,
-          method: methodFixture,
+          method: methodFixture.toLowerCase(),
+          path: pathFixture,
           type: validatedInputParamBodyType,
-          url: urlFixture,
         };
 
         expect(result).toStrictEqual(expected);
@@ -313,6 +329,7 @@ describe(ValidatedBody, () => {
       let bodyFixture: object;
       let methodFixture: string;
       let urlFixture: string;
+      let pathFixture: string;
       let result: unknown;
 
       beforeAll(async () => {
@@ -321,6 +338,9 @@ describe(ValidatedBody, () => {
         bodyFixture = {};
         methodFixture = 'POST';
         urlFixture = '/empty';
+        pathFixture = '/empty';
+
+        vitest.mocked(getPath).mockReturnValueOnce(pathFixture);
 
         result = await handler(requestFixture, responseFixture, {
           getBody: vitest.fn().mockResolvedValueOnce(bodyFixture),
@@ -345,9 +365,9 @@ describe(ValidatedBody, () => {
         const expected: BodyValidationInputParam<unknown> = {
           body: bodyFixture,
           contentType: undefined,
-          method: methodFixture,
+          method: methodFixture.toLowerCase(),
+          path: pathFixture,
           type: validatedInputParamBodyType,
-          url: urlFixture,
         };
 
         expect(result).toStrictEqual(expected);

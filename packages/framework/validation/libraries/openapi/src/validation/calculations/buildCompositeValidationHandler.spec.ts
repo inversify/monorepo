@@ -13,6 +13,7 @@ import type Ajv from 'ajv';
 import { type DiscriminatorValidationHandlerPair } from '../models/DiscriminatorValidationHandlerPair.js';
 import { type ValidationInputParam } from '../models/ValidatedDecoratorResult.js';
 import { type ValidationHandler } from '../models/ValidationHandler.js';
+import { type OpenApiResolver } from '../services/OpenApiResolver.js';
 import { buildCompositeValidationHandler } from './buildCompositeValidationHandler.js';
 
 describe(buildCompositeValidationHandler, () => {
@@ -30,6 +31,7 @@ describe(buildCompositeValidationHandler, () => {
         result = buildCompositeValidationHandler([])(
           Symbol() as unknown as Ajv,
           Symbol(),
+          Symbol() as unknown as OpenApiResolver,
           inputParam,
           vitest.fn(),
         );
@@ -55,6 +57,7 @@ describe(buildCompositeValidationHandler, () => {
         result = buildCompositeValidationHandler([])(
           Symbol() as unknown as Ajv,
           Symbol(),
+          Symbol() as unknown as OpenApiResolver,
           inputParam,
           vitest.fn(),
         );
@@ -80,6 +83,7 @@ describe(buildCompositeValidationHandler, () => {
         result = buildCompositeValidationHandler([])(
           Symbol() as unknown as Ajv,
           Symbol(),
+          Symbol() as unknown as OpenApiResolver,
           inputParam,
           vitest.fn(),
         );
@@ -110,6 +114,7 @@ describe(buildCompositeValidationHandler, () => {
     let getEntryMock: Mock;
     let inputParam: unknown;
     let openApiObjectFixture: unknown;
+    let openApiResolverFixture: OpenApiResolver;
 
     beforeAll(() => {
       const discriminatorValue: symbol = Symbol();
@@ -122,6 +127,7 @@ describe(buildCompositeValidationHandler, () => {
         type: discriminatorValue,
       };
       openApiObjectFixture = Symbol();
+      openApiResolverFixture = Symbol() as unknown as OpenApiResolver;
     });
 
     describe('when called', () => {
@@ -137,6 +143,7 @@ describe(buildCompositeValidationHandler, () => {
         result = buildCompositeValidationHandler([discriminatorHandlerPair])(
           ajvFixture,
           openApiObjectFixture,
+          openApiResolverFixture,
           inputParam,
           getEntryMock,
         );
@@ -150,6 +157,7 @@ describe(buildCompositeValidationHandler, () => {
         expect(handlerMock).toHaveBeenCalledExactlyOnceWith(
           ajvFixture,
           openApiObjectFixture,
+          openApiResolverFixture,
           inputParam,
           getEntryMock,
         );

@@ -1,10 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
-vitest.mock(import('@inversifyjs/json-schema-pointer'));
-
-import { resolveJsonPointer } from '@inversifyjs/json-schema-pointer';
 import {
-  type OpenApi3Dot1Object,
   type OpenApi3Dot1OperationObject,
   type OpenApi3Dot1RequestBodyObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
@@ -13,17 +9,26 @@ import {
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
 
+import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
+import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { getRequestBodyObject } from './getRequestBodyObject.js';
 
 describe(getRequestBodyObject, () => {
-  let openApiObjectFixture: OpenApi3Dot1Object;
-  let methodFixture: string;
-  let pathFixture: string;
+  let openApiResolverMock: OpenApiResolver;
+  let inputParamFixture: BodyValidationInputParam<unknown>;
 
   beforeAll(() => {
-    openApiObjectFixture = Symbol() as unknown as OpenApi3Dot1Object;
-    methodFixture = 'post';
-    pathFixture = '/users';
+    openApiResolverMock = {
+      deepResolveReference: vitest.fn(),
+      resolveReference: vitest.fn(),
+    };
+    inputParamFixture = {
+      body: { name: 'test' },
+      contentType: 'application/json',
+      method: 'post',
+      path: '/users',
+      type: Symbol() as unknown as BodyValidationInputParam<unknown>['type'],
+    };
   });
 
   describe('having an operationObject with no requestBody', () => {
@@ -41,10 +46,9 @@ describe(getRequestBodyObject, () => {
       beforeAll(() => {
         try {
           getRequestBodyObject(
-            openApiObjectFixture,
+            openApiResolverMock,
             operationObjectFixture,
-            methodFixture,
-            pathFixture,
+            inputParamFixture,
           );
         } catch (error: unknown) {
           result = error;
@@ -54,7 +58,7 @@ describe(getRequestBodyObject, () => {
       it('should throw an InversifyValidationError', () => {
         const expectedErrorProperties: Partial<InversifyValidationError> = {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `No requestBody found for method ${methodFixture} for path ${pathFixture}`,
+          message: `No requestBody found for method ${inputParamFixture.method} for path ${inputParamFixture.path}`,
         };
 
         expect(result).toBeInstanceOf(InversifyValidationError);
@@ -84,10 +88,9 @@ describe(getRequestBodyObject, () => {
 
       beforeAll(() => {
         result = getRequestBodyObject(
-          openApiObjectFixture,
+          openApiResolverMock,
           operationObjectFixture,
-          methodFixture,
-          pathFixture,
+          inputParamFixture,
         );
       });
 
@@ -115,14 +118,15 @@ describe(getRequestBodyObject, () => {
       let result: unknown;
 
       beforeAll(() => {
-        vitest.mocked(resolveJsonPointer).mockReturnValueOnce(undefined);
+        vitest
+          .mocked(openApiResolverMock.deepResolveReference)
+          .mockReturnValueOnce(undefined);
 
         try {
           getRequestBodyObject(
-            openApiObjectFixture,
+            openApiResolverMock,
             operationObjectFixture,
-            methodFixture,
-            pathFixture,
+            inputParamFixture,
           );
         } catch (error: unknown) {
           result = error;
@@ -133,11 +137,10 @@ describe(getRequestBodyObject, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call resolveJsonPointer()', () => {
-        expect(resolveJsonPointer).toHaveBeenCalledExactlyOnceWith(
-          openApiObjectFixture,
-          refFixture,
-        );
+      it('should call openApiResolver.deepResolveReference()', () => {
+        expect(
+          openApiResolverMock.deepResolveReference,
+        ).toHaveBeenCalledExactlyOnceWith(refFixture);
       });
 
       it('should throw an InversifyValidationError', () => {
@@ -170,14 +173,15 @@ describe(getRequestBodyObject, () => {
       let result: unknown;
 
       beforeAll(() => {
-        vitest.mocked(resolveJsonPointer).mockReturnValueOnce(null);
+        vitest
+          .mocked(openApiResolverMock.deepResolveReference)
+          .mockReturnValueOnce(null);
 
         try {
           getRequestBodyObject(
-            openApiObjectFixture,
+            openApiResolverMock,
             operationObjectFixture,
-            methodFixture,
-            pathFixture,
+            inputParamFixture,
           );
         } catch (error: unknown) {
           result = error;
@@ -188,11 +192,10 @@ describe(getRequestBodyObject, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call resolveJsonPointer()', () => {
-        expect(resolveJsonPointer).toHaveBeenCalledExactlyOnceWith(
-          openApiObjectFixture,
-          refFixture,
-        );
+      it('should call openApiResolver.deepResolveReference()', () => {
+        expect(
+          openApiResolverMock.deepResolveReference,
+        ).toHaveBeenCalledExactlyOnceWith(refFixture);
       });
 
       it('should throw an InversifyValidationError', () => {
@@ -225,14 +228,15 @@ describe(getRequestBodyObject, () => {
       let result: unknown;
 
       beforeAll(() => {
-        vitest.mocked(resolveJsonPointer).mockReturnValueOnce([]);
+        vitest
+          .mocked(openApiResolverMock.deepResolveReference)
+          .mockReturnValueOnce([]);
 
         try {
           getRequestBodyObject(
-            openApiObjectFixture,
+            openApiResolverMock,
             operationObjectFixture,
-            methodFixture,
-            pathFixture,
+            inputParamFixture,
           );
         } catch (error: unknown) {
           result = error;
@@ -243,11 +247,10 @@ describe(getRequestBodyObject, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call resolveJsonPointer()', () => {
-        expect(resolveJsonPointer).toHaveBeenCalledExactlyOnceWith(
-          openApiObjectFixture,
-          refFixture,
-        );
+      it('should call openApiResolver.deepResolveReference()', () => {
+        expect(
+          openApiResolverMock.deepResolveReference,
+        ).toHaveBeenCalledExactlyOnceWith(refFixture);
       });
 
       it('should throw an InversifyValidationError', () => {
@@ -287,18 +290,17 @@ describe(getRequestBodyObject, () => {
 
       beforeAll(() => {
         vitest
-          .mocked(resolveJsonPointer)
+          .mocked(openApiResolverMock.deepResolveReference)
           .mockReturnValueOnce(
             resolvedObjectFixture as unknown as ReturnType<
-              typeof resolveJsonPointer
+              typeof openApiResolverMock.deepResolveReference
             >,
           );
 
         result = getRequestBodyObject(
-          openApiObjectFixture,
+          openApiResolverMock,
           operationObjectFixture,
-          methodFixture,
-          pathFixture,
+          inputParamFixture,
         );
       });
 
@@ -306,11 +308,10 @@ describe(getRequestBodyObject, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call resolveJsonPointer()', () => {
-        expect(resolveJsonPointer).toHaveBeenCalledExactlyOnceWith(
-          openApiObjectFixture,
-          refFixture,
-        );
+      it('should call openApiResolver.deepResolveReference()', () => {
+        expect(
+          openApiResolverMock.deepResolveReference,
+        ).toHaveBeenCalledExactlyOnceWith(refFixture);
       });
 
       it('should return expected result', () => {
