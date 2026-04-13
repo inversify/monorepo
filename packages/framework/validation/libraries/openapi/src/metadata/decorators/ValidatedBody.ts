@@ -24,10 +24,7 @@ export function ValidatedBody(): ParameterDecorator {
         options: CustomParameterDecoratorHandlerOptions<unknown, unknown>,
       ): Promise<BodyValidationInputParam<unknown>> => {
         const contentTypeHeader: string | string[] | undefined =
-          options.getHeaders(request, 'content-type') as
-            | string
-            | string[]
-            | undefined;
+          options.getHeaders(request, 'content-type');
 
         const body: unknown = await options.getBody(request, response);
 
