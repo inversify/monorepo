@@ -13,16 +13,19 @@ export class InversifyValidationErrorFilter implements ErrorFilter<
   unknown
 > {
   public catch(error: InversifyValidationError): never {
-    if (error.kind === InversifyValidationErrorKind.validationFailed) {
-      throw new BadRequestHttpResponse(
-        { message: error.message },
-        error.message,
-        {
+    switch (error.kind) {
+      case InversifyValidationErrorKind.validationFailed:
+        throw new BadRequestHttpResponse(
+          { message: error.message },
+          error.message,
+          {
+            cause: error,
+          },
+        );
+      default:
+        throw new Error(error.message, {
           cause: error,
-        },
-      );
+        });
     }
-
-    throw error;
   }
 }
