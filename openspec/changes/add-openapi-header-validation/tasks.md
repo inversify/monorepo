@@ -16,9 +16,9 @@
 
 ## 2. `@ValidatedHeaders()` custom parameter decorator
 
-- [ ] 2.1 Implement the `@ValidatedHeaders()` custom parameter decorator at `src/metadata/decorators/ValidatedHeaders.ts` that: calls `setValidateMetadata` to store the validation marker; uses `createCustomParameterDecorator` with a handler that extracts all headers (via `options.getHeaders(request)`), HTTP method, URL, and path; returns a `HeaderValidationInputParam`
-- [ ] 2.2 Add unit tests for `ValidatedHeaders`: verifies `setValidateMetadata` is called and `createCustomParameterDecorator` is called with the appropriate handler
-- [ ] 2.3 Export `ValidatedHeaders` from `src/index.ts`
+- [x] 2.1 Implement the `@ValidatedHeaders()` custom parameter decorator at `src/metadata/decorators/ValidatedHeaders.ts` that: calls `setValidateMetadata` to store the validation marker; uses `createCustomParameterDecorator` with a handler that extracts all headers (via `options.getHeaders(request)`), HTTP method, URL, and path; returns a `HeaderValidationInputParam`
+- [x] 2.2 Add unit tests for `ValidatedHeaders`: verifies `setValidateMetadata` is called and `createCustomParameterDecorator` is called with the appropriate handler
+- [x] 2.3 Export `ValidatedHeaders` from `src/index.ts`
 
 ## 3. Header coercion utility
 
