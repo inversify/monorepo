@@ -6,13 +6,13 @@
 
 ## 1. Shared models and types
 
-- [ ] 1.1 Add `validatedInputParamHeaderType` unique symbol to `src/validation/models/validatedInputParamTypes.ts`
-- [ ] 1.2 Create `HeaderValidationInputParam` interface at `src/validation/models/HeaderValidationInputParam.ts` with fields: `headers` (`Record<string, string | string[] | undefined>`), `method` (string), `path` (string), `type` (`typeof validatedInputParamHeaderType`)
-- [ ] 1.3 Update `ValidationInputParam` union in `src/validation/models/ValidatedDecoratorResult.ts` to include `HeaderValidationInputParam`
-- [ ] 1.4 Extend `ValidationCacheEntry` in `src/validation/models/v3Dot1/ValidationCacheEntry.ts` to add `headers: Map<string, ValidateFunction>` field
-- [ ] 1.5 Extend `ValidationCacheEntry` in `src/validation/models/v3Dot2/ValidationCacheEntry.ts` to add `headers: Map<string, ValidateFunction>` field
-- [ ] 1.6 Update `ValidationCache.getOrCreate` in `src/validation/services/v3Dot1/ValidationCache.ts` to initialize the `headers` map
-- [ ] 1.7 Update `ValidationCache.getOrCreate` in `src/validation/services/v3Dot2/ValidationCache.ts` to initialize the `headers` map
+- [x] 1.1 Add `validatedInputParamHeaderType` unique symbol to `src/validation/models/validatedInputParamTypes.ts`
+- [x] 1.2 Create `HeaderValidationInputParam` interface at `src/validation/models/HeaderValidationInputParam.ts` with fields: `headers` (`Record<string, string | string[] | undefined>`), `method` (string), `path` (string), `type` (`typeof validatedInputParamHeaderType`)
+- [x] 1.3 Update `ValidationInputParam` union in `src/validation/models/ValidatedDecoratorResult.ts` to include `HeaderValidationInputParam`
+- [x] 1.4 Extend `ValidationCacheEntry` in `src/validation/models/v3Dot1/ValidationCacheEntry.ts` to add `headers: Map<string, ValidateFunction>` field
+- [x] 1.5 Extend `ValidationCacheEntry` in `src/validation/models/v3Dot2/ValidationCacheEntry.ts` to add `headers: Map<string, ValidateFunction>` field
+- [x] 1.6 Update `ValidationCache.getOrCreate` in `src/validation/services/v3Dot1/ValidationCache.ts` to initialize the `headers` map
+- [x] 1.7 Update `ValidationCache.getOrCreate` in `src/validation/services/v3Dot2/ValidationCache.ts` to initialize the `headers` map
 
 ## 2. `@ValidatedHeaders()` custom parameter decorator
 
