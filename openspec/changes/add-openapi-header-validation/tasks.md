@@ -52,8 +52,8 @@
 
 ## 9. Integration testing
 
-- [ ] 9.1 Write an integration test (v3.1) demonstrating end-to-end header validation: a controller with `@OasParameter({ in: 'header', ... })` + `@ValidatedHeaders()`, an OpenAPI spec populated by `SwaggerUiProvider`, and the `OpenApiValidationPipe` validating valid headers, missing required headers, invalid header values, and complex schema types
-- [ ] 9.2 Write an integration test (v3.2) mirroring the v3.1 test with v3.2 types and imports
+- [x] 9.1 Write an integration test (v3.1) demonstrating end-to-end header validation: a controller with `@OasParameter({ in: 'header', ... })` + `@ValidatedHeaders()`, an OpenAPI spec populated by `SwaggerUiProvider`, and the `OpenApiValidationPipe` validating valid headers, missing required headers, invalid header values, and complex schema types
+- [x] 9.2 Write an integration test (v3.2) mirroring the v3.1 test with v3.2 types and imports
 
 ## 10. Verification
 

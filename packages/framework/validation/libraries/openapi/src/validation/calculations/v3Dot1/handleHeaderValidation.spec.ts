@@ -9,12 +9,10 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock(import('@inversifyjs/json-schema-pointer'));
 vitest.mock(import('../coerceHeaderValue.js'));
 vitest.mock(import('../inferOpenApiSchemaTypes.js'));
 vitest.mock(import('./getHeaderParameterObjects.js'));
 
-import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import { type JsonSchemaType } from '@inversifyjs/json-schema-types/2020-12';
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import {
@@ -43,10 +41,6 @@ describe(handleHeaderValidation, () => {
   beforeAll(() => {
     openApiObjectFixture = Symbol() as unknown as OpenApi3Dot1Object;
     openApiResolverFixture = Symbol() as unknown as OpenApiResolver;
-
-    vitest
-      .mocked(escapeJsonPointerFragments)
-      .mockImplementation((...fragments: string[]) => fragments.join('/'));
   });
 
   afterAll(() => {

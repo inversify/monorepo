@@ -1,4 +1,3 @@
-import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import { type JsonSchemaType } from '@inversifyjs/json-schema-types/2020-12';
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import {
@@ -84,11 +83,12 @@ export function handleHeaderValidation(
       continue;
     }
 
-    const schemaPointer: string = `${SCHEMA_ID}#/${escapeJsonPointerFragments(entry.pointerPrefix, 'schema')}`;
+    const resolverSchemaPointer: string = `#/${entry.pointerPrefix}/schema`;
+    const ajvSchemaPointer: string = `${SCHEMA_ID}#/${entry.pointerPrefix}/schema`;
 
     const types: Set<JsonSchemaType> = inferOpenApiSchemaTypes(
       openApiResolver,
-      schemaPointer,
+      resolverSchemaPointer,
     );
 
     let candidates: CoercionCandidate[] = coerceHeaderValue(rawValue, types);
@@ -102,11 +102,11 @@ export function handleHeaderValidation(
           'items' in entry.parameter.schema &&
           entry.parameter.schema.items !== undefined
         ) {
-          const itemsSchemaPointer: string = `${SCHEMA_ID}#/${escapeJsonPointerFragments(entry.pointerPrefix, 'schema', 'items')}`;
+          const itemsResolverPointer: string = `#/${entry.pointerPrefix}/schema/items`;
 
           const itemTypes: Set<JsonSchemaType> = inferOpenApiSchemaTypes(
             openApiResolver,
-            itemsSchemaPointer,
+            itemsResolverPointer,
           );
 
           const coercedItems: unknown[] = (
@@ -134,7 +134,7 @@ export function handleHeaderValidation(
       ajv,
       validationCacheEntry,
       lowerName,
-      schemaPointer,
+      ajvSchemaPointer,
     );
 
     let validated: boolean = false;
