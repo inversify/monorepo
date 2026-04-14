@@ -22,8 +22,8 @@
 
 ## 3. Header coercion utility
 
-- [ ] 3.1 Implement `coerceHeaderValue` at `src/validation/calculations/coerceHeaderValue.ts` (shared, version-agnostic) that receives a raw header value (`string | string[] | undefined`) and a `Set<JsonSchemaType>` (already resolved by the caller via `inferOpenApiSchemaTypes`). For each type in the set, attempt coercion: `"integer"` → `Number()` + `Number.isInteger()`, `"number"` → `Number()` + `NaN` check, `"boolean"` → `"true"`/`"false"` mapping, `"string"` → pass-through, `"array"` → comma-split (or use `string[]` directly), `"null"` → empty string → `null`. Returns an array of `{ type, coercedValue }` candidates (only types where coercion succeeded), with the `"string"` candidate always first when present. Handles `string[]` adapter input (use first element for non-array types, use directly for array type).
-- [ ] 3.2 Add unit tests for `coerceHeaderValue` covering: single type coercions, multi-type sets (try all), string candidate ordered first, empty candidates when nothing coerces, `string[]` input, array comma-split
+- [x] 3.1 Implement `coerceHeaderValue` at `src/validation/calculations/coerceHeaderValue.ts` (shared, version-agnostic) that receives a raw header value (`string | string[] | undefined`) and a `Set<JsonSchemaType>` (already resolved by the caller via `inferOpenApiSchemaTypes`). For each type in the set, attempt coercion: `"integer"` → `Number()` + `Number.isInteger()`, `"number"` → `Number()` + `NaN` check, `"boolean"` → `"true"`/`"false"` mapping, `"string"` → pass-through, `"array"` → comma-split (or use `string[]` directly), `"null"` → empty string → `null`. Returns an array of `{ type, coercedValue }` candidates (only types where coercion succeeded), with the `"string"` candidate always first when present. Handles `string[]` adapter input (use first element for non-array types, use directly for array type).
+- [x] 3.2 Add unit tests for `coerceHeaderValue` covering: single type coercions, multi-type sets (try all), string candidate ordered first, empty candidates when nothing coerces, `string[]` input, array comma-split
 
 ## 4. Header parameter resolution helpers (v3.1)
 
