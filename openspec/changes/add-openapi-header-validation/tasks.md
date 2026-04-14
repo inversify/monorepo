@@ -32,8 +32,8 @@
 
 ## 5. Header validation handler (v3.1)
 
-- [ ] 5.1 Implement `handleHeaderValidation` at `src/validation/calculations/v3Dot1/handleHeaderValidation.ts` that: calls `getHeaderParameterObjects` (which internally resolves path-item and operation), checks required headers are present, for each header: calls `inferOpenApiSchemaTypes` to get possible types, calls `coerceHeaderValue` to get candidates, for array candidates coerces individual items via `inferOpenApiSchemaTypes` on the `items` schema and `coerceHeaderValue` per element, tries each candidate with AJV validation (caching via `ValidationCacheEntry.headers`), uses the first valid candidate; if no candidate passes throws `InversifyValidationError`; returns validated+coerced headers record
-- [ ] 5.2 Add unit tests for `handleHeaderValidation` covering: valid headers, missing required header, invalid schema violation, optional absent header, simple type coercion, multi-type schema coercion, `$ref` schema, `allOf`/`anyOf` schemas, case-insensitive matching, caching
+- [x] 5.1 Implement `handleHeaderValidation` at `src/validation/calculations/v3Dot1/handleHeaderValidation.ts` that: calls `getHeaderParameterObjects` (which internally resolves path-item and operation), checks required headers are present, for each header: calls `inferOpenApiSchemaTypes` to get possible types, calls `coerceHeaderValue` to get candidates, for array candidates coerces individual items via `inferOpenApiSchemaTypes` on the `items` schema and `coerceHeaderValue` per element, tries each candidate with AJV validation (caching via `ValidationCacheEntry.headers`), uses the first valid candidate; if no candidate passes throws `InversifyValidationError`; returns validated+coerced headers record
+- [x] 5.2 Add unit tests for `handleHeaderValidation` covering: valid headers, missing required header, invalid schema violation, optional absent header, simple type coercion, multi-type schema coercion, `$ref` schema, `allOf`/`anyOf` schemas, case-insensitive matching, caching
 
 ## 6. Header parameter resolution helpers (v3.2)
 
