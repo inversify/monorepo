@@ -4,11 +4,12 @@ title: API
 ---
 import apiOpenApiValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiOpenApiValidationPipe.ts.txt';
 import apiValidateDecoratorSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiValidateDecorator.ts.txt';
+import apiValidateHeadersDecoratorSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiValidateHeadersDecorator.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 ## OpenApiValidationPipe
 
-Validates incoming request bodies against the schemas defined in your OpenAPI specification. The pipe uses Ajv for JSON Schema validation and supports format validation via `ajv-formats`.
+Validates incoming request bodies and headers against the schemas defined in your OpenAPI specification. The pipe uses Ajv for JSON Schema validation and supports format validation via `ajv-formats`.
 
 ```ts
 constructor(
@@ -65,16 +66,44 @@ public createUser(@ValidatedBody() user: User): string {
 
 <CodeBlock language="ts">{apiValidateDecoratorSource}</CodeBlock>
 
+## ValidatedHeaders
+
+A custom parameter decorator that extracts request headers along with the HTTP method and URL, and marks the parameter for OpenAPI header validation.
+
+```ts
+ValidatedHeaders(): ParameterDecorator
+```
+
+Apply `@ValidatedHeaders()` to any controller method parameter you want to validate against OpenAPI header parameters defined with `@OasParameter()`:
+
+```ts
+@Get('/')
+public getResources(@ValidatedHeaders() _headers: Record<string, unknown>): string {
+  return 'ok';
+}
+```
+
+`@ValidatedHeaders()` is built with `createCustomParameterDecorator` from `@inversifyjs/http-core`. It stores a boolean validation marker on the parameter index and provides a handler that extracts all request headers, the HTTP method, and URL at runtime. The `OpenApiValidationPipe` checks for this marker and validates each header individually against its OpenAPI schema, coercing string values to the expected type when needed.
+
+### Example: validate request headers with OpenAPI schema
+
+<CodeBlock language="ts">{apiValidateHeadersDecoratorSource}</CodeBlock>
+
 ### Error Handling
 
 When validation fails, the pipe throws an `InversifyValidationError` with a detailed message containing:
 - The JSON Schema path where validation failed
-- The instance path in the request body
+- The instance path in the request body or header
 - The validation error message from Ajv
 
-For example:
+For example, a body validation failure:
 ```
 [schema: #/properties/email/format, instance: /email]: "must match format \"email\""
+```
+
+A header validation failure:
+```
+[schema: #/components/parameters/x-page-size/schema, instance: /x-page-size]: "must be integer"
 ```
 
 Use `InversifyValidationErrorFilter` (from `@inversifyjs/http-validation`) or a custom `@CatchError(InversifyValidationError)` filter to convert these errors into HTTP 400 responses.
