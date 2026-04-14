@@ -90,6 +90,7 @@ describe(handleBodyValidation, () => {
 
         validationCacheEntryFixture = {
           body: new Map(),
+          headers: new Map(),
         };
 
         getEntryMock = vitest
@@ -199,6 +200,7 @@ describe(handleBodyValidation, () => {
 
         validationCacheEntryFixture = {
           body: new Map(),
+          headers: new Map(),
         };
 
         getEntryMock = vitest
@@ -287,6 +289,7 @@ describe(handleBodyValidation, () => {
 
         validationCacheEntryFixture = {
           body: new Map(),
+          headers: new Map(),
         };
 
         getEntryMock = vitest
@@ -380,6 +383,7 @@ describe(handleBodyValidation, () => {
 
         validationCacheEntryFixture = {
           body: new Map(),
+          headers: new Map(),
         };
 
         getEntryMock = vitest

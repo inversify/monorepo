@@ -50,7 +50,7 @@ export function getHeaderParameterObjects(
       const param: OpenApi3Dot2ParameterObject = isReferenceObject(raw)
         ? (openApiResolver.deepResolveReference(
             raw.$ref,
-          ) as OpenApi3Dot2ParameterObject)
+          ) as unknown as OpenApi3Dot2ParameterObject)
         : raw;
 
       if (param.in === 'header') {
@@ -72,7 +72,7 @@ export function getHeaderParameterObjects(
       const param: OpenApi3Dot2ParameterObject = isReferenceObject(raw)
         ? (openApiResolver.deepResolveReference(
             raw.$ref,
-          ) as OpenApi3Dot2ParameterObject)
+          ) as unknown as OpenApi3Dot2ParameterObject)
         : raw;
 
       if (param.in === 'header') {

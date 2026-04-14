@@ -15,22 +15,21 @@ vitest.mock(import('./getHeaderParameterObjects.js'));
 
 import { type JsonSchemaType } from '@inversifyjs/json-schema-types/2020-12';
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
-import {
-  InversifyValidationError,
-  InversifyValidationErrorKind,
-} from '@inversifyjs/validation-common';
+import { InversifyValidationError } from '@inversifyjs/validation-common';
 import type Ajv from 'ajv';
 import { type ValidateFunction } from 'ajv';
 
 import { type HeaderValidationInputParam } from '../../models/HeaderValidationInputParam.js';
-import { SCHEMA_ID } from '../../models/v3Dot1/schemaId.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot1/ValidationCacheEntry.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
-import { type CoercionCandidate, coerceHeaderValue } from '../coerceHeaderValue.js';
+import {
+  coerceHeaderValue,
+  type CoercionCandidate,
+} from '../coerceHeaderValue.js';
 import { inferOpenApiSchemaTypes } from '../inferOpenApiSchemaTypes.js';
 import {
-  type HeaderParameterEntry,
   getHeaderParameterObjects,
+  type HeaderParameterEntry,
 } from './getHeaderParameterObjects.js';
 import { handleHeaderValidation } from './handleHeaderValidation.js';
 

@@ -23,10 +23,7 @@ export function ValidatedHeaders(): ParameterDecorator {
         options: CustomParameterDecoratorHandlerOptions<unknown, unknown>,
       ): Promise<HeaderValidationInputParam> => {
         const headers: Record<string, string | string[] | undefined> =
-          options.getHeaders(request) as Record<
-            string,
-            string | string[] | undefined
-          >;
+          options.getHeaders(request);
 
         const method: string = options.getMethod(request).toLowerCase();
         const url: string = options.getUrl(request);

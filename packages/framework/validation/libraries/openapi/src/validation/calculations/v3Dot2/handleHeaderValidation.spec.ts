@@ -13,24 +13,19 @@ vitest.mock(import('../coerceHeaderValue.js'));
 vitest.mock(import('../inferOpenApiSchemaTypes.js'));
 vitest.mock(import('./getHeaderParameterObjects.js'));
 
-import { type JsonSchemaType } from '@inversifyjs/json-schema-types/2020-12';
 import { type OpenApi3Dot2Object } from '@inversifyjs/open-api-types/v3Dot2';
-import {
-  InversifyValidationError,
-  InversifyValidationErrorKind,
-} from '@inversifyjs/validation-common';
+import { InversifyValidationError } from '@inversifyjs/validation-common';
 import type Ajv from 'ajv';
 import { type ValidateFunction } from 'ajv';
 
 import { type HeaderValidationInputParam } from '../../models/HeaderValidationInputParam.js';
-import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
-import { type CoercionCandidate, coerceHeaderValue } from '../coerceHeaderValue.js';
+import { coerceHeaderValue } from '../coerceHeaderValue.js';
 import { inferOpenApiSchemaTypes } from '../inferOpenApiSchemaTypes.js';
 import {
-  type HeaderParameterEntry,
   getHeaderParameterObjects,
+  type HeaderParameterEntry,
 } from './getHeaderParameterObjects.js';
 import { handleHeaderValidation } from './handleHeaderValidation.js';
 

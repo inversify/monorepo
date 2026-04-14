@@ -14,10 +14,12 @@ import { handleBodyValidation } from '../../calculations/v3Dot2/handleBodyValida
 import { handleHeaderValidation } from '../../calculations/v3Dot2/handleHeaderValidation.js';
 import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
+import { type ValidationInputParam } from '../../models/ValidatedDecoratorResult.js';
 import {
   validatedInputParamBodyType,
   validatedInputParamHeaderType,
 } from '../../models/validatedInputParamTypes.js';
+import { type ValidationHandler } from '../../models/ValidationHandler.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { DefaultOpenApiResolver } from '../../services/v3Dot2/DefaultOpenApiResolver.js';
 import { ValidationCache } from '../../services/v3Dot2/ValidationCache.js';
@@ -31,7 +33,24 @@ const handler: (
 ) => unknown = buildCompositeValidationHandler<
   OpenApi3Dot2Object,
   ValidationCacheEntry
->([[validatedInputParamBodyType, handleBodyValidation], [validatedInputParamHeaderType, handleHeaderValidation]]);
+>([
+  [
+    validatedInputParamBodyType,
+    handleBodyValidation as ValidationHandler<
+      OpenApi3Dot2Object,
+      ValidationInputParam,
+      ValidationCacheEntry
+    >,
+  ],
+  [
+    validatedInputParamHeaderType,
+    handleHeaderValidation as ValidationHandler<
+      OpenApi3Dot2Object,
+      ValidationInputParam,
+      ValidationCacheEntry
+    >,
+  ],
+]);
 
 export class OpenApiValidationPipe implements Pipe {
   readonly #openApiObject: OpenApi3Dot2Object;

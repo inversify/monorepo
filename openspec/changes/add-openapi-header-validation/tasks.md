@@ -57,6 +57,6 @@
 
 ## 10. Verification
 
-- [ ] 10.1 Run the full test suite (`pnpm run --filter "@inversifyjs/open-api-validation" test`)
-- [ ] 10.2 Run linter and formatter (`pnpm run --filter "@inversifyjs/open-api-validation" lint && pnpm run --filter "@inversifyjs/open-api-validation" format`)
-- [ ] 10.3 Verify the full build succeeds (`pnpm run build`)
+- [x] 10.1 Run the full test suite (`pnpm run --filter "@inversifyjs/open-api-validation" test`)
+- [x] 10.2 Run linter and formatter (`pnpm run --filter "@inversifyjs/open-api-validation" lint && pnpm run --filter "@inversifyjs/open-api-validation" format`)
+- [x] 10.3 Verify the full build succeeds (`pnpm run build`)

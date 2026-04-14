@@ -15,8 +15,8 @@ import {
 
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import {
-  type HeaderParameterEntry,
   getHeaderParameterObjects,
+  type HeaderParameterEntry,
 } from './getHeaderParameterObjects.js';
 import { getOperationObject } from './getOperationObject.js';
 import { getPathItemObject } from './getPathItemObject.js';

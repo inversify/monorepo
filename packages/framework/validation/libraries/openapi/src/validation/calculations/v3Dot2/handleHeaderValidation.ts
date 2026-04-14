@@ -12,13 +12,13 @@ import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import {
-  type CoercionCandidate,
   coerceHeaderValue,
+  type CoercionCandidate,
 } from '../coerceHeaderValue.js';
 import { inferOpenApiSchemaTypes } from '../inferOpenApiSchemaTypes.js';
 import {
-  type HeaderParameterEntry,
   getHeaderParameterObjects,
+  type HeaderParameterEntry,
 } from './getHeaderParameterObjects.js';
 
 function getOrCompileValidator(
@@ -99,8 +99,8 @@ export function handleHeaderValidation(
           candidate.type === 'array' &&
           Array.isArray(candidate.coercedValue) &&
           entry.parameter.schema !== undefined &&
-          'items' in entry.parameter.schema &&
-          entry.parameter.schema.items !== undefined
+          typeof entry.parameter.schema === 'object' &&
+          'items' in entry.parameter.schema
         ) {
           const itemsResolverPointer: string = `#/${entry.pointerPrefix}/schema/items`;
 
@@ -157,7 +157,9 @@ export function handleHeaderValidation(
 
       throw new InversifyValidationError(
         InversifyValidationErrorKind.validationFailed,
-        `Header "${entry.parameter.name}" validation failed: ${(validate.errors ?? [])
+        `Header "${entry.parameter.name}" validation failed: ${(
+          validate.errors ?? []
+        )
           .map(
             (error: ErrorObject): string =>
               `[schema: ${error.schemaPath}, instance: ${error.instancePath}]: "${error.message ?? '-'}"`,

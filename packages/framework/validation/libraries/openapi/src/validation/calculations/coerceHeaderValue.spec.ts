@@ -1,9 +1,10 @@
-import { type JsonSchemaType } from '@inversifyjs/json-schema-types/2020-12';
 import { describe, expect, it } from 'vitest';
 
+import { type JsonSchemaType } from '@inversifyjs/json-schema-types/2020-12';
+
 import {
-  type CoercionCandidate,
   coerceHeaderValue,
+  type CoercionCandidate,
 } from './coerceHeaderValue.js';
 
 describe(coerceHeaderValue, () => {
