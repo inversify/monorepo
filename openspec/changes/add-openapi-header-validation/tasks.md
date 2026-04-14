@@ -37,13 +37,13 @@
 
 ## 6. Header parameter resolution helpers (v3.2)
 
-- [ ] 6.1 Implement `getHeaderParameterObjects` at `src/validation/calculations/v3Dot2/getHeaderParameterObjects.ts` (mirrors v3.1 with v3.2 types)
-- [ ] 6.2 Add unit tests for `getHeaderParameterObjects` (v3.2)
+- [x] 6.1 Implement `getHeaderParameterObjects` at `src/validation/calculations/v3Dot2/getHeaderParameterObjects.ts` (mirrors v3.1 with v3.2 types)
+- [x] 6.2 Add unit tests for `getHeaderParameterObjects` (v3.2)
 
 ## 7. Header validation handler (v3.2)
 
-- [ ] 7.1 Implement `handleHeaderValidation` at `src/validation/calculations/v3Dot2/handleHeaderValidation.ts` (mirrors v3.1 with v3.2 types)
-- [ ] 7.2 Add unit tests for `handleHeaderValidation` (v3.2)
+- [x] 7.1 Implement `handleHeaderValidation` at `src/validation/calculations/v3Dot2/handleHeaderValidation.ts` (mirrors v3.1 with v3.2 types)
+- [x] 7.2 Add unit tests for `handleHeaderValidation` (v3.2)
 
 ## 8. Extend OpenApiValidationPipe (v3.1 and v3.2)
 
