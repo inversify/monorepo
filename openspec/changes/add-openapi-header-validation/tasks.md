@@ -47,8 +47,8 @@
 
 ## 8. Extend OpenApiValidationPipe (v3.1 and v3.2)
 
-- [ ] 8.1 Add `[validatedInputParamHeaderType, handleHeaderValidation]` to the handler pairs in `src/validation/pipes/v3Dot1/OpenApiValidationPipe.ts`
-- [ ] 8.2 Add `[validatedInputParamHeaderType, handleHeaderValidation]` to the handler pairs in `src/validation/pipes/v3Dot2/OpenApiValidationPipe.ts`
+- [x] 8.1 Add `[validatedInputParamHeaderType, handleHeaderValidation]` to the handler pairs in `src/validation/pipes/v3Dot1/OpenApiValidationPipe.ts`
+- [x] 8.2 Add `[validatedInputParamHeaderType, handleHeaderValidation]` to the handler pairs in `src/validation/pipes/v3Dot2/OpenApiValidationPipe.ts`
 
 ## 9. Integration testing
 

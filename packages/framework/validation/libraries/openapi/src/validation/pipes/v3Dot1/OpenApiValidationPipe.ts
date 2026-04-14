@@ -11,9 +11,13 @@ import addFormats from 'ajv-formats';
 import { openApiValidationMetadataReflectKey } from '../../../metadata/models/openApiValidationMetadataReflectKey.js';
 import { buildCompositeValidationHandler } from '../../calculations/buildCompositeValidationHandler.js';
 import { handleBodyValidation } from '../../calculations/v3Dot1/handleBodyValidation.js';
+import { handleHeaderValidation } from '../../calculations/v3Dot1/handleHeaderValidation.js';
 import { SCHEMA_ID } from '../../models/v3Dot1/schemaId.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot1/ValidationCacheEntry.js';
-import { validatedInputParamBodyType } from '../../models/validatedInputParamTypes.js';
+import {
+  validatedInputParamBodyType,
+  validatedInputParamHeaderType,
+} from '../../models/validatedInputParamTypes.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { DefaultOpenApiResolver } from '../../services/v3Dot1/DefaultOpenApiResolver.js';
 import { ValidationCache } from '../../services/v3Dot1/ValidationCache.js';
@@ -27,7 +31,7 @@ const handler: (
 ) => unknown = buildCompositeValidationHandler<
   OpenApi3Dot1Object,
   ValidationCacheEntry
->([[validatedInputParamBodyType, handleBodyValidation]]);
+>([[validatedInputParamBodyType, handleBodyValidation], [validatedInputParamHeaderType, handleHeaderValidation]]);
 
 export class OpenApiValidationPipe implements Pipe {
   readonly #openApiObject: OpenApi3Dot1Object;
