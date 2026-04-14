@@ -27,8 +27,8 @@
 
 ## 4. Header parameter resolution helpers (v3.1)
 
-- [ ] 4.1 Implement `getHeaderParameterObjects` at `src/validation/calculations/v3Dot1/getHeaderParameterObjects.ts` that: receives `openApiObject`, `openApiResolver`, `method`, and `path`; calls `getPathItemObject` and `getOperationObject`; collects operation-level and path-item-level parameters; resolves `$ref` references; filters for `in: 'header'`; merges with operation-level overriding path-item-level by name (case-insensitive); returns `Map<string, { parameter: OpenApi3Dot1ParameterObject, pointerPrefix: string }>` keyed by lowercase header name, where `pointerPrefix` is the JSON pointer path to the parameter in the spec
-- [ ] 4.2 Add unit tests for `getHeaderParameterObjects` covering: operation-only params, path-item-only params, merge with override, `$ref` resolution, empty parameters
+- [x] 4.1 Implement `getHeaderParameterObjects` at `src/validation/calculations/v3Dot1/getHeaderParameterObjects.ts` that: receives `openApiObject`, `openApiResolver`, `method`, and `path`; calls `getPathItemObject` and `getOperationObject`; collects operation-level and path-item-level parameters; resolves `$ref` references; filters for `in: 'header'`; merges with operation-level overriding path-item-level by name (case-insensitive); returns `Map<string, { parameter: OpenApi3Dot1ParameterObject, pointerPrefix: string }>` keyed by lowercase header name, where `pointerPrefix` is the JSON pointer path to the parameter in the spec
+- [x] 4.2 Add unit tests for `getHeaderParameterObjects` covering: operation-only params, path-item-only params, merge with override, `$ref` resolution, empty parameters
 
 ## 5. Header validation handler (v3.1)
 
