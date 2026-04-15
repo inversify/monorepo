@@ -23,7 +23,7 @@
     "@types/multer": "2.1.0",
     "@types/node": "24.12.2",
     "@vitest/coverage-v8": "4.1.4",
-    "better-auth": "1.6.3",
+    "better-auth": "1.6.4",
     "better-sqlite3": "12.9.0",
     "eslint": "10.2.0",
     "express": "5.2.1",
