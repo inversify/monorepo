@@ -36,7 +36,7 @@ function getHeaderParameterEntryMap(
       inputParam.path,
     );
 
-  for (const headerParam of headerParams.values()) {
+  for (const [headerName, headerParam] of headerParams) {
     const parse: (value: string | string[] | undefined) => unknown =
       buildHeaderParse(
         openApiResolver,
@@ -56,7 +56,7 @@ function getHeaderParameterEntryMap(
       );
     }
 
-    headerParameterEntryMap.set(headerParam.parameter.name, {
+    headerParameterEntryMap.set(headerName, {
       parse,
       required: headerParam.parameter.required ?? false,
       validate: validate,

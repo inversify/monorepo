@@ -13,7 +13,10 @@ vitest.mock(import('../buildHeaderParse.js'));
 vitest.mock(import('./getHeaderParameterObjects.js'));
 
 import { type OpenApi3Dot2Object } from '@inversifyjs/open-api-types/v3Dot2';
-import { InversifyValidationError } from '@inversifyjs/validation-common';
+import {
+  InversifyValidationError,
+  InversifyValidationErrorKind,
+} from '@inversifyjs/validation-common';
 import type Ajv from 'ajv';
 import { type ValidateFunction } from 'ajv';
 
@@ -86,7 +89,7 @@ describe(handleHeaderValidation, () => {
       > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
 
       const inputParam: HeaderValidationInputParam = {
-        headers: { 'X-Request-ID': 'abc-123' },
+        headers: { 'x-request-id': 'abc-123' },
         method: 'get',
         path: '/users',
         type: Symbol() as unknown as HeaderValidationInputParam['type'],
@@ -106,7 +109,7 @@ describe(handleHeaderValidation, () => {
     });
 
     it('should return validated headers record', () => {
-      expect(result).toStrictEqual({ 'X-Request-ID': 'abc-123' });
+      expect(result).toStrictEqual({ 'x-request-id': 'abc-123' });
     });
   });
 
@@ -180,13 +183,13 @@ describe(handleHeaderValidation, () => {
     });
 
     it('should throw an InversifyValidationError', () => {
-      expect(result).toBeInstanceOf(InversifyValidationError);
-    });
+      const expectedErrorProperties: Partial<InversifyValidationError> = {
+        kind: InversifyValidationErrorKind.validationFailed,
+        message: 'Missing required header: x-request-id',
+      };
 
-    it('should throw with missing header message', () => {
-      expect((result as InversifyValidationError).message).toBe(
-        'Missing required header: X-Request-ID',
-      );
+      expect(result).toBeInstanceOf(InversifyValidationError);
+      expect(result).toMatchObject(expectedErrorProperties);
     });
   });
 
@@ -316,7 +319,7 @@ describe(handleHeaderValidation, () => {
       > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
 
       const inputParam: HeaderValidationInputParam = {
-        headers: { 'X-Count': 'not-valid' },
+        headers: { 'x-count': 'not-valid' },
         method: 'get',
         path: '/users',
         type: Symbol() as unknown as HeaderValidationInputParam['type'],
@@ -340,11 +343,13 @@ describe(handleHeaderValidation, () => {
     });
 
     it('should throw an InversifyValidationError', () => {
-      expect(result).toBeInstanceOf(InversifyValidationError);
-    });
+      const expectedErrorProperties: Partial<InversifyValidationError> = {
+        kind: InversifyValidationErrorKind.validationFailed,
+        message: expect.stringContaining('x-count'),
+      };
 
-    it('should throw with validation error message', () => {
-      expect((result as InversifyValidationError).message).toContain('X-Count');
+      expect(result).toBeInstanceOf(InversifyValidationError);
+      expect(result).toMatchObject(expectedErrorProperties);
     });
   });
 
@@ -368,7 +373,7 @@ describe(handleHeaderValidation, () => {
         body: new Map(),
         headers: new Map([
           [
-            'X-Request-ID',
+            'x-request-id',
             {
               parse: parseMock,
               required: true,
@@ -383,7 +388,7 @@ describe(handleHeaderValidation, () => {
       > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
 
       const inputParam: HeaderValidationInputParam = {
-        headers: { 'X-Request-ID': 'test' },
+        headers: { 'x-request-id': 'test' },
         method: 'get',
         path: '/users',
         type: Symbol() as unknown as HeaderValidationInputParam['type'],
@@ -411,7 +416,7 @@ describe(handleHeaderValidation, () => {
     });
 
     it('should return validated headers', () => {
-      expect(result).toStrictEqual({ 'X-Request-ID': 'test' });
+      expect(result).toStrictEqual({ 'x-request-id': 'test' });
     });
   });
 });

@@ -1,22 +1,18 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('./maybeCoerceStringOrStringArrayToNonNullableBoolean.js'));
-vitest.mock(import('./maybeCoerceStringOrStringArrayToNonNullableInteger.js'));
 vitest.mock(import('./maybeCoerceStringOrStringArrayToNonNullableNumber.js'));
 vitest.mock(import('./maybeCoerceStringOrStringArrayToNull.js'));
 vitest.mock(import('./maybeCoerceStringOrStringArrayToNullableBoolean.js'));
-vitest.mock(import('./maybeCoerceStringOrStringArrayToNullableInteger.js'));
 vitest.mock(import('./maybeCoerceStringOrStringArrayToNullableNumber.js'));
 
 import { InversifyValidationError } from '@inversifyjs/validation-common';
 
 import { buildNonArrayHeaderParse } from './buildNonArrayHeaderParse.js';
 import { maybeCoerceStringOrStringArrayToNonNullableBoolean } from './maybeCoerceStringOrStringArrayToNonNullableBoolean.js';
-import { maybeCoerceStringOrStringArrayToNonNullableInteger } from './maybeCoerceStringOrStringArrayToNonNullableInteger.js';
 import { maybeCoerceStringOrStringArrayToNonNullableNumber } from './maybeCoerceStringOrStringArrayToNonNullableNumber.js';
 import { maybeCoerceStringOrStringArrayToNull } from './maybeCoerceStringOrStringArrayToNull.js';
 import { maybeCoerceStringOrStringArrayToNullableBoolean } from './maybeCoerceStringOrStringArrayToNullableBoolean.js';
-import { maybeCoerceStringOrStringArrayToNullableInteger } from './maybeCoerceStringOrStringArrayToNullableInteger.js';
 import { maybeCoerceStringOrStringArrayToNullableNumber } from './maybeCoerceStringOrStringArrayToNullableNumber.js';
 
 describe(buildNonArrayHeaderParse, () => {
@@ -41,13 +37,13 @@ describe(buildNonArrayHeaderParse, () => {
       'type is "integer" and isNullable is false',
       false,
       'integer',
-      () => maybeCoerceStringOrStringArrayToNonNullableInteger,
+      () => maybeCoerceStringOrStringArrayToNonNullableNumber,
     ],
     [
       'type is "integer" and isNullable is true',
       true,
       'integer',
-      () => maybeCoerceStringOrStringArrayToNullableInteger,
+      () => maybeCoerceStringOrStringArrayToNullableNumber,
     ],
     [
       'type is "number" and isNullable is false',

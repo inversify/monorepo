@@ -5,11 +5,9 @@ import {
 } from '@inversifyjs/validation-common';
 
 import { maybeCoerceStringOrStringArrayToNonNullableBoolean } from './maybeCoerceStringOrStringArrayToNonNullableBoolean.js';
-import { maybeCoerceStringOrStringArrayToNonNullableInteger } from './maybeCoerceStringOrStringArrayToNonNullableInteger.js';
 import { maybeCoerceStringOrStringArrayToNonNullableNumber } from './maybeCoerceStringOrStringArrayToNonNullableNumber.js';
 import { maybeCoerceStringOrStringArrayToNull } from './maybeCoerceStringOrStringArrayToNull.js';
 import { maybeCoerceStringOrStringArrayToNullableBoolean } from './maybeCoerceStringOrStringArrayToNullableBoolean.js';
-import { maybeCoerceStringOrStringArrayToNullableInteger } from './maybeCoerceStringOrStringArrayToNullableInteger.js';
 import { maybeCoerceStringOrStringArrayToNullableNumber } from './maybeCoerceStringOrStringArrayToNullableNumber.js';
 
 export function buildNonArrayHeaderParse(
@@ -25,11 +23,6 @@ export function buildNonArrayHeaderParse(
         return maybeCoerceStringOrStringArrayToNonNullableBoolean;
       }
     case 'integer':
-      if (isNullable) {
-        return maybeCoerceStringOrStringArrayToNullableInteger;
-      } else {
-        return maybeCoerceStringOrStringArrayToNonNullableInteger;
-      }
     case 'number':
       if (isNullable) {
         return maybeCoerceStringOrStringArrayToNullableNumber;

@@ -5,7 +5,7 @@ export function maybeCoerceStringToNonNullableNumber(
     return value;
   }
 
-  const parsed: number = parseFloat(value);
+  const parsed: number = Number(value);
 
   if (isNaN(parsed)) {
     return value;
