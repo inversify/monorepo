@@ -1,4 +1,3 @@
-import { type JsonSchemaType } from '@inversifyjs/json-schema-types/2020-12';
 import { type OpenApi3Dot2Object } from '@inversifyjs/open-api-types/v3Dot2';
 import {
   InversifyValidationError,
@@ -9,41 +8,62 @@ import { type ErrorObject, type ValidateFunction } from 'ajv';
 
 import { type HeaderValidationInputParam } from '../../models/HeaderValidationInputParam.js';
 import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
-import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
-import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import {
-  coerceHeaderValue,
-  type CoercionCandidate,
-} from '../coerceHeaderValue.js';
-import { inferOpenApiSchemaTypes } from '../inferOpenApiSchemaTypes.js';
+  type ValidationCacheEntry,
+  type ValidationCacheEntryHeader,
+} from '../../models/v3Dot2/ValidationCacheEntry.js';
+import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
+import { buildHeaderParse } from '../buildHeaderParse.js';
 import {
   getHeaderParameterObjects,
   type HeaderParameterEntry,
 } from './getHeaderParameterObjects.js';
 
-function getOrCompileValidator(
+function getHeaderParameterEntryMap(
   ajv: Ajv,
-  validationCacheEntry: ValidationCacheEntry,
-  headerName: string,
-  schemaPointer: string,
-): ValidateFunction {
-  let validate: ValidateFunction | undefined =
-    validationCacheEntry.headers.get(headerName);
+  openApiObject: OpenApi3Dot2Object,
+  openApiResolver: OpenApiResolver,
+  inputParam: HeaderValidationInputParam,
+): Map<string, ValidationCacheEntryHeader> {
+  const headerParameterEntryMap: Map<string, ValidationCacheEntryHeader> =
+    new Map();
 
-  if (validate === undefined) {
-    validate = ajv.getSchema(schemaPointer);
+  const headerParams: Map<string, HeaderParameterEntry> =
+    getHeaderParameterObjects(
+      openApiObject,
+      openApiResolver,
+      inputParam.method,
+      inputParam.path,
+    );
+
+  for (const headerParam of headerParams.values()) {
+    const parse: (value: string | string[] | undefined) => unknown =
+      buildHeaderParse(
+        openApiResolver,
+        headerParam.parameter.schema,
+        `${SCHEMA_ID}#/${headerParam.pointerPrefix}/schema`,
+      );
+
+    const ajvSchemaPointer: string = `${SCHEMA_ID}#/${headerParam.pointerPrefix}/schema`;
+
+    const validate: ValidateFunction | undefined =
+      ajv.getSchema(ajvSchemaPointer);
 
     if (validate === undefined) {
       throw new InversifyValidationError(
         InversifyValidationErrorKind.validationFailed,
-        `Unable to find schema for header "${headerName}" at pointer: ${schemaPointer}`,
+        `Unable to find schema for pointer: ${ajvSchemaPointer}`,
       );
     }
 
-    validationCacheEntry.headers.set(headerName, validate);
+    headerParameterEntryMap.set(headerParam.parameter.name, {
+      parse,
+      required: headerParam.parameter.required ?? false,
+      validate: validate,
+    });
   }
 
-  return validate;
+  return headerParameterEntryMap;
 }
 
 export function handleHeaderValidation(
@@ -53,121 +73,75 @@ export function handleHeaderValidation(
   inputParam: HeaderValidationInputParam,
   getEntry: (path: string, method: string) => ValidationCacheEntry,
 ): unknown {
-  const headerParams: Map<string, HeaderParameterEntry> =
-    getHeaderParameterObjects(
-      openApiObject,
-      openApiResolver,
-      inputParam.method,
-      inputParam.path,
-    );
-
   const validationCacheEntry: ValidationCacheEntry = getEntry(
     inputParam.path,
     inputParam.method,
   );
 
-  const result: Record<string, unknown> = {};
+  if (validationCacheEntry.headers === undefined) {
+    validationCacheEntry.headers = getHeaderParameterEntryMap(
+      ajv,
+      openApiObject,
+      openApiResolver,
+      inputParam,
+    );
+  }
 
-  for (const [lowerName, entry] of headerParams) {
-    const rawValue: string | string[] | undefined =
-      inputParam.headers[lowerName];
+  const computedHeaders: Record<string, unknown> = {
+    ...inputParam.headers,
+  };
 
-    if (rawValue === undefined) {
-      if (entry.parameter.required === true) {
+  let valid: boolean = true;
+  const headerToErrorObject: Record<string, ErrorObject[]> = {};
+
+  for (const [
+    headerName,
+    validationCacheEntryHeader,
+  ] of validationCacheEntry.headers) {
+    if (!(headerName in inputParam.headers)) {
+      if (validationCacheEntryHeader.required) {
         throw new InversifyValidationError(
           InversifyValidationErrorKind.validationFailed,
-          `Required header "${entry.parameter.name}" is missing`,
+          `Missing required header: ${headerName}`,
         );
       }
 
       continue;
     }
 
-    const resolverSchemaPointer: string = `#/${entry.pointerPrefix}/schema`;
-    const ajvSchemaPointer: string = `${SCHEMA_ID}#/${entry.pointerPrefix}/schema`;
+    const headerValue: string | string[] | undefined =
+      inputParam.headers[headerName];
 
-    const types: Set<JsonSchemaType> = inferOpenApiSchemaTypes(
-      openApiResolver,
-      resolverSchemaPointer,
+    computedHeaders[headerName] = validationCacheEntryHeader.parse(headerValue);
+
+    const isValidHeader: boolean = validationCacheEntryHeader.validate(
+      computedHeaders[headerName],
     );
 
-    let candidates: CoercionCandidate[] = coerceHeaderValue(rawValue, types);
+    if (!isValidHeader) {
+      valid = false;
 
-    candidates = candidates.map(
-      (candidate: CoercionCandidate): CoercionCandidate => {
-        if (
-          candidate.type === 'array' &&
-          Array.isArray(candidate.coercedValue) &&
-          entry.parameter.schema !== undefined &&
-          typeof entry.parameter.schema === 'object' &&
-          'items' in entry.parameter.schema
-        ) {
-          const itemsResolverPointer: string = `#/${entry.pointerPrefix}/schema/items`;
-
-          const itemTypes: Set<JsonSchemaType> = inferOpenApiSchemaTypes(
-            openApiResolver,
-            itemsResolverPointer,
-          );
-
-          const coercedItems: unknown[] = (
-            candidate.coercedValue as string[]
-          ).map((item: string): unknown => {
-            const itemCandidates: CoercionCandidate[] = coerceHeaderValue(
-              item,
-              itemTypes,
-            );
-
-            return itemCandidates.length > 0
-              ? (itemCandidates[0] as CoercionCandidate).coercedValue
-              : item;
-          });
-
-          return { coercedValue: coercedItems, type: 'array' };
-        }
-
-        return candidate;
-      },
-    );
-
-    const validate: ValidateFunction = getOrCompileValidator(
-      ajv,
-      validationCacheEntry,
-      lowerName,
-      ajvSchemaPointer,
-    );
-
-    let validated: boolean = false;
-
-    for (const candidate of candidates) {
-      if (validate(candidate.coercedValue)) {
-        result[lowerName] = candidate.coercedValue;
-        validated = true;
-        break;
-      }
-    }
-
-    if (!validated) {
-      const lastValue: unknown =
-        candidates.length > 0
-          ? (candidates[candidates.length - 1] as CoercionCandidate)
-              .coercedValue
-          : rawValue;
-
-      validate(lastValue);
-
-      throw new InversifyValidationError(
-        InversifyValidationErrorKind.validationFailed,
-        `Header "${entry.parameter.name}" validation failed: ${(
-          validate.errors ?? []
-        )
-          .map(
-            (error: ErrorObject): string =>
-              `[schema: ${error.schemaPath}, instance: ${error.instancePath}]: "${error.message ?? '-'}"`,
-          )
-          .join('\n')}`,
-      );
+      headerToErrorObject[headerName] = [
+        ...(validationCacheEntryHeader.validate.errors ?? []),
+      ];
     }
   }
 
-  return result;
+  if (!valid) {
+    throw new InversifyValidationError(
+      InversifyValidationErrorKind.validationFailed,
+      Object.entries(headerToErrorObject)
+        .map(([headerName, errors]: [string, ErrorObject[]]): string =>
+          errors
+            .map(
+              (error: ErrorObject): string =>
+                `[header: ${headerName}, schemaPath: ${error.schemaPath}, instancePath: ${error.instancePath}]: "${error.message ?? '-'}"`,
+            )
+            .join('\n'),
+        )
+        .join('\n'),
+    );
+  }
+
+  return computedHeaders;
 }

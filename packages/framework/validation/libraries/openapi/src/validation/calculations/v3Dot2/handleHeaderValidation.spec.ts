@@ -9,8 +9,7 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock(import('../coerceHeaderValue.js'));
-vitest.mock(import('../inferOpenApiSchemaTypes.js'));
+vitest.mock(import('../buildHeaderParse.js'));
 vitest.mock(import('./getHeaderParameterObjects.js'));
 
 import { type OpenApi3Dot2Object } from '@inversifyjs/open-api-types/v3Dot2';
@@ -21,8 +20,7 @@ import { type ValidateFunction } from 'ajv';
 import { type HeaderValidationInputParam } from '../../models/HeaderValidationInputParam.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
-import { coerceHeaderValue } from '../coerceHeaderValue.js';
-import { inferOpenApiSchemaTypes } from '../inferOpenApiSchemaTypes.js';
+import { buildHeaderParse } from '../buildHeaderParse.js';
 import {
   getHeaderParameterObjects,
   type HeaderParameterEntry,
@@ -65,13 +63,9 @@ describe(handleHeaderValidation, () => {
         .mocked(getHeaderParameterObjects)
         .mockReturnValueOnce(headerParamMap);
 
-      vitest
-        .mocked(inferOpenApiSchemaTypes)
-        .mockReturnValueOnce(new Set(['string']));
+      const parseMock: Mock = vitest.fn().mockReturnValueOnce('abc-123');
 
-      vitest
-        .mocked(coerceHeaderValue)
-        .mockReturnValueOnce([{ coercedValue: 'abc-123', type: 'string' }]);
+      vitest.mocked(buildHeaderParse).mockReturnValueOnce(parseMock);
 
       const validateMock: ValidateFunction = Object.assign(
         vitest.fn().mockReturnValueOnce(true),
@@ -84,7 +78,7 @@ describe(handleHeaderValidation, () => {
 
       const validationCacheEntry: ValidationCacheEntry = {
         body: new Map(),
-        headers: new Map(),
+        headers: undefined,
       };
 
       const getEntryMock: Mock<
@@ -92,7 +86,7 @@ describe(handleHeaderValidation, () => {
       > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
 
       const inputParam: HeaderValidationInputParam = {
-        headers: { 'x-request-id': 'abc-123' },
+        headers: { 'X-Request-ID': 'abc-123' },
         method: 'get',
         path: '/users',
         type: Symbol() as unknown as HeaderValidationInputParam['type'],
@@ -112,7 +106,7 @@ describe(handleHeaderValidation, () => {
     });
 
     it('should return validated headers record', () => {
-      expect(result).toStrictEqual({ 'x-request-id': 'abc-123' });
+      expect(result).toStrictEqual({ 'X-Request-ID': 'abc-123' });
     });
   });
 
@@ -139,13 +133,22 @@ describe(handleHeaderValidation, () => {
         .mocked(getHeaderParameterObjects)
         .mockReturnValueOnce(headerParamMap);
 
+      const parseMock: Mock = vitest.fn();
+
+      vitest.mocked(buildHeaderParse).mockReturnValueOnce(parseMock);
+
+      const validateMock: ValidateFunction = Object.assign(vitest.fn(), {
+        errors: null,
+        schema: {},
+      }) as unknown as ValidateFunction;
+
       const ajvMock: Mocked<Ajv> = {
-        getSchema: vitest.fn(),
+        getSchema: vitest.fn().mockReturnValueOnce(validateMock),
       } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
       const validationCacheEntry: ValidationCacheEntry = {
         body: new Map(),
-        headers: new Map(),
+        headers: undefined,
       };
 
       const getEntryMock: Mock<
@@ -182,7 +185,7 @@ describe(handleHeaderValidation, () => {
 
     it('should throw with missing header message', () => {
       expect((result as InversifyValidationError).message).toBe(
-        'Required header "X-Request-ID" is missing',
+        'Missing required header: X-Request-ID',
       );
     });
   });
@@ -209,13 +212,22 @@ describe(handleHeaderValidation, () => {
         .mocked(getHeaderParameterObjects)
         .mockReturnValueOnce(headerParamMap);
 
+      const parseMock: Mock = vitest.fn();
+
+      vitest.mocked(buildHeaderParse).mockReturnValueOnce(parseMock);
+
+      const validateMock: ValidateFunction = Object.assign(vitest.fn(), {
+        errors: null,
+        schema: {},
+      }) as unknown as ValidateFunction;
+
       const ajvMock: Mocked<Ajv> = {
-        getSchema: vitest.fn(),
+        getSchema: vitest.fn().mockReturnValueOnce(validateMock),
       } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
       const validationCacheEntry: ValidationCacheEntry = {
         body: new Map(),
-        headers: new Map(),
+        headers: undefined,
       };
 
       const getEntryMock: Mock<
@@ -242,86 +254,12 @@ describe(handleHeaderValidation, () => {
       vitest.clearAllMocks();
     });
 
-    it('should return empty record', () => {
+    it('should return headers without the optional header', () => {
       expect(result).toStrictEqual({});
     });
   });
 
-  describe('when called, and integer coercion succeeds', () => {
-    let result: unknown;
-
-    beforeAll(() => {
-      const headerParamMap: Map<string, HeaderParameterEntry> = new Map([
-        [
-          'x-rate-limit',
-          {
-            parameter: {
-              in: 'header',
-              name: 'X-Rate-Limit',
-              required: true,
-              schema: { type: 'integer' },
-            },
-            pointerPrefix: 'paths/~1users/get/parameters/0',
-          },
-        ],
-      ]);
-
-      vitest
-        .mocked(getHeaderParameterObjects)
-        .mockReturnValueOnce(headerParamMap);
-
-      vitest
-        .mocked(inferOpenApiSchemaTypes)
-        .mockReturnValueOnce(new Set(['integer']));
-
-      vitest
-        .mocked(coerceHeaderValue)
-        .mockReturnValueOnce([{ coercedValue: 42, type: 'integer' }]);
-
-      const validateMock: ValidateFunction = Object.assign(
-        vitest.fn().mockReturnValueOnce(true),
-        { errors: null, schema: {} },
-      ) as unknown as ValidateFunction;
-
-      const ajvMock: Mocked<Ajv> = {
-        getSchema: vitest.fn().mockReturnValueOnce(validateMock),
-      } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
-
-      const validationCacheEntry: ValidationCacheEntry = {
-        body: new Map(),
-        headers: new Map(),
-      };
-
-      const getEntryMock: Mock<
-        (path: string, method: string) => ValidationCacheEntry
-      > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
-
-      const inputParam: HeaderValidationInputParam = {
-        headers: { 'x-rate-limit': '42' },
-        method: 'get',
-        path: '/users',
-        type: Symbol() as unknown as HeaderValidationInputParam['type'],
-      };
-
-      result = handleHeaderValidation(
-        ajvMock,
-        openApiObjectFixture,
-        openApiResolverFixture,
-        inputParam,
-        getEntryMock,
-      );
-    });
-
-    afterAll(() => {
-      vitest.clearAllMocks();
-    });
-
-    it('should return record with coerced value', () => {
-      expect(result).toStrictEqual({ 'x-rate-limit': 42 });
-    });
-  });
-
-  describe('when called, and validation fails for all candidates', () => {
+  describe('when called, and validation fails', () => {
     let result: unknown;
 
     beforeAll(() => {
@@ -344,11 +282,9 @@ describe(handleHeaderValidation, () => {
         .mocked(getHeaderParameterObjects)
         .mockReturnValueOnce(headerParamMap);
 
-      vitest
-        .mocked(inferOpenApiSchemaTypes)
-        .mockReturnValueOnce(new Set(['integer']));
+      const parseMock: Mock = vitest.fn().mockReturnValueOnce('not-valid');
 
-      vitest.mocked(coerceHeaderValue).mockReturnValueOnce([]);
+      vitest.mocked(buildHeaderParse).mockReturnValueOnce(parseMock);
 
       const validateMock: ValidateFunction = Object.assign(
         vitest.fn().mockReturnValueOnce(false),
@@ -372,7 +308,7 @@ describe(handleHeaderValidation, () => {
 
       const validationCacheEntry: ValidationCacheEntry = {
         body: new Map(),
-        headers: new Map(),
+        headers: undefined,
       };
 
       const getEntryMock: Mock<
@@ -380,7 +316,7 @@ describe(handleHeaderValidation, () => {
       > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
 
       const inputParam: HeaderValidationInputParam = {
-        headers: { 'x-count': 'not-valid' },
+        headers: { 'X-Count': 'not-valid' },
         method: 'get',
         path: '/users',
         type: Symbol() as unknown as HeaderValidationInputParam['type'],
@@ -408,9 +344,74 @@ describe(handleHeaderValidation, () => {
     });
 
     it('should throw with validation error message', () => {
-      expect((result as InversifyValidationError).message).toContain(
-        'Header "X-Count" validation failed',
+      expect((result as InversifyValidationError).message).toContain('X-Count');
+    });
+  });
+
+  describe('when called, and cached headers are reused', () => {
+    let result: unknown;
+    let ajvMock: Mocked<Ajv>;
+
+    beforeAll(() => {
+      const parseMock: Mock = vitest.fn().mockReturnValueOnce('test');
+
+      const validateMock: ValidateFunction = Object.assign(
+        vitest.fn().mockReturnValueOnce(true),
+        { errors: null, schema: {} },
+      ) as unknown as ValidateFunction;
+
+      ajvMock = {
+        getSchema: vitest.fn(),
+      } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
+
+      const validationCacheEntry: ValidationCacheEntry = {
+        body: new Map(),
+        headers: new Map([
+          [
+            'X-Request-ID',
+            {
+              parse: parseMock,
+              required: true,
+              validate: validateMock,
+            },
+          ],
+        ]),
+      };
+
+      const getEntryMock: Mock<
+        (path: string, method: string) => ValidationCacheEntry
+      > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
+
+      const inputParam: HeaderValidationInputParam = {
+        headers: { 'X-Request-ID': 'test' },
+        method: 'get',
+        path: '/users',
+        type: Symbol() as unknown as HeaderValidationInputParam['type'],
+      };
+
+      result = handleHeaderValidation(
+        ajvMock,
+        openApiObjectFixture,
+        openApiResolverFixture,
+        inputParam,
+        getEntryMock,
       );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should not call ajv.getSchema()', () => {
+      expect(ajvMock.getSchema).not.toHaveBeenCalled();
+    });
+
+    it('should not call getHeaderParameterObjects()', () => {
+      expect(getHeaderParameterObjects).not.toHaveBeenCalled();
+    });
+
+    it('should return validated headers', () => {
+      expect(result).toStrictEqual({ 'X-Request-ID': 'test' });
     });
   });
 });

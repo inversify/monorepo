@@ -13,259 +13,250 @@ describe(inferOpenApiSchemaTypes, () => {
     ]
   >([
     [
-      'an OpenApi object and a pointer to a true schema',
+      'a $ref schema pointing to a non-existent schema',
       [
         {
-          deepResolveReference: (): JsonValue => true,
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Any',
+        { $ref: '#/components/schemas/NonExistent' },
+      ],
+      new Set(),
+    ],
+    [
+      'a true schema',
+      [
+        {
+          deepResolveReference: (): undefined => undefined,
+          resolveReference: (): undefined => undefined,
+        },
+        true,
       ],
       new Set(['array', 'boolean', 'null', 'number', 'object', 'string']),
     ],
     [
-      'an OpenApi object and a pointer to a false schema',
+      'a false schema',
       [
         {
-          deepResolveReference: (): JsonValue => false,
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/None',
+        false,
       ],
       new Set(),
     ],
     [
-      'an OpenApi object and a pointer to a schema with a single type',
+      'a schema with a single type',
       [
         {
-          deepResolveReference: (): JsonValue => ({ type: 'string' }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/MyString',
+        { type: 'string' },
       ],
       new Set(['string']),
     ],
     [
-      'an OpenApi object and a pointer to a schema with multiple types',
+      'a schema with multiple types',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            type: ['string', 'number'],
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/StringOrNumber',
+        { type: ['string', 'number'] },
       ],
       new Set(['string', 'number']),
     ],
     [
-      'an OpenApi object and a pointer to a $ref schema',
+      'a $ref schema',
       [
         {
           deepResolveReference: vitest
             .fn<(reference: string) => JsonValue | undefined>()
-            .mockReturnValueOnce({ $ref: '#/components/schemas/Target' })
             .mockReturnValueOnce({ type: 'object' }),
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Ref',
+        { $ref: '#/components/schemas/Target' },
       ],
       new Set(['object']),
     ],
     [
-      'an OpenApi object and a pointer to an allOf schema with overlapping types',
+      'an allOf schema with overlapping types',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            allOf: [
-              { type: ['string', 'number'] },
-              { type: ['number', 'boolean'] },
-            ],
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Combined',
+        {
+          allOf: [
+            { type: ['string', 'number'] },
+            { type: ['number', 'boolean'] },
+          ],
+        },
       ],
       new Set(['number']),
     ],
     [
-      'an OpenApi object and a pointer to an allOf schema with no overlapping types',
+      'an allOf schema with no overlapping types',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            allOf: [{ type: 'string' }, { type: 'number' }],
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Empty',
+        { allOf: [{ type: 'string' }, { type: 'number' }] },
       ],
       new Set(),
     ],
     [
-      'an OpenApi object and a pointer to an allOf schema with a type constraint',
+      'an allOf schema with a type constraint',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            allOf: [
-              { type: ['string', 'number'] },
-              { type: ['string', 'boolean'] },
-            ],
-            type: 'string',
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Constrained',
+        {
+          allOf: [
+            { type: ['string', 'number'] },
+            { type: ['string', 'boolean'] },
+          ],
+          type: 'string',
+        },
       ],
       new Set(['string']),
     ],
     [
-      'an OpenApi object and a pointer to an allOf schema with $ref entries',
+      'an allOf schema with $ref entries',
       [
         {
           deepResolveReference: vitest
             .fn<(reference: string) => JsonValue | undefined>()
-            .mockReturnValueOnce({
-              allOf: [
-                { $ref: '#/components/schemas/Base' },
-                { type: ['string', 'number'] },
-              ],
-            })
             .mockReturnValueOnce({
               type: ['string', 'number', 'boolean'],
             }),
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Combined',
+        {
+          allOf: [
+            { $ref: '#/components/schemas/Base' },
+            { type: ['string', 'number'] },
+          ],
+        },
       ],
       new Set(['string', 'number']),
     ],
     [
-      'an OpenApi object and a pointer to an anyOf schema',
+      'an anyOf schema',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            anyOf: [{ type: 'string' }, { type: 'number' }],
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Union',
+        { anyOf: [{ type: 'string' }, { type: 'number' }] },
       ],
       new Set(['string', 'number']),
     ],
     [
-      'an OpenApi object and a pointer to an anyOf schema with a type constraint',
+      'an anyOf schema with a type constraint',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            anyOf: [
-              { type: ['string', 'number'] },
-              { type: ['boolean', 'string'] },
-            ],
-            type: 'string',
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Constrained',
+        {
+          anyOf: [
+            { type: ['string', 'number'] },
+            { type: ['boolean', 'string'] },
+          ],
+          type: 'string',
+        },
       ],
       new Set(['string']),
     ],
     [
-      'an OpenApi object and a pointer to an empty schema (no type, no composition)',
+      'an empty schema (no type, no composition)',
       [
         {
-          deepResolveReference: (): JsonValue => ({}),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Empty',
+        {},
       ],
       new Set(['array', 'boolean', 'null', 'number', 'object', 'string']),
     ],
     [
-      'an OpenApi object and a pointer to an allOf schema with a boolean true child',
+      'an allOf schema with a boolean true child',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            allOf: [true, { type: 'string' }],
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Combined',
+        { allOf: [true, { type: 'string' }] },
       ],
       new Set(['string']),
     ],
     [
-      'an OpenApi object and a pointer to an allOf schema with a boolean false child',
+      'an allOf schema with a boolean false child',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            allOf: [false, { type: 'string' }],
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Combined',
+        { allOf: [false, { type: 'string' }] },
       ],
       new Set(),
     ],
     [
-      'an OpenApi object and a pointer to a schema with integer type',
+      'a schema with integer type',
       [
         {
-          deepResolveReference: (): JsonValue => ({ type: 'integer' }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/MyInteger',
+        { type: 'integer' },
       ],
       new Set(['integer']),
     ],
     [
-      'an OpenApi object and a pointer to an allOf schema with number and integer',
+      'an allOf schema with number and integer',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            allOf: [{ type: 'number' }, { type: 'integer' }],
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Combined',
+        { allOf: [{ type: 'number' }, { type: 'integer' }] },
       ],
       new Set(['integer']),
     ],
     [
-      'an OpenApi object and a pointer to an allOf schema with integer and constraint-only',
+      'an allOf schema with integer and constraint-only',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            allOf: [{ type: 'integer' }, { minimum: 1 }],
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Combined',
+        { allOf: [{ type: 'integer' }, { minimum: 1 }] },
       ],
       new Set(['integer']),
     ],
     [
-      'an OpenApi object and a pointer to an anyOf schema with number and integer',
+      'an anyOf schema with number and integer',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            anyOf: [{ type: 'number' }, { type: 'integer' }],
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/Union',
+        { anyOf: [{ type: 'number' }, { type: 'integer' }] },
       ],
       new Set(['number']),
     ],
     [
-      'an OpenApi object and a pointer to a schema with type ["number", "integer"]',
+      'a schema with type ["number", "integer"]',
       [
         {
-          deepResolveReference: (): JsonValue => ({
-            type: ['number', 'integer'],
-          }),
+          deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/NumberOrInteger',
+        { type: ['number', 'integer'] },
       ],
       new Set(['number']),
     ],
@@ -292,49 +283,33 @@ describe(inferOpenApiSchemaTypes, () => {
 
   describe.each<[string, Parameters<typeof inferOpenApiSchemaTypes>]>([
     [
-      'an OpenApi object and a pointer to a schema with $dynamicRef',
-      [
-        {
-          deepResolveReference: (): JsonValue => ({
-            $dynamicRef: '#meta',
-          }),
-          resolveReference: (): undefined => undefined,
-        },
-        '#/components/schemas/Dynamic',
-      ],
-    ],
-    [
-      'an OpenApi object and a pointer to a schema with oneOf',
-      [
-        {
-          deepResolveReference: (): JsonValue => ({
-            oneOf: [{ type: 'string' }, { type: 'number' }],
-          }),
-          resolveReference: (): undefined => undefined,
-        },
-        '#/components/schemas/OneOf',
-      ],
-    ],
-    [
-      'an OpenApi object and a pointer to a schema with not',
-      [
-        {
-          deepResolveReference: (): JsonValue => ({
-            not: { type: 'string' },
-          }),
-          resolveReference: (): undefined => undefined,
-        },
-        '#/components/schemas/Not',
-      ],
-    ],
-    [
-      'an OpenApi object and a pointer to a non-existent schema',
+      'a schema with $dynamicRef',
       [
         {
           deepResolveReference: (): undefined => undefined,
           resolveReference: (): undefined => undefined,
         },
-        '#/components/schemas/NonExistent',
+        { $dynamicRef: '#meta' },
+      ],
+    ],
+    [
+      'a schema with oneOf',
+      [
+        {
+          deepResolveReference: (): undefined => undefined,
+          resolveReference: (): undefined => undefined,
+        },
+        { oneOf: [{ type: 'string' }, { type: 'number' }] },
+      ],
+    ],
+    [
+      'a schema with not',
+      [
+        {
+          deepResolveReference: (): undefined => undefined,
+          resolveReference: (): undefined => undefined,
+        },
+        { not: { type: 'string' } },
       ],
     ],
   ])(

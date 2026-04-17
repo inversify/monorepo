@@ -19,20 +19,9 @@ const ALL_JSON_SCHEMA_TYPES: Set<JsonSchemaType> = new Set([
 
 export function inferOpenApiSchemaTypes(
   openApiResolver: OpenApiResolver,
-  reference: string,
+  schema: JsonSchema,
 ): Set<JsonSchemaType> {
-  const schema: JsonValue | undefined =
-    openApiResolver.deepResolveReference(reference);
-
-  if (schema === undefined) {
-    throw new Error(
-      `Unable to resolve JSON pointer "${reference}" in the OpenAPI object`,
-    );
-  }
-
-  return normalizeNumericTypes(
-    inferTypesFromSchema(openApiResolver, schema as JsonSchema),
-  );
+  return normalizeNumericTypes(inferTypesFromSchema(openApiResolver, schema));
 }
 
 function inferTypesFromSchema(
@@ -44,7 +33,17 @@ function inferTypesFromSchema(
   }
 
   if (schema.$ref !== undefined) {
-    return inferOpenApiSchemaTypes(openApiResolver, schema.$ref);
+    const derreferencedSchema: JsonValue | undefined =
+      openApiResolver.deepResolveReference(schema.$ref);
+
+    if (derreferencedSchema === undefined) {
+      return new Set();
+    }
+
+    return inferOpenApiSchemaTypes(
+      openApiResolver,
+      derreferencedSchema as JsonSchema,
+    );
   }
 
   if (schema.$dynamicRef !== undefined) {
@@ -101,6 +100,10 @@ function intersectAll(
   openApiResolver: OpenApiResolver,
   schemas: JsonSchema[],
 ): Set<JsonSchemaType> {
+  if (schemas.length === 0) {
+    return new Set();
+  }
+
   let result: Set<JsonSchemaType> = inferTypesFromSchema(
     openApiResolver,
     schemas[0] as JsonSchema,
@@ -129,7 +132,7 @@ function unionAll(
     }
   }
 
-  return normalizeNumericTypes(result);
+  return result;
 }
 
 function constrainWithType(
@@ -167,7 +170,7 @@ function intersectSets(
     result.add('integer');
   }
 
-  return normalizeNumericTypes(result);
+  return result;
 }
 
 function normalizeNumericTypes(
