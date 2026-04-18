@@ -1,5 +1,12 @@
 # @inversifyjs/http-uwebsockets
 
+## 5.4.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.4.0
+
 ## 5.3.0
 
 ### Patch Changes
