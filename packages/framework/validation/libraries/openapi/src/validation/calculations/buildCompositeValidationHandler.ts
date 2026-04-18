@@ -1,45 +1,27 @@
 import type Ajv from 'ajv';
 
 import { type ValidationInputParam } from '../models/ValidatedDecoratorResult.js';
+import {
+  type validatedInputParamBodyType,
+  type validatedInputParamHeaderType,
+} from '../models/validatedInputParamTypes.js';
 import { type ValidationHandler } from '../models/ValidationHandler.js';
 import { type OpenApiResolver } from '../services/OpenApiResolver.js';
 
-type DiscriminatorValidationHandlerPair<
-  TDiscriminatorValue extends symbol,
-  TOpenApiObject,
-  TValidatedDecoratorResult extends ValidationInputParam & {
-    type: TDiscriminatorValue;
-  },
-  TValidationCacheEntry,
-> = [
-  TDiscriminatorValue,
-  ValidationHandler<
-    TOpenApiObject,
-    TValidatedDecoratorResult,
-    TValidationCacheEntry
-  >,
-];
+type ValidatedInputParamType =
+  | typeof validatedInputParamBodyType
+  | typeof validatedInputParamHeaderType;
 
 export function buildCompositeValidationHandler<
   TOpenApiObject,
   TValidationCacheEntry,
->(
-  discriminatorHandlerPairs: DiscriminatorValidationHandlerPair<
-    symbol,
+>(handlers: {
+  [TKey in ValidatedInputParamType]?: ValidationHandler<
     TOpenApiObject,
-    ValidationInputParam,
+    ValidationInputParam & { type: TKey },
     TValidationCacheEntry
-  >[],
-) {
-  const handlerMap: Map<
-    symbol,
-    ValidationHandler<
-      TOpenApiObject,
-      ValidationInputParam,
-      TValidationCacheEntry
-    >
-  > = new Map(discriminatorHandlerPairs);
-
+  >;
+}) {
   return (
     ajv: Ajv,
     openApiObject: TOpenApiObject,
@@ -61,7 +43,14 @@ export function buildCompositeValidationHandler<
           ValidationInputParam,
           TValidationCacheEntry
         >
-      | undefined = handlerMap.get(discriminatorValue as symbol);
+      | undefined = handlers[discriminatorValue as ValidatedInputParamType] as
+      | ValidationHandler<
+          TOpenApiObject,
+          ValidationInputParam,
+          TValidationCacheEntry
+        >
+      | undefined;
+
     if (handler === undefined) {
       return inputParam;
     }

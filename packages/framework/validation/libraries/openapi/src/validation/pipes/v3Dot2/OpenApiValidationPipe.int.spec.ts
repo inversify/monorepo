@@ -11,10 +11,12 @@ import {
 import {
   BadRequestHttpResponse,
   Controller,
+  Get,
   Post,
 } from '@inversifyjs/http-core';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import {
+  OasParameter,
   OasRequestBody,
   SwaggerUiProvider,
 } from '@inversifyjs/http-open-api/v3Dot2';
@@ -24,6 +26,7 @@ import type express from 'express';
 import { Container, type Newable } from 'inversify';
 
 import { ValidatedBody } from '../../../metadata/decorators/ValidatedBody.js';
+import { ValidatedHeaders } from '../../../metadata/decorators/ValidatedHeaders.js';
 import { OpenApiValidationPipe } from './OpenApiValidationPipe.js';
 
 interface Server {
@@ -401,6 +404,129 @@ describe(OpenApiValidationPipe, () => {
         );
         await expect(response.json()).resolves.toStrictEqual({
           label: 'My Item',
+        });
+      });
+    });
+  });
+
+  describe('having an OpenApiValidationPipe (v3.2) in an HTTP server with validated headers', () => {
+    @Controller('/resources')
+    class ResourceController {
+      @OasParameter({
+        in: 'header',
+        name: 'x-request-id',
+        required: true,
+        schema: { type: 'string' },
+      })
+      @OasParameter({
+        in: 'header',
+        name: 'x-page-size',
+        required: false,
+        schema: { type: 'integer' },
+      })
+      @Get()
+      public async getResources(
+        @ValidatedHeaders() _headers: Record<string, unknown>,
+      ): Promise<{ ok: boolean }> {
+        return { ok: true };
+      }
+    }
+
+    let server: Server;
+
+    beforeAll(async () => {
+      const container: Container = new Container();
+
+      container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+      container.bind(ResourceController).toSelf().inSingletonScope();
+
+      const openApiObject: OpenApi3Dot2Object = {
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.2.0',
+      };
+
+      const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+        api: {
+          openApiObject,
+          path: '/docs',
+        },
+      });
+
+      swaggerProvider.provide(container);
+
+      server = await buildExpressServer(
+        container,
+        [ValidationErrorFilter],
+        [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+      );
+    });
+
+    afterAll(async () => {
+      await server.shutdown();
+    });
+
+    describe('when a GET /resources request is made with valid headers', () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/resources`,
+          {
+            headers: { 'x-request-id': 'abc-123' },
+            method: 'GET',
+          },
+        );
+      });
+
+      it('should return expected Response', async () => {
+        expect(response.status).toBe(200);
+        expect(response.headers.get('content-type')).toStrictEqual(
+          expect.stringContaining('application/json'),
+        );
+        await expect(response.json()).resolves.toStrictEqual({ ok: true });
+      });
+    });
+
+    describe('when a GET /resources request is made without the required header', () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/resources`,
+          {
+            method: 'GET',
+          },
+        );
+      });
+
+      it('should return expected Response', async () => {
+        expect(response.status).toBe(400);
+        await expect(response.json()).resolves.toStrictEqual({
+          message: expect.stringContaining('x-request-id'),
+        });
+      });
+    });
+
+    describe('when a GET /resources request is made with an invalid integer header', () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/resources`,
+          {
+            headers: {
+              'x-page-size': 'not-a-number',
+              'x-request-id': 'abc-123',
+            },
+            method: 'GET',
+          },
+        );
+      });
+
+      it('should return expected Response', async () => {
+        expect(response.status).toBe(400);
+        await expect(response.json()).resolves.toStrictEqual({
+          message: expect.stringContaining('x-page-size'),
         });
       });
     });
