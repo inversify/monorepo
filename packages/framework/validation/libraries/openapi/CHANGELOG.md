@@ -1,5 +1,20 @@
 # @inversifyjs/open-api-validation
 
+## 3.2.0
+
+### Minor Changes
+
+- Added `ValidatedHeaders` decorator for OpenAPI header validation
+- Added header validation support to `OpenApiValidationPipe` (v3.1 and v3.2)
+
+### Patch Changes
+
+- Updated `OpenApiValidationPipe` to handle optional body endpoints
+- Updated dependencies
+  - @inversifyjs/http-core@5.4.0
+  - @inversifyjs/http-open-api@5.4.0
+  - @inversifyjs/validation-common@3.2.0
+
 ## 3.1.0
 
 ### Minor Changes

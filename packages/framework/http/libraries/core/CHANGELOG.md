@@ -1,5 +1,11 @@
 # @inversifyjs/http-core
 
+## 5.4.0
+
+### Minor Changes
+
+- Updated `CustomParameterDecoratorHandlerOptions.getHeaders` with better return type
+
 ## 5.3.0
 
 ### Minor Changes
