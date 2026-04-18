@@ -1,5 +1,10 @@
 import { type ValidateFunction } from 'ajv';
 
+export interface ValidationCacheEntryBody {
+  contentToValidateMap: Map<string | undefined, ValidateFunction>;
+  required: boolean;
+}
+
 export interface ValidationCacheEntryHeader {
   parse: (value: string | string[] | undefined) => unknown;
   required: boolean;
@@ -7,6 +12,6 @@ export interface ValidationCacheEntryHeader {
 }
 
 export interface ValidationCacheEntry {
-  body: Map<string | undefined, ValidateFunction>;
+  body: ValidationCacheEntryBody | undefined;
   headers: Map<string, ValidationCacheEntryHeader> | undefined;
 }

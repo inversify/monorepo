@@ -80,7 +80,7 @@ describe(handleHeaderValidation, () => {
       } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
       const validationCacheEntry: ValidationCacheEntry = {
-        body: new Map(),
+        body: undefined,
         headers: undefined,
       };
 
@@ -150,7 +150,7 @@ describe(handleHeaderValidation, () => {
       } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
       const validationCacheEntry: ValidationCacheEntry = {
-        body: new Map(),
+        body: undefined,
         headers: undefined,
       };
 
@@ -229,7 +229,7 @@ describe(handleHeaderValidation, () => {
       } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
       const validationCacheEntry: ValidationCacheEntry = {
-        body: new Map(),
+        body: undefined,
         headers: undefined,
       };
 
@@ -310,7 +310,7 @@ describe(handleHeaderValidation, () => {
       } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
       const validationCacheEntry: ValidationCacheEntry = {
-        body: new Map(),
+        body: undefined,
         headers: undefined,
       };
 
@@ -370,7 +370,7 @@ describe(handleHeaderValidation, () => {
       } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
       const validationCacheEntry: ValidationCacheEntry = {
-        body: new Map(),
+        body: undefined,
         headers: new Map([
           [
             'x-request-id',
