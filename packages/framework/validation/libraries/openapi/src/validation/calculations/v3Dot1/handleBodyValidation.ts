@@ -143,7 +143,5 @@ export function handleBodyValidation(
     return undefined;
   }
 
-  console.log('### BODY ###', JSON.stringify(inputParam.body));
-
   return handleRequiredBodyValidation(validationCacheEntry.body, inputParam);
 }
