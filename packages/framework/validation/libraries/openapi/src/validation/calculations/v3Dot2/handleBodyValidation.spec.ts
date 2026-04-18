@@ -12,7 +12,6 @@ import {
 vitest.mock(import('@inversifyjs/json-schema-pointer'));
 vitest.mock(import('./getOperationObject.js'));
 vitest.mock(import('./getRequestBodyObject.js'));
-vitest.mock(import('./inferContentType.js'));
 
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import {
@@ -34,7 +33,6 @@ import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { getOperationObject } from './getOperationObject.js';
 import { getRequestBodyObject } from './getRequestBodyObject.js';
 import { handleBodyValidation } from './handleBodyValidation.js';
-import { inferContentType } from './inferContentType.js';
 
 describe(handleBodyValidation, () => {
   let openApiObjectFixture: OpenApi3Dot2Object;
@@ -67,8 +65,13 @@ describe(handleBodyValidation, () => {
       };
       operationObjectFixture =
         Symbol() as unknown as OpenApi3Dot2OperationObject;
-      requestBodyObjectFixture =
-        Symbol() as unknown as OpenApi3Dot2RequestBodyObject;
+      requestBodyObjectFixture = {
+        content: {
+          [contentTypeFixture]: {
+            schema: {},
+          },
+        },
+      } as unknown as OpenApi3Dot2RequestBodyObject;
       escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
     });
 
@@ -89,8 +92,8 @@ describe(handleBodyValidation, () => {
         schemaPointerFixture = `${SCHEMA_ID}#/${escapedPointerFixture}`;
 
         validationCacheEntryFixture = {
-          body: new Map(),
-          headers: new Map(),
+          body: undefined,
+          headers: undefined,
         };
 
         getEntryMock = vitest
@@ -147,10 +150,6 @@ describe(handleBodyValidation, () => {
         );
       });
 
-      it('should not call inferContentType()', () => {
-        expect(inferContentType).not.toHaveBeenCalled();
-      });
-
       it('should call escapeJsonPointerFragments()', () => {
         expect(escapeJsonPointerFragments).toHaveBeenCalledExactlyOnceWith(
           'paths',
@@ -199,8 +198,8 @@ describe(handleBodyValidation, () => {
         } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
         validationCacheEntryFixture = {
-          body: new Map(),
-          headers: new Map(),
+          body: undefined,
+          headers: undefined,
         };
 
         getEntryMock = vitest
@@ -288,8 +287,8 @@ describe(handleBodyValidation, () => {
         } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
         validationCacheEntryFixture = {
-          body: new Map(),
-          headers: new Map(),
+          body: undefined,
+          headers: undefined,
         };
 
         getEntryMock = vitest
@@ -340,7 +339,7 @@ describe(handleBodyValidation, () => {
     let inputParamFixture: BodyValidationInputParam<unknown>;
     let pathFixture: string;
     let methodFixture: string;
-    let inferredContentTypeFixture: string;
+    let contentTypeFixture: string;
     let operationObjectFixture: OpenApi3Dot2OperationObject;
     let requestBodyObjectFixture: OpenApi3Dot2RequestBodyObject;
     let escapedPointerFixture: string;
@@ -348,7 +347,7 @@ describe(handleBodyValidation, () => {
     beforeAll(() => {
       pathFixture = '/users';
       methodFixture = 'post';
-      inferredContentTypeFixture = 'application/json';
+      contentTypeFixture = 'application/json';
       inputParamFixture = {
         body: { name: 'test' },
         contentType: undefined,
@@ -358,9 +357,14 @@ describe(handleBodyValidation, () => {
       };
       operationObjectFixture =
         Symbol() as unknown as OpenApi3Dot2OperationObject;
-      requestBodyObjectFixture =
-        Symbol() as unknown as OpenApi3Dot2RequestBodyObject;
-      escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${inferredContentTypeFixture}/schema`;
+      requestBodyObjectFixture = {
+        content: {
+          [contentTypeFixture]: {
+            schema: {},
+          },
+        },
+      } as unknown as OpenApi3Dot2RequestBodyObject;
+      escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
     });
 
     describe('when called, and getEntry() returns empty entry and validation succeeds', () => {
@@ -382,8 +386,8 @@ describe(handleBodyValidation, () => {
         } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
         validationCacheEntryFixture = {
-          body: new Map(),
-          headers: new Map(),
+          body: undefined,
+          headers: undefined,
         };
 
         getEntryMock = vitest
@@ -396,9 +400,6 @@ describe(handleBodyValidation, () => {
         vitest
           .mocked(getRequestBodyObject)
           .mockReturnValueOnce(requestBodyObjectFixture);
-        vitest
-          .mocked(inferContentType)
-          .mockReturnValueOnce(inferredContentTypeFixture);
         vitest
           .mocked(escapeJsonPointerFragments)
           .mockReturnValueOnce(escapedPointerFixture);
@@ -416,13 +417,6 @@ describe(handleBodyValidation, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call inferContentType()', () => {
-        expect(inferContentType).toHaveBeenCalledExactlyOnceWith(
-          requestBodyObjectFixture,
-          methodFixture,
-        );
-      });
-
       it('should call escapeJsonPointerFragments()', () => {
         expect(escapeJsonPointerFragments).toHaveBeenCalledExactlyOnceWith(
           'paths',
@@ -430,13 +424,101 @@ describe(handleBodyValidation, () => {
           methodFixture,
           'requestBody',
           'content',
-          inferredContentTypeFixture,
+          contentTypeFixture,
           'schema',
         );
       });
 
       it('should return expected result', () => {
         expect(result).toBe(inputParamFixture.body);
+      });
+    });
+  });
+
+  describe('having an inputParam with undefined body and optional request body', () => {
+    let inputParamFixture: BodyValidationInputParam<unknown>;
+    let pathFixture: string;
+    let methodFixture: string;
+    let contentTypeFixture: string;
+    let operationObjectFixture: OpenApi3Dot2OperationObject;
+    let requestBodyObjectFixture: OpenApi3Dot2RequestBodyObject;
+    let escapedPointerFixture: string;
+
+    beforeAll(() => {
+      pathFixture = '/users';
+      methodFixture = 'post';
+      contentTypeFixture = 'application/json';
+      inputParamFixture = {
+        body: undefined,
+        contentType: contentTypeFixture,
+        method: methodFixture,
+        path: pathFixture,
+        type: Symbol() as unknown as BodyValidationInputParam<unknown>['type'],
+      };
+      operationObjectFixture =
+        Symbol() as unknown as OpenApi3Dot2OperationObject;
+      requestBodyObjectFixture = {
+        content: {
+          [contentTypeFixture]: {
+            schema: {},
+          },
+        },
+      } as unknown as OpenApi3Dot2RequestBodyObject;
+      escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
+    });
+
+    describe('when called, and getEntry() returns empty entry', () => {
+      let ajvMock: Mocked<Ajv>;
+      let getEntryMock: Mock<
+        (path: string, method: string) => ValidationCacheEntry
+      >;
+      let validationCacheEntryFixture: ValidationCacheEntry;
+      let result: unknown;
+
+      beforeAll(() => {
+        const validateMock: ValidateFunction = Object.assign(vitest.fn(), {
+          errors: null,
+          schema: {},
+        }) as unknown as ValidateFunction;
+
+        ajvMock = {
+          getSchema: vitest.fn().mockReturnValueOnce(validateMock),
+        } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
+
+        validationCacheEntryFixture = {
+          body: undefined,
+          headers: undefined,
+        };
+
+        getEntryMock = vitest
+          .fn<(path: string, method: string) => ValidationCacheEntry>()
+          .mockReturnValueOnce(validationCacheEntryFixture);
+
+        vitest
+          .mocked(getOperationObject)
+          .mockReturnValueOnce(operationObjectFixture);
+        vitest
+          .mocked(getRequestBodyObject)
+          .mockReturnValueOnce(requestBodyObjectFixture);
+        vitest
+          .mocked(escapeJsonPointerFragments)
+          .mockReturnValueOnce(escapedPointerFixture);
+
+        result = handleBodyValidation(
+          ajvMock,
+          openApiObjectFixture,
+          openApiResolverFixture,
+          inputParamFixture,
+          getEntryMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
       });
     });
   });

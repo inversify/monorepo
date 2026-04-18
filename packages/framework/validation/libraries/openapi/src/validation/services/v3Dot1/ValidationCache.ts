@@ -4,7 +4,7 @@ import { ValidationCache as BaseValidationCache } from '../ValidationCache.js';
 export class ValidationCache extends BaseValidationCache<ValidationCacheEntry> {
   protected _createCacheEntry(): ValidationCacheEntry {
     return {
-      body: new Map(),
+      body: undefined,
       headers: undefined,
     };
   }
