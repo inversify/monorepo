@@ -17,7 +17,7 @@
     "@types/express": "5.0.6",
     "@types/node": "24.12.2",
     "@vitest/coverage-v8": "4.1.4",
-    "eslint": "10.2.0",
+    "eslint": "10.2.1",
     "fastify": "5.8.5",
     "glob": "13.0.6",
     "inversify": "8.1.0",
