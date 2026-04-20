@@ -12,13 +12,13 @@ import {
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
 
-import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 
 export function getRequestBodyObject(
   openApiResolver: OpenApiResolver,
   operationObject: OpenApi3Dot2OperationObject,
-  inputParam: BodyValidationInputParam<unknown>,
+  method: string,
+  route: string,
 ): OpenApi3Dot2RequestBodyObject {
   const requestBodyObject:
     | OpenApi3Dot2RequestBodyObject
@@ -28,7 +28,7 @@ export function getRequestBodyObject(
   if (requestBodyObject === undefined) {
     throw new InversifyValidationError(
       InversifyValidationErrorKind.validationFailed,
-      `No requestBody found for method ${inputParam.method} for path ${inputParam.path}`,
+      `No requestBody found for ${method.toUpperCase()} ${route}`,
     );
   }
 
@@ -46,7 +46,7 @@ export function getRequestBodyObject(
     if (resolvedRef === undefined) {
       throw new InversifyValidationError(
         InversifyValidationErrorKind.validationFailed,
-        `Could not resolve $ref pointer ${ref}`,
+        `Could not resolve $ref pointer ${ref} for ${method.toUpperCase()} ${route}`,
       );
     }
 
@@ -57,7 +57,7 @@ export function getRequestBodyObject(
     ) {
       throw new InversifyValidationError(
         InversifyValidationErrorKind.validationFailed,
-        `Resolved $ref pointer ${ref} is not a valid object`,
+        `Resolved $ref pointer ${ref} is not a valid request body object for ${method.toUpperCase()} ${route}`,
       );
     }
 

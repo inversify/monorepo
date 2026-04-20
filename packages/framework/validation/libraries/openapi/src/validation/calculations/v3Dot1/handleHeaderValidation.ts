@@ -7,6 +7,7 @@ import type Ajv from 'ajv';
 import { type ErrorObject, type ValidateFunction } from 'ajv';
 
 import { type HeaderValidationInputParam } from '../../models/HeaderValidationInputParam.js';
+import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
 import { SCHEMA_ID } from '../../models/v3Dot1/schemaId.js';
 import {
   type ValidationCacheEntry,
@@ -23,18 +24,14 @@ function getHeaderParameterEntryMap(
   ajv: Ajv,
   openApiObject: OpenApi3Dot1Object,
   openApiResolver: OpenApiResolver,
-  inputParam: HeaderValidationInputParam,
+  method: string,
+  route: string,
 ): Map<string, ValidationCacheEntryHeader> {
   const headerParameterEntryMap: Map<string, ValidationCacheEntryHeader> =
     new Map();
 
   const headerParams: Map<string, HeaderParameterEntry> =
-    getHeaderParameterObjects(
-      openApiObject,
-      openApiResolver,
-      inputParam.method,
-      inputParam.path,
-    );
+    getHeaderParameterObjects(openApiObject, openApiResolver, method, route);
 
   for (const [headerName, headerParam] of headerParams) {
     const parse: (value: string | string[] | undefined) => unknown =
@@ -69,12 +66,24 @@ function getHeaderParameterEntryMap(
 export function handleHeaderValidation(
   ajv: Ajv,
   openApiObject: OpenApi3Dot1Object,
-  openApiResolver: OpenApiResolver,
+  validationContext: OpenApiValidationContext,
   inputParam: HeaderValidationInputParam,
   getEntry: (path: string, method: string) => ValidationCacheEntry,
 ): unknown {
-  const validationCacheEntry: ValidationCacheEntry = getEntry(
+  const route: string | undefined = validationContext.router.findRoute(
+    inputParam.method,
     inputParam.path,
+  );
+
+  if (route === undefined) {
+    throw new InversifyValidationError(
+      InversifyValidationErrorKind.validationFailed,
+      `Unable to find route for operation: ${inputParam.method.toUpperCase()} ${inputParam.path}`,
+    );
+  }
+
+  const validationCacheEntry: ValidationCacheEntry = getEntry(
+    route,
     inputParam.method,
   );
 
@@ -82,8 +91,9 @@ export function handleHeaderValidation(
     validationCacheEntry.headers = getHeaderParameterEntryMap(
       ajv,
       openApiObject,
-      openApiResolver,
-      inputParam,
+      validationContext.resolver,
+      inputParam.method,
+      route,
     );
   }
 

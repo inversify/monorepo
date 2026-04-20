@@ -21,6 +21,7 @@ import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from '../../../metadata/ac
 import { type ControllerOpenApiMetadata } from '../../../metadata/models/v3Dot1/ControllerOpenApiMetadata.js';
 import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/controllerOpenApiMetadataReflectKey.js';
 import { mergeOpenApiTypeSchema } from '../../actions/v3Dot1/mergeOpenApiTypeSchema.js';
+import { tryBuildOperationFromPath } from '../../calculations/buildOperationFromPath.js';
 import { buildSwaggerUiController } from '../../calculations/buildSwaggerUiController.js';
 import { type BaseSwaggerUiController } from '../../controllers/BaseSwagggerUiController.js';
 import { type SwaggerUiProviderOptions } from '../../models/v3Dot1/SwaggerUiProviderOptions.js';
@@ -236,29 +237,34 @@ export class SwaggerUiProvider {
       );
 
     if (operationObject !== undefined) {
-      const path: string = buildNormalizedPath(
-        `${controllerMetadata.path}/${methodMetadata.path}`,
+      const path: string | undefined = tryBuildOperationFromPath(
+        buildNormalizedPath(
+          `${controllerMetadata.path}/${methodMetadata.path}`,
+        ),
       );
 
-      const openApi3Dot1PathItemObject: OpenApi3Dot1PathItemObject =
-        this.#buildOrGetPathItemObject(pathToPathItemObjectMap, path);
+      if (path !== undefined) {
+        const openApi3Dot1PathItemObject: OpenApi3Dot1PathItemObject =
+          this.#buildOrGetPathItemObject(pathToPathItemObjectMap, path);
 
-      if (controllerOpenApiMetadata.servers !== undefined) {
-        openApi3Dot1PathItemObject.servers = [
-          ...controllerOpenApiMetadata.servers,
-        ];
+        if (controllerOpenApiMetadata.servers !== undefined) {
+          openApi3Dot1PathItemObject.servers = [
+            ...controllerOpenApiMetadata.servers,
+          ];
+        }
+
+        if (controllerOpenApiMetadata.summary !== undefined) {
+          openApi3Dot1PathItemObject.summary =
+            controllerOpenApiMetadata.summary;
+        }
+
+        this.#setPathItemObjectOperations(
+          openApi3Dot1PathItemObject,
+          methodMetadata.requestMethodType,
+          operationObject,
+          path,
+        );
       }
-
-      if (controllerOpenApiMetadata.summary !== undefined) {
-        openApi3Dot1PathItemObject.summary = controllerOpenApiMetadata.summary;
-      }
-
-      this.#setPathItemObjectOperations(
-        openApi3Dot1PathItemObject,
-        methodMetadata.requestMethodType,
-        operationObject,
-        path,
-      );
     }
   }
 

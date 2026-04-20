@@ -34,6 +34,7 @@ import { Container, type Newable } from 'inversify';
 
 import { ValidatedBody } from '../../../metadata/decorators/ValidatedBody.js';
 import { ValidatedHeaders } from '../../../metadata/decorators/ValidatedHeaders.js';
+import { ValidatedParams } from '../../../metadata/decorators/ValidatedParams.js';
 import { OpenApiValidationPipe } from './OpenApiValidationPipe.js';
 
 interface Server {
@@ -812,6 +813,98 @@ describe(OpenApiValidationPipe, () => {
             expect(response.status).toBe(400);
             await expect(response.json()).resolves.toStrictEqual({
               message: expect.stringContaining('x-page-size'),
+            });
+          });
+        });
+      });
+
+      describe('having an OpenApiValidationPipe (v3.1) in an HTTP server with validated params', () => {
+        @Controller('/users')
+        class UserController {
+          @OasParameter({
+            in: 'path',
+            name: 'userId',
+            required: true,
+            schema: { format: 'uuid', type: 'string' },
+          })
+          @Get('/:userId')
+          public async getUser(
+            @ValidatedParams() _params: Record<string, unknown>,
+          ): Promise<{ ok: boolean }> {
+            return { ok: true };
+          }
+        }
+
+        let server: Server;
+
+        beforeAll(async () => {
+          const container: Container = new Container();
+
+          container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+          container.bind(UserController).toSelf().inSingletonScope();
+
+          const openApiObject: OpenApi3Dot1Object = {
+            info: { title: 'Test API', version: '1.0.0' },
+            openapi: '3.1.0',
+          };
+
+          const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+            api: {
+              openApiObject,
+              path: '/docs',
+            },
+          });
+
+          swaggerProvider.provide(container);
+
+          server = await buildServer(
+            container,
+            [ValidationErrorFilter],
+            [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+          );
+        });
+
+        afterAll(async () => {
+          await server.shutdown();
+        });
+
+        describe('when a GET /users/:userId request is made with a valid uuid param', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/users/550e8400-e29b-41d4-a716-446655440000`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(200);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+            await expect(response.json()).resolves.toStrictEqual({ ok: true });
+          });
+        });
+
+        describe('when a GET /users/:userId request is made with an invalid uuid param', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/users/not-a-uuid`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            await expect(response.json()).resolves.toStrictEqual({
+              message: expect.stringContaining('userId'),
             });
           });
         });
