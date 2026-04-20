@@ -40,7 +40,7 @@
  * 6. If all segments are processed and a node with a path is found, the
  *    path is matched.
  *
- * Further optimizations can be made to avoid unnecesary string slice
+ * Further optimizations can be made to avoid unnecessary string slice
  * operations, but so far it is good enough for our use case.
  */
 export interface RouterNode {
