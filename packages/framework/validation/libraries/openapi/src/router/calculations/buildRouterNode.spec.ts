@@ -127,12 +127,12 @@ describe(buildRouterNode, () => {
         result = buildRouterNode(['/users/{userId}', '/users/me']);
       });
 
-      it('should have both static and wildcard children with first registered winning', () => {
+      it('should prioritize the static route while keeping wildcard matching', () => {
         const usersNode: RouterNode | undefined =
           result.children?.['']?.children?.['users'];
 
         expect(usersNode).toBeDefined();
-        expect(usersNode?.children?.['me']?.path).toBe('/users/{userId}');
+        expect(usersNode?.children?.['me']?.path).toBe('/users/me');
         expect(usersNode?.children?.[wildcardKey]?.path).toBe(
           '/users/{userId}',
         );
@@ -148,7 +148,7 @@ describe(buildRouterNode, () => {
         result = buildRouterNode(['/users/me', '/users/{userId}']);
       });
 
-      it('should have both static and wildcard children with first registered winning', () => {
+      it('should prioritize the static route while keeping wildcard matching', () => {
         const usersNode: RouterNode | undefined =
           result.children?.['']?.children?.['users'];
 

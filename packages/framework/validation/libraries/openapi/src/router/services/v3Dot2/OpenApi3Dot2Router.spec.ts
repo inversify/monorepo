@@ -132,8 +132,8 @@ describe(OpenApi3Dot2Router, () => {
           result = router.findRoute('get', '/users/me');
         });
 
-        it('should return first registered route', () => {
-          expect(result).toBe('/users/{userId}');
+        it('should return the concrete route', () => {
+          expect(result).toBe('/users/me');
         });
       });
 

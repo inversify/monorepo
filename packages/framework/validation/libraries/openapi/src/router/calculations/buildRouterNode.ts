@@ -5,10 +5,10 @@ import { isPathParam } from './isPathParam.js';
 function populateAuxiliaryNode(
   node: RouterNode,
   path: string,
-  pathSegments: string[],
+  pathSegments: (string | symbol)[],
   index: number,
 ): void {
-  const segment: string | undefined = pathSegments[index];
+  const segment: string | symbol | undefined = pathSegments[index];
 
   if (segment === undefined) {
     if (node.path === undefined) {
@@ -22,32 +22,23 @@ function populateAuxiliaryNode(
     node.children = {};
   }
 
-  const nextSegmentProperty: string | symbol = isPathParam(segment)
-    ? wildcardKey
-    : segment;
-
-  if (node.children[nextSegmentProperty] === undefined) {
-    node.children[nextSegmentProperty] = {
+  if (node.children[segment] === undefined) {
+    node.children[segment] = {
       children: undefined,
       path: undefined,
     };
   }
 
-  populateAuxiliaryNode(
-    node.children[nextSegmentProperty],
-    path,
-    pathSegments,
-    index + 1,
-  );
+  populateAuxiliaryNode(node.children[segment], path, pathSegments, index + 1);
 }
 
 function populateRouterNode(
   routerAndAuxiliaryNodePairList: [RouterNode, RouterNode][],
   path: string,
-  pathSegments: string[],
+  pathSegments: (string | symbol)[],
   index: number,
 ): void {
-  const segment: string | undefined = pathSegments[index];
+  const segment: string | symbol | undefined = pathSegments[index];
 
   if (segment === undefined) {
     // We reach the end of the path segments, so we can populate the router nodes
@@ -67,7 +58,7 @@ function populateRouterNode(
   for (const [routerNode, auxiliaryNode] of routerAndAuxiliaryNodePairList) {
     let nextSegmentProperties: (string | symbol)[];
 
-    if (isPathParam(segment)) {
+    if (segment === wildcardKey) {
       nextSegmentProperties =
         auxiliaryNode.children === undefined
           ? []
@@ -111,9 +102,66 @@ function populateRouterNode(
   );
 }
 
+/**
+ * Sorts path segments to keep path priority as stated in OpenAPI 3.X specifications.
+ * @param firstSegments First segments
+ * @param secondSegments Second segments
+ * @returns Numeric value indicating the order of the segments for sorting purposes.
+ */
+function sortPathSegments(
+  firstSegments: (string | symbol)[],
+  secondSegments: (string | symbol)[],
+): number {
+  const minLength: number = Math.min(
+    firstSegments.length,
+    secondSegments.length,
+  );
+
+  for (let index: number = 0; index < minLength; ++index) {
+    const firstSegment: string | symbol = firstSegments[index] as
+      | string
+      | symbol;
+    const secondSegment: string | symbol = secondSegments[index] as
+      | string
+      | symbol;
+
+    if (typeof firstSegment === 'string') {
+      if (typeof secondSegment === 'string') {
+        if (firstSegment < secondSegment) {
+          return -1;
+        } else if (firstSegment > secondSegment) {
+          return 1;
+        }
+      } else {
+        return -1;
+      }
+    } else {
+      if (typeof secondSegment === 'string') {
+        return 1;
+      }
+    }
+  }
+
+  return firstSegments.length - secondSegments.length;
+}
+
 export function buildRouterNode(paths: string[]): RouterNode {
-  const pathAndSegmentsList: [string, string[]][] = paths.map(
-    (path: string) => [path, path.split('/')],
+  const pathAndSegmentsList: [string, (string | symbol)[]][] = paths.map(
+    (path: string) => [
+      path,
+      path
+        .split('/')
+        .map((segment: string) =>
+          isPathParam(segment) ? wildcardKey : segment,
+        ),
+    ],
+  );
+
+  pathAndSegmentsList.sort(
+    (
+      [, firstSegments]: [string, (string | symbol)[]],
+      [, secondSegments]: [string, (string | symbol)[]],
+    ) => sortPathSegments(firstSegments, secondSegments),
   );
 
   // Useful data structure to efficiently build the router tree, but not ideal for runtime usage
