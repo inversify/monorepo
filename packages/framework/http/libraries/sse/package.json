@@ -9,7 +9,7 @@
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
-    "@hono/node-server": "1.19.14",
+    "@hono/node-server": "2.0.0",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-express-v4": "workspace:*",
