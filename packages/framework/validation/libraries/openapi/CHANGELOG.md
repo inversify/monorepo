@@ -1,5 +1,19 @@
 # @inversifyjs/open-api-validation
 
+## 3.3.0
+
+### Minor Changes
+
+- Updated `OpenApiValidationPipe` to handle param validation
+
+### Patch Changes
+
+- Updated `OpenApiValidationPipe` to properly handle param related operations
+- Updated dependencies
+  - @inversifyjs/http-open-api@5.4.1
+  - @inversifyjs/validation-common@3.3.0
+  - @inversifyjs/http-core@5.4.1
+
 ## 3.2.0
 
 ### Minor Changes
