@@ -150,4 +150,36 @@ describe(OpenApi3Dot1Router, () => {
       });
     });
   });
+
+  describe('having an OpenAPI object with a root path', () => {
+    let router: OpenApi3Dot1Router;
+
+    beforeAll(() => {
+      const openApiObject: OpenApi3Dot1Object = {
+        info: { title: 'Test', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/': {
+            get: { responses: {} },
+          },
+        },
+      };
+
+      router = new OpenApi3Dot1Router(openApiObject);
+    });
+
+    describe('.findRoute', () => {
+      describe('when called with /', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = router.findRoute('get', '/');
+        });
+
+        it('should return the root route', () => {
+          expect(result).toBe('/');
+        });
+      });
+    });
+  });
 });
