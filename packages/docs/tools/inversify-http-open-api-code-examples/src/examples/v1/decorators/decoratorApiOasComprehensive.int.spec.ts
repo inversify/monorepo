@@ -42,7 +42,7 @@ describe.each<[(container: Container) => Promise<Server>]>([
       // Check that the OpenAPI spec was generated successfully
       expect(docsSpecResponseBody.paths).toBeDefined();
       expect(docsSpecResponseBody.paths?.['/products']).toBeDefined();
-      expect(docsSpecResponseBody.paths?.['/products/:id']).toBeDefined();
+      expect(docsSpecResponseBody.paths?.['/products/{id}']).toBeDefined();
       expect(docsSpecResponseBody.paths?.['/products/legacy']).toBeDefined();
 
       // Check that schemas were generated

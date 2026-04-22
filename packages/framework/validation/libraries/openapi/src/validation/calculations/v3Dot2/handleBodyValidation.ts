@@ -12,6 +12,7 @@ import type Ajv from 'ajv';
 import { type ErrorObject, type ValidateFunction } from 'ajv';
 
 import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
+import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
 import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
 import {
   type ValidationCacheEntry,
@@ -25,16 +26,17 @@ function getValidationCacheEntryBody(
   ajv: Ajv,
   openApiObject: OpenApi3Dot2Object,
   openApiResolver: OpenApiResolver,
-  inputParam: BodyValidationInputParam<unknown>,
+  method: string,
+  route: string,
 ): ValidationCacheEntryBody {
   const operationObject: OpenApi3Dot2OperationObject = getOperationObject(
     openApiObject,
-    inputParam.method,
-    inputParam.path,
+    method,
+    route,
   );
 
   const openApi3Dot2RequestBodyObject: OpenApi3Dot2RequestBodyObject =
-    getRequestBodyObject(openApiResolver, operationObject, inputParam);
+    getRequestBodyObject(openApiResolver, operationObject, method, route);
 
   const required: boolean = openApi3Dot2RequestBodyObject.required ?? false;
 
@@ -48,8 +50,8 @@ function getValidationCacheEntryBody(
   for (const contentType of contentTypes) {
     const schemaPointer: string = `${SCHEMA_ID}#/${escapeJsonPointerFragments(
       'paths',
-      inputParam.path,
-      inputParam.method,
+      route,
+      method,
       'requestBody',
       'content',
       contentType,
@@ -86,6 +88,7 @@ function getValidationCacheEntryBody(
 function handleRequiredBodyValidation(
   validationCacheEntryBody: ValidationCacheEntryBody,
   inputParam: BodyValidationInputParam<unknown>,
+  route: string,
 ): unknown {
   const validate: ValidateFunction | undefined =
     validationCacheEntryBody.contentToValidateMap.get(inputParam.contentType);
@@ -93,7 +96,7 @@ function handleRequiredBodyValidation(
   if (validate === undefined) {
     throw new InversifyValidationError(
       InversifyValidationErrorKind.validationFailed,
-      `Unable to find schema for operation: ${inputParam.method.toUpperCase()} ${inputParam.path} with content type: ${inputParam.contentType ?? '-'}`,
+      `Unable to find schema for operation: ${inputParam.method.toUpperCase()} ${route} with content type: ${inputParam.contentType ?? '-'}`,
     );
   }
 
@@ -117,12 +120,24 @@ function handleRequiredBodyValidation(
 export function handleBodyValidation(
   ajv: Ajv,
   openApiObject: OpenApi3Dot2Object,
-  openApiResolver: OpenApiResolver,
+  validationContext: OpenApiValidationContext,
   inputParam: BodyValidationInputParam<unknown>,
   getEntry: (path: string, method: string) => ValidationCacheEntry,
 ): unknown {
-  const validationCacheEntry: ValidationCacheEntry = getEntry(
+  const route: string | undefined = validationContext.router.findRoute(
+    inputParam.method,
     inputParam.path,
+  );
+
+  if (route === undefined) {
+    throw new InversifyValidationError(
+      InversifyValidationErrorKind.validationFailed,
+      `Unable to find route for operation: ${inputParam.method.toUpperCase()} ${inputParam.path}`,
+    );
+  }
+
+  const validationCacheEntry: ValidationCacheEntry = getEntry(
+    route,
     inputParam.method,
   );
 
@@ -130,18 +145,27 @@ export function handleBodyValidation(
     validationCacheEntry.body = getValidationCacheEntryBody(
       ajv,
       openApiObject,
-      openApiResolver,
-      inputParam,
+      validationContext.resolver,
+      inputParam.method,
+      route,
     );
   }
 
   if (validationCacheEntry.body.required) {
-    return handleRequiredBodyValidation(validationCacheEntry.body, inputParam);
+    return handleRequiredBodyValidation(
+      validationCacheEntry.body,
+      inputParam,
+      route,
+    );
   }
 
   if (inputParam.body === undefined || inputParam.body === '') {
     return undefined;
   }
 
-  return handleRequiredBodyValidation(validationCacheEntry.body, inputParam);
+  return handleRequiredBodyValidation(
+    validationCacheEntry.body,
+    inputParam,
+    route,
+  );
 }

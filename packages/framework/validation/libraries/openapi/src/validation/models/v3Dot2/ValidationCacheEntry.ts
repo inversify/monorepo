@@ -11,7 +11,13 @@ export interface ValidationCacheEntryHeader {
   validate: ValidateFunction;
 }
 
+export interface ValidationCacheEntryParam {
+  parse: (value: string | string[] | undefined) => unknown;
+  validate: ValidateFunction;
+}
+
 export interface ValidationCacheEntry {
   body: ValidationCacheEntryBody | undefined;
   headers: Map<string, ValidationCacheEntryHeader> | undefined;
+  params: Map<string, ValidationCacheEntryParam> | undefined;
 }

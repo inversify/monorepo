@@ -10,9 +10,9 @@ import {
 
 import type Ajv from 'ajv';
 
+import { type OpenApiValidationContext } from '../models/OpenApiValidationContext.js';
 import { type ValidationInputParam } from '../models/ValidatedDecoratorResult.js';
 import { type ValidationHandler } from '../models/ValidationHandler.js';
-import { type OpenApiResolver } from '../services/OpenApiResolver.js';
 import { buildCompositeValidationHandler } from './buildCompositeValidationHandler.js';
 
 describe(buildCompositeValidationHandler, () => {
@@ -30,7 +30,7 @@ describe(buildCompositeValidationHandler, () => {
         result = buildCompositeValidationHandler({})(
           Symbol() as unknown as Ajv,
           Symbol(),
-          Symbol() as unknown as OpenApiResolver,
+          Symbol() as unknown as OpenApiValidationContext,
           inputParam,
           vitest.fn(),
         );
@@ -56,7 +56,7 @@ describe(buildCompositeValidationHandler, () => {
         result = buildCompositeValidationHandler({})(
           Symbol() as unknown as Ajv,
           Symbol(),
-          Symbol() as unknown as OpenApiResolver,
+          Symbol() as unknown as OpenApiValidationContext,
           inputParam,
           vitest.fn(),
         );
@@ -82,7 +82,7 @@ describe(buildCompositeValidationHandler, () => {
         result = buildCompositeValidationHandler({})(
           Symbol() as unknown as Ajv,
           Symbol(),
-          Symbol() as unknown as OpenApiResolver,
+          Symbol() as unknown as OpenApiValidationContext,
           inputParam,
           vitest.fn(),
         );
@@ -109,7 +109,7 @@ describe(buildCompositeValidationHandler, () => {
     let getEntryMock: Mock;
     let inputParam: unknown;
     let openApiObjectFixture: unknown;
-    let openApiResolverFixture: OpenApiResolver;
+    let openApiValidationContextFixture: OpenApiValidationContext;
 
     beforeAll(() => {
       discriminatorValueFixture = Symbol();
@@ -121,7 +121,8 @@ describe(buildCompositeValidationHandler, () => {
         type: discriminatorValueFixture,
       };
       openApiObjectFixture = Symbol();
-      openApiResolverFixture = Symbol() as unknown as OpenApiResolver;
+      openApiValidationContextFixture =
+        Symbol() as unknown as OpenApiValidationContext;
     });
 
     describe('when called', () => {
@@ -139,7 +140,7 @@ describe(buildCompositeValidationHandler, () => {
         })(
           ajvFixture,
           openApiObjectFixture,
-          openApiResolverFixture,
+          openApiValidationContextFixture,
           inputParam,
           getEntryMock,
         );
@@ -153,7 +154,7 @@ describe(buildCompositeValidationHandler, () => {
         expect(handlerMock).toHaveBeenCalledExactlyOnceWith(
           ajvFixture,
           openApiObjectFixture,
-          openApiResolverFixture,
+          openApiValidationContextFixture,
           inputParam,
           getEntryMock,
         );

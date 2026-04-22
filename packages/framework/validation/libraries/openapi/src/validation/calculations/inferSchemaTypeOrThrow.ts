@@ -31,7 +31,7 @@ export function inferSchemaTypeOrThrow(
   ) {
     throw new InversifyValidationError(
       InversifyValidationErrorKind.invalidConfiguration,
-      `Unable to determine header parameter "${schemaRef}" type: expected exactly 1 type but found "${[...typesSet].join(', ')}"`,
+      `Unable to determine parameter "${schemaRef}" type: expected exactly 1 type but found "${[...typesSet].join(', ')}"`,
     );
   }
 

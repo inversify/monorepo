@@ -20,7 +20,9 @@ import {
 import type Ajv from 'ajv';
 import { type ValidateFunction } from 'ajv';
 
+import { type OpenApiRouter } from '../../../router/services/OpenApiRouter.js';
 import { type HeaderValidationInputParam } from '../../models/HeaderValidationInputParam.js';
+import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { buildHeaderParse } from '../buildHeaderParse.js';
@@ -32,11 +34,20 @@ import { handleHeaderValidation } from './handleHeaderValidation.js';
 
 describe(handleHeaderValidation, () => {
   let openApiObjectFixture: OpenApi3Dot2Object;
+  let validationContextFixture: OpenApiValidationContext;
   let openApiResolverFixture: OpenApiResolver;
+  let openApiRouterMock: OpenApiRouter;
 
   beforeAll(() => {
     openApiObjectFixture = Symbol() as unknown as OpenApi3Dot2Object;
     openApiResolverFixture = Symbol() as unknown as OpenApiResolver;
+    openApiRouterMock = {
+      findRoute: vitest.fn(),
+    };
+    validationContextFixture = {
+      resolver: openApiResolverFixture,
+      router: openApiRouterMock,
+    };
   });
 
   afterAll(() => {
@@ -82,6 +93,7 @@ describe(handleHeaderValidation, () => {
       const validationCacheEntry: ValidationCacheEntry = {
         body: undefined,
         headers: undefined,
+        params: undefined,
       };
 
       const getEntryMock: Mock<
@@ -95,10 +107,14 @@ describe(handleHeaderValidation, () => {
         type: Symbol() as unknown as HeaderValidationInputParam['type'],
       };
 
+      vitest
+        .mocked(openApiRouterMock.findRoute)
+        .mockReturnValueOnce(inputParam.path);
+
       result = handleHeaderValidation(
         ajvMock,
         openApiObjectFixture,
-        openApiResolverFixture,
+        validationContextFixture,
         inputParam,
         getEntryMock,
       );
@@ -152,6 +168,7 @@ describe(handleHeaderValidation, () => {
       const validationCacheEntry: ValidationCacheEntry = {
         body: undefined,
         headers: undefined,
+        params: undefined,
       };
 
       const getEntryMock: Mock<
@@ -165,11 +182,15 @@ describe(handleHeaderValidation, () => {
         type: Symbol() as unknown as HeaderValidationInputParam['type'],
       };
 
+      vitest
+        .mocked(openApiRouterMock.findRoute)
+        .mockReturnValueOnce(inputParam.path);
+
       try {
         handleHeaderValidation(
           ajvMock,
           openApiObjectFixture,
-          openApiResolverFixture,
+          validationContextFixture,
           inputParam,
           getEntryMock,
         );
@@ -231,6 +252,7 @@ describe(handleHeaderValidation, () => {
       const validationCacheEntry: ValidationCacheEntry = {
         body: undefined,
         headers: undefined,
+        params: undefined,
       };
 
       const getEntryMock: Mock<
@@ -244,10 +266,14 @@ describe(handleHeaderValidation, () => {
         type: Symbol() as unknown as HeaderValidationInputParam['type'],
       };
 
+      vitest
+        .mocked(openApiRouterMock.findRoute)
+        .mockReturnValueOnce(inputParam.path);
+
       result = handleHeaderValidation(
         ajvMock,
         openApiObjectFixture,
-        openApiResolverFixture,
+        validationContextFixture,
         inputParam,
         getEntryMock,
       );
@@ -312,6 +338,7 @@ describe(handleHeaderValidation, () => {
       const validationCacheEntry: ValidationCacheEntry = {
         body: undefined,
         headers: undefined,
+        params: undefined,
       };
 
       const getEntryMock: Mock<
@@ -325,11 +352,15 @@ describe(handleHeaderValidation, () => {
         type: Symbol() as unknown as HeaderValidationInputParam['type'],
       };
 
+      vitest
+        .mocked(openApiRouterMock.findRoute)
+        .mockReturnValueOnce(inputParam.path);
+
       try {
         handleHeaderValidation(
           ajvMock,
           openApiObjectFixture,
-          openApiResolverFixture,
+          validationContextFixture,
           inputParam,
           getEntryMock,
         );
@@ -381,6 +412,7 @@ describe(handleHeaderValidation, () => {
             },
           ],
         ]),
+        params: undefined,
       };
 
       const getEntryMock: Mock<
@@ -394,10 +426,14 @@ describe(handleHeaderValidation, () => {
         type: Symbol() as unknown as HeaderValidationInputParam['type'],
       };
 
+      vitest
+        .mocked(openApiRouterMock.findRoute)
+        .mockReturnValueOnce(inputParam.path);
+
       result = handleHeaderValidation(
         ajvMock,
         openApiObjectFixture,
-        openApiResolverFixture,
+        validationContextFixture,
         inputParam,
         getEntryMock,
       );
