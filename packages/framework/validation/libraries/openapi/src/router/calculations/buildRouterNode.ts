@@ -240,21 +240,32 @@ function populateRouterNode(
   );
 }
 
-const PARAM_SEGMENT_REGEXP: RegExp = /\{[^{]+\}/g;
+const PARAM_SEGMENT_REGEXP: RegExp = /\{[^{}]+\}/;
+
+function escapeRegExp(literal: string): string {
+  return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 function pathSegmentToSegmentOrConstraint(segment: string): string | RegExp {
-  if (PARAM_SEGMENT_REGEXP.test(segment)) {
-    return new RegExp(segment.replaceAll(PARAM_SEGMENT_REGEXP, '.+'));
+  if (!segment.includes('{')) {
+    return segment;
   }
 
-  return segment;
+  const pattern: string = segment
+    .split(PARAM_SEGMENT_REGEXP)
+    .map(escapeRegExp)
+    .join('.+');
+
+  return new RegExp(`^${pattern}$`);
 }
 
 export function buildRouterNode(paths: string[]): RouterNode {
   const pathAndSegmentsOrConstraints: [string, (string | RegExp)[]][] =
     paths.map((path: string) => [
       path,
-      path.split('/').map(pathSegmentToSegmentOrConstraint),
+      (path === '/' ? [''] : path.split('/')).map(
+        pathSegmentToSegmentOrConstraint,
+      ),
     ]);
 
   pathAndSegmentsOrConstraints.sort(

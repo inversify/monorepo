@@ -57,6 +57,36 @@ export function sortOpenApiPathTemplates(
     );
   }
 
+  if (firstPathParamStartIndex !== -1) {
+    const firstLiteralSlice: string = firstPathTemplate.slice(
+      currentFirstPathIndex,
+      firstPathParamStartIndex,
+    );
+    const secondLiteralSlice: string = secondPathTemplate.slice(
+      currentSecondPathIndex,
+      currentSecondPathIndex + firstLiteralSlice.length,
+    );
+
+    if (firstLiteralSlice === secondLiteralSlice) {
+      return 1;
+    }
+  }
+
+  if (secondPathParamStartIndex !== -1) {
+    const secondLiteralSlice: string = secondPathTemplate.slice(
+      currentSecondPathIndex,
+      secondPathParamStartIndex,
+    );
+    const firstLiteralSlice: string = firstPathTemplate.slice(
+      currentFirstPathIndex,
+      currentFirstPathIndex + secondLiteralSlice.length,
+    );
+
+    if (secondLiteralSlice === firstLiteralSlice) {
+      return -1;
+    }
+  }
+
   if (firstPathTemplate < secondPathTemplate) {
     return -1;
   }

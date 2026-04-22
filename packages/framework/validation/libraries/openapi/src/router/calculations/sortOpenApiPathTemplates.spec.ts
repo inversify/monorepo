@@ -167,4 +167,18 @@ describe(sortOpenApiPathTemplates, () => {
       });
     });
   });
+
+  describe('having a templated path and a concrete sibling sharing the same literal prefix', () => {
+    describe('when called', () => {
+      let result: number;
+
+      beforeAll(() => {
+        result = sortOpenApiPathTemplates('/users/{id}', '/users/~me');
+      });
+
+      it('should return a positive number placing the concrete path first', () => {
+        expect(result).toBeGreaterThan(0);
+      });
+    });
+  });
 });

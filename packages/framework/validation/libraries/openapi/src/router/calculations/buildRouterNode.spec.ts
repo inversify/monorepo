@@ -288,6 +288,42 @@ describe(buildRouterNode, () => {
     });
   });
 
+  describe('having a path where the segment literal suffix contains a special regex character', () => {
+    describe('when called', () => {
+      let result: RouterNode;
+
+      beforeAll(() => {
+        result = buildRouterNode(['/{param}+']);
+      });
+
+      it('should build a param route whose constraint matches a value ending with a literal "+" but not without it', () => {
+        const leadingEmpty: RouterNode | undefined = trieLookup(
+          result.nextLiterals,
+          '',
+          0,
+          0,
+        );
+        const paramNode: RouterNode | undefined = leadingEmpty?.nextParam;
+
+        expect(paramNode?.match?.kind).toBe(RouterNodeMatchKind.param);
+
+        const paramMatch: RouterNodeParamMatch =
+          paramNode?.match as RouterNodeParamMatch;
+        const [route]: RouterNodeParamMatchRoute[] = paramMatch.routes;
+
+        expect(route?.constraints).toHaveLength(1);
+
+        const constraintEntry: [number, RegExp] = (
+          route?.constraints as [number, RegExp][]
+        )[0] as [number, RegExp];
+        const constraint: RegExp = constraintEntry[1];
+
+        expect(constraint.test('abc+')).toBe(true);
+        expect(constraint.test('abc')).toBe(false);
+      });
+    });
+  });
+
   describe('having two param paths that converge at the same node', () => {
     describe('when called with /files/{name} and /files/{name}.{ext}', () => {
       let result: RouterNode;

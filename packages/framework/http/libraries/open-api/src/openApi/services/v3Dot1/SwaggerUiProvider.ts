@@ -7,7 +7,7 @@ import {
   RequestMethodType,
 } from '@inversifyjs/http-core';
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
-import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
+import { type Logger } from '@inversifyjs/logger';
 import {
   type OpenApi3Dot1Object,
   type OpenApi3Dot1OperationObject,
@@ -24,6 +24,7 @@ import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/da
 import { mergeOpenApiTypeSchema } from '../../actions/v3Dot1/mergeOpenApiTypeSchema.js';
 import { tryBuildOperationFromPath } from '../../calculations/buildOperationFromPath.js';
 import { buildSwaggerUiController } from '../../calculations/buildSwaggerUiController.js';
+import { resolveLogger } from '../../calculations/resolveLogger.js';
 import { type BaseSwaggerUiController } from '../../controllers/BaseSwagggerUiController.js';
 import { type SwaggerUiProviderOptions } from '../../models/v3Dot1/SwaggerUiProviderOptions.js';
 
@@ -66,12 +67,7 @@ export class SwaggerUiProvider {
   #provided: boolean;
 
   constructor(options: SwaggerUiProviderOptions) {
-    this.#logger =
-      options.logger === true
-        ? new ConsoleLogger()
-        : options.logger === false
-          ? undefined
-          : (options.logger ?? new ConsoleLogger());
+    this.#logger = resolveLogger(options.logger);
     this.#options = options;
     this.#provided = false;
   }
@@ -254,7 +250,7 @@ export class SwaggerUiProvider {
 
       if (path === undefined) {
         this.#logger?.warn(
-          `Skipping metadata for path ${normalizedPath}. Path contains wildcard character which is not supported in OpenAPI specification`,
+          `Skipping metadata for path ${normalizedPath}. The framework-level wildcard segment (*) has no equivalent in OpenAPI path templates, therefore metadata is skipped`,
         );
       } else {
         const openApi3Dot1PathItemObject: OpenApi3Dot1PathItemObject =
