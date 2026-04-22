@@ -37,11 +37,7 @@ describe(requestMethod, () => {
           .mocked(buildArrayMetadataWithElement)
           .mockReturnValueOnce(callbackFixture);
 
-        requestMethod(RequestMethodType.Get)(
-          targetFixture,
-          keyFixture,
-          {} as TypedPropertyDescriptor<unknown>,
-        );
+        requestMethod(RequestMethodType.Get)(targetFixture, keyFixture, {});
       });
 
       afterAll(() => {
@@ -98,7 +94,7 @@ describe(requestMethod, () => {
         requestMethod(RequestMethodType.Get, pathFixture)(
           targetFixture,
           keyFixture,
-          {} as TypedPropertyDescriptor<unknown>,
+          {},
         );
       });
 

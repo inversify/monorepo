@@ -109,11 +109,7 @@ describe(buildNonArrayParamParse, () => {
 
       beforeAll(() => {
         try {
-          buildNonArrayParamParse(
-            false,
-            'test-ref',
-            'object' as Parameters<typeof buildNonArrayParamParse>[2],
-          );
+          buildNonArrayParamParse(false, 'test-ref', 'object');
         } catch (error: unknown) {
           result = error;
         }

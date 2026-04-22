@@ -16,10 +16,7 @@ describe(buildCustomNativeControllerMethodParameterMetadata, () => {
       let result: unknown;
 
       beforeAll(() => {
-        parameterPipeListFixture = [
-          Symbol() as unknown as Pipe,
-          Symbol() as unknown as Pipe,
-        ];
+        parameterPipeListFixture = [Symbol(), Symbol()];
         handlerFixture =
           Symbol() as unknown as CustomNativeParameterDecoratorHandler;
 
@@ -49,10 +46,7 @@ describe(buildCustomNativeControllerMethodParameterMetadata, () => {
       let result: unknown;
 
       beforeAll(() => {
-        parameterPipeListFixture = [
-          Symbol() as ServiceIdentifier<Pipe>,
-          'PipeClass' as ServiceIdentifier<Pipe>,
-        ];
+        parameterPipeListFixture = [Symbol(), 'PipeClass'];
         handlerFixture =
           Symbol() as unknown as CustomNativeParameterDecoratorHandler;
 

@@ -99,9 +99,7 @@ describe(BindingManager, () => {
       it('should return BindToFluentSyntax', () => {
         const expected: BindToFluentSyntax<unknown> =
           new BindToFluentSyntaxImplementation(
-            expect.any(Function) as unknown as (
-              binding: Binding<unknown>,
-            ) => void,
+            expect.any(Function) as (binding: Binding<unknown>) => void,
             undefined,
             defaultScopeFixture,
             serviceIdentifierFixture,
@@ -209,7 +207,7 @@ describe(BindingManager, () => {
 
       it('should call binding.isSatisfiedBy()', () => {
         const expectedBindingConstraints: BindingConstraints = {
-          getAncestor: expect.any(Function) as unknown as () =>
+          getAncestor: expect.any(Function) as () =>
             | BindingConstraints
             | undefined,
           name: nameFixture,
@@ -278,7 +276,7 @@ describe(BindingManager, () => {
 
       it('should call binding.isSatisfiedBy()', () => {
         const expectedBindingConstraints: BindingConstraints = {
-          getAncestor: expect.any(Function) as unknown as () =>
+          getAncestor: expect.any(Function) as () =>
             | BindingConstraints
             | undefined,
           name: nameFixture,
@@ -396,7 +394,7 @@ describe(BindingManager, () => {
 
       it('should call binding.isSatisfiedBy()', () => {
         const expectedBindingConstraints: BindingConstraints = {
-          getAncestor: expect.any(Function) as unknown as () =>
+          getAncestor: expect.any(Function) as () =>
             | BindingConstraints
             | undefined,
           name: nameFixture,
@@ -465,7 +463,7 @@ describe(BindingManager, () => {
 
       it('should call binding.isSatisfiedBy()', () => {
         const expectedBindingConstraints: BindingConstraints = {
-          getAncestor: expect.any(Function) as unknown as () =>
+          getAncestor: expect.any(Function) as () =>
             | BindingConstraints
             | undefined,
           name: nameFixture,
@@ -556,9 +554,7 @@ describe(BindingManager, () => {
       it('should return BindToFluentSyntax', () => {
         const expected: BindToFluentSyntax<unknown> =
           new BindToFluentSyntaxImplementation(
-            expect.any(Function) as unknown as (
-              binding: Binding<unknown>,
-            ) => void,
+            expect.any(Function) as (binding: Binding<unknown>) => void,
             undefined,
             bindingScopeValues.Singleton,
             serviceIdentifierFixture,
@@ -641,9 +637,7 @@ describe(BindingManager, () => {
       it('should return BindToFluentSyntax', () => {
         const expected: BindToFluentSyntax<unknown> =
           new BindToFluentSyntaxImplementation(
-            expect.any(Function) as unknown as (
-              binding: Binding<unknown>,
-            ) => void,
+            expect.any(Function) as (binding: Binding<unknown>) => void,
             undefined,
             bindingScopeValues.Singleton,
             serviceIdentifierFixture,

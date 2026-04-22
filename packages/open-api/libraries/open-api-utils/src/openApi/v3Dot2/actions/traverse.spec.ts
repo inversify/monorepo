@@ -611,9 +611,7 @@ describe(traverseOpenApi3Dot2ResponseObjectJsonSchemas, () => {
 
     it('should call traverse() with the header schema', () => {
       const headerObject: OpenApi3Dot2HeaderObject | undefined =
-        responseObjectFixture.headers?.['header'] as
-          | OpenApi3Dot2HeaderObject
-          | undefined;
+        responseObjectFixture.headers?.['header'];
 
       expect(traverse).toHaveBeenNthCalledWith(
         2,
@@ -681,9 +679,7 @@ describe(traverseOpenApi3Dot2ResponseObjectJsonSchemas, () => {
 
     it('should call traverse() once for the header schema', () => {
       const headerObject: OpenApi3Dot2HeaderObject | undefined =
-        responseObjectFixture.headers?.['header'] as
-          | OpenApi3Dot2HeaderObject
-          | undefined;
+        responseObjectFixture.headers?.['header'];
 
       expect(traverse).toHaveBeenCalledExactlyOnceWith(
         {
@@ -716,9 +712,7 @@ describe(traverseOpenApi3Dot2ResponseObjectJsonSchemas, () => {
 
     it('should call traverse() only for the header schema', () => {
       const headerObject: OpenApi3Dot2HeaderObject | undefined =
-        responseObjectFixture.headers?.['header'] as
-          | OpenApi3Dot2HeaderObject
-          | undefined;
+        responseObjectFixture.headers?.['header'];
 
       expect(traverse).toHaveBeenCalledExactlyOnceWith(
         {

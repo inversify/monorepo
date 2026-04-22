@@ -63,6 +63,7 @@ export function pipeStreamOverResponse(
 
     const lastOffset: number = response.getWriteOffset();
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     let ok: boolean = true as boolean;
 
     response.cork((): void => {
@@ -86,6 +87,7 @@ export function pipeStreamOverResponse(
           return false;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         let retryOk: boolean = true as boolean;
 
         response.cork((): void => {

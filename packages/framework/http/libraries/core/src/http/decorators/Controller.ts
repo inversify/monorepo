@@ -43,7 +43,7 @@ export function Controller(
 
         if (pathOrOptions.serviceIdentifier !== undefined) {
           controllerMetadata.serviceIdentifier =
-            pathOrOptions.serviceIdentifier as ServiceIdentifier<ControllerModel>;
+            pathOrOptions.serviceIdentifier;
         }
 
         scope = pathOrOptions.scope;

@@ -803,9 +803,7 @@ describe(BindToFluentSyntaxImplementation, () => {
             },
             id: getBindingId(),
             implementationType: Foo,
-            isSatisfiedBy: expect.any(Function) as unknown as (
-              metadata: BindingConstraints,
-            ) => boolean,
+            isSatisfiedBy: expect.any(Function),
             moduleId: containerModuleIdFixture,
             onActivation: undefined,
             onDeactivation: undefined,
@@ -855,9 +853,7 @@ describe(BindToFluentSyntaxImplementation, () => {
             },
             id: getBindingId(),
             implementationType: Foo,
-            isSatisfiedBy: expect.any(Function) as unknown as (
-              metadata: BindingConstraints,
-            ) => boolean,
+            isSatisfiedBy: expect.any(Function),
             moduleId: containerModuleIdFixture,
             onActivation: undefined,
             onDeactivation: undefined,
@@ -896,9 +892,7 @@ describe(BindToFluentSyntaxImplementation, () => {
       it('should call callback()', () => {
         const expectedBinding: ServiceRedirectionBinding<unknown> = {
           id: bindingIdFixture,
-          isSatisfiedBy: expect.any(Function) as unknown as (
-            metadata: BindingConstraints,
-          ) => boolean,
+          isSatisfiedBy: expect.any(Function),
           moduleId: containerModuleIdFixture,
           serviceIdentifier: serviceIdentifierFixture,
           targetServiceIdentifier: targetServiceFixture,
@@ -936,9 +930,7 @@ describe(BindOnFluentSyntaxImplementation, () => {
         value: undefined,
       },
       id: 1,
-      isSatisfiedBy: expect.any(Function) as unknown as (
-        metadata: BindingConstraints,
-      ) => boolean,
+      isSatisfiedBy: expect.any(Function),
       moduleId: undefined,
       get onActivation(): BindingActivation<unknown> | undefined {
         return undefined;
@@ -1001,9 +993,7 @@ describe(BindOnFluentSyntaxImplementation, () => {
             value: undefined,
           },
           id: 1,
-          isSatisfiedBy: expect.any(Function) as unknown as (
-            metadata: BindingConstraints,
-          ) => boolean,
+          isSatisfiedBy: expect.any(Function),
           moduleId: undefined,
           get onActivation(): BindingActivation<unknown> | undefined {
             return undefined;
@@ -1087,9 +1077,7 @@ describe(BindOnFluentSyntaxImplementation, () => {
             value: undefined,
           },
           id: 1,
-          isSatisfiedBy: expect.any(Function) as unknown as (
-            metadata: BindingConstraints,
-          ) => boolean,
+          isSatisfiedBy: expect.any(Function),
           moduleId: undefined,
           get onActivation(): BindingActivation<unknown> | undefined {
             return undefined;
@@ -1817,9 +1805,7 @@ describe(BindWhenOnFluentSyntaxImplementation, () => {
         value: undefined,
       },
       id: 1,
-      isSatisfiedBy: expect.any(Function) as unknown as (
-        metadata: BindingConstraints,
-      ) => boolean,
+      isSatisfiedBy: expect.any(Function),
       moduleId: undefined,
       get onActivation(): BindingActivation<unknown> | undefined {
         return undefined;

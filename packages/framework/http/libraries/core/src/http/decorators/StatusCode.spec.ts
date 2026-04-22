@@ -19,7 +19,7 @@ describe(StatusCode, () => {
       controllerMethodKeyFixture = 'testMethod';
       descriptorFixture = {
         value: 'value-descriptor-example',
-      } as PropertyDescriptor;
+      };
 
       StatusCode(HttpStatusCode.OK)(
         controllerFixture,

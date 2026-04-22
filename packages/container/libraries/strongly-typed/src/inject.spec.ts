@@ -25,7 +25,7 @@ describe(inject, () => {
     asyncNumber: Promise<number>;
   }
 
-  const $inject: TypedInject<BindingMap> = inject as TypedInject<BindingMap>;
+  const $inject: TypedInject<BindingMap> = inject;
 
   it('strongly types injected properties', () => {
     class Test {
@@ -74,8 +74,7 @@ describe(inject, () => {
   });
 
   describe(multiInject, () => {
-    const $multiInject: TypedMultiInject<BindingMap> =
-      multiInject as TypedMultiInject<BindingMap>;
+    const $multiInject: TypedMultiInject<BindingMap> = multiInject;
 
     it('strongly types injected properties', () => {
       class Test {

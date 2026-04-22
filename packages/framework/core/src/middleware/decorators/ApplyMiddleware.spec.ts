@@ -72,7 +72,7 @@ describe(ApplyMiddleware, () => {
         middlewareServiceIdentifierFixture = Symbol();
         descriptorFixture = {
           value: 'value-descriptor-example',
-        } as PropertyDescriptor;
+        };
 
         vitest
           .mocked(buildArrayMetadataWithArray)

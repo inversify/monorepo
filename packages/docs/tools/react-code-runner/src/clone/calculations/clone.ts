@@ -26,7 +26,7 @@ export function clone(
     }
 
     if (typeof input === 'object' && input !== null) {
-      const cached: unknown = objectToCloneWeakMap.get(input as object);
+      const cached: unknown = objectToCloneWeakMap.get(input);
       if (cached !== undefined) {
         return cached as Cloneable<T>;
       }

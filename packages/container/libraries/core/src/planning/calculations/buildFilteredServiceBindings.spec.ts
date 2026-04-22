@@ -216,7 +216,7 @@ describe(buildFilteredServiceBindings, () => {
           id: bindingIdFixture,
           implementationType:
             bindingConstraintsFixture.serviceIdentifier as Newable,
-          isSatisfiedBy: expect.any(Function) as unknown as () => boolean,
+          isSatisfiedBy: expect.any(Function),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -239,7 +239,7 @@ describe(buildFilteredServiceBindings, () => {
           id: 0,
           implementationType:
             bindingConstraintsFixture.serviceIdentifier as Newable,
-          isSatisfiedBy: expect.any(Function) as unknown as () => boolean,
+          isSatisfiedBy: expect.any(Function),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -317,7 +317,7 @@ describe(buildFilteredServiceBindings, () => {
           id: bindingIdFixture,
           implementationType:
             bindingConstraintsFixture.serviceIdentifier as Newable,
-          isSatisfiedBy: expect.any(Function) as unknown as () => boolean,
+          isSatisfiedBy: expect.any(Function),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,
@@ -340,7 +340,7 @@ describe(buildFilteredServiceBindings, () => {
           id: bindingIdFixture,
           implementationType:
             bindingConstraintsFixture.serviceIdentifier as Newable,
-          isSatisfiedBy: expect.any(Function) as unknown as () => boolean,
+          isSatisfiedBy: expect.any(Function),
           moduleId: undefined,
           onActivation: undefined,
           onDeactivation: undefined,

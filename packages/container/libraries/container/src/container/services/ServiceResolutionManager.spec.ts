@@ -14,7 +14,6 @@ vitest.mock(import('@inversifyjs/core'));
 import { type ServiceIdentifier } from '@inversifyjs/common';
 import {
   type ActivationsService,
-  type BindingActivation,
   type BindingScope,
   bindingScopeValues,
   type BindingService,
@@ -28,7 +27,6 @@ import {
   type PlanParamsOperations,
   type PlanResult,
   type PlanResultCacheService,
-  type ResolutionContext,
   type ResolutionParams,
   resolve,
 } from '@inversifyjs/core';
@@ -159,10 +157,8 @@ describe(ServiceResolutionManager, () => {
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
-            } as unknown as ResolutionContext,
-            getActivations: expect.any(Function) as unknown as <TActivated>(
-              serviceIdentifier: ServiceIdentifier<TActivated>,
-            ) => Iterable<BindingActivation<TActivated>> | undefined,
+            },
+            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: new Map(),
           };
@@ -258,10 +254,8 @@ describe(ServiceResolutionManager, () => {
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
-            } as unknown as ResolutionContext,
-            getActivations: expect.any(Function) as unknown as <TActivated>(
-              serviceIdentifier: ServiceIdentifier<TActivated>,
-            ) => Iterable<BindingActivation<TActivated>> | undefined,
+            },
+            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: new Map(),
           };
@@ -380,10 +374,8 @@ describe(ServiceResolutionManager, () => {
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
-            } as unknown as ResolutionContext,
-            getActivations: expect.any(Function) as unknown as <TActivated>(
-              serviceIdentifier: ServiceIdentifier<TActivated>,
-            ) => Iterable<BindingActivation<TActivated>> | undefined,
+            },
+            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: new Map(),
           };
@@ -492,10 +484,8 @@ describe(ServiceResolutionManager, () => {
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
-            } as unknown as ResolutionContext,
-            getActivations: expect.any(Function) as unknown as <TActivated>(
-              serviceIdentifier: ServiceIdentifier<TActivated>,
-            ) => Iterable<BindingActivation<TActivated>> | undefined,
+            },
+            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: new Map(),
           };
@@ -605,10 +595,8 @@ describe(ServiceResolutionManager, () => {
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
-            } as unknown as ResolutionContext,
-            getActivations: expect.any(Function) as unknown as <TActivated>(
-              serviceIdentifier: ServiceIdentifier<TActivated>,
-            ) => Iterable<BindingActivation<TActivated>> | undefined,
+            },
+            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: new Map(),
           };
@@ -701,10 +689,8 @@ describe(ServiceResolutionManager, () => {
             getAll: expect.any(Function),
             getAllAsync: expect.any(Function),
             getAsync: expect.any(Function),
-          } as unknown as ResolutionContext,
-          getActivations: expect.any(Function) as unknown as <TActivated>(
-            serviceIdentifier: ServiceIdentifier<TActivated>,
-          ) => Iterable<BindingActivation<TActivated>> | undefined,
+          },
+          getActivations: expect.any(Function),
           planResult: planResultFixture,
           requestScopeCache: new Map(),
         };
@@ -793,10 +779,8 @@ describe(ServiceResolutionManager, () => {
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
-            } as unknown as ResolutionContext,
-            getActivations: expect.any(Function) as unknown as <TActivated>(
-              serviceIdentifier: ServiceIdentifier<TActivated>,
-            ) => Iterable<BindingActivation<TActivated>> | undefined,
+            },
+            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: new Map(),
           };
@@ -893,10 +877,8 @@ describe(ServiceResolutionManager, () => {
             getAll: expect.any(Function),
             getAllAsync: expect.any(Function),
             getAsync: expect.any(Function),
-          } as unknown as ResolutionContext,
-          getActivations: expect.any(Function) as unknown as <TActivated>(
-            serviceIdentifier: ServiceIdentifier<TActivated>,
-          ) => Iterable<BindingActivation<TActivated>> | undefined,
+          },
+          getActivations: expect.any(Function),
           planResult: planResultFixture,
           requestScopeCache: new Map(),
         };
@@ -994,10 +976,8 @@ describe(ServiceResolutionManager, () => {
             getAll: expect.any(Function),
             getAllAsync: expect.any(Function),
             getAsync: expect.any(Function),
-          } as unknown as ResolutionContext,
-          getActivations: expect.any(Function) as unknown as <TActivated>(
-            serviceIdentifier: ServiceIdentifier<TActivated>,
-          ) => Iterable<BindingActivation<TActivated>> | undefined,
+          },
+          getActivations: expect.any(Function),
           planResult: planResultFixture,
           requestScopeCache: new Map(),
         };
@@ -1101,10 +1081,8 @@ describe(ServiceResolutionManager, () => {
             getAll: expect.any(Function),
             getAllAsync: expect.any(Function),
             getAsync: expect.any(Function),
-          } as unknown as ResolutionContext,
-          getActivations: expect.any(Function) as unknown as <TActivated>(
-            serviceIdentifier: ServiceIdentifier<TActivated>,
-          ) => Iterable<BindingActivation<TActivated>> | undefined,
+          },
+          getActivations: expect.any(Function),
           planResult: planResultFixture,
           requestScopeCache: new Map(),
         };
@@ -1198,10 +1176,8 @@ describe(ServiceResolutionManager, () => {
             getAll: expect.any(Function),
             getAllAsync: expect.any(Function),
             getAsync: expect.any(Function),
-          } as unknown as ResolutionContext,
-          getActivations: expect.any(Function) as unknown as <TActivated>(
-            serviceIdentifier: ServiceIdentifier<TActivated>,
-          ) => Iterable<BindingActivation<TActivated>> | undefined,
+          },
+          getActivations: expect.any(Function),
           planResult: planResultFixture,
           requestScopeCache: new Map(),
         };

@@ -281,7 +281,7 @@ function createRule(
           pathValue,
         );
 
-        check(context, node as NodeWithSource & Rule.Node, resolvedPath);
+        check(context, node, resolvedPath);
       }
 
       return {

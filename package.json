@@ -9,7 +9,7 @@
     "@commitlint/cli": "20.5.0",
     "@commitlint/config-conventional": "20.5.0",
     "@commitlint/prompt-cli": "20.5.0",
-    "@fission-ai/openspec": "^1.3.0",
+    "@fission-ai/openspec": "^1.3.1",
     "@inversifyjs/foundation-changelog-generator": "workspace:*",
     "@inversifyjs/foundation-eslint-config": "workspace:*",
     "@inversifyjs/foundation-prettier-config": "workspace:*",
@@ -19,7 +19,7 @@
     "@inversifyjs/foundation-typescript-config": "workspace:*",
     "@inversifyjs/foundation-vitest-config": "workspace:*",
     "husky": "9.1.7",
-    "knip": "6.5.0",
+    "knip": "6.6.1",
     "lint-staged": "16.4.0",
     "sponsorkit": "17.1.0",
     "turbo": "2.9.6"
@@ -28,7 +28,7 @@
   "keywords": [],
   "license": "MIT",
   "name": "root",
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@10.33.1",
   "private": true,
   "repository": {
     "type": "git",

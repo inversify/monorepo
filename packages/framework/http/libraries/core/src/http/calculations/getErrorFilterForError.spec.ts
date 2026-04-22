@@ -86,7 +86,7 @@ describe(getErrorFilterForError, () => {
         errorFixture = new CustomError('Test error');
         errorFilterFixture = {
           catch: vitest.fn(),
-        } as unknown as ErrorFilter;
+        };
 
         errorToFilterMapListFixture = [new Map([[Error, errorFilterFixture]])];
 
@@ -132,7 +132,7 @@ describe(getErrorFilterForError, () => {
 
       beforeAll(async () => {
         errorFixture = new CustomError('Test error');
-        errorFilterTypeFixture = CustomErrorFilter as Newable<ErrorFilter>;
+        errorFilterTypeFixture = CustomErrorFilter;
         errorFilterInstanceFixture = {
           catch: vitest.fn(),
         };
@@ -185,7 +185,7 @@ describe(getErrorFilterForError, () => {
         errorFixture = new CustomError('Test error');
         errorFilterFixture = {
           catch: vitest.fn(),
-        } as unknown as ErrorFilter;
+        };
 
         errorToFilterMapListFixture = [new Map([[null, errorFilterFixture]])];
 
@@ -314,7 +314,7 @@ describe(getErrorFilterForError, () => {
         errorFixture = new CustomError('Test error');
         errorFilterFixture = {
           catch: vitest.fn(),
-        } as unknown as ErrorFilter;
+        };
 
         errorToFilterMapListFixture = [
           new Map(),

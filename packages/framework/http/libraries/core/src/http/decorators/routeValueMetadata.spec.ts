@@ -25,7 +25,7 @@ describe(routeValueMetadata, () => {
       controllerMethodKeyFixture = 'testMethod';
       descriptorFixture = {
         value: 'value-descriptor-example',
-      } as PropertyDescriptor;
+      };
       metadataKeyFixture = 'key-example';
       valueFixture = 'value-example';
       setRouteValueMetadataResultFixture = vitest.fn();

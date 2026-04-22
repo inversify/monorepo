@@ -134,6 +134,7 @@ describe('BindToFluentSyntax', () => {
 
       it('when called, with as many "wrong" service identifier inject options as function parameters, should throw a syntax error', () => {
         const firstServiceIdentifier: ServiceIdentifier<number> =
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
           Symbol() as ServiceIdentifier<number>;
 
         const secondServiceIdentifier: Newable<object> = Object;
