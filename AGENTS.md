@@ -12,10 +12,6 @@ This is the InversifyJS monorepo - a TypeScript dependency injection library eco
 - **JSON Schema packages**: Schema validation utilities
 - **Open API packages**: OpenAPI integration
 
-## Tooling Notes
-
-- **openspec** is installed as a local dev dependency. Always invoke it via `pnpm openspec <command>` — never use a bare `openspec` command or `npx`/`dlx`.
-
 ## Build and Test Commands
 
 ### Setup
