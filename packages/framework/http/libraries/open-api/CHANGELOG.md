@@ -1,5 +1,13 @@
 # @inversifyjs/http-open-api
 
+## 5.4.1
+
+### Patch Changes
+
+- Updated `SwaggerUiProvider` to properly build param related operations
+- Updated dependencies
+  - @inversifyjs/http-core@5.4.1
+
 ## 5.4.0
 
 ### Patch Changes
