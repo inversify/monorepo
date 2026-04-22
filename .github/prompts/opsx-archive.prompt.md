@@ -10,7 +10,7 @@ Archive a completed change in the experimental workflow.
 
 1. **If no change name provided, prompt for selection**
 
-   Run `pnpm openspec list --json` to get available changes. Use the **AskUserQuestion tool** to let the user select.
+   Run `openspec list --json` to get available changes. Use the **AskUserQuestion tool** to let the user select.
 
    Show only active changes (not already archived).
    Include the schema used for each change if available.
@@ -19,7 +19,7 @@ Archive a completed change in the experimental workflow.
 
 2. **Check artifact completion status**
 
-   Run `pnpm openspec status --change "<name>" --json` to check artifact completion.
+   Run `openspec status --change "<name>" --json` to check artifact completion.
 
    Parse the JSON to understand:
    - `schemaName`: The workflow being used
@@ -86,7 +86,7 @@ Archive a completed change in the experimental workflow.
 
 **Output On Success**
 
-```md
+```
 ## Archive Complete
 
 **Change:** <change-name>
@@ -99,7 +99,7 @@ All artifacts complete. All tasks complete.
 
 **Output On Success (No Delta Specs)**
 
-```md
+```
 ## Archive Complete
 
 **Change:** <change-name>
@@ -112,7 +112,7 @@ All artifacts complete. All tasks complete.
 
 **Output On Success With Warnings**
 
-```md
+```
 ## Archive Complete (with warnings)
 
 **Change:** <change-name>
@@ -130,7 +130,7 @@ Review the archive if this was not intentional.
 
 **Output On Error (Archive Exists)**
 
-```md
+```
 ## Archive Failed
 
 **Change:** <change-name>
@@ -146,7 +146,7 @@ Target archive directory already exists.
 
 **Guardrails**
 - Always prompt for change selection if not provided
-- Use artifact graph (pnpm openspec status --json) for completion checking
+- Use artifact graph (openspec status --json) for completion checking
 - Don't block archive on warnings - just inform and confirm
 - Preserve .openspec.yaml when moving to archive (it moves with the directory)
 - Show clear summary of what happened

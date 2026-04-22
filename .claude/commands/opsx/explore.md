@@ -1,5 +1,8 @@
 ---
-description: Enter explore mode - think through ideas, investigate problems, clarify requirements
+name: "OPSX: Explore"
+description: "Enter explore mode - think through ideas, investigate problems, clarify requirements"
+category: Workflow
+tags: [workflow, explore, experimental, thinking]
 ---
 
 Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
