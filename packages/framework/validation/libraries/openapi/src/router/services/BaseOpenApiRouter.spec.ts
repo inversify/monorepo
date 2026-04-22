@@ -18,8 +18,12 @@ describe(BaseOpenApiRouter, () => {
 
     beforeAll(() => {
       routerNodeFixture = {
-        children: undefined,
-        path: undefined,
+        match: undefined,
+        nextLiterals: {
+          children: new Map(),
+          value: undefined,
+        },
+        nextParam: undefined,
       };
 
       vitest.mocked(buildRouterNode).mockReturnValue(routerNodeFixture);
@@ -38,7 +42,7 @@ describe(BaseOpenApiRouter, () => {
         }));
       });
 
-      it('should call buildRouterNode once', () => {
+      it('should call buildRouterNode()', () => {
         expect(buildRouterNode).toHaveBeenCalledExactlyOnceWith([
           '/users',
           '/users/{userId}',
@@ -59,7 +63,7 @@ describe(BaseOpenApiRouter, () => {
             vitest.clearAllMocks();
           });
 
-          it('should call findRoute with the router node and path', () => {
+          it('should call findRoute()', () => {
             expect(findRoute).toHaveBeenCalledExactlyOnceWith(
               routerNodeFixture,
               '/users/123',
@@ -95,7 +99,7 @@ describe(BaseOpenApiRouter, () => {
         }));
       });
 
-      it('should call buildRouterNode for each method', () => {
+      it('should call buildRouterNode()', () => {
         expect(buildRouterNode).toHaveBeenCalledTimes(2);
       });
     });

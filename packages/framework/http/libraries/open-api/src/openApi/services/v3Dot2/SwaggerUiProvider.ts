@@ -7,6 +7,7 @@ import {
   RequestMethodType,
 } from '@inversifyjs/http-core';
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
+import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
 import {
   type OpenApi3Dot2Object,
   type OpenApi3Dot2OperationObject,
@@ -59,11 +60,18 @@ type MetadataTuple = [
 ];
 
 export class SwaggerUiProvider {
+  readonly #logger: Logger | undefined;
   readonly #options: SwaggerUiProviderOptions;
 
   #provided: boolean;
 
   constructor(options: SwaggerUiProviderOptions) {
+    this.#logger =
+      options.logger === true
+        ? new ConsoleLogger()
+        : options.logger === false
+          ? undefined
+          : (options.logger ?? new ConsoleLogger());
     this.#options = options;
     this.#provided = false;
   }
@@ -237,13 +245,18 @@ export class SwaggerUiProvider {
       );
 
     if (operationObject !== undefined) {
-      const path: string | undefined = tryBuildOperationFromPath(
-        buildNormalizedPath(
-          `${controllerMetadata.path}/${methodMetadata.path}`,
-        ),
+      const normalizedPath: string = buildNormalizedPath(
+        `${controllerMetadata.path}/${methodMetadata.path}`,
       );
 
-      if (path !== undefined) {
+      const path: string | undefined =
+        tryBuildOperationFromPath(normalizedPath);
+
+      if (path === undefined) {
+        this.#logger?.warn(
+          `Skipping metadata for path ${normalizedPath}. Path contains wildcard character which is not supported in OpenAPI specification`,
+        );
+      } else {
         const openApi3Dot2PathItemObject: OpenApi3Dot2PathItemObject =
           this.#buildOrGetPathItemObject(pathToPathItemObjectMap, path);
 

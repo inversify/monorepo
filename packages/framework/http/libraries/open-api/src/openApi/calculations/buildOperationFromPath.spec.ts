@@ -45,6 +45,20 @@ describe(tryBuildOperationFromPath, () => {
     });
   });
 
+  describe('having a path with multiple params in the same segment', () => {
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = tryBuildOperationFromPath('/flights/:from-:to');
+      });
+
+      it('should replace all params with OpenAPI curly-brace syntax', () => {
+        expect(result).toBe('/flights/{from}-{to}');
+      });
+    });
+  });
+
   describe('having a path with a wildcard', () => {
     describe('when called', () => {
       let result: unknown;

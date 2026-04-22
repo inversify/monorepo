@@ -1,50 +1,139 @@
+import { trieInsert } from '../../trie/actions/trieInsert.js';
+import { createTrieNode } from '../../trie/calculations/createTrieNode.js';
+import { trieIterateEntries } from '../../trie/calculations/trieIterateEntries.js';
+import { trieLookup } from '../../trie/calculations/trieLookup.js';
 import { type RouterNode } from '../models/RouterNode.js';
-import { wildcardKey } from '../models/wildcardKey.js';
-import { isPathParam } from './isPathParam.js';
+import { RouterNodeMatchKind } from '../models/RouterNodeMatchKind.js';
+import { sortOpenApiPathTemplates } from './sortOpenApiPathTemplates.js';
+
+function extractConstraints(
+  pathSegments: (string | RegExp)[],
+): [number, RegExp][] {
+  return pathSegments
+    .map(
+      (segment: string | RegExp, index: number): [number, string | RegExp] => [
+        index,
+        segment,
+      ],
+    )
+    .filter(
+      (
+        indexAndPathSegment: [number, string | RegExp],
+      ): indexAndPathSegment is [number, RegExp] =>
+        indexAndPathSegment[1] instanceof RegExp,
+    );
+}
+
+function maybeSetAuxiliaryNodeMatch(
+  node: RouterNode,
+  path: string,
+  pathSegmentsOrConstraints: (string | RegExp)[],
+): void {
+  const constraints: [number, RegExp][] = extractConstraints(
+    pathSegmentsOrConstraints,
+  );
+
+  if (node.match === undefined) {
+    if (constraints.length === 0) {
+      node.match = {
+        kind: RouterNodeMatchKind.literal,
+        route: path,
+      };
+    } else {
+      node.match = {
+        kind: RouterNodeMatchKind.param,
+        routes: [
+          {
+            constraints,
+            route: path,
+          },
+        ],
+      };
+    }
+  } else {
+    if (
+      node.match.kind === RouterNodeMatchKind.param &&
+      constraints.length > 0
+    ) {
+      node.match.routes.push({
+        constraints,
+        route: path,
+      });
+    }
+  }
+}
 
 function populateAuxiliaryNode(
   node: RouterNode,
   path: string,
-  pathSegments: (string | symbol)[],
+  pathSegmentsOrConstraints: (string | RegExp)[],
   index: number,
 ): void {
-  const segment: string | symbol | undefined = pathSegments[index];
+  const segment: string | RegExp | undefined = pathSegmentsOrConstraints[index];
 
   if (segment === undefined) {
-    if (node.path === undefined) {
-      node.path = path;
+    maybeSetAuxiliaryNodeMatch(node, path, pathSegmentsOrConstraints);
+    return;
+  }
+
+  if (typeof segment === 'string') {
+    let childNode: RouterNode | undefined = trieLookup(
+      node.nextLiterals,
+      segment,
+      0,
+      segment.length,
+    );
+
+    if (childNode === undefined) {
+      childNode = {
+        match: undefined,
+        nextLiterals: createTrieNode(),
+        nextParam: undefined,
+      };
+
+      trieInsert(node.nextLiterals, segment, childNode);
     }
+
+    populateAuxiliaryNode(
+      childNode,
+      path,
+      pathSegmentsOrConstraints,
+      index + 1,
+    );
 
     return;
   }
 
-  if (node.children === undefined) {
-    node.children = {};
-  }
+  // Segment is a RegExp, so we need to populate the nextParam node
 
-  if (node.children[segment] === undefined) {
-    node.children[segment] = {
-      children: undefined,
-      path: undefined,
+  if (node.nextParam === undefined) {
+    node.nextParam = {
+      match: undefined,
+      nextLiterals: createTrieNode(),
+      nextParam: undefined,
     };
   }
 
-  populateAuxiliaryNode(node.children[segment], path, pathSegments, index + 1);
+  populateAuxiliaryNode(
+    node.nextParam,
+    path,
+    pathSegmentsOrConstraints,
+    index + 1,
+  );
 }
 
 function populateRouterNode(
   routerAndAuxiliaryNodePairList: [RouterNode, RouterNode][],
-  path: string,
-  pathSegments: (string | symbol)[],
+  pathSegmentsOrConstraints: (string | RegExp)[],
   index: number,
 ): void {
-  const segment: string | symbol | undefined = pathSegments[index];
+  const segment: string | RegExp | undefined = pathSegmentsOrConstraints[index];
 
   if (segment === undefined) {
     // We reach the end of the path segments, so we can populate the router nodes
-    for (const [node] of routerAndAuxiliaryNodePairList) {
-      if (node.path === undefined) {
-        node.path = path;
+    for (const [routerNode, auxiliaryNode] of routerAndAuxiliaryNodePairList) {
+      if (routerNode.match === undefined) {
+        routerNode.match = auxiliaryNode.match;
       }
     }
 
@@ -56,133 +145,150 @@ function populateRouterNode(
   const nextRouterAndAuxiliaryNodePairList: [RouterNode, RouterNode][] = [];
 
   for (const [routerNode, auxiliaryNode] of routerAndAuxiliaryNodePairList) {
-    let nextSegmentProperties: (string | symbol)[];
-
-    if (segment === wildcardKey) {
-      nextSegmentProperties =
-        auxiliaryNode.children === undefined
-          ? []
-          : Reflect.ownKeys(auxiliaryNode.children).filter(
-              (key: string | symbol) => key !== wildcardKey,
-            );
-      nextSegmentProperties.push(wildcardKey);
-    } else {
-      nextSegmentProperties = [segment];
-    }
-
-    for (const nextSegmentProperty of nextSegmentProperties) {
-      const nextAuxiliaryNode: RouterNode | undefined =
-        auxiliaryNode.children?.[nextSegmentProperty];
+    if (typeof segment === 'string') {
+      const nextAuxiliaryNode: RouterNode | undefined = trieLookup(
+        auxiliaryNode.nextLiterals,
+        segment,
+        0,
+        segment.length,
+      );
 
       if (nextAuxiliaryNode !== undefined) {
-        if (routerNode.children === undefined) {
-          routerNode.children = {};
+        let nextRouterNode: RouterNode | undefined = trieLookup(
+          routerNode.nextLiterals,
+          segment,
+          0,
+          segment.length,
+        );
+
+        if (nextRouterNode === undefined) {
+          nextRouterNode = {
+            match: undefined,
+            nextLiterals: createTrieNode(),
+            nextParam: undefined,
+          };
+
+          trieInsert(routerNode.nextLiterals, segment, nextRouterNode);
         }
 
-        if (routerNode.children[nextSegmentProperty] === undefined) {
-          routerNode.children[nextSegmentProperty] = {
-            children: undefined,
-            path: undefined,
+        nextRouterAndAuxiliaryNodePairList.push([
+          nextRouterNode,
+          nextAuxiliaryNode,
+        ]);
+      }
+    } else {
+      // First, let's create the nextParam node if it does not exists in the auxiliary node
+
+      if (auxiliaryNode.nextParam !== undefined) {
+        if (routerNode.nextParam === undefined) {
+          routerNode.nextParam = {
+            match: undefined,
+            nextLiterals: createTrieNode(),
+            nextParam: undefined,
           };
         }
 
         nextRouterAndAuxiliaryNodePairList.push([
-          routerNode.children[nextSegmentProperty],
-          nextAuxiliaryNode,
+          routerNode.nextParam,
+          auxiliaryNode.nextParam,
         ]);
+
+        /*
+         * Now, we need to populate literal nodes for all the next literals of the
+         * auxiliary node that matches the current segment pattern
+         */
+
+        for (const [nextAuxiliaryLiteral] of trieIterateEntries(
+          auxiliaryNode.nextLiterals,
+        )) {
+          if (segment.test(nextAuxiliaryLiteral)) {
+            let nextRouterNode: RouterNode | undefined = trieLookup(
+              routerNode.nextLiterals,
+              nextAuxiliaryLiteral,
+              0,
+              nextAuxiliaryLiteral.length,
+            );
+
+            if (nextRouterNode === undefined) {
+              nextRouterNode = {
+                match: undefined,
+                nextLiterals: createTrieNode(),
+                nextParam: undefined,
+              };
+
+              trieInsert(
+                routerNode.nextLiterals,
+                nextAuxiliaryLiteral,
+                nextRouterNode,
+              );
+            }
+
+            nextRouterAndAuxiliaryNodePairList.push([
+              nextRouterNode,
+              auxiliaryNode.nextParam,
+            ]);
+          }
+        }
       }
     }
   }
 
   populateRouterNode(
     nextRouterAndAuxiliaryNodePairList,
-    path,
-    pathSegments,
+    pathSegmentsOrConstraints,
     index + 1,
   );
 }
 
-/**
- * Sorts path segments to keep path priority as stated in OpenAPI 3.X specifications.
- * @param firstSegments First segments
- * @param secondSegments Second segments
- * @returns Numeric value indicating the order of the segments for sorting purposes.
- */
-function sortPathSegments(
-  firstSegments: (string | symbol)[],
-  secondSegments: (string | symbol)[],
-): number {
-  const minLength: number = Math.min(
-    firstSegments.length,
-    secondSegments.length,
-  );
+const PARAM_SEGMENT_REGEXP: RegExp = /\{[^{]+\}/g;
 
-  for (let index: number = 0; index < minLength; ++index) {
-    const firstSegment: string | symbol = firstSegments[index] as
-      | string
-      | symbol;
-    const secondSegment: string | symbol = secondSegments[index] as
-      | string
-      | symbol;
-
-    if (typeof firstSegment === 'string') {
-      if (typeof secondSegment === 'string') {
-        if (firstSegment < secondSegment) {
-          return -1;
-        } else if (firstSegment > secondSegment) {
-          return 1;
-        }
-      } else {
-        return -1;
-      }
-    } else {
-      if (typeof secondSegment === 'string') {
-        return 1;
-      }
-    }
+function pathSegmentToSegmentOrConstraint(segment: string): string | RegExp {
+  if (PARAM_SEGMENT_REGEXP.test(segment)) {
+    return new RegExp(segment.replaceAll(PARAM_SEGMENT_REGEXP, '.+'));
   }
 
-  return firstSegments.length - secondSegments.length;
+  return segment;
 }
 
 export function buildRouterNode(paths: string[]): RouterNode {
-  const pathAndSegmentsList: [string, (string | symbol)[]][] = paths.map(
-    (path: string) => [
+  const pathAndSegmentsOrConstraints: [string, (string | RegExp)[]][] =
+    paths.map((path: string) => [
       path,
-      path
-        .split('/')
-        .map((segment: string) =>
-          isPathParam(segment) ? wildcardKey : segment,
-        ),
-    ],
-  );
+      path.split('/').map(pathSegmentToSegmentOrConstraint),
+    ]);
 
-  pathAndSegmentsList.sort(
+  pathAndSegmentsOrConstraints.sort(
     (
-      [, firstSegments]: [string, (string | symbol)[]],
-      [, secondSegments]: [string, (string | symbol)[]],
-    ) => sortPathSegments(firstSegments, secondSegments),
+      [firstPath]: [string, (string | RegExp)[]],
+      [secondPath]: [string, (string | RegExp)[]],
+    ) => sortOpenApiPathTemplates(firstPath, secondPath),
   );
 
   // Useful data structure to efficiently build the router tree, but not ideal for runtime usage
   const auxiliaryNode: RouterNode = {
-    children: undefined,
-    path: undefined,
+    match: undefined,
+    nextLiterals: createTrieNode(),
+    nextParam: undefined,
   };
 
   // Populate the auxiliary node with all paths
-  for (const [path, pathSegments] of pathAndSegmentsList) {
-    populateAuxiliaryNode(auxiliaryNode, path, pathSegments, 0);
+  for (const [path, pathSegmentOrConstraint] of pathAndSegmentsOrConstraints) {
+    populateAuxiliaryNode(auxiliaryNode, path, pathSegmentOrConstraint, 0);
   }
 
   // Create the final router node with the assistance of the auxiliary node
   const routerNode: RouterNode = {
-    children: undefined,
-    path: undefined,
+    match: undefined,
+    nextLiterals: createTrieNode(),
+    nextParam: undefined,
   };
 
-  for (const [path, pathSegments] of pathAndSegmentsList) {
-    populateRouterNode([[routerNode, auxiliaryNode]], path, pathSegments, 0);
+  for (const [, pathSegmentsOrConstraints] of pathAndSegmentsOrConstraints) {
+    populateRouterNode(
+      [[routerNode, auxiliaryNode]],
+      pathSegmentsOrConstraints,
+      0,
+    );
   }
 
   return routerNode;
