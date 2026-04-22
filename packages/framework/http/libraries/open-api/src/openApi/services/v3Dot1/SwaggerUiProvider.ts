@@ -7,6 +7,7 @@ import {
   RequestMethodType,
 } from '@inversifyjs/http-core';
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
+import { type Logger } from '@inversifyjs/logger';
 import {
   type OpenApi3Dot1Object,
   type OpenApi3Dot1OperationObject,
@@ -21,7 +22,9 @@ import { mergeOpenApiPathItemObjectIntoOpenApiPaths } from '../../../metadata/ac
 import { type ControllerOpenApiMetadata } from '../../../metadata/models/v3Dot1/ControllerOpenApiMetadata.js';
 import { controllerOpenApiMetadataReflectKey } from '../../../reflectMetadata/data/v3Dot1/controllerOpenApiMetadataReflectKey.js';
 import { mergeOpenApiTypeSchema } from '../../actions/v3Dot1/mergeOpenApiTypeSchema.js';
+import { tryBuildOperationFromPath } from '../../calculations/buildOperationFromPath.js';
 import { buildSwaggerUiController } from '../../calculations/buildSwaggerUiController.js';
+import { resolveLogger } from '../../calculations/resolveLogger.js';
 import { type BaseSwaggerUiController } from '../../controllers/BaseSwagggerUiController.js';
 import { type SwaggerUiProviderOptions } from '../../models/v3Dot1/SwaggerUiProviderOptions.js';
 
@@ -58,11 +61,13 @@ type MetadataTuple = [
 ];
 
 export class SwaggerUiProvider {
+  readonly #logger: Logger | undefined;
   readonly #options: SwaggerUiProviderOptions;
 
   #provided: boolean;
 
   constructor(options: SwaggerUiProviderOptions) {
+    this.#logger = resolveLogger(options.logger);
     this.#options = options;
     this.#provided = false;
   }
@@ -236,29 +241,39 @@ export class SwaggerUiProvider {
       );
 
     if (operationObject !== undefined) {
-      const path: string = buildNormalizedPath(
+      const normalizedPath: string = buildNormalizedPath(
         `${controllerMetadata.path}/${methodMetadata.path}`,
       );
 
-      const openApi3Dot1PathItemObject: OpenApi3Dot1PathItemObject =
-        this.#buildOrGetPathItemObject(pathToPathItemObjectMap, path);
+      const path: string | undefined =
+        tryBuildOperationFromPath(normalizedPath);
 
-      if (controllerOpenApiMetadata.servers !== undefined) {
-        openApi3Dot1PathItemObject.servers = [
-          ...controllerOpenApiMetadata.servers,
-        ];
+      if (path === undefined) {
+        this.#logger?.warn(
+          `Skipping metadata for path ${normalizedPath}. The framework-level wildcard segment (*) has no equivalent in OpenAPI path templates, therefore metadata is skipped`,
+        );
+      } else {
+        const openApi3Dot1PathItemObject: OpenApi3Dot1PathItemObject =
+          this.#buildOrGetPathItemObject(pathToPathItemObjectMap, path);
+
+        if (controllerOpenApiMetadata.servers !== undefined) {
+          openApi3Dot1PathItemObject.servers = [
+            ...controllerOpenApiMetadata.servers,
+          ];
+        }
+
+        if (controllerOpenApiMetadata.summary !== undefined) {
+          openApi3Dot1PathItemObject.summary =
+            controllerOpenApiMetadata.summary;
+        }
+
+        this.#setPathItemObjectOperations(
+          openApi3Dot1PathItemObject,
+          methodMetadata.requestMethodType,
+          operationObject,
+          path,
+        );
       }
-
-      if (controllerOpenApiMetadata.summary !== undefined) {
-        openApi3Dot1PathItemObject.summary = controllerOpenApiMetadata.summary;
-      }
-
-      this.#setPathItemObjectOperations(
-        openApi3Dot1PathItemObject,
-        methodMetadata.requestMethodType,
-        operationObject,
-        path,
-      );
     }
   }
 

@@ -9,26 +9,21 @@ import {
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
 
-import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { getRequestBodyObject } from './getRequestBodyObject.js';
 
 describe(getRequestBodyObject, () => {
   let openApiResolverMock: OpenApiResolver;
-  let inputParamFixture: BodyValidationInputParam<unknown>;
+  let methodFixture: string;
+  let routeFixture: string;
 
   beforeAll(() => {
     openApiResolverMock = {
       deepResolveReference: vitest.fn(),
       resolveReference: vitest.fn(),
     };
-    inputParamFixture = {
-      body: { name: 'test' },
-      contentType: 'application/json',
-      method: 'post',
-      path: '/users',
-      type: Symbol() as unknown as BodyValidationInputParam<unknown>['type'],
-    };
+    methodFixture = 'post';
+    routeFixture = '/users';
   });
 
   describe('having an operationObject with no requestBody', () => {
@@ -48,7 +43,8 @@ describe(getRequestBodyObject, () => {
           getRequestBodyObject(
             openApiResolverMock,
             operationObjectFixture,
-            inputParamFixture,
+            methodFixture,
+            routeFixture,
           );
         } catch (error: unknown) {
           result = error;
@@ -58,7 +54,7 @@ describe(getRequestBodyObject, () => {
       it('should throw an InversifyValidationError', () => {
         const expectedErrorProperties: Partial<InversifyValidationError> = {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `No requestBody found for method ${inputParamFixture.method} for path ${inputParamFixture.path}`,
+          message: `No requestBody found for ${methodFixture.toUpperCase()} ${routeFixture}`,
         };
 
         expect(result).toBeInstanceOf(InversifyValidationError);
@@ -90,7 +86,8 @@ describe(getRequestBodyObject, () => {
         result = getRequestBodyObject(
           openApiResolverMock,
           operationObjectFixture,
-          inputParamFixture,
+          methodFixture,
+          routeFixture,
         );
       });
 
@@ -126,7 +123,8 @@ describe(getRequestBodyObject, () => {
           getRequestBodyObject(
             openApiResolverMock,
             operationObjectFixture,
-            inputParamFixture,
+            methodFixture,
+            routeFixture,
           );
         } catch (error: unknown) {
           result = error;
@@ -146,7 +144,7 @@ describe(getRequestBodyObject, () => {
       it('should throw an InversifyValidationError', () => {
         const expectedErrorProperties: Partial<InversifyValidationError> = {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `Could not resolve $ref pointer ${refFixture}`,
+          message: `Could not resolve $ref pointer ${refFixture} for ${methodFixture.toUpperCase()} ${routeFixture}`,
         };
 
         expect(result).toBeInstanceOf(InversifyValidationError);
@@ -181,7 +179,8 @@ describe(getRequestBodyObject, () => {
           getRequestBodyObject(
             openApiResolverMock,
             operationObjectFixture,
-            inputParamFixture,
+            methodFixture,
+            routeFixture,
           );
         } catch (error: unknown) {
           result = error;
@@ -201,7 +200,7 @@ describe(getRequestBodyObject, () => {
       it('should throw an InversifyValidationError', () => {
         const expectedErrorProperties: Partial<InversifyValidationError> = {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `Resolved $ref pointer ${refFixture} is not a valid object`,
+          message: `Resolved $ref pointer ${refFixture} is not a valid request body object for ${methodFixture.toUpperCase()} ${routeFixture}`,
         };
 
         expect(result).toBeInstanceOf(InversifyValidationError);
@@ -236,7 +235,8 @@ describe(getRequestBodyObject, () => {
           getRequestBodyObject(
             openApiResolverMock,
             operationObjectFixture,
-            inputParamFixture,
+            methodFixture,
+            routeFixture,
           );
         } catch (error: unknown) {
           result = error;
@@ -256,7 +256,7 @@ describe(getRequestBodyObject, () => {
       it('should throw an InversifyValidationError', () => {
         const expectedErrorProperties: Partial<InversifyValidationError> = {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `Resolved $ref pointer ${refFixture} is not a valid object`,
+          message: `Resolved $ref pointer ${refFixture} is not a valid request body object for ${methodFixture.toUpperCase()} ${routeFixture}`,
         };
 
         expect(result).toBeInstanceOf(InversifyValidationError);
@@ -300,7 +300,8 @@ describe(getRequestBodyObject, () => {
         result = getRequestBodyObject(
           openApiResolverMock,
           operationObjectFixture,
-          inputParamFixture,
+          methodFixture,
+          routeFixture,
         );
       });
 

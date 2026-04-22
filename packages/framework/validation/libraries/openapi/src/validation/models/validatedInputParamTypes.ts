@@ -5,3 +5,7 @@ export const validatedInputParamBodyType: unique symbol = Symbol.for(
 export const validatedInputParamHeaderType: unique symbol = Symbol.for(
   '@inversifyjs/open-api-validation/validatedInputParamHeaderType',
 );
+
+export const validatedInputParamParamType: unique symbol = Symbol.for(
+  '@inversifyjs/open-api-validation/validatedInputParamParamType',
+);

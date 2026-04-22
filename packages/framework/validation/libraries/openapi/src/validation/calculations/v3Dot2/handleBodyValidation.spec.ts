@@ -26,7 +26,9 @@ import {
 import type Ajv from 'ajv';
 import { type ValidateFunction } from 'ajv';
 
+import { type OpenApiRouter } from '../../../router/services/OpenApiRouter.js';
 import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
+import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
 import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
@@ -36,11 +38,20 @@ import { handleBodyValidation } from './handleBodyValidation.js';
 
 describe(handleBodyValidation, () => {
   let openApiObjectFixture: OpenApi3Dot2Object;
+  let validationContextFixture: OpenApiValidationContext;
   let openApiResolverFixture: OpenApiResolver;
+  let openApiRouterMock: OpenApiRouter;
 
   beforeAll(() => {
     openApiObjectFixture = Symbol() as unknown as OpenApi3Dot2Object;
     openApiResolverFixture = Symbol() as unknown as OpenApiResolver;
+    openApiRouterMock = {
+      findRoute: vitest.fn(),
+    };
+    validationContextFixture = {
+      resolver: openApiResolverFixture,
+      router: openApiRouterMock,
+    };
   });
 
   describe('having an inputParam with contentType', () => {
@@ -94,6 +105,7 @@ describe(handleBodyValidation, () => {
         validationCacheEntryFixture = {
           body: undefined,
           headers: undefined,
+          params: undefined,
         };
 
         getEntryMock = vitest
@@ -110,11 +122,15 @@ describe(handleBodyValidation, () => {
           .mocked(escapeJsonPointerFragments)
           .mockReturnValueOnce(escapedPointerFixture);
 
+        vitest
+          .mocked(openApiRouterMock.findRoute)
+          .mockReturnValueOnce(pathFixture);
+
         try {
           handleBodyValidation(
             ajvMock,
             openApiObjectFixture,
-            openApiResolverFixture,
+            validationContextFixture,
             inputParamFixture,
             getEntryMock,
           );
@@ -146,7 +162,8 @@ describe(handleBodyValidation, () => {
         expect(getRequestBodyObject).toHaveBeenCalledExactlyOnceWith(
           openApiResolverFixture,
           operationObjectFixture,
-          inputParamFixture,
+          methodFixture,
+          pathFixture,
         );
       });
 
@@ -200,6 +217,7 @@ describe(handleBodyValidation, () => {
         validationCacheEntryFixture = {
           body: undefined,
           headers: undefined,
+          params: undefined,
         };
 
         getEntryMock = vitest
@@ -216,10 +234,14 @@ describe(handleBodyValidation, () => {
           .mocked(escapeJsonPointerFragments)
           .mockReturnValueOnce(escapedPointerFixture);
 
+        vitest
+          .mocked(openApiRouterMock.findRoute)
+          .mockReturnValueOnce(pathFixture);
+
         result = handleBodyValidation(
           ajvMock,
           openApiObjectFixture,
-          openApiResolverFixture,
+          validationContextFixture,
           inputParamFixture,
           getEntryMock,
         );
@@ -248,7 +270,8 @@ describe(handleBodyValidation, () => {
         expect(getRequestBodyObject).toHaveBeenCalledExactlyOnceWith(
           openApiResolverFixture,
           operationObjectFixture,
-          inputParamFixture,
+          methodFixture,
+          pathFixture,
         );
       });
 
@@ -289,6 +312,7 @@ describe(handleBodyValidation, () => {
         validationCacheEntryFixture = {
           body: undefined,
           headers: undefined,
+          params: undefined,
         };
 
         getEntryMock = vitest
@@ -305,11 +329,15 @@ describe(handleBodyValidation, () => {
           .mocked(escapeJsonPointerFragments)
           .mockReturnValueOnce(escapedPointerFixture);
 
+        vitest
+          .mocked(openApiRouterMock.findRoute)
+          .mockReturnValueOnce(pathFixture);
+
         try {
           handleBodyValidation(
             ajvMock,
             openApiObjectFixture,
-            openApiResolverFixture,
+            validationContextFixture,
             inputParamFixture,
             getEntryMock,
           );
@@ -388,6 +416,7 @@ describe(handleBodyValidation, () => {
         validationCacheEntryFixture = {
           body: undefined,
           headers: undefined,
+          params: undefined,
         };
 
         getEntryMock = vitest
@@ -404,10 +433,14 @@ describe(handleBodyValidation, () => {
           .mocked(escapeJsonPointerFragments)
           .mockReturnValueOnce(escapedPointerFixture);
 
+        vitest
+          .mocked(openApiRouterMock.findRoute)
+          .mockReturnValueOnce(pathFixture);
+
         result = handleBodyValidation(
           ajvMock,
           openApiObjectFixture,
-          openApiResolverFixture,
+          validationContextFixture,
           inputParamFixture,
           getEntryMock,
         );
@@ -488,6 +521,7 @@ describe(handleBodyValidation, () => {
         validationCacheEntryFixture = {
           body: undefined,
           headers: undefined,
+          params: undefined,
         };
 
         getEntryMock = vitest
@@ -504,10 +538,14 @@ describe(handleBodyValidation, () => {
           .mocked(escapeJsonPointerFragments)
           .mockReturnValueOnce(escapedPointerFixture);
 
+        vitest
+          .mocked(openApiRouterMock.findRoute)
+          .mockReturnValueOnce(pathFixture);
+
         result = handleBodyValidation(
           ajvMock,
           openApiObjectFixture,
-          openApiResolverFixture,
+          validationContextFixture,
           inputParamFixture,
           getEntryMock,
         );

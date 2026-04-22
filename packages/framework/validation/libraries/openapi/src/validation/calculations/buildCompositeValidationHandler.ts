@@ -1,16 +1,18 @@
 import type Ajv from 'ajv';
 
+import { type OpenApiValidationContext } from '../models/OpenApiValidationContext.js';
 import { type ValidationInputParam } from '../models/ValidatedDecoratorResult.js';
 import {
   type validatedInputParamBodyType,
   type validatedInputParamHeaderType,
+  type validatedInputParamParamType,
 } from '../models/validatedInputParamTypes.js';
 import { type ValidationHandler } from '../models/ValidationHandler.js';
-import { type OpenApiResolver } from '../services/OpenApiResolver.js';
 
 type ValidatedInputParamType =
   | typeof validatedInputParamBodyType
-  | typeof validatedInputParamHeaderType;
+  | typeof validatedInputParamHeaderType
+  | typeof validatedInputParamParamType;
 
 export function buildCompositeValidationHandler<
   TOpenApiObject,
@@ -25,7 +27,7 @@ export function buildCompositeValidationHandler<
   return (
     ajv: Ajv,
     openApiObject: TOpenApiObject,
-    openApiResolver: OpenApiResolver,
+    validationContext: OpenApiValidationContext,
     inputParam: unknown,
     getEntry: (path: string, method: string) => TValidationCacheEntry,
   ): unknown => {
@@ -57,7 +59,7 @@ export function buildCompositeValidationHandler<
     return handler(
       ajv,
       openApiObject,
-      openApiResolver,
+      validationContext,
       inputParam as ValidationInputParam,
       getEntry,
     );

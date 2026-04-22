@@ -1,6 +1,6 @@
 import type Ajv from 'ajv';
 
-import { type OpenApiResolver } from '../services/OpenApiResolver.js';
+import { type OpenApiValidationContext } from './OpenApiValidationContext.js';
 import { type ValidationInputParam } from './ValidatedDecoratorResult.js';
 
 export type ValidationHandler<
@@ -10,7 +10,7 @@ export type ValidationHandler<
 > = (
   ajv: Ajv,
   openApiObject: TOpenApiObject,
-  openApiResolver: OpenApiResolver,
+  validationContext: OpenApiValidationContext,
   inputParam: TValidatedDecoratorResult,
   getEntry: (path: string, method: string) => TValidationCacheEntry,
 ) => unknown;

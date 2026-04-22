@@ -9,23 +9,26 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 
 import { openApiValidationMetadataReflectKey } from '../../../metadata/models/openApiValidationMetadataReflectKey.js';
+import { OpenApi3Dot1Router } from '../../../router/services/v3Dot1/OpenApi3Dot1Router.js';
 import { buildCompositeValidationHandler } from '../../calculations/buildCompositeValidationHandler.js';
 import { handleBodyValidation } from '../../calculations/v3Dot1/handleBodyValidation.js';
 import { handleHeaderValidation } from '../../calculations/v3Dot1/handleHeaderValidation.js';
+import { handleParamValidation } from '../../calculations/v3Dot1/handleParamValidation.js';
+import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
 import { SCHEMA_ID } from '../../models/v3Dot1/schemaId.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot1/ValidationCacheEntry.js';
 import {
   validatedInputParamBodyType,
   validatedInputParamHeaderType,
+  validatedInputParamParamType,
 } from '../../models/validatedInputParamTypes.js';
-import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { DefaultOpenApiResolver } from '../../services/v3Dot1/DefaultOpenApiResolver.js';
 import { ValidationCache } from '../../services/v3Dot1/ValidationCache.js';
 
 const handler: (
   ajv: Ajv,
   openApiObject: OpenApi3Dot1Object,
-  openApiResolver: OpenApiResolver,
+  validationContext: OpenApiValidationContext,
   inputParam: unknown,
   getEntry: (path: string, method: string) => ValidationCacheEntry,
 ) => unknown = buildCompositeValidationHandler<
@@ -34,18 +37,22 @@ const handler: (
 >({
   [validatedInputParamBodyType]: handleBodyValidation,
   [validatedInputParamHeaderType]: handleHeaderValidation,
+  [validatedInputParamParamType]: handleParamValidation,
 });
 
 export class OpenApiValidationPipe implements Pipe {
   readonly #openApiObject: OpenApi3Dot1Object;
-  readonly #openApiResolver: OpenApiResolver;
   readonly #validationCache: ValidationCache;
+  readonly #validationContext: OpenApiValidationContext;
 
   #ajv: Ajv | undefined;
 
   constructor(openApiObject: OpenApi3Dot1Object) {
     this.#openApiObject = openApiObject;
-    this.#openApiResolver = new DefaultOpenApiResolver(openApiObject);
+    this.#validationContext = {
+      resolver: new DefaultOpenApiResolver(openApiObject),
+      router: new OpenApi3Dot1Router(openApiObject),
+    };
     this.#validationCache = new ValidationCache();
     this.#ajv = undefined;
   }
@@ -90,7 +97,7 @@ export class OpenApiValidationPipe implements Pipe {
     return handler(
       ajv,
       this.#openApiObject,
-      this.#openApiResolver,
+      this.#validationContext,
       input,
       this.#validationCache.getOrCreate.bind(this.#validationCache),
     );
