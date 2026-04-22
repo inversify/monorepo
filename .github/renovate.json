@@ -47,18 +47,23 @@
       "matchManagers": ["github-actions"]
     },
     {
-      "description": "Updates for uWebSockets.js",
-      "matchDatasources": ["github-tags"],
-      "matchDepNames": ["uNetworking/uWebSockets.js"],
-      "versioning": "semver-coerced"
-    },
-    {
       "description": "Quarantine packages with current known issues",
       "enabled": false,
       "matchPackageNames": []
     }
   ],
   "rangeStrategy": "bump",
+  "regexManagers": [
+    {
+      "fileMatch": ["package.json"],
+      "matchStrings": [
+        "uNetworking/uWebSockets\\.js#(?<currentValue>[^\"\\s]+)"
+      ],
+      "depNameTemplate": "uNetworking/uWebSockets.js",
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "semver-coerced"
+    }
+  ],
   "rebaseWhen": "conflicted",
   "semanticCommits": "enabled",
   "schedule": ["at any time"]
