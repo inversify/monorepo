@@ -18,7 +18,7 @@ describe(buildNonCustomControllerMethodParameterMetadata, () => {
 
       beforeAll(() => {
         parameterTypeFixture = RequestMethodParameterType.Query;
-        parameterPipeListFixture = [Symbol() as unknown as Pipe];
+        parameterPipeListFixture = [Symbol()];
         optionsFixture = { name: 'testParam' };
 
         result = buildNonCustomControllerMethodParameterMetadata(
@@ -80,7 +80,7 @@ describe(buildNonCustomControllerMethodParameterMetadata, () => {
 
       beforeAll(() => {
         parameterTypeFixture = RequestMethodParameterType.Params;
-        parameterPipeListFixture = [Symbol() as unknown as Pipe];
+        parameterPipeListFixture = [Symbol()];
         optionsFixture = {};
 
         result = buildNonCustomControllerMethodParameterMetadata(

@@ -87,7 +87,7 @@ describe(UseErrorFilter, () => {
       methodKeyFixture = 'testMethod';
       descriptorFixture = {
         value: 'value-descriptor-example',
-      } as PropertyDescriptor;
+      };
     });
 
     describe('when called', () => {

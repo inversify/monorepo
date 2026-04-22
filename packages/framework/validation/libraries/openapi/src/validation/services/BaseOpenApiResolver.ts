@@ -44,7 +44,7 @@ export abstract class BaseOpenApiResolver implements OpenApiResolver {
       typeof object === 'object' &&
       object !== null &&
       '$ref' in object &&
-      typeof (object as { $ref: unknown }).$ref === 'string'
+      typeof object.$ref === 'string'
     );
   }
 

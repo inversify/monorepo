@@ -43,7 +43,7 @@ function buildResolvedValueBindingNode(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     binding: { type: bindingTypeValues.ResolvedValue } as any,
     params: children,
-  } as unknown as ResolvedValueBindingNode;
+  };
 }
 
 function buildServiceRedirectionBindingNode(
@@ -53,11 +53,11 @@ function buildServiceRedirectionBindingNode(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     binding: { type: bindingTypeValues.Instance } as any,
     redirections,
-  } as unknown as PlanServiceRedirectionBindingNode;
+  };
 }
 
 function buildParams(root: PlanServiceNode): ResolutionParams {
-  const planResult: PlanResult = { tree: { root } } as PlanResult;
+  const planResult: PlanResult = { tree: { root } };
   return {
     context: {} as unknown,
     getActivations: vitest.fn(),

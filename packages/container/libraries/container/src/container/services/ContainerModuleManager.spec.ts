@@ -10,11 +10,8 @@ import {
 
 vitest.mock(import('@inversifyjs/core'));
 
-import { type ServiceIdentifier } from '@inversifyjs/common';
 import {
   type ActivationsService,
-  type BindingActivation,
-  type BindingDeactivation,
   type BindingScope,
   bindingScopeValues,
   type BindingService,
@@ -24,15 +21,12 @@ import {
   resolveModuleDeactivations,
 } from '@inversifyjs/core';
 
-import { type BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax.js';
-import { type BindingIdentifier } from '../../binding/models/BindingIdentifier.js';
 import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
 import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
 import {
   type ContainerModule,
   type ContainerModuleLoadOptions,
 } from '../models/ContainerModule.js';
-import { type IsBoundOptions } from '../models/isBoundOptions.js';
 import { type BindingManager } from './BindingManager.js';
 import { ContainerModuleManager } from './ContainerModuleManager.js';
 import { type PlanResultCacheManager } from './PlanResultCacheManager.js';
@@ -114,33 +108,14 @@ describe(ContainerModuleManager, () => {
 
       it('should call containerModule.load()', () => {
         const options: ContainerModuleLoadOptions = {
-          bind: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => BindToFluentSyntax<T>,
-          isBound: expect.any(Function) as unknown as (
-            serviceIdentifier: ServiceIdentifier,
-            options?: IsBoundOptions,
-          ) => boolean,
-          onActivation: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-            activation: BindingActivation<T>,
-          ) => void,
-          onDeactivation: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-            activation: BindingDeactivation<T>,
-          ) => void,
-          rebind: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => BindToFluentSyntax<T>,
-          rebindAsync: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => Promise<BindToFluentSyntax<T>>,
-          unbind: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => void,
-          unbindAsync: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => Promise<void>,
+          bind: expect.any(Function),
+          isBound: expect.any(Function),
+          onActivation: expect.any(Function),
+          onDeactivation: expect.any(Function),
+          rebind: expect.any(Function),
+          rebindAsync: expect.any(Function),
+          unbind: expect.any(Function),
+          unbindAsync: expect.any(Function),
         };
 
         expect(asyncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
@@ -172,33 +147,14 @@ describe(ContainerModuleManager, () => {
 
       it('should call containerModule.load()', () => {
         const options: ContainerModuleLoadOptions = {
-          bind: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => BindToFluentSyntax<T>,
-          isBound: expect.any(Function) as unknown as (
-            serviceIdentifier: ServiceIdentifier,
-            options?: IsBoundOptions,
-          ) => boolean,
-          onActivation: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-            activation: BindingActivation<T>,
-          ) => void,
-          onDeactivation: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-            activation: BindingDeactivation<T>,
-          ) => void,
-          rebind: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => BindToFluentSyntax<T>,
-          rebindAsync: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => Promise<BindToFluentSyntax<T>>,
-          unbind: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => void,
-          unbindAsync: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => Promise<void>,
+          bind: expect.any(Function),
+          isBound: expect.any(Function),
+          onActivation: expect.any(Function),
+          onDeactivation: expect.any(Function),
+          rebind: expect.any(Function),
+          rebindAsync: expect.any(Function),
+          unbind: expect.any(Function),
+          unbindAsync: expect.any(Function),
         };
 
         expect(syncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
@@ -245,33 +201,14 @@ describe(ContainerModuleManager, () => {
 
       it('should call containerModule.load()', () => {
         const options: ContainerModuleLoadOptions = {
-          bind: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => BindToFluentSyntax<T>,
-          isBound: expect.any(Function) as unknown as (
-            serviceIdentifier: ServiceIdentifier,
-            options?: IsBoundOptions,
-          ) => boolean,
-          onActivation: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-            activation: BindingActivation<T>,
-          ) => void,
-          onDeactivation: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-            activation: BindingDeactivation<T>,
-          ) => void,
-          rebind: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => BindToFluentSyntax<T>,
-          rebindAsync: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => Promise<BindToFluentSyntax<T>>,
-          unbind: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => void,
-          unbindAsync: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => Promise<void>,
+          bind: expect.any(Function),
+          isBound: expect.any(Function),
+          onActivation: expect.any(Function),
+          onDeactivation: expect.any(Function),
+          rebind: expect.any(Function),
+          rebindAsync: expect.any(Function),
+          unbind: expect.any(Function),
+          unbindAsync: expect.any(Function),
         };
 
         expect(syncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
@@ -307,33 +244,14 @@ describe(ContainerModuleManager, () => {
 
       it('should call containerModule.load()', () => {
         const options: ContainerModuleLoadOptions = {
-          bind: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => BindToFluentSyntax<T>,
-          isBound: expect.any(Function) as unknown as (
-            serviceIdentifier: ServiceIdentifier,
-            options?: IsBoundOptions,
-          ) => boolean,
-          onActivation: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-            activation: BindingActivation<T>,
-          ) => void,
-          onDeactivation: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-            activation: BindingDeactivation<T>,
-          ) => void,
-          rebind: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => BindToFluentSyntax<T>,
-          rebindAsync: expect.any(Function) as unknown as <T>(
-            serviceIdentifier: ServiceIdentifier<T>,
-          ) => Promise<BindToFluentSyntax<T>>,
-          unbind: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => void,
-          unbindAsync: expect.any(Function) as unknown as (
-            serviceIdentifier: BindingIdentifier | ServiceIdentifier,
-          ) => Promise<void>,
+          bind: expect.any(Function),
+          isBound: expect.any(Function),
+          onActivation: expect.any(Function),
+          onDeactivation: expect.any(Function),
+          rebind: expect.any(Function),
+          rebindAsync: expect.any(Function),
+          unbind: expect.any(Function),
+          unbindAsync: expect.any(Function),
         };
 
         expect(asyncContainerModuleMock.load).toHaveBeenCalledExactlyOnceWith(
@@ -431,9 +349,7 @@ describe(ContainerModuleManager, () => {
       let result: unknown;
 
       beforeAll(async () => {
-        vitest
-          .mocked(resolveModuleDeactivations)
-          .mockResolvedValue(undefined as never);
+        vitest.mocked(resolveModuleDeactivations).mockResolvedValue(undefined);
 
         result = await new ContainerModuleManager(
           bindingManagerMock,
@@ -560,9 +476,7 @@ describe(ContainerModuleManager, () => {
       let result: unknown;
 
       beforeAll(() => {
-        vitest
-          .mocked(resolveModuleDeactivations)
-          .mockResolvedValue(undefined as never);
+        vitest.mocked(resolveModuleDeactivations).mockResolvedValue(undefined);
 
         try {
           new ContainerModuleManager(

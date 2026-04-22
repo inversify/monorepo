@@ -3,8 +3,6 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('./buildNonArrayParamParse.js'));
 vitest.mock(import('./inferSchemaTypeOrThrow.js'));
 
-import { type JsonSchemaType } from '@inversifyjs/json-schema-types/2020-12';
-
 import { type OpenApiResolver } from '../services/OpenApiResolver.js';
 import { buildNonArrayParamParse } from './buildNonArrayParamParse.js';
 import { buildParamParse } from './buildParamParse.js';
@@ -34,7 +32,7 @@ describe(buildParamParse, () => {
       beforeAll(() => {
         vitest.mocked(inferSchemaTypeOrThrow).mockReturnValueOnce({
           isNullable: false,
-          type: 'string' as JsonSchemaType,
+          type: 'string',
         });
 
         vitest
@@ -97,11 +95,11 @@ describe(buildParamParse, () => {
           .mocked(inferSchemaTypeOrThrow)
           .mockReturnValueOnce({
             isNullable: false,
-            type: 'array' as JsonSchemaType,
+            type: 'array',
           })
           .mockReturnValueOnce({
             isNullable: true,
-            type: 'integer' as JsonSchemaType,
+            type: 'integer',
           });
 
         vitest

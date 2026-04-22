@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/typedef */
 import { Container, type ServiceIdentifier } from 'inversify8';
 

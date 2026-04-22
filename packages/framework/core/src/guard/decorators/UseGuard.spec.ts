@@ -70,7 +70,7 @@ describe(UseGuard, () => {
         guardServiceIdentifierFixture = Symbol();
         descriptorFixture = {
           value: 'value-descriptor-example',
-        } as PropertyDescriptor;
+        };
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
 

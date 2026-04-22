@@ -143,9 +143,7 @@ describe(BindingConstraintsImplementation, () => {
 
         it('should return expected result', () => {
           const expected: Partial<BindingConstraints> = {
-            getAncestor: expect.any(Function) as unknown as () =>
-              | BindingConstraints
-              | undefined,
+            getAncestor: expect.any(Function),
             name: ancestorInternalBindingConstraintsFixture.name,
             serviceIdentifier:
               ancestorInternalBindingConstraintsFixture.serviceIdentifier,

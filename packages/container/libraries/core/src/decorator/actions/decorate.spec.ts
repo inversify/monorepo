@@ -88,9 +88,7 @@ describe(decorate, () => {
     let parameterIndexFixture: number;
 
     beforeAll(() => {
-      parameterDecoratorMock =
-        vitest.fn<ParameterDecorator>() as Mock<ParameterDecorator> &
-          ParameterDecorator;
+      parameterDecoratorMock = vitest.fn<ParameterDecorator>();
       targetFixture = class {};
       parameterIndexFixture = 1;
     });
@@ -132,9 +130,7 @@ describe(decorate, () => {
     let parameterIndexFixture: number;
 
     beforeAll(() => {
-      parameterDecoratorMock =
-        vitest.fn<ParameterDecorator>() as Mock<ParameterDecorator> &
-          ParameterDecorator;
+      parameterDecoratorMock = vitest.fn<ParameterDecorator>();
       targetFixture = class {};
       methodNameFixture = Symbol();
       parameterIndexFixture = 1;

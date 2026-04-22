@@ -101,7 +101,7 @@ function buildSimpleInstancePlanResult(
 
   const instanceBindingNode: InstanceBindingNode = {
     binding: instanceBinding,
-    classMetadata: expect.any(Object) as unknown as ClassMetadata,
+    classMetadata: expect.any(Object),
     constructorParams: [],
     propertyParams: new Map(),
   };

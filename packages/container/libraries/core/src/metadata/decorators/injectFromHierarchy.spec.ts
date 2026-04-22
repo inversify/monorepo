@@ -169,9 +169,7 @@ describe(injectFromHierarchy, () => {
         extendProperties: true,
       };
 
-      vitest
-        .mocked(getBaseType)
-        .mockReturnValueOnce(Object as unknown as Newable);
+      vitest.mocked(getBaseType).mockReturnValueOnce(Object);
 
       injectFromHierarchy(optionsFixture)(targetFixture);
     });
@@ -208,7 +206,7 @@ describe(injectFromHierarchy, () => {
       vitest
         .mocked(getBaseType)
         .mockReturnValueOnce(base1Fixture)
-        .mockReturnValueOnce(Object as unknown as Newable);
+        .mockReturnValueOnce(Object);
 
       vitest.mocked(injectFrom).mockReturnValue(injectFromResultMock);
 

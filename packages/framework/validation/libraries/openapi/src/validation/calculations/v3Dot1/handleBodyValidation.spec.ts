@@ -82,7 +82,7 @@ describe(handleBodyValidation, () => {
             schema: {},
           },
         },
-      } as unknown as OpenApi3Dot1RequestBodyObject;
+      };
       escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
     });
 
@@ -391,7 +391,7 @@ describe(handleBodyValidation, () => {
             schema: {},
           },
         },
-      } as unknown as OpenApi3Dot1RequestBodyObject;
+      };
       escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
     });
 
@@ -496,7 +496,7 @@ describe(handleBodyValidation, () => {
             schema: {},
           },
         },
-      } as unknown as OpenApi3Dot1RequestBodyObject;
+      };
       escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
     });
 

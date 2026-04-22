@@ -430,7 +430,7 @@ describe(SwaggerUiProvider, () => {
       beforeAll(() => {
         operationObjectFixture = {
           summary: 'Test operation',
-        } as OpenApi3Dot2OperationObject;
+        };
 
         controllerOpenApiMetadataFixture = {
           methodToOperationObjectMap: new Map([
@@ -450,7 +450,7 @@ describe(SwaggerUiProvider, () => {
             methodKey: 'testMethod',
             path: '/test-method',
             requestMethodType: RequestMethodType.Get,
-          } as ControllerMethodMetadata,
+          },
         ];
 
         controllerMetadataListFixture = [
@@ -552,7 +552,7 @@ describe(SwaggerUiProvider, () => {
       beforeAll(() => {
         operationObjectFixture = {
           summary: 'Test operation',
-        } as OpenApi3Dot2OperationObject;
+        };
 
         controllerOpenApiMetadataFixture = {
           methodToOperationObjectMap: new Map([
@@ -568,7 +568,7 @@ describe(SwaggerUiProvider, () => {
             methodKey: 'testMethod',
             path: '/test-method',
             requestMethodType: RequestMethodType.Post,
-          } as ControllerMethodMetadata,
+          },
         ];
 
         controllerMetadataListFixture = [
@@ -655,7 +655,7 @@ describe(SwaggerUiProvider, () => {
             methodKey: 'testMethod',
             path: '/test-method',
             requestMethodType: RequestMethodType.Get,
-          } as ControllerMethodMetadata,
+          },
         ];
 
         controllerMetadataListFixture = [
@@ -723,15 +723,15 @@ describe(SwaggerUiProvider, () => {
       beforeAll(() => {
         operationObjectFixture1 = {
           summary: 'Delete operation',
-        } as OpenApi3Dot2OperationObject;
+        };
 
         operationObjectFixture2 = {
           summary: 'Put operation',
-        } as OpenApi3Dot2OperationObject;
+        };
 
         operationObjectFixture3 = {
           summary: 'All operations',
-        } as OpenApi3Dot2OperationObject;
+        };
 
         controllerOpenApiMetadataFixture = {
           methodToOperationObjectMap: new Map([
@@ -749,17 +749,17 @@ describe(SwaggerUiProvider, () => {
             methodKey: 'deleteMethod',
             path: '/delete',
             requestMethodType: RequestMethodType.Delete,
-          } as ControllerMethodMetadata,
+          },
           {
             methodKey: 'putMethod',
             path: '/put',
             requestMethodType: RequestMethodType.Put,
-          } as ControllerMethodMetadata,
+          },
           {
             methodKey: 'allMethod',
             path: '/all',
             requestMethodType: RequestMethodType.All,
-          } as ControllerMethodMetadata,
+          },
         ];
 
         controllerMetadataListFixture = [
@@ -879,7 +879,7 @@ describe(SwaggerUiProvider, () => {
       beforeAll(() => {
         operationObjectFixture = {
           summary: 'Test operation',
-        } as OpenApi3Dot2OperationObject;
+        };
 
         controllerOpenApiMetadataFixture = {
           methodToOperationObjectMap: new Map([
@@ -896,12 +896,12 @@ describe(SwaggerUiProvider, () => {
             methodKey: 'method1',
             path: '/duplicate',
             requestMethodType: RequestMethodType.Get,
-          } as ControllerMethodMetadata,
+          },
           {
             methodKey: 'method2',
             path: '/duplicate',
             requestMethodType: RequestMethodType.Get,
-          } as ControllerMethodMetadata,
+          },
         ];
 
         controllerMetadataListFixture = [

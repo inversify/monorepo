@@ -114,7 +114,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
       existingErrorFilterFixture =
         class ExistingErrorFilter {} as Newable<ErrorFilter>;
       errorFilterFixture = class TestErrorFilter {} as Newable<ErrorFilter>;
-      customErrorFixture = class CustomError extends Error {} as Newable<Error>;
+      customErrorFixture = class CustomError extends Error {};
       errorTypesFixture = new Set([Error, customErrorFixture]);
 
       errorTypeToGlobalErrorFilterMapFixture.set(

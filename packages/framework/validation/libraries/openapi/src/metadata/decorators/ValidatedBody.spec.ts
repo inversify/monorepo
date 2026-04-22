@@ -92,7 +92,7 @@ describe(ValidatedBody, () => {
     beforeAll(() => {
       vitest
         .mocked(createCustomParameterDecorator)
-        .mockReturnValueOnce(vitest.fn() as unknown as ParameterDecorator);
+        .mockReturnValueOnce(vitest.fn());
 
       const decorator: ParameterDecorator = ValidatedBody();
 

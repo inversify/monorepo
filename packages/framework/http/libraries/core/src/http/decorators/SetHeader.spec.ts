@@ -25,7 +25,7 @@ describe(SetHeader, () => {
       controllerMethodKeyFixture = 'testMethod';
       descriptorFixture = {
         value: 'value-descriptor-example',
-      } as PropertyDescriptor;
+      };
       keyFixture = 'key-example';
       valueFixture = 'value-example';
       callbackFixture = (

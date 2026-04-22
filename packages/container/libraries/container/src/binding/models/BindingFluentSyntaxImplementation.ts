@@ -23,7 +23,6 @@ import {
   type MetadataName,
   type MetadataTag,
   type ResolutionContext,
-  type Resolved,
   type ResolvedValueBinding,
   type ResolvedValueElementMetadata,
   ResolvedValueElementMetadataKind,
@@ -175,7 +174,7 @@ export class BindToFluentSyntaxImplementation<
       scope: bindingScopeValues.Singleton,
       serviceIdentifier: this.#serviceIdentifier,
       type: bindingTypeValues.ConstantValue,
-      value: value as Resolved<T>,
+      value,
     };
 
     this.#callback(binding);
