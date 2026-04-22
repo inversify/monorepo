@@ -48,8 +48,8 @@
     },
     {
       "description": "Updates for uWebSockets.js",
-      "matchDatasources": ["github-tags", "github-releases"],
-      "matchPackageNames": ["uNetworking/uWebSockets.js"],
+      "matchDatasources": ["github-tags"],
+      "matchDepNames": ["uNetworking/uWebSockets.js"],
       "versioning": "semver-coerced"
     },
     {
