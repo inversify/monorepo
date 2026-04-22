@@ -6,7 +6,7 @@ compatibility: Requires openspec CLI.
 metadata:
   author: openspec
   version: "1.0"
-  generatedBy: "1.2.0"
+  generatedBy: "1.3.1"
 ---
 
 Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
@@ -51,15 +51,15 @@ Depending on what the user brings, you might:
 - Recommend a path (if asked)
 
 **Visualize**
-```text
+```
 ┌─────────────────────────────────────────┐
 │     Use ASCII diagrams liberally        │
 ├─────────────────────────────────────────┤
 │                                         │
-│   ┌────────┐         ┌────────┐        │
-│   │ State  │────────▶│ State  │        │
-│   │   A    │         │   B    │        │
-│   └────────┘         └────────┘        │
+│      ┌────────┐         ┌────────┐      │
+│      │ State  │────────▶│ State  │      │
+│      │   A    │         │   B    │      │
+│      └────────┘         └────────┘      │
 │                                         │
 │   System diagrams, state machines,      │
 │   data flows, architecture sketches,    │
@@ -83,7 +83,7 @@ You have full context of the OpenSpec system. Use it naturally, don't force it.
 
 At the start, quickly check what exists:
 ```bash
-pnpm openspec list --json
+openspec list --json
 ```
 
 This tells you:
@@ -114,14 +114,14 @@ If the user mentions a change or you detect one is relevant:
 
 3. **Offer to capture when decisions are made**
 
-   | Insight Type | Where to Capture |
-   |--------------|------------------|
-   | New requirement discovered | `specs/<capability>/spec.md` |
-   | Requirement changed | `specs/<capability>/spec.md` |
-   | Design decision made | `design.md` |
-   | Scope changed | `proposal.md` |
-   | New work identified | `tasks.md` |
-   | Assumption invalidated | Relevant artifact |
+    | Insight Type               | Where to Capture               |
+    |----------------------------|--------------------------------|
+    | New requirement discovered | `specs/<capability>/spec.md` |
+    | Requirement changed        | `specs/<capability>/spec.md` |
+    | Design decision made       | `design.md`                  |
+    | Scope changed              | `proposal.md`                |
+    | New work identified        | `tasks.md`                   |
+    | Assumption invalidated     | Relevant artifact              |
 
    Example offers:
    - "That's a design decision. Capture it in design.md?"
@@ -146,7 +146,7 @@ If the user mentions a change or you detect one is relevant:
 ## Handling Different Entry Points
 
 **User brings a vague idea:**
-```text
+```
 User: I'm thinking about adding real-time collaboration
 
 You: Real-time collab is a big space. Let me think about this...
@@ -169,7 +169,7 @@ You: Real-time collab is a big space. Let me think about this...
 ```
 
 **User brings a specific problem:**
-```text
+```
 User: The auth system is a mess
 
 You: [reads codebase]
@@ -200,7 +200,7 @@ You: [reads codebase]
 ```
 
 **User is stuck mid-implementation:**
-```text
+```
 User: /opsx:explore add-auth-system
       The OAuth integration is more complex than expected
 
@@ -217,7 +217,7 @@ You: [reads change artifacts]
 ```
 
 **User wants to compare options:**
-```text
+```
 User: Should we use Postgres or SQLite?
 
 You: Generic answer is boring. What's the context?
@@ -227,7 +227,7 @@ User: A CLI tool that tracks local dev environments
 You: That changes everything.
 
      ┌─────────────────────────────────────────────────┐
-     │         CLI TOOL DATA STORAGE                  │
+     │          CLI TOOL DATA STORAGE                  │
      └─────────────────────────────────────────────────┘
 
      Key constraints:
@@ -258,7 +258,7 @@ There's no required ending. Discovery might:
 
 When it feels like things are crystallizing, you might summarize:
 
-```text
+```
 ## What We Figured Out
 
 **The problem**: [crystallized understanding]

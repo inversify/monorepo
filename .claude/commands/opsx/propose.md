@@ -1,12 +1,8 @@
 ---
-name: openspec-propose
-description: Propose a new change with all artifacts generated in one step. Use when the user wants to quickly describe what they want to build and get a complete proposal with design, specs, and tasks ready for implementation.
-license: MIT
-compatibility: Requires openspec CLI.
-metadata:
-  author: openspec
-  version: "1.0"
-  generatedBy: "1.3.1"
+name: "OPSX: Propose"
+description: Propose a new change - create it and generate all artifacts in one step
+category: Workflow
+tags: [workflow, artifacts, experimental]
 ---
 
 Propose a new change - create the change and generate all artifacts in one step.
@@ -20,11 +16,11 @@ When ready to implement, run /opsx:apply
 
 ---
 
-**Input**: The user's request should include a change name (kebab-case) OR a description of what they want to build.
+**Input**: The argument after `/opsx:propose` is the change name (kebab-case), OR a description of what the user wants to build.
 
 **Steps**
 
-1. **If no clear input provided, ask what they want to build**
+1. **If no input provided, ask what they want to build**
 
    Use the **AskUserQuestion tool** (open-ended, no preset options) to ask:
    > "What change do you want to work on? Describe what you want to build or fix."
@@ -90,7 +86,7 @@ After completing all artifacts, summarize:
 - Change name and location
 - List of artifacts created with brief descriptions
 - What's ready: "All artifacts created! Ready for implementation."
-- Prompt: "Run `/opsx:apply` or ask me to implement to start working on the tasks."
+- Prompt: "Run `/opsx:apply` to start implementing."
 
 **Artifact Creation Guidelines**
 

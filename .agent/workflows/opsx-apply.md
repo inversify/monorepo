@@ -13,13 +13,13 @@ Implement tasks from an OpenSpec change.
    If a name is provided, use it. Otherwise:
    - Infer from conversation context if the user mentioned a change
    - Auto-select if only one active change exists
-   - If ambiguous, run `pnpm openspec list --json` to get available changes and use the **AskUserQuestion tool** to let the user select
+   - If ambiguous, run `openspec list --json` to get available changes and use the **AskUserQuestion tool** to let the user select
 
    Always announce: "Using change: <name>" and how to override (e.g., `/opsx:apply <other>`).
 
 2. **Check status to understand the schema**
    ```bash
-   pnpm openspec status --change "<name>" --json
+   openspec status --change "<name>" --json
    ```
    Parse the JSON to understand:
    - `schemaName`: The workflow being used (e.g., "spec-driven")
@@ -28,11 +28,11 @@ Implement tasks from an OpenSpec change.
 3. **Get apply instructions**
 
    ```bash
-   pnpm openspec instructions apply --change "<name>" --json
+   openspec instructions apply --change "<name>" --json
    ```
 
    This returns:
-   - Context file paths (varies by schema)
+   - `contextFiles`: artifact ID -> array of concrete file paths (varies by schema)
    - Progress (total, complete, remaining)
    - Task list with status
    - Dynamic instruction based on current state
@@ -44,7 +44,7 @@ Implement tasks from an OpenSpec change.
 
 4. **Read context files**
 
-   Read the files listed in `contextFiles` from the apply instructions output.
+   Read every file path listed under `contextFiles` from the apply instructions output.
    The files depend on the schema being used:
    - **spec-driven**: proposal, specs, design, tasks
    - Other schemas: follow the contextFiles from CLI output
@@ -82,7 +82,7 @@ Implement tasks from an OpenSpec change.
 
 **Output During Implementation**
 
-```md
+```
 ## Implementing: <change-name> (schema: <schema-name>)
 
 Working on task 3/7: <task description>
@@ -96,7 +96,7 @@ Working on task 4/7: <task description>
 
 **Output On Completion**
 
-```md
+```
 ## Implementation Complete
 
 **Change:** <change-name>
@@ -113,7 +113,7 @@ All tasks complete! You can archive this change with `/opsx:archive`.
 
 **Output On Pause (Issue Encountered)**
 
-```md
+```
 ## Implementation Paused
 
 **Change:** <change-name>
