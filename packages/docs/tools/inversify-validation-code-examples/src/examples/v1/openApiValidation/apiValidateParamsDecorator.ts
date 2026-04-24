@@ -3,6 +3,10 @@ import { Controller, Get } from '@inversifyjs/http-core';
 import { OasParameter } from '@inversifyjs/http-open-api';
 import { ValidatedParams } from '@inversifyjs/open-api-validation';
 
+interface UserParams {
+  userId: string;
+}
+
 @Controller('/users')
 export class UserController {
   @OasParameter({
@@ -12,7 +16,7 @@ export class UserController {
     schema: { format: 'uuid', type: 'string' },
   })
   @Get('/:userId')
-  public getUser(@ValidatedParams() params: Record<string, unknown>): string {
-    return `User ID: ${String(params['userId'])}`;
+  public getUser(@ValidatedParams() params: UserParams): string {
+    return `User ID: ${params.userId}`;
   }
 }
