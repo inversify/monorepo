@@ -3,6 +3,11 @@ import { Controller, Get } from '@inversifyjs/http-core';
 import { OasParameter } from '@inversifyjs/http-open-api';
 import { ValidatedHeaders } from '@inversifyjs/open-api-validation';
 
+interface ResourceHeaders {
+  'x-page-size'?: number;
+  'x-request-id': string;
+}
+
 @Controller('/resources')
 export class ResourceController {
   @OasParameter({
@@ -18,9 +23,7 @@ export class ResourceController {
     schema: { minimum: 1, type: 'integer' },
   })
   @Get('/')
-  public getResources(
-    @ValidatedHeaders() headers: Record<string, unknown>,
-  ): string {
-    return `Request ID: ${String(headers['x-request-id'])}`;
+  public getResources(@ValidatedHeaders() headers: ResourceHeaders): string {
+    return `Request ID: ${headers['x-request-id']}`;
   }
 }
