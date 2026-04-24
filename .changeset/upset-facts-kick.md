@@ -2,4 +2,4 @@
 "@inversifyjs/http-hono": patch
 ---
 
-- Updated `InversifyHttpHonoAdapter` to properly handle multiple query params.
+- Updated `InversifyHonoHttpAdapter` to properly handle multiple query params.

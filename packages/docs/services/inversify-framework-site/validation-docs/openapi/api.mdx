@@ -11,7 +11,7 @@ import CodeBlock from '@theme/CodeBlock';
 
 ## OpenApiValidationPipe
 
-Validates incoming request bodies and headers against the schemas defined in your OpenAPI specification. The pipe uses Ajv for JSON Schema validation and supports format validation via `ajv-formats`.
+Validates incoming request bodies, headers, path parameters, and query parameters against the schemas defined in your OpenAPI specification. The pipe uses Ajv for JSON Schema validation and supports format validation via `ajv-formats`.
 
 ```ts
 constructor(
