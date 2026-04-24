@@ -94,6 +94,7 @@ describe(handleHeaderValidation, () => {
         body: undefined,
         headers: undefined,
         params: undefined,
+        queries: undefined,
       };
 
       const getEntryMock: Mock<
@@ -169,6 +170,7 @@ describe(handleHeaderValidation, () => {
         body: undefined,
         headers: undefined,
         params: undefined,
+        queries: undefined,
       };
 
       const getEntryMock: Mock<
@@ -253,6 +255,7 @@ describe(handleHeaderValidation, () => {
         body: undefined,
         headers: undefined,
         params: undefined,
+        queries: undefined,
       };
 
       const getEntryMock: Mock<
@@ -339,6 +342,7 @@ describe(handleHeaderValidation, () => {
         body: undefined,
         headers: undefined,
         params: undefined,
+        queries: undefined,
       };
 
       const getEntryMock: Mock<
@@ -413,6 +417,7 @@ describe(handleHeaderValidation, () => {
           ],
         ]),
         params: undefined,
+        queries: undefined,
       };
 
       const getEntryMock: Mock<

@@ -158,8 +158,8 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
   protected _getQuery(request: HonoRequest, parameterName: string): unknown;
   protected _getQuery(request: HonoRequest, parameterName?: string): unknown {
     return parameterName === undefined
-      ? request.query()
-      : request.query(parameterName);
+      ? this.#parseQueriesRecord(request)
+      : this.#parseQueriesParam(request, parameterName);
   }
 
   protected _getHeaders(
@@ -388,6 +388,35 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     const normalizedContentType: string = contentType.trim().toLowerCase();
 
     return normalizedContentType === '' ? undefined : normalizedContentType;
+  }
+
+  #parseQueriesRecord(request: HonoRequest): Record<string, string | string[]> {
+    const queries: Record<string, string | string[]> = request.queries();
+
+    for (const [key, value] of Object.entries(queries)) {
+      if ((value as string[]).length === 1) {
+        queries[key] = (value as [string])[0];
+      }
+    }
+
+    return queries;
+  }
+
+  #parseQueriesParam(
+    request: HonoRequest,
+    paramName: string,
+  ): string | string[] | undefined {
+    const query: string[] | undefined = request.queries(paramName);
+
+    if (query === undefined) {
+      return undefined;
+    }
+
+    if (query.length === 1) {
+      return query[0];
+    }
+
+    return query;
   }
 
   #parseUrlEncodedBody(

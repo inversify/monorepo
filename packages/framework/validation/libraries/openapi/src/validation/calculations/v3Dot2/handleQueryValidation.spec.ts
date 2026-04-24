@@ -9,8 +9,8 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock(import('../buildParamParse.js'));
-vitest.mock(import('./getParamParameterObjects.js'));
+vitest.mock(import('../buildQueryParse.js'));
+vitest.mock(import('./getQueryParameterObjects.js'));
 
 import { type OpenApi3Dot2Object } from '@inversifyjs/open-api-types/v3Dot2';
 import {
@@ -22,17 +22,17 @@ import { type ValidateFunction } from 'ajv';
 
 import { type OpenApiRouter } from '../../../router/services/OpenApiRouter.js';
 import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
-import { type ParamValidationInputParam } from '../../models/ParamValidationInputParam.js';
+import { type QueryValidationInputParam } from '../../models/QueryValidationInputParam.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
-import { buildParamParse } from '../buildParamParse.js';
+import { buildQueryParse } from '../buildQueryParse.js';
 import {
-  getParamParameterObjects,
-  type ParamParameterEntry,
-} from './getParamParameterObjects.js';
-import { handleParamValidation } from './handleParamValidation.js';
+  getQueryParameterObjects,
+  type QueryParameterEntry,
+} from './getQueryParameterObjects.js';
+import { handleQueryValidation } from './handleQueryValidation.js';
 
-describe(handleParamValidation, () => {
+describe(handleQueryValidation, () => {
   let openApiObjectFixture: OpenApi3Dot2Object;
   let validationContextFixture: OpenApiValidationContext;
   let openApiResolverFixture: OpenApiResolver;
@@ -54,32 +54,81 @@ describe(handleParamValidation, () => {
     vitest.restoreAllMocks();
   });
 
-  describe('when called, and params are valid with string type', () => {
+  describe('when called, and route is not found', () => {
     let result: unknown;
 
     beforeAll(() => {
-      const paramParamMap: Map<string, ParamParameterEntry> = new Map([
+      vitest.mocked(openApiRouterMock.findRoute).mockReturnValueOnce(undefined);
+
+      const ajvMock: Mocked<Ajv> = {
+        getSchema: vitest.fn(),
+      } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
+
+      const getEntryMock: Mock<
+        (path: string, method: string) => ValidationCacheEntry
+      > = vitest.fn();
+
+      const inputParam: QueryValidationInputParam = {
+        method: 'get',
+        path: '/unknown',
+        queries: {},
+        type: Symbol() as unknown as QueryValidationInputParam['type'],
+      };
+
+      try {
+        handleQueryValidation(
+          ajvMock,
+          openApiObjectFixture,
+          validationContextFixture,
+          inputParam,
+          getEntryMock,
+        );
+      } catch (error: unknown) {
+        result = error;
+      }
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should throw an InversifyValidationError', () => {
+      const expectedErrorProperties: Partial<InversifyValidationError> = {
+        kind: InversifyValidationErrorKind.validationFailed,
+        message: expect.stringContaining('GET /unknown'),
+      };
+
+      expect(result).toBeInstanceOf(InversifyValidationError);
+      expect(result).toMatchObject(expectedErrorProperties);
+    });
+  });
+
+  describe('when called, and queries are valid', () => {
+    let result: unknown;
+
+    beforeAll(() => {
+      const queryParamMap: Map<string, QueryParameterEntry> = new Map([
         [
-          'userId',
+          'page',
           {
             parameter: {
-              in: 'path',
-              name: 'userId',
-              required: true,
-              schema: { type: 'string' },
+              in: 'query',
+              name: 'page',
+              required: false,
+              schema: { type: 'integer' },
             },
-            pointerPrefix: 'paths/~1users~1{userId}/get/parameters/0',
+            pointerPrefix: 'paths/~1items/get/parameters/0',
           },
         ],
       ]);
 
       vitest
-        .mocked(getParamParameterObjects)
-        .mockReturnValueOnce(paramParamMap);
+        .mocked(getQueryParameterObjects)
+        .mockReturnValueOnce(queryParamMap);
 
-      const parseMock: Mock = vitest.fn().mockReturnValueOnce('abc-123');
+      const parseMock: Mock = vitest.fn().mockReturnValueOnce(10);
 
-      vitest.mocked(buildParamParse).mockReturnValueOnce(parseMock);
+      vitest.mocked(buildQueryParse).mockReturnValueOnce(parseMock);
 
       const validateMock: ValidateFunction = Object.assign(
         vitest.fn().mockReturnValueOnce(true),
@@ -101,18 +150,18 @@ describe(handleParamValidation, () => {
         (path: string, method: string) => ValidationCacheEntry
       > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
 
-      const inputParam: ParamValidationInputParam = {
+      const inputParam: QueryValidationInputParam = {
         method: 'get',
-        params: { userId: 'abc-123' },
-        path: '/users/{userId}',
-        type: Symbol() as unknown as ParamValidationInputParam['type'],
+        path: '/items',
+        queries: { page: '1' },
+        type: Symbol() as unknown as QueryValidationInputParam['type'],
       };
 
       vitest
         .mocked(openApiRouterMock.findRoute)
         .mockReturnValueOnce(inputParam.path);
 
-      result = handleParamValidation(
+      result = handleQueryValidation(
         ajvMock,
         openApiObjectFixture,
         validationContextFixture,
@@ -125,37 +174,37 @@ describe(handleParamValidation, () => {
       vitest.clearAllMocks();
     });
 
-    it('should return validated params record', () => {
-      expect(result).toStrictEqual({ userId: 'abc-123' });
+    it('should return the computed queries record', () => {
+      expect(result).toStrictEqual({ page: 10 });
     });
   });
 
-  describe('when called, and required param is missing', () => {
+  describe('when called, and required query is missing', () => {
     let result: unknown;
 
     beforeAll(() => {
-      const paramParamMap: Map<string, ParamParameterEntry> = new Map([
+      const queryParamMap: Map<string, QueryParameterEntry> = new Map([
         [
-          'userId',
+          'search',
           {
             parameter: {
-              in: 'path',
-              name: 'userId',
+              in: 'query',
+              name: 'search',
               required: true,
               schema: { type: 'string' },
             },
-            pointerPrefix: 'paths/~1users~1{userId}/get/parameters/0',
+            pointerPrefix: 'paths/~1items/get/parameters/0',
           },
         ],
       ]);
 
       vitest
-        .mocked(getParamParameterObjects)
-        .mockReturnValueOnce(paramParamMap);
+        .mocked(getQueryParameterObjects)
+        .mockReturnValueOnce(queryParamMap);
 
       const parseMock: Mock = vitest.fn();
 
-      vitest.mocked(buildParamParse).mockReturnValueOnce(parseMock);
+      vitest.mocked(buildQueryParse).mockReturnValueOnce(parseMock);
 
       const validateMock: ValidateFunction = Object.assign(vitest.fn(), {
         errors: null,
@@ -177,19 +226,19 @@ describe(handleParamValidation, () => {
         (path: string, method: string) => ValidationCacheEntry
       > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
 
-      const inputParam: ParamValidationInputParam = {
+      const inputParam: QueryValidationInputParam = {
         method: 'get',
-        params: {},
-        path: '/users/{userId}',
-        type: Symbol() as unknown as ParamValidationInputParam['type'],
+        path: '/items',
+        queries: {},
+        type: Symbol() as unknown as QueryValidationInputParam['type'],
       };
 
-      vitest
-        .mocked(openApiRouterMock.findRoute)
-        .mockReturnValueOnce(inputParam.path);
-
       try {
-        handleParamValidation(
+        vitest
+          .mocked(openApiRouterMock.findRoute)
+          .mockReturnValueOnce(inputParam.path);
+
+        handleQueryValidation(
           ajvMock,
           openApiObjectFixture,
           validationContextFixture,
@@ -208,7 +257,7 @@ describe(handleParamValidation, () => {
     it('should throw an InversifyValidationError', () => {
       const expectedErrorProperties: Partial<InversifyValidationError> = {
         kind: InversifyValidationErrorKind.validationFailed,
-        message: 'Missing required param: userId',
+        message: 'Missing required query: search',
       };
 
       expect(result).toBeInstanceOf(InversifyValidationError);
@@ -216,32 +265,32 @@ describe(handleParamValidation, () => {
     });
   });
 
-  describe('when called, and validation fails', () => {
+  describe('when called, and query validation fails', () => {
     let result: unknown;
 
     beforeAll(() => {
-      const paramParamMap: Map<string, ParamParameterEntry> = new Map([
+      const queryParamMap: Map<string, QueryParameterEntry> = new Map([
         [
-          'userId',
+          'limit',
           {
             parameter: {
-              in: 'path',
-              name: 'userId',
-              required: true,
+              in: 'query',
+              name: 'limit',
+              required: false,
               schema: { minimum: 1, type: 'integer' },
             },
-            pointerPrefix: 'paths/~1users~1{userId}/get/parameters/0',
+            pointerPrefix: 'paths/~1items/get/parameters/0',
           },
         ],
       ]);
 
       vitest
-        .mocked(getParamParameterObjects)
-        .mockReturnValueOnce(paramParamMap);
+        .mocked(getQueryParameterObjects)
+        .mockReturnValueOnce(queryParamMap);
 
-      const parseMock: Mock = vitest.fn().mockReturnValueOnce('not-valid');
+      const parseMock: Mock = vitest.fn().mockReturnValueOnce('not-a-number');
 
-      vitest.mocked(buildParamParse).mockReturnValueOnce(parseMock);
+      vitest.mocked(buildQueryParse).mockReturnValueOnce(parseMock);
 
       const validateMock: ValidateFunction = Object.assign(
         vitest.fn().mockReturnValueOnce(false),
@@ -274,19 +323,19 @@ describe(handleParamValidation, () => {
         (path: string, method: string) => ValidationCacheEntry
       > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
 
-      const inputParam: ParamValidationInputParam = {
+      const inputParam: QueryValidationInputParam = {
         method: 'get',
-        params: { userId: 'not-valid' },
-        path: '/users/{userId}',
-        type: Symbol() as unknown as ParamValidationInputParam['type'],
+        path: '/items',
+        queries: { limit: 'not-a-number' },
+        type: Symbol() as unknown as QueryValidationInputParam['type'],
       };
 
-      vitest
-        .mocked(openApiRouterMock.findRoute)
-        .mockReturnValueOnce(inputParam.path);
-
       try {
-        handleParamValidation(
+        vitest
+          .mocked(openApiRouterMock.findRoute)
+          .mockReturnValueOnce(inputParam.path);
+
+        handleQueryValidation(
           ajvMock,
           openApiObjectFixture,
           validationContextFixture,
@@ -305,7 +354,7 @@ describe(handleParamValidation, () => {
     it('should throw an InversifyValidationError', () => {
       const expectedErrorProperties: Partial<InversifyValidationError> = {
         kind: InversifyValidationErrorKind.validationFailed,
-        message: expect.stringContaining('userId'),
+        message: expect.stringContaining('limit'),
       };
 
       expect(result).toBeInstanceOf(InversifyValidationError);
@@ -313,12 +362,12 @@ describe(handleParamValidation, () => {
     });
   });
 
-  describe('when called, and cached params are reused', () => {
+  describe('when called, and cached queries are reused', () => {
     let result: unknown;
     let ajvMock: Mocked<Ajv>;
 
     beforeAll(() => {
-      const parseMock: Mock = vitest.fn().mockReturnValueOnce('test');
+      const parseMock: Mock = vitest.fn().mockReturnValueOnce('foo');
 
       const validateMock: ValidateFunction = Object.assign(
         vitest.fn().mockReturnValueOnce(true),
@@ -332,34 +381,35 @@ describe(handleParamValidation, () => {
       const validationCacheEntry: ValidationCacheEntry = {
         body: undefined,
         headers: undefined,
-        params: new Map([
+        params: undefined,
+        queries: new Map([
           [
-            'userId',
+            'search',
             {
               parse: parseMock,
+              required: false,
               validate: validateMock,
             },
           ],
         ]),
-        queries: undefined,
       };
 
       const getEntryMock: Mock<
         (path: string, method: string) => ValidationCacheEntry
       > = vitest.fn().mockReturnValueOnce(validationCacheEntry);
 
-      const inputParam: ParamValidationInputParam = {
+      const inputParam: QueryValidationInputParam = {
         method: 'get',
-        params: { userId: 'test' },
-        path: '/users/{userId}',
-        type: Symbol() as unknown as ParamValidationInputParam['type'],
+        path: '/items',
+        queries: { search: 'foo' },
+        type: Symbol() as unknown as QueryValidationInputParam['type'],
       };
 
       vitest
         .mocked(openApiRouterMock.findRoute)
         .mockReturnValueOnce(inputParam.path);
 
-      result = handleParamValidation(
+      result = handleQueryValidation(
         ajvMock,
         openApiObjectFixture,
         validationContextFixture,
@@ -376,12 +426,12 @@ describe(handleParamValidation, () => {
       expect(ajvMock.getSchema).not.toHaveBeenCalled();
     });
 
-    it('should not call getParamParameterObjects()', () => {
-      expect(getParamParameterObjects).not.toHaveBeenCalled();
+    it('should not call getQueryParameterObjects()', () => {
+      expect(getQueryParameterObjects).not.toHaveBeenCalled();
     });
 
-    it('should return validated params', () => {
-      expect(result).toStrictEqual({ userId: 'test' });
+    it('should return the computed queries', () => {
+      expect(result).toStrictEqual({ search: 'foo' });
     });
   });
 });

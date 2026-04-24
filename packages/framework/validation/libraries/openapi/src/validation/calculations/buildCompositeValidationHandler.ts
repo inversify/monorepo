@@ -6,29 +6,34 @@ import {
   type validatedInputParamBodyType,
   type validatedInputParamHeaderType,
   type validatedInputParamParamType,
+  type validatedInputParamQueryType,
 } from '../models/validatedInputParamTypes.js';
 import { type ValidationHandler } from '../models/ValidationHandler.js';
 
 type ValidatedInputParamType =
   | typeof validatedInputParamBodyType
   | typeof validatedInputParamHeaderType
-  | typeof validatedInputParamParamType;
+  | typeof validatedInputParamParamType
+  | typeof validatedInputParamQueryType;
 
 export function buildCompositeValidationHandler<
   TOpenApiObject,
   TValidationCacheEntry,
 >(handlers: {
-  [TKey in ValidatedInputParamType]?: ValidationHandler<
-    TOpenApiObject,
-    ValidationInputParam & { type: TKey },
-    TValidationCacheEntry
-  >;
+  [TKey in ValidatedInputParamType]?: [
+    ValidationHandler<
+      TOpenApiObject,
+      ValidationInputParam & { type: TKey },
+      TValidationCacheEntry
+    >,
+    boolean,
+  ];
 }) {
   return (
-    ajv: Ajv,
     openApiObject: TOpenApiObject,
     validationContext: OpenApiValidationContext,
     inputParam: unknown,
+    getAjv: (coerceTypes: boolean) => Ajv,
     getEntry: (path: string, method: string) => TValidationCacheEntry,
   ): unknown => {
     if (inputParam === null || typeof inputParam !== 'object') {
@@ -39,25 +44,41 @@ export function buildCompositeValidationHandler<
       inputParam as Partial<ValidationInputParam>
     ).type;
 
-    const handler:
-      | ValidationHandler<
-          TOpenApiObject,
-          ValidationInputParam,
-          TValidationCacheEntry
-        >
+    const handlerAndCoerceTypes:
+      | [
+          ValidationHandler<
+            TOpenApiObject,
+            ValidationInputParam,
+            TValidationCacheEntry
+          >,
+          boolean,
+        ]
       | undefined = handlers[discriminatorValue as ValidatedInputParamType] as
-      | ValidationHandler<
-          TOpenApiObject,
-          ValidationInputParam,
-          TValidationCacheEntry
-        >
+      | [
+          ValidationHandler<
+            TOpenApiObject,
+            ValidationInputParam,
+            TValidationCacheEntry
+          >,
+          boolean,
+        ]
       | undefined;
 
-    if (handler === undefined) {
+    if (handlerAndCoerceTypes === undefined) {
       return inputParam;
     }
+
+    const [handler, coerceTypes]: [
+      ValidationHandler<
+        TOpenApiObject,
+        ValidationInputParam,
+        TValidationCacheEntry
+      >,
+      boolean,
+    ] = handlerAndCoerceTypes;
+
     return handler(
-      ajv,
+      getAjv(coerceTypes),
       openApiObject,
       validationContext,
       inputParam as ValidationInputParam,

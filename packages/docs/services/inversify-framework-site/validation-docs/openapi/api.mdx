@@ -5,6 +5,8 @@ title: API
 import apiOpenApiValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiOpenApiValidationPipe.ts.txt';
 import apiValidateDecoratorSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiValidateDecorator.ts.txt';
 import apiValidateHeadersDecoratorSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiValidateHeadersDecorator.ts.txt';
+import apiValidateParamsDecoratorSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiValidateParamsDecorator.ts.txt';
+import apiValidateQueryDecoratorSource from '@inversifyjs/validation-code-examples/generated/examples/v1/openApiValidation/apiValidateQueryDecorator.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 ## OpenApiValidationPipe
@@ -107,3 +109,49 @@ A header validation failure:
 ```
 
 Use `InversifyValidationErrorFilter` (from `@inversifyjs/http-validation`) or a custom `@CatchError(InversifyValidationError)` filter to convert these errors into HTTP 400 responses.
+
+## ValidatedParams
+
+A custom parameter decorator that extracts URL path parameters along with the HTTP method and URL, and marks the parameter for OpenAPI path parameter validation.
+
+```ts
+ValidatedParams(): ParameterDecorator
+```
+
+Apply `@ValidatedParams()` to any controller method parameter you want to validate against OpenAPI path parameters defined with `@OasParameter({ in: 'path', ... })`:
+
+```ts
+@Get('/:userId')
+public getUser(@ValidatedParams() params: Record<string, unknown>): string {
+  return `User ID: ${String(params['userId'])}`;
+}
+```
+
+`@ValidatedParams()` is built with `createCustomParameterDecorator` from `@inversifyjs/http-core`. It stores a boolean validation marker on the parameter index and provides a handler that extracts all URL path parameters, the HTTP method, and URL at runtime. The `OpenApiValidationPipe` checks for this marker and validates each path parameter individually against its OpenAPI schema, coercing string values to the expected type when needed.
+
+### Example: validate URL path parameters with OpenAPI schema
+
+<CodeBlock language="ts">{apiValidateParamsDecoratorSource}</CodeBlock>
+
+## ValidatedQuery
+
+A custom parameter decorator that extracts URL query parameters along with the HTTP method and URL, and marks the parameter for OpenAPI query parameter validation.
+
+```ts
+ValidatedQuery(): ParameterDecorator
+```
+
+Apply `@ValidatedQuery()` to any controller method parameter you want to validate against OpenAPI query parameters defined with `@OasParameter({ in: 'query', ... })`:
+
+```ts
+@Get('/')
+public getProducts(@ValidatedQuery() query: Record<string, unknown>): string {
+  return `Search: ${String(query['search'])}`;
+}
+```
+
+`@ValidatedQuery()` is built with `createCustomParameterDecorator` from `@inversifyjs/http-core`. It stores a boolean validation marker on the parameter index and provides a handler that extracts all query parameters as an object, the HTTP method, and URL at runtime. The `OpenApiValidationPipe` checks for this marker and validates each query parameter individually against its OpenAPI schema. Because query parameters arrive as strings over HTTP, the pipe uses `coerceTypes: true` on the Ajv instance and additionally pre-coerces string values to the expected type (boolean, number, null) before validation.
+
+### Example: validate query parameters with OpenAPI schema
+
+<CodeBlock language="ts">{apiValidateQueryDecoratorSource}</CodeBlock>

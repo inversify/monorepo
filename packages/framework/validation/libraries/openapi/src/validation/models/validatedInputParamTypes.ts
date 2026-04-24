@@ -9,3 +9,7 @@ export const validatedInputParamHeaderType: unique symbol = Symbol.for(
 export const validatedInputParamParamType: unique symbol = Symbol.for(
   '@inversifyjs/open-api-validation/validatedInputParamParamType',
 );
+
+export const validatedInputParamQueryType: unique symbol = Symbol.for(
+  '@inversifyjs/open-api-validation/validatedInputParamQueryType',
+);
