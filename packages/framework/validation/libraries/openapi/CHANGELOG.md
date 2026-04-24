@@ -1,5 +1,18 @@
 # @inversifyjs/open-api-validation
 
+## 3.4.0
+
+### Minor Changes
+
+- Added `ValidatedQuery` decorator.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-open-api@5.4.2
+  - @inversifyjs/validation-common@3.4.0
+  - @inversifyjs/http-core@5.4.2
+
 ## 3.3.0
 
 ### Minor Changes
