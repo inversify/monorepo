@@ -106,6 +106,7 @@ describe(handleBodyValidation, () => {
           body: undefined,
           headers: undefined,
           params: undefined,
+          queries: undefined,
         };
 
         getEntryMock = vitest
@@ -218,6 +219,7 @@ describe(handleBodyValidation, () => {
           body: undefined,
           headers: undefined,
           params: undefined,
+          queries: undefined,
         };
 
         getEntryMock = vitest
@@ -313,6 +315,7 @@ describe(handleBodyValidation, () => {
           body: undefined,
           headers: undefined,
           params: undefined,
+          queries: undefined,
         };
 
         getEntryMock = vitest
@@ -417,6 +420,7 @@ describe(handleBodyValidation, () => {
           body: undefined,
           headers: undefined,
           params: undefined,
+          queries: undefined,
         };
 
         getEntryMock = vitest
@@ -522,6 +526,7 @@ describe(handleBodyValidation, () => {
           body: undefined,
           headers: undefined,
           params: undefined,
+          queries: undefined,
         };
 
         getEntryMock = vitest

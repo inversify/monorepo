@@ -14,6 +14,7 @@ import { buildCompositeValidationHandler } from '../../calculations/buildComposi
 import { handleBodyValidation } from '../../calculations/v3Dot2/handleBodyValidation.js';
 import { handleHeaderValidation } from '../../calculations/v3Dot2/handleHeaderValidation.js';
 import { handleParamValidation } from '../../calculations/v3Dot2/handleParamValidation.js';
+import { handleQueryValidation } from '../../calculations/v3Dot2/handleQueryValidation.js';
 import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
 import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
 import { type ValidationCacheEntry } from '../../models/v3Dot2/ValidationCacheEntry.js';
@@ -21,23 +22,25 @@ import {
   validatedInputParamBodyType,
   validatedInputParamHeaderType,
   validatedInputParamParamType,
+  validatedInputParamQueryType,
 } from '../../models/validatedInputParamTypes.js';
 import { DefaultOpenApiResolver } from '../../services/v3Dot2/DefaultOpenApiResolver.js';
 import { ValidationCache } from '../../services/v3Dot2/ValidationCache.js';
 
 const handler: (
-  ajv: Ajv,
   openApiObject: OpenApi3Dot2Object,
   validationContext: OpenApiValidationContext,
   inputParam: unknown,
+  getAjv: (coerceTypes: boolean) => Ajv,
   getEntry: (path: string, method: string) => ValidationCacheEntry,
 ) => unknown = buildCompositeValidationHandler<
   OpenApi3Dot2Object,
   ValidationCacheEntry
 >({
-  [validatedInputParamBodyType]: handleBodyValidation,
-  [validatedInputParamHeaderType]: handleHeaderValidation,
-  [validatedInputParamParamType]: handleParamValidation,
+  [validatedInputParamBodyType]: [handleBodyValidation, false],
+  [validatedInputParamHeaderType]: [handleHeaderValidation, false],
+  [validatedInputParamParamType]: [handleParamValidation, false],
+  [validatedInputParamQueryType]: [handleQueryValidation, true],
 });
 
 export class OpenApiValidationPipe implements Pipe {
@@ -46,6 +49,7 @@ export class OpenApiValidationPipe implements Pipe {
   readonly #validationContext: OpenApiValidationContext;
 
   #ajv: Ajv | undefined;
+  #ajvWithCoercions: Ajv | undefined;
 
   constructor(openApiObject: OpenApi3Dot2Object) {
     this.#openApiObject = openApiObject;
@@ -55,6 +59,7 @@ export class OpenApiValidationPipe implements Pipe {
     };
     this.#validationCache = new ValidationCache();
     this.#ajv = undefined;
+    this.#ajvWithCoercions = undefined;
   }
 
   public async execute(
@@ -92,13 +97,12 @@ export class OpenApiValidationPipe implements Pipe {
       return input;
     }
 
-    const ajv: Ajv = this.#getOrInitAjv();
-
     return handler(
-      ajv,
       this.#openApiObject,
       this.#validationContext,
       input,
+      (coerceTypes: boolean) =>
+        coerceTypes ? this.#getOrInitAjvWithCoercions() : this.#getOrInitAjv(),
       this.#validationCache.getOrCreate.bind(this.#validationCache),
     );
   }
@@ -111,5 +115,19 @@ export class OpenApiValidationPipe implements Pipe {
     }
 
     return this.#ajv;
+  }
+
+  #getOrInitAjvWithCoercions(): Ajv {
+    if (this.#ajvWithCoercions === undefined) {
+      this.#ajvWithCoercions = new Ajv({
+        allErrors: true,
+        coerceTypes: true,
+        strict: false,
+      });
+      addFormats(this.#ajvWithCoercions);
+      this.#ajvWithCoercions.addSchema(this.#openApiObject, SCHEMA_ID);
+    }
+
+    return this.#ajvWithCoercions;
   }
 }

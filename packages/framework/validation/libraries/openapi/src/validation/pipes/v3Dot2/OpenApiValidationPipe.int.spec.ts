@@ -35,6 +35,7 @@ import { Container, type Newable } from 'inversify';
 import { ValidatedBody } from '../../../metadata/decorators/ValidatedBody.js';
 import { ValidatedHeaders } from '../../../metadata/decorators/ValidatedHeaders.js';
 import { ValidatedParams } from '../../../metadata/decorators/ValidatedParams.js';
+import { ValidatedQuery } from '../../../metadata/decorators/ValidatedQuery.js';
 import { OpenApiValidationPipe } from './OpenApiValidationPipe.js';
 
 interface Server {
@@ -905,6 +906,379 @@ describe(OpenApiValidationPipe, () => {
             expect(response.status).toBe(400);
             await expect(response.json()).resolves.toStrictEqual({
               message: expect.stringContaining('userId'),
+            });
+          });
+        });
+      });
+
+      describe('having an OpenApiValidationPipe (v3.2) in an HTTP server with validated query params', () => {
+        @Controller('/products')
+        class ProductController {
+          @OasParameter({
+            in: 'query',
+            name: 'search',
+            required: true,
+            schema: {
+              type: 'string',
+            },
+          })
+          @OasParameter({
+            in: 'query',
+            name: 'limit',
+            required: false,
+            schema: {
+              type: 'integer',
+            },
+          })
+          @Get()
+          public async getProducts(
+            @ValidatedQuery() _query: Record<string, unknown>,
+          ): Promise<{ ok: boolean }> {
+            return { ok: true };
+          }
+        }
+
+        let server: Server;
+
+        beforeAll(async () => {
+          const container: Container = new Container();
+
+          container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+          container.bind(ProductController).toSelf().inSingletonScope();
+
+          const openApiObject: OpenApi3Dot2Object = {
+            info: { title: 'Test API', version: '1.0.0' },
+            openapi: '3.2.0',
+          };
+
+          const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+            api: {
+              openApiObject,
+              path: '/docs',
+            },
+          });
+
+          swaggerProvider.provide(container);
+
+          server = await buildServer(
+            container,
+            [ValidationErrorFilter],
+            [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+          );
+        });
+
+        afterAll(async () => {
+          await server.shutdown();
+        });
+
+        describe('when a GET /products request is made with valid query params', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/products?search=widget&limit=10`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(200);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+            await expect(response.json()).resolves.toStrictEqual({ ok: true });
+          });
+        });
+
+        describe('when a GET /products request is made without the required query param', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/products`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            await expect(response.json()).resolves.toStrictEqual({
+              message: expect.stringContaining('search'),
+            });
+          });
+        });
+
+        describe('when a GET /products request is made with an invalid integer query param', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/products?search=widget&limit=not-a-number`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            await expect(response.json()).resolves.toStrictEqual({
+              message: expect.stringContaining('limit'),
+            });
+          });
+        });
+      });
+
+      describe('having an OpenApiValidationPipe (v3.2) in an HTTP server with an array of number query param', () => {
+        @Controller('/numbers')
+        class NumberController {
+          @OasParameter({
+            in: 'query',
+            name: 'ids',
+            required: true,
+            schema: { items: { type: 'number' }, type: 'array' },
+          })
+          @Get()
+          public async getNumbers(
+            @ValidatedQuery() _query: Record<string, unknown>,
+          ): Promise<{ ok: boolean }> {
+            return { ok: true };
+          }
+        }
+
+        let server: Server;
+
+        beforeAll(async () => {
+          const container: Container = new Container();
+
+          container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+          container.bind(NumberController).toSelf().inSingletonScope();
+
+          const openApiObject: OpenApi3Dot2Object = {
+            info: { title: 'Test API', version: '1.0.0' },
+            openapi: '3.2.0',
+          };
+
+          const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+            api: {
+              openApiObject,
+              path: '/docs',
+            },
+          });
+
+          swaggerProvider.provide(container);
+
+          server = await buildServer(
+            container,
+            [ValidationErrorFilter],
+            [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+          );
+        });
+
+        afterAll(async () => {
+          await server.shutdown();
+        });
+
+        describe('when a GET /numbers request is made with a valid array of number query param', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/numbers?ids=1&ids=2&ids=3`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(200);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+            await expect(response.json()).resolves.toStrictEqual({ ok: true });
+          });
+        });
+
+        describe('when a GET /numbers request is made with an invalid array of number query param', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/numbers?ids=1&ids=not-a-number&ids=3`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            await expect(response.json()).resolves.toStrictEqual({
+              message: expect.stringContaining('ids'),
+            });
+          });
+        });
+      });
+
+      describe('having an OpenApiValidationPipe (v3.2) in an HTTP server with an array or number query params', () => {
+        @Controller('/products')
+        class ProductController {
+          @OasParameter({
+            in: 'query',
+            name: 'search',
+            required: true,
+            schema: {
+              anyOf: [
+                {
+                  type: 'string',
+                },
+                {
+                  items: { type: 'string' },
+                  type: 'array',
+                },
+              ],
+            },
+          })
+          @OasParameter({
+            in: 'query',
+            name: 'limit',
+            required: false,
+            schema: {
+              anyOf: [
+                {
+                  type: 'integer',
+                },
+                {
+                  items: { type: 'integer' },
+                  type: 'array',
+                },
+              ],
+            },
+          })
+          @Get()
+          public async getProducts(
+            @ValidatedQuery() _query: Record<string, unknown>,
+          ): Promise<{ ok: boolean }> {
+            return { ok: true };
+          }
+        }
+
+        let server: Server;
+
+        beforeAll(async () => {
+          const container: Container = new Container();
+
+          container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+          container.bind(ProductController).toSelf().inSingletonScope();
+
+          const openApiObject: OpenApi3Dot2Object = {
+            info: { title: 'Test API', version: '1.0.0' },
+            openapi: '3.2.0',
+          };
+
+          const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+            api: {
+              openApiObject,
+              path: '/docs',
+            },
+          });
+
+          swaggerProvider.provide(container);
+
+          server = await buildServer(
+            container,
+            [ValidationErrorFilter],
+            [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+          );
+        });
+
+        afterAll(async () => {
+          await server.shutdown();
+        });
+
+        describe('when a GET /products request is made with valid query params', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/products?search=widget&limit=10`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(200);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+            await expect(response.json()).resolves.toStrictEqual({ ok: true });
+          });
+        });
+
+        describe('when a GET /products request is made with valid array query params', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/products?search=widget&search=widget2&limit=10&limit=20`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(200);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+            await expect(response.json()).resolves.toStrictEqual({ ok: true });
+          });
+        });
+
+        describe('when a GET /products request is made without the required query param', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/products`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            await expect(response.json()).resolves.toStrictEqual({
+              message: expect.stringContaining('search'),
+            });
+          });
+        });
+
+        describe('when a GET /products request is made with an invalid integer query param', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/products?search=widget&limit=not-a-number`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            await expect(response.json()).resolves.toStrictEqual({
+              message: expect.stringContaining('limit'),
             });
           });
         });

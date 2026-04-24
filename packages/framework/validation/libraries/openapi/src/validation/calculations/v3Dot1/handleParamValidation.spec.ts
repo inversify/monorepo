@@ -94,6 +94,7 @@ describe(handleParamValidation, () => {
         body: undefined,
         headers: undefined,
         params: undefined,
+        queries: undefined,
       };
 
       const getEntryMock: Mock<
@@ -169,6 +170,7 @@ describe(handleParamValidation, () => {
         body: undefined,
         headers: undefined,
         params: undefined,
+        queries: undefined,
       };
 
       const getEntryMock: Mock<
@@ -265,6 +267,7 @@ describe(handleParamValidation, () => {
         body: undefined,
         headers: undefined,
         params: undefined,
+        queries: undefined,
       };
 
       const getEntryMock: Mock<
@@ -338,6 +341,7 @@ describe(handleParamValidation, () => {
             },
           ],
         ]),
+        queries: undefined,
       };
 
       const getEntryMock: Mock<

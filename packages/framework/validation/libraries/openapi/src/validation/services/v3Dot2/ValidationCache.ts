@@ -7,6 +7,7 @@ export class ValidationCache extends BaseValidationCache<ValidationCacheEntry> {
       body: undefined,
       headers: undefined,
       params: undefined,
+      queries: undefined,
     };
   }
 }

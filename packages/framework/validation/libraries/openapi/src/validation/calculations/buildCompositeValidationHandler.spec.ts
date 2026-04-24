@@ -28,10 +28,10 @@ describe(buildCompositeValidationHandler, () => {
 
       beforeAll(() => {
         result = buildCompositeValidationHandler({})(
-          Symbol() as unknown as Ajv,
           Symbol(),
           Symbol() as unknown as OpenApiValidationContext,
           inputParam,
+          vitest.fn(),
           vitest.fn(),
         );
       });
@@ -54,10 +54,10 @@ describe(buildCompositeValidationHandler, () => {
 
       beforeAll(() => {
         result = buildCompositeValidationHandler({})(
-          Symbol() as unknown as Ajv,
           Symbol(),
           Symbol() as unknown as OpenApiValidationContext,
           inputParam,
+          vitest.fn(),
           vitest.fn(),
         );
       });
@@ -80,10 +80,10 @@ describe(buildCompositeValidationHandler, () => {
 
       beforeAll(() => {
         result = buildCompositeValidationHandler({})(
-          Symbol() as unknown as Ajv,
           Symbol(),
           Symbol() as unknown as OpenApiValidationContext,
           inputParam,
+          vitest.fn(),
           vitest.fn(),
         );
       });
@@ -96,6 +96,7 @@ describe(buildCompositeValidationHandler, () => {
 
   describe('having non handler map and object input params with right discriminator', () => {
     let ajvFixture: Ajv;
+    let coerceTypesFixture: boolean;
     let discriminatorValueFixture: symbol;
     let handlerMock: Mock<
       ValidationHandler<
@@ -106,6 +107,7 @@ describe(buildCompositeValidationHandler, () => {
         unknown
       >
     >;
+    let getAjvMock: Mock<(coerceTypes: boolean) => Ajv>;
     let getEntryMock: Mock;
     let inputParam: unknown;
     let openApiObjectFixture: unknown;
@@ -113,9 +115,11 @@ describe(buildCompositeValidationHandler, () => {
 
     beforeAll(() => {
       discriminatorValueFixture = Symbol();
+      coerceTypesFixture = true;
 
       handlerMock = vitest.fn();
       ajvFixture = Symbol() as unknown as Ajv;
+      getAjvMock = vitest.fn();
       getEntryMock = vitest.fn();
       inputParam = {
         type: discriminatorValueFixture,
@@ -133,21 +137,26 @@ describe(buildCompositeValidationHandler, () => {
       beforeAll(() => {
         resultFixture = Symbol();
 
+        getAjvMock.mockReturnValueOnce(ajvFixture);
         handlerMock.mockReturnValueOnce(resultFixture);
 
         result = buildCompositeValidationHandler({
-          [discriminatorValueFixture]: handlerMock,
+          [discriminatorValueFixture]: [handlerMock, coerceTypesFixture],
         })(
-          ajvFixture,
           openApiObjectFixture,
           openApiValidationContextFixture,
           inputParam,
+          getAjvMock,
           getEntryMock,
         );
       });
 
       afterAll(() => {
         vitest.clearAllMocks();
+      });
+
+      it('should call getAjv()', () => {
+        expect(getAjvMock).toHaveBeenCalledExactlyOnceWith(coerceTypesFixture);
       });
 
       it('should call handler()', () => {
