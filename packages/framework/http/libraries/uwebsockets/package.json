@@ -6,7 +6,7 @@
   "description": "InversifyJs http express package",
   "dependencies": {
     "@inversifyjs/http-core": "workspace:*",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.65.0"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.66.0"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
