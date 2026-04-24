@@ -16,7 +16,7 @@
     "express": "^5.2.1",
     "express4": "npm:express@4.22.1",
     "fastify": "^5.8.5",
-    "hono": "^4.12.14",
+    "hono": "^4.12.15",
     "inversify": "8.1.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.65.0"
   },
