@@ -476,6 +476,7 @@ describe(OpenApiValidationPipe, () => {
 
         describe('when an invalid POST /messages request is made', () => {
           let response: Response;
+          let responseJson: unknown;
 
           beforeAll(async () => {
             response = await fetch(
@@ -489,6 +490,8 @@ describe(OpenApiValidationPipe, () => {
                 method: 'POST',
               },
             );
+
+            responseJson = await response.json();
           });
 
           it('should return expected Response', async () => {
@@ -496,8 +499,10 @@ describe(OpenApiValidationPipe, () => {
             expect(response.headers.get('content-type')).toStrictEqual(
               expect.stringContaining('application/json'),
             );
-            await expect(response.json()).resolves.toStrictEqual({
-              message: expect.stringContaining('additionalProperties'),
+
+            expect(responseJson).toStrictEqual({
+              message:
+                '[schema: #/additionalProperties, instance: ]: "must NOT have additional properties"',
             });
           });
         });
@@ -776,6 +781,7 @@ describe(OpenApiValidationPipe, () => {
 
         describe('when a GET /resources request is made without the required header', () => {
           let response: Response;
+          let responseJson: unknown;
 
           beforeAll(async () => {
             response = await fetch(
@@ -784,18 +790,21 @@ describe(OpenApiValidationPipe, () => {
                 method: 'GET',
               },
             );
+
+            responseJson = await response.json();
           });
 
           it('should return expected Response', async () => {
             expect(response.status).toBe(400);
-            await expect(response.json()).resolves.toStrictEqual({
-              message: expect.stringContaining('x-request-id'),
+            expect(responseJson).toStrictEqual({
+              message: 'Missing required header: x-request-id',
             });
           });
         });
 
         describe('when a GET /resources request is made with an invalid integer header', () => {
           let response: Response;
+          let responseJson: unknown;
 
           beforeAll(async () => {
             response = await fetch(
@@ -808,12 +817,15 @@ describe(OpenApiValidationPipe, () => {
                 method: 'GET',
               },
             );
+
+            responseJson = await response.json();
           });
 
           it('should return expected Response', async () => {
             expect(response.status).toBe(400);
-            await expect(response.json()).resolves.toStrictEqual({
-              message: expect.stringContaining('x-page-size'),
+            expect(responseJson).toStrictEqual({
+              message:
+                '[header: x-page-size, schemaPath: #/type, instancePath: ]: "must be integer"',
             });
           });
         });
@@ -892,6 +904,7 @@ describe(OpenApiValidationPipe, () => {
 
         describe('when a GET /users/:userId request is made with an invalid uuid param', () => {
           let response: Response;
+          let responseJson: unknown;
 
           beforeAll(async () => {
             response = await fetch(
@@ -900,12 +913,15 @@ describe(OpenApiValidationPipe, () => {
                 method: 'GET',
               },
             );
+
+            responseJson = await response.json();
           });
 
           it('should return expected Response', async () => {
             expect(response.status).toBe(400);
-            await expect(response.json()).resolves.toStrictEqual({
-              message: expect.stringContaining('userId'),
+            expect(responseJson).toStrictEqual({
+              message:
+                '[param: userId, schemaPath: #/format, instancePath: ]: "must match format "uuid""',
             });
           });
         });
@@ -994,6 +1010,7 @@ describe(OpenApiValidationPipe, () => {
 
         describe('when a GET /products request is made without the required query param', () => {
           let response: Response;
+          let responseJson: unknown;
 
           beforeAll(async () => {
             response = await fetch(
@@ -1002,18 +1019,21 @@ describe(OpenApiValidationPipe, () => {
                 method: 'GET',
               },
             );
+
+            responseJson = await response.json();
           });
 
           it('should return expected Response', async () => {
             expect(response.status).toBe(400);
-            await expect(response.json()).resolves.toStrictEqual({
-              message: expect.stringContaining('search'),
+            expect(responseJson).toStrictEqual({
+              message: 'Missing required query: search',
             });
           });
         });
 
         describe('when a GET /products request is made with an invalid integer query param', () => {
           let response: Response;
+          let responseJson: unknown;
 
           beforeAll(async () => {
             response = await fetch(
@@ -1022,12 +1042,15 @@ describe(OpenApiValidationPipe, () => {
                 method: 'GET',
               },
             );
+
+            responseJson = await response.json();
           });
 
           it('should return expected Response', async () => {
             expect(response.status).toBe(400);
-            await expect(response.json()).resolves.toStrictEqual({
-              message: expect.stringContaining('limit'),
+            expect(responseJson).toStrictEqual({
+              message:
+                '[query: limit, schemaPath: #/type, instancePath: ]: "must be integer"',
             });
           });
         });
@@ -1106,6 +1129,7 @@ describe(OpenApiValidationPipe, () => {
 
         describe('when a GET /numbers request is made with an invalid array of number query param', () => {
           let response: Response;
+          let responseJson: unknown;
 
           beforeAll(async () => {
             response = await fetch(
@@ -1114,12 +1138,15 @@ describe(OpenApiValidationPipe, () => {
                 method: 'GET',
               },
             );
+
+            responseJson = await response.json();
           });
 
           it('should return expected Response', async () => {
             expect(response.status).toBe(400);
-            await expect(response.json()).resolves.toStrictEqual({
-              message: expect.stringContaining('ids'),
+            expect(responseJson).toStrictEqual({
+              message:
+                '[query: ids, schemaPath: #/items/type, instancePath: /1]: "must be number"',
             });
           });
         });
@@ -1245,6 +1272,7 @@ describe(OpenApiValidationPipe, () => {
 
         describe('when a GET /products request is made without the required query param', () => {
           let response: Response;
+          let responseJson: unknown;
 
           beforeAll(async () => {
             response = await fetch(
@@ -1253,18 +1281,21 @@ describe(OpenApiValidationPipe, () => {
                 method: 'GET',
               },
             );
+
+            responseJson = await response.json();
           });
 
           it('should return expected Response', async () => {
             expect(response.status).toBe(400);
-            await expect(response.json()).resolves.toStrictEqual({
-              message: expect.stringContaining('search'),
+            expect(responseJson).toStrictEqual({
+              message: 'Missing required query: search',
             });
           });
         });
 
         describe('when a GET /products request is made with an invalid integer query param', () => {
           let response: Response;
+          let responseJson: unknown;
 
           beforeAll(async () => {
             response = await fetch(
@@ -1273,12 +1304,15 @@ describe(OpenApiValidationPipe, () => {
                 method: 'GET',
               },
             );
+
+            responseJson = await response.json();
           });
 
           it('should return expected Response', async () => {
             expect(response.status).toBe(400);
-            await expect(response.json()).resolves.toStrictEqual({
-              message: expect.stringContaining('limit'),
+            expect(responseJson).toStrictEqual({
+              message:
+                '[query: limit, schemaPath: #/anyOf/0/type, instancePath: ]: "must be integer"\n[query: limit, schemaPath: #/anyOf/1/type, instancePath: ]: "must be array"\n[query: limit, schemaPath: #/anyOf, instancePath: ]: "must match a schema in anyOf"',
             });
           });
         });

@@ -1,6 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "automerge": false,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update @fission-ai/openspec version tracked via generatedBy field in skill files",
+      "fileMatch": ["^\\.agent/skills/[^/]+/SKILL\\.md$"],
+      "matchStrings": ["generatedBy:\\s*\"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "@fission-ai/openspec",
+      "datasourceTemplate": "npm",
+      "versioningTemplate": "npm"
+    }
+  ],
   "constraints": {
     "pnpm": "10"
   },
@@ -50,6 +61,14 @@
       "description": "Quarantine packages with current known issues",
       "enabled": false,
       "matchPackageNames": []
+    },
+    {
+      "description": "Regenerate OpenSpec instruction files after @fission-ai/openspec is bumped",
+      "matchPackageNames": ["@fission-ai/openspec"],
+      "postUpgradeTasks": {
+        "commands": ["pnpm dlx @fission-ai/openspec update"],
+        "fileFilters": ["**/skills/**"]
+      }
     }
   ],
   "rangeStrategy": "bump",
