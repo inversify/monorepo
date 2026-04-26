@@ -1,5 +1,13 @@
 # @inversifyjs/http-hono
 
+## 5.4.3
+
+### Patch Changes
+
+- Updated compiled files to no longer rely on tslib
+- Updated dependencies
+  - @inversifyjs/http-core@5.4.3
+
 ## 5.4.2
 
 ### Patch Changes
