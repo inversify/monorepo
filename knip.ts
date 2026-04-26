@@ -10,7 +10,7 @@ const defaultWorkspaceProjectConfig: WorkspaceProjectConfig & {
     "src/{index,cli,main}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
     "**/?(*.)+(spec|spec-d).[jt]s?(x)",
   ],
-  ignoreDependencies: ["ts-loader", "tslib"],
+  ignoreDependencies: [],
   project: [
     "**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}!",
     "!vitest.config.stryker.mjs",
@@ -31,15 +31,20 @@ export default {
   workspaces: {
     ".": {
       entry: [],
-      ignoreDependencies: [
-        ...defaultWorkspaceProjectConfig.ignoreDependencies,
-        "@fission-ai/openspec",
-      ],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: [],
     },
     "packages/container/examples/*": defaultWorkspaceProjectConfig,
     "packages/container/libraries/*": defaultWorkspaceProjectConfig,
     "packages/container/tools/*": defaultWorkspaceProjectConfig,
+    "packages/container/tools/container-benchmarks": {
+      ...defaultWorkspaceProjectConfig,
+      ignoreDependencies: [
+        ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        "ts-loader",
+        "tslib",
+      ],
+    },
     "packages/container/tools/e2e-tests": {
       entry: [
         "config/*.mjs",
@@ -50,6 +55,8 @@ export default {
       ignoreDependencies: [
         ...defaultWorkspaceProjectConfig.ignoreDependencies,
         "ts-node",
+        "ts-loader",
+        "tslib",
       ],
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
@@ -59,11 +66,9 @@ export default {
         "src/{pages,theme}/**/*.{js,ts,jsx,tsx}",
         "{blog,docs,graphql-docs,logger-docs,openapi-docs,validation-docs}/**/*.mdx",
       ],
-      ignoreDependencies: ["@docusaurus/faster"],
     },
     "packages/docs/services/inversify-site": {
       entry: ["src/{pages,theme}/**/*.{js,ts,jsx,tsx}", "{blog,docs}/**/*.mdx"],
-      ignoreDependencies: ["@docusaurus/faster", "inversify"],
       ignoreFiles: ["i18n/**"],
     },
     "packages/docs/tools/*": defaultWorkspaceProjectConfig,
@@ -111,7 +116,7 @@ export default {
         ...defaultWorkspaceProjectConfig.ignoreDependencies,
         "@inversifyjs/common",
         "@inversifyjs/container",
-        "@inversifyjs/core",
+        "ts-loader",
       ],
     },
     "packages/foundation/libraries/*": defaultWorkspaceProjectConfig,
@@ -132,7 +137,9 @@ export default {
       ],
       ignoreDependencies: [
         ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        "ts-loader",
         "ts-node",
+        "tslib",
       ],
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
@@ -145,7 +152,8 @@ export default {
       ],
       ignoreDependencies: [
         ...defaultWorkspaceProjectConfig.ignoreDependencies,
-        "ts-node",
+        "ts-loader",
+        "tslib",
       ],
       project: defaultWorkspaceProjectConfig.project,
     },
