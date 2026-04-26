@@ -5,8 +5,8 @@
   },
   "description": "InversifyJs GraphQL docs code examples package",
   "devDependencies": {
-    "@inversifyjs/apollo-core": "0.7.0",
-    "@inversifyjs/apollo-express": "0.8.0",
+    "@inversifyjs/apollo-core": "0.7.1",
+    "@inversifyjs/apollo-express": "0.8.1",
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-core": "5.4.3",
