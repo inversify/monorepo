@@ -1,5 +1,15 @@
 # @inversifyjs/open-api-validation
 
+## 3.4.2
+
+### Patch Changes
+
+- Fixed publish config to no longer ignore compiled files
+- Updated dependencies
+  - @inversifyjs/validation-common@3.4.2
+  - @inversifyjs/http-core@5.4.4
+  - @inversifyjs/http-open-api@5.4.4
+
 ## 3.4.1
 
 ### Patch Changes
