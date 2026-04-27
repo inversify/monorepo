@@ -2,18 +2,14 @@ import { type BetterAuthOptions } from 'better-auth';
 import {
   ContainerModule,
   type ContainerModuleLoadOptions,
+  type MapToResolvedValueInjectOptions,
   type Newable,
-  type ResolvedValueInjectOptions,
 } from 'inversify';
 
 import { buildBetterAuthMiddleware } from '../calculations/buildBetterAuthMiddleware.js';
 import { type BetterAuth } from '../models/BetterAuth.js';
 import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier.js';
 import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier.js';
-
-type MapToResolvedValueInjectOptions<TArgs extends unknown[]> = {
-  [K in keyof TArgs]-?: ResolvedValueInjectOptions<TArgs[K]>;
-};
 
 export abstract class BaseBetterAuthContainerModule<
   TOptions extends BetterAuthOptions,
