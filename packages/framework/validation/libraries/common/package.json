@@ -42,6 +42,6 @@
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean"
   },
-  "version": "3.4.1",
+  "version": "3.4.2",
   "type": "module"
 }
