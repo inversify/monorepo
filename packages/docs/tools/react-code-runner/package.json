@@ -37,7 +37,7 @@
     "vite-plugin-lib-inject-css": "2.2.2"
   },
   "peerDependencies": {
-    "@babel/standalone": "^7.29.2",
+    "@babel/standalone": "^7.29.3",
     "@swc/wasm-web": "^1.15.32",
     "monaco-editor": "~0.55.1",
     "react": "19.2.5"
