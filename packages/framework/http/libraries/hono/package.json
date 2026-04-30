@@ -8,7 +8,7 @@
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
-    "@hono/node-server": "2.0.0",
+    "@hono/node-server": "2.0.1",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@stryker-mutator/core": "9.6.1",
     "@stryker-mutator/typescript-checker": "9.6.1",
@@ -42,7 +42,7 @@
   },
   "name": "@inversifyjs/http-hono",
   "peerDependencies": {
-    "hono": "^4.12.15",
+    "hono": "^4.12.16",
     "inversify": "^8.1.0"
   },
   "publishConfig": {

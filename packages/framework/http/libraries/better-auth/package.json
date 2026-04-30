@@ -8,7 +8,7 @@
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
-    "@hono/node-server": "2.0.0",
+    "@hono/node-server": "2.0.1",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-express-v4": "workspace:*",
@@ -26,7 +26,7 @@
     "better-sqlite3": "^12.9.0",
     "eslint": "10.2.1",
     "fastify": "5.8.5",
-    "hono": "4.12.15",
+    "hono": "4.12.16",
     "prettier": "3.8.3",
     "rimraf": "6.1.3",
     "typescript": "6.0.3",
