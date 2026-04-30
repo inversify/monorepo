@@ -12,7 +12,7 @@
     "@inversifyjs/http-core": "5.4.4",
     "@inversifyjs/http-express": "5.4.4",
     "@apollo/server": "5.5.0",
-    "@apollo/subgraph": "2.13.3",
+    "@apollo/subgraph": "2.14.0",
     "@graphql-tools/utils": "11.1.0",
     "@types/express": "5.0.6",
     "@types/node": "24.12.2",
