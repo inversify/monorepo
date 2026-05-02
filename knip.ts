@@ -152,6 +152,7 @@ export default {
       ],
       ignoreDependencies: [
         ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        "k6",
         "ts-loader",
         "tslib",
       ],
