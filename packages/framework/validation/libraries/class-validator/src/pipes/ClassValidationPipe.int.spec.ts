@@ -13,7 +13,7 @@ import {
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { InversifyValidationError } from '@inversifyjs/validation-common';
 import { IsString } from 'class-validator';
-import express from 'express';
+import type express from 'express';
 import { Container, Newable } from 'inversify';
 
 import { ClassValidationPipe } from './ClassValidationPipe.js';
