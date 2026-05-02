@@ -636,11 +636,11 @@ export abstract class InversifyHttpAdapter<
     return [
       ...this.#getMiddlewareHandlerFromMetadata(
         routerExplorerControllerMethodMetadata,
-        this.#postHandlerMiddlewareList,
+        routerExplorerControllerMethodMetadata.postHandlerMiddlewareList,
       ),
       ...this.#getMiddlewareHandlerFromMetadata(
         routerExplorerControllerMethodMetadata,
-        routerExplorerControllerMethodMetadata.postHandlerMiddlewareList,
+        this.#postHandlerMiddlewareList,
       ),
     ];
   }
