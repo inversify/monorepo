@@ -13,6 +13,7 @@ import {
   routeValueMetadataSymbol,
 } from '@inversifyjs/http-core';
 import { type Container } from 'inversify';
+import status from 'statuses';
 import {
   App,
   getParts,
@@ -40,6 +41,13 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   TemplatedApp
 > {
   public readonly id: symbol = ADAPTER_ID;
+
+  #globalPreHandlerMiddlewareList: MiddlewareHandler<
+    HttpRequest,
+    HttpResponse,
+    () => void,
+    void
+  >[] = [];
 
   constructor(
     container: Container,
@@ -71,6 +79,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
         () => void,
         void
       >[] = [
+        ...this.#globalPreHandlerMiddlewareList,
         ...routeParams.preHandlerMiddlewareList,
         ...routeParams.guardList,
         routeParams.handler,
@@ -97,6 +106,44 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
         },
       );
     }
+
+    if (this.#globalPreHandlerMiddlewareList.length > 0) {
+      const handleMiddlewares: (
+        request: HttpRequest,
+        response: HttpResponse,
+      ) => Promise<void> = handleMiddlewareList(
+        this.#globalPreHandlerMiddlewareList,
+      );
+
+      this._app.any(
+        '/*',
+        async (res: HttpResponse, req: HttpRequest): Promise<void> => {
+          res.onAborted((): void => {
+            (res as CustomHttpResponse)[abortedSymbol] = true;
+          });
+
+          await handleMiddlewares(req, res);
+
+          if ((res as CustomHttpResponse)[abortedSymbol] !== true) {
+            res.cork((): void => {
+              res.writeStatus('404 Not Found');
+              res.end();
+            });
+          }
+        },
+      );
+    }
+  }
+
+  protected _applyGlobalPreHandlerMiddlewareList(
+    handlerList: MiddlewareHandler<
+      HttpRequest,
+      HttpResponse,
+      () => void,
+      void
+    >[],
+  ): void {
+    this.#globalPreHandlerMiddlewareList = handlerList;
   }
 
   protected _replyJson(
@@ -157,7 +204,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     statusCode: HttpStatusCode,
   ): void {
     response.cork((): void => {
-      response.writeStatus(statusCode.toString());
+      response.writeStatus(`${statusCode.toString()} ${status(statusCode)}`);
     });
   }
 

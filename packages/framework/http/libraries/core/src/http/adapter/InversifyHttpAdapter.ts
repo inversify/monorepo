@@ -178,6 +178,15 @@ export abstract class InversifyHttpAdapter<
 
     this.#bindAdapterRelatedServices();
 
+    /*
+     * Note: Some adapters might require global middleware to be registered
+     * before controllers are registered. Mind the orderof these operations
+     */
+
+    await this._applyGlobalPreHandlerMiddlewareList(
+      this.#buildGlobalMiddlewareHandlerList(this.#preHandlerMiddlewareList),
+    );
+
     await this.#registerControllers();
 
     this.#isBuilt = true;
@@ -672,10 +681,6 @@ export abstract class InversifyHttpAdapter<
     preHandlerMiddlewareList.push(
       ...this.#getMiddlewareHandlerFromMetadata(
         routerExplorerControllerMethodMetadata,
-        this.#preHandlerMiddlewareList,
-      ),
-      ...this.#getMiddlewareHandlerFromMetadata(
-        routerExplorerControllerMethodMetadata,
         routerExplorerControllerMethodMetadata.preHandlerMiddlewareList,
       ),
     );
@@ -708,6 +713,95 @@ export abstract class InversifyHttpAdapter<
     >[],
   ): Promise<ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined> {
     return getErrorFilterForError(this.#container, error, errorToFilterMapList);
+  }
+
+  #buildGlobalHandleError(): (
+    request: TRequest,
+    response: TResponse,
+    error: unknown,
+  ) => Promise<TResult> {
+    const handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult> = async (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ): Promise<TResult> => {
+      const errorFilter:
+        | ErrorFilter<unknown, TRequest, TResponse, TResult>
+        | undefined = await this.#getErrorFilterForError(error, [
+        this.#errorTypeToGlobalErrorFilterMap,
+      ]);
+
+      if (errorFilter === undefined) {
+        this.#printError(error);
+
+        const httpResponse: HttpResponse = new InternalServerErrorHttpResponse(
+          undefined,
+          undefined,
+          {
+            cause: error,
+          },
+        );
+
+        return this.#reply(
+          request,
+          response,
+          httpResponse,
+          undefined,
+          undefined,
+        );
+      }
+
+      try {
+        return await errorFilter.catch(error, request, response);
+      } catch (error: unknown) {
+        return handleError(request, response, error);
+      }
+    };
+
+    return handleError;
+  }
+
+  #buildGlobalMiddlewareHandlerList(
+    middlewareServiceIdentifierList: ServiceIdentifier<
+      Middleware<TRequest, TResponse, TNextFunction, TResult>
+    >[],
+  ): MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>[] {
+    const handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult> = this.#buildGlobalHandleError();
+
+    return middlewareServiceIdentifierList.map(
+      (
+        middlewareServiceIdentifier: ServiceIdentifier<
+          Middleware<TRequest, TResponse, TNextFunction, TResult>
+        >,
+      ) => {
+        return async (
+          request: TRequest,
+          response: TResponse,
+          next: TNextFunction,
+        ): Promise<TResult> => {
+          try {
+            const middleware: Middleware<
+              TRequest,
+              TResponse,
+              TNextFunction,
+              TResult
+            > = await this.#container.getAsync(middlewareServiceIdentifier);
+
+            return await middleware.execute(request, response, next);
+          } catch (error: unknown) {
+            return handleError(request, response, error);
+          }
+        };
+      },
+    );
   }
 
   #buildHandleError(
@@ -1094,5 +1188,14 @@ export abstract class InversifyHttpAdapter<
 
   protected abstract _buildRouter(
     routerParams: RouterParams<TRequest, TResponse, TNextFunction, TResult>,
+  ): void | Promise<void>;
+
+  protected abstract _applyGlobalPreHandlerMiddlewareList(
+    handlerList: MiddlewareHandler<
+      TRequest,
+      TResponse,
+      TNextFunction,
+      TResult
+    >[],
   ): void | Promise<void>;
 }

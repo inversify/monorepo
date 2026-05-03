@@ -12,7 +12,7 @@ export class WarriorRouteUwebSocketsInterceptor implements UwebSocketsIntercepto
     next: () => Promise<InterceptorTransformObject>,
   ): Promise<void> {
     response.cork(() => {
-      response.writeStatus(HttpStatusCode.ACCEPTED.toString());
+      response.writeStatus(`${HttpStatusCode.ACCEPTED.toString()} Accepted`);
     });
 
     await next();

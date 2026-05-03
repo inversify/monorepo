@@ -6,6 +6,7 @@ import {
 } from '@inversifyjs/http-core';
 import { type BetterAuthOptions } from 'better-auth';
 import { inject, type Newable } from 'inversify';
+import status from 'statuses';
 import type { HttpRequest, HttpResponse } from 'uWebSockets.js';
 
 import { type BetterAuth } from '../models/BetterAuth.js';
@@ -152,7 +153,9 @@ export function buildBetterAuthUwebSocketsController(
       const buffer: ArrayBuffer = await handlerResponse.arrayBuffer();
 
       response.cork(() => {
-        response.writeStatus(handlerResponse.status.toString());
+        response.writeStatus(
+          `${handlerResponse.status.toString()} ${status(handlerResponse.status)}`,
+        );
 
         for (const [key, value] of handlerResponse.headers) {
           response.writeHeader(key, value);

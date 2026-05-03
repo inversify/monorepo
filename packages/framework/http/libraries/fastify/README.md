@@ -4,3 +4,7 @@
 # @inversifyjs/http-fastify
 
 Inversify monorepo fastify package.
+
+## Global pre-handler middlewares
+
+Global pre-handler middlewares (registered via `applyGlobalMiddleware` without `isPostHandler: true`) run at Fastify's `onRequest` lifecycle stage, before body parsing (`preParsing`). As a result, calling `getBody(request)` inside such a middleware returns `undefined`. Headers, query string, and path params are available at this stage.

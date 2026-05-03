@@ -7,7 +7,7 @@ async function setUp(): Promise<void> {
 
   app.get('/', (res: HttpResponse) => {
     res.cork(() => {
-      res.writeStatus('200').end('ok');
+      res.writeStatus('200 OK').end('ok');
     });
   });
 

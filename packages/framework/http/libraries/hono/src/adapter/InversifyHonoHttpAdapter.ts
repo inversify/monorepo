@@ -98,6 +98,21 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     this._app.route(routerParams.path, router);
   }
 
+  protected _applyGlobalPreHandlerMiddlewareList(
+    handlerList: MiddlewareHandler<
+      HonoRequest,
+      Context,
+      Next,
+      Response | undefined
+    >[],
+  ): void {
+    for (const handler of handlerList) {
+      this._app.use(async (ctx: Context, next: Next): Promise<void> => {
+        await handler(ctx.req as HonoRequest, ctx, next);
+      });
+    }
+  }
+
   protected async _getBody(
     request: HonoRequest,
     _response: Context,
