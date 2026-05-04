@@ -1,5 +1,11 @@
 # @inversifyjs/http-core
 
+## 5.4.5
+
+### Patch Changes
+
+- Updated `InversifyHttpAdapter` to properly handle route post handler middlewares before global post handler middlewares
+
 ## 5.4.4
 
 ## 5.4.3

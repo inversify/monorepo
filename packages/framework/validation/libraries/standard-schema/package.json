@@ -68,6 +68,6 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "version": "3.4.2",
+  "version": "3.4.3",
   "type": "module"
 }

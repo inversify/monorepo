@@ -1,5 +1,12 @@
 # @inversifyjs/http-express-v4
 
+## 5.4.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.4.5
+
 ## 5.4.4
 
 ### Patch Changes
