@@ -11,7 +11,7 @@ export class UnsuccessfulUwebSocketsMiddleware implements UwebSocketsMiddleware 
     _next: () => void,
   ): Promise<void> {
     response.cork(() => {
-      response.writeStatus(HttpStatusCode.FORBIDDEN.toString());
+      response.writeStatus(`${HttpStatusCode.FORBIDDEN.toString()} Forbidden`);
       response.writeHeader('x-test-header', 'test-value');
       response.end();
     });

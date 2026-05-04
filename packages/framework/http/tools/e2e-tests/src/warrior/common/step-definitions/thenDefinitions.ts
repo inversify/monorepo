@@ -75,6 +75,13 @@ Then<InversifyHttpWorld>(
 );
 
 Then<InversifyHttpWorld>(
+  'the response status code is NOT_FOUND',
+  async function (this: InversifyHttpWorld): Promise<void> {
+    await thenResponseStatusCodeIs.bind(this)(HttpStatusCode.NOT_FOUND);
+  },
+);
+
+Then<InversifyHttpWorld>(
   'the response status code is Ok-ish',
   async function (this: InversifyHttpWorld): Promise<void> {
     await thenResponseStatusCodeIsOkIsh.bind(this)();

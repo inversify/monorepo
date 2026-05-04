@@ -3,7 +3,7 @@ import { AddressInfo } from 'node:net';
 
 import { Given } from '@cucumber/cucumber';
 import { serve, ServerType } from '@hono/node-server';
-import { Interceptor } from '@inversifyjs/http-core';
+import { Interceptor, Middleware } from '@inversifyjs/http-core';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { InversifyExpressHttpAdapter as InversifyExpress4HttpAdapter } from '@inversifyjs/http-express-v4';
 import { InversifyFastifyHttpAdapter } from '@inversifyjs/http-fastify';
@@ -26,6 +26,7 @@ import { ServerKind } from '../models/ServerKind';
 async function buildExpressServer(
   container: Container,
   globalInterceptors?: ServiceIdentifier<Interceptor>[],
+  globalMiddlewares?: ServiceIdentifier<Middleware>[],
 ): Promise<Server> {
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
     container,
@@ -34,6 +35,10 @@ async function buildExpressServer(
 
   if (globalInterceptors !== undefined && globalInterceptors.length > 0) {
     adapter.useGlobalInterceptors(...globalInterceptors);
+  }
+
+  if (globalMiddlewares !== undefined && globalMiddlewares.length > 0) {
+    adapter.applyGlobalMiddleware(...globalMiddlewares);
   }
 
   const application: express.Application = await adapter.build();
@@ -80,6 +85,7 @@ async function buildExpressServer(
 async function buildExpress4Server(
   container: Container,
   globalInterceptors?: ServiceIdentifier<Interceptor>[],
+  globalMiddlewares?: ServiceIdentifier<Middleware>[],
 ): Promise<Server> {
   const adapter: InversifyExpress4HttpAdapter =
     new InversifyExpress4HttpAdapter(container, {
@@ -91,6 +97,10 @@ async function buildExpress4Server(
 
   if (globalInterceptors !== undefined && globalInterceptors.length > 0) {
     adapter.useGlobalInterceptors(...globalInterceptors);
+  }
+
+  if (globalMiddlewares !== undefined && globalMiddlewares.length > 0) {
+    adapter.applyGlobalMiddleware(...globalMiddlewares);
   }
 
   const application: express4.Application = await adapter.build();
@@ -137,6 +147,7 @@ async function buildExpress4Server(
 async function buildHonoServer(
   container: Container,
   globalInterceptors?: ServiceIdentifier<Interceptor>[],
+  globalMiddlewares?: ServiceIdentifier<Middleware>[],
 ): Promise<Server> {
   const adapter: InversifyHonoHttpAdapter = new InversifyHonoHttpAdapter(
     container,
@@ -145,6 +156,10 @@ async function buildHonoServer(
 
   if (globalInterceptors !== undefined && globalInterceptors.length > 0) {
     adapter.useGlobalInterceptors(...globalInterceptors);
+  }
+
+  if (globalMiddlewares !== undefined && globalMiddlewares.length > 0) {
+    adapter.applyGlobalMiddleware(...globalMiddlewares);
   }
 
   const application: Hono = await adapter.build();
@@ -189,6 +204,7 @@ async function buildHonoServer(
 async function buildFastifyServer(
   container: Container,
   globalInterceptors?: ServiceIdentifier<Interceptor>[],
+  globalMiddlewares?: ServiceIdentifier<Middleware>[],
 ): Promise<Server> {
   const adapter: InversifyFastifyHttpAdapter = new InversifyFastifyHttpAdapter(
     container,
@@ -197,6 +213,10 @@ async function buildFastifyServer(
 
   if (globalInterceptors !== undefined && globalInterceptors.length > 0) {
     adapter.useGlobalInterceptors(...globalInterceptors);
+  }
+
+  if (globalMiddlewares !== undefined && globalMiddlewares.length > 0) {
+    adapter.applyGlobalMiddleware(...globalMiddlewares);
   }
 
   const application: FastifyInstance = await adapter.build();
@@ -240,6 +260,7 @@ async function buildFastifyServer(
 async function buildUwebSocketsJsServer(
   container: Container,
   globalInterceptors?: ServiceIdentifier<Interceptor>[],
+  globalMiddlewares?: ServiceIdentifier<Middleware>[],
 ): Promise<Server> {
   const adapter: InversifyUwebSocketsHttpAdapter =
     new InversifyUwebSocketsHttpAdapter(container, {
@@ -248,6 +269,10 @@ async function buildUwebSocketsJsServer(
 
   if (globalInterceptors !== undefined && globalInterceptors.length > 0) {
     adapter.useGlobalInterceptors(...globalInterceptors);
+  }
+
+  if (globalMiddlewares !== undefined && globalMiddlewares.length > 0) {
+    adapter.applyGlobalMiddleware(...globalMiddlewares);
   }
 
   // eslint-disable-next-line @typescript-eslint/typedef
@@ -286,27 +311,50 @@ async function givenServer(
   const globalInterceptors: ServiceIdentifier<Interceptor>[] | undefined =
     this.globalInterceptors.get(parsedContainerAlias);
 
+  const globalMiddlewares: ServiceIdentifier<Middleware>[] | undefined =
+    this.globalMiddlewares.get(parsedContainerAlias);
+
   let server: Server;
 
   switch (serverKind) {
     case ServerKind.express: {
-      server = await buildExpressServer(container, globalInterceptors);
+      server = await buildExpressServer(
+        container,
+        globalInterceptors,
+        globalMiddlewares,
+      );
       break;
     }
     case ServerKind.express4: {
-      server = await buildExpress4Server(container, globalInterceptors);
+      server = await buildExpress4Server(
+        container,
+        globalInterceptors,
+        globalMiddlewares,
+      );
       break;
     }
     case ServerKind.hono: {
-      server = await buildHonoServer(container, globalInterceptors);
+      server = await buildHonoServer(
+        container,
+        globalInterceptors,
+        globalMiddlewares,
+      );
       break;
     }
     case ServerKind.fastify: {
-      server = await buildFastifyServer(container, globalInterceptors);
+      server = await buildFastifyServer(
+        container,
+        globalInterceptors,
+        globalMiddlewares,
+      );
       break;
     }
     case ServerKind.uwebsockets: {
-      server = await buildUwebSocketsJsServer(container, globalInterceptors);
+      server = await buildUwebSocketsJsServer(
+        container,
+        globalInterceptors,
+        globalMiddlewares,
+      );
     }
   }
 

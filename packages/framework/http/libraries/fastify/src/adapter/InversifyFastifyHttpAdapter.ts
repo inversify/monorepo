@@ -344,6 +344,19 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     }
   }
 
+  protected _applyGlobalPreHandlerMiddlewareList(
+    handlerList: MiddlewareHandler<
+      InversifyFastifyRequest,
+      InversifyFastifyReply,
+      () => void,
+      void
+    >[],
+  ): void {
+    if (handlerList.length > 0) {
+      this._app.addHook('onRequest', handleMiddlewareList(handlerList));
+    }
+  }
+
   #getAppRouteHandler(
     requestMethodType: RequestMethodType,
   ): (pattern: string, handler: RouteHandlerMethod) => FastifyInstance {

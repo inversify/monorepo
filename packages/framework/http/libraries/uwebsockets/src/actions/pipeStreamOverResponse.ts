@@ -114,7 +114,7 @@ export function pipeStreamOverResponse(
 
     if ((response as CustomHttpResponse)[abortedSymbol] !== true) {
       response.cork((): void => {
-        response.writeStatus('500');
+        response.writeStatus('500 Internal Server Error');
         response.end('Stream error occurred');
       });
     }

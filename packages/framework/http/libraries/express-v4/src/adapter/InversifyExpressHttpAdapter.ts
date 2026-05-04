@@ -116,6 +116,14 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     }
   }
 
+  protected _applyGlobalPreHandlerMiddlewareList(
+    handlerList: MiddlewareHandler<Request, Response, NextFunction, void>[],
+  ): void {
+    for (const handler of handlerList) {
+      this._app.use(handler as ExpressRequestHandler);
+    }
+  }
+
   protected _replyText(
     _request: Request,
     response: Response,

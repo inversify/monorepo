@@ -6,15 +6,17 @@
   "description": "InversifyJs http express package",
   "dependencies": {
     "@inversifyjs/http-core": "workspace:*",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.66.0"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.66.0",
+    "statuses": "^2.0.2"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "@inversifyjs/logger": "^2.0.0",
+    "@inversifyjs/logger": "2.0.0",
     "@stryker-mutator/core": "9.6.1",
     "@stryker-mutator/vitest-runner": "9.6.1",
     "@stryker-mutator/typescript-checker": "9.6.1",
     "@types/node": "24.12.2",
+    "@types/statuses": "2.0.6",
     "@vitest/coverage-v8": "4.1.5",
     "eslint": "10.3.0",
     "prettier": "3.8.3",
