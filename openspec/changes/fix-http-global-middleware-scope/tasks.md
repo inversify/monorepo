@@ -34,8 +34,8 @@
 
 ## 7. E2E tests (`packages/framework/http/tools/e2e-tests`)
 
-- [ ] 7.1 Add a scenario: a global pre-handler middleware sets the response header `X-Global: 1`. A `GET /not-a-route` request returns 404 with `X-Global: 1` set. Assert for every adapter (`express`, `express-v4`, `fastify`, `hono`, `uwebsockets`).
-- [ ] 7.2 Add a scenario reproducing issue [#1837](https://github.com/inversify/monorepo/issues/1837): a controller declares only `@Get('/test-cors')`; a CORS middleware (or a stub that sets `Access-Control-Allow-Origin`) is registered via `applyGlobalMiddleware`; an `OPTIONS /test-cors` request returns 204 with the CORS headers. Assert for `express`, `express-v4`, `fastify`, `hono`.
+- [x] 7.1 Add a scenario: a global pre-handler middleware sets the response header `X-Global: 1`. A `GET /not-a-route` request returns 404 with `X-Global: 1` set. Assert for every adapter (`express`, `express-v4`, `fastify`, `hono`, `uwebsockets`).
+- [x] 7.2 Add a scenario reproducing issue [#1837](https://github.com/inversify/monorepo/issues/1837): a controller declares only `@Get('/test-cors')`; a CORS middleware (or a stub that sets `Access-Control-Allow-Origin`) is registered via `applyGlobalMiddleware`; an `OPTIONS /test-cors` request returns 204 with the CORS headers. Assert for `express`, `express-v4`, `fastify`, `hono`.
 
 
 ## 8. Verification

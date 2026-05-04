@@ -12,6 +12,7 @@ export function initializeWorld(
     servers: new Map(),
   };
   this.globalInterceptors = new Map();
+  this.globalMiddlewares = new Map();
   this.serverRequests = new Map();
   this.serverResponses = new Map();
 }
