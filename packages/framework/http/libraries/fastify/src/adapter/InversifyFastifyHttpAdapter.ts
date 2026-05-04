@@ -28,7 +28,6 @@ import {
 import { type HttpHeader } from 'fastify/types/utils';
 import { type Container } from 'inversify';
 
-import { handleGlobalMiddlewareList } from '../actions/handleGlobalMiddlewareList.js';
 import { type FastifyHttpAdapterOptions } from '../models/FastifyHttpAdapterOptions.js';
 
 const ADAPTER_ID: unique symbol = Symbol.for(
@@ -354,7 +353,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     >[],
   ): void {
     if (handlerList.length > 0) {
-      this._app.addHook('onRequest', handleGlobalMiddlewareList(handlerList));
+      this._app.addHook('onRequest', handleMiddlewareList(handlerList));
     }
   }
 

@@ -78,6 +78,12 @@ Builds and returns the Fastify instance with all configured routes, middleware, 
 
 **Returns**: The Fastify `FastifyInstance` ready to be used with `fastify.listen()`.
 
+## Fastify-Specific Features
+
+### Global pre-handler middlewares
+
+Global pre-handler middlewares (registered via `applyGlobalMiddleware` without `isPostHandler: true`) run at Fastify's `onRequest` lifecycle stage, before body parsing (`preParsing`). As a result, calling `getBody(request)` inside such a middleware returns `undefined`. Headers, query string, and path params are available at this stage.
+
 ## Options
 
 ### FastifyHttpAdapterOptions

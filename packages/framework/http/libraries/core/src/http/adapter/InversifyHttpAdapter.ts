@@ -180,7 +180,7 @@ export abstract class InversifyHttpAdapter<
 
     /*
      * Note: Some adapters might require global middleware to be registered
-     * before controllers are registered. Mind the orderof these operations
+     * before controllers are registered. Mind the order of these operations
      */
 
     await this._applyGlobalPreHandlerMiddlewareList(

@@ -130,6 +130,10 @@ Body parsing in uWebSockets.js is handled asynchronously due to the streaming na
 
 uWebSockets.js requires careful handling of response streams to respect backpressure. The adapter handles this automatically when using `@Response()` parameter decorators with streams.
 
+### Global pre-handler middlewares
+
+uWebSockets.js has no native global-middleware hook. Global pre-handler middlewares (registered via `applyGlobalMiddleware` without `isPostHandler: true`) are implemented by chaining them into the handler list of every registered route. Additionally, a wildcard fallback route (`app.any('/*', ...)`) is registered after all controller routes to ensure the global pre-handlers also fire for requests to unmatched paths. The fallback route ends the response with HTTP 404 after running the global pre-handler chain.
+
 ## Type Parameters
 
 The adapter is strongly typed with uWebSockets.js types:

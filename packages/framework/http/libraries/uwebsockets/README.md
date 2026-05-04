@@ -3,7 +3,3 @@
 # @inversifyjs/http-uwebsockets
 
 Inversify monorepo http uwebsockets modules.
-
-## Global pre-handler middlewares
-
-uWebSockets.js has no native global-middleware hook. Global pre-handler middlewares (registered via `applyGlobalMiddleware` without `isPostHandler: true`) are implemented by chaining them into the handler list of every registered route. Additionally, a wildcard fallback route (`app.any('/*', ...)`) is registered after all controller routes to ensure the global pre-handlers also fire for requests to unmatched paths. The fallback route ends the response with HTTP 404 after running the global pre-handler chain.
