@@ -9,7 +9,7 @@
     "@rollup/plugin-terser": "1.0.0",
     "@rollup/plugin-typescript": "12.3.0",
     "rollup-plugin-dts": "6.4.1",
-    "rollup": "4.60.2"
+    "rollup": "4.60.3"
   },
   "devDependencies": {
     "prettier": "3.8.3"
