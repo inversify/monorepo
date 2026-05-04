@@ -1,5 +1,13 @@
 # @inversifyjs/http-uwebsockets
 
+## 5.4.5
+
+### Patch Changes
+
+- Updated uWebSockets setStatus calls to set the right status code message
+- Updated dependencies
+  - @inversifyjs/http-core@5.4.5
+
 ## 5.4.4
 
 ### Patch Changes
