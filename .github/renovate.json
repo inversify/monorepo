@@ -63,6 +63,11 @@
       "matchPackageNames": []
     },
     {
+      "description": "Track @typescript/native-preview on the beta npm tag",
+      "followTag": "beta",
+      "matchPackageNames": ["@typescript/native-preview"]
+    },
+    {
       "description": "Regenerate OpenSpec instruction files after @fission-ai/openspec is bumped",
       "matchPackageNames": ["@fission-ai/openspec"],
       "postUpgradeTasks": {
