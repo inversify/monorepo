@@ -11,7 +11,7 @@
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-core": "5.4.5",
     "@inversifyjs/http-express": "5.4.5",
-    "@apollo/server": "5.5.0",
+    "@apollo/server": "5.5.1",
     "@apollo/subgraph": "2.14.0",
     "@graphql-tools/utils": "11.1.0",
     "@types/express": "5.0.6",
