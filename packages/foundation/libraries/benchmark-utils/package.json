@@ -24,7 +24,7 @@
     "tinybench": "6.0.1"
   },
   "devDependencies": {
-    "@types/node": "24.12.2",
+    "@types/node": "24.12.3",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "eslint": "10.3.0",
     "prettier": "3.8.3",
