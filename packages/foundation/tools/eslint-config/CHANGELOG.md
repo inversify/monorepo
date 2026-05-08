@@ -1,5 +1,11 @@
 # @inversifyjs/foundation-eslint-config
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies with less strict constraints
+
 ## 0.2.0
 
 ### Minor Changes
