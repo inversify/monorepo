@@ -18,7 +18,7 @@
     "@inversifyjs/standard-schema-validation": "workspace:*",
     "@inversifyjs/validation-common": "workspace:*",
     "@types/express": "5.0.6",
-    "@types/node": "24.12.2",
+    "@types/node": "24.12.3",
     "@vitest/coverage-v8": "4.1.5",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
