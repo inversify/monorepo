@@ -66,9 +66,11 @@ export default {
         "src/{pages,theme}/**/*.{js,ts,jsx,tsx}",
         "{blog,docs,graphql-docs,logger-docs,openapi-docs,validation-docs}/**/*.mdx",
       ],
+      ignoreDependencies: ["postcss"],
     },
     "packages/docs/services/inversify-site": {
       entry: ["src/{pages,theme}/**/*.{js,ts,jsx,tsx}", "{blog,docs}/**/*.mdx"],
+      ignoreDependencies: ["postcss"],
       ignoreFiles: ["i18n/**"],
     },
     "packages/docs/tools/*": defaultWorkspaceProjectConfig,
