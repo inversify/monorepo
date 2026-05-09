@@ -60,7 +60,7 @@
     {
       "description": "Quarantine packages with current known issues",
       "enabled": false,
-      "matchPackageNames": []
+      "matchPackageNames": ["turbo"]
     },
     {
       "description": "Regenerate OpenSpec instruction files after @fission-ai/openspec is bumped",
