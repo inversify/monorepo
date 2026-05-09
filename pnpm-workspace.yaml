@@ -13,21 +13,20 @@ packages:
   - packages/json-schema/libraries/*
   - packages/logger
   - packages/open-api/libraries/*
-
-ignoredBuiltDependencies:
-  - '@scarf/scarf'
-  - lmdb
-  - msgpackr-extract
-
-onlyBuiltDependencies:
-  - '@apollo/protobufjs'
-  - '@nestjs/core'
-  - '@prisma/engines'
-  - '@swc/core'
-  - better-sqlite3
-  - core-js
-  - core-js-pure
-  - esbuild
-  - oxc-resolver
-  - prisma
-  - sharp
+enablePrePostScripts: true
+strictPeerDependencies: false
+allowBuilds:
+  '@apollo/protobufjs': true
+  '@nestjs/core': true
+  '@prisma/engines': true
+  '@swc/core': true
+  better-sqlite3: true
+  core-js: true
+  core-js-pure: true
+  esbuild: true
+  oxc-resolver: true
+  prisma: true
+  sharp: true
+  '@scarf/scarf': false
+  lmdb: false
+  msgpackr-extract: false
