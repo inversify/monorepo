@@ -13,7 +13,7 @@
     },
     "@inversifyjs/react-code-runner#build": {
       "dependsOn": ["^build"],
-      "inputs": ["src/**/*.{css,cts,mts,ts,tsx}"],
+      "inputs": ["src/**/*.{css,cts,mts,ts,tsx}", "vite.config.ts"],
       "outputs": ["generated/**", "lib/**"]
     },
     "@inversifyjs/code-examples#build": {
