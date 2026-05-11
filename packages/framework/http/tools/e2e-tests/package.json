@@ -14,7 +14,7 @@
     "@inversifyjs/http-hono": "workspace:*",
     "@inversifyjs/http-uwebsockets": "workspace:*",
     "express": "^5.2.1",
-    "express4": "npm:express@4.22.1",
+    "express4": "npm:express@4.22.2",
     "fastify": "^5.8.5",
     "hono": "^4.12.18",
     "inversify": "8.1.0",
