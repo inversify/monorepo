@@ -6,9 +6,9 @@
   "description": "A powerful and lightweight inversion of control container for JavaScript & Node.js apps powered by TypeScript",
   "devDependencies": {
     "@changesets/cli": "2.31.0",
-    "@commitlint/cli": "21.0.0",
-    "@commitlint/config-conventional": "21.0.0",
-    "@commitlint/prompt-cli": "21.0.0",
+    "@commitlint/cli": "21.0.1",
+    "@commitlint/config-conventional": "21.0.1",
+    "@commitlint/prompt-cli": "21.0.1",
     "@inversifyjs/foundation-changelog-generator": "workspace:*",
     "@inversifyjs/foundation-eslint-config": "workspace:*",
     "@inversifyjs/foundation-prettier-config": "workspace:*",
