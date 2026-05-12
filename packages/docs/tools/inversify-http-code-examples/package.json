@@ -24,7 +24,7 @@
     "@types/node": "24.12.4",
     "@vitest/coverage-v8": "4.1.6",
     "better-auth": "1.6.10",
-    "better-sqlite3": "12.9.0",
+    "better-sqlite3": "12.10.0",
     "eslint": "10.3.0",
     "express": "5.2.1",
     "express4": "npm:express@4.22.2",
