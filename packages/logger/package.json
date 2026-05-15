@@ -11,7 +11,7 @@
     "@stryker-mutator/vitest-runner": "9.6.1",
     "@types/node": "24.12.4",
     "@vitest/coverage-v8": "4.1.6",
-    "eslint": "10.3.0",
+    "eslint": "10.4.0",
     "logform": "^2.7.0",
     "prettier": "3.8.3",
     "rimraf": "6.1.3",
