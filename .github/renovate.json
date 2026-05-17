@@ -16,7 +16,7 @@
       "description": "Update node version tracked in package.json engines field",
       "fileMatch": ["(^|/)package\\.json$"],
       "matchStrings": [
-        "\"node\"\\s*:\\s*\\{\\s*\"version\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
+        "\"devEngines\"\\s*:\\s*\\{[\\s\\S]*?\"node\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
       ],
       "depNameTemplate": "node",
       "datasourceTemplate": "node-version"
@@ -26,7 +26,7 @@
       "description": "Update pnpm version tracked in package.json engines field",
       "fileMatch": ["(^|/)package\\.json$"],
       "matchStrings": [
-        "\"pnpm\"\\s*:\\s*\\{\\s*\"version\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
+        "\"devEngines\"\\s*:\\s*\\{[\\s\\S]*?\"pnpm\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
       ],
       "depNameTemplate": "pnpm",
       "datasourceTemplate": "npm"
