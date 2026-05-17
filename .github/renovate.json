@@ -10,6 +10,26 @@
       "depNameTemplate": "@fission-ai/openspec",
       "datasourceTemplate": "npm",
       "versioningTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "description": "Update node version tracked in package.json engines field",
+      "fileMatch": ["(^|/)package\\.json$"],
+      "matchStrings": [
+        "\"devEngines\"\\s*:\\s*\\{[\\s\\S]*?\"node\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "node",
+      "datasourceTemplate": "node-version"
+    },
+    {
+      "customType": "regex",
+      "description": "Update pnpm version tracked in package.json engines field",
+      "fileMatch": ["(^|/)package\\.json$"],
+      "matchStrings": [
+        "\"devEngines\"\\s*:\\s*\\{[\\s\\S]*?\"pnpm\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "pnpm",
+      "datasourceTemplate": "npm"
     }
   ],
   "constraints": {
