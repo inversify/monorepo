@@ -15,7 +15,7 @@
   "homepage": "https://inversify.io",
   "keywords": [],
   "devEngines": {
-    "pnpm": "^10.13.1"
+    "pnpm": "^11.0.0"
   },
   "license": "MIT",
   "exports": {
