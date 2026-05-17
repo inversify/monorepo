@@ -20,7 +20,7 @@
   "homepage": "https://inversify.io",
   "devEngines": {
     "node": "^24.10.0",
-    "pnpm": "^10.13.1"
+    "pnpm": "^11.0.0"
   },
   "license": "MIT",
   "name": "@inversifyjs/logger-code-examples",
