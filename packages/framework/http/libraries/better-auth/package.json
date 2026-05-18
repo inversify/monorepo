@@ -9,7 +9,7 @@
     "statuses": "^2.0.2"
   },
   "devDependencies": {
-    "@hono/node-server": "2.0.2",
+    "@hono/node-server": "2.0.3",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-express-v4": "workspace:*",
