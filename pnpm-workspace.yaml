@@ -30,3 +30,12 @@ allowBuilds:
   '@scarf/scarf': false
   lmdb: false
   msgpackr-extract: false
+overrides:
+  postcss: 8.5.15
+packageExtensions:
+  "@docusaurus/theme-search-algolia@*":
+    peerDependencies:
+      postcss: ">=8"
+  "@docusaurus/preset-classic@*":
+    peerDependencies:
+      postcss: ">=8"
