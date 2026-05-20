@@ -20,7 +20,7 @@
     "clsx": "2.1.1",
     "mermaid": "^11.15.0",
     "monaco-editor": "0.55.1",
-    "postcss": "8.5.14",
+    "postcss": "8.5.15",
     "prism-react-renderer": "2.4.1",
     "react": "19.2.6",
     "react-dom": "19.2.6"
@@ -32,7 +32,7 @@
     "@eslint/js": "10.0.1",
     "@rspack/core": "1.7.11",
     "@types/babel__standalone": "7.1.9",
-    "@types/react": "19.2.14",
+    "@types/react": "19.2.15",
     "eslint": "10.4.0",
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-simple-import-sort": "13.0.0",

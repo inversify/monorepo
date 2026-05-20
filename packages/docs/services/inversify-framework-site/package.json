@@ -16,7 +16,7 @@
     "@inversifyjs/validation-code-examples": "workspace:*",
     "@mdx-js/react": "3.1.1",
     "clsx": "2.1.1",
-    "postcss": "8.5.14",
+    "postcss": "8.5.15",
     "prism-react-renderer": "2.4.1",
     "react": "19.2.6",
     "react-dom": "19.2.6"
@@ -25,7 +25,7 @@
     "@docusaurus/module-type-aliases": "3.10.1",
     "@docusaurus/types": "3.10.1",
     "@eslint/js": "10.0.1",
-    "@types/react": "19.2.14",
+    "@types/react": "19.2.15",
     "eslint": "10.4.0",
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-simple-import-sort": "13.0.0",
