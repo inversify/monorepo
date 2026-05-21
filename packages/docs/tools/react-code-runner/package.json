@@ -33,7 +33,7 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.59.4",
     "unplugin-dts": "1.0.1",
-    "vite": "8.0.13",
+    "vite": "8.0.14",
     "vite-plugin-lib-inject-css": "2.2.2"
   },
   "peerDependencies": {
