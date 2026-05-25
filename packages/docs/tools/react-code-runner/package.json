@@ -31,7 +31,7 @@
     "ts-loader": "9.5.7",
     "tslib": "2.8.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.59.4",
+    "typescript-eslint": "8.60.0",
     "unplugin-dts": "1.0.1",
     "vite": "8.0.14",
     "vite-plugin-lib-inject-css": "2.2.2"
