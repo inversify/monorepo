@@ -33,7 +33,7 @@
     }
   ],
   "constraints": {
-    "pnpm": "11.3.0"
+    "pnpm": "11.4.0"
   },
   "extends": [
     ":dependencyDashboard",
