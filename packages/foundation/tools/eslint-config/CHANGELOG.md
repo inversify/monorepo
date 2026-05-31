@@ -1,5 +1,11 @@
 # @inversifyjs/foundation-eslint-config
 
+## 0.3.0
+
+### Minor Changes
+
+- Updated `buildDefaultConfig` with `ignoresOverride`
+
 ## 0.2.1
 
 ### Patch Changes

@@ -39,3 +39,5 @@ packageExtensions:
   "@docusaurus/preset-classic@*":
     peerDependencies:
       postcss: ">=8"
+minimumReleaseAgeExclude:
+  - lint-staged@17.0.6
