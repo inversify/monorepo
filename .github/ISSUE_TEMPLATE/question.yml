@@ -1,5 +1,5 @@
 name: 'Questions / Help 💬'
-description: If you have questions, please check StackOverflow
+description: If you have questions, please check StackOverflow or start a new GitHub discussion
 title: '[Please read the message below]'
 labels: [':speech_balloon: Question']
 body:
@@ -13,6 +13,7 @@ body:
         For anything else, such as questions or getting help, please see:
 
         - [Docs](https://inversify.io)
+        - [GitHub Discussions](https://github.com/inversify/monorepo/discussions)
         - The [inversifyjs](https://stackoverflow.com/questions/tagged/inversifyjs) tag on [StackOverflow](https://stackoverflow.com/questions/ask)
   - type: checkboxes
     id: no-post

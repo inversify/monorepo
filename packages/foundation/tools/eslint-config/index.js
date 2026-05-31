@@ -165,10 +165,12 @@ function buildBaseConfig() {
 /**
  * @param {Record<string, import('@eslint/config-helpers').RuleConfig>} sourceRulesOverride
  * @param {Record<string, import('@eslint/config-helpers').Plugin>} pluginsOverride
+ * @param {string[]} ignoresOverride
  */
 export function buildDefaultConfig(
   sourceRulesOverride = {},
   pluginsOverride = {},
+  ignoresOverride = [],
 ) {
   const baseConfig = buildBaseConfig();
 
@@ -189,15 +191,16 @@ export function buildDefaultConfig(
   return defineConfig(
     {
       ...baseConfig,
+      files: ['**/*.{cjs,mts,ts,tsx}'],
+      ignores: ['**/*.spec.{cjs,mts,ts,tsx}', ...ignoresOverride],
       plugins: overridenPlugins,
       rules: overridenRules,
-      files: ['**/*.{cjs,mts,ts,tsx}'],
-      ignores: ['**/*.spec.{cjs,mts,ts,tsx}'],
     },
     {
       ...baseConfig,
       extends: [...(baseConfig.extends ?? [])],
       files: ['**/*.spec.{cjs,mts,ts,tsx}'],
+      ignores: ignoresOverride,
       plugins: overridenPlugins,
       rules: {
         ...overridenRules,
@@ -208,6 +211,7 @@ export function buildDefaultConfig(
     },
     {
       files: ['**/*.spec.ts', '**/*.spec-d.ts'],
+      ignores: ignoresOverride,
       plugins: {
         vitest: vitestPlugin,
       },
