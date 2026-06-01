@@ -59,6 +59,11 @@
   ],
   "packageRules": [
     {
+      "description": "Ignore updates to dependencies that are less than 3 days old",
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
       "enabled": false,
       "matchDepTypes": ["peerDependencies"],
       "matchPackageNames": ["express"],

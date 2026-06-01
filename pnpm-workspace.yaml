@@ -30,6 +30,7 @@ allowBuilds:
   '@scarf/scarf': false
   lmdb: false
   msgpackr-extract: false
+minimumReleaseAge: 1440
 overrides:
   postcss: 8.5.15
 packageExtensions:
@@ -39,5 +40,4 @@ packageExtensions:
   "@docusaurus/preset-classic@*":
     peerDependencies:
       postcss: ">=8"
-minimumReleaseAgeExclude:
-  - lint-staged@17.0.6
+
