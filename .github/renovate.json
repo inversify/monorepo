@@ -71,6 +71,12 @@
       "matchCurrentVersion": ">=4.0.0 <5.0.0"
     },
     {
+      "enabled": false,
+      "matchPackageNames": ["@types/express"],
+      "matchUpdateTypes": ["major"],
+      "matchCurrentVersion": ">=4.0.0 <5.0.0"
+    },
+    {
       "automerge": true,
       "description": "auto merge on patch or minor",
       "groupName": "auto merge on patch or minor",
@@ -86,6 +92,11 @@
       "description": "Quarantine packages with current known issues",
       "enabled": false,
       "matchPackageNames": []
+    },
+    {
+      "description": "Ignore inversify version-aliased dependencies (e.g. inversify6, inversify7)",
+      "enabled": false,
+      "matchPackagePatterns": ["^inversify\\d+$"]
     },
     {
       "description": "Regenerate OpenSpec instruction files after @fission-ai/openspec is bumped",
