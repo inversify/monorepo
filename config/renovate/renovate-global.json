@@ -1,0 +1,5 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-global-schema.json",
+  "allowedCommands": ["pnpm dlx @fission-ai/openspec update"],
+  "binarySource": "global"
+}
