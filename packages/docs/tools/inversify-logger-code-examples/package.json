@@ -8,7 +8,7 @@
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/logger": "workspace:*",
-    "@types/node": "24.12.4",
+    "@types/node": "24.13.0",
     "@vitest/coverage-v8": "4.1.8",
     "eslint": "10.4.1",
     "glob": "13.0.6",
