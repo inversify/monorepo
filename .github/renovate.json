@@ -112,6 +112,7 @@
       "matchPackageNames": ["@fission-ai/openspec"],
       "postUpgradeTasks": {
         "commands": ["pnpm dlx @fission-ai/openspec update"],
+        "executionMode": "branch",
         "fileFilters": ["**/skills/**"],
         "installTools": {
           "pnpm": {}
