@@ -1,5 +1,6 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "$schema": "https://docs.renovatebot.com/renovate-global-schema.json",
+  "allowedCommands": ["pnpm dlx @fission-ai/openspec update"],
   "automerge": false,
   "customManagers": [
     {
