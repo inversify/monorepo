@@ -1,12 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-global-schema.json",
-  "allowedCommands": ["npx --yes @fission-ai/openspec update"],
+  "allowedCommands": ["pnpm dlx @fission-ai/openspec update"],
   "automerge": false,
   "customManagers": [
     {
       "customType": "regex",
       "description": "Update @fission-ai/openspec version tracked via generatedBy field in skill files",
-      "fileMatch": ["^\\.agent/skills/[^/]+/SKILL\\.md$"],
+      "managerFilePatterns": ["/^\\.agent/skills/[^/]+/SKILL\\.md$/"],
       "matchStrings": ["generatedBy:\\s*\"(?<currentValue>[^\"]+)\""],
       "depNameTemplate": "@fission-ai/openspec",
       "datasourceTemplate": "npm",
@@ -15,7 +15,7 @@
     {
       "customType": "regex",
       "description": "Update node version tracked in package.json engines field",
-      "fileMatch": ["(^|/)package\\.json$"],
+      "managerFilePatterns": ["/(^|/)package\\.json$/"],
       "matchStrings": [
         "\"devEngines\"\\s*:\\s*\\{[\\s\\S]*?\"node\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
       ],
@@ -25,17 +25,26 @@
     {
       "customType": "regex",
       "description": "Update pnpm version tracked in package.json engines field",
-      "fileMatch": ["(^|/)package\\.json$"],
+      "managerFilePatterns": ["/(^|/)package\\.json$/"],
       "matchStrings": [
         "\"devEngines\"\\s*:\\s*\\{[\\s\\S]*?\"pnpm\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
       ],
       "depNameTemplate": "pnpm",
       "datasourceTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "description": "Update uWebSockets.js version tracked in package.json dependencies",
+      "managerFilePatterns": ["/(^|/)package\\.json$/"],
+      "matchStrings": [
+        "uNetworking/uWebSockets\\.js#(?<currentValue>[^\"\\s]+)"
+      ],
+      "depNameTemplate": "uNetworking/uWebSockets.js",
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "semver-coerced"
     }
   ],
-  "constraints": {
-    "pnpm": "11.5.0"
-  },
+  "constraints": { "pnpm": "11.5.0" },
   "extends": [
     ":dependencyDashboard",
     ":disableRateLimiting",
@@ -82,7 +91,7 @@
       "description": "auto merge on patch or minor",
       "groupName": "auto merge on patch or minor",
       "matchUpdateTypes": ["patch", "minor"],
-      "excludePackageNames": ["turbo", "typescript"]
+      "matchPackageNames": ["!turbo", "!typescript"]
     },
     {
       "description": "Group GitHub Actions updates",
@@ -97,29 +106,22 @@
     {
       "description": "Ignore inversify version-aliased dependencies (e.g. inversify6, inversify7)",
       "enabled": false,
-      "matchPackagePatterns": ["^inversify\\d+$"]
+      "matchPackageNames": ["/^inversify\\d+$/"]
     },
     {
       "description": "Regenerate OpenSpec instruction files after @fission-ai/openspec is bumped",
       "matchPackageNames": ["@fission-ai/openspec"],
       "postUpgradeTasks": {
-        "commands": ["npx --yes @fission-ai/openspec update"],
-        "fileFilters": ["**/skills/**"]
+        "commands": ["pnpm dlx @fission-ai/openspec update"],
+        "executionMode": "branch",
+        "fileFilters": ["**/skills/**"],
+        "installTools": {
+          "pnpm": {}
+        }
       }
     }
   ],
   "rangeStrategy": "bump",
-  "regexManagers": [
-    {
-      "fileMatch": ["package.json"],
-      "matchStrings": [
-        "uNetworking/uWebSockets\\.js#(?<currentValue>[^\"\\s]+)"
-      ],
-      "depNameTemplate": "uNetworking/uWebSockets.js",
-      "datasourceTemplate": "github-tags",
-      "versioningTemplate": "semver-coerced"
-    }
-  ],
   "rebaseWhen": "conflicted",
   "semanticCommits": "enabled",
   "schedule": ["at any time"]
