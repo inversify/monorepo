@@ -28,5 +28,5 @@ jobs:
           RENOVATE_REPOSITORIES: '[{ repository: "inversify/monorepo", bumpVersion: true }]'
         with:
           configurationFile: config/renovate/renovate-global.json
-          renovate-image: ghcr.io/renovatebot/renovate:43.214.5-full
+          renovate-version: 43.214.5-full
           token: ${{ steps.create_token.outputs.token }}
