@@ -46,7 +46,6 @@
   "constraints": { "pnpm": "11.5.1" },
   "dependencyDashboard": false,
   "extends": [
-    ":dependencyDashboard",
     ":disableRateLimiting",
     ":semanticCommitScopeDisabled",
     ":semanticPrefixFixDepsChoreOthers",
