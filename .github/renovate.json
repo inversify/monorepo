@@ -115,6 +115,7 @@
         "executionMode": "branch",
         "fileFilters": ["**/skills/**"],
         "installTools": {
+          "node": {},
           "pnpm": {}
         }
       }
