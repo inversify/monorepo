@@ -9,7 +9,6 @@ import {
 } from 'vitest';
 
 vitest.mock(import('./cacheResolvedValue.js'));
-vitest.mock(import('./resolveBindingActivations.js'));
 
 import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures.js';
 import { type bindingTypeValues } from '../../binding/models/BindingType.js';
@@ -18,10 +17,9 @@ import { type BaseBindingNode } from '../../planning/models/BaseBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { type Resolved } from '../models/Resolved.js';
 import { cacheResolvedValue } from './cacheResolvedValue.js';
-import { resolveBindingActivations } from './resolveBindingActivations.js';
-import { resolveScoped } from './resolveScoped.js';
+import { resolveScopedWithNoActivations } from './resolveScopedWithNoActivations.js';
 
-describe(resolveScoped, () => {
+describe(resolveScopedWithNoActivations, () => {
   describe('having a node with a binding with scope Singleton and no cache', () => {
     let nodeFixture: BaseBindingNode<InstanceBinding<unknown>>;
 
@@ -44,7 +42,7 @@ describe(resolveScoped, () => {
       beforeAll(() => {
         resolveMock = vitest.fn();
 
-        resolveFunction = resolveScoped<
+        resolveFunction = resolveScopedWithNoActivations<
           unknown,
           typeof bindingTypeValues.Instance,
           InstanceBinding<unknown>,
@@ -65,10 +63,6 @@ describe(resolveScoped, () => {
           resolveMock.mockReturnValueOnce(resolveMockResult);
 
           vitest
-            .mocked(resolveBindingActivations)
-            .mockReturnValueOnce(resolveMockResult);
-
-          vitest
             .mocked(cacheResolvedValue)
             .mockReturnValueOnce(resolveMockResult);
 
@@ -83,14 +77,6 @@ describe(resolveScoped, () => {
           expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
             paramsFixture,
             nodeFixture,
-          );
-        });
-
-        it('should call resolveBindingActivations()', () => {
-          expect(resolveBindingActivations).toHaveBeenCalledExactlyOnceWith(
-            paramsFixture,
-            nodeFixture.binding,
-            resolveMockResult,
           );
         });
 
@@ -130,7 +116,7 @@ describe(resolveScoped, () => {
       beforeAll(() => {
         resolveMock = vitest.fn();
 
-        resolveFunction = resolveScoped<
+        resolveFunction = resolveScopedWithNoActivations<
           unknown,
           typeof bindingTypeValues.Instance,
           InstanceBinding<unknown>,
@@ -155,10 +141,6 @@ describe(resolveScoped, () => {
 
         it('should not call resolveMock()', () => {
           expect(resolveMock).not.toHaveBeenCalled();
-        });
-
-        it('should not call resolveBindingActivations()', () => {
-          expect(resolveBindingActivations).not.toHaveBeenCalled();
         });
 
         it('should not call cacheResolvedValue()', () => {
@@ -194,7 +176,7 @@ describe(resolveScoped, () => {
       beforeAll(() => {
         resolveMock = vitest.fn();
 
-        resolveFunction = resolveScoped<
+        resolveFunction = resolveScopedWithNoActivations<
           unknown,
           typeof bindingTypeValues.Instance,
           InstanceBinding<unknown>,
@@ -216,10 +198,6 @@ describe(resolveScoped, () => {
 
           resolveMock.mockReturnValueOnce(resolveMockResult);
 
-          vitest
-            .mocked(resolveBindingActivations)
-            .mockReturnValueOnce(resolveMockResult);
-
           result = resolveFunction(paramsFixture);
         });
 
@@ -231,14 +209,6 @@ describe(resolveScoped, () => {
           expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
             paramsFixture,
             nodeFixture,
-          );
-        });
-
-        it('should call resolveBindingActivations()', () => {
-          expect(resolveBindingActivations).toHaveBeenCalledExactlyOnceWith(
-            paramsFixture,
-            nodeFixture.binding,
-            resolveMockResult,
           );
         });
 
@@ -278,10 +248,6 @@ describe(resolveScoped, () => {
           expect(resolveMock).not.toHaveBeenCalled();
         });
 
-        it('should not call resolveBindingActivations()', () => {
-          expect(resolveBindingActivations).not.toHaveBeenCalled();
-        });
-
         it('should return expected value', () => {
           expect(result).toBe(requestScopeCacheResult);
         });
@@ -311,7 +277,7 @@ describe(resolveScoped, () => {
       beforeAll(() => {
         resolveMock = vitest.fn();
 
-        resolveFunction = resolveScoped<
+        resolveFunction = resolveScopedWithNoActivations<
           unknown,
           typeof bindingTypeValues.Instance,
           InstanceBinding<unknown>,
@@ -331,10 +297,6 @@ describe(resolveScoped, () => {
 
           resolveMock.mockReturnValueOnce(resolveMockResult);
 
-          vitest
-            .mocked(resolveBindingActivations)
-            .mockReturnValueOnce(resolveMockResult);
-
           result = resolveFunction(paramsFixture);
         });
 
@@ -346,14 +308,6 @@ describe(resolveScoped, () => {
           expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
             paramsFixture,
             nodeFixture,
-          );
-        });
-
-        it('should call resolveBindingActivations()', () => {
-          expect(resolveBindingActivations).toHaveBeenCalledExactlyOnceWith(
-            paramsFixture,
-            nodeFixture.binding,
-            resolveMockResult,
           );
         });
 

@@ -1,33 +1,38 @@
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
 import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
-import { type Resolved, type SyncResolved } from '../models/Resolved.js';
+import { type SyncResolved } from '../models/Resolved.js';
+import { resolveBindingServiceActivations } from './resolveBindingServiceActivations.js';
+import { resolveInstanceBindingNodeFromConstructorParams } from './resolveInstanceBindingNodeFromConstructorParams.js';
 
-export function resolveInstanceBindingNodeAsyncFromConstructorParams<
+export async function resolveInstanceBindingNodeAsyncFromOnlyConstructorParams<
   TActivated,
   TBinding extends InstanceBinding<TActivated> = InstanceBinding<TActivated>,
 >(
-  resolveInstanceBindingNodeFromConstructorParams: (
-    constructorValues: unknown[],
-    params: ResolutionParams,
-    node: InstanceBindingNode<TBinding>,
-  ) => Resolved<TActivated>,
-): (
   constructorValues: Promise<unknown[]>,
   params: ResolutionParams,
-  node: InstanceBindingNode<TBinding>,
-) => Promise<SyncResolved<TActivated>> {
-  return async (
-    constructorValues: Promise<unknown[]>,
-    params: ResolutionParams,
-    node: InstanceBindingNode<TBinding>,
-  ): Promise<SyncResolved<TActivated>> => {
-    const constructorResolvedValues: unknown[] = await constructorValues;
+  node: InstanceBindingNode<TActivated, TBinding>,
+): Promise<SyncResolved<TActivated>> {
+  return resolveBindingServiceActivations<TActivated>(
+    params,
+    node.binding.serviceIdentifier,
+    new node.binding.implementationType(...(await constructorValues)),
+  );
+}
 
-    return resolveInstanceBindingNodeFromConstructorParams(
-      constructorResolvedValues,
-      params,
-      node,
-    );
-  };
+export async function resolveInstanceBindingNodeAsyncFromConstructorParams<
+  TActivated,
+  TBinding extends InstanceBinding<TActivated> = InstanceBinding<TActivated>,
+>(
+  constructorValues: Promise<unknown[]>,
+  params: ResolutionParams,
+  node: InstanceBindingNode<TActivated, TBinding>,
+): Promise<SyncResolved<TActivated>> {
+  const constructorResolvedValues: unknown[] = await constructorValues;
+
+  return resolveInstanceBindingNodeFromConstructorParams(
+    constructorResolvedValues,
+    params,
+    node,
+  );
 }

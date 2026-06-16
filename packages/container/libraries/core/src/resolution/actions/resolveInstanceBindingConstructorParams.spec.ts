@@ -1,36 +1,26 @@
-import {
-  afterAll,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  type Mock,
-  vitest,
-} from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
+
+vitest.mock(import('./resolveServiceNode.js'));
 
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
 import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
 import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { resolveInstanceBindingConstructorParams } from './resolveInstanceBindingConstructorParams.js';
+import { resolveServiceNode } from './resolveServiceNode.js';
 
 describe(resolveInstanceBindingConstructorParams, () => {
   describe('having InstanceBindingNode with constructor param with undefined value', () => {
-    let resolveServiceNodeMock: Mock<
-      (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
-    >;
-
     let paramsFixture: ResolutionParams;
-    let nodeFixture: InstanceBindingNode<InstanceBinding<unknown>>;
+    let nodeFixture: InstanceBindingNode<unknown, InstanceBinding<unknown>>;
 
     beforeAll(() => {
-      resolveServiceNodeMock = vitest.fn();
       paramsFixture = Symbol() as unknown as ResolutionParams;
       nodeFixture = {
         constructorParams: [undefined],
       } as Partial<
-        InstanceBindingNode<InstanceBinding<unknown>>
-      > as InstanceBindingNode<InstanceBinding<unknown>>;
+        InstanceBindingNode<unknown, InstanceBinding<unknown>>
+      > as InstanceBindingNode<unknown, InstanceBinding<unknown>>;
     });
 
     describe('when called', () => {
@@ -38,8 +28,9 @@ describe(resolveInstanceBindingConstructorParams, () => {
 
       beforeAll(() => {
         result = resolveInstanceBindingConstructorParams(
-          resolveServiceNodeMock,
-        )(paramsFixture, nodeFixture);
+          paramsFixture,
+          nodeFixture,
+        );
       });
 
       it('should return expected value', () => {
@@ -50,12 +41,9 @@ describe(resolveInstanceBindingConstructorParams, () => {
 
   describe('having InstanceBindingNode with constructor param with PlanServiceNode value', () => {
     let constructorParamFixture: PlanServiceNode;
-    let resolveServiceNodeMock: Mock<
-      (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
-    >;
 
     let paramsFixture: ResolutionParams;
-    let nodeFixture: InstanceBindingNode<InstanceBinding<unknown>>;
+    let nodeFixture: InstanceBindingNode<unknown, InstanceBinding<unknown>>;
 
     beforeAll(() => {
       constructorParamFixture = {
@@ -63,13 +51,12 @@ describe(resolveInstanceBindingConstructorParams, () => {
         isContextFree: true,
         serviceIdentifier: 'service-id',
       };
-      resolveServiceNodeMock = vitest.fn();
       paramsFixture = Symbol() as unknown as ResolutionParams;
       nodeFixture = {
         constructorParams: [constructorParamFixture],
       } as Partial<
-        InstanceBindingNode<InstanceBinding<unknown>>
-      > as InstanceBindingNode<InstanceBinding<unknown>>;
+        InstanceBindingNode<unknown, InstanceBinding<unknown>>
+      > as InstanceBindingNode<unknown, InstanceBinding<unknown>>;
     });
 
     describe('when called, and resolveServiceNode() return non Promise value', () => {
@@ -80,11 +67,12 @@ describe(resolveInstanceBindingConstructorParams, () => {
       beforeAll(() => {
         resolvedValue = Symbol();
 
-        resolveServiceNodeMock.mockReturnValueOnce(resolvedValue);
+        vitest.mocked(resolveServiceNode).mockReturnValueOnce(resolvedValue);
 
         result = resolveInstanceBindingConstructorParams(
-          resolveServiceNodeMock,
-        )(paramsFixture, nodeFixture);
+          paramsFixture,
+          nodeFixture,
+        );
       });
 
       afterAll(() => {
@@ -92,7 +80,7 @@ describe(resolveInstanceBindingConstructorParams, () => {
       });
 
       it('should call resolveServiceNode()', () => {
-        expect(resolveServiceNodeMock).toHaveBeenCalledExactlyOnceWith(
+        expect(resolveServiceNode).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           constructorParamFixture,
         );
@@ -111,11 +99,12 @@ describe(resolveInstanceBindingConstructorParams, () => {
       beforeAll(() => {
         resolvedValue = Symbol();
 
-        resolveServiceNodeMock.mockResolvedValueOnce(resolvedValue);
+        vitest.mocked(resolveServiceNode).mockResolvedValueOnce(resolvedValue);
 
         result = resolveInstanceBindingConstructorParams(
-          resolveServiceNodeMock,
-        )(paramsFixture, nodeFixture);
+          paramsFixture,
+          nodeFixture,
+        );
       });
 
       afterAll(() => {
@@ -123,7 +112,7 @@ describe(resolveInstanceBindingConstructorParams, () => {
       });
 
       it('should call resolveServiceNode()', () => {
-        expect(resolveServiceNodeMock).toHaveBeenCalledExactlyOnceWith(
+        expect(resolveServiceNode).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           constructorParamFixture,
         );

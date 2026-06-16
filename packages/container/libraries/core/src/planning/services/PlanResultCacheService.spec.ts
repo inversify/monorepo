@@ -804,6 +804,7 @@ describe(PlanResultCacheService, () => {
                   type: bindingTypeValues.ResolvedValue,
                 },
                 params: [childLazyPlanServiceNodeFixture],
+                resolve: () => undefined,
               },
               isContextFree: true,
               serviceIdentifier: 'service-id',
@@ -1021,6 +1022,7 @@ describe(PlanResultCacheService, () => {
                     type: bindingTypeValues.ResolvedValue,
                   },
                   params: [childLazyPlanServiceNodeFixture],
+                  resolve: () => undefined,
                 },
               ],
               isContextFree: true,
@@ -1208,6 +1210,7 @@ describe(PlanResultCacheService, () => {
               childPlanServiceNodeFixture,
               buildPlanServiceNodeMock,
             );
+
             planServiceNodeFixture = {
               bindings: {
                 binding: {
@@ -1250,6 +1253,7 @@ describe(PlanResultCacheService, () => {
                       type: bindingTypeValues.ResolvedValue,
                     },
                     params: [childLazyPlanServiceNodeFixture],
+                    resolve: () => undefined,
                   },
                 ],
               },
@@ -1469,6 +1473,7 @@ describe(PlanResultCacheService, () => {
                     type: bindingTypeValues.ResolvedValue,
                   },
                   params: [childLazyPlanServiceNodeFixture],
+                  resolve: () => undefined,
                 },
               ],
               isContextFree: true,
@@ -1693,6 +1698,7 @@ describe(PlanResultCacheService, () => {
                   },
                   constructorParams: [childLazyPlanServiceNodeFixture],
                   propertyParams: new Map(),
+                  resolve: () => undefined,
                 },
               ],
               isContextFree: true,
@@ -1922,6 +1928,7 @@ describe(PlanResultCacheService, () => {
                   propertyParams: new Map([
                     ['foo', childLazyPlanServiceNodeFixture],
                   ]),
+                  resolve: () => undefined,
                 },
               ],
               isContextFree: true,

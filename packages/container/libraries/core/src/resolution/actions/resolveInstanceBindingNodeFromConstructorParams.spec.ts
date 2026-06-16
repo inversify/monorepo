@@ -4,12 +4,12 @@ import {
   describe,
   expect,
   it,
-  type Mock,
   type Mocked,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('./resolvePostConstruct.js'));
+vitest.mock(import('./setInstanceProperties.js'));
 
 import { bindingScopeValues } from '../../binding/models/BindingScope.js';
 import { bindingTypeValues } from '../../binding/models/BindingType.js';
@@ -21,23 +21,14 @@ import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { type Resolved, type SyncResolved } from '../models/Resolved.js';
 import { resolveInstanceBindingNodeFromConstructorParams } from './resolveInstanceBindingNodeFromConstructorParams.js';
 import { resolvePostConstruct } from './resolvePostConstruct.js';
+import { setInstanceProperties } from './setInstanceProperties.js';
 
 describe(resolveInstanceBindingNodeFromConstructorParams, () => {
-  let setInstancePropertiesMock: Mock<
-    (
-      params: ResolutionParams,
-      instance: Record<string | symbol, unknown>,
-      node: InstanceBindingNode,
-    ) => void | Promise<void>
-  >;
-
   let constructorValuesFixture: unknown[];
   let paramsFixture: ResolutionParams;
-  let nodeMock: Mocked<InstanceBindingNode<InstanceBinding<unknown>>>;
+  let nodeMock: Mocked<InstanceBindingNode<unknown, InstanceBinding<unknown>>>;
 
   beforeAll(() => {
-    setInstancePropertiesMock = vitest.fn();
-
     constructorValuesFixture = [Symbol()];
     paramsFixture = Symbol() as unknown as ResolutionParams;
     nodeMock = {
@@ -67,6 +58,7 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
       propertyParams: new Map() as Mocked<
         Map<string | symbol, PlanServiceNode>
       >,
+      resolve: vitest.fn(),
     };
 
     vitest
@@ -95,11 +87,13 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
             expectedResultValue;
         });
 
-      setInstancePropertiesMock.mockReturnValueOnce(undefined);
+      vitest.mocked(setInstanceProperties).mockReturnValueOnce(undefined);
 
       result = resolveInstanceBindingNodeFromConstructorParams(
-        setInstancePropertiesMock,
-      )(constructorValuesFixture, paramsFixture, nodeMock);
+        constructorValuesFixture,
+        paramsFixture,
+        nodeMock,
+      );
     });
 
     afterAll(() => {
@@ -113,7 +107,7 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
     });
 
     it('should call setInstanceProperties()', () => {
-      expect(setInstancePropertiesMock).toHaveBeenCalledExactlyOnceWith(
+      expect(setInstanceProperties).toHaveBeenCalledExactlyOnceWith(
         paramsFixture,
         expect.any(Object),
         nodeMock,
@@ -156,11 +150,13 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
             expectedResultValue;
         });
 
-      setInstancePropertiesMock.mockResolvedValueOnce(undefined);
+      vitest.mocked(setInstanceProperties).mockResolvedValueOnce(undefined);
 
       result = resolveInstanceBindingNodeFromConstructorParams(
-        setInstancePropertiesMock,
-      )(constructorValuesFixture, paramsFixture, nodeMock);
+        constructorValuesFixture,
+        paramsFixture,
+        nodeMock,
+      );
     });
 
     afterAll(() => {
@@ -174,7 +170,7 @@ describe(resolveInstanceBindingNodeFromConstructorParams, () => {
     });
 
     it('should call setInstanceProperties()', () => {
-      expect(setInstancePropertiesMock).toHaveBeenCalledExactlyOnceWith(
+      expect(setInstanceProperties).toHaveBeenCalledExactlyOnceWith(
         paramsFixture,
         expect.any(Object),
         nodeMock,

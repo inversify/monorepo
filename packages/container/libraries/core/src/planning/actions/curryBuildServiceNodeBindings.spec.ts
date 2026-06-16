@@ -126,6 +126,7 @@ describe(curryBuildServiceNodeBindings, () => {
             classMetadata: classMetadataFixture,
             constructorParams: [],
             propertyParams: new Map(),
+            resolve: expect.any(Function),
           },
           operations: basePlanParamsMock.operations,
           servicesBranch: basePlanParamsMock.servicesBranch,
@@ -207,6 +208,7 @@ describe(curryBuildServiceNodeBindings, () => {
           node: {
             binding: resolvedValueBindingFixture,
             params: [],
+            resolve: expect.any(Function),
           },
           operations: basePlanParamsMock.operations,
           servicesBranch: basePlanParamsMock.servicesBranch,

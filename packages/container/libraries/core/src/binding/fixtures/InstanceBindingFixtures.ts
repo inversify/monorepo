@@ -21,10 +21,34 @@ export class InstanceBindingFixtures {
     };
   }
 
+  public static get withScopeRequest(): InstanceBinding<unknown> {
+    return {
+      ...InstanceBindingFixtures.any,
+      scope: bindingScopeValues.Request,
+    };
+  }
+
   public static get withScopeSingleton(): InstanceBinding<unknown> {
     return {
       ...InstanceBindingFixtures.any,
       scope: bindingScopeValues.Singleton,
+    };
+  }
+
+  public static get withScopeTransient(): InstanceBinding<unknown> {
+    return {
+      ...InstanceBindingFixtures.any,
+      scope: bindingScopeValues.Transient,
+    };
+  }
+
+  public static get withCacheIsRightFalseAndScopeSingleton(): InstanceBinding<unknown> {
+    return {
+      ...InstanceBindingFixtures.withScopeSingleton,
+      cache: {
+        isRight: false,
+        value: undefined,
+      },
     };
   }
 

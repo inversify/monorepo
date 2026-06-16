@@ -9,9 +9,8 @@ import { type BaseBindingNode } from '../../planning/models/BaseBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { type Resolved } from '../models/Resolved.js';
 import { cacheResolvedValue } from './cacheResolvedValue.js';
-import { resolveBindingActivations } from './resolveBindingActivations.js';
 
-export function resolveScoped<
+export function resolveScopedWithNoActivations<
   TActivated,
   TType extends BindingType,
   TBinding extends ScopedBinding<TType, BindingScope, TActivated> &
@@ -30,12 +29,7 @@ export function resolveScoped<
           return binding.cache.value;
         }
 
-        const resolvedValue: Resolved<TActivated> =
-          resolveBindingActivations<TActivated>(
-            params,
-            binding,
-            resolve(params, node),
-          );
+        const resolvedValue: Resolved<TActivated> = resolve(params, node);
 
         return cacheResolvedValue(binding, resolvedValue);
       };
@@ -48,12 +42,7 @@ export function resolveScoped<
           ) as Resolved<TActivated>;
         }
 
-        const resolvedValue: Resolved<TActivated> =
-          resolveBindingActivations<TActivated>(
-            params,
-            binding,
-            resolve(params, node),
-          );
+        const resolvedValue: Resolved<TActivated> = resolve(params, node);
 
         params.requestScopeCache.set(binding.id, resolvedValue);
 
@@ -62,10 +51,6 @@ export function resolveScoped<
     }
     case bindingScopeValues.Transient:
       return (params: ResolutionParams): Resolved<TActivated> =>
-        resolveBindingActivations<TActivated>(
-          params,
-          binding,
-          resolve(params, node),
-        );
+        resolve(params, node);
   }
 }

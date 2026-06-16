@@ -1,3 +1,4 @@
+import { type FactoryBindingNode } from './FactoryBindingNode.js';
 import { type LeafBindingNode } from './LeafBindingNode.js';
 import { type PlanServiceNodeParent } from './PlanServiceNodeParent.js';
 import { type PlanServiceRedirectionBindingNode } from './PlanServiceRedirectionBindingNode.js';
@@ -5,4 +6,5 @@ import { type PlanServiceRedirectionBindingNode } from './PlanServiceRedirection
 export type PlanBindingNode =
   | PlanServiceNodeParent
   | PlanServiceRedirectionBindingNode
-  | LeafBindingNode;
+  | LeafBindingNode
+  | FactoryBindingNode;

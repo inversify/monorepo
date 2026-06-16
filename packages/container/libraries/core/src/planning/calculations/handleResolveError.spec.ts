@@ -43,7 +43,7 @@ function buildResolvedValueBindingNode(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     binding: { type: bindingTypeValues.ResolvedValue } as any,
     params: children,
-  };
+  } as ResolvedValueBindingNode;
 }
 
 function buildServiceRedirectionBindingNode(

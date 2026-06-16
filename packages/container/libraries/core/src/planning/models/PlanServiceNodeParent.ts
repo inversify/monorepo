@@ -5,5 +5,5 @@ import { type ResolvedValueBindingNode } from './ResolvedValueBindingNode.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PlanServiceNodeParent<TActivated = any> =
-  | InstanceBindingNode<InstanceBinding<TActivated>>
+  | InstanceBindingNode<TActivated, InstanceBinding<TActivated>>
   | ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>;

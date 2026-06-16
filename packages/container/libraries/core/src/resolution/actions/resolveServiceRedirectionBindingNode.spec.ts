@@ -1,29 +1,20 @@
-import { beforeAll, describe, expect, it, type Mock, vitest } from 'vitest';
+import { beforeAll, describe, expect, it, type Mocked, vitest } from 'vitest';
 
 import { bindingScopeValues } from '../../binding/models/BindingScope.js';
 import { bindingTypeValues } from '../../binding/models/BindingType.js';
-import { type LeafBindingNode } from '../../planning/models/LeafBindingNode.js';
-import { type PlanBindingNode } from '../../planning/models/PlanBindingNode.js';
-import { type PlanServiceNodeParent } from '../../planning/models/PlanServiceNodeParent.js';
+import { type ConstantValueBindingNode } from '../../planning/models/ConstantValueBindingNode.js';
 import { type PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { resolveServiceRedirectionBindingNode } from './resolveServiceRedirectionBindingNode.js';
 
 describe(resolveServiceRedirectionBindingNode, () => {
   describe('having PlanServiceRedirectionBindingNode with PlanServiceRedirectionBindingNode redirection with binding node redirection', () => {
-    let resolveBindingNodeMock: Mock<
-      (
-        params: ResolutionParams,
-        planBindingNode: PlanServiceNodeParent | LeafBindingNode,
-      ) => unknown
-    >;
     let paramsFixture: ResolutionParams;
     let nodeFixture: PlanServiceRedirectionBindingNode;
     let nodeRedirectionFixture: PlanServiceRedirectionBindingNode;
-    let bindingNodeFixture: PlanBindingNode;
+    let bindingNodeMock: Mocked<ConstantValueBindingNode<unknown>>;
 
     beforeAll(() => {
-      resolveBindingNodeMock = vitest.fn();
       paramsFixture = Symbol() as unknown as ResolutionParams;
       nodeFixture = {
         binding: {
@@ -48,7 +39,7 @@ describe(resolveServiceRedirectionBindingNode, () => {
         redirections: [],
       };
 
-      bindingNodeFixture = {
+      bindingNodeMock = {
         binding: {
           cache: {
             isRight: true,
@@ -64,10 +55,11 @@ describe(resolveServiceRedirectionBindingNode, () => {
           type: bindingTypeValues.ConstantValue,
           value: Symbol(),
         },
+        resolve: vitest.fn(),
       };
 
       nodeFixture.redirections.push(nodeRedirectionFixture);
-      nodeRedirectionFixture.redirections.push(bindingNodeFixture);
+      nodeRedirectionFixture.redirections.push(bindingNodeMock);
     });
 
     describe('when called', () => {
@@ -78,18 +70,17 @@ describe(resolveServiceRedirectionBindingNode, () => {
       beforeAll(() => {
         resolvedValue = Symbol();
 
-        resolveBindingNodeMock.mockReturnValueOnce(resolvedValue);
+        bindingNodeMock.resolve.mockReturnValueOnce(resolvedValue);
 
-        result = resolveServiceRedirectionBindingNode(resolveBindingNodeMock)(
+        result = resolveServiceRedirectionBindingNode(
           paramsFixture,
           nodeFixture,
         );
       });
 
       it('should call resolveBindingNode()', () => {
-        expect(resolveBindingNodeMock).toHaveBeenCalledExactlyOnceWith(
+        expect(bindingNodeMock.resolve).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
-          bindingNodeFixture,
         );
       });
 
