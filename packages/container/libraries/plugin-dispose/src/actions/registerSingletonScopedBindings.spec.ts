@@ -95,6 +95,7 @@ describe(registerSingletonScopedBindings, () => {
           type: bindingTypeValues.ConstantValue,
           value: Symbol(),
         },
+        resolve: () => undefined,
       };
 
       (serviceNode as Writable<PlanServiceNode>).bindings = leafBindingNode;
@@ -215,6 +216,7 @@ describe(registerSingletonScopedBindings, () => {
           type: bindingTypeValues.ConstantValue,
           value: Symbol(),
         },
+        resolve: () => undefined,
       };
 
       (serviceNode as Writable<PlanServiceNode>).bindings = leafBindingNode;
@@ -302,6 +304,7 @@ describe(registerSingletonScopedBindings, () => {
         classMetadata: Symbol() as unknown as ClassMetadata,
         constructorParams: [],
         propertyParams: new Map(),
+        resolve: () => undefined,
       };
 
       leafBindingNode = {
@@ -320,6 +323,7 @@ describe(registerSingletonScopedBindings, () => {
           type: bindingTypeValues.ConstantValue,
           value: Symbol(),
         },
+        resolve: () => undefined,
       };
 
       leafServiceNode = {
@@ -488,6 +492,7 @@ describe(registerSingletonScopedBindings, () => {
           type: bindingTypeValues.ResolvedValue,
         },
         params: [],
+        resolve: () => undefined,
       };
 
       leafBindingNode = {
@@ -506,6 +511,7 @@ describe(registerSingletonScopedBindings, () => {
           type: bindingTypeValues.ConstantValue,
           value: Symbol(),
         },
+        resolve: () => undefined,
       };
 
       leafServiceNode = {
@@ -669,6 +675,7 @@ describe(registerSingletonScopedBindings, () => {
           type: bindingTypeValues.ConstantValue,
           value: Symbol(),
         },
+        resolve: () => undefined,
       };
 
       (serviceNode as Writable<PlanServiceNode>).bindings =

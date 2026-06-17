@@ -1,25 +1,17 @@
-import {
-  afterAll,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  type Mock,
-  vitest,
-} from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
+
+vitest.mock(import('./resolveServiceNode.js'));
 
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
 import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { resolveResolvedValueBindingParams } from './resolveResolvedValueBindingParams.js';
+import { resolveServiceNode } from './resolveServiceNode.js';
 
 describe(resolveResolvedValueBindingParams, () => {
   describe('having ResolvedValueBindingNode with constructor param with PlanServiceNode value', () => {
     let paramNodeFixture: PlanServiceNode;
-    let resolveServiceNodeMock: Mock<
-      (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
-    >;
 
     let paramsFixture: ResolutionParams;
     let nodeFixture: ResolvedValueBindingNode<ResolvedValueBinding<unknown>>;
@@ -30,7 +22,6 @@ describe(resolveResolvedValueBindingParams, () => {
         isContextFree: true,
         serviceIdentifier: 'service-id',
       };
-      resolveServiceNodeMock = vitest.fn();
       paramsFixture = Symbol() as unknown as ResolutionParams;
       nodeFixture = {
         params: [paramNodeFixture],
@@ -47,12 +38,9 @@ describe(resolveResolvedValueBindingParams, () => {
       beforeAll(() => {
         resolvedValue = Symbol();
 
-        resolveServiceNodeMock.mockReturnValueOnce(resolvedValue);
+        vitest.mocked(resolveServiceNode).mockReturnValueOnce(resolvedValue);
 
-        result = resolveResolvedValueBindingParams(resolveServiceNodeMock)(
-          paramsFixture,
-          nodeFixture,
-        );
+        result = resolveResolvedValueBindingParams(paramsFixture, nodeFixture);
       });
 
       afterAll(() => {
@@ -60,7 +48,7 @@ describe(resolveResolvedValueBindingParams, () => {
       });
 
       it('should call resolveServiceNode()', () => {
-        expect(resolveServiceNodeMock).toHaveBeenCalledExactlyOnceWith(
+        expect(resolveServiceNode).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           paramNodeFixture,
         );
@@ -79,12 +67,9 @@ describe(resolveResolvedValueBindingParams, () => {
       beforeAll(() => {
         resolvedValue = Symbol();
 
-        resolveServiceNodeMock.mockResolvedValueOnce(resolvedValue);
+        vitest.mocked(resolveServiceNode).mockResolvedValueOnce(resolvedValue);
 
-        result = resolveResolvedValueBindingParams(resolveServiceNodeMock)(
-          paramsFixture,
-          nodeFixture,
-        );
+        result = resolveResolvedValueBindingParams(paramsFixture, nodeFixture);
       });
 
       afterAll(() => {
@@ -92,7 +77,7 @@ describe(resolveResolvedValueBindingParams, () => {
       });
 
       it('should call resolveServiceNode()', () => {
-        expect(resolveServiceNodeMock).toHaveBeenCalledExactlyOnceWith(
+        expect(resolveServiceNode).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           paramNodeFixture,
         );

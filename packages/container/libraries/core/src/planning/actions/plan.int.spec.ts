@@ -23,7 +23,9 @@ import { inject } from '../../metadata/decorators/inject.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
 import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
 import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
+import { type FactoryBindingNode } from '../models/FactoryBindingNode.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
+import { type LeafBindingNode } from '../models/LeafBindingNode.js';
 import { type PlanParamsConstraint } from '../models/PlanParamsConstraint.js';
 import { type PlanResult } from '../models/PlanResult.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
@@ -71,9 +73,11 @@ function buildLeafBindingPlanResult(
     },
   };
 
-  (planServiceNode as Writable<PlanServiceNode>).bindings = {
-    binding: binding,
-  };
+  (planServiceNode as Writable<PlanServiceNode>).bindings =
+    expect.objectContaining({
+      binding: binding,
+      resolve: expect.any(Function),
+    });
 
   return planResult;
 }
@@ -104,6 +108,7 @@ function buildSimpleInstancePlanResult(
     classMetadata: expect.any(Object),
     constructorParams: [],
     propertyParams: new Map(),
+    resolve: expect.any(Function),
   };
 
   const constructorParamServiceNode: PlanServiceNode = {
@@ -112,9 +117,11 @@ function buildSimpleInstancePlanResult(
     serviceIdentifier: constructorParameterBinding.serviceIdentifier,
   };
 
-  (constructorParamServiceNode as Writable<PlanServiceNode>).bindings = {
-    binding: constructorParameterBinding,
-  };
+  (constructorParamServiceNode as Writable<PlanServiceNode>).bindings =
+    expect.objectContaining({
+      binding: constructorParameterBinding,
+      resolve: expect.any(Function),
+    });
 
   instanceBindingNode.constructorParams.push(
     expect.objectContaining(constructorParamServiceNode) as PlanServiceNode,
@@ -135,16 +142,19 @@ function buildSimpleInstancePlanResult(
     serviceIdentifier: propertyKeyBinding.serviceIdentifier,
   };
 
-  (propertyServiceNode as Writable<PlanServiceNode>).bindings = {
-    binding: propertyKeyBinding,
-  };
+  (propertyServiceNode as Writable<PlanServiceNode>).bindings =
+    expect.objectContaining({
+      binding: propertyKeyBinding,
+      resolve: expect.any(Function),
+    });
 
   instanceBindingNode.propertyParams.set(
     propertyKey,
     expect.objectContaining(propertyServiceNode) as PlanServiceNode,
   );
 
-  (planServiceNode as Writable<PlanServiceNode>).bindings = instanceBindingNode;
+  (planServiceNode as Writable<PlanServiceNode>).bindings =
+    expect.objectContaining(instanceBindingNode);
 
   const planResult: PlanResult = {
     tree: {
@@ -168,9 +178,10 @@ function buildSimpleResolvedValuePlanResult(
     serviceIdentifier: resolvedValueBinding.serviceIdentifier,
   };
 
-  const instanceBindingNode: ResolvedValueBindingNode = {
+  const resolvedValueBindingNode: ResolvedValueBindingNode = {
     binding: resolvedValueBinding,
     params: [],
+    resolve: expect.any(Function),
   };
 
   const constructorParamServiceNode: PlanServiceNode = {
@@ -179,15 +190,18 @@ function buildSimpleResolvedValuePlanResult(
     serviceIdentifier: parameterBinding.serviceIdentifier,
   };
 
-  (constructorParamServiceNode as Writable<PlanServiceNode>).bindings = {
-    binding: parameterBinding,
-  };
+  (constructorParamServiceNode as Writable<PlanServiceNode>).bindings =
+    expect.objectContaining({
+      binding: parameterBinding,
+      resolve: expect.any(Function),
+    });
 
-  instanceBindingNode.params.push(
+  resolvedValueBindingNode.params.push(
     expect.objectContaining(constructorParamServiceNode) as PlanServiceNode,
   );
 
-  (planServiceNode as Writable<PlanServiceNode>).bindings = instanceBindingNode;
+  (planServiceNode as Writable<PlanServiceNode>).bindings =
+    expect.objectContaining(resolvedValueBindingNode);
 
   const planResult: PlanResult = {
     tree: {
@@ -222,9 +236,13 @@ function buildServiceRedirectionToLeafBindingPlanResult(
     redirections: [],
   };
 
-  serviceRedirectionBindingNode.redirections.push({
-    binding: leafBinding,
-  });
+  serviceRedirectionBindingNode.redirections.push(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    expect.objectContaining<LeafBindingNode | FactoryBindingNode>({
+      binding: leafBinding,
+      resolve: expect.any(Function),
+    }),
+  );
 
   (planServiceNode as Writable<PlanServiceNode>).bindings =
     serviceRedirectionBindingNode;

@@ -4,30 +4,23 @@ import {
   describe,
   expect,
   it,
-  type Mock,
   type Mocked,
   vitest,
 } from 'vitest';
+
+vitest.mock(import('./resolveResolvedValueBindingParams.js'));
 
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
 import { type ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { resolveResolvedValueBindingNode } from './resolveResolvedValueBindingNode.js';
+import { resolveResolvedValueBindingParams } from './resolveResolvedValueBindingParams.js';
 
 describe(resolveResolvedValueBindingNode, () => {
-  let resolveResolvedValueBindingParamsMock: Mock<
-    (
-      params: ResolutionParams,
-      node: ResolvedValueBindingNode,
-    ) => unknown[] | Promise<unknown[]>
-  >;
-
   let paramsFixture: ResolutionParams;
   let nodeMock: Mocked<ResolvedValueBindingNode>;
 
   beforeAll(() => {
-    resolveResolvedValueBindingParamsMock = vitest.fn();
-
     paramsFixture = Symbol() as unknown as ResolutionParams;
     nodeMock = {
       binding: {
@@ -50,17 +43,15 @@ describe(resolveResolvedValueBindingNode, () => {
       constructorResolvedValues = [Symbol()];
       instanceResolvedValue = Symbol();
 
-      resolveResolvedValueBindingParamsMock.mockReturnValue(
-        constructorResolvedValues,
-      );
+      vitest
+        .mocked(resolveResolvedValueBindingParams)
+        .mockReturnValue(constructorResolvedValues);
 
       vitest
         .mocked(nodeMock.binding.factory)
         .mockReturnValueOnce(instanceResolvedValue);
 
-      result = resolveResolvedValueBindingNode(
-        resolveResolvedValueBindingParamsMock,
-      )(paramsFixture, nodeMock);
+      result = resolveResolvedValueBindingNode(paramsFixture, nodeMock);
     });
 
     afterAll(() => {
@@ -68,9 +59,10 @@ describe(resolveResolvedValueBindingNode, () => {
     });
 
     it('should call resolveResolvedValueBindingParams()', () => {
-      expect(
-        resolveResolvedValueBindingParamsMock,
-      ).toHaveBeenCalledExactlyOnceWith(paramsFixture, nodeMock);
+      expect(resolveResolvedValueBindingParams).toHaveBeenCalledExactlyOnceWith(
+        paramsFixture,
+        nodeMock,
+      );
     });
 
     it('should call node.binding.factory()', () => {
@@ -94,17 +86,15 @@ describe(resolveResolvedValueBindingNode, () => {
       constructorResolvedValues = [Symbol()];
       instanceResolvedValue = Symbol();
 
-      resolveResolvedValueBindingParamsMock.mockResolvedValue(
-        constructorResolvedValues,
-      );
+      vitest
+        .mocked(resolveResolvedValueBindingParams)
+        .mockResolvedValue(constructorResolvedValues);
 
       vitest
         .mocked(nodeMock.binding.factory)
         .mockResolvedValueOnce(instanceResolvedValue);
 
-      result = await resolveResolvedValueBindingNode(
-        resolveResolvedValueBindingParamsMock,
-      )(paramsFixture, nodeMock);
+      result = await resolveResolvedValueBindingNode(paramsFixture, nodeMock);
     });
 
     afterAll(() => {
@@ -112,9 +102,10 @@ describe(resolveResolvedValueBindingNode, () => {
     });
 
     it('should call resolveResolvedValueBindingParams()', () => {
-      expect(
-        resolveResolvedValueBindingParamsMock,
-      ).toHaveBeenCalledExactlyOnceWith(paramsFixture, nodeMock);
+      expect(resolveResolvedValueBindingParams).toHaveBeenCalledExactlyOnceWith(
+        paramsFixture,
+        nodeMock,
+      );
     });
 
     it('should call node.binding.factory()', () => {

@@ -245,6 +245,7 @@ Binding constraints:
             type: bindingTypeValues.ConstantValue,
             value: Symbol(),
           },
+          resolve: () => undefined,
         },
         {
           binding: {
@@ -262,6 +263,7 @@ Binding constraints:
             type: bindingTypeValues.ConstantValue,
             value: Symbol(),
           },
+          resolve: () => undefined,
         },
       ];
       isOptionalFixture = false;

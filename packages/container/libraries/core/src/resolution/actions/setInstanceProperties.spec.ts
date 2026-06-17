@@ -1,12 +1,6 @@
-import {
-  afterAll,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  type Mock,
-  vitest,
-} from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
+
+vitest.mock(import('./resolveServiceNode.js'));
 
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
@@ -15,15 +9,12 @@ import { type InstanceBindingNode } from '../../planning/models/InstanceBindingN
 import { type PlanBindingNode } from '../../planning/models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
+import { resolveServiceNode } from './resolveServiceNode.js';
 import { setInstanceProperties } from './setInstanceProperties.js';
 
 describe(setInstanceProperties, () => {
   describe('having node with properties and no metadata', () => {
     let propertyKeyFixture: string | symbol;
-
-    let resolveServiceNodeMock: Mock<
-      (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
-    >;
 
     let paramsFixture: ResolutionParams;
     let instanceFixture: Record<string | symbol, unknown>;
@@ -31,7 +22,6 @@ describe(setInstanceProperties, () => {
 
     beforeAll(() => {
       propertyKeyFixture = Symbol();
-      resolveServiceNodeMock = vitest.fn();
 
       paramsFixture = Symbol() as unknown as ResolutionParams;
       instanceFixture = {};
@@ -50,7 +40,7 @@ describe(setInstanceProperties, () => {
 
       beforeAll(async () => {
         try {
-          await setInstanceProperties(resolveServiceNodeMock)(
+          await setInstanceProperties(
             paramsFixture,
             instanceFixture,
             nodeFixture,
@@ -77,17 +67,12 @@ describe(setInstanceProperties, () => {
   describe('having node with properties and matching unmanaged metadata', () => {
     let propertyKeyFixture: string | symbol;
 
-    let resolveServiceNodeMock: Mock<
-      (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
-    >;
-
     let paramsFixture: ResolutionParams;
     let instanceFixture: Record<string | symbol, unknown>;
     let nodeFixture: InstanceBindingNode;
 
     beforeAll(() => {
       propertyKeyFixture = Symbol();
-      resolveServiceNodeMock = vitest.fn();
 
       paramsFixture = Symbol() as unknown as ResolutionParams;
       instanceFixture = {};
@@ -107,7 +92,7 @@ describe(setInstanceProperties, () => {
       let result: unknown;
 
       beforeAll(() => {
-        result = setInstanceProperties(resolveServiceNodeMock)(
+        result = setInstanceProperties(
           paramsFixture,
           instanceFixture,
           nodeFixture,
@@ -123,17 +108,12 @@ describe(setInstanceProperties, () => {
   describe('having node with properties with bindings and matching managed metadata', () => {
     let propertyKeyFixture: string | symbol;
 
-    let resolveServiceNodeMock: Mock<
-      (params: ResolutionParams, serviceNode: PlanServiceNode) => unknown
-    >;
-
     let paramsFixture: ResolutionParams;
 
     let nodeFixture: InstanceBindingNode;
 
     beforeAll(() => {
       propertyKeyFixture = Symbol();
-      resolveServiceNodeMock = vitest.fn();
 
       paramsFixture = Symbol() as unknown as ResolutionParams;
 
@@ -174,9 +154,11 @@ describe(setInstanceProperties, () => {
 
         resolvedPropertyValue = Symbol();
 
-        resolveServiceNodeMock.mockReturnValueOnce(resolvedPropertyValue);
+        vitest
+          .mocked(resolveServiceNode)
+          .mockReturnValueOnce(resolvedPropertyValue);
 
-        result = setInstanceProperties(resolveServiceNodeMock)(
+        result = setInstanceProperties(
           paramsFixture,
           instanceFixture,
           nodeFixture,
@@ -208,9 +190,11 @@ describe(setInstanceProperties, () => {
 
         resolvedPropertyValue = Symbol();
 
-        resolveServiceNodeMock.mockResolvedValueOnce(resolvedPropertyValue);
+        vitest
+          .mocked(resolveServiceNode)
+          .mockResolvedValueOnce(resolvedPropertyValue);
 
-        result = setInstanceProperties(resolveServiceNodeMock)(
+        result = setInstanceProperties(
           paramsFixture,
           instanceFixture,
           nodeFixture,

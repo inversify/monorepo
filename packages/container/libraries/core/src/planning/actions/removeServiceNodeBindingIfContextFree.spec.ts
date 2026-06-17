@@ -112,6 +112,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
 
       planBindingNodeFixture = {
         binding: bindingMock,
+        resolve: vitest.fn(),
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
@@ -358,6 +359,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
 
       planBindingNodeFixture = {
         binding: bindingMock,
+        resolve: vitest.fn(),
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
@@ -459,6 +461,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
 
       planBindingNodeFixture = {
         binding: bindingMock,
+        resolve: vitest.fn(),
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =
@@ -558,6 +561,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
 
       planBindingNodeFixture = {
         binding: bindingMock,
+        resolve: vitest.fn(),
       } as PlanBindingNode;
 
       bindingConstraintsListFixture =

@@ -100,6 +100,7 @@ describe(checkPlanServiceRedirectionBindingNodeSingleInjectionBindings, () => {
               type: bindingTypeValues.ConstantValue,
               value: Symbol(),
             },
+            resolve: () => undefined,
           },
         ],
       };

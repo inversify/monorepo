@@ -6,7 +6,12 @@ import {
   BindingConstraintsImplementation,
   type InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation.js';
-import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import {
+  type BindingType,
+  bindingTypeValues,
+} from '../../binding/models/BindingType.js';
+import { type Factory } from '../../binding/models/Factory.js';
+import { type FactoryBinding } from '../../binding/models/FactoryBinding.js';
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
 import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
@@ -16,10 +21,15 @@ import { buildFilteredServiceBindings } from '../calculations/buildFilteredServi
 import { isPlanServiceRedirectionBindingNode } from '../calculations/isPlanServiceRedirectionBindingNode.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { ConstantValueBindingNode } from '../models/ConstantValueBindingNode.js';
+import { DynamicValueBindingNode } from '../models/DynamicValueBindingNode.js';
+import { FactoryBindingNodeImplementation } from '../models/FactoryBindingNodeImplementation.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
+import { InstanceBindingNodeImplementation } from '../models/InstanceBindingNodeImplementation.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
+import { ResolvedValueBindingNodeImplementation } from '../models/ResolvedValueBindingNodeImplementation.js';
 import { type SubplanParams } from '../models/SubplanParams.js';
 
 export function curryBuildServiceNodeBindings(
@@ -68,7 +78,24 @@ export function curryBuildServiceNodeBindings(
     const planBindingNodes: PlanBindingNode[] = [];
 
     for (const binding of serviceBindings) {
+      if ((binding.type as BindingType) === bindingTypeValues.Factory) {
+        planBindingNodes.push(
+          new FactoryBindingNodeImplementation(
+            binding as unknown as FactoryBinding<Factory<unknown>>,
+          ),
+        );
+        continue;
+      }
+
       switch (binding.type) {
+        case bindingTypeValues.ConstantValue: {
+          planBindingNodes.push(new ConstantValueBindingNode(binding));
+          break;
+        }
+        case bindingTypeValues.DynamicValue: {
+          planBindingNodes.push(new DynamicValueBindingNode(binding));
+          break;
+        }
         case bindingTypeValues.Instance: {
           planBindingNodes.push(
             buildInstancePlanBindingNode(
@@ -102,10 +129,6 @@ export function curryBuildServiceNodeBindings(
 
           break;
         }
-        default:
-          planBindingNodes.push({
-            binding: binding,
-          });
       }
     }
 
@@ -145,12 +168,8 @@ function curryBuildInstancePlanBindingNode(
       binding.implementationType,
     );
 
-    const childNode: InstanceBindingNode = {
-      binding: binding,
-      classMetadata,
-      constructorParams: [],
-      propertyParams: new Map(),
-    };
+    const childNode: InstanceBindingNode =
+      new InstanceBindingNodeImplementation(binding, classMetadata);
 
     const subplanParams: SubplanParams = {
       autobindOptions: params.autobindOptions,
@@ -178,10 +197,8 @@ function curryBuildResolvedValuePlanBindingNode(
     binding: ResolvedValueBinding<unknown>,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ): PlanBindingNode => {
-    const childNode: ResolvedValueBindingNode = {
-      binding: binding,
-      params: [],
-    };
+    const childNode: ResolvedValueBindingNode =
+      new ResolvedValueBindingNodeImplementation(binding);
 
     const subplanParams: SubplanParams = {
       autobindOptions: params.autobindOptions,

@@ -74,6 +74,7 @@ import { type BaseGetPlanOptions } from './planning/models/BaseGetPlanOptions.js
 import { type BasePlanParams } from './planning/models/BasePlanParams.js';
 import { type CacheBindingInvalidation } from './planning/models/CacheBindingInvalidation.js';
 import { CacheBindingInvalidationKind } from './planning/models/CacheBindingInvalidationKind.js';
+import { type FactoryBindingNode } from './planning/models/FactoryBindingNode.js';
 import { type GetMultipleServicePlanOptions } from './planning/models/GetMultipleServicePlanOptions.js';
 import { type GetPlanOptions } from './planning/models/GetPlanOptions.js';
 import { type GetPlanOptionsTagConstraint } from './planning/models/GetPlanOptionsTagConstraint.js';
@@ -93,6 +94,7 @@ import { type PlanServiceNode } from './planning/models/PlanServiceNode.js';
 import { type PlanServiceNodeParent } from './planning/models/PlanServiceNodeParent.js';
 import { type PlanServiceRedirectionBindingNode } from './planning/models/PlanServiceRedirectionBindingNode.js';
 import { type PlanTree } from './planning/models/PlanTree.js';
+import { type ResolvableBindingNode } from './planning/models/ResolvableBindingNode.js';
 import { type ResolvedValueBindingNode } from './planning/models/ResolvedValueBindingNode.js';
 import { SingleBindingPlanParamsConstraint } from './planning/models/SingleBindingPlanParamsConstraint.js';
 import { PlanResultCacheService } from './planning/services/PlanResultCacheService.js';
@@ -135,6 +137,7 @@ export type {
   DynamicValueBuilder,
   Factory,
   FactoryBinding,
+  FactoryBindingNode,
   GetAllOptions,
   GetMultipleServicePlanOptions,
   GetOptions,
@@ -171,6 +174,7 @@ export type {
   PlanTree,
   ResolutionContext,
   ResolutionParams,
+  ResolvableBindingNode,
   Resolved,
   ResolvedValueBinding,
   ResolvedValueBindingNode,

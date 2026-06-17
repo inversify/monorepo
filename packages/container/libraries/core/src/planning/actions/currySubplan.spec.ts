@@ -87,6 +87,7 @@ describe(currySubplan, () => {
         classMetadata: ClassMetadataFixtures.withUnmanagedConstructorArguments,
         constructorParams: [],
         propertyParams: new Map(),
+        resolve: () => undefined,
       };
 
       subplanParamsFixture = {
@@ -146,6 +147,7 @@ describe(currySubplan, () => {
           ClassMetadataFixtures.withSingleInjectionConstructorArguments,
         constructorParams: [],
         propertyParams: new Map(),
+        resolve: () => undefined,
       };
 
       subplanParamsMock = {
@@ -211,6 +213,7 @@ describe(currySubplan, () => {
           ClassMetadataFixtures.withSingleInjectionConstructorArguments,
         constructorParams: [],
         propertyParams: new Map(),
+        resolve: () => undefined,
       };
 
       subplanParamsMock = {
@@ -547,6 +550,7 @@ describe(currySubplan, () => {
         classMetadata: ClassMetadataFixtures.withSingleInjectionProperty,
         constructorParams: [],
         propertyParams: new Map(),
+        resolve: () => undefined,
       };
 
       subplanParamsMock = {
@@ -909,6 +913,7 @@ describe(currySubplan, () => {
       resolvedValueBindingNodeFixture = {
         binding: ResolvedValueBindingFixtures.withSingleInjectionMetadata,
         params: [],
+        resolve: () => undefined,
       };
 
       subplanParamsMock = {

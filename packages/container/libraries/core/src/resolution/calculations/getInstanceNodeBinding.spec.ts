@@ -5,14 +5,14 @@ import { type InstanceBindingNode } from '../../planning/models/InstanceBindingN
 import { getInstanceNodeBinding } from './getInstanceNodeBinding.js';
 
 describe(getInstanceNodeBinding, () => {
-  let nodeFixture: InstanceBindingNode<InstanceBinding<unknown>>;
+  let nodeFixture: InstanceBindingNode<unknown, InstanceBinding<unknown>>;
 
   beforeAll(() => {
     nodeFixture = {
       binding: Symbol() as unknown as InstanceBinding<unknown>,
     } as Partial<
-      InstanceBindingNode<InstanceBinding<unknown>>
-    > as InstanceBindingNode<InstanceBinding<unknown>>;
+      InstanceBindingNode<unknown, InstanceBinding<unknown>>
+    > as InstanceBindingNode<unknown, InstanceBinding<unknown>>;
   });
 
   describe('when called', () => {

@@ -11,25 +11,25 @@ export function resolveInstanceBindingNode<
 >(
   resolveInstanceBindingConstructorParams: (
     params: ResolutionParams,
-    node: InstanceBindingNode<TBinding>,
+    node: InstanceBindingNode<TActivated, TBinding>,
   ) => unknown[] | Promise<unknown[]>,
   resolveInstanceBindingNodeAsyncFromConstructorParams: (
     constructorValues: Promise<unknown[]>,
     params: ResolutionParams,
-    node: InstanceBindingNode<TBinding>,
+    node: InstanceBindingNode<TActivated, TBinding>,
   ) => Promise<SyncResolved<TActivated>>,
   resolveInstanceBindingNodeFromConstructorParams: (
     constructorValues: unknown[],
     params: ResolutionParams,
-    node: InstanceBindingNode<TBinding>,
+    node: InstanceBindingNode<TActivated, TBinding>,
   ) => Resolved<TActivated>,
 ): (
   params: ResolutionParams,
-  node: InstanceBindingNode<TBinding>,
+  node: InstanceBindingNode<TActivated, TBinding>,
 ) => Resolved<TActivated> {
   return (
     params: ResolutionParams,
-    node: InstanceBindingNode<TBinding>,
+    node: InstanceBindingNode<TActivated, TBinding>,
   ): Resolved<TActivated> => {
     const constructorValues: unknown[] | Promise<unknown[]> =
       resolveInstanceBindingConstructorParams(params, node);
