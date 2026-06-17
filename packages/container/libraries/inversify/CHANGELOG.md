@@ -1,5 +1,14 @@
 # inversify
 
+## 8.1.1
+
+### Patch Changes
+
+- Resolution performance on transient scoped services has been improved by caching a resolver in the binding node and simplifying the core logic. Benchmarks show around 20% performance improvement on transient services with deep dependency graphs.
+- Updated dependencies
+  - @inversifyjs/core@11.0.0
+  - @inversifyjs/container@2.0.2
+
 ## 8.1.0
 
 ### Minor Changes
