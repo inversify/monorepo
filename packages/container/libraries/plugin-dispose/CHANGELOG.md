@@ -1,5 +1,14 @@
 # @inversifyjs/plugin-dispose
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/container@2.0.2
+  - inversify@8.1.1
+  - @inversifyjs/plugin@0.3.1
+
 ## 0.4.0
 
 ### Minor Changes
