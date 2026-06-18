@@ -1,8 +1,8 @@
 ---
-name: "OPSX: Archive"
-description: Archive a completed change in the experimental workflow
+name: /opsx-archive
+id: opsx-archive
 category: Workflow
-tags: [workflow, archive, experimental]
+description: Archive a completed change in the experimental workflow
 ---
 
 Archive a completed change in the experimental workflow.

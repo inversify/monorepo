@@ -1,6 +1,10 @@
-description = "Implement tasks from an OpenSpec change (Experimental)"
+---
+name: /opsx-apply
+id: opsx-apply
+category: Workflow
+description: Implement tasks from an OpenSpec change (Experimental)
+---
 
-prompt = """
 Implement tasks from an OpenSpec change.
 
 **Input**: Optionally specify a change name (e.g., `/opsx:apply add-auth`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
@@ -149,4 +153,3 @@ This skill supports the "actions on a change" model:
 
 - **Can be invoked anytime**: Before all artifacts are done (if tasks exist), after partial implementation, interleaved with other actions
 - **Allows artifact updates**: If implementation reveals design issues, suggest updating artifacts - not phase-locked, work fluidly
-"""
