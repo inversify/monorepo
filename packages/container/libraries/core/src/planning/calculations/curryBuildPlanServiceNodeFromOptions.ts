@@ -7,18 +7,16 @@ import {
   type InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation.js';
 import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
-import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind.js';
-import { type ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata.js';
-import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
-import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings.js';
-import { getServiceFromMaybeLazyServiceIdentifier } from '../calculations/getServiceFromMaybeLazyServiceIdentifier.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type SubplanParams } from '../models/SubplanParams.js';
+import { buildFilteredServiceBindings } from './buildFilteredServiceBindings.js';
+import { checkServiceNodeSingleInjectionBindings } from './checkServiceNodeSingleInjectionBindings.js';
 
-export function curryBuildPlanServiceNodeFromClassElementMetadata(
+export function curryBuildPlanServiceNodeFromOptions(
   buildServiceNodeBindings: (
     params: BasePlanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
@@ -29,30 +27,27 @@ export function curryBuildPlanServiceNodeFromClassElementMetadata(
 ): (
   params: SubplanParams,
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-  elementMetadata: ManagedClassElementMetadata,
+  options: BuildServiceNodeOptions,
 ) => PlanServiceNode {
   return (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
+    options: BuildServiceNodeOptions,
   ): PlanServiceNode => {
-    const serviceIdentifier: ServiceIdentifier =
-      getServiceFromMaybeLazyServiceIdentifier(elementMetadata.value);
+    const serviceIdentifier: ServiceIdentifier = options.serviceIdentifier;
 
     const updatedBindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints> =
       bindingConstraintsList.concat({
         getAncestorsCalled: false,
-        name: elementMetadata.name,
+        name: options.name,
         serviceIdentifier,
-        tags: elementMetadata.tags,
+        tags: options.tags,
       });
 
     const bindingConstraints: BindingConstraints =
       new BindingConstraintsImplementation(updatedBindingConstraintsList.last);
 
-    const chained: boolean =
-      elementMetadata.kind === ClassElementMetadataKind.multipleInjection &&
-      elementMetadata.chained;
+    const chained: boolean = options.isMultiple && options.chained;
 
     const filteredServiceBindings: Binding<unknown>[] =
       buildFilteredServiceBindings(params, bindingConstraints, {
@@ -80,10 +75,10 @@ export function curryBuildPlanServiceNodeFromClassElementMetadata(
     serviceNode.isContextFree =
       !updatedBindingConstraintsList.last.elem.getAncestorsCalled;
 
-    if (elementMetadata.kind === ClassElementMetadataKind.singleInjection) {
+    if (!options.isMultiple) {
       checkServiceNodeSingleInjectionBindings(
         serviceNode,
-        elementMetadata.optional,
+        options.optional,
         updatedBindingConstraintsList.last,
       );
 

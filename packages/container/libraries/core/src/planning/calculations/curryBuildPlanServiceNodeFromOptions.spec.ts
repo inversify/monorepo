@@ -13,8 +13,6 @@ vitest.mock(
   import('../calculations/checkServiceNodeSingleInjectionBindings.js'),
 );
 
-import { type ServiceIdentifier } from '@inversifyjs/common';
-
 import { type Binding } from '../../binding/models/Binding.js';
 import {
   BindingConstraintsImplementation,
@@ -24,20 +22,20 @@ import {
   SingleImmutableLinkedList,
   type SingleImmutableLinkedListNode,
 } from '../../common/models/SingleImmutableLinkedList.js';
-import { MultipleInjectionManagedClassElementMetadataFixtures } from '../../metadata/fixtures/MultipleInjectionManagedClassElementMetadataFixtures.js';
-import { SingleInjectionManagedClassElementMetadataFixtures } from '../../metadata/fixtures/SingleInjectionManagedClassElementMetadataFixtures.js';
-import { type MultipleInjectionManagedClassElementMetadata } from '../../metadata/models/MultipleInjectionManagedClassElementMetadata.js';
-import { type SingleInjectionManagedClassElementMetadata } from '../../metadata/models/SingleInjectionManagedClassElementMetadata.js';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
 import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings.js';
+import { BuildMultipleBindingServiceNodeOptionsFixtures } from '../fixtures/BuildMultipleBindingServiceNodeOptionsFixtures.js';
+import { BuildSingleBindingServiceNodeOptionsFixtures } from '../fixtures/BuildSingleBindingServiceNodeOptionsFixtures.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type BuildMultipleBindingServiceNodeOptions } from '../models/BuildMultipleBindingServiceNodeOptions.js';
+import { type BuildSingleBindingServiceNodeOptions } from '../models/BuildSingleBindingServiceNodeOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type SubplanParams } from '../models/SubplanParams.js';
-import { curryBuildPlanServiceNodeFromClassElementMetadata } from './curryBuildPlanServiceNodeFromClassElementMetadata.js';
+import { curryBuildPlanServiceNodeFromOptions } from './curryBuildPlanServiceNodeFromOptions.js';
 
-describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
+describe(curryBuildPlanServiceNodeFromOptions, () => {
   let buildServiceNodeBindingsMock: Mock<
     (
       params: BasePlanParams,
@@ -55,7 +53,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
   describe('having multiple injection class element metadata', () => {
     let paramsFixture: SubplanParams;
     let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
-    let elementMetadataFixture: MultipleInjectionManagedClassElementMetadata;
+    let optionsFixture: BuildMultipleBindingServiceNodeOptions;
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as SubplanParams;
@@ -66,8 +64,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
         },
         1,
       );
-      elementMetadataFixture =
-        MultipleInjectionManagedClassElementMetadataFixtures.any;
+      optionsFixture = BuildMultipleBindingServiceNodeOptionsFixtures.any;
     });
 
     describe('when called', () => {
@@ -88,9 +85,9 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
           serviceNodeBindingsFixture,
         );
 
-        result = curryBuildPlanServiceNodeFromClassElementMetadata(
+        result = curryBuildPlanServiceNodeFromOptions(
           buildServiceNodeBindingsMock,
-        )(paramsFixture, bindingConstraintsListFixture, elementMetadataFixture);
+        )(paramsFixture, bindingConstraintsListFixture, optionsFixture);
       });
 
       afterAll(() => {
@@ -101,7 +98,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
         expect(buildFilteredServiceBindings).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           expect.any(BindingConstraintsImplementation),
-          { chained: elementMetadataFixture.chained },
+          { chained: optionsFixture.chained },
         );
       });
 
@@ -109,7 +106,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
         const expectedServiceNode: PlanServiceNode = {
           bindings: serviceNodeBindingsFixture,
           isContextFree: true,
-          serviceIdentifier: elementMetadataFixture.value as ServiceIdentifier,
+          serviceIdentifier: optionsFixture.serviceIdentifier,
         };
 
         expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
@@ -118,9 +115,9 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
             {
               elem: {
                 getAncestorsCalled: false,
-                name: elementMetadataFixture.name,
+                name: optionsFixture.name,
                 serviceIdentifier: expectedServiceNode.serviceIdentifier,
-                tags: elementMetadataFixture.tags,
+                tags: optionsFixture.tags,
               },
               previous: bindingConstraintsListFixture.last,
             },
@@ -128,15 +125,19 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
           ),
           bindingsFixture,
           expectedServiceNode,
-          elementMetadataFixture.chained,
+          optionsFixture.chained,
         );
+      });
+
+      it('should not call checkServiceNodeSingleInjectionBindings()', () => {
+        expect(checkServiceNodeSingleInjectionBindings).not.toHaveBeenCalled();
       });
 
       it('should return a PlanServiceNode', () => {
         const expectedServiceNode: PlanServiceNode = {
           bindings: serviceNodeBindingsFixture,
           isContextFree: true,
-          serviceIdentifier: elementMetadataFixture.value as ServiceIdentifier,
+          serviceIdentifier: optionsFixture.serviceIdentifier,
         };
 
         expect(result).toStrictEqual(expectedServiceNode);
@@ -147,7 +148,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
   describe('having single injection class element metadata', () => {
     let paramsFixture: SubplanParams;
     let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
-    let elementMetadataFixture: SingleInjectionManagedClassElementMetadata;
+    let optionsFixture: BuildSingleBindingServiceNodeOptions;
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as SubplanParams;
@@ -158,8 +159,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
         },
         1,
       );
-      elementMetadataFixture =
-        SingleInjectionManagedClassElementMetadataFixtures.any;
+      optionsFixture = BuildSingleBindingServiceNodeOptionsFixtures.any;
     });
 
     describe('when called', () => {
@@ -180,9 +180,9 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
           .mocked(buildServiceNodeBindingsMock)
           .mockReturnValueOnce([serviceNodeBindingFixture]);
 
-        result = curryBuildPlanServiceNodeFromClassElementMetadata(
+        result = curryBuildPlanServiceNodeFromOptions(
           buildServiceNodeBindingsMock,
-        )(paramsFixture, bindingConstraintsListFixture, elementMetadataFixture);
+        )(paramsFixture, bindingConstraintsListFixture, optionsFixture);
       });
 
       afterAll(() => {
@@ -201,7 +201,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
         const expectedServiceNode: PlanServiceNode = {
           bindings: serviceNodeBindingFixture,
           isContextFree: true,
-          serviceIdentifier: elementMetadataFixture.value as ServiceIdentifier,
+          serviceIdentifier: optionsFixture.serviceIdentifier,
         };
 
         expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
@@ -210,9 +210,9 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
             {
               elem: {
                 getAncestorsCalled: false,
-                name: elementMetadataFixture.name,
+                name: optionsFixture.name,
                 serviceIdentifier: expectedServiceNode.serviceIdentifier,
-                tags: elementMetadataFixture.tags,
+                tags: optionsFixture.tags,
               },
               previous: bindingConstraintsListFixture.last,
             },
@@ -228,16 +228,16 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
         const expectedServiceNode: PlanServiceNode = {
           bindings: serviceNodeBindingFixture,
           isContextFree: true,
-          serviceIdentifier: elementMetadataFixture.value as ServiceIdentifier,
+          serviceIdentifier: optionsFixture.serviceIdentifier,
         };
 
         const expectedBindingConstraintsListNode: SingleImmutableLinkedListNode<InternalBindingConstraints> =
           {
             elem: {
               getAncestorsCalled: false,
-              name: elementMetadataFixture.name,
+              name: optionsFixture.name,
               serviceIdentifier: expectedServiceNode.serviceIdentifier,
-              tags: elementMetadataFixture.tags,
+              tags: optionsFixture.tags,
             },
             previous: bindingConstraintsListFixture.last,
           };
@@ -246,7 +246,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
           checkServiceNodeSingleInjectionBindings,
         ).toHaveBeenCalledExactlyOnceWith(
           expectedServiceNode,
-          elementMetadataFixture.optional,
+          optionsFixture.optional,
           expectedBindingConstraintsListNode,
         );
       });
@@ -255,7 +255,7 @@ describe(curryBuildPlanServiceNodeFromClassElementMetadata, () => {
         const expectedServiceNode: PlanServiceNode = {
           bindings: serviceNodeBindingFixture,
           isContextFree: true,
-          serviceIdentifier: elementMetadataFixture.value as ServiceIdentifier,
+          serviceIdentifier: optionsFixture.serviceIdentifier,
         };
 
         expect(result).toStrictEqual(expectedServiceNode);

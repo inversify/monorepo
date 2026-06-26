@@ -1,12 +1,12 @@
 import { type Binding } from '../../binding/models/Binding.js';
 import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
 import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
-import { type ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata.js';
-import { type ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata.js';
 import { buildGetPlanOptionsFromPlanParams } from '../calculations/buildGetPlanOptionsFromPlanParams.js';
+import { curryBuildPlanServiceNodeFromOptions } from '../calculations/curryBuildPlanServiceNodeFromOptions.js';
 import { handlePlanError } from '../calculations/handlePlanError.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type GetPlanOptions } from '../models/GetPlanOptions.js';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
@@ -15,8 +15,6 @@ import { type PlanResult } from '../models/PlanResult.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type SubplanParams } from '../models/SubplanParams.js';
 import { curryBuildPlanServiceNode } from './curryBuildPlanServiceNode.js';
-import { curryBuildPlanServiceNodeFromClassElementMetadata } from './curryBuildPlanServiceNodeFromClassElementMetadata.js';
-import { curryBuildPlanServiceNodeFromResolvedValueElementMetadata } from './curryBuildPlanServiceNodeFromResolvedValueElementMetadata.js';
 import { curryBuildServiceNodeBindings } from './curryBuildServiceNodeBindings.js';
 import { currySubplan } from './currySubplan.js';
 
@@ -34,31 +32,20 @@ class LazyRootPlanServiceNode extends LazyPlanServiceNode {
   }
 }
 
-export const buildPlanServiceNodeFromClassElementMetadata: (
+export const buildPlanServiceNodeFromOptions: (
   params: SubplanParams,
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-  elementMetadata: ManagedClassElementMetadata,
-) => PlanServiceNode = curryBuildPlanServiceNodeFromClassElementMetadata(
+  options: BuildServiceNodeOptions,
+) => PlanServiceNode = curryBuildPlanServiceNodeFromOptions(
   circularBuildServiceNodeBindings,
 );
-
-export const buildPlanServiceNodeFromResolvedValueElementMetadata: (
-  params: SubplanParams,
-  bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-  elementMetadata: ResolvedValueElementMetadata,
-) => PlanServiceNode =
-  curryBuildPlanServiceNodeFromResolvedValueElementMetadata(
-    circularBuildServiceNodeBindings,
-  );
 
 const subplan: (
   params: SubplanParams,
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
 ) => PlanBindingNode = currySubplan(
-  buildPlanServiceNodeFromClassElementMetadata,
-  buildPlanServiceNodeFromResolvedValueElementMetadata,
-  buildPlanServiceNodeFromClassElementMetadata,
-  buildPlanServiceNodeFromResolvedValueElementMetadata,
+  buildPlanServiceNodeFromOptions,
+  buildPlanServiceNodeFromOptions,
 );
 
 const buildServiceNodeBindings: (

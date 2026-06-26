@@ -27,12 +27,6 @@ vitest.mock(import('./curryBuildServiceNodeBindings.js'), () => {
       .mockReturnValue(buildServiceNodeBindingsMock),
   };
 });
-vitest.mock(
-  import('./curryLazyBuildPlanServiceNodeFromClassElementMetadata.js'),
-);
-vitest.mock(
-  import('./curryLazyBuildPlanServiceNodeFromResolvedValueElementMetadata.js'),
-);
 vitest.mock(import('./currySubplan.js'));
 vitest.mock(import('./plan.js'));
 

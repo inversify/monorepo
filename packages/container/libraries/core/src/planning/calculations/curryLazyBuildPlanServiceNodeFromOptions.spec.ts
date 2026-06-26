@@ -8,24 +8,23 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock(import('./curryBuildPlanServiceNodeFromClassElementMetadata.js'));
+vitest.mock(import('./curryBuildPlanServiceNodeFromOptions.js'));
 
 import { type Binding } from '../../binding/models/Binding.js';
 import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
 import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
-import { type ClassElementMetadata } from '../../metadata/models/ClassElementMetadata.js';
-import { type ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type SubplanParams } from '../models/SubplanParams.js';
-import { curryBuildPlanServiceNodeFromClassElementMetadata } from './curryBuildPlanServiceNodeFromClassElementMetadata.js';
-import { curryLazyBuildPlanServiceNodeFromClassElementMetadata } from './curryLazyBuildPlanServiceNodeFromClassElementMetadata.js';
+import { curryBuildPlanServiceNodeFromOptions } from './curryBuildPlanServiceNodeFromOptions.js';
+import { curryLazyBuildPlanServiceNodeFromOptions } from './curryLazyBuildPlanServiceNodeFromOptions.js';
 
-describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
+describe(curryLazyBuildPlanServiceNodeFromOptions, () => {
   let buildServiceNodeBindingsFixture: Mock<
     (
       params: BasePlanParams,
@@ -38,7 +37,7 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
 
   let paramsFixture: SubplanParams;
   let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
-  let elementMetadataFixture: ManagedClassElementMetadata;
+  let optionsFixture: BuildServiceNodeOptions;
 
   beforeAll(() => {
     buildServiceNodeBindingsFixture = vitest.fn();
@@ -46,15 +45,15 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
     paramsFixture = Symbol() as unknown as SubplanParams;
     bindingConstraintsListFixture =
       Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>;
-    elementMetadataFixture = Symbol() as unknown as ManagedClassElementMetadata;
+    optionsFixture = Symbol() as unknown as BuildServiceNodeOptions;
   });
 
   describe('when called', () => {
-    let buildPlanServiceNodeFromClassElementMetadataMock: Mock<
+    let buildPlanServiceNodeFromOptionsMock: Mock<
       (
         params: SubplanParams,
         bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-        elementMetadata: ClassElementMetadata,
+        options: BuildServiceNodeOptions,
       ) => PlanServiceNode
     >;
 
@@ -65,26 +64,26 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
     beforeAll(() => {
       planServiceNodeFixture = Symbol() as unknown as PlanServiceNode;
 
-      buildPlanServiceNodeFromClassElementMetadataMock = vitest
+      buildPlanServiceNodeFromOptionsMock = vitest
         .fn()
         .mockReturnValueOnce(planServiceNodeFixture);
 
       vitest
-        .mocked(curryBuildPlanServiceNodeFromClassElementMetadata)
-        .mockReturnValueOnce(buildPlanServiceNodeFromClassElementMetadataMock);
+        .mocked(curryBuildPlanServiceNodeFromOptions)
+        .mockReturnValueOnce(buildPlanServiceNodeFromOptionsMock);
 
-      result = curryLazyBuildPlanServiceNodeFromClassElementMetadata(
+      result = curryLazyBuildPlanServiceNodeFromOptions(
         buildServiceNodeBindingsFixture,
-      )(paramsFixture, bindingConstraintsListFixture, elementMetadataFixture);
+      )(paramsFixture, bindingConstraintsListFixture, optionsFixture);
     });
 
     afterAll(() => {
       vitest.clearAllMocks();
     });
 
-    it('should call curryBuildPlanServiceNodeFromClassElementMetadata()', () => {
+    it('should call curryBuildPlanServiceNodeFromOptions()', () => {
       expect(
-        curryBuildPlanServiceNodeFromClassElementMetadata,
+        curryBuildPlanServiceNodeFromOptions,
       ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsFixture);
     });
 
@@ -94,11 +93,11 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
   });
 
   describe('when called, and buildPlanServiceNodeFromClassElementMetadata() throws an Error', () => {
-    let buildPlanServiceNodeFromClassElementMetadataMock: Mock<
+    let buildPlanServiceNodeFromOptionsMock: Mock<
       (
         params: SubplanParams,
         bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-        elementMetadata: ClassElementMetadata,
+        options: BuildServiceNodeOptions,
       ) => PlanServiceNode
     >;
 
@@ -109,20 +108,20 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
     beforeAll(() => {
       errorFixture = new Error('Test error');
 
-      buildPlanServiceNodeFromClassElementMetadataMock = vitest
+      buildPlanServiceNodeFromOptionsMock = vitest
         .fn()
         .mockImplementationOnce((): never => {
           throw errorFixture;
         });
 
       vitest
-        .mocked(curryBuildPlanServiceNodeFromClassElementMetadata)
-        .mockReturnValueOnce(buildPlanServiceNodeFromClassElementMetadataMock);
+        .mocked(curryBuildPlanServiceNodeFromOptions)
+        .mockReturnValueOnce(buildPlanServiceNodeFromOptionsMock);
 
       try {
-        curryLazyBuildPlanServiceNodeFromClassElementMetadata(
+        curryLazyBuildPlanServiceNodeFromOptions(
           buildServiceNodeBindingsFixture,
-        )(paramsFixture, bindingConstraintsListFixture, elementMetadataFixture);
+        )(paramsFixture, bindingConstraintsListFixture, optionsFixture);
       } catch (error: unknown) {
         result = error;
       }
@@ -132,9 +131,9 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call curryBuildPlanServiceNodeFromClassElementMetadata()', () => {
+    it('should call curryBuildPlanServiceNodeFromOptions()', () => {
       expect(
-        curryBuildPlanServiceNodeFromClassElementMetadata,
+        curryBuildPlanServiceNodeFromOptions,
       ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsFixture);
     });
 
@@ -144,11 +143,11 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
   });
 
   describe('when called, and buildPlanServiceNodeFromClassElementMetadata() throws an InversifyCoreError', () => {
-    let buildPlanServiceNodeFromClassElementMetadataMock: Mock<
+    let buildPlanServiceNodeFromOptionsMock: Mock<
       (
         params: SubplanParams,
         bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-        elementMetadata: ClassElementMetadata,
+        options: BuildServiceNodeOptions,
       ) => PlanServiceNode
     >;
 
@@ -162,28 +161,28 @@ describe(curryLazyBuildPlanServiceNodeFromClassElementMetadata, () => {
         'Test error',
       );
 
-      buildPlanServiceNodeFromClassElementMetadataMock = vitest
+      buildPlanServiceNodeFromOptionsMock = vitest
         .fn()
         .mockImplementationOnce((): never => {
           throw errorFixture;
         });
 
       vitest
-        .mocked(curryBuildPlanServiceNodeFromClassElementMetadata)
-        .mockReturnValueOnce(buildPlanServiceNodeFromClassElementMetadataMock);
+        .mocked(curryBuildPlanServiceNodeFromOptions)
+        .mockReturnValueOnce(buildPlanServiceNodeFromOptionsMock);
 
-      result = curryLazyBuildPlanServiceNodeFromClassElementMetadata(
+      result = curryLazyBuildPlanServiceNodeFromOptions(
         buildServiceNodeBindingsFixture,
-      )(paramsFixture, bindingConstraintsListFixture, elementMetadataFixture);
+      )(paramsFixture, bindingConstraintsListFixture, optionsFixture);
     });
 
     afterAll(() => {
       vitest.clearAllMocks();
     });
 
-    it('should call curryBuildPlanServiceNodeFromClassElementMetadata()', () => {
+    it('should call curryBuildPlanServiceNodeFromOptions()', () => {
       expect(
-        curryBuildPlanServiceNodeFromClassElementMetadata,
+        curryBuildPlanServiceNodeFromOptions,
       ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsFixture);
     });
 
