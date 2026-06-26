@@ -129,6 +129,10 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
         );
       });
 
+      it('should not call checkServiceNodeSingleInjectionBindings()', () => {
+        expect(checkServiceNodeSingleInjectionBindings).not.toHaveBeenCalled();
+      });
+
       it('should return a PlanServiceNode', () => {
         const expectedServiceNode: PlanServiceNode = {
           bindings: serviceNodeBindingsFixture,

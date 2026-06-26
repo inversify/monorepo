@@ -80,6 +80,42 @@ describe(buildBuildServiceNodeOptionsFromResolvedValueElementMetadata, () => {
     });
   });
 
+  describe('having MultipleInjectionResolvedValueElementMetadata with LazyServiceIdentifier', () => {
+    let serviceIdentifierFixture: ServiceIdentifier;
+    let resolvedValueElementMetadataFixture: MultipleInjectionResolvedValueElementMetadata;
+
+    beforeAll(() => {
+      serviceIdentifierFixture = Symbol();
+      resolvedValueElementMetadataFixture = {
+        ...MultipleInjectionResolvedValueElementMetadataFixtures.any,
+        value: new LazyServiceIdentifier(() => serviceIdentifierFixture),
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = buildBuildServiceNodeOptionsFromResolvedValueElementMetadata(
+          resolvedValueElementMetadataFixture,
+        );
+      });
+
+      it('should return BuildServiceNodeOptions with unwrapped service identifier', () => {
+        const expected: BuildServiceNodeOptions = {
+          chained: resolvedValueElementMetadataFixture.chained,
+          isMultiple: true,
+          name: resolvedValueElementMetadataFixture.name,
+          optional: resolvedValueElementMetadataFixture.optional,
+          serviceIdentifier: serviceIdentifierFixture,
+          tags: resolvedValueElementMetadataFixture.tags,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
+
   describe('having MultipleInjectionResolvedValueElementMetadata', () => {
     let resolvedValueElementMetadataFixture: MultipleInjectionResolvedValueElementMetadata;
 
