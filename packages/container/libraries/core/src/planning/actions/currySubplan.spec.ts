@@ -15,18 +15,25 @@ vitest.mock(
   import('../calculations/tryBuildGetPlanOptionsFromResolvedValueElementMetadata.js'),
 );
 vitest.mock(import('./cacheNonRootPlanServiceNode.js'));
+vitest.mock(
+  import('../../common/calculations/buildBuildServiceNodeOptionsFromClassElementMetadata.js'),
+);
+vitest.mock(
+  import('../../common/calculations/buildBuildServiceNodeOptionsFromResolvedValueElementMetadata.js'),
+);
 
 import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures.js';
 import { ResolvedValueBindingFixtures } from '../../binding/fixtures/ResolvedValueBindingFixtures.js';
 import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { buildBuildServiceNodeOptionsFromClassElementMetadata } from '../../common/calculations/buildBuildServiceNodeOptionsFromClassElementMetadata.js';
+import { buildBuildServiceNodeOptionsFromResolvedValueElementMetadata } from '../../common/calculations/buildBuildServiceNodeOptionsFromResolvedValueElementMetadata.js';
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
 import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures.js';
-import { type ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata.js';
-import { type ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata.js';
 import { tryBuildGetPlanOptionsFromManagedClassElementMetadata } from '../calculations/tryBuildGetPlanOptionsFromManagedClassElementMetadata.js';
 import { tryBuildGetPlanOptionsFromResolvedValueElementMetadata } from '../calculations/tryBuildGetPlanOptionsFromResolvedValueElementMetadata.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type GetPlanOptions } from '../models/GetPlanOptions.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
@@ -39,41 +46,24 @@ import { cacheNonRootPlanServiceNode } from './cacheNonRootPlanServiceNode.js';
 import { currySubplan } from './currySubplan.js';
 
 describe(currySubplan, () => {
-  let buildLazyPlanServiceNodeNodeFromClassElementMetadataMock: Mock<
+  let buildLazyPlanServiceNodeNodeFromOptionsMock: Mock<
     (
       params: SubplanParams,
       bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-      elementMetadata: ManagedClassElementMetadata,
+      options: BuildServiceNodeOptions,
     ) => PlanServiceNode
   >;
-  let buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock: Mock<
+  let buildPlanServiceNodeFromOptionsMock: Mock<
     (
       params: SubplanParams,
       bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-      elementMetadata: ResolvedValueElementMetadata,
-    ) => PlanServiceNode
-  >;
-  let buildPlanServiceNodeFromClassElementMetadataMock: Mock<
-    (
-      params: SubplanParams,
-      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-      elementMetadata: ManagedClassElementMetadata,
-    ) => PlanServiceNode | undefined
-  >;
-  let buildPlanServiceNodeFromResolvedValueElementMetadataMock: Mock<
-    (
-      params: SubplanParams,
-      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-      elementMetadata: ResolvedValueElementMetadata,
+      options: BuildServiceNodeOptions,
     ) => PlanServiceNode | undefined
   >;
 
   beforeAll(() => {
-    buildLazyPlanServiceNodeNodeFromClassElementMetadataMock = vitest.fn();
-    buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock =
-      vitest.fn();
-    buildPlanServiceNodeFromClassElementMetadataMock = vitest.fn();
-    buildPlanServiceNodeFromResolvedValueElementMetadataMock = vitest.fn();
+    buildLazyPlanServiceNodeNodeFromOptionsMock = vitest.fn();
+    buildPlanServiceNodeFromOptionsMock = vitest.fn();
   });
 
   describe('having BasePlanParams with InstanceBindingNode with unmanaged constructor arguments', () => {
@@ -116,10 +106,8 @@ describe(currySubplan, () => {
           );
 
         result = currySubplan(
-          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-          buildPlanServiceNodeFromClassElementMetadataMock,
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromOptionsMock,
+          buildPlanServiceNodeFromOptionsMock,
         )(subplanParamsFixture, bindingConstraintsListFixture);
       });
 
@@ -175,10 +163,8 @@ describe(currySubplan, () => {
       beforeAll(() => {
         try {
           currySubplan(
-            buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-            buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-            buildPlanServiceNodeFromClassElementMetadataMock,
-            buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+            buildLazyPlanServiceNodeNodeFromOptionsMock,
+            buildPlanServiceNodeFromOptionsMock,
           )(subplanParamsMock, bindingConstraintsListFixture);
         } catch (error: unknown) {
           result = error;
@@ -228,6 +214,7 @@ describe(currySubplan, () => {
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns undefined', () => {
       let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
 
       let result: unknown;
 
@@ -241,15 +228,20 @@ describe(currySubplan, () => {
             1,
           );
 
+        buildServiceNodeOptionsFixture =
+          Symbol() as unknown as BuildServiceNodeOptions;
+
         vitest
           .mocked(tryBuildGetPlanOptionsFromManagedClassElementMetadata)
           .mockReturnValueOnce(undefined);
 
+        vitest
+          .mocked(buildBuildServiceNodeOptionsFromClassElementMetadata)
+          .mockReturnValueOnce(buildServiceNodeOptionsFixture);
+
         result = currySubplan(
-          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-          buildPlanServiceNodeFromClassElementMetadataMock,
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromOptionsMock,
+          buildPlanServiceNodeFromOptionsMock,
         )(subplanParamsMock, bindingConstraintsListFixture);
       });
 
@@ -265,13 +257,21 @@ describe(currySubplan, () => {
         );
       });
 
-      it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
+      it('should call buildBuildServiceNodeOptionsFromClassElementMetadata()', () => {
         expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildBuildServiceNodeOptionsFromClassElementMetadata,
+        ).toHaveBeenCalledExactlyOnceWith(
+          instanceBindingNodeFixture.classMetadata.constructorArguments[0],
+        );
+      });
+
+      it('should call buildPlanServiceNodeFromOptions()', () => {
+        expect(
+          buildPlanServiceNodeFromOptionsMock,
         ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
-          instanceBindingNodeFixture.classMetadata.constructorArguments[0],
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -295,6 +295,7 @@ describe(currySubplan, () => {
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns undefined', () => {
       let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
       let getPlanOptionsFixture: GetPlanOptions;
 
       let result: unknown;
@@ -309,17 +310,22 @@ describe(currySubplan, () => {
             1,
           );
 
+        buildServiceNodeOptionsFixture =
+          Symbol() as unknown as BuildServiceNodeOptions;
+
         getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
 
         vitest
           .mocked(tryBuildGetPlanOptionsFromManagedClassElementMetadata)
           .mockReturnValueOnce(getPlanOptionsFixture);
 
+        vitest
+          .mocked(buildBuildServiceNodeOptionsFromClassElementMetadata)
+          .mockReturnValueOnce(buildServiceNodeOptionsFixture);
+
         result = currySubplan(
-          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-          buildPlanServiceNodeFromClassElementMetadataMock,
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromOptionsMock,
+          buildPlanServiceNodeFromOptionsMock,
         )(subplanParamsMock, bindingConstraintsListFixture);
       });
 
@@ -341,13 +347,21 @@ describe(currySubplan, () => {
         ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
-      it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
+      it('should call buildBuildServiceNodeOptionsFromClassElementMetadata()', () => {
         expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildBuildServiceNodeOptionsFromClassElementMetadata,
+        ).toHaveBeenCalledExactlyOnceWith(
+          instanceBindingNodeFixture.classMetadata.constructorArguments[0],
+        );
+      });
+
+      it('should call buildPlanServiceNodeFromOptions()', () => {
+        expect(
+          buildPlanServiceNodeFromOptionsMock,
         ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
-          instanceBindingNodeFixture.classMetadata.constructorArguments[0],
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -407,10 +421,8 @@ describe(currySubplan, () => {
           .mockReturnValueOnce(planResultFixture);
 
         result = currySubplan(
-          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-          buildPlanServiceNodeFromClassElementMetadataMock,
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromOptionsMock,
+          buildPlanServiceNodeFromOptionsMock,
         )(subplanParamsMock, bindingConstraintsListFixture);
       });
 
@@ -432,10 +444,14 @@ describe(currySubplan, () => {
         ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
-      it('should not call buildPlanServiceNodeFromClassElementMetadata()', () => {
+      it('should not call buildBuildServiceNodeOptionsFromClassElementMetadata()', () => {
         expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildBuildServiceNodeOptionsFromClassElementMetadata,
         ).not.toHaveBeenCalled();
+      });
+
+      it('should not call buildPlanServiceNodeFromOptions()', () => {
+        expect(buildPlanServiceNodeFromOptionsMock).not.toHaveBeenCalled();
       });
 
       it('should not call cacheNonRootPlanServiceNode()', () => {
@@ -449,6 +465,7 @@ describe(currySubplan, () => {
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns non context free plan', () => {
       let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
       let getPlanOptionsFixture: GetPlanOptions;
       let planResultFixture: PlanResult;
 
@@ -463,6 +480,9 @@ describe(currySubplan, () => {
             },
             1,
           );
+
+        buildServiceNodeOptionsFixture =
+          Symbol() as unknown as BuildServiceNodeOptions;
 
         getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
 
@@ -484,11 +504,13 @@ describe(currySubplan, () => {
           .mocked(subplanParamsMock.operations.getPlan)
           .mockReturnValueOnce(planResultFixture);
 
+        vitest
+          .mocked(buildBuildServiceNodeOptionsFromClassElementMetadata)
+          .mockReturnValueOnce(buildServiceNodeOptionsFixture);
+
         result = currySubplan(
-          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-          buildPlanServiceNodeFromClassElementMetadataMock,
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromOptionsMock,
+          buildPlanServiceNodeFromOptionsMock,
         )(subplanParamsMock, bindingConstraintsListFixture);
       });
 
@@ -510,13 +532,21 @@ describe(currySubplan, () => {
         ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
-      it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
+      it('should call buildBuildServiceNodeOptionsFromClassElementMetadata()', () => {
         expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildBuildServiceNodeOptionsFromClassElementMetadata,
+        ).toHaveBeenCalledExactlyOnceWith(
+          instanceBindingNodeFixture.classMetadata.constructorArguments[0],
+        );
+      });
+
+      it('should call buildPlanServiceNodeFromOptions()', () => {
+        expect(
+          buildPlanServiceNodeFromOptionsMock,
         ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
-          instanceBindingNodeFixture.classMetadata.constructorArguments[0],
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -565,6 +595,7 @@ describe(currySubplan, () => {
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns undefined', () => {
       let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
 
       let result: unknown;
 
@@ -578,15 +609,20 @@ describe(currySubplan, () => {
             1,
           );
 
+        buildServiceNodeOptionsFixture =
+          Symbol() as unknown as BuildServiceNodeOptions;
+
         vitest
           .mocked(tryBuildGetPlanOptionsFromManagedClassElementMetadata)
           .mockReturnValueOnce(undefined);
 
+        vitest
+          .mocked(buildBuildServiceNodeOptionsFromClassElementMetadata)
+          .mockReturnValueOnce(buildServiceNodeOptionsFixture);
+
         result = currySubplan(
-          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-          buildPlanServiceNodeFromClassElementMetadataMock,
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromOptionsMock,
+          buildPlanServiceNodeFromOptionsMock,
         )(subplanParamsMock, bindingConstraintsListFixture);
       });
 
@@ -606,17 +642,25 @@ describe(currySubplan, () => {
         );
       });
 
-      it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
+      it('should call buildBuildServiceNodeOptionsFromClassElementMetadata()', () => {
         const [property]: [string | symbol] = [
           ...instanceBindingNodeFixture.classMetadata.properties.keys(),
         ] as [string | symbol];
 
         expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildBuildServiceNodeOptionsFromClassElementMetadata,
+        ).toHaveBeenCalledExactlyOnceWith(
+          instanceBindingNodeFixture.classMetadata.properties.get(property),
+        );
+      });
+
+      it('should call buildPlanServiceNodeFromOptions()', () => {
+        expect(
+          buildPlanServiceNodeFromOptionsMock,
         ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
-          instanceBindingNodeFixture.classMetadata.properties.get(property),
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -640,6 +684,7 @@ describe(currySubplan, () => {
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns undefined', () => {
       let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
       let getPlanOptionsFixture: GetPlanOptions;
 
       let result: unknown;
@@ -654,17 +699,22 @@ describe(currySubplan, () => {
             1,
           );
 
+        buildServiceNodeOptionsFixture =
+          Symbol() as unknown as BuildServiceNodeOptions;
+
         getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
 
         vitest
           .mocked(tryBuildGetPlanOptionsFromManagedClassElementMetadata)
           .mockReturnValueOnce(getPlanOptionsFixture);
 
+        vitest
+          .mocked(buildBuildServiceNodeOptionsFromClassElementMetadata)
+          .mockReturnValueOnce(buildServiceNodeOptionsFixture);
+
         result = currySubplan(
-          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-          buildPlanServiceNodeFromClassElementMetadataMock,
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromOptionsMock,
+          buildPlanServiceNodeFromOptionsMock,
         )(subplanParamsMock, bindingConstraintsListFixture);
       });
 
@@ -690,17 +740,25 @@ describe(currySubplan, () => {
         ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
-      it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
+      it('should call buildBuildServiceNodeOptionsFromClassElementMetadata()', () => {
         const [property]: [string | symbol] = [
           ...instanceBindingNodeFixture.classMetadata.properties.keys(),
         ] as [string | symbol];
 
         expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildBuildServiceNodeOptionsFromClassElementMetadata,
+        ).toHaveBeenCalledExactlyOnceWith(
+          instanceBindingNodeFixture.classMetadata.properties.get(property),
+        );
+      });
+
+      it('should call buildPlanServiceNodeFromOptions()', () => {
+        expect(
+          buildPlanServiceNodeFromOptionsMock,
         ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
-          instanceBindingNodeFixture.classMetadata.properties.get(property),
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -760,10 +818,8 @@ describe(currySubplan, () => {
           .mockReturnValueOnce(planResultFixture);
 
         result = currySubplan(
-          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-          buildPlanServiceNodeFromClassElementMetadataMock,
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromOptionsMock,
+          buildPlanServiceNodeFromOptionsMock,
         )(subplanParamsMock, bindingConstraintsListFixture);
       });
 
@@ -789,10 +845,14 @@ describe(currySubplan, () => {
         ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
-      it('should not call buildPlanServiceNodeFromClassElementMetadata()', () => {
+      it('should not call buildBuildServiceNodeOptionsFromClassElementMetadata()', () => {
         expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildBuildServiceNodeOptionsFromClassElementMetadata,
         ).not.toHaveBeenCalled();
+      });
+
+      it('should not call buildPlanServiceNodeFromOptions()', () => {
+        expect(buildPlanServiceNodeFromOptionsMock).not.toHaveBeenCalled();
       });
 
       it('should not call cacheNonRootPlanServiceNode()', () => {
@@ -806,6 +866,7 @@ describe(currySubplan, () => {
 
     describe('when called, and tryBuildGetPlanOptionsFromManagedClassElementMetadata() returns GetPlanOptions and operations.getPlan() returns non context free plan', () => {
       let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
       let getPlanOptionsFixture: GetPlanOptions;
       let planResultFixture: PlanResult;
 
@@ -820,6 +881,9 @@ describe(currySubplan, () => {
             },
             1,
           );
+
+        buildServiceNodeOptionsFixture =
+          Symbol() as unknown as BuildServiceNodeOptions;
 
         getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
 
@@ -841,11 +905,13 @@ describe(currySubplan, () => {
           .mocked(subplanParamsMock.operations.getPlan)
           .mockReturnValueOnce(planResultFixture);
 
+        vitest
+          .mocked(buildBuildServiceNodeOptionsFromClassElementMetadata)
+          .mockReturnValueOnce(buildServiceNodeOptionsFixture);
+
         result = currySubplan(
-          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-          buildPlanServiceNodeFromClassElementMetadataMock,
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromOptionsMock,
+          buildPlanServiceNodeFromOptionsMock,
         )(subplanParamsMock, bindingConstraintsListFixture);
       });
 
@@ -871,17 +937,25 @@ describe(currySubplan, () => {
         ).toHaveBeenCalledExactlyOnceWith(getPlanOptionsFixture);
       });
 
-      it('should call buildPlanServiceNodeFromClassElementMetadata()', () => {
+      it('should call buildBuildServiceNodeOptionsFromClassElementMetadata()', () => {
         const [property]: [string | symbol] = [
           ...instanceBindingNodeFixture.classMetadata.properties.keys(),
         ] as [string | symbol];
 
         expect(
-          buildPlanServiceNodeFromClassElementMetadataMock,
+          buildBuildServiceNodeOptionsFromClassElementMetadata,
+        ).toHaveBeenCalledExactlyOnceWith(
+          instanceBindingNodeFixture.classMetadata.properties.get(property),
+        );
+      });
+
+      it('should call buildPlanServiceNodeFromOptions()', () => {
+        expect(
+          buildPlanServiceNodeFromOptionsMock,
         ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
-          instanceBindingNodeFixture.classMetadata.properties.get(property),
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -928,6 +1002,7 @@ describe(currySubplan, () => {
 
     describe('when called, and tryBuildGetPlanOptionsFromResolvedValueElementMetadata() returns undefined', () => {
       let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
 
       let result: unknown;
 
@@ -941,15 +1016,20 @@ describe(currySubplan, () => {
             1,
           );
 
+        buildServiceNodeOptionsFixture =
+          Symbol() as unknown as BuildServiceNodeOptions;
+
         vitest
           .mocked(tryBuildGetPlanOptionsFromResolvedValueElementMetadata)
           .mockReturnValueOnce(undefined);
 
+        vitest
+          .mocked(buildBuildServiceNodeOptionsFromResolvedValueElementMetadata)
+          .mockReturnValueOnce(buildServiceNodeOptionsFixture);
+
         result = currySubplan(
-          buildLazyPlanServiceNodeNodeFromClassElementMetadataMock,
-          buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadataMock,
-          buildPlanServiceNodeFromClassElementMetadataMock,
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildLazyPlanServiceNodeNodeFromOptionsMock,
+          buildPlanServiceNodeFromOptionsMock,
         )(subplanParamsMock, bindingConstraintsListFixture);
       });
 
@@ -965,13 +1045,21 @@ describe(currySubplan, () => {
         );
       });
 
-      it('should call buildPlanServiceNodeFromResolvedValueElementMetadata()', () => {
+      it('should call buildBuildServiceNodeOptionsFromResolvedValueElementMetadata()', () => {
         expect(
-          buildPlanServiceNodeFromResolvedValueElementMetadataMock,
+          buildBuildServiceNodeOptionsFromResolvedValueElementMetadata,
+        ).toHaveBeenCalledExactlyOnceWith(
+          resolvedValueBindingNodeFixture.binding.metadata.arguments[0],
+        );
+      });
+
+      it('should call buildPlanServiceNodeFromOptions()', () => {
+        expect(
+          buildPlanServiceNodeFromOptionsMock,
         ).toHaveBeenCalledExactlyOnceWith(
           subplanParamsMock,
           bindingConstraintsListFixture,
-          resolvedValueBindingNodeFixture.binding.metadata.arguments[0],
+          buildServiceNodeOptionsFixture,
         );
       });
 

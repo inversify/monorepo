@@ -1,18 +1,19 @@
 import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { buildBuildServiceNodeOptionsFromClassElementMetadata } from '../../common/calculations/buildBuildServiceNodeOptionsFromClassElementMetadata.js';
+import { buildBuildServiceNodeOptionsFromResolvedValueElementMetadata } from '../../common/calculations/buildBuildServiceNodeOptionsFromResolvedValueElementMetadata.js';
 import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
 import { type ClassElementMetadata } from '../../metadata/models/ClassElementMetadata.js';
 import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
-import { type ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata.js';
 import { type ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata.js';
 import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
 import { type ResolvedValueMetadata } from '../../metadata/models/ResolvedValueMetadata.js';
-import { getServiceFromMaybeLazyServiceIdentifier } from '../calculations/getServiceFromMaybeLazyServiceIdentifier.js';
 import { isInstanceBindingNode } from '../calculations/isInstanceBindingNode.js';
 import { tryBuildGetPlanOptionsFromManagedClassElementMetadata } from '../calculations/tryBuildGetPlanOptionsFromManagedClassElementMetadata.js';
 import { tryBuildGetPlanOptionsFromResolvedValueElementMetadata } from '../calculations/tryBuildGetPlanOptionsFromResolvedValueElementMetadata.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type GetPlanOptions } from '../models/GetPlanOptions.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
@@ -25,112 +26,55 @@ import { cacheNonRootPlanServiceNode } from './cacheNonRootPlanServiceNode.js';
 
 const MAX_PLAN_DEPTH: number = 500;
 
-class LazyManagedClassMetadataPlanServiceNode extends LazyPlanServiceNode {
+class LazySubPlanServiceNode extends LazyPlanServiceNode {
   readonly #params: SubplanParams;
-  readonly #buildLazyPlanServiceNodeNodeFromClassElementMetadata: (
+  readonly #buildLazyPlanServiceNodeNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode;
   readonly #bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>;
-  readonly #elementMetadata: ManagedClassElementMetadata;
+  readonly #options: BuildServiceNodeOptions;
 
   constructor(
     params: SubplanParams,
-    buildLazyPlanServiceNodeNodeFromClassElementMetadata: (
+    buildLazyPlanServiceNodeNodeFromOptions: (
       params: SubplanParams,
       bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-      elementMetadata: ManagedClassElementMetadata,
+      options: BuildServiceNodeOptions,
     ) => PlanServiceNode,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
+    options: BuildServiceNodeOptions,
     serviceNode: PlanServiceNode | undefined,
   ) {
-    super(
-      serviceNode,
-      getServiceFromMaybeLazyServiceIdentifier(elementMetadata.value),
-    );
+    super(serviceNode, options.serviceIdentifier);
 
-    this.#buildLazyPlanServiceNodeNodeFromClassElementMetadata =
-      buildLazyPlanServiceNodeNodeFromClassElementMetadata;
+    this.#buildLazyPlanServiceNodeNodeFromOptions =
+      buildLazyPlanServiceNodeNodeFromOptions;
     this.#params = params;
     this.#bindingConstraintsList = bindingConstraintsList;
-    this.#elementMetadata = elementMetadata;
+    this.#options = options;
   }
 
   protected override _buildPlanServiceNode(): PlanServiceNode {
-    return this.#buildLazyPlanServiceNodeNodeFromClassElementMetadata(
+    return this.#buildLazyPlanServiceNodeNodeFromOptions(
       this.#params,
       this.#bindingConstraintsList,
-      this.#elementMetadata,
-    );
-  }
-}
-
-class LazyResolvedValueMetadataPlanServiceNode extends LazyPlanServiceNode {
-  readonly #params: SubplanParams;
-  readonly #buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata: (
-    params: SubplanParams,
-    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ResolvedValueElementMetadata,
-  ) => PlanServiceNode;
-  readonly #bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>;
-  readonly #resolvedValueElementMetadata: ResolvedValueElementMetadata;
-
-  constructor(
-    params: SubplanParams,
-    buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata: (
-      params: SubplanParams,
-      bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-      elementMetadata: ResolvedValueElementMetadata,
-    ) => PlanServiceNode,
-    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    resolvedValueElementMetadata: ResolvedValueElementMetadata,
-    serviceNode: PlanServiceNode | undefined,
-  ) {
-    super(
-      serviceNode,
-      getServiceFromMaybeLazyServiceIdentifier(
-        resolvedValueElementMetadata.value,
-      ),
-    );
-
-    this.#params = params;
-    this.#buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata =
-      buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata;
-    this.#bindingConstraintsList = bindingConstraintsList;
-    this.#resolvedValueElementMetadata = resolvedValueElementMetadata;
-  }
-
-  protected override _buildPlanServiceNode(): PlanServiceNode {
-    return this.#buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata(
-      this.#params,
-      this.#bindingConstraintsList,
-      this.#resolvedValueElementMetadata,
+      this.#options,
     );
   }
 }
 
 export function currySubplan(
-  buildLazyPlanServiceNodeNodeFromClassElementMetadata: (
+  buildLazyPlanServiceNodeNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode,
-  buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata: (
+  buildPlanServiceNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ResolvedValueElementMetadata,
-  ) => PlanServiceNode,
-  buildPlanServiceNodeFromClassElementMetadata: (
-    params: SubplanParams,
-    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
-  ) => PlanServiceNode | undefined,
-  buildPlanServiceNodeFromResolvedValueElementMetadata: (
-    params: SubplanParams,
-    bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ResolvedValueElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode | undefined,
 ): (
   params: SubplanParams,
@@ -141,8 +85,8 @@ export function currySubplan(
     node: InstanceBindingNode,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ) => PlanBindingNode = currySubplanInstanceBindingNode(
-    buildLazyPlanServiceNodeNodeFromClassElementMetadata,
-    buildPlanServiceNodeFromClassElementMetadata,
+    buildLazyPlanServiceNodeNodeFromOptions,
+    buildPlanServiceNodeFromOptions,
   );
 
   const subplanResolvedValueBindingNode: (
@@ -150,8 +94,8 @@ export function currySubplan(
     node: ResolvedValueBindingNode,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ) => PlanBindingNode = currySubplanResolvedValueBindingNode(
-    buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata,
-    buildPlanServiceNodeFromResolvedValueElementMetadata,
+    buildLazyPlanServiceNodeNodeFromOptions,
+    buildPlanServiceNodeFromOptions,
   );
 
   return (
@@ -175,15 +119,15 @@ export function currySubplan(
 }
 
 function currySubplanInstanceBindingNode(
-  buildLazyPlanServiceNodeNodeFromClassElementMetadata: (
+  buildLazyPlanServiceNodeNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode,
-  buildPlanServiceNodeFromClassElementMetadata: (
+  buildPlanServiceNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode | undefined,
 ): (
   params: SubplanParams,
@@ -196,8 +140,8 @@ function currySubplanInstanceBindingNode(
     elementMetadata: ClassElementMetadata,
   ) => PlanServiceNode | undefined =
     curryHandlePlanServiceNodeBuildFromClassElementMetadata(
-      buildLazyPlanServiceNodeNodeFromClassElementMetadata,
-      buildPlanServiceNodeFromClassElementMetadata,
+      buildLazyPlanServiceNodeNodeFromOptions,
+      buildPlanServiceNodeFromOptions,
     );
 
   return (
@@ -237,15 +181,15 @@ function currySubplanInstanceBindingNode(
 }
 
 function currySubplanResolvedValueBindingNode(
-  buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata: (
+  buildLazyPlanServiceNodeNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ResolvedValueElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode,
-  buildPlanServiceNodeFromResolvedValueElementMetadata: (
+  buildPlanServiceNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ResolvedValueElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode | undefined,
 ): (
   params: SubplanParams,
@@ -258,8 +202,8 @@ function currySubplanResolvedValueBindingNode(
     elementMetadata: ResolvedValueElementMetadata,
   ) => PlanServiceNode =
     curryHandlePlanServiceNodeBuildFromResolvedValueElementMetadata(
-      buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata,
-      buildPlanServiceNodeFromResolvedValueElementMetadata,
+      buildLazyPlanServiceNodeNodeFromOptions,
+      buildPlanServiceNodeFromOptions,
     );
 
   return (
@@ -286,15 +230,15 @@ function currySubplanResolvedValueBindingNode(
 }
 
 function curryHandlePlanServiceNodeBuildFromClassElementMetadata(
-  buildLazyPlanServiceNodeNodeFromClassElementMetadata: (
+  buildLazyPlanServiceNodeNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode,
-  buildPlanServiceNodeFromClassElementMetadata: (
+  buildPlanServiceNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode | undefined,
 ): (
   params: SubplanParams,
@@ -329,21 +273,19 @@ function curryHandlePlanServiceNodeBuildFromClassElementMetadata(
       }
     }
 
-    const serviceNode: PlanServiceNode | undefined =
-      buildPlanServiceNodeFromClassElementMetadata(
-        params,
-        bindingConstraintsList,
-        elementMetadata,
-      );
+    const options: BuildServiceNodeOptions =
+      buildBuildServiceNodeOptionsFromClassElementMetadata(elementMetadata);
 
-    const lazyPlanServiceNode: LazyPlanServiceNode =
-      new LazyManagedClassMetadataPlanServiceNode(
-        params,
-        buildLazyPlanServiceNodeNodeFromClassElementMetadata,
-        bindingConstraintsList,
-        elementMetadata,
-        serviceNode,
-      );
+    const serviceNode: PlanServiceNode | undefined =
+      buildPlanServiceNodeFromOptions(params, bindingConstraintsList, options);
+
+    const lazyPlanServiceNode: LazyPlanServiceNode = new LazySubPlanServiceNode(
+      params,
+      buildLazyPlanServiceNodeNodeFromOptions,
+      bindingConstraintsList,
+      options,
+      serviceNode,
+    );
 
     cacheNonRootPlanServiceNode(
       getPlanOptions,
@@ -366,12 +308,12 @@ function curryHandlePlanServiceNodeBuildFromResolvedValueElementMetadata(
   buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ResolvedValueElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode,
-  buildPlanServiceNodeFromResolvedValueElementMetadata: (
+  buildPlanServiceNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ResolvedValueElementMetadata,
+    options: BuildServiceNodeOptions,
   ) => PlanServiceNode | undefined,
 ): (
   params: SubplanParams,
@@ -395,21 +337,21 @@ function curryHandlePlanServiceNodeBuildFromResolvedValueElementMetadata(
       }
     }
 
-    const serviceNode: PlanServiceNode | undefined =
-      buildPlanServiceNodeFromResolvedValueElementMetadata(
-        params,
-        bindingConstraintsList,
+    const options: BuildServiceNodeOptions =
+      buildBuildServiceNodeOptionsFromResolvedValueElementMetadata(
         elementMetadata,
       );
 
-    const lazyPlanServiceNode: LazyPlanServiceNode =
-      new LazyResolvedValueMetadataPlanServiceNode(
-        params,
-        buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata,
-        bindingConstraintsList,
-        elementMetadata,
-        serviceNode,
-      );
+    const serviceNode: PlanServiceNode | undefined =
+      buildPlanServiceNodeFromOptions(params, bindingConstraintsList, options);
+
+    const lazyPlanServiceNode: LazyPlanServiceNode = new LazySubPlanServiceNode(
+      params,
+      buildLazyPlanServiceNodeNodeFromResolvedValueElementMetadata,
+      bindingConstraintsList,
+      options,
+      serviceNode,
+    );
 
     cacheNonRootPlanServiceNode(
       getPlanOptions,

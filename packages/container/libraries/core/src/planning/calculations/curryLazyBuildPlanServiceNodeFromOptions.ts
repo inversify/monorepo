@@ -3,15 +3,15 @@ import { type InternalBindingConstraints } from '../../binding/models/BindingCon
 import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
-import { type ManagedClassElementMetadata } from '../../metadata/models/ManagedClassElementMetadata.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type SubplanParams } from '../models/SubplanParams.js';
-import { curryBuildPlanServiceNodeFromClassElementMetadata } from './curryBuildPlanServiceNodeFromClassElementMetadata.js';
+import { curryBuildPlanServiceNodeFromOptions } from './curryBuildPlanServiceNodeFromOptions.js';
 
-export function curryLazyBuildPlanServiceNodeFromClassElementMetadata(
+export function curryLazyBuildPlanServiceNodeFromOptions(
   buildServiceNodeBindings: (
     params: BasePlanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
@@ -22,26 +22,26 @@ export function curryLazyBuildPlanServiceNodeFromClassElementMetadata(
 ): (
   params: SubplanParams,
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-  elementMetadata: ManagedClassElementMetadata,
+  options: BuildServiceNodeOptions,
 ) => PlanServiceNode | undefined {
-  const buildPlanServiceNodeFromClassElementMetadata: (
+  const buildPlanServiceNodeFromOptions: (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
-  ) => PlanServiceNode = curryBuildPlanServiceNodeFromClassElementMetadata(
+    options: BuildServiceNodeOptions,
+  ) => PlanServiceNode = curryBuildPlanServiceNodeFromOptions(
     buildServiceNodeBindings,
   );
 
   return (
     params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    elementMetadata: ManagedClassElementMetadata,
+    options: BuildServiceNodeOptions,
   ): PlanServiceNode | undefined => {
     try {
-      return buildPlanServiceNodeFromClassElementMetadata(
+      return buildPlanServiceNodeFromOptions(
         params,
         bindingConstraintsList,
-        elementMetadata,
+        options,
       );
     } catch (error: unknown) {
       if (
