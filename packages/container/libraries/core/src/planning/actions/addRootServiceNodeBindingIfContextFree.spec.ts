@@ -9,6 +9,9 @@ import {
   vitest,
 } from 'vitest';
 
+vitest.mock(
+  import('../../common/calculations/buildBuildServiceNodeOptionsFromPlanParamsConstraints.js'),
+);
 vitest.mock(import('../calculations/buildPlanBindingConstraintsList.js'));
 vitest.mock(import('./addServiceNodeBindingIfContextFree.js'));
 
@@ -18,9 +21,11 @@ import { type Binding } from '../../binding/models/Binding.js';
 import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
 import { bindingScopeValues } from '../../binding/models/BindingScope.js';
 import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { buildBuildServiceNodeOptionsFromPlanParamsConstraints } from '../../common/calculations/buildBuildServiceNodeOptionsFromPlanParamsConstraints.js';
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { type PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult.js';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
 import { type PlanParams } from '../models/PlanParams.js';
 import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
@@ -132,6 +137,7 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
 
     describe('when called', () => {
       let buildPlanBindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
       let planServiceNodeBindingAddedResultFixture: PlanServiceNodeBindingAddedResult;
 
       let result: unknown;
@@ -145,6 +151,9 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
           1,
         );
 
+        buildServiceNodeOptionsFixture =
+          Symbol() as unknown as BuildServiceNodeOptions;
+
         planServiceNodeBindingAddedResultFixture = {
           isContextFreeBinding: true,
           shouldInvalidateServiceNode: false,
@@ -153,6 +162,10 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
         vitest
           .mocked(buildPlanBindingConstraintsList)
           .mockReturnValueOnce(buildPlanBindingConstraintsListFixture);
+
+        vitest
+          .mocked(buildBuildServiceNodeOptionsFromPlanParamsConstraints)
+          .mockReturnValueOnce(buildServiceNodeOptionsFixture);
 
         vitest
           .mocked(addServiceNodeBindingIfContextFree)
@@ -169,6 +182,12 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
         vitest.clearAllMocks();
       });
 
+      it('should call buildBuildServiceNodeOptionsFromPlanParamsConstraints()', () => {
+        expect(
+          buildBuildServiceNodeOptionsFromPlanParamsConstraints,
+        ).toHaveBeenCalledExactlyOnceWith(paramsFixture.rootConstraints);
+      });
+
       it('should call addServiceNodeBindingIfContextFree()', () => {
         expect(
           addServiceNodeBindingIfContextFree,
@@ -177,7 +196,7 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
           lazyPlanServiceNodeFixture,
           bindingMock,
           buildPlanBindingConstraintsListFixture,
-          false,
+          buildServiceNodeOptionsFixture,
         );
       });
 

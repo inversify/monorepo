@@ -27,6 +27,7 @@ import { type SingleImmutableLinkedList } from '../../common/models/SingleImmuta
 import { buildGetPlanOptionsFromPlanParams } from '../calculations/buildGetPlanOptionsFromPlanParams.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type GetPlanOptions } from '../models/GetPlanOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanParams } from '../models/PlanParams.js';
@@ -49,7 +50,7 @@ describe(plan, () => {
           bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
           serviceBindings: Binding<unknown>[],
           parentNode: BindingNodeParent,
-          chainedBindings: boolean,
+          options: BuildServiceNodeOptions,
         ) => PlanBindingNode[],
       ),
     );

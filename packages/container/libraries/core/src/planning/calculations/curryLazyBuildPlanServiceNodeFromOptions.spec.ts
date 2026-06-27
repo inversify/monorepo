@@ -25,13 +25,13 @@ import { curryBuildPlanServiceNodeFromOptions } from './curryBuildPlanServiceNod
 import { curryLazyBuildPlanServiceNodeFromOptions } from './curryLazyBuildPlanServiceNodeFromOptions.js';
 
 describe(curryLazyBuildPlanServiceNodeFromOptions, () => {
-  let buildServiceNodeBindingsFixture: Mock<
+  let buildServiceNodeBindingsMock: Mock<
     (
       params: BasePlanParams,
       bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       serviceBindings: Binding<unknown>[],
       parentNode: BindingNodeParent,
-      chainedBindings: boolean,
+      opitons: BuildServiceNodeOptions,
     ) => PlanBindingNode[]
   >;
 
@@ -40,7 +40,7 @@ describe(curryLazyBuildPlanServiceNodeFromOptions, () => {
   let optionsFixture: BuildServiceNodeOptions;
 
   beforeAll(() => {
-    buildServiceNodeBindingsFixture = vitest.fn();
+    buildServiceNodeBindingsMock = vitest.fn();
 
     paramsFixture = Symbol() as unknown as SubplanParams;
     bindingConstraintsListFixture =
@@ -73,7 +73,7 @@ describe(curryLazyBuildPlanServiceNodeFromOptions, () => {
         .mockReturnValueOnce(buildPlanServiceNodeFromOptionsMock);
 
       result = curryLazyBuildPlanServiceNodeFromOptions(
-        buildServiceNodeBindingsFixture,
+        buildServiceNodeBindingsMock,
       )(paramsFixture, bindingConstraintsListFixture, optionsFixture);
     });
 
@@ -84,7 +84,7 @@ describe(curryLazyBuildPlanServiceNodeFromOptions, () => {
     it('should call curryBuildPlanServiceNodeFromOptions()', () => {
       expect(
         curryBuildPlanServiceNodeFromOptions,
-      ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsFixture);
+      ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsMock);
     });
 
     it('should return a PlanServiceNode', () => {
@@ -119,9 +119,11 @@ describe(curryLazyBuildPlanServiceNodeFromOptions, () => {
         .mockReturnValueOnce(buildPlanServiceNodeFromOptionsMock);
 
       try {
-        curryLazyBuildPlanServiceNodeFromOptions(
-          buildServiceNodeBindingsFixture,
-        )(paramsFixture, bindingConstraintsListFixture, optionsFixture);
+        curryLazyBuildPlanServiceNodeFromOptions(buildServiceNodeBindingsMock)(
+          paramsFixture,
+          bindingConstraintsListFixture,
+          optionsFixture,
+        );
       } catch (error: unknown) {
         result = error;
       }
@@ -134,7 +136,7 @@ describe(curryLazyBuildPlanServiceNodeFromOptions, () => {
     it('should call curryBuildPlanServiceNodeFromOptions()', () => {
       expect(
         curryBuildPlanServiceNodeFromOptions,
-      ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsFixture);
+      ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsMock);
     });
 
     it('should throw an Error', () => {
@@ -172,7 +174,7 @@ describe(curryLazyBuildPlanServiceNodeFromOptions, () => {
         .mockReturnValueOnce(buildPlanServiceNodeFromOptionsMock);
 
       result = curryLazyBuildPlanServiceNodeFromOptions(
-        buildServiceNodeBindingsFixture,
+        buildServiceNodeBindingsMock,
       )(paramsFixture, bindingConstraintsListFixture, optionsFixture);
     });
 
@@ -183,7 +185,7 @@ describe(curryLazyBuildPlanServiceNodeFromOptions, () => {
     it('should call curryBuildPlanServiceNodeFromOptions()', () => {
       expect(
         curryBuildPlanServiceNodeFromOptions,
-      ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsFixture);
+      ).toHaveBeenCalledExactlyOnceWith(buildServiceNodeBindingsMock);
     });
 
     it('should return undefined', () => {

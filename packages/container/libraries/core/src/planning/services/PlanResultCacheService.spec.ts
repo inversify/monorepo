@@ -2145,7 +2145,7 @@ describe(PlanResultCacheService, () => {
             lazyPlanServiceNodeFixture,
             planResultCacheServiceInvalidationFixture.binding,
             nonCachedServiceNodeContextFixture.bindingConstraintsList,
-            false,
+            nonCachedServiceNodeContextFixture.buildServiceNodeOptions,
           );
         });
 
@@ -2245,7 +2245,7 @@ describe(PlanResultCacheService, () => {
             lazyPlanServiceNodeFixture,
             planResultCacheServiceInvalidationFixture.binding,
             nonCachedServiceNodeContextFixture.bindingConstraintsList,
-            false,
+            nonCachedServiceNodeContextFixture.buildServiceNodeOptions,
           );
         });
 

@@ -21,6 +21,7 @@ import { buildFilteredServiceBindings } from '../calculations/buildFilteredServi
 import { isPlanServiceRedirectionBindingNode } from '../calculations/isPlanServiceRedirectionBindingNode.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { ConstantValueBindingNode } from '../models/ConstantValueBindingNode.js';
 import { DynamicValueBindingNode } from '../models/DynamicValueBindingNode.js';
 import { FactoryBindingNodeImplementation } from '../models/FactoryBindingNodeImplementation.js';
@@ -42,7 +43,7 @@ export function curryBuildServiceNodeBindings(
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   serviceBindings: Binding<unknown>[],
   parentNode: BindingNodeParent,
-  chainedBindings: boolean,
+  buildServiceNodeOptions: BuildServiceNodeOptions,
 ) => PlanBindingNode[] {
   const buildInstancePlanBindingNode: (
     params: BasePlanParams,
@@ -60,13 +61,13 @@ export function curryBuildServiceNodeBindings(
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
-    chainedBindings: boolean,
+    buildServiceNodeOptions: BuildServiceNodeOptions,
   ) => PlanBindingNode[] = (
     params: BasePlanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
-    chainedBindings: boolean,
+    buildServiceNodeOptions: BuildServiceNodeOptions,
   ): PlanBindingNode[] => {
     const serviceIdentifier: ServiceIdentifier =
       isPlanServiceRedirectionBindingNode(parentNode)
@@ -122,7 +123,7 @@ export function curryBuildServiceNodeBindings(
               params,
               bindingConstraintsList,
               binding,
-              chainedBindings,
+              buildServiceNodeOptions,
             );
 
           planBindingNodes.push(planBindingNode);
@@ -141,7 +142,7 @@ export function curryBuildServiceNodeBindings(
     params: BasePlanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     binding: ServiceRedirectionBinding<unknown>,
-    chainedBindings: boolean,
+    buildServiceNodeOptions: BuildServiceNodeOptions,
   ) => PlanBindingNode = curryBuildServiceRedirectionPlanBindingNode(
     buildServiceNodeBindings,
   );
@@ -217,19 +218,19 @@ function curryBuildServiceRedirectionPlanBindingNode(
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
-    chainedBindings: boolean,
+    buildServiceNodeOptions: BuildServiceNodeOptions,
   ) => PlanBindingNode[],
 ): (
   params: BasePlanParams,
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   binding: ServiceRedirectionBinding<unknown>,
-  chainedBindings: boolean,
+  buildServiceNodeOptions: BuildServiceNodeOptions,
 ) => PlanBindingNode {
   return (
     params: BasePlanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     binding: ServiceRedirectionBinding<unknown>,
-    chainedBindings: boolean,
+    buildServiceNodeOptions: BuildServiceNodeOptions,
   ): PlanBindingNode => {
     const childNode: PlanServiceRedirectionBindingNode = {
       binding,
@@ -241,7 +242,8 @@ function curryBuildServiceRedirectionPlanBindingNode(
 
     const filteredServiceBindings: Binding<unknown>[] =
       buildFilteredServiceBindings(params, bindingConstraints, {
-        chained: chainedBindings,
+        chained:
+          buildServiceNodeOptions.isMultiple && buildServiceNodeOptions.chained,
         customServiceIdentifier: binding.targetServiceIdentifier,
       });
 
@@ -251,7 +253,7 @@ function curryBuildServiceRedirectionPlanBindingNode(
         bindingConstraintsList,
         filteredServiceBindings,
         childNode,
-        chainedBindings,
+        buildServiceNodeOptions,
       ),
     );
 
