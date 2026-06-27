@@ -34,7 +34,7 @@ const buildServiceNodeBindings: (
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   serviceBindings: Binding<unknown>[],
   parentNode: BindingNodeParent,
-  chainedBindings: boolean,
+  buildServiceNodeOptions: BuildServiceNodeOptions,
 ) => PlanBindingNode[] = curryBuildServiceNodeBindings(subplan);
 
 const lazyBuildPlanServiceNodeFromOptions: (
@@ -71,7 +71,7 @@ export function addServiceNodeBindingIfContextFree(
   serviceNode: PlanServiceNode,
   binding: Binding<unknown>,
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-  chainedBindings: boolean,
+  buildServiceNodeOptions: BuildServiceNodeOptions,
 ): PlanServiceNodeBindingAddedResult {
   if (LazyPlanServiceNode.is(serviceNode) && !serviceNode.isExpanded()) {
     return {
@@ -99,7 +99,7 @@ export function addServiceNodeBindingIfContextFree(
     serviceNode,
     binding,
     bindingConstraintsList,
-    chainedBindings,
+    buildServiceNodeOptions,
   );
 }
 
@@ -108,7 +108,7 @@ function addServiceNodeSatisfiedBindingIfContextFree(
   serviceNode: PlanServiceNode,
   binding: Binding<unknown>,
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-  chainedBindings: boolean,
+  buildServiceNodeOptions: BuildServiceNodeOptions,
 ): PlanServiceNodeBindingAddedResult {
   let serviceNodeBinding: PlanBindingNode;
 
@@ -118,7 +118,7 @@ function addServiceNodeSatisfiedBindingIfContextFree(
       bindingConstraintsList,
       [binding],
       serviceNode,
-      chainedBindings,
+      buildServiceNodeOptions,
     ) as [PlanBindingNode];
   } catch (error: unknown) {
     if (

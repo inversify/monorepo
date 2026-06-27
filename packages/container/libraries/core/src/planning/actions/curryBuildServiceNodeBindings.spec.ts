@@ -102,7 +102,14 @@ describe(curryBuildServiceNodeBindings, () => {
           bindingConstraintsListFixture,
           [instanceBindingFixture],
           parentNodeFixture,
-          false,
+          {
+            chained: false,
+            isMultiple: true,
+            name: undefined,
+            optional: false,
+            serviceIdentifier: Symbol(),
+            tags: new Map(),
+          },
         );
       });
 
@@ -194,7 +201,14 @@ describe(curryBuildServiceNodeBindings, () => {
           bindingConstraintsListFixture,
           [resolvedValueBindingFixture],
           parentNodeFixture,
-          false,
+          {
+            chained: false,
+            isMultiple: true,
+            name: undefined,
+            optional: false,
+            serviceIdentifier: Symbol(),
+            tags: new Map(),
+          },
         );
       });
 
@@ -278,7 +292,14 @@ describe(curryBuildServiceNodeBindings, () => {
           bindingConstraintsListFixture,
           [serviceRedirectionBindingFixture],
           parentNodeFixture,
-          false,
+          {
+            chained: false,
+            isMultiple: true,
+            name: undefined,
+            optional: false,
+            serviceIdentifier: Symbol(),
+            tags: new Map(),
+          },
         );
       });
 

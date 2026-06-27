@@ -8,6 +8,9 @@ import {
   vitest,
 } from 'vitest';
 
+vitest.mock(
+  import('../../common/calculations/buildBuildServiceNodeOptionsFromPlanParamsConstraints.js'),
+);
 vitest.mock(import('../calculations/buildFilteredServiceBindings.js'));
 vitest.mock(import('../calculations/buildPlanBindingConstraintsList.js'));
 vitest.mock(
@@ -19,12 +22,14 @@ import {
   BindingConstraintsImplementation,
   type InternalBindingConstraints,
 } from '../../binding/models/BindingConstraintsImplementation.js';
+import { buildBuildServiceNodeOptionsFromPlanParamsConstraints } from '../../common/calculations/buildBuildServiceNodeOptionsFromPlanParamsConstraints.js';
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList.js';
 import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanParams } from '../models/PlanParams.js';
 import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
@@ -38,7 +43,7 @@ describe(curryBuildPlanServiceNode, () => {
       bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       serviceBindings: Binding<unknown>[],
       parentNode: BindingNodeParent,
-      chainedBindings: boolean,
+      options: BuildServiceNodeOptions,
     ) => PlanBindingNode[]
   >;
 
@@ -65,6 +70,7 @@ describe(curryBuildPlanServiceNode, () => {
     describe('when called', () => {
       let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let bindingsFixture: Binding<unknown>[];
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
       let planBindingNodesFixture: PlanBindingNode[];
 
       let result: unknown;
@@ -80,6 +86,8 @@ describe(curryBuildPlanServiceNode, () => {
           );
 
         bindingsFixture = [Symbol() as unknown as Binding<unknown>];
+        buildServiceNodeOptionsFixture =
+          Symbol() as unknown as BuildServiceNodeOptions;
         planBindingNodesFixture = [Symbol() as unknown as PlanBindingNode];
 
         vitest
@@ -89,6 +97,10 @@ describe(curryBuildPlanServiceNode, () => {
         vitest
           .mocked(buildFilteredServiceBindings)
           .mockReturnValueOnce(bindingsFixture);
+
+        vitest
+          .mocked(buildBuildServiceNodeOptionsFromPlanParamsConstraints)
+          .mockReturnValueOnce(buildServiceNodeOptionsFixture);
 
         buildServiceNodeBindingsMock.mockReturnValueOnce(
           planBindingNodesFixture,
@@ -119,6 +131,12 @@ describe(curryBuildPlanServiceNode, () => {
         );
       });
 
+      it('should call buildBuildServiceNodeOptionsFromPlanParamsConstraints()', () => {
+        expect(
+          buildBuildServiceNodeOptionsFromPlanParamsConstraints,
+        ).toHaveBeenCalledExactlyOnceWith(planParamsFixture.rootConstraints);
+      });
+
       it('should call buildServiceNodeBindings()', () => {
         const expectedServiceNode: BindingNodeParent = {
           bindings: planBindingNodesFixture,
@@ -132,7 +150,7 @@ describe(curryBuildPlanServiceNode, () => {
           bindingConstraintsListFixture,
           bindingsFixture,
           expectedServiceNode,
-          false,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -167,6 +185,7 @@ describe(curryBuildPlanServiceNode, () => {
     describe('when called', () => {
       let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
       let bindingsFixture: Binding<unknown>[];
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
       let planBindingNodeFixture: PlanBindingNode;
 
       let result: unknown;
@@ -182,6 +201,8 @@ describe(curryBuildPlanServiceNode, () => {
           );
 
         bindingsFixture = [Symbol() as unknown as Binding<unknown>];
+        buildServiceNodeOptionsFixture =
+          Symbol() as unknown as BuildServiceNodeOptions;
         planBindingNodeFixture = Symbol() as unknown as PlanBindingNode;
 
         vitest
@@ -191,6 +212,10 @@ describe(curryBuildPlanServiceNode, () => {
         vitest
           .mocked(buildFilteredServiceBindings)
           .mockReturnValueOnce(bindingsFixture);
+
+        vitest
+          .mocked(buildBuildServiceNodeOptionsFromPlanParamsConstraints)
+          .mockReturnValueOnce(buildServiceNodeOptionsFixture);
 
         buildServiceNodeBindingsMock.mockReturnValueOnce([
           planBindingNodeFixture,
@@ -221,6 +246,12 @@ describe(curryBuildPlanServiceNode, () => {
         );
       });
 
+      it('should call buildBuildServiceNodeOptionsFromPlanParamsConstraints()', () => {
+        expect(
+          buildBuildServiceNodeOptionsFromPlanParamsConstraints,
+        ).toHaveBeenCalledExactlyOnceWith(planParamsFixture.rootConstraints);
+      });
+
       it('should call buildServiceNodeBindings()', () => {
         const expectedServiceNode: BindingNodeParent = {
           bindings: planBindingNodeFixture,
@@ -234,7 +265,7 @@ describe(curryBuildPlanServiceNode, () => {
           bindingConstraintsListFixture,
           bindingsFixture,
           expectedServiceNode,
-          false,
+          buildServiceNodeOptionsFixture,
         );
       });
 

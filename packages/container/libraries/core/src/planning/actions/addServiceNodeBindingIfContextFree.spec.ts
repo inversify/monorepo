@@ -46,6 +46,7 @@ import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKin
 import { type PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
@@ -77,7 +78,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
       bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       serviceBindings: Binding<unknown>[],
       parentNode: BindingNodeParent,
-      chainedBindings: boolean,
+      options: BuildServiceNodeOptions,
     ) => PlanBindingNode[]
   >;
 
@@ -93,7 +94,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
 
     let bindingMock: Mocked<Binding<unknown>>;
     let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
+    let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as BasePlanParams;
@@ -130,7 +131,14 @@ describe(addServiceNodeBindingIfContextFree, () => {
           1,
         );
 
-      chainedBindings = false;
+      buildServiceNodeOptionsFixture = {
+        chained: false,
+        isMultiple: true,
+        name: undefined,
+        optional: false,
+        serviceIdentifier: Symbol(),
+        tags: new Map(),
+      };
     });
 
     describe('when called, and binding.isSatisfiedBy() returns true, and buildServiceNodeBindings throws an stack overflow error', () => {
@@ -162,7 +170,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           lazyPlanServiceNodeFixture,
           bindingMock,
           bindingConstraintsListFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -184,7 +192,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           bindingConstraintsListFixture,
           [bindingMock],
           lazyPlanServiceNodeFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -238,7 +246,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           lazyPlanServiceNodeFixture,
           bindingMock,
           bindingConstraintsListFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -260,7 +268,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           bindingConstraintsListFixture,
           [bindingMock],
           lazyPlanServiceNodeFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -312,7 +320,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
             lazyPlanServiceNodeFixture,
             bindingMock,
             bindingConstraintsListFixture,
-            chainedBindings,
+            buildServiceNodeOptionsFixture,
           );
         } catch (error: unknown) {
           result = error;
@@ -337,7 +345,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           bindingConstraintsListFixture,
           [bindingMock],
           lazyPlanServiceNodeFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -373,7 +381,14 @@ describe(addServiceNodeBindingIfContextFree, () => {
           lazyPlanServiceNodeFixture,
           Symbol() as unknown as Binding<unknown>,
           Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
-          false,
+          {
+            chained: false,
+            isMultiple: true,
+            name: undefined,
+            optional: false,
+            serviceIdentifier: Symbol(),
+            tags: new Map(),
+          },
         );
       });
 
@@ -397,7 +412,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
     let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
+    let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as BasePlanParams;
@@ -444,7 +459,14 @@ describe(addServiceNodeBindingIfContextFree, () => {
           1,
         );
 
-      chainedBindings = false;
+      buildServiceNodeOptionsFixture = {
+        chained: false,
+        isMultiple: true,
+        name: undefined,
+        optional: false,
+        serviceIdentifier: Symbol(),
+        tags: new Map(),
+      };
     });
 
     describe('when called, and binding.isSatisfiedBy() returns false', () => {
@@ -458,7 +480,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           lazyPlanServiceNodeFixture,
           bindingMock,
           bindingConstraintsListFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -504,7 +526,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           lazyPlanServiceNodeFixture,
           bindingMock,
           bindingConstraintsListFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -526,7 +548,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           bindingConstraintsListFixture,
           [bindingMock],
           lazyPlanServiceNodeFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -547,7 +569,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
     let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
+    let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as BasePlanParams;
@@ -594,7 +616,14 @@ describe(addServiceNodeBindingIfContextFree, () => {
           1,
         );
 
-      chainedBindings = false;
+      buildServiceNodeOptionsFixture = {
+        chained: false,
+        isMultiple: true,
+        name: undefined,
+        optional: false,
+        serviceIdentifier: Symbol(),
+        tags: new Map(),
+      };
     });
 
     describe('when called, and binding.isSatisfiedBy() returns true', () => {
@@ -608,7 +637,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           lazyPlanServiceNodeFixture,
           bindingMock,
           bindingConstraintsListFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -641,7 +670,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
     let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
+    let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as BasePlanParams;
@@ -688,7 +717,14 @@ describe(addServiceNodeBindingIfContextFree, () => {
           1,
         );
 
-      chainedBindings = false;
+      buildServiceNodeOptionsFixture = {
+        chained: false,
+        isMultiple: true,
+        name: undefined,
+        optional: false,
+        serviceIdentifier: Symbol(),
+        tags: new Map(),
+      };
     });
 
     describe('when called, and binding.isSatisfiedBy() returns true', () => {
@@ -710,7 +746,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           lazyPlanServiceNodeFixture,
           bindingMock,
           bindingConstraintsListFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -732,7 +768,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           bindingConstraintsListFixture,
           [bindingMock],
           lazyPlanServiceNodeFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -753,7 +789,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
     let lazyPlanServiceNodeFixture: LazyPlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
     let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
+    let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as BasePlanParams;
@@ -800,7 +836,14 @@ describe(addServiceNodeBindingIfContextFree, () => {
           1,
         );
 
-      chainedBindings = false;
+      buildServiceNodeOptionsFixture = {
+        chained: false,
+        isMultiple: true,
+        name: undefined,
+        optional: false,
+        serviceIdentifier: Symbol(),
+        tags: new Map(),
+      };
     });
 
     describe('when called, and binding.isSatisfiedBy() returns true', () => {
@@ -822,7 +865,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           lazyPlanServiceNodeFixture,
           bindingMock,
           bindingConstraintsListFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -844,7 +887,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           bindingConstraintsListFixture,
           [bindingMock],
           lazyPlanServiceNodeFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -865,7 +908,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
     let planServiceNodeFixture: PlanServiceNode;
     let bindingMock: Mocked<Binding<unknown>>;
     let bindingConstraintsListFixture: SingleImmutableLinkedList<InternalBindingConstraints>;
-    let chainedBindings: boolean;
+    let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as BasePlanParams;
@@ -908,7 +951,14 @@ describe(addServiceNodeBindingIfContextFree, () => {
           1,
         );
 
-      chainedBindings = false;
+      buildServiceNodeOptionsFixture = {
+        chained: false,
+        isMultiple: true,
+        name: undefined,
+        optional: false,
+        serviceIdentifier: Symbol(),
+        tags: new Map(),
+      };
     });
 
     describe('when called, and binding.isSatisfiedBy() returns true', () => {
@@ -931,7 +981,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
             planServiceNodeFixture,
             bindingMock,
             bindingConstraintsListFixture,
-            chainedBindings,
+            buildServiceNodeOptionsFixture,
           );
         } catch (error: unknown) {
           result = error;
@@ -956,7 +1006,7 @@ describe(addServiceNodeBindingIfContextFree, () => {
           bindingConstraintsListFixture,
           [bindingMock],
           planServiceNodeFixture,
-          chainedBindings,
+          buildServiceNodeOptionsFixture,
         );
       });
 

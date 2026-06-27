@@ -29,6 +29,7 @@ import { BuildSingleBindingServiceNodeOptionsFixtures } from '../fixtures/BuildS
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
 import { type BuildMultipleBindingServiceNodeOptions } from '../models/BuildMultipleBindingServiceNodeOptions.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type BuildSingleBindingServiceNodeOptions } from '../models/BuildSingleBindingServiceNodeOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
@@ -42,7 +43,7 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
       bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
       serviceBindings: Binding<unknown>[],
       parentNode: BindingNodeParent,
-      chainedBindings: boolean,
+      options: BuildServiceNodeOptions,
     ) => PlanBindingNode[]
   >;
 
@@ -125,7 +126,7 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
           ),
           bindingsFixture,
           expectedServiceNode,
-          optionsFixture.chained,
+          optionsFixture,
         );
       });
 
@@ -220,7 +221,7 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
           ),
           bindingsFixture,
           expectedServiceNode,
-          false,
+          optionsFixture,
         );
       });
 

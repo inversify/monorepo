@@ -53,7 +53,7 @@ const buildServiceNodeBindings: (
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   serviceBindings: Binding<unknown>[],
   parentNode: BindingNodeParent,
-  chainedBindings: boolean,
+  buildServiceNodeOptions: BuildServiceNodeOptions,
 ) => PlanBindingNode[] = curryBuildServiceNodeBindings(subplan);
 
 function circularBuildServiceNodeBindings(
@@ -61,14 +61,14 @@ function circularBuildServiceNodeBindings(
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   serviceBindings: Binding<unknown>[],
   parentNode: BindingNodeParent,
-  chainedBindings: boolean,
+  buildServiceNodeOptions: BuildServiceNodeOptions,
 ): PlanBindingNode[] {
   return buildServiceNodeBindings(
     params,
     bindingConstraintsList,
     serviceBindings,
     parentNode,
-    chainedBindings,
+    buildServiceNodeOptions,
   );
 }
 

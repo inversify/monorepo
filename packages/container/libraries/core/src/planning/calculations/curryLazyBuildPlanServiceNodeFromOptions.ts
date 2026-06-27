@@ -17,7 +17,7 @@ export function curryLazyBuildPlanServiceNodeFromOptions(
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
-    chainedBindings: boolean,
+    buildServiceNodeOptions: BuildServiceNodeOptions,
   ) => PlanBindingNode[],
 ): (
   params: SubplanParams,

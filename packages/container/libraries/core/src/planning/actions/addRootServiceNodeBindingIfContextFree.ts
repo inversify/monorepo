@@ -1,5 +1,6 @@
 import { type Binding } from '../../binding/models/Binding.js';
 import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
+import { buildBuildServiceNodeOptionsFromPlanParamsConstraints } from '../../common/calculations/buildBuildServiceNodeOptionsFromPlanParamsConstraints.js';
 import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { type PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult.js';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList.js';
@@ -30,14 +31,13 @@ export function addRootServiceNodeBindingIfContextFree(
   const bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints> =
     buildPlanBindingConstraintsList(params);
 
-  const chained: boolean =
-    params.rootConstraints.isMultiple && params.rootConstraints.chained;
-
   return addServiceNodeBindingIfContextFree(
     params,
     serviceNode,
     binding,
     bindingConstraintsList,
-    chained,
+    buildBuildServiceNodeOptionsFromPlanParamsConstraints(
+      params.rootConstraints,
+    ),
   );
 }

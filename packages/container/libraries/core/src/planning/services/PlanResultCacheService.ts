@@ -457,7 +457,7 @@ export class PlanResultCacheService {
                 serviceNode,
                 invalidation.binding,
                 context.bindingConstraintsList,
-                context.chainedBindings,
+                context.buildServiceNodeOptions,
               );
 
             if (result.isContextFreeBinding) {

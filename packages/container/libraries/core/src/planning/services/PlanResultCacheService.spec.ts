@@ -1528,7 +1528,14 @@ describe(PlanResultCacheService, () => {
                 {
                   bindingConstraintsList:
                     Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
-                  chainedBindings: false,
+                  buildServiceNodeOptions: {
+                    chained: false,
+                    isMultiple: true,
+                    name: undefined,
+                    optional: false,
+                    serviceIdentifier: Symbol(),
+                    tags: new Map(),
+                  },
                   optionalBindings: false,
                 },
               );
@@ -1753,7 +1760,14 @@ describe(PlanResultCacheService, () => {
                 {
                   bindingConstraintsList:
                     Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
-                  chainedBindings: false,
+                  buildServiceNodeOptions: {
+                    chained: false,
+                    isMultiple: true,
+                    name: undefined,
+                    optional: false,
+                    serviceIdentifier: Symbol(),
+                    tags: new Map(),
+                  },
                   optionalBindings: false,
                 },
               );
@@ -1983,7 +1997,14 @@ describe(PlanResultCacheService, () => {
                 {
                   bindingConstraintsList:
                     Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
-                  chainedBindings: false,
+                  buildServiceNodeOptions: {
+                    chained: false,
+                    isMultiple: true,
+                    name: undefined,
+                    optional: false,
+                    serviceIdentifier: Symbol(),
+                    tags: new Map(),
+                  },
                   optionalBindings: false,
                 },
               );
@@ -2075,7 +2096,14 @@ describe(PlanResultCacheService, () => {
           nonCachedServiceNodeContextFixture = {
             bindingConstraintsList:
               Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
-            chainedBindings: false,
+            buildServiceNodeOptions: {
+              chained: false,
+              isMultiple: true,
+              name: undefined,
+              optional: false,
+              serviceIdentifier: Symbol(),
+              tags: new Map(),
+            },
             optionalBindings: false,
           };
 
@@ -2117,7 +2145,7 @@ describe(PlanResultCacheService, () => {
             lazyPlanServiceNodeFixture,
             planResultCacheServiceInvalidationFixture.binding,
             nonCachedServiceNodeContextFixture.bindingConstraintsList,
-            nonCachedServiceNodeContextFixture.chainedBindings,
+            nonCachedServiceNodeContextFixture.buildServiceNodeOptions,
           );
         });
 
@@ -2173,7 +2201,14 @@ describe(PlanResultCacheService, () => {
           nonCachedServiceNodeContextFixture = {
             bindingConstraintsList:
               Symbol() as unknown as SingleImmutableLinkedList<InternalBindingConstraints>,
-            chainedBindings: false,
+            buildServiceNodeOptions: {
+              chained: false,
+              isMultiple: true,
+              name: undefined,
+              optional: false,
+              serviceIdentifier: Symbol(),
+              tags: new Map(),
+            },
             optionalBindings: false,
           };
 
@@ -2210,7 +2245,7 @@ describe(PlanResultCacheService, () => {
             lazyPlanServiceNodeFixture,
             planResultCacheServiceInvalidationFixture.binding,
             nonCachedServiceNodeContextFixture.bindingConstraintsList,
-            nonCachedServiceNodeContextFixture.chainedBindings,
+            nonCachedServiceNodeContextFixture.buildServiceNodeOptions,
           );
         });
 

@@ -22,7 +22,7 @@ export function curryBuildPlanServiceNodeFromOptions(
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     serviceBindings: Binding<unknown>[],
     parentNode: BindingNodeParent,
-    chainedBindings: boolean,
+    buildServiceNodeOptions: BuildServiceNodeOptions,
   ) => PlanBindingNode[],
 ): (
   params: SubplanParams,
@@ -68,7 +68,7 @@ export function curryBuildPlanServiceNodeFromOptions(
         updatedBindingConstraintsList,
         filteredServiceBindings,
         serviceNode,
-        chained,
+        options,
       ),
     );
 
