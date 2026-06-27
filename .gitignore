@@ -17,5 +17,7 @@
 /pnpm-lock.yaml
 /yarn.lock
 
+/.pnpm-store
+
 ### Sponsorkit cache
 assets/.cache.json

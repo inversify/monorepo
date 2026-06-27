@@ -37,6 +37,7 @@ import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.
 import { type GetPlanOptions } from '../models/GetPlanOptions.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
+import { type NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext.js';
 import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
 import { type PlanResult } from '../models/PlanResult.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
@@ -282,9 +283,9 @@ describe(currySubplan, () => {
           expect.any(LazyPlanServiceNode),
           {
             bindingConstraintsList: bindingConstraintsListFixture,
-            chainedBindings: false,
+            buildServiceNodeOptions: buildServiceNodeOptionsFixture,
             optionalBindings: false,
-          },
+          } satisfies NonCachedServiceNodeContext,
         );
       });
 
@@ -372,9 +373,9 @@ describe(currySubplan, () => {
           expect.any(LazyPlanServiceNode),
           {
             bindingConstraintsList: bindingConstraintsListFixture,
-            chainedBindings: false,
+            buildServiceNodeOptions: buildServiceNodeOptionsFixture,
             optionalBindings: false,
-          },
+          } satisfies NonCachedServiceNodeContext,
         );
       });
 
@@ -557,9 +558,9 @@ describe(currySubplan, () => {
           expect.any(LazyPlanServiceNode),
           {
             bindingConstraintsList: bindingConstraintsListFixture,
-            chainedBindings: false,
+            buildServiceNodeOptions: buildServiceNodeOptionsFixture,
             optionalBindings: false,
-          },
+          } satisfies NonCachedServiceNodeContext,
         );
       });
 
@@ -671,9 +672,9 @@ describe(currySubplan, () => {
           expect.any(LazyPlanServiceNode),
           {
             bindingConstraintsList: bindingConstraintsListFixture,
-            chainedBindings: false,
+            buildServiceNodeOptions: buildServiceNodeOptionsFixture,
             optionalBindings: false,
-          },
+          } satisfies NonCachedServiceNodeContext,
         );
       });
 
@@ -769,9 +770,9 @@ describe(currySubplan, () => {
           expect.any(LazyPlanServiceNode),
           {
             bindingConstraintsList: bindingConstraintsListFixture,
-            chainedBindings: false,
+            buildServiceNodeOptions: buildServiceNodeOptionsFixture,
             optionalBindings: false,
-          },
+          } satisfies NonCachedServiceNodeContext,
         );
       });
 
@@ -966,9 +967,9 @@ describe(currySubplan, () => {
           expect.any(LazyPlanServiceNode),
           {
             bindingConstraintsList: bindingConstraintsListFixture,
-            chainedBindings: false,
+            buildServiceNodeOptions: buildServiceNodeOptionsFixture,
             optionalBindings: false,
-          },
+          } satisfies NonCachedServiceNodeContext,
         );
       });
 
@@ -1070,9 +1071,9 @@ describe(currySubplan, () => {
           expect.any(LazyPlanServiceNode),
           {
             bindingConstraintsList: bindingConstraintsListFixture,
-            chainedBindings: false,
+            buildServiceNodeOptions: buildServiceNodeOptionsFixture,
             optionalBindings: false,
-          },
+          } satisfies NonCachedServiceNodeContext,
         );
       });
 
