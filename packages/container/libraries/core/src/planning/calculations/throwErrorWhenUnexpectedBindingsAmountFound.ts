@@ -11,11 +11,12 @@ import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKin
 import { type MetadataTag } from '../../metadata/models/MetadataTag.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 
+const SINGLE_SERVICE_NODE_BINDINGS: number = 1;
+
 export function throwErrorWhenUnexpectedBindingsAmountFound(
   bindingNodes: PlanBindingNode[] | PlanBindingNode | undefined,
   isOptional: boolean,
   bindingConstraintNode: SingleImmutableLinkedListNode<InternalBindingConstraints>,
-  serviceRedirections: readonly ServiceIdentifier[],
 ): void {
   const serviceIdentifier: ServiceIdentifier =
     bindingConstraintNode.elem.serviceIdentifier;
@@ -29,7 +30,6 @@ export function throwErrorWhenUnexpectedBindingsAmountFound(
       serviceIdentifier,
       parentServiceIdentifier,
       bindingConstraintNode.elem,
-      serviceRedirections,
     );
   } else {
     throwErrorWhenSingleUnexpectedBindingFound(
@@ -38,7 +38,6 @@ export function throwErrorWhenUnexpectedBindingsAmountFound(
       serviceIdentifier,
       parentServiceIdentifier,
       bindingConstraintNode.elem,
-      serviceRedirections,
     );
   }
 }
@@ -47,14 +46,10 @@ function throwBindingNotFoundError(
   serviceIdentifier: ServiceIdentifier,
   parentServiceIdentifier: ServiceIdentifier | undefined,
   bindingConstraints: InternalBindingConstraints,
-  serviceRedirections: readonly ServiceIdentifier[],
 ): never {
-  const lastResolvedServiceIdentifier: ServiceIdentifier =
-    serviceRedirections[serviceRedirections.length - 1] ?? serviceIdentifier;
+  const errorMessage: string = `No bindings found for service: "${stringifyServiceIdentifier(serviceIdentifier)}".
 
-  const errorMessage: string = `No bindings found for service: "${stringifyServiceIdentifier(lastResolvedServiceIdentifier)}".
-
-Trying to resolve bindings for "${stringifyParentServiceIdentifier(serviceIdentifier, parentServiceIdentifier)}".${stringifyServiceRedirections(serviceRedirections)}${stringifyBindingConstraints(bindingConstraints)}`;
+Trying to resolve bindings for "${stringifyParentServiceIdentifier(serviceIdentifier, parentServiceIdentifier)}".${stringifyBindingConstraints(bindingConstraints)}`;
 
   throw new InversifyCoreError(InversifyCoreErrorKind.planning, errorMessage);
 }
@@ -65,22 +60,21 @@ function throwErrorWhenMultipleUnexpectedBindingsAmountFound(
   serviceIdentifier: ServiceIdentifier,
   parentServiceIdentifier: ServiceIdentifier | undefined,
   bindingConstraints: InternalBindingConstraints,
-  serviceRedirections: readonly ServiceIdentifier[],
 ): void {
+  if (bindingNodes.length === SINGLE_SERVICE_NODE_BINDINGS) {
+    return;
+  }
+
   if (bindingNodes.length === 0) {
     if (!isOptional) {
       throwBindingNotFoundError(
         serviceIdentifier,
         parentServiceIdentifier,
         bindingConstraints,
-        serviceRedirections,
       );
     }
   } else {
-    const lastResolvedServiceIdentifier: ServiceIdentifier =
-      serviceRedirections[serviceRedirections.length - 1] ?? serviceIdentifier;
-
-    const errorMessage: string = `Ambiguous bindings found for service: "${stringifyServiceIdentifier(lastResolvedServiceIdentifier)}".${stringifyServiceRedirections(serviceRedirections)}
+    const errorMessage: string = `Ambiguous bindings found for service: "${stringifyServiceIdentifier(serviceIdentifier)}".
 
 Registered bindings:
 
@@ -98,14 +92,12 @@ function throwErrorWhenSingleUnexpectedBindingFound(
   serviceIdentifier: ServiceIdentifier,
   parentServiceIdentifier: ServiceIdentifier | undefined,
   bindingConstraints: InternalBindingConstraints,
-  serviceRedirections: readonly ServiceIdentifier[],
 ): void {
   if (bindingNode === undefined && !isOptional) {
     throwBindingNotFoundError(
       serviceIdentifier,
       parentServiceIdentifier,
       bindingConstraints,
-      serviceRedirections,
     );
   }
 }
@@ -134,19 +126,4 @@ function stringifyBindingConstraints(
 Binding constraints:
 - service identifier: ${stringifyServiceIdentifier(bindingConstraints.serviceIdentifier)}
 - name: ${bindingConstraints.name?.toString() ?? '-'}${stringifiedTags}`;
-}
-
-function stringifyServiceRedirections(
-  serviceRedirections: readonly ServiceIdentifier[],
-): string {
-  return serviceRedirections.length === 0
-    ? ''
-    : `
-
-- service redirections:
-  - ${serviceRedirections
-    .map((serviceIdentifier: ServiceIdentifier) =>
-      stringifyServiceIdentifier(serviceIdentifier),
-    )
-    .join('\n  - ')}`;
 }

@@ -12,6 +12,7 @@ vitest.mock(import('./resolveServiceRedirectionBindingNode.js'));
 
 import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures.js';
 import { ServiceRedirectionBindingFixtures } from '../../binding/fixtures/ServiceRedirectionBindingFixtures.js';
+import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
 import { type LeafBindingNode } from '../../planning/models/LeafBindingNode.js';
@@ -27,9 +28,17 @@ describe(resolveSingleBindingServiceNode, () => {
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as ResolutionParams;
+
+      const binding: ServiceRedirectionBinding<unknown> =
+        ServiceRedirectionBindingFixtures.any;
+
       serviceRedirectionBindingNodeFixture = {
         binding: ServiceRedirectionBindingFixtures.any,
-        redirections: [],
+        redirection: {
+          bindings: [],
+          isContextFree: true,
+          serviceIdentifier: binding.targetServiceIdentifier,
+        },
       };
     });
 

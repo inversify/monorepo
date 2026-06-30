@@ -1,11 +1,12 @@
 import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
 import { type BaseBindingNode } from './BaseBindingNode.js';
-import { type PlanBindingNode } from './PlanBindingNode.js';
+import { type PlanServiceNode } from './PlanServiceNode.js';
 
 export interface PlanServiceRedirectionBindingNode<
-  TBinding extends
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ServiceRedirectionBinding<any> = ServiceRedirectionBinding<any>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  TActivated = any,
+  TBinding extends ServiceRedirectionBinding<TActivated> =
+    ServiceRedirectionBinding<TActivated>,
 > extends BaseBindingNode<TBinding> {
-  redirections: PlanBindingNode[];
+  redirection: PlanServiceNode;
 }

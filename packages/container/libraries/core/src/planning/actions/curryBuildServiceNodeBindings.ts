@@ -1,11 +1,7 @@
 import { type ServiceIdentifier } from '@inversifyjs/common';
 
 import { type Binding } from '../../binding/models/Binding.js';
-import { type BindingConstraints } from '../../binding/models/BindingConstraints.js';
-import {
-  BindingConstraintsImplementation,
-  type InternalBindingConstraints,
-} from '../../binding/models/BindingConstraintsImplementation.js';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
 import {
   type BindingType,
   bindingTypeValues,
@@ -17,7 +13,6 @@ import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBin
 import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
 import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
-import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
 import { isPlanServiceRedirectionBindingNode } from '../calculations/isPlanServiceRedirectionBindingNode.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
@@ -28,10 +23,14 @@ import { FactoryBindingNodeImplementation } from '../models/FactoryBindingNodeIm
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { InstanceBindingNodeImplementation } from '../models/InstanceBindingNodeImplementation.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
 import { ResolvedValueBindingNodeImplementation } from '../models/ResolvedValueBindingNodeImplementation.js';
-import { type SubplanParams } from '../models/SubplanParams.js';
+import {
+  type RedirectionSubplanParams,
+  type SubplanParams,
+} from '../models/SubplanParams.js';
 
 export function curryBuildServiceNodeBindings(
   subplan: (
@@ -143,9 +142,7 @@ export function curryBuildServiceNodeBindings(
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     binding: ServiceRedirectionBinding<unknown>,
     buildServiceNodeOptions: BuildServiceNodeOptions,
-  ) => PlanBindingNode = curryBuildServiceRedirectionPlanBindingNode(
-    buildServiceNodeBindings,
-  );
+  ) => PlanBindingNode = curryBuildServiceRedirectionPlanBindingNode(subplan);
 
   return buildServiceNodeBindings;
 }
@@ -213,13 +210,10 @@ function curryBuildResolvedValuePlanBindingNode(
 }
 
 function curryBuildServiceRedirectionPlanBindingNode(
-  buildServiceNodeBindings: (
-    params: BasePlanParams,
+  subplan: (
+    params: SubplanParams,
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
-    serviceBindings: Binding<unknown>[],
-    parentNode: BindingNodeParent,
-    buildServiceNodeOptions: BuildServiceNodeOptions,
-  ) => PlanBindingNode[],
+  ) => PlanBindingNode,
 ): (
   params: BasePlanParams,
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
@@ -234,29 +228,20 @@ function curryBuildServiceRedirectionPlanBindingNode(
   ): PlanBindingNode => {
     const childNode: PlanServiceRedirectionBindingNode = {
       binding,
-      redirections: [],
+      redirection: undefined as unknown as PlanServiceNode,
     };
 
-    const bindingConstraints: BindingConstraints =
-      new BindingConstraintsImplementation(bindingConstraintsList.last);
+    const subplanParams: RedirectionSubplanParams = {
+      autobindOptions: params.autobindOptions,
+      buildServiceNodeOptions: {
+        ...buildServiceNodeOptions,
+        serviceIdentifier: binding.targetServiceIdentifier,
+      },
+      node: childNode,
+      operations: params.operations,
+      servicesBranch: params.servicesBranch,
+    };
 
-    const filteredServiceBindings: Binding<unknown>[] =
-      buildFilteredServiceBindings(params, bindingConstraints, {
-        chained:
-          buildServiceNodeOptions.isMultiple && buildServiceNodeOptions.chained,
-        customServiceIdentifier: binding.targetServiceIdentifier,
-      });
-
-    childNode.redirections.push(
-      ...buildServiceNodeBindings(
-        params,
-        bindingConstraintsList,
-        filteredServiceBindings,
-        childNode,
-        buildServiceNodeOptions,
-      ),
-    );
-
-    return childNode;
+    return subplan(subplanParams, bindingConstraintsList);
   };
 }

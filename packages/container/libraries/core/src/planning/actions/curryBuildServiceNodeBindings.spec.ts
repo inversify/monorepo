@@ -9,16 +9,10 @@ import {
   vitest,
 } from 'vitest';
 
-vitest.mock(import('../calculations/buildFilteredServiceBindings.js'));
-
 import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures.js';
 import { ResolvedValueBindingFixtures } from '../../binding/fixtures/ResolvedValueBindingFixtures.js';
 import { ServiceRedirectionBindingFixtures } from '../../binding/fixtures/ServiceRedirectionBindingFixtures.js';
-import { type BindingConstraints } from '../../binding/models/BindingConstraints.js';
-import {
-  BindingConstraintsImplementation,
-  type InternalBindingConstraints,
-} from '../../binding/models/BindingConstraintsImplementation.js';
+import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
 import { bindingScopeValues } from '../../binding/models/BindingScope.js';
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
@@ -26,8 +20,8 @@ import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedi
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
-import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
+import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
@@ -125,7 +119,7 @@ describe(curryBuildServiceNodeBindings, () => {
         );
       });
 
-      it('should call subplan with correct params', () => {
+      it('should call subplan()', () => {
         const expectedSubplanParams: SubplanParams = {
           autobindOptions: basePlanParamsMock.autobindOptions,
           node: {
@@ -216,7 +210,7 @@ describe(curryBuildServiceNodeBindings, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call subplan with correct params', () => {
+      it('should call subplan()', () => {
         const expectedSubplanParams: SubplanParams = {
           autobindOptions: basePlanParamsMock.autobindOptions,
           node: {
@@ -276,30 +270,30 @@ describe(curryBuildServiceNodeBindings, () => {
     });
 
     describe('when called', () => {
+      let buildServiceNodeOptionsFixture: BuildServiceNodeOptions;
       let planBindingNodeFixture: PlanBindingNode;
 
       let result: unknown;
 
       beforeAll(() => {
+        buildServiceNodeOptionsFixture = {
+          chained: false,
+          isMultiple: true,
+          name: undefined,
+          optional: false,
+          serviceIdentifier: Symbol(),
+          tags: new Map(),
+        };
         planBindingNodeFixture = Symbol() as unknown as PlanBindingNode;
 
         subplanMock.mockReturnValueOnce(planBindingNodeFixture);
-
-        vitest.mocked(buildFilteredServiceBindings).mockReturnValueOnce([]);
 
         result = curryBuildServiceNodeBindings(subplanMock)(
           basePlanParamsMock,
           bindingConstraintsListFixture,
           [serviceRedirectionBindingFixture],
           parentNodeFixture,
-          {
-            chained: false,
-            isMultiple: true,
-            name: undefined,
-            optional: false,
-            serviceIdentifier: Symbol(),
-            tags: new Map(),
-          },
+          buildServiceNodeOptionsFixture,
         );
       });
 
@@ -307,29 +301,31 @@ describe(curryBuildServiceNodeBindings, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call buildFilteredServiceBindings()', () => {
-        const expectedBindingConstraints: BindingConstraints =
-          new BindingConstraintsImplementation(
-            bindingConstraintsListFixture.last,
-          );
-
-        expect(buildFilteredServiceBindings).toHaveBeenCalledExactlyOnceWith(
-          basePlanParamsMock,
-          expectedBindingConstraints,
-          {
-            chained: false,
-            customServiceIdentifier:
+      it('should call subplan()', () => {
+        const expectedSubplanParams: SubplanParams = {
+          autobindOptions: basePlanParamsMock.autobindOptions,
+          buildServiceNodeOptions: {
+            ...buildServiceNodeOptionsFixture,
+            serviceIdentifier:
               serviceRedirectionBindingFixture.targetServiceIdentifier,
           },
+          node: {
+            binding: serviceRedirectionBindingFixture,
+            redirection: undefined as unknown as PlanServiceNode,
+          },
+          operations: basePlanParamsMock.operations,
+          servicesBranch: basePlanParamsMock.servicesBranch,
+        };
+
+        expect(subplanMock).toHaveBeenCalledExactlyOnceWith(
+          expectedSubplanParams,
+          bindingConstraintsListFixture,
         );
       });
 
       it('should return PlanBindingNode[]', () => {
         const expectedPlanBindingNodes: PlanBindingNode[] = [
-          {
-            binding: serviceRedirectionBindingFixture,
-            redirections: [],
-          },
+          planBindingNodeFixture,
         ];
 
         expect(result).toStrictEqual(expectedPlanBindingNodes);

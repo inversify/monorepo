@@ -23,9 +23,7 @@ import { inject } from '../../metadata/decorators/inject.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
 import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
 import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
-import { type FactoryBindingNode } from '../models/FactoryBindingNode.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
-import { type LeafBindingNode } from '../models/LeafBindingNode.js';
 import { type PlanParamsConstraint } from '../models/PlanParamsConstraint.js';
 import { type PlanResult } from '../models/PlanResult.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
@@ -233,16 +231,15 @@ function buildServiceRedirectionToLeafBindingPlanResult(
 
   const serviceRedirectionBindingNode: PlanServiceRedirectionBindingNode = {
     binding: serviceRedirectionBinding,
-    redirections: [],
-  };
-
-  serviceRedirectionBindingNode.redirections.push(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    expect.objectContaining<LeafBindingNode | FactoryBindingNode>({
-      binding: leafBinding,
-      resolve: expect.any(Function),
+    redirection: expect.objectContaining({
+      bindings: expect.objectContaining({
+        binding: leafBinding,
+        resolve: expect.any(Function),
+      }),
+      isContextFree: true,
+      serviceIdentifier: serviceRedirectionBinding.targetServiceIdentifier,
     }),
-  );
+  };
 
   (planServiceNode as Writable<PlanServiceNode>).bindings =
     serviceRedirectionBindingNode;
@@ -504,7 +501,7 @@ describe(plan, () => {
 Trying to resolve bindings for "${ServiceIds.nonExistent} (Root service)".
 
 Binding constraints:
-- service identifier: non-existent-service-id
+- service identifier: ${ServiceIds.nonExistent}
 - name: -`,
       },
     ],
@@ -518,13 +515,10 @@ Binding constraints:
         kind: InversifyCoreErrorKind.planning,
         message: `No bindings found for service: "${ServiceIds.nonExistent}".
 
-Trying to resolve bindings for "${ServiceIds.serviceRedirectionToNonExistent} (Root service)".
-
-- service redirections:
-  - non-existent-service-id
+Trying to resolve bindings for "${ServiceIds.serviceRedirectionToNonExistent}".
 
 Binding constraints:
-- service identifier: service-redirection-to-non-existent-service-id
+- service identifier: ${ServiceIds.nonExistent}
 - name: -`,
       },
     ],

@@ -1222,8 +1222,8 @@ describe(PlanResultCacheService, () => {
                     childPlanServiceNodeFixture.serviceIdentifier,
                   type: bindingTypeValues.ServiceRedirection,
                 },
-                redirections: [
-                  {
+                redirection: {
+                  bindings: {
                     binding: {
                       cache: {
                         isRight: false,
@@ -1255,7 +1255,10 @@ describe(PlanResultCacheService, () => {
                     params: [childLazyPlanServiceNodeFixture],
                     resolve: () => undefined,
                   },
-                ],
+                  isContextFree: true,
+                  serviceIdentifier:
+                    childPlanServiceNodeFixture.serviceIdentifier,
+                },
               },
               isContextFree: true,
               serviceIdentifier: 'service-id',
@@ -1536,7 +1539,6 @@ describe(PlanResultCacheService, () => {
                     serviceIdentifier: Symbol(),
                     tags: new Map(),
                   },
-                  optionalBindings: false,
                 },
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
@@ -1768,7 +1770,6 @@ describe(PlanResultCacheService, () => {
                     serviceIdentifier: Symbol(),
                     tags: new Map(),
                   },
-                  optionalBindings: false,
                 },
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
@@ -2005,7 +2006,6 @@ describe(PlanResultCacheService, () => {
                     serviceIdentifier: Symbol(),
                     tags: new Map(),
                   },
-                  optionalBindings: false,
                 },
               );
               planResultCacheService.set(optionsFixture, planResultFixture);
@@ -2104,7 +2104,6 @@ describe(PlanResultCacheService, () => {
               serviceIdentifier: Symbol(),
               tags: new Map(),
             },
-            optionalBindings: false,
           };
 
           planServiceNodeBindingAddedResultFixture = {
@@ -2209,7 +2208,6 @@ describe(PlanResultCacheService, () => {
               serviceIdentifier: Symbol(),
               tags: new Map(),
             },
-            optionalBindings: false,
           };
 
           planResultCacheService = new PlanResultCacheService();

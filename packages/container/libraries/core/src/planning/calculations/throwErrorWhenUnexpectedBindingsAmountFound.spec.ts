@@ -59,7 +59,6 @@ describe(throwErrorWhenUnexpectedBindingsAmountFound, () => {
             bindingsFixture,
             isOptionalFixture,
             bindingConstraintsNodeFixture,
-            [],
           );
         } catch (error: unknown) {
           result = error;
@@ -144,7 +143,6 @@ Binding constraints:
             bindingsFixture,
             isOptionalFixture,
             bindingConstraintsNodeFixture,
-            [],
           );
         } catch (error: unknown) {
           result = error;
@@ -208,7 +206,6 @@ Binding constraints:
           bindingsFixture,
           isOptionalFixture,
           bindingConstraintsNodeFixture,
-          [],
         );
       });
 
@@ -321,7 +318,6 @@ Binding constraints:
             bindingsFixture,
             isOptionalFixture,
             bindingConstraintsNodeFixture,
-            [],
           );
         } catch (error: unknown) {
           result = error;

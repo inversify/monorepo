@@ -284,7 +284,6 @@ describe(currySubplan, () => {
           {
             bindingConstraintsList: bindingConstraintsListFixture,
             buildServiceNodeOptions: buildServiceNodeOptionsFixture,
-            optionalBindings: false,
           } satisfies NonCachedServiceNodeContext,
         );
       });
@@ -374,7 +373,6 @@ describe(currySubplan, () => {
           {
             bindingConstraintsList: bindingConstraintsListFixture,
             buildServiceNodeOptions: buildServiceNodeOptionsFixture,
-            optionalBindings: false,
           } satisfies NonCachedServiceNodeContext,
         );
       });
@@ -559,7 +557,6 @@ describe(currySubplan, () => {
           {
             bindingConstraintsList: bindingConstraintsListFixture,
             buildServiceNodeOptions: buildServiceNodeOptionsFixture,
-            optionalBindings: false,
           } satisfies NonCachedServiceNodeContext,
         );
       });
@@ -673,7 +670,6 @@ describe(currySubplan, () => {
           {
             bindingConstraintsList: bindingConstraintsListFixture,
             buildServiceNodeOptions: buildServiceNodeOptionsFixture,
-            optionalBindings: false,
           } satisfies NonCachedServiceNodeContext,
         );
       });
@@ -771,7 +767,6 @@ describe(currySubplan, () => {
           {
             bindingConstraintsList: bindingConstraintsListFixture,
             buildServiceNodeOptions: buildServiceNodeOptionsFixture,
-            optionalBindings: false,
           } satisfies NonCachedServiceNodeContext,
         );
       });
@@ -968,7 +963,6 @@ describe(currySubplan, () => {
           {
             bindingConstraintsList: bindingConstraintsListFixture,
             buildServiceNodeOptions: buildServiceNodeOptionsFixture,
-            optionalBindings: false,
           } satisfies NonCachedServiceNodeContext,
         );
       });
@@ -1072,7 +1066,6 @@ describe(currySubplan, () => {
           {
             bindingConstraintsList: bindingConstraintsListFixture,
             buildServiceNodeOptions: buildServiceNodeOptionsFixture,
-            optionalBindings: false,
           } satisfies NonCachedServiceNodeContext,
         );
       });

@@ -43,9 +43,10 @@ function registerSingletonBinding(
   singletonDependencies: SingletonScopedBinding[],
 ): void {
   if (isPlanServiceRedirectionBindingNode(bindingNode)) {
-    for (const redirection of bindingNode.redirections) {
-      registerSingletonBinding(redirection, singletonDependencies);
-    }
+    registerServiceSingletonScopedBindings(
+      bindingNode.redirection,
+      singletonDependencies,
+    );
 
     return;
   }

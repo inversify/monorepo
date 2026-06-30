@@ -13,7 +13,7 @@ describe(isPlanServiceRedirectionBindingNode, () => {
     ],
     [
       'a PlanServiceRedirectionBindingNode',
-      { redirections: [] } as Partial<PlanBindingNode> as PlanBindingNode,
+      { redirection: Symbol() } as Partial<PlanBindingNode> as PlanBindingNode,
       true,
     ],
   ])(

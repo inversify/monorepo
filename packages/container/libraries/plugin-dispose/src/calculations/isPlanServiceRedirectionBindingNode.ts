@@ -3,11 +3,10 @@ import {
   type PlanServiceRedirectionBindingNode,
 } from '@inversifyjs/core';
 
+const REDIRECTION_KEY: keyof PlanServiceRedirectionBindingNode = 'redirection';
+
 export function isPlanServiceRedirectionBindingNode(
   node: PlanBindingNode,
 ): node is PlanServiceRedirectionBindingNode {
-  return (
-    (node as Partial<PlanServiceRedirectionBindingNode>).redirections !==
-    undefined
-  );
+  return REDIRECTION_KEY in node;
 }

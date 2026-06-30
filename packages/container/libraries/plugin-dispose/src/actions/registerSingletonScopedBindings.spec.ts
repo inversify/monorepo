@@ -11,6 +11,7 @@ import {
   type PlanServiceNode,
   type PlanServiceRedirectionBindingNode,
   type ResolvedValueBindingNode,
+  type ServiceRedirectionBinding,
 } from '@inversifyjs/core';
 
 vitest.mock(import('./getPluginDisposeBinding.js'));
@@ -647,16 +648,13 @@ describe(registerSingletonScopedBindings, () => {
         serviceIdentifier: 'service-id',
       };
 
-      planServiceRedirectionBindingNode = {
-        binding: {
-          id: 1,
-          isSatisfiedBy: () => true,
-          moduleId: undefined,
-          serviceIdentifier: 'service-redirection-service-id',
-          targetServiceIdentifier: 'constant-value-service-id',
-          type: bindingTypeValues.ServiceRedirection,
-        },
-        redirections: [],
+      const binding: ServiceRedirectionBinding<unknown> = {
+        id: 1,
+        isSatisfiedBy: () => true,
+        moduleId: undefined,
+        serviceIdentifier: 'service-redirection-service-id',
+        targetServiceIdentifier: 'constant-value-service-id',
+        type: bindingTypeValues.ServiceRedirection,
       };
 
       leafBindingNode = {
@@ -678,10 +676,17 @@ describe(registerSingletonScopedBindings, () => {
         resolve: () => undefined,
       };
 
+      planServiceRedirectionBindingNode = {
+        binding,
+        redirection: {
+          bindings: [leafBindingNode],
+          isContextFree: true,
+          serviceIdentifier: binding.targetServiceIdentifier,
+        },
+      };
+
       (serviceNode as Writable<PlanServiceNode>).bindings =
         planServiceRedirectionBindingNode;
-
-      planServiceRedirectionBindingNode.redirections.push(leafBindingNode);
 
       planResultFixture = {
         tree: {
