@@ -239,9 +239,7 @@ export default function buildMermaidFlowChart(
     lines.push(`${parentNodeId} --> ${nodeId}`);
 
     // Process redirected bindings
-    for (const redirection of node.redirections) {
-      processBindingNode(redirection, nodeId);
-    }
+    processServiceNode(node.redirection);
   }
 
   /**

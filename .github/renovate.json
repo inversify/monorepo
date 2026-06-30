@@ -100,7 +100,7 @@
     {
       "description": "Quarantine packages with current known issues",
       "enabled": false,
-      "matchPackageNames": []
+      "matchPackageNames": ["turbo"]
     },
     {
       "description": "Ignore inversify version-aliased dependencies (e.g. inversify6, inversify7)",

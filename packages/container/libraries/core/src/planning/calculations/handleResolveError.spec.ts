@@ -47,12 +47,12 @@ function buildResolvedValueBindingNode(
 }
 
 function buildServiceRedirectionBindingNode(
-  redirections: PlanServiceRedirectionBindingNode['redirections'],
+  redirection: PlanServiceNode,
 ): PlanServiceRedirectionBindingNode {
   return {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     binding: { type: bindingTypeValues.Instance } as any,
-    redirections,
+    redirection,
   };
 }
 
@@ -301,14 +301,13 @@ describe(handleResolveError, () => {
         buildInstanceBindingNode([serviceNodeB]);
 
       // Redirection binding that redirects A to either B or C
-      const redirectionBinding: PlanServiceRedirectionBindingNode =
-        buildServiceRedirectionBindingNode([
-          (serviceNodeB as { bindings: InstanceBindingNode }).bindings,
-          (serviceNodeC as { bindings: InstanceBindingNode }).bindings,
-        ]);
+      const redirectionBindingToB: PlanServiceRedirectionBindingNode =
+        buildServiceRedirectionBindingNode(serviceNodeB);
+      const redirectionBindingToC: PlanServiceRedirectionBindingNode =
+        buildServiceRedirectionBindingNode(serviceNodeC);
 
       const serviceNodeA: PlanServiceNode = {
-        bindings: redirectionBinding,
+        bindings: [redirectionBindingToB, redirectionBindingToC],
         isContextFree: true,
         serviceIdentifier: 'A',
       };

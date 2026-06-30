@@ -94,9 +94,7 @@ function getChildServiceNodes(serviceNode: PlanServiceNode): PlanServiceNode[] {
     bindingNode: PlanBindingNode,
   ): void => {
     if (isPlanServiceRedirectionBindingNode(bindingNode)) {
-      for (const redirection of bindingNode.redirections) {
-        processBindingNode(redirection);
-      }
+      children.push(...getChildServiceNodes(bindingNode.redirection));
       return;
     }
 

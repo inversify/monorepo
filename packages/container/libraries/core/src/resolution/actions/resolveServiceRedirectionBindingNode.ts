@@ -2,6 +2,7 @@ import { type Factory } from '../../binding/models/Factory.js';
 import { isPlanServiceRedirectionBindingNode } from '../../planning/calculations/isPlanServiceRedirectionBindingNode.js';
 import { type FactoryBindingNode } from '../../planning/models/FactoryBindingNode.js';
 import { type LeafBindingNode } from '../../planning/models/LeafBindingNode.js';
+import { type PlanBindingNode } from '../../planning/models/PlanBindingNode.js';
 import { type PlanServiceNodeParent } from '../../planning/models/PlanServiceNodeParent.js';
 import { type PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
@@ -15,25 +16,27 @@ function resolveBindingNode<TActivated>(
     | (TActivated extends Factory<unknown>
         ? FactoryBindingNode<TActivated>
         : never),
-): Resolved<TActivated> {
-  return planBindingNode.resolve(params) as Resolved<TActivated>;
+): unknown[] {
+  if (isPlanServiceRedirectionBindingNode(planBindingNode)) {
+    return resolveServiceRedirectionBindingNode(params, planBindingNode);
+  }
+
+  return [planBindingNode.resolve(params) as Resolved<TActivated>];
 }
 
 export function resolveServiceRedirectionBindingNode(
   params: ResolutionParams,
   node: PlanServiceRedirectionBindingNode,
 ): unknown[] {
-  const resolvedValues: unknown[] = [];
-
-  for (const redirection of node.redirections) {
-    if (isPlanServiceRedirectionBindingNode(redirection)) {
-      resolvedValues.push(
-        ...resolveServiceRedirectionBindingNode(params, redirection),
-      );
-    } else {
-      resolvedValues.push(resolveBindingNode(params, redirection));
-    }
+  if (node.redirection.bindings === undefined) {
+    return [];
   }
 
-  return resolvedValues;
+  if (Array.isArray(node.redirection.bindings)) {
+    return node.redirection.bindings.flatMap((binding: PlanBindingNode) =>
+      resolveBindingNode(params, binding),
+    );
+  }
+
+  return resolveBindingNode(params, node.redirection.bindings);
 }

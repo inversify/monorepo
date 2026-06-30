@@ -1,7 +1,9 @@
 import { beforeAll, describe, expect, it, type Mocked, vitest } from 'vitest';
 
+import { ServiceRedirectionBindingFixtures } from '../../binding/fixtures/ServiceRedirectionBindingFixtures.js';
 import { bindingScopeValues } from '../../binding/models/BindingScope.js';
 import { bindingTypeValues } from '../../binding/models/BindingType.js';
+import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
 import { type ConstantValueBindingNode } from '../../planning/models/ConstantValueBindingNode.js';
 import { type PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
@@ -16,27 +18,14 @@ describe(resolveServiceRedirectionBindingNode, () => {
 
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as ResolutionParams;
-      nodeFixture = {
-        binding: {
-          id: 1,
-          isSatisfiedBy: () => true,
-          moduleId: undefined,
-          serviceIdentifier: 'service-id',
-          targetServiceIdentifier: 'target-service-id',
-          type: bindingTypeValues.ServiceRedirection,
-        },
-        redirections: [],
-      };
-      nodeRedirectionFixture = {
-        binding: {
-          id: 1,
-          isSatisfiedBy: () => true,
-          moduleId: undefined,
-          serviceIdentifier: 'target-service-id',
-          targetServiceIdentifier: 'another-target-service-id',
-          type: bindingTypeValues.ServiceRedirection,
-        },
-        redirections: [],
+
+      const binding: ServiceRedirectionBinding<unknown> =
+        ServiceRedirectionBindingFixtures.any;
+
+      const redirectionBinding: ServiceRedirectionBinding<unknown> = {
+        ...binding,
+        serviceIdentifier: binding.targetServiceIdentifier,
+        targetServiceIdentifier: Symbol(),
       };
 
       bindingNodeMock = {
@@ -58,8 +47,23 @@ describe(resolveServiceRedirectionBindingNode, () => {
         resolve: vitest.fn(),
       };
 
-      nodeFixture.redirections.push(nodeRedirectionFixture);
-      nodeRedirectionFixture.redirections.push(bindingNodeMock);
+      nodeRedirectionFixture = {
+        binding: redirectionBinding,
+        redirection: {
+          bindings: [bindingNodeMock],
+          isContextFree: true,
+          serviceIdentifier: redirectionBinding.targetServiceIdentifier,
+        },
+      };
+
+      nodeFixture = {
+        binding,
+        redirection: {
+          bindings: [nodeRedirectionFixture],
+          isContextFree: true,
+          serviceIdentifier: binding.targetServiceIdentifier,
+        },
+      };
     });
 
     describe('when called', () => {

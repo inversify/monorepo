@@ -13,7 +13,7 @@ describe(isPlanServiceRedirectionBindingNode, () => {
       planServiceRedirectionBindingNodeFixture = {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         binding: Symbol() as unknown as ServiceRedirectionBinding<any>,
-        redirections: [],
+        redirection: Symbol() as unknown as PlanServiceNode,
       };
     });
 

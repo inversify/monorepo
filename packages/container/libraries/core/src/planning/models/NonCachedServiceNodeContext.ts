@@ -5,5 +5,4 @@ import { type BuildServiceNodeOptions } from './BuildServiceNodeOptions.js';
 export interface NonCachedServiceNodeContext {
   bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>;
   buildServiceNodeOptions: BuildServiceNodeOptions;
-  optionalBindings: boolean;
 }

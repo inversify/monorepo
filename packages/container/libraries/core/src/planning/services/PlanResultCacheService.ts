@@ -355,11 +355,9 @@ export class PlanResultCacheService {
   ): void {
     switch (planBindingNode.binding.type) {
       case bindingTypeValues.ServiceRedirection:
-        for (const redirection of (
-          planBindingNode as PlanServiceRedirectionBindingNode
-        ).redirections) {
-          this.#invalidateNonCachePlanBindingNodeDescendents(redirection);
-        }
+        this.#invalidateNonCachePlanServiceNode(
+          (planBindingNode as PlanServiceRedirectionBindingNode).redirection,
+        );
         break;
       case bindingTypeValues.Instance:
         for (const constructorParam of (planBindingNode as InstanceBindingNode)
@@ -481,7 +479,7 @@ export class PlanResultCacheService {
                 serviceNode,
                 invalidation.binding,
                 context.bindingConstraintsList,
-                context.optionalBindings,
+                context.buildServiceNodeOptions.optional,
               );
 
             if (result.isContextFreeBinding) {
