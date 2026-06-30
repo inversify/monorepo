@@ -16,10 +16,9 @@ interface BaseSubplanParams<
   node: TNode;
 }
 
-export type InstanceSubplanParams = BaseSubplanParams<InstanceBindingNode>;
+type InstanceSubplanParams = BaseSubplanParams<InstanceBindingNode>;
 export interface RedirectionSubplanParams extends BaseSubplanParams<PlanServiceRedirectionBindingNode> {
   buildServiceNodeOptions: BuildServiceNodeOptions;
 }
 
-export type ResolvedValueSubplanParams =
-  BaseSubplanParams<ResolvedValueBindingNode>;
+type ResolvedValueSubplanParams = BaseSubplanParams<ResolvedValueBindingNode>;
