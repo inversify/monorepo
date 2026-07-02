@@ -25,6 +25,7 @@ import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { PlanServiceRedirectionBindingNodeImplementation } from '../models/PlanServiceRedirectionBindingNodeImplementation.js';
 import { type SubplanParams } from '../models/SubplanParams.js';
 import { curryBuildServiceNodeBindings } from './curryBuildServiceNodeBindings.js';
 
@@ -309,10 +310,9 @@ describe(curryBuildServiceNodeBindings, () => {
             serviceIdentifier:
               serviceRedirectionBindingFixture.targetServiceIdentifier,
           },
-          node: {
-            binding: serviceRedirectionBindingFixture,
-            redirection: undefined as unknown as PlanServiceNode,
-          },
+          node: new PlanServiceRedirectionBindingNodeImplementation(
+            serviceRedirectionBindingFixture,
+          ),
           operations: basePlanParamsMock.operations,
           servicesBranch: basePlanParamsMock.servicesBranch,
         };

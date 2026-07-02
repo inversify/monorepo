@@ -54,6 +54,7 @@ describe(resolveServiceRedirectionBindingNode, () => {
           isContextFree: true,
           serviceIdentifier: redirectionBinding.targetServiceIdentifier,
         },
+        resolve: vitest.fn(),
       };
 
       nodeFixture = {
@@ -63,6 +64,7 @@ describe(resolveServiceRedirectionBindingNode, () => {
           isContextFree: true,
           serviceIdentifier: binding.targetServiceIdentifier,
         },
+        resolve: vitest.fn(),
       };
     });
 

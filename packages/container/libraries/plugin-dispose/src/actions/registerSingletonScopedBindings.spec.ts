@@ -683,6 +683,7 @@ describe(registerSingletonScopedBindings, () => {
           isContextFree: true,
           serviceIdentifier: binding.targetServiceIdentifier,
         },
+        resolve: () => undefined,
       };
 
       (serviceNode as Writable<PlanServiceNode>).bindings =
