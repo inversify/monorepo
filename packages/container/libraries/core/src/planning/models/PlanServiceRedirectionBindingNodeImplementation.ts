@@ -44,11 +44,9 @@ export class PlanServiceRedirectionBindingNodeImplementation<
           );
         };
       } else {
-        const bindingNode: PlanBindingNode = value.bindings;
-
         this.#resolve = (params: ResolutionParams): Resolved<TActivated> =>
           // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-          bindingNode.resolve(params);
+          (value.bindings as PlanBindingNode).resolve(params);
       }
     }
   }
