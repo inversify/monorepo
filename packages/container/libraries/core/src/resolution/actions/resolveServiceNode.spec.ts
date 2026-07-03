@@ -1,14 +1,21 @@
-import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  type Mocked,
+  vitest,
+} from 'vitest';
 
 vitest.mock(import('./resolveMultipleBindingServiceNode.js'));
-vitest.mock(import('./resolveSingleBindingServiceNode.js'));
 
+import { type LeafBindingNode } from '../../planning/models/LeafBindingNode.js';
 import { type PlanBindingNode } from '../../planning/models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { resolveMultipleBindingServiceNode } from './resolveMultipleBindingServiceNode.js';
 import { resolveServiceNode } from './resolveServiceNode.js';
-import { resolveSingleBindingServiceNode } from './resolveSingleBindingServiceNode.js';
 
 describe(resolveServiceNode, () => {
   describe('having a service node with undefined bindings', () => {
@@ -93,31 +100,33 @@ describe(resolveServiceNode, () => {
   });
 
   describe('having a service node with a single binding', () => {
-    let planBindingNodeFixture: PlanBindingNode;
+    let planBindingNodeMock: Mocked<LeafBindingNode<unknown>>;
     let resolutionParamsFixture: ResolutionParams;
     let serviceNodeFixture: PlanServiceNode;
 
     beforeAll(() => {
-      planBindingNodeFixture = Symbol() as unknown as PlanBindingNode;
+      planBindingNodeMock = {
+        resolve: vitest.fn(),
+      } as Partial<Mocked<LeafBindingNode<unknown>>> as Mocked<
+        LeafBindingNode<unknown>
+      >;
       resolutionParamsFixture = Symbol() as unknown as ResolutionParams;
       serviceNodeFixture = {
-        bindings: planBindingNodeFixture,
+        bindings: planBindingNodeMock,
         isContextFree: true,
         serviceIdentifier: Symbol(),
       };
     });
 
     describe('when called', () => {
-      let resolveSingleBindingServiceNodeResult: unknown;
+      let resolveResult: unknown;
 
       let result: unknown;
 
       beforeAll(() => {
-        resolveSingleBindingServiceNodeResult = Symbol();
+        resolveResult = Symbol();
 
-        vitest
-          .mocked(resolveSingleBindingServiceNode)
-          .mockReturnValueOnce(resolveSingleBindingServiceNodeResult);
+        planBindingNodeMock.resolve.mockReturnValueOnce(resolveResult);
 
         result = resolveServiceNode(
           resolutionParamsFixture,
@@ -129,15 +138,14 @@ describe(resolveServiceNode, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call resolveSingleBindingServiceNode()', () => {
-        expect(resolveSingleBindingServiceNode).toHaveBeenCalledExactlyOnceWith(
+      it('should call bindings.resolve()', () => {
+        expect(planBindingNodeMock.resolve).toHaveBeenCalledExactlyOnceWith(
           resolutionParamsFixture,
-          planBindingNodeFixture,
         );
       });
 
       it('should return expected result', () => {
-        expect(result).toBe(resolveSingleBindingServiceNodeResult);
+        expect(result).toBe(resolveResult);
       });
     });
   });

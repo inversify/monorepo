@@ -53,6 +53,7 @@ function buildServiceRedirectionBindingNode(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     binding: { type: bindingTypeValues.Instance } as any,
     redirection,
+    resolve: vitest.fn(),
   };
 }
 

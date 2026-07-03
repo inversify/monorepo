@@ -57,6 +57,7 @@ describe(resolveMultipleBindingServiceNode, () => {
           isContextFree: true,
           serviceIdentifier: binding.targetServiceIdentifier,
         },
+        resolve: vitest.fn(),
       };
     });
 
@@ -220,6 +221,7 @@ describe(resolveMultipleBindingServiceNode, () => {
           isContextFree: true,
           serviceIdentifier: binding.targetServiceIdentifier,
         },
+        resolve: vitest.fn(),
       };
 
       bindingNodeMock = {

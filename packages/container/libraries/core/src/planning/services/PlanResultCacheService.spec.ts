@@ -1259,6 +1259,7 @@ describe(PlanResultCacheService, () => {
                   serviceIdentifier:
                     childPlanServiceNodeFixture.serviceIdentifier,
                 },
+                resolve: () => undefined,
               },
               isContextFree: true,
               serviceIdentifier: 'service-id',

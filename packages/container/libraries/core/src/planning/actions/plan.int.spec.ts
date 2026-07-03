@@ -229,17 +229,19 @@ function buildServiceRedirectionToLeafBindingPlanResult(
     },
   };
 
-  const serviceRedirectionBindingNode: PlanServiceRedirectionBindingNode = {
-    binding: serviceRedirectionBinding,
-    redirection: expect.objectContaining({
-      bindings: expect.objectContaining({
-        binding: leafBinding,
-        resolve: expect.any(Function),
+  const serviceRedirectionBindingNode: PlanServiceRedirectionBindingNode =
+    expect.objectContaining({
+      binding: serviceRedirectionBinding,
+      redirection: expect.objectContaining({
+        bindings: expect.objectContaining({
+          binding: leafBinding,
+          resolve: expect.any(Function),
+        }),
+        isContextFree: true,
+        serviceIdentifier: serviceRedirectionBinding.targetServiceIdentifier,
       }),
-      isContextFree: true,
-      serviceIdentifier: serviceRedirectionBinding.targetServiceIdentifier,
-    }),
-  };
+      resolve: expect.any(Function),
+    });
 
   (planServiceNode as Writable<PlanServiceNode>).bindings =
     serviceRedirectionBindingNode;

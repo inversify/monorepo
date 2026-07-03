@@ -23,8 +23,8 @@ import { FactoryBindingNodeImplementation } from '../models/FactoryBindingNodeIm
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { InstanceBindingNodeImplementation } from '../models/InstanceBindingNodeImplementation.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
-import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode.js';
+import { PlanServiceRedirectionBindingNodeImplementation } from '../models/PlanServiceRedirectionBindingNodeImplementation.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
 import { ResolvedValueBindingNodeImplementation } from '../models/ResolvedValueBindingNodeImplementation.js';
 import {
@@ -226,10 +226,8 @@ function curryBuildServiceRedirectionPlanBindingNode(
     binding: ServiceRedirectionBinding<unknown>,
     buildServiceNodeOptions: BuildServiceNodeOptions,
   ): PlanBindingNode => {
-    const childNode: PlanServiceRedirectionBindingNode = {
-      binding,
-      redirection: undefined as unknown as PlanServiceNode,
-    };
+    const childNode: PlanServiceRedirectionBindingNode =
+      new PlanServiceRedirectionBindingNodeImplementation(binding);
 
     const subplanParams: RedirectionSubplanParams = {
       autobindOptions: params.autobindOptions,
