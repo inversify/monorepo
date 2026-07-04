@@ -7,6 +7,8 @@ import { isStackOverflowError } from '../../error/calculations/isStackOverflowEr
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
+import { PlanMultipleBindingServiceNodeFixtures } from '../fixtures/PlanMultipleBindingServiceNodeFixtures.js';
+import { PlanSingleBindingServiceNodeFixtures } from '../fixtures/PlanSingleBindingServiceNodeFixtures.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { type PlanResult } from '../models/PlanResult.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
@@ -79,18 +81,17 @@ describe(handleResolveError, () => {
 
     beforeAll(() => {
       const serviceNodeC: PlanServiceNode = {
-        bindings: undefined,
-        isContextFree: true,
+        ...PlanSingleBindingServiceNodeFixtures.withBindingsUndefined,
         serviceIdentifier: 'C',
       };
       const serviceNodeB: PlanServiceNode = {
+        ...PlanSingleBindingServiceNodeFixtures.any,
         bindings: buildInstanceBindingNode([serviceNodeC]),
-        isContextFree: true,
         serviceIdentifier: 'B',
       };
       const serviceNodeA: PlanServiceNode = {
+        ...PlanSingleBindingServiceNodeFixtures.any,
         bindings: buildInstanceBindingNode([serviceNodeB]),
-        isContextFree: true,
         serviceIdentifier: 'A',
       };
       paramsFixture = buildParams(serviceNodeA);
@@ -187,13 +188,13 @@ describe(handleResolveError, () => {
 
     beforeAll(() => {
       const serviceNodeA: PlanServiceNode = {
+        ...PlanSingleBindingServiceNodeFixtures.any,
         bindings: undefined, // temp placeholder, will set later
-        isContextFree: true,
         serviceIdentifier: 'A',
       };
       const serviceNodeB: PlanServiceNode = {
+        ...PlanSingleBindingServiceNodeFixtures.any,
         bindings: buildInstanceBindingNode([serviceNodeA]),
-        isContextFree: true,
         serviceIdentifier: 'B',
       };
       (serviceNodeA as { bindings: InstanceBindingNode }).bindings =
@@ -234,20 +235,19 @@ describe(handleResolveError, () => {
 
     beforeAll(() => {
       const serviceNodeB: PlanServiceNode = {
-        bindings: undefined,
-        isContextFree: true,
+        ...PlanSingleBindingServiceNodeFixtures.withBindingsUndefined,
         serviceIdentifier: 'B',
       };
       const serviceNodeC: PlanServiceNode = {
+        ...PlanSingleBindingServiceNodeFixtures.any,
         bindings: buildInstanceBindingNode([serviceNodeB]),
-        isContextFree: true,
         serviceIdentifier: 'C',
       };
       (serviceNodeB as { bindings: InstanceBindingNode }).bindings =
         buildInstanceBindingNode([serviceNodeC]);
       const serviceNodeA: PlanServiceNode = {
+        ...PlanSingleBindingServiceNodeFixtures.any,
         bindings: buildResolvedValueBindingNode([serviceNodeB]),
-        isContextFree: true,
         serviceIdentifier: 'A',
       };
       paramsFixture = buildParams(serviceNodeA);
@@ -286,13 +286,11 @@ describe(handleResolveError, () => {
 
     beforeAll(() => {
       const serviceNodeB: PlanServiceNode = {
-        bindings: undefined,
-        isContextFree: true,
+        ...PlanSingleBindingServiceNodeFixtures.withBindingsUndefined,
         serviceIdentifier: 'B',
       };
       const serviceNodeC: PlanServiceNode = {
-        bindings: undefined,
-        isContextFree: true,
+        ...PlanSingleBindingServiceNodeFixtures.withBindingsUndefined,
         serviceIdentifier: 'C',
       };
       // Assign bindings after nodes exist so they can reference each other
@@ -308,8 +306,8 @@ describe(handleResolveError, () => {
         buildServiceRedirectionBindingNode(serviceNodeC);
 
       const serviceNodeA: PlanServiceNode = {
+        ...PlanMultipleBindingServiceNodeFixtures.any,
         bindings: [redirectionBindingToB, redirectionBindingToC],
-        isContextFree: true,
         serviceIdentifier: 'A',
       };
       paramsFixture = buildParams(serviceNodeA);
@@ -348,13 +346,12 @@ describe(handleResolveError, () => {
 
     beforeAll(() => {
       const serviceNodeA: PlanServiceNode = {
-        bindings: undefined,
-        isContextFree: true,
+        ...PlanSingleBindingServiceNodeFixtures.withBindingsUndefined,
         serviceIdentifier: 'A',
       };
       const serviceNodeB: PlanServiceNode = {
+        ...PlanSingleBindingServiceNodeFixtures.any,
         bindings: buildInstanceBindingNode([], { a: serviceNodeA }),
-        isContextFree: true,
         serviceIdentifier: 'B',
       };
       (serviceNodeA as { bindings: InstanceBindingNode }).bindings =

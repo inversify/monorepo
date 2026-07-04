@@ -10,6 +10,7 @@ import {
 
 import { type ServiceIdentifier } from '@inversifyjs/common';
 
+import { PlanSingleBindingServiceNodeFixtures } from '../fixtures/PlanSingleBindingServiceNodeFixtures.js';
 import { LazyPlanServiceNode } from './LazyPlanServiceNode.js';
 import { type PlanBindingNode } from './PlanBindingNode.js';
 import { type PlanServiceNode } from './PlanServiceNode.js';
@@ -57,8 +58,8 @@ describe(LazyPlanServiceNode, () => {
           lazyPlanServiceNode.invalidate();
 
           planServiceNodeFixture = {
+            ...PlanSingleBindingServiceNodeFixtures.any,
             bindings: Symbol() as unknown as PlanBindingNode,
-            isContextFree: true,
             serviceIdentifier: Symbol(),
           };
 
@@ -92,8 +93,8 @@ describe(LazyPlanServiceNode, () => {
 
         beforeAll(() => {
           planServiceNodeFixture = {
+            ...PlanSingleBindingServiceNodeFixtures.any,
             bindings: Symbol() as unknown as PlanBindingNode,
-            isContextFree: true,
             serviceIdentifier: Symbol(),
           };
 
@@ -139,8 +140,8 @@ describe(LazyPlanServiceNode, () => {
           lazyPlanServiceNode.invalidate();
 
           planServiceNodeFixture = {
+            ...PlanSingleBindingServiceNodeFixtures.any,
             bindings: Symbol() as unknown as PlanBindingNode,
-            isContextFree: true,
             serviceIdentifier: Symbol(),
           };
 
@@ -174,8 +175,8 @@ describe(LazyPlanServiceNode, () => {
 
         beforeAll(() => {
           planServiceNodeFixture = {
+            ...PlanSingleBindingServiceNodeFixtures.any,
             bindings: Symbol() as unknown as PlanBindingNode,
-            isContextFree: true,
             serviceIdentifier: Symbol(),
           };
 
@@ -213,8 +214,8 @@ describe(LazyPlanServiceNode, () => {
 
       beforeAll(() => {
         planServiceNodeFixture = {
+          ...PlanSingleBindingServiceNodeFixtures.any,
           bindings: Symbol() as unknown as PlanBindingNode,
-          isContextFree: true,
           serviceIdentifier: Symbol(),
         };
         serviceIdentifierFixture = Symbol();

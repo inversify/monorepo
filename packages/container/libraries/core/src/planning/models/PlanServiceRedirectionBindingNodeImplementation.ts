@@ -15,11 +15,7 @@ export class PlanServiceRedirectionBindingNodeImplementation<
   ServiceRedirectionBinding<TActivated>
 > {
   #redirection: PlanServiceNode | undefined;
-  #resolve:
-    | ((
-        params: ResolutionParams,
-      ) => Resolved<TActivated | TActivated[] | undefined>)
-    | undefined;
+  #resolve: ((params: ResolutionParams) => Resolved<TActivated>) | undefined;
 
   constructor(public readonly binding: ServiceRedirectionBinding<TActivated>) {
     this.#redirection = undefined;
@@ -34,7 +30,7 @@ export class PlanServiceRedirectionBindingNodeImplementation<
     this.#redirection = value;
 
     if (value.bindings === undefined) {
-      this.#resolve = (): Resolved<undefined> => undefined;
+      this.#resolve = (): Resolved<TActivated> => undefined as TActivated;
     } else {
       if (Array.isArray(value.bindings)) {
         this.#resolve = (): never => {

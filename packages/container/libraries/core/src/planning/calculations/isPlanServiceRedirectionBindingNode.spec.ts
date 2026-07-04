@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { PlanMultipleBindingServiceNodeFixtures } from '../fixtures/PlanMultipleBindingServiceNodeFixtures.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode.js';
 import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode.js';
@@ -38,8 +39,7 @@ describe(isPlanServiceRedirectionBindingNode, () => {
 
     beforeAll(() => {
       planServiceNodeFixture = {
-        bindings: [],
-        isContextFree: true,
+        ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
         serviceIdentifier: 'service-id',
       };
     });

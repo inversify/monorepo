@@ -20,6 +20,7 @@ import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedi
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { PlanMultipleBindingServiceNodeFixtures } from '../fixtures/PlanMultipleBindingServiceNodeFixtures.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
@@ -70,8 +71,7 @@ describe(curryBuildServiceNodeBindings, () => {
         );
 
       parentNodeFixture = {
-        bindings: [],
-        isContextFree: true,
+        ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
         serviceIdentifier: Symbol(),
       };
     });
@@ -175,8 +175,7 @@ describe(curryBuildServiceNodeBindings, () => {
         );
 
       parentNodeFixture = {
-        bindings: [],
-        isContextFree: true,
+        ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
         serviceIdentifier: Symbol(),
       };
     });
@@ -264,8 +263,7 @@ describe(curryBuildServiceNodeBindings, () => {
         );
 
       parentNodeFixture = {
-        bindings: [],
-        isContextFree: true,
+        ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
         serviceIdentifier: Symbol(),
       };
     });

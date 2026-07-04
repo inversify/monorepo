@@ -8,13 +8,15 @@ import { buildBuildServiceNodeOptionsFromPlanParamsConstraints } from '../../com
 import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList.js';
-import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings.js';
+import { throwErrorWhenUnexpectedBindingsAmountFound } from '../calculations/throwErrorWhenUnexpectedBindingsAmountFound.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
 import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { PlanMultipleBindingServiceNodeImplementation } from '../models/PlanMultipleBindingServiceNodeImplementation.js';
 import { type PlanParams } from '../models/PlanParams.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { PlanSingleBindingServiceNodeImplementation } from '../models/PlanSingleBindingServiceNode.js';
 
 export function curryBuildPlanServiceNode(
   buildServiceNodeBindings: (
@@ -42,11 +44,35 @@ export function curryBuildPlanServiceNode(
 
     const serviceNodeBindings: PlanBindingNode[] = [];
 
-    const serviceNode: PlanServiceNode = {
-      bindings: serviceNodeBindings,
-      isContextFree: true,
-      serviceIdentifier: params.rootConstraints.serviceIdentifier,
-    };
+    if (params.rootConstraints.isMultiple) {
+      const serviceNode: PlanMultipleBindingServiceNodeImplementation =
+        new PlanMultipleBindingServiceNodeImplementation(
+          serviceNodeBindings,
+          params.rootConstraints.serviceIdentifier,
+        );
+
+      serviceNodeBindings.push(
+        ...buildServiceNodeBindings(
+          params,
+          bindingConstraintsList,
+          filteredServiceBindings,
+          serviceNode,
+          buildBuildServiceNodeOptionsFromPlanParamsConstraints(
+            params.rootConstraints,
+          ),
+        ),
+      );
+
+      serviceNode.isContextFree =
+        !bindingConstraintsList.last.elem.getAncestorsCalled;
+
+      return serviceNode;
+    }
+
+    const serviceNode: PlanSingleBindingServiceNodeImplementation =
+      new PlanSingleBindingServiceNodeImplementation(
+        params.rootConstraints.serviceIdentifier,
+      );
 
     serviceNodeBindings.push(
       ...buildServiceNodeBindings(
@@ -63,17 +89,15 @@ export function curryBuildPlanServiceNode(
     serviceNode.isContextFree =
       !bindingConstraintsList.last.elem.getAncestorsCalled;
 
-    if (!params.rootConstraints.isMultiple) {
-      checkServiceNodeSingleInjectionBindings(
-        serviceNode,
-        params.rootConstraints.isOptional ?? false,
-        bindingConstraintsList.last,
-      );
+    throwErrorWhenUnexpectedBindingsAmountFound(
+      serviceNodeBindings,
+      params.rootConstraints.isOptional ?? false,
+      bindingConstraintsList.last,
+    );
 
-      const [planBindingNode]: PlanBindingNode[] = serviceNodeBindings;
+    const [planBindingNode]: PlanBindingNode[] = serviceNodeBindings;
 
-      serviceNode.bindings = planBindingNode;
-    }
+    serviceNode.bindings = planBindingNode;
 
     return serviceNode;
   };

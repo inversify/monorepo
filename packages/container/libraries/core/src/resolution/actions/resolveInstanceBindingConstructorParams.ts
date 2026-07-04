@@ -3,7 +3,6 @@ import { isPromise } from '@inversifyjs/common';
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
 import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
-import { resolveServiceNode } from './resolveServiceNode.js';
 
 export function resolveInstanceBindingConstructorParams<
   TActivated,
@@ -18,9 +17,7 @@ export function resolveInstanceBindingConstructorParams<
     if (constructorParam === undefined) {
       constructorResolvedValues.push(undefined);
     } else {
-      constructorResolvedValues.push(
-        resolveServiceNode(params, constructorParam),
-      );
+      constructorResolvedValues.push(constructorParam.resolve(params));
     }
   }
 

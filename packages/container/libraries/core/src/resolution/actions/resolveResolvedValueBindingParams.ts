@@ -3,7 +3,6 @@ import { isPromise } from '@inversifyjs/common';
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
 import { type ResolvedValueBindingNode } from '../../planning/models/ResolvedValueBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
-import { resolveServiceNode } from './resolveServiceNode.js';
 
 export function resolveResolvedValueBindingParams<
   TActivated,
@@ -16,7 +15,7 @@ export function resolveResolvedValueBindingParams<
   const paramsResolvedValues: unknown[] = [];
 
   for (const param of node.params) {
-    paramsResolvedValues.push(resolveServiceNode(params, param));
+    paramsResolvedValues.push(param.resolve(params));
   }
 
   return paramsResolvedValues.some(isPromise)

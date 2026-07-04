@@ -1,6 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
-
-vitest.mock(import('./resolveServiceNode.js'));
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  type Mocked,
+  vitest,
+} from 'vitest';
 
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
@@ -9,7 +15,6 @@ import { type InstanceBindingNode } from '../../planning/models/InstanceBindingN
 import { type PlanBindingNode } from '../../planning/models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
-import { resolveServiceNode } from './resolveServiceNode.js';
 import { setInstanceProperties } from './setInstanceProperties.js';
 
 describe(setInstanceProperties, () => {
@@ -107,6 +112,7 @@ describe(setInstanceProperties, () => {
 
   describe('having node with properties with bindings and matching managed metadata', () => {
     let propertyKeyFixture: string | symbol;
+    let propertyServiceNodeMock: Mocked<PlanServiceNode>;
 
     let paramsFixture: ResolutionParams;
 
@@ -117,9 +123,10 @@ describe(setInstanceProperties, () => {
 
       paramsFixture = Symbol() as unknown as ResolutionParams;
 
-      const propertyServiceNodeFixture: PlanServiceNode = {
+      propertyServiceNodeMock = {
         bindings: Symbol() as unknown as PlanBindingNode,
-      } as Partial<PlanServiceNode> as PlanServiceNode;
+        resolve: vitest.fn(),
+      } as Partial<Mocked<PlanServiceNode>> as Mocked<PlanServiceNode>;
 
       nodeFixture = {
         classMetadata: {
@@ -136,8 +143,8 @@ describe(setInstanceProperties, () => {
             ],
           ]),
         },
-        propertyParams: new Map([
-          [propertyKeyFixture, propertyServiceNodeFixture],
+        propertyParams: new Map<string | symbol, PlanServiceNode>([
+          [propertyKeyFixture, propertyServiceNodeMock],
         ]),
       } as Partial<InstanceBindingNode> as InstanceBindingNode;
     });
@@ -154,9 +161,9 @@ describe(setInstanceProperties, () => {
 
         resolvedPropertyValue = Symbol();
 
-        vitest
-          .mocked(resolveServiceNode)
-          .mockReturnValueOnce(resolvedPropertyValue);
+        propertyServiceNodeMock.resolve.mockReturnValueOnce(
+          resolvedPropertyValue,
+        );
 
         result = setInstanceProperties(
           paramsFixture,
@@ -190,9 +197,9 @@ describe(setInstanceProperties, () => {
 
         resolvedPropertyValue = Symbol();
 
-        vitest
-          .mocked(resolveServiceNode)
-          .mockResolvedValueOnce(resolvedPropertyValue);
+        propertyServiceNodeMock.resolve.mockResolvedValueOnce(
+          resolvedPropertyValue,
+        );
 
         result = setInstanceProperties(
           paramsFixture,

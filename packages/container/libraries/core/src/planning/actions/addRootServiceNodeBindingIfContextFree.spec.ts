@@ -25,6 +25,7 @@ import { buildBuildServiceNodeOptionsFromPlanParamsConstraints } from '../../com
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { type PlanServiceNodeBindingAddedResult } from '../../metadata/models/PlanServiceNodeBindingAddedResult.js';
 import { buildPlanBindingConstraintsList } from '../calculations/buildPlanBindingConstraintsList.js';
+import { PlanMultipleBindingServiceNodeFixtures } from '../fixtures/PlanMultipleBindingServiceNodeFixtures.js';
 import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
 import { type PlanParams } from '../models/PlanParams.js';
@@ -110,8 +111,7 @@ describe(addRootServiceNodeBindingIfContextFree, () => {
 
       lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
         {
-          bindings: [],
-          isContextFree: true,
+          ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
           serviceIdentifier: serviceIdentifier,
         },
         serviceIdentifier,

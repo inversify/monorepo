@@ -25,6 +25,7 @@ import { type Binding } from '../../binding/models/Binding.js';
 import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
 import { type SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { buildGetPlanOptionsFromPlanParams } from '../calculations/buildGetPlanOptionsFromPlanParams.js';
+import { PlanSingleBindingServiceNodeFixtures } from '../fixtures/PlanSingleBindingServiceNodeFixtures.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BindingNodeParent } from '../models/BindingNodeParent.js';
 import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
@@ -117,8 +118,8 @@ describe(plan, () => {
     beforeAll(() => {
       getPlanOptionsFixture = Symbol() as unknown as GetPlanOptions;
       planServiceNodeFixture = {
+        ...PlanSingleBindingServiceNodeFixtures.any,
         bindings: Symbol() as unknown as PlanBindingNode,
-        isContextFree: true,
         serviceIdentifier: Symbol(),
       };
 
@@ -160,7 +161,10 @@ describe(plan, () => {
     it('should return expected value', () => {
       const expectedPlanResult: PlanResult = {
         tree: {
-          root: expect.objectContaining(planServiceNodeFixture),
+          root: expect.objectContaining({
+            ...planServiceNodeFixture,
+            resolve: expect.any(Function) as () => unknown,
+          }),
         },
       };
 

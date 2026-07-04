@@ -4,6 +4,7 @@ import { ServiceRedirectionBindingFixtures } from '../../binding/fixtures/Servic
 import { bindingScopeValues } from '../../binding/models/BindingScope.js';
 import { bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { PlanMultipleBindingServiceNodeFixtures } from '../../planning/fixtures/PlanMultipleBindingServiceNodeFixtures.js';
 import { type ConstantValueBindingNode } from '../../planning/models/ConstantValueBindingNode.js';
 import { type PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
@@ -50,8 +51,8 @@ describe(resolveServiceRedirectionBindingNode, () => {
       nodeRedirectionFixture = {
         binding: redirectionBinding,
         redirection: {
+          ...PlanMultipleBindingServiceNodeFixtures.any,
           bindings: [bindingNodeMock],
-          isContextFree: true,
           serviceIdentifier: redirectionBinding.targetServiceIdentifier,
         },
         resolve: vitest.fn(),
@@ -60,8 +61,8 @@ describe(resolveServiceRedirectionBindingNode, () => {
       nodeFixture = {
         binding,
         redirection: {
+          ...PlanMultipleBindingServiceNodeFixtures.any,
           bindings: [nodeRedirectionFixture],
-          isContextFree: true,
           serviceIdentifier: binding.targetServiceIdentifier,
         },
         resolve: vitest.fn(),

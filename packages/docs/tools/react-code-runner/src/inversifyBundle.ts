@@ -21,6 +21,9 @@ const customHandlerTuples: CustomCloneableHandlerTuple[] = [
       clone({
         bindings: input.bindings,
         isContextFree: input.isContextFree,
+        // We really don't care about resolve here, the node is used to generate a graph
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        resolve: input.resolve,
         serviceIdentifier: input.serviceIdentifier,
       }),
   ],

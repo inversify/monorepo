@@ -12,6 +12,7 @@ import {
 import { type ServiceIdentifier } from '@inversifyjs/common';
 
 import { GetPlanOptionsFixtures } from '../fixtures/GetPlanOptionsFixtures.js';
+import { PlanSingleBindingServiceNodeFixtures } from '../fixtures/PlanSingleBindingServiceNodeFixtures.js';
 import { type GetPlanOptions } from '../models/GetPlanOptions.js';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
 import { type NonCachedServiceNodeContext } from '../models/NonCachedServiceNodeContext.js';
@@ -95,7 +96,7 @@ describe(cacheNonRootPlanServiceNode, () => {
     beforeAll(() => {
       getPlanOptionsFixture = GetPlanOptionsFixtures.any;
       planServiceNodeFixture = {
-        bindings: undefined,
+        ...PlanSingleBindingServiceNodeFixtures.withBindingsUndefined,
         isContextFree: false,
         serviceIdentifier: Symbol(),
       };
@@ -141,8 +142,7 @@ describe(cacheNonRootPlanServiceNode, () => {
     beforeAll(() => {
       getPlanOptionsFixture = GetPlanOptionsFixtures.any;
       planServiceNodeFixture = {
-        bindings: undefined,
-        isContextFree: true,
+        ...PlanSingleBindingServiceNodeFixtures.withBindingsUndefined,
         serviceIdentifier: Symbol(),
       };
       contextFixture = Symbol() as unknown as NonCachedServiceNodeContext;

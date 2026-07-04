@@ -62,6 +62,7 @@ function buildLeafBindingPlanResult(
   const planServiceNode: PlanServiceNode = {
     bindings: [],
     isContextFree: true,
+    resolve: expect.any(Function),
     serviceIdentifier: binding.serviceIdentifier,
   };
 
@@ -98,6 +99,7 @@ function buildSimpleInstancePlanResult(
   const planServiceNode: PlanServiceNode = {
     bindings: [],
     isContextFree: true,
+    resolve: expect.any(Function),
     serviceIdentifier: instanceBinding.serviceIdentifier,
   };
 
@@ -112,6 +114,7 @@ function buildSimpleInstancePlanResult(
   const constructorParamServiceNode: PlanServiceNode = {
     bindings: [],
     isContextFree: true,
+    resolve: expect.any(Function),
     serviceIdentifier: constructorParameterBinding.serviceIdentifier,
   };
 
@@ -137,6 +140,7 @@ function buildSimpleInstancePlanResult(
   const propertyServiceNode: PlanServiceNode = {
     bindings: [],
     isContextFree: true,
+    resolve: expect.any(Function),
     serviceIdentifier: propertyKeyBinding.serviceIdentifier,
   };
 
@@ -173,6 +177,7 @@ function buildSimpleResolvedValuePlanResult(
   const planServiceNode: PlanServiceNode = {
     bindings: [],
     isContextFree: true,
+    resolve: expect.any(Function),
     serviceIdentifier: resolvedValueBinding.serviceIdentifier,
   };
 
@@ -185,6 +190,7 @@ function buildSimpleResolvedValuePlanResult(
   const constructorParamServiceNode: PlanServiceNode = {
     bindings: [],
     isContextFree: true,
+    resolve: expect.any(Function),
     serviceIdentifier: parameterBinding.serviceIdentifier,
   };
 
@@ -220,6 +226,7 @@ function buildServiceRedirectionToLeafBindingPlanResult(
   const planServiceNode: PlanServiceNode = {
     bindings: [],
     isContextFree: true,
+    resolve: expect.any(Function),
     serviceIdentifier: serviceRedirectionBinding.serviceIdentifier,
   };
 

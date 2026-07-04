@@ -10,7 +10,7 @@ import {
 
 vitest.mock(import('../calculations/buildFilteredServiceBindings.js'));
 vitest.mock(
-  import('../calculations/checkServiceNodeSingleInjectionBindings.js'),
+  import('../calculations/throwErrorWhenUnexpectedBindingsAmountFound.js'),
 );
 
 import { type Binding } from '../../binding/models/Binding.js';
@@ -23,7 +23,7 @@ import {
   type SingleImmutableLinkedListNode,
 } from '../../common/models/SingleImmutableLinkedList.js';
 import { buildFilteredServiceBindings } from '../calculations/buildFilteredServiceBindings.js';
-import { checkServiceNodeSingleInjectionBindings } from '../calculations/checkServiceNodeSingleInjectionBindings.js';
+import { throwErrorWhenUnexpectedBindingsAmountFound } from '../calculations/throwErrorWhenUnexpectedBindingsAmountFound.js';
 import { BuildMultipleBindingServiceNodeOptionsFixtures } from '../fixtures/BuildMultipleBindingServiceNodeOptionsFixtures.js';
 import { BuildSingleBindingServiceNodeOptionsFixtures } from '../fixtures/BuildSingleBindingServiceNodeOptionsFixtures.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
@@ -32,7 +32,9 @@ import { type BuildMultipleBindingServiceNodeOptions } from '../models/BuildMult
 import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type BuildSingleBindingServiceNodeOptions } from '../models/BuildSingleBindingServiceNodeOptions.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { PlanMultipleBindingServiceNodeImplementation } from '../models/PlanMultipleBindingServiceNodeImplementation.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
+import { PlanSingleBindingServiceNodeImplementation } from '../models/PlanSingleBindingServiceNode.js';
 import { type SubplanParams } from '../models/SubplanParams.js';
 import { curryBuildPlanServiceNodeFromOptions } from './curryBuildPlanServiceNodeFromOptions.js';
 
@@ -104,12 +106,6 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
       });
 
       it('should call buildServiceNodeBindings()', () => {
-        const expectedServiceNode: PlanServiceNode = {
-          bindings: serviceNodeBindingsFixture,
-          isContextFree: true,
-          serviceIdentifier: optionsFixture.serviceIdentifier,
-        };
-
         expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           new SingleImmutableLinkedList(
@@ -117,7 +113,7 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
               elem: {
                 getAncestorsCalled: false,
                 name: optionsFixture.name,
-                serviceIdentifier: expectedServiceNode.serviceIdentifier,
+                serviceIdentifier: optionsFixture.serviceIdentifier,
                 tags: optionsFixture.tags,
               },
               previous: bindingConstraintsListFixture.last,
@@ -125,21 +121,23 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
             2,
           ),
           bindingsFixture,
-          expectedServiceNode,
+          result as BindingNodeParent,
           optionsFixture,
         );
       });
 
-      it('should not call checkServiceNodeSingleInjectionBindings()', () => {
-        expect(checkServiceNodeSingleInjectionBindings).not.toHaveBeenCalled();
+      it('should not call throwErrorWhenUnexpectedBindingsAmountFound()', () => {
+        expect(
+          throwErrorWhenUnexpectedBindingsAmountFound,
+        ).not.toHaveBeenCalled();
       });
 
       it('should return a PlanServiceNode', () => {
-        const expectedServiceNode: PlanServiceNode = {
-          bindings: serviceNodeBindingsFixture,
-          isContextFree: true,
-          serviceIdentifier: optionsFixture.serviceIdentifier,
-        };
+        const expectedServiceNode: PlanServiceNode =
+          new PlanMultipleBindingServiceNodeImplementation(
+            serviceNodeBindingsFixture,
+            optionsFixture.serviceIdentifier,
+          );
 
         expect(result).toStrictEqual(expectedServiceNode);
       });
@@ -171,7 +169,9 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
 
       beforeAll(() => {
         bindingsFixture = [Symbol() as unknown as Binding<unknown>];
-        serviceNodeBindingFixture = Symbol() as unknown as PlanBindingNode;
+        serviceNodeBindingFixture = {
+          resolve: vitest.fn(),
+        } as Partial<PlanBindingNode> as PlanBindingNode;
 
         vitest
           .mocked(buildFilteredServiceBindings)
@@ -199,12 +199,6 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
       });
 
       it('should call buildServiceNodeBindings()', () => {
-        const expectedServiceNode: PlanServiceNode = {
-          bindings: serviceNodeBindingFixture,
-          isContextFree: true,
-          serviceIdentifier: optionsFixture.serviceIdentifier,
-        };
-
         expect(buildServiceNodeBindingsMock).toHaveBeenCalledExactlyOnceWith(
           paramsFixture,
           new SingleImmutableLinkedList(
@@ -212,7 +206,7 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
               elem: {
                 getAncestorsCalled: false,
                 name: optionsFixture.name,
-                serviceIdentifier: expectedServiceNode.serviceIdentifier,
+                serviceIdentifier: optionsFixture.serviceIdentifier,
                 tags: optionsFixture.tags,
               },
               previous: bindingConstraintsListFixture.last,
@@ -220,46 +214,44 @@ describe(curryBuildPlanServiceNodeFromOptions, () => {
             2,
           ),
           bindingsFixture,
-          expectedServiceNode,
+          result as BindingNodeParent,
           optionsFixture,
         );
       });
 
-      it('should call checkServiceNodeSingleInjectionBindings()', () => {
-        const expectedServiceNode: PlanServiceNode = {
-          bindings: serviceNodeBindingFixture,
-          isContextFree: true,
-          serviceIdentifier: optionsFixture.serviceIdentifier,
-        };
-
+      it('should call throwErrorWhenUnexpectedBindingsAmountFound()', () => {
         const expectedBindingConstraintsListNode: SingleImmutableLinkedListNode<InternalBindingConstraints> =
           {
             elem: {
               getAncestorsCalled: false,
               name: optionsFixture.name,
-              serviceIdentifier: expectedServiceNode.serviceIdentifier,
+              serviceIdentifier: optionsFixture.serviceIdentifier,
               tags: optionsFixture.tags,
             },
             previous: bindingConstraintsListFixture.last,
           };
 
         expect(
-          checkServiceNodeSingleInjectionBindings,
+          throwErrorWhenUnexpectedBindingsAmountFound,
         ).toHaveBeenCalledExactlyOnceWith(
-          expectedServiceNode,
+          [serviceNodeBindingFixture],
           optionsFixture.optional,
           expectedBindingConstraintsListNode,
         );
       });
 
       it('should return a PlanServiceNode', () => {
-        const expectedServiceNode: PlanServiceNode = {
-          bindings: serviceNodeBindingFixture,
-          isContextFree: true,
-          serviceIdentifier: optionsFixture.serviceIdentifier,
-        };
+        expect(result).toBeInstanceOf(
+          PlanSingleBindingServiceNodeImplementation,
+        );
 
-        expect(result).toStrictEqual(expectedServiceNode);
+        const resultServiceNode: PlanServiceNode = result as PlanServiceNode;
+
+        expect(resultServiceNode.bindings).toBe(serviceNodeBindingFixture);
+        expect(resultServiceNode.isContextFree).toBe(true);
+        expect(resultServiceNode.serviceIdentifier).toBe(
+          optionsFixture.serviceIdentifier,
+        );
       });
     });
   });
