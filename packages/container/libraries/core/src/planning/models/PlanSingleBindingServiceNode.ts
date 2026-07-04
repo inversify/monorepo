@@ -8,6 +8,8 @@ const UNDEFINED_RESOLVE: (
   params: ResolutionParams,
 ) => unknown = (): undefined => undefined;
 
+const RESOLVE_KEY: keyof PlanServiceNode = 'resolve';
+
 export class PlanSingleBindingServiceNodeImplementation implements PlanServiceNode {
   public isContextFree: boolean;
   public resolve: (params: ResolutionParams) => unknown;
@@ -30,7 +32,15 @@ export class PlanSingleBindingServiceNodeImplementation implements PlanServiceNo
     if (value === undefined) {
       this.resolve = UNDEFINED_RESOLVE;
     } else {
-      this.resolve = value.resolve.bind(value);
+      /*
+       * Binding nodes exposing an own `resolve` property provide `this`
+       * independent closures. Reusing them avoids a bound function trampoline
+       * in the resolution hot path. Prototype `resolve` methods rely on
+       * `this`, so they are bound to the binding node instead.
+       */
+      this.resolve = Object.hasOwn(value, RESOLVE_KEY)
+        ? value.resolve
+        : value.resolve.bind(value);
     }
   }
 }

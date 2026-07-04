@@ -11,43 +11,33 @@ import {
 vitest.mock(import('./cacheResolvedValue.js'));
 
 import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures.js';
-import { type bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
-import { type BaseBindingNode } from '../../planning/models/BaseBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { type Resolved } from '../models/Resolved.js';
 import { cacheResolvedValue } from './cacheResolvedValue.js';
 import { resolveScopedWithNoActivations } from './resolveScopedWithNoActivations.js';
 
 describe(resolveScopedWithNoActivations, () => {
-  describe('having a node with a binding with scope Singleton and no cache', () => {
-    let nodeFixture: BaseBindingNode<InstanceBinding<unknown>>;
+  describe('having a binding with scope Singleton and no cache', () => {
+    let bindingFixture: InstanceBinding<unknown>;
 
     beforeAll(() => {
-      nodeFixture = {
-        binding: InstanceBindingFixtures.withCacheIsRightFalseAndScopeSingleton,
-      };
+      bindingFixture =
+        InstanceBindingFixtures.withCacheIsRightFalseAndScopeSingleton;
     });
 
     describe('when called', () => {
-      let resolveMock: Mock<
-        (
-          params: ResolutionParams,
-          node: BaseBindingNode<InstanceBinding<unknown>>,
-        ) => Resolved<unknown>
-      >;
+      let resolveMock: Mock<(params: ResolutionParams) => Resolved<unknown>>;
 
       let resolveFunction: (params: ResolutionParams) => Resolved<unknown>;
 
       beforeAll(() => {
         resolveMock = vitest.fn();
 
-        resolveFunction = resolveScopedWithNoActivations<
-          unknown,
-          typeof bindingTypeValues.Instance,
-          InstanceBinding<unknown>,
-          BaseBindingNode<InstanceBinding<unknown>>
-        >(nodeFixture, resolveMock);
+        resolveFunction = resolveScopedWithNoActivations(
+          bindingFixture,
+          resolveMock,
+        );
       });
 
       describe('when resolveFunction is called', () => {
@@ -74,15 +64,12 @@ describe(resolveScopedWithNoActivations, () => {
         });
 
         it('should call resolveMock()', () => {
-          expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
-            paramsFixture,
-            nodeFixture,
-          );
+          expect(resolveMock).toHaveBeenCalledExactlyOnceWith(paramsFixture);
         });
 
         it('should call cacheResolvedValue()', () => {
           expect(cacheResolvedValue).toHaveBeenCalledExactlyOnceWith(
-            nodeFixture.binding,
+            bindingFixture,
             resolveMockResult,
           );
         });
@@ -94,34 +81,26 @@ describe(resolveScopedWithNoActivations, () => {
     });
   });
 
-  describe('having a node with a binding with scope Singleton and cache', () => {
-    let nodeFixture: BaseBindingNode<InstanceBinding<unknown>>;
+  describe('having a binding with scope Singleton and cache', () => {
+    let bindingFixture: InstanceBinding<unknown>;
 
     beforeAll(() => {
-      nodeFixture = {
-        binding: InstanceBindingFixtures.withCacheIsRightAndScopeSingleton,
-      };
+      bindingFixture =
+        InstanceBindingFixtures.withCacheIsRightAndScopeSingleton;
     });
 
     describe('when called', () => {
-      let resolveMock: Mock<
-        (
-          params: ResolutionParams,
-          node: BaseBindingNode<InstanceBinding<unknown>>,
-        ) => Resolved<unknown>
-      >;
+      let resolveMock: Mock<(params: ResolutionParams) => Resolved<unknown>>;
 
       let resolveFunction: (params: ResolutionParams) => Resolved<unknown>;
 
       beforeAll(() => {
         resolveMock = vitest.fn();
 
-        resolveFunction = resolveScopedWithNoActivations<
-          unknown,
-          typeof bindingTypeValues.Instance,
-          InstanceBinding<unknown>,
-          BaseBindingNode<InstanceBinding<unknown>>
-        >(nodeFixture, resolveMock);
+        resolveFunction = resolveScopedWithNoActivations(
+          bindingFixture,
+          resolveMock,
+        );
       });
 
       describe('when resolveFunction is called', () => {
@@ -148,40 +127,31 @@ describe(resolveScopedWithNoActivations, () => {
         });
 
         it('should return expected value', () => {
-          expect(result).toBe(nodeFixture.binding.cache.value);
+          expect(result).toBe(bindingFixture.cache.value);
         });
       });
     });
   });
 
-  describe('having a node with a binding with scope Request', () => {
-    let nodeFixture: BaseBindingNode<InstanceBinding<unknown>>;
+  describe('having a binding with scope Request', () => {
+    let bindingFixture: InstanceBinding<unknown>;
 
     beforeAll(() => {
-      nodeFixture = {
-        binding: InstanceBindingFixtures.withScopeRequest,
-      };
+      bindingFixture = InstanceBindingFixtures.withScopeRequest;
     });
 
     describe('when called', () => {
-      let resolveMock: Mock<
-        (
-          params: ResolutionParams,
-          node: BaseBindingNode<InstanceBinding<unknown>>,
-        ) => Resolved<unknown>
-      >;
+      let resolveMock: Mock<(params: ResolutionParams) => Resolved<unknown>>;
 
       let resolveFunction: (params: ResolutionParams) => Resolved<unknown>;
 
       beforeAll(() => {
         resolveMock = vitest.fn();
 
-        resolveFunction = resolveScopedWithNoActivations<
-          unknown,
-          typeof bindingTypeValues.Instance,
-          InstanceBinding<unknown>,
-          BaseBindingNode<InstanceBinding<unknown>>
-        >(nodeFixture, resolveMock);
+        resolveFunction = resolveScopedWithNoActivations(
+          bindingFixture,
+          resolveMock,
+        );
       });
 
       describe('when resolveFunction is called, and params.requestScopeCache does not have a value for the binding', () => {
@@ -206,16 +176,13 @@ describe(resolveScopedWithNoActivations, () => {
         });
 
         it('should call resolveMock()', () => {
-          expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
-            paramsFixture,
-            nodeFixture,
-          );
+          expect(resolveMock).toHaveBeenCalledExactlyOnceWith(paramsFixture);
         });
 
         it('should set request scope value()', () => {
-          expect(
-            paramsFixture.requestScopeCache.get(nodeFixture.binding.id),
-          ).toBe(resolveMockResult);
+          expect(paramsFixture.requestScopeCache.get(bindingFixture.id)).toBe(
+            resolveMockResult,
+          );
         });
 
         it('should return expected value', () => {
@@ -233,7 +200,7 @@ describe(resolveScopedWithNoActivations, () => {
           requestScopeCacheResult = Symbol();
           paramsFixture = {
             requestScopeCache: new Map([
-              [nodeFixture.binding.id, requestScopeCacheResult],
+              [bindingFixture.id, requestScopeCacheResult],
             ]),
           } as Partial<ResolutionParams> as ResolutionParams;
 
@@ -255,34 +222,29 @@ describe(resolveScopedWithNoActivations, () => {
     });
   });
 
-  describe('having a node with a binding with scope Transient', () => {
-    let nodeFixture: BaseBindingNode<InstanceBinding<unknown>>;
+  describe('having a binding with scope Transient', () => {
+    let bindingFixture: InstanceBinding<unknown>;
 
     beforeAll(() => {
-      nodeFixture = {
-        binding: InstanceBindingFixtures.withScopeTransient,
-      };
+      bindingFixture = InstanceBindingFixtures.withScopeTransient;
     });
 
     describe('when called', () => {
-      let resolveMock: Mock<
-        (
-          params: ResolutionParams,
-          node: BaseBindingNode<InstanceBinding<unknown>>,
-        ) => Resolved<unknown>
-      >;
+      let resolveMock: Mock<(params: ResolutionParams) => Resolved<unknown>>;
 
       let resolveFunction: (params: ResolutionParams) => Resolved<unknown>;
 
       beforeAll(() => {
         resolveMock = vitest.fn();
 
-        resolveFunction = resolveScopedWithNoActivations<
-          unknown,
-          typeof bindingTypeValues.Instance,
-          InstanceBinding<unknown>,
-          BaseBindingNode<InstanceBinding<unknown>>
-        >(nodeFixture, resolveMock);
+        resolveFunction = resolveScopedWithNoActivations(
+          bindingFixture,
+          resolveMock,
+        );
+      });
+
+      it('should return the resolve function itself', () => {
+        expect(resolveFunction).toBe(resolveMock);
       });
 
       describe('when resolveFunction is called', () => {
@@ -305,10 +267,7 @@ describe(resolveScopedWithNoActivations, () => {
         });
 
         it('should call resolveMock()', () => {
-          expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
-            paramsFixture,
-            nodeFixture,
-          );
+          expect(resolveMock).toHaveBeenCalledExactlyOnceWith(paramsFixture);
         });
 
         it('should return expected value', () => {

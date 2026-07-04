@@ -68,30 +68,24 @@ export class ActivationsService implements Cloneable<ActivationsService> {
   public get(
     serviceIdentifier: ServiceIdentifier,
   ): Iterable<BindingActivation> | undefined {
-    const activationIterables: Iterable<BindingActivation>[] = [];
-
     const activations: Iterable<BindingActivation> | undefined =
       this.#activationMaps.get(
         ActivationRelationKind.serviceId,
         serviceIdentifier,
       );
 
-    if (activations !== undefined) {
-      activationIterables.push(activations);
-    }
-
     const parentActivations: Iterable<BindingActivation> | undefined =
       this.#getParent()?.get(serviceIdentifier);
 
-    if (parentActivations !== undefined) {
-      activationIterables.push(parentActivations);
+    if (activations === undefined) {
+      return parentActivations;
     }
 
-    if (activationIterables.length === 0) {
-      return undefined;
+    if (parentActivations === undefined) {
+      return activations;
     }
 
-    return chain(...activationIterables);
+    return chain(activations, parentActivations);
   }
 
   public removeAllByModuleId(moduleId: number): void {
