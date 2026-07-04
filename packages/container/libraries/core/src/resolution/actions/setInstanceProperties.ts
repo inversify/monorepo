@@ -6,7 +6,6 @@ import { type ClassElementMetadata } from '../../metadata/models/ClassElementMet
 import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMetadataKind.js';
 import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
-import { resolveServiceNode } from './resolveServiceNode.js';
 
 export function setInstanceProperties(
   params: ResolutionParams,
@@ -30,7 +29,7 @@ export function setInstanceProperties(
       metadata.kind !== ClassElementMetadataKind.unmanaged &&
       propertyNode.bindings !== undefined
     ) {
-      instance[propertyKey] = resolveServiceNode(params, propertyNode);
+      instance[propertyKey] = propertyNode.resolve(params);
 
       if (isPromise(instance[propertyKey])) {
         propertyAssignmentPromises.push(
