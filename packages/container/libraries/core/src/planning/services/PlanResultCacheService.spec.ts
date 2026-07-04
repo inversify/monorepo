@@ -22,6 +22,8 @@ import { type PlanServiceNodeBindingAddedResult } from '../../metadata/models/Pl
 import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
 import { addRootServiceNodeBindingIfContextFree } from '../actions/addRootServiceNodeBindingIfContextFree.js';
 import { addServiceNodeBindingIfContextFree } from '../actions/addServiceNodeBindingIfContextFree.js';
+import { PlanMultipleBindingServiceNodeFixtures } from '../fixtures/PlanMultipleBindingServiceNodeFixtures.js';
+import { PlanSingleBindingServiceNodeFixtures } from '../fixtures/PlanSingleBindingServiceNodeFixtures.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type CacheBindingInvalidation } from '../models/CacheBindingInvalidation.js';
 import { CacheBindingInvalidationKind } from '../models/CacheBindingInvalidationKind.js';
@@ -472,8 +474,7 @@ describe(PlanResultCacheService, () => {
           beforeAll(() => {
             buildPlanServiceNodeMock = vitest.fn();
             planServiceNodeFixture = {
-              bindings: [],
-              isContextFree: true,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
               serviceIdentifier: 'service-id',
             };
             lazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
@@ -618,8 +619,7 @@ describe(PlanResultCacheService, () => {
           beforeAll(() => {
             buildPlanServiceNodeMock = vitest.fn();
             planServiceNodeFixture = {
-              bindings: undefined,
-              isContextFree: true,
+              ...PlanSingleBindingServiceNodeFixtures.withBindingsUndefined,
               serviceIdentifier: 'service-id',
             };
             lazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
@@ -766,8 +766,7 @@ describe(PlanResultCacheService, () => {
           beforeAll(() => {
             buildPlanServiceNodeMock = vitest.fn();
             childPlanServiceNodeFixture = {
-              bindings: [],
-              isContextFree: true,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
               serviceIdentifier: 'child-service-id',
             };
             childLazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
@@ -775,6 +774,7 @@ describe(PlanResultCacheService, () => {
               buildPlanServiceNodeMock,
             );
             planServiceNodeFixture = {
+              ...PlanSingleBindingServiceNodeFixtures.any,
               bindings: {
                 binding: {
                   cache: {
@@ -983,8 +983,7 @@ describe(PlanResultCacheService, () => {
           beforeAll(() => {
             buildPlanServiceNodeMock = vitest.fn();
             childPlanServiceNodeFixture = {
-              bindings: [],
-              isContextFree: true,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
               serviceIdentifier: 'child-service-id',
             };
             childLazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
@@ -992,6 +991,7 @@ describe(PlanResultCacheService, () => {
               buildPlanServiceNodeMock,
             );
             planServiceNodeFixture = {
+              ...PlanMultipleBindingServiceNodeFixtures.any,
               bindings: [
                 {
                   binding: {
@@ -1202,8 +1202,7 @@ describe(PlanResultCacheService, () => {
           beforeAll(() => {
             buildPlanServiceNodeMock = vitest.fn();
             childPlanServiceNodeFixture = {
-              bindings: [],
-              isContextFree: true,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
               serviceIdentifier: 'child-service-id',
             };
             childLazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
@@ -1212,6 +1211,7 @@ describe(PlanResultCacheService, () => {
             );
 
             planServiceNodeFixture = {
+              ...PlanSingleBindingServiceNodeFixtures.any,
               bindings: {
                 binding: {
                   id: 1,
@@ -1223,6 +1223,7 @@ describe(PlanResultCacheService, () => {
                   type: bindingTypeValues.ServiceRedirection,
                 },
                 redirection: {
+                  ...PlanSingleBindingServiceNodeFixtures.any,
                   bindings: {
                     binding: {
                       cache: {
@@ -1438,8 +1439,7 @@ describe(PlanResultCacheService, () => {
           beforeAll(() => {
             buildPlanServiceNodeMock = vitest.fn();
             childPlanServiceNodeFixture = {
-              bindings: [],
-              isContextFree: false,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArrayAndIsContextFreeFalse,
               serviceIdentifier: 'child-service-id',
             };
             childLazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
@@ -1447,6 +1447,7 @@ describe(PlanResultCacheService, () => {
               buildPlanServiceNodeMock,
             );
             planServiceNodeFixture = {
+              ...PlanMultipleBindingServiceNodeFixtures.any,
               bindings: [
                 {
                   binding: {
@@ -1662,8 +1663,7 @@ describe(PlanResultCacheService, () => {
           beforeAll(() => {
             buildPlanServiceNodeMock = vitest.fn();
             childPlanServiceNodeFixture = {
-              bindings: [],
-              isContextFree: false,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArrayAndIsContextFreeFalse,
               serviceIdentifier: 'child-service-id',
             };
             childLazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
@@ -1671,6 +1671,7 @@ describe(PlanResultCacheService, () => {
               buildPlanServiceNodeMock,
             );
             planServiceNodeFixture = {
+              ...PlanMultipleBindingServiceNodeFixtures.any,
               bindings: [
                 {
                   binding: {
@@ -1893,8 +1894,7 @@ describe(PlanResultCacheService, () => {
           beforeAll(() => {
             buildPlanServiceNodeMock = vitest.fn();
             childPlanServiceNodeFixture = {
-              bindings: [],
-              isContextFree: false,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArrayAndIsContextFreeFalse,
               serviceIdentifier: 'child-service-id',
             };
             childLazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
@@ -1902,6 +1902,7 @@ describe(PlanResultCacheService, () => {
               buildPlanServiceNodeMock,
             );
             planServiceNodeFixture = {
+              ...PlanMultipleBindingServiceNodeFixtures.any,
               bindings: [
                 {
                   binding: {
@@ -2077,8 +2078,7 @@ describe(PlanResultCacheService, () => {
         beforeAll(() => {
           buildPlanServiceNodeMock = vitest.fn();
           planServiceNodeFixture = {
-            bindings: [],
-            isContextFree: true,
+            ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
             serviceIdentifier: 'service-id',
           };
           lazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(
@@ -2171,8 +2171,7 @@ describe(PlanResultCacheService, () => {
         beforeAll(() => {
           buildPlanServiceNodeMock = vitest.fn();
           planServiceNodeFixture = {
-            bindings: [],
-            isContextFree: true,
+            ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
             serviceIdentifier: 'service-id',
           };
           lazyPlanServiceNodeFixture = new LazyPlanServiceNodeMock(

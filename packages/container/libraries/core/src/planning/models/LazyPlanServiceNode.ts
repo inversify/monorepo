@@ -1,5 +1,6 @@
 import { type ServiceIdentifier } from '@inversifyjs/common';
 
+import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type PlanBindingNode } from './PlanBindingNode.js';
 import { type PlanServiceNode } from './PlanServiceNode.js';
 
@@ -58,6 +59,10 @@ export abstract class LazyPlanServiceNode implements PlanServiceNode {
 
   public isExpanded(): boolean {
     return this._serviceNode !== undefined;
+  }
+
+  public resolve(params: ResolutionParams): unknown {
+    return this._getNode().resolve(params);
   }
 
   protected _getNode(): PlanServiceNode {

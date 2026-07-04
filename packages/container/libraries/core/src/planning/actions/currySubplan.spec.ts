@@ -33,6 +33,7 @@ import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKin
 import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures.js';
 import { tryBuildGetPlanOptionsFromManagedClassElementMetadata } from '../calculations/tryBuildGetPlanOptionsFromManagedClassElementMetadata.js';
 import { tryBuildGetPlanOptionsFromResolvedValueElementMetadata } from '../calculations/tryBuildGetPlanOptionsFromResolvedValueElementMetadata.js';
+import { PlanMultipleBindingServiceNodeFixtures } from '../fixtures/PlanMultipleBindingServiceNodeFixtures.js';
 import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
 import { type GetPlanOptions } from '../models/GetPlanOptions.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
@@ -404,8 +405,7 @@ describe(currySubplan, () => {
         planResultFixture = {
           tree: {
             root: {
-              bindings: [],
-              isContextFree: true,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
               serviceIdentifier: Symbol(),
             },
           },
@@ -488,8 +488,7 @@ describe(currySubplan, () => {
         planResultFixture = {
           tree: {
             root: {
-              bindings: [],
-              isContextFree: false,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArrayAndIsContextFreeFalse,
               serviceIdentifier: Symbol(),
             },
           },
@@ -798,8 +797,7 @@ describe(currySubplan, () => {
         planResultFixture = {
           tree: {
             root: {
-              bindings: [],
-              isContextFree: true,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
               serviceIdentifier: Symbol(),
             },
           },
@@ -886,8 +884,7 @@ describe(currySubplan, () => {
         planResultFixture = {
           tree: {
             root: {
-              bindings: [],
-              isContextFree: false,
+              ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArrayAndIsContextFreeFalse,
               serviceIdentifier: Symbol(),
             },
           },

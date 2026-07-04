@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('./resolveServiceNode.js'));
 
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { PlanSingleBindingServiceNodeFixtures } from '../../planning/fixtures/PlanSingleBindingServiceNodeFixtures.js';
 import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
 import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
@@ -47,8 +48,7 @@ describe(resolveInstanceBindingConstructorParams, () => {
 
     beforeAll(() => {
       constructorParamFixture = {
-        bindings: undefined,
-        isContextFree: true,
+        ...PlanSingleBindingServiceNodeFixtures.withBindingsUndefined,
         serviceIdentifier: 'service-id',
       };
       paramsFixture = Symbol() as unknown as ResolutionParams;

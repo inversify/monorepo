@@ -13,6 +13,7 @@ vitest.mock(import('./resolveServiceRedirectionBindingNode.js'));
 import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures.js';
 import { ServiceRedirectionBindingFixtures } from '../../binding/fixtures/ServiceRedirectionBindingFixtures.js';
 import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedirectionBinding.js';
+import { PlanMultipleBindingServiceNodeFixtures } from '../../planning/fixtures/PlanMultipleBindingServiceNodeFixtures.js';
 import { type LeafBindingNode } from '../../planning/models/LeafBindingNode.js';
 import { type PlanServiceRedirectionBindingNode } from '../../planning/models/PlanServiceRedirectionBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
@@ -53,8 +54,7 @@ describe(resolveMultipleBindingServiceNode, () => {
       serviceRedirectionBindingNodeFixture = {
         binding,
         redirection: {
-          bindings: [],
-          isContextFree: true,
+          ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
           serviceIdentifier: binding.targetServiceIdentifier,
         },
         resolve: vitest.fn(),
@@ -217,8 +217,7 @@ describe(resolveMultipleBindingServiceNode, () => {
       serviceRedirectionBindingNodeFixture = {
         binding,
         redirection: {
-          bindings: [],
-          isContextFree: true,
+          ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
           serviceIdentifier: binding.targetServiceIdentifier,
         },
         resolve: vitest.fn(),

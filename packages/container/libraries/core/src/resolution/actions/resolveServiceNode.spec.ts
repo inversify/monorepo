@@ -10,6 +10,7 @@ import {
 
 vitest.mock(import('./resolveMultipleBindingServiceNode.js'));
 
+import { PlanSingleBindingServiceNodeFixtures } from '../../planning/fixtures/PlanSingleBindingServiceNodeFixtures.js';
 import { type LeafBindingNode } from '../../planning/models/LeafBindingNode.js';
 import { type PlanBindingNode } from '../../planning/models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
@@ -25,8 +26,7 @@ describe(resolveServiceNode, () => {
     beforeAll(() => {
       resolutionParamsFixture = Symbol() as unknown as ResolutionParams;
       serviceNodeFixture = {
-        bindings: undefined,
-        isContextFree: true,
+        ...PlanSingleBindingServiceNodeFixtures.withBindingsUndefined,
         serviceIdentifier: Symbol(),
       };
     });
@@ -56,8 +56,8 @@ describe(resolveServiceNode, () => {
       planBindingNodeListFixture = [Symbol() as unknown as PlanBindingNode];
       resolutionParamsFixture = Symbol() as unknown as ResolutionParams;
       serviceNodeFixture = {
+        ...PlanSingleBindingServiceNodeFixtures.any,
         bindings: planBindingNodeListFixture,
-        isContextFree: true,
         serviceIdentifier: Symbol(),
       };
     });
@@ -112,8 +112,8 @@ describe(resolveServiceNode, () => {
       >;
       resolutionParamsFixture = Symbol() as unknown as ResolutionParams;
       serviceNodeFixture = {
+        ...PlanSingleBindingServiceNodeFixtures.any,
         bindings: planBindingNodeMock,
-        isContextFree: true,
         serviceIdentifier: Symbol(),
       };
     });

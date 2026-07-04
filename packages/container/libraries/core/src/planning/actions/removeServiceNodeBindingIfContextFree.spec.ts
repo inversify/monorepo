@@ -22,6 +22,8 @@ import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLi
 import { type InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
 import { type PlanServiceNodeBindingRemovedResult } from '../../metadata/models/PlanServiceNodeBindingRemovedResult.js';
+import { PlanMultipleBindingServiceNodeFixtures } from '../fixtures/PlanMultipleBindingServiceNodeFixtures.js';
+import { PlanSingleBindingServiceNodeFixtures } from '../fixtures/PlanSingleBindingServiceNodeFixtures.js';
 import { LazyPlanServiceNode } from '../models/LazyPlanServiceNode.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
@@ -140,8 +142,8 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       beforeAll(() => {
         lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
           {
+            ...PlanMultipleBindingServiceNodeFixtures.any,
             bindings: [planBindingNodeFixture],
-            isContextFree: true,
             serviceIdentifier: serviceIdentifierFixture,
           },
           serviceIdentifierFixture,
@@ -195,8 +197,8 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       beforeAll(() => {
         lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
           {
+            ...PlanMultipleBindingServiceNodeFixtures.any,
             bindings: [planBindingNodeFixture],
-            isContextFree: true,
             serviceIdentifier: serviceIdentifierFixture,
           },
           serviceIdentifierFixture,
@@ -252,8 +254,7 @@ describe(removeServiceNodeBindingIfContextFree, () => {
 
       lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
         {
-          bindings: [],
-          isContextFree: true,
+          ...PlanMultipleBindingServiceNodeFixtures.withBindingsEmptyArray,
           serviceIdentifier: serviceIdentifier,
         },
         serviceIdentifier,
@@ -387,8 +388,8 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       beforeAll(() => {
         lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
           {
+            ...PlanSingleBindingServiceNodeFixtures.any,
             bindings: planBindingNodeFixture,
-            isContextFree: true,
             serviceIdentifier: serviceIdentifierFixture,
           },
           serviceIdentifierFixture,
@@ -488,8 +489,8 @@ describe(removeServiceNodeBindingIfContextFree, () => {
 
       beforeAll(() => {
         planServiceNodeFixture = {
+          ...PlanSingleBindingServiceNodeFixtures.any,
           bindings: planBindingNodeFixture,
-          isContextFree: true,
           serviceIdentifier: serviceIdentifierFixture,
         };
 
@@ -589,8 +590,8 @@ describe(removeServiceNodeBindingIfContextFree, () => {
       beforeAll(() => {
         lazyPlanServiceNodeFixture = new LazyPlanServiceNodeTest(
           {
+            ...PlanSingleBindingServiceNodeFixtures.any,
             bindings: planBindingNodeFixture,
-            isContextFree: true,
             serviceIdentifier: serviceIdentifierFixture,
           },
           serviceIdentifierFixture,

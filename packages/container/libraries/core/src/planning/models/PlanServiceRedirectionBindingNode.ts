@@ -7,9 +7,6 @@ export interface PlanServiceRedirectionBindingNode<
   TActivated = any,
   TBinding extends ServiceRedirectionBinding<TActivated> =
     ServiceRedirectionBinding<TActivated>,
-> extends ResolvableBindingNode<
-  TActivated | TActivated[] | undefined,
-  TBinding
-> {
+> extends ResolvableBindingNode<TActivated, TBinding> {
   redirection: PlanServiceNode;
 }
