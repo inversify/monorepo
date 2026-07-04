@@ -12,16 +12,23 @@ export function resolveInstanceBindingConstructorParams<
   node: InstanceBindingNode<TActivated, TBinding>,
 ): unknown[] | Promise<unknown[]> {
   const constructorResolvedValues: unknown[] = [];
+  let promiseValueFound: boolean = false;
 
   for (const constructorParam of node.constructorParams) {
     if (constructorParam === undefined) {
       constructorResolvedValues.push(undefined);
     } else {
-      constructorResolvedValues.push(constructorParam.resolve(params));
+      const resolvedValue: unknown = constructorParam.resolve(params);
+
+      if (!promiseValueFound && isPromise(resolvedValue)) {
+        promiseValueFound = true;
+      }
+
+      constructorResolvedValues.push(resolvedValue);
     }
   }
 
-  return constructorResolvedValues.some(isPromise)
+  return promiseValueFound
     ? Promise.all(constructorResolvedValues)
     : constructorResolvedValues;
 }

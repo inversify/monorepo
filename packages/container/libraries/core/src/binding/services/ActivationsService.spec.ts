@@ -131,8 +131,6 @@ describe(ActivationsService, () => {
           .mockReturnValueOnce([bindingActivationFixture])
           .mockReturnValueOnce(undefined);
 
-        vitest.mocked(chain).mockReturnValueOnce([bindingActivationFixture]);
-
         result = activationsService.get(serviceIdFixture);
       });
 
@@ -154,10 +152,8 @@ describe(ActivationsService, () => {
         );
       });
 
-      it('should call chain()', () => {
-        expect(chain).toHaveBeenCalledExactlyOnceWith([
-          bindingActivationFixture,
-        ]);
+      it('should not call chain()', () => {
+        expect(chain).not.toHaveBeenCalled();
       });
 
       it('should return BindingActivation[]', () => {
@@ -179,7 +175,6 @@ describe(ActivationsService, () => {
 
         vitest
           .mocked(chain)
-          .mockReturnValueOnce([bindingActivationFixture])
           .mockReturnValueOnce([
             bindingActivationFixture,
             bindingActivationFixture,
@@ -207,10 +202,7 @@ describe(ActivationsService, () => {
       });
 
       it('should call chain()', () => {
-        expect(chain).toHaveBeenCalledTimes(2);
-        expect(chain).toHaveBeenNthCalledWith(1, [bindingActivationFixture]);
-        expect(chain).toHaveBeenNthCalledWith(
-          2,
+        expect(chain).toHaveBeenCalledExactlyOnceWith(
           [bindingActivationFixture],
           [bindingActivationFixture],
         );

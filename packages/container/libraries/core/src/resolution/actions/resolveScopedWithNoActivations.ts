@@ -5,23 +5,15 @@ import {
 } from '../../binding/models/BindingScope.js';
 import { type BindingType } from '../../binding/models/BindingType.js';
 import { type ScopedBinding } from '../../binding/models/ScopedBinding.js';
-import { type BaseBindingNode } from '../../planning/models/BaseBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { type Resolved } from '../models/Resolved.js';
 import { cacheResolvedValue } from './cacheResolvedValue.js';
 
-export function resolveScopedWithNoActivations<
-  TActivated,
-  TType extends BindingType,
-  TBinding extends ScopedBinding<TType, BindingScope, TActivated> &
+export function resolveScopedWithNoActivations<TActivated>(
+  binding: ScopedBinding<BindingType, BindingScope, TActivated> &
     Binding<TActivated>,
-  TNode extends BaseBindingNode<TBinding>,
->(
-  node: TNode,
-  resolve: (params: ResolutionParams, node: TNode) => Resolved<TActivated>,
+  resolve: (params: ResolutionParams) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  const binding: TBinding = node.binding;
-
   switch (binding.scope) {
     case bindingScopeValues.Singleton: {
       return (params: ResolutionParams): Resolved<TActivated> => {
@@ -29,7 +21,7 @@ export function resolveScopedWithNoActivations<
           return binding.cache.value;
         }
 
-        const resolvedValue: Resolved<TActivated> = resolve(params, node);
+        const resolvedValue: Resolved<TActivated> = resolve(params);
 
         return cacheResolvedValue(binding, resolvedValue);
       };
@@ -42,7 +34,7 @@ export function resolveScopedWithNoActivations<
           ) as Resolved<TActivated>;
         }
 
-        const resolvedValue: Resolved<TActivated> = resolve(params, node);
+        const resolvedValue: Resolved<TActivated> = resolve(params);
 
         params.requestScopeCache.set(binding.id, resolvedValue);
 
@@ -50,7 +42,6 @@ export function resolveScopedWithNoActivations<
       };
     }
     case bindingScopeValues.Transient:
-      return (params: ResolutionParams): Resolved<TActivated> =>
-        resolve(params, node);
+      return resolve;
   }
 }
