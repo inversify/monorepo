@@ -12,7 +12,7 @@ export function buildBenchmark(options: BuildBenchmarkOptions): Bench {
 
   for (const scenario of options.scenarios) {
     bench.add(
-      scenario.platform,
+      scenario.name,
       async (): Promise<void> => {
         await scenario.execute();
       },

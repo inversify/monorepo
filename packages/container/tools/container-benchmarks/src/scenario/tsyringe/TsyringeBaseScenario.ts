@@ -3,10 +3,10 @@ import { Scenario } from '@inversifyjs/benchmark-utils';
 import { Platform } from '../models/Platform';
 
 export abstract class TsyringeBaseScenario implements Scenario<Platform> {
-  public readonly platform: Platform;
+  public readonly name: Platform;
 
   constructor() {
-    this.platform = Platform.tsyringe;
+    this.name = Platform.tsyringe;
   }
 
   public async setUp(): Promise<void> {

@@ -180,12 +180,12 @@ class Node1 {
 class ContainerModule {}
 
 export class NestCoreGetComplexServiceInSingletonScopeScenario implements Scenario<Platform> {
-  public readonly platform: Platform;
+  public readonly name: Platform;
 
   #context!: INestApplicationContext;
 
   constructor() {
-    this.platform = Platform.nestJs;
+    this.name = Platform.nestJs;
   }
 
   public async setUp(): Promise<void> {
