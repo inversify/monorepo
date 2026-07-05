@@ -73,7 +73,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
   const serviceIdentifier: ServiceIdentifier<TActivated> =
     binding.serviceIdentifier;
 
-  function resolveInstanceActivations(
+  function resolveActivations(
     params: ResolutionParams,
     instance: SyncResolved<TActivated>,
   ): Resolved<TActivated> {
@@ -93,7 +93,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
   switch (classMetadata.constructorArguments.length) {
     case ZERO_CONSTRUCTOR_ARGUMENTS:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> =>
-        resolveInstanceActivations(params, new implementationType());
+        resolveActivations(params, new implementationType());
       break;
     case ONE_CONSTRUCTOR_ARGUMENT:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
@@ -102,14 +102,13 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           node.constructorParams[0]!.resolve(params);
 
         if (isPromise(resolvedValue)) {
-          return resolveInstanceBindingNodeAsyncFromOnlyConstructorParams(
-            Promise.all([resolvedValue]),
-            params,
-            node,
+          return resolvedValue.then(
+            (resolvedValue: unknown): Resolved<TActivated> =>
+              resolveActivations(params, new implementationType(resolvedValue)),
           );
         }
 
-        return resolveInstanceActivations(
+        return resolveActivations(
           params,
           new implementationType(resolvedValue),
         );
@@ -132,7 +131,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           );
         }
 
-        return resolveInstanceActivations(
+        return resolveActivations(
           params,
           new implementationType(firstResolvedValue, secondResolvedValue),
         );
@@ -166,7 +165,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           );
         }
 
-        return resolveInstanceActivations(
+        return resolveActivations(
           params,
           new implementationType(
             firstResolvedValue,
@@ -209,7 +208,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           );
         }
 
-        return resolveInstanceActivations(
+        return resolveActivations(
           params,
           new implementationType(
             firstResolvedValue,
@@ -233,7 +232,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           );
         }
 
-        return resolveInstanceActivations(
+        return resolveActivations(
           params,
           new implementationType(...constructorValues),
         );
