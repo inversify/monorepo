@@ -1,6 +1,7 @@
 import {
   bindingScopeValues,
   type GetPlanOptions,
+  isConstructorNoParamNode,
   type PlanBindingNode,
   type PlanResult,
   type PlanServiceNode,
@@ -70,7 +71,7 @@ function registerSingletonBinding(
 
   if (isInstanceBindingNode(bindingNode)) {
     for (const param of bindingNode.constructorParams) {
-      if (param !== undefined) {
+      if (!isConstructorNoParamNode(param)) {
         registerServiceSingletonScopedBindings(param, [
           ...singletonDependencies,
         ]);

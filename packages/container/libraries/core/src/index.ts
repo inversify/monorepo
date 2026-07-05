@@ -69,11 +69,13 @@ import { type SingleInjectionManagedClassElementMetadata } from './metadata/mode
 import { type SingleInjectionResolvedValueElementMetadata } from './metadata/models/SingleInjectionResolvedValueElementMetadata.js';
 import { type UnmanagedClassElementMetadata } from './metadata/models/UnmanagedClassElementMetadata.js';
 import { plan } from './planning/actions/plan.js';
+import { isConstructorNoParamNode } from './planning/calculations/isConstructorNoParamNode.js';
 import { type BaseBindingNode } from './planning/models/BaseBindingNode.js';
 import { type BaseGetPlanOptions } from './planning/models/BaseGetPlanOptions.js';
 import { type BasePlanParams } from './planning/models/BasePlanParams.js';
 import { type CacheBindingInvalidation } from './planning/models/CacheBindingInvalidation.js';
 import { CacheBindingInvalidationKind } from './planning/models/CacheBindingInvalidationKind.js';
+import { type ConstructorNoParamNode } from './planning/models/ConstructorNoParamNode.js';
 import { type FactoryBindingNode } from './planning/models/FactoryBindingNode.js';
 import { type GetMultipleServicePlanOptions } from './planning/models/GetMultipleServicePlanOptions.js';
 import { type GetPlanOptions } from './planning/models/GetPlanOptions.js';
@@ -132,6 +134,7 @@ export type {
   ClassMetadata,
   ClassMetadataLifecycle,
   ConstantValueBinding,
+  ConstructorNoParamNode,
   DeactivationParams,
   DynamicValueBinding,
   DynamicValueBuilder,
@@ -202,6 +205,7 @@ export {
   injectable,
   injectFromBase,
   injectFromHierarchy,
+  isConstructorNoParamNode,
   InversifyCoreError,
   InversifyCoreErrorKind,
   LazyPlanServiceNode,

@@ -10,6 +10,7 @@ import { addRootServiceNodeBindingIfContextFree } from '../actions/addRootServic
 import { addServiceNodeBindingIfContextFree } from '../actions/addServiceNodeBindingIfContextFree.js';
 import { removeRootServiceNodeBindingIfContextFree } from '../actions/removeRootServiceNodeBindingIfContextFree.js';
 import { removeServiceNodeBindingIfContextFree } from '../actions/removeServiceNodeBindingIfContextFree.js';
+import { isConstructorNoParamNode } from '../calculations/isConstructorNoParamNode.js';
 import { type CacheBindingInvalidation } from '../models/CacheBindingInvalidation.js';
 import { CacheBindingInvalidationKind } from '../models/CacheBindingInvalidationKind.js';
 import { type GetPlanOptions } from '../models/GetPlanOptions.js';
@@ -362,7 +363,7 @@ export class PlanResultCacheService {
       case bindingTypeValues.Instance:
         for (const constructorParam of (planBindingNode as InstanceBindingNode)
           .constructorParams) {
-          if (constructorParam !== undefined) {
+          if (!isConstructorNoParamNode(constructorParam)) {
             this.#invalidateNonCachePlanServiceNode(constructorParam);
           }
         }
