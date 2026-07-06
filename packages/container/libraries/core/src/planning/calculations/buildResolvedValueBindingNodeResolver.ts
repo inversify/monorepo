@@ -193,7 +193,10 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
       break;
     default:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> =>
-        resolveResolvedValueBindingNode(params, node);
+        resolveActivations(
+          params,
+          resolveResolvedValueBindingNode(params, node),
+        );
   }
 
   return resolveScopedWithNoActivations(binding, resolveNode);
