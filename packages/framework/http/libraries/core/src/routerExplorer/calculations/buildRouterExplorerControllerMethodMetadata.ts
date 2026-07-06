@@ -38,8 +38,7 @@ export function buildRouterExplorerControllerMethodMetadata<
   controllerMethodMetadata: ControllerMethodMetadata,
 ): RouterExplorerControllerMethodMetadata<TRequest, TResponse, TResult> {
   const controllerMethodParameterMetadataList: (
-    | ControllerMethodParameterMetadata
-    | undefined
+    ControllerMethodParameterMetadata | undefined
   )[] = getControllerMethodParameterMetadataList(
     controllerMetadata.target,
     controllerMethodMetadata.methodKey,
@@ -71,7 +70,7 @@ export function buildRouterExplorerControllerMethodMetadata<
 
   const controllerMiddlewareList: (
     | // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ServiceIdentifier<Middleware<TRequest, TResponse, any, TResult>>
+      ServiceIdentifier<Middleware<TRequest, TResponse, any, TResult>>
     | ApplyMiddlewareOptions
   )[] = getClassMiddlewareList(controllerMetadata.target);
 
@@ -80,7 +79,7 @@ export function buildRouterExplorerControllerMethodMetadata<
 
   const controllerMethodMiddlewareList: (
     | // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ServiceIdentifier<Middleware<TRequest, TResponse, any, TResult>>
+      ServiceIdentifier<Middleware<TRequest, TResponse, any, TResult>>
     | ApplyMiddlewareOptions
   )[] = getClassMethodMiddlewareList(
     controllerMetadata.target,

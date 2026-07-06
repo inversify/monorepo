@@ -21,9 +21,8 @@ export function getRequestBodyObject(
   route: string,
 ): OpenApi3Dot2RequestBodyObject {
   const requestBodyObject:
-    | OpenApi3Dot2RequestBodyObject
-    | OpenApi3Dot2ReferenceObject
-    | undefined = operationObject.requestBody;
+    OpenApi3Dot2RequestBodyObject | OpenApi3Dot2ReferenceObject | undefined =
+    operationObject.requestBody;
 
   if (requestBodyObject === undefined) {
     throw new InversifyValidationError(

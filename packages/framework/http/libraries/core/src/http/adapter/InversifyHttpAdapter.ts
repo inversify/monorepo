@@ -99,8 +99,7 @@ export abstract class InversifyHttpAdapter<
     defaultHttpAdapterOptions: RequiredOptions<TOptions>,
     httpAdapterOptions: TOptions | undefined,
     awaitableRequestMethodParamTypes?:
-      | Iterable<RequestMethodParameterType>
-      | undefined,
+      Iterable<RequestMethodParameterType> | undefined,
     customApp?: TApp,
   ) {
     this.#awaitableRequestMethodParamTypes = new Set([
@@ -133,8 +132,7 @@ export abstract class InversifyHttpAdapter<
 
   public applyGlobalMiddleware(
     ...middlewareList: (
-      | ServiceIdentifier<Middleware>
-      | ApplyMiddlewareOptions
+      ServiceIdentifier<Middleware> | ApplyMiddlewareOptions
     )[]
   ): void {
     if (this.#isBuilt) {
@@ -229,8 +227,7 @@ export abstract class InversifyHttpAdapter<
   protected _getRouteValueMetadataHandler(
     _routeValueMetadataMap: Map<string | symbol, unknown>,
   ):
-    | MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>
-    | undefined {
+    MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult> | undefined {
     return undefined;
   }
 
@@ -730,10 +727,10 @@ export abstract class InversifyHttpAdapter<
       error: unknown,
     ): Promise<TResult> => {
       const errorFilter:
-        | ErrorFilter<unknown, TRequest, TResponse, TResult>
-        | undefined = await this.#getErrorFilterForError(error, [
-        this.#errorTypeToGlobalErrorFilterMap,
-      ]);
+        ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined =
+        await this.#getErrorFilterForError(error, [
+          this.#errorTypeToGlobalErrorFilterMap,
+        ]);
 
       if (errorFilter === undefined) {
         this.#printError(error);
@@ -825,11 +822,11 @@ export abstract class InversifyHttpAdapter<
       error: unknown,
     ): Promise<TResult> => {
       const errorFilter:
-        | ErrorFilter<unknown, TRequest, TResponse, TResult>
-        | undefined = await this.#getErrorFilterForError(error, [
-        routerExplorerControllerMethodMetadata.errorTypeToErrorFilterMap,
-        this.#errorTypeToGlobalErrorFilterMap,
-      ]);
+        ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined =
+        await this.#getErrorFilterForError(error, [
+          routerExplorerControllerMethodMetadata.errorTypeToErrorFilterMap,
+          this.#errorTypeToGlobalErrorFilterMap,
+        ]);
 
       if (errorFilter === undefined) {
         this.#printError(error);

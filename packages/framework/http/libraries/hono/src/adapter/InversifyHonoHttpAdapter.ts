@@ -233,9 +233,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
 
   protected _sendBodySeparator(_request: HonoRequest, response: Context): void {
     const rawResponse:
-      | http.ServerResponse
-      | http2.Http2ServerResponse
-      | undefined = (
+      http.ServerResponse | http2.Http2ServerResponse | undefined = (
       response as Context<{ Bindings: Partial<HttpBindings | Http2Bindings> }>
     ).env.outgoing;
 

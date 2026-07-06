@@ -3,6 +3,4 @@ import { type LeafBindingNode } from './LeafBindingNode.js';
 import { type PlanServiceNodeParent } from './PlanServiceNodeParent.js';
 
 export type PlanBindingNode =
-  | PlanServiceNodeParent
-  | LeafBindingNode
-  | FactoryBindingNode;
+  PlanServiceNodeParent | LeafBindingNode | FactoryBindingNode;

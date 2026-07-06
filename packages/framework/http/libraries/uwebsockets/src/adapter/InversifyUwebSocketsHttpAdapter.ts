@@ -222,8 +222,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
   protected override _getRouteValueMetadataHandler(
     routeValueMetadataMap: Map<string | symbol, unknown>,
   ):
-    | MiddlewareHandler<HttpRequest, HttpResponse, () => void, void>
-    | undefined {
+    MiddlewareHandler<HttpRequest, HttpResponse, () => void, void> | undefined {
     if (routeValueMetadataMap.size === 0) {
       return undefined;
     }
@@ -236,8 +235,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
       (
         request as HttpRequest & {
           [routeValueMetadataSymbol]?:
-            | Map<string | symbol, unknown>
-            | undefined;
+            Map<string | symbol, unknown> | undefined;
         }
       )[routeValueMetadataSymbol] = routeValueMetadataMap;
 

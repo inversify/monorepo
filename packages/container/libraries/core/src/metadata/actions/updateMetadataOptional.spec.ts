@@ -10,8 +10,7 @@ import { updateMetadataOptional } from './updateMetadataOptional.js';
 describe(updateMetadataOptional, () => {
   describe('having metadata with no optional', () => {
     let metadataFixture:
-      | ManagedClassElementMetadata
-      | MaybeManagedClassElementMetadata;
+      ManagedClassElementMetadata | MaybeManagedClassElementMetadata;
 
     beforeAll(() => {
       metadataFixture = {
@@ -32,8 +31,7 @@ describe(updateMetadataOptional, () => {
 
       it('should return metadata', () => {
         const expected:
-          | ManagedClassElementMetadata
-          | MaybeManagedClassElementMetadata = {
+          ManagedClassElementMetadata | MaybeManagedClassElementMetadata = {
           ...metadataFixture,
           optional: true,
         };
@@ -45,8 +43,7 @@ describe(updateMetadataOptional, () => {
 
   describe('having metadata with optional', () => {
     let metadataFixture:
-      | ManagedClassElementMetadata
-      | MaybeManagedClassElementMetadata;
+      ManagedClassElementMetadata | MaybeManagedClassElementMetadata;
 
     beforeAll(() => {
       metadataFixture = {

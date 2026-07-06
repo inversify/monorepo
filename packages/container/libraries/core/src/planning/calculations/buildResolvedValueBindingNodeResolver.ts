@@ -121,16 +121,11 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
             firstResolvedValue,
             secondResolvedValue,
             thirdResolvedValue,
-          ]).then(
-            (resolvedValues: unknown[]): Resolved<TActivated> =>
-              resolveActivations(
-                params,
-                factory(
-                  resolvedValues[0],
-                  resolvedValues[1],
-                  resolvedValues[2],
-                ),
-              ),
+          ]).then((resolvedValues: unknown[]): Resolved<TActivated> =>
+            resolveActivations(
+              params,
+              factory(resolvedValues[0], resolvedValues[1], resolvedValues[2]),
+            ),
           );
         }
 
@@ -166,17 +161,16 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
             secondResolvedValue,
             thirdResolvedValue,
             fourthResolvedValue,
-          ]).then(
-            (resolvedValues: unknown[]): Resolved<TActivated> =>
-              resolveActivations(
-                params,
-                factory(
-                  resolvedValues[0],
-                  resolvedValues[1],
-                  resolvedValues[2],
-                  resolvedValues[3],
-                ),
+          ]).then((resolvedValues: unknown[]): Resolved<TActivated> =>
+            resolveActivations(
+              params,
+              factory(
+                resolvedValues[0],
+                resolvedValues[1],
+                resolvedValues[2],
+                resolvedValues[3],
               ),
+            ),
           );
         }
 

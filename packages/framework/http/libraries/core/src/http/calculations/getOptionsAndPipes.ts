@@ -5,9 +5,7 @@ import { type RouteParamOptions } from '../models/RouteParamOptions.js';
 
 export function getOptionsAndPipes(
   optionsOrPipe:
-    | RouteParamOptions
-    | (ServiceIdentifier<Pipe> | Pipe)
-    | undefined,
+    RouteParamOptions | (ServiceIdentifier<Pipe> | Pipe) | undefined,
   parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[],
 ): [RouteParamOptions | undefined, (ServiceIdentifier<Pipe> | Pipe)[]] {
   let options: RouteParamOptions | undefined;

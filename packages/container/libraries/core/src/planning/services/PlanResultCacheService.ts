@@ -184,10 +184,8 @@ export class PlanResultCacheService {
     context: NonCachedServiceNodeContext,
   ): void {
     let nonCachedMap:
-      | Map<PlanServiceNode, NonCachedServiceNodeContext>
-      | undefined = this.#serviceIdToNonCachedServiceNodeMapMap.get(
-      node.serviceIdentifier,
-    );
+      Map<PlanServiceNode, NonCachedServiceNodeContext> | undefined =
+      this.#serviceIdToNonCachedServiceNodeMapMap.get(node.serviceIdentifier);
 
     if (nonCachedMap === undefined) {
       nonCachedMap = new Map();
@@ -391,10 +389,10 @@ export class PlanResultCacheService {
 
   #invalidateNonCachePlanServiceNode(planServiceNode: PlanServiceNode): void {
     const serviceNonCachedMap:
-      | Map<PlanServiceNode, NonCachedServiceNodeContext>
-      | undefined = this.#serviceIdToNonCachedServiceNodeMapMap.get(
-      planServiceNode.serviceIdentifier,
-    );
+      Map<PlanServiceNode, NonCachedServiceNodeContext> | undefined =
+      this.#serviceIdToNonCachedServiceNodeMapMap.get(
+        planServiceNode.serviceIdentifier,
+      );
 
     if (
       serviceNonCachedMap === undefined ||
@@ -437,10 +435,10 @@ export class PlanResultCacheService {
     invalidation: CacheBindingInvalidation,
   ): void {
     const serviceNonCachedServiceNodeMap:
-      | Map<PlanServiceNode, NonCachedServiceNodeContext>
-      | undefined = this.#serviceIdToNonCachedServiceNodeMapMap.get(
-      invalidation.binding.serviceIdentifier,
-    );
+      Map<PlanServiceNode, NonCachedServiceNodeContext> | undefined =
+      this.#serviceIdToNonCachedServiceNodeMapMap.get(
+        invalidation.binding.serviceIdentifier,
+      );
 
     if (serviceNonCachedServiceNodeMap !== undefined) {
       switch (invalidation.kind) {
@@ -511,8 +509,9 @@ export class PlanResultCacheService {
   #invalidateTaggedServiceMap(invalidation: CacheBindingInvalidation): void {
     for (const [index, map] of this.#taggedServiceIdToValuePlanMap.entries()) {
       const servicePlanMapMap:
-        | Map<MetadataTag, Map<unknown, PlanResult>>
-        | undefined = map.get(invalidation.binding.serviceIdentifier);
+        Map<MetadataTag, Map<unknown, PlanResult>> | undefined = map.get(
+        invalidation.binding.serviceIdentifier,
+      );
 
       if (servicePlanMapMap !== undefined) {
         for (const [tag, servicePlanMap] of servicePlanMapMap.entries()) {

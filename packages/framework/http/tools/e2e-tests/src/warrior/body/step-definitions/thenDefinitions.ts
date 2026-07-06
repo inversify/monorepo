@@ -21,8 +21,7 @@ async function thenResponseContainsTheCorrectBodyData(
     getServerRequestOrFail.bind(this)(parsedRequestAlias);
 
   const requestBody: WarriorRequest | undefined = request.body as
-    | WarriorRequest
-    | undefined;
+    WarriorRequest | undefined;
 
   assert(requestBody !== undefined);
 
@@ -81,8 +80,7 @@ async function thenResponseContainsTheCorrectMultipartBodyData(
     getServerRequestOrFail.bind(this)(parsedRequestAlias);
 
   const requestBody: WarriorRequest | undefined = request.body as
-    | WarriorRequest
-    | undefined;
+    WarriorRequest | undefined;
 
   assert(requestBody !== undefined);
 

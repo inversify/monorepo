@@ -12,8 +12,7 @@ export class InstanceBindingNodeImplementation<
   TActivated = any,
 > implements InstanceBindingNode<TActivated, InstanceBinding<TActivated>> {
   public readonly constructorParams: (
-    | PlanServiceNode
-    | ConstructorNoParamNode
+    PlanServiceNode | ConstructorNoParamNode
   )[];
   public readonly propertyParams: Map<string | symbol, PlanServiceNode>;
   public readonly resolve: (params: ResolutionParams) => Resolved<TActivated>;

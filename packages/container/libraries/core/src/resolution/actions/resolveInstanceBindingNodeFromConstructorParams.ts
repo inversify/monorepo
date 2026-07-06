@@ -57,13 +57,12 @@ export function resolveInstanceBindingNodeFromConstructorParams<
     setInstanceProperties(params, instance, node);
 
   if (isPromise(propertiesAssignmentResult)) {
-    return propertiesAssignmentResult.then(
-      (): Resolved<TActivated> =>
-        resolveAllPostConstructMethods(
-          instance,
-          node.binding,
-          node.classMetadata.lifecycle.postConstructMethodNames,
-        ),
+    return propertiesAssignmentResult.then((): Resolved<TActivated> =>
+      resolveAllPostConstructMethods(
+        instance,
+        node.binding,
+        node.classMetadata.lifecycle.postConstructMethodNames,
+      ),
     );
   }
 

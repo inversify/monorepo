@@ -340,8 +340,7 @@ describe(resolve, () => {
           serviceIdentifier: ServiceIdentifier,
         ): BindingActivation<TActivated>[] | undefined =>
           activationService.get(serviceIdentifier) as
-            | BindingActivation<TActivated>[]
-            | undefined,
+            BindingActivation<TActivated>[] | undefined,
         planResult,
         requestScopeCache: new Map(),
       }) as TMultiple extends false
@@ -546,8 +545,7 @@ describe(resolve, () => {
               serviceIdentifier: ServiceIdentifier,
             ): BindingActivation<TActivated>[] | undefined =>
               activationService.get(serviceIdentifier) as
-                | BindingActivation<TActivated>[]
-                | undefined,
+                BindingActivation<TActivated>[] | undefined,
             planResult,
             requestScopeCache: new Map(),
           });

@@ -17,8 +17,7 @@ describe(isResolvedValueBindingNode, () => {
           type: bindingTypeValues.Instance,
         },
       } as Partial<PlanServiceNodeParent | LeafBindingNode> as
-        | PlanServiceNodeParent
-        | LeafBindingNode,
+        PlanServiceNodeParent | LeafBindingNode,
       false,
     ],
     [
@@ -28,8 +27,7 @@ describe(isResolvedValueBindingNode, () => {
           type: bindingTypeValues.ResolvedValue,
         },
       } as Partial<PlanServiceNodeParent | LeafBindingNode> as
-        | PlanServiceNodeParent
-        | LeafBindingNode,
+        PlanServiceNodeParent | LeafBindingNode,
       true,
     ],
   ])(

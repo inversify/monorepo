@@ -5,6 +5,5 @@ export function getOwnReflectMetadata<TMetadata>(
   propertyKey?: string | symbol,
 ): TMetadata | undefined {
   return Reflect.getOwnMetadata(metadataKey, target, propertyKey) as
-    | TMetadata
-    | undefined;
+    TMetadata | undefined;
 }
