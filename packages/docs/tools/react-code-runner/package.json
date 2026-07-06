@@ -5,7 +5,7 @@
   },
   "description": "InversifyJS bundles package",
   "devDependencies": {
-    "@babel/types": "7.29.7",
+    "@babel/types": "8.0.0",
     "@eslint/config-helpers": "0.6.0",
     "@eslint/js": "10.0.1",
     "@inversifyjs/common": "workspace:*",
@@ -37,7 +37,7 @@
     "vite-plugin-lib-inject-css": "2.2.2"
   },
   "peerDependencies": {
-    "@babel/standalone": "^7.29.7",
+    "@babel/standalone": "^8.0.3",
     "@swc/wasm-web": "^1.15.43",
     "monaco-editor": "~0.55.1",
     "react": "19.2.7"
