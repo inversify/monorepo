@@ -73,7 +73,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
   const serviceIdentifier: ServiceIdentifier<TActivated> =
     binding.serviceIdentifier;
 
-  function resolveInstanceActivations(
+  function resolveActivations(
     params: ResolutionParams,
     instance: SyncResolved<TActivated>,
   ): Resolved<TActivated> {
@@ -93,22 +93,22 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
   switch (classMetadata.constructorArguments.length) {
     case ZERO_CONSTRUCTOR_ARGUMENTS:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> =>
-        resolveInstanceActivations(params, new implementationType());
+        resolveActivations(params, new implementationType());
       break;
     case ONE_CONSTRUCTOR_ARGUMENT:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
         const resolvedValue: unknown =
-          node.constructorParams[0]?.resolve(params);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          node.constructorParams[0]!.resolve(params);
 
         if (isPromise(resolvedValue)) {
-          return resolveInstanceBindingNodeAsyncFromOnlyConstructorParams(
-            Promise.all([resolvedValue]),
-            params,
-            node,
+          return resolvedValue.then(
+            (resolvedValue: unknown): Resolved<TActivated> =>
+              resolveActivations(params, new implementationType(resolvedValue)),
           );
         }
 
-        return resolveInstanceActivations(
+        return resolveActivations(
           params,
           new implementationType(resolvedValue),
         );
@@ -117,9 +117,11 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
     case TWO_CONSTRUCTOR_ARGUMENTS:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
         const firstResolvedValue: unknown =
-          node.constructorParams[0]?.resolve(params);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          node.constructorParams[0]!.resolve(params);
         const secondResolvedValue: unknown =
-          node.constructorParams[1]?.resolve(params);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          node.constructorParams[1]!.resolve(params);
 
         if (isPromise(firstResolvedValue) || isPromise(secondResolvedValue)) {
           return resolveInstanceBindingNodeAsyncFromOnlyConstructorParams(
@@ -129,7 +131,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           );
         }
 
-        return resolveInstanceActivations(
+        return resolveActivations(
           params,
           new implementationType(firstResolvedValue, secondResolvedValue),
         );
@@ -138,11 +140,14 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
     case THREE_CONSTRUCTOR_ARGUMENTS:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
         const firstResolvedValue: unknown =
-          node.constructorParams[0]?.resolve(params);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          node.constructorParams[0]!.resolve(params);
         const secondResolvedValue: unknown =
-          node.constructorParams[1]?.resolve(params);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          node.constructorParams[1]!.resolve(params);
         const thirdResolvedValue: unknown =
-          node.constructorParams[2]?.resolve(params);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          node.constructorParams[2]!.resolve(params);
 
         if (
           isPromise(firstResolvedValue) ||
@@ -160,7 +165,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           );
         }
 
-        return resolveInstanceActivations(
+        return resolveActivations(
           params,
           new implementationType(
             firstResolvedValue,
@@ -173,13 +178,17 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
     case FOUR_CONSTRUCTOR_ARGUMENTS:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
         const firstResolvedValue: unknown =
-          node.constructorParams[0]?.resolve(params);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          node.constructorParams[0]!.resolve(params);
         const secondResolvedValue: unknown =
-          node.constructorParams[1]?.resolve(params);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          node.constructorParams[1]!.resolve(params);
         const thirdResolvedValue: unknown =
-          node.constructorParams[2]?.resolve(params);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          node.constructorParams[2]!.resolve(params);
         const fourthResolvedValue: unknown =
-          node.constructorParams[3]?.resolve(params);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          node.constructorParams[3]!.resolve(params);
 
         if (
           isPromise(firstResolvedValue) ||
@@ -199,7 +208,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           );
         }
 
-        return resolveInstanceActivations(
+        return resolveActivations(
           params,
           new implementationType(
             firstResolvedValue,
@@ -223,7 +232,7 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           );
         }
 
-        return resolveInstanceActivations(
+        return resolveActivations(
           params,
           new implementationType(...constructorValues),
         );

@@ -55,8 +55,7 @@ export class ServiceResolutionManager {
       serviceIdentifier: ServiceIdentifier<TActivated>,
     ): Iterable<BindingActivation<TActivated>> | undefined =>
       this.#serviceReferenceManager.activationService.get(serviceIdentifier) as
-        | Iterable<BindingActivation<TActivated>>
-        | undefined;
+        Iterable<BindingActivation<TActivated>> | undefined;
 
     this.#onPlanHandlers = [];
 

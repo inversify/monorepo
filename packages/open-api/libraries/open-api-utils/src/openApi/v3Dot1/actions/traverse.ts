@@ -340,9 +340,7 @@ function isNotReferenceObject<T>(
 
 function isOpenApi3Dot1RequestBodyObject(
   openApi3Dot1RequestBodyOrReferenceObject:
-    | OpenApi3Dot1RequestBodyObject
-    | OpenApi3Dot1ReferenceObject
-    | undefined,
+    OpenApi3Dot1RequestBodyObject | OpenApi3Dot1ReferenceObject | undefined,
 ): openApi3Dot1RequestBodyOrReferenceObject is OpenApi3Dot1RequestBodyObject {
   return (
     openApi3Dot1RequestBodyOrReferenceObject !== undefined &&

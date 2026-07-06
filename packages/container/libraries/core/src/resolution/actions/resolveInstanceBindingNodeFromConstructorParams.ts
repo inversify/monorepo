@@ -4,7 +4,6 @@ import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
 import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { type Resolved, type SyncResolved } from '../models/Resolved.js';
-import { resolveBindingServiceActivations } from './resolveBindingServiceActivations.js';
 import { resolvePostConstruct } from './resolvePostConstruct.js';
 import { setInstanceProperties } from './setInstanceProperties.js';
 
@@ -41,21 +40,6 @@ function resolveAllPostConstructMethods<TActivated>(
   return result;
 }
 
-export function resolveInstanceBindingNodeFromOnlyConstructorParams<
-  TActivated,
-  TBinding extends InstanceBinding<TActivated> = InstanceBinding<TActivated>,
->(
-  constructorValues: unknown[],
-  params: ResolutionParams,
-  node: InstanceBindingNode<TActivated, TBinding>,
-): Resolved<TActivated> {
-  return resolveBindingServiceActivations<TActivated>(
-    params,
-    node.binding.serviceIdentifier,
-    new node.binding.implementationType(...constructorValues),
-  );
-}
-
 export function resolveInstanceBindingNodeFromConstructorParams<
   TActivated,
   TBinding extends InstanceBinding<TActivated> = InstanceBinding<TActivated>,
@@ -73,13 +57,12 @@ export function resolveInstanceBindingNodeFromConstructorParams<
     setInstanceProperties(params, instance, node);
 
   if (isPromise(propertiesAssignmentResult)) {
-    return propertiesAssignmentResult.then(
-      (): Resolved<TActivated> =>
-        resolveAllPostConstructMethods(
-          instance,
-          node.binding,
-          node.classMetadata.lifecycle.postConstructMethodNames,
-        ),
+    return propertiesAssignmentResult.then((): Resolved<TActivated> =>
+      resolveAllPostConstructMethods(
+        instance,
+        node.binding,
+        node.classMetadata.lifecycle.postConstructMethodNames,
+      ),
     );
   }
 

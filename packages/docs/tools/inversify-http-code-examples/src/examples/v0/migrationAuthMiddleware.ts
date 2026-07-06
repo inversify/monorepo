@@ -29,8 +29,7 @@ export class AuthMiddleware implements ExpressMiddleware {
     const context: HttpContext | undefined = httpContextStorage.getStore();
     if (context !== undefined) {
       const token: string | undefined = req.headers['x-auth-token'] as
-        | string
-        | undefined;
+        string | undefined;
       if (token !== undefined) {
         context.user = await this.authService.getUser(token);
       }

@@ -6,9 +6,7 @@ import { type PlanServiceRedirectionBindingNode } from './PlanServiceRedirection
 import { type ResolvedValueBindingNode } from './ResolvedValueBindingNode.js';
 
 export type SubplanParams =
-  | InstanceSubplanParams
-  | RedirectionSubplanParams
-  | ResolvedValueSubplanParams;
+  InstanceSubplanParams | RedirectionSubplanParams | ResolvedValueSubplanParams;
 
 interface BaseSubplanParams<
   TNode extends PlanServiceNodeParent,

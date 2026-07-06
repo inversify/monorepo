@@ -56,9 +56,7 @@ interface ExportSpecifier {
 }
 
 type ImportSpecifierNode =
-  | ImportDefaultSpecifier
-  | ImportNamespaceSpecifier
-  | ImportSpecifier;
+  ImportDefaultSpecifier | ImportNamespaceSpecifier | ImportSpecifier;
 
 /**
  * Represents an import declaration node.

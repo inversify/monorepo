@@ -4,8 +4,7 @@ import { type SingletonScopedBinding } from '../models/SingletonScopedBinding.js
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   var __INVERSIFY_PLUGIN_DISPOSE_BINDING_MAP:
-    | Map<SingletonScopedBinding, BindingDisposeMetadata>
-    | undefined;
+    Map<SingletonScopedBinding, BindingDisposeMetadata> | undefined;
 }
 
 export function getPluginDisposeBindingMap(): Map<

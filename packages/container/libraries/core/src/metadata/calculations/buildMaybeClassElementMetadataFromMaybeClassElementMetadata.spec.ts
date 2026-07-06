@@ -14,8 +14,7 @@ describe(buildMaybeClassElementMetadataFromMaybeClassElementMetadata, () => {
     let updateMetadataMock: Mock<
       (
         metadata:
-          | ManagedClassElementMetadata
-          | MaybeManagedClassElementMetadata,
+          ManagedClassElementMetadata | MaybeManagedClassElementMetadata,
       ) => ManagedClassElementMetadata | MaybeManagedClassElementMetadata
     >;
 
@@ -59,8 +58,7 @@ describe(buildMaybeClassElementMetadataFromMaybeClassElementMetadata, () => {
     let updateMetadataMock: Mock<
       (
         metadata:
-          | ManagedClassElementMetadata
-          | MaybeManagedClassElementMetadata,
+          ManagedClassElementMetadata | MaybeManagedClassElementMetadata,
       ) => ManagedClassElementMetadata | MaybeManagedClassElementMetadata
     >;
 

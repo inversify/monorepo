@@ -21,7 +21,7 @@ export abstract class BaseK6Scenario implements Scenario<Platform, K6Summary> {
   #serverProcess!: ChildProcess;
 
   constructor(
-    public readonly platform: Platform,
+    public readonly name: Platform,
     benchFile: string,
     serverFile: string,
   ) {
@@ -36,7 +36,7 @@ export abstract class BaseK6Scenario implements Scenario<Platform, K6Summary> {
 
     return {
       ...JSON.parse(stdout),
-      name: this.platform,
+      name: this.name,
     } as K6Summary;
   }
 

@@ -44,8 +44,7 @@ export function getParamParameterObjects(
     for (let i: number = 0; i < pathItemObject.parameters.length; i++) {
       const raw: OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject =
         pathItemObject.parameters[i] as
-          | OpenApi3Dot1ParameterObject
-          | OpenApi3Dot1ReferenceObject;
+          OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject;
 
       const param: OpenApi3Dot1ParameterObject = isReferenceObject(raw)
         ? (openApiResolver.deepResolveReference(
@@ -66,8 +65,7 @@ export function getParamParameterObjects(
     for (let i: number = 0; i < operationObject.parameters.length; i++) {
       const raw: OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject =
         operationObject.parameters[i] as
-          | OpenApi3Dot1ParameterObject
-          | OpenApi3Dot1ReferenceObject;
+          OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject;
 
       const param: OpenApi3Dot1ParameterObject = isReferenceObject(raw)
         ? (openApiResolver.deepResolveReference(

@@ -2,5 +2,4 @@ import { type ManagedClassElementMetadata } from './ManagedClassElementMetadata.
 import { type UnmanagedClassElementMetadata } from './UnmanagedClassElementMetadata.js';
 
 export type ClassElementMetadata =
-  | ManagedClassElementMetadata
-  | UnmanagedClassElementMetadata;
+  ManagedClassElementMetadata | UnmanagedClassElementMetadata;

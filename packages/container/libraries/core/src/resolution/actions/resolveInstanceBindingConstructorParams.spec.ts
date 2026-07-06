@@ -9,6 +9,7 @@ import {
 } from 'vitest';
 
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { buildConstructorNoParamNode } from '../../planning/calculations/buildConstructorNoParamNode.js';
 import { PlanSingleBindingServiceNodeFixtures } from '../../planning/fixtures/PlanSingleBindingServiceNodeFixtures.js';
 import { type InstanceBindingNode } from '../../planning/models/InstanceBindingNode.js';
 import { type PlanServiceNode } from '../../planning/models/PlanServiceNode.js';
@@ -23,7 +24,7 @@ describe(resolveInstanceBindingConstructorParams, () => {
     beforeAll(() => {
       paramsFixture = Symbol() as unknown as ResolutionParams;
       nodeFixture = {
-        constructorParams: [undefined],
+        constructorParams: [buildConstructorNoParamNode()],
       } as Partial<
         InstanceBindingNode<unknown, InstanceBinding<unknown>>
       > as InstanceBindingNode<unknown, InstanceBinding<unknown>>;

@@ -20,6 +20,7 @@ import { Inversify8GetComplexServiceInSingletonScope } from '../scenario/inversi
 import { Inversify8GetComplexServiceInTransientScope } from '../scenario/inversify8/Inversify8GetComplexServiceInTransientScope';
 import { Inversify8GetServiceInSingletonScope } from '../scenario/inversify8/Inversify8GetServiceInSingletonScope';
 import { Inversify8GetServiceInTransientScope } from '../scenario/inversify8/Inversify8GetServiceInTransientScope';
+import { InversifyCurrentGetComplexResolvedValueServiceInTransientScope } from '../scenario/inversifyCurrent/InversifyCurrentGetComplexResolvedValueServiceInTranstientScope';
 import { InversifyCurrentGetComplexServiceInSingletonScope } from '../scenario/inversifyCurrent/InversifyCurrentGetComplexServiceInSingletonScope';
 import { InversifyCurrentGetComplexServiceInTransientScope } from '../scenario/inversifyCurrent/InversifyCurrentGetComplexServiceInTransientScope';
 import { InversifyCurrentGetServiceInSingletonScope } from '../scenario/inversifyCurrent/InversifyCurrentGetServiceInSingletonScope';
@@ -109,6 +110,7 @@ export async function run(): Promise<void> {
       },
       scenarios: [
         new InversifyCurrentGetComplexServiceInTransientScope(),
+        new InversifyCurrentGetComplexResolvedValueServiceInTransientScope(),
         new Inversify6GetComplexServiceInTransientScope(),
         new Inversify7GetComplexServiceInTransientScope(),
         new Inversify8GetComplexServiceInTransientScope(),

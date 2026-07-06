@@ -13,12 +13,19 @@ export function resolveResolvedValueBindingParams<
   node: ResolvedValueBindingNode<TBinding>,
 ): unknown[] | Promise<unknown[]> {
   const paramsResolvedValues: unknown[] = [];
+  let promiseValueFound: boolean = false;
 
   for (const param of node.params) {
-    paramsResolvedValues.push(param.resolve(params));
+    const resolvedValue: unknown = param.resolve(params);
+
+    if (!promiseValueFound && isPromise(resolvedValue)) {
+      promiseValueFound = true;
+    }
+
+    paramsResolvedValues.push(resolvedValue);
   }
 
-  return paramsResolvedValues.some(isPromise)
+  return promiseValueFound
     ? Promise.all(paramsResolvedValues)
     : paramsResolvedValues;
 }

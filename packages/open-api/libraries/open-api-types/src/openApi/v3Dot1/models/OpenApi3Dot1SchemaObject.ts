@@ -7,5 +7,4 @@ import { type OpenApi3Dot1SchemaObjectBaseVocabulary } from './OpenApi3Dot1Schem
 
 // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#schemaObject
 export type OpenApi3Dot1SchemaObject =
-  | JsonSchema
-  | (JsonSchemaObject & OpenApi3Dot1SchemaObjectBaseVocabulary);
+  JsonSchema | (JsonSchemaObject & OpenApi3Dot1SchemaObjectBaseVocabulary);

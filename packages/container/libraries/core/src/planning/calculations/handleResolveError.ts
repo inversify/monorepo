@@ -12,6 +12,7 @@ import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
+import { isConstructorNoParamNode } from './isConstructorNoParamNode.js';
 import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionBindingNode.js';
 
 const INDEX_NOT_FOUND: number = -1;
@@ -103,7 +104,7 @@ function getChildServiceNodes(serviceNode: PlanServiceNode): PlanServiceNode[] {
         const instanceNode: InstanceBindingNode =
           bindingNode as InstanceBindingNode;
         for (const ctorParam of instanceNode.constructorParams) {
-          if (ctorParam !== undefined) {
+          if (!isConstructorNoParamNode(ctorParam)) {
             children.push(ctorParam);
           }
         }
