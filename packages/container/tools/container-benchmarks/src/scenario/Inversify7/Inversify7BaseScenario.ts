@@ -4,13 +4,13 @@ import { Container } from 'inversify7';
 import { Platform } from '../models/Platform';
 
 export abstract class Inversify7BaseScenario implements Scenario<Platform> {
-  public readonly platform: Platform;
+  public readonly name: Platform;
 
   protected readonly _container: Container;
 
   constructor() {
     this._container = new Container();
-    this.platform = Platform.inversify7;
+    this.name = Platform.inversify7;
   }
 
   public async setUp(): Promise<void> {

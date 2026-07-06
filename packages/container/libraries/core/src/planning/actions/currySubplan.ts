@@ -9,6 +9,7 @@ import { ClassElementMetadataKind } from '../../metadata/models/ClassElementMeta
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
 import { type ResolvedValueElementMetadata } from '../../metadata/models/ResolvedValueElementMetadata.js';
 import { type ResolvedValueMetadata } from '../../metadata/models/ResolvedValueMetadata.js';
+import { buildConstructorNoParamNode } from '../calculations/buildConstructorNoParamNode.js';
 import { isInstanceBindingNode } from '../calculations/isInstanceBindingNode.js';
 import { isPlanServiceRedirectionBindingNode } from '../calculations/isPlanServiceRedirectionBindingNode.js';
 import { tryBuildGetPlanOptionsFromBuildServiceNodeOptions } from '../calculations/tryBuildGetPlanOptionsFromBuildServiceNodeOptions.js';
@@ -182,7 +183,7 @@ function currySubplanInstanceBindingNode(
           params,
           bindingConstraintsList,
           elementMetadata,
-        );
+        ) ?? buildConstructorNoParamNode();
     }
 
     for (const [propertyKey, elementMetadata] of classMetadata.properties) {

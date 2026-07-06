@@ -2,6 +2,7 @@ import { ServiceIdentifier } from '@inversifyjs/common';
 import {
   GetPlanOptions,
   InstanceBindingNode,
+  isConstructorNoParamNode,
   LeafBindingNode,
   PlanBindingNode,
   PlanResult,
@@ -178,12 +179,12 @@ export default function buildMermaidFlowChart(
     lines.push(`${parentNodeId} --> ${nodeId}`);
 
     // Process constructor parameters
-    for (let i: number = 0; i < node.constructorParams.length; i++) {
-      const param: PlanServiceNode | Cloneable<PlanServiceNode> | undefined =
-        node.constructorParams[i];
-      if (param !== undefined) {
-        const paramNodeId: string = processServiceNode(param);
-        lines.push(`${nodeId} -.->|param ${String(i)}| ${paramNodeId}`);
+    for (const [index, param] of node.constructorParams.entries()) {
+      if (!isConstructorNoParamNode(param)) {
+        const paramNodeId: string = processServiceNode(
+          param as Cloneable<PlanServiceNode>,
+        );
+        lines.push(`${nodeId} -.->|param ${String(index)}| ${paramNodeId}`);
       }
     }
 

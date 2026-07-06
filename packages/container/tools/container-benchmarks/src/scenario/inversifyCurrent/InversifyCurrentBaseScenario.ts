@@ -3,14 +3,14 @@ import { Container } from '@inversifyjs/container';
 
 import { Platform } from '../models/Platform';
 
-export abstract class InversifyCurrentBaseScenario implements Scenario<Platform> {
-  public readonly platform: Platform;
+export abstract class InversifyCurrentBaseScenario implements Scenario {
+  public readonly name: string;
 
   protected readonly _container: Container;
 
-  constructor() {
+  constructor(name?: string) {
     this._container = new Container();
-    this.platform = Platform.inversifyCurrent;
+    this.name = name ?? Platform.inversifyCurrent;
   }
 
   public async setUp(): Promise<void> {
