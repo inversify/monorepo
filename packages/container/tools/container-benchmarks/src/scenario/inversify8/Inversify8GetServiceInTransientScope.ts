@@ -1,6 +1,6 @@
 import { injectable } from 'inversify8';
 
-import { Inversify8BaseScenario } from './Inversify8BaseScenario';
+import { Inversify8BaseScenario } from './Inversify8BaseScenario.js';
 
 @injectable()
 class Katana {

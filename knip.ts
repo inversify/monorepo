@@ -37,14 +37,8 @@ export default {
     "packages/container/examples/*": defaultWorkspaceProjectConfig,
     "packages/container/libraries/*": defaultWorkspaceProjectConfig,
     "packages/container/tools/*": defaultWorkspaceProjectConfig,
-    "packages/container/tools/container-benchmarks": {
-      ...defaultWorkspaceProjectConfig,
-      ignoreDependencies: [
-        ...defaultWorkspaceProjectConfig.ignoreDependencies,
-        "ts-loader",
-        "tslib",
-      ],
-    },
+    "packages/container/tools/container-benchmarks":
+      defaultWorkspaceProjectConfig,
     "packages/container/tools/e2e-tests": {
       entry: [
         "config/*.mjs",

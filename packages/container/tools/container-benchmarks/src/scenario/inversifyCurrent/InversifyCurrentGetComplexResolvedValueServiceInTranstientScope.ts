@@ -1,7 +1,7 @@
 import { injectable } from '@inversifyjs/core';
 
-import { Platform } from '../models/Platform';
-import { InversifyCurrentBaseScenario } from './InversifyCurrentBaseScenario';
+import { Platform } from '../models/Platform.js';
+import { InversifyCurrentBaseScenario } from './InversifyCurrentBaseScenario.js';
 
 @injectable()
 class FinalNode {

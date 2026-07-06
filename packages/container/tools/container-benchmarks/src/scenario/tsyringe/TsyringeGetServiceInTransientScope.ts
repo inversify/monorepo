@@ -1,6 +1,6 @@
 import { container, inject, injectable } from 'tsyringe';
 
-import { TsyringeBaseScenario } from './TsyringeBaseScenario';
+import { TsyringeBaseScenario } from './TsyringeBaseScenario.js';
 
 @injectable()
 class Katana {
