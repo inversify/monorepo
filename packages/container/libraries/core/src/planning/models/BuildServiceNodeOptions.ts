@@ -2,5 +2,4 @@ import { type BuildMultipleBindingServiceNodeOptions } from './BuildMultipleBind
 import { type BuildSingleBindingServiceNodeOptions } from './BuildSingleBindingServiceNodeOptions.js';
 
 export type BuildServiceNodeOptions =
-  | BuildMultipleBindingServiceNodeOptions
-  | BuildSingleBindingServiceNodeOptions;
+  BuildMultipleBindingServiceNodeOptions | BuildSingleBindingServiceNodeOptions;

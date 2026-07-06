@@ -67,8 +67,7 @@ export class OpenApiValidationPipe implements Pipe {
     metadata: PipeMetadata,
   ): Promise<unknown> {
     const parameterMetadataList: (
-      | ControllerMethodParameterMetadata
-      | undefined
+      ControllerMethodParameterMetadata | undefined
     )[] = getControllerMethodParameterMetadataList(
       metadata.targetClass,
       metadata.methodName,

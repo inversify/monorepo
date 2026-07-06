@@ -291,8 +291,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
       (
         request as InversifyFastifyRequest & {
           [routeValueMetadataSymbol]?:
-            | Map<string | symbol, unknown>
-            | undefined;
+            Map<string | symbol, unknown> | undefined;
         }
       )[routeValueMetadataSymbol] = routeValueMetadataMap;
 

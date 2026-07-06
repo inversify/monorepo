@@ -7,8 +7,7 @@ import { type RequestMethodParameterType } from '../models/RequestMethodParamete
 export function areAllParamsSync(
   awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>,
   controllerMethodParameterMetadataList: (
-    | ControllerMethodParameterMetadata
-    | undefined
+    ControllerMethodParameterMetadata | undefined
   )[],
   globalPipeList: (ServiceIdentifier<Pipe> | Pipe)[],
 ): boolean {
@@ -17,8 +16,7 @@ export function areAllParamsSync(
     controllerMethodParameterMetadataList.every(
       (
         controllerMethodParameterMetadata:
-          | ControllerMethodParameterMetadata
-          | undefined,
+          ControllerMethodParameterMetadata | undefined,
       ): boolean =>
         controllerMethodParameterMetadata === undefined ||
         (controllerMethodParameterMetadata.pipeList.length === 0 &&

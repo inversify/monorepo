@@ -21,8 +21,7 @@ export function OasRequestBody(
 ): MethodDecorator {
   return (target: object, key: string | symbol): void => {
     const requestBodyResult:
-      | OpenApi3Dot2RequestBodyObject
-      | OpenApi3Dot2ReferenceObject =
+      OpenApi3Dot2RequestBodyObject | OpenApi3Dot2ReferenceObject =
       typeof requestBody === 'function'
         ? requestBody(
             toSchemaInControllerOpenApiMetadataContext(target.constructor),

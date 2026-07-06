@@ -40,3 +40,6 @@ packageExtensions:
   "@docusaurus/preset-classic@*":
     peerDependencies:
       postcss: ">=8"
+
+trustPolicyExclude:
+  - '@typescript-eslint/*'

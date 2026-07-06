@@ -12,8 +12,7 @@ export type HttpStatusCodeWildCard =
 // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#responsesObject
 export type OpenApi3Dot1ResponsesObject = {
   [statusCode in HttpStatusCode | HttpStatusCodeWildCard]?:
-    | OpenApi3Dot1ReferenceObject
-    | OpenApi3Dot1ResponseObject;
+    OpenApi3Dot1ReferenceObject | OpenApi3Dot1ResponseObject;
 } & {
   default?: OpenApi3Dot1ReferenceObject | OpenApi3Dot1ResponseObject;
 };

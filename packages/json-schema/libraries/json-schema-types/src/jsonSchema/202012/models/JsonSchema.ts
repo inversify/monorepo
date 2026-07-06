@@ -101,13 +101,7 @@ export interface JsonSchemaStructuralValidationProperties {
 
 // https://json-schema.org/draft/2020-12/json-schema-validation.html#name-validation-keywords-for-any
 export type JsonSchemaType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'object'
-  | 'array'
-  | 'integer'
-  | 'null';
+  'string' | 'number' | 'boolean' | 'object' | 'array' | 'integer' | 'null';
 
 // https://json-schema.org/draft/2020-12/json-schema-validation.html#name-vocabularies-for-semantic-c
 export interface JsonSchemaFormatProperties {
@@ -143,8 +137,7 @@ export type JsonSchemaFormat =
 // https://json-schema.org/draft/2020-12/json-schema-validation.html#name-a-vocabulary-for-the-conten
 export interface JsonSchemaStringContentEncodedProperties {
   contentEncoding?:
-    | JsonSchemaBaseContentEncoding
-    | JsonSchemaMimeContentTransferEncoding;
+    JsonSchemaBaseContentEncoding | JsonSchemaMimeContentTransferEncoding;
   contentMediaType?: string;
   contentSchema?: JsonSchema;
 }
@@ -154,11 +147,7 @@ export interface JsonSchemaStringContentEncodedProperties {
  * - https://www.rfc-editor.org/rfc/rfc4648.html
  */
 export type JsonSchemaBaseContentEncoding =
-  | 'base32'
-  | 'base32hex'
-  | 'base64'
-  | 'base64url'
-  | 'hex';
+  'base32' | 'base32hex' | 'base64' | 'base64url' | 'hex';
 
 export type JsonSchemaMimeContentTransferEncoding =
   | 'base64'

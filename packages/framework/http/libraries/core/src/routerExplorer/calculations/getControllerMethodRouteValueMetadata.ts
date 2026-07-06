@@ -14,16 +14,13 @@ export function getControllerMethodRouteValueMetadata(
 
   while (currentType !== undefined) {
     const typeRouteValueMetadataMap:
-      | Map<string | symbol, Map<string | symbol, unknown>>
-      | undefined = getOwnReflectMetadata(
-      currentType,
-      routeValueMetadataReflectKey,
-    );
+      Map<string | symbol, Map<string | symbol, unknown>> | undefined =
+      getOwnReflectMetadata(currentType, routeValueMetadataReflectKey);
 
     if (typeRouteValueMetadataMap !== undefined) {
       const typeMethodRouteValueMetadataMap:
-        | Map<string | symbol, unknown>
-        | undefined = typeRouteValueMetadataMap.get(methodKey);
+        Map<string | symbol, unknown> | undefined =
+        typeRouteValueMetadataMap.get(methodKey);
 
       if (typeMethodRouteValueMetadataMap !== undefined) {
         if (routeValueMetadataMap === undefined) {

@@ -12,12 +12,7 @@ export class ErrorHttpResponse extends Error implements HttpResponse {
   constructor(
     public readonly statusCode: HttpStatusCode,
     public readonly body?:
-      | object
-      | string
-      | number
-      | boolean
-      | Stream
-      | undefined,
+      object | string | number | boolean | Stream | undefined,
     message?: string | undefined,
     errorOptions?: ErrorOptions | undefined,
     public readonly headers?: Record<string, string> | undefined,

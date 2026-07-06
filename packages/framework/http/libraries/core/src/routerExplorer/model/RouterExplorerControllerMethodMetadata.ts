@@ -26,8 +26,7 @@ export interface RouterExplorerControllerMethodMetadata<
   >[];
   readonly methodKey: string | symbol;
   readonly parameterMetadataList: (
-    | ControllerMethodParameterMetadata<TRequest, TResponse, TResult>
-    | undefined
+    ControllerMethodParameterMetadata<TRequest, TResponse, TResult> | undefined
   )[];
   readonly path: string;
   readonly postHandlerMiddlewareList: ServiceIdentifier<

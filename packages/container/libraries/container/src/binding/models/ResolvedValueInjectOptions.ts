@@ -18,12 +18,10 @@ export type ResolvedValueMetadataInjectOptions<T> = [T] extends [
   (infer U)[] | undefined,
 ]
   ? [T] extends [U[]]
-    ?
-        | MultipleResolvedValueMetadataInjectOptions<U>
-        | BaseResolvedValueMetadataInjectOptions<T>
-    :
-        | MultipleOptionalResolvedValueMetadataInjectOptions<U>
-        | OptionalResolvedValueMetadataInjectOptions<T>
+    ? | MultipleResolvedValueMetadataInjectOptions<U>
+      | BaseResolvedValueMetadataInjectOptions<T>
+    : | MultipleOptionalResolvedValueMetadataInjectOptions<U>
+      | OptionalResolvedValueMetadataInjectOptions<T>
   : T extends undefined
     ? OptionalResolvedValueMetadataInjectOptions<T>
     : BaseResolvedValueMetadataInjectOptions<T>;

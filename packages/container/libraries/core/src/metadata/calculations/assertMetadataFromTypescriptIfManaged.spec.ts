@@ -21,8 +21,7 @@ describe(assertMetadataFromTypescriptIfManaged, () => {
     (
       _: string,
       metadataFixture:
-        | MaybeManagedClassElementMetadata
-        | ManagedClassElementMetadata,
+        MaybeManagedClassElementMetadata | ManagedClassElementMetadata,
     ) => {
       describe('when called', () => {
         let result: unknown;
@@ -67,8 +66,7 @@ describe(assertMetadataFromTypescriptIfManaged, () => {
     (
       _: string,
       metadataFixture:
-        | MaybeManagedClassElementMetadata
-        | ManagedClassElementMetadata,
+        MaybeManagedClassElementMetadata | ManagedClassElementMetadata,
     ) => {
       describe('when called', () => {
         let result: unknown;
