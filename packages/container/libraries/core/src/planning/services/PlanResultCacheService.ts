@@ -10,6 +10,7 @@ import { addRootServiceNodeBindingIfContextFree } from '../actions/addRootServic
 import { addServiceNodeBindingIfContextFree } from '../actions/addServiceNodeBindingIfContextFree.js';
 import { removeRootServiceNodeBindingIfContextFree } from '../actions/removeRootServiceNodeBindingIfContextFree.js';
 import { removeServiceNodeBindingIfContextFree } from '../actions/removeServiceNodeBindingIfContextFree.js';
+import { isConstructorNoParamNode } from '../calculations/isConstructorNoParamNode.js';
 import { type CacheBindingInvalidation } from '../models/CacheBindingInvalidation.js';
 import { CacheBindingInvalidationKind } from '../models/CacheBindingInvalidationKind.js';
 import { type GetPlanOptions } from '../models/GetPlanOptions.js';
@@ -183,10 +184,8 @@ export class PlanResultCacheService {
     context: NonCachedServiceNodeContext,
   ): void {
     let nonCachedMap:
-      | Map<PlanServiceNode, NonCachedServiceNodeContext>
-      | undefined = this.#serviceIdToNonCachedServiceNodeMapMap.get(
-      node.serviceIdentifier,
-    );
+      Map<PlanServiceNode, NonCachedServiceNodeContext> | undefined =
+      this.#serviceIdToNonCachedServiceNodeMapMap.get(node.serviceIdentifier);
 
     if (nonCachedMap === undefined) {
       nonCachedMap = new Map();
@@ -362,7 +361,7 @@ export class PlanResultCacheService {
       case bindingTypeValues.Instance:
         for (const constructorParam of (planBindingNode as InstanceBindingNode)
           .constructorParams) {
-          if (constructorParam !== undefined) {
+          if (!isConstructorNoParamNode(constructorParam)) {
             this.#invalidateNonCachePlanServiceNode(constructorParam);
           }
         }
@@ -390,10 +389,10 @@ export class PlanResultCacheService {
 
   #invalidateNonCachePlanServiceNode(planServiceNode: PlanServiceNode): void {
     const serviceNonCachedMap:
-      | Map<PlanServiceNode, NonCachedServiceNodeContext>
-      | undefined = this.#serviceIdToNonCachedServiceNodeMapMap.get(
-      planServiceNode.serviceIdentifier,
-    );
+      Map<PlanServiceNode, NonCachedServiceNodeContext> | undefined =
+      this.#serviceIdToNonCachedServiceNodeMapMap.get(
+        planServiceNode.serviceIdentifier,
+      );
 
     if (
       serviceNonCachedMap === undefined ||
@@ -436,10 +435,10 @@ export class PlanResultCacheService {
     invalidation: CacheBindingInvalidation,
   ): void {
     const serviceNonCachedServiceNodeMap:
-      | Map<PlanServiceNode, NonCachedServiceNodeContext>
-      | undefined = this.#serviceIdToNonCachedServiceNodeMapMap.get(
-      invalidation.binding.serviceIdentifier,
-    );
+      Map<PlanServiceNode, NonCachedServiceNodeContext> | undefined =
+      this.#serviceIdToNonCachedServiceNodeMapMap.get(
+        invalidation.binding.serviceIdentifier,
+      );
 
     if (serviceNonCachedServiceNodeMap !== undefined) {
       switch (invalidation.kind) {
@@ -510,8 +509,9 @@ export class PlanResultCacheService {
   #invalidateTaggedServiceMap(invalidation: CacheBindingInvalidation): void {
     for (const [index, map] of this.#taggedServiceIdToValuePlanMap.entries()) {
       const servicePlanMapMap:
-        | Map<MetadataTag, Map<unknown, PlanResult>>
-        | undefined = map.get(invalidation.binding.serviceIdentifier);
+        Map<MetadataTag, Map<unknown, PlanResult>> | undefined = map.get(
+        invalidation.binding.serviceIdentifier,
+      );
 
       if (servicePlanMapMap !== undefined) {
         for (const [tag, servicePlanMap] of servicePlanMapMap.entries()) {

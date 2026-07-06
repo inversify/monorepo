@@ -1,9 +1,7 @@
-import { type bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
-import { resolveResolvedValueBindingNode } from '../../resolution/actions/resolveResolvedValueBindingNode.js';
-import { resolveScoped } from '../../resolution/actions/resolveScoped.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
+import { buildResolvedValueBindingNodeResolver } from '../calculations/buildResolvedValueBindingNodeResolver.js';
 import { type PlanServiceNode } from './PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from './ResolvedValueBindingNode.js';
 
@@ -16,11 +14,6 @@ export class ResolvedValueBindingNodeImplementation<
 
   constructor(public readonly binding: ResolvedValueBinding<TActivated>) {
     this.params = [];
-    this.resolve = resolveScoped<
-      TActivated,
-      typeof bindingTypeValues.ResolvedValue,
-      ResolvedValueBinding<TActivated>,
-      ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>
-    >(this, resolveResolvedValueBindingNode);
+    this.resolve = buildResolvedValueBindingNodeResolver(binding, this);
   }
 }
