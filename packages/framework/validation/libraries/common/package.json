@@ -6,8 +6,8 @@
   "description": "InversifyJs common validation package",
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "eslint": "10.5.0",
-    "prettier": "3.8.4",
+    "eslint": "10.6.0",
+    "prettier": "3.9.4",
     "rimraf": "6.1.3",
     "typescript": "6.0.3"
   },
