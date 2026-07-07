@@ -241,6 +241,21 @@ export class ServiceResolutionManager {
     serviceIdentifier: ServiceIdentifier,
     options: GetOptions | GetAllOptions | undefined,
   ): PlanResult {
+    /**
+     * This avoids allocating a {@link GetPlanOptions} object and the extra
+     * branching performed by the plan result cache service.
+     */
+    if (!isMultiple && options === undefined) {
+      const cachedPlanResultFromServiceIdentifier: PlanResult | undefined =
+        this.#serviceReferenceManager.planResultCacheService.getByServiceIdentifier(
+          serviceIdentifier,
+        );
+
+      if (cachedPlanResultFromServiceIdentifier !== undefined) {
+        return cachedPlanResultFromServiceIdentifier;
+      }
+    }
+
     const getPlanOptions: GetPlanOptions = this.#buildGetPlanOptions(
       isMultiple,
       serviceIdentifier,
@@ -280,7 +295,7 @@ export class ServiceResolutionManager {
       context: this.#resolutionContext,
       getActivations: this.#getActivationsResolutionParam,
       planResult,
-      requestScopeCache: new Map(),
+      requestScopeCache: undefined,
     }) as T;
   }
 

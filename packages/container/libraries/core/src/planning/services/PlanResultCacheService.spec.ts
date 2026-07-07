@@ -12,6 +12,8 @@ import {
 vitest.mock(import('../actions/addRootServiceNodeBindingIfContextFree.js'));
 vitest.mock(import('../actions/addServiceNodeBindingIfContextFree.js'));
 
+import { type ServiceIdentifier } from '@inversifyjs/common';
+
 import { type Binding } from '../../binding/models/Binding.js';
 import { type InternalBindingConstraints } from '../../binding/models/BindingConstraintsImplementation.js';
 import { bindingScopeValues } from '../../binding/models/BindingScope.js';
@@ -2253,6 +2255,86 @@ describe(PlanResultCacheService, () => {
               .internalServiceNode,
           ).toBeUndefined();
         });
+      });
+    });
+  });
+
+  describe('.getByServiceIdentifier', () => {
+    describe('having a service identifier with a cached plan result', () => {
+      let serviceIdentifierFixture: ServiceIdentifier;
+      let planService: PlanResultCacheService;
+      let planResultFixture: PlanResult;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        serviceIdentifierFixture = 'service-id';
+        planService = new PlanResultCacheService();
+        planResultFixture = {} as PlanResult;
+
+        planService.set(
+          {
+            isMultiple: false,
+            name: undefined,
+            optional: false,
+            serviceIdentifier: serviceIdentifierFixture,
+            tag: undefined,
+          },
+          planResultFixture,
+        );
+
+        result = planService.getByServiceIdentifier(serviceIdentifierFixture);
+      });
+
+      it('should return the cached plan result', () => {
+        expect(result).toBe(planResultFixture);
+      });
+    });
+
+    describe('having a service identifier with no cached plan result', () => {
+      let serviceIdentifierFixture: ServiceIdentifier;
+      let planService: PlanResultCacheService;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        serviceIdentifierFixture = 'service-id';
+        planService = new PlanResultCacheService();
+
+        result = planService.getByServiceIdentifier(serviceIdentifierFixture);
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+
+    describe('having a service identifier with a cached plan result under different options', () => {
+      let serviceIdentifierFixture: ServiceIdentifier;
+      let planService: PlanResultCacheService;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        serviceIdentifierFixture = 'service-id';
+        planService = new PlanResultCacheService();
+
+        planService.set(
+          {
+            isMultiple: false,
+            name: 'name',
+            optional: false,
+            serviceIdentifier: serviceIdentifierFixture,
+            tag: undefined,
+          },
+          {} as PlanResult,
+        );
+
+        result = planService.getByServiceIdentifier(serviceIdentifierFixture);
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
       });
     });
   });

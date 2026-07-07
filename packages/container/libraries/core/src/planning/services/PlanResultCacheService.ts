@@ -26,6 +26,8 @@ import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type PlanServiceRedirectionBindingNode } from '../models/PlanServiceRedirectionBindingNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
 
+const NO_OPTIONS_INDEX: number = 0;
+
 const CHAINED_MASK: number = 0x4;
 const IS_MULTIPLE_MASK: number = 0x2;
 const OPTIONAL_MASK: number = 0x1;
@@ -83,6 +85,17 @@ export class PlanResultCacheService {
     for (const subscriber of this.#subscribers) {
       subscriber.clearCache();
     }
+  }
+
+  public getByServiceIdentifier(
+    serviceIdentifier: ServiceIdentifier,
+  ): PlanResult | undefined {
+    return (
+      this.#serviceIdToValuePlanMap[NO_OPTIONS_INDEX] as Map<
+        ServiceIdentifier,
+        PlanResult
+      >
+    ).get(serviceIdentifier);
   }
 
   public get(options: GetPlanOptions): PlanResult | undefined {
