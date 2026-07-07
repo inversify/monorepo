@@ -1,6 +1,6 @@
 import { container, inject, injectable, singleton } from 'tsyringe';
 
-import { TsyringeBaseScenario } from './TsyringeBaseScenario';
+import { TsyringeBaseScenario } from './TsyringeBaseScenario.js';
 
 @injectable()
 @singleton()

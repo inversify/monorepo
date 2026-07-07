@@ -1,3 +1,3 @@
-import { run } from './bin/run';
+import { run } from './bin/run.js';
 
 export { run };

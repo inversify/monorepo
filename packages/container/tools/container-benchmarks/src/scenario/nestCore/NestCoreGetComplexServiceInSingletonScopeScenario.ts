@@ -2,7 +2,7 @@ import { Scenario } from '@inversifyjs/benchmark-utils';
 import { INestApplicationContext, Injectable, Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import { Platform } from '../models/Platform';
+import { Platform } from '../models/Platform.js';
 
 @Injectable()
 class FinalNode {

@@ -21,6 +21,7 @@ export function buildBenchmark(options: BuildBenchmarkOptions): Bench {
           await scenario.tearDown();
         },
         beforeAll: async (): Promise<void> => {
+          global.gc?.();
           await scenario.setUp();
         },
       },

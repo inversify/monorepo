@@ -1,16 +1,18 @@
 import { type Scenario } from '@inversifyjs/benchmark-utils';
-import { Container } from 'inversify8';
+import { type AwilixContainer, createContainer, InjectionMode } from 'awilix';
 
 import { Platform } from '../models/Platform.js';
 
-export abstract class Inversify8BaseScenario implements Scenario<Platform> {
+export abstract class AwilixBaseScenario implements Scenario<string> {
   public readonly name: Platform;
 
-  protected readonly _container: Container;
+  protected readonly _container: AwilixContainer;
 
   constructor() {
-    this._container = new Container();
-    this.name = Platform.inversify8;
+    this._container = createContainer({
+      injectionMode: InjectionMode.CLASSIC,
+    });
+    this.name = Platform.awilix;
   }
 
   public async setUp(): Promise<void> {

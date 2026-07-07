@@ -1,6 +1,6 @@
 import { injectable } from 'inversify7';
 
-import { Inversify7BaseScenario } from './Inversify7BaseScenario';
+import { Inversify7BaseScenario } from './Inversify7BaseScenario.js';
 
 @injectable()
 class FinalNode {

@@ -1,7 +1,7 @@
-import { Scenario } from '@inversifyjs/benchmark-utils';
+import { type Scenario } from '@inversifyjs/benchmark-utils';
 import { Container } from 'inversify6';
 
-import { Platform } from '../models/Platform';
+import { Platform } from '../models/Platform.js';
 
 export abstract class Inversify6BaseScenario implements Scenario<Platform> {
   public readonly name: Platform;

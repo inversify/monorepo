@@ -39,10 +39,10 @@ export default {
     "packages/container/tools/*": defaultWorkspaceProjectConfig,
     "packages/container/tools/container-benchmarks": {
       ...defaultWorkspaceProjectConfig,
-      ignoreDependencies: [
-        ...defaultWorkspaceProjectConfig.ignoreDependencies,
-        "ts-loader",
-        "tslib",
+      entry: [
+        ...defaultWorkspaceProjectConfig.entry,
+        "bin/run-cjs.cjs",
+        "bin/run-esm.mjs",
       ],
     },
     "packages/container/tools/e2e-tests": {

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import { Platform } from '../models/Platform';
+import { Platform } from '../models/Platform.js';
 
 @Injectable({ scope: Scope.TRANSIENT })
 class FinalNode {
