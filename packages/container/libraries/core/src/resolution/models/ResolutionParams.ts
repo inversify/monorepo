@@ -10,5 +10,5 @@ export interface ResolutionParams {
     serviceIdentifier: ServiceIdentifier<TActivated>,
   ) => Iterable<BindingActivation<TActivated>> | undefined;
   planResult: PlanResult;
-  requestScopeCache: Map<number, unknown>;
+  requestScopeCache: Map<number, unknown> | undefined;
 }

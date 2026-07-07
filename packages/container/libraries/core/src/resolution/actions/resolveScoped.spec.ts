@@ -244,7 +244,58 @@ describe(resolveScoped, () => {
 
         it('should set request scope value()', () => {
           expect(
-            paramsFixture.requestScopeCache.get(nodeFixture.binding.id),
+            paramsFixture.requestScopeCache?.get(nodeFixture.binding.id),
+          ).toBe(resolveMockResult);
+        });
+
+        it('should return expected value', () => {
+          expect(result).toBe(resolveMockResult);
+        });
+      });
+
+      describe('when resolveFunction is called, and params.requestScopeCache is undefined', () => {
+        let paramsFixture: ResolutionParams;
+        let resolveMockResult: unknown;
+
+        let result: unknown;
+
+        beforeAll(() => {
+          paramsFixture = {
+            requestScopeCache: undefined,
+          } as Partial<ResolutionParams> as ResolutionParams;
+          resolveMockResult = Symbol();
+
+          resolveMock.mockReturnValueOnce(resolveMockResult);
+
+          vitest
+            .mocked(resolveBindingActivations)
+            .mockReturnValueOnce(resolveMockResult);
+
+          result = resolveFunction(paramsFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call resolveMock()', () => {
+          expect(resolveMock).toHaveBeenCalledExactlyOnceWith(
+            paramsFixture,
+            nodeFixture,
+          );
+        });
+
+        it('should call resolveBindingActivations()', () => {
+          expect(resolveBindingActivations).toHaveBeenCalledExactlyOnceWith(
+            paramsFixture,
+            nodeFixture.binding,
+            resolveMockResult,
+          );
+        });
+
+        it('should lazily create the request scope cache and set the value', () => {
+          expect(
+            paramsFixture.requestScopeCache?.get(nodeFixture.binding.id),
           ).toBe(resolveMockResult);
         });
 
