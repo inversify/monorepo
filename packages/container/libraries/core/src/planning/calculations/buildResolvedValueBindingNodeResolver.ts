@@ -9,6 +9,9 @@ import { resolveScopedWithNoActivations } from '../../resolution/actions/resolve
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
+import { resolveFour } from './resolveFour.js';
+import { resolveThree } from './resolveThree.js';
+import { resolveTwo } from './resolveTwo.js';
 
 const ZERO_PARAMS: number = 0;
 const ONE_PARAM: number = 1;
@@ -84,19 +87,17 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           node.params[1]!.resolve(params);
 
-        if (isPromise(firstResolvedValue) || isPromise(secondResolvedValue)) {
-          return Promise.all([firstResolvedValue, secondResolvedValue]).then(
-            (resolvedValues: unknown[]): Resolved<TActivated> =>
-              resolveActivations(
-                params,
-                factory(resolvedValues[0], resolvedValues[1]),
-              ),
-          );
-        }
-
-        return resolveActivations(
-          params,
-          factory(firstResolvedValue, secondResolvedValue),
+        return resolveTwo(
+          firstResolvedValue,
+          secondResolvedValue,
+          (
+            resolvedFirstValue: unknown,
+            resolvedSecondValue: unknown,
+          ): Resolved<TActivated> =>
+            resolveActivations(
+              params,
+              factory(resolvedFirstValue, resolvedSecondValue),
+            ),
         );
       };
       break;
@@ -112,26 +113,23 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           node.params[2]!.resolve(params);
 
-        if (
-          isPromise(firstResolvedValue) ||
-          isPromise(secondResolvedValue) ||
-          isPromise(thirdResolvedValue)
-        ) {
-          return Promise.all([
-            firstResolvedValue,
-            secondResolvedValue,
-            thirdResolvedValue,
-          ]).then((resolvedValues: unknown[]): Resolved<TActivated> =>
+        return resolveThree(
+          firstResolvedValue,
+          secondResolvedValue,
+          thirdResolvedValue,
+          (
+            resolvedFirstValue: unknown,
+            resolvedSecondValue: unknown,
+            resolvedThirdValue: unknown,
+          ): Resolved<TActivated> =>
             resolveActivations(
               params,
-              factory(resolvedValues[0], resolvedValues[1], resolvedValues[2]),
+              factory(
+                resolvedFirstValue,
+                resolvedSecondValue,
+                resolvedThirdValue,
+              ),
             ),
-          );
-        }
-
-        return resolveActivations(
-          params,
-          factory(firstResolvedValue, secondResolvedValue, thirdResolvedValue),
         );
       };
       break;
@@ -150,38 +148,26 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           node.params[3]!.resolve(params);
 
-        if (
-          isPromise(firstResolvedValue) ||
-          isPromise(secondResolvedValue) ||
-          isPromise(thirdResolvedValue) ||
-          isPromise(fourthResolvedValue)
-        ) {
-          return Promise.all([
-            firstResolvedValue,
-            secondResolvedValue,
-            thirdResolvedValue,
-            fourthResolvedValue,
-          ]).then((resolvedValues: unknown[]): Resolved<TActivated> =>
+        return resolveFour(
+          firstResolvedValue,
+          secondResolvedValue,
+          thirdResolvedValue,
+          fourthResolvedValue,
+          (
+            resolvedFirstValue: unknown,
+            resolvedSecondValue: unknown,
+            resolvedThirdValue: unknown,
+            resolvedFourthValue: unknown,
+          ): Resolved<TActivated> =>
             resolveActivations(
               params,
               factory(
-                resolvedValues[0],
-                resolvedValues[1],
-                resolvedValues[2],
-                resolvedValues[3],
+                resolvedFirstValue,
+                resolvedSecondValue,
+                resolvedThirdValue,
+                resolvedFourthValue,
               ),
             ),
-          );
-        }
-
-        return resolveActivations(
-          params,
-          factory(
-            firstResolvedValue,
-            secondResolvedValue,
-            thirdResolvedValue,
-            fourthResolvedValue,
-          ),
         );
       };
       break;
