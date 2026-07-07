@@ -12,26 +12,33 @@ export function resolveTwo<TParam, TResult>(
   if (isPromise(value1)) {
     if (isPromise(value2)) {
       return new Promise(
-        (resolve: (value: TResult | PromiseLike<TResult>) => void) => {
+        (
+          resolve: (value: TResult | PromiseLike<TResult>) => void,
+          reject: (reason?: unknown) => void,
+        ) => {
           let resolvedValues: number = 0;
           let resolvedValue1: TParam;
           let resolvedValue2: TParam;
 
-          void value1.then((resolvedValue: TParam) => {
-            if (++resolvedValues === PARAMS) {
-              resolve(build(resolvedValue, resolvedValue2));
-            } else {
-              resolvedValue1 = resolvedValue;
-            }
-          });
+          void value1
+            .then((resolvedValue: TParam) => {
+              if (++resolvedValues === PARAMS) {
+                resolve(build(resolvedValue, resolvedValue2));
+              } else {
+                resolvedValue1 = resolvedValue;
+              }
+            })
+            .catch(reject);
 
-          void value2.then((resolvedValue: TParam) => {
-            if (++resolvedValues === PARAMS) {
-              resolve(build(resolvedValue1, resolvedValue));
-            } else {
-              resolvedValue2 = resolvedValue;
-            }
-          });
+          void value2
+            .then((resolvedValue: TParam) => {
+              if (++resolvedValues === PARAMS) {
+                resolve(build(resolvedValue1, resolvedValue));
+              } else {
+                resolvedValue2 = resolvedValue;
+              }
+            })
+            .catch(reject);
         },
       );
     }

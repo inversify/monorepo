@@ -15,86 +15,109 @@ export function resolveThree<TParam, TResult>(
     if (isPromise(value2)) {
       if (isPromise(value3)) {
         return new Promise(
-          (resolve: (value: TResult | PromiseLike<TResult>) => void) => {
+          (
+            resolve: (value: TResult | PromiseLike<TResult>) => void,
+            reject: (reason?: unknown) => void,
+          ) => {
             let resolvedValues: number = 0;
             let resolvedValue1: TParam;
             let resolvedValue2: TParam;
             let resolvedValue3: TParam;
 
-            void value1.then((resolvedValue: TParam) => {
-              if (++resolvedValues === THREE_PARAMS) {
-                resolve(build(resolvedValue, resolvedValue2, resolvedValue3));
-              } else {
-                resolvedValue1 = resolvedValue;
-              }
-            });
+            void value1
+              .then((resolvedValue: TParam) => {
+                if (++resolvedValues === THREE_PARAMS) {
+                  resolve(build(resolvedValue, resolvedValue2, resolvedValue3));
+                } else {
+                  resolvedValue1 = resolvedValue;
+                }
+              })
+              .catch(reject);
 
-            void value2.then((resolvedValue: TParam) => {
-              if (++resolvedValues === THREE_PARAMS) {
-                resolve(build(resolvedValue1, resolvedValue, resolvedValue3));
-              } else {
-                resolvedValue2 = resolvedValue;
-              }
-            });
+            void value2
+              .then((resolvedValue: TParam) => {
+                if (++resolvedValues === THREE_PARAMS) {
+                  resolve(build(resolvedValue1, resolvedValue, resolvedValue3));
+                } else {
+                  resolvedValue2 = resolvedValue;
+                }
+              })
+              .catch(reject);
 
-            void value3.then((resolvedValue: TParam) => {
-              if (++resolvedValues === THREE_PARAMS) {
-                resolve(build(resolvedValue1, resolvedValue2, resolvedValue));
-              } else {
-                resolvedValue3 = resolvedValue;
-              }
-            });
+            void value3
+              .then((resolvedValue: TParam) => {
+                if (++resolvedValues === THREE_PARAMS) {
+                  resolve(build(resolvedValue1, resolvedValue2, resolvedValue));
+                } else {
+                  resolvedValue3 = resolvedValue;
+                }
+              })
+              .catch(reject);
           },
         );
       }
 
       return new Promise(
-        (resolve: (value: TResult | PromiseLike<TResult>) => void) => {
+        (
+          resolve: (value: TResult | PromiseLike<TResult>) => void,
+          reject: (reason?: unknown) => void,
+        ) => {
           let resolvedValues: number = 0;
           let resolvedValue1: TParam;
           let resolvedValue2: TParam;
 
-          void value1.then((resolvedValue: TParam) => {
-            if (++resolvedValues === TWO_PARAMS) {
-              resolve(build(resolvedValue, resolvedValue2, value3));
-            } else {
-              resolvedValue1 = resolvedValue;
-            }
-          });
+          void value1
+            .then((resolvedValue: TParam) => {
+              if (++resolvedValues === TWO_PARAMS) {
+                resolve(build(resolvedValue, resolvedValue2, value3));
+              } else {
+                resolvedValue1 = resolvedValue;
+              }
+            })
+            .catch(reject);
 
-          void value2.then((resolvedValue: TParam) => {
-            if (++resolvedValues === TWO_PARAMS) {
-              resolve(build(resolvedValue1, resolvedValue, value3));
-            } else {
-              resolvedValue2 = resolvedValue;
-            }
-          });
+          void value2
+            .then((resolvedValue: TParam) => {
+              if (++resolvedValues === TWO_PARAMS) {
+                resolve(build(resolvedValue1, resolvedValue, value3));
+              } else {
+                resolvedValue2 = resolvedValue;
+              }
+            })
+            .catch(reject);
         },
       );
     }
 
     if (isPromise(value3)) {
       return new Promise(
-        (resolve: (value: TResult | PromiseLike<TResult>) => void) => {
+        (
+          resolve: (value: TResult | PromiseLike<TResult>) => void,
+          reject: (reason?: unknown) => void,
+        ) => {
           let resolvedValues: number = 0;
           let resolvedValue1: TParam;
           let resolvedValue3: TParam;
 
-          void value1.then((resolvedValue: TParam) => {
-            if (++resolvedValues === TWO_PARAMS) {
-              resolve(build(resolvedValue, value2, resolvedValue3));
-            } else {
-              resolvedValue1 = resolvedValue;
-            }
-          });
+          void value1
+            .then((resolvedValue: TParam) => {
+              if (++resolvedValues === TWO_PARAMS) {
+                resolve(build(resolvedValue, value2, resolvedValue3));
+              } else {
+                resolvedValue1 = resolvedValue;
+              }
+            })
+            .catch(reject);
 
-          void value3.then((resolvedValue: TParam) => {
-            if (++resolvedValues === TWO_PARAMS) {
-              resolve(build(resolvedValue1, value2, resolvedValue));
-            } else {
-              resolvedValue3 = resolvedValue;
-            }
-          });
+          void value3
+            .then((resolvedValue: TParam) => {
+              if (++resolvedValues === TWO_PARAMS) {
+                resolve(build(resolvedValue1, value2, resolvedValue));
+              } else {
+                resolvedValue3 = resolvedValue;
+              }
+            })
+            .catch(reject);
         },
       );
     }
@@ -107,26 +130,33 @@ export function resolveThree<TParam, TResult>(
   if (isPromise(value2)) {
     if (isPromise(value3)) {
       return new Promise(
-        (resolve: (value: TResult | PromiseLike<TResult>) => void) => {
+        (
+          resolve: (value: TResult | PromiseLike<TResult>) => void,
+          reject: (reason?: unknown) => void,
+        ) => {
           let resolvedValues: number = 0;
           let resolvedValue2: TParam;
           let resolvedValue3: TParam;
 
-          void value2.then((resolvedValue: TParam) => {
-            if (++resolvedValues === TWO_PARAMS) {
-              resolve(build(value1, resolvedValue, resolvedValue3));
-            } else {
-              resolvedValue2 = resolvedValue;
-            }
-          });
+          void value2
+            .then((resolvedValue: TParam) => {
+              if (++resolvedValues === TWO_PARAMS) {
+                resolve(build(value1, resolvedValue, resolvedValue3));
+              } else {
+                resolvedValue2 = resolvedValue;
+              }
+            })
+            .catch(reject);
 
-          void value3.then((resolvedValue: TParam) => {
-            if (++resolvedValues === TWO_PARAMS) {
-              resolve(build(value1, resolvedValue2, resolvedValue));
-            } else {
-              resolvedValue3 = resolvedValue;
-            }
-          });
+          void value3
+            .then((resolvedValue: TParam) => {
+              if (++resolvedValues === TWO_PARAMS) {
+                resolve(build(value1, resolvedValue2, resolvedValue));
+              } else {
+                resolvedValue3 = resolvedValue;
+              }
+            })
+            .catch(reject);
         },
       );
     }
