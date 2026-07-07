@@ -1,5 +1,18 @@
 # @inversifyjs/container
 
+## 3.0.0
+
+### Major Changes
+
+- Removed `NonCachedServiceNodeContext.chainedBindings` in favor of `buildServiceNodeOptions`.
+
+### Patch Changes
+
+- Deep redirection bindings are now properly refreshed in the plan cache when relevant bindings are added or removed
+- Updated dependencies
+  - @inversifyjs/core@12.0.0
+  - @inversifyjs/plugin@0.3.1
+
 ## 2.0.2
 
 ### Patch Changes
