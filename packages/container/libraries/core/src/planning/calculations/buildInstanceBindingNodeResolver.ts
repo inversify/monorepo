@@ -23,6 +23,9 @@ import {
   type SyncResolved,
 } from '../../resolution/models/Resolved.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
+import { resolveFour } from './resolveFour.js';
+import { resolveThree } from './resolveThree.js';
+import { resolveTwo } from './resolveTwo.js';
 
 const ZERO_CONSTRUCTOR_ARGUMENTS: number = 0;
 const ONE_CONSTRUCTOR_ARGUMENT: number = 1;
@@ -123,17 +126,17 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           node.constructorParams[1]!.resolve(params);
 
-        if (isPromise(firstResolvedValue) || isPromise(secondResolvedValue)) {
-          return resolveInstanceBindingNodeAsyncFromOnlyConstructorParams(
-            Promise.all([firstResolvedValue, secondResolvedValue]),
-            params,
-            node,
-          );
-        }
-
-        return resolveActivations(
-          params,
-          new implementationType(firstResolvedValue, secondResolvedValue),
+        return resolveTwo(
+          firstResolvedValue,
+          secondResolvedValue,
+          (
+            resolvedFirstValue: unknown,
+            resolvedSecondValue: unknown,
+          ): Resolved<TActivated> =>
+            resolveActivations(
+              params,
+              new implementationType(resolvedFirstValue, resolvedSecondValue),
+            ),
         );
       };
       break;
@@ -149,29 +152,23 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           node.constructorParams[2]!.resolve(params);
 
-        if (
-          isPromise(firstResolvedValue) ||
-          isPromise(secondResolvedValue) ||
-          isPromise(thirdResolvedValue)
-        ) {
-          return resolveInstanceBindingNodeAsyncFromOnlyConstructorParams(
-            Promise.all([
-              firstResolvedValue,
-              secondResolvedValue,
-              thirdResolvedValue,
-            ]),
-            params,
-            node,
-          );
-        }
-
-        return resolveActivations(
-          params,
-          new implementationType(
-            firstResolvedValue,
-            secondResolvedValue,
-            thirdResolvedValue,
-          ),
+        return resolveThree(
+          firstResolvedValue,
+          secondResolvedValue,
+          thirdResolvedValue,
+          (
+            resolvedFirstValue: unknown,
+            resolvedSecondValue: unknown,
+            resolvedThirdValue: unknown,
+          ): Resolved<TActivated> =>
+            resolveActivations(
+              params,
+              new implementationType(
+                resolvedFirstValue,
+                resolvedSecondValue,
+                resolvedThirdValue,
+              ),
+            ),
         );
       };
       break;
@@ -190,32 +187,26 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           node.constructorParams[3]!.resolve(params);
 
-        if (
-          isPromise(firstResolvedValue) ||
-          isPromise(secondResolvedValue) ||
-          isPromise(thirdResolvedValue) ||
-          isPromise(fourthResolvedValue)
-        ) {
-          return resolveInstanceBindingNodeAsyncFromOnlyConstructorParams(
-            Promise.all([
-              firstResolvedValue,
-              secondResolvedValue,
-              thirdResolvedValue,
-              fourthResolvedValue,
-            ]),
-            params,
-            node,
-          );
-        }
-
-        return resolveActivations(
-          params,
-          new implementationType(
-            firstResolvedValue,
-            secondResolvedValue,
-            thirdResolvedValue,
-            fourthResolvedValue,
-          ),
+        return resolveFour(
+          firstResolvedValue,
+          secondResolvedValue,
+          thirdResolvedValue,
+          fourthResolvedValue,
+          (
+            resolvedFirstValue: unknown,
+            resolvedSecondValue: unknown,
+            resolvedThirdValue: unknown,
+            resolvedFourthValue: unknown,
+          ): Resolved<TActivated> =>
+            resolveActivations(
+              params,
+              new implementationType(
+                resolvedFirstValue,
+                resolvedSecondValue,
+                resolvedThirdValue,
+                resolvedFourthValue,
+              ),
+            ),
         );
       };
       break;
