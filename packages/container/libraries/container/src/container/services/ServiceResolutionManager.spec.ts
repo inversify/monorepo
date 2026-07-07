@@ -59,6 +59,7 @@ describe(ServiceResolutionManager, () => {
       onReset: vitest.fn(),
       planResultCacheService: {
         get: vitest.fn(),
+        getByServiceIdentifier: vitest.fn(),
         set: vitest.fn(),
         setNonCachedServiceNode: vitest.fn(),
       } as Partial<PlanResultCacheService> as PlanResultCacheService,
@@ -160,7 +161,7 @@ describe(ServiceResolutionManager, () => {
             },
             getActivations: expect.any(Function),
             planResult: planResultFixture,
-            requestScopeCache: new Map(),
+            requestScopeCache: undefined,
           };
 
           expect(resolve).toHaveBeenCalledExactlyOnceWith(
@@ -257,7 +258,7 @@ describe(ServiceResolutionManager, () => {
             },
             getActivations: expect.any(Function),
             planResult: planResultFixture,
-            requestScopeCache: new Map(),
+            requestScopeCache: undefined,
           };
 
           expect(resolve).toHaveBeenCalledExactlyOnceWith(
@@ -377,7 +378,7 @@ describe(ServiceResolutionManager, () => {
             },
             getActivations: expect.any(Function),
             planResult: planResultFixture,
-            requestScopeCache: new Map(),
+            requestScopeCache: undefined,
           };
 
           expect(resolve).toHaveBeenCalledExactlyOnceWith(
@@ -487,7 +488,7 @@ describe(ServiceResolutionManager, () => {
             },
             getActivations: expect.any(Function),
             planResult: planResultFixture,
-            requestScopeCache: new Map(),
+            requestScopeCache: undefined,
           };
 
           expect(resolve).toHaveBeenCalledExactlyOnceWith(
@@ -598,7 +599,7 @@ describe(ServiceResolutionManager, () => {
             },
             getActivations: expect.any(Function),
             planResult: planResultFixture,
-            requestScopeCache: new Map(),
+            requestScopeCache: undefined,
           };
 
           expect(resolve).toHaveBeenCalledExactlyOnceWith(
@@ -692,7 +693,7 @@ describe(ServiceResolutionManager, () => {
           },
           getActivations: expect.any(Function),
           planResult: planResultFixture,
-          requestScopeCache: new Map(),
+          requestScopeCache: undefined,
         };
 
         expect(resolve).toHaveBeenCalledExactlyOnceWith(expectedResolveParams);
@@ -700,6 +701,165 @@ describe(ServiceResolutionManager, () => {
 
       it('should return expected value', () => {
         expect(result).toBe(resolvedValueFixture);
+      });
+    });
+
+    describe('having a serviceResolutionManager with no options', () => {
+      let serviceResolutionManager: ServiceResolutionManager;
+
+      beforeAll(() => {
+        serviceResolutionManager = new ServiceResolutionManager(
+          planParamsOperationsManagerFixture,
+          serviceReferenceManagerMock,
+          autobindFixture,
+          defaultScopeFixture,
+        );
+      });
+
+      describe('when called, and serviceReferenceManager.planResultCacheService.getByServiceIdentifier() returns PlanResult', () => {
+        let serviceIdentifierFixture: ServiceIdentifier;
+
+        let planResultFixture: PlanResult;
+
+        let resolvedValueFixture: unknown;
+
+        let result: unknown;
+
+        beforeAll(() => {
+          serviceIdentifierFixture = 'service-id';
+
+          planResultFixture = Symbol() as unknown as PlanResult;
+
+          resolvedValueFixture = Symbol();
+
+          vitest
+            .mocked(
+              serviceReferenceManagerMock.planResultCacheService
+                .getByServiceIdentifier,
+            )
+            .mockReturnValueOnce(planResultFixture);
+
+          vitest.mocked(resolve).mockReturnValueOnce(resolvedValueFixture);
+
+          result = serviceResolutionManager.get(serviceIdentifierFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call serviceReferenceManager.planResultCacheService.getByServiceIdentifier()', () => {
+          expect(
+            serviceReferenceManagerMock.planResultCacheService
+              .getByServiceIdentifier,
+          ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
+        });
+
+        it('should not call serviceReferenceManager.planResultCacheService.get()', () => {
+          expect(
+            serviceReferenceManagerMock.planResultCacheService.get,
+          ).not.toHaveBeenCalled();
+        });
+
+        it('should not call plan()', () => {
+          expect(plan).not.toHaveBeenCalled();
+        });
+
+        it('should call resolve()', () => {
+          const expectedResolveParams: ResolutionParams = {
+            context: {
+              get: expect.any(Function),
+              getAll: expect.any(Function),
+              getAllAsync: expect.any(Function),
+              getAsync: expect.any(Function),
+            },
+            getActivations: expect.any(Function),
+            planResult: planResultFixture,
+            requestScopeCache: undefined,
+          };
+
+          expect(resolve).toHaveBeenCalledExactlyOnceWith(
+            expectedResolveParams,
+          );
+        });
+
+        it('should return expected value', () => {
+          expect(result).toBe(resolvedValueFixture);
+        });
+      });
+
+      describe('when called, and serviceReferenceManager.planResultCacheService.getByServiceIdentifier() returns undefined', () => {
+        let serviceIdentifierFixture: ServiceIdentifier;
+
+        let planResultFixture: PlanResult;
+
+        let resolvedValueFixture: unknown;
+
+        let result: unknown;
+
+        beforeAll(() => {
+          serviceIdentifierFixture = 'service-id';
+
+          planResultFixture = Symbol() as unknown as PlanResult;
+
+          resolvedValueFixture = Symbol();
+
+          vitest
+            .mocked(
+              serviceReferenceManagerMock.planResultCacheService
+                .getByServiceIdentifier,
+            )
+            .mockReturnValueOnce(undefined);
+
+          vitest.mocked(plan).mockReturnValueOnce(planResultFixture);
+
+          vitest.mocked(resolve).mockReturnValueOnce(resolvedValueFixture);
+
+          result = serviceResolutionManager.get(serviceIdentifierFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call serviceReferenceManager.planResultCacheService.getByServiceIdentifier()', () => {
+          expect(
+            serviceReferenceManagerMock.planResultCacheService
+              .getByServiceIdentifier,
+          ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
+        });
+
+        it('should call serviceReferenceManager.planResultCacheService.get()', () => {
+          const expectedGetPlanOptions: GetPlanOptions = {
+            isMultiple: false,
+            name: undefined,
+            optional: false,
+            serviceIdentifier: serviceIdentifierFixture,
+            tag: undefined,
+          };
+
+          expect(
+            serviceReferenceManagerMock.planResultCacheService.get,
+          ).toHaveBeenCalledExactlyOnceWith(expectedGetPlanOptions);
+        });
+
+        it('should call plan()', () => {
+          const expectedPlanParams: PlanParams = {
+            autobindOptions: undefined,
+            operations: planParamsOperationsManagerFixture.planParamsOperations,
+            rootConstraints: {
+              isMultiple: false,
+              serviceIdentifier: serviceIdentifierFixture,
+            },
+            servicesBranch: [],
+          };
+
+          expect(plan).toHaveBeenCalledExactlyOnceWith(expectedPlanParams);
+        });
+
+        it('should return expected value', () => {
+          expect(result).toBe(resolvedValueFixture);
+        });
       });
     });
   });
@@ -782,7 +942,7 @@ describe(ServiceResolutionManager, () => {
             },
             getActivations: expect.any(Function),
             planResult: planResultFixture,
-            requestScopeCache: new Map(),
+            requestScopeCache: undefined,
           };
 
           expect(resolve).toHaveBeenCalledExactlyOnceWith(
@@ -880,7 +1040,7 @@ describe(ServiceResolutionManager, () => {
           },
           getActivations: expect.any(Function),
           planResult: planResultFixture,
-          requestScopeCache: new Map(),
+          requestScopeCache: undefined,
         };
 
         expect(resolve).toHaveBeenCalledExactlyOnceWith(expectedResolveParams);
@@ -979,7 +1139,7 @@ describe(ServiceResolutionManager, () => {
           },
           getActivations: expect.any(Function),
           planResult: planResultFixture,
-          requestScopeCache: new Map(),
+          requestScopeCache: undefined,
         };
 
         expect(resolve).toHaveBeenCalledExactlyOnceWith(expectedResolveParams);
@@ -1084,7 +1244,7 @@ describe(ServiceResolutionManager, () => {
           },
           getActivations: expect.any(Function),
           planResult: planResultFixture,
-          requestScopeCache: new Map(),
+          requestScopeCache: undefined,
         };
 
         expect(resolve).toHaveBeenCalledExactlyOnceWith(expectedResolveParams);
@@ -1179,7 +1339,7 @@ describe(ServiceResolutionManager, () => {
           },
           getActivations: expect.any(Function),
           planResult: planResultFixture,
-          requestScopeCache: new Map(),
+          requestScopeCache: undefined,
         };
 
         expect(resolve).toHaveBeenCalledExactlyOnceWith(expectedResolveParams);

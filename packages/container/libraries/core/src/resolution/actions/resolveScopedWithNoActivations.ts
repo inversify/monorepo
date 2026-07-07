@@ -28,7 +28,7 @@ export function resolveScopedWithNoActivations<TActivated>(
     }
     case bindingScopeValues.Request: {
       return (params: ResolutionParams): Resolved<TActivated> => {
-        if (params.requestScopeCache.has(binding.id)) {
+        if (params.requestScopeCache?.has(binding.id) === true) {
           return params.requestScopeCache.get(
             binding.id,
           ) as Resolved<TActivated>;
@@ -36,7 +36,7 @@ export function resolveScopedWithNoActivations<TActivated>(
 
         const resolvedValue: Resolved<TActivated> = resolve(params);
 
-        params.requestScopeCache.set(binding.id, resolvedValue);
+        (params.requestScopeCache ??= new Map()).set(binding.id, resolvedValue);
 
         return resolvedValue;
       };
