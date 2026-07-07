@@ -1,5 +1,14 @@
 # inversify
 
+## 8.1.2
+
+### Patch Changes
+
+- Deep redirection bindings are now properly refreshed in the plan cache when relevant bindings are added or removed
+- Updated dependencies
+  - @inversifyjs/container@3.0.0
+  - @inversifyjs/core@12.0.0
+
 ## 8.1.1
 
 ### Patch Changes

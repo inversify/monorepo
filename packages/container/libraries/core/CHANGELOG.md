@@ -1,5 +1,17 @@
 # @inversifyjs/core
 
+## 12.0.0
+
+### Major Changes
+
+- Removed `PlanServiceRedirectionBindingNode.redirections` in favor of a `ServiceNode` `redirection` field.
+- Added `ConstructorNoParamNode`.
+- Updated `InstanceBindingNode.constructorParams` to rely on `ConstructorNoParamNode` instead of `undefined` to represent constructor parameters that have no injections.
+- Updated `ResolutionParams.requestScopedCache` to allow `undefined` value.
+- Removed `NonCachedServiceNodeContext.chainedBindings` in favor of `buildServiceNodeOptions`.
+- Updated `PlanServiceNode` with `resolve`.
+- Updated `PlanServiceRedirectionBindingNode` with `resolve`.
+
 ## 11.0.0
 
 ### Major Changes
