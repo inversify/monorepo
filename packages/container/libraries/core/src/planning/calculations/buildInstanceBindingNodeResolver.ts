@@ -6,7 +6,6 @@ import {
 
 import { type bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
-import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
 import { resolveBindingServiceActivations } from '../../resolution/actions/resolveBindingServiceActivations.js';
 import { resolveInstanceBindingConstructorParams } from '../../resolution/actions/resolveInstanceBindingConstructorParams.js';
 import { resolveInstanceBindingNode as curryResolveInstanceBindingNode } from '../../resolution/actions/resolveInstanceBindingNode.js';
@@ -32,6 +31,354 @@ const ONE_CONSTRUCTOR_ARGUMENT: number = 1;
 const TWO_CONSTRUCTOR_ARGUMENTS: number = 2;
 const THREE_CONSTRUCTOR_ARGUMENTS: number = 3;
 const FOUR_CONSTRUCTOR_ARGUMENTS: number = 4;
+
+/*
+ * Monotonically increasing id used to make every generated function's
+ * source text unique (see buildZeroConstructorArgumentsResolveNode below).
+ */
+let nextGeneratedResolverId: number = 0;
+
+/**
+ * Builds a `resolveNode` for a zero-argument instance binding by generating
+ * a brand new function via the `Function` constructor for every binding.
+ *
+ * This is not just an inlining trick: the `Function` constructor result is
+ * cached by V8 keyed on the *exact source text* passed to it. If every
+ * binding generated the exact same source text (e.g. always naming the
+ * constructor parameter `ctor`), V8 would transparently reuse the very same
+ * compiled function (and its feedback vector) for every binding sharing
+ * this code path. Since that single shared `new ctor()` call site would
+ * then observe a different class on every binding, its type feedback would
+ * become polymorphic/megamorphic across all of them, defeating the purpose
+ * of generating specialized code and forcing V8 back to the generic,
+ * non-inlined construction path.
+ *
+ * Suffixing every identifier with a per-binding id keeps the source text
+ * (and therefore the compiled function and its feedback) unique per
+ * binding, so the `new ctor()` call site stays monomorphic and V8 can
+ * inline/optimize it as if it had been hand-written for that one class.
+ */
+function buildZeroConstructorArgumentsResolveNode<TActivated>(
+  implementationType: Newable<TActivated>,
+  resolveActivations: (
+    params: ResolutionParams,
+    instance: SyncResolved<TActivated>,
+  ) => Resolved<TActivated>,
+): (params: ResolutionParams) => Resolved<TActivated> {
+  const id: string = (nextGeneratedResolverId++).toString();
+
+  const buildResolveNode: (
+    ctor: Newable<TActivated>,
+    activate: (
+      params: ResolutionParams,
+      instance: SyncResolved<TActivated>,
+    ) => Resolved<TActivated>,
+  ) => (params: ResolutionParams) => Resolved<TActivated> =
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    new Function(
+      `ctor$${id}`,
+      `activate$${id}`,
+      `return function resolveNode$${id}(params$${id}) {
+        return activate$${id}(params$${id}, new ctor$${id}());
+      };`,
+    ) as (
+      implementationType: Newable<TActivated>,
+      resolveActivations: (
+        params: ResolutionParams,
+        instance: SyncResolved<TActivated>,
+      ) => Resolved<TActivated>,
+    ) => (params: ResolutionParams) => Resolved<TActivated>;
+
+  return buildResolveNode(implementationType, resolveActivations);
+}
+
+/**
+ * Same rationale as {@link buildZeroConstructorArgumentsResolveNode}, but
+ * for one-argument instance bindings.
+ */
+function buildOneConstructorArgumentResolveNode<TActivated>(
+  node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+  implementationType: Newable<TActivated>,
+  resolveActivations: (
+    params: ResolutionParams,
+    instance: SyncResolved<TActivated>,
+  ) => Resolved<TActivated>,
+): (params: ResolutionParams) => Resolved<TActivated> {
+  const id: string = (nextGeneratedResolverId++).toString();
+
+  const buildResolveNode: (
+    boundNode: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+    ctor: Newable<TActivated>,
+    activate: (
+      params: ResolutionParams,
+      instance: SyncResolved<TActivated>,
+    ) => Resolved<TActivated>,
+    isPromiseFunction: typeof isPromise,
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+  ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
+    `node$${id}`,
+    `ctor$${id}`,
+    `activate$${id}`,
+    `isPromise$${id}`,
+    `return function resolveNode$${id}(params$${id}) {
+        const resolvedValue$${id} = node$${id}.constructorParams[0].resolve(params$${id});
+
+        if (isPromise$${id}(resolvedValue$${id})) {
+          return resolvedValue$${id}.then(function (resolvedValue$${id}) {
+            return activate$${id}(params$${id}, new ctor$${id}(resolvedValue$${id}));
+          });
+        }
+
+        return activate$${id}(params$${id}, new ctor$${id}(resolvedValue$${id}));
+      };`,
+  ) as (
+    node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+    implementationType: Newable<TActivated>,
+    resolveActivations: (
+      params: ResolutionParams,
+      instance: SyncResolved<TActivated>,
+    ) => Resolved<TActivated>,
+    isPromise: <TParam>(object: unknown) => object is Promise<TParam>,
+  ) => (params: ResolutionParams) => Resolved<TActivated>;
+
+  return buildResolveNode(
+    node,
+    implementationType,
+    resolveActivations,
+    isPromise,
+  );
+}
+
+/**
+ * Same rationale as {@link buildZeroConstructorArgumentsResolveNode}, but
+ * for two-argument instance bindings.
+ */
+function buildTwoConstructorArgumentsResolveNode<TActivated>(
+  node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+  implementationType: Newable<TActivated>,
+  resolveActivations: (
+    params: ResolutionParams,
+    instance: SyncResolved<TActivated>,
+  ) => Resolved<TActivated>,
+): (params: ResolutionParams) => Resolved<TActivated> {
+  const id: string = (nextGeneratedResolverId++).toString();
+
+  const buildResolveNode: (
+    boundNode: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+    ctor: Newable<TActivated>,
+    activate: (
+      params: ResolutionParams,
+      instance: SyncResolved<TActivated>,
+    ) => Resolved<TActivated>,
+    resolveTwoFunction: typeof resolveTwo,
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+  ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
+    `node$${id}`,
+    `ctor$${id}`,
+    `activate$${id}`,
+    `resolveTwo$${id}`,
+    `return function resolveNode$${id}(params$${id}) {
+        const firstResolvedValue$${id} = node$${id}.constructorParams[0].resolve(params$${id});
+        const secondResolvedValue$${id} = node$${id}.constructorParams[1].resolve(params$${id});
+
+        return resolveTwo$${id}(
+          firstResolvedValue$${id},
+          secondResolvedValue$${id},
+          function (resolvedFirstValue$${id}, resolvedSecondValue$${id}) {
+            return activate$${id}(
+              params$${id},
+              new ctor$${id}(resolvedFirstValue$${id}, resolvedSecondValue$${id}),
+            );
+          },
+        );
+      };`,
+  ) as (
+    node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+    implementationType: Newable<TActivated>,
+    resolveActivations: (
+      params: ResolutionParams,
+      instance: SyncResolved<TActivated>,
+    ) => Resolved<TActivated>,
+    resolveTwo: <TParam, TResult>(
+      value1: Resolved<TParam>,
+      value2: Resolved<TParam>,
+      build: (value1: TParam, value2: TParam) => Resolved<TResult>,
+    ) => Resolved<TResult>,
+  ) => (params: ResolutionParams) => Resolved<TActivated>;
+
+  return buildResolveNode(
+    node,
+    implementationType,
+    resolveActivations,
+    resolveTwo,
+  );
+}
+
+/**
+ * Same rationale as {@link buildZeroConstructorArgumentsResolveNode}, but
+ * for three-argument instance bindings.
+ */
+function buildThreeConstructorArgumentsResolveNode<TActivated>(
+  node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+  implementationType: Newable<TActivated>,
+  resolveActivations: (
+    params: ResolutionParams,
+    instance: SyncResolved<TActivated>,
+  ) => Resolved<TActivated>,
+): (params: ResolutionParams) => Resolved<TActivated> {
+  const id: string = (nextGeneratedResolverId++).toString();
+
+  const buildResolveNode: (
+    boundNode: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+    ctor: Newable<TActivated>,
+    activate: (
+      params: ResolutionParams,
+      instance: SyncResolved<TActivated>,
+    ) => Resolved<TActivated>,
+    resolveThreeFunction: typeof resolveThree,
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+  ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
+    `node$${id}`,
+    `ctor$${id}`,
+    `activate$${id}`,
+    `resolveThree$${id}`,
+    `return function resolveNode$${id}(params$${id}) {
+        const firstResolvedValue$${id} = node$${id}.constructorParams[0].resolve(params$${id});
+        const secondResolvedValue$${id} = node$${id}.constructorParams[1].resolve(params$${id});
+        const thirdResolvedValue$${id} = node$${id}.constructorParams[2].resolve(params$${id});
+
+        return resolveThree$${id}(
+          firstResolvedValue$${id},
+          secondResolvedValue$${id},
+          thirdResolvedValue$${id},
+          function (
+            resolvedFirstValue$${id},
+            resolvedSecondValue$${id},
+            resolvedThirdValue$${id},
+          ) {
+            return activate$${id}(
+              params$${id},
+              new ctor$${id}(
+                resolvedFirstValue$${id},
+                resolvedSecondValue$${id},
+                resolvedThirdValue$${id},
+              ),
+            );
+          },
+        );
+      };`,
+  ) as (
+    node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+    implementationType: Newable<TActivated>,
+    resolveActivations: (
+      params: ResolutionParams,
+      instance: SyncResolved<TActivated>,
+    ) => Resolved<TActivated>,
+    resolveThree: <TParam, TResult>(
+      value1: Resolved<TParam>,
+      value2: Resolved<TParam>,
+      value3: Resolved<TParam>,
+      build: (
+        value1: TParam,
+        value2: TParam,
+        value3: TParam,
+      ) => Resolved<TResult>,
+    ) => Resolved<TResult>,
+  ) => (params: ResolutionParams) => Resolved<TActivated>;
+
+  return buildResolveNode(
+    node,
+    implementationType,
+    resolveActivations,
+    resolveThree,
+  );
+}
+
+/**
+ * Same rationale as {@link buildZeroConstructorArgumentsResolveNode}, but
+ * for four-argument instance bindings.
+ */
+function buildFourConstructorArgumentsResolveNode<TActivated>(
+  node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+  implementationType: Newable<TActivated>,
+  resolveActivations: (
+    params: ResolutionParams,
+    instance: SyncResolved<TActivated>,
+  ) => Resolved<TActivated>,
+): (params: ResolutionParams) => Resolved<TActivated> {
+  const id: string = (nextGeneratedResolverId++).toString();
+
+  const buildResolveNode: (
+    boundNode: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+    ctor: Newable<TActivated>,
+    activate: (
+      params: ResolutionParams,
+      instance: SyncResolved<TActivated>,
+    ) => Resolved<TActivated>,
+    resolveFourFunction: typeof resolveFour,
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+  ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
+    `node$${id}`,
+    `ctor$${id}`,
+    `activate$${id}`,
+    `resolveFour$${id}`,
+    `return function resolveNode$${id}(params$${id}) {
+        const firstResolvedValue$${id} = node$${id}.constructorParams[0].resolve(params$${id});
+        const secondResolvedValue$${id} = node$${id}.constructorParams[1].resolve(params$${id});
+        const thirdResolvedValue$${id} = node$${id}.constructorParams[2].resolve(params$${id});
+        const fourthResolvedValue$${id} = node$${id}.constructorParams[3].resolve(params$${id});
+
+        return resolveFour$${id}(
+          firstResolvedValue$${id},
+          secondResolvedValue$${id},
+          thirdResolvedValue$${id},
+          fourthResolvedValue$${id},
+          function (
+            resolvedFirstValue$${id},
+            resolvedSecondValue$${id},
+            resolvedThirdValue$${id},
+            resolvedFourthValue$${id},
+          ) {
+            return activate$${id}(
+              params$${id},
+              new ctor$${id}(
+                resolvedFirstValue$${id},
+                resolvedSecondValue$${id},
+                resolvedThirdValue$${id},
+                resolvedFourthValue$${id},
+              ),
+            );
+          },
+        );
+      };`,
+  ) as (
+    node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+    implementationType: Newable<TActivated>,
+    resolveActivations: (
+      params: ResolutionParams,
+      instance: SyncResolved<TActivated>,
+    ) => Resolved<TActivated>,
+    resolveFour: <TParam, TResult>(
+      value1: Resolved<TParam>,
+      value2: Resolved<TParam>,
+      value3: Resolved<TParam>,
+      value4: Resolved<TParam>,
+      build: (
+        value1: TParam,
+        value2: TParam,
+        value3: TParam,
+        value4: TParam,
+      ) => Resolved<TResult>,
+    ) => Resolved<TResult>,
+  ) => (params: ResolutionParams) => Resolved<TActivated>;
+
+  return buildResolveNode(
+    node,
+    implementationType,
+    resolveActivations,
+    resolveFour,
+  );
+}
 
 const resolveInstanceBindingNode: <
   TActivated,
@@ -68,13 +415,12 @@ const resolveScopedInstanceBindingNode: <TActivated>(
  * allocations and spread construct calls.
  */
 function buildSimpleInstanceBindingNodeResolver<TActivated>(
-  binding: InstanceBinding<TActivated>,
-  classMetadata: ClassMetadata,
   node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  const implementationType: Newable<TActivated> = binding.implementationType;
+  const implementationType: Newable<TActivated> =
+    node.binding.implementationType;
   const serviceIdentifier: ServiceIdentifier<TActivated> =
-    binding.serviceIdentifier;
+    node.binding.serviceIdentifier;
 
   function resolveActivations(
     params: ResolutionParams,
@@ -93,122 +439,40 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
 
   let resolveNode: (params: ResolutionParams) => Resolved<TActivated>;
 
-  switch (classMetadata.constructorArguments.length) {
+  switch (node.classMetadata.constructorArguments.length) {
     case ZERO_CONSTRUCTOR_ARGUMENTS:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> =>
-        resolveActivations(params, new implementationType());
+      resolveNode = buildZeroConstructorArgumentsResolveNode(
+        implementationType,
+        resolveActivations,
+      );
       break;
     case ONE_CONSTRUCTOR_ARGUMENT:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
-        const resolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.constructorParams[0]!.resolve(params);
-
-        if (isPromise(resolvedValue)) {
-          return resolvedValue.then(
-            (resolvedValue: unknown): Resolved<TActivated> =>
-              resolveActivations(params, new implementationType(resolvedValue)),
-          );
-        }
-
-        return resolveActivations(
-          params,
-          new implementationType(resolvedValue),
-        );
-      };
+      resolveNode = buildOneConstructorArgumentResolveNode(
+        node,
+        implementationType,
+        resolveActivations,
+      );
       break;
     case TWO_CONSTRUCTOR_ARGUMENTS:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
-        const firstResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.constructorParams[0]!.resolve(params);
-        const secondResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.constructorParams[1]!.resolve(params);
-
-        return resolveTwo(
-          firstResolvedValue,
-          secondResolvedValue,
-          (
-            resolvedFirstValue: unknown,
-            resolvedSecondValue: unknown,
-          ): Resolved<TActivated> =>
-            resolveActivations(
-              params,
-              new implementationType(resolvedFirstValue, resolvedSecondValue),
-            ),
-        );
-      };
+      resolveNode = buildTwoConstructorArgumentsResolveNode(
+        node,
+        implementationType,
+        resolveActivations,
+      );
       break;
     case THREE_CONSTRUCTOR_ARGUMENTS:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
-        const firstResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.constructorParams[0]!.resolve(params);
-        const secondResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.constructorParams[1]!.resolve(params);
-        const thirdResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.constructorParams[2]!.resolve(params);
-
-        return resolveThree(
-          firstResolvedValue,
-          secondResolvedValue,
-          thirdResolvedValue,
-          (
-            resolvedFirstValue: unknown,
-            resolvedSecondValue: unknown,
-            resolvedThirdValue: unknown,
-          ): Resolved<TActivated> =>
-            resolveActivations(
-              params,
-              new implementationType(
-                resolvedFirstValue,
-                resolvedSecondValue,
-                resolvedThirdValue,
-              ),
-            ),
-        );
-      };
+      resolveNode = buildThreeConstructorArgumentsResolveNode(
+        node,
+        implementationType,
+        resolveActivations,
+      );
       break;
     case FOUR_CONSTRUCTOR_ARGUMENTS:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
-        const firstResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.constructorParams[0]!.resolve(params);
-        const secondResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.constructorParams[1]!.resolve(params);
-        const thirdResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.constructorParams[2]!.resolve(params);
-        const fourthResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.constructorParams[3]!.resolve(params);
-
-        return resolveFour(
-          firstResolvedValue,
-          secondResolvedValue,
-          thirdResolvedValue,
-          fourthResolvedValue,
-          (
-            resolvedFirstValue: unknown,
-            resolvedSecondValue: unknown,
-            resolvedThirdValue: unknown,
-            resolvedFourthValue: unknown,
-          ): Resolved<TActivated> =>
-            resolveActivations(
-              params,
-              new implementationType(
-                resolvedFirstValue,
-                resolvedSecondValue,
-                resolvedThirdValue,
-                resolvedFourthValue,
-              ),
-            ),
-        );
-      };
+      resolveNode = buildFourConstructorArgumentsResolveNode(
+        node,
+        implementationType,
+        resolveActivations,
+      );
       break;
     default:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
@@ -230,20 +494,18 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
       };
   }
 
-  return resolveScopedWithNoActivations(binding, resolveNode);
+  return resolveScopedWithNoActivations(node.binding, resolveNode);
 }
 
 export function buildInstanceBindingNodeResolver<TActivated>(
-  binding: InstanceBinding<TActivated>,
-  classMetadata: ClassMetadata,
   node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   if (
-    classMetadata.lifecycle.postConstructMethodNames.size === 0 &&
-    binding.onActivation === undefined &&
-    classMetadata.properties.size === 0
+    node.classMetadata.lifecycle.postConstructMethodNames.size === 0 &&
+    node.binding.onActivation === undefined &&
+    node.classMetadata.properties.size === 0
   ) {
-    return buildSimpleInstanceBindingNodeResolver(binding, classMetadata, node);
+    return buildSimpleInstanceBindingNodeResolver(node);
   }
 
   return resolveScopedInstanceBindingNode(node);

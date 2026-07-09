@@ -32,13 +32,13 @@ const resolveScopedResolvedValueBindingNode: <TActivated>(
   >(node, resolveResolvedValueBindingNode);
 
 function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
-  binding: ResolvedValueBinding<TActivated>,
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const factory: (...args: any[]) => Resolved<TActivated> = binding.factory;
+  const factory: (...args: any[]) => Resolved<TActivated> =
+    node.binding.factory;
   const serviceIdentifier: ServiceIdentifier<TActivated> =
-    binding.serviceIdentifier;
+    node.binding.serviceIdentifier;
 
   function resolveActivations(
     params: ResolutionParams,
@@ -57,7 +57,7 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
 
   let resolveNode: (params: ResolutionParams) => Resolved<TActivated>;
 
-  switch (binding.metadata.arguments.length) {
+  switch (node.binding.metadata.arguments.length) {
     case ZERO_PARAMS:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> =>
         resolveActivations(params, factory());
@@ -179,15 +179,14 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
         );
   }
 
-  return resolveScopedWithNoActivations(binding, resolveNode);
+  return resolveScopedWithNoActivations(node.binding, resolveNode);
 }
 
 export function buildResolvedValueBindingNodeResolver<TActivated>(
-  binding: ResolvedValueBinding<TActivated>,
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  if (binding.onActivation === undefined) {
-    return buildSimpleResolvedValueBindingNodeResolver(binding, node);
+  if (node.binding.onActivation === undefined) {
+    return buildSimpleResolvedValueBindingNodeResolver(node);
   }
 
   return resolveScopedResolvedValueBindingNode(node);

@@ -5,7 +5,7 @@
   },
   "description": "InversifyJS bundles package",
   "devDependencies": {
-    "@babel/types": "8.0.0",
+    "@babel/types": "7.29.7",
     "@eslint/config-helpers": "0.6.0",
     "@eslint/js": "10.0.1",
     "@inversifyjs/common": "workspace:*",
@@ -37,7 +37,7 @@
     "vite-plugin-lib-inject-css": "2.2.2"
   },
   "peerDependencies": {
-    "@babel/standalone": "^8.0.3",
+    "@babel/standalone": "^7.29.7",
     "@swc/wasm-web": "^1.15.43",
     "monaco-editor": "~0.55.1",
     "react": "19.2.7"
@@ -64,13 +64,14 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "build": "pnpm run build:esm",
+    "build": "pnpm run types:check && pnpm run build:esm",
     "build:esm": "rollup -c ./bundle.rollup.config.mjs && pnpm run bundle:types:esm && vite build",
     "build:clean": "rimraf generated lib",
     "bundle:types:esm": "pnpm exec api-extractor run --local --verbose",
     "format": "prettier --write ./src",
     "lint": "eslint ./src",
-    "prebuild": "pnpm run build:clean"
+    "prebuild": "pnpm run build:clean",
+    "types:check": "tsc --noEmit"
   },
   "type": "module"
 }
