@@ -14,6 +14,6 @@ export class ResolvedValueBindingNodeImplementation<
 
   constructor(public readonly binding: ResolvedValueBinding<TActivated>) {
     this.params = [];
-    this.resolve = buildResolvedValueBindingNodeResolver(binding, this);
+    this.resolve = buildResolvedValueBindingNodeResolver(this);
   }
 }
