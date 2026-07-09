@@ -23,10 +23,6 @@ export class InstanceBindingNodeImplementation<
   ) {
     this.constructorParams = [];
     this.propertyParams = new Map();
-    this.resolve = buildInstanceBindingNodeResolver(
-      binding,
-      classMetadata,
-      this,
-    );
+    this.resolve = buildInstanceBindingNodeResolver(this);
   }
 }
