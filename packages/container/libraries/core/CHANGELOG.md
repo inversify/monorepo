@@ -1,5 +1,11 @@
 # @inversifyjs/core
 
+## 12.0.1
+
+### Patch Changes
+
+- Improved instance `transient` scoped resolution performance forcing inlined v8 constructor calls.
+
 ## 12.0.0
 
 ### Major Changes
