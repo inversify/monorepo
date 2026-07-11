@@ -105,8 +105,8 @@ const config: Config = {
     },
     announcementBar: {
       content:
-        '<a target="_blank" rel="noopener noreferrer" href="/blog/announcing-inversify-8-0-0/">InversifyJS 8 is out! 🎉️</a>',
-      id: 'announcing_v8',
+        '<a target="_blank" rel="noopener noreferrer" href="/blog/announcing-inversify-8-1-3/">InversifyJS 8.1.3 is out! 🎉️</a>',
+      id: 'announcing_v8_1_3',
       isCloseable: true,
     },
     footer: {
