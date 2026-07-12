@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "@types/node": "24.13.2",
+    "@types/node": "24.13.3",
     "eslint": "10.6.0",
     "prettier": "3.9.4",
     "rimraf": "6.1.3"

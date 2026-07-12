@@ -43,7 +43,7 @@
       "versioningTemplate": "semver-coerced"
     }
   ],
-  "constraints": { "pnpm": "11.9.0" },
+  "constraints": { "pnpm": "11.10.0" },
   "dependencyDashboard": false,
   "extends": [
     ":disableRateLimiting",

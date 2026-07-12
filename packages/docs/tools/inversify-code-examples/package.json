@@ -7,18 +7,18 @@
   "devDependencies": {
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "@types/node": "24.13.2",
-    "@vitest/coverage-v8": "4.1.9",
+    "@types/node": "24.13.3",
+    "@vitest/coverage-v8": "4.1.10",
     "eslint": "10.6.0",
     "glob": "13.0.6",
     "inversify6": "npm:inversify@6.2.2",
     "inversify7": "npm:inversify@7.11.0",
-    "inversify8": "npm:inversify@8.1.1",
+    "inversify8": "npm:inversify@8.1.2",
     "prettier": "3.9.4",
     "reflect-metadata": "0.2.2",
     "rimraf": "6.1.3",
     "typescript": "6.0.3",
-    "vitest": "4.1.9"
+    "vitest": "4.1.10"
   },
   "homepage": "https://inversify.io",
   "keywords": [
