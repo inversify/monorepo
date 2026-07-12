@@ -6,7 +6,7 @@
   "description": "A powerful and lightweight inversion of control container for JavaScript & Node.js apps powered by TypeScript",
   "devDependencies": {
     "@changesets/cli": "2.31.0",
-    "@commitlint/cli": "21.2.0",
+    "@commitlint/cli": "21.2.1",
     "@commitlint/config-conventional": "21.2.0",
     "@commitlint/prompt-cli": "21.2.0",
     "@inversifyjs/foundation-changelog-generator": "workspace:*",
@@ -18,16 +18,16 @@
     "@inversifyjs/foundation-typescript-config": "workspace:*",
     "@inversifyjs/foundation-vitest-config": "workspace:*",
     "husky": "9.1.7",
-    "knip": "6.24.0",
+    "knip": "6.25.0",
     "lint-staged": "17.0.8",
     "sponsorkit": "17.1.1",
-    "turbo": "2.10.3"
+    "turbo": "2.10.4"
   },
   "homepage": "https://inversify.io",
   "keywords": [],
   "license": "MIT",
   "name": "root",
-  "packageManager": "pnpm@11.12.0",
+  "packageManager": "pnpm@11.10.0",
   "private": true,
   "repository": {
     "type": "git",
