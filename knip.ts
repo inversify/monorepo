@@ -28,6 +28,10 @@ export default {
   ignoreWorkspaces: [
     "packages/docs/services/inversify-binding-decorators-site",
   ],
+  pnpm: {
+    config: ["package.json"],
+    entry: [".pnpmfile.{cjs,mjs}"],
+  },
   workspaces: {
     ".": {
       entry: [],
