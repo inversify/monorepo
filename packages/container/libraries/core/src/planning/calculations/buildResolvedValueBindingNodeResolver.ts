@@ -1,4 +1,4 @@
-import { isPromise, type ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
 import { type bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
@@ -9,6 +9,9 @@ import { resolveScopedWithNoActivations } from '../../resolution/actions/resolve
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
+import { buildOneResolvedValueArgumentResolver } from './buildOneResolvedValueArgumentResolver.js';
+import { buildResolvedValueArgumentsResolver } from './buildResolvedValueArgumentsResolver.js';
+import { buildZeroResolvedValueArgumentsResolver } from './buildZeroResolvedValueArgumentsResolver.js';
 import { resolveFour } from './resolveFour.js';
 import { resolveThree } from './resolveThree.js';
 import { resolveTwo } from './resolveTwo.js';
@@ -59,117 +62,41 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
 
   switch (node.binding.metadata.arguments.length) {
     case ZERO_PARAMS:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> =>
-        resolveActivations(params, factory());
+      resolveNode = buildZeroResolvedValueArgumentsResolver(
+        factory,
+        resolveActivations,
+      );
       break;
     case ONE_PARAM:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
-        const resolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.params[0]!.resolve(params);
-
-        if (isPromise(resolvedValue)) {
-          return resolvedValue.then(
-            (resolvedValue: unknown): Resolved<TActivated> =>
-              resolveActivations(params, factory(resolvedValue)),
-          );
-        }
-
-        return resolveActivations(params, factory(resolvedValue));
-      };
+      resolveNode = buildOneResolvedValueArgumentResolver(
+        node,
+        factory,
+        resolveActivations,
+      );
       break;
     case TWO_PARAMS:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
-        const firstResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.params[0]!.resolve(params);
-        const secondResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.params[1]!.resolve(params);
-
-        return resolveTwo(
-          firstResolvedValue,
-          secondResolvedValue,
-          (
-            resolvedFirstValue: unknown,
-            resolvedSecondValue: unknown,
-          ): Resolved<TActivated> =>
-            resolveActivations(
-              params,
-              factory(resolvedFirstValue, resolvedSecondValue),
-            ),
-        );
-      };
+      resolveNode = buildResolvedValueArgumentsResolver(
+        node,
+        factory,
+        resolveActivations,
+        resolveTwo,
+      );
       break;
     case THREE_PARAMS:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
-        const firstResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.params[0]!.resolve(params);
-        const secondResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.params[1]!.resolve(params);
-        const thirdResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.params[2]!.resolve(params);
-
-        return resolveThree(
-          firstResolvedValue,
-          secondResolvedValue,
-          thirdResolvedValue,
-          (
-            resolvedFirstValue: unknown,
-            resolvedSecondValue: unknown,
-            resolvedThirdValue: unknown,
-          ): Resolved<TActivated> =>
-            resolveActivations(
-              params,
-              factory(
-                resolvedFirstValue,
-                resolvedSecondValue,
-                resolvedThirdValue,
-              ),
-            ),
-        );
-      };
+      resolveNode = buildResolvedValueArgumentsResolver(
+        node,
+        factory,
+        resolveActivations,
+        resolveThree,
+      );
       break;
     case FOUR_PARAMS:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
-        const firstResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.params[0]!.resolve(params);
-        const secondResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.params[1]!.resolve(params);
-        const thirdResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.params[2]!.resolve(params);
-        const fourthResolvedValue: unknown =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node.params[3]!.resolve(params);
-
-        return resolveFour(
-          firstResolvedValue,
-          secondResolvedValue,
-          thirdResolvedValue,
-          fourthResolvedValue,
-          (
-            resolvedFirstValue: unknown,
-            resolvedSecondValue: unknown,
-            resolvedThirdValue: unknown,
-            resolvedFourthValue: unknown,
-          ): Resolved<TActivated> =>
-            resolveActivations(
-              params,
-              factory(
-                resolvedFirstValue,
-                resolvedSecondValue,
-                resolvedThirdValue,
-                resolvedFourthValue,
-              ),
-            ),
-        );
-      };
+      resolveNode = buildResolvedValueArgumentsResolver(
+        node,
+        factory,
+        resolveActivations,
+        resolveFour,
+      );
       break;
     default:
       resolveNode = (params: ResolutionParams): Resolved<TActivated> =>
