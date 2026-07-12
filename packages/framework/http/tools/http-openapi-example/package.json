@@ -9,14 +9,14 @@
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-open-api": "workspace:*",
     "express": "^5.2.1",
-    "inversify": "^8.1.1",
+    "inversify": "^8.1.2",
     "lmdb": "^3.5.6"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/open-api-types": "workspace:*",
     "@types/express": "^5.0.6",
-    "@types/node": "24.13.2",
+    "@types/node": "24.13.3",
     "eslint": "10.6.0",
     "prettier": "3.9.4",
     "rimraf": "6.1.3",
