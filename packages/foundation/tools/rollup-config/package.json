@@ -12,7 +12,7 @@
     "rollup": "4.62.2"
   },
   "devDependencies": {
-    "prettier": "3.9.4"
+    "prettier": "3.9.5"
   },
   "exports": "./lib/index.js",
   "homepage": "https://github.com/inversify/monorepo#readme",
