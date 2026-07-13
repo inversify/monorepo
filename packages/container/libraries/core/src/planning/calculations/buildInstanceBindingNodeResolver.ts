@@ -4,26 +4,23 @@ import {
   type ServiceIdentifier,
 } from '@inversifyjs/common';
 
+import { type BindingActivation } from '../../binding/models/BindingActivation.js';
 import { type bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
-import { resolveBindingServiceActivations } from '../../resolution/actions/resolveBindingServiceActivations.js';
+import { resolveBindingActivationsFromIterator } from '../../resolution/actions/resolveBindingActivationsFromIterator.js';
+import { resolveBindingActivationsFromIteratorAsync } from '../../resolution/actions/resolveBindingActivationsFromIteratorAsync.js';
 import { resolveInstanceBindingConstructorParams } from '../../resolution/actions/resolveInstanceBindingConstructorParams.js';
 import { resolveInstanceBindingNode as curryResolveInstanceBindingNode } from '../../resolution/actions/resolveInstanceBindingNode.js';
-import {
-  resolveInstanceBindingNodeAsyncFromConstructorParams,
-  resolveInstanceBindingNodeAsyncFromOnlyConstructorParams,
-} from '../../resolution/actions/resolveInstanceBindingNodeAsyncFromConstructorParams.js';
+import { resolveInstanceBindingNodeAsyncFromConstructorParams } from '../../resolution/actions/resolveInstanceBindingNodeAsyncFromConstructorParams.js';
 import { resolveInstanceBindingNodeFromConstructorParams } from '../../resolution/actions/resolveInstanceBindingNodeFromConstructorParams.js';
 import { resolveScoped } from '../../resolution/actions/resolveScoped.js';
 import { resolveScopedWithNoActivations } from '../../resolution/actions/resolveScopedWithNoActivations.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
-import {
-  type Resolved,
-  type SyncResolved,
-} from '../../resolution/models/Resolved.js';
+import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { buildConstructorArgumentsResolver } from './buildConstructorArgumentsResolver.js';
 import { buildOneConstructorArgumentResolver } from './buildOneConstructorArgumentResolver.js';
+import { buildResolveMany } from './buildResolveMany.js';
 import { buildZeroConstructorArgumentsResolver } from './buildZeroConstructorArgumentsResolver.js';
 import { resolveFour } from './resolveFour.js';
 import { resolveThree } from './resolveThree.js';
@@ -79,16 +76,27 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
 
   function resolveActivations(
     params: ResolutionParams,
-    instance: SyncResolved<TActivated>,
+    instance: Resolved<TActivated>,
   ): Resolved<TActivated> {
-    if (params.getActivations(serviceIdentifier) === undefined) {
+    const activations: Iterable<BindingActivation<TActivated>> | undefined =
+      params.getActivations(serviceIdentifier);
+
+    if (activations === undefined) {
       return instance;
     }
 
-    return resolveBindingServiceActivations<TActivated>(
+    if (isPromise(instance)) {
+      return resolveBindingActivationsFromIteratorAsync(
+        params,
+        instance,
+        activations[Symbol.iterator](),
+      );
+    }
+
+    return resolveBindingActivationsFromIterator(
       params,
-      serviceIdentifier,
       instance,
+      activations[Symbol.iterator](),
     );
   }
 
@@ -112,44 +120,33 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
       resolveNode = buildConstructorArgumentsResolver(
         node,
         implementationType,
-        resolveActivations,
         resolveTwo,
+        resolveActivations,
       );
       break;
     case THREE_CONSTRUCTOR_ARGUMENTS:
       resolveNode = buildConstructorArgumentsResolver(
         node,
         implementationType,
-        resolveActivations,
         resolveThree,
+        resolveActivations,
       );
       break;
     case FOUR_CONSTRUCTOR_ARGUMENTS:
       resolveNode = buildConstructorArgumentsResolver(
         node,
         implementationType,
-        resolveActivations,
         resolveFour,
+        resolveActivations,
       );
       break;
     default:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> => {
-        const constructorValues: unknown[] | Promise<unknown[]> =
-          resolveInstanceBindingConstructorParams(params, node);
-
-        if (isPromise(constructorValues)) {
-          return resolveInstanceBindingNodeAsyncFromOnlyConstructorParams(
-            constructorValues,
-            params,
-            node,
-          );
-        }
-
-        return resolveActivations(
-          params,
-          new implementationType(...constructorValues),
-        );
-      };
+      resolveNode = buildConstructorArgumentsResolver(
+        node,
+        implementationType,
+        buildResolveMany(node),
+        resolveActivations,
+      );
   }
 
   return resolveScopedWithNoActivations(node.binding, resolveNode);

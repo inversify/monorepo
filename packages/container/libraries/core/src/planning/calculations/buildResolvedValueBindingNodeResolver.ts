@@ -1,8 +1,10 @@
-import { type ServiceIdentifier } from '@inversifyjs/common';
+import { isPromise, type ServiceIdentifier } from '@inversifyjs/common';
 
+import { type BindingActivation } from '../../binding/models/BindingActivation.js';
 import { type bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
-import { resolveBindingServiceActivations } from '../../resolution/actions/resolveBindingServiceActivations.js';
+import { resolveBindingActivationsFromIterator } from '../../resolution/actions/resolveBindingActivationsFromIterator.js';
+import { resolveBindingActivationsFromIteratorAsync } from '../../resolution/actions/resolveBindingActivationsFromIteratorAsync.js';
 import { resolveResolvedValueBindingNode } from '../../resolution/actions/resolveResolvedValueBindingNode.js';
 import { resolveScoped } from '../../resolution/actions/resolveScoped.js';
 import { resolveScopedWithNoActivations } from '../../resolution/actions/resolveScopedWithNoActivations.js';
@@ -45,16 +47,27 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
 
   function resolveActivations(
     params: ResolutionParams,
-    resolvedValue: Resolved<TActivated>,
+    value: Resolved<TActivated>,
   ): Resolved<TActivated> {
-    if (params.getActivations(serviceIdentifier) === undefined) {
-      return resolvedValue;
+    const activations: Iterable<BindingActivation<TActivated>> | undefined =
+      params.getActivations(serviceIdentifier);
+
+    if (activations === undefined) {
+      return value;
     }
 
-    return resolveBindingServiceActivations<TActivated>(
+    if (isPromise(value)) {
+      return resolveBindingActivationsFromIteratorAsync(
+        params,
+        value,
+        activations[Symbol.iterator](),
+      );
+    }
+
+    return resolveBindingActivationsFromIterator(
       params,
-      serviceIdentifier,
-      resolvedValue,
+      value,
+      activations[Symbol.iterator](),
     );
   }
 

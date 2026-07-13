@@ -1,10 +1,7 @@
 import { type Newable } from '@inversifyjs/common';
 
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
-import {
-  type Resolved,
-  type SyncResolved,
-} from '../../resolution/models/Resolved.js';
+import { type Resolved } from '../../resolution/models/Resolved.js';
 import { getGeneratedResolverId } from './getGeneratedResolverId.js';
 
 /**
@@ -29,18 +26,35 @@ import { getGeneratedResolverId } from './getGeneratedResolverId.js';
  */
 export function buildZeroConstructorArgumentsResolver<TActivated>(
   implementationType: Newable<TActivated>,
-  resolveActivations: (
+  resolveActivations?: (
     params: ResolutionParams,
-    instance: SyncResolved<TActivated>,
+    instance: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   const id: string = getGeneratedResolverId().toString();
+
+  if (resolveActivations === undefined) {
+    const buildResolveNode: (
+      ctor: Newable<TActivated>,
+    ) => (params: ResolutionParams) => Resolved<TActivated> =
+      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+      new Function(
+        `ctor$${id}`,
+        `return function resolveNode$${id}(params$${id}) {
+        return new ctor$${id}();
+      };`,
+      ) as (
+        implementationType: Newable<TActivated>,
+      ) => (params: ResolutionParams) => Resolved<TActivated>;
+
+    return buildResolveNode(implementationType);
+  }
 
   const buildResolveNode: (
     ctor: Newable<TActivated>,
     activate: (
       params: ResolutionParams,
-      instance: SyncResolved<TActivated>,
+      instance: Resolved<TActivated>,
     ) => Resolved<TActivated>,
   ) => (params: ResolutionParams) => Resolved<TActivated> =
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
@@ -54,7 +68,7 @@ export function buildZeroConstructorArgumentsResolver<TActivated>(
       implementationType: Newable<TActivated>,
       resolveActivations: (
         params: ResolutionParams,
-        instance: SyncResolved<TActivated>,
+        instance: Resolved<TActivated>,
       ) => Resolved<TActivated>,
     ) => (params: ResolutionParams) => Resolved<TActivated>;
 
