@@ -13,7 +13,7 @@
     "@vitest/coverage-v8": "4.1.10",
     "eslint": "10.6.0",
     "logform": "^2.7.0",
-    "prettier": "3.9.4",
+    "prettier": "3.9.5",
     "rimraf": "6.1.3",
     "typescript": "6.0.3",
     "vitest": "4.1.10"
