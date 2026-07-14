@@ -20,6 +20,7 @@ import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { buildConstructorArgumentsResolver } from './buildConstructorArgumentsResolver.js';
 import { buildOneConstructorArgumentResolver } from './buildOneConstructorArgumentResolver.js';
+import { buildOnePropertyArgumentResolver } from './buildOnePropertyArgumentResolver.js';
 import { buildResolveMany } from './buildResolveMany.js';
 import { buildZeroConstructorArgumentsResolver } from './buildZeroConstructorArgumentsResolver.js';
 import { resolveFour } from './resolveFour.js';
@@ -102,7 +103,10 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
 
   let resolveNode: (params: ResolutionParams) => Resolved<TActivated>;
 
-  switch (node.classMetadata.constructorArguments.length) {
+  switch (
+    node.classMetadata.constructorArguments.length +
+    node.classMetadata.properties.size
+  ) {
     case ZERO_CONSTRUCTOR_ARGUMENTS:
       resolveNode = buildZeroConstructorArgumentsResolver(
         implementationType,
@@ -110,11 +114,18 @@ function buildSimpleInstanceBindingNodeResolver<TActivated>(
       );
       break;
     case ONE_CONSTRUCTOR_ARGUMENT:
-      resolveNode = buildOneConstructorArgumentResolver(
-        node,
-        implementationType,
-        resolveActivations,
-      );
+      resolveNode =
+        node.classMetadata.properties.size === 0
+          ? buildOneConstructorArgumentResolver(
+              node,
+              implementationType,
+              resolveActivations,
+            )
+          : buildOnePropertyArgumentResolver(
+              node,
+              implementationType,
+              resolveActivations,
+            );
       break;
     case TWO_CONSTRUCTOR_ARGUMENTS:
       resolveNode = buildConstructorArgumentsResolver(
@@ -157,8 +168,7 @@ export function buildInstanceBindingNodeResolver<TActivated>(
 ): (params: ResolutionParams) => Resolved<TActivated> {
   if (
     node.classMetadata.lifecycle.postConstructMethodNames.size === 0 &&
-    node.binding.onActivation === undefined &&
-    node.classMetadata.properties.size === 0
+    node.binding.onActivation === undefined
   ) {
     return buildSimpleInstanceBindingNodeResolver(node);
   }
