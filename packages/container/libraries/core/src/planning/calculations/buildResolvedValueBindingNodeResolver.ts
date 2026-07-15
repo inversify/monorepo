@@ -1,13 +1,11 @@
-import { isPromise, type ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
-import { type BindingActivation } from '../../binding/models/BindingActivation.js';
 import { type bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
-import { resolveBindingActivationsFromIterator } from '../../resolution/actions/resolveBindingActivationsFromIterator.js';
-import { resolveBindingActivationsFromIteratorAsync } from '../../resolution/actions/resolveBindingActivationsFromIteratorAsync.js';
 import { resolveResolvedValueBindingNode } from '../../resolution/actions/resolveResolvedValueBindingNode.js';
 import { resolveScoped } from '../../resolution/actions/resolveScoped.js';
 import { resolveScopedWithNoActivations } from '../../resolution/actions/resolveScopedWithNoActivations.js';
+import { resolveServiceActivations } from '../../resolution/actions/resolveServiceActivations.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
@@ -45,31 +43,10 @@ function buildSimpleResolvedValueBindingNodeResolver<TActivated>(
   const serviceIdentifier: ServiceIdentifier<TActivated> =
     node.binding.serviceIdentifier;
 
-  function resolveActivations(
+  const resolveActivations: (
     params: ResolutionParams,
     value: Resolved<TActivated>,
-  ): Resolved<TActivated> {
-    const activations: Iterable<BindingActivation<TActivated>> | undefined =
-      params.getActivations(serviceIdentifier);
-
-    if (activations === undefined) {
-      return value;
-    }
-
-    if (isPromise(value)) {
-      return resolveBindingActivationsFromIteratorAsync(
-        params,
-        value,
-        activations[Symbol.iterator](),
-      );
-    }
-
-    return resolveBindingActivationsFromIterator(
-      params,
-      value,
-      activations[Symbol.iterator](),
-    );
-  }
+  ) => Resolved<TActivated> = resolveServiceActivations(serviceIdentifier);
 
   let resolveNode: (params: ResolutionParams) => Resolved<TActivated>;
 
