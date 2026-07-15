@@ -1,5 +1,20 @@
 # inversify
 
+## 8.2.0
+
+### Minor Changes
+
+- Updated `ContainerOptions` with optional `jitless` (default true).
+
+### Patch Changes
+
+- Updated resolution flow with better inlined constructor calls.
+- Updated instance resolution flow to rely on inlined functions also in property injected services.
+- Updated resolution algorithm to rely on jit options to avoid CSP related issues.
+- Updated dependencies
+  - @inversifyjs/container@3.1.0
+  - @inversifyjs/core@13.0.0
+
 ## 8.1.3
 
 ### Patch Changes
