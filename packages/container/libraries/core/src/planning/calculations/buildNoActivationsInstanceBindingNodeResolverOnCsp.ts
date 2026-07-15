@@ -1,4 +1,4 @@
-import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
 import { resolveScopedWithNoActivations } from '../../resolution/actions/resolveScopedWithNoActivations.js';
@@ -6,14 +6,13 @@ import { resolveServiceActivations } from '../../resolution/actions/resolveServi
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
-import { buildConstructorArgumentsResolver } from './buildConstructorArgumentsResolver.js';
-import { buildOneConstructorArgumentResolver } from './buildOneConstructorArgumentResolver.js';
-import { buildOnePropertyArgumentResolver } from './buildOnePropertyArgumentResolver.js';
-import { buildResolveMany } from './buildResolveMany.js';
+import { buildConstructorArgumentsResolverOnCsp } from './buildConstructorArgumentsResolverOnCsp.js';
+import { buildFourConstructorArgumentResolverOnCsp } from './buildFourConstructorArgumentResolverOnCsp.js';
+import { buildOneConstructorArgumentResolverOnCsp } from './buildOneConstructorArgumentResolverOnCsp.js';
+import { buildThreeConstructorArgumentResolverOnCsp } from './buildThreeConstructorArgumentResolverOnCsp.js';
+import { buildTwoConstructorArgumentResolverOnCsp } from './buildTwoConstructorArgumentResolverOnCsp.js';
 import { buildZeroConstructorArgumentsResolverOnCsp } from './buildZeroConstructorArgumentsResolverOnCsp.js';
-import { resolveFour } from './resolveFour.js';
-import { resolveThree } from './resolveThree.js';
-import { resolveTwo } from './resolveTwo.js';
+import { resolveMany } from './resolveMany.js';
 
 const ZERO_CONSTRUCTOR_ARGUMENTS: number = 0;
 const ONE_CONSTRUCTOR_ARGUMENT: number = 1;
@@ -25,16 +24,14 @@ const FOUR_CONSTRUCTOR_ARGUMENTS: number = 4;
  * Builds a resolver for instance binding nodes with
  * no post construct methods and no binding activation.
  *
- * The resolution logic is inlined in a single closure to minimize function
- * call dispatch overhead: this is the hottest resolution path. Common small
- * constructor arities are specialized to avoid constructor values array
- * allocations and spread construct calls.
+ * Unlike the JIT path, specialized CSP resolvers key only on constructor
+ * arity: property injection is handled inside those resolvers via
+ * `setInstanceProperties`, so mixed ctor/property graphs must not be
+ * dispatched as if properties were extra constructor arguments.
  */
 export function buildNoActivationsInstanceBindingNodeResolverOnCsp<TActivated>(
   node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  const implementationType: Newable<TActivated> =
-    node.binding.implementationType;
   const serviceIdentifier: ServiceIdentifier<TActivated> =
     node.binding.serviceIdentifier;
 
@@ -45,10 +42,7 @@ export function buildNoActivationsInstanceBindingNodeResolverOnCsp<TActivated>(
 
   let resolveNode: (params: ResolutionParams) => Resolved<TActivated>;
 
-  switch (
-    node.classMetadata.constructorArguments.length +
-    node.classMetadata.properties.size
-  ) {
+  switch (node.classMetadata.constructorArguments.length) {
     case ZERO_CONSTRUCTOR_ARGUMENTS:
       resolveNode = buildZeroConstructorArgumentsResolverOnCsp(
         node,
@@ -56,48 +50,33 @@ export function buildNoActivationsInstanceBindingNodeResolverOnCsp<TActivated>(
       );
       break;
     case ONE_CONSTRUCTOR_ARGUMENT:
-      resolveNode =
-        node.classMetadata.properties.size === 0
-          ? buildOneConstructorArgumentResolver(
-              node,
-              implementationType,
-              resolveActivations,
-            )
-          : buildOnePropertyArgumentResolver(
-              node,
-              implementationType,
-              resolveActivations,
-            );
+      resolveNode = buildOneConstructorArgumentResolverOnCsp(
+        node,
+        resolveActivations,
+      );
       break;
     case TWO_CONSTRUCTOR_ARGUMENTS:
-      resolveNode = buildConstructorArgumentsResolver(
+      resolveNode = buildTwoConstructorArgumentResolverOnCsp(
         node,
-        implementationType,
-        resolveTwo,
         resolveActivations,
       );
       break;
     case THREE_CONSTRUCTOR_ARGUMENTS:
-      resolveNode = buildConstructorArgumentsResolver(
+      resolveNode = buildThreeConstructorArgumentResolverOnCsp(
         node,
-        implementationType,
-        resolveThree,
         resolveActivations,
       );
       break;
     case FOUR_CONSTRUCTOR_ARGUMENTS:
-      resolveNode = buildConstructorArgumentsResolver(
+      resolveNode = buildFourConstructorArgumentResolverOnCsp(
         node,
-        implementationType,
-        resolveFour,
         resolveActivations,
       );
       break;
     default:
-      resolveNode = buildConstructorArgumentsResolver(
+      resolveNode = buildConstructorArgumentsResolverOnCsp(
         node,
-        implementationType,
-        buildResolveMany(node),
+        resolveMany,
         resolveActivations,
       );
   }
