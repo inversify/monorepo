@@ -1,5 +1,17 @@
 # @inversifyjs/core
 
+## 13.0.0
+
+### Major Changes
+
+- Updated `BasePlanParams` with `jitEnabled` option.
+
+### Patch Changes
+
+- Updated resolution flow with better inlined constructor calls.
+- Updated instance resolution flow to rely on inlined functions also in property injected services.
+- Updated resolution algorithm to rely on jit options to avoid CSP related issues.
+
 ## 12.0.1
 
 ### Patch Changes
