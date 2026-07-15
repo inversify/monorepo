@@ -49,8 +49,8 @@ describe(resolveMany, () => {
         );
       });
 
-      it('should build with the resolved values', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3, 4, 5]));
+      it('should build with the resolved values', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3, 4, 5]);
       });
     });
 
@@ -74,8 +74,8 @@ describe(resolveMany, () => {
         );
       });
 
-      it('should build with the resolved values', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3, 4, 5]));
+      it('should build with the resolved values', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3, 4, 5]);
       });
     });
   });
