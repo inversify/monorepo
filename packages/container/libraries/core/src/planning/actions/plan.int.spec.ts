@@ -393,7 +393,7 @@ describe(plan, () => {
       getOwnReflectMetadata(type, classMetadataReflectKey) ??
       getDefaultClassMetadata();
 
-    planResultCacheService = new PlanResultCacheService();
+    planResultCacheService = new PlanResultCacheService(true);
   });
 
   describe.each<[string, PlanParamsConstraint, () => PlanResult]>([
@@ -471,6 +471,7 @@ describe(plan, () => {
         beforeAll(() => {
           result = plan({
             autobindOptions: undefined,
+            jitEnabled: true,
             operations: {
               getBindings: bindingService.get.bind(bindingService),
               getBindingsChained:
@@ -545,6 +546,7 @@ Binding constraints:
           try {
             plan({
               autobindOptions: undefined,
+              jitEnabled: true,
               operations: {
                 getBindings: bindingService.get.bind(bindingService),
                 getBindingsChained:

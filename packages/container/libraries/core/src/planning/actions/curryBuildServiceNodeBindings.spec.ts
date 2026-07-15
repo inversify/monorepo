@@ -53,6 +53,7 @@ describe(curryBuildServiceNodeBindings, () => {
         autobindOptions: {
           scope: bindingScopeValues.Transient,
         },
+        jitEnabled: true,
         operations: {
           getClassMetadata: vitest.fn(),
         } as Partial<PlanParamsOperations> as PlanParamsOperations,
@@ -123,6 +124,7 @@ describe(curryBuildServiceNodeBindings, () => {
       it('should call subplan()', () => {
         const expectedSubplanParams: SubplanParams = {
           autobindOptions: basePlanParamsMock.autobindOptions,
+          jitEnabled: true,
           node: {
             binding: instanceBindingFixture,
             classMetadata: classMetadataFixture,
@@ -157,6 +159,7 @@ describe(curryBuildServiceNodeBindings, () => {
         autobindOptions: {
           scope: bindingScopeValues.Transient,
         },
+        jitEnabled: true,
         operations: {
           getClassMetadata: vitest.fn(),
         } as Partial<PlanParamsOperations> as PlanParamsOperations,
@@ -213,6 +216,7 @@ describe(curryBuildServiceNodeBindings, () => {
       it('should call subplan()', () => {
         const expectedSubplanParams: SubplanParams = {
           autobindOptions: basePlanParamsMock.autobindOptions,
+          jitEnabled: true,
           node: {
             binding: resolvedValueBindingFixture,
             params: [],
@@ -245,6 +249,7 @@ describe(curryBuildServiceNodeBindings, () => {
         autobindOptions: {
           scope: bindingScopeValues.Transient,
         },
+        jitEnabled: true,
         operations: {
           getClassMetadata: vitest.fn(),
         } as Partial<PlanParamsOperations> as PlanParamsOperations,
@@ -308,6 +313,7 @@ describe(curryBuildServiceNodeBindings, () => {
             serviceIdentifier:
               serviceRedirectionBindingFixture.targetServiceIdentifier,
           },
+          jitEnabled: true,
           node: new PlanServiceRedirectionBindingNodeImplementation(
             serviceRedirectionBindingFixture,
           ),

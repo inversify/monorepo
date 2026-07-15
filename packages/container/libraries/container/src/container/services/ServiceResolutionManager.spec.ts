@@ -78,6 +78,7 @@ describe(ServiceResolutionManager, () => {
           serviceReferenceManagerMock,
           autobindFixture,
           defaultScopeFixture,
+          true,
         );
       });
 
@@ -137,6 +138,7 @@ describe(ServiceResolutionManager, () => {
         it('should call plan()', () => {
           const expectedPlanParams: PlanParams = {
             autobindOptions: undefined,
+            jitEnabled: true,
             operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
@@ -234,6 +236,7 @@ describe(ServiceResolutionManager, () => {
         it('should call plan()', () => {
           const expectedPlanParams: PlanParams = {
             autobindOptions: undefined,
+            jitEnabled: true,
             operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
@@ -339,6 +342,7 @@ describe(ServiceResolutionManager, () => {
         it('should call plan()', () => {
           const expectedPlanParams: PlanParams = {
             autobindOptions: undefined,
+            jitEnabled: true,
             operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
@@ -403,6 +407,7 @@ describe(ServiceResolutionManager, () => {
           serviceReferenceManagerMock,
           true,
           defaultScopeFixture,
+          true,
         );
       });
 
@@ -464,6 +469,7 @@ describe(ServiceResolutionManager, () => {
             autobindOptions: {
               scope: defaultScopeFixture,
             },
+            jitEnabled: true,
             operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
@@ -513,6 +519,7 @@ describe(ServiceResolutionManager, () => {
           serviceReferenceManagerMock,
           false,
           defaultScopeFixture,
+          true,
         );
       });
 
@@ -575,6 +582,7 @@ describe(ServiceResolutionManager, () => {
             autobindOptions: {
               scope: defaultScopeFixture,
             },
+            jitEnabled: true,
             operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
@@ -633,6 +641,7 @@ describe(ServiceResolutionManager, () => {
           serviceReferenceManagerMock,
           false,
           defaultScopeFixture,
+          true,
         );
 
         serviceIdentifierFixture = 'service-id';
@@ -713,6 +722,7 @@ describe(ServiceResolutionManager, () => {
           serviceReferenceManagerMock,
           autobindFixture,
           defaultScopeFixture,
+          true,
         );
       });
 
@@ -846,6 +856,7 @@ describe(ServiceResolutionManager, () => {
         it('should call plan()', () => {
           const expectedPlanParams: PlanParams = {
             autobindOptions: undefined,
+            jitEnabled: true,
             operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               isMultiple: false,
@@ -895,6 +906,7 @@ describe(ServiceResolutionManager, () => {
             serviceReferenceManagerMock,
             autobindFixture,
             defaultScopeFixture,
+            true,
           ).getAll(serviceIdentifierFixture, getAllOptionsFixture);
         });
 
@@ -920,6 +932,7 @@ describe(ServiceResolutionManager, () => {
         it('should call plan()', () => {
           const expectedPlanParams: PlanParams = {
             autobindOptions: undefined,
+            jitEnabled: true,
             operations: planParamsOperationsManagerFixture.planParamsOperations,
             rootConstraints: {
               chained: true,
@@ -990,6 +1003,7 @@ describe(ServiceResolutionManager, () => {
           serviceReferenceManagerMock,
           autobindFixture,
           defaultScopeFixture,
+          true,
         ).getAll(serviceIdentifierFixture, getOptionsFixture);
       });
 
@@ -1015,6 +1029,7 @@ describe(ServiceResolutionManager, () => {
       it('should call plan()', () => {
         const expectedPlanParams: PlanParams = {
           autobindOptions: undefined,
+          jitEnabled: true,
           operations: planParamsOperationsManagerFixture.planParamsOperations,
           rootConstraints: {
             chained: false,
@@ -1086,6 +1101,7 @@ describe(ServiceResolutionManager, () => {
             serviceReferenceManagerMock,
             autobindFixture,
             defaultScopeFixture,
+            true,
           ).getAll(serviceIdentifierFixture, getOptionsFixture);
         } catch (error: unknown) {
           result = error;
@@ -1114,6 +1130,7 @@ describe(ServiceResolutionManager, () => {
       it('should call plan()', () => {
         const expectedPlanParams: PlanParams = {
           autobindOptions: undefined,
+          jitEnabled: true,
           operations: planParamsOperationsManagerFixture.planParamsOperations,
           rootConstraints: {
             chained: false,
@@ -1194,6 +1211,7 @@ describe(ServiceResolutionManager, () => {
           serviceReferenceManagerMock,
           autobindFixture,
           defaultScopeFixture,
+          true,
         ).getAllAsync(serviceIdentifierFixture, getOptionsFixture);
       });
 
@@ -1219,6 +1237,7 @@ describe(ServiceResolutionManager, () => {
       it('should call plan()', () => {
         const expectedPlanParams: PlanParams = {
           autobindOptions: undefined,
+          jitEnabled: true,
           operations: planParamsOperationsManagerFixture.planParamsOperations,
           rootConstraints: {
             chained: false,
@@ -1291,6 +1310,7 @@ describe(ServiceResolutionManager, () => {
           serviceReferenceManagerMock,
           autobindFixture,
           defaultScopeFixture,
+          true,
         ).getAsync(serviceIdentifierFixture, getOptionsFixture);
       });
 
@@ -1315,6 +1335,7 @@ describe(ServiceResolutionManager, () => {
       it('should call plan()', () => {
         const expectedPlanParams: PlanParams = {
           autobindOptions: undefined,
+          jitEnabled: true,
           operations: planParamsOperationsManagerFixture.planParamsOperations,
           rootConstraints: {
             isMultiple: false,

@@ -45,6 +45,7 @@ const MAP_ARRAY_LENGTH: number = 0x8;
  * Ancestor binding constraints are the reason to avoid reusing plans from plan children nodes.
  */
 export class PlanResultCacheService {
+  readonly #jitEnabled: boolean;
   readonly #serviceIdToNonCachedServiceNodeMapMap: Map<
     ServiceIdentifier,
     Map<PlanServiceNode, NonCachedServiceNodeContext>
@@ -67,7 +68,8 @@ export class PlanResultCacheService {
 
   readonly #subscribers: WeakList<PlanResultCacheService>;
 
-  constructor() {
+  constructor(jitEnabled: boolean) {
+    this.#jitEnabled = jitEnabled;
     this.#serviceIdToNonCachedServiceNodeMapMap = new Map();
     this.#serviceIdToValuePlanMap = this.#buildInitializedMapArray();
     this.#namedServiceIdToValuePlanMap = this.#buildInitializedMapArray();
@@ -270,6 +272,7 @@ export class PlanResultCacheService {
 
     return {
       autobindOptions: undefined,
+      jitEnabled: this.#jitEnabled,
       operations: invalidation.operations,
       rootConstraints: planParamsConstraint,
       servicesBranch: [],
@@ -461,6 +464,7 @@ export class PlanResultCacheService {
               addServiceNodeBindingIfContextFree(
                 {
                   autobindOptions: undefined,
+                  jitEnabled: this.#jitEnabled,
                   operations: invalidation.operations,
                   servicesBranch: [],
                 },

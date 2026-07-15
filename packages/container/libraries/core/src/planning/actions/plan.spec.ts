@@ -58,6 +58,7 @@ describe(plan, () => {
 
     paramsFixture = {
       autobindOptions: undefined,
+      jitEnabled: true,
       operations: {
         getPlan: vitest.fn(),
         setPlan: vitest.fn(),

@@ -221,9 +221,14 @@ function bindService(
 }
 
 describe(Container, () => {
-  describe.each(CONSTRUCTOR_ARITIES)(
+  describe.each(
+    CONSTRUCTOR_ARITIES.flatMap((arity: number) => [
+      [arity, true],
+      [arity, false],
+    ]),
+  )(
     'having a service with %s constructor/factory parameters',
-    (parameterCount: number) => {
+    (parameterCount: number, jitless: boolean) => {
       const dependencyIds: string[] =
         buildDependencyIdentifiers(parameterCount);
       const expectedArgs: string[] = buildExpectedArgs(parameterCount);
@@ -259,7 +264,9 @@ describe(Container, () => {
               bindDependencies,
               resolveService,
             }: ResolutionCase) => {
-              const container: Container = new Container();
+              const container: Container = new Container({
+                jitless,
+              });
 
               bindDependencies(container);
 

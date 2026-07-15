@@ -84,6 +84,7 @@ describe(currySubplan, () => {
 
       subplanParamsFixture = {
         autobindOptions: undefined,
+        jitEnabled: true,
         node: instanceBindingNodeFixture,
         operations: {
           getPlan: vitest.fn(),
@@ -142,6 +143,7 @@ describe(currySubplan, () => {
 
       subplanParamsMock = {
         autobindOptions: undefined,
+        jitEnabled: true,
         node: instanceBindingNodeFixture,
         operations: {
           getPlan: vitest.fn(),
@@ -206,6 +208,7 @@ describe(currySubplan, () => {
 
       subplanParamsMock = {
         autobindOptions: undefined,
+        jitEnabled: true,
         node: instanceBindingNodeFixture,
         operations: {
           getPlan: vitest.fn(),
@@ -582,6 +585,7 @@ describe(currySubplan, () => {
 
       subplanParamsMock = {
         autobindOptions: undefined,
+        jitEnabled: true,
         node: instanceBindingNodeFixture,
         operations: {
           getPlan: vitest.fn(),
@@ -984,6 +988,7 @@ describe(currySubplan, () => {
 
       subplanParamsMock = {
         autobindOptions: undefined,
+        jitEnabled: true,
         node: resolvedValueBindingNodeFixture,
         operations: {
           getPlan: vitest.fn(),

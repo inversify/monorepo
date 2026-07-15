@@ -20,9 +20,10 @@ export class InstanceBindingNodeImplementation<
   constructor(
     public readonly binding: InstanceBinding<TActivated>,
     public readonly classMetadata: ClassMetadata,
+    jitEnabled: boolean,
   ) {
     this.constructorParams = [];
     this.propertyParams = new Map();
-    this.resolve = buildInstanceBindingNodeResolver(this);
+    this.resolve = buildInstanceBindingNodeResolver(this, jitEnabled);
   }
 }
