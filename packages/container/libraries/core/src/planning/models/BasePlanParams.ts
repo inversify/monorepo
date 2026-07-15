@@ -5,6 +5,7 @@ import { type PlanParamsOperations } from './PlanParamsOperations.js';
 
 export interface BasePlanParams {
   autobindOptions: AutobindOptions | undefined;
+  jitEnabled: boolean;
   operations: PlanParamsOperations;
   servicesBranch: ServiceIdentifier[];
 }

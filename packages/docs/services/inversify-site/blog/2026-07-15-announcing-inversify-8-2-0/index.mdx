@@ -1,0 +1,79 @@
+---
+slug: announcing-inversify-8-2-0
+title: Announcing InversifyJS 8.2.0
+authors: [notaphplover]
+tags: [releases]
+---
+
+We're happy to announce **InversifyJS 8.2.0**, a release focused on making the container work reliably in environments that enforce a strict Content Security Policy (CSP).
+
+{/* truncate */}
+
+## The problem
+
+InversifyJS has long used just-in-time (JIT) resolution optimizations that generate specialized resolver functions at runtime via the `Function` constructor. This approach keeps constructor call sites monomorphic in V8 and delivers strong performance, especially when resolving complex transient object graphs.
+
+The trade-off is that `Function` constructor usage requires `unsafe-eval` (or an equivalent CSP trusted-types allowance). In browser extensions, embedded web views, and other CSP-restricted environments, that can cause resolution to fail at runtime with errors like:
+
+```
+EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script
+```
+
+## The `jitless` option
+
+InversifyJS 8.2.0 introduces a new container option:
+
+```ts
+const container = new Container({ jitless: true });
+```
+
+When `jitless` is `true`, the container uses CSP-compatible resolution paths built from plain closures instead of dynamically generated functions. The behavior is the same — constructor injection, property injection, activations, scopes, and async resolution all continue to work — but without relying on `unsafe-eval`.
+
+**`jitless` defaults to `true` in 8.2.0**, so existing applications that upgrade without changing their container options will automatically use the CSP-safe path. If your environment allows `unsafe-eval` and you want the previous JIT performance profile, opt in explicitly:
+
+```ts
+const container = new Container({ jitless: false });
+```
+
+In the next major release, `jitless` is planned to default to `false`, restoring JIT optimizations as the out-of-the-box behavior for environments that permit them. Applications deployed under strict CSP will be able to set `jitless: true` explicitly.
+
+Refer to the [Container API docs](/docs/api/container#jitless) for the full option reference.
+
+## Performance trade-offs
+
+The CSP-compatible path avoids per-binding monomorphic optimizations, so the performance impact depends on your workload. Simple resolutions are largely unaffected; complex transient graphs see a more noticeable difference.
+
+The benchmarks below were taken from `packages/container/tools/container-benchmarks/src/bin/run.ts` and compare JIT-enabled (`jitless: false`) against the new default (`jitless: true`).
+
+```
+Get service in singleton scope
+inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 0.996x
+
+Get service in transient scope
+inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.065x
+
+Get complex service in transient scope
+inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.748x
+
+Get complex service with properties in transient scope
+inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 2.085x
+
+Get complex async service in transient scope
+inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.058x
+```
+
+In practice:
+
+- **Simple singleton and transient resolutions** are within noise or a few percent of the JIT path.
+- **Complex transient object graphs** are roughly **1.7x–2.1x slower** with `jitless: true`, while remaining competitive with recent InversifyJS releases in the same scenarios.
+- **Resolved value bindings** show negligible difference between the two paths.
+
+If your application does not run under CSP restrictions and resolves large transient graphs frequently, setting `jitless: false` remains the best choice for raw container throughput. If you deploy to CSP-restricted environments — or simply want to avoid `unsafe-eval` as a matter of policy — the default `jitless: true` gives you correct behavior with a modest performance cost in the workloads where JIT mattered most.
+
+## What this means for you
+
+- **Upgrading from 8.1.x**: No code changes are required. The container will use CSP-compatible resolution by default.
+- **CSP-restricted environments**: InversifyJS should now work without relaxing your content security policy.
+- **Performance-sensitive, non-CSP environments**: Pass `{ jitless: false }` to the container constructor to restore the JIT resolution path from previous releases.
+
+Thanks for trying out InversifyJS 8.2.0, and please let us know if you run into any issues.

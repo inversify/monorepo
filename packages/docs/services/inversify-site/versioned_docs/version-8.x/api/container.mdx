@@ -53,6 +53,16 @@ defaultScope?: BindingScope | undefined;
 
 The default scope for bindings.
 
+### jitless
+
+```ts
+jitless?: boolean | undefined;
+```
+
+Option to disable just-in-time resolution optimizations that rely on the `Function` constructor. When `true` (the default), the container uses CSP-compatible resolution paths that work in environments enforcing a strict Content Security Policy without `unsafe-eval`.
+
+Set `jitless` to `false` to enable JIT optimizations for better performance in environments where `unsafe-eval` is permitted. In the next major release, `jitless` is planned to default to `false`.
+
 ## bind
 
 ```ts

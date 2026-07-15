@@ -4,6 +4,7 @@ export enum Platform {
   inversify7 = 'inversify7',
   inversify8 = 'inversify8',
   inversifyCurrent = 'inversifyCurrent',
+  inversifyCurrentJitless = 'inversifyCurrent (Jitless)',
   nestJs = 'NestJS',
   tsyringe = 'tsyringe',
 }

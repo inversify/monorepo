@@ -236,6 +236,7 @@ function currySubplanRedirectionBindingNode(
     const redirectionSubplanParams: RedirectionSubplanParams = {
       autobindOptions: params.autobindOptions,
       buildServiceNodeOptions: params.buildServiceNodeOptions,
+      jitEnabled: params.jitEnabled,
       node,
       operations: params.operations,
       servicesBranch: params.servicesBranch,

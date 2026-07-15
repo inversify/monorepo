@@ -408,8 +408,8 @@ describe(Container, () => {
 
         it('should call PlanResultCacheService()', () => {
           expect(PlanResultCacheService).toHaveBeenCalledTimes(2);
-          expect(PlanResultCacheService).toHaveBeenNthCalledWith(1);
-          expect(PlanResultCacheService).toHaveBeenNthCalledWith(2);
+          expect(PlanResultCacheService).toHaveBeenNthCalledWith(1, false);
+          expect(PlanResultCacheService).toHaveBeenNthCalledWith(2, false);
         });
 
         it('should call planResultCacheService.subscribe()', () => {
@@ -493,7 +493,7 @@ describe(Container, () => {
         });
 
         it('should call PlanResultCacheService()', () => {
-          expect(PlanResultCacheService).toHaveBeenCalledExactlyOnceWith();
+          expect(PlanResultCacheService).toHaveBeenCalledExactlyOnceWith(false);
         });
 
         it('should not call planResultCacheService.subscribe()', () => {

@@ -93,6 +93,7 @@ describe(removeRootServiceNodeBindingIfContextFree, () => {
     beforeAll(() => {
       paramsFixture = {
         autobindOptions: undefined,
+        jitEnabled: true,
         operations: Symbol() as unknown as PlanParamsOperations,
         rootConstraints: {
           chained: false,

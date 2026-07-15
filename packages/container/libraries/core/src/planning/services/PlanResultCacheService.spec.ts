@@ -66,6 +66,7 @@ function buildExpectedPlanParamsFixture(
   const expectedPlanParamsFixture: PlanParams = optionsFixture.isMultiple
     ? {
         autobindOptions: undefined,
+        jitEnabled: true,
         operations: planResultCacheServiceInvalidationFixture.operations,
         rootConstraints: {
           chained: optionsFixture.chained,
@@ -77,6 +78,7 @@ function buildExpectedPlanParamsFixture(
       }
     : {
         autobindOptions: undefined,
+        jitEnabled: true,
         operations: planResultCacheServiceInvalidationFixture.operations,
         rootConstraints: {
           isMultiple: optionsFixture.isMultiple,
@@ -518,7 +520,7 @@ describe(PlanResultCacheService, () => {
                 shouldInvalidateServiceNode: true,
               };
 
-              planResultCacheService = new PlanResultCacheService();
+              planResultCacheService = new PlanResultCacheService(true);
               planResultCacheService.set(optionsFixture, planResultFixture);
 
               vitest
@@ -658,7 +660,7 @@ describe(PlanResultCacheService, () => {
                 planResultCacheServiceInvalidationFixture,
               );
 
-              planResultCacheService = new PlanResultCacheService();
+              planResultCacheService = new PlanResultCacheService(true);
               planResultCacheService.set(optionsFixture, planResultFixture);
 
               planServiceNodeBindingAddedResultFixture = {
@@ -854,7 +856,7 @@ describe(PlanResultCacheService, () => {
                 planResultCacheServiceInvalidationFixture,
               );
 
-              planResultCacheService = new PlanResultCacheService();
+              planResultCacheService = new PlanResultCacheService(true);
               planResultCacheService.set(
                 {
                   ...optionsFixture,
@@ -1073,7 +1075,7 @@ describe(PlanResultCacheService, () => {
                 planResultCacheServiceInvalidationFixture,
               );
 
-              planResultCacheService = new PlanResultCacheService();
+              planResultCacheService = new PlanResultCacheService(true);
               planResultCacheService.set(
                 {
                   ...optionsFixture,
@@ -1310,7 +1312,7 @@ describe(PlanResultCacheService, () => {
                 planResultCacheServiceInvalidationFixture,
               );
 
-              planResultCacheService = new PlanResultCacheService();
+              planResultCacheService = new PlanResultCacheService(true);
               planResultCacheService.set(
                 {
                   ...optionsFixture,
@@ -1529,7 +1531,7 @@ describe(PlanResultCacheService, () => {
                 planResultCacheServiceInvalidationFixture,
               );
 
-              planResultCacheService = new PlanResultCacheService();
+              planResultCacheService = new PlanResultCacheService(true);
               planResultCacheService.setNonCachedServiceNode(
                 childLazyPlanServiceNodeFixture,
                 {
@@ -1760,7 +1762,7 @@ describe(PlanResultCacheService, () => {
                 planResultCacheServiceInvalidationFixture,
               );
 
-              planResultCacheService = new PlanResultCacheService();
+              planResultCacheService = new PlanResultCacheService(true);
               planResultCacheService.setNonCachedServiceNode(
                 childLazyPlanServiceNodeFixture,
                 {
@@ -1996,7 +1998,7 @@ describe(PlanResultCacheService, () => {
                 planResultCacheServiceInvalidationFixture,
               );
 
-              planResultCacheService = new PlanResultCacheService();
+              planResultCacheService = new PlanResultCacheService(true);
               planResultCacheService.setNonCachedServiceNode(
                 childLazyPlanServiceNodeFixture,
                 {
@@ -2114,7 +2116,7 @@ describe(PlanResultCacheService, () => {
             shouldInvalidateServiceNode: true,
           };
 
-          planResultCacheService = new PlanResultCacheService();
+          planResultCacheService = new PlanResultCacheService(true);
           planResultCacheService.setNonCachedServiceNode(
             lazyPlanServiceNodeFixture,
             nonCachedServiceNodeContextFixture,
@@ -2136,6 +2138,7 @@ describe(PlanResultCacheService, () => {
         it('should call addServiceNodeBindingIfContextFree()', () => {
           const expectedBasePlanParams: BasePlanParams = {
             autobindOptions: undefined,
+            jitEnabled: true,
             operations: planResultCacheServiceInvalidationFixture.operations,
             servicesBranch: [],
           };
@@ -2189,8 +2192,8 @@ describe(PlanResultCacheService, () => {
             operations: Symbol() as unknown as PlanParamsOperations,
           };
 
-          parentPlanResultCacheService = new PlanResultCacheService();
-          planResultCacheService = new PlanResultCacheService();
+          parentPlanResultCacheService = new PlanResultCacheService(true);
+          planResultCacheService = new PlanResultCacheService(true);
 
           parentPlanResultCacheService.subscribe(planResultCacheService);
 
@@ -2212,7 +2215,7 @@ describe(PlanResultCacheService, () => {
             },
           };
 
-          planResultCacheService = new PlanResultCacheService();
+          planResultCacheService = new PlanResultCacheService(true);
           planResultCacheService.setNonCachedServiceNode(
             lazyPlanServiceNodeFixture,
             nonCachedServiceNodeContextFixture,
@@ -2234,6 +2237,7 @@ describe(PlanResultCacheService, () => {
         it('should call addServiceNodeBindingIfContextFree()', () => {
           const expectedBasePlanParams: BasePlanParams = {
             autobindOptions: undefined,
+            jitEnabled: true,
             operations: planResultCacheServiceInvalidationFixture.operations,
             servicesBranch: [],
           };
@@ -2269,7 +2273,7 @@ describe(PlanResultCacheService, () => {
 
       beforeAll(() => {
         serviceIdentifierFixture = 'service-id';
-        planService = new PlanResultCacheService();
+        planService = new PlanResultCacheService(true);
         planResultFixture = {} as PlanResult;
 
         planService.set(
@@ -2299,7 +2303,7 @@ describe(PlanResultCacheService, () => {
 
       beforeAll(() => {
         serviceIdentifierFixture = 'service-id';
-        planService = new PlanResultCacheService();
+        planService = new PlanResultCacheService(true);
 
         result = planService.getByServiceIdentifier(serviceIdentifierFixture);
       });
@@ -2317,7 +2321,7 @@ describe(PlanResultCacheService, () => {
 
       beforeAll(() => {
         serviceIdentifierFixture = 'service-id';
-        planService = new PlanResultCacheService();
+        planService = new PlanResultCacheService(true);
 
         planService.set(
           {
@@ -2351,7 +2355,7 @@ describe(PlanResultCacheService, () => {
           let planResultFixture: PlanResult;
 
           beforeAll(() => {
-            planService = new PlanResultCacheService();
+            planService = new PlanResultCacheService(true);
 
             planResultFixture = {} as PlanResult;
             planService.set(options, planResultFixture);
@@ -2390,7 +2394,7 @@ describe(PlanResultCacheService, () => {
       let planResult: PlanResult;
 
       beforeAll(() => {
-        planService = new PlanResultCacheService();
+        planService = new PlanResultCacheService(true);
 
         planResult = {} as PlanResult;
         planService.set(options, planResult);
@@ -2407,7 +2411,7 @@ describe(PlanResultCacheService, () => {
       let subscriberMock: Mocked<PlanResultCacheService>;
 
       beforeAll(() => {
-        planService = new PlanResultCacheService();
+        planService = new PlanResultCacheService(true);
         subscriberMock = {
           clearCache: vitest.fn(),
           // ...other mocked methods...

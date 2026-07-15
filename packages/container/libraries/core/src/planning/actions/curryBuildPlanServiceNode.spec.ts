@@ -59,6 +59,7 @@ describe(curryBuildPlanServiceNode, () => {
     beforeAll(() => {
       planParamsFixture = {
         autobindOptions: undefined,
+        jitEnabled: true,
         operations: {} as Partial<PlanParamsOperations> as PlanParamsOperations,
         rootConstraints: {
           chained: false,
@@ -173,6 +174,7 @@ describe(curryBuildPlanServiceNode, () => {
     beforeAll(() => {
       planParamsFixture = {
         autobindOptions: undefined,
+        jitEnabled: true,
         operations: {} as Partial<PlanParamsOperations> as PlanParamsOperations,
         rootConstraints: {
           isMultiple: false,

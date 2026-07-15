@@ -31,6 +31,7 @@ export class ServiceResolutionManager {
   readonly #getActivationsResolutionParam: <TActivated>(
     serviceIdentifier: ServiceIdentifier<TActivated>,
   ) => Iterable<BindingActivation<TActivated>> | undefined;
+  readonly #jitEnabled: boolean;
   #resolutionContext: ResolutionContext;
   readonly #onPlanHandlers: ((
     options: GetPlanOptions,
@@ -44,13 +45,14 @@ export class ServiceResolutionManager {
     serviceReferenceManager: ServiceReferenceManager,
     autobind: boolean,
     defaultScope: BindingScope,
+    jitEnabled: boolean,
   ) {
     this.#planParamsOperationsManager = planParamsOperationsManager;
     this.#serviceReferenceManager = serviceReferenceManager;
     this.#resolutionContext = this.#buildResolutionContext();
     this.#autobind = autobind;
     this.#defaultScope = defaultScope;
-
+    this.#jitEnabled = jitEnabled;
     this.#getActivationsResolutionParam = <TActivated>(
       serviceIdentifier: ServiceIdentifier<TActivated>,
     ): Iterable<BindingActivation<TActivated>> | undefined =>
@@ -203,6 +205,7 @@ export class ServiceResolutionManager {
               scope: this.#defaultScope,
             }
           : undefined,
+      jitEnabled: this.#jitEnabled,
       operations: this.#planParamsOperationsManager.planParamsOperations,
       rootConstraints: this.#buildPlanParamsConstraints(
         serviceIdentifier,

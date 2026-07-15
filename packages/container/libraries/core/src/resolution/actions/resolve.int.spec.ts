@@ -261,7 +261,7 @@ describe(resolve, () => {
       getOwnReflectMetadata(type, classMetadataReflectKey) ??
       getDefaultClassMetadata();
 
-    planResultCacheService = new PlanResultCacheService();
+    planResultCacheService = new PlanResultCacheService(true);
 
     function buildPlanResult(
       isMultiple: boolean,
@@ -270,6 +270,7 @@ describe(resolve, () => {
     ): PlanResult {
       const planParams: PlanParams = {
         autobindOptions: undefined,
+        jitEnabled: true,
         operations: {
           getBindings: bindingService.get.bind(bindingService),
           getBindingsChained: bindingService.getChained.bind(bindingService),
@@ -522,6 +523,7 @@ describe(resolve, () => {
 
           const planResult: PlanResult = plan({
             autobindOptions: undefined,
+            jitEnabled: true,
             operations: {
               getBindings: bindingService.get.bind(bindingService),
               getBindingsChained:

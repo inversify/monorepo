@@ -30,6 +30,7 @@ import { ServiceResolutionManager } from './ServiceResolutionManager.js';
 import { SnapshotManager } from './SnapshotManager.js';
 
 const DEFAULT_DEFAULT_SCOPE: BindingScope = bindingScopeValues.Transient;
+const DEFAULT_JITLESS: boolean = true;
 
 export class Container {
   readonly #bindingManager: BindingManager;
@@ -43,11 +44,13 @@ export class Container {
     const autobind: boolean = options?.autobind ?? false;
     const defaultScope: BindingScope =
       options?.defaultScope ?? DEFAULT_DEFAULT_SCOPE;
+    const jitless: boolean = options?.jitless ?? DEFAULT_JITLESS;
 
     this.#serviceReferenceManager = this.#buildServiceReferenceManager(
       options,
       autobind,
       defaultScope,
+      jitless,
     );
 
     const planParamsOperationsManager: PlanParamsOperationsManager =
@@ -80,6 +83,7 @@ export class Container {
       this.#serviceReferenceManager,
       autobind,
       defaultScope,
+      !jitless,
     );
     this.#pluginManager = new PluginManager(
       this,
@@ -254,6 +258,7 @@ export class Container {
     options: ContainerOptions | undefined,
     autobind: boolean,
     defaultScope: BindingScope,
+    jitless: boolean,
   ): ServiceReferenceManager {
     const autobindOptions: AutobindOptions | undefined =
       this.#buildAutobindOptions(autobind, defaultScope);
@@ -263,12 +268,12 @@ export class Container {
         ActivationsService.build(() => undefined),
         BindingService.build(() => undefined, autobindOptions),
         DeactivationsService.build(() => undefined),
-        new PlanResultCacheService(),
+        new PlanResultCacheService(!jitless),
       );
     }
 
     const planResultCacheService: PlanResultCacheService =
-      new PlanResultCacheService();
+      new PlanResultCacheService(!jitless);
 
     const parent: Container = options.parent;
 

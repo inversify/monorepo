@@ -167,10 +167,15 @@ function curryBuildInstancePlanBindingNode(
     );
 
     const childNode: InstanceBindingNode =
-      new InstanceBindingNodeImplementation(binding, classMetadata);
+      new InstanceBindingNodeImplementation(
+        binding,
+        classMetadata,
+        params.jitEnabled,
+      );
 
     const subplanParams: SubplanParams = {
       autobindOptions: params.autobindOptions,
+      jitEnabled: params.jitEnabled,
       node: childNode,
       operations: params.operations,
       servicesBranch: params.servicesBranch,
@@ -200,6 +205,7 @@ function curryBuildResolvedValuePlanBindingNode(
 
     const subplanParams: SubplanParams = {
       autobindOptions: params.autobindOptions,
+      jitEnabled: params.jitEnabled,
       node: childNode,
       operations: params.operations,
       servicesBranch: params.servicesBranch,
@@ -235,6 +241,7 @@ function curryBuildServiceRedirectionPlanBindingNode(
         ...buildServiceNodeOptions,
         serviceIdentifier: binding.targetServiceIdentifier,
       },
+      jitEnabled: params.jitEnabled,
       node: childNode,
       operations: params.operations,
       servicesBranch: params.servicesBranch,

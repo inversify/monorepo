@@ -53,6 +53,16 @@ defaultScope?: BindingScope | undefined;
 
 绑定的默认作用域。
 
+### jitless
+
+```ts
+jitless?: boolean | undefined;
+```
+
+用于禁用依赖 `Function` 构造函数的即时（JIT）解析优化的选项。当为 `true`（默认值）时，容器使用与 CSP 兼容的解析路径，可在强制执行严格内容安全策略（不允许 `unsafe-eval`）的环境中正常工作。
+
+在允许 `unsafe-eval` 的环境中，将 `jitless` 设置为 `false` 可启用 JIT 优化以获得更好的性能。在下一个主要版本中，`jitless` 计划默认值为 `false`。
+
 ## bind
 
 ```ts
