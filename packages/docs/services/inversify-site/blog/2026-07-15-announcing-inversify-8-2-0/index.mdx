@@ -47,25 +47,25 @@ The benchmarks below were taken from `packages/container/tools/container-benchma
 
 ```
 Get service in singleton scope
-inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.029x
+inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 0.996x
 
 Get service in transient scope
-inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.005x
+inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.065x
 
 Get complex service in transient scope
-inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.322x
+inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.748x
 
 Get complex service with properties in transient scope
-inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.263x
+inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 2.085x
 
 Get complex async service in transient scope
-inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.009x
+inversifyCurrent vs inversifyCurrent (Jitless) Speedup: 1.058x
 ```
 
 In practice:
 
-- **Simple singleton and transient resolutions** are within ~3% of the JIT path.
-- **Complex transient object graphs** are roughly **1.2x–1.3x slower** with `jitless: true`, which is still significantly faster than InversifyJS 7 and 8.0 in the same scenarios.
+- **Simple singleton and transient resolutions** are within noise or a few percent of the JIT path.
+- **Complex transient object graphs** are roughly **1.7x–2.1x slower** with `jitless: true`, while remaining competitive with recent InversifyJS releases in the same scenarios.
 - **Resolved value bindings** show negligible difference between the two paths.
 
 If your application does not run under CSP restrictions and resolves large transient graphs frequently, setting `jitless: false` remains the best choice for raw container throughput. If you deploy to CSP-restricted environments — or simply want to avoid `unsafe-eval` as a matter of policy — the default `jitless: true` gives you correct behavior with a modest performance cost in the workloads where JIT mattered most.
