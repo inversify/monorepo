@@ -453,6 +453,13 @@ function curryHandlePlanServiceNodeBuildFromResolvedValueElementMetadata(
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
     elementMetadata: ResolvedValueElementMetadata,
   ): PlanServiceNode => {
+    if (bindingConstraintsList.length > MAX_PLAN_DEPTH) {
+      throw new InversifyCoreError(
+        InversifyCoreErrorKind.planningMaxDepthExceeded,
+        'Maximum plan depth exceeded. This is likely caused by a circular dependency.',
+      );
+    }
+
     const getPlanOptions: GetPlanOptions | undefined =
       tryBuildGetPlanOptionsFromResolvedValueElementMetadata(elementMetadata);
 
