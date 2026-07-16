@@ -13,7 +13,6 @@ vitest.mock(import('./resolveBindingServiceActivations.js'));
 
 import { ConstantValueBindingFixtures } from '../../binding/fixtures/ConstantValueBindingFixtures.js';
 import { type ConstantValueBinding } from '../../binding/models/ConstantValueBinding.js';
-import { type ResolutionContext } from '../models/ResolutionContext.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { resolveBindingActivations } from './resolveBindingActivations.js';
 import { resolveBindingServiceActivations } from './resolveBindingServiceActivations.js';
@@ -26,7 +25,6 @@ describe(resolveBindingActivations, () => {
 
     beforeAll(() => {
       paramsMock = {
-        getActivations: vitest.fn(),
         getBindings: vitest.fn(),
       } as Partial<Mocked<ResolutionParams>> as Mocked<ResolutionParams>;
       bindingFixture = ConstantValueBindingFixtures.withOnActivationUndefined;
@@ -80,8 +78,6 @@ describe(resolveBindingActivations, () => {
     beforeAll(() => {
       onActivationMock = vitest.fn();
       paramsMock = {
-        context: Symbol() as unknown as Mocked<ResolutionContext>,
-        getActivations: vitest.fn(),
         getBindings: vitest.fn(),
       } as Partial<Mocked<ResolutionParams>> as Mocked<ResolutionParams>;
       bindingFixture = {

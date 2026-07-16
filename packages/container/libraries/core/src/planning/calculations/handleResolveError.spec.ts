@@ -63,7 +63,6 @@ function buildParams(root: PlanServiceNode): ResolutionParams {
   const planResult: PlanResult = { tree: { root } };
   return {
     context: {} as unknown,
-    getActivations: vitest.fn(),
     planResult,
     requestScopeCache: new Map(),
   } as unknown as ResolutionParams;

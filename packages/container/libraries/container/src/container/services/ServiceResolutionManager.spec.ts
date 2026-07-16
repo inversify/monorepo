@@ -157,11 +157,11 @@ describe(ServiceResolutionManager, () => {
           const expectedResolveParams: ResolutionParams = {
             context: {
               get: expect.any(Function),
+              getActivations: expect.any(Function),
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
             },
-            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: undefined,
           };
@@ -255,11 +255,11 @@ describe(ServiceResolutionManager, () => {
           const expectedResolveParams: ResolutionParams = {
             context: {
               get: expect.any(Function),
+              getActivations: expect.any(Function),
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
             },
-            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: undefined,
           };
@@ -376,11 +376,11 @@ describe(ServiceResolutionManager, () => {
           const expectedResolveParams: ResolutionParams = {
             context: {
               get: expect.any(Function),
+              getActivations: expect.any(Function),
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
             },
-            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: undefined,
           };
@@ -488,11 +488,11 @@ describe(ServiceResolutionManager, () => {
           const expectedResolveParams: ResolutionParams = {
             context: {
               get: expect.any(Function),
+              getActivations: expect.any(Function),
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
             },
-            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: undefined,
           };
@@ -601,11 +601,11 @@ describe(ServiceResolutionManager, () => {
           const expectedResolveParams: ResolutionParams = {
             context: {
               get: expect.any(Function),
+              getActivations: expect.any(Function),
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
             },
-            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: undefined,
           };
@@ -696,11 +696,11 @@ describe(ServiceResolutionManager, () => {
         const expectedResolveParams: ResolutionParams = {
           context: {
             get: expect.any(Function),
+            getActivations: expect.any(Function),
             getAll: expect.any(Function),
             getAllAsync: expect.any(Function),
             getAsync: expect.any(Function),
           },
-          getActivations: expect.any(Function),
           planResult: planResultFixture,
           requestScopeCache: undefined,
         };
@@ -779,11 +779,11 @@ describe(ServiceResolutionManager, () => {
           const expectedResolveParams: ResolutionParams = {
             context: {
               get: expect.any(Function),
+              getActivations: expect.any(Function),
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
             },
-            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: undefined,
           };
@@ -949,11 +949,11 @@ describe(ServiceResolutionManager, () => {
           const expectedResolveParams: ResolutionParams = {
             context: {
               get: expect.any(Function),
+              getActivations: expect.any(Function),
               getAll: expect.any(Function),
               getAllAsync: expect.any(Function),
               getAsync: expect.any(Function),
             },
-            getActivations: expect.any(Function),
             planResult: planResultFixture,
             requestScopeCache: undefined,
           };
@@ -1049,11 +1049,11 @@ describe(ServiceResolutionManager, () => {
         const expectedResolveParams: ResolutionParams = {
           context: {
             get: expect.any(Function),
+            getActivations: expect.any(Function),
             getAll: expect.any(Function),
             getAllAsync: expect.any(Function),
             getAsync: expect.any(Function),
           },
-          getActivations: expect.any(Function),
           planResult: planResultFixture,
           requestScopeCache: undefined,
         };
@@ -1150,11 +1150,11 @@ describe(ServiceResolutionManager, () => {
         const expectedResolveParams: ResolutionParams = {
           context: {
             get: expect.any(Function),
+            getActivations: expect.any(Function),
             getAll: expect.any(Function),
             getAllAsync: expect.any(Function),
             getAsync: expect.any(Function),
           },
-          getActivations: expect.any(Function),
           planResult: planResultFixture,
           requestScopeCache: undefined,
         };
@@ -1257,11 +1257,11 @@ describe(ServiceResolutionManager, () => {
         const expectedResolveParams: ResolutionParams = {
           context: {
             get: expect.any(Function),
+            getActivations: expect.any(Function),
             getAll: expect.any(Function),
             getAllAsync: expect.any(Function),
             getAsync: expect.any(Function),
           },
-          getActivations: expect.any(Function),
           planResult: planResultFixture,
           requestScopeCache: undefined,
         };
@@ -1354,11 +1354,11 @@ describe(ServiceResolutionManager, () => {
         const expectedResolveParams: ResolutionParams = {
           context: {
             get: expect.any(Function),
+            getActivations: expect.any(Function),
             getAll: expect.any(Function),
             getAllAsync: expect.any(Function),
             getAsync: expect.any(Function),
           },
-          getActivations: expect.any(Function),
           planResult: planResultFixture,
           requestScopeCache: undefined,
         };

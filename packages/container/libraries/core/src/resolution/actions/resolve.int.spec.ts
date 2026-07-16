@@ -337,11 +337,6 @@ describe(resolve, () => {
 
       return resolve({
         context: resolutionContext,
-        getActivations: <TActivated>(
-          serviceIdentifier: ServiceIdentifier,
-        ): BindingActivation<TActivated>[] | undefined =>
-          activationService.get(serviceIdentifier) as
-            BindingActivation<TActivated>[] | undefined,
         planResult,
         requestScopeCache: new Map(),
       }) as TMultiple extends false
@@ -402,6 +397,11 @@ describe(resolve, () => {
 
     resolutionContext = {
       get: handleGet,
+      getActivations: <TActivated>(
+        serviceIdentifier: ServiceIdentifier,
+      ): BindingActivation<TActivated>[] | undefined =>
+        activationService.get(serviceIdentifier) as
+          BindingActivation<TActivated>[] | undefined,
       getAll: <TActivated>(
         serviceIdentifier: ServiceIdentifier<TActivated>,
         options?: GetOptions,
@@ -543,11 +543,6 @@ describe(resolve, () => {
 
           result = resolve({
             context: resolutionContext,
-            getActivations: <TActivated>(
-              serviceIdentifier: ServiceIdentifier,
-            ): BindingActivation<TActivated>[] | undefined =>
-              activationService.get(serviceIdentifier) as
-                BindingActivation<TActivated>[] | undefined,
             planResult,
             requestScopeCache: new Map(),
           });

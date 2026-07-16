@@ -17,7 +17,7 @@ export function resolveServiceActivations<TActivated>(
     value: Resolved<TActivated>,
   ): Resolved<TActivated> => {
     const activations: Iterable<BindingActivation<TActivated>> | undefined =
-      params.getActivations(serviceIdentifier);
+      params.context.getActivations(serviceIdentifier);
 
     if (activations === undefined) {
       return value;

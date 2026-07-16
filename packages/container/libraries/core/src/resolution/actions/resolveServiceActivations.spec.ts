@@ -14,6 +14,7 @@ vitest.mock(import('./resolveBindingActivationsFromIteratorAsync.js'));
 import { type ServiceIdentifier } from '@inversifyjs/common';
 
 import { type BindingActivation } from '../../binding/models/BindingActivation.js';
+import { type ResolutionContext } from '../models/ResolutionContext.js';
 import { type ResolutionParams } from '../models/ResolutionParams.js';
 import { resolveBindingActivationsFromIterator } from './resolveBindingActivationsFromIterator.js';
 import { resolveBindingActivationsFromIteratorAsync } from './resolveBindingActivationsFromIteratorAsync.js';
@@ -27,13 +28,15 @@ describe(resolveServiceActivations, () => {
 
     beforeAll(() => {
       paramsMock = {
-        getActivations: vitest.fn(),
+        context: {
+          getActivations: vitest.fn(),
+        } as Partial<Mocked<ResolutionContext>> as Mocked<ResolutionContext>,
       } as Partial<Mocked<ResolutionParams>> as Mocked<ResolutionParams>;
       serviceIdentifierFixture = 'service-id';
       valueFixture = Symbol();
     });
 
-    describe('when called, and params.getActivations() returns undefined', () => {
+    describe('when called, and params.context.getActivations() returns undefined', () => {
       let result: unknown;
 
       beforeAll(() => {
@@ -47,10 +50,10 @@ describe(resolveServiceActivations, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call params.getActivations', () => {
-        expect(paramsMock.getActivations).toHaveBeenCalledExactlyOnceWith(
-          serviceIdentifierFixture,
-        );
+      it('should call params.context.getActivations', () => {
+        expect(
+          paramsMock.context.getActivations,
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should return value', () => {
@@ -58,7 +61,7 @@ describe(resolveServiceActivations, () => {
       });
     });
 
-    describe('when called, and params.getActivations() returns activations', () => {
+    describe('when called, and params.context.getActivations() returns activations', () => {
       let activationsIteratorFixture: Iterator<BindingActivation<unknown>>;
       let activationsIterableFixture: Iterable<BindingActivation<unknown>>;
       let resolveBindingActivationsFromIteratorResultFixture: unknown;
@@ -76,9 +79,9 @@ describe(resolveServiceActivations, () => {
           'resolve-binding-activations-from-iterator-result',
         );
 
-        paramsMock.getActivations.mockReturnValueOnce(
-          activationsIterableFixture,
-        );
+        vitest
+          .mocked(paramsMock.context.getActivations)
+          .mockReturnValueOnce(activationsIterableFixture);
 
         vitest
           .mocked(resolveBindingActivationsFromIterator)
@@ -96,10 +99,10 @@ describe(resolveServiceActivations, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call params.getActivations', () => {
-        expect(paramsMock.getActivations).toHaveBeenCalledExactlyOnceWith(
-          serviceIdentifierFixture,
-        );
+      it('should call params.context.getActivations', () => {
+        expect(
+          paramsMock.context.getActivations,
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call resolveBindingActivationsFromIterator()', () => {
@@ -125,13 +128,15 @@ describe(resolveServiceActivations, () => {
 
     beforeAll(() => {
       paramsMock = {
-        getActivations: vitest.fn(),
+        context: {
+          getActivations: vitest.fn(),
+        } as Partial<Mocked<ResolutionContext>> as Mocked<ResolutionContext>,
       } as Partial<Mocked<ResolutionParams>> as Mocked<ResolutionParams>;
       serviceIdentifierFixture = 'service-id';
       valueFixture = Symbol();
     });
 
-    describe('when called, and params.getActivations() returns undefined', () => {
+    describe('when called, and params.context.getActivations() returns undefined', () => {
       let result: unknown;
 
       beforeAll(async () => {
@@ -145,10 +150,10 @@ describe(resolveServiceActivations, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call params.getActivations', () => {
-        expect(paramsMock.getActivations).toHaveBeenCalledExactlyOnceWith(
-          serviceIdentifierFixture,
-        );
+      it('should call params.context.getActivations', () => {
+        expect(
+          paramsMock.context.getActivations,
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should return value', () => {
@@ -156,7 +161,7 @@ describe(resolveServiceActivations, () => {
       });
     });
 
-    describe('when called, and params.getActivations() returns activations', () => {
+    describe('when called, and params.context.getActivations() returns activations', () => {
       let activationsIteratorFixture: Iterator<BindingActivation<unknown>>;
       let activationsIterableFixture: Iterable<BindingActivation<unknown>>;
       let resolveBindingActivationsFromIteratorAsyncResultFixture: unknown;
@@ -176,9 +181,9 @@ describe(resolveServiceActivations, () => {
         );
         valuePromiseFixture = Promise.resolve(valueFixture);
 
-        paramsMock.getActivations.mockReturnValueOnce(
-          activationsIterableFixture,
-        );
+        vitest
+          .mocked(paramsMock.context.getActivations)
+          .mockReturnValueOnce(activationsIterableFixture);
 
         vitest
           .mocked(resolveBindingActivationsFromIteratorAsync)
@@ -196,10 +201,10 @@ describe(resolveServiceActivations, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call params.getActivations', () => {
-        expect(paramsMock.getActivations).toHaveBeenCalledExactlyOnceWith(
-          serviceIdentifierFixture,
-        );
+      it('should call params.context.getActivations', () => {
+        expect(
+          paramsMock.context.getActivations,
+        ).toHaveBeenCalledExactlyOnceWith(serviceIdentifierFixture);
       });
 
       it('should call resolveBindingActivationsFromIteratorAsync()', () => {

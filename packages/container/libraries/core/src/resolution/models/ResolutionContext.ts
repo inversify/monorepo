@@ -1,5 +1,6 @@
 import { type ServiceIdentifier } from '@inversifyjs/common';
 
+import { type BindingActivation } from '../../binding/models/BindingActivation.js';
 import { type GetOptions } from './GetOptions.js';
 import { type OptionalGetOptions } from './OptionalGetOptions.js';
 
@@ -12,6 +13,10 @@ export interface ResolutionContext {
     serviceIdentifier: ServiceIdentifier<TActivated>,
     options?: GetOptions,
   ): TActivated;
+
+  getActivations<TActivated>(
+    serviceIdentifier: ServiceIdentifier<TActivated>,
+  ): Iterable<BindingActivation<TActivated>> | undefined;
 
   getAll<TActivated>(
     serviceIdentifier: ServiceIdentifier<TActivated>,
