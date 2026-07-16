@@ -23,6 +23,7 @@ class TestFixtures {
   ): ResolvedValueBindingNode<ResolvedValueBinding<string[]>> {
     return {
       binding: {
+        factory: (...values: unknown[]): string[] => values as string[],
         metadata: {
           arguments: new Array<unknown>(argumentsCount).fill(Symbol()),
         },
@@ -54,7 +55,6 @@ describe(buildResolvedValueArgumentsResolverOnCsp, () => {
           const resolveNode: (params: ResolutionParams) => Resolved<string[]> =
             buildResolvedValueArgumentsResolverOnCsp(
               nodeFixture,
-              (...values: unknown[]): string[] => values as string[],
               (
                 _params: ResolutionParams,
                 resolvedValue: Resolved<string[]>,
@@ -89,7 +89,6 @@ describe(buildResolvedValueArgumentsResolverOnCsp, () => {
           const resolveNode: (params: ResolutionParams) => Resolved<string[]> =
             buildResolvedValueArgumentsResolverOnCsp(
               nodeFixture,
-              (...values: unknown[]): string[] => values as string[],
               (
                 _params: ResolutionParams,
                 resolvedValue: Resolved<string[]>,

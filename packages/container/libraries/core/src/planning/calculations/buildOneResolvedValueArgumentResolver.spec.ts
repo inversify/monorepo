@@ -13,6 +13,7 @@ class TestFixtures {
   > {
     return {
       binding: {
+        factory: (value: unknown): string => `factory:${String(value)}`,
         metadata: {
           arguments: [Symbol()],
         },
@@ -38,7 +39,6 @@ describe(buildOneResolvedValueArgumentResolver, () => {
         const resolveNode: (params: ResolutionParams) => Resolved<string> =
           buildOneResolvedValueArgumentResolver(
             nodeFixture,
-            (value: unknown): string => `factory:${String(value)}`,
             (
               _params: ResolutionParams,
               resolvedValue: Resolved<string>,
@@ -67,7 +67,6 @@ describe(buildOneResolvedValueArgumentResolver, () => {
         const resolveNode: (params: ResolutionParams) => Resolved<string> =
           buildOneResolvedValueArgumentResolver(
             nodeFixture,
-            (value: unknown): string => `factory:${String(value)}`,
             (
               _params: ResolutionParams,
               resolvedValue: Resolved<string>,

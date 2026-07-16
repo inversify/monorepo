@@ -8,7 +8,6 @@ import { getGeneratedResolverId } from './getGeneratedResolverId.js';
 
 export function buildOneResolvedValueArgumentResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  factory: (arg: unknown) => Resolved<TActivated>,
   resolveActivations: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
@@ -18,7 +17,6 @@ export function buildOneResolvedValueArgumentResolver<TActivated>(
 
   const buildResolveNode: (
     boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    boundFactory: (arg: unknown) => Resolved<TActivated>,
     activate: (
       params: ResolutionParams,
       resolvedValue: Resolved<TActivated>,
@@ -27,7 +25,6 @@ export function buildOneResolvedValueArgumentResolver<TActivated>(
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
   ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
     `node$${id}`,
-    `factory$${id}`,
     `activate$${id}`,
     `isPromise$${id}`,
     `return function resolveNode$${id}(params$${id}) {
@@ -35,15 +32,14 @@ export function buildOneResolvedValueArgumentResolver<TActivated>(
 
       if (isPromise$${id}(resolvedValue$${id})) {
         return resolvedValue$${id}.then(function (resolvedValue$${id}) {
-          return activate$${id}(params$${id}, factory$${id}(resolvedValue$${id}));
+          return activate$${id}(params$${id}, node$${id}.binding.factory(resolvedValue$${id}));
         });
       }
 
-      return activate$${id}(params$${id}, factory$${id}(resolvedValue$${id}));
+      return activate$${id}(params$${id}, node$${id}.binding.factory(resolvedValue$${id}));
     };`,
   ) as (
     node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    factory: (arg: unknown) => Resolved<TActivated>,
     resolveActivations: (
       params: ResolutionParams,
       resolvedValue: Resolved<TActivated>,
@@ -51,5 +47,5 @@ export function buildOneResolvedValueArgumentResolver<TActivated>(
     isPromise: <TParam>(object: unknown) => object is Promise<TParam>,
   ) => (params: ResolutionParams) => Resolved<TActivated>;
 
-  return buildResolveNode(node, factory, resolveActivations, isPromise);
+  return buildResolveNode(node, resolveActivations, isPromise);
 }

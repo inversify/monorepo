@@ -14,8 +14,6 @@ import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNod
  */
 export function buildResolvedValueArgumentsResolverOnCsp<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  factory: (...args: any[]) => Resolved<TActivated>,
   resolveActivations: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
@@ -33,7 +31,10 @@ export function buildResolvedValueArgumentsResolverOnCsp<TActivated>(
     }
 
     function build(...resolvedValues: unknown[]): Resolved<TActivated> {
-      return resolveActivations(params, factory(...resolvedValues));
+      return resolveActivations(
+        params,
+        node.binding.factory(...resolvedValues),
+      );
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return

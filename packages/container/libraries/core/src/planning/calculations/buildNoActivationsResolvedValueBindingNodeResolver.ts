@@ -30,9 +30,6 @@ const FOUR_PARAMS: number = 4;
 export function buildNoActivationsResolvedValueBindingNodeResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const factory: (...args: any[]) => Resolved<TActivated> =
-    node.binding.factory;
   const serviceIdentifier: ServiceIdentifier<TActivated> =
     node.binding.serviceIdentifier;
 
@@ -46,21 +43,19 @@ export function buildNoActivationsResolvedValueBindingNodeResolver<TActivated>(
   switch (node.binding.metadata.arguments.length) {
     case ZERO_PARAMS:
       resolveNode = buildZeroResolvedValueArgumentsResolver(
-        factory,
+        node,
         resolveActivations,
       );
       break;
     case ONE_PARAM:
       resolveNode = buildOneResolvedValueArgumentResolver(
         node,
-        factory,
         resolveActivations,
       );
       break;
     case TWO_PARAMS:
       resolveNode = buildResolvedValueArgumentsResolver(
         node,
-        factory,
         resolveActivations,
         resolveTwo,
       );
@@ -68,7 +63,6 @@ export function buildNoActivationsResolvedValueBindingNodeResolver<TActivated>(
     case THREE_PARAMS:
       resolveNode = buildResolvedValueArgumentsResolver(
         node,
-        factory,
         resolveActivations,
         resolveThree,
       );
@@ -76,7 +70,6 @@ export function buildNoActivationsResolvedValueBindingNodeResolver<TActivated>(
     case FOUR_PARAMS:
       resolveNode = buildResolvedValueArgumentsResolver(
         node,
-        factory,
         resolveActivations,
         resolveFour,
       );
