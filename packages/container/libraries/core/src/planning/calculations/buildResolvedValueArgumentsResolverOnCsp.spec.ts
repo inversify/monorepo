@@ -5,7 +5,7 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { buildResolvedValueArgumentsResolver } from './buildResolvedValueArgumentsResolver.js';
+import { buildResolvedValueArgumentsResolverOnCsp } from './buildResolvedValueArgumentsResolverOnCsp.js';
 import { resolveFour } from './resolveFour.js';
 import { resolveThree } from './resolveThree.js';
 import { resolveTwo } from './resolveTwo.js';
@@ -33,7 +33,7 @@ class TestFixtures {
   }
 }
 
-describe(buildResolvedValueArgumentsResolver, () => {
+describe(buildResolvedValueArgumentsResolverOnCsp, () => {
   describe.each<[string, ResolveAsyncValues, string[]]>([
     ['two', resolveTwo, ['value-0', 'value-1']],
     ['three', resolveThree, ['value-0', 'value-1', 'value-2']],
@@ -53,7 +53,7 @@ describe(buildResolvedValueArgumentsResolver, () => {
             ResolvedValueBinding<string[]>
           > = TestFixtures.node(valueFixtures.length);
           const resolveNode: (params: ResolutionParams) => Resolved<string[]> =
-            buildResolvedValueArgumentsResolver(
+            buildResolvedValueArgumentsResolverOnCsp(
               nodeFixture,
               (
                 _params: ResolutionParams,
@@ -87,7 +87,7 @@ describe(buildResolvedValueArgumentsResolver, () => {
             ResolvedValueBinding<string[]>
           > = TestFixtures.node(valueFixtures.length);
           const resolveNode: (params: ResolutionParams) => Resolved<string[]> =
-            buildResolvedValueArgumentsResolver(
+            buildResolvedValueArgumentsResolverOnCsp(
               nodeFixture,
               (
                 _params: ResolutionParams,

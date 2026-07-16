@@ -4,7 +4,7 @@ import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBin
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { buildZeroResolvedValueArgumentsResolver } from './buildZeroResolvedValueArgumentsResolver.js';
+import { buildZeroResolvedValueArgumentsResolverOnCsp } from './buildZeroResolvedValueArgumentsResolverOnCsp.js';
 
 class TestFixtures {
   public static node(
@@ -30,7 +30,7 @@ class TestFixtures {
   }
 }
 
-describe(buildZeroResolvedValueArgumentsResolver, () => {
+describe(buildZeroResolvedValueArgumentsResolverOnCsp, () => {
   describe('having a resolved value binding node and an activation resolver', () => {
     describe('when called', () => {
       let expectedResult: object;
@@ -43,7 +43,7 @@ describe(buildZeroResolvedValueArgumentsResolver, () => {
         paramsFixture = TestFixtures.params;
 
         const resolveNode: (params: ResolutionParams) => Resolved<object> =
-          buildZeroResolvedValueArgumentsResolver(
+          buildZeroResolvedValueArgumentsResolverOnCsp(
             TestFixtures.node((): object => expectedResult),
             (
               params: ResolutionParams,
@@ -69,7 +69,7 @@ describe(buildZeroResolvedValueArgumentsResolver, () => {
         expectedResult = TestFixtures.resolvedValue;
 
         const resolveNode: (params: ResolutionParams) => Resolved<object> =
-          buildZeroResolvedValueArgumentsResolver(
+          buildZeroResolvedValueArgumentsResolverOnCsp(
             TestFixtures.node((): object => expectedResult),
             async (
               _params: ResolutionParams,

@@ -12,8 +12,11 @@ export class ResolvedValueBindingNodeImplementation<
   public readonly params: PlanServiceNode[];
   public readonly resolve: (params: ResolutionParams) => Resolved<TActivated>;
 
-  constructor(public readonly binding: ResolvedValueBinding<TActivated>) {
+  constructor(
+    public readonly binding: ResolvedValueBinding<TActivated>,
+    jitEnabled: boolean,
+  ) {
     this.params = [];
-    this.resolve = buildResolvedValueBindingNodeResolver(this);
+    this.resolve = buildResolvedValueBindingNodeResolver(this, jitEnabled);
   }
 }

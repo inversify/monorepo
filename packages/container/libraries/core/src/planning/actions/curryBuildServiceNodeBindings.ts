@@ -201,7 +201,7 @@ function curryBuildResolvedValuePlanBindingNode(
     bindingConstraintsList: SingleImmutableLinkedList<InternalBindingConstraints>,
   ): PlanBindingNode => {
     const childNode: ResolvedValueBindingNode =
-      new ResolvedValueBindingNodeImplementation(binding);
+      new ResolvedValueBindingNodeImplementation(binding, params.jitEnabled);
 
     const subplanParams: SubplanParams = {
       autobindOptions: params.autobindOptions,

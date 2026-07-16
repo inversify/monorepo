@@ -6,8 +6,6 @@ import { getGeneratedResolverId } from './getGeneratedResolverId.js';
 
 export function buildResolvedValueArgumentsResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  factory: (...args: any[]) => Resolved<TActivated>,
   resolveActivations: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
@@ -31,7 +29,6 @@ export function buildResolvedValueArgumentsResolver<TActivated>(
 
   const buildResolveNode: (
     boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    boundFactory: (...args: unknown[]) => Resolved<TActivated>,
     activate: (
       params: ResolutionParams,
       resolvedValue: Resolved<TActivated>,
@@ -41,7 +38,6 @@ export function buildResolvedValueArgumentsResolver<TActivated>(
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
   ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
     `node$${id}`,
-    `factory$${id}`,
     `activate$${id}`,
     `resolveAsyncValues$${id}`,
     `return function resolveNode$${id}(params$${id}) {
@@ -52,14 +48,13 @@ export function buildResolvedValueArgumentsResolver<TActivated>(
     function (${resolvedValueConcatenation}) {
       return activate$${id}(
         params$${id},
-        factory$${id}(${resolvedValueConcatenation}),
+        node$${id}.binding.factory(${resolvedValueConcatenation}),
       );
     },
   );
 }`,
   ) as (
     node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    factory: (...args: unknown[]) => Resolved<TActivated>,
     resolveActivations: (
       params: ResolutionParams,
       resolvedValue: Resolved<TActivated>,
@@ -68,10 +63,5 @@ export function buildResolvedValueArgumentsResolver<TActivated>(
     resolveAsyncValues: Function,
   ) => (params: ResolutionParams) => Resolved<TActivated>;
 
-  return buildResolveNode(
-    node,
-    factory,
-    resolveActivations,
-    resolveAsyncValues,
-  );
+  return buildResolveNode(node, resolveActivations, resolveAsyncValues);
 }
