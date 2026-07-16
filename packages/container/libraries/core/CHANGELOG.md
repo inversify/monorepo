@@ -1,5 +1,16 @@
 # @inversifyjs/core
 
+## 14.0.0
+
+### Major Changes
+
+- Moved `getActivations` from `ResolutionParams` to `ResolutionContext`.
+
+### Patch Changes
+
+- Fixed resolved value binding resolution to respect the `jitless` container option, avoiding `Function` constructor usage in CSP-restricted environments.
+- Updated `currySubplan` with missing depth detection on resolve value plans.
+
 ## 13.0.0
 
 ### Major Changes
