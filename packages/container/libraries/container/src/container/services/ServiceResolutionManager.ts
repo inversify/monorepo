@@ -49,15 +49,17 @@ export class ServiceResolutionManager {
   ) {
     this.#planParamsOperationsManager = planParamsOperationsManager;
     this.#serviceReferenceManager = serviceReferenceManager;
-    this.#resolutionContext = this.#buildResolutionContext();
-    this.#autobind = autobind;
-    this.#defaultScope = defaultScope;
-    this.#jitEnabled = jitEnabled;
+
     this.#getActivationsResolutionParam = <TActivated>(
       serviceIdentifier: ServiceIdentifier<TActivated>,
     ): Iterable<BindingActivation<TActivated>> | undefined =>
       this.#serviceReferenceManager.activationService.get(serviceIdentifier) as
         Iterable<BindingActivation<TActivated>> | undefined;
+
+    this.#resolutionContext = this.#buildResolutionContext();
+    this.#autobind = autobind;
+    this.#defaultScope = defaultScope;
+    this.#jitEnabled = jitEnabled;
 
     this.#onPlanHandlers = [];
 
@@ -286,6 +288,7 @@ export class ServiceResolutionManager {
   #buildResolutionContext(): ResolutionContext {
     return {
       get: this.get.bind(this),
+      getActivations: this.#getActivationsResolutionParam,
       getAll: this.getAll.bind(this),
       getAllAsync: this.getAllAsync.bind(this),
       getAsync: this.getAsync.bind(this),
@@ -296,7 +299,6 @@ export class ServiceResolutionManager {
   #getFromPlanResult<T>(planResult: PlanResult): T {
     return resolve({
       context: this.#resolutionContext,
-      getActivations: this.#getActivationsResolutionParam,
       planResult,
       requestScopeCache: undefined,
     }) as T;
