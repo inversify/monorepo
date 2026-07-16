@@ -15,11 +15,6 @@ import { resolveThree } from './resolveThree.js';
  */
 export function buildThreeResolvedValueArgumentResolverOnCsp<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  factory: (
-    arg0: unknown,
-    arg1: unknown,
-    arg2: unknown,
-  ) => Resolved<TActivated>,
   resolveActivations: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
@@ -47,7 +42,7 @@ export function buildThreeResolvedValueArgumentResolverOnCsp<TActivated>(
       ): Resolved<TActivated> =>
         resolveActivations(
           params,
-          factory(resolvedValue0, resolvedValue1, resolvedValue2),
+          node.binding.factory(resolvedValue0, resolvedValue1, resolvedValue2),
         ),
     );
   };

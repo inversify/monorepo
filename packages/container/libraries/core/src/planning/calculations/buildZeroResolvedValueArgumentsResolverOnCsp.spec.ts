@@ -1,10 +1,26 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
+import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
 import { buildZeroResolvedValueArgumentsResolverOnCsp } from './buildZeroResolvedValueArgumentsResolverOnCsp.js';
 
 class TestFixtures {
+  public static node(
+    factory: () => object,
+  ): ResolvedValueBindingNode<ResolvedValueBinding<object>> {
+    return {
+      binding: {
+        factory,
+        metadata: {
+          arguments: [],
+        },
+      },
+      params: [],
+    } as unknown as ResolvedValueBindingNode<ResolvedValueBinding<object>>;
+  }
+
   public static get params(): ResolutionParams {
     return Symbol() as unknown as ResolutionParams;
   }
@@ -15,7 +31,7 @@ class TestFixtures {
 }
 
 describe(buildZeroResolvedValueArgumentsResolverOnCsp, () => {
-  describe('having a factory and an activation resolver', () => {
+  describe('having a resolved value binding node and an activation resolver', () => {
     describe('when called', () => {
       let expectedResult: object;
       let paramsFixture: ResolutionParams;
@@ -28,7 +44,7 @@ describe(buildZeroResolvedValueArgumentsResolverOnCsp, () => {
 
         const resolveNode: (params: ResolutionParams) => Resolved<object> =
           buildZeroResolvedValueArgumentsResolverOnCsp(
-            (): object => expectedResult,
+            TestFixtures.node((): object => expectedResult),
             (
               params: ResolutionParams,
               resolvedValue: Resolved<object>,
@@ -54,7 +70,7 @@ describe(buildZeroResolvedValueArgumentsResolverOnCsp, () => {
 
         const resolveNode: (params: ResolutionParams) => Resolved<object> =
           buildZeroResolvedValueArgumentsResolverOnCsp(
-            (): object => expectedResult,
+            TestFixtures.node((): object => expectedResult),
             async (
               _params: ResolutionParams,
               resolvedValue: Resolved<object>,

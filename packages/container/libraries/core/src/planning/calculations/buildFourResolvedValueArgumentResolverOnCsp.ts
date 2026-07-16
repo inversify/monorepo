@@ -15,12 +15,6 @@ import { resolveFour } from './resolveFour.js';
  */
 export function buildFourResolvedValueArgumentResolverOnCsp<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  factory: (
-    arg0: unknown,
-    arg1: unknown,
-    arg2: unknown,
-    arg3: unknown,
-  ) => Resolved<TActivated>,
   resolveActivations: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
@@ -53,7 +47,7 @@ export function buildFourResolvedValueArgumentResolverOnCsp<TActivated>(
       ): Resolved<TActivated> =>
         resolveActivations(
           params,
-          factory(
+          node.binding.factory(
             resolvedValue0,
             resolvedValue1,
             resolvedValue2,

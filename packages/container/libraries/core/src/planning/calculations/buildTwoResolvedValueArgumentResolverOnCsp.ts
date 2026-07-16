@@ -15,7 +15,6 @@ import { resolveTwo } from './resolveTwo.js';
  */
 export function buildTwoResolvedValueArgumentResolverOnCsp<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  factory: (arg0: unknown, arg1: unknown) => Resolved<TActivated>,
   resolveActivations: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
@@ -36,7 +35,10 @@ export function buildTwoResolvedValueArgumentResolverOnCsp<TActivated>(
         resolvedValue0: unknown,
         resolvedValue1: unknown,
       ): Resolved<TActivated> =>
-        resolveActivations(params, factory(resolvedValue0, resolvedValue1)),
+        resolveActivations(
+          params,
+          node.binding.factory(resolvedValue0, resolvedValue1),
+        ),
     );
   };
 }

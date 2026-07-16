@@ -1,5 +1,7 @@
+import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
+import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
 
 /**
  * Same rationale as buildZeroConstructorArgumentsResolverOnCsp, but for
@@ -10,13 +12,13 @@ import { type Resolved } from '../../resolution/models/Resolved.js';
  * `unsafe-eval`).
  */
 export function buildZeroResolvedValueArgumentsResolverOnCsp<TActivated>(
-  factory: () => Resolved<TActivated>,
+  node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
   resolveActivations: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
-    return resolveActivations(params, factory());
+    return resolveActivations(params, node.binding.factory());
   };
 }

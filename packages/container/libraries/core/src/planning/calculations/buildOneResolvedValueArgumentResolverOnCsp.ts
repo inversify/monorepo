@@ -16,7 +16,6 @@ import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNod
  */
 export function buildOneResolvedValueArgumentResolverOnCsp<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  factory: (arg: unknown) => Resolved<TActivated>,
   resolveActivations: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
@@ -30,10 +29,10 @@ export function buildOneResolvedValueArgumentResolverOnCsp<TActivated>(
     if (isPromise(resolvedValue)) {
       return resolvedValue.then(
         (resolvedValue: unknown): Resolved<TActivated> =>
-          resolveActivations(params, factory(resolvedValue)),
+          resolveActivations(params, node.binding.factory(resolvedValue)),
       );
     }
 
-    return resolveActivations(params, factory(resolvedValue));
+    return resolveActivations(params, node.binding.factory(resolvedValue));
   };
 }
