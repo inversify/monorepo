@@ -1,5 +1,14 @@
 # inversify
 
+## 8.2.1
+
+### Patch Changes
+
+- Fixed resolved value binding resolution to respect the `jitless` container option, avoiding `Function` constructor usage in CSP-restricted environments.
+- Updated dependencies
+  - @inversifyjs/core@14.0.0
+  - @inversifyjs/container@3.1.1
+
 ## 8.2.0
 
 ### Minor Changes
