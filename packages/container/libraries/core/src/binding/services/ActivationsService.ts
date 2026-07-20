@@ -3,6 +3,8 @@ import { type ServiceIdentifier } from '@inversifyjs/common';
 import { chain } from '../../common/calculations/chain.js';
 import { type Cloneable } from '../../common/models/Cloneable.js';
 import { OneToManyMapStar } from '../../common/models/OneToManyMapStar.js';
+import { WeakList } from '../../common/models/WeakList.js';
+import { type ActivationSubscriber } from '../models/ActivationSubscriber.js';
 import { type BindingActivation } from '../models/BindingActivation.js';
 
 enum ActivationRelationKind {
@@ -21,6 +23,10 @@ export class ActivationsService implements Cloneable<ActivationsService> {
     BindingActivationRelation
   >;
   readonly #getParent: () => ActivationsService | undefined;
+  readonly #serviceToActivationSubscribersOnceMap: Map<
+    ServiceIdentifier,
+    WeakList<ActivationSubscriber>
+  >;
 
   private constructor(
     getParent: () => ActivationsService | undefined,
@@ -41,6 +47,8 @@ export class ActivationsService implements Cloneable<ActivationsService> {
       });
 
     this.#getParent = getParent;
+    // We don't want to clone subscribers
+    this.#serviceToActivationSubscribersOnceMap = new Map();
   }
 
   public static build(
@@ -54,6 +62,29 @@ export class ActivationsService implements Cloneable<ActivationsService> {
     relation: BindingActivationRelation,
   ): void {
     this.#activationMaps.add(activation, relation);
+
+    this.#triggerActivationAdded(
+      relation[ActivationRelationKind.serviceId],
+      activation,
+    );
+  }
+
+  public subscribeOnce(
+    serviceIdentifier: ServiceIdentifier,
+    subscriber: ActivationSubscriber,
+  ): void {
+    let subscribersOnce: WeakList<ActivationSubscriber> | undefined =
+      this.#serviceToActivationSubscribersOnceMap.get(serviceIdentifier);
+
+    if (subscribersOnce === undefined) {
+      subscribersOnce = new WeakList();
+      this.#serviceToActivationSubscribersOnceMap.set(
+        serviceIdentifier,
+        subscribersOnce,
+      );
+    }
+
+    subscribersOnce.push(subscriber);
   }
 
   public clone(): ActivationsService {
@@ -100,5 +131,21 @@ export class ActivationsService implements Cloneable<ActivationsService> {
       ActivationRelationKind.serviceId,
       serviceId,
     );
+  }
+
+  #triggerActivationAdded(
+    serviceId: ServiceIdentifier,
+    activation: BindingActivation,
+  ): void {
+    const subscribersOnce: WeakList<ActivationSubscriber> | undefined =
+      this.#serviceToActivationSubscribersOnceMap.get(serviceId);
+
+    if (subscribersOnce !== undefined) {
+      for (const subscriber of subscribersOnce) {
+        subscriber.onActivationAdded(serviceId, activation);
+      }
+
+      this.#serviceToActivationSubscribersOnceMap.delete(serviceId);
+    }
   }
 }
