@@ -14,14 +14,33 @@ import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNod
  */
 export function buildResolvedValueArgumentsResolverOnCsp<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  resolveActivations: (
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  resolveAsyncValues: Function,
+  resolveActivations?: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  resolveAsyncValues: Function,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   const argumentsCount: number = node.binding.metadata.arguments.length;
+
+  if (resolveActivations === undefined) {
+    return function resolveNode(
+      params: ResolutionParams,
+    ): Resolved<TActivated> {
+      const values: unknown[] = new Array<unknown>(argumentsCount);
+
+      for (let index: number = 0; index < argumentsCount; index++) {
+        values[index] = (node.params[index] as PlanServiceNode).resolve(params);
+      }
+
+      function build(...resolvedValues: unknown[]): Resolved<TActivated> {
+        return node.binding.factory(...resolvedValues);
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+      return resolveAsyncValues(...values, build);
+    };
+  }
 
   return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
     const values: unknown[] = new Array<unknown>(argumentsCount);
@@ -30,12 +49,10 @@ export function buildResolvedValueArgumentsResolverOnCsp<TActivated>(
       values[index] = (node.params[index] as PlanServiceNode).resolve(params);
     }
 
-    function build(...resolvedValues: unknown[]): Resolved<TActivated> {
-      return resolveActivations(
-        params,
-        node.binding.factory(...resolvedValues),
-      );
-    }
+    const build: (...resolvedValues: unknown[]) => Resolved<TActivated> = (
+      ...resolvedValues: unknown[]
+    ): Resolved<TActivated> =>
+      resolveActivations(params, node.binding.factory(...resolvedValues));
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
     return resolveAsyncValues(...values, build);

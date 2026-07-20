@@ -15,11 +15,49 @@ import { resolveFour } from './resolveFour.js';
  */
 export function buildFourResolvedValueArgumentResolverOnCsp<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  resolveActivations: (
+  resolveActivations?: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
+  if (resolveActivations === undefined) {
+    return function resolveNode(
+      params: ResolutionParams,
+    ): Resolved<TActivated> {
+      const resolvedValue0: unknown = (
+        node.params[0] as PlanServiceNode
+      ).resolve(params);
+      const resolvedValue1: unknown = (
+        node.params[1] as PlanServiceNode
+      ).resolve(params);
+      const resolvedValue2: unknown = (
+        node.params[2] as PlanServiceNode
+      ).resolve(params);
+      const resolvedValue3: unknown = (
+        node.params[3] as PlanServiceNode
+      ).resolve(params);
+
+      return resolveFour(
+        resolvedValue0,
+        resolvedValue1,
+        resolvedValue2,
+        resolvedValue3,
+        (
+          resolvedValue0: unknown,
+          resolvedValue1: unknown,
+          resolvedValue2: unknown,
+          resolvedValue3: unknown,
+        ): Resolved<TActivated> =>
+          node.binding.factory(
+            resolvedValue0,
+            resolvedValue1,
+            resolvedValue2,
+            resolvedValue3,
+          ),
+      );
+    };
+  }
+
   return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
     const resolvedValue0: unknown = (node.params[0] as PlanServiceNode).resolve(
       params,

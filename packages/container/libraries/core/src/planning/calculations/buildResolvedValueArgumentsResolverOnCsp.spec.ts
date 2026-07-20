@@ -45,71 +45,139 @@ describe(buildResolvedValueArgumentsResolverOnCsp, () => {
       resolveAsyncValues: ResolveAsyncValues,
       valueFixtures: string[],
     ) => {
-      describe('when called, and node.params is populated after the resolver is built', () => {
-        let result: unknown;
+      describe('when called, and resolveActivations is not provided', () => {
+        describe('when called, and node.params is populated after the resolver is built', () => {
+          let result: unknown;
 
-        beforeAll(() => {
-          const nodeFixture: ResolvedValueBindingNode<
-            ResolvedValueBinding<string[]>
-          > = TestFixtures.node(valueFixtures.length);
-          const resolveNode: (params: ResolutionParams) => Resolved<string[]> =
-            buildResolvedValueArgumentsResolverOnCsp(
+          beforeAll(() => {
+            const nodeFixture: ResolvedValueBindingNode<
+              ResolvedValueBinding<string[]>
+            > = TestFixtures.node(valueFixtures.length);
+            const resolveNode: (
+              params: ResolutionParams,
+            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverOnCsp(
               nodeFixture,
-              (
-                _params: ResolutionParams,
-                resolvedValue: Resolved<string[]>,
-              ): Resolved<string[]> => resolvedValue,
               resolveAsyncValues,
             );
 
-          nodeFixture.params.push(
-            ...valueFixtures.map(
-              (value: string): PlanServiceNode =>
-                ({
-                  resolve: (): string => value,
-                }) as Partial<PlanServiceNode> as PlanServiceNode,
-            ),
-          );
+            nodeFixture.params.push(
+              ...valueFixtures.map(
+                (value: string): PlanServiceNode =>
+                  ({
+                    resolve: (): string => value,
+                  }) as Partial<PlanServiceNode> as PlanServiceNode,
+              ),
+            );
 
-          result = resolveNode(TestFixtures.params);
+            result = resolveNode(TestFixtures.params);
+          });
+
+          it('should call the factory with the resolved arguments in order', () => {
+            expect(result).toStrictEqual(valueFixtures);
+          });
         });
 
-        it('should call the factory with the resolved arguments in order', () => {
-          expect(result).toStrictEqual(valueFixtures);
+        describe('when called, and the arguments resolve asynchronously', () => {
+          let result: unknown;
+
+          beforeAll(async () => {
+            const nodeFixture: ResolvedValueBindingNode<
+              ResolvedValueBinding<string[]>
+            > = TestFixtures.node(valueFixtures.length);
+            const resolveNode: (
+              params: ResolutionParams,
+            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverOnCsp(
+              nodeFixture,
+              resolveAsyncValues,
+            );
+
+            nodeFixture.params.push(
+              ...valueFixtures.map(
+                (value: string): PlanServiceNode =>
+                  ({
+                    resolve: async (): Promise<string> => value,
+                  }) as Partial<PlanServiceNode> as PlanServiceNode,
+              ),
+            );
+
+            result = await resolveNode(TestFixtures.params);
+          });
+
+          it('should call the factory with the resolved arguments in order', () => {
+            expect(result).toStrictEqual(valueFixtures);
+          });
         });
       });
 
-      describe('when called, and the arguments resolve asynchronously', () => {
-        let result: unknown;
+      describe('when called, and resolveActivations is provided', () => {
+        describe('when called, and node.params is populated after the resolver is built', () => {
+          let result: unknown;
 
-        beforeAll(async () => {
-          const nodeFixture: ResolvedValueBindingNode<
-            ResolvedValueBinding<string[]>
-          > = TestFixtures.node(valueFixtures.length);
-          const resolveNode: (params: ResolutionParams) => Resolved<string[]> =
-            buildResolvedValueArgumentsResolverOnCsp(
+          beforeAll(() => {
+            const nodeFixture: ResolvedValueBindingNode<
+              ResolvedValueBinding<string[]>
+            > = TestFixtures.node(valueFixtures.length);
+            const resolveNode: (
+              params: ResolutionParams,
+            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverOnCsp(
               nodeFixture,
+              resolveAsyncValues,
               (
                 _params: ResolutionParams,
                 resolvedValue: Resolved<string[]>,
               ): Resolved<string[]> => resolvedValue,
-              resolveAsyncValues,
             );
 
-          nodeFixture.params.push(
-            ...valueFixtures.map(
-              (value: string): PlanServiceNode =>
-                ({
-                  resolve: async (): Promise<string> => value,
-                }) as Partial<PlanServiceNode> as PlanServiceNode,
-            ),
-          );
+            nodeFixture.params.push(
+              ...valueFixtures.map(
+                (value: string): PlanServiceNode =>
+                  ({
+                    resolve: (): string => value,
+                  }) as Partial<PlanServiceNode> as PlanServiceNode,
+              ),
+            );
 
-          result = await resolveNode(TestFixtures.params);
+            result = resolveNode(TestFixtures.params);
+          });
+
+          it('should call the factory with the resolved arguments in order', () => {
+            expect(result).toStrictEqual(valueFixtures);
+          });
         });
 
-        it('should call the factory with the resolved arguments in order', () => {
-          expect(result).toStrictEqual(valueFixtures);
+        describe('when called, and the arguments resolve asynchronously', () => {
+          let result: unknown;
+
+          beforeAll(async () => {
+            const nodeFixture: ResolvedValueBindingNode<
+              ResolvedValueBinding<string[]>
+            > = TestFixtures.node(valueFixtures.length);
+            const resolveNode: (
+              params: ResolutionParams,
+            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverOnCsp(
+              nodeFixture,
+              resolveAsyncValues,
+              (
+                _params: ResolutionParams,
+                resolvedValue: Resolved<string[]>,
+              ): Resolved<string[]> => resolvedValue,
+            );
+
+            nodeFixture.params.push(
+              ...valueFixtures.map(
+                (value: string): PlanServiceNode =>
+                  ({
+                    resolve: async (): Promise<string> => value,
+                  }) as Partial<PlanServiceNode> as PlanServiceNode,
+              ),
+            );
+
+            result = await resolveNode(TestFixtures.params);
+          });
+
+          it('should call the factory with the resolved arguments in order', () => {
+            expect(result).toStrictEqual(valueFixtures);
+          });
         });
       });
     },

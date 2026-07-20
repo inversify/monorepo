@@ -22,13 +22,20 @@ const resolveScopedResolvedValueBindingNode: <TActivated>(
 
 export function buildResolvedValueBindingNodeResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
+  areServiceActivations: boolean,
   jitEnabled: boolean,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   if (node.binding.onActivation === undefined) {
     if (jitEnabled) {
-      return buildNoActivationsResolvedValueBindingNodeResolver(node);
+      return buildNoActivationsResolvedValueBindingNodeResolver(
+        node,
+        areServiceActivations,
+      );
     } else {
-      return buildNoActivationsResolvedValueBindingNodeResolverOnCsp(node);
+      return buildNoActivationsResolvedValueBindingNodeResolverOnCsp(
+        node,
+        areServiceActivations,
+      );
     }
   }
 

@@ -47,7 +47,35 @@ function buildParamsFixture(
 }
 
 describe(buildThreeResolvedValueArgumentResolverOnCsp, () => {
-  describe('having a resolved value binding node', () => {
+  describe('when called, and resolveActivations is not provided', () => {
+    describe('when called, and node.params is populated after the resolver is built', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        const nodeFixture: ResolvedValueBindingNode<
+          ResolvedValueBinding<string>
+        > = TestFixtures.node;
+        const resolveNode: (params: ResolutionParams) => Resolved<string> =
+          buildThreeResolvedValueArgumentResolverOnCsp(nodeFixture);
+
+        nodeFixture.params.push(
+          ...buildParamsFixture(
+            (): string => 'value-0',
+            (): string => 'value-1',
+            (): string => 'value-2',
+          ),
+        );
+
+        result = resolveNode(TestFixtures.params);
+      });
+
+      it('should call the factory with the resolved arguments', () => {
+        expect(result).toBe('factory:value-0:value-1:value-2');
+      });
+    });
+  });
+
+  describe('when called, and resolveActivations is provided', () => {
     describe('when called, and node.params is populated after the resolver is built', () => {
       let result: unknown;
 

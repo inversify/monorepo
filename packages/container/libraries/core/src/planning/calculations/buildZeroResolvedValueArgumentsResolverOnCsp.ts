@@ -13,11 +13,19 @@ import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNod
  */
 export function buildZeroResolvedValueArgumentsResolverOnCsp<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  resolveActivations: (
+  resolveActivations?: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
+  if (resolveActivations === undefined) {
+    return function resolveNode(
+      _params: ResolutionParams,
+    ): Resolved<TActivated> {
+      return node.binding.factory();
+    };
+  }
+
   return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
     return resolveActivations(params, node.binding.factory());
   };

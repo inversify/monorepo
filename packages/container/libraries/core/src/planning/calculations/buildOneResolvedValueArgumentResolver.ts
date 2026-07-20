@@ -8,12 +8,39 @@ import { getGeneratedResolverId } from './getGeneratedResolverId.js';
 
 export function buildOneResolvedValueArgumentResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  resolveActivations: (
+  resolveActivations?: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   const id: string = getGeneratedResolverId().toString();
+
+  if (resolveActivations === undefined) {
+    const buildResolveNode: (
+      boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
+      isPromiseFunction: typeof isPromise,
+      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
+      `node$${id}`,
+      `isPromise$${id}`,
+      `return function resolveNode$${id}(params$${id}) {
+      const resolvedValue$${id} = node$${id}.params[0].resolve(params$${id});
+
+      if (isPromise$${id}(resolvedValue$${id})) {
+        return resolvedValue$${id}.then(function (resolvedValue$${id}) {
+          return node$${id}.binding.factory(resolvedValue$${id});
+        });
+      }
+
+      return node$${id}.binding.factory(resolvedValue$${id});
+    };`,
+    ) as (
+      node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
+      isPromise: <TParam>(object: unknown) => object is Promise<TParam>,
+    ) => (params: ResolutionParams) => Resolved<TActivated>;
+
+    return buildResolveNode(node, isPromise);
+  }
 
   const buildResolveNode: (
     boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,

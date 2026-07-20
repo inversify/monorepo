@@ -29,14 +29,19 @@ const FOUR_PARAMS: number = 4;
  */
 export function buildNoActivationsResolvedValueBindingNodeResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
+  areServiceActivations: boolean,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   const serviceIdentifier: ServiceIdentifier<TActivated> =
     node.binding.serviceIdentifier;
 
-  const resolveActivations: (
-    params: ResolutionParams,
-    value: Resolved<TActivated>,
-  ) => Resolved<TActivated> = resolveServiceActivations(serviceIdentifier);
+  const resolveActivations:
+    | ((
+        params: ResolutionParams,
+        value: Resolved<TActivated>,
+      ) => Resolved<TActivated>)
+    | undefined = areServiceActivations
+    ? resolveServiceActivations(serviceIdentifier)
+    : undefined;
 
   let resolveNode: (params: ResolutionParams) => Resolved<TActivated>;
 
@@ -56,30 +61,34 @@ export function buildNoActivationsResolvedValueBindingNodeResolver<TActivated>(
     case TWO_PARAMS:
       resolveNode = buildResolvedValueArgumentsResolver(
         node,
-        resolveActivations,
         resolveTwo,
+        resolveActivations,
       );
       break;
     case THREE_PARAMS:
       resolveNode = buildResolvedValueArgumentsResolver(
         node,
-        resolveActivations,
         resolveThree,
+        resolveActivations,
       );
       break;
     case FOUR_PARAMS:
       resolveNode = buildResolvedValueArgumentsResolver(
         node,
-        resolveActivations,
         resolveFour,
+        resolveActivations,
       );
       break;
     default:
-      resolveNode = (params: ResolutionParams): Resolved<TActivated> =>
-        resolveActivations(
-          params,
-          resolveResolvedValueBindingNode(params, node),
-        );
+      resolveNode =
+        resolveActivations === undefined
+          ? (params: ResolutionParams): Resolved<TActivated> =>
+              resolveResolvedValueBindingNode(params, node)
+          : (params: ResolutionParams): Resolved<TActivated> =>
+              resolveActivations(
+                params,
+                resolveResolvedValueBindingNode(params, node),
+              );
   }
 
   return resolveScopedWithNoActivations(node.binding, resolveNode);
