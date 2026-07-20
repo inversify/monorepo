@@ -31,14 +31,19 @@ const FOUR_CONSTRUCTOR_ARGUMENTS: number = 4;
  */
 export function buildNoActivationsInstanceBindingNodeResolverOnCsp<TActivated>(
   node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+  areServiceActivations: boolean,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   const serviceIdentifier: ServiceIdentifier<TActivated> =
     node.binding.serviceIdentifier;
 
-  const resolveActivations: (
-    params: ResolutionParams,
-    value: Resolved<TActivated>,
-  ) => Resolved<TActivated> = resolveServiceActivations(serviceIdentifier);
+  const resolveActivations:
+    | ((
+        params: ResolutionParams,
+        value: Resolved<TActivated>,
+      ) => Resolved<TActivated>)
+    | undefined = areServiceActivations
+    ? resolveServiceActivations(serviceIdentifier)
+    : undefined;
 
   let resolveNode: (params: ResolutionParams) => Resolved<TActivated>;
 

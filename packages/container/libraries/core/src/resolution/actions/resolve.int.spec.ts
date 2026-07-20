@@ -272,6 +272,11 @@ describe(resolve, () => {
         autobindOptions: undefined,
         jitEnabled: true,
         operations: {
+          getActivations: <TActivated>(
+            serviceIdentifier: ServiceIdentifier<TActivated>,
+          ) =>
+            activationService.get(serviceIdentifier) as
+              Iterable<BindingActivation<TActivated>> | undefined,
           getBindings: bindingService.get.bind(bindingService),
           getBindingsChained: bindingService.getChained.bind(bindingService),
           getClassMetadata: getClassMetadataFunction,
@@ -282,6 +287,8 @@ describe(resolve, () => {
               planResultCacheService,
             ),
           setPlan: planResultCacheService.set.bind(planResultCacheService),
+          subscribeActivationAddedOnce:
+            activationService.subscribeOnce.bind(activationService),
         },
         rootConstraints: {
           chained: false,
@@ -525,6 +532,11 @@ describe(resolve, () => {
             autobindOptions: undefined,
             jitEnabled: true,
             operations: {
+              getActivations: <TActivated>(
+                serviceIdentifier: ServiceIdentifier<TActivated>,
+              ) =>
+                activationService.get(serviceIdentifier) as
+                  Iterable<BindingActivation<TActivated>> | undefined,
               getBindings: bindingService.get.bind(bindingService),
               getBindingsChained:
                 bindingService.getChained.bind(bindingService),
@@ -536,6 +548,8 @@ describe(resolve, () => {
                   planResultCacheService,
                 ),
               setPlan: planResultCacheService.set.bind(planResultCacheService),
+              subscribeActivationAddedOnce:
+                activationService.subscribeOnce.bind(activationService),
             },
             rootConstraints: planParamsConstraint(),
             servicesBranch: [],

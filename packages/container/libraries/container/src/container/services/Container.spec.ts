@@ -178,6 +178,7 @@ describe(Container, () => {
     } as Partial<Mocked<DeactivationsService>> as Mocked<DeactivationsService>;
     planParamsOperationsManagerMock = {
       planParamsOperations: {
+        getActivations: vitest.fn(),
         getBindings: vitest.fn(),
         getBindingsChained: vitest.fn(),
         getClassMetadata: vitest.fn(),
@@ -185,6 +186,7 @@ describe(Container, () => {
         setBinding: vitest.fn(),
         setNonCachedServiceNode: vitest.fn(),
         setPlan: vitest.fn(),
+        subscribeActivationAddedOnce: vitest.fn(),
       },
     } as Partial<
       Mocked<PlanParamsOperationsManager>

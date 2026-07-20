@@ -167,11 +167,7 @@ function curryBuildInstancePlanBindingNode(
     );
 
     const childNode: InstanceBindingNode =
-      new InstanceBindingNodeImplementation(
-        binding,
-        classMetadata,
-        params.jitEnabled,
-      );
+      new InstanceBindingNodeImplementation(binding, classMetadata, params);
 
     const subplanParams: SubplanParams = {
       autobindOptions: params.autobindOptions,

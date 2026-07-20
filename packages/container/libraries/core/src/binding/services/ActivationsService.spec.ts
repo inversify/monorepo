@@ -16,6 +16,7 @@ vitest.mock(import('../../common/calculations/chain.js'));
 
 import { chain } from '../../common/calculations/chain.js';
 import { OneToManyMapStar } from '../../common/models/OneToManyMapStar.js';
+import { type ActivationSubscriber } from '../models/ActivationSubscriber.js';
 import { type BindingActivation } from '../models/BindingActivation.js';
 import {
   ActivationsService,
@@ -273,6 +274,202 @@ describe(ActivationsService, () => {
 
       it('should return undefined', () => {
         expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe('.subscribeOnce', () => {
+    describe('when called', () => {
+      let serviceIdentifierFixture: ServiceIdentifier;
+      let subscriberMock: Mocked<ActivationSubscriber>;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        serviceIdentifierFixture = 'subscribe-once-service-id';
+        subscriberMock = {
+          onActivationAdded: vitest.fn(),
+        };
+
+        result = activationsService.subscribeOnce(
+          serviceIdentifierFixture,
+          subscriberMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+
+    describe('when called, and activationsService.add() is called for the same serviceId', () => {
+      let serviceIdentifierFixture: ServiceIdentifier;
+      let activationFixture: BindingActivation;
+      let relationFixture: BindingActivationRelation;
+      let subscriberMock: Mocked<ActivationSubscriber>;
+
+      beforeAll(() => {
+        serviceIdentifierFixture = 'subscribe-once-same-service-id';
+        activationFixture = () => undefined;
+        relationFixture = {
+          serviceId: serviceIdentifierFixture,
+        };
+        subscriberMock = {
+          onActivationAdded: vitest.fn(),
+        };
+
+        activationsService.subscribeOnce(
+          serviceIdentifierFixture,
+          subscriberMock,
+        );
+        activationsService.add(activationFixture, relationFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call subscriber.onActivationAdded()', () => {
+        expect(
+          subscriberMock.onActivationAdded,
+        ).toHaveBeenCalledExactlyOnceWith(
+          serviceIdentifierFixture,
+          activationFixture,
+        );
+      });
+    });
+
+    describe('when called, and activationsService.add() is called twice for the same serviceId', () => {
+      let serviceIdentifierFixture: ServiceIdentifier;
+      let firstActivationFixture: BindingActivation;
+      let secondActivationFixture: BindingActivation;
+      let firstRelationFixture: BindingActivationRelation;
+      let secondRelationFixture: BindingActivationRelation;
+      let subscriberMock: Mocked<ActivationSubscriber>;
+
+      beforeAll(() => {
+        serviceIdentifierFixture = 'subscribe-once-twice-service-id';
+        firstActivationFixture = () => undefined;
+        secondActivationFixture = () => undefined;
+        firstRelationFixture = {
+          serviceId: serviceIdentifierFixture,
+        };
+        secondRelationFixture = {
+          serviceId: serviceIdentifierFixture,
+        };
+        subscriberMock = {
+          onActivationAdded: vitest.fn(),
+        };
+
+        activationsService.subscribeOnce(
+          serviceIdentifierFixture,
+          subscriberMock,
+        );
+        activationsService.add(firstActivationFixture, firstRelationFixture);
+        activationsService.add(secondActivationFixture, secondRelationFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call subscriber.onActivationAdded() once', () => {
+        expect(
+          subscriberMock.onActivationAdded,
+        ).toHaveBeenCalledExactlyOnceWith(
+          serviceIdentifierFixture,
+          firstActivationFixture,
+        );
+      });
+    });
+
+    describe('when called, and activationsService.add() is called for a different serviceId', () => {
+      let serviceIdentifierFixture: ServiceIdentifier;
+      let activationFixture: BindingActivation;
+      let relationFixture: BindingActivationRelation;
+      let subscriberMock: Mocked<ActivationSubscriber>;
+
+      beforeAll(() => {
+        serviceIdentifierFixture = 'subscribe-once-different-service-id';
+        activationFixture = () => undefined;
+        relationFixture = {
+          serviceId: 'other-service-id',
+        };
+        subscriberMock = {
+          onActivationAdded: vitest.fn(),
+        };
+
+        activationsService.subscribeOnce(
+          serviceIdentifierFixture,
+          subscriberMock,
+        );
+        activationsService.add(activationFixture, relationFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should not call subscriber.onActivationAdded()', () => {
+        expect(subscriberMock.onActivationAdded).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('when called twice with different subscribers, and activationsService.add() is called for the same serviceId', () => {
+      let serviceIdentifierFixture: ServiceIdentifier;
+      let activationFixture: BindingActivation;
+      let relationFixture: BindingActivationRelation;
+      let firstSubscriberMock: Mocked<ActivationSubscriber>;
+      let secondSubscriberMock: Mocked<ActivationSubscriber>;
+
+      beforeAll(() => {
+        serviceIdentifierFixture = 'subscribe-once-multiple-subscribers-id';
+        activationFixture = () => undefined;
+        relationFixture = {
+          serviceId: serviceIdentifierFixture,
+        };
+        firstSubscriberMock = {
+          onActivationAdded: vitest.fn(),
+        };
+        secondSubscriberMock = {
+          onActivationAdded: vitest.fn(),
+        };
+
+        activationsService.subscribeOnce(
+          serviceIdentifierFixture,
+          firstSubscriberMock,
+        );
+        activationsService.subscribeOnce(
+          serviceIdentifierFixture,
+          secondSubscriberMock,
+        );
+        activationsService.add(activationFixture, relationFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call firstSubscriber.onActivationAdded()', () => {
+        expect(
+          firstSubscriberMock.onActivationAdded,
+        ).toHaveBeenCalledExactlyOnceWith(
+          serviceIdentifierFixture,
+          activationFixture,
+        );
+      });
+
+      it('should call secondSubscriber.onActivationAdded()', () => {
+        expect(
+          secondSubscriberMock.onActivationAdded,
+        ).toHaveBeenCalledExactlyOnceWith(
+          serviceIdentifierFixture,
+          activationFixture,
+        );
       });
     });
   });
