@@ -192,3 +192,11 @@ Docusaurus-based documentation sites:
 - Use `workspace:*` protocol for internal dependencies
 - Run `pnpm install` after adding new dependencies
 - Check `knip` output for unused dependencies: `pnpm run unused`
+
+## Cursor Cloud specific instructions
+
+- **Node version gotcha (important):** the default `node` on the PATH is `/exec-daemon/node` (v22), which is re-prepended after `~/.bashrc`/`nvm` run, so `nvm use` and `.bashrc` edits do NOT change what bare `node`/`pnpm` resolve to. The repo pins Node `24.18.0` (`.nvmrc`), which is installed via nvm. Select it per-command by prepending PATH: `export PATH="$HOME/.nvm/versions/node/v24.18.0/bin:$PATH"`. The startup update script already does this before `pnpm install`. Run/build/test commands under Node 24 too, because native modules (`lmdb`, `better-sqlite3`, `@swc/core`, `sharp`) are compiled against the install-time ABI — mixing Node 22 and 24 causes native module load errors.
+- Standard build/lint/test/format commands live in the root `package.json` and this file's "Build and Test Commands" section (`pnpm run build`, `pnpm run lint`, `pnpm test`, `pnpm run test:e2e`). Turbo caches results, so re-runs are fast.
+- This is a library monorepo — there is no long-running backend/database to boot for end-to-end validation; `build` + `test` + `test:e2e` are the primary verification.
+- Runnable example app for manual verification: `@inversifyjs/http-openapi-example` (Express + InversifyJS DI + OpenAPI). Build it first, then serve on port 3000: `pnpm run --filter "@inversifyjs/http-openapi-example" build` then `pnpm run --filter "@inversifyjs/http-openapi-example" serve`. Swagger UI is at `http://localhost:3000/docs`; `POST /users` (body `{"email","name","surname"}`) creates a user (persisted via LMDB) and returns it with a generated `id`.
+- Optional Docusaurus docs sites (`packages/docs/services/*`) run via their `start` scripts (ports 3000 / 3001); not required for verifying the libraries.
