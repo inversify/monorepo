@@ -9,6 +9,8 @@ function getConfiguration(parallel) {
   const config = {
     ...getBaseConfiguration(parallel),
     require: [
+      // Must run before decorated support code (Cucumber 13.1+ no longer loads it).
+      'src/app/setup/reflectMetadata.ts',
       'src/*/parameters/*.ts',
       'src/*/step-definitions/*.ts',
       'src/app/hooks/*.ts',

@@ -55,6 +55,7 @@ export default {
         "src/*/parameters/*.ts",
         "src/*/step-definitions/*.ts",
         "src/app/hooks/*.ts",
+        "src/app/setup/*.ts",
       ],
       ignoreDependencies: [
         ...defaultWorkspaceProjectConfig.ignoreDependencies,

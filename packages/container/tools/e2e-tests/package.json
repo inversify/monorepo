@@ -8,7 +8,8 @@
     "@cucumber/cucumber": "13.1.1",
     "@inversifyjs/common": "workspace:*",
     "@inversifyjs/container": "workspace:*",
-    "@inversifyjs/core": "workspace:*"
+    "@inversifyjs/core": "workspace:*",
+    "reflect-metadata": "0.2.2"
   },
   "devDependencies": {
     "@types/node": "24.13.3",
