@@ -35,7 +35,6 @@ export class InstanceBindingNodeImplementation<
         newResolver: (params: ResolutionParams) => Resolved<TActivated>,
       ) => void)[]
     | undefined;
-  #resolveImpl: (params: ResolutionParams) => Resolved<TActivated>;
 
   constructor(
     public readonly binding: InstanceBinding<TActivated>,
@@ -52,13 +51,11 @@ export class InstanceBindingNodeImplementation<
 
     this.#onResolverChangedHandlers = undefined;
 
-    this.#resolveImpl = buildInstanceBindingNodeResolver(
+    this.resolve = buildInstanceBindingNodeResolver(
       this,
       areServiceActivations,
       this.#jitEnabled,
     );
-
-    this.resolve = this.#resolveImpl;
 
     if (!areServiceActivations) {
       params.operations.subscribeActivationAddedOnce(
@@ -69,7 +66,7 @@ export class InstanceBindingNodeImplementation<
   }
 
   public onActivationAdded(): void {
-    this.#resolveImpl = buildInstanceBindingNodeResolver(
+    this.resolve = buildInstanceBindingNodeResolver(
       this,
       true,
       this.#jitEnabled,
@@ -77,7 +74,7 @@ export class InstanceBindingNodeImplementation<
 
     if (this.#onResolverChangedHandlers !== undefined) {
       for (const handler of this.#onResolverChangedHandlers) {
-        handler(this.#resolveImpl);
+        handler(this.resolve);
       }
     }
   }
