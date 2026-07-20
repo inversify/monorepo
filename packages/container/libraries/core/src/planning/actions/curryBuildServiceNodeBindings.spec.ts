@@ -9,6 +9,10 @@ import {
   vitest,
 } from 'vitest';
 
+vitest.mock(import('../models/InstanceBindingNodeImplementation.js'));
+
+import { type Newable } from '@inversifyjs/common';
+
 import { InstanceBindingFixtures } from '../../binding/fixtures/InstanceBindingFixtures.js';
 import { ResolvedValueBindingFixtures } from '../../binding/fixtures/ResolvedValueBindingFixtures.js';
 import { ServiceRedirectionBindingFixtures } from '../../binding/fixtures/ServiceRedirectionBindingFixtures.js';
@@ -20,9 +24,13 @@ import { type ServiceRedirectionBinding } from '../../binding/models/ServiceRedi
 import { SingleImmutableLinkedList } from '../../common/models/SingleImmutableLinkedList.js';
 import { ClassMetadataFixtures } from '../../metadata/fixtures/ClassMetadataFixtures.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
+import { type Resolved } from '../../resolution/models/Resolved.js';
 import { PlanMultipleBindingServiceNodeFixtures } from '../fixtures/PlanMultipleBindingServiceNodeFixtures.js';
 import { type BasePlanParams } from '../models/BasePlanParams.js';
 import { type BuildServiceNodeOptions } from '../models/BuildServiceNodeOptions.js';
+import { type ConstructorNoParamNode } from '../models/ConstructorNoParamNode.js';
+import { InstanceBindingNodeImplementation } from '../models/InstanceBindingNodeImplementation.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
 import { type PlanParamsOperations } from '../models/PlanParamsOperations.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
@@ -31,6 +39,10 @@ import { type SubplanParams } from '../models/SubplanParams.js';
 import { curryBuildServiceNodeBindings } from './curryBuildServiceNodeBindings.js';
 
 describe(curryBuildServiceNodeBindings, () => {
+  let instanceBindingNodeImplementationClassMock: Newable<
+    Mocked<InstanceBindingNodeImplementation>
+  >;
+
   let subplanMock: Mock<
     (
       params: SubplanParams,
@@ -39,7 +51,34 @@ describe(curryBuildServiceNodeBindings, () => {
   >;
 
   beforeAll(() => {
+    instanceBindingNodeImplementationClassMock = class<
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      TActivated = any,
+    > implements Partial<Mocked<InstanceBindingNodeImplementation>> {
+      public readonly constructorParams: (
+        PlanServiceNode | ConstructorNoParamNode
+      )[];
+      public readonly propertyParams: Map<string | symbol, PlanServiceNode>;
+      public resolve: Mock<(params: ResolutionParams) => Resolved<TActivated>>;
+
+      constructor(
+        public readonly binding: InstanceBinding<TActivated>,
+        public readonly classMetadata: ClassMetadata,
+        _params: BasePlanParams,
+      ) {
+        this.constructorParams = [];
+        this.propertyParams = new Map();
+        this.resolve = vitest.fn();
+      }
+    } as Newable<Partial<Mocked<InstanceBindingNodeImplementation>>> as Newable<
+      Mocked<InstanceBindingNodeImplementation>
+    >;
+
     subplanMock = vitest.fn();
+
+    vitest
+      .mocked(InstanceBindingNodeImplementation)
+      .mockImplementation(instanceBindingNodeImplementationClassMock);
   });
 
   describe('having serviceBindings with InstanceBinding and PlanServiceNode parent node', () => {
@@ -125,13 +164,13 @@ describe(curryBuildServiceNodeBindings, () => {
         const expectedSubplanParams: SubplanParams = {
           autobindOptions: basePlanParamsMock.autobindOptions,
           jitEnabled: true,
-          node: {
+          node: expect.objectContaining({
             binding: instanceBindingFixture,
             classMetadata: classMetadataFixture,
             constructorParams: [],
             propertyParams: new Map(),
             resolve: expect.any(Function),
-          },
+          }),
           operations: basePlanParamsMock.operations,
           servicesBranch: basePlanParamsMock.servicesBranch,
         };
