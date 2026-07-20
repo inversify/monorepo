@@ -32,7 +32,7 @@ allowBuilds:
   msgpackr-extract: false
 minimumReleaseAge: 1440
 overrides:
-  postcss: 8.5.16
+  postcss: 8.5.19
 packageExtensions:
   "@docusaurus/theme-search-algolia@*":
     peerDependencies:

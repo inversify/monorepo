@@ -13,7 +13,7 @@
     "awilix": "13.0.5",
     "inversify6": "npm:inversify@6.2.2",
     "inversify7": "npm:inversify@7.11.0",
-    "inversify8": "npm:inversify@8.1.2",
+    "inversify8": "npm:inversify@8.2.1",
     "rxjs": "7.8.2",
     "tinybench": "6.0.2",
     "tsyringe": "4.10.0"
@@ -21,7 +21,7 @@
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@types/node": "^24.13.3",
-    "eslint": "10.6.0",
+    "eslint": "10.7.0",
     "prettier": "3.9.5",
     "rimraf": "6.1.3",
     "typescript": "6.0.3"

@@ -13,7 +13,7 @@
     "swagger-ui-dist": "^5.32.8"
   },
   "devDependencies": {
-    "@hono/node-server": "2.0.8",
+    "@hono/node-server": "2.0.10",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-express-v4": "workspace:*",
@@ -30,11 +30,11 @@
     "@types/node": "24.13.3",
     "@types/swagger-ui-dist": "3.30.6",
     "@vitest/coverage-v8": "4.1.10",
-    "eslint": "10.6.0",
+    "eslint": "10.7.0",
     "express": "5.2.1",
     "express4": "npm:express@4.22.2",
     "fastify": "5.10.0",
-    "hono": "4.12.28",
+    "hono": "4.12.30",
     "prettier": "3.9.5",
     "rimraf": "6.1.3",
     "typescript": "6.0.3",
@@ -63,7 +63,7 @@
   },
   "name": "@inversifyjs/http-open-api",
   "peerDependencies": {
-    "inversify": "^8.1.2"
+    "inversify": "^8.2.1"
   },
   "publishConfig": {
     "access": "public"
