@@ -38,6 +38,7 @@ const resolveScopedInstanceBindingNode: <TActivated>(
 
 export function buildInstanceBindingNodeResolver<TActivated>(
   node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+  areServiceActivations: boolean,
   jitEnabled: boolean,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   if (
@@ -45,9 +46,15 @@ export function buildInstanceBindingNodeResolver<TActivated>(
     node.binding.onActivation === undefined
   ) {
     if (jitEnabled) {
-      return buildNoActivationsInstanceBindingNodeResolver(node);
+      return buildNoActivationsInstanceBindingNodeResolver(
+        node,
+        areServiceActivations,
+      );
     } else {
-      return buildNoActivationsInstanceBindingNodeResolverOnCsp(node);
+      return buildNoActivationsInstanceBindingNodeResolverOnCsp(
+        node,
+        areServiceActivations,
+      );
     }
   }
 

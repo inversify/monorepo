@@ -1,17 +1,17 @@
 ---
-slug: announcing-inversify-8-2-0
-title: Announcing InversifyJS 8.2.0
+slug: announcing-inversify-8-2
+title: Announcing InversifyJS 8.2
 authors: [notaphplover]
 tags: [releases]
 ---
 
-We're happy to announce **InversifyJS 8.2.0**, a release focused on making the container work reliably in environments that enforce a strict Content Security Policy (CSP).
+We're happy to announce **InversifyJS 8.2**, a release focused on making the container work reliably in environments that enforce a strict Content Security Policy (CSP).
 
 {/* truncate */}
 
 ## The problem
 
-InversifyJS has long used just-in-time (JIT) resolution optimizations that generate specialized resolver functions at runtime via the `Function` constructor. This approach keeps constructor call sites monomorphic in V8 and delivers strong performance, especially when resolving complex transient object graphs.
+InversifyJS has used just-in-time (JIT) resolution optimizations that generate specialized resolver functions at runtime via the `Function` constructor. This approach keeps constructor call sites monomorphic in V8 and delivers strong performance, especially when resolving complex transient object graphs.
 
 The trade-off is that `Function` constructor usage requires `unsafe-eval` (or an equivalent CSP trusted-types allowance). In browser extensions, embedded web views, and other CSP-restricted environments, that can cause resolution to fail at runtime with errors like:
 
@@ -21,7 +21,7 @@ EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is n
 
 ## The `jitless` option
 
-InversifyJS 8.2.0 introduces a new container option:
+InversifyJS 8.2 introduces a new container option:
 
 ```ts
 const container = new Container({ jitless: true });
@@ -29,7 +29,7 @@ const container = new Container({ jitless: true });
 
 When `jitless` is `true`, the container uses CSP-compatible resolution paths built from plain closures instead of dynamically generated functions. The behavior is the same — constructor injection, property injection, activations, scopes, and async resolution all continue to work — but without relying on `unsafe-eval`.
 
-**`jitless` defaults to `true` in 8.2.0**, so existing applications that upgrade without changing their container options will automatically use the CSP-safe path. If your environment allows `unsafe-eval` and you want the previous JIT performance profile, opt in explicitly:
+**`jitless` defaults to `true` in 8.2**, so existing applications that upgrade without changing their container options will automatically use the CSP-safe path. If your environment allows `unsafe-eval` and you want the previous JIT performance profile, opt in explicitly:
 
 ```ts
 const container = new Container({ jitless: false });
@@ -76,4 +76,4 @@ If your application does not run under CSP restrictions and resolves large trans
 - **CSP-restricted environments**: InversifyJS should now work without relaxing your content security policy.
 - **Performance-sensitive, non-CSP environments**: Pass `{ jitless: false }` to the container constructor to restore the JIT resolution path from previous releases.
 
-Thanks for trying out InversifyJS 8.2.0, and please let us know if you run into any issues.
+Thanks for trying out InversifyJS 8.2, and please let us know if you run into any issues.

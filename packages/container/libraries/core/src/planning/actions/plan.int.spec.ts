@@ -473,6 +473,7 @@ describe(plan, () => {
             autobindOptions: undefined,
             jitEnabled: true,
             operations: {
+              getActivations: () => undefined,
               getBindings: bindingService.get.bind(bindingService),
               getBindingsChained:
                 bindingService.getChained.bind(bindingService),
@@ -484,6 +485,7 @@ describe(plan, () => {
                   planResultCacheService,
                 ),
               setPlan: planResultCacheService.set.bind(planResultCacheService),
+              subscribeActivationAddedOnce: () => undefined,
             },
             rootConstraints: planParamsConstraint,
             servicesBranch: [],
@@ -548,6 +550,7 @@ Binding constraints:
               autobindOptions: undefined,
               jitEnabled: true,
               operations: {
+                getActivations: () => undefined,
                 getBindings: bindingService.get.bind(bindingService),
                 getBindingsChained:
                   bindingService.getChained.bind(bindingService),
@@ -563,6 +566,7 @@ Binding constraints:
                 setPlan: planResultCacheService.set.bind(
                   planResultCacheService,
                 ),
+                subscribeActivationAddedOnce: () => undefined,
               },
               rootConstraints: planParamsConstraint,
               servicesBranch: [],

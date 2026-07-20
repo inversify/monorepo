@@ -1,6 +1,8 @@
 import { type ServiceIdentifier } from '@inversifyjs/common';
 
+import { type Binding } from '../../binding/models/Binding.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
+import { isDynamicallyResolvableBindingNode } from '../calculations/isDynamicallyResolvableBindingNode.js';
 import { type PlanBindingNode } from './PlanBindingNode.js';
 import { type PlanServiceNode } from './PlanServiceNode.js';
 
@@ -41,6 +43,25 @@ export class PlanSingleBindingServiceNodeImplementation implements PlanServiceNo
       this.resolve = Object.hasOwn(value, RESOLVE_KEY)
         ? value.resolve
         : value.resolve.bind(value);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (isDynamicallyResolvableBindingNode<any, Binding<any>>(value)) {
+        // Weak reference to avoid memory leaks. A strong reference would prevent the service node from being garbage collected.
+
+        const serviceNodeWeakReference: WeakRef<PlanSingleBindingServiceNodeImplementation> =
+          new WeakRef<PlanSingleBindingServiceNodeImplementation>(this);
+
+        value.addOnResolverChangedHandler(
+          (newResolver: (params: ResolutionParams) => unknown) => {
+            const serviceNode:
+              PlanSingleBindingServiceNodeImplementation | undefined =
+              serviceNodeWeakReference.deref();
+            if (serviceNode !== undefined) {
+              serviceNode.resolve = newResolver;
+            }
+          },
+        );
+      }
     }
   }
 }

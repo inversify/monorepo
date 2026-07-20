@@ -295,6 +295,54 @@ describe(Container, () => {
           );
         },
       );
+
+      describe('with activation added after binding', () => {
+        it.each(
+          buildResolutionCases(bindSyncDependencies, bindAsyncDependencies),
+        )(
+          'should activate a $description binding when called, and a service activation is added after the plan is cached',
+          async ({
+            kind,
+            bindDependencies,
+            resolveService,
+          }: ResolutionCase) => {
+            const container: Container = new Container({
+              jitless,
+            });
+
+            bindDependencies(container);
+
+            const serviceIdentifier: ServiceIdentifier<ArgsCapturingInstance> =
+              bindService(
+                container,
+                kind,
+                dependencyIds,
+                resolvedValueServiceId,
+                {
+                  description: 'without a binding or a service activation',
+                  useBindingActivation: false,
+                  useServiceActivation: false,
+                },
+              );
+
+            const instanceBeforeActivation: ArgsCapturingInstance =
+              await resolveService(container, serviceIdentifier);
+
+            expect(instanceBeforeActivation.args).toStrictEqual(expectedArgs);
+            expect(instanceBeforeActivation.activatedByBinding).toBe(false);
+            expect(instanceBeforeActivation.activatedByService).toBe(false);
+
+            container.onActivation(serviceIdentifier, buildServiceActivation());
+
+            const instanceAfterActivation: ArgsCapturingInstance =
+              await resolveService(container, serviceIdentifier);
+
+            expect(instanceAfterActivation.args).toStrictEqual(expectedArgs);
+            expect(instanceAfterActivation.activatedByBinding).toBe(false);
+            expect(instanceAfterActivation.activatedByService).toBe(true);
+          },
+        );
+      });
     },
   );
 
