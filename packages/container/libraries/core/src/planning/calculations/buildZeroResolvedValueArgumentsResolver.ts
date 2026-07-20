@@ -6,12 +6,28 @@ import { getGeneratedResolverId } from './getGeneratedResolverId.js';
 
 export function buildZeroResolvedValueArgumentsResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  resolveActivations: (
+  resolveActivations?: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   const id: string = getGeneratedResolverId().toString();
+
+  if (resolveActivations === undefined) {
+    const buildResolveNode: (
+      boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
+      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
+      `node$${id}`,
+      `return function resolveNode$${id}(params$${id}) {
+      return node$${id}.binding.factory();
+    };`,
+    ) as (
+      node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
+    ) => (params: ResolutionParams) => Resolved<TActivated>;
+
+    return buildResolveNode(node);
+  }
 
   const buildResolveNode: (
     boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,

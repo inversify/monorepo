@@ -15,11 +15,34 @@ import { resolveTwo } from './resolveTwo.js';
  */
 export function buildTwoResolvedValueArgumentResolverOnCsp<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  resolveActivations: (
+  resolveActivations?: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
+  if (resolveActivations === undefined) {
+    return function resolveNode(
+      params: ResolutionParams,
+    ): Resolved<TActivated> {
+      const resolvedValue0: unknown = (
+        node.params[0] as PlanServiceNode
+      ).resolve(params);
+      const resolvedValue1: unknown = (
+        node.params[1] as PlanServiceNode
+      ).resolve(params);
+
+      return resolveTwo(
+        resolvedValue0,
+        resolvedValue1,
+        (
+          resolvedValue0: unknown,
+          resolvedValue1: unknown,
+        ): Resolved<TActivated> =>
+          node.binding.factory(resolvedValue0, resolvedValue1),
+      );
+    };
+  }
+
   return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
     const resolvedValue0: unknown = (node.params[0] as PlanServiceNode).resolve(
       params,

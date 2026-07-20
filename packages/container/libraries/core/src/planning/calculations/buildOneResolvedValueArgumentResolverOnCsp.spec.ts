@@ -28,7 +28,53 @@ class TestFixtures {
 }
 
 describe(buildOneResolvedValueArgumentResolverOnCsp, () => {
-  describe('having a resolved value binding node', () => {
+  describe('when called, and resolveActivations is not provided', () => {
+    describe('when called, and node.params is populated after the resolver is built', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        const nodeFixture: ResolvedValueBindingNode<
+          ResolvedValueBinding<string>
+        > = TestFixtures.node;
+        const resolveNode: (params: ResolutionParams) => Resolved<string> =
+          buildOneResolvedValueArgumentResolverOnCsp(nodeFixture);
+
+        nodeFixture.params.push({
+          resolve: (): string => 'value-0',
+        } as Partial<PlanServiceNode> as PlanServiceNode);
+
+        result = resolveNode(TestFixtures.params);
+      });
+
+      it('should call the factory with the resolved argument', () => {
+        expect(result).toBe('factory:value-0');
+      });
+    });
+
+    describe('when called, and the argument resolves asynchronously', () => {
+      let result: unknown;
+
+      beforeAll(async () => {
+        const nodeFixture: ResolvedValueBindingNode<
+          ResolvedValueBinding<string>
+        > = TestFixtures.node;
+        const resolveNode: (params: ResolutionParams) => Resolved<string> =
+          buildOneResolvedValueArgumentResolverOnCsp(nodeFixture);
+
+        nodeFixture.params.push({
+          resolve: async (): Promise<string> => 'value-0',
+        } as Partial<PlanServiceNode> as PlanServiceNode);
+
+        result = await resolveNode(TestFixtures.params);
+      });
+
+      it('should call the factory with the resolved argument', () => {
+        expect(result).toBe('factory:value-0');
+      });
+    });
+  });
+
+  describe('when called, and resolveActivations is provided', () => {
     describe('when called, and node.params is populated after the resolver is built', () => {
       let result: unknown;
 

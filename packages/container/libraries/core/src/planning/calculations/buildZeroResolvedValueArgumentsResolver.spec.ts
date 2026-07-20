@@ -31,7 +31,28 @@ class TestFixtures {
 }
 
 describe(buildZeroResolvedValueArgumentsResolver, () => {
-  describe('having a resolved value binding node and an activation resolver', () => {
+  describe('when called, and resolveActivations is not provided', () => {
+    let expectedResult: object;
+
+    let result: unknown;
+
+    beforeAll(() => {
+      expectedResult = TestFixtures.resolvedValue;
+
+      const resolveNode: (params: ResolutionParams) => Resolved<object> =
+        buildZeroResolvedValueArgumentsResolver(
+          TestFixtures.node((): object => expectedResult),
+        );
+
+      result = resolveNode(TestFixtures.params);
+    });
+
+    it('should return the factory result', () => {
+      expect(result).toBe(expectedResult);
+    });
+  });
+
+  describe('when called, and resolveActivations is provided', () => {
     describe('when called', () => {
       let expectedResult: object;
       let paramsFixture: ResolutionParams;

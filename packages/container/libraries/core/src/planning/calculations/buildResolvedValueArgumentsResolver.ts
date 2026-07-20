@@ -6,12 +6,12 @@ import { getGeneratedResolverId } from './getGeneratedResolverId.js';
 
 export function buildResolvedValueArgumentsResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-  resolveActivations: (
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  resolveAsyncValues: Function,
+  resolveActivations?: (
     params: ResolutionParams,
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  resolveAsyncValues: Function,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   const id: string = getGeneratedResolverId().toString();
   const argumentIndexes: number[] = Array.from(
@@ -25,6 +25,34 @@ export function buildResolvedValueArgumentsResolver<TActivated>(
 
   for (const index of argumentIndexes) {
     resolvedValueDeclarations += `const value$${index.toString()} = node$${id}.params[${index.toString()}].resolve(params$${id});\n`;
+  }
+
+  if (resolveActivations === undefined) {
+    const buildResolveNode: (
+      boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+      resolveAsyncValues: Function,
+      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
+      `node$${id}`,
+      `resolveAsyncValues$${id}`,
+      `return function resolveNode$${id}(params$${id}) {
+  ${resolvedValueDeclarations}
+
+  return resolveAsyncValues$${id}(
+    ${resolvedValueConcatenation},
+    function (${resolvedValueConcatenation}) {
+      return node$${id}.binding.factory(${resolvedValueConcatenation});
+    },
+  );
+}`,
+    ) as (
+      node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+      resolveAsyncValues: Function,
+    ) => (params: ResolutionParams) => Resolved<TActivated>;
+
+    return buildResolveNode(node, resolveAsyncValues);
   }
 
   const buildResolveNode: (
