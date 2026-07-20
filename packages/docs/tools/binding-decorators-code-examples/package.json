@@ -6,14 +6,14 @@
   "description": "InversifyJs binding decorators docs code examples package",
   "dependencies": {
     "@inversifyjs/binding-decorators": "workspace:*",
-    "inversify": "^8.1.2"
+    "inversify": "^8.2.1"
   },
   "devDependencies": {
     "@inversifyjs/code-examples-devkit": "workspace:*",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@types/node": "24.13.3",
     "@vitest/coverage-v8": "4.1.10",
-    "eslint": "10.6.0",
+    "eslint": "10.7.0",
     "glob": "13.0.6",
     "prettier": "3.9.5",
     "rimraf": "6.1.3",
