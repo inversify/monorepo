@@ -109,9 +109,10 @@
     },
     {
       "description": "Regenerate OpenSpec instruction files after @fission-ai/openspec is bumped",
+      "groupName": "openspec",
       "matchPackageNames": ["@fission-ai/openspec"],
       "postUpgradeTasks": {
-        "commands": ["pnpm dlx @fission-ai/openspec update"],
+        "commands": ["pnpm dlx @fission-ai/openspec update --force"],
         "executionMode": "branch",
         "fileFilters": ["**/skills/**"],
         "installTools": {
