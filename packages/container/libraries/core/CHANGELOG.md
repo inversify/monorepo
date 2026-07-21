@@ -1,5 +1,11 @@
 # @inversifyjs/core
 
+## 15.0.0
+
+### Major Changes
+
+- Updated `PlanParamsOperations` with `getActivations`.
+
 ## 14.0.0
 
 ### Major Changes

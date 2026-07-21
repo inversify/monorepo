@@ -1,5 +1,14 @@
 # @inversifyjs/container
 
+## 3.1.2
+
+### Patch Changes
+
+- Updated `PlanParamsOperations` with `getActivations`.
+- Updated dependencies
+  - @inversifyjs/core@15.0.0
+  - @inversifyjs/plugin@0.3.1
+
 ## 3.1.1
 
 ### Patch Changes
