@@ -25,6 +25,27 @@ export class ResolvedValueBindingFixtures {
     };
   }
 
+  public static get withScopeSingleton(): ResolvedValueBinding<unknown> {
+    return {
+      ...ResolvedValueBindingFixtures.any,
+      scope: bindingScopeValues.Singleton,
+    };
+  }
+
+  public static get withScopeTransient(): ResolvedValueBinding<unknown> {
+    return {
+      ...ResolvedValueBindingFixtures.any,
+      scope: bindingScopeValues.Transient,
+    };
+  }
+
+  public static get withOnActivation(): ResolvedValueBinding<unknown> {
+    return {
+      ...ResolvedValueBindingFixtures.any,
+      onActivation: () => undefined,
+    };
+  }
+
   public static get withSingleInjectionMetadata(): ResolvedValueBinding<unknown> {
     return {
       ...ResolvedValueBindingFixtures.any,
