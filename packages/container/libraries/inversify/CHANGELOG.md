@@ -1,5 +1,13 @@
 # inversify
 
+## 8.2.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/core@15.0.0
+  - @inversifyjs/container@3.1.2
+
 ## 8.2.1
 
 ### Patch Changes
