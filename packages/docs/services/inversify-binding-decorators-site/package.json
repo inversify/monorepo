@@ -24,7 +24,7 @@
     "eslint-plugin-prettier": "5.5.6",
     "eslint-plugin-simple-import-sort": "14.0.0",
     "prettier": "3.9.5",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "typescript-eslint": "8.64.0"
   },
   "homepage": "https://inversify.io",
