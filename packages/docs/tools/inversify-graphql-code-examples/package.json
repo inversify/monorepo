@@ -13,7 +13,7 @@
     "@inversifyjs/http-express": "5.4.5",
     "@apollo/server": "5.5.1",
     "@apollo/subgraph": "2.14.2",
-    "@graphql-tools/utils": "11.2.0",
+    "@graphql-tools/utils": "11.2.2",
     "@types/express": "5.0.6",
     "@types/node": "24.13.3",
     "@vitest/coverage-v8": "4.1.10",
