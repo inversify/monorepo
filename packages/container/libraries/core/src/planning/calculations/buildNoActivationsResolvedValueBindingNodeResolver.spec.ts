@@ -362,20 +362,15 @@ describe(buildNoActivationsResolvedValueBindingNodeResolver, () => {
 
         vitest
           .mocked(resolveScopedWithNoActivations)
-          .mockImplementationOnce(
-            (
-              _binding: ResolvedValueBinding<unknown>,
-              resolve: (params: ResolutionParams) => Resolved<unknown>,
-            ): ((params: ResolutionParams) => Resolved<unknown>) => {
-              resolveNode = resolve;
-              return scopedResolveFixture;
-            },
-          );
+          .mockReturnValueOnce(scopedResolveFixture);
 
         result = buildNoActivationsResolvedValueBindingNodeResolver(
           nodeFixture,
           areServiceActivationsFixture,
         );
+
+        resolveNode = vitest.mocked(resolveScopedWithNoActivations).mock
+          .calls[0]?.[1] as (params: ResolutionParams) => Resolved<unknown>;
       });
 
       afterAll(() => {
@@ -465,20 +460,15 @@ describe(buildNoActivationsResolvedValueBindingNodeResolver, () => {
           .mockReturnValueOnce(resolveActivationsFixture);
         vitest
           .mocked(resolveScopedWithNoActivations)
-          .mockImplementationOnce(
-            (
-              _binding: ResolvedValueBinding<unknown>,
-              resolve: (params: ResolutionParams) => Resolved<unknown>,
-            ): ((params: ResolutionParams) => Resolved<unknown>) => {
-              resolveNode = resolve;
-              return scopedResolveFixture;
-            },
-          );
+          .mockReturnValueOnce(scopedResolveFixture);
 
         result = buildNoActivationsResolvedValueBindingNodeResolver(
           nodeFixture,
           areServiceActivationsFixture,
         );
+
+        resolveNode = vitest.mocked(resolveScopedWithNoActivations).mock
+          .calls[0]?.[1] as (params: ResolutionParams) => Resolved<unknown>;
       });
 
       afterAll(() => {
