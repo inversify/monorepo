@@ -1,9 +1,17 @@
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { getGeneratedResolverId } from './getGeneratedResolverId.js';
 
+/**
+ * Same rationale as buildZeroConstructorArgumentsResolver, but for
+ * resolved value bindings with two or more arguments. Equivalent to
+ * `buildResolvedValueArgumentsResolverJit`, but implemented with a plain
+ * closure instead of the `Function` constructor, so it works in
+ * environments enforcing a strict Content Security Policy (no
+ * `unsafe-eval`).
+ */
 export function buildResolvedValueArgumentsResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -13,83 +21,40 @@ export function buildResolvedValueArgumentsResolver<TActivated>(
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  const id: string = getGeneratedResolverId().toString();
-  const argumentIndexes: number[] = Array.from(
-    { length: node.binding.metadata.arguments.length },
-    (_: unknown, index: number) => index,
-  );
-  const resolvedValueConcatenation: string = argumentIndexes
-    .map((index: number) => `value$${index.toString()}`)
-    .join(', ');
-  let resolvedValueDeclarations: string = '';
-
-  for (const index of argumentIndexes) {
-    resolvedValueDeclarations += `const value$${index.toString()} = node$${id}.params[${index.toString()}].resolve(params$${id});\n`;
-  }
+  const argumentsCount: number = node.binding.metadata.arguments.length;
 
   if (resolveActivations === undefined) {
-    const buildResolveNode: (
-      boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-      resolveAsyncValues: Function,
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-    ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
-      `node$${id}`,
-      `resolveAsyncValues$${id}`,
-      `return function resolveNode$${id}(params$${id}) {
-  ${resolvedValueDeclarations}
+    return function resolveNode(
+      params: ResolutionParams,
+    ): Resolved<TActivated> {
+      const values: unknown[] = new Array<unknown>(argumentsCount);
 
-  return resolveAsyncValues$${id}(
-    ${resolvedValueConcatenation},
-    function (${resolvedValueConcatenation}) {
-      return node$${id}.binding.factory(${resolvedValueConcatenation});
-    },
-  );
-}`,
-    ) as (
-      node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-      resolveAsyncValues: Function,
-    ) => (params: ResolutionParams) => Resolved<TActivated>;
+      for (let index: number = 0; index < argumentsCount; index++) {
+        values[index] = (node.params[index] as PlanServiceNode).resolve(params);
+      }
 
-    return buildResolveNode(node, resolveAsyncValues);
+      function build(...resolvedValues: unknown[]): Resolved<TActivated> {
+        return node.binding.factory(...resolvedValues);
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+      return resolveAsyncValues(...values, build);
+    };
   }
 
-  const buildResolveNode: (
-    boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    activate: (
-      params: ResolutionParams,
-      resolvedValue: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    resolveAsyncValues: Function,
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval
-  ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
-    `node$${id}`,
-    `activate$${id}`,
-    `resolveAsyncValues$${id}`,
-    `return function resolveNode$${id}(params$${id}) {
-  ${resolvedValueDeclarations}
+  return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
+    const values: unknown[] = new Array<unknown>(argumentsCount);
 
-  return resolveAsyncValues$${id}(
-    ${resolvedValueConcatenation},
-    function (${resolvedValueConcatenation}) {
-      return activate$${id}(
-        params$${id},
-        node$${id}.binding.factory(${resolvedValueConcatenation}),
-      );
-    },
-  );
-}`,
-  ) as (
-    node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    resolveActivations: (
-      params: ResolutionParams,
-      resolvedValue: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    resolveAsyncValues: Function,
-  ) => (params: ResolutionParams) => Resolved<TActivated>;
+    for (let index: number = 0; index < argumentsCount; index++) {
+      values[index] = (node.params[index] as PlanServiceNode).resolve(params);
+    }
 
-  return buildResolveNode(node, resolveActivations, resolveAsyncValues);
+    const build: (...resolvedValues: unknown[]) => Resolved<TActivated> = (
+      ...resolvedValues: unknown[]
+    ): Resolved<TActivated> =>
+      resolveActivations(params, node.binding.factory(...resolvedValues));
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+    return resolveAsyncValues(...values, build);
+  };
 }

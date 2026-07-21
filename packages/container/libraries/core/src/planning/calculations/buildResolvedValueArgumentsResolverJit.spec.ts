@@ -5,7 +5,7 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { buildResolvedValueArgumentsResolverOnCsp } from './buildResolvedValueArgumentsResolverOnCsp.js';
+import { buildResolvedValueArgumentsResolverJit } from './buildResolvedValueArgumentsResolverJit.js';
 import { resolveFour } from './resolveFour.js';
 import { resolveThree } from './resolveThree.js';
 import { resolveTwo } from './resolveTwo.js';
@@ -33,7 +33,7 @@ class TestFixtures {
   }
 }
 
-describe(buildResolvedValueArgumentsResolverOnCsp, () => {
+describe(buildResolvedValueArgumentsResolverJit, () => {
   describe.each<[string, ResolveAsyncValues, string[]]>([
     ['two', resolveTwo, ['value-0', 'value-1']],
     ['three', resolveThree, ['value-0', 'value-1', 'value-2']],
@@ -55,7 +55,7 @@ describe(buildResolvedValueArgumentsResolverOnCsp, () => {
             > = TestFixtures.node(valueFixtures.length);
             const resolveNode: (
               params: ResolutionParams,
-            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverOnCsp(
+            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverJit(
               nodeFixture,
               resolveAsyncValues,
             );
@@ -86,7 +86,7 @@ describe(buildResolvedValueArgumentsResolverOnCsp, () => {
             > = TestFixtures.node(valueFixtures.length);
             const resolveNode: (
               params: ResolutionParams,
-            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverOnCsp(
+            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverJit(
               nodeFixture,
               resolveAsyncValues,
             );
@@ -119,7 +119,7 @@ describe(buildResolvedValueArgumentsResolverOnCsp, () => {
             > = TestFixtures.node(valueFixtures.length);
             const resolveNode: (
               params: ResolutionParams,
-            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverOnCsp(
+            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverJit(
               nodeFixture,
               resolveAsyncValues,
               (
@@ -154,7 +154,7 @@ describe(buildResolvedValueArgumentsResolverOnCsp, () => {
             > = TestFixtures.node(valueFixtures.length);
             const resolveNode: (
               params: ResolutionParams,
-            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverOnCsp(
+            ) => Resolved<string[]> = buildResolvedValueArgumentsResolverJit(
               nodeFixture,
               resolveAsyncValues,
               (

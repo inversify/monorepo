@@ -1,3 +1,4 @@
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
 import { type bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
 import { resolveInstanceBindingConstructorParams } from '../../resolution/actions/resolveInstanceBindingConstructorParams.js';
@@ -9,7 +10,7 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { buildNoActivationsInstanceBindingNodeResolver } from './buildNoActivationsInstanceBindingNodeResolver.js';
-import { buildNoActivationsInstanceBindingNodeResolverOnCsp } from './buildNoActivationsInstanceBindingNodeResolverOnCsp.js';
+import { buildNoActivationsInstanceBindingNodeResolverJit } from './buildNoActivationsInstanceBindingNodeResolverJit.js';
 
 const resolveInstanceBindingNode: <
   TActivated,
@@ -45,13 +46,13 @@ export function buildInstanceBindingNodeResolver<TActivated>(
     node.classMetadata.lifecycle.postConstructMethodNames.size === 0 &&
     node.binding.onActivation === undefined
   ) {
-    if (jitEnabled) {
-      return buildNoActivationsInstanceBindingNodeResolver(
+    if (jitEnabled && node.binding.scope !== bindingScopeValues.Singleton) {
+      return buildNoActivationsInstanceBindingNodeResolverJit(
         node,
         areServiceActivations,
       );
     } else {
-      return buildNoActivationsInstanceBindingNodeResolverOnCsp(
+      return buildNoActivationsInstanceBindingNodeResolver(
         node,
         areServiceActivations,
       );

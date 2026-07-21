@@ -48,6 +48,9 @@ function buildNodeFixtureForArguments(
   >();
 
   return {
+    binding: {
+      implementationType: Foo,
+    } as Partial<InstanceBinding<Foo>> as InstanceBinding<Foo>,
     classMetadata: {
       constructorArguments: new Array<ClassElementMetadata>(length).fill(
         Symbol() as unknown as ClassElementMetadata,
@@ -100,7 +103,6 @@ describe(buildConstructorArgumentsResolver, () => {
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
               buildConstructorArgumentsResolver(
                 nodeFixture,
-                Foo,
                 resolveAsyncValues,
               );
 
@@ -133,7 +135,6 @@ describe(buildConstructorArgumentsResolver, () => {
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
               buildConstructorArgumentsResolver(
                 nodeFixture,
-                Foo,
                 resolveAsyncValues,
               );
 
@@ -180,7 +181,6 @@ describe(buildConstructorArgumentsResolver, () => {
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
               buildConstructorArgumentsResolver(
                 nodeFixture,
-                Foo,
                 resolveAsyncValues,
                 resolveActivations,
               );
@@ -214,7 +214,6 @@ describe(buildConstructorArgumentsResolver, () => {
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
               buildConstructorArgumentsResolver(
                 nodeFixture,
-                Foo,
                 resolveAsyncValues,
                 resolveActivations,
               );
@@ -246,7 +245,7 @@ describe(buildConstructorArgumentsResolver, () => {
     [
       'two constructor arguments and two properties',
       2,
-      resolveFour,
+      resolveTwo,
       ['value-0', 'value-1'],
       [
         { key: 'propertyA', value: 'property-0' },
@@ -305,7 +304,6 @@ describe(buildConstructorArgumentsResolver, () => {
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
               buildConstructorArgumentsResolver(
                 nodeFixture,
-                Foo,
                 resolveAsyncValues,
               );
 
@@ -349,7 +347,6 @@ describe(buildConstructorArgumentsResolver, () => {
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
               buildConstructorArgumentsResolver(
                 nodeFixture,
-                Foo,
                 resolveAsyncValues,
               );
 
@@ -407,7 +404,6 @@ describe(buildConstructorArgumentsResolver, () => {
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
               buildConstructorArgumentsResolver(
                 nodeFixture,
-                Foo,
                 resolveAsyncValues,
                 resolveActivations,
               );
@@ -452,7 +448,6 @@ describe(buildConstructorArgumentsResolver, () => {
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
               buildConstructorArgumentsResolver(
                 nodeFixture,
-                Foo,
                 resolveAsyncValues,
                 resolveActivations,
               );
@@ -526,6 +521,11 @@ describe(buildConstructorArgumentsResolver, () => {
       ]);
 
       return {
+        binding: {
+          implementationType: FooWithDefaultProperty,
+        } as Partial<
+          InstanceBinding<FooWithDefaultProperty>
+        > as InstanceBinding<FooWithDefaultProperty>,
         classMetadata: {
           constructorArguments: new Array<ClassElementMetadata>(2).fill(
             Symbol() as unknown as ClassElementMetadata,
@@ -564,11 +564,7 @@ describe(buildConstructorArgumentsResolver, () => {
         const resolveNode: (
           params: ResolutionParams,
         ) => Resolved<FooWithDefaultProperty> =
-          buildConstructorArgumentsResolver(
-            nodeFixture,
-            FooWithDefaultProperty,
-            resolveThree,
-          );
+          buildConstructorArgumentsResolver(nodeFixture, resolveTwo);
 
         nodeFixture.constructorParams.push(
           ...['value-0', 'value-1'].map(

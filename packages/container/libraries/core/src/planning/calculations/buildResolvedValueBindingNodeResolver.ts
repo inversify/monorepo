@@ -1,3 +1,4 @@
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
 import { type bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
 import { resolveResolvedValueBindingNode } from '../../resolution/actions/resolveResolvedValueBindingNode.js';
@@ -6,7 +7,7 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
 import { buildNoActivationsResolvedValueBindingNodeResolver } from './buildNoActivationsResolvedValueBindingNodeResolver.js';
-import { buildNoActivationsResolvedValueBindingNodeResolverOnCsp } from './buildNoActivationsResolvedValueBindingNodeResolverOnCsp.js';
+import { buildNoActivationsResolvedValueBindingNodeResolverJit } from './buildNoActivationsResolvedValueBindingNodeResolverJit.js';
 
 const resolveScopedResolvedValueBindingNode: <TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
@@ -26,13 +27,13 @@ export function buildResolvedValueBindingNodeResolver<TActivated>(
   jitEnabled: boolean,
 ): (params: ResolutionParams) => Resolved<TActivated> {
   if (node.binding.onActivation === undefined) {
-    if (jitEnabled) {
-      return buildNoActivationsResolvedValueBindingNodeResolver(
+    if (jitEnabled && node.binding.scope !== bindingScopeValues.Singleton) {
+      return buildNoActivationsResolvedValueBindingNodeResolverJit(
         node,
         areServiceActivations,
       );
     } else {
-      return buildNoActivationsResolvedValueBindingNodeResolverOnCsp(
+      return buildNoActivationsResolvedValueBindingNodeResolver(
         node,
         areServiceActivations,
       );

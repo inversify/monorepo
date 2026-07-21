@@ -3,9 +3,17 @@ import { isPromise } from '@inversifyjs/common';
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { getGeneratedResolverId } from './getGeneratedResolverId.js';
 
+/**
+ * Same rationale as buildZeroConstructorArgumentsResolver, but for
+ * one-argument resolved value bindings. Equivalent to
+ * `buildOneResolvedValueArgumentResolverJit`, but implemented with a plain
+ * closure instead of the `Function` constructor, so it works in
+ * environments enforcing a strict Content Security Policy (no
+ * `unsafe-eval`).
+ */
 export function buildOneResolvedValueArgumentResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
   resolveActivations?: (
@@ -13,66 +21,37 @@ export function buildOneResolvedValueArgumentResolver<TActivated>(
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  const id: string = getGeneratedResolverId().toString();
-
   if (resolveActivations === undefined) {
-    const buildResolveNode: (
-      boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-      isPromiseFunction: typeof isPromise,
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-    ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
-      `node$${id}`,
-      `isPromise$${id}`,
-      `return function resolveNode$${id}(params$${id}) {
-      const resolvedValue$${id} = node$${id}.params[0].resolve(params$${id});
+    return function resolveNode(
+      params: ResolutionParams,
+    ): Resolved<TActivated> {
+      const resolvedValue: unknown = (
+        node.params[0] as PlanServiceNode
+      ).resolve(params);
 
-      if (isPromise$${id}(resolvedValue$${id})) {
-        return resolvedValue$${id}.then(function (resolvedValue$${id}) {
-          return node$${id}.binding.factory(resolvedValue$${id});
-        });
+      if (isPromise(resolvedValue)) {
+        return resolvedValue.then(
+          (resolvedValue: unknown): Resolved<TActivated> =>
+            node.binding.factory(resolvedValue),
+        );
       }
 
-      return node$${id}.binding.factory(resolvedValue$${id});
-    };`,
-    ) as (
-      node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-      isPromise: <TParam>(object: unknown) => object is Promise<TParam>,
-    ) => (params: ResolutionParams) => Resolved<TActivated>;
-
-    return buildResolveNode(node, isPromise);
+      return node.binding.factory(resolvedValue);
+    };
   }
 
-  const buildResolveNode: (
-    boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    activate: (
-      params: ResolutionParams,
-      resolvedValue: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-    isPromiseFunction: typeof isPromise,
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval
-  ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
-    `node$${id}`,
-    `activate$${id}`,
-    `isPromise$${id}`,
-    `return function resolveNode$${id}(params$${id}) {
-      const resolvedValue$${id} = node$${id}.params[0].resolve(params$${id});
+  return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
+    const resolvedValue: unknown = (node.params[0] as PlanServiceNode).resolve(
+      params,
+    );
 
-      if (isPromise$${id}(resolvedValue$${id})) {
-        return resolvedValue$${id}.then(function (resolvedValue$${id}) {
-          return activate$${id}(params$${id}, node$${id}.binding.factory(resolvedValue$${id}));
-        });
-      }
+    if (isPromise(resolvedValue)) {
+      return resolvedValue.then(
+        (resolvedValue: unknown): Resolved<TActivated> =>
+          resolveActivations(params, node.binding.factory(resolvedValue)),
+      );
+    }
 
-      return activate$${id}(params$${id}, node$${id}.binding.factory(resolvedValue$${id}));
-    };`,
-  ) as (
-    node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    resolveActivations: (
-      params: ResolutionParams,
-      resolvedValue: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-    isPromise: <TParam>(object: unknown) => object is Promise<TParam>,
-  ) => (params: ResolutionParams) => Resolved<TActivated>;
-
-  return buildResolveNode(node, resolveActivations, isPromise);
+    return resolveActivations(params, node.binding.factory(resolvedValue));
+  };
 }

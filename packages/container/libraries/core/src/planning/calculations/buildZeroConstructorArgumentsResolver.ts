@@ -1,76 +1,91 @@
-import { type Newable } from '@inversifyjs/common';
+import { isPromise } from '@inversifyjs/common';
 
+import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { setInstanceProperties } from '../../resolution/actions/setInstanceProperties.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
-import { type Resolved } from '../../resolution/models/Resolved.js';
-import { getGeneratedResolverId } from './getGeneratedResolverId.js';
+import {
+  type Resolved,
+  type SyncResolved,
+} from '../../resolution/models/Resolved.js';
+import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 
 /**
- * Builds a `resolveNode` for a zero-argument instance binding by generating
- * a brand new function via the `Function` constructor for every binding.
+ * Builds a `resolveNode` for a zero-argument instance binding without
+ * relying on the `Function` constructor.
  *
- * This is not just an inlining trick: the `Function` constructor result is
- * cached by V8 keyed on the *exact source text* passed to it. If every
- * binding generated the exact same source text (e.g. always naming the
- * constructor parameter `ctor`), V8 would transparently reuse the very same
- * compiled function (and its feedback vector) for every binding sharing
- * this code path. Since that single shared `new ctor()` call site would
- * then observe a different class on every binding, its type feedback would
- * become polymorphic/megamorphic across all of them, defeating the purpose
- * of generating specialized code and forcing V8 back to the generic,
- * non-inlined construction path.
+ * `buildZeroConstructorArgumentsResolverJit` generates a brand new function
+ * from source text for every binding to keep the `new ctor()` call site
+ * monomorphic in V8's eyes. That approach requires `unsafe-eval` (or an
+ * equivalent CSP trusted types allowance), so it cannot be used in
+ * environments enforcing a strict Content Security Policy.
  *
- * Suffixing every identifier with a per-binding id keeps the source text
- * (and therefore the compiled function and its feedback) unique per
- * binding, so the `new ctor()` call site stays monomorphic and V8 can
- * inline/optimize it as if it had been hand-written for that one class.
+ * This function provides the same behavior using a plain closure instead,
+ * so it works under CSP restrictions at the cost of the per-binding
+ * monomorphic optimization described above.
+ *
+ * When the bound class has no properties to inject,
+ * `node.classMetadata.properties` is empty and the returned `resolveNode`
+ * never performs any property related check, matching the zero-property
+ * fast path performance of `buildZeroConstructorArgumentsResolverJit`.
  */
 export function buildZeroConstructorArgumentsResolver<TActivated>(
-  implementationType: Newable<TActivated>,
+  node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
   resolveActivations?: (
     params: ResolutionParams,
     instance: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  const id: string = getGeneratedResolverId().toString();
+  if (node.classMetadata.properties.size === 0) {
+    if (resolveActivations === undefined) {
+      return function resolveNode(
+        _params: ResolutionParams,
+      ): Resolved<TActivated> {
+        return new node.binding.implementationType();
+      };
+    }
 
-  if (resolveActivations === undefined) {
-    const buildResolveNode: (
-      ctor: Newable<TActivated>,
-    ) => (params: ResolutionParams) => Resolved<TActivated> =
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-      new Function(
-        `ctor$${id}`,
-        `return function resolveNode$${id}(params$${id}) {
-        return new ctor$${id}();
-      };`,
-      ) as (
-        implementationType: Newable<TActivated>,
-      ) => (params: ResolutionParams) => Resolved<TActivated>;
-
-    return buildResolveNode(implementationType);
+    return function resolveNode(
+      params: ResolutionParams,
+    ): Resolved<TActivated> {
+      return resolveActivations(params, new node.binding.implementationType());
+    };
   }
 
-  const buildResolveNode: (
-    ctor: Newable<TActivated>,
-    activate: (
+  if (resolveActivations === undefined) {
+    return function resolveNode(
       params: ResolutionParams,
-      instance: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-  ) => (params: ResolutionParams) => Resolved<TActivated> =
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval
-    new Function(
-      `ctor$${id}`,
-      `activate$${id}`,
-      `return function resolveNode$${id}(params$${id}) {
-        return activate$${id}(params$${id}, new ctor$${id}());
-      };`,
-    ) as (
-      implementationType: Newable<TActivated>,
-      resolveActivations: (
-        params: ResolutionParams,
-        instance: Resolved<TActivated>,
-      ) => Resolved<TActivated>,
-    ) => (params: ResolutionParams) => Resolved<TActivated>;
+    ): Resolved<TActivated> {
+      const instance: SyncResolved<TActivated> &
+        Record<string | symbol, unknown> =
+        new node.binding.implementationType() as SyncResolved<TActivated> &
+          Record<string | symbol, unknown>;
 
-  return buildResolveNode(implementationType, resolveActivations);
+      const propertiesAssignmentResult: void | Promise<void> =
+        setInstanceProperties(params, instance, node);
+
+      if (isPromise(propertiesAssignmentResult)) {
+        return propertiesAssignmentResult.then((): TActivated => instance);
+      }
+
+      return instance;
+    };
+  }
+
+  return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
+    const instance: SyncResolved<TActivated> &
+      Record<string | symbol, unknown> =
+      new node.binding.implementationType() as SyncResolved<TActivated> &
+        Record<string | symbol, unknown>;
+
+    const propertiesAssignmentResult: void | Promise<void> =
+      setInstanceProperties(params, instance, node);
+
+    if (isPromise(propertiesAssignmentResult)) {
+      return propertiesAssignmentResult.then((): Resolved<TActivated> =>
+        resolveActivations(params, instance),
+      );
+    }
+
+    return resolveActivations(params, instance);
+  };
 }

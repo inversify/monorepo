@@ -2,8 +2,15 @@ import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBin
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { getGeneratedResolverId } from './getGeneratedResolverId.js';
 
+/**
+ * Same rationale as buildZeroConstructorArgumentsResolver, but for
+ * zero-argument resolved value bindings. Equivalent to
+ * `buildZeroResolvedValueArgumentsResolverJit`, but implemented with a plain
+ * closure instead of the `Function` constructor, so it works in
+ * environments enforcing a strict Content Security Policy (no
+ * `unsafe-eval`).
+ */
 export function buildZeroResolvedValueArgumentsResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
   resolveActivations?: (
@@ -11,44 +18,15 @@ export function buildZeroResolvedValueArgumentsResolver<TActivated>(
     resolvedValue: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  const id: string = getGeneratedResolverId().toString();
-
   if (resolveActivations === undefined) {
-    const buildResolveNode: (
-      boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-    ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
-      `node$${id}`,
-      `return function resolveNode$${id}(params$${id}) {
-      return node$${id}.binding.factory();
-    };`,
-    ) as (
-      node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    ) => (params: ResolutionParams) => Resolved<TActivated>;
-
-    return buildResolveNode(node);
+    return function resolveNode(
+      _params: ResolutionParams,
+    ): Resolved<TActivated> {
+      return node.binding.factory();
+    };
   }
 
-  const buildResolveNode: (
-    boundNode: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    activate: (
-      params: ResolutionParams,
-      resolvedValue: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval
-  ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
-    `node$${id}`,
-    `activate$${id}`,
-    `return function resolveNode$${id}(params$${id}) {
-      return activate$${id}(params$${id}, node$${id}.binding.factory());
-    };`,
-  ) as (
-    node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
-    resolveActivations: (
-      params: ResolutionParams,
-      resolvedValue: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-  ) => (params: ResolutionParams) => Resolved<TActivated>;
-
-  return buildResolveNode(node, resolveActivations);
+  return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
+    return resolveActivations(params, node.binding.factory());
+  };
 }

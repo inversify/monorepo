@@ -1,17 +1,18 @@
 import { type ServiceIdentifier } from '@inversifyjs/common';
 
 import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBinding.js';
-import { resolveResolvedValueBindingNode } from '../../resolution/actions/resolveResolvedValueBindingNode.js';
 import { resolveScopedWithNoActivations } from '../../resolution/actions/resolveScopedWithNoActivations.js';
 import { resolveServiceActivations } from '../../resolution/actions/resolveServiceActivations.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { buildFourResolvedValueArgumentResolverOnCsp } from './buildFourResolvedValueArgumentResolverOnCsp.js';
-import { buildOneResolvedValueArgumentResolverOnCsp } from './buildOneResolvedValueArgumentResolverOnCsp.js';
-import { buildThreeResolvedValueArgumentResolverOnCsp } from './buildThreeResolvedValueArgumentResolverOnCsp.js';
-import { buildTwoResolvedValueArgumentResolverOnCsp } from './buildTwoResolvedValueArgumentResolverOnCsp.js';
-import { buildZeroResolvedValueArgumentsResolverOnCsp } from './buildZeroResolvedValueArgumentsResolverOnCsp.js';
+import { buildOneResolvedValueArgumentResolverJit } from './buildOneResolvedValueArgumentResolverJit.js';
+import { buildResolvedValueArgumentsResolverJit } from './buildResolvedValueArgumentsResolverJit.js';
+import { buildZeroResolvedValueArgumentsResolverJit } from './buildZeroResolvedValueArgumentsResolverJit.js';
+import { resolveFour } from './resolveFour.js';
+import { resolveMany } from './resolveMany.js';
+import { resolveThree } from './resolveThree.js';
+import { resolveTwo } from './resolveTwo.js';
 
 const ZERO_PARAMS: number = 0;
 const ONE_PARAM: number = 1;
@@ -23,12 +24,10 @@ const FOUR_PARAMS: number = 4;
  * Builds a resolver for resolved value binding nodes with no binding
  * activation.
  *
- * Unlike the JIT path, specialized CSP resolvers are implemented with plain
- * closures instead of the `Function` constructor, so they work in
- * environments enforcing a strict Content Security Policy (no
- * `unsafe-eval`).
+ * The resolution logic is specialized by argument arity to minimize function
+ * call dispatch overhead on the hottest resolution path.
  */
-export function buildNoActivationsResolvedValueBindingNodeResolverOnCsp<
+export function buildNoActivationsResolvedValueBindingNodeResolverJit<
   TActivated,
 >(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
@@ -50,45 +49,44 @@ export function buildNoActivationsResolvedValueBindingNodeResolverOnCsp<
 
   switch (node.binding.metadata.arguments.length) {
     case ZERO_PARAMS:
-      resolveNode = buildZeroResolvedValueArgumentsResolverOnCsp(
+      resolveNode = buildZeroResolvedValueArgumentsResolverJit(
         node,
         resolveActivations,
       );
       break;
     case ONE_PARAM:
-      resolveNode = buildOneResolvedValueArgumentResolverOnCsp(
+      resolveNode = buildOneResolvedValueArgumentResolverJit(
         node,
         resolveActivations,
       );
       break;
     case TWO_PARAMS:
-      resolveNode = buildTwoResolvedValueArgumentResolverOnCsp(
+      resolveNode = buildResolvedValueArgumentsResolverJit(
         node,
+        resolveTwo,
         resolveActivations,
       );
       break;
     case THREE_PARAMS:
-      resolveNode = buildThreeResolvedValueArgumentResolverOnCsp(
+      resolveNode = buildResolvedValueArgumentsResolverJit(
         node,
+        resolveThree,
         resolveActivations,
       );
       break;
     case FOUR_PARAMS:
-      resolveNode = buildFourResolvedValueArgumentResolverOnCsp(
+      resolveNode = buildResolvedValueArgumentsResolverJit(
         node,
+        resolveFour,
         resolveActivations,
       );
       break;
     default:
-      resolveNode =
-        resolveActivations === undefined
-          ? (params: ResolutionParams): Resolved<TActivated> =>
-              resolveResolvedValueBindingNode(params, node)
-          : (params: ResolutionParams): Resolved<TActivated> =>
-              resolveActivations(
-                params,
-                resolveResolvedValueBindingNode(params, node),
-              );
+      resolveNode = buildResolvedValueArgumentsResolverJit(
+        node,
+        resolveMany,
+        resolveActivations,
+      );
   }
 
   return resolveScopedWithNoActivations(node.binding, resolveNode);

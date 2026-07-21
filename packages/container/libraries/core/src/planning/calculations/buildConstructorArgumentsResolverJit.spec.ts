@@ -6,7 +6,7 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
-import { buildConstructorArgumentsResolverOnCsp } from './buildConstructorArgumentsResolverOnCsp.js';
+import { buildConstructorArgumentsResolverJit } from './buildConstructorArgumentsResolverJit.js';
 import { resolveFour } from './resolveFour.js';
 import { resolveThree } from './resolveThree.js';
 import { resolveTwo } from './resolveTwo.js';
@@ -48,9 +48,6 @@ function buildNodeFixtureForArguments(
   >();
 
   return {
-    binding: {
-      implementationType: Foo,
-    } as Partial<InstanceBinding<Foo>> as InstanceBinding<Foo>,
     classMetadata: {
       constructorArguments: new Array<ClassElementMetadata>(length).fill(
         Symbol() as unknown as ClassElementMetadata,
@@ -72,7 +69,7 @@ function buildNodeFixtureForArguments(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ResolveAsyncValues = (...args: any[]) => any;
 
-describe(buildConstructorArgumentsResolverOnCsp, () => {
+describe(buildConstructorArgumentsResolverJit, () => {
   describe.each<[string, number, ResolveAsyncValues, string[]]>([
     ['two', 2, resolveTwo, ['value-0', 'value-1']],
     ['three', 3, resolveThree, ['value-0', 'value-1', 'value-2']],
@@ -101,8 +98,9 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
             nodeFixture = buildNodeFixtureForArguments(paramsCount);
 
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-              buildConstructorArgumentsResolverOnCsp(
+              buildConstructorArgumentsResolverJit(
                 nodeFixture,
+                Foo,
                 resolveAsyncValues,
               );
 
@@ -133,8 +131,9 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
             nodeFixture = buildNodeFixtureForArguments(paramsCount);
 
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-              buildConstructorArgumentsResolverOnCsp(
+              buildConstructorArgumentsResolverJit(
                 nodeFixture,
+                Foo,
                 resolveAsyncValues,
               );
 
@@ -179,8 +178,9 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
             nodeFixture = buildNodeFixtureForArguments(paramsCount);
 
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-              buildConstructorArgumentsResolverOnCsp(
+              buildConstructorArgumentsResolverJit(
                 nodeFixture,
+                Foo,
                 resolveAsyncValues,
                 resolveActivations,
               );
@@ -212,8 +212,9 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
             nodeFixture = buildNodeFixtureForArguments(paramsCount);
 
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-              buildConstructorArgumentsResolverOnCsp(
+              buildConstructorArgumentsResolverJit(
                 nodeFixture,
+                Foo,
                 resolveAsyncValues,
                 resolveActivations,
               );
@@ -245,7 +246,7 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
     [
       'two constructor arguments and two properties',
       2,
-      resolveTwo,
+      resolveFour,
       ['value-0', 'value-1'],
       [
         { key: 'propertyA', value: 'property-0' },
@@ -302,8 +303,9 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
             );
 
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-              buildConstructorArgumentsResolverOnCsp(
+              buildConstructorArgumentsResolverJit(
                 nodeFixture,
+                Foo,
                 resolveAsyncValues,
               );
 
@@ -345,8 +347,9 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
             );
 
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-              buildConstructorArgumentsResolverOnCsp(
+              buildConstructorArgumentsResolverJit(
                 nodeFixture,
+                Foo,
                 resolveAsyncValues,
               );
 
@@ -402,8 +405,9 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
             );
 
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-              buildConstructorArgumentsResolverOnCsp(
+              buildConstructorArgumentsResolverJit(
                 nodeFixture,
+                Foo,
                 resolveAsyncValues,
                 resolveActivations,
               );
@@ -446,8 +450,9 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
             );
 
             const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-              buildConstructorArgumentsResolverOnCsp(
+              buildConstructorArgumentsResolverJit(
                 nodeFixture,
+                Foo,
                 resolveAsyncValues,
                 resolveActivations,
               );
@@ -521,11 +526,6 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
       ]);
 
       return {
-        binding: {
-          implementationType: FooWithDefaultProperty,
-        } as Partial<
-          InstanceBinding<FooWithDefaultProperty>
-        > as InstanceBinding<FooWithDefaultProperty>,
         classMetadata: {
           constructorArguments: new Array<ClassElementMetadata>(2).fill(
             Symbol() as unknown as ClassElementMetadata,
@@ -564,7 +564,11 @@ describe(buildConstructorArgumentsResolverOnCsp, () => {
         const resolveNode: (
           params: ResolutionParams,
         ) => Resolved<FooWithDefaultProperty> =
-          buildConstructorArgumentsResolverOnCsp(nodeFixture, resolveTwo);
+          buildConstructorArgumentsResolverJit(
+            nodeFixture,
+            FooWithDefaultProperty,
+            resolveThree,
+          );
 
         nodeFixture.constructorParams.push(
           ...['value-0', 'value-1'].map(

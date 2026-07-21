@@ -13,9 +13,9 @@ import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { resolveThree } from './resolveThree.js';
 
 /**
- * Same rationale as buildZeroConstructorArgumentsResolverOnCsp, but for
+ * Same rationale as buildZeroConstructorArgumentsResolver, but for
  * three-argument instance bindings. Equivalent to
- * `buildConstructorArgumentsResolver` with `resolveThree`, but implemented
+ * `buildConstructorArgumentsResolverJit` with `resolveThree`, but implemented
  * with a plain closure instead of the `Function` constructor, so it works in
  * environments enforcing a strict Content Security Policy (no
  * `unsafe-eval`).
@@ -23,10 +23,10 @@ import { resolveThree } from './resolveThree.js';
  * When the bound class has no properties to inject,
  * `node.classMetadata.properties` is empty and the returned `resolveNode`
  * never performs any property related check, matching the zero-property
- * fast path performance of `buildConstructorArgumentsResolver` with
+ * fast path performance of `buildConstructorArgumentsResolverJit` with
  * `resolveThree`.
  */
-export function buildThreeConstructorArgumentResolverOnCsp<TActivated>(
+export function buildThreeConstructorArgumentResolver<TActivated>(
   node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
   resolveActivations?: (
     params: ResolutionParams,

@@ -1,14 +1,30 @@
-import { type Newable } from '@inversifyjs/common';
+import { isPromise } from '@inversifyjs/common';
 
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { setInstanceProperties } from '../../resolution/actions/setInstanceProperties.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
-import { type Resolved } from '../../resolution/models/Resolved.js';
+import {
+  type Resolved,
+  type SyncResolved,
+} from '../../resolution/models/Resolved.js';
+import { type ConstructorNoParamNode } from '../models/ConstructorNoParamNode.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
-import { getGeneratedResolverId } from './getGeneratedResolverId.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 
+/**
+ * Same rationale as buildZeroConstructorArgumentsResolver, but for
+ * instance bindings with two or more constructor arguments. Equivalent to
+ * `buildConstructorArgumentsResolverJit`, but implemented with a plain closure
+ * instead of the `Function` constructor, so it works in environments
+ * enforcing a strict Content Security Policy (no `unsafe-eval`).
+ *
+ * When the bound class has no properties to inject,
+ * `node.classMetadata.properties` is empty and the returned `resolveNode`
+ * never performs any property related check, matching the zero-property
+ * fast path performance of `buildConstructorArgumentsResolverJit`.
+ */
 export function buildConstructorArgumentsResolver<TActivated>(
   node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
-  implementationType: Newable<TActivated>,
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   resolveAsyncValues: Function,
   resolveActivations?: (
@@ -16,178 +32,108 @@ export function buildConstructorArgumentsResolver<TActivated>(
     instance: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  const id: string = getGeneratedResolverId().toString();
-
   const constructorArgumentsCount: number =
     node.classMetadata.constructorArguments.length;
 
-  const constructorArgumentIndexes: number[] = Array.from(
-    { length: constructorArgumentsCount },
-    (_: unknown, index: number) => index,
-  );
+  function resolveConstructorValues(params: ResolutionParams): unknown[] {
+    const values: unknown[] = new Array<unknown>(constructorArgumentsCount);
 
-  const constructorValuesConcatenation: string = constructorArgumentIndexes
-    .map((index: number) => `value$${index.toString()}`)
-    .join(', ');
-  let constructorValuesDeclarations: string = '';
+    for (let index: number = 0; index < constructorArgumentsCount; index++) {
+      values[index] = (
+        node.constructorParams[index] as
+          PlanServiceNode | ConstructorNoParamNode
+      ).resolve(params);
+    }
 
-  for (const index of constructorArgumentIndexes) {
-    constructorValuesDeclarations += `const value$${index.toString()} = node$${id}.constructorParams[${index.toString()}].resolve(params$${id});\n`;
+    return values;
   }
 
-  const propertiesArgumentsCount: number = node.classMetadata.properties.size;
+  if (node.classMetadata.properties.size === 0) {
+    if (resolveActivations === undefined) {
+      return function resolveNode(
+        params: ResolutionParams,
+      ): Resolved<TActivated> {
+        const values: unknown[] = resolveConstructorValues(params);
 
-  const propertiesArgumentIndexes: number[] = Array.from(
-    { length: propertiesArgumentsCount },
-    (_: unknown, index: number) => index,
-  );
+        function build(...resolvedValues: unknown[]): TActivated {
+          return new node.binding.implementationType(...resolvedValues);
+        }
 
-  const propertiesValuesConcatenation: string = propertiesArgumentIndexes
-    .map((index: number) => `property$${index.toString()}`)
-    .join(', ');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+        return resolveAsyncValues(...values, build);
+      };
+    }
 
-  let propertyValuesDeclarations: string = `let propertyIterator = node$${id}.propertyParams.entries();\n`;
+    return function resolveNode(
+      params: ResolutionParams,
+    ): Resolved<TActivated> {
+      const values: unknown[] = resolveConstructorValues(params);
 
-  for (const index of propertiesArgumentIndexes) {
-    propertyValuesDeclarations += `const propertyNode$${index.toString()} = propertyIterator.next().value;
-  const propertyKey$${index.toString()} = propertyNode$${index.toString()}[0];
-  const propertyBound$${index.toString()} = propertyNode$${index.toString()}[1].bindings !== undefined;
-  const property$${index.toString()} = propertyBound$${index.toString()} ? propertyNode$${index.toString()}[1].resolve(params$${id}) : undefined;\n`;
+      const build: (...resolvedValues: unknown[]) => Resolved<TActivated> = (
+        ...resolvedValues: unknown[]
+      ): Resolved<TActivated> =>
+        resolveActivations(
+          params,
+          new node.binding.implementationType(...resolvedValues),
+        );
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+      return resolveAsyncValues(...values, build);
+    };
   }
-
-  const propertyAssignments: string = propertiesArgumentIndexes
-    .map(
-      (index: number): string =>
-        `if (propertyBound$${index.toString()}) { instance[propertyKey$${index.toString()}] = property$${index.toString()}; }`,
-    )
-    .join('      \n');
-
-  const resolveAsyncValuesArguments: string = [
-    constructorValuesConcatenation,
-    propertiesValuesConcatenation,
-  ]
-    .filter((value: string) => value.length > 0)
-    .join(', ');
-
-  const resolveAsyncValuesBuildArguments: string = resolveAsyncValuesArguments;
 
   if (resolveActivations === undefined) {
-    const buildResolveNodeBody: string =
-      propertiesArgumentsCount === 0
-        ? `return function resolveNode$${id}(params$${id}) {
-  ${constructorValuesDeclarations}
+    return function resolveNode(
+      params: ResolutionParams,
+    ): Resolved<TActivated> {
+      const values: unknown[] = resolveConstructorValues(params);
 
-  return resolveAsyncValues$${id}(
-    ${constructorValuesConcatenation},
-    function (${constructorValuesConcatenation}) {
-      return new ctor$${id}(${constructorValuesConcatenation});
-    },
-  );
-}`
-        : `return function resolveNode$${id}(params$${id}) {
-  ${constructorValuesDeclarations}
+      function build(...resolvedValues: unknown[]): Resolved<TActivated> {
+        const instance: SyncResolved<TActivated> &
+          Record<string | symbol, unknown> =
+          new node.binding.implementationType(
+            ...resolvedValues,
+          ) as SyncResolved<TActivated> & Record<string | symbol, unknown>;
 
-  ${propertyValuesDeclarations}
+        const propertiesAssignmentResult: void | Promise<void> =
+          setInstanceProperties(params, instance, node);
 
-  return resolveAsyncValues$${id}(
-    ${resolveAsyncValuesArguments},
-    function (${resolveAsyncValuesBuildArguments}) {
-      const instance = new ctor$${id}(${constructorValuesConcatenation});
+        if (isPromise(propertiesAssignmentResult)) {
+          return propertiesAssignmentResult.then((): TActivated => instance);
+        }
 
-      ${propertyAssignments}
+        return instance;
+      }
 
-      return instance;
-    },
-  );
-}`;
-
-    const buildResolveNode: (
-      boundNode: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
-      ctor: Newable<TActivated>,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-      resolveAsyncValues: Function,
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-    ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
-      `node$${id}`,
-      `ctor$${id}`,
-      `resolveAsyncValues$${id}`,
-      buildResolveNodeBody,
-    ) as (
-      node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
-      implementationType: Newable<TActivated>,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-      resolveAsyncValues: Function,
-    ) => (params: ResolutionParams) => Resolved<TActivated>;
-
-    return buildResolveNode(node, implementationType, resolveAsyncValues);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+      return resolveAsyncValues(...values, build);
+    };
   }
 
-  const buildResolveNodeBody: string =
-    propertiesArgumentsCount === 0
-      ? `return function resolveNode$${id}(params$${id}) {
-  ${constructorValuesDeclarations}
+  return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
+    const values: unknown[] = resolveConstructorValues(params);
 
-  return resolveAsyncValues$${id}(
-    ${constructorValuesConcatenation},
-    function (${constructorValuesConcatenation}) {
-      return activate$${id}(
-        params$${id},
-        new ctor$${id}(${constructorValuesConcatenation}),
-      );
-    },
-  );
-}`
-      : `return function resolveNode$${id}(params$${id}) {
-  ${constructorValuesDeclarations}
+    const build: (...resolvedValues: unknown[]) => Resolved<TActivated> = (
+      ...resolvedValues: unknown[]
+    ): Resolved<TActivated> => {
+      const instance: SyncResolved<TActivated> &
+        Record<string | symbol, unknown> = new node.binding.implementationType(
+        ...resolvedValues,
+      ) as SyncResolved<TActivated> & Record<string | symbol, unknown>;
 
-  ${propertyValuesDeclarations}
+      const propertiesAssignmentResult: void | Promise<void> =
+        setInstanceProperties(params, instance, node);
 
-  return resolveAsyncValues$${id}(
-    ${resolveAsyncValuesArguments},
-    function (${resolveAsyncValuesBuildArguments}) {
-      const instance = new ctor$${id}(${constructorValuesConcatenation});
+      if (isPromise(propertiesAssignmentResult)) {
+        return propertiesAssignmentResult.then((): Resolved<TActivated> =>
+          resolveActivations(params, instance),
+        );
+      }
 
-      ${propertyAssignments}
+      return resolveActivations(params, instance);
+    };
 
-      return activate$${id}(
-        params$${id},
-        instance,
-      );
-    },
-  );
-}`;
-
-  const buildResolveNode: (
-    boundNode: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
-    ctor: Newable<TActivated>,
-    activate: (
-      params: ResolutionParams,
-      instance: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    resolveAsyncValues: Function,
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval
-  ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
-    `node$${id}`,
-    `ctor$${id}`,
-    `activate$${id}`,
-    `resolveAsyncValues$${id}`,
-    buildResolveNodeBody,
-  ) as (
-    node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
-    implementationType: Newable<TActivated>,
-    resolveActivations: (
-      params: ResolutionParams,
-      instance: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    resolveAsyncValues: Function,
-  ) => (params: ResolutionParams) => Resolved<TActivated>;
-
-  return buildResolveNode(
-    node,
-    implementationType,
-    resolveActivations,
-    resolveAsyncValues,
-  );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+    return resolveAsyncValues(...values, build);
+  };
 }

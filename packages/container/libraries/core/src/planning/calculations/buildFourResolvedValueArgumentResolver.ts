@@ -3,17 +3,17 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { resolveThree } from './resolveThree.js';
+import { resolveFour } from './resolveFour.js';
 
 /**
- * Same rationale as buildZeroConstructorArgumentsResolverOnCsp, but for
- * three-argument resolved value bindings. Equivalent to
- * `buildResolvedValueArgumentsResolver` with `resolveThree`, but implemented
+ * Same rationale as buildZeroConstructorArgumentsResolver, but for
+ * four-argument resolved value bindings. Equivalent to
+ * `buildResolvedValueArgumentsResolverJit` with `resolveFour`, but implemented
  * with a plain closure instead of the `Function` constructor, so it works in
  * environments enforcing a strict Content Security Policy (no
  * `unsafe-eval`).
  */
-export function buildThreeResolvedValueArgumentResolverOnCsp<TActivated>(
+export function buildFourResolvedValueArgumentResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
   resolveActivations?: (
     params: ResolutionParams,
@@ -33,17 +33,27 @@ export function buildThreeResolvedValueArgumentResolverOnCsp<TActivated>(
       const resolvedValue2: unknown = (
         node.params[2] as PlanServiceNode
       ).resolve(params);
+      const resolvedValue3: unknown = (
+        node.params[3] as PlanServiceNode
+      ).resolve(params);
 
-      return resolveThree(
+      return resolveFour(
         resolvedValue0,
         resolvedValue1,
         resolvedValue2,
+        resolvedValue3,
         (
           resolvedValue0: unknown,
           resolvedValue1: unknown,
           resolvedValue2: unknown,
+          resolvedValue3: unknown,
         ): Resolved<TActivated> =>
-          node.binding.factory(resolvedValue0, resolvedValue1, resolvedValue2),
+          node.binding.factory(
+            resolvedValue0,
+            resolvedValue1,
+            resolvedValue2,
+            resolvedValue3,
+          ),
       );
     };
   }
@@ -58,19 +68,29 @@ export function buildThreeResolvedValueArgumentResolverOnCsp<TActivated>(
     const resolvedValue2: unknown = (node.params[2] as PlanServiceNode).resolve(
       params,
     );
+    const resolvedValue3: unknown = (node.params[3] as PlanServiceNode).resolve(
+      params,
+    );
 
-    return resolveThree(
+    return resolveFour(
       resolvedValue0,
       resolvedValue1,
       resolvedValue2,
+      resolvedValue3,
       (
         resolvedValue0: unknown,
         resolvedValue1: unknown,
         resolvedValue2: unknown,
+        resolvedValue3: unknown,
       ): Resolved<TActivated> =>
         resolveActivations(
           params,
-          node.binding.factory(resolvedValue0, resolvedValue1, resolvedValue2),
+          node.binding.factory(
+            resolvedValue0,
+            resolvedValue1,
+            resolvedValue2,
+            resolvedValue3,
+          ),
         ),
     );
   };

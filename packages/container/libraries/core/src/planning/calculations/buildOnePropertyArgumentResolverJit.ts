@@ -7,10 +7,10 @@ import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { getGeneratedResolverId } from './getGeneratedResolverId.js';
 
 /**
- * Same rationale as buildOneConstructorArgumentResolver, but
+ * Same rationale as buildOneConstructorArgumentResolverJit, but
  * for zero-argument instance bindings with one property.
  */
-export function buildOnePropertyArgumentResolver<TActivated>(
+export function buildOnePropertyArgumentResolverJit<TActivated>(
   node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
   implementationType: Newable<TActivated>,
   resolveActivations?: (

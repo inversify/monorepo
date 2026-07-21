@@ -5,7 +5,7 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { buildOneResolvedValueArgumentResolverOnCsp } from './buildOneResolvedValueArgumentResolverOnCsp.js';
+import { buildOneResolvedValueArgumentResolverJit } from './buildOneResolvedValueArgumentResolverJit.js';
 
 class TestFixtures {
   public static get node(): ResolvedValueBindingNode<
@@ -27,7 +27,7 @@ class TestFixtures {
   }
 }
 
-describe(buildOneResolvedValueArgumentResolverOnCsp, () => {
+describe(buildOneResolvedValueArgumentResolverJit, () => {
   describe('when called, and resolveActivations is not provided', () => {
     describe('when called, and node.params is populated after the resolver is built', () => {
       let result: unknown;
@@ -37,7 +37,7 @@ describe(buildOneResolvedValueArgumentResolverOnCsp, () => {
           ResolvedValueBinding<string>
         > = TestFixtures.node;
         const resolveNode: (params: ResolutionParams) => Resolved<string> =
-          buildOneResolvedValueArgumentResolverOnCsp(nodeFixture);
+          buildOneResolvedValueArgumentResolverJit(nodeFixture);
 
         nodeFixture.params.push({
           resolve: (): string => 'value-0',
@@ -59,7 +59,7 @@ describe(buildOneResolvedValueArgumentResolverOnCsp, () => {
           ResolvedValueBinding<string>
         > = TestFixtures.node;
         const resolveNode: (params: ResolutionParams) => Resolved<string> =
-          buildOneResolvedValueArgumentResolverOnCsp(nodeFixture);
+          buildOneResolvedValueArgumentResolverJit(nodeFixture);
 
         nodeFixture.params.push({
           resolve: async (): Promise<string> => 'value-0',
@@ -83,7 +83,7 @@ describe(buildOneResolvedValueArgumentResolverOnCsp, () => {
           ResolvedValueBinding<string>
         > = TestFixtures.node;
         const resolveNode: (params: ResolutionParams) => Resolved<string> =
-          buildOneResolvedValueArgumentResolverOnCsp(
+          buildOneResolvedValueArgumentResolverJit(
             nodeFixture,
             (
               _params: ResolutionParams,
@@ -111,7 +111,7 @@ describe(buildOneResolvedValueArgumentResolverOnCsp, () => {
           ResolvedValueBinding<string>
         > = TestFixtures.node;
         const resolveNode: (params: ResolutionParams) => Resolved<string> =
-          buildOneResolvedValueArgumentResolverOnCsp(
+          buildOneResolvedValueArgumentResolverJit(
             nodeFixture,
             (
               _params: ResolutionParams,
