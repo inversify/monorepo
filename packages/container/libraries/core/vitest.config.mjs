@@ -4,12 +4,12 @@ export default {
   ...defaultConfig,
   test: {
     ...defaultConfig.test,
-    execArgv: ['--expose-gc'],
+    execArgv: [...(defaultConfig.execArgv ?? []), '--expose-gc'],
     projects: defaultConfig.test.projects.map((project) => ({
       ...project,
       test: {
         ...project.test,
-        execArgv: ['--expose-gc'],
+        execArgv: [...(project.test.execArgv ?? []), '--expose-gc'],
       },
     })),
   },
