@@ -1,9 +1,17 @@
 import { type ActivationSubscriber } from '../../binding/models/ActivationSubscriber.js';
+import { bindingScopeValues } from '../../binding/models/BindingScope.js';
+import { type bindingTypeValues } from '../../binding/models/BindingType.js';
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
+import { resolveInstanceBindingConstructorParams } from '../../resolution/actions/resolveInstanceBindingConstructorParams.js';
+import { resolveInstanceBindingNode as curryResolveInstanceBindingNode } from '../../resolution/actions/resolveInstanceBindingNode.js';
+import { resolveInstanceBindingNodeAsyncFromConstructorParams } from '../../resolution/actions/resolveInstanceBindingNodeAsyncFromConstructorParams.js';
+import { resolveInstanceBindingNodeFromConstructorParams } from '../../resolution/actions/resolveInstanceBindingNodeFromConstructorParams.js';
+import { resolveScoped } from '../../resolution/actions/resolveScoped.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
-import { buildInstanceBindingNodeResolver } from '../calculations/buildInstanceBindingNodeResolver.js';
+import { buildNoActivationsInstanceBindingNodeResolver } from '../calculations/buildNoActivationsInstanceBindingNodeResolver.js';
+import { buildNoActivationsInstanceBindingNodeResolverJit } from '../calculations/buildNoActivationsInstanceBindingNodeResolverJit.js';
 import { type BasePlanParams } from './BasePlanParams.js';
 import { type ConstructorNoParamNode } from './ConstructorNoParamNode.js';
 import {
@@ -12,6 +20,31 @@ import {
 } from './DynamicallyResolvableBindingNode.js';
 import { type InstanceBindingNode } from './InstanceBindingNode.js';
 import { type PlanServiceNode } from './PlanServiceNode.js';
+
+const resolveInstanceBindingNode: <
+  TActivated,
+  TBinding extends InstanceBinding<TActivated> = InstanceBinding<TActivated>,
+>(
+  params: ResolutionParams,
+  node: InstanceBindingNode<TActivated, TBinding>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+) => Resolved<TActivated> = curryResolveInstanceBindingNode<any, any>(
+  resolveInstanceBindingConstructorParams,
+  resolveInstanceBindingNodeAsyncFromConstructorParams,
+  resolveInstanceBindingNodeFromConstructorParams,
+);
+
+const resolveScopedInstanceBindingNode: <TActivated>(
+  node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+) => (params: ResolutionParams) => Resolved<TActivated> = <TActivated>(
+  node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
+) =>
+  resolveScoped<
+    TActivated,
+    typeof bindingTypeValues.Instance,
+    InstanceBinding<TActivated>,
+    InstanceBindingNode<TActivated, InstanceBinding<TActivated>>
+  >(node, resolveInstanceBindingNode);
 
 export class InstanceBindingNodeImplementation<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,13 +84,14 @@ export class InstanceBindingNodeImplementation<
 
     this.#onResolverChangedHandlers = undefined;
 
-    this.resolve = buildInstanceBindingNodeResolver(
-      this,
+    this.resolve = this.#buildInstanceBindingNodeResolver(
       areServiceActivations,
-      this.#jitEnabled,
     );
 
-    if (!areServiceActivations) {
+    if (
+      !areServiceActivations &&
+      this.#areNoBindingActivationsNorPostConstructsDefined()
+    ) {
       params.operations.subscribeActivationAddedOnce(
         binding.serviceIdentifier,
         this,
@@ -66,11 +100,7 @@ export class InstanceBindingNodeImplementation<
   }
 
   public onActivationAdded(): void {
-    this.resolve = buildInstanceBindingNodeResolver(
-      this,
-      true,
-      this.#jitEnabled,
-    );
+    this.resolve = this.#buildInstanceBindingNodeResolver(true);
 
     if (this.#onResolverChangedHandlers !== undefined) {
       for (const handler of this.#onResolverChangedHandlers) {
@@ -89,5 +119,35 @@ export class InstanceBindingNodeImplementation<
     }
 
     this.#onResolverChangedHandlers.push(callback);
+  }
+
+  #buildInstanceBindingNodeResolver(
+    areServiceActivations: boolean,
+  ): (params: ResolutionParams) => Resolved<TActivated> {
+    if (this.#areNoBindingActivationsNorPostConstructsDefined()) {
+      if (
+        this.#jitEnabled &&
+        this.binding.scope !== bindingScopeValues.Singleton
+      ) {
+        return buildNoActivationsInstanceBindingNodeResolverJit(
+          this,
+          areServiceActivations,
+        );
+      } else {
+        return buildNoActivationsInstanceBindingNodeResolver(
+          this,
+          areServiceActivations,
+        );
+      }
+    }
+
+    return resolveScopedInstanceBindingNode(this);
+  }
+
+  #areNoBindingActivationsNorPostConstructsDefined(): boolean {
+    return (
+      this.classMetadata.lifecycle.postConstructMethodNames.size === 0 &&
+      this.binding.onActivation === undefined
+    );
   }
 }
