@@ -16,8 +16,16 @@ export const defaultConfig = defineConfig({
       },
       {
         test: {
+          exclude: ['src/**/*.no-eval.int.spec.ts'],
           include: ['src/**/*.int.spec.ts'],
           name: 'Integration',
+        },
+      },
+      {
+        test: {
+          execArgv: ['--disallow-code-generation-from-strings'],
+          include: ['src/**/*.no-eval.int.spec.ts'],
+          name: 'Integration (No Eval)',
         },
       },
       {
