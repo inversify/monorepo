@@ -10,7 +10,7 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
-import { buildTwoConstructorArgumentResolverOnCsp } from './buildTwoConstructorArgumentResolverOnCsp.js';
+import { buildTwoConstructorArgumentResolver } from './buildTwoConstructorArgumentResolver.js';
 
 class Foo {
   public readonly args: unknown[];
@@ -68,7 +68,7 @@ function buildConstructorParamsFixture(
   ];
 }
 
-describe(buildTwoConstructorArgumentResolverOnCsp, () => {
+describe(buildTwoConstructorArgumentResolver, () => {
   let paramsFixture: ResolutionParams;
 
   beforeAll(() => {
@@ -87,7 +87,7 @@ describe(buildTwoConstructorArgumentResolverOnCsp, () => {
 
       beforeAll(() => {
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildTwoConstructorArgumentResolverOnCsp(nodeFixture);
+          buildTwoConstructorArgumentResolver(nodeFixture);
 
         (
           nodeFixture as Writable<
@@ -134,7 +134,7 @@ describe(buildTwoConstructorArgumentResolverOnCsp, () => {
 
         beforeAll(async () => {
           const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-            buildTwoConstructorArgumentResolverOnCsp(nodeFixture);
+            buildTwoConstructorArgumentResolver(nodeFixture);
 
           (
             nodeFixture as Writable<
@@ -177,10 +177,7 @@ describe(buildTwoConstructorArgumentResolverOnCsp, () => {
 
       beforeAll(() => {
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildTwoConstructorArgumentResolverOnCsp(
-            nodeFixture,
-            resolveActivations,
-          );
+          buildTwoConstructorArgumentResolver(nodeFixture, resolveActivations);
 
         (
           nodeFixture as Writable<
@@ -205,10 +202,7 @@ describe(buildTwoConstructorArgumentResolverOnCsp, () => {
 
       beforeAll(async () => {
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildTwoConstructorArgumentResolverOnCsp(
-            nodeFixture,
-            resolveActivations,
-          );
+          buildTwoConstructorArgumentResolver(nodeFixture, resolveActivations);
 
         (
           nodeFixture as Writable<
@@ -243,10 +237,7 @@ describe(buildTwoConstructorArgumentResolverOnCsp, () => {
         };
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildTwoConstructorArgumentResolverOnCsp(
-            nodeFixture,
-            resolveActivations,
-          );
+          buildTwoConstructorArgumentResolver(nodeFixture, resolveActivations);
 
         (
           nodeFixture as Writable<
@@ -289,7 +280,7 @@ describe(buildTwoConstructorArgumentResolverOnCsp, () => {
         );
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildTwoConstructorArgumentResolverOnCsp(nodeFixture);
+          buildTwoConstructorArgumentResolver(nodeFixture);
 
         result = resolveNode(paramsFixture);
       });
@@ -328,7 +319,7 @@ describe(buildTwoConstructorArgumentResolverOnCsp, () => {
         );
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildTwoConstructorArgumentResolverOnCsp(nodeFixture);
+          buildTwoConstructorArgumentResolver(nodeFixture);
 
         result = resolveNode(paramsFixture);
       });
@@ -366,7 +357,7 @@ describe(buildTwoConstructorArgumentResolverOnCsp, () => {
         );
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildTwoConstructorArgumentResolverOnCsp(nodeFixture);
+          buildTwoConstructorArgumentResolver(nodeFixture);
 
         result = await resolveNode(paramsFixture);
       });
@@ -414,7 +405,7 @@ describe(buildTwoConstructorArgumentResolverOnCsp, () => {
         );
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildTwoConstructorArgumentResolverOnCsp(
+          buildTwoConstructorArgumentResolver(
             nodeFixture,
             (
               _params: ResolutionParams,
@@ -463,7 +454,7 @@ describe(buildTwoConstructorArgumentResolverOnCsp, () => {
         );
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildTwoConstructorArgumentResolverOnCsp(
+          buildTwoConstructorArgumentResolver(
             nodeFixture,
             (
               _params: ResolutionParams,

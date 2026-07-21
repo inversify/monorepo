@@ -7,7 +7,7 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
-import { buildOnePropertyArgumentResolver } from './buildOnePropertyArgumentResolver.js';
+import { buildOnePropertyArgumentResolverJit } from './buildOnePropertyArgumentResolverJit.js';
 
 const propertyKeyFixture: string = 'propertyA';
 
@@ -41,7 +41,7 @@ function buildNodeFixture(): InstanceBindingNode<Foo, InstanceBinding<Foo>> {
   > as InstanceBindingNode<Foo, InstanceBinding<Foo>>;
 }
 
-describe(buildOnePropertyArgumentResolver, () => {
+describe(buildOnePropertyArgumentResolverJit, () => {
   let paramsFixture: ResolutionParams;
 
   beforeAll(() => {
@@ -58,7 +58,7 @@ describe(buildOnePropertyArgumentResolver, () => {
         nodeFixture = buildNodeFixture();
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildOnePropertyArgumentResolver(nodeFixture, Foo);
+          buildOnePropertyArgumentResolverJit(nodeFixture, Foo);
 
         nodeFixture.propertyParams.set(propertyKeyFixture, {
           bindings: [],
@@ -86,7 +86,7 @@ describe(buildOnePropertyArgumentResolver, () => {
         nodeFixture = buildNodeFixture();
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildOnePropertyArgumentResolver(nodeFixture, Foo);
+          buildOnePropertyArgumentResolverJit(nodeFixture, Foo);
 
         (
           nodeFixture as Writable<
@@ -123,7 +123,7 @@ describe(buildOnePropertyArgumentResolver, () => {
         nodeFixture = buildNodeFixture();
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildOnePropertyArgumentResolver(nodeFixture, Foo);
+          buildOnePropertyArgumentResolverJit(nodeFixture, Foo);
 
         nodeFixture.propertyParams.set(propertyKeyFixture, {
           bindings: undefined,
@@ -169,7 +169,7 @@ describe(buildOnePropertyArgumentResolver, () => {
         nodeFixture = buildNodeFixture();
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildOnePropertyArgumentResolver(
+          buildOnePropertyArgumentResolverJit(
             nodeFixture,
             Foo,
             resolveActivations,
@@ -201,7 +201,7 @@ describe(buildOnePropertyArgumentResolver, () => {
         nodeFixture = buildNodeFixture();
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildOnePropertyArgumentResolver(
+          buildOnePropertyArgumentResolverJit(
             nodeFixture,
             Foo,
             resolveActivations,
@@ -242,7 +242,7 @@ describe(buildOnePropertyArgumentResolver, () => {
         nodeFixture = buildNodeFixture();
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildOnePropertyArgumentResolver(
+          buildOnePropertyArgumentResolverJit(
             nodeFixture,
             Foo,
             resolveActivations,
@@ -288,7 +288,7 @@ describe(buildOnePropertyArgumentResolver, () => {
         };
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildOnePropertyArgumentResolver(
+          buildOnePropertyArgumentResolverJit(
             nodeFixture,
             Foo,
             resolveActivations,

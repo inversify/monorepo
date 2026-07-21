@@ -4,7 +4,7 @@ import { type ResolvedValueBinding } from '../../binding/models/ResolvedValueBin
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { buildZeroResolvedValueArgumentsResolverOnCsp } from './buildZeroResolvedValueArgumentsResolverOnCsp.js';
+import { buildZeroResolvedValueArgumentsResolverJit } from './buildZeroResolvedValueArgumentsResolverJit.js';
 
 class TestFixtures {
   public static node(
@@ -30,7 +30,7 @@ class TestFixtures {
   }
 }
 
-describe(buildZeroResolvedValueArgumentsResolverOnCsp, () => {
+describe(buildZeroResolvedValueArgumentsResolverJit, () => {
   describe('when called, and resolveActivations is not provided', () => {
     let expectedResult: object;
 
@@ -40,7 +40,7 @@ describe(buildZeroResolvedValueArgumentsResolverOnCsp, () => {
       expectedResult = TestFixtures.resolvedValue;
 
       const resolveNode: (params: ResolutionParams) => Resolved<object> =
-        buildZeroResolvedValueArgumentsResolverOnCsp(
+        buildZeroResolvedValueArgumentsResolverJit(
           TestFixtures.node((): object => expectedResult),
         );
 
@@ -64,7 +64,7 @@ describe(buildZeroResolvedValueArgumentsResolverOnCsp, () => {
         paramsFixture = TestFixtures.params;
 
         const resolveNode: (params: ResolutionParams) => Resolved<object> =
-          buildZeroResolvedValueArgumentsResolverOnCsp(
+          buildZeroResolvedValueArgumentsResolverJit(
             TestFixtures.node((): object => expectedResult),
             (
               params: ResolutionParams,
@@ -90,7 +90,7 @@ describe(buildZeroResolvedValueArgumentsResolverOnCsp, () => {
         expectedResult = TestFixtures.resolvedValue;
 
         const resolveNode: (params: ResolutionParams) => Resolved<object> =
-          buildZeroResolvedValueArgumentsResolverOnCsp(
+          buildZeroResolvedValueArgumentsResolverJit(
             TestFixtures.node((): object => expectedResult),
             async (
               _params: ResolutionParams,

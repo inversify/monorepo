@@ -7,12 +7,11 @@ import { resolveServiceActivations } from '../../resolution/actions/resolveServi
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
+import { buildFourResolvedValueArgumentResolver } from './buildFourResolvedValueArgumentResolver.js';
 import { buildOneResolvedValueArgumentResolver } from './buildOneResolvedValueArgumentResolver.js';
-import { buildResolvedValueArgumentsResolver } from './buildResolvedValueArgumentsResolver.js';
+import { buildThreeResolvedValueArgumentResolver } from './buildThreeResolvedValueArgumentResolver.js';
+import { buildTwoResolvedValueArgumentResolver } from './buildTwoResolvedValueArgumentResolver.js';
 import { buildZeroResolvedValueArgumentsResolver } from './buildZeroResolvedValueArgumentsResolver.js';
-import { resolveFour } from './resolveFour.js';
-import { resolveThree } from './resolveThree.js';
-import { resolveTwo } from './resolveTwo.js';
 
 const ZERO_PARAMS: number = 0;
 const ONE_PARAM: number = 1;
@@ -24,8 +23,10 @@ const FOUR_PARAMS: number = 4;
  * Builds a resolver for resolved value binding nodes with no binding
  * activation.
  *
- * The resolution logic is specialized by argument arity to minimize function
- * call dispatch overhead on the hottest resolution path.
+ * Unlike the JIT path, specialized CSP resolvers are implemented with plain
+ * closures instead of the `Function` constructor, so they work in
+ * environments enforcing a strict Content Security Policy (no
+ * `unsafe-eval`).
  */
 export function buildNoActivationsResolvedValueBindingNodeResolver<TActivated>(
   node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
@@ -59,23 +60,20 @@ export function buildNoActivationsResolvedValueBindingNodeResolver<TActivated>(
       );
       break;
     case TWO_PARAMS:
-      resolveNode = buildResolvedValueArgumentsResolver(
+      resolveNode = buildTwoResolvedValueArgumentResolver(
         node,
-        resolveTwo,
         resolveActivations,
       );
       break;
     case THREE_PARAMS:
-      resolveNode = buildResolvedValueArgumentsResolver(
+      resolveNode = buildThreeResolvedValueArgumentResolver(
         node,
-        resolveThree,
         resolveActivations,
       );
       break;
     case FOUR_PARAMS:
-      resolveNode = buildResolvedValueArgumentsResolver(
+      resolveNode = buildFourResolvedValueArgumentResolver(
         node,
-        resolveFour,
         resolveActivations,
       );
       break;

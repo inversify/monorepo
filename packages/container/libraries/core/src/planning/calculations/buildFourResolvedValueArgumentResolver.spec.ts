@@ -5,7 +5,7 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
-import { buildThreeResolvedValueArgumentResolverOnCsp } from './buildThreeResolvedValueArgumentResolverOnCsp.js';
+import { buildFourResolvedValueArgumentResolver } from './buildFourResolvedValueArgumentResolver.js';
 
 class TestFixtures {
   public static get node(): ResolvedValueBindingNode<
@@ -13,10 +13,15 @@ class TestFixtures {
   > {
     return {
       binding: {
-        factory: (value0: unknown, value1: unknown, value2: unknown): string =>
-          `factory:${String(value0)}:${String(value1)}:${String(value2)}`,
+        factory: (
+          value0: unknown,
+          value1: unknown,
+          value2: unknown,
+          value3: unknown,
+        ): string =>
+          `factory:${String(value0)}:${String(value1)}:${String(value2)}:${String(value3)}`,
         metadata: {
-          arguments: [Symbol(), Symbol(), Symbol()],
+          arguments: [Symbol(), Symbol(), Symbol(), Symbol()],
         },
       },
       params: [],
@@ -32,6 +37,7 @@ function buildParamsFixture(
   resolve0: () => unknown,
   resolve1: () => unknown,
   resolve2: () => unknown,
+  resolve3: () => unknown,
 ): PlanServiceNode[] {
   return [
     {
@@ -43,10 +49,13 @@ function buildParamsFixture(
     {
       resolve: resolve2,
     } as Partial<PlanServiceNode> as PlanServiceNode,
+    {
+      resolve: resolve3,
+    } as Partial<PlanServiceNode> as PlanServiceNode,
   ];
 }
 
-describe(buildThreeResolvedValueArgumentResolverOnCsp, () => {
+describe(buildFourResolvedValueArgumentResolver, () => {
   describe('when called, and resolveActivations is not provided', () => {
     describe('when called, and node.params is populated after the resolver is built', () => {
       let result: unknown;
@@ -56,13 +65,14 @@ describe(buildThreeResolvedValueArgumentResolverOnCsp, () => {
           ResolvedValueBinding<string>
         > = TestFixtures.node;
         const resolveNode: (params: ResolutionParams) => Resolved<string> =
-          buildThreeResolvedValueArgumentResolverOnCsp(nodeFixture);
+          buildFourResolvedValueArgumentResolver(nodeFixture);
 
         nodeFixture.params.push(
           ...buildParamsFixture(
             (): string => 'value-0',
             (): string => 'value-1',
             (): string => 'value-2',
+            (): string => 'value-3',
           ),
         );
 
@@ -70,7 +80,7 @@ describe(buildThreeResolvedValueArgumentResolverOnCsp, () => {
       });
 
       it('should call the factory with the resolved arguments', () => {
-        expect(result).toBe('factory:value-0:value-1:value-2');
+        expect(result).toBe('factory:value-0:value-1:value-2:value-3');
       });
     });
   });
@@ -84,7 +94,7 @@ describe(buildThreeResolvedValueArgumentResolverOnCsp, () => {
           ResolvedValueBinding<string>
         > = TestFixtures.node;
         const resolveNode: (params: ResolutionParams) => Resolved<string> =
-          buildThreeResolvedValueArgumentResolverOnCsp(
+          buildFourResolvedValueArgumentResolver(
             nodeFixture,
             (
               _params: ResolutionParams,
@@ -97,6 +107,7 @@ describe(buildThreeResolvedValueArgumentResolverOnCsp, () => {
             (): string => 'value-0',
             (): string => 'value-1',
             (): string => 'value-2',
+            (): string => 'value-3',
           ),
         );
 
@@ -104,34 +115,47 @@ describe(buildThreeResolvedValueArgumentResolverOnCsp, () => {
       });
 
       it('should call the factory with the resolved arguments', () => {
-        expect(result).toBe('factory:value-0:value-1:value-2');
+        expect(result).toBe('factory:value-0:value-1:value-2:value-3');
       });
     });
 
-    describe.each<[string, () => unknown, () => unknown, () => unknown]>([
+    describe.each<
+      [string, () => unknown, () => unknown, () => unknown, () => unknown]
+    >([
       [
         'all arguments resolve asynchronously',
         async (): Promise<string> => 'value-0',
         async (): Promise<string> => 'value-1',
         async (): Promise<string> => 'value-2',
+        async (): Promise<string> => 'value-3',
       ],
       [
         'the first argument resolves asynchronously',
         async (): Promise<string> => 'value-0',
         (): string => 'value-1',
         (): string => 'value-2',
+        (): string => 'value-3',
       ],
       [
         'the second argument resolves asynchronously',
         (): string => 'value-0',
         async (): Promise<string> => 'value-1',
         (): string => 'value-2',
+        (): string => 'value-3',
       ],
       [
         'the third argument resolves asynchronously',
         (): string => 'value-0',
         (): string => 'value-1',
         async (): Promise<string> => 'value-2',
+        (): string => 'value-3',
+      ],
+      [
+        'the fourth argument resolves asynchronously',
+        (): string => 'value-0',
+        (): string => 'value-1',
+        (): string => 'value-2',
+        async (): Promise<string> => 'value-3',
       ],
     ])(
       'when called, and %s',
@@ -140,6 +164,7 @@ describe(buildThreeResolvedValueArgumentResolverOnCsp, () => {
         resolve0: () => unknown,
         resolve1: () => unknown,
         resolve2: () => unknown,
+        resolve3: () => unknown,
       ) => {
         let result: unknown;
 
@@ -148,7 +173,7 @@ describe(buildThreeResolvedValueArgumentResolverOnCsp, () => {
             ResolvedValueBinding<string>
           > = TestFixtures.node;
           const resolveNode: (params: ResolutionParams) => Resolved<string> =
-            buildThreeResolvedValueArgumentResolverOnCsp(
+            buildFourResolvedValueArgumentResolver(
               nodeFixture,
               (
                 _params: ResolutionParams,
@@ -157,14 +182,14 @@ describe(buildThreeResolvedValueArgumentResolverOnCsp, () => {
             );
 
           nodeFixture.params.push(
-            ...buildParamsFixture(resolve0, resolve1, resolve2),
+            ...buildParamsFixture(resolve0, resolve1, resolve2, resolve3),
           );
 
           result = await resolveNode(TestFixtures.params);
         });
 
         it('should call the factory with the resolved arguments', () => {
-          expect(result).toBe('factory:value-0:value-1:value-2');
+          expect(result).toBe('factory:value-0:value-1:value-2:value-3');
         });
       },
     );

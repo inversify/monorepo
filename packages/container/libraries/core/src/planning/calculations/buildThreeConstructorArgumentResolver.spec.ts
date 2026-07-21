@@ -10,7 +10,7 @@ import { type ResolutionParams } from '../../resolution/models/ResolutionParams.
 import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
-import { buildThreeConstructorArgumentResolverOnCsp } from './buildThreeConstructorArgumentResolverOnCsp.js';
+import { buildThreeConstructorArgumentResolver } from './buildThreeConstructorArgumentResolver.js';
 
 class Foo {
   public readonly args: unknown[];
@@ -74,7 +74,7 @@ function buildConstructorParamsFixture(
   ];
 }
 
-describe(buildThreeConstructorArgumentResolverOnCsp, () => {
+describe(buildThreeConstructorArgumentResolver, () => {
   let paramsFixture: ResolutionParams;
 
   beforeAll(() => {
@@ -93,7 +93,7 @@ describe(buildThreeConstructorArgumentResolverOnCsp, () => {
 
       beforeAll(() => {
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildThreeConstructorArgumentResolverOnCsp(nodeFixture);
+          buildThreeConstructorArgumentResolver(nodeFixture);
 
         (
           nodeFixture as Writable<
@@ -155,7 +155,7 @@ describe(buildThreeConstructorArgumentResolverOnCsp, () => {
 
         beforeAll(async () => {
           const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-            buildThreeConstructorArgumentResolverOnCsp(nodeFixture);
+            buildThreeConstructorArgumentResolver(nodeFixture);
 
           (
             nodeFixture as Writable<
@@ -199,7 +199,7 @@ describe(buildThreeConstructorArgumentResolverOnCsp, () => {
 
       beforeAll(() => {
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildThreeConstructorArgumentResolverOnCsp(
+          buildThreeConstructorArgumentResolver(
             nodeFixture,
             resolveActivations,
           );
@@ -228,7 +228,7 @@ describe(buildThreeConstructorArgumentResolverOnCsp, () => {
 
       beforeAll(async () => {
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildThreeConstructorArgumentResolverOnCsp(
+          buildThreeConstructorArgumentResolver(
             nodeFixture,
             resolveActivations,
           );
@@ -267,7 +267,7 @@ describe(buildThreeConstructorArgumentResolverOnCsp, () => {
         };
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildThreeConstructorArgumentResolverOnCsp(
+          buildThreeConstructorArgumentResolver(
             nodeFixture,
             resolveActivations,
           );
@@ -315,7 +315,7 @@ describe(buildThreeConstructorArgumentResolverOnCsp, () => {
         );
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildThreeConstructorArgumentResolverOnCsp(nodeFixture);
+          buildThreeConstructorArgumentResolver(nodeFixture);
 
         result = resolveNode(paramsFixture);
       });
@@ -355,7 +355,7 @@ describe(buildThreeConstructorArgumentResolverOnCsp, () => {
         );
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildThreeConstructorArgumentResolverOnCsp(nodeFixture);
+          buildThreeConstructorArgumentResolver(nodeFixture);
 
         result = resolveNode(paramsFixture);
       });
@@ -394,7 +394,7 @@ describe(buildThreeConstructorArgumentResolverOnCsp, () => {
         );
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildThreeConstructorArgumentResolverOnCsp(nodeFixture);
+          buildThreeConstructorArgumentResolver(nodeFixture);
 
         result = await resolveNode(paramsFixture);
       });
@@ -443,7 +443,7 @@ describe(buildThreeConstructorArgumentResolverOnCsp, () => {
         );
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildThreeConstructorArgumentResolverOnCsp(
+          buildThreeConstructorArgumentResolver(
             nodeFixture,
             (
               _params: ResolutionParams,
@@ -493,7 +493,7 @@ describe(buildThreeConstructorArgumentResolverOnCsp, () => {
         );
 
         const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
-          buildThreeConstructorArgumentResolverOnCsp(
+          buildThreeConstructorArgumentResolver(
             nodeFixture,
             (
               _params: ResolutionParams,

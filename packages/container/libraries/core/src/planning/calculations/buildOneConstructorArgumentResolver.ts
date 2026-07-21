@@ -1,94 +1,167 @@
-import { isPromise, type Newable } from '@inversifyjs/common';
+import { isPromise } from '@inversifyjs/common';
 
 import { type InstanceBinding } from '../../binding/models/InstanceBinding.js';
+import { setInstanceProperties } from '../../resolution/actions/setInstanceProperties.js';
 import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
-import { type Resolved } from '../../resolution/models/Resolved.js';
+import {
+  type Resolved,
+  type SyncResolved,
+} from '../../resolution/models/Resolved.js';
+import { type ConstructorNoParamNode } from '../models/ConstructorNoParamNode.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
-import { getGeneratedResolverId } from './getGeneratedResolverId.js';
+import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 
 /**
- * Same rationale as buildZeroConstructorArgumentsResolveNode, but
- * for one-argument instance bindings.
+ * Same rationale as buildZeroConstructorArgumentsResolver, but for
+ * one-argument instance bindings. Equivalent to
+ * `buildOneConstructorArgumentResolverJit`, but implemented with a plain
+ * closure instead of the `Function` constructor, so it works in
+ * environments enforcing a strict Content Security Policy (no
+ * `unsafe-eval`).
+ *
+ * When the bound class has no properties to inject,
+ * `node.classMetadata.properties` is empty and the returned `resolveNode`
+ * never performs any property related check, matching the zero-property
+ * fast path performance of `buildOneConstructorArgumentResolverJit`.
  */
 export function buildOneConstructorArgumentResolver<TActivated>(
   node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
-  implementationType: Newable<TActivated>,
   resolveActivations?: (
     params: ResolutionParams,
     instance: Resolved<TActivated>,
   ) => Resolved<TActivated>,
 ): (params: ResolutionParams) => Resolved<TActivated> {
-  const id: string = getGeneratedResolverId().toString();
+  if (node.classMetadata.properties.size === 0) {
+    if (resolveActivations === undefined) {
+      return function resolveNode(
+        params: ResolutionParams,
+      ): Resolved<TActivated> {
+        const resolvedValue: unknown = (
+          node.constructorParams[0] as PlanServiceNode | ConstructorNoParamNode
+        ).resolve(params);
 
-  if (resolveActivations === undefined) {
-    const buildResolveNode: (
-      boundNode: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
-      ctor: Newable<TActivated>,
-      isPromiseFunction: typeof isPromise,
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-    ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
-      `node$${id}`,
-      `ctor$${id}`,
-      `isPromise$${id}`,
-      `return function resolveNode$${id}(params$${id}) {
-        const resolvedValue$${id} = node$${id}.constructorParams[0].resolve(params$${id});
-
-        if (isPromise$${id}(resolvedValue$${id})) {
-          return resolvedValue$${id}.then(function (resolvedValue$${id}) {
-            return new ctor$${id}(resolvedValue$${id});
-          });
+        if (isPromise(resolvedValue)) {
+          return resolvedValue.then(
+            (resolvedValue: unknown): TActivated =>
+              new node.binding.implementationType(resolvedValue),
+          );
         }
 
-        return new ctor$${id}(resolvedValue$${id});
-      };`,
-    ) as (
-      node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
-      implementationType: Newable<TActivated>,
-      isPromise: <TParam>(object: unknown) => object is Promise<TParam>,
-    ) => (params: ResolutionParams) => Resolved<TActivated>;
+        return new node.binding.implementationType(resolvedValue);
+      };
+    }
 
-    return buildResolveNode(node, implementationType, isPromise);
+    return function resolveNode(
+      params: ResolutionParams,
+    ): Resolved<TActivated> {
+      const resolvedValue: unknown = (
+        node.constructorParams[0] as PlanServiceNode | ConstructorNoParamNode
+      ).resolve(params);
+
+      if (isPromise(resolvedValue)) {
+        return resolvedValue.then(
+          (resolvedValue: unknown): Resolved<TActivated> =>
+            resolveActivations(
+              params,
+              new node.binding.implementationType(resolvedValue),
+            ),
+        );
+      }
+
+      return resolveActivations(
+        params,
+        new node.binding.implementationType(resolvedValue),
+      );
+    };
   }
 
-  const buildResolveNode: (
-    boundNode: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
-    ctor: Newable<TActivated>,
-    activate: (
+  if (resolveActivations === undefined) {
+    const finalizeInstance: (
       params: ResolutionParams,
-      instance: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-    isPromiseFunction: typeof isPromise,
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval
-  ) => (params: ResolutionParams) => Resolved<TActivated> = new Function(
-    `node$${id}`,
-    `ctor$${id}`,
-    `activate$${id}`,
-    `isPromise$${id}`,
-    `return function resolveNode$${id}(params$${id}) {
-        const resolvedValue$${id} = node$${id}.constructorParams[0].resolve(params$${id});
-
-        if (isPromise$${id}(resolvedValue$${id})) {
-          return resolvedValue$${id}.then(function (resolvedValue$${id}) {
-            return activate$${id}(params$${id}, new ctor$${id}(resolvedValue$${id}));
-          });
-        }
-
-        return activate$${id}(params$${id}, new ctor$${id}(resolvedValue$${id}));
-      };`,
-  ) as (
-    node: InstanceBindingNode<TActivated, InstanceBinding<TActivated>>,
-    implementationType: Newable<TActivated>,
-    resolveActivations: (
+      instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,
+    ) => Resolved<TActivated> = (
       params: ResolutionParams,
-      instance: Resolved<TActivated>,
-    ) => Resolved<TActivated>,
-    isPromise: <TParam>(object: unknown) => object is Promise<TParam>,
-  ) => (params: ResolutionParams) => Resolved<TActivated>;
+      instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,
+    ): Resolved<TActivated> => {
+      const propertiesAssignmentResult: void | Promise<void> =
+        setInstanceProperties(params, instance, node);
 
-  return buildResolveNode(
-    node,
-    implementationType,
-    resolveActivations,
-    isPromise,
-  );
+      if (isPromise(propertiesAssignmentResult)) {
+        return propertiesAssignmentResult.then((): TActivated => instance);
+      }
+
+      return instance;
+    };
+
+    return function resolveNode(
+      params: ResolutionParams,
+    ): Resolved<TActivated> {
+      const resolvedValue: unknown = (
+        node.constructorParams[0] as PlanServiceNode | ConstructorNoParamNode
+      ).resolve(params);
+
+      if (isPromise(resolvedValue)) {
+        return resolvedValue.then(
+          (resolvedValue: unknown): Resolved<TActivated> =>
+            finalizeInstance(
+              params,
+              new node.binding.implementationType(
+                resolvedValue,
+              ) as SyncResolved<TActivated> & Record<string | symbol, unknown>,
+            ),
+        );
+      }
+
+      return finalizeInstance(
+        params,
+        new node.binding.implementationType(
+          resolvedValue,
+        ) as SyncResolved<TActivated> & Record<string | symbol, unknown>,
+      );
+    };
+  }
+
+  const finalizeInstance: (
+    params: ResolutionParams,
+    instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,
+  ) => Resolved<TActivated> = (
+    params: ResolutionParams,
+    instance: SyncResolved<TActivated> & Record<string | symbol, unknown>,
+  ): Resolved<TActivated> => {
+    const propertiesAssignmentResult: void | Promise<void> =
+      setInstanceProperties(params, instance, node);
+
+    if (isPromise(propertiesAssignmentResult)) {
+      return propertiesAssignmentResult.then((): Resolved<TActivated> =>
+        resolveActivations(params, instance),
+      );
+    }
+
+    return resolveActivations(params, instance);
+  };
+
+  return function resolveNode(params: ResolutionParams): Resolved<TActivated> {
+    const resolvedValue: unknown = (
+      node.constructorParams[0] as PlanServiceNode | ConstructorNoParamNode
+    ).resolve(params);
+
+    if (isPromise(resolvedValue)) {
+      return resolvedValue.then(
+        (resolvedValue: unknown): Resolved<TActivated> =>
+          finalizeInstance(
+            params,
+            new node.binding.implementationType(
+              resolvedValue,
+            ) as SyncResolved<TActivated> & Record<string | symbol, unknown>,
+          ),
+      );
+    }
+
+    return finalizeInstance(
+      params,
+      new node.binding.implementationType(
+        resolvedValue,
+      ) as SyncResolved<TActivated> & Record<string | symbol, unknown>,
+    );
+  };
 }
