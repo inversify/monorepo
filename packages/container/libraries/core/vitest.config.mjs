@@ -4,7 +4,7 @@ export default {
   ...defaultConfig,
   test: {
     ...defaultConfig.test,
-    execArgv: [...(defaultConfig.execArgv ?? []), '--expose-gc'],
+    execArgv: [...(defaultConfig.test.execArgv ?? []), '--expose-gc'],
     projects: defaultConfig.test.projects.map((project) => ({
       ...project,
       test: {
