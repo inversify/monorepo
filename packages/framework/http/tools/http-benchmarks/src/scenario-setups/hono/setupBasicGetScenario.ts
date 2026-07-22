@@ -6,7 +6,7 @@ import { DEFAULT_PORT } from '../../constant/defaultPort';
 async function setUp(): Promise<void> {
   const app: Hono = new Hono();
 
-  app.get('/', (ctx: Context) => {
+  app.get('/', async (ctx: Context) => {
     return ctx.text('ok');
   });
 

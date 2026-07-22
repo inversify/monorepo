@@ -5,7 +5,7 @@ import { DEFAULT_PORT } from '../../constant/defaultPort';
 async function setUp(): Promise<void> {
   const app: TemplatedApp = App();
 
-  app.get('/', (res: HttpResponse) => {
+  app.get('/', async (res: HttpResponse) => {
     res.cork(() => {
       res.writeStatus('200 OK').end('ok');
     });

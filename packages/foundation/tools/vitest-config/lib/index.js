@@ -4,6 +4,7 @@ export const defaultConfig = defineConfig({
   test: {
     coverage: {
       all: false,
+      exclude: ['src/**/*Fixtures.ts'],
     },
     passWithNoTests: true,
     projects: [
