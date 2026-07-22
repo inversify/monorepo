@@ -5,7 +5,7 @@ import { DEFAULT_PORT } from '../../constant/defaultPort';
 async function setUp(): Promise<void> {
   const app: Application = express();
 
-  app.get('/', (_req: Request, res: Response) => {
+  app.get('/', async (_req: Request, res: Response) => {
     res.send('ok');
   });
 

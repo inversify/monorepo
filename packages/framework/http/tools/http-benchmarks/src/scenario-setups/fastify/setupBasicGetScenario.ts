@@ -9,7 +9,7 @@ import { DEFAULT_PORT } from '../../constant/defaultPort';
 async function setUp(): Promise<void> {
   const app: FastifyInstance = fastify();
 
-  app.get('/', (_req: FastifyRequest, reply: FastifyReply) => {
+  app.get('/', async (_req: FastifyRequest, reply: FastifyReply) => {
     reply.send('ok');
   });
 
