@@ -34,6 +34,13 @@ import { Inversify8GetComplexServiceWithPropertiesInTransientScope } from '../sc
 import { Inversify8GetServiceInSingletonScope } from '../scenario/inversify8/Inversify8GetServiceInSingletonScope.js';
 import { Inversify8GetServiceInTransientScope } from '../scenario/inversify8/Inversify8GetServiceInTransientScope.js';
 import { Inversify8GetWideServiceInTransientScope } from '../scenario/inversify8/Inversify8GetWideServiceInTransientScope.js';
+import { Inversify8JitlessGetComplexAsyncServiceInTransientScope } from '../scenario/inversify8Jitless/Inversify8JitlessGetComplexAsyncServiceInTransientScope.js';
+import { Inversify8JitlessGetComplexServiceInSingletonScope } from '../scenario/inversify8Jitless/Inversify8JitlessGetComplexServiceInSingletonScope.js';
+import { Inversify8JitlessGetComplexServiceInTransientScope } from '../scenario/inversify8Jitless/Inversify8JitlessGetComplexServiceInTransientScope.js';
+import { Inversify8JitlessGetComplexServiceWithPropertiesInTransientScope } from '../scenario/inversify8Jitless/Inversify8JitlessGetComplexServiceWithPropertiesInTransientScope.js';
+import { Inversify8JitlessGetServiceInSingletonScope } from '../scenario/inversify8Jitless/Inversify8JitlessGetServiceInSingletonScope.js';
+import { Inversify8JitlessGetServiceInTransientScope } from '../scenario/inversify8Jitless/Inversify8JitlessGetServiceInTransientScope.js';
+import { Inversify8JitlessGetWideServiceInTransientScope } from '../scenario/inversify8Jitless/Inversify8JitlessGetWideServiceInTransientScope.js';
 import { InversifyCurrentGetComplexAsyncServiceInTransientScope } from '../scenario/inversifyCurrent/InversifyCurrentGetComplexAsyncServiceInTransientScope.js';
 import { InversifyCurrentGetComplexResolvedValueServiceInTransientScope } from '../scenario/inversifyCurrent/InversifyCurrentGetComplexResolvedValueServiceInTranstientScope.js';
 import { InversifyCurrentGetComplexServiceInSingletonScope } from '../scenario/inversifyCurrent/InversifyCurrentGetComplexServiceInSingletonScope.js';
@@ -76,6 +83,7 @@ export async function run(): Promise<void> {
         new Inversify6GetServiceInSingletonScope(),
         new Inversify7GetServiceInSingletonScope(),
         new Inversify8GetServiceInSingletonScope(),
+        new Inversify8JitlessGetServiceInSingletonScope(),
         new AwilixGetServiceInSingletonScope(),
         new NestCoreGetServiceInSingletonScopeScenario(),
         new TsyringeGetServiceInSingletonScope(),
@@ -100,6 +108,7 @@ export async function run(): Promise<void> {
         new Inversify6GetServiceInTransientScope(),
         new Inversify7GetServiceInTransientScope(),
         new Inversify8GetServiceInTransientScope(),
+        new Inversify8JitlessGetServiceInTransientScope(),
         new AwilixGetServiceInTransientScope(),
         new NestCoreGetServiceInTransientScopeScenario(),
         new TsyringeGetServiceInTransientScope(),
@@ -124,6 +133,7 @@ export async function run(): Promise<void> {
         new Inversify6GetWideServiceInTransientScope(),
         new Inversify7GetWideServiceInTransientScope(),
         new Inversify8GetWideServiceInTransientScope(),
+        new Inversify8JitlessGetWideServiceInTransientScope(),
         new AwilixGetWideServiceInTransientScope(),
         new NestCoreGetWideServiceInTransientScopeScenario(),
         new TsyringeGetWideServiceInTransientScope(),
@@ -148,6 +158,7 @@ export async function run(): Promise<void> {
         new Inversify6GetComplexServiceInSingletonScope(),
         new Inversify7GetComplexServiceInSingletonScope(),
         new Inversify8GetComplexServiceInSingletonScope(),
+        new Inversify8JitlessGetComplexServiceInSingletonScope(),
         new AwilixGetComplexServiceInSingletonScope(),
         new NestCoreGetComplexServiceInSingletonScopeScenario(),
         new TsyringeGetComplexServiceInSingletonScope(),
@@ -174,6 +185,7 @@ export async function run(): Promise<void> {
         new Inversify6GetComplexServiceInTransientScope(),
         new Inversify7GetComplexServiceInTransientScope(),
         new Inversify8GetComplexServiceInTransientScope(),
+        new Inversify8JitlessGetComplexServiceInTransientScope(),
         new AwilixGetComplexServiceInTransientScope(),
         new NestCoreGetComplexServiceInTransientScopeScenario(),
         new TsyringeGetComplexServiceInTransientScope(),
@@ -198,6 +210,7 @@ export async function run(): Promise<void> {
         new Inversify6GetComplexServiceWithPropertiesInTransientScope(),
         new Inversify7GetComplexServiceWithPropertiesInTransientScope(),
         new Inversify8GetComplexServiceWithPropertiesInTransientScope(),
+        new Inversify8JitlessGetComplexServiceWithPropertiesInTransientScope(),
         new NestCoreGetComplexServiceWithPropertiesInTransientScopeScenario(),
       ],
     });
@@ -220,6 +233,7 @@ export async function run(): Promise<void> {
         new Inversify6GetComplexAsyncServiceInTransientScope(),
         new Inversify7GetComplexAsyncServiceInTransientScope(),
         new Inversify8GetComplexAsyncServiceInTransientScope(),
+        new Inversify8JitlessGetComplexAsyncServiceInTransientScope(),
       ],
     });
 
