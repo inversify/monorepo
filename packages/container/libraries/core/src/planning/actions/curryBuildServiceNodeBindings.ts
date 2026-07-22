@@ -93,7 +93,7 @@ export function curryBuildServiceNodeBindings(
           break;
         }
         case bindingTypeValues.DynamicValue: {
-          planBindingNodes.push(new DynamicValueBindingNode(binding));
+          planBindingNodes.push(new DynamicValueBindingNode(binding, params));
           break;
         }
         case bindingTypeValues.Instance: {
