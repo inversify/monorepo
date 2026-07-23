@@ -1,5 +1,12 @@
 # @inversifyjs/core
 
+## 15.0.1
+
+### Patch Changes
+
+- Improved dynamic value binding resolution performance.
+- Fixed JIT resolution for transient instance bindings with more than four constructor and property injections combined, which could throw a `SyntaxError` or resolve with the wrong arity when `jitless` was `false`.
+
 ## 15.0.0
 
 ### Major Changes

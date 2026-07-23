@@ -1,5 +1,11 @@
 # @inversifyjs/foundation-vitest-config
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated config to exclude fixture files.
+
 ## 0.2.0
 
 ### Minor Changes
