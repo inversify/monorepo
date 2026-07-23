@@ -14,6 +14,7 @@ import {
 } from '../../index.js';
 
 const CONSTRUCTOR_ARITIES: number[] = [0, 1, 2, 3, 4, 5];
+const PROPERTY_ARITIES: number[] = [0, 1, 2, 3, 4, 5];
 
 function buildDependencyIdentifiers(parameterCount: number): string[] {
   return Array.from(
@@ -30,10 +31,21 @@ function buildExpectedArgs(parameterCount: number): string[] {
   );
 }
 
+function buildPropertyKey(index: number): string {
+  return `property${index.toString()}`;
+}
+
 interface ArgsCapturingInstance {
   activatedByBinding: boolean;
   activatedByService: boolean;
   args: unknown[];
+}
+
+interface PropertiesCapturingInstance {
+  [propertyKey: string]: unknown;
+
+  activatedByBinding: boolean;
+  activatedByService: boolean;
 }
 
 function buildArgsCapturingClass(
@@ -56,6 +68,64 @@ function buildArgsCapturingClass(
   });
 
   return ArgsCapturingService;
+}
+
+function buildPropertiesCapturingClass(
+  dependencyIds: string[],
+): Newable<PropertiesCapturingInstance> {
+  class PropertiesCapturingService implements PropertiesCapturingInstance {
+    [propertyKey: string]: unknown;
+
+    public activatedByBinding: boolean = false;
+    public activatedByService: boolean = false;
+  }
+
+  injectable()(PropertiesCapturingService);
+
+  dependencyIds.forEach((dependencyId: string, index: number): void => {
+    inject(dependencyId)(
+      PropertiesCapturingService.prototype,
+      buildPropertyKey(index),
+    );
+  });
+
+  return PropertiesCapturingService;
+}
+
+function buildArgsAndPropertiesCapturingClass(
+  constructorDependencyIds: string[],
+  propertyDependencyIds: string[],
+): Newable<ArgsCapturingInstance & PropertiesCapturingInstance> {
+  class ArgsAndPropertiesCapturingService
+    implements ArgsCapturingInstance, PropertiesCapturingInstance
+  {
+    [propertyKey: string]: unknown;
+
+    public activatedByBinding: boolean = false;
+    public activatedByService: boolean = false;
+    public readonly args: unknown[];
+
+    constructor(...args: unknown[]) {
+      this.args = args;
+    }
+  }
+
+  injectable()(ArgsAndPropertiesCapturingService);
+
+  constructorDependencyIds.forEach(
+    (dependencyId: string, index: number): void => {
+      inject(dependencyId)(ArgsAndPropertiesCapturingService, undefined, index);
+    },
+  );
+
+  propertyDependencyIds.forEach((dependencyId: string, index: number): void => {
+    inject(dependencyId)(
+      ArgsAndPropertiesCapturingService.prototype,
+      buildPropertyKey(index),
+    );
+  });
+
+  return ArgsAndPropertiesCapturingService;
 }
 
 function buildArgsCapturingResolvedValueFactory(): (
@@ -340,6 +410,105 @@ describe(Container, () => {
             expect(instanceAfterActivation.args).toStrictEqual(expectedArgs);
             expect(instanceAfterActivation.activatedByBinding).toBe(false);
             expect(instanceAfterActivation.activatedByService).toBe(true);
+          },
+        );
+      });
+    },
+  );
+
+  describe.each(
+    PROPERTY_ARITIES.flatMap((arity: number) => [
+      [arity, true],
+      [arity, false],
+    ]),
+  )(
+    'having a transient instance service with %s property injections and no constructor parameters',
+    (propertyCount: number, jitless: boolean) => {
+      const dependencyIds: string[] = buildDependencyIdentifiers(propertyCount);
+      const expectedValues: string[] = buildExpectedArgs(propertyCount);
+
+      it('should resolve property injections when called', () => {
+        const container: Container = new Container({
+          jitless,
+        });
+
+        dependencyIds.forEach((dependencyId: string, index: number): void => {
+          container
+            .bind<string>(dependencyId)
+            .toConstantValue(expectedValues[index] as string);
+        });
+
+        const serviceClass: Newable<PropertiesCapturingInstance> =
+          buildPropertiesCapturingClass(dependencyIds);
+
+        container.bind(serviceClass).toSelf().inTransientScope();
+
+        const instance: PropertiesCapturingInstance =
+          container.get(serviceClass);
+
+        dependencyIds.forEach((_dependencyId: string, index: number): void => {
+          expect(instance[buildPropertyKey(index)]).toBe(expectedValues[index]);
+        });
+      });
+    },
+  );
+
+  describe.each([[true], [false]])(
+    'having a transient instance service with two constructor parameters and three property injections (jitless %s)',
+    (jitless: boolean) => {
+      const constructorDependencyIds: string[] = buildDependencyIdentifiers(2);
+      const propertyDependencyIds: string[] = [
+        'property-dependency-0',
+        'property-dependency-1',
+        'property-dependency-2',
+      ];
+      const expectedConstructorArgs: string[] = buildExpectedArgs(2);
+      const expectedPropertyValues: string[] = [
+        'property-value-0',
+        'property-value-1',
+        'property-value-2',
+      ];
+
+      it('should resolve constructor and property injections when called', () => {
+        const container: Container = new Container({
+          jitless,
+        });
+
+        constructorDependencyIds.forEach(
+          (dependencyId: string, index: number): void => {
+            container
+              .bind<string>(dependencyId)
+              .toConstantValue(expectedConstructorArgs[index] as string);
+          },
+        );
+
+        propertyDependencyIds.forEach(
+          (dependencyId: string, index: number): void => {
+            container
+              .bind<string>(dependencyId)
+              .toConstantValue(expectedPropertyValues[index] as string);
+          },
+        );
+
+        const serviceClass: Newable<
+          ArgsCapturingInstance & PropertiesCapturingInstance
+        > = buildArgsAndPropertiesCapturingClass(
+          constructorDependencyIds,
+          propertyDependencyIds,
+        );
+
+        container.bind(serviceClass).toSelf().inTransientScope();
+
+        const instance: ArgsCapturingInstance & PropertiesCapturingInstance =
+          container.get(serviceClass);
+
+        expect(instance.args).toStrictEqual(expectedConstructorArgs);
+
+        propertyDependencyIds.forEach(
+          (_dependencyId: string, index: number): void => {
+            expect(instance[buildPropertyKey(index)]).toBe(
+              expectedPropertyValues[index],
+            );
           },
         );
       });

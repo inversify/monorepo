@@ -7,6 +7,7 @@ import { type Resolved } from '../../resolution/models/Resolved.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { buildConstructorArgumentsResolverJit } from './buildConstructorArgumentsResolverJit.js';
+import { buildResolveMany } from './buildResolveMany.js';
 import { resolveFour } from './resolveFour.js';
 import { resolveThree } from './resolveThree.js';
 import { resolveTwo } from './resolveTwo.js';
@@ -594,4 +595,104 @@ describe(buildConstructorArgumentsResolverJit, () => {
       });
     });
   });
+
+  describe.each<[string, number, string[], PropertyFixture[]]>([
+    [
+      'zero constructor arguments and five properties',
+      0,
+      [],
+      [
+        { key: 'propertyA', value: 'property-0' },
+        { key: 'propertyB', value: 'property-1' },
+        { key: 'propertyC', value: 'property-2' },
+        { key: 'propertyD', value: 'property-3' },
+        { key: 'propertyE', value: 'property-4' },
+      ],
+    ],
+    [
+      'two constructor arguments and three properties',
+      2,
+      ['value-0', 'value-1'],
+      [
+        { key: 'propertyA', value: 'property-0' },
+        { key: 'propertyB', value: 'property-1' },
+        { key: 'propertyC', value: 'property-2' },
+      ],
+    ],
+  ])(
+    'having %s',
+    (
+      _description: string,
+      paramsCount: number,
+      valueFixtures: string[],
+      propertyFixtures: PropertyFixture[],
+    ) => {
+      let paramsFixture: ResolutionParams;
+
+      beforeAll(() => {
+        paramsFixture = Symbol() as unknown as ResolutionParams;
+      });
+
+      function populatePropertyResolvers(
+        nodeFixture: InstanceBindingNode<Foo, InstanceBinding<Foo>>,
+      ): void {
+        for (const propertyFixture of propertyFixtures) {
+          nodeFixture.propertyParams.set(propertyFixture.key, {
+            bindings: [],
+            resolve: (resolveParams: ResolutionParams): string => {
+              expect(resolveParams).toBe(paramsFixture);
+
+              return propertyFixture.value;
+            },
+          } as Partial<PlanServiceNode> as PlanServiceNode);
+        }
+      }
+
+      describe('when called, and resolveActivations is not provided', () => {
+        describe('when called, and node params are populated after the resolveNode is built', () => {
+          let nodeFixture: InstanceBindingNode<Foo, InstanceBinding<Foo>>;
+
+          let result: unknown;
+
+          beforeAll(() => {
+            nodeFixture = buildNodeFixtureForArguments(
+              paramsCount,
+              propertyFixtures,
+            );
+
+            const resolveNode: (params: ResolutionParams) => Resolved<Foo> =
+              buildConstructorArgumentsResolverJit(
+                nodeFixture,
+                Foo,
+                buildResolveMany(nodeFixture),
+              );
+
+            nodeFixture.constructorParams.push(
+              ...valueFixtures.map(
+                (value: string): PlanServiceNode =>
+                  ({
+                    resolve: (): string => value,
+                  }) as Partial<PlanServiceNode> as PlanServiceNode,
+              ),
+            );
+
+            populatePropertyResolvers(nodeFixture);
+
+            result = resolveNode(paramsFixture);
+          });
+
+          it('should build an instance with the resolved constructor arguments and properties in order', () => {
+            expect(result).toBeInstanceOf(Foo);
+            expect((result as Foo).args).toStrictEqual(valueFixtures);
+
+            for (const propertyFixture of propertyFixtures) {
+              expect(
+                (result as FooWithProperties)[propertyFixture.key],
+              ).toStrictEqual(propertyFixture.value);
+            }
+          });
+        });
+      });
+    },
+  );
 });
