@@ -364,8 +364,8 @@ describe(buildThreeConstructorArgumentResolver, () => {
         vitest.clearAllMocks();
       });
 
-      it('should build an instance with the resolved constructor arguments', () => {
-        expect(result).toStrictEqual(Promise.resolve(expect.any(Foo)));
+      it('should build an instance with the resolved constructor arguments', async () => {
+        await expect(result).resolves.toStrictEqual(expect.any(Foo));
       });
 
       it('should call setInstanceProperties()', () => {

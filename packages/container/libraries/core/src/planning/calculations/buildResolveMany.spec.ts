@@ -113,8 +113,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3, 4, 5]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3, 4, 5]);
       });
     });
   });
@@ -178,8 +178,8 @@ describe(buildResolveMany, () => {
         result = resolveMany(Promise.resolve(1), (value: number) => [value]);
       });
 
-      it('should build with the resolved value', () => {
-        expect(result).toStrictEqual(Promise.resolve([1]));
+      it('should build with the resolved value', async () => {
+        await expect(result).resolves.toStrictEqual([1]);
       });
     });
   });
@@ -219,8 +219,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2]);
       });
     });
 
@@ -239,8 +239,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2]);
       });
     });
 
@@ -259,8 +259,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2]);
       });
     });
   });
@@ -311,8 +311,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3]);
       });
     });
 
@@ -336,8 +336,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3]);
       });
     });
 
@@ -361,8 +361,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3]);
       });
     });
 
@@ -386,8 +386,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3]);
       });
     });
 
@@ -411,8 +411,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3]);
       });
     });
 
@@ -436,8 +436,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3]);
       });
     });
 
@@ -461,8 +461,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3]);
       });
     });
   });
@@ -521,8 +521,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3, 4, 5]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3, 4, 5]);
       });
     });
 
@@ -550,8 +550,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3, 4, 5]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3, 4, 5]);
       });
     });
 
@@ -579,8 +579,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3, 4, 5]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3, 4, 5]);
       });
     });
 
@@ -608,8 +608,8 @@ describe(buildResolveMany, () => {
         );
       });
 
-      it('should build with resolved values in order', () => {
-        expect(result).toStrictEqual(Promise.resolve([1, 2, 3, 4, 5]));
+      it('should build with resolved values in order', async () => {
+        await expect(result).resolves.toStrictEqual([1, 2, 3, 4, 5]);
       });
     });
   });
