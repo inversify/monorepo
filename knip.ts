@@ -25,8 +25,11 @@ export default {
   commitlint: {
     config: "config/commitlint/commitlint.config.js",
   },
+  docusaurus: false,
   ignoreWorkspaces: [
     "packages/docs/services/inversify-binding-decorators-site",
+    "packages/docs/services/inversify-framework-site",
+    "packages/docs/services/inversify-site",
   ],
   pnpm: {
     config: ["package.json"],
@@ -66,16 +69,6 @@ export default {
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
     "packages/docs/services/*": defaultWorkspaceProjectConfig,
-    "packages/docs/services/inversify-framework-site": {
-      entry: [
-        "src/{pages,theme}/**/*.{js,ts,jsx,tsx}",
-        "{blog,docs,graphql-docs,logger-docs,openapi-docs,validation-docs}/**/*.mdx",
-      ],
-    },
-    "packages/docs/services/inversify-site": {
-      entry: ["src/{pages,theme}/**/*.{js,ts,jsx,tsx}", "{blog,docs}/**/*.mdx"],
-      ignoreFiles: ["i18n/**"],
-    },
     "packages/docs/tools/*": defaultWorkspaceProjectConfig,
     "packages/docs/tools/binding-decorators-code-examples": {
       entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
