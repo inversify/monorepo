@@ -25,7 +25,7 @@
     "@types/node": "24.13.3",
     "@types/statuses": "2.0.6",
     "@vitest/coverage-v8": "4.1.10",
-    "better-sqlite3": "^12.11.1",
+    "better-sqlite3": "^13.0.1",
     "eslint": "10.7.0",
     "fastify": "5.10.0",
     "hono": "4.12.31",
