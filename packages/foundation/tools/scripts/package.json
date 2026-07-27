@@ -3,7 +3,7 @@
   "private": true,
   "description": "Common scripts for monorepo packages",
   "devDependencies": {
-    "prettier": "3.9.5"
+    "prettier": "3.9.6"
   },
   "repository": {
     "type": "git",
