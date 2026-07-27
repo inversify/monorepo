@@ -9,7 +9,7 @@
     "statuses": "^2.0.2"
   },
   "devDependencies": {
-    "@hono/node-server": "2.0.10",
+    "@hono/node-server": "2.0.11",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-express-v4": "workspace:*",
@@ -28,8 +28,8 @@
     "better-sqlite3": "^12.11.1",
     "eslint": "10.7.0",
     "fastify": "5.10.0",
-    "hono": "4.12.30",
-    "prettier": "3.9.5",
+    "hono": "4.12.31",
+    "prettier": "3.9.6",
     "rimraf": "6.1.3",
     "typescript": "6.0.3",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.69.0",
@@ -56,8 +56,8 @@
   },
   "name": "@inversifyjs/http-better-auth",
   "peerDependencies": {
-    "better-auth": "^1.6.23",
-    "inversify": "^8.2.1"
+    "better-auth": "^1.6.25",
+    "inversify": "^8.2.3"
   },
   "publishConfig": {
     "access": "public"
