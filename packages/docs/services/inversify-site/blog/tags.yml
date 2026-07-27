@@ -7,3 +7,8 @@ types:
   label: Types
   permalink: /types
   description: InversifyJS types related posts
+
+performance:
+  label: Performance
+  permalink: /performance
+  description: InversifyJS performance related posts
