@@ -1,0 +1,12 @@
+.mermaidContainer {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.mermaidContainer :global(svg) {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
