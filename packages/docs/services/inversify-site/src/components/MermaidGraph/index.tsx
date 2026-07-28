@@ -1,6 +1,8 @@
 import mermaid, { RenderResult } from 'mermaid';
 import { useEffect, useRef } from 'react';
 
+import styles from './styles.module.css';
+
 mermaid.initialize({});
 
 const MermaidGraph: ({
@@ -37,7 +39,9 @@ const MermaidGraph: ({
     }
   }, [id, source]);
 
-  return <div id={id} ref={mermaidRef}></div>;
+  return (
+    <div className={styles.mermaidContainer} id={id} ref={mermaidRef}></div>
+  );
 };
 
 export default MermaidGraph;
