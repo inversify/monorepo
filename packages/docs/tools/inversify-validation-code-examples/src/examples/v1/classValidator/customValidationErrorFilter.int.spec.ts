@@ -42,6 +42,9 @@ describe(CustomClassValidationErrorFilter, () => {
           `http://${server.host}:${server.port.toString()}/users`,
           {
             body: JSON.stringify({
+              address: {
+                city: 'New York',
+              },
               firstName: 'Jane',
               lastName: 'Doe',
             }),
@@ -56,6 +59,9 @@ describe(CustomClassValidationErrorFilter, () => {
       it('should return expected Response', async () => {
         expect(response.status).toBe(200);
         await expect(response.json()).resolves.toStrictEqual({
+          address: {
+            city: 'New York',
+          },
           firstName: 'Jane',
           lastName: 'Doe',
         });
@@ -70,6 +76,9 @@ describe(CustomClassValidationErrorFilter, () => {
           `http://${server.host}:${server.port.toString()}/users`,
           {
             body: JSON.stringify({
+              address: {
+                city: '',
+              },
               firstName: '',
               lastName: '',
             }),
@@ -88,6 +97,7 @@ describe(CustomClassValidationErrorFilter, () => {
         );
         await expect(response.json()).resolves.toStrictEqual({
           errors: {
+            city: 'City is required',
             firstName: 'First name is required',
             lastName: 'Last name is required',
           },

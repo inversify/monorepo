@@ -22,6 +22,8 @@ function mapClassValidationErrors(
     if (message !== undefined) {
       result[error.property] = message;
     }
+
+    Object.assign(result, mapClassValidationErrors(error.children ?? []));
   }
 
   return result;
@@ -53,9 +55,20 @@ export class CustomClassValidationErrorFilter implements ErrorFilter<InversifyCl
 // End-example
 
 import { Body, Controller, Post } from '@inversifyjs/http-core';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+
+export class Address {
+  @IsString()
+  @IsNotEmpty({ message: 'City is required' })
+  public readonly city!: string;
+}
 
 export class User {
+  @ValidateNested()
+  @Type(() => Address)
+  public readonly address!: Address;
+
   @IsString()
   @IsNotEmpty({ message: 'First name is required' })
   public readonly firstName!: string;
