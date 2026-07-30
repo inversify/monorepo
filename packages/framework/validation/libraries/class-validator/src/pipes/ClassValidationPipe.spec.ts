@@ -21,6 +21,7 @@ import {
 import { plainToInstance } from 'class-transformer';
 import { validate, type ValidationError } from 'class-validator';
 
+import { InversifyClassValidationError } from '../models/InversifyClassValidationError.js';
 import { ClassValidationPipe } from './ClassValidationPipe.js';
 
 describe(ClassValidationPipe, () => {
@@ -482,13 +483,15 @@ describe(ClassValidationPipe, () => {
           });
         });
 
-        it('should throw an InversifyValidationError', () => {
-          const expectedErrorProperties: Partial<InversifyValidationError> = {
-            kind: InversifyValidationErrorKind.validationFailed,
-            message: expect.stringContaining(errorMessageFixture),
-          };
+        it('should throw an InversifyClassValidationError', () => {
+          const expectedErrorProperties: Partial<InversifyClassValidationError> =
+            {
+              errors: [errorFixtureMock],
+              kind: InversifyValidationErrorKind.validationFailed,
+              message: expect.stringContaining(errorMessageFixture),
+            };
 
-          expect(result).toBeInstanceOf(InversifyValidationError);
+          expect(result).toBeInstanceOf(InversifyClassValidationError);
           expect(result).toMatchObject(expectedErrorProperties);
         });
       });
