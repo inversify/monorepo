@@ -6,6 +6,7 @@ import {
 import type Ajv from 'ajv';
 import { type ErrorObject, type ValidateFunction } from 'ajv';
 
+import { InversifyOpenApiValidationError } from '../../../models/InversifyOpenApiValidationError.js';
 import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
 import { type QueryValidationInputParam } from '../../models/QueryValidationInputParam.js';
 import { SCHEMA_ID } from '../../models/v3Dot2/schemaId.js';
@@ -136,7 +137,7 @@ export function handleQueryValidation(
   }
 
   if (!valid) {
-    throw new InversifyValidationError(
+    throw new InversifyOpenApiValidationError(
       InversifyValidationErrorKind.validationFailed,
       Object.entries(queryToErrorObject)
         .map(([queryName, errors]: [string, ErrorObject[]]): string =>
@@ -148,6 +149,8 @@ export function handleQueryValidation(
             .join('\n'),
         )
         .join('\n'),
+      undefined,
+      Object.values(queryToErrorObject).flat(),
     );
   }
 
