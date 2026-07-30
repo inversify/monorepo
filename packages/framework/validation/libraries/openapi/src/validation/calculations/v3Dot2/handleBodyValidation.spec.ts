@@ -26,6 +26,7 @@ import {
 import type Ajv from 'ajv';
 import { type ValidateFunction } from 'ajv';
 
+import { InversifyOpenApiValidationError } from '../../../models/InversifyOpenApiValidationError.js';
 import { type OpenApiRouter } from '../../../router/services/OpenApiRouter.js';
 import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
 import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
@@ -353,14 +354,24 @@ describe(handleBodyValidation, () => {
         vitest.clearAllMocks();
       });
 
-      it('should throw an InversifyValidationError', () => {
-        const expectedErrorProperties: Partial<InversifyValidationError> = {
-          kind: InversifyValidationErrorKind.validationFailed,
-          message:
-            '[schema: #/properties/name/type, instance: /name]: "must be string"',
-        };
+      it('should throw an InversifyOpenApiValidationError', () => {
+        const expectedErrorProperties: Partial<InversifyOpenApiValidationError> =
+          {
+            errors: [
+              {
+                instancePath: '/name',
+                keyword: 'type',
+                message: 'must be string',
+                params: {},
+                schemaPath: '#/properties/name/type',
+              },
+            ],
+            kind: InversifyValidationErrorKind.validationFailed,
+            message:
+              '[schema: #/properties/name/type, instance: /name]: "must be string"',
+          };
 
-        expect(result).toBeInstanceOf(InversifyValidationError);
+        expect(result).toBeInstanceOf(InversifyOpenApiValidationError);
         expect(result).toMatchObject(expectedErrorProperties);
       });
     });

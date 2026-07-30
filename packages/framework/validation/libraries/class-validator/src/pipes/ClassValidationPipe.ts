@@ -7,6 +7,8 @@ import {
 import { type ClassConstructor, plainToInstance } from 'class-transformer';
 import { validate, type ValidationError } from 'class-validator';
 
+import { InversifyClassValidationError } from '../models/InversifyClassValidationError.js';
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 const ALLOW_NULLISH_VALUE_TYPES_LIST: (Function | undefined)[] = [
   Object,
@@ -77,11 +79,13 @@ export class ClassValidationPipe implements Pipe {
     });
 
     if (validationResult.length > 0) {
-      throw new InversifyValidationError(
+      throw new InversifyClassValidationError(
         InversifyValidationErrorKind.validationFailed,
         validationResult
           .map((error: ValidationError) => error.toString(false, false))
           .join('\n'),
+        undefined,
+        validationResult,
       );
     }
 

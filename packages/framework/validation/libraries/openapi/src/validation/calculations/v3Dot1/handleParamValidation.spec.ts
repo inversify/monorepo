@@ -20,6 +20,7 @@ import {
 import type Ajv from 'ajv';
 import { type ValidateFunction } from 'ajv';
 
+import { InversifyOpenApiValidationError } from '../../../models/InversifyOpenApiValidationError.js';
 import { type OpenApiRouter } from '../../../router/services/OpenApiRouter.js';
 import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
 import { type ParamValidationInputParam } from '../../models/ParamValidationInputParam.js';
@@ -302,13 +303,23 @@ describe(handleParamValidation, () => {
       vitest.clearAllMocks();
     });
 
-    it('should throw an InversifyValidationError', () => {
-      const expectedErrorProperties: Partial<InversifyValidationError> = {
-        kind: InversifyValidationErrorKind.validationFailed,
-        message: expect.stringContaining('userId'),
-      };
+    it('should throw an InversifyOpenApiValidationError', () => {
+      const expectedErrorProperties: Partial<InversifyOpenApiValidationError> =
+        {
+          errors: [
+            {
+              instancePath: '',
+              keyword: 'type',
+              message: 'must be integer',
+              params: {},
+              schemaPath: '#/type',
+            },
+          ],
+          kind: InversifyValidationErrorKind.validationFailed,
+          message: expect.stringContaining('userId'),
+        };
 
-      expect(result).toBeInstanceOf(InversifyValidationError);
+      expect(result).toBeInstanceOf(InversifyOpenApiValidationError);
       expect(result).toMatchObject(expectedErrorProperties);
     });
   });

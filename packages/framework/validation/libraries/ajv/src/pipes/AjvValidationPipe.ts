@@ -1,13 +1,11 @@
 import { isPromise } from '@inversifyjs/common';
 import { type Pipe, type PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import {
-  InversifyValidationError,
-  InversifyValidationErrorKind,
-} from '@inversifyjs/validation-common';
+import { InversifyValidationErrorKind } from '@inversifyjs/validation-common';
 import Ajv, { type AnySchema } from 'ajv';
 
 import { stringifyAjvErrors } from '../calculations/stringifyAjvErrors.js';
+import { InversifyAjvValidationError } from '../models/InversifyAjvValidationError.js';
 import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey.js';
 
 export class AjvValidationPipe implements Pipe {
@@ -52,9 +50,11 @@ export class AjvValidationPipe implements Pipe {
         return;
       }
 
-      throw new InversifyValidationError(
+      throw new InversifyAjvValidationError(
         InversifyValidationErrorKind.validationFailed,
         stringifyAjvErrors(this._ajv.errors ?? []),
+        undefined,
+        this._ajv.errors ?? [],
       );
     }
 
@@ -62,9 +62,11 @@ export class AjvValidationPipe implements Pipe {
       await result;
     } catch (error: unknown) {
       if (error instanceof Ajv.ValidationError) {
-        throw new InversifyValidationError(
+        throw new InversifyAjvValidationError(
           InversifyValidationErrorKind.validationFailed,
           stringifyAjvErrors(error.errors),
+          undefined,
+          error.errors,
         );
       }
     }

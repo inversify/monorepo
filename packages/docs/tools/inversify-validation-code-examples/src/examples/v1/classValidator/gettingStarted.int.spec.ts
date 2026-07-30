@@ -1,30 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { ClassValidationPipe } from '@inversifyjs/class-validation';
-import {
-  BadRequestHttpResponse,
-  CatchError,
-  ErrorFilter,
-} from '@inversifyjs/http-core';
-import { InversifyValidationError } from '@inversifyjs/validation-common';
+import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';
 import { Container } from 'inversify';
 
 import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer.js';
-import { Server } from '../../../server/models/Server.js';
+import { type Server } from '../../../server/models/Server.js';
 import { MessageController } from './gettingStarted.js';
-
-@CatchError(InversifyValidationError)
-class ValidationErrorFilter implements ErrorFilter<InversifyValidationError> {
-  public catch(error: InversifyValidationError): never {
-    throw new BadRequestHttpResponse(
-      { message: error.message },
-      error.message,
-      {
-        cause: error,
-      },
-    );
-  }
-}
 
 describe('Getting started', () => {
   describe('having a ClassValidationPipe in an HTTP server with validated endpoints', () => {
@@ -33,12 +15,15 @@ describe('Getting started', () => {
     beforeAll(async () => {
       const container: Container = new Container();
 
-      container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+      container
+        .bind(InversifyValidationErrorFilter)
+        .toSelf()
+        .inSingletonScope();
       container.bind(MessageController).toSelf().inSingletonScope();
 
       server = await buildExpressServer(
         container,
-        [ValidationErrorFilter],
+        [InversifyValidationErrorFilter],
         [new ClassValidationPipe()],
       );
     });

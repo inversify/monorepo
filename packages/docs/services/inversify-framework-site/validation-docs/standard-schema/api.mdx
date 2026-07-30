@@ -4,6 +4,7 @@ title: API
 ---
 import apiStandardSchemaValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/standardSchema/apiStandardSchemaValidationPipe.ts.txt';
 import apiValidateStandardSchemaV1Source from '@inversifyjs/validation-code-examples/generated/examples/v1/standardSchema/apiValidateStandardSchemaV1.ts.txt';
+import customValidationErrorFilterSource from '@inversifyjs/validation-code-examples/generated/examples/v1/standardSchema/customValidationErrorFilter.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 ## StandardSchemaValidationPipe
@@ -39,8 +40,33 @@ Parameters
 
 When multiple schemas are provided, they run in order. The output of one becomes the input of the next. Any schemas provided to `StandardSchemaValidationPipe` run first; parameter-level schemas run afterwards. If a schema transforms the value (e.g., parsing/coercion), the controller receives the transformed value.
 
-On failure, an `InversifyValidationError` is thrown and can be converted to a Bad Request HTTP response by `ValidationErrorFilter`.
+On failure, an `InversifyStandardSchemaValidationError` (a subclass of `InversifyValidationError`) is thrown with an `errors` field containing the raw Standard Schema `Issue[]`. It can be converted to a Bad Request HTTP response by `InversifyValidationErrorFilter`.
 
 Example: validate request body with Zod
 
 <CodeBlock language="ts">{apiValidateStandardSchemaV1Source}</CodeBlock>
+
+## Customizing validation error responses
+
+`InversifyValidationErrorFilter` returns `{ message }` by default. When frontends need field-level errors, catch `InversifyStandardSchemaValidationError` and map its `errors` field into the response body you want:
+
+<CodeBlock language="ts">{customValidationErrorFilterSource}</CodeBlock>
+
+Register the filter instead of (or in addition to) the built-in one:
+
+```ts
+adapter.useGlobalFilters(CustomStandardSchemaValidationErrorFilter);
+```
+
+That yields responses like:
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": {
+    "firstName": "First name is required",
+    "lastName": "Last name is required"
+  }
+}
+```

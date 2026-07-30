@@ -4,6 +4,7 @@ title: API
 ---
 import apiClassValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/classValidator/apiClassValidationPipe.ts.txt';
 import gettingStartedSource from '@inversifyjs/validation-code-examples/generated/examples/v1/classValidator/gettingStarted.ts.txt';
+import customValidationErrorFilterSource from '@inversifyjs/validation-code-examples/generated/examples/v1/classValidator/customValidationErrorFilter.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 ## ClassValidationPipe
@@ -21,7 +22,7 @@ This way, controller parameters with decorated classes are automatically validat
 
 To validate request parameters, create classes with class-validator decorators and use them as parameter types in your controller methods. The `ClassValidationPipe` will automatically validate and transform the data.
 
-On validation failure, an `InversifyValidationError` is thrown and can be converted to a Bad Request HTTP response by `InversifyValidationErrorFilter`.
+On validation failure, an `InversifyClassValidationError` (a subclass of `InversifyValidationError`) is thrown with an `errors` field containing the raw class-validator `ValidationError[]`. It can be converted to a Bad Request HTTP response by `InversifyValidationErrorFilter`.
 
 ### Example: validate request body with class-validator
 
@@ -30,3 +31,28 @@ On validation failure, an `InversifyValidationError` is thrown and can be conver
 ### Available Validation Decorators
 
 Class-validator provides many built-in validation decorators. For a complete list of available decorators, see the [class-validator documentation](https://github.com/typestack/class-validator#validation-decorators).
+
+## Customizing validation error responses
+
+`InversifyValidationErrorFilter` returns `{ message }` by default. When frontends need field-level errors, catch `InversifyClassValidationError` and map its `errors` field into the response body you want:
+
+<CodeBlock language="ts">{customValidationErrorFilterSource}</CodeBlock>
+
+Register the filter instead of (or in addition to) the built-in one:
+
+```ts
+adapter.useGlobalFilters(CustomClassValidationErrorFilter);
+```
+
+That yields responses like:
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": {
+    "firstName": "First name is required",
+    "lastName": "Last name is required"
+  }
+}
+```
