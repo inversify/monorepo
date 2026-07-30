@@ -12,12 +12,10 @@ vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
 import { type PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import {
-  InversifyValidationError,
-  InversifyValidationErrorKind,
-} from '@inversifyjs/validation-common';
+import { InversifyValidationErrorKind } from '@inversifyjs/validation-common';
 import { type StandardSchemaV1 } from '@standard-schema/spec';
 
+import { InversifyStandardSchemaValidationError } from '../models/InversifyStandardSchemaValidationError.js';
 import { standardSchemaValidationMetadataReflectKey } from '../reflectMetadata/models/standardSchemaValidationMetadataReflectKey.js';
 import { StandardSchemaValidationPipe } from './StandardSchemaValidationPipe.js';
 
@@ -183,10 +181,13 @@ describe(StandardSchemaValidationPipe, () => {
         ).toHaveBeenCalledExactlyOnceWith(inputFixture);
       });
 
-      it('should throw InversifyValidationError', () => {
-        expect(result).toBeInstanceOf(InversifyValidationError);
+      it('should throw InversifyStandardSchemaValidationError', () => {
+        expect(result).toBeInstanceOf(InversifyStandardSchemaValidationError);
         expect(result).toStrictEqual(
-          expect.objectContaining<Partial<InversifyValidationError>>({
+          expect.objectContaining<
+            Partial<InversifyStandardSchemaValidationError>
+          >({
+            errors: [standardSchemaIssueFixture],
             kind: InversifyValidationErrorKind.validationFailed,
             message: standardSchemaIssueFixture.message,
           }),
