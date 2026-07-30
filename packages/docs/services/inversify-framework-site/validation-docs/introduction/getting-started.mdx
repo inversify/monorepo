@@ -66,7 +66,7 @@ Validation tools are designed to work outside HTTP context. In order to use them
 In order to enable validation in your application, you need to configure the server:
 
 1. Use the specific validator error pipe. If we take the previous example, we need to use a `StandardSchemaValidationPipe`, for Zod is integrated via Standard Schema integration.
-2. Use the `ValidationErrorFilter` to handle validation errors. This error filter provided by the `@inversifyjs/http-validation` package catches validation errors in order to send Bad Request HTTP responses on top of them.
+2. Use the `InversifyValidationErrorFilter` to handle validation errors. This error filter provided by the `@inversifyjs/http-validation` package catches validation errors in order to send Bad Request HTTP responses on top of them.
 
 ```ts
   const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(

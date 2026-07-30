@@ -40,7 +40,7 @@ Parameters
 
 When multiple schemas are provided, they run in order. The output of one becomes the input of the next. Any schemas provided to `StandardSchemaValidationPipe` run first; parameter-level schemas run afterwards. If a schema transforms the value (e.g., parsing/coercion), the controller receives the transformed value.
 
-On failure, an `InversifyStandardSchemaValidationError` (a subclass of `InversifyValidationError`) is thrown with an `errors` field containing the raw Standard Schema `Issue[]`. It can be converted to a Bad Request HTTP response by `ValidationErrorFilter`.
+On failure, an `InversifyStandardSchemaValidationError` (a subclass of `InversifyValidationError`) is thrown with an `errors` field containing the raw Standard Schema `Issue[]`. It can be converted to a Bad Request HTTP response by `InversifyValidationErrorFilter`.
 
 Example: validate request body with Zod
 

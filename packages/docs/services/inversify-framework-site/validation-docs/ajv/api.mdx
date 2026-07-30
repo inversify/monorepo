@@ -61,7 +61,7 @@ Parameters
 
 When multiple schemas are provided, they run in sequence. The value must pass all schema validations. Any schemas provided to `AjvValidationPipe` run first; parameter-level schemas run afterwards.
 
-On validation failure, an `InversifyAjvValidationError` is thrown and can be converted to a Bad Request HTTP response by `ValidationErrorFilter`.
+On validation failure, an `InversifyAjvValidationError` is thrown and can be converted to a Bad Request HTTP response by `InversifyValidationErrorFilter`.
 
 ### Example: validate request body with JSON Schema
 
