@@ -1,5 +1,16 @@
 # @inversifyjs/standard-schema-validation
 
+## 3.5.0
+
+### Minor Changes
+
+- Added `InversifyStandardSchemaValidationError` with Standard Schema `Issue[]` on validation failure.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/validation-common@3.5.0
+
 ## 3.4.3
 
 ### Patch Changes

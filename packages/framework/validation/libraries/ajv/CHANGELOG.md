@@ -1,5 +1,16 @@
 # @inversifyjs/ajv-validation
 
+## 3.5.0
+
+### Minor Changes
+
+- Added `InversifyAjvValidationError` with Ajv `ErrorObject[]` on validation failure.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/validation-common@3.5.0
+
 ## 3.4.3
 
 ### Patch Changes
