@@ -1,5 +1,11 @@
 # @inversifyjs/validation-common
 
+## 3.5.0
+
+### Minor Changes
+
+- Added an optional typed `errors` field to `InversifyValidationError`.
+
 ## 3.4.3
 
 ## 3.4.2

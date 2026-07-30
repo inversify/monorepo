@@ -1,5 +1,18 @@
 # @inversifyjs/open-api-validation
 
+## 3.5.0
+
+### Minor Changes
+
+- Added `InversifyOpenApiValidationError` with Ajv `ErrorObject[]` on schema validation failure.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/validation-common@3.5.0
+  - @inversifyjs/http-core@5.4.6
+  - @inversifyjs/http-open-api@5.4.6
+
 ## 3.4.3
 
 ### Patch Changes

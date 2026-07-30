@@ -1,5 +1,16 @@
 # @inversifyjs/class-validation
 
+## 3.5.0
+
+### Minor Changes
+
+- Added `InversifyClassValidationError` with class-validator `ValidationError[]` on validation failure.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/validation-common@3.5.0
+
 ## 3.4.3
 
 ### Patch Changes
