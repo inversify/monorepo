@@ -5,6 +5,7 @@ title: API
 import apiAjvValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/ajv/apiAjvValidationPipe.ts.txt';
 import apiAjvCompiledValidationPipeSource from '@inversifyjs/validation-code-examples/generated/examples/v1/ajv/apiAjvCompiledValidationPipe.ts.txt';
 import apiValidateAjvSchemaSource from '@inversifyjs/validation-code-examples/generated/examples/v1/ajv/apiValidateAjvSchema.ts.txt';
+import customValidationErrorFilterSource from '@inversifyjs/validation-code-examples/generated/examples/v1/ajv/customValidationErrorFilter.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
 ## AjvValidationPipe
@@ -60,7 +61,7 @@ Parameters
 
 When multiple schemas are provided, they run in sequence. The value must pass all schema validations. Any schemas provided to `AjvValidationPipe` run first; parameter-level schemas run afterwards.
 
-On validation failure, an `InversifyValidationError` is thrown and can be converted to a Bad Request HTTP response by `ValidationErrorFilter`.
+On validation failure, an `InversifyAjvValidationError` is thrown and can be converted to a Bad Request HTTP response by `InversifyValidationErrorFilter`.
 
 ### Example: validate request body with JSON Schema
 
@@ -68,9 +69,38 @@ On validation failure, an `InversifyValidationError` is thrown and can be conver
 
 ### Error Handling
 
-When validation fails, Ajv provides detailed error information including:
+When validation fails, the pipe throws an `InversifyAjvValidationError` (a subclass of `InversifyValidationError`) with:
+- A user-friendly `message` built from Ajv errors
+- An `errors` field containing the raw Ajv `ErrorObject[]`
+
+Ajv error details include:
 - Property path where validation failed
 - Expected vs actual values
 - Validation rule that was violated
 
-The `AjvValidationPipe` automatically converts these errors into user-friendly messages that can be returned as HTTP responses.
+Use `InversifyValidationErrorFilter` (from `@inversifyjs/http-validation`) or a custom `@CatchError(InversifyValidationError)` / `@CatchError(InversifyAjvValidationError)` filter to convert these errors into HTTP 400 responses.
+
+## Customizing validation error responses
+
+`InversifyValidationErrorFilter` returns `{ message }` by default. When frontends need field-level errors, catch `InversifyAjvValidationError` and map its `errors` field into the response body you want:
+
+<CodeBlock language="ts">{customValidationErrorFilterSource}</CodeBlock>
+
+Register the filter instead of (or in addition to) the built-in one:
+
+```ts
+adapter.useGlobalFilters(CustomAjvValidationErrorFilter);
+```
+
+That yields responses like:
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": {
+    "firstName": "must NOT have fewer than 1 characters",
+    "lastName": "must NOT have fewer than 1 characters"
+  }
+}
+```

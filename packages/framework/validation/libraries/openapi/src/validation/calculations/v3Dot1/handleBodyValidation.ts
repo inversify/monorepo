@@ -11,6 +11,7 @@ import {
 import type Ajv from 'ajv';
 import { type ErrorObject, type ValidateFunction } from 'ajv';
 
+import { InversifyOpenApiValidationError } from '../../../models/InversifyOpenApiValidationError.js';
 import { type BodyValidationInputParam } from '../../models/BodyValidationInputParam.js';
 import { type OpenApiValidationContext } from '../../models/OpenApiValidationContext.js';
 import { SCHEMA_ID } from '../../models/v3Dot1/schemaId.js';
@@ -103,7 +104,7 @@ function handleRequiredBodyValidation(
   const valid: boolean = validate(inputParam.body);
 
   if (!valid) {
-    throw new InversifyValidationError(
+    throw new InversifyOpenApiValidationError(
       InversifyValidationErrorKind.validationFailed,
       (validate.errors ?? [])
         .map(
@@ -111,6 +112,8 @@ function handleRequiredBodyValidation(
             `[schema: ${error.schemaPath}, instance: ${error.instancePath}]: "${error.message ?? '-'}"`,
         )
         .join('\n'),
+      undefined,
+      validate.errors ?? [],
     );
   }
 

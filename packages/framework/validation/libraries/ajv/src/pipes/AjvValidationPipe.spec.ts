@@ -13,13 +13,15 @@ vitest.mock(import('../calculations/stringifyAjvErrors.js'));
 
 import { type PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import {
-  InversifyValidationError,
-  InversifyValidationErrorKind,
-} from '@inversifyjs/validation-common';
-import Ajv, { type AnySchema, type ValidationError } from 'ajv';
+import { InversifyValidationErrorKind } from '@inversifyjs/validation-common';
+import Ajv, {
+  type AnySchema,
+  type ErrorObject,
+  type ValidationError,
+} from 'ajv';
 
 import { stringifyAjvErrors } from '../calculations/stringifyAjvErrors.js';
+import { InversifyAjvValidationError } from '../models/InversifyAjvValidationError.js';
 import { ajvValidationMetadataReflectKey } from '../reflectMetadata/models/ajvValidationMetadataReflectKey.js';
 import { AjvValidationPipe } from './AjvValidationPipe.js';
 
@@ -129,12 +131,13 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should throw expected Error', () => {
-        const expectedErrorProperties: Partial<InversifyValidationError> = {
+        const expectedErrorProperties: Partial<InversifyAjvValidationError> = {
+          errors: [],
           kind: InversifyValidationErrorKind.validationFailed,
           message: stringifyAjvErrorsResultFixture,
         };
 
-        expect(result).toBeInstanceOf(InversifyValidationError);
+        expect(result).toBeInstanceOf(InversifyAjvValidationError);
         expect(result).toMatchObject(expectedErrorProperties);
       });
     });
@@ -182,12 +185,14 @@ describe(AjvValidationPipe, () => {
 
     describe('when called, and getOwnReflectMetadata() returns undefined and this._ajv.validate() returns rejected Promise', () => {
       let errorFixture: ValidationError;
+      let ajvErrorsFixture: ErrorObject[];
       let stringifyAjvErrorsResultFixture: string;
 
       let result: unknown;
 
       beforeAll(async () => {
-        errorFixture = new Ajv.ValidationError([]);
+        ajvErrorsFixture = [];
+        errorFixture = new Ajv.ValidationError(ajvErrorsFixture);
         stringifyAjvErrorsResultFixture = 'error1\nerror2';
 
         vitest.mocked(ajvMock.validate).mockRejectedValueOnce(errorFixture);
@@ -223,16 +228,19 @@ describe(AjvValidationPipe, () => {
       });
 
       it('should call stringifyAjvErrors()', () => {
-        expect(stringifyAjvErrors).toHaveBeenCalledExactlyOnceWith([]);
+        expect(stringifyAjvErrors).toHaveBeenCalledExactlyOnceWith(
+          ajvErrorsFixture,
+        );
       });
 
       it('should throw expected Error', () => {
-        const expectedErrorProperties: Partial<InversifyValidationError> = {
+        const expectedErrorProperties: Partial<InversifyAjvValidationError> = {
+          errors: ajvErrorsFixture,
           kind: InversifyValidationErrorKind.validationFailed,
           message: stringifyAjvErrorsResultFixture,
         };
 
-        expect(result).toBeInstanceOf(InversifyValidationError);
+        expect(result).toBeInstanceOf(InversifyAjvValidationError);
         expect(result).toMatchObject(expectedErrorProperties);
       });
     });

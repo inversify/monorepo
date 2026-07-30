@@ -52,7 +52,7 @@ This example:
 3. Uses `SwaggerUiProvider` to populate the OpenAPI spec from controller metadata.
 4. Creates an `OpenApiValidationPipe` from the populated spec and registers it globally.
 
-When a request arrives, the pipe validates the body against the OpenAPI schema. Invalid requests are rejected with an `InversifyValidationError`, which the `InversifyValidationErrorFilter` converts into a 400 Bad Request response.
+When a request arrives, the pipe validates the body against the OpenAPI schema. Invalid requests are rejected with an `InversifyOpenApiValidationError` (including the raw Ajv errors), which the `InversifyValidationErrorFilter` converts into a 400 Bad Request response.
 
 ## How It Works
 
@@ -65,7 +65,7 @@ The validation flow:
    - Resolves the content type (extracted from the request by `@ValidatedBody()`, or falls back to a single declared type).
    - Locates the matching schema using JSON pointer navigation.
    - Validates the body against the schema using Ajv.
-4. **Error handling** — Validation failures throw `InversifyValidationError` with detailed error information.
+4. **Error handling** — Schema validation failures throw `InversifyOpenApiValidationError` with detailed Ajv error information.
 
 ## OpenAPI Version Support
 

@@ -25,6 +25,6 @@ export function resolveMany(
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   return build(...values);
 }

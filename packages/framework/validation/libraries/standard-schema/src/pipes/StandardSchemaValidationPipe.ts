@@ -1,11 +1,9 @@
 import { type Pipe, type PipeMetadata } from '@inversifyjs/framework-core';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import {
-  InversifyValidationError,
-  InversifyValidationErrorKind,
-} from '@inversifyjs/validation-common';
+import { InversifyValidationErrorKind } from '@inversifyjs/validation-common';
 import { type StandardSchemaV1 } from '@standard-schema/spec';
 
+import { InversifyStandardSchemaValidationError } from '../models/InversifyStandardSchemaValidationError.js';
 import { standardSchemaValidationMetadataReflectKey } from '../reflectMetadata/models/standardSchemaValidationMetadataReflectKey.js';
 
 export class StandardSchemaValidationPipe implements Pipe {
@@ -47,11 +45,13 @@ export class StandardSchemaValidationPipe implements Pipe {
         await standardSchema['~standard'].validate(result);
 
       if (parsedResult.issues !== undefined) {
-        throw new InversifyValidationError(
+        throw new InversifyStandardSchemaValidationError(
           InversifyValidationErrorKind.validationFailed,
           parsedResult.issues
             .map((issue: StandardSchemaV1.Issue) => issue.message)
             .join('\n'),
+          undefined,
+          parsedResult.issues,
         );
       }
 
