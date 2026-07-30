@@ -6,6 +6,7 @@ import {
 import Ajv, { type AnySchema, type ValidateFunction } from 'ajv';
 
 import { stringifyAjvErrors } from '../calculations/stringifyAjvErrors.js';
+import { InversifyAjvValidationError } from '../models/InversifyAjvValidationError.js';
 import { AjvValidationPipe } from './AjvValidationPipe.js';
 
 export class AjvCompiledValidationPipe extends AjvValidationPipe {
@@ -42,9 +43,11 @@ export class AjvCompiledValidationPipe extends AjvValidationPipe {
         return;
       }
 
-      throw new InversifyValidationError(
+      throw new InversifyAjvValidationError(
         InversifyValidationErrorKind.validationFailed,
         stringifyAjvErrors(validateFunction.errors ?? []),
+        undefined,
+        validateFunction.errors ?? [],
       );
     }
 
@@ -52,9 +55,11 @@ export class AjvCompiledValidationPipe extends AjvValidationPipe {
       await this._ajv.validate(schema, input);
     } catch (error: unknown) {
       if (error instanceof Ajv.ValidationError) {
-        throw new InversifyValidationError(
+        throw new InversifyAjvValidationError(
           InversifyValidationErrorKind.validationFailed,
           stringifyAjvErrors(error.errors),
+          undefined,
+          error.errors,
         );
       }
     }
