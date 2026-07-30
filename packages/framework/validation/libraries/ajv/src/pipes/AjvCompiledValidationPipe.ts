@@ -52,7 +52,7 @@ export class AjvCompiledValidationPipe extends AjvValidationPipe {
     }
 
     try {
-      await this._ajv.validate(schema, input);
+      await result;
     } catch (error: unknown) {
       if (error instanceof Ajv.ValidationError) {
         throw new InversifyAjvValidationError(
