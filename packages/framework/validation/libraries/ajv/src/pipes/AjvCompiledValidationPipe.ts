@@ -62,6 +62,8 @@ export class AjvCompiledValidationPipe extends AjvValidationPipe {
           error.errors,
         );
       }
+
+      throw error;
     }
   }
 }
