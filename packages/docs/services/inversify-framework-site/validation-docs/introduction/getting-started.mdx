@@ -77,7 +77,7 @@ In order to enable validation in your application, you need to configure the ser
     },
   );
 
-  adapter.useGlobalFilters(ValidationErrorFilter);
+  adapter.useGlobalFilters(InversifyValidationErrorFilter);
   adapter.useGlobalPipe(new StandardSchemaValidationPipe());
 ```
 
