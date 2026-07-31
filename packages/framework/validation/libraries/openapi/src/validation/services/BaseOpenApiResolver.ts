@@ -28,9 +28,15 @@ export abstract class BaseOpenApiResolver implements OpenApiResolver {
       );
     }
 
+    const uriSchema: JsonValue | undefined = this._maybeResolveUri(reference);
+
+    if (uriSchema !== undefined) {
+      return uriSchema;
+    }
+
     const [id, fragment]: [string, string?] = uriParts;
 
-    const idSchema: JsonValue | undefined = this._resolveId(id);
+    const idSchema: JsonValue | undefined = this._maybeResolveUri(id);
 
     if (idSchema === undefined || fragment === undefined) {
       return idSchema;
@@ -48,5 +54,5 @@ export abstract class BaseOpenApiResolver implements OpenApiResolver {
     );
   }
 
-  protected abstract _resolveId(id: string): JsonValue | undefined;
+  protected abstract _maybeResolveUri(uri: string): JsonValue | undefined;
 }
