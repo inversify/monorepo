@@ -1,5 +1,17 @@
 # @inversifyjs/open-api-validation
 
+## 3.5.1
+
+### Patch Changes
+
+- Updated OpenAPI resolvers to resolve `$anchor` URIs in addition to `$id` references.
+- Updated dependencies
+  - @inversifyjs/json-schema-utils@0.3.0
+  - @inversifyjs/open-api-utils@0.2.1
+  - @inversifyjs/validation-common@3.5.1
+  - @inversifyjs/http-core@5.4.7
+  - @inversifyjs/http-open-api@5.4.7
+
 ## 3.5.0
 
 ### Minor Changes
