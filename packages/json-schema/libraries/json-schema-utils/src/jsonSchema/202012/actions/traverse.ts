@@ -53,8 +53,7 @@ export function traverse(
   traverseJsonSchemaFromParams(
     {
       jsonPointer: params.jsonPointer ?? '',
-      parentJsonPointer: undefined,
-      parentSchema: undefined,
+      rootSchema: params.schema,
       schema: params.schema,
     },
     callback,
@@ -94,8 +93,7 @@ function traverseDirectChildSchema(
 ): void {
   const traverseChildSchemaCallbackParams: TraverseJsonSchemaCallbackParams = {
     jsonPointer: `${params.jsonPointer}/${escapeJsonPointerFragments(key)}`,
-    parentJsonPointer: params.jsonPointer,
-    parentSchema: params.schema,
+    rootSchema: params.rootSchema,
     schema: childSchema,
   };
 
@@ -112,8 +110,7 @@ function traverseDirectChildSchemaArray(
     const traverseChildSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
       {
         jsonPointer: `${params.jsonPointer}/${escapeJsonPointerFragments(key)}/${index.toString()}`,
-        parentJsonPointer: params.jsonPointer,
-        parentSchema: params.schema,
+        rootSchema: params.rootSchema,
         schema,
       };
 
@@ -131,8 +128,7 @@ function traverseDirectChildSchemaMap(
     const traverseChildSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
       {
         jsonPointer: `${params.jsonPointer}/${escapeJsonPointerFragments(key, mapKey)}`,
-        parentJsonPointer: params.jsonPointer,
-        parentSchema: params.schema,
+        rootSchema: params.rootSchema,
         schema,
       };
 
