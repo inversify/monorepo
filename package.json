@@ -21,13 +21,13 @@
     "knip": "6.29.0",
     "lint-staged": "17.2.0",
     "sponsorkit": "17.1.1",
-    "turbo": "2.10.6"
+    "turbo": "2.10.7"
   },
   "homepage": "https://inversify.io",
   "keywords": [],
   "license": "MIT",
   "name": "root",
-  "packageManager": "pnpm@11.17.0",
+  "packageManager": "pnpm@11.18.0",
   "private": true,
   "repository": {
     "type": "git",

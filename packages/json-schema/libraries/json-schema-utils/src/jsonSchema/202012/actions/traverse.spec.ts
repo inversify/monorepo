@@ -37,8 +37,7 @@ describe(traverse, () => {
       const expectedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
         {
           jsonPointer: '',
-          parentJsonPointer: undefined,
-          parentSchema: undefined,
+          rootSchema: JsonRootSchemaFixtures.any,
           schema: JsonRootSchemaFixtures.any,
         };
 
@@ -69,8 +68,7 @@ describe(traverse, () => {
         const expectedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
           {
             jsonPointer: '',
-            parentJsonPointer: undefined,
-            parentSchema: undefined,
+            rootSchema: schemaFixture,
             schema: schemaFixture,
           };
 
@@ -99,8 +97,7 @@ describe(traverse, () => {
           const expectedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
             {
               jsonPointer: `/${schemaKey}/${subschemaKey}`,
-              parentJsonPointer: '',
-              parentSchema: schemaFixture,
+              rootSchema: schemaFixture,
               schema: subschema,
             };
 
@@ -133,8 +130,7 @@ describe(traverse, () => {
         const expectedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
           {
             jsonPointer: '',
-            parentJsonPointer: undefined,
-            parentSchema: undefined,
+            rootSchema: schemaFixture,
             schema: schemaFixture,
           };
 
@@ -155,8 +151,7 @@ describe(traverse, () => {
           const expectedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
             {
               jsonPointer: `/${schemaKey}/${subschemaIndex.toString()}`,
-              parentJsonPointer: '',
-              parentSchema: schemaFixture,
+              rootSchema: schemaFixture,
               schema: subschema,
             };
 
@@ -195,8 +190,7 @@ describe(traverse, () => {
         const expectedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
           {
             jsonPointer: '',
-            parentJsonPointer: undefined,
-            parentSchema: undefined,
+            rootSchema: schemaFixture,
             schema: schemaFixture,
           };
 
@@ -214,8 +208,7 @@ describe(traverse, () => {
         const expectedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
           {
             jsonPointer: `/${schemaKey}`,
-            parentJsonPointer: '',
-            parentSchema: schemaFixture,
+            rootSchema: schemaFixture,
             schema: subschema,
           };
 
