@@ -5,6 +5,8 @@
 const URI_REGEX: RegExp =
   /^(?:([^:\\/?#]+):)?(?:\/\/([^\\/?#]*))?([^?#]*)(?:\?([^#]*))?(?:#(.*))?/;
 
+const SCHEME_REGEX: RegExp = /^[A-Za-z][A-Za-z0-9+.-]*$/;
+
 const PATH_EMPTY: string = '';
 const PATH_SEPARATOR: string = '/';
 const PATH_CURRENT_SEGMENT: string = '.';
@@ -22,12 +24,10 @@ export class Uri {
   public readonly attributes: UriAttributes;
 
   constructor(uri: string, baseUri?: string) {
-    const attributes: UriAttributes =
+    this.attributes =
       baseUri === undefined
         ? this.#buildAttributesFromAbsoluteUri(uri)
         : this.#buildAttributesFromRelativeUri(uri, baseUri);
-
-    this.attributes = this.#normalizeEmptyComponents(attributes);
   }
 
   public toString(): string {
@@ -35,29 +35,29 @@ export class Uri {
   }
 
   #buildAttributesFromAbsoluteUri(uri: string): UriAttributes {
-    const regexpMatch: RegExpMatchArray | null = uri.match(URI_REGEX);
+    const attributes: UriAttributes = this.#parseUri(uri);
 
-    if (regexpMatch === null) {
+    if (
+      attributes.scheme === undefined ||
+      !SCHEME_REGEX.test(attributes.scheme)
+    ) {
       throw new Error('Invalid URI');
     }
 
-    const [, scheme, authority, path, query, fragment]: RegExpMatchArray =
-      regexpMatch;
-
-    return {
-      authority: authority,
-      fragment: fragment,
-      path: path ?? '',
-      query: query,
-      scheme: scheme,
-    };
+    return attributes;
   }
 
   #buildAttributesFromRelativeUri(uri: string, baseUri: string): UriAttributes {
     const baseUriAttributes: UriAttributes =
       this.#buildAttributesFromAbsoluteUri(baseUri);
-    const uriAttributes: UriAttributes =
-      this.#buildAttributesFromAbsoluteUri(uri);
+    const uriAttributes: UriAttributes = this.#parseUri(uri);
+
+    if (
+      uriAttributes.scheme !== undefined &&
+      !SCHEME_REGEX.test(uriAttributes.scheme)
+    ) {
+      throw new Error('Invalid URI');
+    }
 
     let scheme: string | undefined;
     let authority: string | undefined;
@@ -154,14 +154,22 @@ export class Uri {
     );
   }
 
-  #normalizeEmptyComponents(attributes: UriAttributes): UriAttributes {
+  #parseUri(uri: string): UriAttributes {
+    const regexpMatch: RegExpMatchArray | null = uri.match(URI_REGEX);
+
+    if (regexpMatch === null) {
+      throw new Error('Invalid URI');
+    }
+
+    const [, scheme, authority, path, query, fragment]: RegExpMatchArray =
+      regexpMatch;
+
     return {
-      authority: attributes.authority,
-      fragment:
-        attributes.fragment === PATH_EMPTY ? undefined : attributes.fragment,
-      path: attributes.path,
-      query: attributes.query === PATH_EMPTY ? undefined : attributes.query,
-      scheme: attributes.scheme,
+      authority: authority,
+      fragment: fragment,
+      path: path ?? '',
+      query: query,
+      scheme: scheme,
     };
   }
 

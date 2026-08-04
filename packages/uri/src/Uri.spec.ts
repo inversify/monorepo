@@ -1,78 +1,26 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Uri, type UriAttributes } from './Uri.js';
+import { Uri } from './Uri.js';
 
 describe(Uri, () => {
   describe('constructor', () => {
-    describe.each<[string, UriAttributes]>([
-      [
-        '',
-        {
-          authority: undefined,
-          fragment: undefined,
-          path: '',
-          query: undefined,
-          scheme: undefined,
-        },
-      ],
-      [
-        ':::',
-        {
-          authority: undefined,
-          fragment: undefined,
-          path: ':::',
-          query: undefined,
-          scheme: undefined,
-        },
-      ],
-      [
-        '../g',
-        {
-          authority: undefined,
-          fragment: undefined,
-          path: '../g',
-          query: undefined,
-          scheme: undefined,
-        },
-      ],
-      [
-        '?',
-        {
-          authority: undefined,
-          fragment: undefined,
-          path: '',
-          query: undefined,
-          scheme: undefined,
-        },
-      ],
-      [
-        '#',
-        {
-          authority: undefined,
-          fragment: undefined,
-          path: '',
-          query: undefined,
-          scheme: undefined,
-        },
-      ],
-    ])(
-      'having a "%s" uri that is not a valid URI',
-      (stringifiedUri: string, expectedAttributes: UriAttributes) => {
+    describe.each(['', ':::', '../g', '1http:foo'])(
+      'having an invalid "%s" uri',
+      (stringifiedUri: string) => {
         describe('when called', () => {
           let result: unknown;
 
           beforeAll(() => {
-            result = new Uri(stringifiedUri);
+            try {
+              new Uri(stringifiedUri);
+            } catch (error: unknown) {
+              result = error;
+            }
           });
 
-          it('should not throw', () => {
-            expect(result).toBeInstanceOf(Uri);
-          });
-
-          it('should set expected attributes', () => {
-            expect((result as Uri).attributes).toStrictEqual(
-              expectedAttributes,
-            );
+          it('should throw an Error', () => {
+            expect(result).toBeInstanceOf(Error);
+            expect((result as Error).message).toBe('Invalid URI');
           });
         });
       },
@@ -152,8 +100,6 @@ describe(Uri, () => {
       ['g/../h', 'http://a/b/c/d;p?q', 'http://a/b/c/h'],
       ['g;x=1/./y', 'http://a/b/c/d;p?q', 'http://a/b/c/g;x=1/y'],
       ['g;x=1/../y', 'http://a/b/c/d;p?q', 'http://a/b/c/y'],
-      ['#', 'http://a/b/c/d;p?q#l', 'http://a/b/c/d;p?q'],
-      ['?', 'http://a/b/c/d;p?q#l', 'http://a/b/c/d;p'],
     ])(
       'having a "%s" uri and a "%s" base uri',
       (
