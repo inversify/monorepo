@@ -74,6 +74,9 @@ coverage:
       '@inversifyjs/strongly-typed':
         flags:
           - '@inversifyjs/strongly-typed'
+      '@inversifyjs/uri':
+        flags:
+          - '@inversifyjs/uri'
 flags:
   '@inversifyjs/ajv-validation':
     paths:
@@ -147,3 +150,6 @@ flags:
   '@inversifyjs/strongly-typed':
     paths:
       - packages/container/libraries/strongly-typed
+  '@inversifyjs/uri':
+    paths:
+      - packages/uri
