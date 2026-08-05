@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { Uri } from './Uri.js';
+import { Uri, type UriAttributes } from './Uri.js';
 
 describe(Uri, () => {
   describe('constructor', () => {
@@ -20,11 +20,141 @@ describe(Uri, () => {
 
           it('should throw an Error', () => {
             expect(result).toBeInstanceOf(Error);
-            expect((result as Error).message).toBe('Invalid URI');
+            expect((result as Error).message).toBe(
+              `Invalid URI ${stringifiedUri}`,
+            );
           });
         });
       },
     );
+  });
+
+  describe('.fromAttributes()', () => {
+    describe.each<[string, UriAttributes]>([
+      [
+        'http://example.com/schemas/other',
+        {
+          authority: 'example.com',
+          fragment: undefined,
+          path: '/schemas/other',
+          query: undefined,
+          scheme: 'http',
+        },
+      ],
+      [
+        'http://example.com/schemas/other?x=1',
+        {
+          authority: 'example.com',
+          fragment: undefined,
+          path: '/schemas/other',
+          query: 'x=1',
+          scheme: 'http',
+        },
+      ],
+      [
+        'http://example.com/schemas/other#/definitions/foo',
+        {
+          authority: 'example.com',
+          fragment: '/definitions/foo',
+          path: '/schemas/other',
+          query: undefined,
+          scheme: 'http',
+        },
+      ],
+      [
+        'http://user:pass@example.com:8080/schemas/other',
+        {
+          authority: 'user:pass@example.com:8080',
+          fragment: undefined,
+          path: '/schemas/other',
+          query: undefined,
+          scheme: 'http',
+        },
+      ],
+      [
+        'urn:example:schema:other',
+        {
+          authority: undefined,
+          fragment: undefined,
+          path: 'example:schema:other',
+          query: undefined,
+          scheme: 'urn',
+        },
+      ],
+      [
+        'urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6#/definitions/foo',
+        {
+          authority: undefined,
+          fragment: '/definitions/foo',
+          path: 'uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+          query: undefined,
+          scheme: 'urn',
+        },
+      ],
+      [
+        'mailto:John.Doe@example.com',
+        {
+          authority: undefined,
+          fragment: undefined,
+          path: 'John.Doe@example.com',
+          query: undefined,
+          scheme: 'mailto',
+        },
+      ],
+    ])(
+      'having attributes for "%s"',
+      (expectedStringifiedUri: string, attributes: UriAttributes) => {
+        describe('when called', () => {
+          let result: unknown;
+
+          beforeAll(() => {
+            result = Uri.fromAttributes(attributes);
+          });
+
+          it('should return a Uri with the expected string representation', () => {
+            expect(result).toBeInstanceOf(Uri);
+            expect((result as Uri).toString()).toBe(expectedStringifiedUri);
+          });
+
+          it('should return a Uri with the expected attributes', () => {
+            expect((result as Uri).attributes).toStrictEqual(attributes);
+          });
+        });
+      },
+    );
+
+    describe('having attributes with an undefined scheme', () => {
+      let attributesFixture: UriAttributes;
+
+      beforeAll(() => {
+        attributesFixture = {
+          authority: 'example.com',
+          fragment: undefined,
+          path: '/schemas/other',
+          query: undefined,
+          scheme: undefined,
+        };
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          try {
+            Uri.fromAttributes(attributesFixture);
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
+
+        it('should throw an Error', () => {
+          expect(result).toBeInstanceOf(Error);
+          expect((result as Error).message).toBe(
+            'Invalid URI //example.com/schemas/other',
+          );
+        });
+      });
+    });
   });
 
   describe('.toString()', () => {
