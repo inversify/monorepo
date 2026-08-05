@@ -2,6 +2,8 @@
  * Consider https://www.rfc-editor.org/info/rfc3986 as reference
  */
 
+import { stringifyAttributes } from './stringifyAttributes.js';
+
 const URI_REGEX: RegExp =
   /^(?:([^:\\/?#]+):)?(?:\/\/([^\\/?#]*))?([^?#]*)(?:\?([^#]*))?(?:#(.*))?/;
 
@@ -30,8 +32,12 @@ export class Uri {
         : this.#buildAttributesFromRelativeUri(uri, baseUri);
   }
 
+  public static fromAttributes(attributes: UriAttributes): Uri {
+    return new Uri(stringifyAttributes(attributes));
+  }
+
   public toString(): string {
-    return this.#stringifyAttributes(this.attributes);
+    return stringifyAttributes(this.attributes);
   }
 
   #buildAttributesFromAbsoluteUri(uri: string): UriAttributes {
@@ -41,7 +47,7 @@ export class Uri {
       attributes.scheme === undefined ||
       !SCHEME_REGEX.test(attributes.scheme)
     ) {
-      throw new Error('Invalid URI');
+      throw new Error(`Invalid URI ${uri}`);
     }
 
     return attributes;
@@ -56,7 +62,7 @@ export class Uri {
       uriAttributes.scheme !== undefined &&
       !SCHEME_REGEX.test(uriAttributes.scheme)
     ) {
-      throw new Error('Invalid URI');
+      throw new Error(`Invalid URI ${uri}`);
     }
 
     let scheme: string | undefined;
@@ -158,7 +164,7 @@ export class Uri {
     const regexpMatch: RegExpMatchArray | null = uri.match(URI_REGEX);
 
     if (regexpMatch === null) {
-      throw new Error('Invalid URI');
+      throw new Error(`Invalid URI ${uri}`);
     }
 
     const [, scheme, authority, path, query, fragment]: RegExpMatchArray =
@@ -210,29 +216,5 @@ export class Uri {
     }
 
     return resolvedPathSegments.join(PATH_SEPARATOR);
-  }
-
-  #stringifyAttributes(uriAttributes: UriAttributes): string {
-    let stringifiedUri: string = '';
-
-    if (uriAttributes.scheme !== undefined) {
-      stringifiedUri += `${uriAttributes.scheme}:`;
-    }
-
-    if (uriAttributes.authority !== undefined) {
-      stringifiedUri += `//${uriAttributes.authority}`;
-    }
-
-    stringifiedUri += uriAttributes.path;
-
-    if (uriAttributes.query !== undefined) {
-      stringifiedUri += `?${uriAttributes.query}`;
-    }
-
-    if (uriAttributes.fragment !== undefined) {
-      stringifiedUri += `#${uriAttributes.fragment}`;
-    }
-
-    return stringifiedUri;
   }
 }

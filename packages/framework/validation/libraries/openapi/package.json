@@ -12,6 +12,7 @@
     "@inversifyjs/json-schema-utils": "workspace:*",
     "@inversifyjs/open-api-utils": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "1.5.0",
+    "@inversifyjs/uri": "workspace:*",
     "@inversifyjs/validation-common": "workspace:*"
   },
   "devDependencies": {

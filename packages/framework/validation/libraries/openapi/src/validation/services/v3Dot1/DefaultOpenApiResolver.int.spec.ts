@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { type JsonSchema } from '@inversifyjs/json-schema-types/2020-12';
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 
 import { DefaultOpenApiResolver } from './DefaultOpenApiResolver.js';
@@ -252,7 +253,268 @@ describe(DefaultOpenApiResolver, () => {
         it('should throw an Error', () => {
           expect(result).toBeInstanceOf(Error);
           expect(result).toMatchObject({
-            message: 'Invalid JSON pointer!',
+            message: 'Invalid JSON pointer "label"',
+          });
+        });
+      });
+    });
+  });
+
+  describe('having an OpenAPI object with a relative $ref resolved against the closest ancestor $id', () => {
+    let openApiObjectFixture: OpenApi3Dot1Object;
+    let defaultOpenApiResolver: DefaultOpenApiResolver;
+
+    beforeAll(() => {
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            Item: {
+              $id: 'https://example.com/schemas/Item.json',
+              properties: {
+                other: {
+                  $ref: 'Other.json',
+                },
+              },
+              type: 'object',
+            },
+            Other: {
+              $id: 'https://example.com/schemas/Other.json',
+              properties: {
+                value: {
+                  type: 'number',
+                },
+              },
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.1.0',
+      };
+
+      defaultOpenApiResolver = new DefaultOpenApiResolver(openApiObjectFixture);
+    });
+
+    describe('.resolveReference', () => {
+      describe('when called with a JSON pointer fragment pointing to a relative $ref', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveReference(
+            'https://example.com/schemas/Item.json#/properties/other',
+          );
+        });
+
+        it('should return the schema identified by the relative $ref', () => {
+          expect(result).toBe(
+            openApiObjectFixture.components?.schemas?.['Other'],
+          );
+        });
+      });
+    });
+  });
+
+  describe('having an OpenAPI object with nested relative schema $ids under an absolute $id', () => {
+    let openApiObjectFixture: OpenApi3Dot1Object;
+    let defaultOpenApiResolver: DefaultOpenApiResolver;
+    let fooSchemaFixture: JsonSchema;
+    let barSchemaFixture: JsonSchema;
+
+    beforeAll(() => {
+      fooSchemaFixture = {
+        $id: 'Foo.json',
+        properties: {
+          bar: {
+            $ref: 'Bar.json',
+          },
+        },
+        type: 'object',
+      };
+
+      barSchemaFixture = {
+        $anchor: 'bar',
+        $id: 'Bar.json',
+        properties: {
+          value: {
+            type: 'number',
+          },
+        },
+        type: 'object',
+      };
+
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            Container: {
+              $id: 'https://example.com/schemas/',
+              properties: {
+                bar: barSchemaFixture,
+                foo: fooSchemaFixture,
+              },
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.1.0',
+      };
+
+      defaultOpenApiResolver = new DefaultOpenApiResolver(openApiObjectFixture);
+    });
+
+    describe('.resolveReference', () => {
+      describe('when called with the absolute URI of a nested schema that declares a relative $id', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveReference(
+            'https://example.com/schemas/Bar.json',
+          );
+        });
+
+        it('should return the schema identified by the relative $id resolved against its closest ancestor $id', () => {
+          expect(result).toBe(barSchemaFixture);
+        });
+      });
+
+      describe('when called with the absolute URI and $anchor of a nested schema under a relative $id', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveReference(
+            'https://example.com/schemas/Bar.json#bar',
+          );
+        });
+
+        it('should return the schema identified by the absolute URI and $anchor', () => {
+          expect(result).toBe(barSchemaFixture);
+        });
+      });
+
+      describe('when called with a JSON pointer fragment pointing to a relative $ref targeting a relative $id', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveReference(
+            'https://example.com/schemas/#/properties/foo/properties/bar',
+          );
+        });
+
+        it('should return the schema identified by the relative $ref resolved against the nested relative $id', () => {
+          expect(result).toBe(barSchemaFixture);
+        });
+      });
+    });
+  });
+
+  describe('having an OpenAPI object with a relative $ref resolved against a nested $id', () => {
+    let openApiObjectFixture: OpenApi3Dot1Object;
+    let defaultOpenApiResolver: DefaultOpenApiResolver;
+
+    beforeAll(() => {
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            Item: {
+              $id: 'https://example.com/schemas/Item.json',
+              properties: {
+                nested: {
+                  $id: 'https://example.com/schemas/Nested.json',
+                  properties: {
+                    other: {
+                      $ref: 'Other.json',
+                    },
+                  },
+                  type: 'object',
+                },
+              },
+              type: 'object',
+            },
+            Other: {
+              $id: 'https://example.com/schemas/Other.json',
+              properties: {
+                value: {
+                  type: 'number',
+                },
+              },
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.1.0',
+      };
+
+      defaultOpenApiResolver = new DefaultOpenApiResolver(openApiObjectFixture);
+    });
+
+    describe('.resolveReference', () => {
+      describe('when called with a JSON pointer fragment pointing to a relative $ref nested under a descendant $id', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveReference(
+            'https://example.com/schemas/Item.json#/properties/nested/properties/other',
+          );
+        });
+
+        it('should return the schema identified by the relative $ref resolved against the nested $id', () => {
+          expect(result).toBe(
+            openApiObjectFixture.components?.schemas?.['Other'],
+          );
+        });
+      });
+    });
+  });
+
+  describe('having an OpenAPI object with a relative $ref including a JSON pointer fragment', () => {
+    let openApiObjectFixture: OpenApi3Dot1Object;
+    let defaultOpenApiResolver: DefaultOpenApiResolver;
+
+    beforeAll(() => {
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            Item: {
+              $id: 'https://example.com/schemas/Item.json',
+              properties: {
+                other: {
+                  $ref: 'Other.json#/properties/value',
+                },
+              },
+              type: 'object',
+            },
+            Other: {
+              $id: 'https://example.com/schemas/Other.json',
+              properties: {
+                value: {
+                  type: 'number',
+                },
+              },
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.1.0',
+      };
+
+      defaultOpenApiResolver = new DefaultOpenApiResolver(openApiObjectFixture);
+    });
+
+    describe('.resolveReference', () => {
+      describe('when called with a JSON pointer fragment pointing to a relative $ref with its own fragment', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveReference(
+            'https://example.com/schemas/Item.json#/properties/other',
+          );
+        });
+
+        it('should return the schema at the relative $ref JSON pointer fragment', () => {
+          expect(result).toStrictEqual({
+            type: 'number',
           });
         });
       });
