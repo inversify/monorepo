@@ -1,11 +1,22 @@
-import { resolveJsonPointer } from '@inversifyjs/json-schema-pointer';
 import { type JsonValue } from '@inversifyjs/json-schema-types';
 
+import { deepResolveJsonSchemaPointer } from '../calculations/deepResolveJsonSchemaPointer.js';
 import { type OpenApiResolver } from './OpenApiResolver.js';
 
 const URI_SPLIT_BY_FRAGMENT_PARTS_COUNT: number = 2;
 
 export abstract class BaseOpenApiResolver implements OpenApiResolver {
+  readonly #deepResolveJsonSchemaPointer: (
+    schema: JsonValue,
+    pointer: string,
+  ) => JsonValue | undefined;
+
+  constructor() {
+    this.#deepResolveJsonSchemaPointer = deepResolveJsonSchemaPointer(
+      (uri: string) => this._maybeResolveUri(uri),
+    );
+  }
+
   public deepResolveReference(reference: string): JsonValue | undefined {
     let resolved: JsonValue | undefined = this.resolveReference(reference);
 
@@ -42,7 +53,7 @@ export abstract class BaseOpenApiResolver implements OpenApiResolver {
       return idSchema;
     }
 
-    return resolveJsonPointer(idSchema, fragment);
+    return this.#deepResolveJsonSchemaPointer(idSchema, fragment);
   }
 
   #isReferenceObject(object: unknown): object is { $ref: string } {
