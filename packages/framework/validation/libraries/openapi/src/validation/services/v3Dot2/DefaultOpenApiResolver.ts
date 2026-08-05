@@ -6,8 +6,10 @@ import {
 import { type TraverseJsonSchemaCallbackParams } from '@inversifyjs/json-schema-utils/2020-12';
 import { type OpenApi3Dot2Object } from '@inversifyjs/open-api-types/v3Dot2';
 import { traverseOpenApiObjectJsonSchemas } from '@inversifyjs/open-api-utils/v3Dot2';
+import { Uri } from '@inversifyjs/uri';
 
-import { getClosestAncestorId } from '../../calculations/getClosestAncestor.js';
+import { getClosestAncestorId } from '../../calculations/getClosestAncestorId.js';
+import { getClosestAncestorOrNodeId } from '../../calculations/getClosestAncestorOrNodeId.js';
 import { BaseOpenApiResolver } from '../BaseOpenApiResolver.js';
 
 export class DefaultOpenApiResolver extends BaseOpenApiResolver {
@@ -42,14 +44,23 @@ export class DefaultOpenApiResolver extends BaseOpenApiResolver {
         }
 
         if (this.#hasId(params.schema)) {
-          this.#uriToSchemaMap.set(params.schema.$id, params.schema);
+          const baseId: string | undefined = getClosestAncestorId(
+            params.rootSchema,
+            params.jsonPointer,
+            openApiObject.$self,
+          );
+          const idUri: Uri = new Uri(params.schema.$id, baseId);
+
+          this.#uriToSchemaMap.set(idUri.toString(), params.schema);
         }
 
         if (params.schema.$anchor !== undefined) {
-          const anchorRelatedId: string | undefined = getClosestAncestorId(
-            params.rootSchema,
-            params.jsonPointer,
-          );
+          const anchorRelatedId: string | undefined =
+            getClosestAncestorOrNodeId(
+              params.rootSchema,
+              params.jsonPointer,
+              openApiObject.$self,
+            );
 
           if (anchorRelatedId !== undefined) {
             this.#uriToSchemaMap.set(
