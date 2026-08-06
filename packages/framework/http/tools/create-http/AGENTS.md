@@ -116,7 +116,7 @@ Generated (not copied from templates):
 
 | Generated path | Source |
 |---|---|
-| `src/index.ts` | `generateIndexSource()` — calls `bootstrap()` |
+| `src/index.ts` | `generateIndexSource()` — top-level `await bootstrap()` |
 | `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter))` |
 | `src/status/models/StatusResponse.ts` | `generateStatusResponseSource()` |
 | `src/status/controllers/StatusController.ts` | `generateStatusControllerSource()` — `GET /status` → `{ status: 'ok' }` |
@@ -138,7 +138,7 @@ Bootstrap generation:
 - Model: `BootstrapSourceModel` (`imports`, `adapter`, `applicationType`, `listenStatements`, optional container body)
 - Printer: `generateBootstrapSource()` → `src/app/scripts/bootstrap.ts`
 - Writer: `writeBootstrapSourceFile(projectPath, model)`
-- Entry: `generateIndexSource()` → `src/index.ts` calls `void bootstrap()`
+- Entry: `generateIndexSource()` → `src/index.ts` uses top-level `await bootstrap()`
 
 Generated bootstrap always includes:
 

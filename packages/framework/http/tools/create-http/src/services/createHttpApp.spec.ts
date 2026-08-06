@@ -48,11 +48,16 @@ describe(createHttpApp, () => {
         await expect(
           fs.readFile(path.join(projectPath, 'prettier.config.mjs'), 'utf8'),
         ).resolves.toContain('trailingComma');
-        await expect(
-          fs.readFile(path.join(projectPath, 'src/index.ts'), 'utf8'),
-        ).resolves.toContain(
+
+        const indexSource: string = await fs.readFile(
+          path.join(projectPath, 'src/index.ts'),
+          'utf8',
+        );
+
+        expect(indexSource).toContain(
           "import { bootstrap } from './app/scripts/bootstrap.js';",
         );
+        expect(indexSource).toContain('await bootstrap();');
 
         const bootstrapSource: string = await fs.readFile(
           path.join(projectPath, 'src/app/scripts/bootstrap.ts'),
