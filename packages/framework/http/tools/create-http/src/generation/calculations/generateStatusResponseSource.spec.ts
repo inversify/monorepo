@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { StatusResponseSourceFixtures } from '../fixtures/StatusResponseSourceFixtures.js';
 import { generateStatusResponseSource } from './generateStatusResponseSource.js';
 
 describe(generateStatusResponseSource, () => {
@@ -7,7 +8,7 @@ describe(generateStatusResponseSource, () => {
     let result: string;
 
     beforeAll(() => {
-      result = generateStatusResponseSource();
+      result = StatusResponseSourceFixtures.any;
     });
 
     it('should generate the StatusResponse interface', () => {

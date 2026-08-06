@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { StatusControllerSourceFixtures } from '../fixtures/StatusControllerSourceFixtures.js';
 import { generateStatusControllerSource } from './generateStatusControllerSource.js';
 
 describe(generateStatusControllerSource, () => {
@@ -7,7 +8,7 @@ describe(generateStatusControllerSource, () => {
     let result: string;
 
     beforeAll(() => {
-      result = generateStatusControllerSource();
+      result = StatusControllerSourceFixtures.any;
     });
 
     it('should generate a StatusController with a GET status endpoint', () => {

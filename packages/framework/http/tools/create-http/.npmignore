@@ -6,6 +6,7 @@
 **/*.ts
 !lib/**/*.d.ts
 !templates/**/*.ts
+lib/**/fixtures/**
 **/*.spec.d.ts
 **/*.spec.js
 **/*.spec.js.map

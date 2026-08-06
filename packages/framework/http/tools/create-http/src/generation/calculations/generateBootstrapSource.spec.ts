@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { createBootstrapSourceModel } from './createBootstrapSourceModel.js';
+import { BootstrapSourceFixtures } from '../fixtures/BootstrapSourceFixtures.js';
 import { generateBootstrapSource } from './generateBootstrapSource.js';
 
 describe(generateBootstrapSource, () => {
@@ -9,7 +9,7 @@ describe(generateBootstrapSource, () => {
       let result: string;
 
       beforeAll(() => {
-        result = generateBootstrapSource(createBootstrapSourceModel('express'));
+        result = BootstrapSourceFixtures.withHttpAdapterExpress;
       });
 
       it('should generate initializeContainer and adapter bootstrap', () => {
@@ -50,7 +50,7 @@ describe(generateBootstrapSource, () => {
       let result: string;
 
       beforeAll(() => {
-        result = generateBootstrapSource(createBootstrapSourceModel('fastify'));
+        result = BootstrapSourceFixtures.withHttpAdapterFastify;
       });
 
       it('should generate a Fastify adapter bootstrap', () => {
@@ -72,7 +72,7 @@ describe(generateBootstrapSource, () => {
       let result: string;
 
       beforeAll(() => {
-        result = generateBootstrapSource(createBootstrapSourceModel('hono'));
+        result = BootstrapSourceFixtures.withHttpAdapterHono;
       });
 
       it('should generate a Hono adapter bootstrap with node-server serve', () => {
@@ -92,9 +92,7 @@ describe(generateBootstrapSource, () => {
       let result: string;
 
       beforeAll(() => {
-        result = generateBootstrapSource(
-          createBootstrapSourceModel('uwebsockets'),
-        );
+        result = BootstrapSourceFixtures.withHttpAdapterUwebsockets;
       });
 
       it('should generate a uWebSockets adapter bootstrap', () => {
@@ -113,20 +111,8 @@ describe(generateBootstrapSource, () => {
       let result: string;
 
       beforeAll(() => {
-        result = generateBootstrapSource({
-          adapter: createBootstrapSourceModel('express').adapter,
-          applicationType: 'express.Application',
-          imports: [
-            {
-              moduleSpecifier: 'inversify',
-              namedImports: [{ name: 'Container' }],
-            },
-          ],
-          initializeContainerBodyStatements: [
-            'container.load(new UserContainerModule());',
-          ],
-          listenStatements: ['app.listen(PORT);'],
-        });
+        result =
+          BootstrapSourceFixtures.withUseCaseExtraInitializeContainerBodyStatements;
       });
 
       it('should include the extra statements before returning', () => {
