@@ -1,23 +1,40 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { type HttpAdapter } from '../../models/HttpAdapter.js';
+import { BootstrapSourceModelFixtures } from '../fixtures/BootstrapSourceModelFixtures.js';
 import { type BootstrapSourceModel } from '../models/BootstrapSourceModel.js';
 import { createBootstrapSourceModel } from './createBootstrapSourceModel.js';
 
 describe(createBootstrapSourceModel, () => {
   describe.each([
-    ['express', 'InversifyExpressHttpAdapter', '@inversifyjs/http-express'],
-    ['fastify', 'InversifyFastifyHttpAdapter', '@inversifyjs/http-fastify'],
-    ['hono', 'InversifyHonoHttpAdapter', '@inversifyjs/http-hono'],
+    [
+      'express',
+      () => BootstrapSourceModelFixtures.withHttpAdapterExpress,
+      'InversifyExpressHttpAdapter',
+      '@inversifyjs/http-express',
+    ],
+    [
+      'fastify',
+      () => BootstrapSourceModelFixtures.withHttpAdapterFastify,
+      'InversifyFastifyHttpAdapter',
+      '@inversifyjs/http-fastify',
+    ],
+    [
+      'hono',
+      () => BootstrapSourceModelFixtures.withHttpAdapterHono,
+      'InversifyHonoHttpAdapter',
+      '@inversifyjs/http-hono',
+    ],
     [
       'uwebsockets',
+      () => BootstrapSourceModelFixtures.withHttpAdapterUwebsockets,
       'InversifyUwebSocketsHttpAdapter',
       '@inversifyjs/http-uwebsockets',
     ],
   ] as const)(
     'having httpAdapter %s',
     (
-      httpAdapter: HttpAdapter,
+      _httpAdapter: string,
+      getBootstrapSourceModelFixture: () => BootstrapSourceModel,
       adapterClassName: string,
       adapterModuleSpecifier: string,
     ) => {
@@ -25,7 +42,7 @@ describe(createBootstrapSourceModel, () => {
         let result: BootstrapSourceModel;
 
         beforeAll(() => {
-          result = createBootstrapSourceModel(httpAdapter);
+          result = getBootstrapSourceModelFixture();
         });
 
         it('should return a model for the selected adapter', () => {

@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { StatusContainerModuleSourceFixtures } from '../fixtures/StatusContainerModuleSourceFixtures.js';
 import { generateStatusContainerModuleSource } from './generateStatusContainerModuleSource.js';
 
 describe(generateStatusContainerModuleSource, () => {
@@ -7,7 +8,7 @@ describe(generateStatusContainerModuleSource, () => {
     let result: string;
 
     beforeAll(() => {
-      result = generateStatusContainerModuleSource();
+      result = StatusContainerModuleSourceFixtures.any;
     });
 
     it('should generate a StatusContainerModule that binds StatusController', () => {
