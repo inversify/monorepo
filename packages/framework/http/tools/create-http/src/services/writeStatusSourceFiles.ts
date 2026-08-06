@@ -5,13 +5,13 @@ import { generateStatusContainerModuleSource } from '../generation/calculations/
 import { generateStatusControllerSource } from '../generation/calculations/generateStatusControllerSource.js';
 import { generateStatusResponseSource } from '../generation/calculations/generateStatusResponseSource.js';
 
-export const STATUS_CONTROLLER_RELATIVE_PATH: string =
+const STATUS_CONTROLLER_RELATIVE_PATH: string =
   'src/status/controllers/StatusController.ts';
 
-export const STATUS_CONTAINER_MODULE_RELATIVE_PATH: string =
+const STATUS_CONTAINER_MODULE_RELATIVE_PATH: string =
   'src/status/containerModules/StatusContainerModule.ts';
 
-export const STATUS_RESPONSE_RELATIVE_PATH: string =
+const STATUS_RESPONSE_RELATIVE_PATH: string =
   'src/status/models/StatusResponse.ts';
 
 export async function writeStatusSourceFiles(
