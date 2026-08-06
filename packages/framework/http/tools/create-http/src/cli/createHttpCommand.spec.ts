@@ -18,6 +18,8 @@ describe(renderUsage, () => {
         expect(result).toContain('<PATH>');
         expect(result).toContain('--packageManager');
         expect(result).toContain('npm|pnpm|yarn');
+        expect(result).toContain('--adapter');
+        expect(result).toContain('express|fastify|hono|uwebsockets');
       });
     });
   });

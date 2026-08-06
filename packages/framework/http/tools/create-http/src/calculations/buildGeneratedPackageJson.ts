@@ -1,25 +1,15 @@
 import { type PackageManager } from '../models/PackageManager.js';
 
-export interface PackageManagersVersions {
-  npm: string;
-  pnpm: string;
-  yarn: string;
-}
-
-export interface ScaffoldPackageJson {
-  description?: string;
-  devDependencies: Record<string, string>;
-  private?: boolean;
-}
-
 export function buildGeneratedPackageJson(
   packageName: string,
   packageManager: PackageManager,
   packageManagerVersion: string,
-  scaffoldPackageJson: ScaffoldPackageJson,
+  dependencies: Record<string, string>,
+  devDependencies: Record<string, string>,
 ): Record<string, unknown> {
   return {
-    devDependencies: scaffoldPackageJson.devDependencies,
+    dependencies,
+    devDependencies,
     name: packageName,
     packageManager: `${packageManager}@${packageManagerVersion}`,
     private: true,
@@ -27,6 +17,7 @@ export function buildGeneratedPackageJson(
       build: 'tsc',
       format: 'prettier --write ./src',
       lint: 'eslint ./src',
+      serve: 'node ./dist/index.js',
     },
     type: 'module',
     version: '0.1.0',

@@ -1,18 +1,24 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import {
-  buildGeneratedPackageJson,
-  type PackageManagersVersions,
-  type ScaffoldPackageJson,
-} from '../calculations/buildGeneratedPackageJson.js';
+import { buildGeneratedPackageJson } from '../calculations/buildGeneratedPackageJson.js';
 import { getBaseTemplateRoot } from '../calculations/getTemplatesRoot.js';
 import {
   resolvePackageName,
   resolveProjectPath,
 } from '../calculations/resolveProjectPath.js';
+import {
+  type ComposedScaffoldDependencies,
+  composeScaffoldDependencies,
+} from '../dependencies/calculations/composeScaffoldDependencies.js';
+import { type DependencyCatalog } from '../dependencies/models/DependencyCatalog.js';
+import { createBootstrapSourceModel } from '../generation/calculations/createBootstrapSourceModel.js';
+import { generateIndexSource } from '../generation/calculations/generateIndexSource.js';
 import { type CreateHttpAppOptions } from '../models/CreateHttpAppOptions.js';
 import { type PackageManager } from '../models/PackageManager.js';
+import { type PackageManagersVersions } from '../models/PackageManagersVersions.js';
+import { writeBootstrapSourceFile } from './writeBootstrapSourceFile.js';
+import { writeStatusSourceFiles } from './writeStatusSourceFiles.js';
 
 async function assertTargetIsAvailable(projectPath: string): Promise<void> {
   try {
@@ -68,7 +74,7 @@ export async function createHttpApp(
   await assertTargetIsAvailable(projectPath);
   await fs.mkdir(projectPath, { recursive: true });
 
-  const scaffoldPackageJson: ScaffoldPackageJson = await readJsonFile(
+  const dependencyCatalog: DependencyCatalog = await readJsonFile(
     path.join(baseTemplateRoot, 'package.json'),
   );
   const packageManagersVersions: PackageManagersVersions = await readJsonFile(
@@ -77,13 +83,16 @@ export async function createHttpApp(
 
   const packageManager: PackageManager = options.packageManager;
   const packageManagerVersion: string = packageManagersVersions[packageManager];
+  const composedDependencies: ComposedScaffoldDependencies =
+    composeScaffoldDependencies(dependencyCatalog, options.httpAdapter);
 
   const generatedPackageJson: Record<string, unknown> =
     buildGeneratedPackageJson(
       packageName,
       packageManager,
       packageManagerVersion,
-      scaffoldPackageJson,
+      composedDependencies.dependencies,
+      composedDependencies.devDependencies,
     );
 
   const jsonIndentationSpaces: number = 2;
@@ -94,6 +103,7 @@ export async function createHttpApp(
     'utf8',
   );
 
+  await copyTemplateFile('.gitignore', projectPath, baseTemplateRoot);
   await copyTemplateFile('tsconfig.json', projectPath, baseTemplateRoot);
   await copyTemplateFile(
     'eslint.config.mjs.template',
@@ -107,7 +117,17 @@ export async function createHttpApp(
     baseTemplateRoot,
     'prettier.config.mjs',
   );
-  await copyTemplateFile('src/index.ts', projectPath, baseTemplateRoot);
+  await fs.mkdir(path.join(projectPath, 'src'), { recursive: true });
+  await fs.writeFile(
+    path.join(projectPath, 'src/index.ts'),
+    generateIndexSource(),
+    'utf8',
+  );
+  await writeStatusSourceFiles(projectPath);
+  await writeBootstrapSourceFile(
+    projectPath,
+    createBootstrapSourceModel(options.httpAdapter),
+  );
 
   return projectPath;
 }
