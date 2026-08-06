@@ -1,0 +1,113 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+import {
+  buildGeneratedPackageJson,
+  type PackageManagersVersions,
+  type ScaffoldPackageJson,
+} from '../calculations/buildGeneratedPackageJson.js';
+import { getBaseTemplateRoot } from '../calculations/getTemplatesRoot.js';
+import {
+  resolvePackageName,
+  resolveProjectPath,
+} from '../calculations/resolveProjectPath.js';
+import { type CreateHttpAppOptions } from '../models/CreateHttpAppOptions.js';
+import { type PackageManager } from '../models/PackageManager.js';
+
+async function assertTargetIsAvailable(projectPath: string): Promise<void> {
+  try {
+    const directoryEntries: string[] = await fs.readdir(projectPath);
+
+    if (directoryEntries.length > 0) {
+      throw new Error(
+        `Target directory "${projectPath}" already exists and is not empty.`,
+      );
+    }
+  } catch (error: unknown) {
+    if (
+      error instanceof Error &&
+      'code' in error &&
+      (error as NodeJS.ErrnoException).code === 'ENOENT'
+    ) {
+      return;
+    }
+
+    throw error;
+  }
+}
+
+async function copyTemplateFile(
+  sourceRelativePath: string,
+  projectPath: string,
+  baseTemplateRoot: string,
+  destinationRelativePath: string = sourceRelativePath,
+): Promise<void> {
+  const sourcePath: string = path.join(baseTemplateRoot, sourceRelativePath);
+  const destinationPath: string = path.join(
+    projectPath,
+    destinationRelativePath,
+  );
+
+  await fs.mkdir(path.dirname(destinationPath), { recursive: true });
+  await fs.copyFile(sourcePath, destinationPath);
+}
+
+async function readJsonFile<T>(filePath: string): Promise<T> {
+  const fileContents: string = await fs.readFile(filePath, 'utf8');
+
+  return JSON.parse(fileContents) as T;
+}
+
+export async function createHttpApp(
+  options: CreateHttpAppOptions,
+): Promise<string> {
+  const projectPath: string = resolveProjectPath(options.targetPath);
+  const packageName: string = resolvePackageName(projectPath);
+  const baseTemplateRoot: string = getBaseTemplateRoot();
+
+  await assertTargetIsAvailable(projectPath);
+  await fs.mkdir(projectPath, { recursive: true });
+
+  const scaffoldPackageJson: ScaffoldPackageJson = await readJsonFile(
+    path.join(baseTemplateRoot, 'package.json'),
+  );
+  const packageManagersVersions: PackageManagersVersions = await readJsonFile(
+    path.join(baseTemplateRoot, 'package-managers.json'),
+  );
+
+  const packageManager: PackageManager = options.packageManager;
+  const packageManagerVersion: string = packageManagersVersions[packageManager];
+
+  const generatedPackageJson: Record<string, unknown> =
+    buildGeneratedPackageJson(
+      packageName,
+      packageManager,
+      packageManagerVersion,
+      scaffoldPackageJson,
+    );
+
+  const jsonIndentationSpaces: number = 2;
+
+  await fs.writeFile(
+    path.join(projectPath, 'package.json'),
+    `${JSON.stringify(generatedPackageJson, undefined, jsonIndentationSpaces)}\n`,
+    'utf8',
+  );
+
+  await copyTemplateFile('tsconfig.json', projectPath, baseTemplateRoot);
+  await copyTemplateFile(
+    'eslint.config.mjs.template',
+    projectPath,
+    baseTemplateRoot,
+    'eslint.config.mjs',
+  );
+  await copyTemplateFile(
+    'prettier.config.mjs.template',
+    projectPath,
+    baseTemplateRoot,
+    'prettier.config.mjs',
+  );
+  await copyTemplateFile('src/index.ts', projectPath, baseTemplateRoot);
+
+  return projectPath;
+}

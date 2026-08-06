@@ -20,6 +20,9 @@ coverage:
       '@inversifyjs/core':
         flags:
           - '@inversifyjs/core'
+      '@inversifyjs/create-http':
+        flags:
+          - '@inversifyjs/create-http'
       '@inversifyjs/eslint-plugin-require-extensions':
         flags:
           - '@inversifyjs/eslint-plugin-require-extensions'
@@ -96,6 +99,9 @@ flags:
   '@inversifyjs/core':
     paths:
       - packages/container/libraries/core/
+  '@inversifyjs/create-http':
+    paths:
+      - packages/framework/http/tools/create-http
   '@inversifyjs/eslint-plugin-require-extensions':
     paths:
       - packages/foundation/tools/eslint-plugin-require-extensions

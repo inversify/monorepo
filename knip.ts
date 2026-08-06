@@ -156,6 +156,14 @@ export default {
       ],
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/framework/http/tools/create-http": {
+      entry: [
+        "bin/create-inversify-http.js",
+        "src/cli/runCreateHttp.entrypoint.ts",
+        "src/index.ts",
+      ],
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/framework/validation/libraries/*": defaultWorkspaceProjectConfig,
     "packages/json-schema/libraries/*": defaultWorkspaceProjectConfig,
     "packages/logger": defaultWorkspaceProjectConfig,
