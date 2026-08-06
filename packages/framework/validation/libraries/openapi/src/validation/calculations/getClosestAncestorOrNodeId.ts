@@ -1,6 +1,7 @@
 import { resolveJsonPointer } from '@inversifyjs/json-schema-pointer';
 import { type JsonValue } from '@inversifyjs/json-schema-types';
 import { type JsonSchemaObject } from '@inversifyjs/json-schema-types/2020-12';
+import { Uri } from '@inversifyjs/uri';
 import {
   InversifyValidationError,
   InversifyValidationErrorKind,
@@ -8,15 +9,19 @@ import {
 
 const SPACES_INDENTATION: number = 2;
 
-export function getClosestAncestorId(
+export function getClosestAncestorOrNodeId(
   rootSchema: JsonValue,
   jsonPointer: string,
+  baseId: string | undefined,
 ): string | undefined {
   const jsonPointerParts: string[] = jsonPointer.split('/').slice(1);
 
   let jsonSchemaAncestor: JsonValue | undefined = rootSchema;
 
-  let closestId: string | undefined = maybeGetId(jsonSchemaAncestor);
+  let closestId: string | undefined = maybeResolveId(
+    maybeGetId(jsonSchemaAncestor),
+    baseId,
+  );
 
   for (const jsonPointerPart of jsonPointerParts) {
     jsonSchemaAncestor = resolveJsonPointer(
@@ -32,7 +37,11 @@ JSON schema: ${JSON.stringify(rootSchema, null, SPACES_INDENTATION)}`,
       );
     }
 
-    closestId = maybeGetId(jsonSchemaAncestor) ?? closestId;
+    const nodeId: string | undefined = maybeGetId(jsonSchemaAncestor);
+
+    if (nodeId !== undefined) {
+      closestId = maybeResolveId(nodeId, closestId);
+    }
   }
 
   return closestId;
@@ -44,4 +53,20 @@ function maybeGetId(value: JsonValue): string | undefined {
   }
 
   return undefined;
+}
+
+function maybeResolveId(
+  id: string | undefined,
+  baseId: string | undefined,
+): string | undefined {
+  if (id === undefined) {
+    return baseId;
+  }
+
+  try {
+    return new Uri(id, baseId).toString();
+  } catch (_error: unknown) {
+    // We could not resolve the id, but a later absolute uri id might be found to recover from this state
+    return undefined;
+  }
 }

@@ -701,6 +701,152 @@ describe(OpenApiValidationPipe, () => {
         });
       });
 
+      describe('having an OpenApiValidationPipe (v3.2) with relative schema id references', () => {
+        interface Other {
+          value: number;
+        }
+
+        interface Item {
+          label: string;
+          other: Other;
+        }
+
+        @Controller('/items')
+        class ItemController {
+          @OasRequestBody({
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: 'https://example.com/schemas/Item.json',
+                },
+              },
+            },
+            required: true,
+          })
+          @Post()
+          public async createItem(@ValidatedBody() item: Item): Promise<Item> {
+            return item;
+          }
+        }
+
+        let server: Server;
+
+        beforeAll(async () => {
+          const container: Container = new Container();
+
+          container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+          container.bind(ItemController).toSelf().inSingletonScope();
+
+          const openApiObject: OpenApi3Dot2Object = {
+            components: {
+              schemas: {
+                Item: {
+                  $id: 'https://example.com/schemas/Item.json',
+                  properties: {
+                    label: { type: 'string' },
+                    other: {
+                      $ref: 'Other.json',
+                    },
+                  },
+                  required: ['label', 'other'],
+                  type: 'object',
+                },
+                Other: {
+                  $id: 'https://example.com/schemas/Other.json',
+                  properties: {
+                    value: { type: 'number' },
+                  },
+                  required: ['value'],
+                  type: 'object',
+                },
+              },
+            },
+            info: { title: 'Test API', version: '1.0.0' },
+            openapi: '3.2.0',
+          };
+
+          const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+            api: {
+              openApiObject,
+              path: '/docs',
+            },
+          });
+
+          swaggerProvider.provide(container);
+
+          server = await buildServer(
+            container,
+            [ValidationErrorFilter],
+            [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+          );
+        });
+
+        afterAll(async () => {
+          await server.shutdown();
+        });
+
+        describe('when a valid POST /items request is made', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/items`,
+              {
+                body: JSON.stringify({
+                  label: 'My Item',
+                  other: { value: 42 },
+                }),
+                headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(200);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+            await expect(response.json()).resolves.toStrictEqual({
+              label: 'My Item',
+              other: { value: 42 },
+            });
+          });
+        });
+
+        describe('when an invalid POST /items request with a bad relative-ref property is made', () => {
+          let response: Response;
+          let responseJson: unknown;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/items`,
+              {
+                body: JSON.stringify({
+                  label: 'My Item',
+                  other: { value: 'not-a-number' },
+                }),
+                headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+              },
+            );
+
+            responseJson = await response.json();
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+
+            expect(responseJson).toStrictEqual({
+              message: expect.stringContaining('must be number'),
+            });
+          });
+        });
+      });
+
       describe('having an OpenApiValidationPipe (v3.2) in an HTTP server with validated headers', () => {
         @Controller('/resources')
         class ResourceController {

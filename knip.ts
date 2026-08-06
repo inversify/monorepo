@@ -160,5 +160,6 @@ export default {
     "packages/json-schema/libraries/*": defaultWorkspaceProjectConfig,
     "packages/logger": defaultWorkspaceProjectConfig,
     "packages/open-api/libraries/*": defaultWorkspaceProjectConfig,
+    "packages/uri": defaultWorkspaceProjectConfig,
   },
 } satisfies KnipConfig;

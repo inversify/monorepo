@@ -12,7 +12,9 @@ import {
   type OpenApi3Dot1PathItemObject,
   type OpenApi3Dot1ReferenceObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
+import { InversifyValidationErrorKind } from '@inversifyjs/validation-common';
 
+import { InversifyOpenApiValidationError } from '../../../models/InversifyOpenApiValidationError.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { getOperationObject } from './getOperationObject.js';
 import { getPathItemObject } from './getPathItemObject.js';
@@ -201,6 +203,114 @@ describe(getQueryParameterObjects, () => {
       expect(
         openApiResolverFixture.deepResolveReference,
       ).toHaveBeenCalledExactlyOnceWith('#/components/parameters/PageParam');
+    });
+  });
+
+  describe('when called, and path item deepResolveReference returns undefined', () => {
+    let openApiResolverFixture: OpenApiResolver;
+    let result: unknown;
+
+    beforeAll(() => {
+      const refFixture: OpenApi3Dot1ReferenceObject = {
+        $ref: '#/components/parameters/MissingPageParam',
+      };
+
+      const operationFixture: OpenApi3Dot1OperationObject = {
+        responses: {},
+      };
+
+      const pathItemFixture: OpenApi3Dot1PathItemObject = {
+        get: operationFixture,
+        parameters: [refFixture],
+      };
+
+      openApiResolverFixture = {
+        deepResolveReference: vitest.fn().mockReturnValueOnce(undefined),
+        resolveReference: vitest.fn(),
+      };
+
+      vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
+      vitest.mocked(getOperationObject).mockReturnValueOnce(operationFixture);
+
+      try {
+        getQueryParameterObjects(
+          openApiObjectFixture,
+          openApiResolverFixture,
+          methodFixture,
+          pathFixture,
+        );
+      } catch (error: unknown) {
+        result = error;
+      }
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should throw an InversifyOpenApiValidationError', () => {
+      const expectedErrorProperties: Partial<InversifyOpenApiValidationError> =
+        {
+          kind: InversifyValidationErrorKind.validationFailed,
+          message: `Unable to resolve query parameter at path: ${pathFixture} and method: ${methodFixture} and index: 0`,
+        };
+
+      expect(result).toBeInstanceOf(InversifyOpenApiValidationError);
+      expect(result).toMatchObject(expectedErrorProperties);
+    });
+  });
+
+  describe('when called, and operation deepResolveReference returns undefined', () => {
+    let openApiResolverFixture: OpenApiResolver;
+    let result: unknown;
+
+    beforeAll(() => {
+      const refFixture: OpenApi3Dot1ReferenceObject = {
+        $ref: '#/components/parameters/MissingPageParam',
+      };
+
+      const operationFixture: OpenApi3Dot1OperationObject = {
+        parameters: [refFixture],
+        responses: {},
+      };
+
+      const pathItemFixture: OpenApi3Dot1PathItemObject = {
+        get: operationFixture,
+      };
+
+      openApiResolverFixture = {
+        deepResolveReference: vitest.fn().mockReturnValueOnce(undefined),
+        resolveReference: vitest.fn(),
+      };
+
+      vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
+      vitest.mocked(getOperationObject).mockReturnValueOnce(operationFixture);
+
+      try {
+        getQueryParameterObjects(
+          openApiObjectFixture,
+          openApiResolverFixture,
+          methodFixture,
+          pathFixture,
+        );
+      } catch (error: unknown) {
+        result = error;
+      }
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should throw an InversifyOpenApiValidationError', () => {
+      const expectedErrorProperties: Partial<InversifyOpenApiValidationError> =
+        {
+          kind: InversifyValidationErrorKind.validationFailed,
+          message: `Unable to resolve query parameter at path: ${pathFixture} and method: ${methodFixture} and index: 0`,
+        };
+
+      expect(result).toBeInstanceOf(InversifyOpenApiValidationError);
+      expect(result).toMatchObject(expectedErrorProperties);
     });
   });
 

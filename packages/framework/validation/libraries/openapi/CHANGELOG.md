@@ -1,5 +1,19 @@
 # @inversifyjs/open-api-validation
 
+## 3.5.2
+
+### Patch Changes
+
+- Updated `OpenApiValidationPipe` to properly handle unexisting url param $ref.
+- Updated `OpenApiValidationPipe` to properly handle unexisting query $ref.
+- Updated `OpenApiValidationPipe` to properly handle unexisting header $ref.
+- Updated `OpenApiValidationPipe` to properly handle relative $ref.
+- Updated dependencies
+  - @inversifyjs/uri@1.0.0
+  - @inversifyjs/validation-common@3.5.2
+  - @inversifyjs/http-core@5.4.8
+  - @inversifyjs/http-open-api@5.4.8
+
 ## 3.5.1
 
 ### Patch Changes

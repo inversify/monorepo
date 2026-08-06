@@ -6,7 +6,9 @@ import {
   type OpenApi3Dot1PathItemObject,
   type OpenApi3Dot1ReferenceObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
+import { InversifyValidationErrorKind } from '@inversifyjs/validation-common';
 
+import { InversifyOpenApiValidationError } from '../../../models/InversifyOpenApiValidationError.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { getOperationObject } from './getOperationObject.js';
 import { getPathItemObject } from './getPathItemObject.js';
@@ -46,11 +48,18 @@ export function getParamParameterObjects(
         pathItemObject.parameters[i] as
           OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject;
 
-      const param: OpenApi3Dot1ParameterObject = isReferenceObject(raw)
-        ? (openApiResolver.deepResolveReference(
-            raw.$ref,
-          ) as unknown as OpenApi3Dot1ParameterObject)
-        : raw;
+      const param: OpenApi3Dot1ParameterObject | null | undefined =
+        isReferenceObject(raw)
+          ? (openApiResolver.deepResolveReference(raw.$ref) as unknown as
+              OpenApi3Dot1ParameterObject | null | undefined)
+          : raw;
+
+      if (param == undefined) {
+        throw new InversifyOpenApiValidationError(
+          InversifyValidationErrorKind.validationFailed,
+          `Unable to resolve path parameter at path: ${path} and method: ${method} and index: ${String(i)}`,
+        );
+      }
 
       if (param.in === 'path') {
         result.set(param.name, {
@@ -67,11 +76,18 @@ export function getParamParameterObjects(
         operationObject.parameters[i] as
           OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject;
 
-      const param: OpenApi3Dot1ParameterObject = isReferenceObject(raw)
-        ? (openApiResolver.deepResolveReference(
-            raw.$ref,
-          ) as unknown as OpenApi3Dot1ParameterObject)
-        : raw;
+      const param: OpenApi3Dot1ParameterObject | null | undefined =
+        isReferenceObject(raw)
+          ? (openApiResolver.deepResolveReference(raw.$ref) as unknown as
+              OpenApi3Dot1ParameterObject | null | undefined)
+          : raw;
+
+      if (param == undefined) {
+        throw new InversifyOpenApiValidationError(
+          InversifyValidationErrorKind.validationFailed,
+          `Unable to resolve path parameter at path: ${path} and method: ${method} and index: ${String(i)}`,
+        );
+      }
 
       if (param.in === 'path') {
         result.set(param.name, {

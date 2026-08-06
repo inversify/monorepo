@@ -42,7 +42,7 @@
   },
   "name": "@inversifyjs/http-hono",
   "peerDependencies": {
-    "hono": "^4.12.32",
+    "hono": "^4.12.34",
     "inversify": "^8.2.3"
   },
   "publishConfig": {
@@ -64,6 +64,6 @@
     "test:uncommitted": "pnpm run test --changed=HEAD",
     "test:unit": "pnpm run test --project Unit"
   },
-  "version": "5.4.7",
+  "version": "5.4.8",
   "type": "module"
 }
