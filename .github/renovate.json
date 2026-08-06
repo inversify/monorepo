@@ -41,6 +41,18 @@
       "depNameTemplate": "uNetworking/uWebSockets.js",
       "datasourceTemplate": "github-tags",
       "versioningTemplate": "semver-coerced"
+    },
+    {
+      "customType": "jsonata",
+      "description": "Update package manager versions used by @inversifyjs/create-http scaffolds",
+      "fileFormat": "json",
+      "managerFilePatterns": [
+        "/(^|/)packages/framework/http/tools/create-http/templates/base/package-managers\\.json$/"
+      ],
+      "matchStrings": [
+        "$each($, function($v, $k) { {\"depName\": $k, \"currentValue\": $v}})"
+      ],
+      "datasourceTemplate": "npm"
     }
   ],
   "constraints": { "pnpm": "11.18.0" },
