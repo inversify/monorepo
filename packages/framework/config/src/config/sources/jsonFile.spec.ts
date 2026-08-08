@@ -62,4 +62,51 @@ describe(jsonFile, () => {
       expect(result).toBeInstanceOf(InversifyConfigError);
     });
   });
+
+  describe('having invalid JSON content', () => {
+    let directoryFixture: string;
+    let jsonPathFixture: string;
+    let result: unknown;
+
+    beforeAll(async () => {
+      directoryFixture = await mkdtemp(join(tmpdir(), 'inversify-config-'));
+      jsonPathFixture = join(directoryFixture, 'config.json');
+      await writeFile(jsonPathFixture, '{ invalid json');
+
+      try {
+        await jsonFile({ path: jsonPathFixture }).load();
+      } catch (error: unknown) {
+        result = error;
+      }
+    });
+
+    afterAll(async () => {
+      await rm(directoryFixture, { force: true, recursive: true });
+    });
+
+    it('should throw an InversifyConfigError', () => {
+      expect(result).toBeInstanceOf(InversifyConfigError);
+      expect((result as Error).cause).toBeInstanceOf(SyntaxError);
+    });
+  });
+
+  describe('having a missing JSON file', () => {
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(async () => {
+        try {
+          await jsonFile({
+            path: join(tmpdir(), 'inversify-config-missing.json'),
+          }).load();
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an InversifyConfigError', () => {
+        expect(result).toBeInstanceOf(InversifyConfigError);
+      });
+    });
+  });
 });

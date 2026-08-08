@@ -64,4 +64,51 @@ describe(yamlFile, () => {
       expect(result).toBeInstanceOf(InversifyConfigError);
     });
   });
+
+  describe('having invalid YAML content', () => {
+    let directoryFixture: string;
+    let yamlPathFixture: string;
+    let result: unknown;
+
+    beforeAll(async () => {
+      directoryFixture = await mkdtemp(join(tmpdir(), 'inversify-config-'));
+      yamlPathFixture = join(directoryFixture, 'config.yaml');
+      await writeFile(yamlPathFixture, 'foo: [bar');
+
+      try {
+        await yamlFile({ path: yamlPathFixture }).load();
+      } catch (error: unknown) {
+        result = error;
+      }
+    });
+
+    afterAll(async () => {
+      await rm(directoryFixture, { force: true, recursive: true });
+    });
+
+    it('should throw an InversifyConfigError', () => {
+      expect(result).toBeInstanceOf(InversifyConfigError);
+      expect((result as Error).cause).toBeDefined();
+    });
+  });
+
+  describe('having a missing YAML file', () => {
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(async () => {
+        try {
+          await yamlFile({
+            path: join(tmpdir(), 'inversify-config-missing.yaml'),
+          }).load();
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an InversifyConfigError', () => {
+        expect(result).toBeInstanceOf(InversifyConfigError);
+      });
+    });
+  });
 });

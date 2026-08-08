@@ -14,8 +14,27 @@ export interface YamlFileOptions {
 export function yamlFile(options: YamlFileOptions): ConfigSource {
   return {
     async load(): Promise<ConfigObject> {
-      const content: string = await readFile(options.path, 'utf8');
-      const parsed: unknown = parse(content);
+      let content: string;
+
+      try {
+        content = await readFile(options.path, 'utf8');
+      } catch (error: unknown) {
+        throw new InversifyConfigError(
+          `Unable to read YAML config at "${options.path}"`,
+          { cause: error },
+        );
+      }
+
+      let parsed: unknown;
+
+      try {
+        parsed = parse(content);
+      } catch (error: unknown) {
+        throw new InversifyConfigError(
+          `Unable to parse YAML config at "${options.path}"`,
+          { cause: error },
+        );
+      }
 
       if (
         typeof parsed !== 'object' ||

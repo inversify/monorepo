@@ -1,6 +1,10 @@
 import { readFile } from 'node:fs/promises';
 
-import { type ConfigObject, type ConfigSource } from '@inversifyjs/config';
+import {
+  type ConfigObject,
+  type ConfigSource,
+  InversifyConfigError,
+} from '@inversifyjs/config';
 import { parse } from 'dotenv';
 
 export interface EnvFileOptions {
@@ -32,7 +36,10 @@ export function envFile(options?: EnvFileOptions): ConfigSource {
             continue;
           }
 
-          throw error;
+          throw new InversifyConfigError(
+            `Unable to load env config at "${path}"`,
+            { cause: error },
+          );
         }
       }
 

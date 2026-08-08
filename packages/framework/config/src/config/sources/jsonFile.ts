@@ -11,8 +11,27 @@ export interface JsonFileOptions {
 export function jsonFile(options: JsonFileOptions): ConfigSource {
   return {
     async load(): Promise<ConfigObject> {
-      const content: string = await readFile(options.path, 'utf8');
-      const parsed: unknown = JSON.parse(content);
+      let content: string;
+
+      try {
+        content = await readFile(options.path, 'utf8');
+      } catch (error: unknown) {
+        throw new InversifyConfigError(
+          `Unable to read JSON config at "${options.path}"`,
+          { cause: error },
+        );
+      }
+
+      let parsed: unknown;
+
+      try {
+        parsed = JSON.parse(content);
+      } catch (error: unknown) {
+        throw new InversifyConfigError(
+          `Unable to parse JSON config at "${options.path}"`,
+          { cause: error },
+        );
+      }
 
       if (
         typeof parsed !== 'object' ||

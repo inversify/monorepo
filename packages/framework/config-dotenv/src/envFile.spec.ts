@@ -4,7 +4,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { type ConfigObject } from '@inversifyjs/config';
+import { type ConfigObject, InversifyConfigError } from '@inversifyjs/config';
 
 import { envFile } from './envFile.js';
 
@@ -77,6 +77,30 @@ describe(envFile, () => {
       it('should return an empty object', () => {
         expect(result).toStrictEqual({});
       });
+    });
+  });
+
+  describe('having an unreadable env path', () => {
+    let directoryFixture: string;
+    let result: unknown;
+
+    beforeAll(async () => {
+      directoryFixture = await mkdtemp(join(tmpdir(), 'inversify-config-'));
+
+      try {
+        await envFile({ path: directoryFixture }).load();
+      } catch (error: unknown) {
+        result = error;
+      }
+    });
+
+    afterAll(async () => {
+      await rm(directoryFixture, { force: true, recursive: true });
+    });
+
+    it('should throw an InversifyConfigError', () => {
+      expect(result).toBeInstanceOf(InversifyConfigError);
+      expect((result as Error).cause).toBeDefined();
     });
   });
 });
