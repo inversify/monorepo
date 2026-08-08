@@ -36,6 +36,11 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/config-code-examples#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**/*.{cts,mts,ts}"],
+      "outputs": ["generated/**", "lib/**"]
+    },
     "@inversifyjs/logger-code-examples#build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{cts,mts,ts}"],
@@ -50,6 +55,7 @@
       "dependsOn": ["^build"],
       "inputs": [
         "blog/**",
+        "config-docs/**",
         "docs/**",
         "graphql-docs/**",
         "logger-docs/**",
