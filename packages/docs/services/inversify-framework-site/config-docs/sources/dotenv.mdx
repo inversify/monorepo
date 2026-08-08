@@ -1,0 +1,53 @@
+---
+sidebar_position: 2
+title: dotenv
+---
+
+import envFileSourceSource from '@inversifyjs/config-code-examples/generated/examples/v1/envFileSource.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# dotenv
+
+`@inversifyjs/config-dotenv` provides an `envFile` source that parses `.env` files without mutating `process.env`.
+
+## Install
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+  npm install @inversifyjs/config-dotenv
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+  yarn add @inversifyjs/config-dotenv
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+  pnpm install @inversifyjs/config-dotenv
+```
+
+  </TabItem>
+</Tabs>
+
+## envFile
+
+```ts
+interface EnvFileOptions {
+  path?: string | string[];
+}
+```
+
+- Defaults to `.env` when `path` is omitted.
+- Missing files are ignored.
+- When multiple paths are provided, later files override earlier ones.
+
+<CodeBlock language="ts">{envFileSourceSource}</CodeBlock>

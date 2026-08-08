@@ -14,6 +14,15 @@ coverage:
       '@inversifyjs/common':
         flags:
           - '@inversifyjs/common'
+      '@inversifyjs/config':
+        flags:
+          - '@inversifyjs/config'
+      '@inversifyjs/config-dotenv':
+        flags:
+          - '@inversifyjs/config-dotenv'
+      '@inversifyjs/config-yaml':
+        flags:
+          - '@inversifyjs/config-yaml'
       '@inversifyjs/container':
         flags:
           - '@inversifyjs/container'
@@ -93,6 +102,15 @@ flags:
   '@inversifyjs/common':
     paths:
       - packages/container/libraries/common/
+  '@inversifyjs/config':
+    paths:
+      - packages/framework/config
+  '@inversifyjs/config-dotenv':
+    paths:
+      - packages/framework/config-dotenv
+  '@inversifyjs/config-yaml':
+    paths:
+      - packages/framework/config-yaml
   '@inversifyjs/container':
     paths:
       - packages/container/libraries/container/

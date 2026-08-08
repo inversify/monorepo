@@ -1,0 +1,117 @@
+---
+sidebar_position: 2
+title: API
+---
+
+import gettingStartedSource from '@inversifyjs/config-code-examples/generated/examples/v1/gettingStarted.ts.txt';
+import configServiceInjectionSource from '@inversifyjs/config-code-examples/generated/examples/v1/configServiceInjection.ts.txt';
+import customServiceIdentifierSource from '@inversifyjs/config-code-examples/generated/examples/v1/customServiceIdentifier.ts.txt';
+import standardSchemaValidationSource from '@inversifyjs/config-code-examples/generated/examples/v1/standardSchemaValidation.ts.txt';
+import configValidatorSource from '@inversifyjs/config-code-examples/generated/examples/v1/configValidator.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# API Reference
+
+This section covers the core API of `@inversifyjs/config`.
+
+## ConfigContainerModule
+
+`ConfigContainerModule` loads configuration from a single `ConfigSource`, optionally validates it, and binds a `ConfigService`.
+
+```ts
+class ConfigContainerModule extends ContainerModule {
+  static fromOptions<TConfig>(
+    options: ConfigContainerModuleOptions<TConfig>,
+  ): ConfigContainerModule;
+}
+```
+
+### ConfigContainerModuleOptions
+
+```ts
+interface ConfigContainerModuleOptions<TConfig = ConfigObject> {
+  source: ConfigSource;
+  validate?: ConfigValidator<TConfig> | StandardSchemaV1<TConfig>;
+  serviceIdentifier?: ServiceIdentifier<ConfigService<TConfig>>;
+}
+```
+
+Parameters:
+
+- `source` (`ConfigSource`): Loads a plain configuration object.
+- `validate` (optional): A Standard Schema or a custom `ConfigValidator`. When provided, the loaded object is validated and coerced before binding.
+- `serviceIdentifier` (optional): Service identifier used to bind the `ConfigService`. Defaults to `configServiceIdentifier`.
+
+#### Example: Loading and validating config
+
+<CodeBlock language="ts">{gettingStartedSource}</CodeBlock>
+
+:::warning
+
+Always use `container.loadAsync(...)`. The module load callback is asynchronous because sources and validators may perform I/O.
+
+:::
+
+## ConfigService
+
+`ConfigService` exposes the loaded (and optionally validated) configuration object.
+
+```ts
+interface ConfigService<TConfig> {
+  get(): TConfig;
+}
+```
+
+By default it is bound under `configServiceIdentifier`:
+
+```ts
+const configServiceIdentifier: unique symbol = Symbol.for(
+  '@inversifyjs/config/configService',
+);
+```
+
+#### Example: Injecting ConfigService
+
+<CodeBlock language="ts">{configServiceInjectionSource}</CodeBlock>
+
+#### Example: Custom service identifier
+
+Use a custom service identifier when you need multiple configs in the same container:
+
+<CodeBlock language="ts">{customServiceIdentifierSource}</CodeBlock>
+
+## Validation
+
+Validation is optional. When provided, it runs after the source loads and before the `ConfigService` is bound.
+
+### Standard Schema
+
+Any Standard Schema implementation works (Zod, Valibot, ArkType, and others):
+
+<CodeBlock language="ts">{standardSchemaValidationSource}</CodeBlock>
+
+### ConfigValidator
+
+For custom logic, pass an object with a `validate` method:
+
+```ts
+interface ConfigValidator<TConfig> {
+  validate(input: ConfigObject): TConfig | Promise<TConfig>;
+}
+```
+
+<CodeBlock language="ts">{configValidatorSource}</CodeBlock>
+
+If validation fails, an `InversifyConfigError` (or an error thrown by your validator) prevents the module from loading.
+
+## ConfigSource
+
+A config source produces a plain object:
+
+```ts
+interface ConfigSource {
+  load(): ConfigObject | Promise<ConfigObject>;
+}
+```
+
+See [Sources](/config/sources/overview) for built-in helpers and optional packages.

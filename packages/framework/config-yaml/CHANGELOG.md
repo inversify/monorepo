@@ -1,0 +1,1 @@
+# @inversifyjs/config-yaml

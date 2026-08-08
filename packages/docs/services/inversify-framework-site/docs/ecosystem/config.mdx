@@ -1,0 +1,21 @@
+---
+sidebar_position: 6
+title: Config
+---
+import gettingStartedSource from '@inversifyjs/config-code-examples/generated/examples/v1/gettingStarted.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import DocumentationButton from '../../src/components/DocumentationButton';
+
+`@inversifyjs/config` loads application configuration into the InversifyJS container. Provide a single config source, optionally validate it with a Standard Schema or custom validator, and inject a typed `ConfigService`.
+
+### Loading config
+
+<CodeBlock language="ts">{gettingStartedSource}</CodeBlock>
+
+:::tip
+Optional helpers for `.env` and YAML files live in `@inversifyjs/config-dotenv` and `@inversifyjs/config-yaml`.
+:::
+
+<DocumentationButton href="/config/introduction/getting-started/" target="_blank">
+  <span>View Full Documentation</span>
+</DocumentationButton>

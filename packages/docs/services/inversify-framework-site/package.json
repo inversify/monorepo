@@ -9,6 +9,7 @@
     "@docusaurus/faster": "3.10.2",
     "@docusaurus/plugin-content-docs": "3.10.2",
     "@docusaurus/preset-classic": "3.10.2",
+    "@inversifyjs/config-code-examples": "workspace:*",
     "@inversifyjs/http-code-examples": "workspace:*",
     "@inversifyjs/graphql-code-examples": "workspace:*",
     "@inversifyjs/http-open-api-code-examples": "workspace:*",

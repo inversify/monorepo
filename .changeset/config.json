@@ -7,6 +7,11 @@
   "commit": false,
   "fixed": [
     [
+      "@inversifyjs/config",
+      "@inversifyjs/config-dotenv",
+      "@inversifyjs/config-yaml"
+    ],
+    [
       "@inversifyjs/ajv-validation",
       "@inversifyjs/class-validation",
       "@inversifyjs/open-api-validation",
@@ -26,6 +31,7 @@
     ]
   ],
   "ignore": [
+    "@inversifyjs/config-code-examples",
     "@inversifyjs/framework-docs-site",
     "@inversifyjs/http-benchmarks",
     "@inversifyjs/http-code-examples",
