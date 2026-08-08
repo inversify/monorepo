@@ -192,9 +192,9 @@ pnpm run --filter @inversifyjs/create-http build
 
 Important coverage areas:
 
-- Dependency composition includes only the selected adapter
+- Dependency composition includes only the selected adapter (exact versions against a fixture catalog)
 - Bootstrap generation (default + extra body statements)
-- Generated package.json shape / `packageManager` field
+- Generated package.json shape / adapter membership / `packageManager` prefix — not catalog version pins (Renovate owns those)
 - Help text includes citty-defined options (`renderUsage`)
 
 ## Codecov
