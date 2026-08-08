@@ -1,3 +1,4 @@
+import { deepFreeze } from '../calculations/deepFreeze.js';
 import { type ConfigService } from '../models/ConfigService.js';
 
 export class ConfigServiceImplementation<
@@ -6,7 +7,7 @@ export class ConfigServiceImplementation<
   readonly #config: TConfig;
 
   constructor(config: TConfig) {
-    this.#config = config;
+    this.#config = deepFreeze(config);
   }
 
   public get(): TConfig {
