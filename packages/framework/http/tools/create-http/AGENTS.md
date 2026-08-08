@@ -61,7 +61,7 @@ Recipe (CLI args / prompts)
 ### CLI stack
 
 - **citty**: arg parsing, `--help` / `--version` from `defineCommand` args. Prefer adding options here so help stays auto-generated.
-- **@clack/prompts**: interactive selects + progress spinners (`start` / `stop` per step).
+- **@clack/prompts**: interactive selects + progress spinners (`start` / `stop` / `error` / `cancel` per step).
 - Do **not** use consola for help text; citty owns usage rendering.
 
 ## Dependency management (critical)
@@ -192,9 +192,9 @@ pnpm run --filter @inversifyjs/create-http build
 
 Important coverage areas:
 
-- Dependency composition includes only the selected adapter
+- Dependency composition includes only the selected adapter (exact versions against a fixture catalog)
 - Bootstrap generation (default + extra body statements)
-- Generated package.json shape / `packageManager` field
+- Generated package.json shape / adapter membership / `packageManager` prefix — not catalog version pins (Renovate owns those)
 - Help text includes citty-defined options (`renderUsage`)
 
 ## Codecov

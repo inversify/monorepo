@@ -117,13 +117,13 @@ describe(createHttpApp, () => {
 
         expect(packageJson).toMatchObject({
           dependencies: {
-            '@inversifyjs/http-core': '5.4.8',
-            '@inversifyjs/http-express': '5.4.8',
-            express: '5.2.1',
-            inversify: '8.2.3',
+            '@inversifyjs/http-core': expect.any(String) as string,
+            '@inversifyjs/http-express': expect.any(String) as string,
+            express: expect.any(String) as string,
+            inversify: expect.any(String) as string,
           },
           name: 'demo-app',
-          packageManager: 'pnpm@11.18.0',
+          packageManager: expect.stringMatching(/^pnpm@/) as string,
           scripts: {
             build: 'tsc',
             format: 'prettier --write ./src',
@@ -143,7 +143,7 @@ describe(createHttpApp, () => {
           (packageJson as { devDependencies: Record<string, string> })
             .devDependencies,
         ).toMatchObject({
-          '@types/express': '5.0.6',
+          '@types/express': expect.any(String) as string,
           eslint: expect.any(String) as string,
           prettier: expect.any(String) as string,
           typescript: expect.any(String) as string,
