@@ -55,7 +55,7 @@
       "datasourceTemplate": "npm"
     }
   ],
-  "constraints": { "pnpm": "11.18.0" },
+  "constraints": { "pnpm": "11.20.0" },
   "dependencyDashboard": false,
   "extends": [
     ":disableRateLimiting",

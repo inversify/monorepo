@@ -8,8 +8,8 @@
     "@rollup/plugin-multi-entry": "7.1.0",
     "@rollup/plugin-terser": "1.0.0",
     "@rollup/plugin-typescript": "12.3.0",
-    "rollup-plugin-dts": "6.4.1",
-    "rollup": "4.62.3"
+    "rollup-plugin-dts": "6.5.1",
+    "rollup": "4.62.4"
   },
   "devDependencies": {
     "prettier": "3.9.6"

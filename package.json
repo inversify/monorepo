@@ -18,8 +18,8 @@
     "@inversifyjs/foundation-typescript-config": "workspace:*",
     "@inversifyjs/foundation-vitest-config": "workspace:*",
     "husky": "9.1.7",
-    "knip": "6.29.0",
-    "lint-staged": "17.2.0",
+    "knip": "6.31.0",
+    "lint-staged": "17.3.0",
     "sponsorkit": "18.0.0",
     "turbo": "2.10.8"
   },
@@ -27,7 +27,7 @@
   "keywords": [],
   "license": "MIT",
   "name": "root",
-  "packageManager": "pnpm@11.18.0",
+  "packageManager": "pnpm@11.20.0",
   "private": true,
   "repository": {
     "type": "git",
