@@ -2,15 +2,15 @@
   "private": true,
   "description": "Dependency version catalog for apps scaffolded by @inversifyjs/create-http. Renovate updates this file; the CLI composes a subset into generated package.json files based on the selected recipe.",
   "dependencies": {
-    "@hono/node-server": "2.0.12",
+    "@hono/node-server": "2.1.0",
     "@inversifyjs/http-core": "5.4.8",
     "@inversifyjs/http-express": "5.4.8",
     "@inversifyjs/http-fastify": "5.4.8",
     "@inversifyjs/http-hono": "5.4.8",
     "@inversifyjs/http-uwebsockets": "5.4.8",
     "express": "5.2.1",
-    "fastify": "5.11.0",
-    "hono": "4.12.34",
+    "fastify": "5.11.2",
+    "hono": "4.13.0",
     "inversify": "8.2.3",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.69.0"
   },
@@ -21,6 +21,6 @@
     "eslint": "10.8.0",
     "prettier": "3.9.6",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.65.0"
+    "typescript-eslint": "8.66.0"
   }
 }
