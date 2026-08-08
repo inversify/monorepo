@@ -1,0 +1,64 @@
+---
+sidebar_position: 1
+title: Overview
+---
+
+import objectSourceSource from '@inversifyjs/config-code-examples/generated/examples/v1/objectSource.ts.txt';
+import factorySourceSource from '@inversifyjs/config-code-examples/generated/examples/v1/factorySource.ts.txt';
+import processEnvSourceSource from '@inversifyjs/config-code-examples/generated/examples/v1/processEnvSource.ts.txt';
+import jsonFileSourceSource from '@inversifyjs/config-code-examples/generated/examples/v1/jsonFileSource.ts.txt';
+import customMergedSourceSource from '@inversifyjs/config-code-examples/generated/examples/v1/customMergedSource.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Sources
+
+`ConfigContainerModule` accepts a single `ConfigSource`. Built-in helpers cover the common cases; for multiple inputs, compose them in a custom source.
+
+## object
+
+Returns a static configuration object. Useful for defaults and tests.
+
+<CodeBlock language="ts">{objectSourceSource}</CodeBlock>
+
+## factory
+
+Delegates loading to a function. The function may be sync or async.
+
+<CodeBlock language="ts">{factorySourceSource}</CodeBlock>
+
+## processEnv
+
+Reads values from `process.env`.
+
+```ts
+interface ProcessEnvOptions {
+  pick?: string[];
+}
+```
+
+When `pick` is omitted, all environment variables are included.
+
+<CodeBlock language="ts">{processEnvSourceSource}</CodeBlock>
+
+## jsonFile
+
+Reads and parses a JSON object file. The file must contain a JSON object (not an array or primitive).
+
+```ts
+interface JsonFileOptions {
+  path: string;
+}
+```
+
+<CodeBlock language="ts">{jsonFileSourceSource}</CodeBlock>
+
+## Custom sources
+
+Need multiple files or precedence rules? Implement `ConfigSource` yourself:
+
+<CodeBlock language="ts">{customMergedSourceSource}</CodeBlock>
+
+Optional packages provide additional helpers:
+
+- [dotenv](/config/sources/dotenv) via `@inversifyjs/config-dotenv`
+- [YAML](/config/sources/yaml) via `@inversifyjs/config-yaml`

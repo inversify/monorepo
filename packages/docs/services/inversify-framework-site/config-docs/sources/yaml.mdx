@@ -1,0 +1,51 @@
+---
+sidebar_position: 3
+title: YAML
+---
+
+import yamlFileSourceSource from '@inversifyjs/config-code-examples/generated/examples/v1/yamlFileSource.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# YAML
+
+`@inversifyjs/config-yaml` provides a `yamlFile` source for YAML configuration files.
+
+## Install
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+  npm install @inversifyjs/config-yaml
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+  yarn add @inversifyjs/config-yaml
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+  pnpm install @inversifyjs/config-yaml
+```
+
+  </TabItem>
+</Tabs>
+
+## yamlFile
+
+```ts
+interface YamlFileOptions {
+  path: string;
+}
+```
+
+The file must parse to a YAML object (not an array or scalar).
+
+<CodeBlock language="ts">{yamlFileSourceSource}</CodeBlock>
