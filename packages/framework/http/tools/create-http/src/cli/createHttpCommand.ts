@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import * as clack from '@clack/prompts';
 import { type ArgsDef, type CommandDef, defineCommand } from 'citty';
 
+import { isMissingGitIdentityError } from '../calculations/isMissingGitIdentityError.js';
 import { HTTP_ADAPTERS, type HttpAdapter } from '../models/HttpAdapter.js';
 import {
   PACKAGE_MANAGERS,
@@ -210,8 +211,13 @@ export const createHttpCommand: CommandDef = defineCommand({
     try {
       await createInitialGitCommit(projectPath);
       spinner.stop('Initial commit created');
-    } catch {
-      spinner.cancel('Skipped initial commit');
+    } catch (error: unknown) {
+      if (isMissingGitIdentityError(error)) {
+        spinner.cancel('Skipped initial commit');
+      } else {
+        spinner.error('Failed to create initial commit');
+        throw error;
+      }
     }
 
     clack.outro(`Ready at ${projectPath}`);
