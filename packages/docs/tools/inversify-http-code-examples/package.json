@@ -18,7 +18,7 @@
     "@inversifyjs/http-sse": "workspace:*",
     "@inversifyjs/http-uwebsockets": "workspace:*",
     "@inversifyjs/logger": "workspace:*",
-    "@types/better-sqlite3": "7.6.13",
+    "@types/better-sqlite3": "9.6.0",
     "@types/express": "5.0.6",
     "@types/express4": "npm:@types/express@4.17.25",
     "@types/multer": "2.2.0",
