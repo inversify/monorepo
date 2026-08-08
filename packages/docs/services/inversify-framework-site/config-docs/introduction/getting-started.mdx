@@ -13,31 +13,33 @@ import TabItem from '@theme/TabItem';
 
 ## Install dependencies
 
-Install `@inversifyjs/config` and `inversify`:
+Install `@inversifyjs/config`, `inversify`, and a [Standard Schema](https://standardschema.dev/) library. The example below uses Zod:
 
 <Tabs>
   <TabItem value="npm" label="npm">
 
 ```bash
-  npm install inversify @inversifyjs/config
+  npm install inversify @inversifyjs/config zod
 ```
 
   </TabItem>
   <TabItem value="yarn" label="yarn">
 
 ```bash
-  yarn add inversify @inversifyjs/config
+  yarn add inversify @inversifyjs/config zod
 ```
 
   </TabItem>
   <TabItem value="pnpm" label="pnpm">
 
 ```bash
-  pnpm install inversify @inversifyjs/config
+  pnpm install inversify @inversifyjs/config zod
 ```
 
   </TabItem>
 </Tabs>
+
+Validation is optional. If you skip it, you only need `inversify` and `@inversifyjs/config`.
 
 Optional source helpers live in separate packages:
 
@@ -46,7 +48,7 @@ Optional source helpers live in separate packages:
 
 ## Load your first config module
 
-Provide a config source, optionally validate it with a [Standard Schema](https://standardschema.dev/) (for example Zod), and load the module with `container.loadAsync`:
+Provide a config source, optionally validate it with a Standard Schema (Zod in this example), and load the module with `container.loadAsync`:
 
 <CodeBlock language="typescript">{gettingStartedSource}</CodeBlock>
 
