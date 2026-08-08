@@ -20,7 +20,7 @@
     "husky": "9.1.7",
     "knip": "6.29.0",
     "lint-staged": "17.2.0",
-    "sponsorkit": "17.1.1",
+    "sponsorkit": "18.0.0",
     "turbo": "2.10.7"
   },
   "homepage": "https://inversify.io",
