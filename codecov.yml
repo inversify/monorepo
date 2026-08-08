@@ -47,6 +47,9 @@ coverage:
       '@inversifyjs/http-validation':
         flags:
           - '@inversifyjs/http-validation'
+      '@inversifyjs/json-schema-2-type-metadata':
+        flags:
+          - '@inversifyjs/json-schema-2-type-metadata'
       '@inversifyjs/json-schema-pointer':
         flags:
           - '@inversifyjs/json-schema-pointer'
@@ -126,6 +129,9 @@ flags:
   '@inversifyjs/http-validation':
     paths:
       - packages/framework/http/libraries/validation
+  '@inversifyjs/json-schema-2-type-metadata':
+    paths:
+      - packages/json-schema/libraries/json-schema-2-type-metadata
   '@inversifyjs/json-schema-pointer':
     paths:
       - packages/json-schema/libraries/json-schema-pointer
