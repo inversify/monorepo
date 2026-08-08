@@ -1,0 +1,57 @@
+---
+sidebar_position: 1
+title: Getting started
+---
+import gettingStartedSource from '@inversifyjs/config-code-examples/generated/examples/v1/gettingStarted.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting started
+
+`@inversifyjs/config` provides a `ConfigContainerModule` to load, optionally validate, and inject application configuration through the InversifyJS container.
+
+## Install dependencies
+
+Install `@inversifyjs/config` and `inversify`:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+  npm install inversify @inversifyjs/config
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+  yarn add inversify @inversifyjs/config
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+  pnpm install inversify @inversifyjs/config
+```
+
+  </TabItem>
+</Tabs>
+
+Optional source helpers live in separate packages:
+
+- `@inversifyjs/config-dotenv` for `.env` files
+- `@inversifyjs/config-yaml` for YAML files
+
+## Load your first config module
+
+Provide a config source, optionally validate it with a [Standard Schema](https://standardschema.dev/) (for example Zod), and load the module with `container.loadAsync`:
+
+<CodeBlock language="typescript">{gettingStartedSource}</CodeBlock>
+
+:::tip
+
+Config loading and validation happen while the module loads, so invalid configuration fails at bootstrap instead of on first resolve.
+
+:::
