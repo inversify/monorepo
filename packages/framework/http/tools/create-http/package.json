@@ -8,7 +8,7 @@
   },
   "description": "Scaffold an InversifyJS HTTP application",
   "dependencies": {
-    "@clack/prompts": "0.11.0",
+    "@clack/prompts": "1.7.0",
     "citty": "0.2.2",
     "ts-morph": "28.0.0"
   },

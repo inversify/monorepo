@@ -172,7 +172,7 @@ export const createHttpCommand: CommandDef = defineCommand({
       });
       spinner.stop('Project files created');
     } catch (error: unknown) {
-      spinner.stop('Failed to create project files');
+      spinner.error('Failed to create project files');
       throw error;
     }
 
@@ -182,7 +182,7 @@ export const createHttpCommand: CommandDef = defineCommand({
       await initializeGitRepository(projectPath);
       spinner.stop('Git repository initialized');
     } catch {
-      spinner.stop('Skipped git initialization');
+      spinner.cancel('Skipped git initialization');
     }
 
     spinner.start(`Installing dependencies with ${packageManager}`);
@@ -191,7 +191,7 @@ export const createHttpCommand: CommandDef = defineCommand({
       await installProjectDependencies(projectPath, packageManager);
       spinner.stop('Dependencies installed');
     } catch (error: unknown) {
-      spinner.stop('Failed to install dependencies');
+      spinner.error('Failed to install dependencies');
       throw error;
     }
 
@@ -201,7 +201,7 @@ export const createHttpCommand: CommandDef = defineCommand({
       await buildProject(projectPath, packageManager);
       spinner.stop('Project built');
     } catch (error: unknown) {
-      spinner.stop('Failed to build project');
+      spinner.error('Failed to build project');
       throw error;
     }
 
@@ -211,7 +211,7 @@ export const createHttpCommand: CommandDef = defineCommand({
       await createInitialGitCommit(projectPath);
       spinner.stop('Initial commit created');
     } catch {
-      spinner.stop('Skipped initial commit');
+      spinner.cancel('Skipped initial commit');
     }
 
     clack.outro(`Ready at ${projectPath}`);

@@ -61,7 +61,7 @@ Recipe (CLI args / prompts)
 ### CLI stack
 
 - **citty**: arg parsing, `--help` / `--version` from `defineCommand` args. Prefer adding options here so help stays auto-generated.
-- **@clack/prompts**: interactive selects + progress spinners (`start` / `stop` per step).
+- **@clack/prompts**: interactive selects + progress spinners (`start` / `stop` / `error` / `cancel` per step).
 - Do **not** use consola for help text; citty owns usage rendering.
 
 ## Dependency management (critical)
