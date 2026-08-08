@@ -12,7 +12,7 @@ import { configServiceIdentifier } from '../models/configServiceIdentifier.js';
 import { ConfigServiceImplementation } from './ConfigServiceImplementation.js';
 
 export class ConfigContainerModule extends ContainerModule {
-  constructor(options: ConfigContainerModuleOptions<unknown>) {
+  private constructor(options: ConfigContainerModuleOptions<unknown>) {
     super(
       async (
         containerModuleOptions: ContainerModuleLoadOptions,
