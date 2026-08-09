@@ -12,7 +12,6 @@
     "@inversifyjs/foundation-changelog-generator": "workspace:*",
     "@inversifyjs/foundation-eslint-config": "workspace:*",
     "@inversifyjs/foundation-prettier-config": "workspace:*",
-    "@inversifyjs/foundation-rollup-config": "workspace:*",
     "@inversifyjs/foundation-scripts": "workspace:*",
     "@inversifyjs/foundation-stryker-config": "workspace:*",
     "@inversifyjs/foundation-typescript-config": "workspace:*",

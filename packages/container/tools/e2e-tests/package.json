@@ -12,6 +12,7 @@
     "reflect-metadata": "0.2.2"
   },
   "devDependencies": {
+    "@inversifyjs/foundation-rollup-config": "workspace:*",
     "@types/node": "24.13.3",
     "eslint": "10.8.0",
     "prettier": "3.9.6",

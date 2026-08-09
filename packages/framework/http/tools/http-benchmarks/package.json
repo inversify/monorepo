@@ -26,6 +26,7 @@
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.69.0"
   },
   "devDependencies": {
+    "@inversifyjs/foundation-rollup-config": "workspace:*",
     "@types/express": "^5.0.6",
     "@types/express4": "npm:@types/express@4.17.25",
     "@types/k6": "^2.0.1",
