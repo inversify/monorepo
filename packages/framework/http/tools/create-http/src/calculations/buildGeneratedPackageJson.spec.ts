@@ -4,7 +4,7 @@ import { buildGeneratedPackageJson } from './buildGeneratedPackageJson.js';
 
 describe(buildGeneratedPackageJson, () => {
   describe('having a package name, package manager, and dependency maps', () => {
-    describe('when called', () => {
+    describe('when called with prisma+postgresql', () => {
       let result: unknown;
 
       beforeAll(() => {
@@ -18,6 +18,7 @@ describe(buildGeneratedPackageJson, () => {
           {
             typescript: '6.0.3',
           },
+          'prisma+postgresql',
         );
       });
 
@@ -34,6 +35,8 @@ describe(buildGeneratedPackageJson, () => {
           private: true,
           scripts: {
             build: 'tsc',
+            'db:generate': 'prisma generate',
+            'db:migrate': 'prisma migrate deploy',
             format: 'prettier --write ./src',
             lint: 'eslint ./src',
             serve: 'node ./dist/index.js',

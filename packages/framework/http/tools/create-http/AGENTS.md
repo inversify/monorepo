@@ -18,8 +18,9 @@ Current recipe knobs:
 
 - **Package manager**: `npm` | `pnpm` | `yarn`
 - **HTTP adapter**: `express` | `fastify` | `hono` | `uwebsockets`
+- **Database adapter**: `prisma+postgresql` (default; `prisma+sqlite` planned)
 
-Planned extensions (same patterns): DB layer (Prisma), validators, OpenAPI, auth.
+Planned extensions (same patterns): validators, OpenAPI, auth, todos resource wiring via Ports + `@inversifyjs/prisma`.
 
 ## Architecture
 
@@ -31,10 +32,10 @@ Recipe (CLI args / prompts)
 │ createHttpApp     │  orchestrates file generation
 └─────────┬─────────┘
           │
-          ├─ composeScaffoldDependencies(catalog, adapter)
+          ├─ composeScaffoldDependencies(catalog, httpAdapter, dbAdapter)
           │     └─ writes package.json (only selected deps)
           │
-          ├─ copy static templates (tsconfig, eslint, prettier, gitignore, …)
+          ├─ copy static templates (tsconfig, eslint, prettier, gitignore, prisma, docker-compose, …)
           │
           ├─ generateIndexSource() → src/index.ts
           ├─ writeStatusSourceFiles() → status model, controller, container module
@@ -85,13 +86,13 @@ Scaffolded apps must **not** receive every possible dependency. Versions live in
 - `BASE_DEPENDENCY_NAMES` / `BASE_DEV_DEPENDENCY_NAMES` — always installed
 - `HTTP_ADAPTER_DEPENDENCY_SPECS` — per-adapter package **names** only
 
-`composeScaffoldDependencies(catalog, httpAdapter)` picks catalog versions for base + selected adapter only.
+`composeScaffoldDependencies(catalog, httpAdapter, dbAdapter)` picks catalog versions for base + selected HTTP and DB adapters only.
 
-### Adding a new optional feature (e.g. Prisma, validator)
+### Adding a new optional feature (e.g. validator) or DB adapter
 
 1. Add package versions to `templates/base/package.json` (catalog)
-2. Add a feature/adapter spec listing package names (like `HTTP_ADAPTER_DEPENDENCY_SPECS`)
-3. Extend the recipe / CLI option
+2. Add a feature/adapter spec listing package names (`HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS`)
+3. Extend the recipe / CLI option (`DbAdapter` / `HTTP_ADAPTERS`)
 4. Call composition when building generated `package.json`
 5. Add unit tests that assert **included** and **excluded** packages
 
@@ -105,12 +106,19 @@ Copied (sometimes renamed) into the target app:
 
 | Template | Generated path | Notes |
 |---|---|---|
-| `.gitignore` | `.gitignore` | Covers npm/yarn/pnpm caches & logs |
+| `.gitignore` | `.gitignore` | Covers npm/yarn/pnpm caches & logs; ignores `generated/` |
 | `tsconfig.json` | `tsconfig.json` | Strict options; `src` → `dist` |
 | `eslint.config.mjs.template` | `eslint.config.mjs` | **Must** use `.template` suffix in repo |
 | `prettier.config.mjs.template` | `prettier.config.mjs` | Same rename pattern |
+| `.env.example` | `.env.example` / `.env` | Includes `DATABASE_URL` for Postgres |
+| `docker-compose.yml` | `docker-compose.yml` | PostgreSQL service |
+| `prisma.config.ts.template` | `prisma.config.ts` | Prisma 7 config (`prisma/config`) |
+| `prisma/` | `prisma/` | Schema, Todo model, initial migration |
+| `pnpm-workspace.yaml` | `pnpm-workspace.yaml` | **pnpm only** — `allowBuilds` for Prisma engines |
 | `package.json` | _(not copied)_ | Catalog only |
 | `package-managers.json` | _(not copied)_ | Catalog only |
+
+Prisma client generator uses `output = "../generated"` (project-root `generated/`). Scripts: `db:generate`, `db:migrate`.
 
 Generated (not copied from templates):
 

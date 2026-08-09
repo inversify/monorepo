@@ -20,6 +20,8 @@ describe(renderUsage, () => {
         expect(result).toContain('npm|pnpm|yarn');
         expect(result).toContain('--adapter');
         expect(result).toContain('express|fastify|hono|uwebsockets');
+        expect(result).toContain('--db');
+        expect(result).toContain('prisma+postgresql');
       });
     });
   });
