@@ -117,6 +117,13 @@ export async function createHttpApp(
     baseTemplateRoot,
     'prettier.config.mjs',
   );
+  await copyTemplateFile(
+    '.env.example',
+    projectPath,
+    baseTemplateRoot,
+    '.env.example',
+  );
+  await copyTemplateFile('.env.example', projectPath, baseTemplateRoot, '.env');
   await fs.mkdir(path.join(projectPath, 'src'), { recursive: true });
   await fs.writeFile(
     path.join(projectPath, 'src/index.ts'),

@@ -16,7 +16,11 @@ export async function writeBootstrapSourceFile(
   );
 
   await fs.mkdir(path.dirname(bootstrapPath), { recursive: true });
-  await fs.writeFile(bootstrapPath, generateBootstrapSource(model), 'utf8');
+  await fs.writeFile(
+    bootstrapPath,
+    await generateBootstrapSource(model),
+    'utf8',
+  );
 
   return bootstrapPath;
 }

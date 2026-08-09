@@ -9,8 +9,11 @@ export interface AdapterDependencySpec {
  * Always-installed runtime dependencies, regardless of adapter.
  */
 export const BASE_DEPENDENCY_NAMES: readonly string[] = [
+  '@inversifyjs/config',
+  '@inversifyjs/config-dotenv',
   '@inversifyjs/http-core',
   'inversify',
+  'zod',
 ];
 
 /**
@@ -20,6 +23,8 @@ export const BASE_DEV_DEPENDENCY_NAMES: readonly string[] = [
   '@eslint/js',
   '@types/node',
   'eslint',
+  'eslint-config-prettier',
+  'eslint-plugin-prettier',
   'prettier',
   'typescript',
   'typescript-eslint',

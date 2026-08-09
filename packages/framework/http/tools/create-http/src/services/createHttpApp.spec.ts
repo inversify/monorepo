@@ -42,9 +42,20 @@ describe(createHttpApp, () => {
         await expect(
           fs.readFile(path.join(projectPath, 'tsconfig.json'), 'utf8'),
         ).resolves.toContain('"outDir": "./dist"');
-        await expect(
-          fs.readFile(path.join(projectPath, 'eslint.config.mjs'), 'utf8'),
-        ).resolves.toContain('typescript-eslint');
+
+        const eslintConfigContents: string = await fs.readFile(
+          path.join(projectPath, 'eslint.config.mjs'),
+          'utf8',
+        );
+
+        expect(eslintConfigContents).toContain('typescript-eslint');
+        expect(eslintConfigContents).toContain(
+          "import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'",
+        );
+        expect(eslintConfigContents).toContain(
+          'eslintPluginPrettierRecommended',
+        );
+
         await expect(
           fs.readFile(path.join(projectPath, 'prettier.config.mjs'), 'utf8'),
         ).resolves.toContain('trailingComma');
@@ -65,7 +76,7 @@ describe(createHttpApp, () => {
         );
 
         expect(bootstrapSource).toContain(
-          'function initializeContainer(): Container',
+          'async function initializeContainer(): Promise<Container>',
         );
         expect(bootstrapSource).toContain(
           'export async function bootstrap(): Promise<void>',
@@ -74,11 +85,27 @@ describe(createHttpApp, () => {
         expect(bootstrapSource).toContain(
           'const app: express.Application = await adapter.build();',
         );
+        expect(bootstrapSource).toContain("from '@inversifyjs/config'");
+        expect(bootstrapSource).toContain('ConfigContainerModule');
+        expect(bootstrapSource).toContain('configServiceIdentifier');
+        expect(bootstrapSource).toMatch(
+          /^ {2}const container: Container = new Container\(\);$/m,
+        );
         expect(bootstrapSource).toContain(
-          "import { StatusContainerModule } from '../../status/containerModules/StatusContainerModule.js';",
+          "import { envFile } from '@inversifyjs/config-dotenv';",
+        );
+        expect(bootstrapSource).toContain("import { z } from 'zod';");
+        expect(bootstrapSource).toContain(
+          'await container.loadAsync(configModule);',
         );
         expect(bootstrapSource).toContain(
           'container.load(new StatusContainerModule());',
+        );
+        expect(bootstrapSource).toContain(
+          'const container: Container = await initializeContainer();',
+        );
+        expect(bootstrapSource).toContain(
+          'const { PORT } = configService.get();',
         );
 
         await expect(
@@ -115,12 +142,31 @@ describe(createHttpApp, () => {
         expect(gitIgnoreContents).toContain('.yarn/*');
         expect(gitIgnoreContents).toContain('.pnpm-store/');
 
+        const envContents: string = await fs.readFile(
+          path.join(projectPath, '.env'),
+          'utf8',
+        );
+
+        expect(envContents).toContain('NODE_ENV=development');
+        expect(envContents).toContain('PORT=3000');
+
+        const envExampleContents: string = await fs.readFile(
+          path.join(projectPath, '.env.example'),
+          'utf8',
+        );
+
+        expect(envExampleContents).toContain('NODE_ENV=development');
+        expect(envExampleContents).toContain('PORT=3000');
+
         expect(packageJson).toMatchObject({
           dependencies: {
+            '@inversifyjs/config': expect.any(String) as string,
+            '@inversifyjs/config-dotenv': expect.any(String) as string,
             '@inversifyjs/http-core': expect.any(String) as string,
             '@inversifyjs/http-express': expect.any(String) as string,
             express: expect.any(String) as string,
             inversify: expect.any(String) as string,
+            zod: expect.any(String) as string,
           },
           name: 'demo-app',
           packageManager: expect.stringMatching(/^pnpm@/) as string,
@@ -145,6 +191,8 @@ describe(createHttpApp, () => {
         ).toMatchObject({
           '@types/express': expect.any(String) as string,
           eslint: expect.any(String) as string,
+          'eslint-config-prettier': expect.any(String) as string,
+          'eslint-plugin-prettier': expect.any(String) as string,
           prettier: expect.any(String) as string,
           typescript: expect.any(String) as string,
         });
