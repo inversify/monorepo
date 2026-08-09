@@ -80,6 +80,15 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/docs/tools/inversify-db-code-examples": {
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
+      ignoreDependencies: [
+        ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        // Required by `prisma generate`; not imported from application source.
+        "@prisma/client",
+      ],
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/docs/tools/inversify-graphql-code-examples": {
       entry: [
         "src/examples/**/*.{mts,ts}",
