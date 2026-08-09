@@ -44,11 +44,7 @@ export interface BootstrapSourceModel {
   imports: readonly SourceImport[];
   /**
    * Statements after `const app = await adapter.build()`.
-   * `app` and `PORT` are in scope.
+   * `app` and `PORT` (from `ConfigService`) are in scope.
    */
   listenStatements: readonly string[];
-  /**
-   * Listening port constant. Defaults to `3000`.
-   */
-  port?: number;
 }

@@ -2,31 +2,31 @@ import { generateBootstrapSource } from '../calculations/generateBootstrapSource
 import { BootstrapSourceModelFixtures } from './BootstrapSourceModelFixtures.js';
 
 export class BootstrapSourceFixtures {
-  public static get withHttpAdapterExpress(): string {
+  public static async withHttpAdapterExpress(): Promise<string> {
     return generateBootstrapSource(
       BootstrapSourceModelFixtures.withHttpAdapterExpress,
     );
   }
 
-  public static get withHttpAdapterFastify(): string {
+  public static async withHttpAdapterFastify(): Promise<string> {
     return generateBootstrapSource(
       BootstrapSourceModelFixtures.withHttpAdapterFastify,
     );
   }
 
-  public static get withHttpAdapterHono(): string {
+  public static async withHttpAdapterHono(): Promise<string> {
     return generateBootstrapSource(
       BootstrapSourceModelFixtures.withHttpAdapterHono,
     );
   }
 
-  public static get withHttpAdapterUwebsockets(): string {
+  public static async withHttpAdapterUwebsockets(): Promise<string> {
     return generateBootstrapSource(
       BootstrapSourceModelFixtures.withHttpAdapterUwebsockets,
     );
   }
 
-  public static get withUseCaseExtraInitializeContainerBodyStatements(): string {
+  public static async withUseCaseExtraInitializeContainerBodyStatements(): Promise<string> {
     return generateBootstrapSource(
       BootstrapSourceModelFixtures.withUseCaseExtraInitializeContainerBodyStatements,
     );
