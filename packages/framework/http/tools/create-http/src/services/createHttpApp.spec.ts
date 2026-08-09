@@ -40,9 +40,13 @@ describe(createHttpApp, () => {
           'utf8',
         );
 
-        await expect(
-          fs.readFile(path.join(projectPath, 'tsconfig.json'), 'utf8'),
-        ).resolves.toContain('"outDir": "./dist"');
+        const tsconfigContents: string = await fs.readFile(
+          path.join(projectPath, 'tsconfig.json'),
+          'utf8',
+        );
+
+        expect(tsconfigContents).toContain('"outDir": "./dist"');
+        expect(tsconfigContents).toContain('"types": ["node"]');
 
         const eslintConfigContents: string = await fs.readFile(
           path.join(projectPath, 'eslint.config.mjs'),
