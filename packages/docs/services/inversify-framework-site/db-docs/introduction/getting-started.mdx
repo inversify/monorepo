@@ -1,0 +1,72 @@
+---
+sidebar_position: 1
+title: Getting started
+---
+import gettingStartedSource from '@inversifyjs/db-code-examples/generated/examples/v1/gettingStarted.ts.txt';
+import postgresqlAdapterSource from '@inversifyjs/db-code-examples/generated/examples/v1/postgresqlAdapter.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting started
+
+`@inversifyjs/prisma` binds a Prisma 7 client into the InversifyJS container using a driver adapter, so your services can inject `PrismaClient` and talk to the database.
+
+## Install dependencies
+
+Install `@inversifyjs/prisma`, `inversify`, Prisma, and a driver adapter for your database:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+  npm install inversify @inversifyjs/prisma @prisma/client
+  npm install -D prisma
+  # PostgreSQL
+  npm install @prisma/adapter-pg pg
+  # or SQLite
+  npm install @prisma/adapter-better-sqlite3 better-sqlite3
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+  yarn add inversify @inversifyjs/prisma @prisma/client
+  yarn add -D prisma
+  # PostgreSQL
+  yarn add @prisma/adapter-pg pg
+  # or SQLite
+  yarn add @prisma/adapter-better-sqlite3 better-sqlite3
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+  pnpm install inversify @inversifyjs/prisma @prisma/client
+  pnpm install -D prisma
+  # PostgreSQL
+  pnpm install @prisma/adapter-pg pg
+  # or SQLite
+  pnpm install @prisma/adapter-better-sqlite3 better-sqlite3
+```
+
+  </TabItem>
+</Tabs>
+
+Generate your Prisma client after configuring `schema.prisma` (and preferably a custom `output` outside `node_modules`).
+
+## Bind PrismaClient in the container
+
+Load a `PrismaContainerModule` with your driver adapter, then inject `PrismaClient` into services:
+
+<CodeBlock language="typescript">{gettingStartedSource}</CodeBlock>
+
+:::tip
+
+The example above uses SQLite (`@prisma/adapter-better-sqlite3`) so it can run in CI. For PostgreSQL, swap the adapter:
+
+<CodeBlock language="typescript">{postgresqlAdapterSource}</CodeBlock>
+
+:::

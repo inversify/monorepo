@@ -41,6 +41,15 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/db-code-examples#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}"
+      ],
+      "outputs": ["generated/**", "lib/**", "src/generated/**"]
+    },
     "@inversifyjs/logger-code-examples#build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{cts,mts,ts}"],
@@ -56,6 +65,7 @@
       "inputs": [
         "blog/**",
         "config-docs/**",
+        "db-docs/**",
         "docs/**",
         "graphql-docs/**",
         "logger-docs/**",
@@ -64,6 +74,7 @@
         "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
+        "sidebarsDb.ts",
         "validation-docs/**",
         "versioned_docs/**",
         "versioned_sidebars/**"
