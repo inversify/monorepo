@@ -11,6 +11,6 @@ export const DB_ADAPTER_DEPENDENCY_SPECS: Record<
 > = {
   'prisma+postgresql': {
     dependencies: ['@prisma/adapter-pg', '@prisma/client', 'pg'],
-    devDependencies: ['prisma'],
+    devDependencies: ['dotenv', 'prisma'],
   },
 };

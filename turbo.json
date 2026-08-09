@@ -44,9 +44,12 @@
     "@inversifyjs/db-code-examples#build": {
       "dependsOn": ["^build"],
       "inputs": [
+        "$TURBO_DEFAULT$",
         "prisma/**",
         "prisma.config.ts",
-        "src/**/*.{cts,mts,ts}"
+        "src/**/*.{cts,mts,ts}",
+        "tsconfig.json",
+        "tsconfig.esm.json"
       ],
       "outputs": ["generated/**", "lib/**", "src/generated/**"]
     },

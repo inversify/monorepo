@@ -2,7 +2,9 @@ import { defineConfig } from 'prisma/config';
 
 export default defineConfig({
   datasource: {
-    url: 'file:./prisma/dev.db',
+    url:
+      process.env['DATABASE_URL'] ??
+      'postgresql://inversify:inversify@127.0.0.1:5432/inversify',
   },
   migrations: {
     path: 'prisma/migrations',

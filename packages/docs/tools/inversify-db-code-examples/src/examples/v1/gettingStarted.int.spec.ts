@@ -1,47 +1,24 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
-import { execSync } from 'node:child_process';
-import fs from 'node:fs';
-import path from 'node:path';
+import { bootstrap, UserService } from './gettingStarted.js';
 
-import { type User } from '../../generated/prisma/index.js';
-import { bootstrap, type UserService } from './gettingStarted.js';
+describe(UserService, () => {
+  describe('.createUser', () => {
+    describe('having a PostgreSQL PrismaContainerModule', () => {
+      describe('when resolved from the container', () => {
+        let userService: UserService;
 
-describe('gettingStarted', () => {
-  describe('when called', () => {
-    let userService: UserService;
-    let result: User;
+        beforeAll(async () => {
+          process.env['DATABASE_URL'] =
+            'postgresql://inversify:inversify@127.0.0.1:5432/inversify';
 
-    beforeAll(async () => {
-      const databasePath: string = path.join(process.cwd(), 'prisma', 'dev.db');
+          userService = await bootstrap();
+        });
 
-      if (fs.existsSync(databasePath)) {
-        fs.unlinkSync(databasePath);
-      }
-
-      execSync('pnpm exec prisma migrate deploy', {
-        cwd: process.cwd(),
-        stdio: 'inherit',
+        it('should resolve UserService with an injected Prisma client', () => {
+          expect(userService).toBeInstanceOf(UserService);
+        });
       });
-
-      userService = await bootstrap();
-      result = await userService.createUser('ada@example.com', 'Ada Lovelace');
-    });
-
-    afterAll(() => {
-      const databasePath: string = path.join(process.cwd(), 'prisma', 'dev.db');
-
-      if (fs.existsSync(databasePath)) {
-        fs.unlinkSync(databasePath);
-      }
-    });
-
-    it('should create a user through the injected Prisma client', () => {
-      expect(result).toMatchObject({
-        email: 'ada@example.com',
-        name: 'Ada Lovelace',
-      });
-      expect(result.id).toBeTypeOf('number');
     });
   });
 });

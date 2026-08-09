@@ -26,6 +26,7 @@
     "@types/node": "24.13.3",
     "eslint": "10.8.0",
     "eslint-config-prettier": "10.1.8",
+    "dotenv": "17.4.2",
     "eslint-plugin-prettier": "5.5.6",
     "prettier": "3.9.6",
     "prisma": "7.9.1",

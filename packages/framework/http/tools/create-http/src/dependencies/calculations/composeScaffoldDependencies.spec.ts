@@ -31,6 +31,7 @@ describe(composeScaffoldDependencies, () => {
         '@eslint/js': '10.0.1',
         '@types/express': '5.0.6',
         '@types/node': '24.13.3',
+        dotenv: '17.4.2',
         eslint: '10.8.0',
         'eslint-config-prettier': '10.1.8',
         'eslint-plugin-prettier': '5.5.6',
@@ -69,6 +70,7 @@ describe(composeScaffoldDependencies, () => {
         });
         expect(result.devDependencies).toMatchObject({
           '@types/express': '5.0.6',
+          dotenv: '17.4.2',
           prisma: '7.9.1',
           typescript: '6.0.3',
         });
@@ -109,6 +111,7 @@ describe(composeScaffoldDependencies, () => {
         });
         expect(result.devDependencies).not.toHaveProperty('@types/express');
         expect(result.devDependencies).toMatchObject({
+          dotenv: '17.4.2',
           prisma: '7.9.1',
         });
       });

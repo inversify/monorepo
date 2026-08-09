@@ -8,13 +8,15 @@ import DocumentationButton from '../../src/components/DocumentationButton';
 
 `@inversifyjs/prisma` integrates Prisma 7 with InversifyJS. Bind a driver-adapter-backed `PrismaClient` through `PrismaContainerModule` and inject it into your application services.
 
+:::note[PostgreSQL is just an example]
+
+The snippet below uses PostgreSQL with `@prisma/adapter-pg`, but any Prisma 7 driver adapter works the same way.
+
+:::
+
 ### Binding a Prisma client
 
 <CodeBlock language="ts">{gettingStartedSource}</CodeBlock>
-
-:::tip
-Use `@prisma/adapter-pg` with PostgreSQL, or `@prisma/adapter-better-sqlite3` with SQLite. The container module API is the same either way.
-:::
 
 <DocumentationButton href="/db/introduction/getting-started/" target="_blank">
   <span>View Full Documentation</span>

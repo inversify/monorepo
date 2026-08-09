@@ -1,6 +1,6 @@
 // Begin-example
 import { PrismaContainerModule } from '@inversifyjs/prisma';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { Container, inject, injectable } from 'inversify';
 
 import { PrismaClient, type User } from '../../generated/prisma/index.js';
@@ -31,11 +31,11 @@ export async function bootstrap(): Promise<UserService> {
   container.load(
     new PrismaContainerModule({
       adapter: {
-        build: (options: { url: string }) => new PrismaBetterSqlite3(options),
+        build: (options: { connectionString: string }) => new PrismaPg(options),
       },
       options: {
         value: {
-          url: 'file:./prisma/dev.db',
+          connectionString: process.env['DATABASE_URL'] as string,
         },
       },
       PrismaClient,

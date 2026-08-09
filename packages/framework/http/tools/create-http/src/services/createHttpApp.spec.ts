@@ -166,9 +166,13 @@ describe(createHttpApp, () => {
         expect(envExampleContents).toContain('PORT=3000');
         expect(envExampleContents).toContain('DATABASE_URL=');
 
-        await expect(
-          fs.readFile(path.join(projectPath, 'docker-compose.yml'), 'utf8'),
-        ).resolves.toContain('postgres:16-alpine');
+        const dockerComposeContents: string = await fs.readFile(
+          path.join(projectPath, 'docker-compose.yml'),
+          'utf8',
+        );
+
+        expect(dockerComposeContents).toContain('postgres:16-alpine');
+        expect(dockerComposeContents).toContain("'127.0.0.1:5432:5432'");
 
         const pnpmWorkspaceContents: string = await fs.readFile(
           path.join(projectPath, 'pnpm-workspace.yaml'),
@@ -179,9 +183,13 @@ describe(createHttpApp, () => {
         expect(pnpmWorkspaceContents).toContain('prisma: true');
         expect(pnpmWorkspaceContents).toContain("'@prisma/engines': true");
 
-        await expect(
-          fs.readFile(path.join(projectPath, 'prisma.config.ts'), 'utf8'),
-        ).resolves.toContain("from 'prisma/config'");
+        const prismaConfigContents: string = await fs.readFile(
+          path.join(projectPath, 'prisma.config.ts'),
+          'utf8',
+        );
+
+        expect(prismaConfigContents).toContain("import 'dotenv/config'");
+        expect(prismaConfigContents).toContain("from 'prisma/config'");
 
         const prismaSchema: string = await fs.readFile(
           path.join(projectPath, 'prisma/schema.prisma'),
@@ -230,6 +238,7 @@ describe(createHttpApp, () => {
             .devDependencies,
         ).toMatchObject({
           '@types/express': expect.any(String) as string,
+          dotenv: expect.any(String) as string,
           eslint: expect.any(String) as string,
           'eslint-config-prettier': expect.any(String) as string,
           'eslint-plugin-prettier': expect.any(String) as string,

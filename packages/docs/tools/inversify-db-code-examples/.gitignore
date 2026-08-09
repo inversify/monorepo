@@ -24,5 +24,3 @@
 
 # Prisma
 /src/generated
-/prisma/dev.db
-/prisma/dev.db-journal
