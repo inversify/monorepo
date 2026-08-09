@@ -50,6 +50,60 @@
       ],
       "outputs": ["generated/**", "lib/**", "src/generated/**"]
     },
+    "@inversifyjs/db-code-examples#lint": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "eslint.config.{cjs,mjs,js,json}",
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}"
+      ]
+    },
+    "@inversifyjs/db-code-examples#test": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}"
+      ],
+      "outputs": []
+    },
+    "@inversifyjs/db-code-examples#test:unit": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}"
+      ],
+      "outputs": []
+    },
+    "@inversifyjs/db-code-examples#test:integration": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}"
+      ],
+      "outputs": []
+    },
+    "@inversifyjs/db-code-examples#test:coverage": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "@inversifyjs/db-code-examples#test:uncommitted": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}"
+      ],
+      "outputs": []
+    },
     "@inversifyjs/logger-code-examples#build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{cts,mts,ts}"],
