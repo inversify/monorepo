@@ -67,7 +67,8 @@
       "inputs": [
         "prisma/**",
         "prisma.config.ts",
-        "src/**/*.{cts,mts,ts}"
+        "src/**/*.{cts,mts,ts}",
+        "vitest.config.mjs"
       ],
       "outputs": []
     },
@@ -76,7 +77,8 @@
       "inputs": [
         "prisma/**",
         "prisma.config.ts",
-        "src/**/*.{cts,mts,ts}"
+        "src/**/*.{cts,mts,ts}",
+        "vitest.config.mjs"
       ],
       "outputs": []
     },
@@ -85,7 +87,8 @@
       "inputs": [
         "prisma/**",
         "prisma.config.ts",
-        "src/**/*.{cts,mts,ts}"
+        "src/**/*.{cts,mts,ts}",
+        "vitest.config.mjs"
       ],
       "outputs": []
     },
@@ -94,7 +97,8 @@
       "inputs": [
         "prisma/**",
         "prisma.config.ts",
-        "src/**/*.{cts,mts,ts}"
+        "src/**/*.{cts,mts,ts}",
+        "vitest.config.mjs"
       ],
       "outputs": ["coverage/**"]
     },
@@ -103,7 +107,8 @@
       "inputs": [
         "prisma/**",
         "prisma.config.ts",
-        "src/**/*.{cts,mts,ts}"
+        "src/**/*.{cts,mts,ts}",
+        "vitest.config.mjs"
       ],
       "outputs": []
     },
