@@ -12,6 +12,11 @@ export const BASE_DEPENDENCY_NAMES: readonly string[] = [
   '@inversifyjs/config',
   '@inversifyjs/config-dotenv',
   '@inversifyjs/http-core',
+  '@inversifyjs/http-open-api',
+  '@inversifyjs/http-validation',
+  '@inversifyjs/open-api-validation',
+  'ajv',
+  'ajv-formats',
   'inversify',
   'zod',
 ];

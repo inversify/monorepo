@@ -79,6 +79,21 @@ export async function generateBootstrapSource(
   });
 
   sourceFile.addImportDeclaration({
+    moduleSpecifier: '@inversifyjs/http-open-api',
+    namedImports: [{ name: 'SwaggerUiProvider' }],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '@inversifyjs/http-validation',
+    namedImports: [{ name: 'InversifyValidationErrorFilter' }],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '@inversifyjs/open-api-validation/v3Dot1',
+    namedImports: [{ name: 'OpenApiValidationPipe' }],
+  });
+
+  sourceFile.addImportDeclaration({
     moduleSpecifier: 'zod',
     namedImports: [{ name: 'z' }],
   });
@@ -88,7 +103,7 @@ export async function generateBootstrapSource(
     declarations: [
       {
         initializer:
-          "z.object({\n  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),\n  PORT: z.coerce.number().min(1).max(65535).default(3000),\n})",
+          "z.object({\n  DATABASE_URL: z.string().min(1),\n  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),\n  PORT: z.coerce.number().min(1).max(65535).default(3000),\n})",
         name: 'appConfigSchema',
       },
     ],
@@ -132,12 +147,31 @@ export async function generateBootstrapSource(
 
   const bootstrapBodyStatements: string[] = [
     'const container: Container = await initializeContainer();',
+    'container.bind(InversifyValidationErrorFilter).toSelf().inSingletonScope();',
     'const configService: ConfigService<AppConfig> = container.get(configServiceIdentifier);',
     'const { PORT } = configService.get();',
     `const adapter: ${model.adapter.className} = new ${model.adapter.className}(
   container,
   ${model.adapter.optionsObjectLiteral},
 );`,
+    `const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+  api: {
+    openApiObject: {
+      info: {
+        title: 'API',
+        version: '1.0.0',
+      },
+      openapi: '3.1.1',
+    },
+    path: '/docs',
+  },
+  ui: {
+    title: 'API docs',
+  },
+});`,
+    'swaggerProvider.provide(container);',
+    'adapter.useGlobalPipe(new OpenApiValidationPipe(swaggerProvider.openApiObject));',
+    'adapter.useGlobalFilters(InversifyValidationErrorFilter);',
     applicationDeclaration,
     ...model.listenStatements,
   ];

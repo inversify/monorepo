@@ -1,17 +1,22 @@
-export function generateStatusResponseSource(): string {
+export function generateCreateTodoRequestSource(): string {
   return `import { OasSchema, OasSchemaProperty } from '@inversifyjs/http-open-api';
 
 @OasSchema(undefined, {
   customAttributes: {
     unevaluatedProperties: false,
   },
-  name: 'StatusResponse',
+  name: 'CreateTodoRequest',
 })
-export class StatusResponse {
+export class CreateTodoRequest {
   @OasSchemaProperty({
     type: 'string',
   })
-  public status!: string;
+  public title!: string;
+
+  @OasSchemaProperty({
+    type: 'string',
+  })
+  public description!: string;
 }
 `;
 }

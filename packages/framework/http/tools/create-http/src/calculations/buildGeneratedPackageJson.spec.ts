@@ -34,7 +34,7 @@ describe(buildGeneratedPackageJson, () => {
           packageManager: 'pnpm@11.18.0',
           private: true,
           scripts: {
-            build: 'tsc',
+            build: 'prisma generate && tsc',
             'db:generate': 'prisma generate',
             'db:migrate': 'prisma migrate deploy',
             format: 'prettier --write ./src',

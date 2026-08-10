@@ -46,6 +46,8 @@ describe(createHttpApp, () => {
         );
 
         expect(tsconfigContents).toContain('"outDir": "./dist"');
+        expect(tsconfigContents).toContain('"emitDecoratorMetadata": true');
+        expect(tsconfigContents).toContain('"experimentalDecorators": true');
         expect(tsconfigContents).toContain('"types": ["node"]');
 
         const eslintConfigContents: string = await fs.readFile(
@@ -60,6 +62,7 @@ describe(createHttpApp, () => {
         expect(eslintConfigContents).toContain(
           'eslintPluginPrettierRecommended',
         );
+        expect(eslintConfigContents).toContain("ignores: ['src/generated/**']");
 
         await expect(
           fs.readFile(path.join(projectPath, 'prettier.config.mjs'), 'utf8'),
@@ -103,14 +106,59 @@ describe(createHttpApp, () => {
         expect(bootstrapSource).toContain(
           'await container.loadAsync(configModule);',
         );
+        expect(bootstrapSource).toContain('DATABASE_URL');
+        expect(bootstrapSource).toContain(
+          "import { PrismaContainerModule } from '@inversifyjs/prisma';",
+        );
+        expect(bootstrapSource).toContain(
+          "import { PrismaPg } from '@prisma/adapter-pg';",
+        );
+        expect(bootstrapSource).toContain(
+          "import { PrismaClient } from '../../generated/prisma/client.js';",
+        );
+        expect(bootstrapSource).toContain(
+          "import { TodoContainerModule } from '../../todo/adapter/inversify/TodoContainerModule.js';",
+        );
+        expect(bootstrapSource).toContain(
+          "import { TodoPrismaContainerModule } from '../../todo/adapter/inversify/TodoPrismaContainerModule.js';",
+        );
         expect(bootstrapSource).toContain(
           'container.load(new StatusContainerModule());',
+        );
+        expect(bootstrapSource).toContain(
+          'container.load(new TodoContainerModule());',
+        );
+        expect(bootstrapSource).toContain(
+          'container.load(new TodoPrismaContainerModule());',
         );
         expect(bootstrapSource).toContain(
           'const container: Container = await initializeContainer();',
         );
         expect(bootstrapSource).toContain(
           'const { PORT } = configService.get();',
+        );
+        expect(bootstrapSource).toContain(
+          "import { SwaggerUiProvider } from '@inversifyjs/http-open-api';",
+        );
+        expect(bootstrapSource).toContain(
+          "import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';",
+        );
+        expect(bootstrapSource).toContain(
+          "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot1';",
+        );
+        expect(bootstrapSource).toContain(
+          'const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({',
+        );
+        expect(bootstrapSource).toContain("path: '/docs'");
+        expect(bootstrapSource).toContain(
+          'swaggerProvider.provide(container);',
+        );
+        expect(bootstrapSource).toContain('adapter.useGlobalPipe(');
+        expect(bootstrapSource).toContain(
+          'new OpenApiValidationPipe(swaggerProvider.openApiObject)',
+        );
+        expect(bootstrapSource).toContain(
+          'adapter.useGlobalFilters(InversifyValidationErrorFilter);',
         );
 
         await expect(
@@ -121,7 +169,7 @@ describe(createHttpApp, () => {
             ),
             'utf8',
           ),
-        ).resolves.toContain('export class StatusController');
+        ).resolves.toContain("@OasTag('Status')");
         await expect(
           fs.readFile(
             path.join(
@@ -138,10 +186,73 @@ describe(createHttpApp, () => {
             path.join(projectPath, 'src/status/models/StatusResponse.ts'),
             'utf8',
           ),
-        ).resolves.toContain('export interface StatusResponse');
+        ).resolves.toContain('export class StatusResponse');
+
+        await expect(
+          fs.readFile(
+            path.join(projectPath, 'src/todo/domain/models/Todo.ts'),
+            'utf8',
+          ),
+        ).resolves.toContain('export class Todo');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/application/ports/TodoPersistencePort.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('export interface TodoPersistencePort');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/api/controllers/TodoController.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('@ValidatedBody() body: CreateTodoRequest');
+        await expect(
+          fs.readFile(
+            path.join(projectPath, 'src/todo/api/models/CreateTodoRequest.ts'),
+            'utf8',
+          ),
+        ).resolves.toContain('export class CreateTodoRequest');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/adapter/prisma/PrismaTodoPersistenceAdapter.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain(
+          'export class PrismaTodoPersistenceAdapter implements TodoPersistencePort',
+        );
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/adapter/inversify/TodoContainerModule.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain(
+          'options.bind(TodoController).toSelf().inSingletonScope();',
+        );
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/adapter/inversify/TodoPrismaContainerModule.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('todoPersistencePortIdentifier');
 
         expect(gitIgnoreContents).toContain('node_modules/');
         expect(gitIgnoreContents).toContain('generated/');
+        expect(gitIgnoreContents).toContain('src/generated/');
         expect(gitIgnoreContents).toContain('npm-debug.log*');
         expect(gitIgnoreContents).toContain('yarn-debug.log*');
         expect(gitIgnoreContents).toContain('.pnpm-debug.log*');
@@ -171,8 +282,11 @@ describe(createHttpApp, () => {
           'utf8',
         );
 
-        expect(dockerComposeContents).toContain('postgres:16-alpine');
+        expect(dockerComposeContents).toMatch(/image:\s*postgres:\d+-alpine/);
         expect(dockerComposeContents).toContain("'127.0.0.1:5432:5432'");
+        expect(dockerComposeContents).toMatch(
+          /^\s*- postgres_data:\/var\/lib\/postgresql$/m,
+        );
 
         const pnpmWorkspaceContents: string = await fs.readFile(
           path.join(projectPath, 'pnpm-workspace.yaml'),
@@ -182,6 +296,7 @@ describe(createHttpApp, () => {
         expect(pnpmWorkspaceContents).toContain('allowBuilds:');
         expect(pnpmWorkspaceContents).toContain('prisma: true');
         expect(pnpmWorkspaceContents).toContain("'@prisma/engines': true");
+        expect(pnpmWorkspaceContents).not.toContain('blockExoticSubdeps');
 
         const prismaConfigContents: string = await fs.readFile(
           path.join(projectPath, 'prisma.config.ts'),
@@ -196,9 +311,18 @@ describe(createHttpApp, () => {
           'utf8',
         );
 
-        expect(prismaSchema).toContain('output   = "../generated"');
+        expect(prismaSchema).toContain(
+          'provider               = "prisma-client"',
+        );
+        expect(prismaSchema).toContain(
+          'output                 = "../src/generated/prisma"',
+        );
+        expect(prismaSchema).toContain('moduleFormat           = "esm"');
+        expect(prismaSchema).toContain('generatedFileExtension = "ts"');
+        expect(prismaSchema).toContain('importFileExtension    = "js"');
         expect(prismaSchema).toContain('provider = "postgresql"');
         expect(prismaSchema).toContain('model Todo');
+        expect(prismaSchema).toContain('description');
         expect(prismaSchema).toContain('deleted_at');
 
         expect(packageJson).toMatchObject({
@@ -207,8 +331,14 @@ describe(createHttpApp, () => {
             '@inversifyjs/config-dotenv': expect.any(String) as string,
             '@inversifyjs/http-core': expect.any(String) as string,
             '@inversifyjs/http-express': expect.any(String) as string,
+            '@inversifyjs/http-open-api': expect.any(String) as string,
+            '@inversifyjs/http-validation': expect.any(String) as string,
+            '@inversifyjs/open-api-validation': expect.any(String) as string,
+            '@inversifyjs/prisma': expect.any(String) as string,
             '@prisma/adapter-pg': expect.any(String) as string,
             '@prisma/client': expect.any(String) as string,
+            ajv: expect.any(String) as string,
+            'ajv-formats': expect.any(String) as string,
             express: expect.any(String) as string,
             inversify: expect.any(String) as string,
             pg: expect.any(String) as string,
@@ -217,7 +347,7 @@ describe(createHttpApp, () => {
           name: 'demo-app',
           packageManager: expect.stringMatching(/^pnpm@/) as string,
           scripts: {
-            build: 'tsc',
+            build: 'prisma generate && tsc',
             'db:generate': 'prisma generate',
             'db:migrate': 'prisma migrate deploy',
             format: 'prettier --write ./src',

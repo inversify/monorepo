@@ -11,9 +11,14 @@ describe(generateStatusResponseSource, () => {
       result = StatusResponseSourceFixtures.any;
     });
 
-    it('should generate the StatusResponse interface', () => {
-      expect(result).toContain('export interface StatusResponse');
-      expect(result).toContain('status: string;');
+    it('should generate a StatusResponse OpenAPI schema class', () => {
+      expect(result).toContain(
+        "import { OasSchema, OasSchemaProperty } from '@inversifyjs/http-open-api';",
+      );
+      expect(result).toContain('export class StatusResponse');
+      expect(result).toContain('@OasSchema(undefined, {');
+      expect(result).toContain("name: 'StatusResponse'");
+      expect(result).toContain('public status!: string;');
     });
   });
 });

@@ -4,6 +4,7 @@ node_modules/
 # Build
 dist/
 generated/
+src/generated/
 *.tsbuildinfo
 
 # Logs

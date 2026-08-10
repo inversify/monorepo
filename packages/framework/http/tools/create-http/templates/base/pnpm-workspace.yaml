@@ -1,4 +1,0 @@
-# Allow Prisma install scripts (pnpm 10+ blocks dependency build scripts by default).
-allowBuilds:
-  '@prisma/engines': true
-  prisma: true

@@ -10,6 +10,7 @@ const BASE_SCRIPTS: Record<string, string> = {
 
 const DB_ADAPTER_SCRIPTS: Record<DbAdapter, Record<string, string>> = {
   'prisma+postgresql': {
+    build: 'prisma generate && tsc',
     'db:generate': 'prisma generate',
     'db:migrate': 'prisma migrate deploy',
   },
