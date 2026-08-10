@@ -1,4 +1,6 @@
+import { type DbAdapter } from '../../models/DbAdapter.js';
 import { type HttpAdapter } from '../../models/HttpAdapter.js';
+import { DB_ADAPTER_DEPENDENCY_SPECS } from '../models/DbAdapterDependencySpecs.js';
 import { type DependencyCatalog } from '../models/DependencyCatalog.js';
 import {
   type AdapterDependencySpec,
@@ -19,17 +21,22 @@ export interface ComposedScaffoldDependencies {
 export function composeScaffoldDependencies(
   catalog: DependencyCatalog,
   httpAdapter: HttpAdapter,
+  dbAdapter: DbAdapter,
 ): ComposedScaffoldDependencies {
-  const adapterDependencySpec: AdapterDependencySpec =
+  const httpAdapterDependencySpec: AdapterDependencySpec =
     HTTP_ADAPTER_DEPENDENCY_SPECS[httpAdapter];
+  const dbAdapterDependencySpec: AdapterDependencySpec =
+    DB_ADAPTER_DEPENDENCY_SPECS[dbAdapter];
 
   const dependencyNames: string[] = [
     ...BASE_DEPENDENCY_NAMES,
-    ...adapterDependencySpec.dependencies,
+    ...httpAdapterDependencySpec.dependencies,
+    ...dbAdapterDependencySpec.dependencies,
   ];
   const devDependencyNames: string[] = [
     ...BASE_DEV_DEPENDENCY_NAMES,
-    ...(adapterDependencySpec.devDependencies ?? []),
+    ...(httpAdapterDependencySpec.devDependencies ?? []),
+    ...(dbAdapterDependencySpec.devDependencies ?? []),
   ];
 
   return {

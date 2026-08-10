@@ -4,6 +4,11 @@ import * as clack from '@clack/prompts';
 import { type ArgsDef, type CommandDef, defineCommand } from 'citty';
 
 import { isMissingGitIdentityError } from '../calculations/isMissingGitIdentityError.js';
+import {
+  DB_ADAPTERS,
+  type DbAdapter,
+  DEFAULT_DB_ADAPTER,
+} from '../models/DbAdapter.js';
 import { HTTP_ADAPTERS, type HttpAdapter } from '../models/HttpAdapter.js';
 import {
   PACKAGE_MANAGERS,
@@ -32,6 +37,13 @@ const createHttpArgs: ArgsDef = {
     options: [...HTTP_ADAPTERS],
     type: 'enum',
   },
+  db: {
+    alias: 'd',
+    default: DEFAULT_DB_ADAPTER,
+    description: 'Database adapter to install and configure',
+    options: [...DB_ADAPTERS],
+    type: 'enum',
+  },
   packageManager: {
     alias: 'pm',
     description: 'Package manager to configure in the generated project',
@@ -56,6 +68,13 @@ function isHttpAdapter(value: unknown): value is HttpAdapter {
   return (
     typeof value === 'string' &&
     (HTTP_ADAPTERS as readonly string[]).includes(value)
+  );
+}
+
+function isDbAdapter(value: unknown): value is DbAdapter {
+  return (
+    typeof value === 'string' &&
+    (DB_ADAPTERS as readonly string[]).includes(value)
   );
 }
 
@@ -125,6 +144,40 @@ async function resolveHttpAdapter(
   return httpAdapterSelection;
 }
 
+async function resolveDbAdapter(
+  dbAdapterArg: string | undefined,
+): Promise<DbAdapter | undefined> {
+  if (dbAdapterArg !== undefined) {
+    if (!isDbAdapter(dbAdapterArg)) {
+      throw new Error(`Unsupported database adapter: ${dbAdapterArg}`);
+    }
+
+    return dbAdapterArg;
+  }
+
+  const dbAdapterSelection: DbAdapter | symbol = await clack.select({
+    initialValue: DEFAULT_DB_ADAPTER,
+    message: 'Choose a database adapter',
+    options: DB_ADAPTERS.map((dbAdapter: DbAdapter) => ({
+      label: dbAdapter,
+      value: dbAdapter,
+    })),
+  });
+
+  if (clack.isCancel(dbAdapterSelection)) {
+    clack.cancel('Scaffold cancelled.');
+    return undefined;
+  }
+
+  if (!isDbAdapter(dbAdapterSelection)) {
+    throw new Error(
+      `Unsupported database adapter: ${String(dbAdapterSelection)}`,
+    );
+  }
+
+  return dbAdapterSelection;
+}
+
 export const createHttpCommand: CommandDef = defineCommand({
   args: createHttpArgs,
   meta: {
@@ -158,6 +211,15 @@ export const createHttpCommand: CommandDef = defineCommand({
       return;
     }
 
+    const dbAdapterArg: unknown = args['db'];
+    const dbAdapter: DbAdapter | undefined = await resolveDbAdapter(
+      typeof dbAdapterArg === 'string' ? dbAdapterArg : undefined,
+    );
+
+    if (dbAdapter === undefined) {
+      return;
+    }
+
     clack.intro('create-inversify-http');
 
     const spinner: ReturnType<typeof clack.spinner> = clack.spinner();
@@ -167,6 +229,7 @@ export const createHttpCommand: CommandDef = defineCommand({
 
     try {
       projectPath = await createHttpApp({
+        dbAdapter,
         httpAdapter,
         packageManager,
         targetPath: pathArg,

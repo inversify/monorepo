@@ -10,6 +10,7 @@
     "@docusaurus/plugin-content-docs": "3.10.2",
     "@docusaurus/preset-classic": "3.10.2",
     "@inversifyjs/config-code-examples": "workspace:*",
+    "@inversifyjs/db-code-examples": "workspace:*",
     "@inversifyjs/http-code-examples": "workspace:*",
     "@inversifyjs/graphql-code-examples": "workspace:*",
     "@inversifyjs/http-open-api-code-examples": "workspace:*",
@@ -65,7 +66,7 @@
     "start": "docusaurus start",
     "build": "pnpm run typecheck && docusaurus build",
     "format": "prettier --write ./src ./*.ts",
-    "lint": "eslint ./src ./docusaurus.config.ts ./sidebars.ts",
+    "lint": "eslint ./src ./docusaurus.config.ts ./sidebars.ts ./sidebarsDb.ts",
     "serve": "docusaurus serve",
     "typecheck": "tsc"
   }

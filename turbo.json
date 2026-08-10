@@ -41,6 +41,77 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/db-code-examples#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}",
+        "tsconfig.json",
+        "tsconfig.esm.json"
+      ],
+      "outputs": ["generated/**", "lib/**", "src/generated/**"]
+    },
+    "@inversifyjs/db-code-examples#lint": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "eslint.config.{cjs,mjs,js,json}",
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}"
+      ]
+    },
+    "@inversifyjs/db-code-examples#test": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}",
+        "vitest.config.mjs"
+      ],
+      "outputs": []
+    },
+    "@inversifyjs/db-code-examples#test:unit": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}",
+        "vitest.config.mjs"
+      ],
+      "outputs": []
+    },
+    "@inversifyjs/db-code-examples#test:integration": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}",
+        "vitest.config.mjs"
+      ],
+      "outputs": []
+    },
+    "@inversifyjs/db-code-examples#test:coverage": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}",
+        "vitest.config.mjs"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "@inversifyjs/db-code-examples#test:uncommitted": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts",
+        "src/**/*.{cts,mts,ts}",
+        "vitest.config.mjs"
+      ],
+      "outputs": []
+    },
     "@inversifyjs/logger-code-examples#build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{cts,mts,ts}"],
@@ -56,6 +127,7 @@
       "inputs": [
         "blog/**",
         "config-docs/**",
+        "db-docs/**",
         "docs/**",
         "graphql-docs/**",
         "logger-docs/**",
@@ -64,6 +136,7 @@
         "static/**",
         "docusaurus.config.ts",
         "sidebars.ts",
+        "sidebarsDb.ts",
         "validation-docs/**",
         "versioned_docs/**",
         "versioned_sidebars/**"

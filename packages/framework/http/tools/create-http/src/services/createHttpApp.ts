@@ -58,6 +58,21 @@ async function copyTemplateFile(
   await fs.copyFile(sourcePath, destinationPath);
 }
 
+async function copyTemplateDirectory(
+  sourceRelativePath: string,
+  projectPath: string,
+  baseTemplateRoot: string,
+  destinationRelativePath: string = sourceRelativePath,
+): Promise<void> {
+  const sourcePath: string = path.join(baseTemplateRoot, sourceRelativePath);
+  const destinationPath: string = path.join(
+    projectPath,
+    destinationRelativePath,
+  );
+
+  await fs.cp(sourcePath, destinationPath, { recursive: true });
+}
+
 async function readJsonFile<T>(filePath: string): Promise<T> {
   const fileContents: string = await fs.readFile(filePath, 'utf8');
 
@@ -84,7 +99,11 @@ export async function createHttpApp(
   const packageManager: PackageManager = options.packageManager;
   const packageManagerVersion: string = packageManagersVersions[packageManager];
   const composedDependencies: ComposedScaffoldDependencies =
-    composeScaffoldDependencies(dependencyCatalog, options.httpAdapter);
+    composeScaffoldDependencies(
+      dependencyCatalog,
+      options.httpAdapter,
+      options.dbAdapter,
+    );
 
   const generatedPackageJson: Record<string, unknown> =
     buildGeneratedPackageJson(
@@ -93,6 +112,7 @@ export async function createHttpApp(
       packageManagerVersion,
       composedDependencies.dependencies,
       composedDependencies.devDependencies,
+      options.dbAdapter,
     );
 
   const jsonIndentationSpaces: number = 2;
@@ -124,6 +144,22 @@ export async function createHttpApp(
     '.env.example',
   );
   await copyTemplateFile('.env.example', projectPath, baseTemplateRoot, '.env');
+  await copyTemplateFile('docker-compose.yml', projectPath, baseTemplateRoot);
+  await copyTemplateFile(
+    'prisma.config.ts.template',
+    projectPath,
+    baseTemplateRoot,
+    'prisma.config.ts',
+  );
+  await copyTemplateDirectory('prisma', projectPath, baseTemplateRoot);
+
+  if (packageManager === 'pnpm') {
+    await copyTemplateFile(
+      'pnpm-workspace.yaml',
+      projectPath,
+      baseTemplateRoot,
+    );
+  }
   await fs.mkdir(path.join(projectPath, 'src'), { recursive: true });
   await fs.writeFile(
     path.join(projectPath, 'src/index.ts'),

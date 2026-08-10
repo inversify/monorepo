@@ -51,6 +51,15 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'db',
+        path: 'db-docs',
+        routeBasePath: 'db',
+        sidebarPath: './sidebarsDb.ts',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         id: 'graphql',
         path: 'graphql-docs',
         routeBasePath: 'graphql',
@@ -151,6 +160,10 @@ const config: Config = {
               to: '/config/introduction/getting-started',
             },
             {
+              label: 'DB Docs',
+              to: '/db/introduction/getting-started',
+            },
+            {
               label: 'HTTP Docs',
               to: '/docs/introduction/getting-started',
             },
@@ -185,6 +198,10 @@ const config: Config = {
               to: '/config/introduction/getting-started',
             },
             {
+              label: 'DB Docs',
+              to: '/db/introduction/getting-started',
+            },
+            {
               label: 'HTTP Docs',
               to: '/docs/introduction/getting-started',
             },
@@ -217,6 +234,12 @@ const config: Config = {
         {
           className: 'navbar-version-dropdown-config',
           docsPluginId: 'config',
+          position: 'right',
+          type: 'docsVersionDropdown',
+        },
+        {
+          className: 'navbar-version-dropdown-db',
+          docsPluginId: 'db',
           position: 'right',
           type: 'docsVersionDropdown',
         },
