@@ -13,7 +13,7 @@ describe(generatePrismaTodoPersistenceAdapterSource, () => {
 
     it('should generate a Prisma adapter that implements TodoPersistencePort', () => {
       expect(result).toContain(
-        "import { PrismaClient, type Todo as PrismaTodo } from '../../../generated/prisma/client.js';",
+        "import {\n  Prisma,\n  PrismaClient,\n  type Todo as PrismaTodo,\n} from '../../../generated/prisma/client.js';",
       );
       expect(result).toContain(
         'export class PrismaTodoPersistenceAdapter implements TodoPersistencePort',
@@ -25,6 +25,8 @@ describe(generatePrismaTodoPersistenceAdapterSource, () => {
       expect(result).toContain('this.#prismaClient.todo.count');
       expect(result).toContain('this.#prismaClient.todo.update');
       expect(result).toContain('deleted_at: new Date()');
+      expect(result).toContain('deleted_at: null,\n          id,');
+      expect(result).toContain("error.code === 'P2025'");
       expect(result).toContain('public async delete(id: string)');
       expect(result).toContain('public async findById(id: string)');
       expect(result).toContain('public async findMany(query: FindTodosQuery)');
@@ -39,6 +41,7 @@ describe(generatePrismaTodoPersistenceAdapterSource, () => {
         "if (('completed' satisfies keyof UpdateTodoData) in data)",
       );
       expect(result).toContain('#mapTodo(prismaTodo: PrismaTodo): Todo');
+      expect(result).not.toContain('existingTodo');
     });
   });
 });

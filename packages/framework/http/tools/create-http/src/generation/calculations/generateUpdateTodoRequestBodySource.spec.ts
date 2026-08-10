@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { UpdateTodoRequestBodySourceFixtures } from '../fixtures/UpdateTodoRequestBodySourceFixtures.js';
 import { generateUpdateTodoRequestBodySource } from './generateUpdateTodoRequestBodySource.js';
 
 describe(generateUpdateTodoRequestBodySource, () => {
@@ -7,7 +8,7 @@ describe(generateUpdateTodoRequestBodySource, () => {
     let result: string;
 
     beforeAll(() => {
-      result = generateUpdateTodoRequestBodySource();
+      result = UpdateTodoRequestBodySourceFixtures.any;
     });
 
     it('should generate an UpdateTodoRequestBody with optional fields', () => {

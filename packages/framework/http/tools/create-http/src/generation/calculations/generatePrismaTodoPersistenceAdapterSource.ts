@@ -1,7 +1,11 @@
 export function generatePrismaTodoPersistenceAdapterSource(): string {
   return `import { inject, injectable } from 'inversify';
 
-import { PrismaClient, type Todo as PrismaTodo } from '../../../generated/prisma/client.js';
+import {
+  Prisma,
+  PrismaClient,
+  type Todo as PrismaTodo,
+} from '../../../generated/prisma/client.js';
 import {
   type CreateTodoData,
   type FindTodosQuery,
@@ -31,28 +35,28 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
   }
 
   public async delete(id: string): Promise<Todo | undefined> {
-    const existingTodo: PrismaTodo | null =
-      await this.#prismaClient.todo.findFirst({
+    try {
+      const prismaTodo: PrismaTodo = await this.#prismaClient.todo.update({
+        data: {
+          deleted_at: new Date(),
+        },
         where: {
           deleted_at: null,
           id,
         },
       });
 
-    if (existingTodo === null) {
-      return undefined;
+      return this.#mapTodo(prismaTodo);
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        return undefined;
+      }
+
+      throw error;
     }
-
-    const prismaTodo: PrismaTodo = await this.#prismaClient.todo.update({
-      data: {
-        deleted_at: new Date(),
-      },
-      where: {
-        id,
-      },
-    });
-
-    return this.#mapTodo(prismaTodo);
   }
 
   public async findById(id: string): Promise<Todo | undefined> {
@@ -104,18 +108,6 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
     id: string,
     data: UpdateTodoData,
   ): Promise<Todo | undefined> {
-    const existingTodo: PrismaTodo | null =
-      await this.#prismaClient.todo.findFirst({
-        where: {
-          deleted_at: null,
-          id,
-        },
-      });
-
-    if (existingTodo === null) {
-      return undefined;
-    }
-
     const updateData: {
       completed?: boolean;
       description?: string;
@@ -134,14 +126,26 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
       updateData.completed = data.completed;
     }
 
-    const prismaTodo: PrismaTodo = await this.#prismaClient.todo.update({
-      data: updateData,
-      where: {
-        id,
-      },
-    });
+    try {
+      const prismaTodo: PrismaTodo = await this.#prismaClient.todo.update({
+        data: updateData,
+        where: {
+          deleted_at: null,
+          id,
+        },
+      });
 
-    return this.#mapTodo(prismaTodo);
+      return this.#mapTodo(prismaTodo);
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        return undefined;
+      }
+
+      throw error;
+    }
   }
 
   #mapTodo(prismaTodo: PrismaTodo): Todo {
