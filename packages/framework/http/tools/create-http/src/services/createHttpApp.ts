@@ -13,12 +13,16 @@ import {
 } from '../dependencies/calculations/composeScaffoldDependencies.js';
 import { type DependencyCatalog } from '../dependencies/models/DependencyCatalog.js';
 import { createBootstrapSourceModel } from '../generation/calculations/createBootstrapSourceModel.js';
+import { createPnpmWorkspaceSourceModel } from '../generation/calculations/createPnpmWorkspaceSourceModel.js';
 import { generateIndexSource } from '../generation/calculations/generateIndexSource.js';
+import { generatePnpmWorkspaceSource } from '../generation/calculations/generatePnpmWorkspaceSource.js';
 import { type CreateHttpAppOptions } from '../models/CreateHttpAppOptions.js';
 import { type PackageManager } from '../models/PackageManager.js';
 import { type PackageManagersVersions } from '../models/PackageManagersVersions.js';
+import { formatGeneratedProjectSources } from './formatGeneratedProjectSources.js';
 import { writeBootstrapSourceFile } from './writeBootstrapSourceFile.js';
 import { writeStatusSourceFiles } from './writeStatusSourceFiles.js';
+import { writeTodoSourceFiles } from './writeTodoSourceFiles.js';
 
 async function assertTargetIsAvailable(projectPath: string): Promise<void> {
   try {
@@ -154,10 +158,12 @@ export async function createHttpApp(
   await copyTemplateDirectory('prisma', projectPath, baseTemplateRoot);
 
   if (packageManager === 'pnpm') {
-    await copyTemplateFile(
-      'pnpm-workspace.yaml',
-      projectPath,
-      baseTemplateRoot,
+    await fs.writeFile(
+      path.join(projectPath, 'pnpm-workspace.yaml'),
+      generatePnpmWorkspaceSource(
+        createPnpmWorkspaceSourceModel(options.httpAdapter),
+      ),
+      'utf8',
     );
   }
   await fs.mkdir(path.join(projectPath, 'src'), { recursive: true });
@@ -167,10 +173,12 @@ export async function createHttpApp(
     'utf8',
   );
   await writeStatusSourceFiles(projectPath);
+  await writeTodoSourceFiles(projectPath);
   await writeBootstrapSourceFile(
     projectPath,
-    createBootstrapSourceModel(options.httpAdapter),
+    createBootstrapSourceModel(options.httpAdapter, options.dbAdapter),
   );
+  await formatGeneratedProjectSources(projectPath);
 
   return projectPath;
 }

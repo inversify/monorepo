@@ -10,7 +10,12 @@ export const DB_ADAPTER_DEPENDENCY_SPECS: Record<
   AdapterDependencySpec
 > = {
   'prisma+postgresql': {
-    dependencies: ['@prisma/adapter-pg', '@prisma/client', 'pg'],
+    dependencies: [
+      '@inversifyjs/prisma',
+      '@prisma/adapter-pg',
+      '@prisma/client',
+      'pg',
+    ],
     devDependencies: ['dotenv', 'prisma'],
   },
 };

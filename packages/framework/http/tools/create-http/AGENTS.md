@@ -20,7 +20,9 @@ Current recipe knobs:
 - **HTTP adapter**: `express` | `fastify` | `hono` | `uwebsockets`
 - **Database adapter**: `prisma+postgresql` (default; `prisma+sqlite` planned)
 
-Planned extensions (same patterns): validators, OpenAPI, auth, todos resource wiring via Ports + `@inversifyjs/prisma`.
+Scaffolded apps include a `todo` resource (`POST /todos`) wired via Ports + `@inversifyjs/prisma`, OpenAPI docs at `/docs` via `SwaggerUiProvider`, and request validation via `OpenApiValidationPipe` + `@ValidatedBody()`.
+
+Planned extensions (same patterns): auth.
 
 ## Architecture
 
@@ -38,10 +40,14 @@ Recipe (CLI args / prompts)
           ├─ copy static templates (tsconfig, eslint, prettier, gitignore, prisma, docker-compose, …)
           │
           ├─ generateIndexSource() → src/index.ts
+          ├─ generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))
+          │     └─ pnpm only; allowBuilds + adapter knobs (e.g. blockExoticSubdeps)
           ├─ writeStatusSourceFiles() → status model, controller, container module
+          ├─ writeTodoSourceFiles() → todo domain, port, prisma adapter, controller, modules
+          ├─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter, dbAdapter))
+          │     └─ ts-morph from BootstrapSourceModel
           │
-          └─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter))
-                └─ ts-morph from BootstrapSourceModel
+          └─ formatGeneratedProjectSources() → prettier over `src/**/*.ts`
                           │
                           ▼
               Post steps (CLI): git init → install → build → initial commit
@@ -114,35 +120,50 @@ Copied (sometimes renamed) into the target app:
 | `docker-compose.yml` | `docker-compose.yml` | PostgreSQL service |
 | `prisma.config.ts.template` | `prisma.config.ts` | Prisma 7 config (`prisma/config`) |
 | `prisma/` | `prisma/` | Schema, Todo model, initial migration |
-| `pnpm-workspace.yaml` | `pnpm-workspace.yaml` | **pnpm only** — `allowBuilds` for Prisma engines |
 | `package.json` | _(not copied)_ | Catalog only |
 | `package-managers.json` | _(not copied)_ | Catalog only |
 
-Prisma client generator uses `output = "../generated"` (project-root `generated/`). Scripts: `db:generate`, `db:migrate`.
+Prisma uses the `prisma-client` generator (`output = "../src/generated/prisma"`, ESM + `.ts` sources with `.js` import extensions) so `tsc` emits the client into `dist/generated/prisma`. The folder is gitignored. Scripts: `build` runs `prisma generate && tsc`; also `db:generate`, `db:migrate`. Import `PrismaClient` from `generated/prisma/client.js`.
 
 Generated (not copied from templates):
 
 | Generated path | Source |
 |---|---|
 | `src/index.ts` | `generateIndexSource()` — top-level `await bootstrap()` |
-| `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter))` |
+| `pnpm-workspace.yaml` | `generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))` — **pnpm only**; `allowBuilds` + adapter knobs |
+| `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter, dbAdapter))` |
 | `src/status/models/StatusResponse.ts` | `generateStatusResponseSource()` |
 | `src/status/controllers/StatusController.ts` | `generateStatusControllerSource()` — `GET /status` → `{ status: 'ok' }` |
 | `src/status/containerModules/StatusContainerModule.ts` | `generateStatusContainerModuleSource()` — binds controller singleton |
+| `src/todo/domain/models/Todo.ts` | Domain model |
+| `src/todo/application/ports/TodoPersistencePort.ts` | Persistence port |
+| `src/todo/application/models/todoPersistencePortIdentifier.ts` | Port service identifier |
+| `src/todo/api/models/CreateTodoRequest.ts` | `POST /todos` body |
+| `src/todo/api/controllers/TodoController.ts` | `POST /todos` → created `Todo` |
+| `src/todo/adapter/prisma/PrismaTodoPersistenceAdapter.ts` | Prisma port adapter |
+| `src/todo/adapter/inversify/TodoContainerModule.ts` | Binds controller |
+| `src/todo/adapter/inversify/TodoPrismaContainerModule.ts` | Binds port → Prisma adapter |
 
 **Why `.template` for eslint/prettier configs?**  
 ESLint flat config loads the nearest `eslint.config.*`. If the template keeps a real `eslint.config.mjs` under `templates/`, lint-staged/ESLint will try to load it (and fail — `@eslint/js` is not installed there). Rename on copy.
 
 This package's own `eslint.config.mjs` also `ignores: ['templates/**']`, and `.lintstagedrc.json` only lints `src/**/*.ts`.
 
-### Programmatic generation (ts-morph)
+### Programmatic generation (ts-morph / source models)
 
-Variable TypeScript (decorators, DI wiring, adapters) should be generated from a **source model**, not string templates with `if`s.
+Variable TypeScript (decorators, DI wiring, adapters) and recipe-specific config files should be generated from a **source model**, not string templates with `if`s.
+
+`pnpm-workspace.yaml` generation (pnpm only):
+
+- Model factory: `createPnpmWorkspaceSourceModel(httpAdapter)`
+- Model: `PnpmWorkspaceSourceModel` (`allowBuilds`, optional `blockExoticSubdeps`, …)
+- Printer: `generatePnpmWorkspaceSource()` → `pnpm-workspace.yaml`
+- uwebsockets sets `blockExoticSubdeps: false` so git-hosted `uWebSockets.js` can install under pnpm 11+
 
 Bootstrap generation:
 
 - Specs: `HTTP_ADAPTER_BOOTSTRAP_SPECS` — per-adapter imports, options, listen statements
-- Model factory: `createBootstrapSourceModel(httpAdapter)`
+- Model factory: `createBootstrapSourceModel(httpAdapter, dbAdapter)`
 - Model: `BootstrapSourceModel` (`imports`, `adapter`, `applicationType`, `listenStatements`, optional container body)
 - Printer: `generateBootstrapSource()` → `src/app/scripts/bootstrap.ts`
 - Writer: `writeBootstrapSourceFile(projectPath, model)`
@@ -150,19 +171,42 @@ Bootstrap generation:
 
 Generated bootstrap always includes:
 
-1. Non-exported `initializeContainer(): Container` that `container.load(new StatusContainerModule())`
-2. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter and listens
+1. Non-exported `async initializeContainer(): Promise<Container>` that loads config, `PrismaContainerModule` (for `prisma+postgresql`), `StatusContainerModule`, and todo modules
+2. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter, registers `SwaggerUiProvider` (`/docs`), installs `OpenApiValidationPipe` + `InversifyValidationErrorFilter`, and listens
 
-`@inversifyjs/http-core` is a base dependency (for `@Controller` / `@Get` on scaffolded controllers).
+`@inversifyjs/http-core` is a base dependency (for `@Controller` / `@Get` / `@Post` on scaffolded controllers).
+`@inversifyjs/http-open-api` is a base dependency (OpenAPI decorators + `SwaggerUiProvider`).
+`@inversifyjs/open-api-validation`, `@inversifyjs/http-validation`, `ajv`, and `ajv-formats` are base dependencies (OpenAPI-driven request validation).
+`@inversifyjs/prisma` is a DB-adapter dependency (binds `PrismaClient` via `PrismaContainerModule`).
+
+Scaffolded `tsconfig.json` enables both `experimentalDecorators` and `emitDecoratorMetadata` (required by `@inversifyjs/http-open-api` schema inference).
+
+`createHttpApp` formats all generated `src/**/*.ts` with Prettier (using the copied project `prettier.config.mjs`) before returning, so the initial commit lands prettier-clean sources without a separate format step.
 
 Listen APIs differ by adapter (Express `app.listen`, Fastify `await app.listen`, Hono `serve`, uWebSockets callback `app.listen`). Keep those differences in `HTTP_ADAPTER_BOOTSTRAP_SPECS`, not in the printer.
 
 To extend bootstrap later (more container modules, pipes, controllers):
 
-1. Add generators for the new source files (like status)
+1. Add generators for the new source files (like status / todo)
 2. Extend `createBootstrapSourceModel` imports + `initializeContainerBodyStatements`
 3. Keep printing in `generateBootstrapSource`
 4. Avoid forking full file templates per adapter combination
+
+### Todo resource layout (Ports + Adapters)
+
+```
+src/todo/
+  domain/models/Todo.ts
+  application/ports/TodoPersistencePort.ts
+  application/models/todoPersistencePortIdentifier.ts
+  api/controllers/TodoController.ts
+  api/models/CreateTodoRequest.ts
+  adapter/prisma/PrismaTodoPersistenceAdapter.ts
+  adapter/inversify/TodoContainerModule.ts
+  adapter/inversify/TodoPrismaContainerModule.ts
+```
+
+`TodoPersistencePort` keeps HTTP and application code independent of Prisma so future DB adapters can bind a different implementation.
 
 ## Post-scaffold pipeline
 

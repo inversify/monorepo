@@ -21,6 +21,21 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain(
           "import { StatusContainerModule } from '../../status/containerModules/StatusContainerModule.js';",
         );
+        expect(result).toContain(
+          "import { PrismaContainerModule } from '@inversifyjs/prisma';",
+        );
+        expect(result).toContain(
+          "import { PrismaPg } from '@prisma/adapter-pg';",
+        );
+        expect(result).toContain(
+          "import { PrismaClient } from '../../generated/prisma/client.js';",
+        );
+        expect(result).toContain(
+          "import { TodoContainerModule } from '../../todo/adapter/inversify/TodoContainerModule.js';",
+        );
+        expect(result).toContain(
+          "import { TodoPrismaContainerModule } from '../../todo/adapter/inversify/TodoPrismaContainerModule.js';",
+        );
         expect(result).toContain("from '@inversifyjs/config'");
         expect(result).toContain('ConfigContainerModule');
         expect(result).toContain('ConfigService');
@@ -28,8 +43,18 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain(
           "import { envFile } from '@inversifyjs/config-dotenv';",
         );
+        expect(result).toContain(
+          "import { SwaggerUiProvider } from '@inversifyjs/http-open-api';",
+        );
+        expect(result).toContain(
+          "import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';",
+        );
+        expect(result).toContain(
+          "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot1';",
+        );
         expect(result).toContain("import { z } from 'zod';");
         expect(result).toContain('appConfigSchema');
+        expect(result).toContain('DATABASE_URL: z.string().min(1)');
         expect(result).toContain(
           'type AppConfig = z.infer<typeof appConfigSchema>',
         );
@@ -42,7 +67,15 @@ describe(generateBootstrapSource, () => {
         );
         expect(result).toContain('await container.loadAsync(configModule);');
         expect(result).toContain(
+          'const { DATABASE_URL } = configService.get();',
+        );
+        expect(result).toContain('new PrismaContainerModule({');
+        expect(result).toContain(
           'container.load(new StatusContainerModule());',
+        );
+        expect(result).toContain('container.load(new TodoContainerModule());');
+        expect(result).toContain(
+          'container.load(new TodoPrismaContainerModule());',
         );
         expect(result).toContain('return container;');
         expect(result).not.toContain('export function initializeContainer');
@@ -55,10 +88,25 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain(
           'const container: Container = await initializeContainer();',
         );
+        expect(result).toContain(
+          'container.bind(InversifyValidationErrorFilter).toSelf().inSingletonScope();',
+        );
         expect(result).toContain('configServiceIdentifier');
         expect(result).toContain('const { PORT } = configService.get();');
         expect(result).toContain(
           'const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(',
+        );
+        expect(result).toContain(
+          'const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({',
+        );
+        expect(result).toContain("path: '/docs'");
+        expect(result).toContain('swaggerProvider.provide(container);');
+        expect(result).toContain('adapter.useGlobalPipe(');
+        expect(result).toContain(
+          'new OpenApiValidationPipe(swaggerProvider.openApiObject)',
+        );
+        expect(result).toContain(
+          'adapter.useGlobalFilters(InversifyValidationErrorFilter);',
         );
         expect(result).toContain(
           'const app: express.Application = await adapter.build();',
@@ -67,7 +115,26 @@ describe(generateBootstrapSource, () => {
         expect(result).toMatch(
           /^ {2}const container: Container = new Container\(\);$/m,
         );
+        expect(result).toMatch(/^ {2}DATABASE_URL:/m);
         expect(result).toMatch(/^ {2}NODE_ENV:/m);
+
+        const adapterIndex: number = result.indexOf(
+          'const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(',
+        );
+        const provideIndex: number = result.indexOf(
+          'swaggerProvider.provide(container);',
+        );
+        const validationPipeIndex: number = result.indexOf(
+          'adapter.useGlobalPipe(',
+        );
+        const buildIndex: number = result.indexOf(
+          'const app: express.Application = await adapter.build();',
+        );
+
+        expect(adapterIndex).toBeGreaterThan(-1);
+        expect(provideIndex).toBeGreaterThan(adapterIndex);
+        expect(validationPipeIndex).toBeGreaterThan(provideIndex);
+        expect(buildIndex).toBeGreaterThan(validationPipeIndex);
       });
     });
   });
