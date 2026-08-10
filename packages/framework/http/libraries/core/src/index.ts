@@ -52,6 +52,7 @@ import { type MiddlewareHandler } from './http/models/MiddlewareHandler.js';
 import { type RequestHandler } from './http/models/RequestHandler.js';
 import { RequestMethodParameterType } from './http/models/RequestMethodParameterType.js';
 import { RequestMethodType } from './http/models/RequestMethodType.js';
+import { type RequestTransformer } from './http/models/RequestTransformer.js';
 import { type RequiredOptions } from './http/models/RequiredOptions.js';
 import { type RouteParamOptions } from './http/models/RouteParamOptions.js';
 import { type RouteParams } from './http/models/RouteParams.js';
@@ -99,6 +100,8 @@ import { getControllerMethodParameterMetadataList } from './routerExplorer/calcu
 import { type ControllerMetadata } from './routerExplorer/model/ControllerMetadata.js';
 import { type ControllerMethodMetadata } from './routerExplorer/model/ControllerMethodMetadata.js';
 import { type ControllerMethodParameterMetadata } from './routerExplorer/model/ControllerMethodParameterMetadata.js';
+import { type RouterExplorerControllerMetadata } from './routerExplorer/model/RouterExplorerControllerMetadata.js';
+import { type RouterExplorerControllerMethodMetadata } from './routerExplorer/model/RouterExplorerControllerMethodMetadata.js';
 import { createRouteValueMetadataUtils } from './valueMetadata/calculations/createRouteValueMetadataUtils.js';
 
 export type {
@@ -122,9 +125,12 @@ export type {
   Pipe,
   PipeMetadata,
   RequestHandler,
+  RequestTransformer,
   RequiredOptions,
   RouteParamOptions,
   RouteParams,
+  RouterExplorerControllerMetadata,
+  RouterExplorerControllerMethodMetadata,
   RouterParams,
 };
 

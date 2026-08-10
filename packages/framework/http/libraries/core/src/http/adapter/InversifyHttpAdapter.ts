@@ -47,6 +47,7 @@ import { type HttpStatusCode } from '../models/HttpStatusCode.js';
 import { type MiddlewareHandler } from '../models/MiddlewareHandler.js';
 import { type RequestHandler } from '../models/RequestHandler.js';
 import { RequestMethodParameterType } from '../models/RequestMethodParameterType.js';
+import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { type RequiredOptions } from '../models/RequiredOptions.js';
 import { type RouteParams } from '../models/RouteParams.js';
 import { type RouterParams } from '../models/RouterParams.js';
@@ -228,6 +229,21 @@ export abstract class InversifyHttpAdapter<
     _routeValueMetadataMap: Map<string | symbol, unknown>,
   ):
     MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult> | undefined {
+    return undefined;
+  }
+
+  protected _resolveRequestTransformerList(
+    _routerExplorerControllerMetadata: RouterExplorerControllerMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >,
+    _routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >,
+  ): RequestTransformer<TRequest, TResponse>[] | undefined {
     return undefined;
   }
 
@@ -611,6 +627,9 @@ export abstract class InversifyHttpAdapter<
               routerExplorerControllerMethodMetadata,
             ),
           ],
+          handleError: this.#buildHandleError(
+            routerExplorerControllerMethodMetadata,
+          ),
           handler: this.#buildHandler(
             routerExplorerControllerMetadata.serviceIdentifier,
             routerExplorerControllerMetadata.target,
@@ -625,6 +644,10 @@ export abstract class InversifyHttpAdapter<
           ),
           requestMethodType:
             routerExplorerControllerMethodMetadata.requestMethodType,
+          requestTransformerList: this._resolveRequestTransformerList(
+            routerExplorerControllerMetadata,
+            routerExplorerControllerMethodMetadata,
+          ),
           routeValueMetadataMap:
             routerExplorerControllerMethodMetadata.routeValueMetadataMap,
         };
