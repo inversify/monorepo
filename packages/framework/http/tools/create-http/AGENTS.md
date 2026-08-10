@@ -20,7 +20,7 @@ Current recipe knobs:
 - **HTTP adapter**: `express` | `fastify` | `hono` | `uwebsockets`
 - **Database adapter**: `prisma+postgresql` (default; `prisma+sqlite` planned)
 
-Scaffolded apps include a `todo` resource (`POST /todos`) wired via Ports + `@inversifyjs/prisma`, OpenAPI docs at `/docs` via `SwaggerUiProvider`, and request validation via `OpenApiValidationPipe` + `@ValidatedBody()`.
+Scaffolded apps include a `todo` resource (`GET /todos`, `GET /todos/:id`, `POST /todos`, `PATCH /todos/:id`, `DELETE /todos/:id`) wired via Ports + `@inversifyjs/prisma`, OpenAPI docs at `/docs` via `SwaggerUiProvider`, and request validation via `OpenApiValidationPipe` + `@ValidatedBody()` / `@ValidatedParams()` / `@ValidatedQuery()`.
 
 Planned extensions (same patterns): auth.
 
@@ -138,9 +138,11 @@ Generated (not copied from templates):
 | `src/todo/domain/models/Todo.ts` | Domain model |
 | `src/todo/application/ports/TodoPersistencePort.ts` | Persistence port |
 | `src/todo/application/models/todoPersistencePortIdentifier.ts` | Port service identifier |
-| `src/todo/api/models/CreateTodoRequest.ts` | `POST /todos` body |
-| `src/todo/api/controllers/TodoController.ts` | `POST /todos` → created `Todo` |
-| `src/todo/adapter/prisma/PrismaTodoPersistenceAdapter.ts` | Prisma port adapter |
+| `src/todo/api/models/CreateTodoRequestBody.ts` | `POST /todos` body |
+| `src/todo/api/models/PaginatedTodosResponse.ts` | `GET /todos` response |
+| `src/todo/api/models/UpdateTodoRequestBody.ts` | `PATCH /todos/:id` body |
+| `src/todo/api/controllers/TodoController.ts` | `GET /todos`, `GET /todos/:id`, `POST /todos`, `PATCH /todos/:id`, `DELETE /todos/:id` |
+| `src/todo/adapter/prisma/PrismaTodoPersistenceAdapter.ts` | Prisma port adapter (soft delete via `deleted_at`) |
 | `src/todo/adapter/inversify/TodoContainerModule.ts` | Binds controller |
 | `src/todo/adapter/inversify/TodoPrismaContainerModule.ts` | Binds port → Prisma adapter |
 
@@ -175,8 +177,8 @@ Generated bootstrap always includes:
 2. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter, registers `SwaggerUiProvider` (`/docs`), installs `OpenApiValidationPipe` + `InversifyValidationErrorFilter`, and listens
 
 `@inversifyjs/http-core` is a base dependency (for `@Controller` / `@Get` / `@Post` on scaffolded controllers).
-`@inversifyjs/http-open-api` is a base dependency (OpenAPI decorators + `SwaggerUiProvider`).
-`@inversifyjs/open-api-validation`, `@inversifyjs/http-validation`, `ajv`, and `ajv-formats` are base dependencies (OpenAPI-driven request validation).
+`@inversifyjs/http-open-api` is a base dependency (OpenAPI 3.2 decorators + `SwaggerUiProvider` via `/v3Dot2`).
+`@inversifyjs/open-api-validation`, `@inversifyjs/http-validation`, `ajv`, and `ajv-formats` are base dependencies (OpenAPI-driven request validation; pipe from `/v3Dot2`).
 `@inversifyjs/prisma` is a DB-adapter dependency (binds `PrismaClient` via `PrismaContainerModule`).
 
 Scaffolded `tsconfig.json` enables both `experimentalDecorators` and `emitDecoratorMetadata` (required by `@inversifyjs/http-open-api` schema inference).
@@ -200,7 +202,9 @@ src/todo/
   application/ports/TodoPersistencePort.ts
   application/models/todoPersistencePortIdentifier.ts
   api/controllers/TodoController.ts
-  api/models/CreateTodoRequest.ts
+  api/models/CreateTodoRequestBody.ts
+  api/models/PaginatedTodosResponse.ts
+  api/models/UpdateTodoRequestBody.ts
   adapter/prisma/PrismaTodoPersistenceAdapter.ts
   adapter/inversify/TodoContainerModule.ts
   adapter/inversify/TodoPrismaContainerModule.ts

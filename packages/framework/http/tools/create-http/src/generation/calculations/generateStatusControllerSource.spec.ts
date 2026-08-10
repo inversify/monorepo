@@ -15,7 +15,7 @@ describe(generateStatusControllerSource, () => {
       expect(result).toContain(
         "import { Controller, Get, HttpStatusCode } from '@inversifyjs/http-core';",
       );
-      expect(result).toContain("from '@inversifyjs/http-open-api'");
+      expect(result).toContain("from '@inversifyjs/http-open-api/v3Dot2'");
       expect(result).toContain(
         "import { StatusResponse } from '../models/StatusResponse.js';",
       );

@@ -13,7 +13,7 @@ describe(generateTodoDomainModelSource, () => {
 
     it('should generate a Todo OpenAPI schema class with the expected fields', () => {
       expect(result).toContain(
-        "import { OasSchema, OasSchemaProperty } from '@inversifyjs/http-open-api';",
+        "import { OasSchema, OasSchemaProperty } from '@inversifyjs/http-open-api/v3Dot2';",
       );
       expect(result).toContain('export class Todo');
       expect(result).toContain("name: 'Todo'");

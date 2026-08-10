@@ -13,7 +13,7 @@ describe(generateStatusResponseSource, () => {
 
     it('should generate a StatusResponse OpenAPI schema class', () => {
       expect(result).toContain(
-        "import { OasSchema, OasSchemaProperty } from '@inversifyjs/http-open-api';",
+        "import { OasSchema, OasSchemaProperty } from '@inversifyjs/http-open-api/v3Dot2';",
       );
       expect(result).toContain('export class StatusResponse');
       expect(result).toContain('@OasSchema(undefined, {');
