@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 import {
+  ApplyMiddleware,
   Body,
   CatchError,
   Controller,
@@ -11,7 +12,7 @@ import {
   Post,
 } from '@inversifyjs/http-core';
 import { type Logger } from '@inversifyjs/logger';
-import { Container } from 'inversify';
+import { Container, injectable } from 'inversify';
 import {
   type HttpRequest,
   type HttpResponse,
@@ -24,6 +25,8 @@ import { CaptureRequestValues } from '../decorators/CaptureRequestValues.js';
 import { UseRequestTransformers } from '../decorators/UseRequestTransformers.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { type UwebSocketsErrorFilter } from '../models/UwebSocketsErrorFilter.js';
+import { type UwebSocketsMiddleware } from '../models/UwebSocketsMiddleware.js';
+import { createRouteValueMetadataUtils } from '../valueMetadata/calculations/createRouteValueMetadataUtils.js';
 import { InversifyUwebSocketsHttpAdapter } from './InversifyUwebSocketsHttpAdapter.js';
 
 interface Server {
@@ -357,6 +360,75 @@ describe(InversifyUwebSocketsHttpAdapter, () => {
 
       it('should compose the transformers in registration order', () => {
         expect(responseBody).toBe('/transformed/first/second');
+      });
+    });
+  });
+
+  describe('having a controller method with @CaptureRequestValues and route value metadata', () => {
+    let server: Server;
+
+    beforeAll(async () => {
+      const [roles, getRoles]: [
+        decorator: (value: string[]) => MethodDecorator,
+        getter: (request: HttpRequest) => string[] | undefined,
+      ] = createRouteValueMetadataUtils<string[]>('ROLES');
+
+      @injectable()
+      class TestMiddleware implements UwebSocketsMiddleware {
+        public execute(
+          request: HttpRequest,
+          response: HttpResponse,
+          next: () => void,
+        ): void {
+          response.cork((): void => {
+            response.writeHeader(
+              'x-route-roles',
+              (getRoles(request) ?? []).join(','),
+            );
+          });
+
+          next();
+        }
+      }
+
+      @Controller('/captured-metadata')
+      class TestController {
+        @CaptureRequestValues(['method'])
+        @roles(['admin'])
+        @ApplyMiddleware(TestMiddleware)
+        @Get()
+        public async get(
+          @readMethodAfterAwait() method: string,
+        ): Promise<string> {
+          return method;
+        }
+      }
+
+      const container: Container = new Container();
+
+      container.bind(TestMiddleware).toSelf().inSingletonScope();
+      container.bind(TestController).toSelf().inSingletonScope();
+
+      server = await buildUwebSocketsServer(container);
+    });
+
+    afterAll(async () => {
+      await server.shutdown();
+    });
+
+    describe('when sending a request to the endpoint', () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/captured-metadata`,
+        );
+
+        await response.text();
+      });
+
+      it('should attach the route value metadata to the captured request', () => {
+        expect(response.headers.get('x-route-roles')).toBe('admin');
       });
     });
   });
