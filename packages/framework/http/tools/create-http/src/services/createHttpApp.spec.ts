@@ -144,7 +144,8 @@ describe(createHttpApp, () => {
           "import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';",
         );
         expect(bootstrapSource).toContain(
-          "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot2';",        );
+          "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot2';",
+        );
         expect(bootstrapSource).toContain(
           'const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({',
         );

@@ -21,9 +21,7 @@ describe(generateTodoPersistencePortSource, () => {
       expect(result).toContain('export interface UpdateTodoData');
       expect(result).toContain('export interface TodoPersistencePort');
       expect(result).toContain('create(data: CreateTodoData): Promise<Todo>');
-      expect(result).toContain(
-        'delete(id: string): Promise<Todo | undefined>',
-      );
+      expect(result).toContain('delete(id: string): Promise<Todo | undefined>');
       expect(result).toContain(
         'findById(id: string): Promise<Todo | undefined>',
       );
