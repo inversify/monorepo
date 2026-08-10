@@ -8,5 +8,8 @@
 # node modules
 /node_modules/
 
+# Integration test scaffold output
+/tmp/
+
 # Turborepo files
 .turbo/

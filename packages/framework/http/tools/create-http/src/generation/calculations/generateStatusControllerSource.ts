@@ -7,7 +7,7 @@ import {
   OasSummary,
   OasTag,
   type ToSchemaFunction,
-} from '@inversifyjs/http-open-api';
+} from '@inversifyjs/http-open-api/v3Dot2';
 
 import { StatusResponse } from '../models/StatusResponse.js';
 

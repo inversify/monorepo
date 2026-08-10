@@ -138,13 +138,13 @@ describe(createHttpApp, () => {
           'const { PORT } = configService.get();',
         );
         expect(bootstrapSource).toContain(
-          "import { SwaggerUiProvider } from '@inversifyjs/http-open-api';",
+          "import { SwaggerUiProvider } from '@inversifyjs/http-open-api/v3Dot2';",
         );
         expect(bootstrapSource).toContain(
           "import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';",
         );
         expect(bootstrapSource).toContain(
-          "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot1';",
+          "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot2';",
         );
         expect(bootstrapSource).toContain(
           'const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({',
@@ -211,13 +211,70 @@ describe(createHttpApp, () => {
             ),
             'utf8',
           ),
-        ).resolves.toContain('@ValidatedBody() body: CreateTodoRequest');
+        ).resolves.toContain('@ValidatedBody() body: CreateTodoRequestBody');
         await expect(
           fs.readFile(
-            path.join(projectPath, 'src/todo/api/models/CreateTodoRequest.ts'),
+            path.join(
+              projectPath,
+              'src/todo/api/controllers/TodoController.ts',
+            ),
             'utf8',
           ),
-        ).resolves.toContain('export class CreateTodoRequest');
+        ).resolves.toContain('@Get()');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/api/controllers/TodoController.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain("@Get('/:id')");
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/api/controllers/TodoController.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain("@Patch('/:id')");
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/api/controllers/TodoController.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain("@Delete('/:id')");
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/api/models/CreateTodoRequestBody.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('export class CreateTodoRequestBody');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/api/models/PaginatedTodosResponse.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('export class PaginatedTodosResponse');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/api/models/UpdateTodoRequestBody.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('export class UpdateTodoRequestBody');
         await expect(
           fs.readFile(
             path.join(

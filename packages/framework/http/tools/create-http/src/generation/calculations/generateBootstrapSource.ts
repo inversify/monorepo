@@ -79,7 +79,7 @@ export async function generateBootstrapSource(
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '@inversifyjs/http-open-api',
+    moduleSpecifier: '@inversifyjs/http-open-api/v3Dot2',
     namedImports: [{ name: 'SwaggerUiProvider' }],
   });
 
@@ -89,7 +89,7 @@ export async function generateBootstrapSource(
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '@inversifyjs/open-api-validation/v3Dot1',
+    moduleSpecifier: '@inversifyjs/open-api-validation/v3Dot2',
     namedImports: [{ name: 'OpenApiValidationPipe' }],
   });
 
@@ -161,7 +161,7 @@ export async function generateBootstrapSource(
         title: 'API',
         version: '1.0.0',
       },
-      openapi: '3.1.1',
+      openapi: '3.2.0',
     },
     path: '/docs',
   },

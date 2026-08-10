@@ -44,13 +44,13 @@ describe(generateBootstrapSource, () => {
           "import { envFile } from '@inversifyjs/config-dotenv';",
         );
         expect(result).toContain(
-          "import { SwaggerUiProvider } from '@inversifyjs/http-open-api';",
+          "import { SwaggerUiProvider } from '@inversifyjs/http-open-api/v3Dot2';",
         );
         expect(result).toContain(
           "import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';",
         );
         expect(result).toContain(
-          "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot1';",
+          "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot2';",
         );
         expect(result).toContain("import { z } from 'zod';");
         expect(result).toContain('appConfigSchema');
