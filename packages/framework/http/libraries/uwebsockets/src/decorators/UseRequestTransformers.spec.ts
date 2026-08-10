@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, vitest } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('../actions/setControllerMethodRequestTransformerList.js'));
 
@@ -7,6 +7,47 @@ import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { UseRequestTransformers } from './UseRequestTransformers.js';
 
 describe(UseRequestTransformers, () => {
+  describe('having a single request transformer', () => {
+    let requestTransformerFixture: RequestTransformer;
+    let targetFixture: object;
+    let methodKeyFixture: string;
+
+    beforeAll(() => {
+      requestTransformerFixture = vitest.fn();
+      methodKeyFixture = 'testMethod';
+
+      class TestController {
+        public testMethod(): void {}
+      }
+
+      targetFixture = TestController.prototype;
+    });
+
+    describe('when called', () => {
+      beforeAll(() => {
+        UseRequestTransformers(requestTransformerFixture)(
+          targetFixture,
+          methodKeyFixture,
+          {},
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should register the request transformer', () => {
+        expect(
+          setControllerMethodRequestTransformerList,
+        ).toHaveBeenCalledExactlyOnceWith(
+          targetFixture.constructor,
+          methodKeyFixture,
+          [requestTransformerFixture],
+        );
+      });
+    });
+  });
+
   describe('having two request transformers', () => {
     let firstRequestTransformerFixture: RequestTransformer;
     let secondRequestTransformerFixture: RequestTransformer;

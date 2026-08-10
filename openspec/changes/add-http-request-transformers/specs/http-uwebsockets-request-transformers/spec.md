@@ -96,11 +96,15 @@ When a request transformer throws or returns a rejected Promise, the uWebSockets
 - **THEN** the adapter SHALL handle the rejection through the same error-filter path as a thrown error
 
 ### Requirement: Minimal core plumbing supports per-route resolution without exporting the feature from core
-`@inversifyjs/http-core` SHALL provide only the plumbing required for the uWebSockets adapter to receive per-route transformers through `RouteParams`: a protected resolver hook defaulting to `undefined`, and a **mandatory** transformers field on `RouteParams` whose value MAY be `undefined` when unused. `@inversifyjs/http-core` SHALL NOT export `@UseRequestTransformers` or `@CaptureRequestValues`.
+`@inversifyjs/http-core` SHALL provide only the plumbing required for the uWebSockets adapter to receive per-route transformers through `RouteParams`: a protected resolver hook defaulting to `undefined`, a **mandatory** transformers field on `RouteParams` whose value MAY be `undefined` when unused, and a **mandatory** route error handler field on `RouteParams` so an adapter can route failures happening outside the middleware list through the route error filters. `@inversifyjs/http-core` SHALL NOT export `@UseRequestTransformers` or `@CaptureRequestValues`.
 
 #### Scenario: Core default resolves to undefined transformers
 - **WHEN** a non-uWebSockets adapter builds routes
 - **THEN** the transformers field on each `RouteParams` entry SHALL be `undefined`
+
+#### Scenario: Core exposes the route error handler on route params
+- **WHEN** core builds route params for a controller method
+- **THEN** each `RouteParams` entry SHALL expose an error handler applying the route error filters, then the global error filters, then the internal server error fallback
 
 #### Scenario: Core does not export the uWebSockets decorators
 - **WHEN** a consumer inspects the public exports of `@inversifyjs/http-core`

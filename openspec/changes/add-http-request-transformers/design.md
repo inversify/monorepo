@@ -40,7 +40,7 @@ A plain `captureRequestValues(kinds)` **factory** that returns a `RequestTransfo
 ```ts
 const run = handleMiddlewareList(orderedHandlers);
 
-if (transformers === undefined || transformers.length === 0) {
+if (requestTransformerList === undefined) {
   app.<method>(path, async (res, req) => {
     res.onAborted(() => { /* abortedSymbol */ });
     await run(req, res);
@@ -48,18 +48,25 @@ if (transformers === undefined || transformers.length === 0) {
 } else {
   app.<method>(path, async (res, req) => {
     res.onAborted(() => { /* abortedSymbol */ });
+
+    let request = req;
+
     try {
-      let request = req;
-      for (const t of transformers) {
+      for (const t of requestTransformerList) {
         request = await t(request, res, options);
       }
-      await run(request, res);
     } catch (error) {
-      await handleError(/* req or transformed */, res, error);
+      await routeParams.handleError(request, res, error);
+
+      return;
     }
+
+    await run(request, res);
   });
 }
 ```
+
+The empty list check happens when resolving transformers, so `_buildRouter` only checks `undefined`.
 
 Both forks MUST register `res.onAborted` like today.
 
@@ -67,9 +74,11 @@ Both forks MUST register `res.onAborted` like today.
 
 **Decision:** Core does **not** export the uWS decorators. It only:
 
-1. Adds a protected hook on `InversifyHttpAdapter`, e.g. `_resolveRequestTransformers(controllerMetadata, methodMetadata)`, defaulting to `undefined`.
-2. Attaches the result on `RouteParams` as a **mandatory** field whose type allows `undefined` when unused.
-3. Lets `InversifyUwebSocketsHttpAdapter` override the hook to read uWebSockets transformer metadata (from `@UseRequestTransformers` and/or `@CaptureRequestValues`) and implement the build-time fork in `_buildRouter`.
+1. Adds a protected hook on `InversifyHttpAdapter`, `_resolveRequestTransformerList(controllerMetadata, methodMetadata)`, defaulting to `undefined`.
+2. Attaches the result on `RouteParams` as a **mandatory** `requestTransformerList` field whose type allows `undefined` when unused.
+3. Attaches the route error handler on `RouteParams` as a **mandatory** `handleError` field. Route error filters live inside the per-handler closures built by core, so without this field an adapter cannot reuse the middleware error path for work happening outside `handleMiddlewareList`.
+4. Exports the `RequestTransformer` type plus the `RouterExplorerControllerMetadata` / `RouterExplorerControllerMethodMetadata` types used by the hook signature, so adapters outside the package can override it.
+5. Lets `InversifyUwebSocketsHttpAdapter` override the hook to read uWebSockets transformer metadata (from `@UseRequestTransformers` and/or `@CaptureRequestValues`) and implement the build-time fork in `_buildRouter`.
 
 ### 4. Execution order: before the entire `handleMiddlewareList` chain
 
@@ -113,12 +122,16 @@ class UsersController {
 **Why not a factory?**  
 `captureRequestValues(kinds)` as an argument to `@UseRequestTransformers` never receives `target`/`methodKey`, so it cannot later look up path metadata for that method. The method decorator exists to close over class/method identity.
 
+**Capture kinds:**
+
+`RequestValueKind` is the string literal union `'body' | 'headers' | 'method' | 'params' | 'query' | 'url'`, so kinds read as `@CaptureRequestValues(['method', 'headers'])` without importing an enum. Selecting `'url'` also captures the raw query string, since `_getUrl` composes the URL with it.
+
 **Capture transformer behavior:**
 
-1. Synchronously snapshots selected kinds from the native `HttpRequest` (full headers, full query, method, URL including query when present, params using cached names via `getParameter(name)` and/or index zip).
+1. Synchronously snapshots selected kinds from the native `HttpRequest` (full headers, raw query string, method and case sensitive method, URL, params using cached names via `getParameter(name)`).
 2. Optionally awaits body parsing if body is selected (only after sync snapshots).
 3. Returns a **Proxy** that serves those snapshots.
-4. Does not fall back to native `HttpRequest` for unselected kinds; fails clearly instead.
+4. Does not fall back to native `HttpRequest` for unselected kinds; fails clearly instead. `setYield` also fails clearly, since yielding a route is only meaningful while the native request is alive.
 5. Forwards own/symbol property get/set so route-value metadata still works.
 
 Body is stored for `_getBody` / options `getBody` reuse via a well-known association on the transformed request.
@@ -153,8 +166,9 @@ Sync-only capture MAY return the Proxy directly without awaiting.
 
 Rollback: remove decorator usage; additive feature.
 
-## Open Questions
+## Resolved Questions
 
-- Exact public names for capture kinds — finalize during implementation.
-- Exact `RouteParams` field name and stacking order when both `@UseRequestTransformers` and `@CaptureRequestValues` are present — finalize during implementation (recommend: declaration/application order as stored in metadata).
-- Whether to optionally warm param-name cache at `build()` / resolve time instead of first request — implementation choice; behavior remains “compute once, then cache”.
+- **Capture kind names:** `'body'`, `'headers'`, `'method'`, `'params'`, `'query'` and `'url'`, as a string literal union named `RequestValueKind`.
+- **`RouteParams` field name:** `requestTransformerList`, matching the `...List` naming used by the other `RouteParams` fields.
+- **Stacking order:** transformers are appended to the method metadata as decorators are applied, so stacked `@UseRequestTransformers` / `@CaptureRequestValues` run in decorator application order (bottom-up), consistent with `@UseGuard` and `@ApplyMiddleware`.
+- **Param-name cache warm-up:** names are resolved on first use, not at `build()` time, since `@CaptureRequestValues` owns the transformer and the adapter never inspects it.

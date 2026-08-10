@@ -37,8 +37,8 @@ The capture transformer SHALL close over class/method identity (`target` / `meth
 ### Requirement: Selected values are fully snapshotted before any await
 The capture transformer SHALL, during its synchronous phase and before any `await`, snapshot every selected kind in full from the native `HttpRequest`:
 
-- **method** — HTTP method string
-- **url** — URL including query string when present (same information `_getUrl` exposes)
+- **method** — HTTP method string, both lowercased and case sensitive
+- **url** — URL, plus the raw query string so that the URL including its query string (the information `_getUrl` exposes) can be served later
 - **headers** — all headers (sufficient to serve later per-header reads)
 - **query** — all query values (sufficient to serve later per-key and full-query reads)
 - **params** — named route parameters using the lazy-cached param names (and optionally index reads consistent with those names), enabling full `getParams()`-style access on the captured request
@@ -78,6 +78,11 @@ The transformed request SHALL be a Proxy. For each selected kind, corresponding 
 - **AND** later code calls an API for an unselected kind (for example `getHeader`)
 - **THEN** the call SHALL NOT delegate to the native `HttpRequest`
 - **AND** the call SHALL fail with an error that indicates the value was not captured
+
+#### Scenario: Yielding a captured request fails clearly
+- **WHEN** later code calls `setYield` on a captured request
+- **THEN** the call SHALL NOT delegate to the native `HttpRequest`
+- **AND** the call SHALL fail with an error indicating that yielding a captured request is not supported
 
 #### Scenario: Symbol metadata can be attached after swap
 - **WHEN** the capture Proxy is the request passed into `handleMiddlewareList`
