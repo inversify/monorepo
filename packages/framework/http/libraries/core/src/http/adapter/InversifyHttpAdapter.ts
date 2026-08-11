@@ -625,6 +625,7 @@ export abstract class InversifyHttpAdapter<
             routerExplorerControllerMetadata.target,
             routerExplorerControllerMethodMetadata,
           ),
+          methodKey: routerExplorerControllerMethodMetadata.methodKey,
           path: routerExplorerControllerMethodMetadata.path,
           postHandlerMiddlewareList: this.#buildRoutePostMiddlewareList(
             handleError,
@@ -1078,6 +1079,7 @@ export abstract class InversifyHttpAdapter<
         routeParamsList: this.#buildRouteParamHandlerList(
           routerExplorerControllerMetadata,
         ),
+        target: routerExplorerControllerMetadata.target,
       });
 
       this.#printController(
