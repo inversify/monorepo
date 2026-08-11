@@ -157,13 +157,13 @@ The available request value kinds are `'body'`, `'headers'`, `'method'`, `'param
 - **`'params'`**: all named route params, which also makes reading every route parameter at once possible on captured requests.
 - **`'query'`**: the raw query string, so full and per-key query reads work later. Capturing `'url'` also captures the raw query string, since the query string is part of the URL.
 - **`'url'`**: the URL.
-- **`'body'`**: the parsed body. It is the only kind read asynchronously, and it is read after every synchronous snapshot is taken. Later body reads (for example `@Body()`) reuse the captured body instead of reading the request a second time.
+- **`'body'`**: raw body chunks are buffered by `installHttpResponseBodyCapture` and replayed to later readers such as `@Body()`. The transformer does not parse the body or read it asynchronously; it only installs buffering so later body reads can consume the same chunks.
 
 <CodeBlock language="ts">{captureRequestValuesUwebsocketsSource}</CodeBlock>
 
 Kinds that were not captured are not served from the native request: calling their APIs on a captured request throws an error stating which kind is missing, instead of failing with the uWebSockets.js post-await access error.
 
-Route parameter names cannot be read when the decorator is applied, because `@Controller` is a class decorator and therefore runs after method decorators. Instead, the capture transformer derives the names from the controller path and the method path the first time it needs them, and caches them for every later request, so no path parsing happens per request. If neither controller nor method path metadata can be resolved at that point (for example when the method has no HTTP method decorator), the transformer fails with an error describing the missing metadata.
+Route parameter names cannot be read when the decorator is applied, because `@Controller` is a class decorator and therefore runs after method decorators. Instead, the capture transformer derives the names from the matched controller path and method path the first time it needs them for that route, and caches them per route path for every later request, so no path parsing happens per request. If neither controller nor method path metadata can be resolved at that point (for example when the method has no HTTP method decorator), the transformer fails with an error describing the missing metadata. If a method is mapped to multiple paths with different route parameters and the matched route cannot be identified, numeric `getParameter()` indexes cannot be resolved and the transformer fails with an error describing that case.
 
 ### Global pre-handler middlewares
 

@@ -88,6 +88,7 @@ describe(buildCaptureRequestValuesTransformer, () => {
       it('should call buildCapturedRequest() with the native request and captured values', () => {
         const expected: CapturedRequestValues = {
           caseSensitiveMethod: 'POST',
+          contentType: undefined,
           headers: { 'content-type': 'application/json' },
           method: 'post',
           paramNameList: undefined,
@@ -153,12 +154,17 @@ describe(buildCaptureRequestValuesTransformer, () => {
       it('should resolve the param names once', () => {
         expect(
           resolveControllerMethodParamNameList,
-        ).toHaveBeenCalledExactlyOnceWith(TestController, 'testMethod');
+        ).toHaveBeenCalledExactlyOnceWith(
+          TestController,
+          'testMethod',
+          undefined,
+        );
       });
 
       it('should call buildCapturedRequest() with the captured params', () => {
         const expected: CapturedRequestValues = {
           caseSensitiveMethod: undefined,
+          contentType: undefined,
           headers: undefined,
           method: undefined,
           paramNameList: ['userId'],
@@ -226,7 +232,8 @@ describe(buildCaptureRequestValuesTransformer, () => {
       it('should call buildCapturedRequest() with the native request and captured values', () => {
         const expected: CapturedRequestValues = {
           caseSensitiveMethod: 'POST',
-          headers: { 'content-type': '' },
+          contentType: '',
+          headers: undefined,
           method: 'post',
           paramNameList: undefined,
           params: undefined,

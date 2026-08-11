@@ -11,16 +11,52 @@ type OnDataHandler = (chunk: ArrayBuffer, isLast: boolean) => void;
  * - replays chunks already received to late subscribers
  * - broadcasts new chunks to live subscribers as they arrive
  *
+ * Also installs a shared `onAborted` handler so later abort registrations
+ * (for example from body parsing) compose instead of replacing each other.
+ *
  * Safe to call synchronously before returning a captured request proxy.
  */
 export function installHttpResponseBodyCapture(response: HttpResponse): void {
   const receivedChunks: ArrayBuffer[] = [];
   const liveHandlers: Set<OnDataHandler> = new Set();
+  const abortHandlerList: (() => void)[] = [];
   let finished: boolean = false;
+  let aborted: boolean = false;
 
-  response.onAborted((): void => {
+  const nativeOnAborted: HttpResponse['onAborted'] =
+    response.onAborted.bind(response);
+
+  function handleAbort(): void {
+    if (aborted) {
+      return;
+    }
+
+    aborted = true;
     (response as CustomHttpResponse)[abortedSymbol] = true;
-  });
+
+    for (const abortHandler of abortHandlerList) {
+      abortHandler();
+    }
+
+    liveHandlers.clear();
+  }
+
+  /*
+   * uWebSockets.js keeps a single onAborted callback. Install one shared
+   * handler that sets abortedSymbol (preserving write-after-disconnect
+   * guards) and fan out to any later abort registrations such as #parseBody.
+   */
+  nativeOnAborted(handleAbort);
+
+  response.onAborted = (handler: () => void): HttpResponse => {
+    abortHandlerList.push(handler);
+
+    if (aborted) {
+      handler();
+    }
+
+    return response;
+  };
 
   /*
    * Register the native onData handler before replacing the property. From
@@ -61,7 +97,7 @@ export function installHttpResponseBodyCapture(response: HttpResponse): void {
       handler(new ArrayBuffer(0), true);
     }
 
-    if (!finished) {
+    if (!finished && !aborted) {
       liveHandlers.add(handler);
     }
 

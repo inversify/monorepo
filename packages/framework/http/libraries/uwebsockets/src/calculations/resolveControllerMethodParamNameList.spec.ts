@@ -106,9 +106,49 @@ describe(resolveControllerMethodParamNameList, () => {
             ),
           ]);
 
+        try {
+          resolveControllerMethodParamNameList(TestController, 'testMethod');
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      afterAll(() => {
+        vitest.mocked(getControllerMethodMetadataList).mockReset();
+      });
+
+      it('should throw an error', () => {
+        expect(result).toBeInstanceOf(Error);
+        expect((result as Error).message).toContain(
+          'The method is mapped to multiple paths with different route parameters',
+        );
+      });
+    });
+
+    describe('when called with a matched route path', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        vitest
+          .mocked(getControllerMetadataList)
+          .mockReturnValueOnce([
+            buildControllerMetadata(TestController, '/users'),
+          ]);
+
+        vitest
+          .mocked(getControllerMethodMetadataList)
+          .mockReturnValueOnce([
+            buildControllerMethodMetadata('testMethod', '/:userId'),
+            buildControllerMethodMetadata(
+              'testMethod',
+              '/:userId/items/:itemId',
+            ),
+          ]);
+
         result = resolveControllerMethodParamNameList(
           TestController,
           'testMethod',
+          '/users/:userId',
         );
       });
 
@@ -116,8 +156,8 @@ describe(resolveControllerMethodParamNameList, () => {
         vitest.mocked(getControllerMethodMetadataList).mockReset();
       });
 
-      it('should return the param names once', () => {
-        expect(result).toStrictEqual(['userId', 'itemId']);
+      it('should return the param names of the matched route path', () => {
+        expect(result).toStrictEqual(['userId']);
       });
     });
   });

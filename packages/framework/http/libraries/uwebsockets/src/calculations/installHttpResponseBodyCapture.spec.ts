@@ -155,21 +155,72 @@ describe(installHttpResponseBodyCapture, () => {
   });
 
   describe('when the request is aborted', () => {
+    let abortHandler: (() => void) | undefined;
     let responseMock: HttpResponse;
+    let subscriberChunks: [ArrayBuffer, boolean][];
 
     beforeAll(() => {
+      subscriberChunks = [];
+      abortHandler = undefined;
+
       responseMock = {
-        onAborted: vitest.fn((handler: () => void): void => {
-          handler();
+        onAborted: vitest.fn((handler: () => void): HttpResponse => {
+          abortHandler = handler;
+
+          return responseMock;
         }),
         onData: vitest.fn(),
       } as unknown as HttpResponse;
 
       installHttpResponseBodyCapture(responseMock);
+
+      responseMock.onData((chunk: ArrayBuffer, isLast: boolean): void => {
+        subscriberChunks.push([chunk, isLast]);
+      });
+
+      abortHandler?.();
     });
 
     it('should mark the response as aborted', () => {
       expect((responseMock as CustomHttpResponse)[abortedSymbol]).toBe(true);
+    });
+
+    it('should release live body subscribers without delivering a final chunk', () => {
+      expect(subscriberChunks).toStrictEqual([]);
+    });
+  });
+
+  describe('when onAborted is registered after body capture is installed', () => {
+    let abortHandler: (() => void) | undefined;
+    let laterAbortHandlerMock: ReturnType<typeof vitest.fn>;
+    let responseMock: HttpResponse;
+
+    beforeAll(() => {
+      abortHandler = undefined;
+      laterAbortHandlerMock = vitest.fn();
+
+      responseMock = {
+        onAborted: vitest.fn((handler: () => void): HttpResponse => {
+          abortHandler = handler;
+
+          return responseMock;
+        }),
+        onData: vitest.fn(),
+      } as unknown as HttpResponse;
+
+      installHttpResponseBodyCapture(responseMock);
+
+      responseMock.onAborted(laterAbortHandlerMock);
+
+      abortHandler?.();
+    });
+
+    it('should mark the response as aborted', () => {
+      expect((responseMock as CustomHttpResponse)[abortedSymbol]).toBe(true);
+    });
+
+    it('should invoke the later abort handler through the shared handler', () => {
+      expect(laterAbortHandlerMock).toHaveBeenCalledExactlyOnceWith();
     });
   });
 });

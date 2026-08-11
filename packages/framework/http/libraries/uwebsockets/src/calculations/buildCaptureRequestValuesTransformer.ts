@@ -1,7 +1,9 @@
 import { type CustomParameterDecoratorHandlerOptions } from '@inversifyjs/http-core';
 import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
+import { routePathSymbol } from '../data/routePathSymbol.js';
 import { type CapturedRequestValues } from '../models/CapturedRequestValues.js';
+import { type CustomHttpResponse } from '../models/CustomHttpResponse.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { RequestValueKind } from '../models/RequestValueKind.js';
 import { buildCapturedRequest } from './buildCapturedRequest.js';
@@ -42,7 +44,7 @@ export function buildCaptureRequestValuesTransformer(
     requestValueKindList,
   );
 
-  let cachedParamNameList: string[] | undefined = undefined;
+  const cachedParamNameListByRoutePath: Map<string, string[]> = new Map();
 
   return (
     request: HttpRequest,
@@ -51,6 +53,7 @@ export function buildCaptureRequestValuesTransformer(
   ): HttpRequest => {
     const capturedRequestValues: CapturedRequestValues = {
       caseSensitiveMethod: undefined,
+      contentType: undefined,
       headers: undefined,
       method: undefined,
       paramNameList: undefined,
@@ -61,15 +64,15 @@ export function buildCaptureRequestValuesTransformer(
 
     if (requestValueKindSet.has(RequestValueKind.Headers)) {
       capturedRequestValues.headers = captureHeaders(request);
-    } else if (requestValueKindSet.has(RequestValueKind.Body)) {
-      /*
-       * Body parsing reads content-type through request.getHeader(). Capture at
-       * least that header so `_getBody` keeps working when headers were not
-       * selected explicitly.
-       */
-      capturedRequestValues.headers = {
-        'content-type': request.getHeader('content-type'),
-      };
+    }
+
+    /*
+     * Body parsing reads content-type through `_getBody`. Preserve it without
+     * populating a partial headers snapshot, so uncaptured header APIs still
+     * report that headers were not captured.
+     */
+    if (requestValueKindSet.has(RequestValueKind.Body)) {
+      capturedRequestValues.contentType = request.getHeader('content-type');
     }
 
     if (requestValueKindSet.has(RequestValueKind.Method)) {
@@ -95,10 +98,22 @@ export function buildCaptureRequestValuesTransformer(
     }
 
     if (requestValueKindSet.has(RequestValueKind.Params)) {
-      cachedParamNameList ??= resolveControllerMethodParamNameList(
-        controllerConstructor,
-        methodKey,
-      );
+      const routePath: string | undefined = (response as CustomHttpResponse)[
+        routePathSymbol
+      ];
+      const cacheKey: string = routePath ?? '';
+
+      let cachedParamNameList: string[] | undefined =
+        cachedParamNameListByRoutePath.get(cacheKey);
+
+      if (cachedParamNameList === undefined) {
+        cachedParamNameList = resolveControllerMethodParamNameList(
+          controllerConstructor,
+          methodKey,
+          routePath,
+        );
+        cachedParamNameListByRoutePath.set(cacheKey, cachedParamNameList);
+      }
 
       capturedRequestValues.paramNameList = cachedParamNameList;
       capturedRequestValues.params = captureParams(

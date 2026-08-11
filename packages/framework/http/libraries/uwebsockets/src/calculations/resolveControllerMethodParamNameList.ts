@@ -21,14 +21,36 @@ function isControllerMetadataRelated(
   );
 }
 
+function assertControllerMethodPathMetadataFound(
+  controllerConstructor: NewableFunction,
+  methodKey: string | symbol,
+  isPathMetadataFound: boolean,
+): void {
+  if (!isPathMetadataFound) {
+    throw new Error(
+      `Unable to resolve route parameter names for "${controllerConstructor.name}.${String(methodKey)}". No controller path metadata nor HTTP method path metadata was found for this method. Decorate the method with an HTTP method decorator (@Get, @Post, ...) and its class with @Controller.`,
+    );
+  }
+}
+
+function areParamNameListsEqual(left: string[], right: string[]): boolean {
+  return (
+    left.length === right.length &&
+    left.every(
+      (paramName: string, index: number): boolean => paramName === right[index],
+    )
+  );
+}
+
 export function resolveControllerMethodParamNameList(
   controllerConstructor: NewableFunction,
   methodKey: string | symbol,
+  matchedRoutePath?: string,
 ): string[] {
   const controllerMetadataList: ControllerMetadata[] =
     getControllerMetadataList() ?? [];
 
-  const paramNameList: string[] = [];
+  const matchedRouteParamNameList: string[][] = [];
 
   let isPathMetadataFound: boolean = false;
 
@@ -49,23 +71,42 @@ export function resolveControllerMethodParamNameList(
 
       isPathMetadataFound = true;
 
+      if (matchedRoutePath !== undefined) {
+        continue;
+      }
+
       const routePath: string = buildNormalizedPath(
         `${controllerMetadata.path}${controllerMethodMetadata.path}`,
       );
 
-      for (const paramName of getPathParamNameList(routePath)) {
-        if (!paramNameList.includes(paramName)) {
-          paramNameList.push(paramName);
-        }
-      }
+      matchedRouteParamNameList.push(getPathParamNameList(routePath));
     }
   }
 
-  if (!isPathMetadataFound) {
-    throw new Error(
-      `Unable to resolve route parameter names for "${controllerConstructor.name}.${String(methodKey)}". No controller path metadata nor HTTP method path metadata was found for this method. Decorate the method with an HTTP method decorator (@Get, @Post, ...) and its class with @Controller.`,
-    );
+  assertControllerMethodPathMetadataFound(
+    controllerConstructor,
+    methodKey,
+    isPathMetadataFound,
+  );
+
+  if (matchedRoutePath !== undefined) {
+    return getPathParamNameList(matchedRoutePath);
   }
 
-  return paramNameList;
+  if (matchedRouteParamNameList.length === 0) {
+    return [];
+  }
+
+  const firstParamNameList: string[] = matchedRouteParamNameList[0] as string[];
+  const remainingParamNameList: string[][] = matchedRouteParamNameList.slice(1);
+
+  for (const paramNameList of remainingParamNameList) {
+    if (!areParamNameListsEqual(firstParamNameList, paramNameList)) {
+      throw new Error(
+        `Unable to resolve route parameter names for "${controllerConstructor.name}.${String(methodKey)}". The method is mapped to multiple paths with different route parameters, so numeric getParameter() indexes cannot be resolved without the matched route path.`,
+      );
+    }
+  }
+
+  return firstParamNameList;
 }

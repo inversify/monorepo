@@ -30,6 +30,7 @@ import { pipeStreamOverResponse } from '../actions/pipeStreamOverResponse.js';
 import { getControllerMethodRequestTransformerList } from '../calculations/getControllerMethodRequestTransformerList.js';
 import { abortedSymbol } from '../data/abortedSymbol.js';
 import { capturedRequestValuesSymbol } from '../data/capturedRequestValuesSymbol.js';
+import { routePathSymbol } from '../data/routePathSymbol.js';
 import { type CapturedHttpRequest } from '../models/CapturedHttpRequest.js';
 import { type CapturedRequestValues } from '../models/CapturedRequestValues.js';
 import { type CustomHttpResponse } from '../models/CustomHttpResponse.js';
@@ -141,6 +142,8 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
             res.onAborted(() => {
               (res as CustomHttpResponse)[abortedSymbol] = true;
             });
+
+            (res as CustomHttpResponse)[routePathSymbol] = routePath;
 
             let request: HttpRequest = req;
 
@@ -323,7 +326,9 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     response: HttpResponse,
     parameterName?: string,
   ): Promise<unknown> {
-    const contentTypeHeader: string = request.getHeader('content-type');
+    const contentTypeHeader: string =
+      this.#getCapturedRequestValues(request)?.contentType ??
+      request.getHeader('content-type');
 
     const body: unknown = await this.#parseBody(contentTypeHeader, response);
 
@@ -408,7 +413,11 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
       return body;
     }
 
-    if (!(parameterName in (body as Record<string, unknown>))) {
+    if (body === null || typeof body !== 'object') {
+      throw new Error(`Body parameter '${parameterName}' not found.`);
+    }
+
+    if (!(parameterName in body)) {
       throw new Error(`Body parameter '${parameterName}' not found.`);
     }
 

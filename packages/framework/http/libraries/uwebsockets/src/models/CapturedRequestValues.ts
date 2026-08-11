@@ -1,5 +1,6 @@
 export interface CapturedRequestValues {
   caseSensitiveMethod: string | undefined;
+  contentType: string | undefined;
   headers: Record<string, string> | undefined;
   method: string | undefined;
   paramNameList: string[] | undefined;

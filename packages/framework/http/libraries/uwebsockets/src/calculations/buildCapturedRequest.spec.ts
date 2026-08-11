@@ -25,6 +25,7 @@ function buildCapturedRequestValues(
 ): CapturedRequestValues {
   return {
     caseSensitiveMethod: undefined,
+    contentType: undefined,
     headers: undefined,
     method: undefined,
     paramNameList: undefined,
