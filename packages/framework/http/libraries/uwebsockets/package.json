@@ -6,6 +6,7 @@
   "description": "InversifyJs http express package",
   "dependencies": {
     "@inversifyjs/http-core": "workspace:*",
+    "@inversifyjs/reflect-metadata-utils": "1.5.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.69.0",
     "statuses": "^2.0.2"
   },

@@ -227,6 +227,12 @@ function buildSharedHandleErrorContainer(): Container {
 describe(InversifyHttpAdapter, () => {
   describe('.build', () => {
     describe('when called', () => {
+      let routerParams: RouterParams<
+        TestRequest,
+        TestResponse,
+        () => void,
+        void
+      >;
       let routeParams: RouteParams<TestRequest, TestResponse, () => void, void>;
 
       beforeAll(async () => {
@@ -234,13 +240,24 @@ describe(InversifyHttpAdapter, () => {
 
         await adapter.build();
 
-        [routeParams] = adapter.routerParamsList[0]?.routeParamsList as [
+        [routerParams] = adapter.routerParamsList as [
+          RouterParams<TestRequest, TestResponse, () => void, void>,
+        ];
+        [routeParams] = routerParams.routeParamsList as [
           RouteParams<TestRequest, TestResponse, () => void, void>,
         ];
       });
 
       it('should build route params with an error handler', () => {
         expect(routeParams.handleError).toBeInstanceOf(Function);
+      });
+
+      it('should build router params with the controller target', () => {
+        expect(routerParams.target).toBe(TestController);
+      });
+
+      it('should build route params with the controller method key', () => {
+        expect(routeParams.methodKey).toBe('get');
       });
     });
 

@@ -15,6 +15,7 @@ export interface RouteParams<TRequest, TResponse, TNextFunction, TResult> {
     error: unknown,
   ) => Promise<TResult>;
   handler: RequestHandler<TRequest, TResponse, TNextFunction, TResult>;
+  methodKey: string | symbol;
   path: string;
   postHandlerMiddlewareList: MiddlewareHandler<
     TRequest,
