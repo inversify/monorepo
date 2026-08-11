@@ -1,47 +1,47 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 // Begin-example
 import {
+  Body,
   Controller,
-  createCustomParameterDecorator,
-  CustomParameterDecoratorHandlerOptions,
-  Get,
+  Headers,
+  Params,
+  Post,
 } from '@inversifyjs/http-core';
-import { CaptureRequestValues } from '@inversifyjs/http-uwebsockets';
-import { HttpRequest, HttpResponse } from 'uWebSockets.js';
+import {
+  CaptureRequestValues,
+  RequestValueKind,
+} from '@inversifyjs/http-uwebsockets';
 
-export interface AuditEntry {
-  method: string;
-  userAgent: string | string[] | undefined;
-  userId: string | undefined;
+export interface AuditBody {
+  action: string;
 }
 
-// A custom parameter decorator awaiting async work before reading the request
-export const Audit: () => ParameterDecorator = () =>
-  createCustomParameterDecorator(
-    async (
-      request: HttpRequest,
-      _response: HttpResponse,
-      options: CustomParameterDecoratorHandlerOptions<
-        HttpRequest,
-        HttpResponse
-      >,
-    ): Promise<AuditEntry> => {
-      await Promise.resolve();
+export interface AuditEntry {
+  action: string;
+  storeId: string;
+  userAgent: string | string[] | undefined;
+  userId: string;
+}
 
-      return {
-        method: options.getMethod(request),
-        userAgent: options.getHeaders(request, 'user-agent'),
-        userId: options.getParams(request, 'userId') as string | undefined,
-      };
-    },
-  );
-
-@Controller('/users')
-export class UsersController {
-  @CaptureRequestValues(['headers', 'method', 'params'])
-  @Get('/:userId')
-  public async getUser(@Audit() audit: AuditEntry): Promise<AuditEntry> {
-    return audit;
+@Controller('/store/:storeId/users')
+export class StoreUsersController {
+  @CaptureRequestValues([
+    RequestValueKind.Body,
+    RequestValueKind.Headers,
+    RequestValueKind.Params,
+  ])
+  @Post('/:userId/audit')
+  public async createUserAudit(
+    @Body() body: AuditBody,
+    @Headers({ name: 'user-agent' }) userAgent: string | string[] | undefined,
+    @Params({ name: 'storeId' }) storeId: string,
+    @Params({ name: 'userId' }) userId: string,
+  ): Promise<AuditEntry> {
+    return {
+      action: body.action,
+      storeId,
+      userAgent,
+      userId,
+    };
   }
 }
 // End-example

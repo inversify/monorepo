@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
 import { routeValueMetadataSymbol } from '@inversifyjs/http-core';
 import { type HttpRequest } from 'uWebSockets.js';
@@ -7,11 +7,23 @@ import { capturedRequestValuesSymbol } from '../data/capturedRequestValuesSymbol
 import { type CapturedRequestValues } from '../models/CapturedRequestValues.js';
 import { buildCapturedRequest } from './buildCapturedRequest.js';
 
+function buildNativeRequestMock(): HttpRequest {
+  return {
+    forEach: vitest.fn(),
+    getCaseSensitiveMethod: vitest.fn().mockReturnValue('NATIVE'),
+    getHeader: vitest.fn().mockReturnValue('native-header'),
+    getMethod: vitest.fn().mockReturnValue('native'),
+    getParameter: vitest.fn().mockReturnValue('native-param'),
+    getQuery: vitest.fn().mockReturnValue('native=1'),
+    getUrl: vitest.fn().mockReturnValue('/native'),
+    setYield: vitest.fn(),
+  };
+}
+
 function buildCapturedRequestValues(
   capturedRequestValues: Partial<CapturedRequestValues>,
 ): CapturedRequestValues {
   return {
-    body: undefined,
     caseSensitiveMethod: undefined,
     headers: undefined,
     method: undefined,
@@ -26,11 +38,11 @@ function buildCapturedRequestValues(
 describe(buildCapturedRequest, () => {
   describe('having captured request values for every request value kind', () => {
     let capturedRequestValuesFixture: CapturedRequestValues;
+    let nativeRequestMock: HttpRequest;
     let capturedRequest: HttpRequest;
 
     beforeAll(() => {
       capturedRequestValuesFixture = buildCapturedRequestValues({
-        body: { value: { name: 'warrior' } },
         caseSensitiveMethod: 'POST',
         headers: { 'content-type': 'application/json' },
         method: 'post',
@@ -39,8 +51,12 @@ describe(buildCapturedRequest, () => {
         query: 'first=1&second=2',
         url: '/users/user-1/items/item-1',
       });
+      nativeRequestMock = buildNativeRequestMock();
 
-      capturedRequest = buildCapturedRequest(capturedRequestValuesFixture);
+      capturedRequest = buildCapturedRequest(
+        nativeRequestMock,
+        capturedRequestValuesFixture,
+      );
     });
 
     describe('when getMethod() is called', () => {
@@ -52,6 +68,10 @@ describe(buildCapturedRequest, () => {
 
       it('should return the captured method', () => {
         expect(result).toBe('post');
+      });
+
+      it('should not call the native request method', () => {
+        expect(nativeRequestMock.getMethod).not.toHaveBeenCalled();
       });
     });
 
@@ -224,13 +244,13 @@ describe(buildCapturedRequest, () => {
         )[routeValueMetadataSymbol] = routeValueMetadataMapFixture;
 
         result = (
-          capturedRequest as HttpRequest & {
+          nativeRequestMock as HttpRequest & {
             [routeValueMetadataSymbol]?: Map<string | symbol, unknown>;
           }
         )[routeValueMetadataSymbol];
       });
 
-      it('should return the assigned value', () => {
+      it('should set the value on the native request target', () => {
         expect(result).toBe(routeValueMetadataMapFixture);
       });
     });
@@ -250,6 +270,29 @@ describe(buildCapturedRequest, () => {
         expect(result).toBe(capturedRequestValuesFixture);
       });
     });
+
+    describe('when a custom property is read from the native request', () => {
+      const customPropertySymbol: unique symbol = Symbol('customProperty');
+      let result: unknown;
+
+      beforeAll(() => {
+        (
+          nativeRequestMock as HttpRequest & {
+            [customPropertySymbol]?: string;
+          }
+        )[customPropertySymbol] = 'from-native-request';
+
+        result = (
+          capturedRequest as HttpRequest & {
+            [customPropertySymbol]?: string;
+          }
+        )[customPropertySymbol];
+      });
+
+      it('should return the native request property', () => {
+        expect(result).toBe('from-native-request');
+      });
+    });
   });
 
   describe('having captured request values with method only', () => {
@@ -257,6 +300,7 @@ describe(buildCapturedRequest, () => {
 
     beforeAll(() => {
       capturedRequest = buildCapturedRequest(
+        buildNativeRequestMock(),
         buildCapturedRequestValues({
           caseSensitiveMethod: 'GET',
           method: 'get',

@@ -5,7 +5,7 @@ export { CaptureRequestValues } from './decorators/CaptureRequestValues.js';
 export { UseRequestTransformers } from './decorators/UseRequestTransformers.js';
 
 export type { RequestTransformer } from './models/RequestTransformer.js';
-export type { RequestValueKind } from './models/RequestValueKind.js';
+export { RequestValueKind } from './models/RequestValueKind.js';
 export type { UwebSocketsErrorFilter } from './models/UwebSocketsErrorFilter.js';
 export type { UwebSocketsGuard } from './models/UwebSocketsGuard.js';
 export type { UwebSocketsHttpAdapterOptions } from './models/UwebSocketsHttpAdapterOptions.js';

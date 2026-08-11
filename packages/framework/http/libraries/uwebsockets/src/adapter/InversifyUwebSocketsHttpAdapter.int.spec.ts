@@ -24,6 +24,7 @@ import {
 import { CaptureRequestValues } from '../decorators/CaptureRequestValues.js';
 import { UseRequestTransformers } from '../decorators/UseRequestTransformers.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
+import { RequestValueKind } from '../models/RequestValueKind.js';
 import { type UwebSocketsErrorFilter } from '../models/UwebSocketsErrorFilter.js';
 import { type UwebSocketsMiddleware } from '../models/UwebSocketsMiddleware.js';
 import { createRouteValueMetadataUtils } from '../valueMetadata/calculations/createRouteValueMetadataUtils.js';
@@ -170,12 +171,12 @@ describe(InversifyUwebSocketsHttpAdapter, () => {
       @Controller('/captured/:tenantId')
       class TestController {
         @CaptureRequestValues([
-          'body',
-          'headers',
-          'method',
-          'params',
-          'query',
-          'url',
+          RequestValueKind.Body,
+          RequestValueKind.Headers,
+          RequestValueKind.Method,
+          RequestValueKind.Params,
+          RequestValueKind.Query,
+          RequestValueKind.Url,
         ])
         @Post('/users/:userId')
         public async post(
@@ -393,7 +394,7 @@ describe(InversifyUwebSocketsHttpAdapter, () => {
 
       @Controller('/captured-metadata')
       class TestController {
-        @CaptureRequestValues(['method'])
+        @CaptureRequestValues([RequestValueKind.Method])
         @roles(['admin'])
         @ApplyMiddleware(TestMiddleware)
         @Get()

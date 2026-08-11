@@ -6,7 +6,7 @@ vitest.mock(import('../calculations/buildCaptureRequestValuesTransformer.js'));
 import { setControllerMethodRequestTransformerList } from '../actions/setControllerMethodRequestTransformerList.js';
 import { buildCaptureRequestValuesTransformer } from '../calculations/buildCaptureRequestValuesTransformer.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
-import { type RequestValueKind } from '../models/RequestValueKind.js';
+import { RequestValueKind } from '../models/RequestValueKind.js';
 import { CaptureRequestValues } from './CaptureRequestValues.js';
 
 describe(CaptureRequestValues, () => {
@@ -17,7 +17,10 @@ describe(CaptureRequestValues, () => {
 
     beforeAll(() => {
       methodKeyFixture = 'testMethod';
-      requestValueKindListFixture = ['method', 'headers'];
+      requestValueKindListFixture = [
+        RequestValueKind.Method,
+        RequestValueKind.Headers,
+      ];
 
       class TestController {
         public testMethod(): void {}

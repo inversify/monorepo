@@ -627,9 +627,6 @@ export abstract class InversifyHttpAdapter<
               routerExplorerControllerMethodMetadata,
             ),
           ],
-          handleError: this.#buildHandleError(
-            routerExplorerControllerMethodMetadata,
-          ),
           handler: this.#buildHandler(
             routerExplorerControllerMetadata.serviceIdentifier,
             routerExplorerControllerMetadata.target,
@@ -1086,7 +1083,16 @@ export abstract class InversifyHttpAdapter<
     );
 
     for (const routerExplorerControllerMetadata of routerExplorerControllerMetadataList) {
+      const routerExplorerControllerMethodMetadata:
+        | RouterExplorerControllerMethodMetadata<TRequest, TResponse, TResult>
+        | undefined =
+        routerExplorerControllerMetadata.controllerMethodMetadataList[0];
+
       await this._buildRouter({
+        handleError:
+          routerExplorerControllerMethodMetadata === undefined
+            ? this.#buildGlobalHandleError()
+            : this.#buildHandleError(routerExplorerControllerMethodMetadata),
         path: routerExplorerControllerMetadata.path,
         routeParamsList: this.#buildRouteParamHandlerList(
           routerExplorerControllerMetadata,

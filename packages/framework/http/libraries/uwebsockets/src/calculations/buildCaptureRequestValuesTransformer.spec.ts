@@ -1,15 +1,17 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('./buildCapturedRequest.js'));
+vitest.mock(import('./installHttpResponseBodyCapture.js'));
 vitest.mock(import('./resolveControllerMethodParamNameList.js'));
 
-import { type CustomParameterDecoratorHandlerOptions } from '@inversifyjs/http-core';
 import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 import { type CapturedRequestValues } from '../models/CapturedRequestValues.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
+import { RequestValueKind } from '../models/RequestValueKind.js';
 import { buildCapturedRequest } from './buildCapturedRequest.js';
 import { buildCaptureRequestValuesTransformer } from './buildCaptureRequestValuesTransformer.js';
+import { installHttpResponseBodyCapture } from './installHttpResponseBodyCapture.js';
 import { resolveControllerMethodParamNameList } from './resolveControllerMethodParamNameList.js';
 
 class TestController {}
@@ -35,22 +37,11 @@ function buildNativeRequestMock(): HttpRequest {
 
 describe(buildCaptureRequestValuesTransformer, () => {
   let capturedRequestFixture: HttpRequest;
-  let optionsMock: CustomParameterDecoratorHandlerOptions<
-    HttpRequest,
-    HttpResponse
-  >;
   let responseFixture: HttpResponse;
 
   beforeAll(() => {
     capturedRequestFixture = {} as HttpRequest;
     responseFixture = {} as HttpResponse;
-
-    optionsMock = {
-      getBody: vitest.fn(),
-    } as unknown as CustomParameterDecoratorHandlerOptions<
-      HttpRequest,
-      HttpResponse
-    >;
 
     vitest.mocked(buildCapturedRequest).mockReturnValue(capturedRequestFixture);
   });
@@ -62,7 +53,12 @@ describe(buildCaptureRequestValuesTransformer, () => {
       requestTransformer = buildCaptureRequestValuesTransformer(
         TestController,
         'testMethod',
-        ['headers', 'method', 'query', 'url'],
+        [
+          RequestValueKind.Headers,
+          RequestValueKind.Method,
+          RequestValueKind.Query,
+          RequestValueKind.Url,
+        ],
       );
     });
 
@@ -76,21 +72,21 @@ describe(buildCaptureRequestValuesTransformer, () => {
         result = requestTransformer(
           nativeRequestMock,
           responseFixture,
-          optionsMock,
+          {} as never,
         );
       });
 
       afterAll(() => {
         vitest.mocked(buildCapturedRequest).mockClear();
+        vitest.mocked(installHttpResponseBodyCapture).mockClear();
       });
 
-      it('should not read the body', () => {
-        expect(optionsMock.getBody).not.toHaveBeenCalled();
+      it('should not capture the response body', () => {
+        expect(installHttpResponseBodyCapture).not.toHaveBeenCalled();
       });
 
-      it('should call buildCapturedRequest() with the captured values', () => {
+      it('should call buildCapturedRequest() with the native request and captured values', () => {
         const expected: CapturedRequestValues = {
-          body: undefined,
           caseSensitiveMethod: 'POST',
           headers: { 'content-type': 'application/json' },
           method: 'post',
@@ -100,10 +96,13 @@ describe(buildCaptureRequestValuesTransformer, () => {
           url: '/users/user-1',
         };
 
-        expect(buildCapturedRequest).toHaveBeenCalledExactlyOnceWith(expected);
+        expect(buildCapturedRequest).toHaveBeenCalledExactlyOnceWith(
+          nativeRequestMock,
+          expected,
+        );
       });
 
-      it('should return the captured request', () => {
+      it('should return the captured request synchronously', () => {
         expect(result).toBe(capturedRequestFixture);
       });
     });
@@ -120,24 +119,29 @@ describe(buildCaptureRequestValuesTransformer, () => {
       requestTransformer = buildCaptureRequestValuesTransformer(
         TestController,
         'testMethod',
-        ['params'],
+        [RequestValueKind.Params],
       );
     });
 
     describe('when called twice', () => {
+      let firstNativeRequestMock: HttpRequest;
+      let secondNativeRequestMock: HttpRequest;
       let firstResult: unknown;
       let secondResult: unknown;
 
       beforeAll(() => {
+        firstNativeRequestMock = buildNativeRequestMock();
+        secondNativeRequestMock = buildNativeRequestMock();
+
         firstResult = requestTransformer(
-          buildNativeRequestMock(),
+          firstNativeRequestMock,
           responseFixture,
-          optionsMock,
+          {} as never,
         );
         secondResult = requestTransformer(
-          buildNativeRequestMock(),
+          secondNativeRequestMock,
           responseFixture,
-          optionsMock,
+          {} as never,
         );
       });
 
@@ -154,7 +158,6 @@ describe(buildCaptureRequestValuesTransformer, () => {
 
       it('should call buildCapturedRequest() with the captured params', () => {
         const expected: CapturedRequestValues = {
-          body: undefined,
           caseSensitiveMethod: undefined,
           headers: undefined,
           method: undefined,
@@ -165,11 +168,19 @@ describe(buildCaptureRequestValuesTransformer, () => {
         };
 
         expect(buildCapturedRequest).toHaveBeenCalledTimes(2);
-        expect(buildCapturedRequest).toHaveBeenNthCalledWith(1, expected);
-        expect(buildCapturedRequest).toHaveBeenNthCalledWith(2, expected);
+        expect(buildCapturedRequest).toHaveBeenNthCalledWith(
+          1,
+          firstNativeRequestMock,
+          expected,
+        );
+        expect(buildCapturedRequest).toHaveBeenNthCalledWith(
+          2,
+          secondNativeRequestMock,
+          expected,
+        );
       });
 
-      it('should return the captured request', () => {
+      it('should return the captured request synchronously', () => {
         expect(firstResult).toBe(capturedRequestFixture);
         expect(secondResult).toBe(capturedRequestFixture);
       });
@@ -183,45 +194,39 @@ describe(buildCaptureRequestValuesTransformer, () => {
       requestTransformer = buildCaptureRequestValuesTransformer(
         TestController,
         'testMethod',
-        ['body', 'method'],
+        [RequestValueKind.Body, RequestValueKind.Method],
       );
     });
 
     describe('when called', () => {
-      let bodyFixture: unknown;
       let nativeRequestMock: HttpRequest;
       let result: unknown;
 
-      beforeAll(async () => {
-        bodyFixture = { name: 'warrior' };
+      beforeAll(() => {
         nativeRequestMock = buildNativeRequestMock();
 
-        vitest.mocked(optionsMock.getBody).mockResolvedValueOnce(bodyFixture);
-
-        result = await requestTransformer(
+        result = requestTransformer(
           nativeRequestMock,
           responseFixture,
-          optionsMock,
+          {} as never,
         );
       });
 
       afterAll(() => {
         vitest.mocked(buildCapturedRequest).mockClear();
-        vitest.mocked(optionsMock.getBody).mockClear();
+        vitest.mocked(installHttpResponseBodyCapture).mockClear();
       });
 
-      it('should call options.getBody() with the native request', () => {
-        expect(optionsMock.getBody).toHaveBeenCalledExactlyOnceWith(
-          nativeRequestMock,
+      it('should install body capture synchronously', () => {
+        expect(installHttpResponseBodyCapture).toHaveBeenCalledExactlyOnceWith(
           responseFixture,
         );
       });
 
-      it('should call buildCapturedRequest() with the captured body', () => {
+      it('should call buildCapturedRequest() with the native request and captured values', () => {
         const expected: CapturedRequestValues = {
-          body: { value: bodyFixture },
           caseSensitiveMethod: 'POST',
-          headers: undefined,
+          headers: { 'content-type': '' },
           method: 'post',
           paramNameList: undefined,
           params: undefined,
@@ -229,10 +234,13 @@ describe(buildCaptureRequestValuesTransformer, () => {
           url: undefined,
         };
 
-        expect(buildCapturedRequest).toHaveBeenCalledExactlyOnceWith(expected);
+        expect(buildCapturedRequest).toHaveBeenCalledExactlyOnceWith(
+          nativeRequestMock,
+          expected,
+        );
       });
 
-      it('should return the captured request', () => {
+      it('should return the captured request synchronously', () => {
         expect(result).toBe(capturedRequestFixture);
       });
     });

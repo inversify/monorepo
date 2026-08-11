@@ -2,7 +2,7 @@ import { type HttpRequest, type RecognizedString } from 'uWebSockets.js';
 
 import { capturedRequestValuesSymbol } from '../data/capturedRequestValuesSymbol.js';
 import { type CapturedRequestValues } from '../models/CapturedRequestValues.js';
-import { type RequestValueKind } from '../models/RequestValueKind.js';
+import { RequestValueKind } from '../models/RequestValueKind.js';
 import { stringifyRecognizedString } from './stringifyRecognizedString.js';
 
 const EMPTY_HEADER_VALUE: string = '';
@@ -22,7 +22,7 @@ function buildCapturedRequestApi(
   return {
     forEach: (callback: (key: string, value: string) => void): void => {
       if (capturedRequestValues.headers === undefined) {
-        throw buildNotCapturedError('forEach', 'headers');
+        throw buildNotCapturedError('forEach', RequestValueKind.Headers);
       }
 
       for (const [key, value] of Object.entries(
@@ -33,14 +33,17 @@ function buildCapturedRequestApi(
     },
     getCaseSensitiveMethod: (): string => {
       if (capturedRequestValues.caseSensitiveMethod === undefined) {
-        throw buildNotCapturedError('getCaseSensitiveMethod', 'method');
+        throw buildNotCapturedError(
+          'getCaseSensitiveMethod',
+          RequestValueKind.Method,
+        );
       }
 
       return capturedRequestValues.caseSensitiveMethod;
     },
     getHeader: (lowerCaseKey: RecognizedString): string => {
       if (capturedRequestValues.headers === undefined) {
-        throw buildNotCapturedError('getHeader', 'headers');
+        throw buildNotCapturedError('getHeader', RequestValueKind.Headers);
       }
 
       return (
@@ -51,14 +54,14 @@ function buildCapturedRequestApi(
     },
     getMethod: (): string => {
       if (capturedRequestValues.method === undefined) {
-        throw buildNotCapturedError('getMethod', 'method');
+        throw buildNotCapturedError('getMethod', RequestValueKind.Method);
       }
 
       return capturedRequestValues.method;
     },
     getParameter: (index: number | RecognizedString): string | undefined => {
       if (capturedRequestValues.params === undefined) {
-        throw buildNotCapturedError('getParameter', 'params');
+        throw buildNotCapturedError('getParameter', RequestValueKind.Params);
       }
 
       const paramName: string | undefined =
@@ -74,7 +77,7 @@ function buildCapturedRequestApi(
     },
     getQuery: (key?: string): string | undefined => {
       if (capturedRequestValues.query === undefined) {
-        throw buildNotCapturedError('getQuery', 'query');
+        throw buildNotCapturedError('getQuery', RequestValueKind.Query);
       }
 
       if (key === undefined) {
@@ -87,7 +90,7 @@ function buildCapturedRequestApi(
     },
     getUrl: (): string => {
       if (capturedRequestValues.url === undefined) {
-        throw buildNotCapturedError('getUrl', 'url');
+        throw buildNotCapturedError('getUrl', RequestValueKind.Url);
       }
 
       return capturedRequestValues.url;
@@ -101,24 +104,24 @@ function buildCapturedRequestApi(
 }
 
 export function buildCapturedRequest(
+  request: HttpRequest,
   capturedRequestValues: CapturedRequestValues,
 ): HttpRequest {
   const capturedRequestApi: Record<string, unknown> = buildCapturedRequestApi(
     capturedRequestValues,
   );
 
-  const capturedRequestTarget: Record<string | symbol, unknown> = {
-    [capturedRequestValuesSymbol]: capturedRequestValues,
-  };
-
-  return new Proxy(capturedRequestTarget, {
+  return new Proxy(request, {
     get: (
-      target: Record<string | symbol, unknown>,
+      target: HttpRequest,
       property: string | symbol,
       receiver: unknown,
     ): unknown => {
+      if (property === capturedRequestValuesSymbol) {
+        return capturedRequestValues;
+      }
+
       if (
-        !Reflect.has(target, property) &&
         typeof property === 'string' &&
         Object.hasOwn(capturedRequestApi, property)
       ) {
@@ -128,9 +131,10 @@ export function buildCapturedRequest(
       return Reflect.get(target, property, receiver);
     },
     set: (
-      target: Record<string | symbol, unknown>,
+      target: HttpRequest,
       property: string | symbol,
       value: unknown,
-    ): boolean => Reflect.set(target, property, value),
-  }) as unknown as HttpRequest;
+      receiver: unknown,
+    ): boolean => Reflect.set(target, property, value, receiver),
+  });
 }

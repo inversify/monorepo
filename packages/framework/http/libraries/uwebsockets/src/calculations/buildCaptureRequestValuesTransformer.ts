@@ -3,8 +3,9 @@ import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 import { type CapturedRequestValues } from '../models/CapturedRequestValues.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
-import { type RequestValueKind } from '../models/RequestValueKind.js';
+import { RequestValueKind } from '../models/RequestValueKind.js';
 import { buildCapturedRequest } from './buildCapturedRequest.js';
+import { installHttpResponseBodyCapture } from './installHttpResponseBodyCapture.js';
 import { resolveControllerMethodParamNameList } from './resolveControllerMethodParamNameList.js';
 
 const EMPTY_PARAM_VALUE: string = '';
@@ -46,10 +47,9 @@ export function buildCaptureRequestValuesTransformer(
   return (
     request: HttpRequest,
     response: HttpResponse,
-    options: CustomParameterDecoratorHandlerOptions<HttpRequest, HttpResponse>,
-  ): HttpRequest | Promise<HttpRequest> => {
+    _options: CustomParameterDecoratorHandlerOptions<HttpRequest, HttpResponse>,
+  ): HttpRequest => {
     const capturedRequestValues: CapturedRequestValues = {
-      body: undefined,
       caseSensitiveMethod: undefined,
       headers: undefined,
       method: undefined,
@@ -59,11 +59,20 @@ export function buildCaptureRequestValuesTransformer(
       url: undefined,
     };
 
-    if (requestValueKindSet.has('headers')) {
+    if (requestValueKindSet.has(RequestValueKind.Headers)) {
       capturedRequestValues.headers = captureHeaders(request);
+    } else if (requestValueKindSet.has(RequestValueKind.Body)) {
+      /*
+       * Body parsing reads content-type through request.getHeader(). Capture at
+       * least that header so `_getBody` keeps working when headers were not
+       * selected explicitly.
+       */
+      capturedRequestValues.headers = {
+        'content-type': request.getHeader('content-type'),
+      };
     }
 
-    if (requestValueKindSet.has('method')) {
+    if (requestValueKindSet.has(RequestValueKind.Method)) {
       capturedRequestValues.caseSensitiveMethod =
         request.getCaseSensitiveMethod();
       capturedRequestValues.method = request.getMethod();
@@ -74,15 +83,18 @@ export function buildCaptureRequestValuesTransformer(
      * URL is captured. Otherwise `_getUrl` would not be able to rebuild the
      * URL including its query string.
      */
-    if (requestValueKindSet.has('query') || requestValueKindSet.has('url')) {
+    if (
+      requestValueKindSet.has(RequestValueKind.Query) ||
+      requestValueKindSet.has(RequestValueKind.Url)
+    ) {
       capturedRequestValues.query = request.getQuery();
     }
 
-    if (requestValueKindSet.has('url')) {
+    if (requestValueKindSet.has(RequestValueKind.Url)) {
       capturedRequestValues.url = request.getUrl();
     }
 
-    if (requestValueKindSet.has('params')) {
+    if (requestValueKindSet.has(RequestValueKind.Params)) {
       cachedParamNameList ??= resolveControllerMethodParamNameList(
         controllerConstructor,
         methodKey,
@@ -95,16 +107,10 @@ export function buildCaptureRequestValuesTransformer(
       );
     }
 
-    if (!requestValueKindSet.has('body')) {
-      return buildCapturedRequest(capturedRequestValues);
+    if (requestValueKindSet.has(RequestValueKind.Body)) {
+      installHttpResponseBodyCapture(response);
     }
 
-    const body: unknown = options.getBody(request, response);
-
-    return (async (): Promise<HttpRequest> => {
-      capturedRequestValues.body = { value: await body };
-
-      return buildCapturedRequest(capturedRequestValues);
-    })();
+    return buildCapturedRequest(request, capturedRequestValues);
   };
 }

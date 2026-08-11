@@ -153,7 +153,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
                 );
               }
             } catch (error: unknown) {
-              await routeParams.handleError(request, res, error);
+              await routerParams.handleError(request, res, error);
 
               return;
             }
@@ -323,13 +323,6 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     response: HttpResponse,
     parameterName?: string,
   ): Promise<unknown> {
-    const capturedBody: CapturedRequestValues['body'] =
-      this.#getCapturedRequestValues(request)?.body;
-
-    if (capturedBody !== undefined) {
-      return this.#getBodyParameter(capturedBody.value, parameterName);
-    }
-
     const contentTypeHeader: string = request.getHeader('content-type');
 
     const body: unknown = await this.#parseBody(contentTypeHeader, response);
