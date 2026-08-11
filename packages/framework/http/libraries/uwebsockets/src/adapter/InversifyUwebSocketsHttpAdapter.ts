@@ -3,12 +3,15 @@ import { type URLSearchParamsIterator } from 'node:url';
 
 import {
   buildNormalizedPath,
+  type CustomParameterDecoratorHandlerOptions,
   handleMiddlewareList,
   type HttpStatusCode,
   InversifyHttpAdapter,
   type MiddlewareHandler,
   RequestMethodParameterType,
   RequestMethodType,
+  type RouterExplorerControllerMetadata,
+  type RouterExplorerControllerMethodMetadata,
   type RouterParams,
   routeValueMetadataSymbol,
 } from '@inversifyjs/http-core';
@@ -24,8 +27,13 @@ import {
 } from 'uWebSockets.js';
 
 import { pipeStreamOverResponse } from '../actions/pipeStreamOverResponse.js';
+import { getControllerMethodRequestTransformerList } from '../calculations/getControllerMethodRequestTransformerList.js';
 import { abortedSymbol } from '../data/abortedSymbol.js';
+import { capturedRequestValuesSymbol } from '../data/capturedRequestValuesSymbol.js';
+import { type CapturedHttpRequest } from '../models/CapturedHttpRequest.js';
+import { type CapturedRequestValues } from '../models/CapturedRequestValues.js';
 import { type CustomHttpResponse } from '../models/CustomHttpResponse.js';
+import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { type UwebSocketsHttpAdapterOptions } from '../models/UwebSocketsHttpAdapterOptions.js';
 
 const ADAPTER_ID: unique symbol = Symbol.for(
@@ -49,6 +57,11 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     void
   >[] = [];
 
+  readonly #requestTransformerOptions: CustomParameterDecoratorHandlerOptions<
+    HttpRequest,
+    HttpResponse
+  >;
+
   constructor(
     container: Container,
     httpAdapterOptions?: UwebSocketsHttpAdapterOptions,
@@ -63,6 +76,18 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
       [RequestMethodParameterType.Body],
       customApp,
     );
+
+    this.#requestTransformerOptions = {
+      getBody: this._getBody.bind(this),
+      getCookies: this._getCookies.bind(this),
+      getHeaders: this._getHeaders.bind(this),
+      getMethod: this._getMethod.bind(this),
+      getParams: this._getParams.bind(this),
+      getQuery: this._getQuery.bind(this),
+      getUrl: this._getUrl.bind(this),
+      setHeader: this._setHeader.bind(this),
+      setStatus: this._setStatus.bind(this),
+    };
   }
 
   protected _buildApp(customApp: TemplatedApp | undefined): TemplatedApp {
@@ -95,16 +120,48 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
         response: HttpResponse,
       ) => Promise<void> = handleMiddlewareList(orderedHandlers);
 
-      this.#getAppRouteHandler(routeParams.requestMethodType)(
-        routePath,
-        async (res: HttpResponse, req: HttpRequest) => {
-          res.onAborted(() => {
-            (res as CustomHttpResponse)[abortedSymbol] = true;
-          });
+      const requestTransformerList: RequestTransformer[] | undefined =
+        routeParams.requestTransformerList;
 
-          await handleMiddlewares(req, res);
-        },
-      );
+      if (requestTransformerList === undefined) {
+        this.#getAppRouteHandler(routeParams.requestMethodType)(
+          routePath,
+          async (res: HttpResponse, req: HttpRequest) => {
+            res.onAborted(() => {
+              (res as CustomHttpResponse)[abortedSymbol] = true;
+            });
+
+            await handleMiddlewares(req, res);
+          },
+        );
+      } else {
+        this.#getAppRouteHandler(routeParams.requestMethodType)(
+          routePath,
+          async (res: HttpResponse, req: HttpRequest) => {
+            res.onAborted(() => {
+              (res as CustomHttpResponse)[abortedSymbol] = true;
+            });
+
+            let request: HttpRequest = req;
+
+            try {
+              for (const requestTransformer of requestTransformerList) {
+                request = await requestTransformer(
+                  request,
+                  res,
+                  this.#requestTransformerOptions,
+                );
+              }
+            } catch (error: unknown) {
+              await routerParams.handleError(request, res, error);
+
+              return;
+            }
+
+            await handleMiddlewares(request, res);
+          },
+        );
+      }
     }
 
     if (this.#globalPreHandlerMiddlewareList.length > 0) {
@@ -243,6 +300,24 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     };
   }
 
+  protected override _resolveRequestTransformerList(
+    routerExplorerControllerMetadata: RouterExplorerControllerMetadata<
+      HttpRequest,
+      HttpResponse,
+      void
+    >,
+    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      HttpRequest,
+      HttpResponse,
+      void
+    >,
+  ): RequestTransformer[] | undefined {
+    return getControllerMethodRequestTransformerList(
+      routerExplorerControllerMetadata.target,
+      routerExplorerControllerMethodMetadata.methodKey,
+    );
+  }
+
   protected async _getBody(
     request: HttpRequest,
     response: HttpResponse,
@@ -252,15 +327,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
 
     const body: unknown = await this.#parseBody(contentTypeHeader, response);
 
-    if (parameterName === undefined) {
-      return body;
-    }
-
-    if (!(parameterName in (body as Record<string, unknown>))) {
-      throw new Error(`Body parameter '${parameterName}' not found.`);
-    }
-
-    return (body as Record<string, unknown>)[parameterName];
+    return this.#getBodyParameter(body, parameterName);
   }
 
   protected _getMethod(request: HttpRequest): string {
@@ -283,9 +350,16 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     parameterName?: string,
   ): Record<string, string> | string | undefined {
     if (parameterName === undefined) {
-      throw new Error(
-        'Getting all route parameters is not supported in uWebSockets.js adapter.',
-      );
+      const capturedParams: Record<string, string> | undefined =
+        this.#getCapturedRequestValues(request)?.params;
+
+      if (capturedParams === undefined) {
+        throw new Error(
+          'Getting all route parameters is not supported in uWebSockets.js adapter.',
+        );
+      }
+
+      return { ...capturedParams };
     }
 
     return request.getParameter(parameterName);
@@ -327,6 +401,24 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     const cookies: Record<string, string> = this.#parseCookies(request);
 
     return parameterName === undefined ? cookies : cookies[parameterName];
+  }
+
+  #getBodyParameter(body: unknown, parameterName?: string): unknown {
+    if (parameterName === undefined) {
+      return body;
+    }
+
+    if (!(parameterName in (body as Record<string, unknown>))) {
+      throw new Error(`Body parameter '${parameterName}' not found.`);
+    }
+
+    return (body as Record<string, unknown>)[parameterName];
+  }
+
+  #getCapturedRequestValues(
+    request: HttpRequest,
+  ): CapturedRequestValues | undefined {
+    return (request as CapturedHttpRequest)[capturedRequestValuesSymbol];
   }
 
   #getAppRouteHandler(

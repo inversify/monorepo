@@ -3,6 +3,8 @@ sidebar_position: 6
 title: InversifyUwebSocketsHttpAdapter
 ---
 import adapterBasicUsageUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/adapterBasicUsageUwebsockets.ts.txt';
+import captureRequestValuesUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/captureRequestValuesUwebsockets.ts.txt';
+import requestTransformersUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/requestTransformersUwebsockets.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -129,6 +131,39 @@ Body parsing in uWebSockets.js is handled asynchronously due to the streaming na
 ### Backpressure Handling
 
 uWebSockets.js requires careful handling of response streams to respect backpressure. The adapter handles this automatically when using `@Response()` parameter decorators with streams.
+
+### Request transformers
+
+uWebSockets.js invalidates its `HttpRequest` object as soon as a route handler awaits, so any code reading the request after asynchronous work throws. Request transformers are a uWebSockets-specific, opt-in way to replace the request object at the very start of a matched route, before global middlewares, route middlewares, guards, route value metadata injection and parameter extraction run.
+
+`@UseRequestTransformers(...)` is a method decorator accepting one or more transformer functions. Each transformer receives the current request, the response, and the adapter accessors (`getBody`, `getHeaders`, `getMethod`, `getParams`, `getQuery`, `getUrl`, ...), and returns the request to use for the rest of the chain, either synchronously or as a promise. Transformers are applied sequentially in registration order, so each one receives the request produced by the previous one. Errors thrown (or promise rejections) inside a transformer are handled by the same error filters used for middleware failures.
+
+<CodeBlock language="ts">{requestTransformersUwebsocketsSource}</CodeBlock>
+
+Routes without transformers keep the same handler shape as before, so this feature adds no per-request cost to routes that do not use it.
+
+:::warning[uWebSockets.js only]
+`RequestTransformer`, `@UseRequestTransformers` and `@CaptureRequestValues` are exported from `@inversifyjs/http-uwebsockets`. The Express, Express v4, Fastify and Hono adapters own a stable request object for the whole chain and do not support request transformers.
+:::
+
+### Capturing request values
+
+`@CaptureRequestValues(...)` is a method decorator that registers a request transformer taking a snapshot of the request values you list, before any `await` happens, and replaces the request with a Proxy serving those snapshots. Reads of the captured kinds then keep working after asynchronous work.
+
+The available request value kinds are `'body'`, `'headers'`, `'method'`, `'params'`, `'query'` and `'url'`:
+
+- **`'headers'`**: all headers, so `getHeader()`, `forEach()` and cookies reads work later.
+- **`'method'`**: the HTTP method.
+- **`'params'`**: all named route params, which also makes reading every route parameter at once possible on captured requests.
+- **`'query'`**: the raw query string, so full and per-key query reads work later. Capturing `'url'` also captures the raw query string, since the query string is part of the URL.
+- **`'url'`**: the URL.
+- **`'body'`**: the parsed body. It is the only kind read asynchronously, and it is read after every synchronous snapshot is taken. Later body reads (for example `@Body()`) reuse the captured body instead of reading the request a second time.
+
+<CodeBlock language="ts">{captureRequestValuesUwebsocketsSource}</CodeBlock>
+
+Kinds that were not captured are not served from the native request: calling their APIs on a captured request throws an error stating which kind is missing, instead of failing with the uWebSockets.js post-await access error.
+
+Route parameter names cannot be read when the decorator is applied, because `@Controller` is a class decorator and therefore runs after method decorators. Instead, the capture transformer derives the names from the controller path and the method path the first time it needs them, and caches them for every later request, so no path parsing happens per request. If neither controller nor method path metadata can be resolved at that point (for example when the method has no HTTP method decorator), the transformer fails with an error describing the missing metadata.
 
 ### Global pre-handler middlewares
 
