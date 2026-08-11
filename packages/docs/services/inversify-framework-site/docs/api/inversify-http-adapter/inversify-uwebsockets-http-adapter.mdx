@@ -3,6 +3,8 @@ sidebar_position: 6
 title: InversifyUwebSocketsHttpAdapter
 ---
 import adapterBasicUsageUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/adapterBasicUsageUwebsockets.ts.txt';
+import captureRequestValuesUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/captureRequestValuesUwebsockets.ts.txt';
+import requestTransformersUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/requestTransformersUwebsockets.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -129,6 +131,48 @@ Body parsing in uWebSockets.js is handled asynchronously due to the streaming na
 ### Backpressure Handling
 
 uWebSockets.js requires careful handling of response streams to respect backpressure. The adapter handles this automatically when using `@Response()` parameter decorators with streams.
+
+### Request transformers
+
+uWebSockets.js invalidates its `HttpRequest` object as soon as a route handler awaits, so any code reading the request after asynchronous work throws. Request transformers are a uWebSockets-specific, opt-in way to replace the request object at the very start of a matched route, before global middlewares, route middlewares, guards, route value metadata injection and parameter extraction run.
+
+`@UseRequestTransformers(...)` accepts one or more transformer functions on a class or method. Each transformer receives the current request, the response, and the adapter accessors (`getBody`, `getHeaders`, `getMethod`, `getParams`, `getQuery`, `getUrl`, ...), and returns the request to use for the rest of the chain, either synchronously or as a promise. Transformers are applied sequentially in registration order, so each one receives the request produced by the previous one. Class-level transformers run before method-level ones. Errors thrown (or promise rejections) inside a transformer are handled by the same error filters used for middleware failures.
+
+<CodeBlock language="ts">{requestTransformersUwebsocketsSource}</CodeBlock>
+
+Routes without transformers keep the same handler shape as before, so this feature adds no per-request cost to routes that do not use it.
+
+:::warning[uWebSockets.js only]
+`RequestTransformer`, `@UseRequestTransformers` and `@CaptureRequestValues` are exported from `@inversifyjs/http-uwebsockets`. The Express, Express v4, Fastify and Hono adapters own a stable request object for the whole chain and do not support request transformers.
+:::
+
+### Capturing request values
+
+`@CaptureRequestValues(options)` is a method decorator that registers a request transformer taking a snapshot of the request values you enable, before any `await` happens, and replaces the request with a Proxy serving those snapshots. Reads of the captured kinds then keep working after asynchronous work. Applying it more than once on the same method throws.
+
+```ts
+interface CaptureRequestValuesOptions {
+  body?: boolean;
+  headers?: boolean;
+  method?: boolean;
+  params?: false | string[];
+  query?: boolean;
+  url?: boolean;
+}
+```
+
+Omitted or `false` options are not captured. `params` takes an explicit list of route parameter names to snapshot.
+
+- **`headers`**: all headers, so `getHeader()`, `forEach()` and cookies reads work later.
+- **`method`**: the HTTP method.
+- **`params`**: only the named route params you list, so later `@Params({ name })` reads keep working.
+- **`query`**: the raw query string, so full and per-key query reads work later. Capturing `url` also captures the raw query string, since the query string is part of the URL.
+- **`url`**: the URL.
+- **`body`**: also captures headers (needed for `content-type`). Raw body chunks are buffered and replayed to later readers such as `@Body()`. The transformer does not parse the body or read it asynchronously; it only installs buffering so later body reads can consume the same chunks.
+
+<CodeBlock language="ts">{captureRequestValuesUwebsocketsSource}</CodeBlock>
+
+Kinds that were not captured are not served from the native request: calling their APIs on a captured request throws an error stating which kind is missing, instead of failing with the uWebSockets.js post-await access error.
 
 ### Global pre-handler middlewares
 
