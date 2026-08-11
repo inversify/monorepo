@@ -153,7 +153,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
                 );
               }
             } catch (error: unknown) {
-              await routerParams.handleError(request, res, error);
+              await routeParams.handleError(request, res, error);
 
               return;
             }

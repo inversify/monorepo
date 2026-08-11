@@ -198,12 +198,6 @@ describe(InversifyHttpAdapter, () => {
 
   describe('.build', () => {
     describe('when called, and the adapter does not override _resolveRequestTransformerList()', () => {
-      let routerParams: RouterParams<
-        TestRequest,
-        TestResponse,
-        () => void,
-        void
-      >;
       let routeParams: RouteParams<TestRequest, TestResponse, () => void, void>;
 
       beforeAll(async () => {
@@ -211,10 +205,7 @@ describe(InversifyHttpAdapter, () => {
 
         await adapter.build();
 
-        [routerParams] = adapter.routerParamsList as [
-          RouterParams<TestRequest, TestResponse, () => void, void>,
-        ];
-        [routeParams] = routerParams.routeParamsList as [
+        [routeParams] = adapter.routerParamsList[0]?.routeParamsList as [
           RouteParams<TestRequest, TestResponse, () => void, void>,
         ];
       });
@@ -223,8 +214,8 @@ describe(InversifyHttpAdapter, () => {
         expect(routeParams.requestTransformerList).toBeUndefined();
       });
 
-      it('should build router params with an error handler', () => {
-        expect(routerParams.handleError).toBeInstanceOf(Function);
+      it('should build route params with an error handler', () => {
+        expect(routeParams.handleError).toBeInstanceOf(Function);
       });
     });
 
