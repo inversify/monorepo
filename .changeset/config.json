@@ -1,10 +1,15 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
   "access": "restricted",
   "baseBranch": "main",
   "bumpVersionsWithWorkspaceProtocolOnly": true,
   "changelog": "@inversifyjs/foundation-changelog-generator",
   "commit": false,
+  "format": "auto",
+  "privatePackages": {
+    "version": false,
+    "tag": false
+  },
   "fixed": [
     [
       "@inversifyjs/config",
