@@ -1,5 +1,12 @@
 # @inversifyjs/http-express
 
+## 5.5.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.5.0
+
 ## 5.4.8
 
 ### Patch Changes

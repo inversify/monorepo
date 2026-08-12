@@ -1,5 +1,17 @@
 # @inversifyjs/http-uwebsockets
 
+## 5.5.0
+
+### Minor Changes
+
+- Added `RequestTransformer` and `UseRequestTransformers` so routes can run request transformers before middleware, with failures routed through `RouteParams.handleError`.
+- Added `CaptureRequestValues` to snapshot selected request values behind a Proxy before any await, with explicit param name lists.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.5.0
+
 ## 5.4.8
 
 ### Patch Changes
