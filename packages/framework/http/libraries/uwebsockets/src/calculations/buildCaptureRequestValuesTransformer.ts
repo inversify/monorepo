@@ -6,8 +6,6 @@ import { type CaptureRequestValuesOptions } from '../models/CaptureRequestValues
 import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { buildCapturedRequest } from './buildCapturedRequest.js';
 
-const EMPTY_PARAM_VALUE: string = '';
-
 function captureHeaders(request: HttpRequest): Record<string, string> {
   const headers: Record<string, string> = {};
 
@@ -21,11 +19,11 @@ function captureHeaders(request: HttpRequest): Record<string, string> {
 function captureParams(
   request: HttpRequest,
   paramNameList: string[],
-): Record<string, string> {
-  const params: Record<string, string> = {};
+): Record<string, string | undefined> {
+  const params: Record<string, string | undefined> = {};
 
   for (const paramName of paramNameList) {
-    params[paramName] = request.getParameter(paramName) ?? EMPTY_PARAM_VALUE;
+    params[paramName] = request.getParameter(paramName);
   }
 
   return params;

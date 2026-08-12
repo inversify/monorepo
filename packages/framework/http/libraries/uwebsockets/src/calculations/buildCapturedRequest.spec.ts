@@ -163,6 +163,27 @@ describe(buildCapturedRequest, () => {
       });
     });
 
+    describe('when getParameter() is called with an absent configured param', () => {
+      let capturedRequestWithAbsentParam: HttpRequest;
+      let result: unknown;
+
+      beforeAll(() => {
+        capturedRequestWithAbsentParam = buildCapturedRequest(
+          buildNativeRequestMock(),
+          buildCapturedRequestValues({
+            paramNameList: ['userId', 'missingId'],
+            params: { missingId: undefined, userId: 'user-1' },
+          }),
+        );
+
+        result = capturedRequestWithAbsentParam.getParameter('missingId');
+      });
+
+      it('should return undefined', () => {
+        expect(result).toBeUndefined();
+      });
+    });
+
     describe('when getQuery() is called', () => {
       let result: unknown;
 

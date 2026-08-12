@@ -142,6 +142,51 @@ describe(buildCaptureRequestValuesTransformer, () => {
     });
   });
 
+  describe('having an absent configured param', () => {
+    let requestTransformer: RequestTransformer<HttpRequest, HttpResponse>;
+
+    beforeAll(() => {
+      requestTransformer = buildCaptureRequestValuesTransformer({
+        params: ['userId', 'missingId'],
+      });
+    });
+
+    describe('when called', () => {
+      let nativeRequestMock: HttpRequest;
+
+      beforeAll(() => {
+        nativeRequestMock = buildNativeRequestMock();
+
+        void requestTransformer(
+          nativeRequestMock,
+          responseFixture,
+          {} as never,
+        );
+      });
+
+      afterAll(() => {
+        vitest.mocked(buildCapturedRequest).mockClear();
+      });
+
+      it('should preserve undefined for the absent param', () => {
+        const expected: CapturedRequestValues = {
+          caseSensitiveMethod: undefined,
+          headers: undefined,
+          method: undefined,
+          paramNameList: ['userId', 'missingId'],
+          params: { missingId: undefined, userId: 'user-1' },
+          query: undefined,
+          url: undefined,
+        };
+
+        expect(buildCapturedRequest).toHaveBeenCalledExactlyOnceWith(
+          nativeRequestMock,
+          expected,
+        );
+      });
+    });
+  });
+
   describe('having params set to false', () => {
     let requestTransformer: RequestTransformer<HttpRequest, HttpResponse>;
 

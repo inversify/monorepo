@@ -3,7 +3,7 @@ export interface CapturedRequestValues {
   headers: Record<string, string> | undefined;
   method: string | undefined;
   paramNameList: string[] | undefined;
-  params: Record<string, string> | undefined;
+  params: Record<string, string | undefined> | undefined;
   query: string | undefined;
   url: string | undefined;
 }
