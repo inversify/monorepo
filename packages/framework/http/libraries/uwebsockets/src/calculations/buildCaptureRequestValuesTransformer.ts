@@ -5,7 +5,6 @@ import { type CapturedRequestValues } from '../models/CapturedRequestValues.js';
 import { type CaptureRequestValuesOptions } from '../models/CaptureRequestValuesOptions.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { buildCapturedRequest } from './buildCapturedRequest.js';
-import { installHttpResponseBodyCapture } from './installHttpResponseBodyCapture.js';
 
 const EMPTY_PARAM_VALUE: string = '';
 
@@ -35,8 +34,7 @@ function captureParams(
 export function buildCaptureRequestValuesTransformer(
   options: CaptureRequestValuesOptions,
 ): RequestTransformer<HttpRequest, HttpResponse> {
-  const captureBody: boolean = options.body === true;
-  const captureHeadersValues: boolean = options.headers === true || captureBody;
+  const captureHeadersValues: boolean = options.headers === true;
   const captureMethod: boolean = options.method === true;
   const captureUrl: boolean = options.url === true;
   const captureQuery: boolean = options.query === true || captureUrl;
@@ -46,7 +44,7 @@ export function buildCaptureRequestValuesTransformer(
 
   return (
     request: HttpRequest,
-    response: HttpResponse,
+    _response: HttpResponse,
     _options: CustomParameterDecoratorHandlerOptions<HttpRequest, HttpResponse>,
   ): HttpRequest => {
     const capturedRequestValues: CapturedRequestValues = {
@@ -85,10 +83,6 @@ export function buildCaptureRequestValuesTransformer(
     if (paramNameList !== undefined) {
       capturedRequestValues.paramNameList = paramNameList;
       capturedRequestValues.params = captureParams(request, paramNameList);
-    }
-
-    if (captureBody) {
-      installHttpResponseBodyCapture(response);
     }
 
     return buildCapturedRequest(request, capturedRequestValues);

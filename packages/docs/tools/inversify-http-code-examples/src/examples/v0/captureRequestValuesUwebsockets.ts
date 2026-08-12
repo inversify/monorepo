@@ -22,7 +22,6 @@ export interface AuditEntry {
 @Controller('/store/:storeId/users')
 export class StoreUsersController {
   @CaptureRequestValues({
-    body: true,
     headers: true,
     params: ['storeId', 'userId'],
   })

@@ -1,11 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 import {
-  Body,
   Controller,
   createCustomParameterDecorator,
   type CustomParameterDecoratorHandlerOptions,
-  Post,
+  Get,
 } from '@inversifyjs/http-core';
 import { type Logger } from '@inversifyjs/logger';
 import { Container } from 'inversify';
@@ -28,8 +27,6 @@ interface Server {
 
 interface CapturedRequestValuesResponse {
   allParams: Record<string, string | undefined>;
-  body: unknown;
-  bodyParameter: unknown;
   header: string | string[] | undefined;
   method: string;
   query: unknown;
@@ -85,18 +82,18 @@ async function buildUwebSocketsServer(container: Container): Promise<Server> {
   );
 }
 
-const readCapturedValuesAfterBody: () => ParameterDecorator =
+const readCapturedValuesAfterAwait: () => ParameterDecorator =
   (): ParameterDecorator =>
     createCustomParameterDecorator(
       async (
         request: HttpRequest,
-        response: HttpResponse,
+        _response: HttpResponse,
         options: CustomParameterDecoratorHandlerOptions<
           HttpRequest,
           HttpResponse
         >,
-      ): Promise<Omit<CapturedRequestValuesResponse, 'bodyParameter'>> => {
-        const body: unknown = await options.getBody(request, response);
+      ): Promise<CapturedRequestValuesResponse> => {
+        await Promise.resolve();
 
         return {
           allParams: {
@@ -104,7 +101,6 @@ const readCapturedValuesAfterBody: () => ParameterDecorator =
               string | undefined,
             userId: options.getParams(request, 'userId') as string | undefined,
           },
-          body,
           header: options.getHeaders(request, 'x-request-id'),
           method: options.getMethod(request),
           query: options.getQuery(request),
@@ -114,33 +110,25 @@ const readCapturedValuesAfterBody: () => ParameterDecorator =
     );
 
 describe(CaptureRequestValues, () => {
-  describe('having a POST controller method that captures body, headers, method, params, query and url', () => {
+  describe('having a GET controller method that captures headers, method, params, query and url', () => {
     let server: Server;
 
     beforeAll(async () => {
       @Controller('/stores/:storeId/users')
       class TestController {
         @CaptureRequestValues({
-          body: true,
           headers: true,
           method: true,
           params: ['storeId', 'userId'],
           query: true,
           url: true,
         })
-        @Post('/:userId/audit')
-        public async createUserAudit(
-          @readCapturedValuesAfterBody()
-          capturedRequestValues: Omit<
-            CapturedRequestValuesResponse,
-            'bodyParameter'
-          >,
-          @Body() body: unknown,
+        @Get('/:userId/profile')
+        public async getUserProfile(
+          @readCapturedValuesAfterAwait()
+          capturedRequestValues: CapturedRequestValuesResponse,
         ): Promise<CapturedRequestValuesResponse> {
-          return {
-            ...capturedRequestValues,
-            bodyParameter: body,
-          };
+          return capturedRequestValues;
         }
       }
 
@@ -163,14 +151,11 @@ describe(CaptureRequestValues, () => {
 
       beforeAll(async () => {
         firstResponse = await fetch(
-          `http://${server.host}:${server.port.toString()}/stores/store-1/users/user-1/audit?source=first&page=1`,
+          `http://${server.host}:${server.port.toString()}/stores/store-1/users/user-1/profile?source=first&page=1`,
           {
-            body: JSON.stringify({ action: 'login' }),
             headers: {
-              'content-type': 'application/json',
               'x-request-id': 'request-1',
             },
-            method: 'POST',
           },
         );
 
@@ -178,14 +163,11 @@ describe(CaptureRequestValues, () => {
           (await firstResponse.json()) as CapturedRequestValuesResponse;
 
         secondResponse = await fetch(
-          `http://${server.host}:${server.port.toString()}/stores/store-2/users/user-2/audit?source=second&page=2`,
+          `http://${server.host}:${server.port.toString()}/stores/store-2/users/user-2/profile?source=second&page=2`,
           {
-            body: JSON.stringify({ action: 'logout' }),
             headers: {
-              'content-type': 'application/json',
               'x-request-id': 'request-2',
             },
-            method: 'POST',
           },
         );
 
@@ -197,21 +179,19 @@ describe(CaptureRequestValues, () => {
         expect(firstResponse.status).toBe(200);
       });
 
-      it('should return the first request captured values after the body is read', () => {
+      it('should return the first request captured values after an await', () => {
         expect(firstResponseBody).toStrictEqual({
           allParams: {
             storeId: 'store-1',
             userId: 'user-1',
           },
-          body: { action: 'login' },
-          bodyParameter: { action: 'login' },
           header: 'request-1',
-          method: 'POST',
+          method: 'GET',
           query: {
             page: '1',
             source: 'first',
           },
-          url: '/stores/store-1/users/user-1/audit?source=first&page=1',
+          url: '/stores/store-1/users/user-1/profile?source=first&page=1',
         });
       });
 
@@ -225,15 +205,13 @@ describe(CaptureRequestValues, () => {
             storeId: 'store-2',
             userId: 'user-2',
           },
-          body: { action: 'logout' },
-          bodyParameter: { action: 'logout' },
           header: 'request-2',
-          method: 'POST',
+          method: 'GET',
           query: {
             page: '2',
             source: 'second',
           },
-          url: '/stores/store-2/users/user-2/audit?source=second&page=2',
+          url: '/stores/store-2/users/user-2/profile?source=second&page=2',
         });
       });
     });

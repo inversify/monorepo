@@ -152,7 +152,6 @@ Routes without transformers keep the same handler shape as before, so this featu
 
 ```ts
 interface CaptureRequestValuesOptions {
-  body?: boolean;
   headers?: boolean;
   method?: boolean;
   params?: false | string[];
@@ -168,7 +167,8 @@ Omitted or `false` options are not captured. `params` takes an explicit list of 
 - **`params`**: only the named route params you list, so later `@Params({ name })` reads keep working.
 - **`query`**: the raw query string, so full and per-key query reads work later. Capturing `url` also captures the raw query string, since the query string is part of the URL.
 - **`url`**: the URL.
-- **`body`**: also captures headers (needed for `content-type`). Raw body chunks are buffered and replayed to later readers such as `@Body()`. The transformer does not parse the body or read it asynchronously; it only installs buffering so later body reads can consume the same chunks.
+
+Body is not captured: buffering chunked request bodies in memory can exhaust RAM. Keep using `@Body()` for body reads; capture the other request values that must survive an `await`.
 
 <CodeBlock language="ts">{captureRequestValuesUwebsocketsSource}</CodeBlock>
 

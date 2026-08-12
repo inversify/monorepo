@@ -1,7 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('./buildCapturedRequest.js'));
-vitest.mock(import('./installHttpResponseBodyCapture.js'));
 
 import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
@@ -9,7 +8,6 @@ import { type CapturedRequestValues } from '../models/CapturedRequestValues.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { buildCapturedRequest } from './buildCapturedRequest.js';
 import { buildCaptureRequestValuesTransformer } from './buildCaptureRequestValuesTransformer.js';
-import { installHttpResponseBodyCapture } from './installHttpResponseBodyCapture.js';
 
 function buildNativeRequestMock(): HttpRequest {
   return {
@@ -69,11 +67,6 @@ describe(buildCaptureRequestValuesTransformer, () => {
 
       afterAll(() => {
         vitest.mocked(buildCapturedRequest).mockClear();
-        vitest.mocked(installHttpResponseBodyCapture).mockClear();
-      });
-
-      it('should not capture the response body', () => {
-        expect(installHttpResponseBodyCapture).not.toHaveBeenCalled();
       });
 
       it('should call buildCapturedRequest() with the native request and captured values', () => {
@@ -191,63 +184,6 @@ describe(buildCaptureRequestValuesTransformer, () => {
           nativeRequestMock,
           expected,
         );
-      });
-    });
-  });
-
-  describe('having body true', () => {
-    let requestTransformer: RequestTransformer<HttpRequest, HttpResponse>;
-
-    beforeAll(() => {
-      requestTransformer = buildCaptureRequestValuesTransformer({
-        body: true,
-      });
-    });
-
-    describe('when called', () => {
-      let nativeRequestMock: HttpRequest;
-      let result: unknown;
-
-      beforeAll(() => {
-        nativeRequestMock = buildNativeRequestMock();
-
-        result = requestTransformer(
-          nativeRequestMock,
-          responseFixture,
-          {} as never,
-        );
-      });
-
-      afterAll(() => {
-        vitest.mocked(buildCapturedRequest).mockClear();
-        vitest.mocked(installHttpResponseBodyCapture).mockClear();
-      });
-
-      it('should install response body capture', () => {
-        expect(installHttpResponseBodyCapture).toHaveBeenCalledExactlyOnceWith(
-          responseFixture,
-        );
-      });
-
-      it('should imply headers capture', () => {
-        const expected: CapturedRequestValues = {
-          caseSensitiveMethod: undefined,
-          headers: { 'content-type': 'application/json' },
-          method: undefined,
-          paramNameList: undefined,
-          params: undefined,
-          query: undefined,
-          url: undefined,
-        };
-
-        expect(buildCapturedRequest).toHaveBeenCalledExactlyOnceWith(
-          nativeRequestMock,
-          expected,
-        );
-      });
-
-      it('should return the captured request synchronously', () => {
-        expect(result).toBe(capturedRequestFixture);
       });
     });
   });
