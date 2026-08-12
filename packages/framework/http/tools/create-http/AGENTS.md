@@ -43,7 +43,8 @@ Recipe (CLI args / prompts)
           ├─ generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))
           │     └─ pnpm only; allowBuilds + adapter knobs (e.g. blockExoticSubdeps)
           ├─ generateYarnRcSource() → .yarnrc.yml
-          │     └─ yarn only; enableScripts + nodeLinker: node-modules
+          │     └─ yarn only; enableScripts: false, nodeLinker: node-modules
+          │     └─ package.json dependenciesMeta from createYarnRcSourceModel(adapter, dbAdapter)
           ├─ writeStatusSourceFiles() → status model, controller, container module
           ├─ writeTodoSourceFiles() → todo domain, port, prisma adapter, controller, modules
           ├─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter, dbAdapter))
@@ -94,7 +95,7 @@ Scaffolded apps must **not** receive every possible dependency. Versions live in
 `src/dependencies/models/HttpAdapterDependencySpecs.ts`:
 
 - `BASE_DEPENDENCY_NAMES` / `BASE_DEV_DEPENDENCY_NAMES` — always installed
-- `HTTP_ADAPTER_DEPENDENCY_SPECS` — per-adapter package **names** only
+- `HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS` — per-adapter package **names** only; optional `builtDependencies` lists packages that need install-time scripts (Yarn `package.json` `dependenciesMeta.built`)
 
 `composeScaffoldDependencies(catalog, httpAdapter, dbAdapter)` picks catalog versions for base + selected HTTP and DB adapters only.
 
@@ -136,7 +137,7 @@ Generated (not copied from templates):
 |---|---|
 | `src/index.ts` | `generateIndexSource()` — top-level `await bootstrap()` |
 | `pnpm-workspace.yaml` | `generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))` — **pnpm only**; `allowBuilds` + adapter knobs |
-| `.yarnrc.yml` | `generateYarnRcSource()` — **yarn only**; `enableScripts` + `nodeLinker: node-modules` |
+| `.yarnrc.yml` | `generateYarnRcSource()` — **yarn only**; `enableScripts: false`, `nodeLinker: node-modules`. Selected `builtDependencies` go in generated `package.json` `dependenciesMeta` (Yarn rejects that field in `.yarnrc.yml`) |
 | `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter, dbAdapter))` |
 | `src/status/models/StatusResponse.ts` | `generateStatusResponseSource()` |
 | `src/status/controllers/StatusController.ts` | `generateStatusControllerSource()` — `GET /status` → `{ status: 'ok' }` |
@@ -257,7 +258,7 @@ Important coverage areas:
 - Dependency composition includes only the selected adapter (exact versions against a fixture catalog)
 - Bootstrap generation (default + extra body statements)
 - Generated package.json shape / adapter membership / `packageManager` prefix — not catalog version pins (Renovate owns those)
-- Yarn scaffolds write `.yarnrc.yml` (`enableScripts`, `nodeLinker: node-modules`) and `packageManager` starts with `yarn@`
+- Yarn scaffolds write `.yarnrc.yml` (`enableScripts: false`, `nodeLinker: node-modules`), `package.json` `dependenciesMeta` from selected `builtDependencies`, and `packageManager` starts with `yarn@`
 - Help text includes citty-defined options (`renderUsage`)
 
 ## Codecov

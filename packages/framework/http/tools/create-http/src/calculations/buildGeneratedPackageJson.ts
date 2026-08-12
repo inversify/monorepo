@@ -23,9 +23,14 @@ export function buildGeneratedPackageJson(
   dependencies: Record<string, string>,
   devDependencies: Record<string, string>,
   dbAdapter: DbAdapter,
+  dependenciesMeta?: Readonly<Record<string, { built: true }>>,
 ): Record<string, unknown> {
   return {
     dependencies,
+    ...(dependenciesMeta !== undefined &&
+    Object.keys(dependenciesMeta).length > 0
+      ? { dependenciesMeta }
+      : {}),
     devDependencies,
     name: packageName,
     packageManager: `${packageManager}@${packageManagerVersion}`,

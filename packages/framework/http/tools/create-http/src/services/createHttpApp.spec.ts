@@ -467,6 +467,17 @@ describe(createHttpApp, () => {
         );
 
         expect(packageJson).toMatchObject({
+          dependenciesMeta: {
+            '@prisma/engines': {
+              built: true,
+            },
+            '@scarf/scarf': {
+              built: true,
+            },
+            prisma: {
+              built: true,
+            },
+          },
           name: 'demo-app',
           packageManager: expect.stringMatching(/^yarn@/) as string,
         });
@@ -476,8 +487,9 @@ describe(createHttpApp, () => {
           'utf8',
         );
 
-        expect(yarnRcContents).toContain('enableScripts: true');
+        expect(yarnRcContents).toContain('enableScripts: false');
         expect(yarnRcContents).toContain('nodeLinker: node-modules');
+        expect(yarnRcContents).not.toContain('dependenciesMeta:');
 
         await expect(
           fs.access(path.join(projectPath, 'pnpm-workspace.yaml')),

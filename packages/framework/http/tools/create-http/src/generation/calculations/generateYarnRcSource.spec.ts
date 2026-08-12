@@ -10,9 +10,13 @@ describe(generateYarnRcSource, () => {
       result = generateYarnRcSource();
     });
 
-    it('should enable scripts and the node-modules linker', () => {
-      expect(result).toContain('enableScripts: true');
-      expect(result).toContain('nodeLinker: node-modules');
+    it('should disable scripts and keep the node-modules linker', () => {
+      expect(result)
+        .toBe(`# Disable third-party install scripts by default; opt in packages that need native builds via package.json dependenciesMeta.
+enableScripts: false
+nodeLinker: node-modules
+`);
+      expect(result).not.toContain('dependenciesMeta:');
     });
   });
 });
