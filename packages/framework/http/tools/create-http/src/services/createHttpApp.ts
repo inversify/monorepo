@@ -3,6 +3,8 @@ import path from 'node:path';
 
 import { buildGeneratedPackageJson } from '../calculations/buildGeneratedPackageJson.js';
 import { getBaseTemplateRoot } from '../calculations/getTemplatesRoot.js';
+import { readYarnBerryVersion } from '../calculations/readYarnBerryVersion.js';
+import { resolvePackageManagerVersion } from '../calculations/resolvePackageManagerVersion.js';
 import {
   resolvePackageName,
   resolveProjectPath,
@@ -16,6 +18,7 @@ import { createBootstrapSourceModel } from '../generation/calculations/createBoo
 import { createPnpmWorkspaceSourceModel } from '../generation/calculations/createPnpmWorkspaceSourceModel.js';
 import { generateIndexSource } from '../generation/calculations/generateIndexSource.js';
 import { generatePnpmWorkspaceSource } from '../generation/calculations/generatePnpmWorkspaceSource.js';
+import { generateYarnRcSource } from '../generation/calculations/generateYarnRcSource.js';
 import { type CreateHttpAppOptions } from '../models/CreateHttpAppOptions.js';
 import { type PackageManager } from '../models/PackageManager.js';
 import { type PackageManagersVersions } from '../models/PackageManagersVersions.js';
@@ -99,9 +102,14 @@ export async function createHttpApp(
   const packageManagersVersions: PackageManagersVersions = await readJsonFile(
     path.join(baseTemplateRoot, 'package-managers.json'),
   );
+  const yarnBerryVersion: string = await readYarnBerryVersion(baseTemplateRoot);
 
   const packageManager: PackageManager = options.packageManager;
-  const packageManagerVersion: string = packageManagersVersions[packageManager];
+  const packageManagerVersion: string = resolvePackageManagerVersion(
+    packageManager,
+    packageManagersVersions,
+    yarnBerryVersion,
+  );
   const composedDependencies: ComposedScaffoldDependencies =
     composeScaffoldDependencies(
       dependencyCatalog,
@@ -163,6 +171,14 @@ export async function createHttpApp(
       generatePnpmWorkspaceSource(
         createPnpmWorkspaceSourceModel(options.httpAdapter),
       ),
+      'utf8',
+    );
+  }
+
+  if (packageManager === 'yarn') {
+    await fs.writeFile(
+      path.join(projectPath, '.yarnrc.yml'),
+      generateYarnRcSource(),
       'utf8',
     );
   }

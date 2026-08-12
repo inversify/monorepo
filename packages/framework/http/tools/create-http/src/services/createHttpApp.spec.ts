@@ -314,6 +314,7 @@ describe(createHttpApp, () => {
         expect(gitIgnoreContents).toContain('yarn-debug.log*');
         expect(gitIgnoreContents).toContain('.pnpm-debug.log*');
         expect(gitIgnoreContents).toContain('.yarn/*');
+        expect(gitIgnoreContents).toContain('!.yarn/releases');
         expect(gitIgnoreContents).toContain('.pnpm-store/');
 
         const envContents: string = await fs.readFile(
@@ -432,6 +433,56 @@ describe(createHttpApp, () => {
           prettier: expect.any(String) as string,
           prisma: expect.any(String) as string,
           typescript: expect.any(String) as string,
+        });
+      });
+    });
+  });
+
+  describe('having a target path and yarn package manager', () => {
+    describe('when called', () => {
+      let projectPath: string;
+      let temporaryRoot: string;
+
+      beforeAll(async () => {
+        temporaryRoot = await fs.mkdtemp(
+          path.join(os.tmpdir(), 'create-http-yarn-'),
+        );
+        projectPath = path.join(temporaryRoot, 'demo-app');
+
+        await createHttpApp({
+          dbAdapter: 'prisma+postgresql',
+          httpAdapter: 'express',
+          packageManager: 'yarn',
+          targetPath: projectPath,
+        });
+      });
+
+      afterAll(async () => {
+        await fs.rm(temporaryRoot, { force: true, recursive: true });
+      });
+
+      it('should pin Yarn Berry and write .yarnrc.yml', async () => {
+        const packageJson: unknown = JSON.parse(
+          await fs.readFile(path.join(projectPath, 'package.json'), 'utf8'),
+        );
+
+        expect(packageJson).toMatchObject({
+          name: 'demo-app',
+          packageManager: expect.stringMatching(/^yarn@/) as string,
+        });
+
+        const yarnRcContents: string = await fs.readFile(
+          path.join(projectPath, '.yarnrc.yml'),
+          'utf8',
+        );
+
+        expect(yarnRcContents).toContain('enableScripts: true');
+        expect(yarnRcContents).toContain('nodeLinker: node-modules');
+
+        await expect(
+          fs.access(path.join(projectPath, 'pnpm-workspace.yaml')),
+        ).rejects.toMatchObject({
+          code: 'ENOENT',
         });
       });
     });

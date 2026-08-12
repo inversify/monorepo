@@ -42,6 +42,8 @@ Recipe (CLI args / prompts)
           ├─ generateIndexSource() → src/index.ts
           ├─ generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))
           │     └─ pnpm only; allowBuilds + adapter knobs (e.g. blockExoticSubdeps)
+          ├─ generateYarnRcSource() → .yarnrc.yml
+          │     └─ yarn only; enableScripts + nodeLinker: node-modules
           ├─ writeStatusSourceFiles() → status model, controller, container module
           ├─ writeTodoSourceFiles() → todo domain, port, prisma adapter, controller, modules
           ├─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter, dbAdapter))
@@ -83,7 +85,9 @@ Scaffolded apps must **not** receive every possible dependency. Versions live in
 - Renovate's npm manager updates it automatically (`/(^|/)package\.json$/`)
 - `uWebSockets.js` GitHub pin is covered by existing Renovate custom manager in `.github/renovate.json`
 
-`templates/base/package-managers.json` pins `npm` / `pnpm` / `yarn` versions for the generated `packageManager` field (jsonata custom manager in renovate config).
+`templates/base/package-managers.json` pins `npm` / `pnpm` versions for the generated `packageManager` field (jsonata custom manager in renovate config).
+
+`templates/base/yarn-berry.json` pins the Yarn Berry version written to the generated `packageManager` field (`yarn@<version>`). Corepack uses that field; Yarn Classic 1.x will refuse to run until Corepack is enabled. Renovate tracks it against [yarnpkg/berry GitHub releases](https://github.com/yarnpkg/berry/releases) (`github-releases` + `extractVersion` `@yarnpkg/cli/<version>`). Do **not** put yarn back in `package-managers.json` — the npm `yarn` package is Yarn Classic 1.x.
 
 ### Recipe specs
 
@@ -121,7 +125,8 @@ Copied (sometimes renamed) into the target app:
 | `prisma.config.ts.template` | `prisma.config.ts` | Prisma 7 config (`prisma/config`) |
 | `prisma/` | `prisma/` | Schema, Todo model, initial migration |
 | `package.json` | _(not copied)_ | Catalog only |
-| `package-managers.json` | _(not copied)_ | Catalog only |
+| `package-managers.json` | _(not copied)_ | npm / pnpm catalog only |
+| `yarn-berry.json` | _(not copied)_ | Yarn Berry version catalog |
 
 Prisma uses the `prisma-client` generator (`output = "../src/generated/prisma"`, ESM + `.ts` sources with `.js` import extensions) so `tsc` emits the client into `dist/generated/prisma`. The folder is gitignored. Scripts: `build` runs `prisma generate && tsc`; also `db:generate`, `db:migrate`. Import `PrismaClient` from `generated/prisma/client.js`.
 
@@ -131,6 +136,7 @@ Generated (not copied from templates):
 |---|---|
 | `src/index.ts` | `generateIndexSource()` — top-level `await bootstrap()` |
 | `pnpm-workspace.yaml` | `generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))` — **pnpm only**; `allowBuilds` + adapter knobs |
+| `.yarnrc.yml` | `generateYarnRcSource()` — **yarn only**; `enableScripts` + `nodeLinker: node-modules` |
 | `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter, dbAdapter))` |
 | `src/status/models/StatusResponse.ts` | `generateStatusResponseSource()` |
 | `src/status/controllers/StatusController.ts` | `generateStatusControllerSource()` — `GET /status` → `{ status: 'ok' }` |
@@ -218,7 +224,7 @@ Owned by `createHttpCommand` (spinners per step):
 
 1. Create project files (`createHttpApp`)
 2. `git init` (soft-fail if git missing)
-3. Install with selected package manager
+3. Install with selected package manager (Yarn scaffolds assume Corepack is enabled so `packageManager: yarn@<berry>` is honored)
 4. `build` (`tsc`)
 5. Initial commit (soft-fail if git identity missing)
 
@@ -251,6 +257,7 @@ Important coverage areas:
 - Dependency composition includes only the selected adapter (exact versions against a fixture catalog)
 - Bootstrap generation (default + extra body statements)
 - Generated package.json shape / adapter membership / `packageManager` prefix — not catalog version pins (Renovate owns those)
+- Yarn scaffolds write `.yarnrc.yml` (`enableScripts`, `nodeLinker: node-modules`) and `packageManager` starts with `yarn@`
 - Help text includes citty-defined options (`renderUsage`)
 
 ## Codecov
@@ -269,7 +276,7 @@ Package is registered in root `codecov.yml` as `@inversifyjs/create-http` with p
 
 ### Change a scaffolded tooling version
 
-Edit `templates/base/package.json` (or `package-managers.json`). Prefer letting Renovate open the PR.
+Edit `templates/base/package.json`, `package-managers.json`, or `yarn-berry.json`. Prefer letting Renovate open the PR.
 
 ### Local smoke run
 
