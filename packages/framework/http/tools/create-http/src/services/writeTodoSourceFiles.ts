@@ -11,6 +11,7 @@ import { generateTodoPersistencePortIdentifierSource } from '../generation/calcu
 import { generateTodoPersistencePortSource } from '../generation/calculations/generateTodoPersistencePortSource.js';
 import { generateTodoPrismaContainerModuleSource } from '../generation/calculations/generateTodoPrismaContainerModuleSource.js';
 import { generateUpdateTodoRequestBodySource } from '../generation/calculations/generateUpdateTodoRequestBodySource.js';
+import { type TodoControllerSourceModel } from '../generation/models/TodoControllerSourceModel.js';
 
 const TODO_SOURCE_FILES: ReadonlyArray<readonly [string, () => string]> = [
   ['src/todo/domain/models/Todo.ts', generateTodoDomainModelSource],
@@ -34,7 +35,6 @@ const TODO_SOURCE_FILES: ReadonlyArray<readonly [string, () => string]> = [
     'src/todo/api/models/UpdateTodoRequestBody.ts',
     generateUpdateTodoRequestBodySource,
   ],
-  ['src/todo/api/controllers/TodoController.ts', generateTodoControllerSource],
   [
     'src/todo/adapter/prisma/PrismaTodoPersistenceAdapter.ts',
     generatePrismaTodoPersistenceAdapterSource,
@@ -49,9 +49,15 @@ const TODO_SOURCE_FILES: ReadonlyArray<readonly [string, () => string]> = [
   ],
 ];
 
-export async function writeTodoSourceFiles(projectPath: string): Promise<void> {
-  await Promise.all(
-    TODO_SOURCE_FILES.map(
+const TODO_CONTROLLER_SOURCE_RELATIVE_PATH: string =
+  'src/todo/api/controllers/TodoController.ts';
+
+export async function writeTodoSourceFiles(
+  projectPath: string,
+  todoControllerSourceModel: TodoControllerSourceModel,
+): Promise<void> {
+  await Promise.all([
+    ...TODO_SOURCE_FILES.map(
       async ([relativePath, generateSource]: readonly [
         string,
         () => string,
@@ -62,5 +68,18 @@ export async function writeTodoSourceFiles(projectPath: string): Promise<void> {
         await fs.writeFile(absolutePath, generateSource(), 'utf8');
       },
     ),
-  );
+    (async (): Promise<void> => {
+      const absolutePath: string = path.join(
+        projectPath,
+        TODO_CONTROLLER_SOURCE_RELATIVE_PATH,
+      );
+
+      await fs.mkdir(path.dirname(absolutePath), { recursive: true });
+      await fs.writeFile(
+        absolutePath,
+        await generateTodoControllerSource(todoControllerSourceModel),
+        'utf8',
+      );
+    })(),
+  ]);
 }

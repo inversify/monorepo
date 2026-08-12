@@ -14,6 +14,7 @@ import {
 import { type DependencyCatalog } from '../dependencies/models/DependencyCatalog.js';
 import { createBootstrapSourceModel } from '../generation/calculations/createBootstrapSourceModel.js';
 import { createPnpmWorkspaceSourceModel } from '../generation/calculations/createPnpmWorkspaceSourceModel.js';
+import { createTodoControllerSourceModel } from '../generation/calculations/createTodoControllerSourceModel.js';
 import { generateIndexSource } from '../generation/calculations/generateIndexSource.js';
 import { generatePnpmWorkspaceSource } from '../generation/calculations/generatePnpmWorkspaceSource.js';
 import { type CreateHttpAppOptions } from '../models/CreateHttpAppOptions.js';
@@ -173,7 +174,10 @@ export async function createHttpApp(
     'utf8',
   );
   await writeStatusSourceFiles(projectPath);
-  await writeTodoSourceFiles(projectPath);
+  await writeTodoSourceFiles(
+    projectPath,
+    createTodoControllerSourceModel(options.httpAdapter),
+  );
   await writeBootstrapSourceFile(
     projectPath,
     createBootstrapSourceModel(options.httpAdapter, options.dbAdapter),

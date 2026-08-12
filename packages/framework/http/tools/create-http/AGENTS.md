@@ -43,7 +43,8 @@ Recipe (CLI args / prompts)
           ├─ generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))
           │     └─ pnpm only; allowBuilds + adapter knobs (e.g. blockExoticSubdeps)
           ├─ writeStatusSourceFiles() → status model, controller, container module
-          ├─ writeTodoSourceFiles() → todo domain, port, prisma adapter, controller, modules
+          ├─ writeTodoSourceFiles(createTodoControllerSourceModel(adapter))
+          │     └─ ts-morph TodoController; uwebsockets adds @CaptureRequestValues
           ├─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter, dbAdapter))
           │     └─ ts-morph from BootstrapSourceModel
           │
@@ -141,7 +142,7 @@ Generated (not copied from templates):
 | `src/todo/api/models/CreateTodoRequestBody.ts` | `POST /todos` body |
 | `src/todo/api/models/PaginatedTodosResponse.ts` | `GET /todos` response |
 | `src/todo/api/models/UpdateTodoRequestBody.ts` | `PATCH /todos/:id` body |
-| `src/todo/api/controllers/TodoController.ts` | `GET /todos`, `GET /todos/:id`, `POST /todos`, `PATCH /todos/:id`, `DELETE /todos/:id` |
+| `src/todo/api/controllers/TodoController.ts` | `generateTodoControllerSource(createTodoControllerSourceModel(adapter))` — `GET /todos`, `GET /todos/:id`, `POST /todos`, `PATCH /todos/:id`, `DELETE /todos/:id`; uwebsockets adds `@CaptureRequestValues` so OpenAPI validators can read method/url/(query|params|headers) after awaits |
 | `src/todo/adapter/prisma/PrismaTodoPersistenceAdapter.ts` | Prisma port adapter (soft delete via `deleted_at`) |
 | `src/todo/adapter/inversify/TodoContainerModule.ts` | Binds controller |
 | `src/todo/adapter/inversify/TodoPrismaContainerModule.ts` | Binds port → Prisma adapter |
@@ -170,6 +171,13 @@ Bootstrap generation:
 - Printer: `generateBootstrapSource()` → `src/app/scripts/bootstrap.ts`
 - Writer: `writeBootstrapSourceFile(projectPath, model)`
 - Entry: `generateIndexSource()` → `src/index.ts` uses top-level `await bootstrap()`
+
+TodoController generation:
+
+- Model factory: `createTodoControllerSourceModel(httpAdapter)`
+- Model: `TodoControllerSourceModel` (`imports`, `methodCaptureRequestValues`)
+- Printer: `generateTodoControllerSource()` → `src/todo/api/controllers/TodoController.ts`
+- uwebsockets sets per-method `@CaptureRequestValues` options so `@ValidatedBody` / `@ValidatedParams` / `@ValidatedQuery` can still read method, url, headers, query, and params after the request body (or other awaits) is consumed
 
 Generated bootstrap always includes:
 
@@ -242,6 +250,7 @@ Follow [unit testing guidelines](../../../../../docs/testing/unit-testing.md).
 
 ```bash
 pnpm run --filter @inversifyjs/create-http test:unit
+pnpm run --filter @inversifyjs/create-http test:integration
 pnpm run --filter @inversifyjs/create-http lint
 pnpm run --filter @inversifyjs/create-http build
 ```
@@ -252,6 +261,7 @@ Important coverage areas:
 - Bootstrap generation (default + extra body statements)
 - Generated package.json shape / adapter membership / `packageManager` prefix — not catalog version pins (Renovate owns those)
 - Help text includes citty-defined options (`renderUsage`)
+- CLI integration (`createHttpCommand.int.spec.ts`): under `tmp/test/createHttpCommand/{npm|yarn|pnpm}/`, scaffold every HTTP adapter × DB adapter into a per-package-manager monorepo, install dependencies once at that root, then build each member and assert compiled `dist/` outputs exist
 
 ## Codecov
 
