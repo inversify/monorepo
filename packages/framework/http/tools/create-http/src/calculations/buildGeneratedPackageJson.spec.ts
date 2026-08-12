@@ -47,4 +47,41 @@ describe(buildGeneratedPackageJson, () => {
       });
     });
   });
+
+  describe('having yarn dependenciesMeta', () => {
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = buildGeneratedPackageJson(
+          'demo-app',
+          'yarn',
+          '4.18.0',
+          {
+            inversify: '8.2.3',
+          },
+          {
+            typescript: '6.0.3',
+          },
+          'prisma+postgresql',
+          {
+            prisma: {
+              built: true,
+            },
+          },
+        );
+      });
+
+      it('should include dependenciesMeta in the generated package.json', () => {
+        expect(result).toMatchObject({
+          dependenciesMeta: {
+            prisma: {
+              built: true,
+            },
+          },
+          packageManager: 'yarn@4.18.0',
+        });
+      });
+    });
+  });
 });

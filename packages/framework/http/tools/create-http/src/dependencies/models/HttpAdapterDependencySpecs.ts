@@ -1,6 +1,7 @@
 import { type HttpAdapter } from '../../models/HttpAdapter.js';
 
 export interface AdapterDependencySpec {
+  builtDependencies?: readonly string[];
   dependencies: readonly string[];
   devDependencies?: readonly string[];
 }
@@ -54,6 +55,7 @@ export const HTTP_ADAPTER_DEPENDENCY_SPECS: Record<
     dependencies: ['@hono/node-server', '@inversifyjs/http-hono', 'hono'],
   },
   uwebsockets: {
+    builtDependencies: ['uWebSockets.js'],
     dependencies: ['@inversifyjs/http-uwebsockets', 'uWebSockets.js'],
   },
 };
