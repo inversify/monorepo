@@ -22,7 +22,7 @@ async function getDependencyReleaseLine(
 
   const updatedDependenciesList: string[] = dependenciesUpdated.map(
     (dependency: ModCompWithPackage) =>
-      `  - ${dependency.name}@${dependency.newVersion}`,
+      `  - ${dependency.name}@${dependency.newVersion ?? ''}`,
   );
 
   return [changesetLinks, ...updatedDependenciesList].join('\n');
