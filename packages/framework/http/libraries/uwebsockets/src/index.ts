@@ -1,7 +1,9 @@
 export { pipeKnownSizeStreamOverResponse } from './actions/pipeKnownSizeStreamOverResponse.js';
 export { InversifyUwebSocketsHttpAdapter } from './adapter/InversifyUwebSocketsHttpAdapter.js';
+export { CaptureRequestValues } from './decorators/CaptureRequestValues.js';
 export { UseRequestTransformers } from './decorators/UseRequestTransformers.js';
 
+export type { CaptureRequestValuesOptions } from './models/CaptureRequestValuesOptions.js';
 export type { RequestTransformer } from './models/RequestTransformer.js';
 export type { UwebSocketsErrorFilter } from './models/UwebSocketsErrorFilter.js';
 export type { UwebSocketsGuard } from './models/UwebSocketsGuard.js';

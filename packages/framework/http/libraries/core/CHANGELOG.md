@@ -1,5 +1,12 @@
 # @inversifyjs/http-core
 
+## 5.5.0
+
+### Minor Changes
+
+- Updated `RouteParams` with a mandatory `handleError` property so adapters can route failures happening outside the middleware list through the route error filters.
+- Updated `RouterParams` with a mandatory `target` property and `RouteParams` with a mandatory `methodKey` property so adapters can resolve adapter-specific route metadata.
+
 ## 5.4.8
 
 ## 5.4.7
