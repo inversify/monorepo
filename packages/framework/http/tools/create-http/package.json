@@ -32,6 +32,15 @@
   "files": [
     "bin",
     "lib",
+    "!lib/**/*.spec.js",
+    "!lib/**/*.spec.js.map",
+    "!lib/**/*.spec.d.ts",
+    "!lib/**/*.spec.d.ts.map",
+    "!lib/**/*.spec-d.js",
+    "!lib/**/*.spec-d.js.map",
+    "!lib/**/*.spec-d.d.ts",
+    "!lib/**/*.spec-d.d.ts.map",
+    "!lib/**/fixtures/**",
     "templates"
   ],
   "homepage": "https://inversify.io",

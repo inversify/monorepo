@@ -147,7 +147,12 @@ export async function createHttpApp(
     'utf8',
   );
 
-  await copyTemplateFile('.gitignore', projectPath, baseTemplateRoot);
+  await copyTemplateFile(
+    '.gitignore.template',
+    projectPath,
+    baseTemplateRoot,
+    '.gitignore',
+  );
   await copyTemplateFile('tsconfig.json', projectPath, baseTemplateRoot);
   await copyTemplateFile(
     'eslint.config.mjs.template',

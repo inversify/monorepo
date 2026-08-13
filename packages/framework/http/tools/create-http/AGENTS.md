@@ -119,7 +119,7 @@ Copied (sometimes renamed) into the target app:
 
 | Template | Generated path | Notes |
 |---|---|---|
-| `.gitignore` | `.gitignore` | Covers npm/yarn/pnpm caches & logs; ignores `generated/` |
+| `.gitignore.template` | `.gitignore` | **Must** use `.template` suffix in repo |
 | `tsconfig.json` | `tsconfig.json` | Strict options; `src` → `dist` |
 | `eslint.config.mjs.template` | `eslint.config.mjs` | **Must** use `.template` suffix in repo |
 | `prettier.config.mjs.template` | `prettier.config.mjs` | Same rename pattern |
@@ -159,6 +159,13 @@ Generated (not copied from templates):
 
 **Why `.template` for eslint/prettier configs?**  
 ESLint flat config loads the nearest `eslint.config.*`. If the template keeps a real `eslint.config.mjs` under `templates/`, lint-staged/ESLint will try to load it (and fail — `@eslint/js` is not installed there). Rename on copy.
+
+**Why `.template` for `.gitignore`?**  
+`npm pack` / `pnpm pack` omit files named `.gitignore` (they are treated as ignore files, not package contents). Ship `templates/base/.gitignore.template` and rename on copy so scaffolded apps still get a `.gitignore`.
+
+### Published files
+
+`package.json` `files` is the pack allowlist (`bin`, `lib`, `templates`). A top-level `.npmignore` is **not** applied when `files` is set, so test output must be excluded with `!lib/**/*.spec.*` / `!lib/**/fixtures/**` there. Keep the root `.npmignore` as a fallback if `files` is removed.
 
 This package's own `eslint.config.mjs` also `ignores: ['templates/**']`, and `.lintstagedrc.json` only lints `src/**/*.ts`.
 
