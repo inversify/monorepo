@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { PackageManager } from '../models/PackageManager.js';
 import { type PackageManagersVersions } from '../models/PackageManagersVersions.js';
 import { resolvePackageManagerVersion } from './resolvePackageManagerVersion.js';
 
@@ -17,12 +18,12 @@ describe(resolvePackageManagerVersion, () => {
     });
 
     describe.each([
-      ['npm', '12.0.2'],
-      ['pnpm', '11.20.0'],
-      ['yarn', '4.18.0'],
+      [PackageManager.npm, '12.0.2'],
+      [PackageManager.pnpm, '11.20.0'],
+      [PackageManager.yarn, '4.18.0'],
     ] as const)(
       'having package manager %s',
-      (packageManager: 'npm' | 'pnpm' | 'yarn', expectedVersion: string) => {
+      (packageManager: PackageManager, expectedVersion: string) => {
         describe('when called', () => {
           let result: string;
 

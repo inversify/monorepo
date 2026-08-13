@@ -82,6 +82,25 @@ async function buildUwebSocketsServer(container: Container): Promise<Server> {
   );
 }
 
+const readCapturedUrlAfterAwait: () => ParameterDecorator =
+  (): ParameterDecorator =>
+    createCustomParameterDecorator(
+      async (
+        request: HttpRequest,
+        _response: HttpResponse,
+        options: CustomParameterDecoratorHandlerOptions<
+          HttpRequest,
+          HttpResponse
+        >,
+      ): Promise<{ url: string }> => {
+        await Promise.resolve();
+
+        return {
+          url: options.getUrl(request),
+        };
+      },
+    );
+
 const readCapturedValuesAfterAwait: () => ParameterDecorator =
   (): ParameterDecorator =>
     createCustomParameterDecorator(
@@ -110,6 +129,64 @@ const readCapturedValuesAfterAwait: () => ParameterDecorator =
     );
 
 describe(CaptureRequestValues, () => {
+  describe('having a GET controller method that captures url without query', () => {
+    let server: Server;
+
+    beforeAll(async () => {
+      @Controller('/resources')
+      class TestController {
+        @CaptureRequestValues({
+          url: true,
+        })
+        @Get()
+        public async listResources(
+          @readCapturedUrlAfterAwait()
+          capturedRequestValues: Pick<CapturedRequestValuesResponse, 'url'>,
+        ): Promise<Pick<CapturedRequestValuesResponse, 'url'>> {
+          return {
+            url: capturedRequestValues.url,
+          };
+        }
+      }
+
+      const container: Container = new Container();
+
+      container.bind(TestController).toSelf().inSingletonScope();
+
+      server = await buildUwebSocketsServer(container);
+    });
+
+    afterAll(async () => {
+      await server.shutdown();
+    });
+
+    describe('when sending a request with a query string', () => {
+      let response: Response;
+      let responseBody: Pick<CapturedRequestValuesResponse, 'url'>;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/resources?source=captured`,
+        );
+
+        responseBody = (await response.json()) as Pick<
+          CapturedRequestValuesResponse,
+          'url'
+        >;
+      });
+
+      it('should return an OK response', () => {
+        expect(response.status).toBe(200);
+      });
+
+      it('should return the url including the query string after an await', () => {
+        expect(responseBody).toStrictEqual({
+          url: '/resources?source=captured',
+        });
+      });
+    });
+  });
+
   describe('having a GET controller method that captures headers, method, params, query and url', () => {
     let server: Server;
 

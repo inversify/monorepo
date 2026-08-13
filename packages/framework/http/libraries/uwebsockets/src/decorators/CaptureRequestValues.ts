@@ -8,6 +8,7 @@ import {
 import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 import { buildCaptureRequestValuesTransformer } from '../calculations/buildCaptureRequestValuesTransformer.js';
+import { resolveCaptureRequestValuesOptions } from '../calculations/resolveCaptureRequestValuesOptions.js';
 import { type CaptureRequestValuesOptions } from '../models/CaptureRequestValuesOptions.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { captureRequestValuesMetadataReflectKey } from '../reflectMetadata/data/captureRequestValuesMetadataReflectKey.js';
@@ -32,15 +33,18 @@ export function CaptureRequestValues(
       );
     }
 
+    const resolvedOptions: CaptureRequestValuesOptions =
+      resolveCaptureRequestValuesOptions(options);
+
     setReflectMetadata(
       controllerConstructor,
       captureRequestValuesMetadataReflectKey,
-      options,
+      resolvedOptions,
       methodKey,
     );
 
     const requestTransformer: RequestTransformer<HttpRequest, HttpResponse> =
-      buildCaptureRequestValuesTransformer(options);
+      buildCaptureRequestValuesTransformer(resolvedOptions);
 
     updateOwnReflectMetadata(
       controllerConstructor,

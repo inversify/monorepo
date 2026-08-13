@@ -1,4 +1,4 @@
-import { type HttpAdapter } from '../../models/HttpAdapter.js';
+import { HttpAdapter } from '../../models/HttpAdapter.js';
 
 export interface AdapterDependencySpec {
   builtDependencies?: readonly string[];
@@ -15,10 +15,12 @@ export const BASE_DEPENDENCY_NAMES: readonly string[] = [
   '@inversifyjs/http-core',
   '@inversifyjs/http-open-api',
   '@inversifyjs/http-validation',
+  '@inversifyjs/logger',
   '@inversifyjs/open-api-validation',
   'ajv',
   'ajv-formats',
   'inversify',
+  'winston',
   'zod',
 ];
 
@@ -44,17 +46,17 @@ export const HTTP_ADAPTER_DEPENDENCY_SPECS: Record<
   HttpAdapter,
   AdapterDependencySpec
 > = {
-  express: {
+  [HttpAdapter.express]: {
     dependencies: ['@inversifyjs/http-express', 'express'],
     devDependencies: ['@types/express'],
   },
-  fastify: {
+  [HttpAdapter.fastify]: {
     dependencies: ['@inversifyjs/http-fastify', 'fastify'],
   },
-  hono: {
+  [HttpAdapter.hono]: {
     dependencies: ['@hono/node-server', '@inversifyjs/http-hono', 'hono'],
   },
-  uwebsockets: {
+  [HttpAdapter.uwebsockets]: {
     builtDependencies: ['uWebSockets.js'],
     dependencies: ['@inversifyjs/http-uwebsockets', 'uWebSockets.js'],
   },

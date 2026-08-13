@@ -1,4 +1,4 @@
-import { type HttpAdapter } from '../../models/HttpAdapter.js';
+import { HttpAdapter } from '../../models/HttpAdapter.js';
 import { type PnpmWorkspaceSourceModel } from '../models/PnpmWorkspaceSourceModel.js';
 
 const BASE_ALLOW_BUILDS: Readonly<Record<string, boolean>> = {
@@ -12,7 +12,7 @@ export function createPnpmWorkspaceSourceModel(
 ): PnpmWorkspaceSourceModel {
   return {
     allowBuilds: BASE_ALLOW_BUILDS,
-    ...(httpAdapter === 'uwebsockets'
+    ...(httpAdapter === HttpAdapter.uwebsockets
       ? {
           // uWebSockets.js is resolved via git under @inversifyjs/http-uwebsockets.
           blockExoticSubdeps: false,

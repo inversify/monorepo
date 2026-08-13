@@ -1,4 +1,4 @@
-import { type DbAdapter } from '../../models/DbAdapter.js';
+import { DbAdapter } from '../../models/DbAdapter.js';
 import { type AdapterDependencySpec } from './HttpAdapterDependencySpecs.js';
 
 /**
@@ -9,7 +9,7 @@ export const DB_ADAPTER_DEPENDENCY_SPECS: Record<
   DbAdapter,
   AdapterDependencySpec
 > = {
-  'prisma+postgresql': {
+  [DbAdapter.prismaPostgresql]: {
     builtDependencies: ['@prisma/engines', '@scarf/scarf', 'prisma'],
     dependencies: [
       '@inversifyjs/prisma',

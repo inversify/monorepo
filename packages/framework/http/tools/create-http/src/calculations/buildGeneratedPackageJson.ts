@@ -1,4 +1,4 @@
-import { type DbAdapter } from '../models/DbAdapter.js';
+import { DbAdapter } from '../models/DbAdapter.js';
 import { type PackageManager } from '../models/PackageManager.js';
 
 const BASE_SCRIPTS: Record<string, string> = {
@@ -9,7 +9,7 @@ const BASE_SCRIPTS: Record<string, string> = {
 };
 
 const DB_ADAPTER_SCRIPTS: Record<DbAdapter, Record<string, string>> = {
-  'prisma+postgresql': {
+  [DbAdapter.prismaPostgresql]: {
     build: 'prisma generate && tsc',
     'db:generate': 'prisma generate',
     'db:migrate': 'prisma migrate deploy',

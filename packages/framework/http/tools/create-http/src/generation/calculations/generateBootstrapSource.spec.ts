@@ -40,6 +40,14 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain('ConfigContainerModule');
         expect(result).toContain('ConfigService');
         expect(result).toContain('configServiceIdentifier');
+        expect(result).toContain("from '@inversifyjs/logger'");
+        expect(result).toContain('LogLevel');
+        expect(result).toContain(
+          "import { loggerFactoryIdentifier } from '../../logger/models/loggerFactoryIdentifier.js';",
+        );
+        expect(result).toContain(
+          "import { LoggerContainerModule } from '../../logger/containerModules/LoggerContainerModule.js';",
+        );
         expect(result).toContain(
           "import { envFile } from '@inversifyjs/config-dotenv';",
         );
@@ -55,10 +63,21 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain("import { z } from 'zod';");
         expect(result).toContain('appConfigSchema');
         expect(result).toContain('DATABASE_URL: z.string().min(1)');
+        expect(result).toContain('LOG_LEVELS:');
+        expect(result).toContain("default('error,warn,info')");
+        expect(result).toContain('LogLevel.ERROR');
+        expect(result).toContain('LogLevel.SILLY');
         expect(result).toContain(
           'type AppConfig = z.infer<typeof appConfigSchema>',
         );
         expect(result).toContain('configModule');
+        expect(result).toContain('ConfigObject');
+        expect(result).toContain(
+          'ConfigContainerModule.fromOptions<AppConfig>({',
+        );
+        expect(result).toContain(
+          'validate: (input: ConfigObject): AppConfig => appConfigSchema.parse(input)',
+        );
         expect(result).toContain(
           'async function initializeContainer(): Promise<Container>',
         );
@@ -66,6 +85,10 @@ describe(generateBootstrapSource, () => {
           'const container: Container = new Container();',
         );
         expect(result).toContain('await container.loadAsync(configModule);');
+        expect(result).toContain('const { LOG_LEVELS } = configService.get();');
+        expect(result).toContain(
+          'container.load(new LoggerContainerModule({ logTypes: LOG_LEVELS }));',
+        );
         expect(result).toContain(
           'const { DATABASE_URL } = configService.get();',
         );
@@ -93,6 +116,17 @@ describe(generateBootstrapSource, () => {
         );
         expect(result).toContain('configServiceIdentifier');
         expect(result).toContain('const { PORT } = configService.get();');
+        expect(result).toContain(
+          'const loggerFactory: (context: string) => Logger = container.get(',
+        );
+        expect(result).toContain('loggerFactoryIdentifier,');
+        expect(result).toContain(
+          "const logger: Logger = loggerFactory('Bootstrap');",
+        );
+        expect(result).toContain(
+          'logger.info(`Server listening on http://localhost:${String(PORT)}`);',
+        );
+        expect(result).not.toContain('console.log');
         expect(result).toContain(
           'const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(',
         );
@@ -158,6 +192,10 @@ describe(generateBootstrapSource, () => {
           "await app.listen({ host: '0.0.0.0', port: PORT });",
         );
         expect(result).toContain('const { PORT } = configService.get();');
+        expect(result).toContain(
+          'logger.info(`Server listening on http://localhost:${String(PORT)}`);',
+        );
+        expect(result).not.toContain('console.log');
       });
     });
   });
@@ -179,6 +217,10 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain('fetch: app.fetch,');
         expect(result).toContain('port: PORT,');
         expect(result).toContain('const { PORT } = configService.get();');
+        expect(result).toContain(
+          'logger.info(`Server listening on http://localhost:${String(PORT)}`);',
+        );
+        expect(result).not.toContain('console.log');
       });
     });
   });
@@ -199,6 +241,12 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain("app.listen('0.0.0.0', PORT,");
         expect(result).toContain('if (socket !== false)');
         expect(result).toContain('const { PORT } = configService.get();');
+        expect(result).toContain(
+          'logger.info(`Server listening on http://localhost:${String(PORT)}`);',
+        );
+        expect(result).toContain("logger.error('Failed to start server');");
+        expect(result).not.toContain('console.log');
+        expect(result).not.toContain('console.error');
       });
     });
   });

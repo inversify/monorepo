@@ -1,4 +1,4 @@
-import { type PackageManager } from '../models/PackageManager.js';
+import { PackageManager } from '../models/PackageManager.js';
 import { type PackageManagersVersions } from '../models/PackageManagersVersions.js';
 
 export function resolvePackageManagerVersion(
@@ -6,7 +6,7 @@ export function resolvePackageManagerVersion(
   packageManagersVersions: PackageManagersVersions,
   yarnBerryVersion: string,
 ): string {
-  if (packageManager === 'yarn') {
+  if (packageManager === PackageManager.yarn) {
     return yarnBerryVersion;
   }
 

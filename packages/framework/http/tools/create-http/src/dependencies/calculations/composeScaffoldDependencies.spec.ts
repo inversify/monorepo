@@ -1,5 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { DbAdapter } from '../../models/DbAdapter.js';
+import { HttpAdapter } from '../../models/HttpAdapter.js';
 import { type DependencyCatalog } from '../models/DependencyCatalog.js';
 import { composeScaffoldDependencies } from './composeScaffoldDependencies.js';
 
@@ -19,6 +21,7 @@ describe(composeScaffoldDependencies, () => {
         '@inversifyjs/http-open-api': '5.4.8',
         '@inversifyjs/http-uwebsockets': '5.4.8',
         '@inversifyjs/http-validation': '5.4.8',
+        '@inversifyjs/logger': '2.0.0',
         '@inversifyjs/open-api-validation': '3.5.2',
         '@inversifyjs/prisma': '1.0.0',
         '@prisma/adapter-pg': '7.9.1',
@@ -31,6 +34,7 @@ describe(composeScaffoldDependencies, () => {
         inversify: '8.2.3',
         pg: '8.23.0',
         'uWebSockets.js': 'github:uNetworking/uWebSockets.js#v20.69.0',
+        winston: '3.19.0',
         zod: '4.4.3',
       },
       devDependencies: {
@@ -56,8 +60,8 @@ describe(composeScaffoldDependencies, () => {
       beforeAll(() => {
         result = composeScaffoldDependencies(
           catalogFixture,
-          'express',
-          'prisma+postgresql',
+          HttpAdapter.express,
+          DbAdapter.prismaPostgresql,
         );
       });
 
@@ -69,6 +73,7 @@ describe(composeScaffoldDependencies, () => {
           '@inversifyjs/http-express': '5.4.8',
           '@inversifyjs/http-open-api': '5.4.8',
           '@inversifyjs/http-validation': '5.4.8',
+          '@inversifyjs/logger': '2.0.0',
           '@inversifyjs/open-api-validation': '3.5.2',
           '@inversifyjs/prisma': '1.0.0',
           '@prisma/adapter-pg': '7.9.1',
@@ -78,6 +83,7 @@ describe(composeScaffoldDependencies, () => {
           express: '5.2.1',
           inversify: '8.2.3',
           pg: '8.23.0',
+          winston: '3.19.0',
           zod: '4.4.3',
         });
         expect(result.devDependencies).toMatchObject({
@@ -102,8 +108,8 @@ describe(composeScaffoldDependencies, () => {
       beforeAll(() => {
         result = composeScaffoldDependencies(
           catalogFixture,
-          'hono',
-          'prisma+postgresql',
+          HttpAdapter.hono,
+          DbAdapter.prismaPostgresql,
         );
       });
 
@@ -116,6 +122,7 @@ describe(composeScaffoldDependencies, () => {
           '@inversifyjs/http-hono': '5.4.8',
           '@inversifyjs/http-open-api': '5.4.8',
           '@inversifyjs/http-validation': '5.4.8',
+          '@inversifyjs/logger': '2.0.0',
           '@inversifyjs/open-api-validation': '3.5.2',
           '@inversifyjs/prisma': '1.0.0',
           '@prisma/adapter-pg': '7.9.1',
@@ -125,6 +132,7 @@ describe(composeScaffoldDependencies, () => {
           hono: '4.12.34',
           inversify: '8.2.3',
           pg: '8.23.0',
+          winston: '3.19.0',
           zod: '4.4.3',
         });
         expect(result.devDependencies).not.toHaveProperty('@types/express');

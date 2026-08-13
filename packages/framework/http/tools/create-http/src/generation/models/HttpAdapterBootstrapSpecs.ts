@@ -1,4 +1,4 @@
-import { type HttpAdapter } from '../../models/HttpAdapter.js';
+import { HttpAdapter } from '../../models/HttpAdapter.js';
 import { type SourceImport } from './BootstrapSourceModel.js';
 
 export interface HttpAdapterBootstrapSpec {
@@ -14,7 +14,7 @@ export const HTTP_ADAPTER_BOOTSTRAP_SPECS: Record<
   HttpAdapter,
   HttpAdapterBootstrapSpec
 > = {
-  express: {
+  [HttpAdapter.express]: {
     adapterClassName: 'InversifyExpressHttpAdapter',
     adapterModuleSpecifier: '@inversifyjs/http-express',
     adapterOptionsObjectLiteral: '{ logger: true, useJson: true }',
@@ -28,11 +28,11 @@ export const HTTP_ADAPTER_BOOTSTRAP_SPECS: Record<
     ],
     listenStatements: [
       `app.listen(PORT, () => {
-  console.log(\`Server listening on http://localhost:\${String(PORT)}\`);
+  logger.info(\`Server listening on http://localhost:\${String(PORT)}\`);
 });`,
     ],
   },
-  fastify: {
+  [HttpAdapter.fastify]: {
     adapterClassName: 'InversifyFastifyHttpAdapter',
     adapterModuleSpecifier: '@inversifyjs/http-fastify',
     adapterOptionsObjectLiteral: '{ logger: true }',
@@ -50,10 +50,10 @@ export const HTTP_ADAPTER_BOOTSTRAP_SPECS: Record<
     ],
     listenStatements: [
       "await app.listen({ host: '0.0.0.0', port: PORT });",
-      'console.log(`Server listening on http://localhost:${String(PORT)}`);',
+      'logger.info(`Server listening on http://localhost:${String(PORT)}`);',
     ],
   },
-  hono: {
+  [HttpAdapter.hono]: {
     adapterClassName: 'InversifyHonoHttpAdapter',
     adapterModuleSpecifier: '@inversifyjs/http-hono',
     adapterOptionsObjectLiteral: '{ logger: true }',
@@ -78,19 +78,19 @@ export const HTTP_ADAPTER_BOOTSTRAP_SPECS: Record<
   fetch: app.fetch,
   port: PORT,
 });`,
-      'console.log(`Server listening on http://localhost:${String(PORT)}`);',
+      'logger.info(`Server listening on http://localhost:${String(PORT)}`);',
     ],
   },
-  uwebsockets: {
+  [HttpAdapter.uwebsockets]: {
     adapterClassName: 'InversifyUwebSocketsHttpAdapter',
     adapterModuleSpecifier: '@inversifyjs/http-uwebsockets',
     adapterOptionsObjectLiteral: '{ logger: true }',
     listenStatements: [
       `app.listen('0.0.0.0', PORT, (socket) => {
   if (socket !== false) {
-    console.log(\`Server listening on http://localhost:\${String(PORT)}\`);
+    logger.info(\`Server listening on http://localhost:\${String(PORT)}\`);
   } else {
-    console.error('Failed to start server');
+    logger.error('Failed to start server');
   }
 });`,
     ],

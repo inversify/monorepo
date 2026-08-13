@@ -1,4 +1,4 @@
-import { type DbAdapter, DEFAULT_DB_ADAPTER } from '../../models/DbAdapter.js';
+import { DbAdapter, DEFAULT_DB_ADAPTER } from '../../models/DbAdapter.js';
 import { type HttpAdapter } from '../../models/HttpAdapter.js';
 import {
   type BootstrapSourceModel,
@@ -8,6 +8,9 @@ import {
   HTTP_ADAPTER_BOOTSTRAP_SPECS,
   type HttpAdapterBootstrapSpec,
 } from '../models/HttpAdapterBootstrapSpecs.js';
+
+const LOGGER_CONTAINER_MODULE_IMPORT_PATH: string =
+  '../../logger/containerModules/LoggerContainerModule.js';
 
 const STATUS_CONTAINER_MODULE_IMPORT_PATH: string =
   '../../status/containerModules/StatusContainerModule.js';
@@ -29,7 +32,7 @@ const DB_ADAPTER_BOOTSTRAP_FRAGMENTS: Record<
   DbAdapter,
   DbAdapterBootstrapFragments
 > = {
-  'prisma+postgresql': {
+  [DbAdapter.prismaPostgresql]: {
     imports: [
       {
         moduleSpecifier: '@inversifyjs/prisma',
@@ -53,7 +56,6 @@ const DB_ADAPTER_BOOTSTRAP_FRAGMENTS: Record<
       },
     ],
     initializeContainerBodyStatements: [
-      'const configService: ConfigService<AppConfig> = container.get(configServiceIdentifier);',
       'const { DATABASE_URL } = configService.get();',
       `container.load(
   new PrismaContainerModule({
@@ -103,13 +105,21 @@ export function createBootstrapSourceModel(
         namedImports: [{ name: 'Container' }],
       },
       {
+        moduleSpecifier: LOGGER_CONTAINER_MODULE_IMPORT_PATH,
+        namedImports: [{ name: 'LoggerContainerModule' }],
+      },
+      {
         moduleSpecifier: STATUS_CONTAINER_MODULE_IMPORT_PATH,
         namedImports: [{ name: 'StatusContainerModule' }],
       },
       ...dbAdapterFragments.imports,
     ],
-    initializeContainerBodyStatements:
-      dbAdapterFragments.initializeContainerBodyStatements,
+    initializeContainerBodyStatements: [
+      'const configService: ConfigService<AppConfig> = container.get(configServiceIdentifier);',
+      'const { LOG_LEVELS } = configService.get();',
+      'container.load(new LoggerContainerModule({ logTypes: LOG_LEVELS }));',
+      ...dbAdapterFragments.initializeContainerBodyStatements,
+    ],
     listenStatements: bootstrapSpec.listenStatements,
   };
 }

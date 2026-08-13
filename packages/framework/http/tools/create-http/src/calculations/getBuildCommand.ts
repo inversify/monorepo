@@ -1,24 +1,24 @@
 import { type CommandInvocation } from '../models/CommandInvocation.js';
-import { type PackageManager } from '../models/PackageManager.js';
+import { PackageManager } from '../models/PackageManager.js';
 
 export function getBuildCommand(
   packageManager: PackageManager,
 ): CommandInvocation {
   switch (packageManager) {
-    case 'npm':
+    case PackageManager.npm:
       return {
         args: ['run', 'build'],
-        command: 'npm',
+        command: PackageManager.npm,
       };
-    case 'pnpm':
+    case PackageManager.pnpm:
       return {
         args: ['run', 'build'],
-        command: 'pnpm',
+        command: PackageManager.pnpm,
       };
-    case 'yarn':
+    case PackageManager.yarn:
       return {
         args: ['run', 'build'],
-        command: 'yarn',
+        command: PackageManager.yarn,
       };
   }
 }

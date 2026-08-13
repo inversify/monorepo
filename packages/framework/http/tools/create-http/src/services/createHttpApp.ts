@@ -16,16 +16,18 @@ import {
 import { type DependencyCatalog } from '../dependencies/models/DependencyCatalog.js';
 import { createBootstrapSourceModel } from '../generation/calculations/createBootstrapSourceModel.js';
 import { createPnpmWorkspaceSourceModel } from '../generation/calculations/createPnpmWorkspaceSourceModel.js';
+import { createTodoControllerSourceModel } from '../generation/calculations/createTodoControllerSourceModel.js';
 import { createYarnRcSourceModel } from '../generation/calculations/createYarnRcSourceModel.js';
 import { generateIndexSource } from '../generation/calculations/generateIndexSource.js';
 import { generatePnpmWorkspaceSource } from '../generation/calculations/generatePnpmWorkspaceSource.js';
 import { generateYarnRcSource } from '../generation/calculations/generateYarnRcSource.js';
 import { type YarnRcSourceModel } from '../generation/models/YarnRcSourceModel.js';
 import { type CreateHttpAppOptions } from '../models/CreateHttpAppOptions.js';
-import { type PackageManager } from '../models/PackageManager.js';
+import { PackageManager } from '../models/PackageManager.js';
 import { type PackageManagersVersions } from '../models/PackageManagersVersions.js';
 import { formatGeneratedProjectSources } from './formatGeneratedProjectSources.js';
 import { writeBootstrapSourceFile } from './writeBootstrapSourceFile.js';
+import { writeLoggerSourceFiles } from './writeLoggerSourceFiles.js';
 import { writeStatusSourceFiles } from './writeStatusSourceFiles.js';
 import { writeTodoSourceFiles } from './writeTodoSourceFiles.js';
 
@@ -120,7 +122,7 @@ export async function createHttpApp(
     );
 
   const yarnRcSourceModel: YarnRcSourceModel | undefined =
-    packageManager === 'yarn'
+    packageManager === PackageManager.yarn
       ? createYarnRcSourceModel(options.httpAdapter, options.dbAdapter)
       : undefined;
 
@@ -175,7 +177,7 @@ export async function createHttpApp(
   );
   await copyTemplateDirectory('prisma', projectPath, baseTemplateRoot);
 
-  if (packageManager === 'pnpm') {
+  if (packageManager === PackageManager.pnpm) {
     await fs.writeFile(
       path.join(projectPath, 'pnpm-workspace.yaml'),
       generatePnpmWorkspaceSource(
@@ -198,8 +200,12 @@ export async function createHttpApp(
     generateIndexSource(),
     'utf8',
   );
+  await writeLoggerSourceFiles(projectPath);
   await writeStatusSourceFiles(projectPath);
-  await writeTodoSourceFiles(projectPath);
+  await writeTodoSourceFiles(
+    projectPath,
+    createTodoControllerSourceModel(options.httpAdapter),
+  );
   await writeBootstrapSourceFile(
     projectPath,
     createBootstrapSourceModel(options.httpAdapter, options.dbAdapter),
