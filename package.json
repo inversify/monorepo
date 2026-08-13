@@ -20,7 +20,7 @@
     "knip": "6.32.0",
     "lint-staged": "17.3.0",
     "sponsorkit": "18.0.0",
-    "turbo": "2.10.8"
+    "turbo": "2.10.9"
   },
   "homepage": "https://inversify.io",
   "keywords": [],
