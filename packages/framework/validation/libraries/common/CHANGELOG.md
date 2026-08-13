@@ -1,5 +1,7 @@
 # @inversifyjs/validation-common
 
+## 3.5.4
+
 ## 3.5.3
 
 ## 3.5.2

@@ -1,5 +1,13 @@
 # @inversifyjs/http-uwebsockets
 
+## 5.5.1
+
+### Patch Changes
+
+- Resolved `@CaptureRequestValues` options so capturing `url` also captures `query`, which the adapter needs to rebuild the URL.
+- Updated dependencies
+  - @inversifyjs/http-core@5.5.1
+
 ## 5.5.0
 
 ### Minor Changes

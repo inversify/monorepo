@@ -1,5 +1,19 @@
 # @inversifyjs/create-http
 
+## 0.4.0
+
+### Minor Changes
+
+- Scaffolded apps bind a `ConsoleLogger` factory whose log levels come from `LOG_LEVELS`.
+- Replaced `HttpAdapter`, `DbAdapter`, and `PackageManager` string unions with enums.
+- Updated Yarn scaffolds to pin Yarn Berry via Corepack (`packageManager`) and a Renovate-tracked berry version catalog.
+
+### Patch Changes
+
+- Limited uWebSockets `@CaptureRequestValues` to POST and PATCH todo endpoints that read the request body.
+- Added `@SetHeader('Content-Type', 'application/json')` on uWebSockets JSON todo endpoints.
+- Updated uWebsockets.js integration with missing captured values
+
 ## 0.3.0
 
 ### Minor Changes
