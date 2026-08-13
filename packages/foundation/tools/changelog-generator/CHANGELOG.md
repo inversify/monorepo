@@ -1,5 +1,11 @@
 # @inversifyjs/foundation-changelog-generator
 
+## 0.2.1
+
+### Patch Changes
+
+- Bumped changesets types.
+
 ## 0.2.0
 
 ### Minor Changes
