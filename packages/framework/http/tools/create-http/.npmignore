@@ -1,7 +1,12 @@
+# package.json "files" is the pack allowlist (bin, lib, templates). npm pack
+# ignores this top-level file when "files" is set; nested ignores still apply
+# (see lib/.npmignore). Keep these rules as a fallback if "files" is removed.
+
 /.turbo
 /coverage
 /docs
 /reports
+/tmp
 
 **/*.ts
 !lib/**/*.d.ts
