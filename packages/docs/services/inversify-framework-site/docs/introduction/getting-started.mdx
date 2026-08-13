@@ -9,13 +9,118 @@ import TabItem from '@theme/TabItem';
 
 # Getting started
 
-## Install dependencies
+You can start with Inversify HTTP in two ways:
+
+1. **Scaffold a sample app** with `@inversifyjs/create-http` if you want a working project to experiment with.
+2. **Install the packages yourself** if you prefer to add Inversify HTTP to an existing project or follow each step.
+
+## Scaffold a sample app
+
+`@inversifyjs/create-http` generates a TypeScript HTTP app with an adapter of your choice, a Prisma-backed todo API, OpenAPI docs, and request validation.
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```bash
+npm create @inversifyjs/http@latest my-app
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm create @inversifyjs/http my-app
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn create @inversifyjs/http my-app
+```
+
+:::note[Note]
+
+Generated Yarn projects use Yarn Berry. Enable [Corepack](https://nodejs.org/api/corepack.html) (`corepack enable`) so the project's `packageManager` field is honored.
+
+:::
+  </TabItem>
+</Tabs>
+
+The CLI prompts for a package manager (`npm`, `pnpm`, or `yarn`) and an HTTP adapter (`express`, `fastify`, `hono`, or `uwebsockets`). You can also pass them as flags:
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```bash
+npm create @inversifyjs/http@latest my-app -- --pm npm --adapter express
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm create @inversifyjs/http my-app --pm pnpm --adapter express
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn create @inversifyjs/http my-app --pm yarn --adapter express
+```
+
+  </TabItem>
+</Tabs>
+
+The CLI creates the project, installs dependencies, and builds it. The sample uses PostgreSQL; start the database from the generated `docker-compose.yml`, apply migrations, and run the app:
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```bash
+cd my-app
+docker compose up -d
+npm run db:migrate
+npm run serve
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+cd my-app
+docker compose up -d
+pnpm db:migrate
+pnpm serve
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+cd my-app
+docker compose up -d
+yarn db:migrate
+yarn serve
+```
+
+  </TabItem>
+</Tabs>
+
+Then open [http://localhost:3000/docs](http://localhost:3000/docs) for the generated OpenAPI UI, or [http://localhost:3000/status](http://localhost:3000/status) to check that the server is up. The sample includes a `todo` API under `/todos`.
+
+When you are ready to understand each piece, start with [Controllers](../fundamentals/controller.mdx), or follow the manual setup below.
+
+## Install the packages yourself
+
+### Install dependencies
 
 To get started with Inversify HTTP, first install the required packages.
 
 Begin by installing the `inversify` packages and `reflect-metadata`:
 
-<Tabs>
+<Tabs groupId="package-manager">
   <TabItem value="npm" label="npm">
 
 ```bash
@@ -45,7 +150,7 @@ Make sure to enable the [Experimental Decorators](https://www.typescriptlang.org
 
 :::
 
-## Choose an HTTP adapter
+### Choose an HTTP adapter
 
 Inversify HTTP works with several HTTP frameworks. Choose the adapter that best fits your needs:
 
@@ -89,10 +194,10 @@ Inversify HTTP works with several HTTP frameworks. Choose the adapter that best 
   </TabItem>
 </Tabs>
 
-## Configure server
+### Configure server
 
 After installing the packages, create a server to listen for incoming requests. Below is a basic example of setting up an Express server with Inversify HTTP.
 
 <CodeBlock language="typescript">{gettingStartedCreateServerAndListenSource}</CodeBlock>
 
-The server is ready to receive requests, but there are no handlers yet. Add a Controller to handle incoming requests.
+The server is ready to receive requests, but there are no handlers yet. Add a [Controller](../fundamentals/controller.mdx) to handle incoming requests.

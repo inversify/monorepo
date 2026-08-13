@@ -3,6 +3,8 @@ import path from 'node:path';
 
 import { buildGeneratedPackageJson } from '../calculations/buildGeneratedPackageJson.js';
 import { getBaseTemplateRoot } from '../calculations/getTemplatesRoot.js';
+import { readYarnBerryVersion } from '../calculations/readYarnBerryVersion.js';
+import { resolvePackageManagerVersion } from '../calculations/resolvePackageManagerVersion.js';
 import {
   resolvePackageName,
   resolveProjectPath,
@@ -15,8 +17,11 @@ import { type DependencyCatalog } from '../dependencies/models/DependencyCatalog
 import { createBootstrapSourceModel } from '../generation/calculations/createBootstrapSourceModel.js';
 import { createPnpmWorkspaceSourceModel } from '../generation/calculations/createPnpmWorkspaceSourceModel.js';
 import { createTodoControllerSourceModel } from '../generation/calculations/createTodoControllerSourceModel.js';
+import { createYarnRcSourceModel } from '../generation/calculations/createYarnRcSourceModel.js';
 import { generateIndexSource } from '../generation/calculations/generateIndexSource.js';
 import { generatePnpmWorkspaceSource } from '../generation/calculations/generatePnpmWorkspaceSource.js';
+import { generateYarnRcSource } from '../generation/calculations/generateYarnRcSource.js';
+import { type YarnRcSourceModel } from '../generation/models/YarnRcSourceModel.js';
 import { type CreateHttpAppOptions } from '../models/CreateHttpAppOptions.js';
 import { type PackageManager } from '../models/PackageManager.js';
 import { type PackageManagersVersions } from '../models/PackageManagersVersions.js';
@@ -100,15 +105,25 @@ export async function createHttpApp(
   const packageManagersVersions: PackageManagersVersions = await readJsonFile(
     path.join(baseTemplateRoot, 'package-managers.json'),
   );
+  const yarnBerryVersion: string = await readYarnBerryVersion(baseTemplateRoot);
 
   const packageManager: PackageManager = options.packageManager;
-  const packageManagerVersion: string = packageManagersVersions[packageManager];
+  const packageManagerVersion: string = resolvePackageManagerVersion(
+    packageManager,
+    packageManagersVersions,
+    yarnBerryVersion,
+  );
   const composedDependencies: ComposedScaffoldDependencies =
     composeScaffoldDependencies(
       dependencyCatalog,
       options.httpAdapter,
       options.dbAdapter,
     );
+
+  const yarnRcSourceModel: YarnRcSourceModel | undefined =
+    packageManager === 'yarn'
+      ? createYarnRcSourceModel(options.httpAdapter, options.dbAdapter)
+      : undefined;
 
   const generatedPackageJson: Record<string, unknown> =
     buildGeneratedPackageJson(
@@ -118,6 +133,9 @@ export async function createHttpApp(
       composedDependencies.dependencies,
       composedDependencies.devDependencies,
       options.dbAdapter,
+      yarnRcSourceModel === undefined
+        ? undefined
+        : yarnRcSourceModel.dependenciesMeta,
     );
 
   const jsonIndentationSpaces: number = 2;
@@ -164,6 +182,14 @@ export async function createHttpApp(
       generatePnpmWorkspaceSource(
         createPnpmWorkspaceSourceModel(options.httpAdapter),
       ),
+      'utf8',
+    );
+  }
+
+  if (yarnRcSourceModel !== undefined) {
+    await fs.writeFile(
+      path.join(projectPath, '.yarnrc.yml'),
+      generateYarnRcSource(),
       'utf8',
     );
   }
