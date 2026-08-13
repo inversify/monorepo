@@ -33,6 +33,11 @@ export const defaultConfig = defineConfig({
         test: {
           include: ['src/**/*.spec-d.ts'],
           name: 'Type',
+          typecheck: {
+            enabled: true,
+            include: ['src/**/*.spec-d.ts'],
+            only: true,
+          },
         },
       },
     ],
