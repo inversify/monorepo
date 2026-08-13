@@ -1,5 +1,11 @@
 # @inversifyjs/create-http
 
+## 0.4.1
+
+### Patch Changes
+
+Include the scaffold `.gitignore` in the published package by shipping it as `.gitignore.template`, and stop packing compiled tests and fixtures.
+
 ## 0.4.0
 
 ### Minor Changes
