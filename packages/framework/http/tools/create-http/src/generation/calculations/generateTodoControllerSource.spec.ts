@@ -22,6 +22,7 @@ describe(generateTodoControllerSource, () => {
         );
         expect(result).not.toContain('@inversifyjs/http-uwebsockets');
         expect(result).not.toContain('CaptureRequestValues');
+        expect(result).not.toContain('SetHeader');
         expect(result).toContain("@Controller('/todos')");
         expect(result).toContain('export class TodoController');
         expect(result).toContain("@OasOperationId('createTodo')");
@@ -88,30 +89,45 @@ describe(generateTodoControllerSource, () => {
           await TodoControllerSourceFixtures.withHttpAdapterUwebsockets();
       });
 
-      it('should generate CaptureRequestValues for validated endpoints', () => {
+      it('should generate CaptureRequestValues for body endpoints and JSON content-type headers', () => {
         expect(result).toContain(
           "import { CaptureRequestValues } from '@inversifyjs/http-uwebsockets';",
         );
+        expect(result).toContain('SetHeader');
+        expect(result.match(/@CaptureRequestValues/g)).toHaveLength(2);
+        expect(
+          result.match(/@SetHeader\('Content-Type', 'application\/json'\)/g),
+        ).toHaveLength(4);
         expect(result).toContain(
-          '@CaptureRequestValues({ headers: true, method: true, url: true })\n  @Post()',
+          "@SetHeader('Content-Type', 'application/json')\n  @CaptureRequestValues({ headers: true, method: true, url: true })\n  @Post()",
         );
         expect(result).toContain(
-          "@CaptureRequestValues({ method: true, params: ['id'], url: true })\n  @Delete('/:id')",
-        );
-        expect(result).toContain(
-          "@CaptureRequestValues({ method: true, params: ['id'], url: true })\n  @Get('/:id')",
-        );
-        expect(result).toContain(
-          '@CaptureRequestValues({ method: true, query: true, url: true })\n  @Get()',
-        );
-        expect(result).toContain(
-          `@CaptureRequestValues({
+          `@SetHeader('Content-Type', 'application/json')
+  @CaptureRequestValues({
     headers: true,
     method: true,
     params: ['id'],
     url: true,
   })
   @Patch('/:id')`,
+        );
+        expect(result).toContain(
+          "@SetHeader('Content-Type', 'application/json')\n  @Get('/:id')\n  public async getTodo",
+        );
+        expect(result).toContain(
+          "@SetHeader('Content-Type', 'application/json')\n  @Get()\n  public async listTodos",
+        );
+        expect(result).not.toContain(
+          "@SetHeader('Content-Type', 'application/json')\n  @Delete('/:id')",
+        );
+        expect(result).not.toContain(
+          "@CaptureRequestValues({ method: true, params: ['id'], url: true })\n  @Delete('/:id')",
+        );
+        expect(result).not.toContain(
+          "@CaptureRequestValues({ method: true, params: ['id'], url: true })\n  @Get('/:id')",
+        );
+        expect(result).not.toContain(
+          '@CaptureRequestValues({ method: true, query: true, url: true })\n  @Get()',
         );
       });
     });

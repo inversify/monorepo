@@ -44,7 +44,7 @@ export interface BootstrapSourceModel {
   imports: readonly SourceImport[];
   /**
    * Statements after `const app = await adapter.build()`.
-   * `app` and `PORT` (from `ConfigService`) are in scope.
+   * `app`, `PORT` (from `ConfigService`), and `logger` are in scope.
    */
   listenStatements: readonly string[];
 }

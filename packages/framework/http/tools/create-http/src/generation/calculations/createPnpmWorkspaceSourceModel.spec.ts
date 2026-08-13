@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { HttpAdapter } from '../../models/HttpAdapter.js';
 import { createPnpmWorkspaceSourceModel } from './createPnpmWorkspaceSourceModel.js';
 
 describe(createPnpmWorkspaceSourceModel, () => {
@@ -8,7 +9,7 @@ describe(createPnpmWorkspaceSourceModel, () => {
       let result: ReturnType<typeof createPnpmWorkspaceSourceModel>;
 
       beforeAll(() => {
-        result = createPnpmWorkspaceSourceModel('express');
+        result = createPnpmWorkspaceSourceModel(HttpAdapter.express);
       });
 
       it('should include Prisma allowBuilds without blockExoticSubdeps', () => {
@@ -29,7 +30,7 @@ describe(createPnpmWorkspaceSourceModel, () => {
       let result: ReturnType<typeof createPnpmWorkspaceSourceModel>;
 
       beforeAll(() => {
-        result = createPnpmWorkspaceSourceModel('uwebsockets');
+        result = createPnpmWorkspaceSourceModel(HttpAdapter.uwebsockets);
       });
 
       it('should disable blockExoticSubdeps for the git-hosted uWebSockets.js dependency', () => {

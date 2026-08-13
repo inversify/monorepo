@@ -1,5 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { DbAdapter } from '../models/DbAdapter.js';
+import { PackageManager } from '../models/PackageManager.js';
 import { buildGeneratedPackageJson } from './buildGeneratedPackageJson.js';
 
 describe(buildGeneratedPackageJson, () => {
@@ -10,7 +12,7 @@ describe(buildGeneratedPackageJson, () => {
       beforeAll(() => {
         result = buildGeneratedPackageJson(
           'demo-app',
-          'pnpm',
+          PackageManager.pnpm,
           '11.18.0',
           {
             inversify: '8.2.3',
@@ -18,7 +20,7 @@ describe(buildGeneratedPackageJson, () => {
           {
             typescript: '6.0.3',
           },
-          'prisma+postgresql',
+          DbAdapter.prismaPostgresql,
         );
       });
 
@@ -55,7 +57,7 @@ describe(buildGeneratedPackageJson, () => {
       beforeAll(() => {
         result = buildGeneratedPackageJson(
           'demo-app',
-          'yarn',
+          PackageManager.yarn,
           '4.18.0',
           {
             inversify: '8.2.3',
@@ -63,7 +65,7 @@ describe(buildGeneratedPackageJson, () => {
           {
             typescript: '6.0.3',
           },
-          'prisma+postgresql',
+          DbAdapter.prismaPostgresql,
           {
             prisma: {
               built: true,

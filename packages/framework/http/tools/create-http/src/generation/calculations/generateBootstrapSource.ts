@@ -68,9 +68,20 @@ export async function generateBootstrapSource(
     moduleSpecifier: '@inversifyjs/config',
     namedImports: [
       { name: 'ConfigContainerModule' },
+      { isTypeOnly: true, name: 'ConfigObject' },
       { isTypeOnly: true, name: 'ConfigService' },
       { name: 'configServiceIdentifier' },
     ],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '@inversifyjs/logger',
+    namedImports: [{ isTypeOnly: true, name: 'Logger' }, { name: 'LogLevel' }],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '../../logger/models/loggerFactoryIdentifier.js',
+    namedImports: [{ name: 'loggerFactoryIdentifier' }],
   });
 
   sourceFile.addImportDeclaration({
@@ -102,8 +113,30 @@ export async function generateBootstrapSource(
     declarationKind: VariableDeclarationKind.Const,
     declarations: [
       {
-        initializer:
-          "z.object({\n  DATABASE_URL: z.string().min(1),\n  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),\n  PORT: z.coerce.number().min(1).max(65535).default(3000),\n})",
+        initializer: `z.object({
+  DATABASE_URL: z.string().min(1),
+  LOG_LEVELS: z
+    .string()
+    .default('error,warn,info')
+    .transform((value: string) =>
+      value.split(',').map((level: string) => level.trim()),
+    )
+    .pipe(
+      z.array(
+        z.enum([
+          LogLevel.ERROR,
+          LogLevel.WARN,
+          LogLevel.INFO,
+          LogLevel.HTTP,
+          LogLevel.VERBOSE,
+          LogLevel.DEBUG,
+          LogLevel.SILLY,
+        ]),
+      ),
+    ),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  PORT: z.coerce.number().min(1).max(65535).default(3000),
+})`,
         name: 'appConfigSchema',
       },
     ],
@@ -118,8 +151,12 @@ export async function generateBootstrapSource(
     declarationKind: VariableDeclarationKind.Const,
     declarations: [
       {
-        initializer:
-          'ConfigContainerModule.fromOptions({\n  source: envFile(),\n  validate: appConfigSchema,\n})',
+        initializer: `ConfigContainerModule.fromOptions<AppConfig>({
+  source: envFile(),
+  validate: {
+    validate: (input: ConfigObject): AppConfig => appConfigSchema.parse(input),
+  },
+})`,
         name: 'configModule',
       },
     ],
@@ -150,6 +187,8 @@ export async function generateBootstrapSource(
     'container.bind(InversifyValidationErrorFilter).toSelf().inSingletonScope();',
     'const configService: ConfigService<AppConfig> = container.get(configServiceIdentifier);',
     'const { PORT } = configService.get();',
+    'const loggerFactory: (context: string) => Logger = container.get(loggerFactoryIdentifier);',
+    "const logger: Logger = loggerFactory('Bootstrap');",
     `const adapter: ${model.adapter.className} = new ${model.adapter.className}(
   container,
   ${model.adapter.optionsObjectLiteral},

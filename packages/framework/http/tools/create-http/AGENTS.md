@@ -45,6 +45,7 @@ Recipe (CLI args / prompts)
           ├─ generateYarnRcSource() → .yarnrc.yml
           │     └─ yarn only; enableScripts: false, nodeLinker: node-modules
           │     └─ package.json dependenciesMeta from createYarnRcSourceModel(adapter, dbAdapter)
+          ├─ writeLoggerSourceFiles() → logger factory identifier + container module
           ├─ writeStatusSourceFiles() → status model, controller, container module
           ├─ writeTodoSourceFiles(createTodoControllerSourceModel(adapter))
           │     └─ ts-morph TodoController; uwebsockets adds @CaptureRequestValues
@@ -66,7 +67,7 @@ Recipe (CLI args / prompts)
 | `src/dependencies/` | Renovate catalog composition (recipe → dep subset) |
 | `src/generation/` | Programmatic TS generation (ts-morph + source models) |
 | `src/calculations/` | Pure helpers (paths, package.json shape, PM commands) |
-| `src/models/` | Shared types (`HttpAdapter`, `PackageManager`, options) |
+| `src/models/` | Shared enums (`HttpAdapter`, `DbAdapter`, `PackageManager`) and options |
 | `templates/base/` | Static files + Renovate-tracked version catalogs |
 
 ### CLI stack
@@ -104,7 +105,7 @@ Scaffolded apps must **not** receive every possible dependency. Versions live in
 
 1. Add package versions to `templates/base/package.json` (catalog)
 2. Add a feature/adapter spec listing package names (`HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS`)
-3. Extend the recipe / CLI option (`DbAdapter` / `HTTP_ADAPTERS`)
+3. Extend the recipe / CLI option (`DbAdapter` enum / `HTTP_ADAPTERS`)
 4. Call composition when building generated `package.json`
 5. Add unit tests that assert **included** and **excluded** packages
 
@@ -122,7 +123,7 @@ Copied (sometimes renamed) into the target app:
 | `tsconfig.json` | `tsconfig.json` | Strict options; `src` → `dist` |
 | `eslint.config.mjs.template` | `eslint.config.mjs` | **Must** use `.template` suffix in repo |
 | `prettier.config.mjs.template` | `prettier.config.mjs` | Same rename pattern |
-| `.env.example` | `.env.example` / `.env` | Includes `DATABASE_URL` for Postgres |
+| `.env.example` | `.env.example` / `.env` | Includes `DATABASE_URL` for Postgres and `LOG_LEVELS` |
 | `docker-compose.yml` | `docker-compose.yml` | PostgreSQL service |
 | `prisma.config.ts.template` | `prisma.config.ts` | Prisma 7 config (`prisma/config`) |
 | `prisma/` | `prisma/` | Schema, Todo model, initial migration |
@@ -140,6 +141,8 @@ Generated (not copied from templates):
 | `pnpm-workspace.yaml` | `generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))` — **pnpm only**; `allowBuilds` + adapter knobs |
 | `.yarnrc.yml` | `generateYarnRcSource()` — **yarn only**; `enableScripts: false`, `nodeLinker: node-modules`. Selected `builtDependencies` go in generated `package.json` `dependenciesMeta` (Yarn rejects that field in `.yarnrc.yml`) |
 | `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter, dbAdapter))` |
+| `src/logger/models/loggerFactoryIdentifier.ts` | Factory service identifier |
+| `src/logger/containerModules/LoggerContainerModule.ts` | Binds `(context: string) => Logger` → `ConsoleLogger` |
 | `src/status/models/StatusResponse.ts` | `generateStatusResponseSource()` |
 | `src/status/controllers/StatusController.ts` | `generateStatusControllerSource()` — `GET /status` → `{ status: 'ok' }` |
 | `src/status/containerModules/StatusContainerModule.ts` | `generateStatusContainerModuleSource()` — binds controller singleton |
@@ -149,7 +152,7 @@ Generated (not copied from templates):
 | `src/todo/api/models/CreateTodoRequestBody.ts` | `POST /todos` body |
 | `src/todo/api/models/PaginatedTodosResponse.ts` | `GET /todos` response |
 | `src/todo/api/models/UpdateTodoRequestBody.ts` | `PATCH /todos/:id` body |
-| `src/todo/api/controllers/TodoController.ts` | `generateTodoControllerSource(createTodoControllerSourceModel(adapter))` — `GET /todos`, `GET /todos/:id`, `POST /todos`, `PATCH /todos/:id`, `DELETE /todos/:id`; uwebsockets adds `@CaptureRequestValues` so OpenAPI validators can read method/url/(query|params|headers) after awaits |
+| `src/todo/api/controllers/TodoController.ts` | `generateTodoControllerSource(createTodoControllerSourceModel(adapter))` — `GET /todos`, `GET /todos/:id`, `POST /todos`, `PATCH /todos/:id`, `DELETE /todos/:id`; uwebsockets adds `@CaptureRequestValues` on POST and PATCH so `@ValidatedBody` can still read method/url/headers/(params) after the body is consumed, and `@SetHeader('Content-Type', 'application/json')` on JSON replies |
 | `src/todo/adapter/prisma/PrismaTodoPersistenceAdapter.ts` | Prisma port adapter (soft delete via `deleted_at`) |
 | `src/todo/adapter/inversify/TodoContainerModule.ts` | Binds controller |
 | `src/todo/adapter/inversify/TodoPrismaContainerModule.ts` | Binds port → Prisma adapter |
@@ -182,15 +185,17 @@ Bootstrap generation:
 TodoController generation:
 
 - Model factory: `createTodoControllerSourceModel(httpAdapter)`
-- Model: `TodoControllerSourceModel` (`imports`, `methodCaptureRequestValues`)
+- Model: `TodoControllerSourceModel` (`imports`, `methodCaptureRequestValues`, `methodHeaders`)
 - Printer: `generateTodoControllerSource()` → `src/todo/api/controllers/TodoController.ts`
-- uwebsockets sets per-method `@CaptureRequestValues` options so `@ValidatedBody` / `@ValidatedParams` / `@ValidatedQuery` can still read method, url, headers, query, and params after the request body (or other awaits) is consumed
+- uwebsockets sets `@CaptureRequestValues` on POST and PATCH only (the endpoints that read the body). Capturing `url` also captures query, which the adapter needs to rebuild the URL. GET and DELETE do not consume the body, so they do not need the decorator.
+- uwebsockets sets `@SetHeader('Content-Type', 'application/json')` on JSON-returning endpoints (`POST`, `GET`, `PATCH`). `_replyJson` does not set that header. `DELETE` returns 204 No Content and does not need it.
 
 Generated bootstrap always includes:
 
-1. Non-exported `async initializeContainer(): Promise<Container>` that loads config, `PrismaContainerModule` (for `prisma+postgresql`), `StatusContainerModule`, and todo modules
-2. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter, registers `SwaggerUiProvider` (`/docs`), installs `OpenApiValidationPipe` + `InversifyValidationErrorFilter`, and listens
+1. Non-exported `async initializeContainer(): Promise<Container>` that loads config, `LoggerContainerModule` (ConsoleLogger factory whose `logTypes` come from `LOG_LEVELS`), `PrismaContainerModule` (for `prisma+postgresql`), `StatusContainerModule`, and todo modules
+2. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter, registers `SwaggerUiProvider` (`/docs`), installs `OpenApiValidationPipe` + `InversifyValidationErrorFilter`, and listens via the bound logger factory
 
+`@inversifyjs/logger` and `winston` are base dependencies (ConsoleLogger factory bound from `LOG_LEVELS`).
 `@inversifyjs/http-core` is a base dependency (for `@Controller` / `@Get` / `@Post` on scaffolded controllers).
 `@inversifyjs/http-open-api` is a base dependency (OpenAPI 3.2 decorators + `SwaggerUiProvider` via `/v3Dot2`).
 `@inversifyjs/open-api-validation`, `@inversifyjs/http-validation`, `ajv`, and `ajv-formats` are base dependencies (OpenAPI-driven request validation; pipe from `/v3Dot2`).
@@ -279,7 +284,7 @@ Package is registered in root `codecov.yml` as `@inversifyjs/create-http` with p
 
 ### Add a new HTTP adapter option
 
-1. Extend `HttpAdapter` + `HTTP_ADAPTERS`
+1. Extend the `HttpAdapter` enum + `HTTP_ADAPTERS`
 2. Add versions to catalog `templates/base/package.json`
 3. Add entry in `HTTP_ADAPTER_DEPENDENCY_SPECS`
 4. Add entry in `HTTP_ADAPTER_BOOTSTRAP_SPECS` (adapter class, options, listen statements)

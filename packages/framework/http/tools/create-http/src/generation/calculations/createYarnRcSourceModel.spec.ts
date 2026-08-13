@@ -1,5 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { DbAdapter } from '../../models/DbAdapter.js';
+import { HttpAdapter } from '../../models/HttpAdapter.js';
 import { type YarnRcSourceModel } from '../models/YarnRcSourceModel.js';
 import { createYarnRcSourceModel } from './createYarnRcSourceModel.js';
 
@@ -9,7 +11,10 @@ describe(createYarnRcSourceModel, () => {
       let result: YarnRcSourceModel;
 
       beforeAll(() => {
-        result = createYarnRcSourceModel('express', 'prisma+postgresql');
+        result = createYarnRcSourceModel(
+          HttpAdapter.express,
+          DbAdapter.prismaPostgresql,
+        );
       });
 
       it('should include prisma built dependencies without http adapter entries', () => {
@@ -35,7 +40,10 @@ describe(createYarnRcSourceModel, () => {
       let result: YarnRcSourceModel;
 
       beforeAll(() => {
-        result = createYarnRcSourceModel('uwebsockets', 'prisma+postgresql');
+        result = createYarnRcSourceModel(
+          HttpAdapter.uwebsockets,
+          DbAdapter.prismaPostgresql,
+        );
       });
 
       it('should include prisma and uWebSockets.js built dependencies', () => {

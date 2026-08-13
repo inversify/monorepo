@@ -57,6 +57,17 @@ describe(createBootstrapSourceModel, () => {
                 moduleSpecifier: 'inversify',
                 namedImports: [{ name: 'Container' }],
               }),
+              expect.objectContaining({
+                moduleSpecifier:
+                  '../../logger/containerModules/LoggerContainerModule.js',
+                namedImports: [{ name: 'LoggerContainerModule' }],
+              }),
+            ]),
+          );
+          expect(result.initializeContainerBodyStatements).toStrictEqual(
+            expect.arrayContaining([
+              'const { LOG_LEVELS } = configService.get();',
+              'container.load(new LoggerContainerModule({ logTypes: LOG_LEVELS }));',
             ]),
           );
           expect(result.listenStatements.length).toBeGreaterThan(0);

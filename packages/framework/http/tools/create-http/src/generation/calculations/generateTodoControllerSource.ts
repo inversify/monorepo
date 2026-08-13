@@ -17,6 +17,7 @@ import {
 import { SCAFFOLD_PRETTIER_OPTIONS } from '../models/scaffoldPrettierOptions.js';
 import {
   type CaptureRequestValuesSourceModel,
+  type SetHeaderSourceModel,
   type TodoControllerMethodName,
   type TodoControllerSourceModel,
 } from '../models/TodoControllerSourceModel.js';
@@ -106,6 +107,30 @@ function buildCaptureRequestValuesDecorator(
   ];
 }
 
+function buildSetHeaderDecorators(
+  model: TodoControllerSourceModel,
+  methodName: TodoControllerMethodName,
+): OptionalKind<DecoratorStructure>[] {
+  const headers: readonly SetHeaderSourceModel[] | undefined =
+    model.methodHeaders[methodName];
+
+  if (headers === undefined) {
+    return [];
+  }
+
+  return headers.map((header: SetHeaderSourceModel) => ({
+    arguments: [`'${header.headerKey}'`, `'${header.value}'`],
+    name: 'SetHeader',
+  }));
+}
+
+function hasMethodHeaders(model: TodoControllerSourceModel): boolean {
+  return Object.values(model.methodHeaders).some(
+    (headers: readonly SetHeaderSourceModel[] | undefined) =>
+      headers !== undefined && headers.length > 0,
+  );
+}
+
 function buildCreateTodoMethod(
   model: TodoControllerSourceModel,
 ): OptionalKind<MethodDeclarationStructure> {
@@ -150,6 +175,7 @@ function buildCreateTodoMethod(
         arguments: ['HttpStatusCode.CREATED'],
         name: 'StatusCode',
       },
+      ...buildSetHeaderDecorators(model, 'createTodo'),
       ...buildCaptureRequestValuesDecorator(model, 'createTodo'),
       { arguments: [], name: 'Post' },
     ],
@@ -223,6 +249,7 @@ function buildDeleteTodoMethod(
         arguments: ['HttpStatusCode.NO_CONTENT'],
         name: 'StatusCode',
       },
+      ...buildSetHeaderDecorators(model, 'deleteTodo'),
       ...buildCaptureRequestValuesDecorator(model, 'deleteTodo'),
       { arguments: ["'/:id'"], name: 'Delete' },
     ],
@@ -300,6 +327,7 @@ function buildGetTodoMethod(
         ],
         name: 'OasResponse',
       },
+      ...buildSetHeaderDecorators(model, 'getTodo'),
       ...buildCaptureRequestValuesDecorator(model, 'getTodo'),
       { arguments: ["'/:id'"], name: 'Get' },
     ],
@@ -388,6 +416,7 @@ function buildListTodosMethod(
         ],
         name: 'OasResponse',
       },
+      ...buildSetHeaderDecorators(model, 'listTodos'),
       ...buildCaptureRequestValuesDecorator(model, 'listTodos'),
       { arguments: [], name: 'Get' },
     ],
@@ -483,6 +512,7 @@ function buildUpdateTodoMethod(
         ],
         name: 'OasResponse',
       },
+      ...buildSetHeaderDecorators(model, 'updateTodo'),
       ...buildCaptureRequestValuesDecorator(model, 'updateTodo'),
       { arguments: ["'/:id'"], name: 'Patch' },
     ],
@@ -551,6 +581,7 @@ export async function generateTodoControllerSource(
       { name: 'NotFoundHttpResponse' },
       { name: 'Patch' },
       { name: 'Post' },
+      ...(hasMethodHeaders(model) ? [{ name: 'SetHeader' }] : []),
       { name: 'StatusCode' },
     ],
   });

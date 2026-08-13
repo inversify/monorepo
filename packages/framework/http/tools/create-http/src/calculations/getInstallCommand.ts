@@ -1,24 +1,24 @@
 import { type CommandInvocation } from '../models/CommandInvocation.js';
-import { type PackageManager } from '../models/PackageManager.js';
+import { PackageManager } from '../models/PackageManager.js';
 
 export function getInstallCommand(
   packageManager: PackageManager,
 ): CommandInvocation {
   switch (packageManager) {
-    case 'npm':
+    case PackageManager.npm:
       return {
         args: ['install'],
-        command: 'npm',
+        command: PackageManager.npm,
       };
-    case 'pnpm':
+    case PackageManager.pnpm:
       return {
         args: ['install'],
-        command: 'pnpm',
+        command: PackageManager.pnpm,
       };
-    case 'yarn':
+    case PackageManager.yarn:
       return {
         args: ['install'],
-        command: 'yarn',
+        command: PackageManager.yarn,
       };
   }
 }

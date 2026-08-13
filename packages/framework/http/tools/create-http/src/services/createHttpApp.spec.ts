@@ -4,6 +4,9 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
+import { DbAdapter } from '../models/DbAdapter.js';
+import { HttpAdapter } from '../models/HttpAdapter.js';
+import { PackageManager } from '../models/PackageManager.js';
 import { createHttpApp } from './createHttpApp.js';
 
 describe(createHttpApp, () => {
@@ -19,9 +22,9 @@ describe(createHttpApp, () => {
         projectPath = path.join(temporaryRoot, 'demo-app');
 
         await createHttpApp({
-          dbAdapter: 'prisma+postgresql',
-          httpAdapter: 'express',
-          packageManager: 'pnpm',
+          dbAdapter: DbAdapter.prismaPostgresql,
+          httpAdapter: HttpAdapter.express,
+          packageManager: PackageManager.pnpm,
           targetPath: projectPath,
         });
       });
@@ -107,6 +110,15 @@ describe(createHttpApp, () => {
           'await container.loadAsync(configModule);',
         );
         expect(bootstrapSource).toContain('DATABASE_URL');
+        expect(bootstrapSource).toContain('LOG_LEVELS');
+        expect(bootstrapSource).toContain("from '@inversifyjs/logger'");
+        expect(bootstrapSource).toContain('LoggerContainerModule');
+        expect(bootstrapSource).toContain('loggerFactoryIdentifier');
+        expect(bootstrapSource).toContain(
+          "const logger: Logger = loggerFactory('Bootstrap');",
+        );
+        expect(bootstrapSource).toContain('logger.info(');
+        expect(bootstrapSource).not.toContain('console.log');
         expect(bootstrapSource).toContain(
           "import { PrismaContainerModule } from '@inversifyjs/prisma';",
         );
@@ -160,6 +172,25 @@ describe(createHttpApp, () => {
         expect(bootstrapSource).toContain(
           'adapter.useGlobalFilters(InversifyValidationErrorFilter);',
         );
+
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/logger/containerModules/LoggerContainerModule.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('return new ConsoleLogger(context, options);');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/logger/models/loggerFactoryIdentifier.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('loggerFactoryIdentifier');
 
         await expect(
           fs.readFile(
@@ -324,6 +355,7 @@ describe(createHttpApp, () => {
 
         expect(envContents).toContain('NODE_ENV=development');
         expect(envContents).toContain('PORT=3000');
+        expect(envContents).toContain('LOG_LEVELS=error,warn,info');
         expect(envContents).toContain('DATABASE_URL=');
 
         const envExampleContents: string = await fs.readFile(
@@ -333,6 +365,7 @@ describe(createHttpApp, () => {
 
         expect(envExampleContents).toContain('NODE_ENV=development');
         expect(envExampleContents).toContain('PORT=3000');
+        expect(envExampleContents).toContain('LOG_LEVELS=error,warn,info');
         expect(envExampleContents).toContain('DATABASE_URL=');
 
         const dockerComposeContents: string = await fs.readFile(
@@ -391,6 +424,7 @@ describe(createHttpApp, () => {
             '@inversifyjs/http-express': expect.any(String) as string,
             '@inversifyjs/http-open-api': expect.any(String) as string,
             '@inversifyjs/http-validation': expect.any(String) as string,
+            '@inversifyjs/logger': expect.any(String) as string,
             '@inversifyjs/open-api-validation': expect.any(String) as string,
             '@inversifyjs/prisma': expect.any(String) as string,
             '@prisma/adapter-pg': expect.any(String) as string,
@@ -400,6 +434,7 @@ describe(createHttpApp, () => {
             express: expect.any(String) as string,
             inversify: expect.any(String) as string,
             pg: expect.any(String) as string,
+            winston: expect.any(String) as string,
             zod: expect.any(String) as string,
           },
           name: 'demo-app',
@@ -450,9 +485,9 @@ describe(createHttpApp, () => {
         projectPath = path.join(temporaryRoot, 'demo-app');
 
         await createHttpApp({
-          dbAdapter: 'prisma+postgresql',
-          httpAdapter: 'express',
-          packageManager: 'yarn',
+          dbAdapter: DbAdapter.prismaPostgresql,
+          httpAdapter: HttpAdapter.express,
+          packageManager: PackageManager.yarn,
           targetPath: projectPath,
         });
       });

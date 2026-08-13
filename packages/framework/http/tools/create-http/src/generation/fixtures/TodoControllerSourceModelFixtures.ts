@@ -1,20 +1,21 @@
+import { HttpAdapter } from '../../models/HttpAdapter.js';
 import { createTodoControllerSourceModel } from '../calculations/createTodoControllerSourceModel.js';
 import { type TodoControllerSourceModel } from '../models/TodoControllerSourceModel.js';
 
 export class TodoControllerSourceModelFixtures {
   public static get withHttpAdapterExpress(): TodoControllerSourceModel {
-    return createTodoControllerSourceModel('express');
+    return createTodoControllerSourceModel(HttpAdapter.express);
   }
 
   public static get withHttpAdapterFastify(): TodoControllerSourceModel {
-    return createTodoControllerSourceModel('fastify');
+    return createTodoControllerSourceModel(HttpAdapter.fastify);
   }
 
   public static get withHttpAdapterHono(): TodoControllerSourceModel {
-    return createTodoControllerSourceModel('hono');
+    return createTodoControllerSourceModel(HttpAdapter.hono);
   }
 
   public static get withHttpAdapterUwebsockets(): TodoControllerSourceModel {
-    return createTodoControllerSourceModel('uwebsockets');
+    return createTodoControllerSourceModel(HttpAdapter.uwebsockets);
   }
 }

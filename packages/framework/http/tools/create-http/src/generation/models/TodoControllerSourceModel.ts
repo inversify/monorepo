@@ -12,6 +12,11 @@ export interface CaptureRequestValuesSourceModel {
   url?: boolean;
 }
 
+export interface SetHeaderSourceModel {
+  headerKey: string;
+  value: string;
+}
+
 export type TodoControllerMethodName =
   'createTodo' | 'deleteTodo' | 'getTodo' | 'listTodos' | 'updateTodo';
 
@@ -31,5 +36,12 @@ export interface TodoControllerSourceModel {
    */
   methodCaptureRequestValues: Readonly<
     Partial<Record<TodoControllerMethodName, CaptureRequestValuesSourceModel>>
+  >;
+  /**
+   * Per-method `@SetHeader` pairs. Empty when the adapter sets response
+   * content type on JSON replies by itself.
+   */
+  methodHeaders: Readonly<
+    Partial<Record<TodoControllerMethodName, readonly SetHeaderSourceModel[]>>
   >;
 }

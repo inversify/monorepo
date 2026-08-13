@@ -1,7 +1,11 @@
-export type PackageManager = 'npm' | 'pnpm' | 'yarn';
+export enum PackageManager {
+  npm = 'npm',
+  pnpm = 'pnpm',
+  yarn = 'yarn',
+}
 
 export const PACKAGE_MANAGERS: readonly PackageManager[] = [
-  'npm',
-  'pnpm',
-  'yarn',
+  PackageManager.npm,
+  PackageManager.pnpm,
+  PackageManager.yarn,
 ];

@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 vitest.mock(import('../calculations/buildCaptureRequestValuesTransformer.js'));
+vitest.mock(import('../calculations/resolveCaptureRequestValuesOptions.js'));
 
 import {
   buildArrayMetadataWithArray,
@@ -13,6 +14,7 @@ import {
 import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 import { buildCaptureRequestValuesTransformer } from '../calculations/buildCaptureRequestValuesTransformer.js';
+import { resolveCaptureRequestValuesOptions } from '../calculations/resolveCaptureRequestValuesOptions.js';
 import { type CaptureRequestValuesOptions } from '../models/CaptureRequestValuesOptions.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { captureRequestValuesMetadataReflectKey } from '../reflectMetadata/data/captureRequestValuesMetadataReflectKey.js';
@@ -46,13 +48,21 @@ describe(CaptureRequestValues, () => {
         HttpResponse
       >;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
+      let resolvedOptionsFixture: CaptureRequestValuesOptions;
 
       beforeAll(() => {
         requestTransformerFixture = vitest.fn();
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
+        resolvedOptionsFixture = {
+          ...optionsFixture,
+          query: true,
+        };
 
         vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce(undefined);
+        vitest
+          .mocked(resolveCaptureRequestValuesOptions)
+          .mockReturnValueOnce(resolvedOptionsFixture);
         vitest
           .mocked(buildCaptureRequestValuesTransformer)
           .mockReturnValueOnce(requestTransformerFixture);
@@ -71,17 +81,23 @@ describe(CaptureRequestValues, () => {
         vitest.clearAllMocks();
       });
 
+      it('should call resolveCaptureRequestValuesOptions()', () => {
+        expect(
+          resolveCaptureRequestValuesOptions,
+        ).toHaveBeenCalledExactlyOnceWith(optionsFixture);
+      });
+
       it('should call buildCaptureRequestValuesTransformer()', () => {
         expect(
           buildCaptureRequestValuesTransformer,
-        ).toHaveBeenCalledExactlyOnceWith(optionsFixture);
+        ).toHaveBeenCalledExactlyOnceWith(resolvedOptionsFixture);
       });
 
       it('should store capture metadata', () => {
         expect(setReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture.constructor,
           captureRequestValuesMetadataReflectKey,
-          optionsFixture,
+          resolvedOptionsFixture,
           methodKeyFixture,
         );
       });

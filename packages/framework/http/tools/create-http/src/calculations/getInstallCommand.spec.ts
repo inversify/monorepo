@@ -1,14 +1,14 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { type CommandInvocation } from '../models/CommandInvocation.js';
-import { type PackageManager } from '../models/PackageManager.js';
+import { PackageManager } from '../models/PackageManager.js';
 import { getInstallCommand } from './getInstallCommand.js';
 
 describe(getInstallCommand, () => {
   describe.each([
-    ['npm', { args: ['install'], command: 'npm' }],
-    ['pnpm', { args: ['install'], command: 'pnpm' }],
-    ['yarn', { args: ['install'], command: 'yarn' }],
+    [PackageManager.npm, { args: ['install'], command: PackageManager.npm }],
+    [PackageManager.pnpm, { args: ['install'], command: PackageManager.pnpm }],
+    [PackageManager.yarn, { args: ['install'], command: PackageManager.yarn }],
   ] as const)(
     'having package manager %s',
     (packageManager: PackageManager, expected: CommandInvocation) => {

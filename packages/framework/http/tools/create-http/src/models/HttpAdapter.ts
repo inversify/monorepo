@@ -1,8 +1,13 @@
-export type HttpAdapter = 'express' | 'fastify' | 'hono' | 'uwebsockets';
+export enum HttpAdapter {
+  express = 'express',
+  fastify = 'fastify',
+  hono = 'hono',
+  uwebsockets = 'uwebsockets',
+}
 
 export const HTTP_ADAPTERS: readonly HttpAdapter[] = [
-  'express',
-  'fastify',
-  'hono',
-  'uwebsockets',
+  HttpAdapter.express,
+  HttpAdapter.fastify,
+  HttpAdapter.hono,
+  HttpAdapter.uwebsockets,
 ];
