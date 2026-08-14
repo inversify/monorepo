@@ -8,11 +8,23 @@ import {
   OasTag,
   type ToSchemaFunction,
 } from '@inversifyjs/http-open-api/v3Dot2';
+import { inject } from 'inversify';
 
-import { StatusResponse } from '../models/StatusResponse.js';
+import { type Status } from '../../domain/models/Status.js';
+import { StatusV1FromStatusBuilder } from '../builders/StatusV1FromStatusBuilder.js';
+import { StatusV1 } from '../models/StatusV1.js';
 
-@Controller('/status')
+@Controller('/v1/status')
 export class StatusController {
+  readonly #statusV1FromStatusBuilder: StatusV1FromStatusBuilder;
+
+  constructor(
+    @inject(StatusV1FromStatusBuilder)
+    statusV1FromStatusBuilder: StatusV1FromStatusBuilder,
+  ) {
+    this.#statusV1FromStatusBuilder = statusV1FromStatusBuilder;
+  }
+
   @OasSummary('Get service status')
   @OasDescription('Returns the current health status of the service')
   @OasOperationId('getStatus')
@@ -20,16 +32,18 @@ export class StatusController {
   @OasResponse(HttpStatusCode.OK, (toSchema: ToSchemaFunction) => ({
     content: {
       'application/json': {
-        schema: toSchema(StatusResponse),
+        schema: toSchema(StatusV1),
       },
     },
     description: 'Service is healthy',
   }))
   @Get()
-  public async getStatus(): Promise<StatusResponse> {
-    return {
+  public async getStatus(): Promise<StatusV1> {
+    const status: Status = {
       status: 'ok',
     };
+
+    return this.#statusV1FromStatusBuilder.build(status);
   }
 }
 `;

@@ -129,10 +129,13 @@ describe(createHttpApp, () => {
           "import { PrismaClient } from '../../generated/prisma/client.js';",
         );
         expect(bootstrapSource).toContain(
-          "import { TodoContainerModule } from '../../todo/adapter/inversify/TodoContainerModule.js';",
+          "import { StatusContainerModule } from '../../status/adapter/inversify/containerModules/StatusContainerModule.js';",
         );
         expect(bootstrapSource).toContain(
-          "import { TodoPrismaContainerModule } from '../../todo/adapter/inversify/TodoPrismaContainerModule.js';",
+          "import { TodoContainerModule } from '../../todo/adapter/inversify/containerModules/TodoContainerModule.js';",
+        );
+        expect(bootstrapSource).toContain(
+          "import { TodoPrismaContainerModule } from '../../todo/adapter/inversify/containerModules/TodoPrismaContainerModule.js';",
         );
         expect(bootstrapSource).toContain(
           'container.load(new StatusContainerModule());',
@@ -194,9 +197,24 @@ describe(createHttpApp, () => {
 
         await expect(
           fs.readFile(
+            path.join(projectPath, 'src/status/domain/models/Status.ts'),
+            'utf8',
+          ),
+        ).resolves.toContain('export class Status');
+        await expect(
+          fs.readFile(
             path.join(
               projectPath,
-              'src/status/controllers/StatusController.ts',
+              'src/status/api/controllers/StatusController.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain("@Controller('/v1/status')");
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/status/api/controllers/StatusController.ts',
             ),
             'utf8',
           ),
@@ -205,7 +223,7 @@ describe(createHttpApp, () => {
           fs.readFile(
             path.join(
               projectPath,
-              'src/status/containerModules/StatusContainerModule.ts',
+              'src/status/adapter/inversify/containerModules/StatusContainerModule.ts',
             ),
             'utf8',
           ),
@@ -214,10 +232,32 @@ describe(createHttpApp, () => {
         );
         await expect(
           fs.readFile(
-            path.join(projectPath, 'src/status/models/StatusResponse.ts'),
+            path.join(
+              projectPath,
+              'src/status/adapter/inversify/containerModules/StatusContainerModule.ts',
+            ),
             'utf8',
           ),
-        ).resolves.toContain('export class StatusResponse');
+        ).resolves.toContain(
+          'options.bind(StatusV1FromStatusBuilder).toSelf().inSingletonScope();',
+        );
+        await expect(
+          fs.readFile(
+            path.join(projectPath, 'src/status/api/models/StatusV1.ts'),
+            'utf8',
+          ),
+        ).resolves.toContain('export class StatusV1');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/status/api/builders/StatusV1FromStatusBuilder.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain(
+          'export class StatusV1FromStatusBuilder implements Builder<Status, StatusV1>',
+        );
 
         await expect(
           fs.readFile(
@@ -225,6 +265,18 @@ describe(createHttpApp, () => {
             'utf8',
           ),
         ).resolves.toContain('export class Todo');
+        await expect(
+          fs.readFile(
+            path.join(projectPath, 'src/todo/domain/models/Todo.ts'),
+            'utf8',
+          ),
+        ).resolves.toContain('public createdAt!: Date');
+        await expect(
+          fs.readFile(
+            path.join(projectPath, 'src/common/domain/modules/Builder.ts'),
+            'utf8',
+          ),
+        ).resolves.toContain('export interface Builder<TInput, TOutput>');
         await expect(
           fs.readFile(
             path.join(
@@ -242,7 +294,16 @@ describe(createHttpApp, () => {
             ),
             'utf8',
           ),
-        ).resolves.toContain('@ValidatedBody() body: CreateTodoRequestBody');
+        ).resolves.toContain("@Controller('/v1/todos')");
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/api/controllers/TodoController.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('@ValidatedBody() body: CreateTodoV1RequestBody');
         await expect(
           fs.readFile(
             path.join(
@@ -281,36 +342,53 @@ describe(createHttpApp, () => {
         ).resolves.toContain("@Delete('/:id')");
         await expect(
           fs.readFile(
-            path.join(
-              projectPath,
-              'src/todo/api/models/CreateTodoRequestBody.ts',
-            ),
+            path.join(projectPath, 'src/todo/api/models/TodoV1.ts'),
             'utf8',
           ),
-        ).resolves.toContain('export class CreateTodoRequestBody');
+        ).resolves.toContain('export class TodoV1');
         await expect(
           fs.readFile(
             path.join(
               projectPath,
-              'src/todo/api/models/PaginatedTodosResponse.ts',
+              'src/todo/api/models/CreateTodoV1RequestBody.ts',
             ),
             'utf8',
           ),
-        ).resolves.toContain('export class PaginatedTodosResponse');
+        ).resolves.toContain('export class CreateTodoV1RequestBody');
         await expect(
           fs.readFile(
             path.join(
               projectPath,
-              'src/todo/api/models/UpdateTodoRequestBody.ts',
+              'src/todo/api/models/PaginatedTodosV1Response.ts',
             ),
             'utf8',
           ),
-        ).resolves.toContain('export class UpdateTodoRequestBody');
+        ).resolves.toContain('export class PaginatedTodosV1Response');
         await expect(
           fs.readFile(
             path.join(
               projectPath,
-              'src/todo/adapter/prisma/PrismaTodoPersistenceAdapter.ts',
+              'src/todo/api/models/UpdateTodoV1RequestBody.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('export class UpdateTodoV1RequestBody');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/api/builders/TodoV1FromTodoBuilder.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain(
+          'export class TodoV1FromTodoBuilder implements Builder<Todo, TodoV1>',
+        );
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts',
             ),
             'utf8',
           ),
@@ -321,7 +399,18 @@ describe(createHttpApp, () => {
           fs.readFile(
             path.join(
               projectPath,
-              'src/todo/adapter/inversify/TodoContainerModule.ts',
+              'src/todo/adapter/prisma/builders/TodoFromPrismaTodoBuilder.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain(
+          'export class TodoFromPrismaTodoBuilder implements Builder<PrismaTodo, Todo>',
+        );
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/adapter/inversify/containerModules/TodoContainerModule.ts',
             ),
             'utf8',
           ),
@@ -332,11 +421,33 @@ describe(createHttpApp, () => {
           fs.readFile(
             path.join(
               projectPath,
-              'src/todo/adapter/inversify/TodoPrismaContainerModule.ts',
+              'src/todo/adapter/inversify/containerModules/TodoContainerModule.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain(
+          'options.bind(TodoV1FromTodoBuilder).toSelf().inSingletonScope();',
+        );
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/adapter/inversify/containerModules/TodoPrismaContainerModule.ts',
             ),
             'utf8',
           ),
         ).resolves.toContain('todoPersistencePortIdentifier');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/adapter/inversify/containerModules/TodoPrismaContainerModule.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain(
+          'options.bind(TodoFromPrismaTodoBuilder).toSelf().inSingletonScope();',
+        );
 
         expect(gitIgnoreContents).toContain('node_modules/');
         expect(gitIgnoreContents).toContain('generated/');

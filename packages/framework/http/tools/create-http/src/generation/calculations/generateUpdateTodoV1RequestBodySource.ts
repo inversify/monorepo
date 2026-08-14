@@ -1,4 +1,4 @@
-export function generateUpdateTodoRequestBodySource(): string {
+export function generateUpdateTodoV1RequestBodySource(): string {
   return `import {
   OasSchema,
   OasSchemaOptionalProperty,
@@ -8,9 +8,9 @@ export function generateUpdateTodoRequestBodySource(): string {
   customAttributes: {
     unevaluatedProperties: false,
   },
-  name: 'UpdateTodoRequestBody',
+  name: 'UpdateTodoV1RequestBody',
 })
-export class UpdateTodoRequestBody {
+export class UpdateTodoV1RequestBody {
   @OasSchemaOptionalProperty({
     type: 'string',
   })

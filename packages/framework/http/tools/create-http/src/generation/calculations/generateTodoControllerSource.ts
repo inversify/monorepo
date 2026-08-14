@@ -148,7 +148,7 @@ function buildCreateTodoMethod(
           `(toSchema: ToSchemaFunction) => ({
   content: {
     'application/json': {
-      schema: toSchema(CreateTodoRequestBody),
+      schema: toSchema(CreateTodoV1RequestBody),
     },
   },
   description: 'Todo create request',
@@ -163,7 +163,7 @@ function buildCreateTodoMethod(
           `(toSchema: ToSchemaFunction) => ({
   content: {
     'application/json': {
-      schema: toSchema(Todo),
+      schema: toSchema(TodoV1),
     },
   },
   description: 'Todo created',
@@ -185,17 +185,18 @@ function buildCreateTodoMethod(
       {
         decorators: [{ arguments: [], name: 'ValidatedBody' }],
         name: 'body',
-        type: 'CreateTodoRequestBody',
+        type: 'CreateTodoV1RequestBody',
       },
     ],
-    returnType: 'Promise<Todo>',
+    returnType: 'Promise<TodoV1>',
     scope: Scope.Public,
     statements: [
       `const createTodoData: CreateTodoData = {
   description: body.description,
   title: body.title,
 };`,
-      'return this.#todoPersistencePort.create(createTodoData);',
+      `const todo: Todo = await this.#todoPersistencePort.create(createTodoData);`,
+      'return this.#todoV1FromTodoBuilder.build(todo);',
     ],
   };
 }
@@ -310,7 +311,7 @@ function buildGetTodoMethod(
           `(toSchema: ToSchemaFunction) => ({
   content: {
     'application/json': {
-      schema: toSchema(Todo),
+      schema: toSchema(TodoV1),
     },
   },
   description: 'Todo found',
@@ -340,7 +341,7 @@ function buildGetTodoMethod(
         type: '{ id: string }',
       },
     ],
-    returnType: 'Promise<Todo>',
+    returnType: 'Promise<TodoV1>',
     scope: Scope.Public,
     statements: [
       `const todo: Todo | undefined = await this.#todoPersistencePort.findById(
@@ -352,7 +353,7 @@ function buildGetTodoMethod(
     'Todo not found',
   );
 }`,
-      'return todo;',
+      'return this.#todoV1FromTodoBuilder.build(todo);',
     ],
   };
 }
@@ -408,7 +409,7 @@ function buildListTodosMethod(
           `(toSchema: ToSchemaFunction) => ({
   content: {
     'application/json': {
-      schema: toSchema(PaginatedTodosResponse),
+      schema: toSchema(PaginatedTodosV1Response),
     },
   },
   description: 'Paginated todos',
@@ -429,7 +430,7 @@ function buildListTodosMethod(
         type: 'ListTodosQuery',
       },
     ],
-    returnType: 'Promise<PaginatedTodosResponse>',
+    returnType: 'Promise<PaginatedTodosV1Response>',
     scope: Scope.Public,
     statements: [
       'const page: number = query.page ?? 1;',
@@ -439,7 +440,9 @@ function buildListTodosMethod(
   pageSize,
 });`,
       `return {
-  items: result.items,
+  items: result.items.map((todo: Todo): TodoV1 =>
+    this.#todoV1FromTodoBuilder.build(todo),
+  ),
   page,
   pageSize,
   totalItems: result.totalItems,
@@ -480,7 +483,7 @@ function buildUpdateTodoMethod(
           `(toSchema: ToSchemaFunction) => ({
   content: {
     'application/json': {
-      schema: toSchema(UpdateTodoRequestBody),
+      schema: toSchema(UpdateTodoV1RequestBody),
     },
   },
   description: 'Todo update request',
@@ -495,7 +498,7 @@ function buildUpdateTodoMethod(
           `(toSchema: ToSchemaFunction) => ({
   content: {
     'application/json': {
-      schema: toSchema(Todo),
+      schema: toSchema(TodoV1),
     },
   },
   description: 'Todo updated',
@@ -527,20 +530,20 @@ function buildUpdateTodoMethod(
       {
         decorators: [{ arguments: [], name: 'ValidatedBody' }],
         name: 'body',
-        type: 'UpdateTodoRequestBody',
+        type: 'UpdateTodoV1RequestBody',
       },
     ],
-    returnType: 'Promise<Todo>',
+    returnType: 'Promise<TodoV1>',
     scope: Scope.Public,
     statements: [
       'const updateTodoData: UpdateTodoData = {};',
-      `if (('title' satisfies keyof UpdateTodoRequestBody) in body) {
+      `if (('title' satisfies keyof UpdateTodoV1RequestBody) in body) {
   updateTodoData.title = body.title;
 }`,
-      `if (('description' satisfies keyof UpdateTodoRequestBody) in body) {
+      `if (('description' satisfies keyof UpdateTodoV1RequestBody) in body) {
   updateTodoData.description = body.description;
 }`,
-      `if (('completed' satisfies keyof UpdateTodoRequestBody) in body) {
+      `if (('completed' satisfies keyof UpdateTodoV1RequestBody) in body) {
   updateTodoData.completed = body.completed;
 }`,
       `const updatedTodo: Todo | undefined = await this.#todoPersistencePort.update(
@@ -553,7 +556,7 @@ function buildUpdateTodoMethod(
     'Todo not found',
   );
 }`,
-      'return updatedTodo;',
+      'return this.#todoV1FromTodoBuilder.build(updatedTodo);',
     ],
   };
 }
@@ -636,22 +639,32 @@ export async function generateTodoControllerSource(
 
   sourceFile.addImportDeclaration({
     moduleSpecifier: '../../domain/models/Todo.js',
-    namedImports: [{ name: 'Todo' }],
+    namedImports: [{ isTypeOnly: true, name: 'Todo' }],
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '../models/CreateTodoRequestBody.js',
-    namedImports: [{ name: 'CreateTodoRequestBody' }],
+    moduleSpecifier: '../builders/TodoV1FromTodoBuilder.js',
+    namedImports: [{ name: 'TodoV1FromTodoBuilder' }],
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '../models/PaginatedTodosResponse.js',
-    namedImports: [{ name: 'PaginatedTodosResponse' }],
+    moduleSpecifier: '../models/CreateTodoV1RequestBody.js',
+    namedImports: [{ name: 'CreateTodoV1RequestBody' }],
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '../models/UpdateTodoRequestBody.js',
-    namedImports: [{ name: 'UpdateTodoRequestBody' }],
+    moduleSpecifier: '../models/PaginatedTodosV1Response.js',
+    namedImports: [{ name: 'PaginatedTodosV1Response' }],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '../models/TodoV1.js',
+    namedImports: [{ name: 'TodoV1' }],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '../models/UpdateTodoV1RequestBody.js',
+    namedImports: [{ name: 'UpdateTodoV1RequestBody' }],
   });
 
   sourceFile.addInterface({
@@ -684,11 +697,24 @@ export async function generateTodoControllerSource(
             name: 'todoPersistencePort',
             type: 'TodoPersistencePort',
           },
+          {
+            decorators: [
+              {
+                arguments: ['TodoV1FromTodoBuilder'],
+                name: 'inject',
+              },
+            ],
+            name: 'todoV1FromTodoBuilder',
+            type: 'TodoV1FromTodoBuilder',
+          },
         ],
-        statements: ['this.#todoPersistencePort = todoPersistencePort;'],
+        statements: [
+          'this.#todoPersistencePort = todoPersistencePort;',
+          'this.#todoV1FromTodoBuilder = todoV1FromTodoBuilder;',
+        ],
       },
     ],
-    decorators: [{ arguments: ["'/todos'"], name: 'Controller' }],
+    decorators: [{ arguments: ["'/v1/todos'"], name: 'Controller' }],
     isExported: true,
     methods: [
       buildCreateTodoMethod(model),
@@ -703,6 +729,11 @@ export async function generateTodoControllerSource(
         isReadonly: true,
         name: '#todoPersistencePort',
         type: 'TodoPersistencePort',
+      },
+      {
+        isReadonly: true,
+        name: '#todoV1FromTodoBuilder',
+        type: 'TodoV1FromTodoBuilder',
       },
     ],
   });

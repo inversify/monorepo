@@ -13,13 +13,13 @@ const LOGGER_CONTAINER_MODULE_IMPORT_PATH: string =
   '../../logger/containerModules/LoggerContainerModule.js';
 
 const STATUS_CONTAINER_MODULE_IMPORT_PATH: string =
-  '../../status/containerModules/StatusContainerModule.js';
+  '../../status/adapter/inversify/containerModules/StatusContainerModule.js';
 
 const TODO_CONTAINER_MODULE_IMPORT_PATH: string =
-  '../../todo/adapter/inversify/TodoContainerModule.js';
+  '../../todo/adapter/inversify/containerModules/TodoContainerModule.js';
 
 const TODO_PRISMA_CONTAINER_MODULE_IMPORT_PATH: string =
-  '../../todo/adapter/inversify/TodoPrismaContainerModule.js';
+  '../../todo/adapter/inversify/containerModules/TodoPrismaContainerModule.js';
 
 const PRISMA_CLIENT_IMPORT_PATH: string = '../../generated/prisma/client.js';
 

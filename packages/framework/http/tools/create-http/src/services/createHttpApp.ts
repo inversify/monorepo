@@ -27,6 +27,7 @@ import { PackageManager } from '../models/PackageManager.js';
 import { type PackageManagersVersions } from '../models/PackageManagersVersions.js';
 import { formatGeneratedProjectSources } from './formatGeneratedProjectSources.js';
 import { writeBootstrapSourceFile } from './writeBootstrapSourceFile.js';
+import { writeCommonSourceFiles } from './writeCommonSourceFiles.js';
 import { writeLoggerSourceFiles } from './writeLoggerSourceFiles.js';
 import { writeStatusSourceFiles } from './writeStatusSourceFiles.js';
 import { writeTodoSourceFiles } from './writeTodoSourceFiles.js';
@@ -207,6 +208,7 @@ export async function createHttpApp(
   );
   await writeLoggerSourceFiles(projectPath);
   await writeStatusSourceFiles(projectPath);
+  await writeCommonSourceFiles(projectPath);
   await writeTodoSourceFiles(
     projectPath,
     createTodoControllerSourceModel(options.httpAdapter),
