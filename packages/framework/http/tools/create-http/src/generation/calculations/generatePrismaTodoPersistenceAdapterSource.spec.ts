@@ -13,12 +13,16 @@ describe(generatePrismaTodoPersistenceAdapterSource, () => {
 
     it('should generate a Prisma adapter that implements TodoPersistencePort', () => {
       expect(result).toContain(
-        "import {\n  Prisma,\n  PrismaClient,\n  type Todo as PrismaTodo,\n} from '../../../generated/prisma/client.js';",
+        "import {\n  Prisma,\n  PrismaClient,\n  type Todo as PrismaTodo,\n} from '../../../../generated/prisma/client.js';",
+      );
+      expect(result).toContain(
+        "import { TodoFromPrismaTodoBuilder } from '../builders/TodoFromPrismaTodoBuilder.js';",
       );
       expect(result).toContain(
         'export class PrismaTodoPersistenceAdapter implements TodoPersistencePort',
       );
       expect(result).toContain('@inject(PrismaClient)');
+      expect(result).toContain('@inject(TodoFromPrismaTodoBuilder)');
       expect(result).toContain('this.#prismaClient.todo.create');
       expect(result).toContain('this.#prismaClient.todo.findFirst');
       expect(result).toContain('this.#prismaClient.todo.findMany');
@@ -40,7 +44,10 @@ describe(generatePrismaTodoPersistenceAdapterSource, () => {
       expect(result).toContain(
         "if (('completed' satisfies keyof UpdateTodoData) in data)",
       );
-      expect(result).toContain('#mapTodo(prismaTodo: PrismaTodo): Todo');
+      expect(result).toContain(
+        'this.#todoFromPrismaTodoBuilder.build(prismaTodo)',
+      );
+      expect(result).not.toContain('#mapTodo');
       expect(result).not.toContain('existingTodo');
     });
   });

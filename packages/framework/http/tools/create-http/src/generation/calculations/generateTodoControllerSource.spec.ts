@@ -23,7 +23,8 @@ describe(generateTodoControllerSource, () => {
         expect(result).not.toContain('@inversifyjs/http-uwebsockets');
         expect(result).not.toContain('CaptureRequestValues');
         expect(result).not.toContain('SetHeader');
-        expect(result).toContain("@Controller('/todos')");
+        expect(result).toContain("@Controller('/v1/todos')");
+        expect(result).not.toContain("@Controller('/todos')");
         expect(result).toContain('export class TodoController');
         expect(result).toContain("@OasOperationId('createTodo')");
         expect(result).toContain("@OasOperationId('deleteTodo')");
@@ -35,10 +36,11 @@ describe(generateTodoControllerSource, () => {
         expect(result).toContain(
           '@OasRequestBody((toSchema: ToSchemaFunction)',
         );
-        expect(result).toContain('toSchema(CreateTodoRequestBody)');
-        expect(result).toContain('toSchema(UpdateTodoRequestBody)');
-        expect(result).toContain('toSchema(PaginatedTodosResponse)');
-        expect(result).toContain('toSchema(Todo)');
+        expect(result).toContain('toSchema(CreateTodoV1RequestBody)');
+        expect(result).toContain('toSchema(UpdateTodoV1RequestBody)');
+        expect(result).toContain('toSchema(PaginatedTodosV1Response)');
+        expect(result).toContain('toSchema(TodoV1)');
+        expect(result).not.toMatch(/toSchema\(Todo\)(?!V1)/);
         expect(result).toContain("@OasParameter({\n    description: 'Todo id'");
         expect(result).toContain("name: 'page'");
         expect(result).toContain("name: 'pageSize'");
@@ -53,10 +55,10 @@ describe(generateTodoControllerSource, () => {
         expect(result).toContain("@Delete('/:id')");
         expect(result).toContain("@Patch('/:id')");
         expect(result).toContain(
-          '@ValidatedBody() body: CreateTodoRequestBody',
+          '@ValidatedBody() body: CreateTodoV1RequestBody',
         );
         expect(result).toContain(
-          '@ValidatedBody() body: UpdateTodoRequestBody',
+          '@ValidatedBody() body: UpdateTodoV1RequestBody',
         );
         expect(result).toContain('@ValidatedParams() params: { id: string }');
         expect(result).toContain('@ValidatedQuery() query: ListTodosQuery');
@@ -65,17 +67,27 @@ describe(generateTodoControllerSource, () => {
           'const pageSize: number = query.pageSize ?? 10',
         );
         expect(result).toContain(
-          "if (('title' satisfies keyof UpdateTodoRequestBody) in body)",
+          "if (('title' satisfies keyof UpdateTodoV1RequestBody) in body)",
         );
         expect(result).toContain(
-          "if (('description' satisfies keyof UpdateTodoRequestBody) in body)",
+          "if (('description' satisfies keyof UpdateTodoV1RequestBody) in body)",
         );
         expect(result).toContain(
-          "if (('completed' satisfies keyof UpdateTodoRequestBody) in body)",
+          "if (('completed' satisfies keyof UpdateTodoV1RequestBody) in body)",
         );
         expect(result).toContain('NotFoundHttpResponse');
         expect(result).not.toContain('@Body()');
         expect(result).toContain('todoPersistencePortIdentifier');
+        expect(result).toContain('@inject(TodoV1FromTodoBuilder)');
+        expect(result).toContain(
+          'return this.#todoV1FromTodoBuilder.build(todo);',
+        );
+        expect(result).toContain('this.#todoV1FromTodoBuilder.build(todo)');
+        expect(result).toContain(
+          'return this.#todoV1FromTodoBuilder.build(updatedTodo);',
+        );
+        expect(result).toContain('Promise<TodoV1>');
+        expect(result).toContain('Promise<PaginatedTodosV1Response>');
       });
     });
   });

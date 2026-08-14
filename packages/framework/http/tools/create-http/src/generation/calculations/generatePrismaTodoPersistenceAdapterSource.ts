@@ -5,22 +5,29 @@ import {
   Prisma,
   PrismaClient,
   type Todo as PrismaTodo,
-} from '../../../generated/prisma/client.js';
+} from '../../../../generated/prisma/client.js';
 import {
   type CreateTodoData,
   type FindTodosQuery,
   type FindTodosResult,
   type TodoPersistencePort,
   type UpdateTodoData,
-} from '../../application/ports/TodoPersistencePort.js';
-import { type Todo } from '../../domain/models/Todo.js';
+} from '../../../application/ports/TodoPersistencePort.js';
+import { type Todo } from '../../../domain/models/Todo.js';
+import { TodoFromPrismaTodoBuilder } from '../builders/TodoFromPrismaTodoBuilder.js';
 
 @injectable()
 export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
   readonly #prismaClient: PrismaClient;
+  readonly #todoFromPrismaTodoBuilder: TodoFromPrismaTodoBuilder;
 
-  constructor(@inject(PrismaClient) prismaClient: PrismaClient) {
+  constructor(
+    @inject(PrismaClient) prismaClient: PrismaClient,
+    @inject(TodoFromPrismaTodoBuilder)
+    todoFromPrismaTodoBuilder: TodoFromPrismaTodoBuilder,
+  ) {
     this.#prismaClient = prismaClient;
+    this.#todoFromPrismaTodoBuilder = todoFromPrismaTodoBuilder;
   }
 
   public async create(data: CreateTodoData): Promise<Todo> {
@@ -31,7 +38,7 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
       },
     });
 
-    return this.#mapTodo(prismaTodo);
+    return this.#todoFromPrismaTodoBuilder.build(prismaTodo);
   }
 
   public async delete(id: string): Promise<Todo | undefined> {
@@ -46,7 +53,7 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
         },
       });
 
-      return this.#mapTodo(prismaTodo);
+      return this.#todoFromPrismaTodoBuilder.build(prismaTodo);
     } catch (error: unknown) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -72,7 +79,7 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
       return undefined;
     }
 
-    return this.#mapTodo(prismaTodo);
+    return this.#todoFromPrismaTodoBuilder.build(prismaTodo);
   }
 
   public async findMany(query: FindTodosQuery): Promise<FindTodosResult> {
@@ -98,7 +105,7 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
 
     return {
       items: prismaTodos.map((prismaTodo: PrismaTodo): Todo =>
-        this.#mapTodo(prismaTodo),
+        this.#todoFromPrismaTodoBuilder.build(prismaTodo),
       ),
       totalItems,
     };
@@ -135,7 +142,7 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
         },
       });
 
-      return this.#mapTodo(prismaTodo);
+      return this.#todoFromPrismaTodoBuilder.build(prismaTodo);
     } catch (error: unknown) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -146,18 +153,6 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
 
       throw error;
     }
-  }
-
-  #mapTodo(prismaTodo: PrismaTodo): Todo {
-    return {
-      completed: prismaTodo.completed,
-      created_at: prismaTodo.created_at,
-      deleted_at: prismaTodo.deleted_at,
-      description: prismaTodo.description,
-      id: prismaTodo.id,
-      title: prismaTodo.title,
-      updated_at: prismaTodo.updated_at,
-    };
   }
 }
 `;

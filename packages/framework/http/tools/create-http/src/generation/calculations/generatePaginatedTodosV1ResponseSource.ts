@@ -1,24 +1,24 @@
-export function generatePaginatedTodosResponseSource(): string {
+export function generatePaginatedTodosV1ResponseSource(): string {
   return `import {
   OasSchema,
   OasSchemaProperty,
   type ToSchemaFunction,
 } from '@inversifyjs/http-open-api/v3Dot2';
 
-import { Todo } from '../../domain/models/Todo.js';
+import { TodoV1 } from './TodoV1.js';
 
 @OasSchema(undefined, {
   customAttributes: {
     unevaluatedProperties: false,
   },
-  name: 'PaginatedTodosResponse',
+  name: 'PaginatedTodosV1Response',
 })
-export class PaginatedTodosResponse {
+export class PaginatedTodosV1Response {
   @OasSchemaProperty((toSchema: ToSchemaFunction) => ({
-    items: toSchema(Todo),
+    items: toSchema(TodoV1),
     type: 'array',
   }))
-  public items!: Todo[];
+  public items!: TodoV1[];
 
   @OasSchemaProperty({
     minimum: 1,

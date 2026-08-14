@@ -3,50 +3,41 @@ import path from 'node:path';
 
 import { generateStatusContainerModuleSource } from '../generation/calculations/generateStatusContainerModuleSource.js';
 import { generateStatusControllerSource } from '../generation/calculations/generateStatusControllerSource.js';
-import { generateStatusResponseSource } from '../generation/calculations/generateStatusResponseSource.js';
+import { generateStatusDomainModelSource } from '../generation/calculations/generateStatusDomainModelSource.js';
+import { generateStatusV1FromStatusBuilderSource } from '../generation/calculations/generateStatusV1FromStatusBuilderSource.js';
+import { generateStatusV1Source } from '../generation/calculations/generateStatusV1Source.js';
 
-const STATUS_CONTROLLER_RELATIVE_PATH: string =
-  'src/status/controllers/StatusController.ts';
-
-const STATUS_CONTAINER_MODULE_RELATIVE_PATH: string =
-  'src/status/containerModules/StatusContainerModule.ts';
-
-const STATUS_RESPONSE_RELATIVE_PATH: string =
-  'src/status/models/StatusResponse.ts';
+const STATUS_SOURCE_FILES: ReadonlyArray<readonly [string, () => string]> = [
+  ['src/status/domain/models/Status.ts', generateStatusDomainModelSource],
+  ['src/status/api/models/StatusV1.ts', generateStatusV1Source],
+  [
+    'src/status/api/builders/StatusV1FromStatusBuilder.ts',
+    generateStatusV1FromStatusBuilderSource,
+  ],
+  [
+    'src/status/api/controllers/StatusController.ts',
+    generateStatusControllerSource,
+  ],
+  [
+    'src/status/adapter/inversify/containerModules/StatusContainerModule.ts',
+    generateStatusContainerModuleSource,
+  ],
+];
 
 export async function writeStatusSourceFiles(
   projectPath: string,
 ): Promise<void> {
-  const statusControllerPath: string = path.join(
-    projectPath,
-    STATUS_CONTROLLER_RELATIVE_PATH,
-  );
-  const statusContainerModulePath: string = path.join(
-    projectPath,
-    STATUS_CONTAINER_MODULE_RELATIVE_PATH,
-  );
-  const statusResponsePath: string = path.join(
-    projectPath,
-    STATUS_RESPONSE_RELATIVE_PATH,
-  );
+  await Promise.all(
+    STATUS_SOURCE_FILES.map(
+      async ([relativePath, generateSource]: readonly [
+        string,
+        () => string,
+      ]): Promise<void> => {
+        const absolutePath: string = path.join(projectPath, relativePath);
 
-  await fs.mkdir(path.dirname(statusControllerPath), { recursive: true });
-  await fs.mkdir(path.dirname(statusContainerModulePath), { recursive: true });
-  await fs.mkdir(path.dirname(statusResponsePath), { recursive: true });
-
-  await fs.writeFile(
-    statusControllerPath,
-    generateStatusControllerSource(),
-    'utf8',
-  );
-  await fs.writeFile(
-    statusContainerModulePath,
-    generateStatusContainerModuleSource(),
-    'utf8',
-  );
-  await fs.writeFile(
-    statusResponsePath,
-    generateStatusResponseSource(),
-    'utf8',
+        await fs.mkdir(path.dirname(absolutePath), { recursive: true });
+        await fs.writeFile(absolutePath, generateSource(), 'utf8');
+      },
+    ),
   );
 }

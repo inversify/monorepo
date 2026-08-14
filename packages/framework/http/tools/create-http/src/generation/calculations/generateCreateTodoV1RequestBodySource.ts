@@ -1,13 +1,13 @@
-export function generateCreateTodoRequestBodySource(): string {
+export function generateCreateTodoV1RequestBodySource(): string {
   return `import { OasSchema, OasSchemaProperty } from '@inversifyjs/http-open-api/v3Dot2';
 
 @OasSchema(undefined, {
   customAttributes: {
     unevaluatedProperties: false,
   },
-  name: 'CreateTodoRequestBody',
+  name: 'CreateTodoV1RequestBody',
 })
-export class CreateTodoRequestBody {
+export class CreateTodoV1RequestBody {
   @OasSchemaProperty({
     type: 'string',
   })

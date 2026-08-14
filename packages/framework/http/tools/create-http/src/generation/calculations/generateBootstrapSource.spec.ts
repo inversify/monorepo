@@ -19,7 +19,7 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain("import type express from 'express';");
         expect(result).toContain("import { Container } from 'inversify';");
         expect(result).toContain(
-          "import { StatusContainerModule } from '../../status/containerModules/StatusContainerModule.js';",
+          "import { StatusContainerModule } from '../../status/adapter/inversify/containerModules/StatusContainerModule.js';",
         );
         expect(result).toContain(
           "import { PrismaContainerModule } from '@inversifyjs/prisma';",
@@ -31,10 +31,10 @@ describe(generateBootstrapSource, () => {
           "import { PrismaClient } from '../../generated/prisma/client.js';",
         );
         expect(result).toContain(
-          "import { TodoContainerModule } from '../../todo/adapter/inversify/TodoContainerModule.js';",
+          "import { TodoContainerModule } from '../../todo/adapter/inversify/containerModules/TodoContainerModule.js';",
         );
         expect(result).toContain(
-          "import { TodoPrismaContainerModule } from '../../todo/adapter/inversify/TodoPrismaContainerModule.js';",
+          "import { TodoPrismaContainerModule } from '../../todo/adapter/inversify/containerModules/TodoPrismaContainerModule.js';",
         );
         expect(result).toContain("from '@inversifyjs/config'");
         expect(result).toContain('ConfigContainerModule');

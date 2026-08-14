@@ -1,18 +1,22 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { TodoDomainModelSourceFixtures } from '../fixtures/TodoDomainModelSourceFixtures.js';
-import { generateTodoDomainModelSource } from './generateTodoDomainModelSource.js';
+import { TodoV1SourceFixtures } from '../fixtures/TodoV1SourceFixtures.js';
+import { generateTodoV1Source } from './generateTodoV1Source.js';
 
-describe(generateTodoDomainModelSource, () => {
+describe(generateTodoV1Source, () => {
   describe('when called', () => {
     let result: string;
 
     beforeAll(() => {
-      result = TodoDomainModelSourceFixtures.any;
+      result = TodoV1SourceFixtures.any;
     });
 
-    it('should generate a Todo class with camelCase fields', () => {
-      expect(result).toContain('export class Todo');
+    it('should generate a TodoV1 OpenAPI schema class with camelCase fields', () => {
+      expect(result).toContain(
+        "import { OasSchema, OasSchemaProperty } from '@inversifyjs/http-open-api/v3Dot2';",
+      );
+      expect(result).toContain('export class TodoV1');
+      expect(result).toContain("name: 'TodoV1'");
       expect(result).toContain('public id!: string;');
       expect(result).toContain('public title!: string;');
       expect(result).toContain('public description!: string;');
@@ -23,7 +27,6 @@ describe(generateTodoDomainModelSource, () => {
       expect(result).not.toContain('created_at');
       expect(result).not.toContain('deleted_at');
       expect(result).not.toContain('updated_at');
-      expect(result).not.toContain('@inversifyjs/http-open-api');
     });
   });
 });

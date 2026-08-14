@@ -20,7 +20,7 @@ Current recipe knobs:
 - **HTTP adapter**: `express` | `fastify` | `hono` | `uwebsockets`
 - **Database adapter**: `prisma+postgresql` (default; `prisma+sqlite` planned)
 
-Scaffolded apps include a `todo` resource (`GET /todos`, `GET /todos/:id`, `POST /todos`, `PATCH /todos/:id`, `DELETE /todos/:id`) wired via Ports + `@inversifyjs/prisma`, OpenAPI docs at `/docs` via `SwaggerUiProvider`, and request validation via `OpenApiValidationPipe` + `@ValidatedBody()` / `@ValidatedParams()` / `@ValidatedQuery()`.
+Scaffolded apps include a `todo` resource (`GET /v1/todos`, `GET /v1/todos/:id`, `POST /v1/todos`, `PATCH /v1/todos/:id`, `DELETE /v1/todos/:id`) wired via Ports + `@inversifyjs/prisma`, OpenAPI docs at `/docs` via `SwaggerUiProvider`, and request validation via `OpenApiValidationPipe` + `@ValidatedBody()` / `@ValidatedParams()` / `@ValidatedQuery()`.
 
 Planned extensions (same patterns): auth.
 
@@ -46,7 +46,8 @@ Recipe (CLI args / prompts)
           │     └─ yarn only; enableScripts: false, nodeLinker: node-modules
           │     └─ package.json dependenciesMeta from createYarnRcSourceModel(adapter, dbAdapter)
           ├─ writeLoggerSourceFiles() → logger factory identifier + container module
-          ├─ writeStatusSourceFiles() → status model, controller, container module
+          ├─ writeStatusSourceFiles() → status domain, v1 API, builder, controller, container module
+          ├─ writeCommonSourceFiles() → shared Builder interface
           ├─ writeTodoSourceFiles(createTodoControllerSourceModel(adapter))
           │     └─ ts-morph TodoController; uwebsockets adds @CaptureRequestValues
           ├─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter, dbAdapter))
@@ -143,19 +144,25 @@ Generated (not copied from templates):
 | `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter, dbAdapter))` |
 | `src/logger/models/loggerFactoryIdentifier.ts` | Factory service identifier |
 | `src/logger/containerModules/LoggerContainerModule.ts` | Binds `(context: string) => Logger` → `ConsoleLogger` |
-| `src/status/models/StatusResponse.ts` | `generateStatusResponseSource()` |
-| `src/status/controllers/StatusController.ts` | `generateStatusControllerSource()` — `GET /status` → `{ status: 'ok' }` |
-| `src/status/containerModules/StatusContainerModule.ts` | `generateStatusContainerModuleSource()` — binds controller singleton |
-| `src/todo/domain/models/Todo.ts` | Domain model |
+| `src/status/domain/models/Status.ts` | Domain model |
+| `src/status/api/models/StatusV1.ts` | `GET /v1/status` response |
+| `src/status/api/builders/StatusV1FromStatusBuilder.ts` | Maps domain `Status` to `StatusV1` |
+| `src/status/api/controllers/StatusController.ts` | `generateStatusControllerSource()` — `GET /v1/status` → `{ status: 'ok' }` |
+| `src/status/adapter/inversify/containerModules/StatusContainerModule.ts` | Binds controller and `StatusV1FromStatusBuilder` |
+| `src/common/domain/modules/Builder.ts` | Shared `Builder<TInput, TOutput>` mapping contract |
+| `src/todo/domain/models/Todo.ts` | Domain model (camelCase timestamps) |
 | `src/todo/application/ports/TodoPersistencePort.ts` | Persistence port |
 | `src/todo/application/models/todoPersistencePortIdentifier.ts` | Port service identifier |
-| `src/todo/api/models/CreateTodoRequestBody.ts` | `POST /todos` body |
-| `src/todo/api/models/PaginatedTodosResponse.ts` | `GET /todos` response |
-| `src/todo/api/models/UpdateTodoRequestBody.ts` | `PATCH /todos/:id` body |
-| `src/todo/api/controllers/TodoController.ts` | `generateTodoControllerSource(createTodoControllerSourceModel(adapter))` — `GET /todos`, `GET /todos/:id`, `POST /todos`, `PATCH /todos/:id`, `DELETE /todos/:id`; uwebsockets adds `@CaptureRequestValues` on POST and PATCH so `@ValidatedBody` can still read method/url/headers/(params) after the body is consumed, and `@SetHeader('Content-Type', 'application/json')` on JSON replies |
-| `src/todo/adapter/prisma/PrismaTodoPersistenceAdapter.ts` | Prisma port adapter (soft delete via `deleted_at`) |
-| `src/todo/adapter/inversify/TodoContainerModule.ts` | Binds controller |
-| `src/todo/adapter/inversify/TodoPrismaContainerModule.ts` | Binds port → Prisma adapter |
+| `src/todo/api/models/TodoV1.ts` | `GET/POST/PATCH /v1/todos` response |
+| `src/todo/api/models/CreateTodoV1RequestBody.ts` | `POST /v1/todos` body |
+| `src/todo/api/models/PaginatedTodosV1Response.ts` | `GET /v1/todos` response |
+| `src/todo/api/models/UpdateTodoV1RequestBody.ts` | `PATCH /v1/todos/:id` body |
+| `src/todo/api/builders/TodoV1FromTodoBuilder.ts` | Maps domain `Todo` to `TodoV1` |
+| `src/todo/api/controllers/TodoController.ts` | `generateTodoControllerSource(createTodoControllerSourceModel(adapter))` — `GET /v1/todos`, `GET /v1/todos/:id`, `POST /v1/todos`, `PATCH /v1/todos/:id`, `DELETE /v1/todos/:id`; uwebsockets adds `@CaptureRequestValues` on POST and PATCH so `@ValidatedBody` can still read method/url/headers/(params) after the body is consumed, and `@SetHeader('Content-Type', 'application/json')` on JSON replies |
+| `src/todo/adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts` | Prisma port adapter (soft delete via `deleted_at`) |
+| `src/todo/adapter/prisma/builders/TodoFromPrismaTodoBuilder.ts` | Maps Prisma `Todo` to domain `Todo` |
+| `src/todo/adapter/inversify/containerModules/TodoContainerModule.ts` | Binds controller and `TodoV1FromTodoBuilder` |
+| `src/todo/adapter/inversify/containerModules/TodoPrismaContainerModule.ts` | Binds port → Prisma adapter and `TodoFromPrismaTodoBuilder` |
 
 **Why `.template` for eslint/prettier configs?**  
 ESLint flat config loads the nearest `eslint.config.*`. If the template keeps a real `eslint.config.mjs` under `templates/`, lint-staged/ESLint will try to load it (and fail — `@eslint/js` is not installed there). Rename on copy.
@@ -221,20 +228,35 @@ To extend bootstrap later (more container modules, pipes, controllers):
 3. Keep printing in `generateBootstrapSource`
 4. Avoid forking full file templates per adapter combination
 
+### Status resource layout
+
+```
+src/status/
+  domain/models/Status.ts
+  api/controllers/StatusController.ts
+  api/builders/StatusV1FromStatusBuilder.ts
+  api/models/StatusV1.ts
+  adapter/inversify/containerModules/StatusContainerModule.ts
+```
+
 ### Todo resource layout (Ports + Adapters)
 
 ```
+src/common/domain/modules/Builder.ts
 src/todo/
   domain/models/Todo.ts
   application/ports/TodoPersistencePort.ts
   application/models/todoPersistencePortIdentifier.ts
   api/controllers/TodoController.ts
-  api/models/CreateTodoRequestBody.ts
-  api/models/PaginatedTodosResponse.ts
-  api/models/UpdateTodoRequestBody.ts
-  adapter/prisma/PrismaTodoPersistenceAdapter.ts
-  adapter/inversify/TodoContainerModule.ts
-  adapter/inversify/TodoPrismaContainerModule.ts
+  api/builders/TodoV1FromTodoBuilder.ts
+  api/models/TodoV1.ts
+  api/models/CreateTodoV1RequestBody.ts
+  api/models/PaginatedTodosV1Response.ts
+  api/models/UpdateTodoV1RequestBody.ts
+  adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts
+  adapter/prisma/builders/TodoFromPrismaTodoBuilder.ts
+  adapter/inversify/containerModules/TodoContainerModule.ts
+  adapter/inversify/containerModules/TodoPrismaContainerModule.ts
 ```
 
 `TodoPersistencePort` keeps HTTP and application code independent of Prisma so future DB adapters can bind a different implementation.

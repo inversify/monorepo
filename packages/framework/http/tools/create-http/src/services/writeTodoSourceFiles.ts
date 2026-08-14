@@ -1,16 +1,19 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { generateCreateTodoRequestBodySource } from '../generation/calculations/generateCreateTodoRequestBodySource.js';
-import { generatePaginatedTodosResponseSource } from '../generation/calculations/generatePaginatedTodosResponseSource.js';
+import { generateCreateTodoV1RequestBodySource } from '../generation/calculations/generateCreateTodoV1RequestBodySource.js';
+import { generatePaginatedTodosV1ResponseSource } from '../generation/calculations/generatePaginatedTodosV1ResponseSource.js';
 import { generatePrismaTodoPersistenceAdapterSource } from '../generation/calculations/generatePrismaTodoPersistenceAdapterSource.js';
 import { generateTodoContainerModuleSource } from '../generation/calculations/generateTodoContainerModuleSource.js';
 import { generateTodoControllerSource } from '../generation/calculations/generateTodoControllerSource.js';
 import { generateTodoDomainModelSource } from '../generation/calculations/generateTodoDomainModelSource.js';
+import { generateTodoFromPrismaTodoBuilderSource } from '../generation/calculations/generateTodoFromPrismaTodoBuilderSource.js';
 import { generateTodoPersistencePortIdentifierSource } from '../generation/calculations/generateTodoPersistencePortIdentifierSource.js';
 import { generateTodoPersistencePortSource } from '../generation/calculations/generateTodoPersistencePortSource.js';
 import { generateTodoPrismaContainerModuleSource } from '../generation/calculations/generateTodoPrismaContainerModuleSource.js';
-import { generateUpdateTodoRequestBodySource } from '../generation/calculations/generateUpdateTodoRequestBodySource.js';
+import { generateTodoV1FromTodoBuilderSource } from '../generation/calculations/generateTodoV1FromTodoBuilderSource.js';
+import { generateTodoV1Source } from '../generation/calculations/generateTodoV1Source.js';
+import { generateUpdateTodoV1RequestBodySource } from '../generation/calculations/generateUpdateTodoV1RequestBodySource.js';
 import { type TodoControllerSourceModel } from '../generation/models/TodoControllerSourceModel.js';
 
 const TODO_SOURCE_FILES: ReadonlyArray<readonly [string, () => string]> = [
@@ -23,28 +26,37 @@ const TODO_SOURCE_FILES: ReadonlyArray<readonly [string, () => string]> = [
     'src/todo/application/models/todoPersistencePortIdentifier.ts',
     generateTodoPersistencePortIdentifierSource,
   ],
+  ['src/todo/api/models/TodoV1.ts', generateTodoV1Source],
   [
-    'src/todo/api/models/CreateTodoRequestBody.ts',
-    generateCreateTodoRequestBodySource,
+    'src/todo/api/models/CreateTodoV1RequestBody.ts',
+    generateCreateTodoV1RequestBodySource,
   ],
   [
-    'src/todo/api/models/PaginatedTodosResponse.ts',
-    generatePaginatedTodosResponseSource,
+    'src/todo/api/models/PaginatedTodosV1Response.ts',
+    generatePaginatedTodosV1ResponseSource,
   ],
   [
-    'src/todo/api/models/UpdateTodoRequestBody.ts',
-    generateUpdateTodoRequestBodySource,
+    'src/todo/api/models/UpdateTodoV1RequestBody.ts',
+    generateUpdateTodoV1RequestBodySource,
   ],
   [
-    'src/todo/adapter/prisma/PrismaTodoPersistenceAdapter.ts',
+    'src/todo/api/builders/TodoV1FromTodoBuilder.ts',
+    generateTodoV1FromTodoBuilderSource,
+  ],
+  [
+    'src/todo/adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts',
     generatePrismaTodoPersistenceAdapterSource,
   ],
   [
-    'src/todo/adapter/inversify/TodoContainerModule.ts',
+    'src/todo/adapter/prisma/builders/TodoFromPrismaTodoBuilder.ts',
+    generateTodoFromPrismaTodoBuilderSource,
+  ],
+  [
+    'src/todo/adapter/inversify/containerModules/TodoContainerModule.ts',
     generateTodoContainerModuleSource,
   ],
   [
-    'src/todo/adapter/inversify/TodoPrismaContainerModule.ts',
+    'src/todo/adapter/inversify/containerModules/TodoPrismaContainerModule.ts',
     generateTodoPrismaContainerModuleSource,
   ],
 ];
