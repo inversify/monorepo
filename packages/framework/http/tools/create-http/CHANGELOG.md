@@ -1,5 +1,11 @@
 # @inversifyjs/create-http
 
+## 0.5.0
+
+### Minor Changes
+
+Version the scaffolded todo and status APIs under `/v1`, use camelCase domain timestamps, return versioned API models via `Builder` mappings, and nest adapter files under role folders (`adapters`, `builders`, `containerModules`).
+
 ## 0.4.1
 
 ### Patch Changes
