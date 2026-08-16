@@ -9,7 +9,13 @@ export interface RouteParams<TRequest, TResponse, TNextFunction, TResult> {
     TNextFunction,
     TResult | undefined
   >[];
+  handleError: (
+    request: TRequest,
+    response: TResponse,
+    error: unknown,
+  ) => Promise<TResult>;
   handler: RequestHandler<TRequest, TResponse, TNextFunction, TResult>;
+  methodKey: string | symbol;
   path: string;
   postHandlerMiddlewareList: MiddlewareHandler<
     TRequest,

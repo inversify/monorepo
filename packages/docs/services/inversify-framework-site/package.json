@@ -9,6 +9,8 @@
     "@docusaurus/faster": "3.10.2",
     "@docusaurus/plugin-content-docs": "3.10.2",
     "@docusaurus/preset-classic": "3.10.2",
+    "@inversifyjs/config-code-examples": "workspace:*",
+    "@inversifyjs/db-code-examples": "workspace:*",
     "@inversifyjs/http-code-examples": "workspace:*",
     "@inversifyjs/graphql-code-examples": "workspace:*",
     "@inversifyjs/http-open-api-code-examples": "workspace:*",
@@ -25,12 +27,12 @@
     "@docusaurus/types": "3.10.2",
     "@eslint/js": "10.0.1",
     "@types/react": "19.2.18",
-    "eslint": "10.8.0",
+    "eslint": "10.8.1",
     "eslint-plugin-prettier": "5.5.6",
     "eslint-plugin-simple-import-sort": "14.0.0",
     "prettier": "3.9.6",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.65.0"
+    "typescript-eslint": "8.66.0"
   },
   "homepage": "https://inversify.io",
   "keywords": [
@@ -64,7 +66,7 @@
     "start": "docusaurus start",
     "build": "pnpm run typecheck && docusaurus build",
     "format": "prettier --write ./src ./*.ts",
-    "lint": "eslint ./src ./docusaurus.config.ts ./sidebars.ts",
+    "lint": "eslint ./src ./docusaurus.config.ts ./sidebars.ts ./sidebarsDb.ts",
     "serve": "docusaurus serve",
     "typecheck": "tsc"
   }

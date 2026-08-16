@@ -499,6 +499,11 @@ export abstract class InversifyHttpAdapter<
   }
 
   #buildHandler(
+    handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult>,
     serviceIdentifier: ServiceIdentifier,
     targetClass: NewableFunction,
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
@@ -557,14 +562,6 @@ export abstract class InversifyHttpAdapter<
         );
     }
 
-    const handleError: (
-      request: TRequest,
-      response: TResponse,
-      error: unknown,
-    ) => Promise<TResult> = this.#buildHandleError(
-      routerExplorerControllerMethodMetadata,
-    );
-
     return buildInterceptedHandler(
       [
         ...routerExplorerControllerMethodMetadata.interceptorList,
@@ -600,27 +597,42 @@ export abstract class InversifyHttpAdapter<
           TResult
         >,
       ): RouteParams<TRequest, TResponse, TNextFunction, TResult> => {
+        const handleError: (
+          request: TRequest,
+          response: TResponse,
+          error: unknown,
+        ) => Promise<TResult> = this.#buildHandleError(
+          routerExplorerControllerMethodMetadata,
+        );
+
         return {
           guardList: [
             ...this.#getGuardHandlerFromMetadata(
+              handleError,
               this.#globalGuardList,
               routerExplorerControllerMethodMetadata,
             ),
             ...this.#getGuardHandlerFromMetadata(
+              handleError,
               routerExplorerControllerMethodMetadata.guardList,
               routerExplorerControllerMethodMetadata,
             ),
           ],
+          handleError,
           handler: this.#buildHandler(
+            handleError,
             routerExplorerControllerMetadata.serviceIdentifier,
             routerExplorerControllerMetadata.target,
             routerExplorerControllerMethodMetadata,
           ),
+          methodKey: routerExplorerControllerMethodMetadata.methodKey,
           path: routerExplorerControllerMethodMetadata.path,
           postHandlerMiddlewareList: this.#buildRoutePostMiddlewareList(
+            handleError,
             routerExplorerControllerMethodMetadata,
           ),
           preHandlerMiddlewareList: this.#buildRoutePreMiddlewareList(
+            handleError,
             routerExplorerControllerMethodMetadata,
           ),
           requestMethodType:
@@ -633,6 +645,11 @@ export abstract class InversifyHttpAdapter<
   }
 
   #buildRoutePostMiddlewareList(
+    handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult>,
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
       TRequest,
       TResponse,
@@ -641,17 +658,22 @@ export abstract class InversifyHttpAdapter<
   ): MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>[] {
     return [
       ...this.#getMiddlewareHandlerFromMetadata(
-        routerExplorerControllerMethodMetadata,
+        handleError,
         routerExplorerControllerMethodMetadata.postHandlerMiddlewareList,
       ),
       ...this.#getMiddlewareHandlerFromMetadata(
-        routerExplorerControllerMethodMetadata,
+        handleError,
         this.#postHandlerMiddlewareList,
       ),
     ];
   }
 
   #buildRoutePreMiddlewareList(
+    handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult>,
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
       TRequest,
       TResponse,
@@ -677,7 +699,7 @@ export abstract class InversifyHttpAdapter<
 
     preHandlerMiddlewareList.push(
       ...this.#getMiddlewareHandlerFromMetadata(
-        routerExplorerControllerMethodMetadata,
+        handleError,
         routerExplorerControllerMethodMetadata.preHandlerMiddlewareList,
       ),
     );
@@ -921,23 +943,15 @@ export abstract class InversifyHttpAdapter<
   }
 
   #getMiddlewareHandlerFromMetadata(
-    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
-      TRequest,
-      TResponse,
-      TResult
-    >,
+    handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult>,
     middlewareServiceIdentifierList: ServiceIdentifier<
       Middleware<TRequest, TResponse, TNextFunction, TResult>
     >[],
   ): MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>[] {
-    const handleError: (
-      request: TRequest,
-      response: TResponse,
-      error: unknown,
-    ) => Promise<TResult> = this.#buildHandleError(
-      routerExplorerControllerMethodMetadata,
-    );
-
     return middlewareServiceIdentifierList.map(
       (
         middlewareServiceIdentifier: ServiceIdentifier<
@@ -967,6 +981,11 @@ export abstract class InversifyHttpAdapter<
   }
 
   #getGuardHandlerFromMetadata(
+    handleError: (
+      request: TRequest,
+      response: TResponse,
+      error: unknown,
+    ) => Promise<TResult>,
     guardServiceIdentifierList: ServiceIdentifier<Guard<TRequest>>[],
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
       TRequest,
@@ -979,14 +998,6 @@ export abstract class InversifyHttpAdapter<
     TNextFunction,
     TResult | undefined
   >[] {
-    const handleError: (
-      request: TRequest,
-      response: TResponse,
-      error: unknown,
-    ) => Promise<TResult> = this.#buildHandleError(
-      routerExplorerControllerMethodMetadata,
-    );
-
     return guardServiceIdentifierList.map(
       (guardServiceIdentifier: ServiceIdentifier<Guard<TRequest>>) => {
         return async (
@@ -1068,6 +1079,7 @@ export abstract class InversifyHttpAdapter<
         routeParamsList: this.#buildRouteParamHandlerList(
           routerExplorerControllerMetadata,
         ),
+        target: routerExplorerControllerMetadata.target,
       });
 
       this.#printController(

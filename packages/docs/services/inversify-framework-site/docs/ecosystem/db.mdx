@@ -1,0 +1,23 @@
+---
+sidebar_position: 7
+title: DB
+---
+import gettingStartedSource from '@inversifyjs/db-code-examples/generated/examples/v1/gettingStarted.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import DocumentationButton from '../../src/components/DocumentationButton';
+
+`@inversifyjs/prisma` integrates Prisma 7 with InversifyJS. Bind a driver-adapter-backed `PrismaClient` through `PrismaContainerModule` and inject it into your application services.
+
+:::note[PostgreSQL is just an example]
+
+The snippet below uses PostgreSQL with `@prisma/adapter-pg`, but any Prisma 7 driver adapter works the same way.
+
+:::
+
+### Binding a Prisma client
+
+<CodeBlock language="ts">{gettingStartedSource}</CodeBlock>
+
+<DocumentationButton href="/db/introduction/getting-started/" target="_blank">
+  <span>View Full Documentation</span>
+</DocumentationButton>

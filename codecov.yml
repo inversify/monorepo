@@ -14,12 +14,24 @@ coverage:
       '@inversifyjs/common':
         flags:
           - '@inversifyjs/common'
+      '@inversifyjs/config':
+        flags:
+          - '@inversifyjs/config'
+      '@inversifyjs/config-dotenv':
+        flags:
+          - '@inversifyjs/config-dotenv'
+      '@inversifyjs/config-yaml':
+        flags:
+          - '@inversifyjs/config-yaml'
       '@inversifyjs/container':
         flags:
           - '@inversifyjs/container'
       '@inversifyjs/core':
         flags:
           - '@inversifyjs/core'
+      '@inversifyjs/create-http':
+        flags:
+          - '@inversifyjs/create-http'
       '@inversifyjs/eslint-plugin-require-extensions':
         flags:
           - '@inversifyjs/eslint-plugin-require-extensions'
@@ -93,12 +105,24 @@ flags:
   '@inversifyjs/common':
     paths:
       - packages/container/libraries/common/
+  '@inversifyjs/config':
+    paths:
+      - packages/framework/config
+  '@inversifyjs/config-dotenv':
+    paths:
+      - packages/framework/config-dotenv
+  '@inversifyjs/config-yaml':
+    paths:
+      - packages/framework/config-yaml
   '@inversifyjs/container':
     paths:
       - packages/container/libraries/container/
   '@inversifyjs/core':
     paths:
       - packages/container/libraries/core/
+  '@inversifyjs/create-http':
+    paths:
+      - packages/framework/http/tools/create-http
   '@inversifyjs/eslint-plugin-require-extensions':
     paths:
       - packages/foundation/tools/eslint-plugin-require-extensions

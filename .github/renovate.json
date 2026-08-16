@@ -41,9 +41,35 @@
       "depNameTemplate": "uNetworking/uWebSockets.js",
       "datasourceTemplate": "github-tags",
       "versioningTemplate": "semver-coerced"
+    },
+    {
+      "customType": "jsonata",
+      "description": "Update npm and pnpm versions used by @inversifyjs/create-http scaffolds",
+      "fileFormat": "json",
+      "managerFilePatterns": [
+        "/(^|/)packages/framework/http/tools/create-http/templates/base/package-managers\\.json$/"
+      ],
+      "matchStrings": [
+        "$each($, function($v, $k) { {\"depName\": $k, \"currentValue\": $v}})"
+      ],
+      "datasourceTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "description": "Update Yarn Berry version used by @inversifyjs/create-http scaffolds from yarnpkg/berry GitHub releases",
+      "managerFilePatterns": [
+        "/(^|/)packages/framework/http/tools/create-http/templates/base/yarn-berry\\.json$/"
+      ],
+      "matchStrings": [
+        "\"version\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "yarnpkg/berry",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^@yarnpkg/cli/(?<version>.*)$",
+      "versioningTemplate": "semver"
     }
   ],
-  "constraints": { "pnpm": "11.18.0" },
+  "constraints": { "pnpm": "11.21.0" },
   "dependencyDashboard": false,
   "extends": [
     ":disableRateLimiting",

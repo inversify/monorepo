@@ -1,5 +1,20 @@
 # @inversifyjs/http-fastify
 
+## 5.5.1
+
+### Patch Changes
+
+- Updated @fastify/formbody to v9
+- Updated dependencies
+  - @inversifyjs/http-core@5.5.1
+
+## 5.5.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.5.0
+
 ## 5.4.8
 
 ### Patch Changes

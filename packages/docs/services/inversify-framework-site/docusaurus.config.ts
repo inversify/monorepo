@@ -42,6 +42,24 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'config',
+        path: 'config-docs',
+        routeBasePath: 'config',
+        sidebarPath: './sidebarsConfig.ts',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'db',
+        path: 'db-docs',
+        routeBasePath: 'db',
+        sidebarPath: './sidebarsDb.ts',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         id: 'graphql',
         path: 'graphql-docs',
         routeBasePath: 'graphql',
@@ -138,6 +156,14 @@ const config: Config = {
               to: '/blog',
             },
             {
+              label: 'Config Docs',
+              to: '/config/introduction/getting-started',
+            },
+            {
+              label: 'DB Docs',
+              to: '/db/introduction/getting-started',
+            },
+            {
               label: 'HTTP Docs',
               to: '/docs/introduction/getting-started',
             },
@@ -168,6 +194,14 @@ const config: Config = {
         {
           items: [
             {
+              label: 'Config Docs',
+              to: '/config/introduction/getting-started',
+            },
+            {
+              label: 'DB Docs',
+              to: '/db/introduction/getting-started',
+            },
+            {
               label: 'HTTP Docs',
               to: '/docs/introduction/getting-started',
             },
@@ -194,6 +228,18 @@ const config: Config = {
         { label: 'Blog', position: 'left', to: '/blog' },
         {
           className: 'navbar-version-dropdown-main',
+          position: 'right',
+          type: 'docsVersionDropdown',
+        },
+        {
+          className: 'navbar-version-dropdown-config',
+          docsPluginId: 'config',
+          position: 'right',
+          type: 'docsVersionDropdown',
+        },
+        {
+          className: 'navbar-version-dropdown-db',
+          docsPluginId: 'db',
           position: 'right',
           type: 'docsVersionDropdown',
         },

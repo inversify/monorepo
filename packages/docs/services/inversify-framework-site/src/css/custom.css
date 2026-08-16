@@ -73,15 +73,28 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
+.navbar__item.navbar__link.navbar-version-dropdown-config:not(#\#):not(#\#),
 .navbar__item.navbar__link.navbar-version-dropdown-logger:not(#\#):not(#\#),
 .navbar__item.navbar__link.navbar-version-dropdown-main:not(#\#):not(#\#),
 .navbar__item.navbar__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
 .navbar__item.navbar__link.navbar-version-dropdown-validation:not(#\#):not(#\#),
+.menu__link.navbar-version-dropdown-config:not(#\#):not(#\#),
 .menu__link.navbar-version-dropdown-logger:not(#\#):not(#\#),
 .menu__link.navbar-version-dropdown-main:not(#\#):not(#\#),
 .menu__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
 .menu__link.navbar-version-dropdown-validation:not(#\#):not(#\#) {
   display: none;
+}
+
+[data-path*='/config/']
+  .navbar__item.navbar__link.navbar-version-dropdown-config:not(#\#):not(#\#),
+[data-path*='/config']
+  .navbar__item.navbar__link.navbar-version-dropdown-config:not(#\#):not(#\#),
+[data-path*='/config/']
+  .menu__link.navbar-version-dropdown-config:not(#\#):not(#\#),
+[data-path*='/config']
+  .menu__link.navbar-version-dropdown-config:not(#\#):not(#\#) {
+  display: inline-block;
 }
 
 [data-path*='/logger/']

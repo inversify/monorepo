@@ -3,6 +3,7 @@ import { type URLSearchParamsIterator } from 'node:url';
 
 import {
   buildNormalizedPath,
+  type CustomParameterDecoratorHandlerOptions,
   handleMiddlewareList,
   type HttpStatusCode,
   InversifyHttpAdapter,
@@ -24,8 +25,11 @@ import {
 } from 'uWebSockets.js';
 
 import { pipeStreamOverResponse } from '../actions/pipeStreamOverResponse.js';
+import { getClassMethodRequestTransformerList } from '../calculations/getClassMethodRequestTransformerList.js';
+import { getClassRequestTransformerList } from '../calculations/getClassRequestTransformerList.js';
 import { abortedSymbol } from '../data/abortedSymbol.js';
 import { type CustomHttpResponse } from '../models/CustomHttpResponse.js';
+import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { type UwebSocketsHttpAdapterOptions } from '../models/UwebSocketsHttpAdapterOptions.js';
 
 const ADAPTER_ID: unique symbol = Symbol.for(
@@ -49,6 +53,11 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     void
   >[] = [];
 
+  readonly #requestTransformerOptions: CustomParameterDecoratorHandlerOptions<
+    HttpRequest,
+    HttpResponse
+  >;
+
   constructor(
     container: Container,
     httpAdapterOptions?: UwebSocketsHttpAdapterOptions,
@@ -63,6 +72,18 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
       [RequestMethodParameterType.Body],
       customApp,
     );
+
+    this.#requestTransformerOptions = {
+      getBody: this._getBody.bind(this),
+      getCookies: this._getCookies.bind(this),
+      getHeaders: this._getHeaders.bind(this),
+      getMethod: this._getMethod.bind(this),
+      getParams: this._getParams.bind(this),
+      getQuery: this._getQuery.bind(this),
+      getUrl: this._getUrl.bind(this),
+      setHeader: this._setHeader.bind(this),
+      setStatus: this._setStatus.bind(this),
+    };
   }
 
   protected _buildApp(customApp: TemplatedApp | undefined): TemplatedApp {
@@ -95,16 +116,56 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
         response: HttpResponse,
       ) => Promise<void> = handleMiddlewareList(orderedHandlers);
 
-      this.#getAppRouteHandler(routeParams.requestMethodType)(
-        routePath,
-        async (res: HttpResponse, req: HttpRequest) => {
-          res.onAborted(() => {
-            (res as CustomHttpResponse)[abortedSymbol] = true;
-          });
+      const requestTransformerList: RequestTransformer<
+        HttpRequest,
+        HttpResponse
+      >[] = [
+        ...getClassRequestTransformerList(routerParams.target),
+        ...getClassMethodRequestTransformerList(
+          routerParams.target,
+          routeParams.methodKey,
+        ),
+      ];
 
-          await handleMiddlewares(req, res);
-        },
-      );
+      if (requestTransformerList.length === 0) {
+        this.#getAppRouteHandler(routeParams.requestMethodType)(
+          routePath,
+          async (res: HttpResponse, req: HttpRequest) => {
+            res.onAborted(() => {
+              (res as CustomHttpResponse)[abortedSymbol] = true;
+            });
+
+            await handleMiddlewares(req, res);
+          },
+        );
+      } else {
+        this.#getAppRouteHandler(routeParams.requestMethodType)(
+          routePath,
+          async (res: HttpResponse, req: HttpRequest) => {
+            res.onAborted(() => {
+              (res as CustomHttpResponse)[abortedSymbol] = true;
+            });
+
+            let request: HttpRequest = req;
+
+            try {
+              for (const requestTransformer of requestTransformerList) {
+                request = await requestTransformer(
+                  request,
+                  res,
+                  this.#requestTransformerOptions,
+                );
+              }
+            } catch (error: unknown) {
+              await routeParams.handleError(request, res, error);
+
+              return;
+            }
+
+            await handleMiddlewares(request, res);
+          },
+        );
+      }
     }
 
     if (this.#globalPreHandlerMiddlewareList.length > 0) {

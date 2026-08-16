@@ -80,6 +80,15 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/docs/tools/inversify-db-code-examples": {
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
+      ignoreDependencies: [
+        ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        // Required by `prisma generate`; not imported from application source.
+        "@prisma/client",
+      ],
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/docs/tools/inversify-graphql-code-examples": {
       entry: [
         "src/examples/**/*.{mts,ts}",
@@ -94,6 +103,11 @@ export default {
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-http-open-api-code-examples": {
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      project: defaultWorkspaceProjectConfig.project,
+    },
+    "packages/docs/tools/inversify-config-code-examples": {
       entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
@@ -153,6 +167,14 @@ export default {
         "k6",
         "ts-loader",
         "tslib",
+      ],
+      project: defaultWorkspaceProjectConfig.project,
+    },
+    "packages/framework/http/tools/create-http": {
+      entry: [
+        "bin/create-inversify-http.js",
+        "src/cli/runCreateHttp.entrypoint.ts",
+        "src/index.ts",
       ],
       project: defaultWorkspaceProjectConfig.project,
     },

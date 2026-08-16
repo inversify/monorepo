@@ -1,0 +1,88 @@
+import { type CustomParameterDecoratorHandlerOptions } from '@inversifyjs/http-core';
+import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
+
+import { type CapturedRequestValues } from '../models/CapturedRequestValues.js';
+import { type CaptureRequestValuesOptions } from '../models/CaptureRequestValuesOptions.js';
+import { type RequestTransformer } from '../models/RequestTransformer.js';
+import { buildCapturedRequest } from './buildCapturedRequest.js';
+import { resolveCaptureRequestValuesOptions } from './resolveCaptureRequestValuesOptions.js';
+
+function captureHeaders(request: HttpRequest): Record<string, string> {
+  const headers: Record<string, string> = {};
+
+  request.forEach((key: string, value: string): void => {
+    headers[key] = value;
+  });
+
+  return headers;
+}
+
+function captureParams(
+  request: HttpRequest,
+  paramNameList: string[],
+): Record<string, string | undefined> {
+  const params: Record<string, string | undefined> = {};
+
+  for (const paramName of paramNameList) {
+    params[paramName] = request.getParameter(paramName);
+  }
+
+  return params;
+}
+
+export function buildCaptureRequestValuesTransformer(
+  options: CaptureRequestValuesOptions,
+): RequestTransformer<HttpRequest, HttpResponse> {
+  const resolvedOptions: CaptureRequestValuesOptions =
+    resolveCaptureRequestValuesOptions(options);
+  const captureHeadersValues: boolean = resolvedOptions.headers === true;
+  const captureMethod: boolean = resolvedOptions.method === true;
+  const captureUrl: boolean = resolvedOptions.url === true;
+  const captureQuery: boolean = resolvedOptions.query === true;
+  const paramNameList: string[] | undefined = Array.isArray(
+    resolvedOptions.params,
+  )
+    ? resolvedOptions.params
+    : undefined;
+
+  return (
+    request: HttpRequest,
+    _response: HttpResponse,
+    _options: CustomParameterDecoratorHandlerOptions<HttpRequest, HttpResponse>,
+  ): HttpRequest => {
+    const capturedRequestValues: CapturedRequestValues = {
+      caseSensitiveMethod: undefined,
+      headers: undefined,
+      method: undefined,
+      paramNameList: undefined,
+      params: undefined,
+      query: undefined,
+      url: undefined,
+    };
+
+    if (captureHeadersValues) {
+      capturedRequestValues.headers = captureHeaders(request);
+    }
+
+    if (captureMethod) {
+      capturedRequestValues.caseSensitiveMethod =
+        request.getCaseSensitiveMethod();
+      capturedRequestValues.method = request.getMethod();
+    }
+
+    if (captureQuery) {
+      capturedRequestValues.query = request.getQuery();
+    }
+
+    if (captureUrl) {
+      capturedRequestValues.url = request.getUrl();
+    }
+
+    if (paramNameList !== undefined) {
+      capturedRequestValues.paramNameList = paramNameList;
+      capturedRequestValues.params = captureParams(request, paramNameList);
+    }
+
+    return buildCapturedRequest(request, capturedRequestValues);
+  };
+}
