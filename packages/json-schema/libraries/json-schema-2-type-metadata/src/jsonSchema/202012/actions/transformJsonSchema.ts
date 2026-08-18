@@ -11,7 +11,22 @@ import {
   type JsonSchemaType,
 } from '@inversifyjs/json-schema-types/2020-12';
 
+import { type DynamicAnchorBindings } from '../models/DynamicAnchorBindings.js';
+import { type JsonSchemaResource } from '../models/JsonSchemaResource.js';
+import { type ParsedJsonSchemaReference } from '../models/ParsedJsonSchemaReference.js';
 import { type TransformJsonSchemaContext } from '../models/TransformJsonSchemaContext.js';
+import { type TransformJsonSchemaScope } from '../models/TransformJsonSchemaScope.js';
+import { buildJsonSchemaResource } from './buildJsonSchemaResource.js';
+import { enterJsonSchemaScope } from './enterJsonSchemaScope.js';
+import { extendDynamicAnchorBindings } from './extendDynamicAnchorBindings.js';
+import { parseJsonSchemaReference } from './parseJsonSchemaReference.js';
+import { resolveDynamicAnchorSchema } from './resolveDynamicAnchorSchema.js';
+import { resolveJsonSchemaReference } from './resolveJsonSchemaReference.js';
+
+const EMPTY_DYNAMIC_ANCHOR_BINDINGS: DynamicAnchorBindings = {
+  key: '',
+  nameToResourceMap: new Map(),
+};
 
 export function transformJsonSchema(
   schema: JsonRootSchema | JsonSchema,
@@ -20,8 +35,34 @@ export function transformJsonSchema(
   if (typeof schema === 'boolean') {
     return transformBooleanJsonSchema(schema);
   } else {
-    return transformObjectJsonSchema(schema, context);
+    return transformObjectJsonSchema(
+      schema,
+      context,
+      buildEntryScope(schema, context),
+    );
   }
+}
+
+function buildEntryScope(
+  schema: JsonSchemaObject,
+  context: TransformJsonSchemaContext,
+): TransformJsonSchemaScope {
+  /*
+   * The outermost dynamic scope is the schema transformation begins at, even
+   * when it does not root a resource. A schema the context never indexed roots
+   * an anchorless one of its own.
+   */
+  const resource: JsonSchemaResource =
+    context.resourceMap.get(schema) ??
+    registerJsonSchemaResource(context, schema);
+
+  return {
+    dynamicAnchorBindings: extendDynamicAnchorBindings(
+      EMPTY_DYNAMIC_ANCHOR_BINDINGS,
+      resource,
+    ),
+    resource,
+  };
 }
 
 function buildTypeMetadata(
@@ -69,31 +110,35 @@ function buildTypeMetadata(
 function handleApplicatorVocabularyProperties(
   schema: JsonSchemaObject,
   context: TransformJsonSchemaContext,
+  scope: TransformJsonSchemaScope,
   typeConstraints: TypeMetadata[],
 ): void {
-  handleJsonSchemaItems(schema, context, typeConstraints);
-  handleJsonSchemaProperties(schema, context, typeConstraints);
-  handleJsonSchemaSubschemas(schema, context, typeConstraints);
+  handleJsonSchemaItems(schema, context, scope, typeConstraints);
+  handleJsonSchemaProperties(schema, context, scope, typeConstraints);
+  handleJsonSchemaSubschemas(schema, context, scope, typeConstraints);
 }
 
 function handleCoreVocabularyProperties(
   schema: JsonSchemaObject,
   context: TransformJsonSchemaContext,
+  scope: TransformJsonSchemaScope,
   typeConstraints: TypeMetadata[],
 ): void {
-  handleJsonSchemaRef(schema, context, typeConstraints);
+  handleJsonSchemaRef(schema, context, scope, typeConstraints);
+  handleJsonSchemaDynamicRef(schema, context, scope, typeConstraints);
 }
 
 function handleJsonSchemaItems(
   schema: JsonSchemaObject,
   context: TransformJsonSchemaContext,
+  scope: TransformJsonSchemaScope,
   typeConstraints: TypeMetadata[],
 ): void {
   if (schema.items !== undefined) {
     typeConstraints.push({
       children: [
         {
-          child: transformJsonSchema(schema.items, context),
+          child: transformJsonSchemaInScope(schema.items, context, scope),
           kind: TypeMetadataKind.arrayType,
         },
         {
@@ -118,11 +163,16 @@ function handleJsonSchemaItems(
 function handleJsonSchemaAdditionalProperties(
   schema: JsonSchemaObject,
   context: TransformJsonSchemaContext,
+  scope: TransformJsonSchemaScope,
   typeConstraints: TypeMetadata[],
 ): void {
   if (schema.additionalProperties !== undefined) {
     typeConstraints.push({
-      child: transformJsonSchema(schema.additionalProperties, context),
+      child: transformJsonSchemaInScope(
+        schema.additionalProperties,
+        context,
+        scope,
+      ),
       kind: TypeMetadataKind.stringIndexSignatureType,
     });
   }
@@ -131,9 +181,10 @@ function handleJsonSchemaAdditionalProperties(
 function handleJsonSchemaProperties(
   schema: JsonSchemaObject,
   context: TransformJsonSchemaContext,
+  scope: TransformJsonSchemaScope,
   typeConstraints: TypeMetadata[],
 ): void {
-  handleJsonSchemaAdditionalProperties(schema, context, typeConstraints);
+  handleJsonSchemaAdditionalProperties(schema, context, scope, typeConstraints);
 
   if (schema.properties !== undefined) {
     for (const [propertyName, propertySchema] of Object.entries(
@@ -142,7 +193,7 @@ function handleJsonSchemaProperties(
       const isOptional: boolean = isPropertyOptional(schema, propertyName);
 
       typeConstraints.push({
-        child: transformJsonSchema(propertySchema, context),
+        child: transformJsonSchemaInScope(propertySchema, context, scope),
         isOptional,
         kind: TypeMetadataKind.propertyType,
         property: propertyName,
@@ -151,32 +202,72 @@ function handleJsonSchemaProperties(
   }
 }
 
+function handleJsonSchemaDynamicRef(
+  schema: JsonSchemaObject,
+  context: TransformJsonSchemaContext,
+  scope: TransformJsonSchemaScope,
+  typeConstraints: TypeMetadata[],
+): void {
+  if (schema.$dynamicRef !== undefined) {
+    const reference: ParsedJsonSchemaReference = parseJsonSchemaReference(
+      schema.$dynamicRef,
+    );
+
+    const initialSchema: JsonRootSchema | JsonSchema | undefined =
+      resolveJsonSchemaReference(reference, context, scope);
+
+    if (initialSchema === undefined) {
+      throw new Error(`Unable to resolve "${schema.$dynamicRef}" $dynamicRef`);
+    }
+
+    const dereferencedSchema: JsonRootSchema | JsonSchema =
+      resolveDynamicAnchorSchema(
+        reference.anchor,
+        initialSchema,
+        context,
+        scope,
+      );
+
+    typeConstraints.push(
+      transformJsonSchemaInScope(dereferencedSchema, context, scope),
+    );
+  }
+}
+
 function handleJsonSchemaRef(
   schema: JsonSchemaObject,
   context: TransformJsonSchemaContext,
+  scope: TransformJsonSchemaScope,
   typeConstraints: TypeMetadata[],
 ): void {
   if (schema.$ref !== undefined) {
     const dereferencedSchema: JsonRootSchema | JsonSchema | undefined =
-      context.referenceMap.get(schema.$ref);
+      resolveJsonSchemaReference(
+        parseJsonSchemaReference(schema.$ref),
+        context,
+        scope,
+      );
 
     if (dereferencedSchema === undefined) {
       throw new Error(`Unable to resolve "${schema.$ref}" $ref`);
     }
 
-    typeConstraints.push(transformJsonSchema(dereferencedSchema, context));
+    typeConstraints.push(
+      transformJsonSchemaInScope(dereferencedSchema, context, scope),
+    );
   }
 }
 
 function handleJsonSchemaSubschemas(
   schema: JsonSchemaObject,
   context: TransformJsonSchemaContext,
+  scope: TransformJsonSchemaScope,
   typeConstraints: TypeMetadata[],
 ): void {
   if (schema.allOf !== undefined) {
     typeConstraints.push({
       children: schema.allOf.map((childSchema: JsonSchema) =>
-        transformJsonSchema(childSchema, context),
+        transformJsonSchemaInScope(childSchema, context, scope),
       ),
       kind: TypeMetadataKind.and,
     });
@@ -185,7 +276,7 @@ function handleJsonSchemaSubschemas(
   if (schema.anyOf !== undefined) {
     typeConstraints.push({
       children: schema.anyOf.map((childSchema: JsonSchema) =>
-        transformJsonSchema(childSchema, context),
+        transformJsonSchemaInScope(childSchema, context, scope),
       ),
       kind: TypeMetadataKind.or,
     });
@@ -194,7 +285,7 @@ function handleJsonSchemaSubschemas(
   if (schema.oneOf !== undefined) {
     typeConstraints.push({
       children: schema.oneOf.map((childSchema: JsonSchema) =>
-        transformJsonSchema(childSchema, context),
+        transformJsonSchemaInScope(childSchema, context, scope),
       ),
       kind: TypeMetadataKind.or,
     });
@@ -243,6 +334,17 @@ function isPropertyOptional(
   return !(schema.required?.includes(propertyName) ?? false);
 }
 
+function registerJsonSchemaResource(
+  context: TransformJsonSchemaContext,
+  schema: JsonSchemaObject,
+): JsonSchemaResource {
+  const resource: JsonSchemaResource = buildJsonSchemaResource(context);
+
+  context.resourceMap.set(schema, resource);
+
+  return resource;
+}
+
 function transformBooleanJsonSchema(schema: JsonSchemaBoolean): TypeMetadata {
   if (schema) {
     return {
@@ -255,12 +357,40 @@ function transformBooleanJsonSchema(schema: JsonSchemaBoolean): TypeMetadata {
   }
 }
 
+function transformJsonSchemaInScope(
+  schema: JsonRootSchema | JsonSchema,
+  context: TransformJsonSchemaContext,
+  scope: TransformJsonSchemaScope,
+): TypeMetadata {
+  if (typeof schema === 'boolean') {
+    return transformBooleanJsonSchema(schema);
+  } else {
+    return transformObjectJsonSchema(
+      schema,
+      context,
+      enterJsonSchemaScope(schema, context, scope),
+    );
+  }
+}
+
 function transformObjectJsonSchema(
   schema: JsonSchemaObject,
   context: TransformJsonSchemaContext,
+  scope: TransformJsonSchemaScope,
 ): TypeMetadata {
+  const bindingsKey: string = scope.dynamicAnchorBindings.key;
+
+  let bindingsToTypeMap: Map<string, TypeMetadata> | undefined =
+    context.schemaToBindingsToTypeMap.get(schema);
+
+  if (bindingsToTypeMap === undefined) {
+    bindingsToTypeMap = new Map();
+
+    context.schemaToBindingsToTypeMap.set(schema, bindingsToTypeMap);
+  }
+
   const existingType: TypeMetadata | undefined =
-    context.jsonSchemaToTypeMap.get(schema);
+    bindingsToTypeMap.get(bindingsKey);
 
   if (existingType !== undefined) {
     return existingType;
@@ -268,14 +398,14 @@ function transformObjectJsonSchema(
 
   const typeMetadataPartial: Partial<TypeMetadata> = {};
 
-  context.jsonSchemaToTypeMap.set(schema, typeMetadataPartial as TypeMetadata);
+  bindingsToTypeMap.set(bindingsKey, typeMetadataPartial as TypeMetadata);
 
   const id: string | undefined = schema.title;
 
   const typeConstraints: TypeMetadata[] = [];
 
-  handleApplicatorVocabularyProperties(schema, context, typeConstraints);
-  handleCoreVocabularyProperties(schema, context, typeConstraints);
+  handleApplicatorVocabularyProperties(schema, context, scope, typeConstraints);
+  handleCoreVocabularyProperties(schema, context, scope, typeConstraints);
   handleValidationVocabularyProperties(schema, typeConstraints);
 
   return buildTypeMetadata(id, typeMetadataPartial, typeConstraints);

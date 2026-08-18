@@ -17,10 +17,67 @@ own subpath export. Currently supported drafts:
 ## Usage
 
 ```ts
-import { transformJsonSchema } from '@inversifyjs/json-schema-2-type-metadata/2020-12';
+import {
+  buildTransformJsonSchemaContext,
+  transformJsonSchema,
+} from '@inversifyjs/json-schema-2-type-metadata/2020-12';
 
-const typeMetadata = transformJsonSchema(schema, {
-  jsonSchemaToTypeMap: new Map(),
-  referenceMap: new Map(),
+const context = buildTransformJsonSchemaContext({ schema });
+
+const typeMetadata = transformJsonSchema(schema, context);
+```
+
+### References
+
+The transformer never resolves a URI on its own, since the document a `$ref`
+points at might live somewhere it has no access to, such as an OpenAPI
+document. Supply those schemas through `referenceMap`, keyed by the exact
+reference value:
+
+```ts
+const context = buildTransformJsonSchemaContext({
+  referenceMap: new Map([['https://example.com/tree', treeSchema]]),
+  schema,
 });
+```
+
+Plain name fragments are the exception. `buildTransformJsonSchemaContext`
+indexes the entry schema and every `referenceMap` value into resources
+delimited by `$id`, so a reference such as `#node` resolves against the
+`$anchor` and `$dynamicAnchor` declarations of the resource it appears in, and
+only falls back to `referenceMap` when the current resource declares no such
+name.
+
+Indexing is eager, and `contentSchema` subschemas are not reached by it.
+
+### Dynamic references
+
+`$dynamicRef` resolves to the outermost resource in the dynamic scope declaring
+the referenced `$dynamicAnchor`, so a schema extending another one contributes
+its own constraints to the recursive positions of the schema it extends:
+
+```ts
+const context = buildTransformJsonSchemaContext({
+  referenceMap: new Map([['https://example.com/tree', treeSchema]]),
+  schema: strictTreeSchema,
+});
+
+// Every node of the tree is typed as a strict tree node.
+const typeMetadata = transformJsonSchema(strictTreeSchema, context);
+```
+
+A reference carrying a path part, such as
+`https://example.com/tree#node`, still needs a `referenceMap` entry under that
+exact value to find its initial target before the dynamic substitution is
+applied.
+
+### Transforming a subschema
+
+A context may be reused to transform any subschema of the documents it indexed,
+which keeps the anchors of the owning resource resolvable:
+
+```ts
+const context = buildTransformJsonSchemaContext({ schema: document });
+
+const typeMetadata = transformJsonSchema(document.$defs.node, context);
 ```
