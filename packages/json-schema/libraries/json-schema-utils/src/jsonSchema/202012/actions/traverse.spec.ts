@@ -22,7 +22,7 @@ describe(traverse, () => {
   let callbackMock: Mock<TraverseJsonSchemaCallback>;
 
   beforeAll(() => {
-    callbackMock = vitest.fn().mockReturnValue({});
+    callbackMock = vitest.fn();
   });
 
   describe('when called', () => {
@@ -220,4 +220,136 @@ describe(traverse, () => {
       });
     },
   );
+
+  describe('having a schema with nested properties', () => {
+    let schemaFixture: JsonRootSchemaObject;
+    let nestedSchemaFixture: JsonSchema;
+    let descendantSchemaFixture: JsonSchema;
+
+    beforeAll(() => {
+      descendantSchemaFixture = {
+        type: 'string',
+      };
+      nestedSchemaFixture = {
+        properties: {
+          bar: descendantSchemaFixture,
+        },
+      };
+      schemaFixture = {
+        ...JsonRootSchemaFixtures.any,
+        properties: {
+          foo: nestedSchemaFixture,
+        },
+      };
+    });
+
+    describe('when called, and the root callback returns traverseChildren false', () => {
+      beforeAll(() => {
+        callbackMock.mockReturnValueOnce({
+          traverseChildren: false,
+        });
+
+        traverse({ schema: schemaFixture }, callbackMock);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call callback() with the schema', () => {
+        const expectedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
+          {
+            jsonPointer: '',
+            rootSchema: schemaFixture,
+            schema: schemaFixture,
+          };
+
+        expect(callbackMock).toHaveBeenCalledTimes(1);
+        expect(callbackMock).toHaveBeenCalledWith(
+          expectedTraverseJsonSchemaCallbackParams,
+        );
+      });
+
+      it('should not call callback() with descendants', () => {
+        const expectedNestedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
+          {
+            jsonPointer: '/properties/foo',
+            rootSchema: schemaFixture,
+            schema: nestedSchemaFixture,
+          };
+        const expectedDescendantTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
+          {
+            jsonPointer: '/properties/foo/properties/bar',
+            rootSchema: schemaFixture,
+            schema: descendantSchemaFixture,
+          };
+
+        expect(callbackMock).not.toHaveBeenCalledWith(
+          expectedNestedTraverseJsonSchemaCallbackParams,
+        );
+        expect(callbackMock).not.toHaveBeenCalledWith(
+          expectedDescendantTraverseJsonSchemaCallbackParams,
+        );
+      });
+    });
+
+    describe('when called, and a nested callback returns traverseChildren false', () => {
+      beforeAll(() => {
+        callbackMock.mockReturnValueOnce({
+          traverseChildren: true,
+        });
+        callbackMock.mockReturnValueOnce({
+          traverseChildren: false,
+        });
+
+        traverse({ schema: schemaFixture }, callbackMock);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call callback() with the schema', () => {
+        const expectedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
+          {
+            jsonPointer: '',
+            rootSchema: schemaFixture,
+            schema: schemaFixture,
+          };
+
+        expect(callbackMock).toHaveBeenNthCalledWith(
+          1,
+          expectedTraverseJsonSchemaCallbackParams,
+        );
+      });
+
+      it('should call callback() with the nested schema', () => {
+        const expectedTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
+          {
+            jsonPointer: '/properties/foo',
+            rootSchema: schemaFixture,
+            schema: nestedSchemaFixture,
+          };
+
+        expect(callbackMock).toHaveBeenCalledTimes(2);
+        expect(callbackMock).toHaveBeenNthCalledWith(
+          2,
+          expectedTraverseJsonSchemaCallbackParams,
+        );
+      });
+
+      it('should not call callback() with descendants of the nested schema', () => {
+        const expectedDescendantTraverseJsonSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
+          {
+            jsonPointer: '/properties/foo/properties/bar',
+            rootSchema: schemaFixture,
+            schema: descendantSchemaFixture,
+          };
+
+        expect(callbackMock).not.toHaveBeenCalledWith(
+          expectedDescendantTraverseJsonSchemaCallbackParams,
+        );
+      });
+    });
+  });
 });
