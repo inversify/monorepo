@@ -5,7 +5,9 @@
   },
   "description": "InversifyJs JSON Schema utils package",
   "dependencies": {
-    "@inversifyjs/json-schema-pointer": "workspace:*"
+    "@inversifyjs/common": "workspace:*",
+    "@inversifyjs/json-schema-pointer": "workspace:*",
+    "@inversifyjs/uri": "workspace:*"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",

@@ -5,6 +5,7 @@ import {
   type JsonSchema,
 } from '@inversifyjs/json-schema-types/2020-12';
 
+import { type TraverseJsonSchemaCallback } from '../models/TraverseJsonSchemaCallback.js';
 import { type TraverseJsonSchemaCallbackParams } from '../models/TraverseJsonSchemaCallbackParams.js';
 import { type TraverseJsonSchemaParams } from '../models/TraverseJsonSchemaParams.js';
 
@@ -15,7 +16,7 @@ type JsonRootSchemaSchemaPropertyHandler = (
   params: TraverseJsonSchemaCallbackParams,
   childSchema: JsonRootSchemaSchemaProperty,
   key: string,
-  callback: (params: TraverseJsonSchemaCallbackParams) => void,
+  callback: TraverseJsonSchemaCallback,
 ) => void;
 
 const jsonRootSchemaObjectPropertyToHandlerMap: {
@@ -23,7 +24,7 @@ const jsonRootSchemaObjectPropertyToHandlerMap: {
     params: TraverseJsonSchemaCallbackParams,
     childSchema: Exclude<JsonRootSchemaObject[TKey], undefined>,
     key: string,
-    callback: (params: TraverseJsonSchemaCallbackParams) => void,
+    callback: TraverseJsonSchemaCallback,
   ) => void;
 } = {
   $defs: traverseDirectChildSchemaMap,
@@ -48,7 +49,7 @@ const jsonRootSchemaObjectPropertyToHandlerMap: {
 
 export function traverse(
   params: TraverseJsonSchemaParams,
-  callback: (params: TraverseJsonSchemaCallbackParams) => void,
+  callback: TraverseJsonSchemaCallback,
 ): void {
   traverseJsonSchemaFromParams(
     {
@@ -62,11 +63,19 @@ export function traverse(
 
 function traverseJsonSchemaFromParams(
   params: TraverseJsonSchemaCallbackParams,
-  callback: (params: TraverseJsonSchemaCallbackParams) => void,
+  callback: TraverseJsonSchemaCallback,
 ): void {
-  callback(params);
+  // eslint-disable-next-line @typescript-eslint/typedef
+  const callbackResult = callback(params);
 
-  if (params.schema !== true && params.schema !== false) {
+  const shouldTraverseChildren: boolean =
+    callbackResult?.traverseChildren ?? true;
+
+  if (
+    shouldTraverseChildren &&
+    params.schema !== true &&
+    params.schema !== false
+  ) {
     for (const key of Object.keys(params.schema)) {
       const handler: JsonRootSchemaSchemaPropertyHandler | undefined =
         jsonRootSchemaObjectPropertyToHandlerMap[
@@ -89,7 +98,7 @@ function traverseDirectChildSchema(
   params: TraverseJsonSchemaCallbackParams,
   childSchema: JsonSchema,
   key: string,
-  callback: (params: TraverseJsonSchemaCallbackParams) => void,
+  callback: TraverseJsonSchemaCallback,
 ): void {
   const traverseChildSchemaCallbackParams: TraverseJsonSchemaCallbackParams = {
     jsonPointer: `${params.jsonPointer}/${escapeJsonPointerFragments(key)}`,
@@ -104,7 +113,7 @@ function traverseDirectChildSchemaArray(
   params: TraverseJsonSchemaCallbackParams,
   childSchemas: JsonSchema[],
   key: string,
-  callback: (params: TraverseJsonSchemaCallbackParams) => void,
+  callback: TraverseJsonSchemaCallback,
 ): void {
   for (const [index, schema] of childSchemas.entries()) {
     const traverseChildSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
@@ -122,7 +131,7 @@ function traverseDirectChildSchemaMap(
   params: TraverseJsonSchemaCallbackParams,
   schemasMap: Record<string, JsonSchema>,
   key: string,
-  callback: (params: TraverseJsonSchemaCallbackParams) => void,
+  callback: TraverseJsonSchemaCallback,
 ): void {
   for (const [mapKey, schema] of Object.entries(schemasMap)) {
     const traverseChildSchemaCallbackParams: TraverseJsonSchemaCallbackParams =
