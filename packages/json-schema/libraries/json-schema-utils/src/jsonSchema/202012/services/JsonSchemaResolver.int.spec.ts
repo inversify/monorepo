@@ -1364,6 +1364,148 @@ describe(JsonSchemaResolver, () => {
       });
     });
 
+    describe('having a schema with a JSON Pointer $ref to an allOf item', () => {
+      let jsonSchemaResolver: JsonSchemaResolver;
+      let schemaFixture: JsonSchemaObject;
+      let schemaIdFixture: string;
+      let subschemaFixture: JsonSchemaObject;
+
+      beforeAll(() => {
+        schemaIdFixture = 'https://example.com/schema.json';
+        subschemaFixture = {
+          type: 'string',
+        };
+        schemaFixture = {
+          $id: schemaIdFixture,
+          $ref: '#/allOf/0',
+          allOf: [subschemaFixture],
+        };
+
+        const schemaById: Map<string, JsonSchema> = new Map([
+          [schemaIdFixture, schemaFixture],
+        ]);
+
+        jsonSchemaResolver = new JsonSchemaResolver((id: string) =>
+          schemaById.get(id),
+        );
+      });
+
+      describe('when called', () => {
+        let result: Either<ResolutionFailure, SchemaResolutionSuccessTree>;
+
+        beforeAll(() => {
+          result = jsonSchemaResolver.resolveSchema(schemaFixture);
+        });
+
+        it('should return a tree with the referenced allOf item', () => {
+          const expected: Either<
+            ResolutionFailure,
+            SchemaResolutionSuccessTree
+          > = {
+            isRight: true,
+            value: {
+              $dynamicRef: undefined,
+              $ref: {
+                $dynamicRef: undefined,
+                $ref: undefined,
+                dynamicScopeEntries: buildDynamicScopeEntries(
+                  {
+                    lexicalScope: {
+                      $canonicalId: new Uri(schemaIdFixture),
+                    },
+                    resolutionContext: {
+                      $ref: schemaIdFixture,
+                      isDynamic: false,
+                    },
+                  },
+                  {
+                    lexicalScope: {
+                      $canonicalId: new Uri(schemaIdFixture),
+                    },
+                    resolutionContext: {
+                      $ref: '#/allOf/0',
+                      isDynamic: false,
+                    },
+                  },
+                ),
+                value: subschemaFixture,
+              },
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe.each<[string, string]>([
+      ['1abc', '#/allOf/1abc'],
+      ['01', '#/allOf/01'],
+    ])(
+      'having a schema with a $ref to a non-RFC 6901 array index "%s"',
+      (_pointerSegment: string, refFixture: string) => {
+        let jsonSchemaResolver: JsonSchemaResolver;
+        let schemaFixture: JsonSchemaObject;
+        let schemaIdFixture: string;
+
+        beforeAll(() => {
+          schemaIdFixture = 'https://example.com/schema.json';
+          schemaFixture = {
+            $id: schemaIdFixture,
+            $ref: refFixture,
+            allOf: [
+              {
+                type: 'string',
+              },
+              {
+                type: 'number',
+              },
+            ],
+          };
+
+          const schemaById: Map<string, JsonSchema> = new Map([
+            [schemaIdFixture, schemaFixture],
+          ]);
+
+          jsonSchemaResolver = new JsonSchemaResolver((id: string) =>
+            schemaById.get(id),
+          );
+        });
+
+        describe('when called', () => {
+          let result: Either<ResolutionFailure, SchemaResolutionSuccessTree>;
+
+          beforeAll(() => {
+            result = jsonSchemaResolver.resolveSchema(schemaFixture);
+          });
+
+          it('should return a resolution failure', () => {
+            const expected: Either<
+              ResolutionFailure,
+              SchemaResolutionSuccessTree
+            > = {
+              isRight: false,
+              value: {
+                reason: `Failed to resolve JSON Pointer: ${refFixture.slice(1)}`,
+                resolutionContextStack: [
+                  {
+                    $ref: schemaIdFixture,
+                    isDynamic: false,
+                  },
+                  {
+                    $ref: refFixture,
+                    isDynamic: false,
+                  },
+                ],
+              },
+            };
+
+            expect(result).toStrictEqual(expected);
+          });
+        });
+      },
+    );
+
     describe('having a schema with a $ref to a missing JSON Pointer node', () => {
       let jsonSchemaResolver: JsonSchemaResolver;
       let schemaFixture: JsonSchemaObject;

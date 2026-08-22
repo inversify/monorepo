@@ -14,14 +14,15 @@ import {
 } from '@inversifyjs/json-schema-types/2020-12';
 
 import { JsonRootSchemaFixtures } from '../fixtures/JsonRootSchemaFixtures.js';
+import { type TraverseJsonSchemaCallback } from '../models/TraverseJsonSchemaCallback.js';
 import { type TraverseJsonSchemaCallbackParams } from '../models/TraverseJsonSchemaCallbackParams.js';
 import { traverse } from './traverse.js';
 
 describe(traverse, () => {
-  let callbackMock: Mock<(params: TraverseJsonSchemaCallbackParams) => void>;
+  let callbackMock: Mock<TraverseJsonSchemaCallback>;
 
   beforeAll(() => {
-    callbackMock = vitest.fn();
+    callbackMock = vitest.fn().mockReturnValue({});
   });
 
   describe('when called', () => {

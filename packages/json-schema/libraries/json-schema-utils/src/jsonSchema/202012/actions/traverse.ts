@@ -7,6 +7,7 @@ import {
 
 import { type TraverseJsonSchemaCallback } from '../models/TraverseJsonSchemaCallback.js';
 import { type TraverseJsonSchemaCallbackParams } from '../models/TraverseJsonSchemaCallbackParams.js';
+import { type TraverseJsonSchemaCallbackParamsResult } from '../models/TraverseJsonSchemaCallbackParamsResult.js';
 import { type TraverseJsonSchemaParams } from '../models/TraverseJsonSchemaParams.js';
 
 type JsonRootSchemaSchemaProperty =
@@ -65,11 +66,11 @@ function traverseJsonSchemaFromParams(
   params: TraverseJsonSchemaCallbackParams,
   callback: TraverseJsonSchemaCallback,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/typedef
-  const callbackResult = callback(params);
+  const callbackResult: TraverseJsonSchemaCallbackParamsResult =
+    callback(params);
 
   const shouldTraverseChildren: boolean =
-    callbackResult?.traverseChildren ?? true;
+    callbackResult.traverseChildren ?? true;
 
   if (
     shouldTraverseChildren &&

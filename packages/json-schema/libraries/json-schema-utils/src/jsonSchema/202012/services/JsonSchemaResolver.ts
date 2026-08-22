@@ -12,6 +12,7 @@ import { type TraverseJsonSchemaCallbackParams } from '../models/TraverseJsonSch
 import { type TraverseJsonSchemaCallbackParamsResult } from '../models/TraverseJsonSchemaCallbackParamsResult.js';
 
 const ANCHOR_FRAGMENT_REGEXP: RegExp = /^[A-Za-z_][A-Za-z0-9._-]*$/;
+const JSON_POINTER_ARRAY_INDEX_REGEXP: RegExp = /^(?:0|[1-9]\d*)$/;
 const JSON_POINTER_FRAGMENT_REGEXP: RegExp = /^(?:\/(?:[^~/]|~[01])*)*$/u;
 const JSON_POINTER_SEGMENT_SEPARATOR: string = '/';
 const JSON_POINTER_SEGMENT_SEPARATOR_ENCODED: string = '~1';
@@ -578,14 +579,12 @@ export class JsonSchemaResolver {
       }
 
       if (Array.isArray(result)) {
-        const pointerIndex: number = parseInt(pointerSegment, 10);
-
-        if (Number.isNaN(pointerIndex)) {
+        if (!JSON_POINTER_ARRAY_INDEX_REGEXP.test(pointerSegment)) {
           result = undefined;
           break;
         }
 
-        result = result[pointerIndex];
+        result = result[Number.parseInt(pointerSegment, 10)];
       } else {
         const syncResult: Either<
           ResolutionFailure,

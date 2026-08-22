@@ -5,11 +5,11 @@
   },
   "description": "InversifyJs JSON Schema utils package",
   "dependencies": {
+    "@inversifyjs/common": "workspace:*",
     "@inversifyjs/json-schema-pointer": "workspace:*",
     "@inversifyjs/uri": "workspace:*"
   },
   "devDependencies": {
-    "@inversifyjs/common": "workspace:*",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/json-schema-types": "workspace:*",
     "@stryker-mutator/core": "9.6.1",
