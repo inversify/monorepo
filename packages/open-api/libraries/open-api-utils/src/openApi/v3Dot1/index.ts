@@ -12,3 +12,11 @@ export {
   traverseOpenApi3Dot1ResponsesObjectJsonSchemas,
   traverseOpenApiObjectJsonSchemas,
 } from './actions/traverse.js';
+export {
+  type OpenApi3Dot1RefResolutionChainEntry,
+  type OpenApi3Dot1RefResolutionContext,
+  type OpenApi3Dot1RefResolutionFailure,
+  type OpenApi3Dot1RefResolutionResult,
+  type OpenApi3Dot1RefResolutionSuccess,
+  OpenApi3Dot1Resolver,
+} from './services/OpenApi3Dot1Resolver.js';

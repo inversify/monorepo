@@ -5,7 +5,10 @@
   },
   "description": "InversifyJs OpenAPI utils package",
   "dependencies": {
-    "@inversifyjs/json-schema-utils": "workspace:*"
+    "@inversifyjs/json-schema-pointer": "workspace:*",
+    "@inversifyjs/json-schema-types": "workspace:*",
+    "@inversifyjs/json-schema-utils": "workspace:*",
+    "@inversifyjs/uri": "workspace:*"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
