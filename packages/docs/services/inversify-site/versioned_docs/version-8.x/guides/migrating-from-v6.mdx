@@ -36,6 +36,8 @@ The following table summarizes the key changes from v6 to v8:
 | `container.tryGet`                    | `container.get(X, { optional: true })`   | Added `optional` flag for optional `get`                         |
 | `container.tryGetNamed`               | `container.get(X, { name: ..., optional: true })` | Combined named and optional parameters                  |
 | `container.tryGetTagged`              | `container.get(X, { tag: ..., optional: true })`  | Combined tagged and optional parameters                 |
+| `.withTargetNamed`                    | `.withNamed`                             | Simplified named binding API                                     |
+| `container.getAll` with named filter  | Not supported                            | `getAll` cannot filter by name; use individual `get` calls instead|
 | `container.createChild()`             | `new Container({ parent: container })`   | Child containers created via constructor                         |
 | `.toAutoFactory(X)`                   | `.toFactory((ctx) => () => ctx.get(X))`  | Use `toFactory` with `ResolutionContext.get()`                   |
 | `.toAutoNamedFactory(X)`              | `.toFactory((ctx) => (name) => ctx.get(X, { name }))` | Use `toFactory` with named resolution         |
@@ -96,6 +98,42 @@ In v6, `container.getAll` returned all bindings matching the service identifier.
 If you need to simulate the old behavior, you can use custom constraints to accomplish this. Refer to this [issue](https://github.com/inversify/InversifyJS/issues/1796#issuecomment-2842402397) for more information.
 
 :::
+
+### Named Bindings with `withNamed`
+
+In v6, you used `withTargetNamed` to bind and resolve named instances. In v8, this has been replaced with `withNamed`, providing a cleaner API for both binding and retrieval.
+
+To retrieve a named instance in v8, use the `name` option when calling `container.get`:
+
+```typescript
+// Binding a named instance
+container.bind(MyService).toConstantValue(service1).withNamed('serviceA');
+container.bind(MyService).toConstantValue(service2).withNamed('serviceB');
+
+// Retrieving a named instance
+const instance = container.get(MyService, { name: 'serviceA' });
+```
+
+#### Important: `getAll` Does Not Support `withNamed`
+
+Named bindings work with single instance resolution via `container.get()`. However, `container.getAll()` and `container.getAllAsync()` do **not** support the `withNamed` constraint.
+
+If you need to retrieve all instances with a specific name, this is **not supported**. When using `getAll`, you must resolve all bindings without filtering by name:
+
+```typescript
+// ❌ This is NOT supported - getAll ignores the name option
+const allNamed = container.getAll(MyService, { name: 'serviceA' });
+
+// ✅ If you need multiple instances, resolve each individually
+const instanceA = container.get(MyService, { name: 'serviceA' });
+const instanceB = container.get(MyService, { name: 'serviceB' });
+
+// ✅ Or use getAll without naming the services
+container.bind(MyService).toConstantValue(service1);
+container.bind(MyService).toConstantValue(service2);
+
+const allInstances = container.getAll(MyService);
+```
 
 ### Parent and Child Containers
 
