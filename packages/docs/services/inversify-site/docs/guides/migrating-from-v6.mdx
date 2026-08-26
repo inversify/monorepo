@@ -36,8 +36,8 @@ The following table summarizes the key changes from v6 to v8:
 | `container.tryGet`                    | `container.get(X, { optional: true })`   | Added `optional` flag for optional `get`                         |
 | `container.tryGetNamed`               | `container.get(X, { name: ..., optional: true })` | Combined named and optional parameters                  |
 | `container.tryGetTagged`              | `container.get(X, { tag: ..., optional: true })`  | Combined tagged and optional parameters                 |
-| `.withTargetNamed`                    | `.withNamed`                             | Simplified named binding API                                     |
 | `container.getAll` with named filter  | Not supported                            | `getAll` cannot filter by name; use individual `get` calls instead|
+| `.withTargetNamed`                    | `.withNamed`                             | Simplified named binding API                                     |
 | `container.createChild()`             | `new Container({ parent: container })`   | Child containers created via constructor                         |
 | `.toAutoFactory(X)`                   | `.toFactory((ctx) => () => ctx.get(X))`  | Use `toFactory` with `ResolutionContext.get()`                   |
 | `.toAutoNamedFactory(X)`              | `.toFactory((ctx) => (name) => ctx.get(X, { name }))` | Use `toFactory` with named resolution         |
