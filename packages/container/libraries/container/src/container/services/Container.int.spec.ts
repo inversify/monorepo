@@ -1,8 +1,7 @@
+import 'reflect-metadata/lite';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import 'reflect-metadata/lite';
-
-import { injectable, multiInject } from '@inversifyjs/core';
+import { type Injectable, type InjectMulti } from '@inversifyjs/core';
 
 import {
   ContainerModule,
@@ -10,12 +9,10 @@ import {
 } from '../models/ContainerModule.js';
 import { Container } from './Container.js';
 
-@injectable()
-class Gun {}
+class Gun implements Injectable {}
 
-@injectable()
-class Arsenal {
-  constructor(@multiInject(Gun) public guns: Gun[]) {}
+class Arsenal implements Injectable {
+  constructor(public guns: InjectMulti<Gun>) {}
 }
 
 describe(Container, () => {
@@ -282,11 +279,9 @@ Binding constraints:
     describe('having some classes to be bound', () => {
       let container: Container;
 
-      @injectable()
-      class Ninja {}
+      class Ninja implements Injectable {}
 
-      @injectable()
-      class Samurai {}
+      class Samurai implements Injectable {}
 
       beforeAll(() => {
         container = new Container();

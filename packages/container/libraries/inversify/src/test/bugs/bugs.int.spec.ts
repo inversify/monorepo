@@ -1,23 +1,21 @@
+import { resolve } from 'rflct';
 import { describe, expect, it } from 'vitest';
 
 import {
-  BindingConstraints,
+  type BindingConstraints,
   Container,
-  decorate,
-  inject,
-  injectable,
-  injectFromBase,
-  MetadataName,
-  named,
-  ServiceIdentifier,
-  tagged,
-  unmanaged,
+  type Inject,
+  type Injectable,
+  type InjectNamed,
+  type InjectTagged,
+  type InjectUnmanaged,
+  type MetadataName,
+  type ServiceIdentifier,
 } from '../../index.js';
 
 describe('Bugs', () => {
   it('Should not throw when args length of base and derived class match (property setter)', () => {
-    @injectable()
-    class Warrior {
+    class Warrior implements Injectable {
       public rank: string | null;
       constructor() {
         // length = 0
@@ -25,8 +23,7 @@ describe('Bugs', () => {
       }
     }
 
-    @injectable()
-    class SamuraiMaster extends Warrior {
+    class SamuraiMaster extends Warrior implements Injectable {
       constructor() {
         // length = 0
         super();
@@ -44,8 +41,9 @@ describe('Bugs', () => {
   it('Should not throw when args length of base and derived class match', () => {
     // Injecting into the derived class
 
-    @injectable()
-    class Warrior {
+    type Rank = string;
+
+    class Warrior implements Injectable {
       protected rank: string;
       constructor(rank: string) {
         // length = 1
@@ -53,13 +51,9 @@ describe('Bugs', () => {
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = { Rank: 'Rank' };
-
-    @injectable()
-    class SamuraiMaster extends Warrior {
+    class SamuraiMaster extends Warrior implements Injectable {
       constructor(
-        @inject(TYPES.Rank) @named('master') public override rank: string, // length = 1
+        public override rank: InjectNamed<Rank, 'master'>, // length = 1
       ) {
         super(rank);
       }
@@ -68,7 +62,7 @@ describe('Bugs', () => {
     const container: Container = new Container();
     container.bind<SamuraiMaster>(SamuraiMaster).to(SamuraiMaster);
     container
-      .bind<string>(TYPES.Rank)
+      .bind(resolve<Rank>())
       .toConstantValue('master')
       .whenNamed('master');
 
@@ -78,8 +72,9 @@ describe('Bugs', () => {
   });
 
   it('Should not throw when args length of base and derived class match (multiple args)', () => {
-    @injectable()
-    class Warrior {
+    type Rank = string;
+
+    class Warrior implements Injectable {
       protected rank: string;
       constructor(rank: string) {
         // length = 1
@@ -91,26 +86,18 @@ describe('Bugs', () => {
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Rank: 'Rank',
-      Weapon: 'Weapon',
-    };
-
-    @injectable()
-    class SamuraiMaster extends Warrior {
+    class SamuraiMaster extends Warrior implements Injectable {
       public weapon: Weapon;
       constructor(
-        @inject(TYPES.Rank) @named('master') public override rank: string,
-        @inject(TYPES.Weapon) weapon: Weapon,
+        public override rank: InjectNamed<Rank, 'master'>,
+        weapon: Inject<Weapon>,
       ) {
         // length = 2
         super(rank);
@@ -119,10 +106,10 @@ describe('Bugs', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Weapon>(TYPES.Weapon).to(Katana);
+    container.bind(resolve<Weapon>()).to(Katana);
     container.bind<SamuraiMaster>(SamuraiMaster).to(SamuraiMaster);
     container
-      .bind<string>(TYPES.Rank)
+      .bind(resolve<Rank>())
       .toConstantValue('master')
       .whenNamed('master');
 
@@ -212,10 +199,9 @@ Binding constraints:
   });
 
   it('Should be able to use an abstract class as the serviceIdentifier', () => {
-    @injectable()
-    abstract class Animal {
+    abstract class Animal implements Injectable {
       protected name: string;
-      constructor(@unmanaged() name: string) {
+      constructor(name: InjectUnmanaged<string>) {
         this.name = name;
       }
       public move(meters: number) {
@@ -224,8 +210,7 @@ Binding constraints:
       public abstract makeSound(input: string): string;
     }
 
-    @injectable()
-    class Snake extends Animal {
+    class Snake extends Animal implements Injectable {
       constructor() {
         super('Snake');
       }
@@ -237,10 +222,9 @@ Binding constraints:
       }
     }
 
-    @injectable()
-    class Jungle {
+    class Jungle implements Injectable {
       public animal: Animal;
-      constructor(@inject(Animal) animal: Animal) {
+      constructor(animal: Inject<Animal>) {
         this.animal = animal;
       }
     }
@@ -266,8 +250,7 @@ Binding constraints:
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
@@ -304,42 +287,29 @@ Trying to resolve bindings for "Weapon (Root service)"`;
   it('Should be able to inject into an abstract class', () => {
     type Weapon = unknown;
 
-    @injectable()
-    abstract class BaseSoldier {
+    abstract class BaseSoldier implements Injectable {
       public weapon: Weapon;
-      constructor(@inject('Weapon') weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         this.weapon = weapon;
       }
     }
 
-    @injectable()
-    @injectFromBase({
-      extendConstructorArguments: true,
-    })
-    class Soldier extends BaseSoldier {}
+    class Soldier extends BaseSoldier implements Injectable {}
 
-    @injectable()
-    @injectFromBase({
-      extendConstructorArguments: true,
-    })
-    class Archer extends BaseSoldier {}
+    class Archer extends BaseSoldier implements Injectable {}
 
-    @injectable()
-    @injectFromBase({
-      extendConstructorArguments: true,
-    })
-    class Knight extends BaseSoldier {}
+    class Knight extends BaseSoldier implements Injectable {}
 
-    @injectable()
-    class Sword {}
+    class Sword implements Injectable {}
 
-    @injectable()
-    class Bow {}
+    class Bow implements Injectable {}
 
-    @injectable()
-    class DefaultWeapon {}
+    class DefaultWeapon implements Injectable {}
 
     const container: Container = new Container();
+
+    const weaponId = resolve<Weapon>();
+    const baseSoldierId = resolve<BaseSoldier>();
 
     function whenIsAndIsNamed(
       serviceIdentifier: ServiceIdentifier,
@@ -351,28 +321,28 @@ Trying to resolve bindings for "Weapon (Root service)"`;
     }
 
     container
-      .bind<Weapon>('Weapon')
+      .bind(weaponId)
       .to(DefaultWeapon)
-      .whenParent(whenIsAndIsNamed('BaseSoldier', 'default'));
+      .whenParent(whenIsAndIsNamed(baseSoldierId, 'default'));
     container
-      .bind<Weapon>('Weapon')
+      .bind(weaponId)
       .to(Sword)
-      .whenParent(whenIsAndIsNamed('BaseSoldier', 'knight'));
+      .whenParent(whenIsAndIsNamed(baseSoldierId, 'knight'));
     container
-      .bind<Weapon>('Weapon')
+      .bind(weaponId)
       .to(Bow)
-      .whenParent(whenIsAndIsNamed('BaseSoldier', 'archer'));
-    container.bind<BaseSoldier>('BaseSoldier').to(Soldier).whenNamed('default');
-    container.bind<BaseSoldier>('BaseSoldier').to(Knight).whenNamed('knight');
-    container.bind<BaseSoldier>('BaseSoldier').to(Archer).whenNamed('archer');
+      .whenParent(whenIsAndIsNamed(baseSoldierId, 'archer'));
+    container.bind(baseSoldierId).to(Soldier).whenNamed('default');
+    container.bind(baseSoldierId).to(Knight).whenNamed('knight');
+    container.bind(baseSoldierId).to(Archer).whenNamed('archer');
 
-    const soldier: BaseSoldier = container.get<BaseSoldier>('BaseSoldier', {
+    const soldier: BaseSoldier = container.get(baseSoldierId, {
       name: 'default',
     });
-    const knight: BaseSoldier = container.get<BaseSoldier>('BaseSoldier', {
+    const knight: BaseSoldier = container.get(baseSoldierId, {
       name: 'knight',
     });
-    const archer: BaseSoldier = container.get<BaseSoldier>('BaseSoldier', {
+    const archer: BaseSoldier = container.get(baseSoldierId, {
       name: 'archer',
     });
 
@@ -386,17 +356,15 @@ Trying to resolve bindings for "Weapon (Root service)"`;
       use(): string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public use() {
         return 'Used Katana!';
       }
     }
 
-    @injectable()
-    class Ninja {
+    class Ninja implements Injectable {
       constructor(
-        @inject('Weapon') @named('sword') private readonly _weapon: Weapon,
+        private readonly _weapon: InjectNamed<Weapon, 'sword'>,
       ) {
         //
       }
@@ -406,7 +374,7 @@ Trying to resolve bindings for "Weapon (Root service)"`;
     }
 
     const container: Container = new Container();
-    container.bind<Weapon>('Weapon').to(Katana).whenNamed('sword');
+    container.bind(resolve<Weapon>()).to(Katana).whenNamed('sword');
     container.bind<Ninja>(Ninja).toSelf();
 
     const ninja: Ninja = container.get<Ninja>(Ninja);
@@ -432,16 +400,14 @@ Trying to resolve bindings for "Weapon (Root service)"`;
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
@@ -453,32 +419,17 @@ Trying to resolve bindings for "Weapon (Root service)"`;
       primaryWeapon: Weapon;
     }
 
-    abstract class BaseWarrior implements Warrior {
+    abstract class BaseWarrior implements Warrior, Injectable {
       public name: string;
-      public primaryWeapon!: Weapon;
+      public primaryWeapon!: InjectTagged<Weapon, 'Priority', 'Primary'>;
 
-      constructor(@unmanaged() name: string) {
+      constructor(name: InjectUnmanaged<string>) {
         this.name = name;
       }
     }
 
-    // @injectable()
-    decorate([injectable()], BaseWarrior);
-
-    // @inject(TYPES.Weapon)
-    inject(TYPES.Weapon)(BaseWarrior.prototype, 'primaryWeapon');
-
-    // @tagged(TAGS.Priority, TAGS.Primary)
-    tagged(TAGS.Priority, TAGS.Primary)(BaseWarrior.prototype, 'primaryWeapon');
-
-    @injectable()
-    @injectFromBase({
-      extendProperties: true,
-    })
-    class Samurai extends BaseWarrior {
-      @inject(TYPES.Weapon)
-      @tagged(TAGS.Priority, TAGS.Secondary)
-      public secondaryWeapon!: Weapon;
+    class Samurai extends BaseWarrior implements Injectable {
+      public secondaryWeapon!: InjectTagged<Weapon, 'Priority', 'Secondary'>;
 
       constructor() {
         super('Samurai');
@@ -486,17 +437,17 @@ Trying to resolve bindings for "Weapon (Root service)"`;
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>(TYPES.Warrior).to(Samurai);
+    container.bind(resolve<Warrior>()).to(Samurai);
     container
-      .bind<Weapon>(TYPES.Weapon)
+      .bind(resolve<Weapon>())
       .to(Katana)
       .whenTagged(TAGS.Priority, TAGS.Primary);
     container
-      .bind<Weapon>(TYPES.Weapon)
+      .bind(resolve<Weapon>())
       .to(Shuriken)
       .whenTagged(TAGS.Priority, TAGS.Secondary);
 
-    const samurai: Samurai = container.get<Samurai>(TYPES.Warrior);
+    const samurai = container.get(resolve<Warrior>()) as Samurai;
 
     expect(samurai.name).toBe('Samurai');
     expect(samurai.secondaryWeapon).toBeDefined();
@@ -521,32 +472,29 @@ Trying to resolve bindings for "Weapon (Root service)"`;
       }
     }
 
-    @injectable()
-    class RepoBase<T> implements RepoBaseInterface<T> {
+    class RepoBase<T> implements RepoBaseInterface<T>, Injectable {
       public model: Model<T>;
 
       constructor(
-        // using @unmanaged() here is right
+        // using InjectUnmanaged here is right
         // because entityType is NOT Injected by inversify
-        @unmanaged() entityType: new () => T,
+        entityType: InjectUnmanaged<new () => T>,
       ) {
         this.model = { instance: new entityType() };
       }
     }
 
-    @injectable()
-    class TypedRepo extends RepoBase<Type> {
+    class TypedRepo extends RepoBase<Type> implements Injectable {
       constructor() {
         super(Type); // unmanaged injection (NOT Injected by inversify)
       }
     }
 
-    @injectable()
-    class BlBase<T> {
+    class BlBase<T> implements Injectable {
       public repository: RepoBaseInterface<T>;
 
       constructor(
-        // using @unmanaged() here would wrong
+        // using InjectUnmanaged here would wrong
         // because repository is injected by inversify
         repository: RepoBaseInterface<T>,
       ) {
@@ -554,26 +502,24 @@ Trying to resolve bindings for "Weapon (Root service)"`;
       }
     }
 
-    @injectable()
-    class TypedBl extends BlBase<Type> {
+    class TypedBl extends BlBase<Type> implements Injectable {
       // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-      constructor(repository: TypedRepo) {
+      constructor(repository: Inject<TypedRepo>) {
         super(repository);
       }
     }
 
     const container: Container = new Container();
     container.bind<TypedRepo>(TypedRepo).toSelf();
-    container.bind<TypedBl>('TypedBL').to(TypedBl);
+    container.bind(resolve<TypedBl>()).to(TypedBl);
 
-    const typedBl: TypedBl = container.get<TypedBl>('TypedBL');
+    const typedBl: TypedBl = container.get(resolve<TypedBl>());
 
     expect(typedBl.repository.model.instance.name).toBe(new Type().name);
   });
 
   it('Should allow missing annotations in base classes', () => {
-    @injectable()
-    class Katana implements Katana {
+    class Katana implements Injectable {
       public hit() {
         return 'cut!';
       }
@@ -582,7 +528,7 @@ Trying to resolve bindings for "Weapon (Root service)"`;
     abstract class Warrior {
       private readonly _katana: Katana;
 
-      constructor(@unmanaged() katana: Katana) {
+      constructor(katana: InjectUnmanaged<Katana>) {
         this._katana = katana;
       }
 
@@ -591,19 +537,18 @@ Trying to resolve bindings for "Weapon (Root service)"`;
       }
     }
 
-    @injectable()
-    class Ninja extends Warrior {
-      constructor(@inject('Katana') katana: Katana) {
+    class Ninja extends Warrior implements Injectable {
+      constructor(katana: Inject<Katana>) {
         super(katana);
       }
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>('Ninja').to(Ninja);
-    container.bind<Katana>('Katana').to(Katana);
+    container.bind(resolve<Ninja>()).to(Ninja);
+    container.bind(resolve<Katana>()).to(Katana);
 
     const tryGet: () => void = () => {
-      container.get<Ninja>('Ninja');
+      container.get(resolve<Ninja>());
     };
 
     expect(tryGet).not.toThrow();

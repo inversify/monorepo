@@ -1,17 +1,17 @@
+import { resolve } from 'rflct';
 import { describe, expect, it } from 'vitest';
 
 import { performance } from 'node:perf_hooks';
 
-import { Container, inject, injectable, named } from '../../index.js';
+import {
+  Container,
+  type Inject,
+  type Injectable,
+  type InjectNamed,
+} from '../../index.js';
 
 describe('inRequestScope', () => {
   it('Should support request scope in basic bindings', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPE = {
-      Warrior: Symbol('Warrior'),
-      Weapon: Symbol('Weapon'),
-    };
-
     interface Weapon {
       use(): string;
     }
@@ -21,8 +21,7 @@ describe('inRequestScope', () => {
       secondaryWeapon: Weapon;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       private readonly _madeOn: number;
       constructor() {
         this._madeOn = performance.now();
@@ -32,13 +31,12 @@ describe('inRequestScope', () => {
       }
     }
 
-    @injectable()
-    class Samurai implements Warrior {
+    class Samurai implements Warrior, Injectable {
       public primaryWeapon: Weapon;
       public secondaryWeapon: Weapon;
       constructor(
-        @inject(TYPE.Weapon) primaryWeapon: Weapon,
-        @inject(TYPE.Weapon) secondaryWeapon: Weapon,
+        primaryWeapon: Inject<Weapon>,
+        secondaryWeapon: Inject<Weapon>,
       ) {
         this.primaryWeapon = primaryWeapon;
         this.secondaryWeapon = secondaryWeapon;
@@ -47,10 +45,10 @@ describe('inRequestScope', () => {
 
     // Without request scope
     const container: Container = new Container();
-    container.bind<Weapon>(TYPE.Weapon).to(Katana);
-    container.bind<Warrior>(TYPE.Warrior).to(Samurai);
-    const samurai: Warrior = container.get(TYPE.Warrior);
-    const samurai2: Warrior = container.get(TYPE.Warrior);
+    container.bind(resolve<Weapon>()).to(Katana);
+    container.bind(resolve<Warrior>()).to(Samurai);
+    const samurai: Warrior = container.get(resolve<Warrior>());
+    const samurai2: Warrior = container.get(resolve<Warrior>());
 
     // One requests should use two instances because scope is transient
     expect(samurai.primaryWeapon.use()).not.toBe(samurai.secondaryWeapon.use());
@@ -69,10 +67,10 @@ describe('inRequestScope', () => {
 
     // With request scope
     const container1: Container = new Container();
-    container1.bind<Weapon>(TYPE.Weapon).to(Katana).inRequestScope(); // Important
-    container1.bind<Warrior>(TYPE.Warrior).to(Samurai);
-    const samurai3: Warrior = container1.get(TYPE.Warrior);
-    const samurai4: Warrior = container1.get(TYPE.Warrior);
+    container1.bind(resolve<Weapon>()).to(Katana).inRequestScope(); // Important
+    container1.bind(resolve<Warrior>()).to(Samurai);
+    const samurai3: Warrior = container1.get(resolve<Warrior>());
+    const samurai4: Warrior = container1.get(resolve<Warrior>());
 
     // One requests should use one instance because scope is request scope
     expect(samurai3.primaryWeapon.use()).to.eql(samurai3.secondaryWeapon.use());
@@ -89,12 +87,6 @@ describe('inRequestScope', () => {
   });
 
   it('Should support request scope when using contraints', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPE = {
-      Warrior: Symbol('Warrior'),
-      Weapon: Symbol('Weapon'),
-    };
-
     interface Weapon {
       use(): string;
     }
@@ -105,8 +97,7 @@ describe('inRequestScope', () => {
       tertiaryWeapon: Weapon;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       private readonly _madeOn: number;
       constructor() {
         this._madeOn = performance.now();
@@ -116,8 +107,7 @@ describe('inRequestScope', () => {
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       private readonly _madeOn: number;
       constructor() {
         this._madeOn = performance.now();
@@ -127,15 +117,14 @@ describe('inRequestScope', () => {
       }
     }
 
-    @injectable()
-    class Samurai implements Warrior {
+    class Samurai implements Warrior, Injectable {
       public primaryWeapon: Weapon;
       public secondaryWeapon: Weapon;
       public tertiaryWeapon: Weapon;
       constructor(
-        @inject(TYPE.Weapon) @named('sword') primaryWeapon: Weapon,
-        @inject(TYPE.Weapon) @named('throwable') secondaryWeapon: Weapon,
-        @inject(TYPE.Weapon) @named('throwable') tertiaryWeapon: Weapon,
+        primaryWeapon: InjectNamed<Weapon, 'sword'>,
+        secondaryWeapon: InjectNamed<Weapon, 'throwable'>,
+        tertiaryWeapon: InjectNamed<Weapon, 'throwable'>,
       ) {
         this.primaryWeapon = primaryWeapon;
         this.secondaryWeapon = secondaryWeapon;
@@ -146,21 +135,21 @@ describe('inRequestScope', () => {
     const container: Container = new Container();
 
     container
-      .bind<Weapon>(TYPE.Weapon)
+      .bind(resolve<Weapon>())
       .to(Katana)
       .inRequestScope()
       .whenNamed('sword');
 
     container
-      .bind<Weapon>(TYPE.Weapon)
+      .bind(resolve<Weapon>())
       .to(Shuriken)
       .inRequestScope()
       .whenNamed('throwable');
 
-    container.bind<Warrior>(TYPE.Warrior).to(Samurai);
+    container.bind(resolve<Warrior>()).to(Samurai);
 
-    const samurai1: Warrior = container.get<Warrior>(TYPE.Warrior);
-    const samurai2: Warrior = container.get<Warrior>(TYPE.Warrior);
+    const samurai1: Warrior = container.get(resolve<Warrior>());
+    const samurai2: Warrior = container.get(resolve<Warrior>());
 
     // Katana and Shuriken are two instances
     expect(samurai1.primaryWeapon.use()).not.toBe(

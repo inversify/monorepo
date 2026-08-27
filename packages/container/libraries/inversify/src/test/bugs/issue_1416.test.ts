@@ -3,29 +3,25 @@ import { describe, expect, it, Mock, vitest } from 'vitest';
 import {
   bindingScopeValues,
   Container,
-  injectable,
-  preDestroy,
+  type Injectable,
+  type PreDestroy,
 } from '../../index.js';
 
 describe('Issue 1416', () => {
   it('should allow providing default values on optional bindings', async () => {
-    @injectable()
-    class Test1 {
+    class Test1 implements Injectable {
       public onDestroyMock: Mock<() => void> = vitest.fn();
 
-      @preDestroy()
-      public destroy() {
+      public destroy: PreDestroy<() => void> = () => {
         this.onDestroyMock();
-      }
+      };
     }
 
-    @injectable()
-    class Test2 {
+    class Test2 implements Injectable {
       public destroy(): void {}
     }
 
-    @injectable()
-    class Test3 {
+    class Test3 implements Injectable {
       public destroy(): void {}
     }
 

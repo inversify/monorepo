@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable } from '../../index.js';
+import { Container, type Inject, type Injectable } from '../../index.js';
 
 const CHILD_CONTAINER_ITERATIONS: number = 50_000;
 /*
@@ -34,14 +34,11 @@ function getHeapUsedMb(): number {
 
 describe('Issue 1810', () => {
   describe('when many temporary child containers resolve instance bindings', () => {
-    @injectable()
-    class Dependency {}
+    class Dependency implements Injectable {}
 
-    @injectable()
-    class Service {
+    class Service implements Injectable {
       constructor(
-        @inject(Dependency)
-        public readonly dependency: Dependency,
+        public readonly dependency: Inject<Dependency>,
       ) {}
     }
 
@@ -97,14 +94,11 @@ describe('Issue 1810', () => {
   });
 
   describe('when cache plans are regenerated over time', () => {
-    @injectable()
-    class Dependency {}
+    class Dependency implements Injectable {}
 
-    @injectable()
-    class Service {
+    class Service implements Injectable {
       constructor(
-        @inject(Dependency)
-        public readonly dependency: Dependency,
+        public readonly dependency: Inject<Dependency>,
       ) {}
     }
 

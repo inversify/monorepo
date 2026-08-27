@@ -1,16 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, injectable } from '../../index.js';
+import { Container, type Injectable } from '../../index.js';
 
 describe('Error message when resolving fails', () => {
-  @injectable()
-  class Katana {}
+  class Katana implements Injectable {}
 
-  @injectable()
-  class Shuriken {}
+  class Shuriken implements Injectable {}
 
-  @injectable()
-  class Bokken {}
+  class Bokken implements Injectable {}
 
   it('Should contain correct message and the serviceIdentifier in error message', () => {
     const container: Container = new Container();

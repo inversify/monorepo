@@ -1,15 +1,14 @@
+import 'reflect-metadata/lite';
 import { describe, expect, it } from 'vitest';
 
-import 'reflect-metadata/lite';
-
-import { inject, multiInject } from '@inversifyjs/core';
+import { type Inject, type Injectable, type InjectMulti } from '@inversifyjs/core';
 
 import { Container } from '../container/services/Container.js';
 
 describe('inversify/InversifyJS#1864', () => {
   it('Container unbindAsync request should not throw planning errors', () => {
-    class Foo {
-      constructor(@inject('bar') _bar: string) {}
+    class Foo implements Injectable {
+      constructor(_bar: Inject<string>) {}
     }
 
     const container: Container = new Container();
@@ -26,8 +25,8 @@ describe('inversify/InversifyJS#1864', () => {
   });
 
   it('Container leaf bind request should not throw planning errors', () => {
-    class Foo {
-      constructor(@multiInject('bar') _bar: string[]) {}
+    class Foo implements Injectable {
+      constructor(_bar: InjectMulti<string>) {}
     }
 
     const container: Container = new Container();
@@ -42,12 +41,12 @@ describe('inversify/InversifyJS#1864', () => {
   });
 
   it('Container non leaf bind request should not throw planning errors', () => {
-    class Foo {
-      constructor(@multiInject('bar') _bar: unknown[]) {}
+    class Foo implements Injectable {
+      constructor(_bar: InjectMulti<unknown>) {}
     }
 
-    class Bar {
-      constructor(@inject('baz') _baz: string) {}
+    class Bar implements Injectable {
+      constructor(_baz: Inject<string>) {}
     }
 
     const container: Container = new Container();
@@ -68,12 +67,12 @@ describe('inversify/InversifyJS#1864', () => {
   });
 
   it('Container non leaf circular bind request should not throw planning errors', () => {
-    class Foo {
-      constructor(@multiInject('bar') _bar: unknown[]) {}
+    class Foo implements Injectable {
+      constructor(_bar: InjectMulti<unknown>) {}
     }
 
-    class Circular {
-      constructor(@inject(Circular) _circular: Circular) {}
+    class Circular implements Injectable {
+      constructor(_circular: Inject<Circular>) {}
     }
 
     const container: Container = new Container();

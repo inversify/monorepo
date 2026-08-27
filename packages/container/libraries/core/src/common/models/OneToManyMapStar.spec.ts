@@ -107,6 +107,116 @@ describe(OneToManyMapStar, () => {
         expect(originalModelsFromRelationResult).toStrictEqual([modelFixture]);
       });
     });
+
+    describe('when called, and a value is removed', () => {
+      let originalModelsFromRelationResult: unknown;
+      let cloneModelsFromRelationResult: unknown;
+      let error: unknown;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        const clone: OneToManyMapStar<unknown, RelationTest> =
+          oneToManyMapStar.clone();
+
+        try {
+          clone.removeByRelation(
+            RelationKey.bar,
+            relationFixture[RelationKey.bar],
+          );
+        } catch (caughtError: unknown) {
+          error = caughtError;
+        }
+
+        cloneModelsFromRelationResult = clone.get(
+          RelationKey.bar,
+          relationFixture[RelationKey.bar],
+        );
+
+        originalModelsFromRelationResult = [
+          ...(oneToManyMapStar.get(
+            RelationKey.bar,
+            relationFixture[RelationKey.bar],
+          ) ?? []),
+        ];
+
+        result = clone;
+      });
+
+      it('should not throw', () => {
+        expect(error).toBeUndefined();
+      });
+
+      it('should return a OneToManyMapStar', () => {
+        expect(result).toBeInstanceOf(OneToManyMapStar);
+      });
+
+      it('should provide expected models from clone', () => {
+        expect(cloneModelsFromRelationResult).toBeUndefined();
+      });
+
+      it('should provide expected models from original', () => {
+        expect(originalModelsFromRelationResult).toStrictEqual([modelFixture]);
+      });
+    });
+
+    describe('having a OneToManyMapStart with a removed model', () => {
+      class CloneTrackingOneToManyMapStar extends OneToManyMapStar<
+        unknown,
+        RelationTest
+      > {
+        public readonly clonedModels: unknown[] = [];
+
+        protected override _cloneModel(model: unknown): unknown {
+          this.clonedModels.push(model);
+
+          return model;
+        }
+      }
+
+      let keptModelFixture: unknown;
+      let removedModelFixture: unknown;
+      let oneToManyMapStar: CloneTrackingOneToManyMapStar;
+
+      beforeAll(() => {
+        keptModelFixture = Symbol();
+        removedModelFixture = Symbol();
+
+        oneToManyMapStar = new CloneTrackingOneToManyMapStar({
+          bar: {
+            isOptional: true,
+          },
+          foo: {
+            isOptional: false,
+          },
+        });
+
+        oneToManyMapStar.add(keptModelFixture, {
+          [RelationKey.bar]: 1,
+          [RelationKey.foo]: 'kept-foo-fixture',
+        });
+        oneToManyMapStar.add(removedModelFixture, {
+          [RelationKey.bar]: 2,
+          [RelationKey.foo]: 'removed-foo-fixture',
+        });
+
+        oneToManyMapStar.removeByRelation(RelationKey.bar, 2);
+      });
+
+      describe('when called', () => {
+        let clonedModelsFixture: unknown[];
+
+        beforeAll(() => {
+          oneToManyMapStar.clone();
+
+          clonedModelsFixture = oneToManyMapStar.clonedModels;
+        });
+
+        it('should clone remaining models', () => {
+          expect(clonedModelsFixture).toStrictEqual([keptModelFixture]);
+        });
+      });
+    });
   });
 
   describe('.get', () => {
@@ -300,11 +410,21 @@ describe(OneToManyMapStar, () => {
       });
 
       describe('when called', () => {
+        let error: unknown;
+
         beforeAll(() => {
-          oneToManyMapStar.removeByRelation(
-            RelationKey.bar,
-            relationFixture[RelationKey.bar],
-          );
+          try {
+            oneToManyMapStar.removeByRelation(
+              RelationKey.bar,
+              relationFixture[RelationKey.bar],
+            );
+          } catch (caughtError: unknown) {
+            error = caughtError;
+          }
+        });
+
+        it('should not throw', () => {
+          expect(error).toBeUndefined();
         });
 
         describe('when called .get()', () => {
@@ -593,6 +713,98 @@ describe(OneToManyMapStar, () => {
             };
 
             expect(results).toStrictEqual(expectedResults);
+          });
+        });
+      });
+    });
+
+    describe('having a OneToManyMapStart with two models sharing a relation key and different values', () => {
+      let firstModelFixture: unknown;
+      let secondModelFixture: unknown;
+      let firstRelationFixture: Required<RelationTest>;
+      let secondRelationFixture: Required<RelationTest>;
+
+      beforeAll(() => {
+        firstModelFixture = Symbol();
+        secondModelFixture = Symbol();
+        firstRelationFixture = {
+          bar: 1,
+          foo: 'shared-foo-fixture',
+        };
+        secondRelationFixture = {
+          bar: 2,
+          foo: firstRelationFixture[RelationKey.foo],
+        };
+      });
+
+      describe('when called, with a value associated to the second model', () => {
+        let oneToManyMapStar: OneToManyMapStar<unknown, RelationTest>;
+
+        beforeAll(() => {
+          oneToManyMapStar = new OneToManyMapStar<unknown, RelationTest>({
+            bar: {
+              isOptional: true,
+            },
+            foo: {
+              isOptional: false,
+            },
+          });
+
+          oneToManyMapStar.add(firstModelFixture, firstRelationFixture);
+          oneToManyMapStar.add(secondModelFixture, secondRelationFixture);
+
+          oneToManyMapStar.removeByRelation(
+            RelationKey.bar,
+            secondRelationFixture[RelationKey.bar],
+          );
+        });
+
+        describe('when called .get()', () => {
+          let results: {
+            [TKey in RelationKey]-?: Iterable<unknown> | undefined;
+          };
+
+          beforeAll(() => {
+            results = {
+              [RelationKey.bar]: [
+                ...(oneToManyMapStar.get(
+                  RelationKey.bar,
+                  firstRelationFixture[RelationKey.bar],
+                ) ?? []),
+              ],
+              [RelationKey.foo]: [
+                ...(oneToManyMapStar.get(
+                  RelationKey.foo,
+                  firstRelationFixture[RelationKey.foo],
+                ) ?? []),
+              ],
+            };
+          });
+
+          it('should return expected results', () => {
+            const expectedResults: {
+              [TKey in RelationKey]-?: Iterable<unknown> | undefined;
+            } = {
+              [RelationKey.bar]: [firstModelFixture],
+              [RelationKey.foo]: [firstModelFixture],
+            };
+
+            expect(results).toStrictEqual(expectedResults);
+          });
+        });
+
+        describe('when called .get() with the removed relation value', () => {
+          let result: unknown;
+
+          beforeAll(() => {
+            result = oneToManyMapStar.get(
+              RelationKey.bar,
+              secondRelationFixture[RelationKey.bar],
+            );
+          });
+
+          it('should return expected result', () => {
+            expect(result).toBeUndefined();
           });
         });
       });

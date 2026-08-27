@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import {
   Container,
-  inject,
-  injectable,
+  type Inject,
+  type Injectable,
+  type InjectOptional,
   Newable,
-  optional,
 } from '../../index.js';
 
 describe('Issue 928', () => {
@@ -14,37 +14,31 @@ describe('Issue 928', () => {
     let injectedB: unknown;
     let injectedC: unknown;
 
-    // some dependencies
-    @injectable()
-    class DepA {
+    class DepA implements Injectable {
       public a: number = 1;
     }
-    @injectable()
-    class DepB {
+    class DepB implements Injectable {
       public b: number = 1;
     }
-    @injectable()
-    class DepC {
+    class DepC implements Injectable {
       public c: number = 1;
     }
 
-    @injectable()
-    abstract class AbstractCls {
+    abstract class AbstractCls implements Injectable {
       constructor(
-        @inject(DepA) a: DepA,
-        @inject(DepB) @optional() b: DepB = { b: 0 },
+        a: Inject<DepA>,
+        b: InjectOptional<DepB> = { b: 0 },
       ) {
         injectedA = a;
         injectedB = b;
       }
     }
 
-    @injectable()
-    class Cls extends AbstractCls {
+    class Cls extends AbstractCls implements Injectable {
       constructor(
-        @inject(DepC) c: DepC,
-        @inject(DepB) @optional() b: DepB = { b: 0 },
-        @inject(DepA) a: DepA,
+        c: Inject<DepC>,
+        b: InjectOptional<DepB> = { b: 0 },
+        a: Inject<DepA>,
       ) {
         super(a, b);
 

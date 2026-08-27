@@ -1,31 +1,24 @@
+import { resolve } from 'rflct';
 import { describe, expect, it } from 'vitest';
 
 import {
   Container,
-  inject,
-  injectable,
-  injectFromBase,
-  multiInject,
-  named,
-  optional,
-  tagged,
-  unmanaged,
+  type Inject,
+  type Injectable,
+  type InjectMulti,
+  type InjectNamed,
+  type InjectOptional,
+  type InjectTagged,
+  type InjectUnmanaged,
 } from '../../index.js';
 
 describe('Property Injection', () => {
   it('Should be able to inject a property', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Warrior: 'Warrior',
-      Weapon: 'Weapon',
-    };
-
     interface Weapon {
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
@@ -37,10 +30,8 @@ describe('Property Injection', () => {
       weapon: Weapon;
     }
 
-    @injectable()
-    class Samurai implements Warrior {
-      @inject(TYPES.Weapon)
-      public weapon!: Weapon;
+    class Samurai implements Warrior, Injectable {
+      public weapon!: Inject<Weapon>;
       public name: string;
 
       constructor() {
@@ -49,10 +40,10 @@ describe('Property Injection', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>(TYPES.Warrior).to(Samurai);
-    container.bind<Weapon>(TYPES.Weapon).to(Katana);
+    container.bind(resolve<Warrior>()).to(Samurai);
+    container.bind(resolve<Weapon>()).to(Katana);
 
-    const warrior: Warrior = container.get<Warrior>(TYPES.Warrior);
+    const warrior: Warrior = container.get(resolve<Warrior>());
 
     expect(warrior.name).toBe('Samurai');
     expect(warrior.weapon).toBeDefined();
@@ -60,32 +51,18 @@ describe('Property Injection', () => {
   });
 
   it('Should be able to inject a property combined with constructor injection', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Warrior: 'Warrior',
-      Weapon: 'Weapon',
-    };
-
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TAGS = {
-      Primary: 'Primary',
-      Secondary: 'Secondary',
-    };
-
     interface Weapon {
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
@@ -98,26 +75,23 @@ describe('Property Injection', () => {
       secondaryWeapon: Weapon;
     }
 
-    @injectable()
-    class Samurai implements Warrior {
-      @inject(TYPES.Weapon)
-      @named(TAGS.Secondary)
-      public secondaryWeapon!: Weapon;
+    class Samurai implements Warrior, Injectable {
+      public secondaryWeapon!: InjectNamed<Weapon, 'Secondary'>;
       public name: string;
       public primaryWeapon: Weapon;
 
-      constructor(@inject(TYPES.Weapon) @named(TAGS.Primary) weapon: Weapon) {
+      constructor(weapon: InjectNamed<Weapon, 'Primary'>) {
         this.name = 'Samurai';
         this.primaryWeapon = weapon;
       }
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>(TYPES.Warrior).to(Samurai);
-    container.bind<Weapon>(TYPES.Weapon).to(Katana).whenNamed(TAGS.Primary);
-    container.bind<Weapon>(TYPES.Weapon).to(Shuriken).whenNamed(TAGS.Secondary);
+    container.bind(resolve<Warrior>()).to(Samurai);
+    container.bind(resolve<Weapon>()).to(Katana).whenNamed('Primary');
+    container.bind(resolve<Weapon>()).to(Shuriken).whenNamed('Secondary');
 
-    const warrior: Warrior = container.get<Warrior>(TYPES.Warrior);
+    const warrior: Warrior = container.get(resolve<Warrior>());
 
     expect(warrior.name).toBe('Samurai');
     expect(warrior.primaryWeapon).toBeDefined();
@@ -127,32 +101,18 @@ describe('Property Injection', () => {
   });
 
   it('Should be able to inject a named property', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Warrior: 'Warrior',
-      Weapon: 'Weapon',
-    };
-
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TAGS = {
-      Primary: 'Primary',
-      Secondary: 'Secondary',
-    };
-
     interface Weapon {
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
@@ -165,15 +125,10 @@ describe('Property Injection', () => {
       secondaryWeapon: Weapon;
     }
 
-    @injectable()
-    class Samurai implements Warrior {
-      @inject(TYPES.Weapon)
-      @named(TAGS.Primary)
-      public primaryWeapon!: Weapon;
+    class Samurai implements Warrior, Injectable {
+      public primaryWeapon!: InjectNamed<Weapon, 'Primary'>;
 
-      @inject(TYPES.Weapon)
-      @named(TAGS.Secondary)
-      public secondaryWeapon!: Weapon;
+      public secondaryWeapon!: InjectNamed<Weapon, 'Secondary'>;
 
       public name: string;
 
@@ -183,11 +138,11 @@ describe('Property Injection', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>(TYPES.Warrior).to(Samurai);
-    container.bind<Weapon>(TYPES.Weapon).to(Katana).whenNamed(TAGS.Primary);
-    container.bind<Weapon>(TYPES.Weapon).to(Shuriken).whenNamed(TAGS.Secondary);
+    container.bind(resolve<Warrior>()).to(Samurai);
+    container.bind(resolve<Weapon>()).to(Katana).whenNamed('Primary');
+    container.bind(resolve<Weapon>()).to(Shuriken).whenNamed('Secondary');
 
-    const warrior: Warrior = container.get<Warrior>(TYPES.Warrior);
+    const warrior: Warrior = container.get(resolve<Warrior>());
 
     expect(warrior.name).toBe('Samurai');
     expect(warrior.primaryWeapon).toBeDefined();
@@ -197,33 +152,18 @@ describe('Property Injection', () => {
   });
 
   it('Should be able to inject a tagged property', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Warrior: 'Warrior',
-      Weapon: 'Weapon',
-    };
-
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TAGS = {
-      Primary: 'Primary',
-      Priority: 'Priority',
-      Secondary: 'Secondary',
-    };
-
     interface Weapon {
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
@@ -236,15 +176,10 @@ describe('Property Injection', () => {
       secondaryWeapon: Weapon;
     }
 
-    @injectable()
-    class Samurai implements Warrior {
-      @inject(TYPES.Weapon)
-      @tagged(TAGS.Priority, TAGS.Primary)
-      public primaryWeapon!: Weapon;
+    class Samurai implements Warrior, Injectable {
+      public primaryWeapon!: InjectTagged<Weapon, 'Priority', 'Primary'>;
 
-      @inject(TYPES.Weapon)
-      @tagged(TAGS.Priority, TAGS.Secondary)
-      public secondaryWeapon!: Weapon;
+      public secondaryWeapon!: InjectTagged<Weapon, 'Priority', 'Secondary'>;
 
       public name: string;
 
@@ -254,17 +189,17 @@ describe('Property Injection', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>(TYPES.Warrior).to(Samurai);
+    container.bind(resolve<Warrior>()).to(Samurai);
     container
-      .bind<Weapon>(TYPES.Weapon)
+      .bind(resolve<Weapon>())
       .to(Katana)
-      .whenTagged(TAGS.Priority, TAGS.Primary);
+      .whenTagged('Priority', 'Primary');
     container
-      .bind<Weapon>(TYPES.Weapon)
+      .bind(resolve<Weapon>())
       .to(Shuriken)
-      .whenTagged(TAGS.Priority, TAGS.Secondary);
+      .whenTagged('Priority', 'Secondary');
 
-    const warrior: Warrior = container.get<Warrior>(TYPES.Warrior);
+    const warrior: Warrior = container.get(resolve<Warrior>());
 
     expect(warrior.name).toBe('Samurai');
     expect(warrior.primaryWeapon).toBeDefined();
@@ -274,26 +209,18 @@ describe('Property Injection', () => {
   });
 
   it('Should be able to multi-inject a property', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Warrior: 'Warrior',
-      Weapon: 'Weapon',
-    };
-
     interface Weapon {
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
@@ -305,10 +232,8 @@ describe('Property Injection', () => {
       weapons: Weapon[];
     }
 
-    @injectable()
-    class Samurai implements Warrior {
-      @multiInject(TYPES.Weapon)
-      public weapons!: Weapon[];
+    class Samurai implements Warrior, Injectable {
+      public weapons!: InjectMulti<Weapon>;
       public name: string;
 
       constructor() {
@@ -317,11 +242,11 @@ describe('Property Injection', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>(TYPES.Warrior).to(Samurai);
-    container.bind<Weapon>(TYPES.Weapon).to(Katana);
-    container.bind<Weapon>(TYPES.Weapon).to(Shuriken);
+    container.bind(resolve<Warrior>()).to(Samurai);
+    container.bind(resolve<Weapon>()).to(Katana);
+    container.bind(resolve<Weapon>()).to(Shuriken);
 
-    const warrior: Warrior = container.get<Warrior>(TYPES.Warrior);
+    const warrior: Warrior = container.get(resolve<Warrior>());
 
     expect(warrior.name).toBe('Samurai');
     expect(warrior.weapons[0]).toBeDefined();
@@ -331,33 +256,18 @@ describe('Property Injection', () => {
   });
 
   it('Should be able to inject a property in a base class', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Warrior: 'Warrior',
-      Weapon: 'Weapon',
-    };
-
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TAGS = {
-      Primary: 'Primary',
-      Priority: 'Priority',
-      Secondary: 'Secondary',
-    };
-
     interface Weapon {
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
@@ -369,27 +279,17 @@ describe('Property Injection', () => {
       primaryWeapon: Weapon;
     }
 
-    @injectable()
-    class BaseWarrior implements Warrior {
-      @inject(TYPES.Weapon)
-      @tagged(TAGS.Priority, TAGS.Primary)
-      public primaryWeapon!: Weapon;
+    class BaseWarrior implements Warrior, Injectable {
+      public primaryWeapon!: InjectTagged<Weapon, 'Priority', 'Primary'>;
       public name: string;
 
-      constructor(@unmanaged() name: string) {
+      constructor(name: InjectUnmanaged<string>) {
         this.name = name;
       }
     }
 
-    @injectable()
-    @injectFromBase({
-      extendConstructorArguments: false,
-      extendProperties: true,
-    })
-    class Samurai extends BaseWarrior {
-      @inject(TYPES.Weapon)
-      @tagged(TAGS.Priority, TAGS.Secondary)
-      public secondaryWeapon!: Weapon;
+    class Samurai extends BaseWarrior implements Injectable {
+      public secondaryWeapon!: InjectTagged<Weapon, 'Priority', 'Secondary'>;
 
       constructor() {
         super('Samurai');
@@ -397,17 +297,17 @@ describe('Property Injection', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>(TYPES.Warrior).to(Samurai);
+    container.bind(resolve<Warrior>()).to(Samurai);
     container
-      .bind<Weapon>(TYPES.Weapon)
+      .bind(resolve<Weapon>())
       .to(Katana)
-      .whenTagged(TAGS.Priority, TAGS.Primary);
+      .whenTagged('Priority', 'Primary');
     container
-      .bind<Weapon>(TYPES.Weapon)
+      .bind(resolve<Weapon>())
       .to(Shuriken)
-      .whenTagged(TAGS.Priority, TAGS.Secondary);
+      .whenTagged('Priority', 'Secondary');
 
-    const samurai: Samurai = container.get<Samurai>(TYPES.Warrior);
+    const samurai = container.get(resolve<Warrior>()) as Samurai;
 
     expect(samurai.name).toBe('Samurai');
     expect(samurai.secondaryWeapon).toBeDefined();
@@ -417,21 +317,12 @@ describe('Property Injection', () => {
   });
 
   it('Should be able to flag a property injection as optional', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Route: 'Route',
-      Router: 'Router',
-    };
-
     interface Route {
       name: string;
     }
 
-    @injectable()
-    class Router {
-      @inject(TYPES.Route)
-      @optional()
-      private readonly route!: Route;
+    class Router implements Injectable {
+      private readonly route!: InjectOptional<Route>;
 
       public getRoute(): Route {
         return this.route;
@@ -440,15 +331,15 @@ describe('Property Injection', () => {
 
     const container: Container = new Container();
 
-    container.bind<Router>(TYPES.Router).to(Router);
+    container.bind(resolve<Router>()).to(Router);
 
-    const router1: Router = container.get<Router>(TYPES.Router);
+    const router1: Router = container.get(resolve<Router>());
 
     expect(router1.getRoute()).toBeUndefined();
 
-    container.bind<Route>(TYPES.Route).toConstantValue({ name: 'route1' });
+    container.bind(resolve<Route>()).toConstantValue({ name: 'route1' });
 
-    const router2: Router = container.get<Router>(TYPES.Router);
+    const router2: Router = container.get(resolve<Router>());
 
     expect(router2.getRoute().name).toBe('route1');
   });

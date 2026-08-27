@@ -4,6 +4,8 @@ vitest.mock(import('./getDefaultClassMetadata.js'));
 
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
+vitest.mock(import('./buildClassMetadataFromRflct.js'));
+
 import { type Newable } from '@inversifyjs/common';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
@@ -122,11 +124,12 @@ describe(getClassMetadata, () => {
       expect(getDefaultClassMetadata).toHaveBeenCalledExactlyOnceWith();
     });
 
-    it('should call validateConstructorMetadataArray()', () => {
-      expect(validateConstructorMetadataArray).toHaveBeenCalledExactlyOnceWith(
-        typeFixture,
-        metadataFixture.constructorArguments,
-      );
+    it('should not call isPendingClassMetadata()', () => {
+      expect(isPendingClassMetadata).not.toHaveBeenCalled();
+    });
+
+    it('should not call validateConstructorMetadataArray()', () => {
+      expect(validateConstructorMetadataArray).not.toHaveBeenCalled();
     });
 
     it('should return expected result', () => {

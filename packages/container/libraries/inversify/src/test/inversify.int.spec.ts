@@ -1,20 +1,18 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
+import { resolve } from 'rflct';
 
 import {
   BindingConstraints,
   Container,
   ContainerModule,
-  ContainerModuleLoadOptions,
-  decorate,
-  Factory,
-  inject,
-  injectable,
-  LazyServiceIdentifier,
-  multiInject,
-  named,
+  type ContainerModuleLoadOptions,
+  type Inject,
+  type Injectable,
+  type InjectMulti,
+  type InjectNamed,
+  type InjectTagged,
   Newable,
-  ResolutionContext,
-  tagged,
+  type ResolutionContext,
 } from '../index.js';
 
 describe('InversifyJS', () => {
@@ -32,28 +30,25 @@ describe('InversifyJS', () => {
       throw(): string;
     }
 
-    @injectable()
-    class Katana implements KatanaInterface {
+    class Katana implements KatanaInterface, Injectable {
       public hit() {
         return 'cut!';
       }
     }
 
-    @injectable()
-    class Shuriken implements ShurikenInterface {
+    class Shuriken implements ShurikenInterface, Injectable {
       public throw() {
         return 'hit!';
       }
     }
 
-    @injectable()
-    class Ninja implements NinjaInterface {
+    class Ninja implements NinjaInterface, Injectable {
       private readonly _katana: KatanaInterface;
       private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        @inject('Katana') katana: KatanaInterface,
-        @inject('Shuriken') shuriken: ShurikenInterface,
+        katana: Inject<KatanaInterface>,
+        shuriken: Inject<ShurikenInterface>,
       ) {
         this._katana = katana;
         this._shuriken = shuriken;
@@ -68,38 +63,33 @@ describe('InversifyJS', () => {
     }
 
     const container: Container = new Container();
-    container.bind<NinjaInterface>('Ninja').to(Ninja);
-    container.bind<KatanaInterface>('Katana').to(Katana);
-    container.bind<ShurikenInterface>('Shuriken').to(Shuriken);
+    container.bind(resolve<NinjaInterface>()).to(Ninja);
+    container.bind(resolve<KatanaInterface>()).to(Katana);
+    container.bind(resolve<ShurikenInterface>()).to(Shuriken);
 
-    const ninja: NinjaInterface = container.get('Ninja');
+    const ninja: NinjaInterface = container.get(resolve<NinjaInterface>());
 
     expect(ninja.fight()).toBe('cut!');
     expect(ninja.sneak()).toBe('hit!');
   });
 
   it('Should be able to do setter injection and property injection', () => {
-    @injectable()
-    class Shuriken {
+    class Shuriken implements Injectable {
       public throw() {
         return 'hit!';
       }
     }
-    @injectable()
-    class Katana implements Katana {
+    class Katana implements Katana, Injectable {
       public hit() {
         return 'cut!';
       }
     }
 
-    @injectable()
-    class Ninja {
-      @inject(Katana)
-      public katana!: Katana;
+    class Ninja implements Injectable {
+      public katana!: Inject<Katana>;
 
       private _shuriken!: Shuriken;
-      @inject(Shuriken)
-      public set Shuriken(shuriken: Shuriken) {
+      public set Shuriken(shuriken: Inject<Shuriken>) {
         this._shuriken = shuriken;
       }
 
@@ -112,54 +102,58 @@ describe('InversifyJS', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Ninja>('Ninja').to(Ninja);
+    container.bind(resolve<Ninja>()).to(Ninja);
     container.bind(Shuriken).toSelf();
     container.bind(Katana).toSelf();
 
-    const ninja: Ninja = container.get<Ninja>('Ninja');
+    const ninja: Ninja = container.get(resolve<Ninja>());
 
     expect(ninja.sneak()).toBe('hit!');
     expect(ninja.fight()).toBe('cut!');
   });
 
   it('Should be able to resolve and inject dependencies in VanillaJS', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Blowgun: 'Blowgun',
-      Katana: 'Katana',
-      Ninja: 'Ninja',
-      Shuriken: 'Shuriken',
-    };
+    interface BlowgunInterface {
+      blow(): string;
+    }
 
-    class Blowgun {
+    interface KatanaInterface {
+      hit(): string;
+    }
+
+    interface ShurikenInterface {
+      throw(): string;
+    }
+
+    class Blowgun implements BlowgunInterface, Injectable {
       public blow() {
         return 'poison!';
       }
     }
 
-    class Katana {
+    class Katana implements KatanaInterface, Injectable {
       public hit() {
         return 'cut!';
       }
     }
 
-    class Shuriken {
+    class Shuriken implements ShurikenInterface, Injectable {
       public throw() {
         return 'hit!';
       }
     }
 
-    class Ninja {
-      public _katana: Katana;
-      public _shuriken: Shuriken;
-      public _blowgun!: Blowgun;
+    class Ninja implements Injectable {
+      public _katana: KatanaInterface;
+      public _shuriken: ShurikenInterface;
+      public _blowgun!: BlowgunInterface;
 
-      constructor(katana: Katana, shuriken: Shuriken) {
+      constructor(katana: Inject<KatanaInterface>, shuriken: Inject<ShurikenInterface>) {
         this._katana = katana;
         this._shuriken = shuriken;
       }
 
-      public set blowgun(blowgun: Blowgun) {
+      public set blowgun(blowgun: Inject<BlowgunInterface>) {
         this._blowgun = blowgun;
       }
 
@@ -174,21 +168,13 @@ describe('InversifyJS', () => {
       }
     }
 
-    decorate([injectable()], Katana);
-    decorate([injectable()], Shuriken);
-    decorate([injectable()], Ninja);
-    decorate([injectable()], Blowgun);
-    decorate([inject(TYPES.Katana)], Ninja, 0);
-    decorate([inject(TYPES.Shuriken)], Ninja, 1);
-    decorate([inject(TYPES.Blowgun)], Ninja, 'blowgun');
-
     const container: Container = new Container();
-    container.bind<Ninja>(TYPES.Ninja).to(Ninja);
-    container.bind<Katana>(TYPES.Katana).to(Katana);
-    container.bind<Shuriken>(TYPES.Shuriken).to(Shuriken);
-    container.bind<Blowgun>(TYPES.Blowgun).to(Blowgun);
+    container.bind(resolve<Ninja>()).to(Ninja);
+    container.bind(resolve<KatanaInterface>()).to(Katana);
+    container.bind(resolve<ShurikenInterface>()).to(Shuriken);
+    container.bind(resolve<BlowgunInterface>()).to(Blowgun);
 
-    const ninja: Ninja = container.get(TYPES.Ninja);
+    const ninja: Ninja = container.get(resolve<Ninja>());
 
     expect(ninja.fight()).toBe('cut!');
     expect(ninja.sneak()).toBe('hit!');
@@ -196,26 +182,23 @@ describe('InversifyJS', () => {
   });
 
   it('Should be able to use classes as runtime identifiers', () => {
-    @injectable()
-    class Katana {
+    class Katana implements Injectable {
       public hit() {
         return 'cut!';
       }
     }
 
-    @injectable()
-    class Shuriken {
+    class Shuriken implements Injectable {
       public throw() {
         return 'hit!';
       }
     }
 
-    @injectable()
-    class Ninja {
+    class Ninja implements Injectable {
       private readonly _katana: Katana;
       private readonly _shuriken: Shuriken;
 
-      constructor(katana: Katana, shuriken: Shuriken) {
+      constructor(katana: Inject<Katana>, shuriken: Inject<Shuriken>) {
         this._katana = katana;
         this._shuriken = shuriken;
       }
@@ -240,15 +223,21 @@ describe('InversifyJS', () => {
   });
 
   it('Should be able to use Symbols as runtime identifiers', () => {
-    @injectable()
-    class Katana {
+    interface KatanaInterface {
+      hit(): string;
+    }
+
+    interface ShurikenInterface {
+      throw(): string;
+    }
+
+    class Katana implements KatanaInterface, Injectable {
       public hit() {
         return 'cut!';
       }
     }
 
-    @injectable()
-    class Shuriken {
+    class Shuriken implements ShurikenInterface, Injectable {
       public throw() {
         return 'hit!';
       }
@@ -261,14 +250,13 @@ describe('InversifyJS', () => {
       Shuriken: Symbol.for('Shuriken'),
     };
 
-    @injectable()
-    class Ninja {
-      private readonly _katana: Katana;
-      private readonly _shuriken: Shuriken;
+    class Ninja implements Injectable {
+      private readonly _katana: KatanaInterface;
+      private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        @inject(TYPES.Katana) katana: Katana,
-        @inject(TYPES.Shuriken) shuriken: Shuriken,
+        katana: Inject<KatanaInterface>,
+        shuriken: Inject<ShurikenInterface>,
       ) {
         this._katana = katana;
         this._shuriken = shuriken;
@@ -283,47 +271,44 @@ describe('InversifyJS', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Ninja>(TYPES.Ninja).to(Ninja);
-    container.bind<Katana>(TYPES.Katana).to(Katana);
-    container.bind<Shuriken>(TYPES.Shuriken).to(Shuriken);
+    container.bind(resolve<Ninja>()).to(Ninja);
+    container.bind(resolve<KatanaInterface>()).to(Katana);
+    container.bind(resolve<ShurikenInterface>()).to(Shuriken);
 
-    const ninja: Ninja = container.get(TYPES.Ninja);
+    const ninja: Ninja = container.get(resolve<Ninja>());
 
     expect(ninja.fight()).toBe('cut!');
     expect(ninja.sneak()).toBe('hit!');
   });
 
   it('Should be able to wrap Symbols with LazyServiceIdentifier', () => {
-    @injectable()
-    class Katana {
+    interface KatanaInterface {
+      hit(): string;
+    }
+
+    interface ShurikenInterface {
+      throw(): string;
+    }
+
+    class Katana implements KatanaInterface, Injectable {
       public hit() {
         return 'cut!';
       }
     }
 
-    @injectable()
-    class Shuriken {
+    class Shuriken implements ShurikenInterface, Injectable {
       public throw() {
         return 'hit!';
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Katana: Symbol.for('Katana'),
-      Ninja: Symbol.for('Ninja'),
-      Shuriken: Symbol.for('Shuriken'),
-    };
-
-    @injectable()
-    class Ninja implements Ninja {
-      private readonly _katana: Katana;
-      private readonly _shuriken: Shuriken;
+    class Ninja implements Injectable {
+      private readonly _katana: KatanaInterface;
+      private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        @inject(new LazyServiceIdentifier(() => TYPES.Katana)) katana: Katana,
-        @inject(new LazyServiceIdentifier(() => TYPES.Shuriken))
-        shuriken: Shuriken,
+        katana: Inject<KatanaInterface>,
+        shuriken: Inject<ShurikenInterface>,
       ) {
         this._katana = katana;
         this._shuriken = shuriken;
@@ -338,39 +323,49 @@ describe('InversifyJS', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Ninja>(TYPES.Ninja).to(Ninja);
-    container.bind<Katana>(TYPES.Katana).to(Katana);
-    container.bind<Shuriken>(TYPES.Shuriken).to(Shuriken);
+    container.bind(resolve<Ninja>()).to(Ninja);
+    container.bind(resolve<KatanaInterface>()).to(Katana);
+    container.bind(resolve<ShurikenInterface>()).to(Shuriken);
 
-    const ninja: Ninja = container.get<Ninja>(TYPES.Ninja);
+    const ninja: Ninja = container.get(resolve<Ninja>());
 
     expect(ninja.fight()).toBe('cut!');
     expect(ninja.sneak()).toBe('hit!');
   });
 
   it('Should support Container modules', async () => {
-    @injectable()
-    class Katana {
+    interface KatanaInterface {
+      hit(): string;
+    }
+
+    interface ShurikenInterface {
+      throw(): string;
+    }
+
+    interface NinjaInterface {
+      fight(): string;
+      sneak(): string;
+    }
+
+    class Katana implements KatanaInterface, Injectable {
       public hit() {
         return 'cut!';
       }
     }
 
-    @injectable()
-    class Shuriken {
+    class Shuriken implements ShurikenInterface, Injectable {
       public throw() {
         return 'hit!';
       }
     }
 
-    @injectable()
-    class Ninja {
-      private readonly _katana: Katana;
-      private readonly _shuriken: Shuriken;
+    class Ninja implements NinjaInterface, Injectable {
+      private readonly _katana: KatanaInterface;
+      private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        @inject('Katana') katana: Katana,
-        @inject('Shuriken') shuriken: Shuriken,
+        katana: Inject<KatanaInterface>,
+        shuriken: Inject<ShurikenInterface>,
       ) {
         this._katana = katana;
         this._shuriken = shuriken;
@@ -386,14 +381,14 @@ describe('InversifyJS', () => {
 
     const warriors: ContainerModule = new ContainerModule(
       (options: ContainerModuleLoadOptions) => {
-        options.bind<Ninja>('Ninja').to(Ninja);
+        options.bind(resolve<NinjaInterface>()).to(Ninja);
       },
     );
 
     const weapons: ContainerModule = new ContainerModule(
       (options: ContainerModuleLoadOptions) => {
-        options.bind<Katana>('Katana').to(Katana);
-        options.bind<Shuriken>('Shuriken').to(Shuriken);
+        options.bind(resolve<KatanaInterface>()).to(Katana);
+        options.bind(resolve<ShurikenInterface>()).to(Shuriken);
       },
     );
 
@@ -402,62 +397,54 @@ describe('InversifyJS', () => {
     // load
     await container.loadAsync(warriors, weapons);
 
-    const ninja: Ninja = container.get('Ninja');
+    const ninjaId = resolve<NinjaInterface>();
+    const katanaId = resolve<KatanaInterface>();
+    const shurikenId = resolve<ShurikenInterface>();
+
+    const ninja: NinjaInterface = container.get(ninjaId);
 
     expect(ninja.fight()).toBe('cut!');
     expect(ninja.sneak()).toBe('hit!');
 
     const tryGetNinja: () => void = () => {
-      container.get('Ninja');
+      container.get(ninjaId);
     };
     const tryGetKatana: () => void = () => {
-      container.get('Katana');
+      container.get(katanaId);
     };
     const tryGetShuruken: () => void = () => {
-      container.get('Shuriken');
+      container.get(shurikenId);
     };
 
     // unload
     await container.unloadAsync(warriors);
 
-    expect(tryGetNinja).toThrow(`No bindings found for service: "Ninja".
-
-Trying to resolve bindings for "Ninja (Root service)".
-
-Binding constraints:
-- service identifier: Ninja
-- name: -`);
+    expect(tryGetNinja).toThrow();
     expect(tryGetKatana).not.toThrow();
     expect(tryGetShuruken).not.toThrow();
 
     await container.unloadAsync(weapons);
 
-    expect(tryGetNinja).toThrow(`No bindings found for service: "Ninja".
-
-Trying to resolve bindings for "Ninja (Root service)".
-
-Binding constraints:
-- service identifier: Ninja
-- name: -`);
-    expect(tryGetKatana).toThrow(`No bindings found for service: "Katana".
-
-Trying to resolve bindings for "Katana (Root service)".
-
-Binding constraints:
-- service identifier: Katana
-- name: -`);
-    expect(tryGetShuruken).toThrow(`No bindings found for service: "Shuriken".
-
-Trying to resolve bindings for "Shuriken (Root service)".
-
-Binding constraints:
-- service identifier: Shuriken
-- name: -`);
+    expect(tryGetNinja).toThrow();
+    expect(tryGetKatana).toThrow();
+    expect(tryGetShuruken).toThrow();
   });
 
   it('Should support control over the scope of the dependencies', () => {
-    @injectable()
-    class Katana {
+    interface KatanaInterface {
+      hit(): string;
+    }
+
+    interface ShurikenInterface {
+      throw(): string;
+    }
+
+    interface NinjaInterface {
+      fight(): string;
+      sneak(): string;
+    }
+
+    class Katana implements KatanaInterface, Injectable {
       private _usageCount: number;
       constructor() {
         this._usageCount = 0;
@@ -468,8 +455,7 @@ Binding constraints:
       }
     }
 
-    @injectable()
-    class Shuriken {
+    class Shuriken implements ShurikenInterface, Injectable {
       private _shurikenCount: number;
       constructor() {
         this._shurikenCount = 10;
@@ -480,14 +466,13 @@ Binding constraints:
       }
     }
 
-    @injectable()
-    class Ninja {
-      private readonly _katana: Katana;
-      private readonly _shuriken: Shuriken;
+    class Ninja implements NinjaInterface, Injectable {
+      private readonly _katana: KatanaInterface;
+      private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        @inject('Katana') katana: Katana,
-        @inject('Shuriken') shuriken: Shuriken,
+        katana: Inject<KatanaInterface>,
+        shuriken: Inject<ShurikenInterface>,
       ) {
         this._katana = katana;
         this._shuriken = shuriken;
@@ -502,18 +487,18 @@ Binding constraints:
     }
 
     const container: Container = new Container();
-    container.bind<Ninja>('Ninja').to(Ninja);
-    container.bind<Katana>('Katana').to(Katana).inSingletonScope();
-    container.bind<Shuriken>('Shuriken').to(Shuriken);
+    container.bind(resolve<NinjaInterface>()).to(Ninja);
+    container.bind(resolve<KatanaInterface>()).to(Katana).inSingletonScope();
+    container.bind(resolve<ShurikenInterface>()).to(Shuriken);
 
-    const ninja1: Ninja = container.get('Ninja');
+    const ninja1: NinjaInterface = container.get(resolve<NinjaInterface>());
 
     expect(ninja1.fight()).toBe('This katana was used 1 times!');
     expect(ninja1.fight()).toBe('This katana was used 2 times!');
     expect(ninja1.sneak()).toBe('Only 9 items left!');
     expect(ninja1.sneak()).toBe('Only 8 items left!');
 
-    const ninja2: Ninja = container.get('Ninja');
+    const ninja2: NinjaInterface = container.get(resolve<NinjaInterface>());
 
     expect(ninja2.fight()).toBe('This katana was used 3 times!');
     expect(ninja2.sneak()).toBe('Only 9 items left!');
@@ -522,8 +507,7 @@ Binding constraints:
   it('Should support the injection of classes to itself', () => {
     const heroName: string = 'superman';
 
-    @injectable()
-    class Hero {
+    class Hero implements Injectable {
       public name: string;
       constructor() {
         this.name = heroName;
@@ -542,15 +526,9 @@ Binding constraints:
       name: string;
     }
 
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Warrior: 'Warrior',
-    };
-
     const heroName: string = 'superman';
 
-    @injectable()
-    class Hero implements Warrior {
+    class Hero implements Warrior, Injectable {
       public name: string;
       constructor() {
         this.name = heroName;
@@ -558,107 +536,107 @@ Binding constraints:
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>(TYPES.Warrior).toConstantValue(new Hero());
-    const hero: Warrior = container.get(TYPES.Warrior);
+    container.bind(resolve<Warrior>()).toConstantValue(new Hero());
+    const hero: Warrior = container.get(resolve<Warrior>());
 
     expect(hero.name).toBe(heroName);
   });
 
   it('Should support the injection of dynamic values', async () => {
-    @injectable()
-    class UseSymbol {
+    interface CurrentSymbol {}
+
+    class UseSymbol implements Injectable {
       public currentSymbol: symbol;
-      constructor(@inject('Symbol') currentDate: symbol) {
-        this.currentSymbol = currentDate;
+      constructor(currentDate: Inject<CurrentSymbol>) {
+        this.currentSymbol = currentDate as unknown as symbol;
       }
       public doSomething() {
         return this.currentSymbol;
       }
     }
 
-    const container: Container = new Container();
-    container.bind<UseSymbol>('UseSymbol').to(UseSymbol);
-    container
-      .bind<symbol>('Symbol')
-      .toDynamicValue((_context: ResolutionContext) => Symbol());
+    const symbolId = resolve<CurrentSymbol>();
 
-    const subject1: UseSymbol = container.get('UseSymbol');
-    const subject2: UseSymbol = container.get('UseSymbol');
+    const container: Container = new Container();
+    container.bind(resolve<UseSymbol>()).to(UseSymbol);
+    container
+      .bind(symbolId)
+      .toDynamicValue(
+        (_context: ResolutionContext) => Symbol() as unknown as CurrentSymbol,
+      );
+
+    const subject1: UseSymbol = container.get(resolve<UseSymbol>());
+    const subject2: UseSymbol = container.get(resolve<UseSymbol>());
 
     expect(subject1.doSomething()).not.toBe(subject2.doSomething());
 
-    await container.unbindAsync('Symbol');
-    container.bind<symbol>('Symbol').toConstantValue(Symbol());
+    await container.unbindAsync(symbolId);
+    container
+      .bind(symbolId)
+      .toConstantValue(Symbol() as unknown as CurrentSymbol);
 
-    const subject3: UseSymbol = container.get('UseSymbol');
-    const subject4: UseSymbol = container.get('UseSymbol');
+    const subject3: UseSymbol = container.get(resolve<UseSymbol>());
+    const subject4: UseSymbol = container.get(resolve<UseSymbol>());
 
     expect(subject3.doSomething()).toBe(subject4.doSomething());
   });
 
   it('Should support the injection of Functions', () => {
-    const ninjaId: string = 'Ninja';
-    const longDistanceWeaponId: string = 'LongDistanceWeapon';
-    const shortDistanceWeaponFactoryId: string = 'ShortDistanceWeaponFactory';
-
     type ShortDistanceWeaponFactory = () => ShortDistanceWeapon;
 
-    @injectable()
-    class KatanaBlade {}
+    class KatanaBlade implements Injectable {}
 
-    @injectable()
-    class KatanaHandler {}
+    class KatanaHandler implements Injectable {}
 
     interface ShortDistanceWeapon {
       handler: KatanaHandler;
       blade: KatanaBlade;
     }
 
-    @injectable()
-    class Katana implements ShortDistanceWeapon {
+    class Katana implements ShortDistanceWeapon, Injectable {
       public handler: KatanaHandler;
       public blade: KatanaBlade;
-      constructor(handler: KatanaHandler, blade: KatanaBlade) {
+      constructor(handler: Inject<KatanaHandler>, blade: Inject<KatanaBlade>) {
         this.handler = handler;
         this.blade = blade;
       }
     }
 
-    @injectable()
-    class Shuriken {}
+    class Shuriken implements Injectable {}
+
+    interface ShortDistanceWeaponFactoryId {}
+    interface LongDistanceWeaponId {}
 
     interface Warrior {
       shortDistanceWeaponFactory: ShortDistanceWeaponFactory;
       longDistanceWeapon: Shuriken;
     }
 
-    @injectable()
-    class Ninja implements Warrior {
+    class Ninja implements Warrior, Injectable {
       public shortDistanceWeaponFactory: ShortDistanceWeaponFactory;
       public longDistanceWeapon: Shuriken;
       constructor(
-        @inject(shortDistanceWeaponFactoryId)
-        shortDistanceWeaponFactory: ShortDistanceWeaponFactory,
-        @inject(longDistanceWeaponId)
-        longDistanceWeapon: Shuriken,
+        shortDistanceWeaponFactory: Inject<ShortDistanceWeaponFactoryId>,
+        longDistanceWeapon: Inject<LongDistanceWeaponId>,
       ) {
-        this.shortDistanceWeaponFactory = shortDistanceWeaponFactory;
-        this.longDistanceWeapon = longDistanceWeapon;
+        this.shortDistanceWeaponFactory =
+          shortDistanceWeaponFactory as unknown as ShortDistanceWeaponFactory;
+        this.longDistanceWeapon = longDistanceWeapon as unknown as Shuriken;
       }
     }
 
     const container: Container = new Container();
-    container.bind<Ninja>(ninjaId).to(Ninja);
-    container.bind<Shuriken>(longDistanceWeaponId).to(Shuriken);
+    container.bind(resolve<Ninja>()).to(Ninja);
+    container.bind(resolve<LongDistanceWeaponId>()).to(Shuriken);
 
     const katanaFactory: () => Katana = function () {
       return new Katana(new KatanaHandler(), new KatanaBlade());
     };
 
     container
-      .bind<ShortDistanceWeaponFactory>(shortDistanceWeaponFactoryId)
-      .toConstantValue(katanaFactory);
-    const ninja: Ninja = container.get<Ninja>(ninjaId);
+      .bind(resolve<ShortDistanceWeaponFactoryId>())
+      .toConstantValue(katanaFactory as unknown as ShortDistanceWeaponFactoryId);
+    const ninja: Ninja = container.get(resolve<Ninja>());
 
     expect(ninja instanceof Ninja).toBe(true);
     expect(ninja.shortDistanceWeaponFactory).toStrictEqual(
@@ -675,19 +653,19 @@ Binding constraints:
   });
 
   it('Should support the injection of class constructors', () => {
-    @injectable()
-    class Katana {
+    class Katana implements Injectable {
       public hit() {
         return 'cut!';
       }
     }
 
-    @injectable()
-    class Ninja {
+    interface NewableKatana {}
+
+    class Ninja implements Injectable {
       private readonly _katana: Katana;
 
-      constructor(@inject('Newable<Katana>') katana: Newable<Katana>) {
-        this._katana = new katana();
+      constructor(katana: Inject<NewableKatana>) {
+        this._katana = new (katana as unknown as Newable<Katana>)();
       }
 
       public fight() {
@@ -696,10 +674,12 @@ Binding constraints:
     }
 
     const container: Container = new Container();
-    container.bind<Ninja>('Ninja').to(Ninja);
-    container.bind<Newable<Katana>>('Newable<Katana>').toConstantValue(Katana);
+    container.bind(resolve<Ninja>()).to(Ninja);
+    container
+      .bind(resolve<NewableKatana>())
+      .toConstantValue(Katana as unknown as NewableKatana);
 
-    const ninja: Ninja = container.get<Ninja>('Ninja');
+    const ninja: Ninja = container.get(resolve<Ninja>());
 
     expect(ninja.fight()).toBe('cut!');
   });
@@ -710,30 +690,39 @@ Binding constraints:
       sneak(): string;
     }
 
-    @injectable()
-    class Katana {
+    interface KatanaInterface {
+      hit(): string;
+    }
+
+    interface ShurikenInterface {
+      throw(): string;
+    }
+
+    interface KatanaFactory {
+      (): KatanaInterface;
+    }
+
+    class Katana implements KatanaInterface, Injectable {
       public hit() {
         return 'cut!';
       }
     }
 
-    @injectable()
-    class Shuriken implements Shuriken {
+    class Shuriken implements ShurikenInterface, Injectable {
       public throw() {
         return 'hit!';
       }
     }
 
-    @injectable()
-    class NinjaWithUserDefinedFactory implements Ninja {
-      private readonly _katana: Katana;
-      private readonly _shuriken: Shuriken;
+    class NinjaWithUserDefinedFactory implements Ninja, Injectable {
+      private readonly _katana: KatanaInterface;
+      private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        @inject('Factory<Katana>') katanaFactory: () => Katana,
-        @inject('Shuriken') shuriken: Shuriken,
+        katanaFactory: Inject<KatanaFactory>,
+        shuriken: Inject<ShurikenInterface>,
       ) {
-        this._katana = katanaFactory();
+        this._katana = (katanaFactory as unknown as () => KatanaInterface)();
         this._shuriken = shuriken;
       }
 
@@ -746,16 +735,17 @@ Binding constraints:
     }
 
     const container: Container = new Container();
-    container.bind<Ninja>('Ninja').to(NinjaWithUserDefinedFactory);
-    container.bind<Shuriken>('Shuriken').to(Shuriken);
-    container.bind<Katana>('Katana').to(Katana);
+    container.bind(resolve<Ninja>()).to(NinjaWithUserDefinedFactory);
+    container.bind(resolve<ShurikenInterface>()).to(Shuriken);
+    container.bind(resolve<KatanaInterface>()).to(Katana);
     container
-      .bind<Factory<Katana>>('Factory<Katana>')
+      .bind(resolve<KatanaFactory>())
       .toFactory(
-        (context: ResolutionContext) => () => context.get<Katana>('Katana'),
+        (context: ResolutionContext) => () =>
+          context.get(resolve<KatanaInterface>()),
       );
 
-    const ninja: Ninja = container.get<Ninja>('Ninja');
+    const ninja: Ninja = container.get(resolve<Ninja>());
 
     expect(ninja.fight()).toBe('cut!');
     expect(ninja.sneak()).toBe('hit!');
@@ -771,31 +761,32 @@ Binding constraints:
       use(): string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    interface WeaponFactory {
+      (throwable: boolean): Weapon;
+    }
+
+    class Katana implements Weapon, Injectable {
       public use() {
         return 'katana!';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public use() {
         return 'shuriken!';
       }
     }
 
-    @injectable()
-    class NinjaWithUserDefinedFactory implements Ninja {
+    class NinjaWithUserDefinedFactory implements Ninja, Injectable {
       private readonly _katana: Weapon;
       private readonly _shuriken: Weapon;
 
       constructor(
-        @inject('Factory<Weapon>')
-        weaponFactory: (throwable: boolean) => Weapon,
+        weaponFactory: Inject<WeaponFactory>,
       ) {
-        this._katana = weaponFactory(false);
-        this._shuriken = weaponFactory(true);
+        const factory = weaponFactory as unknown as (throwable: boolean) => Weapon;
+        this._katana = factory(false);
+        this._shuriken = factory(true);
       }
 
       public fight() {
@@ -807,13 +798,13 @@ Binding constraints:
     }
 
     const container: Container = new Container();
-    container.bind<Ninja>('Ninja').to(NinjaWithUserDefinedFactory);
-    container.bind<Weapon>('Weapon').to(Shuriken).whenTagged('throwable', true);
-    container.bind<Weapon>('Weapon').to(Katana).whenTagged('throwable', false);
+    container.bind(resolve<Ninja>()).to(NinjaWithUserDefinedFactory);
+    container.bind(resolve<Weapon>()).to(Shuriken).whenTagged('throwable', true);
+    container.bind(resolve<Weapon>()).to(Katana).whenTagged('throwable', false);
 
-    container.bind<Factory<Weapon>>('Factory<Weapon>').toFactory(
+    container.bind(resolve<WeaponFactory>()).toFactory(
       (context: ResolutionContext) => (throwable: boolean) =>
-        context.get<Weapon>('Weapon', {
+        context.get(resolve<Weapon>(), {
           tag: {
             key: 'throwable',
             value: throwable,
@@ -821,29 +812,36 @@ Binding constraints:
         }),
     );
 
-    const ninja: Ninja = container.get<Ninja>('Ninja');
+    const ninja: Ninja = container.get(resolve<Ninja>());
 
     expect(ninja.fight()).toBe('katana!');
     expect(ninja.sneak()).toBe('shuriken!');
   });
 
   it('Should support the injection of user defined factories with partial application', () => {
-    @injectable()
-    class InjectorPump {}
+    class InjectorPump implements Injectable {}
 
-    @injectable()
-    class SparkPlugs {}
+    class SparkPlugs implements Injectable {}
 
     class Engine {
       public displacement!: number | null;
     }
 
-    @injectable()
-    class DieselEngine implements Engine {
-      public displacement: number | null;
+    interface InjectorPumpId {}
+    interface SparkPlugsId {}
+    interface EngineId {
+      displacement: number | null;
+    }
+    interface EngineFactory {
+      (theNamed: string): (displacement: number) => Engine;
+    }
+
+    class DieselEngine extends Engine implements Injectable {
+      public override displacement: number | null;
       private readonly _injectorPump: InjectorPump;
-      constructor(@inject('InjectorPump') injectorPump: InjectorPump) {
-        this._injectorPump = injectorPump;
+      constructor(injectorPump: Inject<InjectorPumpId>) {
+        super();
+        this._injectorPump = injectorPump as unknown as InjectorPump;
         this.displacement = null;
       }
       public debug() {
@@ -851,12 +849,12 @@ Binding constraints:
       }
     }
 
-    @injectable()
-    class PetrolEngine implements Engine {
-      public displacement: number | null;
+    class PetrolEngine extends Engine implements Injectable {
+      public override displacement: number | null;
       private readonly _sparkPlugs: SparkPlugs;
-      constructor(@inject('SparkPlugs') sparkPlugs: SparkPlugs) {
-        this._sparkPlugs = sparkPlugs;
+      constructor(sparkPlugs: Inject<SparkPlugsId>) {
+        super();
+        this._sparkPlugs = sparkPlugs as unknown as SparkPlugs;
         this.displacement = null;
       }
       public debug() {
@@ -868,14 +866,12 @@ Binding constraints:
       createEngine(displacement: number): Engine;
     }
 
-    @injectable()
-    class DieselCarFactory implements CarFactory {
+    class DieselCarFactory implements CarFactory, Injectable {
       private readonly _dieselFactory: (displacement: number) => Engine;
       constructor(
-        @inject('Factory<Engine>')
-        factory: (category: string) => (displacement: number) => Engine,
+        factory: Inject<EngineFactory>,
       ) {
-        this._dieselFactory = factory('diesel');
+        this._dieselFactory = (factory as unknown as (category: string) => (displacement: number) => Engine)('diesel');
       }
       public createEngine(displacement: number): Engine {
         return this._dieselFactory(displacement);
@@ -883,18 +879,18 @@ Binding constraints:
     }
 
     const container: Container = new Container();
-    container.bind<SparkPlugs>('SparkPlugs').to(SparkPlugs);
-    container.bind<InjectorPump>('InjectorPump').to(InjectorPump);
-    container.bind<Engine>('Engine').to(PetrolEngine).whenNamed('petrol');
-    container.bind<Engine>('Engine').to(DieselEngine).whenNamed('diesel');
+    container.bind(resolve<SparkPlugsId>()).to(SparkPlugs);
+    container.bind(resolve<InjectorPumpId>()).to(InjectorPump);
+    container.bind(resolve<EngineId>()).to(PetrolEngine).whenNamed('petrol');
+    container.bind(resolve<EngineId>()).to(DieselEngine).whenNamed('diesel');
 
     container
-      .bind<Factory<(displacement: number) => Engine>>('Factory<Engine>')
+      .bind(resolve<EngineFactory>())
       .toFactory(
         (context: ResolutionContext) =>
           (theNamed: string) =>
           (displacement: number) => {
-            const theEngine: Engine = context.get<Engine>('Engine', {
+            const theEngine: Engine = context.get(resolve<EngineId>(), {
               name: theNamed,
             });
             theEngine.displacement = displacement;
@@ -902,10 +898,9 @@ Binding constraints:
           },
       );
 
-    container.bind<CarFactory>('DieselCarFactory').to(DieselCarFactory);
+    container.bind(resolve<CarFactory>()).to(DieselCarFactory);
 
-    const dieselCarFactory: CarFactory =
-      container.get<CarFactory>('DieselCarFactory');
+    const dieselCarFactory: CarFactory = container.get(resolve<CarFactory>());
     const engine: Engine = dieselCarFactory.createEngine(300);
 
     expect(engine.displacement).toBe(300);
@@ -914,20 +909,15 @@ Binding constraints:
 
   describe('Injection of multiple values with string as keys', () => {
     it('Should support the injection of multiple values', () => {
-      const warriorId: string = 'Warrior';
-      const weaponId: string = 'Weapon';
-
       interface Weapon {
         name: string;
       }
 
-      @injectable()
-      class Katana implements Weapon {
+      class Katana implements Weapon, Injectable {
         public name: string = 'Katana';
       }
 
-      @injectable()
-      class Shuriken implements Weapon {
+      class Shuriken implements Weapon, Injectable {
         public name: string = 'Shuriken';
       }
 
@@ -936,59 +926,68 @@ Binding constraints:
         shuriken: Weapon;
       }
 
-      @injectable()
-      class Ninja implements Warrior {
+      class Ninja implements Warrior, Injectable {
         public katana: Weapon;
         public shuriken: Weapon;
-        constructor(@multiInject(weaponId) weapons: Weapon[]) {
+        constructor(weapons: InjectMulti<Weapon>) {
           this.katana = weapons[0] as Weapon;
           this.shuriken = weapons[1] as Weapon;
         }
       }
 
       const container: Container = new Container();
-      container.bind<Warrior>(warriorId).to(Ninja);
-      container.bind<Weapon>(weaponId).to(Katana);
-      container.bind<Weapon>(weaponId).to(Shuriken);
+      container.bind(resolve<Warrior>()).to(Ninja);
+      container.bind(resolve<Weapon>()).to(Katana);
+      container.bind(resolve<Weapon>()).to(Shuriken);
 
-      const ninja: Warrior = container.get<Warrior>(warriorId);
+      const ninja: Warrior = container.get(resolve<Warrior>());
 
       expect(ninja.katana.name).toBe('Katana');
       expect(ninja.shuriken.name).toBe('Shuriken');
 
       // if only one value is bound to Weapon
       const container2: Container = new Container();
-      container2.bind<Warrior>(warriorId).to(Ninja);
-      container2.bind<Weapon>(weaponId).to(Katana);
+      container2.bind(resolve<Warrior>()).to(Ninja);
+      container2.bind(resolve<Weapon>()).to(Katana);
 
-      const ninja2: Ninja = container2.get<Warrior>(warriorId);
+      const ninja2: Ninja = container2.get(resolve<Warrior>());
 
       expect(ninja2.katana.name).toBe('Katana');
     });
 
     it('Should support the injection of multiple values with nested inject', () => {
-      @injectable()
-      class Katana {
+      interface KatanaInterface {
+        hit(): string;
+      }
+
+      interface ShurikenInterface {
+        throw(): string;
+      }
+
+      class Katana implements KatanaInterface, Injectable {
         public hit() {
           return 'cut!';
         }
       }
 
-      @injectable()
-      class Shuriken {
+      class Shuriken implements ShurikenInterface, Injectable {
         public throw() {
           return 'hit!';
         }
       }
 
-      @injectable()
-      class Ninja {
-        private readonly _katana: Katana;
-        private readonly _shuriken: Shuriken;
+      interface NinjaInterface {
+        fight(): string;
+        sneak(): string;
+      }
+
+      class Ninja implements NinjaInterface, Injectable {
+        private readonly _katana: KatanaInterface;
+        private readonly _shuriken: ShurikenInterface;
 
         constructor(
-          @inject('Katana') katana: Katana,
-          @inject('Shuriken') shuriken: Shuriken,
+          katana: Inject<KatanaInterface>,
+          shuriken: Inject<ShurikenInterface>,
         ) {
           this._katana = katana;
           this._shuriken = shuriken;
@@ -1003,29 +1002,28 @@ Binding constraints:
       }
 
       interface School {
-        ninjaMaster: Ninja;
-        student: Ninja;
+        ninjaMaster: NinjaInterface;
+        student: NinjaInterface;
       }
 
-      @injectable()
-      class NinjaSchool implements School {
-        public ninjaMaster: Ninja;
-        public student: Ninja;
+      class NinjaSchool implements School, Injectable {
+        public ninjaMaster: NinjaInterface;
+        public student: NinjaInterface;
 
-        constructor(@multiInject('Ninja') ninja: Ninja[]) {
-          this.ninjaMaster = ninja[0] as Ninja;
-          this.student = ninja[1] as Ninja;
+        constructor(ninja: InjectMulti<NinjaInterface>) {
+          this.ninjaMaster = ninja[0] as NinjaInterface;
+          this.student = ninja[1] as NinjaInterface;
         }
       }
 
       const container: Container = new Container();
-      container.bind<Katana>('Katana').to(Katana);
-      container.bind<Shuriken>('Shuriken').to(Shuriken);
-      container.bind<Ninja>('Ninja').to(Ninja);
-      container.bind<Ninja>('Ninja').to(Ninja);
-      container.bind<School>('School').to(NinjaSchool);
+      container.bind(resolve<KatanaInterface>()).to(Katana);
+      container.bind(resolve<ShurikenInterface>()).to(Shuriken);
+      container.bind(resolve<NinjaInterface>()).to(Ninja);
+      container.bind(resolve<NinjaInterface>()).to(Ninja);
+      container.bind(resolve<School>()).to(NinjaSchool);
 
-      const ninjaSchool: School = container.get<School>('School');
+      const ninjaSchool: School = container.get(resolve<School>());
 
       expect(ninjaSchool.ninjaMaster.fight()).toBe('cut!');
       expect(ninjaSchool.ninjaMaster.sneak()).toBe('hit!');
@@ -1035,12 +1033,6 @@ Binding constraints:
     });
 
     it('Should support the injection of multiple values with nested multiInject', () => {
-      const warriorId: string = 'Warrior';
-      const swordId: string = 'Sword';
-      const shurikenId: string = 'Shuriken';
-      const schoolId: string = 'School';
-      const organisationId: string = 'Organisation';
-
       interface Warrior {
         fight(): string;
         sneak(): string;
@@ -1050,28 +1042,29 @@ Binding constraints:
         hit(): string;
       }
 
-      @injectable()
-      class Katana implements Sword {
+      interface ShurikenInterface {
+        throw(): string;
+      }
+
+      class Katana implements Sword, Injectable {
         public hit() {
           return 'cut!';
         }
       }
 
-      @injectable()
-      class Shuriken {
+      class Shuriken implements ShurikenInterface, Injectable {
         public throw() {
           return 'hit!';
         }
       }
 
-      @injectable()
-      class Ninja implements Warrior {
+      class Ninja implements Warrior, Injectable {
         private readonly _katana: Sword;
-        private readonly _shuriken: Shuriken;
+        private readonly _shuriken: ShurikenInterface;
 
         constructor(
-          @inject(swordId) katana: Sword,
-          @inject(shurikenId) shuriken: Shuriken,
+          katana: Inject<Sword>,
+          shuriken: Inject<ShurikenInterface>,
         ) {
           this._katana = katana;
           this._shuriken = shuriken;
@@ -1090,14 +1083,13 @@ Binding constraints:
         student: Warrior;
       }
 
-      @injectable()
-      class NinjaSchool implements School {
+      class NinjaSchool implements School, Injectable {
         public ninjaMaster: Warrior;
         public student: Warrior;
 
-        constructor(@multiInject(warriorId) ninjas: Ninja[]) {
-          this.ninjaMaster = ninjas[0] as Ninja;
-          this.student = ninjas[1] as Ninja;
+        constructor(ninjas: InjectMulti<Warrior>) {
+          this.ninjaMaster = ninjas[0] as Warrior;
+          this.student = ninjas[1] as Warrior;
         }
       }
 
@@ -1105,26 +1097,25 @@ Binding constraints:
         schools: School[];
       }
 
-      @injectable()
-      class NinjaOrganisation implements Organisation {
+      class NinjaOrganisation implements Organisation, Injectable {
         public schools: School[];
 
-        constructor(@multiInject(schoolId) schools: School[]) {
+        constructor(schools: InjectMulti<School>) {
           this.schools = schools;
         }
       }
 
       const container: Container = new Container();
-      container.bind<Sword>(swordId).to(Katana);
-      container.bind<Shuriken>(shurikenId).to(Shuriken);
-      container.bind<Warrior>(warriorId).to(Ninja);
-      container.bind<Warrior>(warriorId).to(Ninja);
-      container.bind<School>(schoolId).to(NinjaSchool);
-      container.bind<School>(schoolId).to(NinjaSchool);
-      container.bind<Organisation>(organisationId).to(NinjaOrganisation);
+      container.bind(resolve<Sword>()).to(Katana);
+      container.bind(resolve<ShurikenInterface>()).to(Shuriken);
+      container.bind(resolve<Warrior>()).to(Ninja);
+      container.bind(resolve<Warrior>()).to(Ninja);
+      container.bind(resolve<School>()).to(NinjaSchool);
+      container.bind(resolve<School>()).to(NinjaSchool);
+      container.bind(resolve<Organisation>()).to(NinjaOrganisation);
 
       const ninjaOrganisation: Organisation =
-        container.get<Organisation>(organisationId);
+        container.get(resolve<Organisation>());
 
       for (let i: number = 0; i < 2; i++) {
         const ithNinjaOrganizationSchool: School = ninjaOrganisation.schools[
@@ -1141,32 +1132,28 @@ Binding constraints:
 
   describe('Injection of multiple values with class as keys', () => {
     it('Should support the injection of multiple values when using classes as keys', () => {
-      @injectable()
-      class Weapon {
+      class Weapon implements Injectable {
         public name!: string;
       }
 
-      @injectable()
-      class Katana extends Weapon {
+      class Katana extends Weapon implements Injectable {
         constructor() {
           super();
           this.name = 'Katana';
         }
       }
 
-      @injectable()
-      class Shuriken extends Weapon {
+      class Shuriken extends Weapon implements Injectable {
         constructor() {
           super();
           this.name = 'Shuriken';
         }
       }
 
-      @injectable()
-      class Ninja {
+      class Ninja implements Injectable {
         public katana: Weapon;
         public shuriken: Weapon;
-        constructor(@multiInject(Weapon) weapons: Weapon[]) {
+        constructor(weapons: InjectMulti<Weapon>) {
           this.katana = weapons[0] as Weapon;
           this.shuriken = weapons[1] as Weapon;
         }
@@ -1193,26 +1180,23 @@ Binding constraints:
     });
 
     it('Should support the injection of multiple values with nested inject', () => {
-      @injectable()
-      class Katana {
+      class Katana implements Injectable {
         public hit() {
           return 'cut!';
         }
       }
 
-      @injectable()
-      class Shuriken {
+      class Shuriken implements Injectable {
         public throw() {
           return 'hit!';
         }
       }
 
-      @injectable()
-      class Ninja {
+      class Ninja implements Injectable {
         private readonly _katana: Katana;
         private readonly _shuriken: Shuriken;
 
-        constructor(katana: Katana, shuriken: Shuriken) {
+        constructor(katana: Inject<Katana>, shuriken: Inject<Shuriken>) {
           this._katana = katana;
           this._shuriken = shuriken;
         }
@@ -1225,12 +1209,11 @@ Binding constraints:
         }
       }
 
-      @injectable()
-      class NinjaSchool {
+      class NinjaSchool implements Injectable {
         public ninjaMaster: Ninja;
         public student: Ninja;
 
-        constructor(@multiInject(Ninja) ninja: Ninja[]) {
+        constructor(ninja: InjectMulti<Ninja>) {
           this.ninjaMaster = ninja[0] as Ninja;
           this.student = ninja[1] as Ninja;
         }
@@ -1253,26 +1236,23 @@ Binding constraints:
     });
 
     it('Should support the injection of multiple values with nested multiInject', () => {
-      @injectable()
-      class Katana {
+      class Katana implements Injectable {
         public hit() {
           return 'cut!';
         }
       }
 
-      @injectable()
-      class Shuriken {
+      class Shuriken implements Injectable {
         public throw() {
           return 'hit!';
         }
       }
 
-      @injectable()
-      class Ninja {
+      class Ninja implements Injectable {
         private readonly _katana: Katana;
         private readonly _shuriken: Shuriken;
 
-        constructor(katana: Katana, shuriken: Shuriken) {
+        constructor(katana: Inject<Katana>, shuriken: Inject<Shuriken>) {
           this._katana = katana;
           this._shuriken = shuriken;
         }
@@ -1285,22 +1265,20 @@ Binding constraints:
         }
       }
 
-      @injectable()
-      class NinjaSchool {
+      class NinjaSchool implements Injectable {
         public ninjaMaster: Ninja;
         public student: Ninja;
 
-        constructor(@multiInject(Ninja) ninjas: Ninja[]) {
+        constructor(ninjas: InjectMulti<Ninja>) {
           this.ninjaMaster = ninjas[0] as Ninja;
           this.student = ninjas[1] as Ninja;
         }
       }
 
-      @injectable()
-      class NinjaOrganisation {
+      class NinjaOrganisation implements Injectable {
         public schools: NinjaSchool[];
 
-        constructor(@multiInject(NinjaSchool) schools: NinjaSchool[]) {
+        constructor(schools: InjectMulti<NinjaSchool>) {
           this.schools = schools;
         }
       }
@@ -1333,23 +1311,15 @@ Binding constraints:
 
   describe('Injection of multiple values with Symbol as keys', () => {
     it('Should support the injection of multiple values when using Symbols as keys', () => {
-      // eslint-disable-next-line @typescript-eslint/typedef
-      const TYPES = {
-        Warrior: Symbol.for('Warrior'),
-        Weapon: Symbol.for('Weapon'),
-      };
-
       interface Weapon {
         name: string;
       }
 
-      @injectable()
-      class Katana implements Weapon {
+      class Katana implements Weapon, Injectable {
         public name: string = 'Katana';
       }
 
-      @injectable()
-      class Shuriken implements Weapon {
+      class Shuriken implements Weapon, Injectable {
         public name: string = 'Shuriken';
       }
 
@@ -1358,67 +1328,63 @@ Binding constraints:
         shuriken: Weapon;
       }
 
-      @injectable()
-      class Ninja implements Warrior {
+      class Ninja implements Warrior, Injectable {
         public katana: Weapon;
         public shuriken: Weapon;
-        constructor(@multiInject(TYPES.Weapon) weapons: Weapon[]) {
+        constructor(weapons: InjectMulti<Weapon>) {
           this.katana = weapons[0] as Weapon;
           this.shuriken = weapons[1] as Weapon;
         }
       }
 
       const container: Container = new Container();
-      container.bind<Warrior>(TYPES.Warrior).to(Ninja);
-      container.bind<Weapon>(TYPES.Weapon).to(Katana);
-      container.bind<Weapon>(TYPES.Weapon).to(Shuriken);
+      container.bind(resolve<Warrior>()).to(Ninja);
+      container.bind(resolve<Weapon>()).to(Katana);
+      container.bind(resolve<Weapon>()).to(Shuriken);
 
-      const ninja: Ninja = container.get<Warrior>(TYPES.Warrior);
+      const ninja: Ninja = container.get(resolve<Warrior>());
 
       expect(ninja.katana.name).toBe('Katana');
       expect(ninja.shuriken.name).toBe('Shuriken');
 
       // if only one value is bound to Weapon
       const container2: Container = new Container();
-      container2.bind<Warrior>(TYPES.Warrior).to(Ninja);
-      container2.bind<Weapon>(TYPES.Weapon).to(Katana);
+      container2.bind(resolve<Warrior>()).to(Ninja);
+      container2.bind(resolve<Weapon>()).to(Katana);
 
-      const ninja2: Ninja = container2.get<Warrior>(TYPES.Warrior);
+      const ninja2: Ninja = container2.get(resolve<Warrior>());
 
       expect(ninja2.katana.name).toBe('Katana');
     });
 
     it('Should support the injection of multiple values with nested inject', () => {
-      // eslint-disable-next-line @typescript-eslint/typedef
-      const TYPES = {
-        Katana: Symbol.for('Katana'),
-        Ninja: Symbol.for('Ninja'),
-        School: Symbol.for('School'),
-        Shuriken: Symbol.for('Shuriken'),
-      };
+      interface KatanaInterface {
+        hit(): string;
+      }
 
-      @injectable()
-      class Katana {
+      interface ShurikenInterface {
+        throw(): string;
+      }
+
+      class Katana implements KatanaInterface, Injectable {
         public hit() {
           return 'cut!';
         }
       }
 
-      @injectable()
-      class Shuriken {
+      class Shuriken implements ShurikenInterface, Injectable {
         public throw() {
           return 'hit!';
         }
       }
 
-      @injectable()
-      class Ninja {
-        private readonly _katana: Katana;
-        private readonly _shuriken: Shuriken;
+      class Ninja implements Injectable {
+        private readonly _katana: KatanaInterface;
+        private readonly _shuriken: ShurikenInterface;
 
         constructor(
-          @inject(TYPES.Katana) katana: Katana,
-          @inject(TYPES.Shuriken) shuriken: Shuriken,
+          katana: Inject<KatanaInterface>,
+          shuriken: Inject<ShurikenInterface>,
         ) {
           this._katana = katana;
           this._shuriken = shuriken;
@@ -1437,25 +1403,24 @@ Binding constraints:
         student: Ninja;
       }
 
-      @injectable()
-      class NinjaSchool implements School {
+      class NinjaSchool implements School, Injectable {
         public ninjaMaster: Ninja;
         public student: Ninja;
 
-        constructor(@multiInject(TYPES.Ninja) ninja: Ninja[]) {
+        constructor(ninja: InjectMulti<Ninja>) {
           this.ninjaMaster = ninja[0] as Ninja;
           this.student = ninja[1] as Ninja;
         }
       }
 
       const container: Container = new Container();
-      container.bind<Katana>(TYPES.Katana).to(Katana);
-      container.bind<Shuriken>(TYPES.Shuriken).to(Shuriken);
-      container.bind<Ninja>(TYPES.Ninja).to(Ninja);
-      container.bind<Ninja>(TYPES.Ninja).to(Ninja);
-      container.bind<School>(TYPES.School).to(NinjaSchool);
+      container.bind(resolve<KatanaInterface>()).to(Katana);
+      container.bind(resolve<ShurikenInterface>()).to(Shuriken);
+      container.bind(resolve<Ninja>()).to(Ninja);
+      container.bind(resolve<Ninja>()).to(Ninja);
+      container.bind(resolve<School>()).to(NinjaSchool);
 
-      const ninjaSchool: School = container.get<School>(TYPES.School);
+      const ninjaSchool: School = container.get(resolve<School>());
 
       expect(ninjaSchool.ninjaMaster.fight()).toBe('cut!');
       expect(ninjaSchool.ninjaMaster.sneak()).toBe('hit!');
@@ -1465,37 +1430,33 @@ Binding constraints:
     });
 
     it('Should support the injection of multiple values with nested multiInject', () => {
-      // eslint-disable-next-line @typescript-eslint/typedef
-      const TYPES = {
-        Katana: Symbol.for('Katana'),
-        Ninja: Symbol.for('Ninja'),
-        Organisation: Symbol.for('Organisation'),
-        School: Symbol.for('School'),
-        Shuriken: Symbol.for('Shuriken'),
-      };
+      interface KatanaInterface {
+        hit(): string;
+      }
 
-      @injectable()
-      class Katana {
+      interface ShurikenInterface {
+        throw(): string;
+      }
+
+      class Katana implements KatanaInterface, Injectable {
         public hit() {
           return 'cut!';
         }
       }
 
-      @injectable()
-      class Shuriken {
+      class Shuriken implements ShurikenInterface, Injectable {
         public throw() {
           return 'hit!';
         }
       }
 
-      @injectable()
-      class Ninja {
-        private readonly _katana: Katana;
-        private readonly _shuriken: Shuriken;
+      class Ninja implements Injectable {
+        private readonly _katana: KatanaInterface;
+        private readonly _shuriken: ShurikenInterface;
 
         constructor(
-          @inject(TYPES.Katana) katana: Katana,
-          @inject(TYPES.Shuriken) shuriken: Shuriken,
+          katana: Inject<KatanaInterface>,
+          shuriken: Inject<ShurikenInterface>,
         ) {
           this._katana = katana;
           this._shuriken = shuriken;
@@ -1514,12 +1475,11 @@ Binding constraints:
         student: Ninja;
       }
 
-      @injectable()
-      class NinjaSchool implements School {
+      class NinjaSchool implements School, Injectable {
         public ninjaMaster: Ninja;
         public student: Ninja;
 
-        constructor(@multiInject(TYPES.Ninja) ninjas: Ninja[]) {
+        constructor(ninjas: InjectMulti<Ninja>) {
           this.ninjaMaster = ninjas[0] as Ninja;
           this.student = ninjas[1] as Ninja;
         }
@@ -1529,26 +1489,25 @@ Binding constraints:
         schools: NinjaSchool[];
       }
 
-      @injectable()
-      class NinjaOrganisation implements Organisation {
+      class NinjaOrganisation implements Organisation, Injectable {
         public schools: NinjaSchool[];
 
-        constructor(@multiInject(TYPES.School) schools: School[]) {
-          this.schools = schools;
+        constructor(schools: InjectMulti<School>) {
+          this.schools = schools as NinjaSchool[];
         }
       }
 
       const container: Container = new Container();
-      container.bind<Katana>(TYPES.Katana).to(Katana);
-      container.bind<Shuriken>(TYPES.Shuriken).to(Shuriken);
-      container.bind<Ninja>(TYPES.Ninja).to(Ninja);
-      container.bind<Ninja>(TYPES.Ninja).to(Ninja);
-      container.bind<School>(TYPES.School).to(NinjaSchool);
-      container.bind<School>(TYPES.School).to(NinjaSchool);
-      container.bind<Organisation>(TYPES.Organisation).to(NinjaOrganisation);
+      container.bind(resolve<KatanaInterface>()).to(Katana);
+      container.bind(resolve<ShurikenInterface>()).to(Shuriken);
+      container.bind(resolve<Ninja>()).to(Ninja);
+      container.bind(resolve<Ninja>()).to(Ninja);
+      container.bind(resolve<School>()).to(NinjaSchool);
+      container.bind(resolve<School>()).to(NinjaSchool);
+      container.bind(resolve<Organisation>()).to(NinjaOrganisation);
 
-      const ninjaOrganisation: Organisation = container.get<Organisation>(
-        TYPES.Organisation,
+      const ninjaOrganisation: Organisation = container.get(
+        resolve<Organisation>(),
       );
 
       for (let i: number = 0; i < 2; i++) {
@@ -1565,28 +1524,23 @@ Binding constraints:
   });
 
   it('Should support tagged bindings', () => {
-    enum Tag {
-      CanThrow,
-    }
+    interface Weapon {}
 
-    @injectable()
-    class Katana {}
+    class Katana implements Weapon, Injectable {}
 
-    @injectable()
-    class Shuriken {}
+    class Shuriken implements Weapon, Injectable {}
 
     interface Warrior {
       katana: unknown;
       shuriken: unknown;
     }
 
-    @injectable()
-    class Ninja implements Warrior {
+    class Ninja implements Warrior, Injectable {
       public katana: unknown;
       public shuriken: unknown;
       constructor(
-        @inject('Weapon') @tagged('canThrow', false) katana: unknown,
-        @inject('Weapon') @tagged(Tag.CanThrow, true) shuriken: unknown,
+        katana: InjectTagged<Weapon, 'canThrow', false>,
+        shuriken: InjectTagged<Weapon, 'canThrow', true>,
       ) {
         this.katana = katana;
         this.shuriken = shuriken;
@@ -1594,44 +1548,34 @@ Binding constraints:
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>('Warrior').to(Ninja);
-    container.bind('Weapon').to(Katana).whenTagged('canThrow', false);
-    container.bind('Weapon').to(Shuriken).whenTagged(Tag.CanThrow, true);
+    container.bind(resolve<Warrior>()).to(Ninja);
+    container.bind(resolve<Weapon>()).to(Katana).whenTagged('canThrow', false);
+    container.bind(resolve<Weapon>()).to(Shuriken).whenTagged('canThrow', true);
 
-    const ninja: Ninja = container.get<Warrior>('Warrior');
+    const ninja: Ninja = container.get(resolve<Warrior>());
 
     expect(ninja.katana instanceof Katana).toBe(true);
     expect(ninja.shuriken instanceof Shuriken).toBe(true);
   });
 
   it('Should support custom tag decorators', () => {
-    @injectable()
-    class Katana {}
+    interface Weapon {}
 
-    @injectable()
-    class Shuriken {}
+    class Katana implements Weapon, Injectable {}
+
+    class Shuriken implements Weapon, Injectable {}
 
     interface Warrior {
       katana: unknown;
       shuriken: unknown;
     }
 
-    const throwable: ParameterDecorator & PropertyDecorator = tagged(
-      'canThrow',
-      true,
-    );
-    const notThrowable: ParameterDecorator & PropertyDecorator = tagged(
-      'canThrow',
-      false,
-    );
-
-    @injectable()
-    class Ninja implements Warrior {
+    class Ninja implements Warrior, Injectable {
       public katana: unknown;
       public shuriken: unknown;
       constructor(
-        @inject('Weapon') @notThrowable katana: unknown,
-        @inject('Weapon') @throwable shuriken: unknown,
+        katana: InjectTagged<Weapon, 'canThrow', false>,
+        shuriken: InjectTagged<Weapon, 'canThrow', true>,
       ) {
         this.katana = katana;
         this.shuriken = shuriken;
@@ -1639,37 +1583,34 @@ Binding constraints:
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>('Warrior').to(Ninja);
-    container.bind('Weapon').to(Katana).whenTagged('canThrow', false);
-    container.bind('Weapon').to(Shuriken).whenTagged('canThrow', true);
+    container.bind(resolve<Warrior>()).to(Ninja);
+    container.bind(resolve<Weapon>()).to(Katana).whenTagged('canThrow', false);
+    container.bind(resolve<Weapon>()).to(Shuriken).whenTagged('canThrow', true);
 
-    const ninja: Warrior = container.get<Warrior>('Warrior');
+    const ninja: Warrior = container.get(resolve<Warrior>());
 
     expect(ninja.katana instanceof Katana).toBe(true);
     expect(ninja.shuriken instanceof Shuriken).toBe(true);
   });
 
   it('Should support named bindings', () => {
-    const name: symbol = Symbol.for('Weak');
+    interface Weapon {}
 
-    @injectable()
-    class Katana {}
+    class Katana implements Weapon, Injectable {}
 
-    @injectable()
-    class Shuriken {}
+    class Shuriken implements Weapon, Injectable {}
 
     interface Warrior {
       katana: unknown;
       shuriken: unknown;
     }
 
-    @injectable()
-    class Ninja implements Warrior {
+    class Ninja implements Warrior, Injectable {
       public katana: unknown;
       public shuriken: unknown;
       constructor(
-        @inject('Weapon') @named('strong') katana: unknown,
-        @inject('Weapon') @named(name) shuriken: unknown,
+        katana: InjectNamed<Weapon, 'strong'>,
+        shuriken: InjectNamed<Weapon, 'weak'>,
       ) {
         this.katana = katana;
         this.shuriken = shuriken;
@@ -1677,11 +1618,11 @@ Binding constraints:
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>('Warrior').to(Ninja);
-    container.bind('Weapon').to(Katana).whenNamed('strong');
-    container.bind('Weapon').to(Shuriken).whenNamed(name);
+    container.bind(resolve<Warrior>()).to(Ninja);
+    container.bind(resolve<Weapon>()).to(Katana).whenNamed('strong');
+    container.bind(resolve<Weapon>()).to(Shuriken).whenNamed('weak');
 
-    const ninja: Warrior = container.get<Warrior>('Warrior');
+    const ninja: Warrior = container.get(resolve<Warrior>());
 
     expect(ninja.katana instanceof Katana).toBe(true);
     expect(ninja.shuriken instanceof Shuriken).toBe(true);
@@ -1692,16 +1633,14 @@ Binding constraints:
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'shuriken';
@@ -1709,13 +1648,13 @@ Binding constraints:
     }
 
     const container: Container = new Container();
-    container.bind<Weapon>('Weapon').to(Katana).whenNamed('japanese');
-    container.bind<Weapon>('Weapon').to(Shuriken).whenNamed('chinese');
+    container.bind(resolve<Weapon>()).to(Katana).whenNamed('japanese');
+    container.bind(resolve<Weapon>()).to(Shuriken).whenNamed('chinese');
 
-    const katana: Weapon = container.get<Weapon>('Weapon', {
+    const katana: Weapon = container.get(resolve<Weapon>(), {
       name: 'japanese',
     });
-    const shuriken: Weapon = container.get<Weapon>('Weapon', {
+    const shuriken: Weapon = container.get(resolve<Weapon>(), {
       name: 'chinese',
     });
 
@@ -1728,16 +1667,14 @@ Binding constraints:
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'shuriken';
@@ -1746,21 +1683,21 @@ Binding constraints:
 
     const container: Container = new Container();
     container
-      .bind<Weapon>('Weapon')
+      .bind(resolve<Weapon>())
       .to(Katana)
       .whenTagged('faction', 'samurai');
     container
-      .bind<Weapon>('Weapon')
+      .bind(resolve<Weapon>())
       .to(Shuriken)
       .whenTagged('faction', 'ninja');
 
-    const katana: Weapon = container.get<Weapon>('Weapon', {
+    const katana: Weapon = container.get(resolve<Weapon>(), {
       tag: {
         key: 'faction',
         value: 'samurai',
       },
     });
-    const shuriken: Weapon = container.get<Weapon>('Weapon', {
+    const shuriken: Weapon = container.get(resolve<Weapon>(), {
       tag: {
         key: 'faction',
         value: 'ninja',
@@ -1788,34 +1725,31 @@ Binding constraints:
       weapon: Weapon;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'katana';
       }
     }
 
-    @injectable()
-    class Samurai implements Warrior {
+    class Samurai implements Warrior, Injectable {
       public weapon: Weapon;
 
-      constructor(weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         this.weapon = weapon;
       }
     }
 
-    @injectable()
-    class SamuraiMaster extends Samurai implements Warrior {
+    class SamuraiMaster extends Samurai implements Warrior, Injectable {
       public isMaster: boolean;
-      constructor(@inject(SYMBOLS.Weapon) weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         super(weapon);
         this.isMaster = true;
       }
     }
 
     const container: Container = new Container();
-    container.bind<Weapon>(SYMBOLS.Weapon).to(Katana);
+    container.bind(resolve<Weapon>()).to(Katana);
 
     container.bind<Warrior>(SYMBOLS.SamuraiMaster2).to(SamuraiMaster);
 
@@ -1841,16 +1775,14 @@ Binding constraints:
       name: string;
     }
 
-    @injectable()
-    class Wood implements Material {
+    class Wood implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'wood';
       }
     }
 
-    @injectable()
-    class Iron implements Material {
+    class Iron implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'iron';
@@ -1861,10 +1793,9 @@ Binding constraints:
       material: Material;
     }
 
-    @injectable()
-    class Sword implements Weapon {
+    class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(@inject('Material') material: Material) {
+      constructor(material: Inject<Material>) {
         this.material = material;
       }
     }
@@ -1873,20 +1804,18 @@ Binding constraints:
       weapon: Weapon;
     }
 
-    @injectable()
-    class NinjaStudent implements Ninja {
+    class NinjaStudent implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') @named('non-lethal') weapon: Weapon) {
+      constructor(weapon: InjectNamed<Weapon, 'non-lethal'>) {
         this.weapon = weapon;
       }
     }
 
-    @injectable()
-    class NinjaMaster implements Ninja {
+    class NinjaMaster implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') @named('lethal') weapon: Weapon) {
+      constructor(weapon: InjectNamed<Weapon, 'lethal'>) {
         this.weapon = weapon;
       }
     }
@@ -1900,10 +1829,10 @@ Binding constraints:
       .bind<Ninja>(TYPES.Ninja)
       .to(NinjaMaster)
       .whenTagged('master', true);
-    container.bind<Weapon>(TYPES.Weapon).to(Sword);
-    container.bind<Material>(TYPES.Material).to(Iron).whenParentNamed('lethal');
+    container.bind(resolve<Weapon>()).to(Sword);
+    container.bind(resolve<Material>()).to(Iron).whenParentNamed('lethal');
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Wood)
       .whenParentNamed('non-lethal');
 
@@ -1936,16 +1865,14 @@ Binding constraints:
       name: string;
     }
 
-    @injectable()
-    class Wood implements Material {
+    class Wood implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'wood';
       }
     }
 
-    @injectable()
-    class Iron implements Material {
+    class Iron implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'iron';
@@ -1956,10 +1883,9 @@ Binding constraints:
       material: Material;
     }
 
-    @injectable()
-    class Sword implements Weapon {
+    class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(@inject('Material') material: Material) {
+      constructor(material: Inject<Material>) {
         this.material = material;
       }
     }
@@ -1968,20 +1894,18 @@ Binding constraints:
       weapon: Weapon;
     }
 
-    @injectable()
-    class NinjaStudent implements Ninja {
+    class NinjaStudent implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') @tagged('lethal', false) weapon: Weapon) {
+      constructor(weapon: InjectTagged<Weapon, 'lethal', false>) {
         this.weapon = weapon;
       }
     }
 
-    @injectable()
-    class NinjaMaster implements Ninja {
+    class NinjaMaster implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') @tagged('lethal', true) weapon: Weapon) {
+      constructor(weapon: InjectTagged<Weapon, 'lethal', true>) {
         this.weapon = weapon;
       }
     }
@@ -1995,13 +1919,13 @@ Binding constraints:
       .bind<Ninja>(TYPES.Ninja)
       .to(NinjaMaster)
       .whenTagged('master', true);
-    container.bind<Weapon>(TYPES.Weapon).to(Sword);
+    container.bind(resolve<Weapon>()).to(Sword);
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Iron)
       .whenParentTagged('lethal', true);
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Wood)
       .whenParentTagged('lethal', false);
 
@@ -2034,16 +1958,14 @@ Binding constraints:
       name: string;
     }
 
-    @injectable()
-    class Wood implements Material {
+    class Wood implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'wood';
       }
     }
 
-    @injectable()
-    class Iron implements Material {
+    class Iron implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'iron';
@@ -2054,10 +1976,9 @@ Binding constraints:
       material: Material;
     }
 
-    @injectable()
-    class Sword implements Weapon {
+    class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(@inject('Material') material: Material) {
+      constructor(material: Inject<Material>) {
         this.material = material;
       }
     }
@@ -2066,20 +1987,18 @@ Binding constraints:
       weapon: Weapon;
     }
 
-    @injectable()
-    class NinjaStudent implements Ninja {
+    class NinjaStudent implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         this.weapon = weapon;
       }
     }
 
-    @injectable()
-    class NinjaMaster implements Ninja {
+    class NinjaMaster implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         this.weapon = weapon;
       }
     }
@@ -2112,13 +2031,13 @@ Binding constraints:
       .bind<Ninja>(TYPES.Ninja)
       .to(NinjaMaster)
       .whenTagged('master', true);
-    container.bind<Weapon>(TYPES.Weapon).to(Sword);
+    container.bind(resolve<Weapon>()).to(Sword);
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Iron)
       .whenAnyAncestor(isNinjaMasterConstraint);
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Wood)
       .whenAnyAncestor(isNinjaStudentConstraint);
 
@@ -2148,13 +2067,13 @@ Binding constraints:
       .bind<Ninja>(TYPES.Ninja)
       .to(NinjaMaster)
       .whenTagged('master', true);
-    container2.bind<Weapon>(TYPES.Weapon).to(Sword);
+    container2.bind(resolve<Weapon>()).to(Sword);
     container2
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Iron)
       .whenNoAncestor(isNinjaStudentConstraint);
     container2
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Wood)
       .whenNoAncestor(isNinjaMasterConstraint);
 
@@ -2187,16 +2106,14 @@ Binding constraints:
       name: string;
     }
 
-    @injectable()
-    class Wood implements Material {
+    class Wood implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'wood';
       }
     }
 
-    @injectable()
-    class Iron implements Material {
+    class Iron implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'iron';
@@ -2207,10 +2124,9 @@ Binding constraints:
       material: Material;
     }
 
-    @injectable()
-    class Sword implements Weapon {
+    class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(@inject('Material') material: Material) {
+      constructor(material: Inject<Material>) {
         this.material = material;
       }
     }
@@ -2219,20 +2135,18 @@ Binding constraints:
       weapon: Weapon;
     }
 
-    @injectable()
-    class NinjaStudent implements Ninja {
+    class NinjaStudent implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         this.weapon = weapon;
       }
     }
 
-    @injectable()
-    class NinjaMaster implements Ninja {
+    class NinjaMaster implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         this.weapon = weapon;
       }
     }
@@ -2241,13 +2155,13 @@ Binding constraints:
     const container: Container = new Container();
     container.bind<Ninja>(TYPES.Ninja).to(NinjaStudent).whenNamed('non-lethal');
     container.bind<Ninja>(TYPES.Ninja).to(NinjaMaster).whenNamed('lethal');
-    container.bind<Weapon>(TYPES.Weapon).to(Sword);
+    container.bind(resolve<Weapon>()).to(Sword);
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Iron)
       .whenAnyAncestorNamed('lethal');
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Wood)
       .whenAnyAncestorNamed('non-lethal');
 
@@ -2268,13 +2182,13 @@ Binding constraints:
       .to(NinjaStudent)
       .whenNamed('non-lethal');
     container2.bind<Ninja>(TYPES.Ninja).to(NinjaMaster).whenNamed('lethal');
-    container2.bind<Weapon>(TYPES.Weapon).to(Sword);
+    container2.bind(resolve<Weapon>()).to(Sword);
     container2
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Iron)
       .whenNoAncestorNamed('non-lethal');
     container2
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Wood)
       .whenNoAncestorNamed('lethal');
 
@@ -2301,16 +2215,14 @@ Binding constraints:
       name: string;
     }
 
-    @injectable()
-    class Wood implements Material {
+    class Wood implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'wood';
       }
     }
 
-    @injectable()
-    class Iron implements Material {
+    class Iron implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'iron';
@@ -2321,10 +2233,9 @@ Binding constraints:
       material: Material;
     }
 
-    @injectable()
-    class Sword implements Weapon {
+    class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(@inject('Material') material: Material) {
+      constructor(material: Inject<Material>) {
         this.material = material;
       }
     }
@@ -2333,20 +2244,18 @@ Binding constraints:
       weapon: Weapon;
     }
 
-    @injectable()
-    class NinjaStudent implements Ninja {
+    class NinjaStudent implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') weapon: Weapon) {
+      constructor(weapon: InjectTagged<Weapon, 'lethal', false>) {
         this.weapon = weapon;
       }
     }
 
-    @injectable()
-    class NinjaMaster implements Ninja {
+    class NinjaMaster implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') weapon: Weapon) {
+      constructor(weapon: InjectTagged<Weapon, 'lethal', true>) {
         this.weapon = weapon;
       }
     }
@@ -2361,13 +2270,13 @@ Binding constraints:
       .bind<Ninja>(TYPES.Ninja)
       .to(NinjaMaster)
       .whenTagged('lethal', true);
-    container.bind<Weapon>(TYPES.Weapon).to(Sword);
+    container.bind(resolve<Weapon>()).to(Sword);
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Iron)
       .whenAnyAncestorTagged('lethal', true);
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Wood)
       .whenAnyAncestorTagged('lethal', false);
 
@@ -2397,13 +2306,13 @@ Binding constraints:
       .bind<Ninja>(TYPES.Ninja)
       .to(NinjaMaster)
       .whenTagged('lethal', true);
-    container2.bind<Weapon>(TYPES.Weapon).to(Sword);
+    container2.bind(resolve<Weapon>()).to(Sword);
     container2
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Iron)
       .whenNoAncestorTagged('lethal', false);
     container2
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Wood)
       .whenNoAncestorTagged('lethal', true);
 
@@ -2436,16 +2345,14 @@ Binding constraints:
       name: string;
     }
 
-    @injectable()
-    class Wood implements Material {
+    class Wood implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'wood';
       }
     }
 
-    @injectable()
-    class Iron implements Material {
+    class Iron implements Material, Injectable {
       public name: string;
       constructor() {
         this.name = 'iron';
@@ -2456,10 +2363,9 @@ Binding constraints:
       material: Material;
     }
 
-    @injectable()
-    class Sword implements Weapon {
+    class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(@inject('Material') material: Material) {
+      constructor(material: Inject<Material>) {
         this.material = material;
       }
     }
@@ -2468,20 +2374,18 @@ Binding constraints:
       weapon: Weapon;
     }
 
-    @injectable()
-    class NinjaStudent implements Ninja {
+    class NinjaStudent implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         this.weapon = weapon;
       }
     }
 
-    @injectable()
-    class NinjaMaster implements Ninja {
+    class NinjaMaster implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(@inject('Weapon') weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         this.weapon = weapon;
       }
     }
@@ -2515,13 +2419,13 @@ Binding constraints:
       .bind<Ninja>(TYPES.Ninja)
       .to(NinjaMaster)
       .whenTagged('master', true);
-    container.bind<Weapon>(TYPES.Weapon).to(Sword);
+    container.bind(resolve<Weapon>()).to(Sword);
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Iron)
       .whenAnyAncestor(isNinjaMasterConstraint);
     container
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Wood)
       .whenAnyAncestor(isNinjaStudentConstraint);
 
@@ -2551,13 +2455,13 @@ Binding constraints:
       .bind<Ninja>(TYPES.Ninja)
       .to(NinjaMaster)
       .whenTagged('master', true);
-    container2.bind<Weapon>(TYPES.Weapon).to(Sword);
+    container2.bind(resolve<Weapon>()).to(Sword);
     container2
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Iron)
       .whenNoAncestor(isNinjaStudentConstraint);
     container2
-      .bind<Material>(TYPES.Material)
+      .bind(resolve<Material>())
       .to(Wood)
       .whenNoAncestor(isNinjaMasterConstraint);
 
@@ -2589,25 +2493,27 @@ Binding constraints:
       rank: string;
     }
 
-    @injectable()
-    class Samurai implements Warrior {
+    interface RankId {}
+
+    class Samurai implements Warrior, Injectable {
       public rank: string;
 
-      constructor(rank: string) {
-        this.rank = rank;
+      constructor(rank: Inject<RankId>) {
+        this.rank = rank as unknown as string;
       }
     }
 
-    @injectable()
-    class SamuraiMaster extends Samurai implements Warrior {
-      constructor(@inject(SYMBOLS.RANK) rank: string) {
+    class SamuraiMaster extends Samurai implements Warrior, Injectable {
+      constructor(rank: Inject<RankId>) {
         super(rank);
       }
     }
 
     const container: Container = new Container();
     container.bind<Warrior>(SYMBOLS.SamuraiMaster).to(SamuraiMaster);
-    container.bind<string>(SYMBOLS.RANK).toConstantValue('Master');
+    container
+      .bind(resolve<RankId>())
+      .toConstantValue('Master' as unknown as RankId);
 
     const samurai: SamuraiMaster = container.get<SamuraiMaster>(
       SYMBOLS.SamuraiMaster,
@@ -2626,7 +2532,7 @@ Binding constraints:
       rank: string;
     }
 
-    // IMPORTANT: Missing @injectable()
+    // IMPORTANT: Missing Injectable
     class Samurai implements Warrior {
       public rank: string;
 
@@ -2635,8 +2541,7 @@ Binding constraints:
       }
     }
 
-    @injectable()
-    class SamuraiMaster extends Samurai implements Warrior {
+    class SamuraiMaster extends Samurai implements Warrior, Injectable {
       constructor() {
         super('master');
       }

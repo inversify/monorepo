@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { bindingScopeValues, Container, injectable } from '../../index.js';
+import { bindingScopeValues, Container, type Injectable } from '../../index.js';
 
 describe('Issue 706', () => {
   it('Should expose BindingScopeEnum as part of the public API', () => {
-    @injectable()
-    class SomeClass {
+    class SomeClass implements Injectable {
       public time: number;
       constructor() {
         this.time = new Date().getTime();

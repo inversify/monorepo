@@ -1,33 +1,35 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable, optional } from '../../index.js';
+import {
+  Container,
+  type Inject,
+  type Injectable,
+  type InjectOptional,
+} from '../../index.js';
 
-describe(optional, () => {
+describe('optional', () => {
   it('Should allow to flag dependencies as optional', () => {
-    @injectable()
-    class Katana {
+    class Katana implements Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken {
+    class Shuriken implements Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
       }
     }
 
-    @injectable()
-    class Ninja {
+    class Ninja implements Injectable {
       public name: string;
       public katana: Katana;
       public shuriken: Shuriken;
       constructor(
-        @inject('Katana') katana: Katana,
-        @inject('Shuriken') @optional() shuriken: Shuriken,
+        katana: Inject<Katana>,
+        shuriken: InjectOptional<Shuriken>,
       ) {
         this.name = 'Ninja';
         this.katana = katana;
@@ -37,18 +39,18 @@ describe(optional, () => {
 
     const container: Container = new Container();
 
-    container.bind<Katana>('Katana').to(Katana);
-    container.bind<Ninja>('Ninja').to(Ninja);
+    container.bind(Katana).toSelf();
+    container.bind(Ninja).toSelf();
 
-    let ninja: Ninja = container.get('Ninja');
+    let ninja: Ninja = container.get(Ninja);
 
     expect(ninja.name).toBe('Ninja');
     expect(ninja.katana.name).toBe('Katana');
     expect(ninja.shuriken).toBeUndefined();
 
-    container.bind<Shuriken>('Shuriken').to(Shuriken);
+    container.bind(Shuriken).toSelf();
 
-    ninja = container.get('Ninja');
+    ninja = container.get(Ninja);
 
     expect(ninja.name).toBe('Ninja');
     expect(ninja.katana.name).toBe('Katana');
@@ -56,32 +58,29 @@ describe(optional, () => {
   });
 
   it('Should allow to set a default value for dependencies flagged as optional', () => {
-    @injectable()
-    class Katana {
+    class Katana implements Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken {
+    class Shuriken implements Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
       }
     }
 
-    @injectable()
-    class Ninja {
+    class Ninja implements Injectable {
       public name: string;
       public katana: Katana;
       public shuriken: Shuriken;
       constructor(
-        @inject('Katana') katana: Katana,
-        @inject('Shuriken')
-        @optional()
-        shuriken: Shuriken = { name: 'DefaultShuriken' },
+        katana: Inject<Katana>,
+        shuriken: InjectOptional<Shuriken> = {
+          name: 'DefaultShuriken',
+        },
       ) {
         this.name = 'Ninja';
         this.katana = katana;
@@ -91,18 +90,18 @@ describe(optional, () => {
 
     const container: Container = new Container();
 
-    container.bind<Katana>('Katana').to(Katana);
-    container.bind<Ninja>('Ninja').to(Ninja);
+    container.bind(Katana).toSelf();
+    container.bind(Ninja).toSelf();
 
-    let ninja: Ninja = container.get('Ninja');
+    let ninja: Ninja = container.get(Ninja);
 
     expect(ninja.name).to.eql('Ninja');
     expect(ninja.katana.name).to.eql('Katana');
     expect(ninja.shuriken.name).to.eql('DefaultShuriken');
 
-    container.bind<Shuriken>('Shuriken').to(Shuriken);
+    container.bind(Shuriken).toSelf();
 
-    ninja = container.get<Ninja>('Ninja');
+    ninja = container.get(Ninja);
 
     expect(ninja.name).to.eql('Ninja');
     expect(ninja.katana.name).to.eql('Katana');
@@ -110,26 +109,23 @@ describe(optional, () => {
   });
 
   it('Should allow to set a default value for class property dependencies flagged as optional', () => {
-    @injectable()
-    class Katana {
+    class Katana implements Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken {
+    class Shuriken implements Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
       }
     }
 
-    @injectable()
-    class Ninja {
-      @inject('Katana') public katana?: Katana;
-      @inject('Shuriken') @optional() public shuriken: Shuriken = {
+    class Ninja implements Injectable {
+      public katana?: Inject<Katana>;
+      public shuriken: InjectOptional<Shuriken> = {
         name: 'DefaultShuriken',
       };
       public name: string = 'Ninja';
@@ -137,18 +133,18 @@ describe(optional, () => {
 
     const container: Container = new Container();
 
-    container.bind<Katana>('Katana').to(Katana);
-    container.bind<Ninja>('Ninja').to(Ninja);
+    container.bind(Katana).toSelf();
+    container.bind(Ninja).toSelf();
 
-    let ninja: Ninja = container.get('Ninja');
+    let ninja: Ninja = container.get(Ninja);
 
     expect(ninja.name).toBe('Ninja');
     expect(ninja.katana?.name).toBe('Katana');
     expect(ninja.shuriken.name).toBe('DefaultShuriken');
 
-    container.bind<Shuriken>('Shuriken').to(Shuriken);
+    container.bind(Shuriken).toSelf();
 
-    ninja = container.get('Ninja');
+    ninja = container.get(Ninja);
 
     expect(ninja.name).toBe('Ninja');
     expect(ninja.katana?.name).toBe('Katana');

@@ -3,21 +3,28 @@ import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
 import { type ClassMetadata } from '../models/ClassMetadata.js';
+import { buildClassMetadataFromRflct } from './buildClassMetadataFromRflct.js';
 import { getDefaultClassMetadata } from './getDefaultClassMetadata.js';
 import { isPendingClassMetadata } from './isPendingClassMetadata.js';
 import { throwAtInvalidClassMetadata } from './throwAtInvalidClassMetadata.js';
 import { validateConstructorMetadataArray } from './validateConstructorMetadataArray.js';
 
 export function getClassMetadata(type: Newable): ClassMetadata {
-  const classMetadata: ClassMetadata =
-    getOwnReflectMetadata(type, classMetadataReflectKey) ??
-    getDefaultClassMetadata();
+  const decoratorMetadata: ClassMetadata | undefined = getOwnReflectMetadata(
+    type,
+    classMetadataReflectKey,
+  );
 
-  if (isPendingClassMetadata(type)) {
-    throwAtInvalidClassMetadata(type, classMetadata);
-  } else {
-    validateConstructorMetadataArray(type, classMetadata.constructorArguments);
-
-    return classMetadata;
+  if (decoratorMetadata !== undefined) {
+    if (isPendingClassMetadata(type)) {
+      throwAtInvalidClassMetadata(type, decoratorMetadata);
+    }
+    validateConstructorMetadataArray(
+      type,
+      decoratorMetadata.constructorArguments,
+    );
+    return decoratorMetadata;
   }
+
+  return buildClassMetadataFromRflct(type) ?? getDefaultClassMetadata();
 }

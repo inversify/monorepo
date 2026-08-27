@@ -31,31 +31,14 @@ import {
   type BindingDeactivationRelation,
   DeactivationsService,
 } from './binding/services/DeactivationsService.js';
-import { decorate } from './decorator/actions/decorate.js';
 import { InversifyCoreError } from './error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from './error/models/InversifyCoreErrorKind.js';
 import { getClassMetadata } from './metadata/calculations/getClassMetadata.js';
-import { inject } from './metadata/decorators/inject.js';
-import { injectable } from './metadata/decorators/injectable.js';
-import { injectFromBase } from './metadata/decorators/injectFromBase.js';
-import { injectFromHierarchy } from './metadata/decorators/injectFromHierarchy.js';
-import { multiInject } from './metadata/decorators/multiInject.js';
-import { named } from './metadata/decorators/named.js';
-import { optional } from './metadata/decorators/optional.js';
-import { postConstruct } from './metadata/decorators/postConstruct.js';
-import { preDestroy } from './metadata/decorators/preDestroy.js';
-import { tagged } from './metadata/decorators/tagged.js';
-import { unmanaged } from './metadata/decorators/unmanaged.js';
 import { type BaseManagedClassElementMetadata } from './metadata/models/BaseManagedClassElementMetadata.js';
 import { type ClassElementMetadata } from './metadata/models/ClassElementMetadata.js';
 import { ClassElementMetadataKind } from './metadata/models/ClassElementMetadataKind.js';
 import { type ClassMetadata } from './metadata/models/ClassMetadata.js';
 import { type ClassMetadataLifecycle } from './metadata/models/ClassMetadataLifecycle.js';
-import { type InjectFromBaseOptions } from './metadata/models/InjectFromBaseOptions.js';
-import { type InjectFromBaseOptionsLifecycle } from './metadata/models/InjectFromBaseOptionsLifecycle.js';
-import { type InjectFromHierarchyOptions } from './metadata/models/InjectFromHierarchyOptions.js';
-import { type InjectFromHierarchyOptionsLifecycle } from './metadata/models/InjectFromHierarchyOptionsLifecycle.js';
-import { type InjectFromOptions } from './metadata/models/InjectFromOptions.js';
 import { type ManagedClassElementMetadata } from './metadata/models/ManagedClassElementMetadata.js';
 import { type MetadataName } from './metadata/models/MetadataName.js';
 import { type MetadataTag } from './metadata/models/MetadataTag.js';
@@ -113,6 +96,16 @@ import { type OptionalGetOptions } from './resolution/models/OptionalGetOptions.
 import { type ResolutionContext } from './resolution/models/ResolutionContext.js';
 import { type ResolutionParams } from './resolution/models/ResolutionParams.js';
 import { type Resolved } from './resolution/models/Resolved.js';
+import { type Inject } from './reflection/types/RflctTypes.js';
+import { type Injectable } from './reflection/types/RflctTypes.js';
+import { type InjectMulti } from './reflection/types/RflctTypes.js';
+import { type InjectMultiChained } from './reflection/types/RflctTypes.js';
+import { type InjectNamed } from './reflection/types/RflctTypes.js';
+import { type InjectOptional } from './reflection/types/RflctTypes.js';
+import { type InjectTagged } from './reflection/types/RflctTypes.js';
+import { type InjectUnmanaged } from './reflection/types/RflctTypes.js';
+import { type PostConstruct } from './reflection/types/RflctTypes.js';
+import { type PreDestroy } from './reflection/types/RflctTypes.js';
 
 export type {
   BaseBinding,
@@ -148,17 +141,22 @@ export type {
   GetPlanOptions,
   GetPlanOptionsTagConstraint,
   GetSingleServicePlanOptions,
-  InjectFromBaseOptions,
-  InjectFromBaseOptionsLifecycle,
-  InjectFromHierarchyOptions,
-  InjectFromHierarchyOptionsLifecycle,
+  Inject,
+  Injectable,
+  InjectMulti,
+  InjectMultiChained,
+  InjectNamed,
+  InjectOptional,
+  InjectTagged,
+  InjectUnmanaged,
+  PostConstruct,
+  PreDestroy,
   InstanceBinding,
   InstanceBindingNode,
   LeafBindingNode,
   ManagedClassElementMetadata,
   MetadataName,
   MetadataTag,
-  InjectFromOptions,
   MultiInjectOptions,
   MultipleInjectionManagedClassElementMetadata,
   MultipleInjectionResolvedValueElementMetadata,
@@ -198,31 +196,19 @@ export {
   CacheBindingInvalidationKind,
   ClassElementMetadataKind,
   DeactivationsService,
-  decorate,
   getBindingId,
   getClassMetadata,
-  inject,
-  injectable,
-  injectFromBase,
-  injectFromHierarchy,
   isConstructorNoParamNode,
   InversifyCoreError,
   InversifyCoreErrorKind,
   LazyPlanServiceNode,
-  multiInject,
-  named,
-  optional,
   plan,
   PlanResultCacheService,
-  postConstruct,
-  preDestroy,
   resolve,
   resolveBindingsDeactivations,
   ResolvedValueElementMetadataKind,
   resolveModuleDeactivations,
   resolveServiceDeactivations,
-  tagged,
-  unmanaged,
   MultipleBindingPlanParamsConstraint,
   SingleBindingPlanParamsConstraint,
 };

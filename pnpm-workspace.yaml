@@ -2,8 +2,8 @@ packages:
   - packages/container/examples/*
   - packages/container/libraries/*
   - packages/container/tools/*
-  - packages/docs/services/*
-  - packages/docs/tools/*
+  #- packages/docs/services/*
+  #- packages/docs/tools/*
   - packages/foundation/libraries/*
   - packages/foundation/tools/*
   - packages/framework/*
@@ -33,6 +33,8 @@ allowBuilds:
   msgpackr-extract: false
 minimumReleaseAge: 1440
 overrides:
+  electron-to-chromium: '1.5.149'
+  typescript: '7.0.2'
   postcss: 8.5.26
 packageExtensions:
   "@docusaurus/theme-search-algolia@*":
