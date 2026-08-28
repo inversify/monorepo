@@ -6,22 +6,18 @@ import {
   type OpenApi3Dot1PathItemObject,
   type OpenApi3Dot1ReferenceObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
-import { InversifyValidationErrorKind } from '@inversifyjs/validation-common';
 
-import { InversifyOpenApiValidationError } from '../../../models/InversifyOpenApiValidationError.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { getOperationObject } from './getOperationObject.js';
 import { getPathItemObject } from './getPathItemObject.js';
+import {
+  type ResolvedParameterObject,
+  resolveParameterObject,
+} from './resolveParameterObject.js';
 
 export interface QueryParameterEntry {
   parameter: OpenApi3Dot1ParameterObject;
   pointerPrefix: string;
-}
-
-function isReferenceObject(
-  param: OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject,
-): param is OpenApi3Dot1ReferenceObject {
-  return '$ref' in param;
 }
 
 export function getQueryParameterObjects(
@@ -48,23 +44,22 @@ export function getQueryParameterObjects(
         pathItemObject.parameters[i] as
           OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject;
 
-      const param: OpenApi3Dot1ParameterObject | null | undefined =
-        isReferenceObject(raw)
-          ? (openApiResolver.deepResolveReference(raw.$ref) as unknown as
-              OpenApi3Dot1ParameterObject | null | undefined)
-          : raw;
+      const resolved: ResolvedParameterObject = resolveParameterObject(
+        openApiResolver,
+        raw,
+        method,
+        path,
+        i,
+      );
 
-      if (param == undefined) {
-        throw new InversifyOpenApiValidationError(
-          InversifyValidationErrorKind.validationFailed,
-          `Unable to resolve query parameter at path: ${path} and method: ${method} and index: ${String(i)}`,
-        );
-      }
+      const param: OpenApi3Dot1ParameterObject = resolved.parameter;
 
       if (param.in === 'query') {
         result.set(param.name, {
           parameter: param,
-          pointerPrefix: `paths/${escapeJsonPointerFragments(path)}/parameters/${String(i)}`,
+          pointerPrefix:
+            resolved.pointerPrefix ??
+            `paths/${escapeJsonPointerFragments(path)}/parameters/${String(i)}`,
         });
       }
     }
@@ -76,23 +71,22 @@ export function getQueryParameterObjects(
         operationObject.parameters[i] as
           OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject;
 
-      const param: OpenApi3Dot1ParameterObject | null | undefined =
-        isReferenceObject(raw)
-          ? (openApiResolver.deepResolveReference(raw.$ref) as unknown as
-              OpenApi3Dot1ParameterObject | null | undefined)
-          : raw;
+      const resolved: ResolvedParameterObject = resolveParameterObject(
+        openApiResolver,
+        raw,
+        method,
+        path,
+        i,
+      );
 
-      if (param == undefined) {
-        throw new InversifyOpenApiValidationError(
-          InversifyValidationErrorKind.validationFailed,
-          `Unable to resolve query parameter at path: ${path} and method: ${method} and index: ${String(i)}`,
-        );
-      }
+      const param: OpenApi3Dot1ParameterObject = resolved.parameter;
 
       if (param.in === 'query') {
         result.set(param.name, {
           parameter: param,
-          pointerPrefix: `paths/${escapeJsonPointerFragments(path)}/${method}/parameters/${String(i)}`,
+          pointerPrefix:
+            resolved.pointerPrefix ??
+            `paths/${escapeJsonPointerFragments(path)}/${method}/parameters/${String(i)}`,
         });
       }
     }
