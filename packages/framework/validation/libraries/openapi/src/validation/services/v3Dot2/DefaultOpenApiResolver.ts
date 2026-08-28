@@ -5,26 +5,54 @@ import {
 } from '@inversifyjs/json-schema-types/2020-12';
 import { type TraverseJsonSchemaCallbackParams } from '@inversifyjs/json-schema-utils/2020-12';
 import { type OpenApi3Dot2Object } from '@inversifyjs/open-api-types/v3Dot2';
-import { traverseOpenApiObjectJsonSchemas } from '@inversifyjs/open-api-utils/v3Dot2';
+import {
+  OpenApi3Dot2Resolver,
+  traverseOpenApiObjectJsonSchemas,
+} from '@inversifyjs/open-api-utils/v3Dot2';
 import { Uri } from '@inversifyjs/uri';
 
 import { getClosestAncestorId } from '../../calculations/getClosestAncestorId.js';
 import { getClosestAncestorOrNodeId } from '../../calculations/getClosestAncestorOrNodeId.js';
 import { BaseOpenApiResolver } from '../BaseOpenApiResolver.js';
+import { type OpenApiRefResolutionResult } from '../OpenApiResolver.js';
+
+const OPEN_API_DOCUMENT_URI: string = 'urn:inversifyjs:openapi-v3dot2-spec';
 
 export class DefaultOpenApiResolver extends BaseOpenApiResolver {
+  readonly #openApi3Dot2Resolver: OpenApi3Dot2Resolver;
+  readonly #openApiObject: JsonValue;
   readonly #uriToSchemaMap: Map<string, JsonValue>;
 
   constructor(openApiObject: OpenApi3Dot2Object) {
     super();
 
+    this.#openApiObject = openApiObject as unknown as JsonValue;
     this.#uriToSchemaMap = new Map();
 
     this.#populateUriToSchemaMap(openApiObject);
+
+    this.#openApi3Dot2Resolver = new OpenApi3Dot2Resolver(
+      OPEN_API_DOCUMENT_URI,
+      (id: string) => this.#maybeResolveOpenApiDocument(id),
+    );
+  }
+
+  public resolveOpenApiReference(
+    reference: JsonValue,
+  ): OpenApiRefResolutionResult {
+    return this.#openApi3Dot2Resolver.resolveRef(reference);
   }
 
   protected _maybeResolveUri(uri: string): JsonValue | undefined {
     return this.#uriToSchemaMap.get(uri);
+  }
+
+  #maybeResolveOpenApiDocument(uri: string): JsonValue | undefined {
+    if (uri === OPEN_API_DOCUMENT_URI) {
+      return this.#openApiObject;
+    }
+
+    return undefined;
   }
 
   #hasId(

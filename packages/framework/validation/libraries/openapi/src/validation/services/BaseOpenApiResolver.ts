@@ -1,7 +1,10 @@
 import { type JsonValue } from '@inversifyjs/json-schema-types';
 
 import { deepResolveJsonSchemaPointer } from '../calculations/deepResolveJsonSchemaPointer.js';
-import { type OpenApiResolver } from './OpenApiResolver.js';
+import {
+  type OpenApiRefResolutionResult,
+  type OpenApiResolver,
+} from './OpenApiResolver.js';
 
 const URI_SPLIT_BY_FRAGMENT_PARTS_COUNT: number = 2;
 
@@ -64,6 +67,10 @@ export abstract class BaseOpenApiResolver implements OpenApiResolver {
       typeof object.$ref === 'string'
     );
   }
+
+  public abstract resolveOpenApiReference(
+    reference: JsonValue,
+  ): OpenApiRefResolutionResult;
 
   protected abstract _maybeResolveUri(uri: string): JsonValue | undefined;
 }

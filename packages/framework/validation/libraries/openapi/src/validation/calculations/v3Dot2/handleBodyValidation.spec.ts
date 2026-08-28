@@ -576,4 +576,112 @@ describe(handleBodyValidation, () => {
       });
     });
   });
+
+  describe('having an inputParam with contentType and an operationObject whose requestBody is a Reference Object', () => {
+    let inputParamFixture: BodyValidationInputParam<unknown>;
+    let pathFixture: string;
+    let methodFixture: string;
+    let contentTypeFixture: string;
+    let operationObjectFixture: OpenApi3Dot2OperationObject;
+    let requestBodyObjectFixture: OpenApi3Dot2RequestBodyObject;
+    let requestBodyReferenceFixture: { $ref: string };
+    let escapedPointerFixture: string;
+
+    beforeAll(() => {
+      pathFixture = '/users';
+      methodFixture = 'post';
+      contentTypeFixture = 'application/json';
+      inputParamFixture = {
+        body: { name: 'test' },
+        contentType: contentTypeFixture,
+        method: methodFixture,
+        path: pathFixture,
+        type: Symbol() as unknown as BodyValidationInputParam<unknown>['type'],
+      };
+      requestBodyReferenceFixture = {
+        $ref: '#/components/requestBodies/UserBody',
+      };
+      operationObjectFixture = {
+        requestBody: requestBodyReferenceFixture,
+        responses: {},
+      };
+      requestBodyObjectFixture = {
+        content: {
+          [contentTypeFixture]: {
+            schema: {},
+          },
+        },
+      };
+      escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
+    });
+
+    describe('when called, and getEntry() returns empty entry and ajv.getSchema() returns undefined', () => {
+      let ajvMock: Mocked<Ajv>;
+      let getEntryMock: Mock<
+        (path: string, method: string) => ValidationCacheEntry
+      >;
+      let validationCacheEntryFixture: ValidationCacheEntry;
+      let schemaPointerFixture: string;
+      let result: unknown;
+
+      beforeAll(() => {
+        ajvMock = {
+          getSchema: vitest.fn().mockReturnValueOnce(undefined),
+        } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
+
+        schemaPointerFixture = `${SCHEMA_ID}#/${escapedPointerFixture}`;
+
+        validationCacheEntryFixture = {
+          body: undefined,
+          headers: undefined,
+          params: undefined,
+          queries: undefined,
+        };
+
+        getEntryMock = vitest
+          .fn<(path: string, method: string) => ValidationCacheEntry>()
+          .mockReturnValueOnce(validationCacheEntryFixture);
+
+        vitest
+          .mocked(getOperationObject)
+          .mockReturnValueOnce(operationObjectFixture);
+        vitest
+          .mocked(getRequestBodyObject)
+          .mockReturnValueOnce(requestBodyObjectFixture);
+        vitest
+          .mocked(escapeJsonPointerFragments)
+          .mockReturnValueOnce(escapedPointerFixture);
+
+        vitest
+          .mocked(openApiRouterMock.findRoute)
+          .mockReturnValueOnce(pathFixture);
+
+        try {
+          handleBodyValidation(
+            ajvMock,
+            openApiObjectFixture,
+            validationContextFixture,
+            inputParamFixture,
+            getEntryMock,
+          );
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should throw an InversifyValidationError', () => {
+        expect(result).toBeInstanceOf(InversifyValidationError);
+      });
+
+      it('should throw an error with expected message', () => {
+        expect((result as InversifyValidationError).message).toBe(
+          `Unable to find schema for pointer: ${schemaPointerFixture}. The operation requestBody is an OpenAPI Reference Object ($ref: "${requestBodyReferenceFixture.$ref}"); AJV looks up this pointer on the document and does not follow OpenAPI $ref`,
+        );
+      });
+    });
+  });
 });
