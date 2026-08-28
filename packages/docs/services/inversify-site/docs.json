@@ -9,65 +9,136 @@
   },
   "favicon": "/favicon.ico",
   "navigation": {
-    "groups": [
+    "languages": [
       {
-        "group": "Get Started",
-        "pages": [
-          "docs/introduction/getting-started",
-          "docs/introduction/dependency-inversion"
+        "language": "en",
+        "default": true,
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "docs/introduction/getting-started",
+              "docs/introduction/dependency-inversion"
+            ]
+          },
+          {
+            "group": "Fundamentals",
+            "pages": [
+              "docs/fundamentals/di-hierarchy",
+              "docs/fundamentals/binding",
+              "docs/fundamentals/inheritance",
+              "docs/fundamentals/lifecycle/activation",
+              "docs/fundamentals/lifecycle/deactivation",
+              "docs/fundamentals/snapshot",
+              "docs/fundamentals/plugins"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "docs/guides/migrating-from-v7",
+              "docs/guides/migrating-from-v6"
+            ]
+          },
+          {
+            "group": "FAQ",
+            "pages": [
+              "docs/faq/requirements",
+              "docs/faq/using-bundlers"
+            ]
+          },
+          {
+            "group": "Ecosystem",
+            "pages": [
+              "docs/ecosystem/framework",
+              "docs/ecosystem/binding-decorators",
+              "docs/ecosystem/strongly-typed",
+              "docs/ecosystem/suites"
+            ]
+          },
+          {
+            "group": "Internals",
+            "pages": [
+              "docs/internals/planning"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "pages": [
+              "docs/api/binding-syntax",
+              "docs/api/container",
+              "docs/api/lazy-service-identifier",
+              "docs/api/decorate",
+              "docs/api/service-identifier",
+              "docs/api/decorator",
+              "docs/api/container-module"
+            ]
+          }
         ]
       },
       {
-        "group": "Fundamentals",
-        "pages": [
-          "docs/fundamentals/di-hierarchy",
-          "docs/fundamentals/binding",
-          "docs/fundamentals/inheritance",
-          "docs/fundamentals/lifecycle/activation",
-          "docs/fundamentals/lifecycle/deactivation",
-          "docs/fundamentals/snapshot",
-          "docs/fundamentals/plugins"
-        ]
-      },
-      {
-        "group": "Guides",
-        "pages": [
-          "docs/guides/migrating-from-v7",
-          "docs/guides/migrating-from-v6"
-        ]
-      },
-      {
-        "group": "FAQ",
-        "pages": [
-          "docs/faq/requirements",
-          "docs/faq/using-bundlers"
-        ]
-      },
-      {
-        "group": "Ecosystem",
-        "pages": [
-          "docs/ecosystem/framework",
-          "docs/ecosystem/binding-decorators",
-          "docs/ecosystem/strongly-typed",
-          "docs/ecosystem/suites"
-        ]
-      },
-      {
-        "group": "Internals",
-        "pages": [
-          "docs/internals/planning"
-        ]
-      },
-      {
-        "group": "API Reference",
-        "pages": [
-          "docs/api/binding-syntax",
-          "docs/api/container",
-          "docs/api/lazy-service-identifier",
-          "docs/api/decorate",
-          "docs/api/service-identifier",
-          "docs/api/decorator",
-          "docs/api/container-module"
+        "language": "zh",
+        "groups": [
+          {
+            "group": "快速入门",
+            "pages": [
+              "zh/docs/introduction/getting-started",
+              "zh/docs/introduction/dependency-inversion"
+            ]
+          },
+          {
+            "group": "基础",
+            "pages": [
+              "zh/docs/fundamentals/di-hierarchy",
+              "zh/docs/fundamentals/binding",
+              "zh/docs/fundamentals/inheritance",
+              "zh/docs/fundamentals/lifecycle/activation",
+              "zh/docs/fundamentals/lifecycle/deactivation",
+              "zh/docs/fundamentals/snapshot",
+              "zh/docs/fundamentals/plugins"
+            ]
+          },
+          {
+            "group": "指南",
+            "pages": [
+              "zh/docs/guides/migrating-from-v7",
+              "zh/docs/guides/migrating-from-v6"
+            ]
+          },
+          {
+            "group": "常见问题",
+            "pages": [
+              "zh/docs/faq/requirements",
+              "zh/docs/faq/using-bundlers"
+            ]
+          },
+          {
+            "group": "生态系统",
+            "pages": [
+              "zh/docs/ecosystem/framework",
+              "zh/docs/ecosystem/binding-decorators",
+              "zh/docs/ecosystem/strongly-typed",
+              "zh/docs/ecosystem/suites"
+            ]
+          },
+          {
+            "group": "内部实现",
+            "pages": [
+              "zh/docs/internals/planning"
+            ]
+          },
+          {
+            "group": "API 参考",
+            "pages": [
+              "zh/docs/api/binding-syntax",
+              "zh/docs/api/container",
+              "zh/docs/api/lazy-service-identifier",
+              "zh/docs/api/decorate",
+              "zh/docs/api/service-identifier",
+              "zh/docs/api/decorator",
+              "zh/docs/api/container-module"
+            ]
+          }
         ]
       }
     ]

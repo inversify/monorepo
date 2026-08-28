@@ -1,0 +1,45 @@
+---
+sidebar_position: 2
+title: 使用打包工具
+---
+
+# 使用打包工具
+
+InversifyJS 可以与任何支持转译 TypeScript 遗留装饰器并发出 TypeScript 类元数据的打包工具一起使用。
+
+如果你的打包工具不转译 TypeScript 遗留装饰器，则在没有执行此操作的插件的情况下，你将无法使用 InversifyJS。
+
+如果你的打包工具不发出 TypeScript 类元数据，InversifyJS 将无法提供以下功能：
+
+- [自动绑定](../fundamentals/binding.mdx#自动绑定)。
+- 无需包含 `@inject` 装饰器的类构造函数参数或属性。
+
+## esbuild
+
+esbuild 不支持转译 TypeScript 遗留装饰器，如 [此问题](https://github.com/evanw/esbuild/issues/257) 中所述。
+
+## Rollup
+
+你可以使用 `@rollup/plugin-typescript` 插件成功转译带有遗留装饰器的 TypeScript 代码。
+
+## Vite
+
+Vite 在底层使用 esbuild，因此它也不支持转译 TypeScript 遗留装饰器。但是，你可以使用 `unplugin-swc` 插件来转译 TypeScript 遗留装饰器。
+
+```ts title="vite.config.ts"
+import swc from "unplugin-swc";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    // Vite plugin
+    swc.vite(),
+  ],
+});
+```
+
+有关更多信息，请参阅 [此问题](https://github.com/inversify/InversifyJS/issues/1710)。
+
+## Webpack
+
+你可以使用 `ts-loader` 插件成功转译带有遗留装饰器的 TypeScript 代码。
