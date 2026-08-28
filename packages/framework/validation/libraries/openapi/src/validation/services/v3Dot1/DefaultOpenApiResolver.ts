@@ -3,7 +3,10 @@ import {
   type JsonRootSchemaObject,
   type JsonSchemaObject,
 } from '@inversifyjs/json-schema-types/2020-12';
-import { type TraverseJsonSchemaCallbackParams } from '@inversifyjs/json-schema-utils/2020-12';
+import {
+  JsonSchemaResolver,
+  type TraverseJsonSchemaCallbackParams,
+} from '@inversifyjs/json-schema-utils/2020-12';
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import {
   OpenApi3Dot1Resolver,
@@ -14,11 +17,15 @@ import { Uri } from '@inversifyjs/uri';
 import { getClosestAncestorId } from '../../calculations/getClosestAncestorId.js';
 import { getClosestAncestorOrNodeId } from '../../calculations/getClosestAncestorOrNodeId.js';
 import { BaseOpenApiResolver } from '../BaseOpenApiResolver.js';
-import { type OpenApiRefResolutionResult } from '../OpenApiResolver.js';
+import {
+  type JsonSchemaResolutionResult,
+  type OpenApiRefResolutionResult,
+} from '../OpenApiResolver.js';
 
 const OPEN_API_DOCUMENT_URI: string = 'urn:inversifyjs:openapi-v3dot1-spec';
 
 export class DefaultOpenApiResolver extends BaseOpenApiResolver {
+  readonly #jsonSchemaResolver: JsonSchemaResolver;
   readonly #openApi3Dot1Resolver: OpenApi3Dot1Resolver;
   readonly #openApiObject: JsonValue;
   readonly #uriToSchemaMap: Map<string, JsonValue>;
@@ -31,10 +38,17 @@ export class DefaultOpenApiResolver extends BaseOpenApiResolver {
 
     this.#populateUriToSchemaMap(openApiObject);
 
+    this.#jsonSchemaResolver = new JsonSchemaResolver((id: string) =>
+      this._maybeResolveUri(id),
+    );
     this.#openApi3Dot1Resolver = new OpenApi3Dot1Resolver(
       OPEN_API_DOCUMENT_URI,
       (id: string) => this.#maybeResolveOpenApiDocument(id),
     );
+  }
+
+  public resolveJsonSchema(schema: JsonValue): JsonSchemaResolutionResult {
+    return this.#jsonSchemaResolver.resolveSchema(schema);
   }
 
   public resolveOpenApiReference(
@@ -63,6 +77,10 @@ export class DefaultOpenApiResolver extends BaseOpenApiResolver {
 
   #populateUriToSchemaMap(openApiObject: OpenApi3Dot1Object): void {
     this.#uriToSchemaMap.set('', openApiObject as unknown as JsonValue);
+    this.#uriToSchemaMap.set(
+      OPEN_API_DOCUMENT_URI,
+      openApiObject as unknown as JsonValue,
+    );
 
     traverseOpenApiObjectJsonSchemas(
       openApiObject,

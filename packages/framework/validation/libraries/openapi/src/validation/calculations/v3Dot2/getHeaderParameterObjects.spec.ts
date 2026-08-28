@@ -5,6 +5,7 @@ vitest.mock(import('./getOperationObject.js'));
 vitest.mock(import('./getPathItemObject.js'));
 
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
+import { type JsonValue } from '@inversifyjs/json-schema-types';
 import {
   type OpenApi3Dot2Object,
   type OpenApi3Dot2OperationObject,
@@ -65,6 +66,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
@@ -82,6 +84,12 @@ describe(getHeaderParameterObjects, () => {
 
     afterAll(() => {
       vitest.clearAllMocks();
+    });
+
+    it('should not call openApiResolver.resolveOpenApiReference()', () => {
+      expect(
+        openApiResolverFixture.resolveOpenApiReference,
+      ).not.toHaveBeenCalled();
     });
 
     it('should return a map with the header parameter', () => {
@@ -123,6 +131,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
@@ -185,6 +194,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
@@ -222,10 +232,11 @@ describe(getHeaderParameterObjects, () => {
 
   describe('when called, and parameter is a $ref reference', () => {
     let openApiResolverFixture: OpenApiResolver;
+    let refFixture: OpenApi3Dot2ReferenceObject;
     let result: Map<string, HeaderParameterEntry>;
 
     beforeAll(() => {
-      const refFixture: OpenApi3Dot2ReferenceObject = {
+      refFixture = {
         $ref: '#/components/parameters/ApiKeyHeader',
       };
 
@@ -246,10 +257,22 @@ describe(getHeaderParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest
-          .fn()
-          .mockReturnValueOnce(resolvedParamFixture),
-        resolveOpenApiReference: vitest.fn(),
+        deepResolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
+          isRight: true,
+          value: {
+            chain: [
+              {
+                $ref: refFixture.$ref,
+                canonicalId:
+                  'urn:inversifyjs:openapi-v3dot2-spec#/components/parameters/ApiKeyHeader',
+                value: refFixture as unknown as JsonValue,
+              },
+            ],
+            value: resolvedParamFixture as unknown as JsonValue,
+          },
+        }),
         resolveReference: vitest.fn(),
       };
 
@@ -268,18 +291,117 @@ describe(getHeaderParameterObjects, () => {
       vitest.clearAllMocks();
     });
 
+    it('should call openApiResolver.resolveOpenApiReference()', () => {
+      expect(
+        openApiResolverFixture.resolveOpenApiReference,
+      ).toHaveBeenCalledExactlyOnceWith(refFixture);
+    });
+
     it('should resolve the $ref and return the header parameter', () => {
       expect(result.size).toBe(1);
       expect(result.has('x-api-key')).toBe(true);
     });
+
+    it('should return entry with component pointer prefix', () => {
+      const entry: HeaderParameterEntry = result.get(
+        'x-api-key',
+      ) as HeaderParameterEntry;
+
+      expect(entry.pointerPrefix).toBe('components/parameters/ApiKeyHeader');
+    });
   });
 
-  describe('when called, and path item deepResolveReference returns undefined', () => {
+  describe('when called, and path item parameter is a $ref reference', () => {
     let openApiResolverFixture: OpenApiResolver;
+    let refFixture: OpenApi3Dot2ReferenceObject;
+    let result: Map<string, HeaderParameterEntry>;
+
+    beforeAll(() => {
+      refFixture = {
+        $ref: '#/components/parameters/ApiKeyHeader',
+      };
+
+      const resolvedParamFixture: OpenApi3Dot2ParameterObject = {
+        in: 'header',
+        name: 'X-Api-Key',
+        required: true,
+        schema: { type: 'string' },
+      };
+
+      const operationFixture: OpenApi3Dot2OperationObject = {
+        responses: {},
+      };
+
+      const pathItemFixture: OpenApi3Dot2PathItemObject = {
+        get: operationFixture,
+        parameters: [refFixture],
+      };
+
+      openApiResolverFixture = {
+        deepResolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
+          isRight: true,
+          value: {
+            chain: [
+              {
+                $ref: refFixture.$ref,
+                canonicalId:
+                  'urn:inversifyjs:openapi-v3dot2-spec#/components/parameters/ApiKeyHeader',
+                value: refFixture as unknown as JsonValue,
+              },
+            ],
+            value: resolvedParamFixture as unknown as JsonValue,
+          },
+        }),
+        resolveReference: vitest.fn(),
+      };
+
+      vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
+      vitest.mocked(getOperationObject).mockReturnValueOnce(operationFixture);
+
+      result = getHeaderParameterObjects(
+        openApiObjectFixture,
+        openApiResolverFixture,
+        methodFixture,
+        pathFixture,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call openApiResolver.resolveOpenApiReference()', () => {
+      expect(
+        openApiResolverFixture.resolveOpenApiReference,
+      ).toHaveBeenCalledExactlyOnceWith(refFixture);
+    });
+
+    it('should resolve the $ref and return the header parameter', () => {
+      expect(result.size).toBe(1);
+      expect(result.has('x-api-key')).toBe(true);
+    });
+
+    it('should return entry with component pointer prefix', () => {
+      const entry: HeaderParameterEntry = result.get(
+        'x-api-key',
+      ) as HeaderParameterEntry;
+
+      expect(entry.pointerPrefix).toBe('components/parameters/ApiKeyHeader');
+    });
+  });
+
+  describe('when called, and path item $ref fails to resolve', () => {
+    let openApiResolverFixture: OpenApiResolver;
+    let reasonFixture: string;
+    let refFixture: OpenApi3Dot2ReferenceObject;
     let result: unknown;
 
     beforeAll(() => {
-      const refFixture: OpenApi3Dot2ReferenceObject = {
+      reasonFixture =
+        'Failed to resolve JSON Pointer: /components/parameters/MissingHeader';
+      refFixture = {
         $ref: '#/components/parameters/MissingHeader',
       };
 
@@ -293,8 +415,15 @@ describe(getHeaderParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn().mockReturnValueOnce(undefined),
-        resolveOpenApiReference: vitest.fn(),
+        deepResolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
+          isRight: false,
+          value: {
+            reason: reasonFixture,
+            resolutionContextStack: [],
+          },
+        }),
         resolveReference: vitest.fn(),
       };
 
@@ -317,11 +446,17 @@ describe(getHeaderParameterObjects, () => {
       vitest.clearAllMocks();
     });
 
+    it('should call openApiResolver.resolveOpenApiReference()', () => {
+      expect(
+        openApiResolverFixture.resolveOpenApiReference,
+      ).toHaveBeenCalledExactlyOnceWith(refFixture);
+    });
+
     it('should throw an InversifyOpenApiValidationError', () => {
       const expectedErrorProperties: Partial<InversifyOpenApiValidationError> =
         {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `Unable to resolve header parameter at path: ${pathFixture} and method: ${methodFixture} and index: 0`,
+          message: `Could not resolve $ref pointer ${refFixture.$ref} for parameter at path: ${pathFixture} and method: ${methodFixture} and index: 0: ${reasonFixture}`,
         };
 
       expect(result).toBeInstanceOf(InversifyOpenApiValidationError);
@@ -329,12 +464,16 @@ describe(getHeaderParameterObjects, () => {
     });
   });
 
-  describe('when called, and operation deepResolveReference returns undefined', () => {
+  describe('when called, and operation $ref fails to resolve', () => {
     let openApiResolverFixture: OpenApiResolver;
+    let reasonFixture: string;
+    let refFixture: OpenApi3Dot2ReferenceObject;
     let result: unknown;
 
     beforeAll(() => {
-      const refFixture: OpenApi3Dot2ReferenceObject = {
+      reasonFixture =
+        'Failed to resolve JSON Pointer: /components/parameters/MissingHeader';
+      refFixture = {
         $ref: '#/components/parameters/MissingHeader',
       };
 
@@ -348,8 +487,84 @@ describe(getHeaderParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn().mockReturnValueOnce(undefined),
-        resolveOpenApiReference: vitest.fn(),
+        deepResolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
+          isRight: false,
+          value: {
+            reason: reasonFixture,
+            resolutionContextStack: [],
+          },
+        }),
+        resolveReference: vitest.fn(),
+      };
+
+      vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
+      vitest.mocked(getOperationObject).mockReturnValueOnce(operationFixture);
+
+      try {
+        getHeaderParameterObjects(
+          openApiObjectFixture,
+          openApiResolverFixture,
+          methodFixture,
+          pathFixture,
+        );
+      } catch (error: unknown) {
+        result = error;
+      }
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call openApiResolver.resolveOpenApiReference()', () => {
+      expect(
+        openApiResolverFixture.resolveOpenApiReference,
+      ).toHaveBeenCalledExactlyOnceWith(refFixture);
+    });
+
+    it('should throw an InversifyOpenApiValidationError', () => {
+      const expectedErrorProperties: Partial<InversifyOpenApiValidationError> =
+        {
+          kind: InversifyValidationErrorKind.validationFailed,
+          message: `Could not resolve $ref pointer ${refFixture.$ref} for parameter at path: ${pathFixture} and method: ${methodFixture} and index: 0: ${reasonFixture}`,
+        };
+
+      expect(result).toBeInstanceOf(InversifyOpenApiValidationError);
+      expect(result).toMatchObject(expectedErrorProperties);
+    });
+  });
+
+  describe('when called, and $ref resolves to a non-object', () => {
+    let openApiResolverFixture: OpenApiResolver;
+    let refFixture: OpenApi3Dot2ReferenceObject;
+    let result: unknown;
+
+    beforeAll(() => {
+      refFixture = {
+        $ref: '#/components/parameters/ApiKeyHeader',
+      };
+
+      const operationFixture: OpenApi3Dot2OperationObject = {
+        parameters: [refFixture],
+        responses: {},
+      };
+
+      const pathItemFixture: OpenApi3Dot2PathItemObject = {
+        get: operationFixture,
+      };
+
+      openApiResolverFixture = {
+        deepResolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
+          isRight: true,
+          value: {
+            chain: [],
+            value: null,
+          },
+        }),
         resolveReference: vitest.fn(),
       };
 
@@ -376,7 +591,7 @@ describe(getHeaderParameterObjects, () => {
       const expectedErrorProperties: Partial<InversifyOpenApiValidationError> =
         {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `Unable to resolve header parameter at path: ${pathFixture} and method: ${methodFixture} and index: 0`,
+          message: `Resolved $ref pointer ${refFixture.$ref} is not a valid parameter object at path: ${pathFixture} and method: ${methodFixture} and index: 0`,
         };
 
       expect(result).toBeInstanceOf(InversifyOpenApiValidationError);
@@ -399,6 +614,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
