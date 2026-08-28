@@ -1,7 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
+import { type JsonValue } from '@inversifyjs/json-schema-types';
 import {
   type OpenApi3Dot1OperationObject,
+  type OpenApi3Dot1ReferenceObject,
   type OpenApi3Dot1RequestBodyObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 import {
@@ -20,6 +22,7 @@ describe(getRequestBodyObject, () => {
   beforeAll(() => {
     openApiResolverMock = {
       deepResolveReference: vitest.fn(),
+      resolveOpenApiReference: vitest.fn(),
       resolveReference: vitest.fn(),
     };
     methodFixture = 'post';
@@ -91,22 +94,35 @@ describe(getRequestBodyObject, () => {
         );
       });
 
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should not call openApiResolver.resolveOpenApiReference()', () => {
+        expect(
+          openApiResolverMock.resolveOpenApiReference,
+        ).not.toHaveBeenCalled();
+      });
+
       it('should return expected result', () => {
         expect(result).toBe(requestBodyObjectFixture);
       });
     });
   });
 
-  describe('having an operationObject with requestBody with $ref resolving to undefined', () => {
+  describe('having an operationObject with requestBody with $ref that fails to resolve', () => {
     let operationObjectFixture: OpenApi3Dot1OperationObject;
-    let refFixture: string;
+    let reasonFixture: string;
+    let requestBodyReferenceFixture: OpenApi3Dot1ReferenceObject;
 
     beforeAll(() => {
-      refFixture = '#/components/requestBodies/UserBody';
+      reasonFixture =
+        'Failed to resolve JSON Pointer: /components/requestBodies/UserBody';
+      requestBodyReferenceFixture = {
+        $ref: '#/components/requestBodies/UserBody',
+      };
       operationObjectFixture = {
-        requestBody: {
-          $ref: refFixture,
-        },
+        requestBody: requestBodyReferenceFixture,
         responses: {},
       };
     });
@@ -116,8 +132,14 @@ describe(getRequestBodyObject, () => {
 
       beforeAll(() => {
         vitest
-          .mocked(openApiResolverMock.deepResolveReference)
-          .mockReturnValueOnce(undefined);
+          .mocked(openApiResolverMock.resolveOpenApiReference)
+          .mockReturnValueOnce({
+            isRight: false,
+            value: {
+              reason: reasonFixture,
+              resolutionContextStack: [],
+            },
+          });
 
         try {
           getRequestBodyObject(
@@ -135,16 +157,16 @@ describe(getRequestBodyObject, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call openApiResolver.deepResolveReference()', () => {
+      it('should call openApiResolver.resolveOpenApiReference()', () => {
         expect(
-          openApiResolverMock.deepResolveReference,
-        ).toHaveBeenCalledExactlyOnceWith(refFixture);
+          openApiResolverMock.resolveOpenApiReference,
+        ).toHaveBeenCalledExactlyOnceWith(requestBodyReferenceFixture);
       });
 
       it('should throw an InversifyValidationError', () => {
         const expectedErrorProperties: Partial<InversifyValidationError> = {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `Could not resolve $ref pointer ${refFixture} for ${methodFixture.toUpperCase()} ${routeFixture}`,
+          message: `Could not resolve $ref pointer ${requestBodyReferenceFixture.$ref} for ${methodFixture.toUpperCase()} ${routeFixture}: ${reasonFixture}`,
         };
 
         expect(result).toBeInstanceOf(InversifyValidationError);
@@ -155,14 +177,14 @@ describe(getRequestBodyObject, () => {
 
   describe('having an operationObject with requestBody with $ref resolving to null', () => {
     let operationObjectFixture: OpenApi3Dot1OperationObject;
-    let refFixture: string;
+    let requestBodyReferenceFixture: OpenApi3Dot1ReferenceObject;
 
     beforeAll(() => {
-      refFixture = '#/components/requestBodies/UserBody';
+      requestBodyReferenceFixture = {
+        $ref: '#/components/requestBodies/UserBody',
+      };
       operationObjectFixture = {
-        requestBody: {
-          $ref: refFixture,
-        },
+        requestBody: requestBodyReferenceFixture,
         responses: {},
       };
     });
@@ -172,8 +194,14 @@ describe(getRequestBodyObject, () => {
 
       beforeAll(() => {
         vitest
-          .mocked(openApiResolverMock.deepResolveReference)
-          .mockReturnValueOnce(null);
+          .mocked(openApiResolverMock.resolveOpenApiReference)
+          .mockReturnValueOnce({
+            isRight: true,
+            value: {
+              chain: [],
+              value: null,
+            },
+          });
 
         try {
           getRequestBodyObject(
@@ -191,16 +219,16 @@ describe(getRequestBodyObject, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call openApiResolver.deepResolveReference()', () => {
+      it('should call openApiResolver.resolveOpenApiReference()', () => {
         expect(
-          openApiResolverMock.deepResolveReference,
-        ).toHaveBeenCalledExactlyOnceWith(refFixture);
+          openApiResolverMock.resolveOpenApiReference,
+        ).toHaveBeenCalledExactlyOnceWith(requestBodyReferenceFixture);
       });
 
       it('should throw an InversifyValidationError', () => {
         const expectedErrorProperties: Partial<InversifyValidationError> = {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `Resolved $ref pointer ${refFixture} is not a valid request body object for ${methodFixture.toUpperCase()} ${routeFixture}`,
+          message: `Resolved $ref pointer ${requestBodyReferenceFixture.$ref} is not a valid request body object for ${methodFixture.toUpperCase()} ${routeFixture}`,
         };
 
         expect(result).toBeInstanceOf(InversifyValidationError);
@@ -211,14 +239,14 @@ describe(getRequestBodyObject, () => {
 
   describe('having an operationObject with requestBody with $ref resolving to an array', () => {
     let operationObjectFixture: OpenApi3Dot1OperationObject;
-    let refFixture: string;
+    let requestBodyReferenceFixture: OpenApi3Dot1ReferenceObject;
 
     beforeAll(() => {
-      refFixture = '#/components/requestBodies/UserBody';
+      requestBodyReferenceFixture = {
+        $ref: '#/components/requestBodies/UserBody',
+      };
       operationObjectFixture = {
-        requestBody: {
-          $ref: refFixture,
-        },
+        requestBody: requestBodyReferenceFixture,
         responses: {},
       };
     });
@@ -228,8 +256,14 @@ describe(getRequestBodyObject, () => {
 
       beforeAll(() => {
         vitest
-          .mocked(openApiResolverMock.deepResolveReference)
-          .mockReturnValueOnce([]);
+          .mocked(openApiResolverMock.resolveOpenApiReference)
+          .mockReturnValueOnce({
+            isRight: true,
+            value: {
+              chain: [],
+              value: [],
+            },
+          });
 
         try {
           getRequestBodyObject(
@@ -247,16 +281,16 @@ describe(getRequestBodyObject, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call openApiResolver.deepResolveReference()', () => {
+      it('should call openApiResolver.resolveOpenApiReference()', () => {
         expect(
-          openApiResolverMock.deepResolveReference,
-        ).toHaveBeenCalledExactlyOnceWith(refFixture);
+          openApiResolverMock.resolveOpenApiReference,
+        ).toHaveBeenCalledExactlyOnceWith(requestBodyReferenceFixture);
       });
 
       it('should throw an InversifyValidationError', () => {
         const expectedErrorProperties: Partial<InversifyValidationError> = {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `Resolved $ref pointer ${refFixture} is not a valid request body object for ${methodFixture.toUpperCase()} ${routeFixture}`,
+          message: `Resolved $ref pointer ${requestBodyReferenceFixture.$ref} is not a valid request body object for ${methodFixture.toUpperCase()} ${routeFixture}`,
         };
 
         expect(result).toBeInstanceOf(InversifyValidationError);
@@ -267,20 +301,20 @@ describe(getRequestBodyObject, () => {
 
   describe('having an operationObject with requestBody with $ref resolving to a valid object', () => {
     let operationObjectFixture: OpenApi3Dot1OperationObject;
-    let refFixture: string;
+    let requestBodyReferenceFixture: OpenApi3Dot1ReferenceObject;
     let resolvedObjectFixture: OpenApi3Dot1RequestBodyObject;
 
     beforeAll(() => {
-      refFixture = '#/components/requestBodies/UserBody';
+      requestBodyReferenceFixture = {
+        $ref: '#/components/requestBodies/UserBody',
+      };
       resolvedObjectFixture = {
         content: {
           'application/json': {},
         },
       };
       operationObjectFixture = {
-        requestBody: {
-          $ref: refFixture,
-        },
+        requestBody: requestBodyReferenceFixture,
         responses: {},
       };
     });
@@ -290,12 +324,14 @@ describe(getRequestBodyObject, () => {
 
       beforeAll(() => {
         vitest
-          .mocked(openApiResolverMock.deepResolveReference)
-          .mockReturnValueOnce(
-            resolvedObjectFixture as unknown as ReturnType<
-              typeof openApiResolverMock.deepResolveReference
-            >,
-          );
+          .mocked(openApiResolverMock.resolveOpenApiReference)
+          .mockReturnValueOnce({
+            isRight: true,
+            value: {
+              chain: [],
+              value: resolvedObjectFixture as unknown as JsonValue,
+            },
+          });
 
         result = getRequestBodyObject(
           openApiResolverMock,
@@ -309,10 +345,10 @@ describe(getRequestBodyObject, () => {
         vitest.clearAllMocks();
       });
 
-      it('should call openApiResolver.deepResolveReference()', () => {
+      it('should call openApiResolver.resolveOpenApiReference()', () => {
         expect(
-          openApiResolverMock.deepResolveReference,
-        ).toHaveBeenCalledExactlyOnceWith(refFixture);
+          openApiResolverMock.resolveOpenApiReference,
+        ).toHaveBeenCalledExactlyOnceWith(requestBodyReferenceFixture);
       });
 
       it('should return expected result', () => {

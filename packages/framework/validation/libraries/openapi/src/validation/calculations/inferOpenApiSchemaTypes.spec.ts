@@ -17,6 +17,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { $ref: '#/components/schemas/NonExistent' },
@@ -28,6 +29,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         true,
@@ -39,6 +41,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         false,
@@ -50,6 +53,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { type: 'string' },
@@ -61,6 +65,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { type: ['string', 'number'] },
@@ -74,6 +79,7 @@ describe(inferOpenApiSchemaTypes, () => {
           deepResolveReference: vitest
             .fn<(reference: string) => JsonValue | undefined>()
             .mockReturnValueOnce({ type: 'object' }),
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { $ref: '#/components/schemas/Target' },
@@ -85,6 +91,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         {
@@ -101,6 +108,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { allOf: [{ type: 'string' }, { type: 'number' }] },
@@ -112,6 +120,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         {
@@ -133,6 +142,7 @@ describe(inferOpenApiSchemaTypes, () => {
             .mockReturnValueOnce({
               type: ['string', 'number', 'boolean'],
             }),
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         {
@@ -149,6 +159,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { anyOf: [{ type: 'string' }, { type: 'number' }] },
@@ -160,6 +171,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         {
@@ -177,6 +189,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         {},
@@ -188,6 +201,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { allOf: [true, { type: 'string' }] },
@@ -199,6 +213,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { allOf: [false, { type: 'string' }] },
@@ -210,6 +225,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { type: 'integer' },
@@ -221,6 +237,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { allOf: [{ type: 'number' }, { type: 'integer' }] },
@@ -232,6 +249,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { allOf: [{ type: 'integer' }, { minimum: 1 }] },
@@ -243,6 +261,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { anyOf: [{ type: 'number' }, { type: 'integer' }] },
@@ -254,6 +273,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { type: ['number', 'integer'] },
@@ -287,6 +307,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { $dynamicRef: '#meta' },
@@ -297,6 +318,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { oneOf: [{ type: 'string' }, { type: 'number' }] },
@@ -307,6 +329,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { not: { type: 'string' } },

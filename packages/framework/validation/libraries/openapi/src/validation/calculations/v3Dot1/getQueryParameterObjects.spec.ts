@@ -65,6 +65,7 @@ describe(getQueryParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -121,6 +122,7 @@ describe(getQueryParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -176,6 +178,7 @@ describe(getQueryParameterObjects, () => {
         deepResolveReference: vitest
           .fn()
           .mockReturnValueOnce(resolvedParamFixture),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -226,6 +229,7 @@ describe(getQueryParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn().mockReturnValueOnce(undefined),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -280,6 +284,7 @@ describe(getQueryParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn().mockReturnValueOnce(undefined),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -342,6 +347,7 @@ describe(getQueryParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
