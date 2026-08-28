@@ -2,7 +2,6 @@
 sidebar_position: 1
 title: Getting started
 ---
-import CodeBlock from '@theme/CodeBlock';
 import gettingStartedSource from '@inversifyjs/code-examples/generated/examples/v7/gettingStarted.ts.txt';
 
 # Getting started
@@ -15,11 +14,9 @@ npm install inversify reflect-metadata
 
 Next, initialize your first container and add some bindings:
 
-:::warning
-
+<Warning>
 Make sure to enable [Experimental decorators](https://www.typescriptlang.org/tsconfig/#experimentalDecorators) and [Emit Decorator Metadata](https://www.typescriptlang.org/tsconfig/#emitDecoratorMetadata) options in your `tsconfig.json` to use this library.
-
-:::
+</Warning>
 
 <CodeBlock language="ts">{gettingStartedSource}</CodeBlock>
 

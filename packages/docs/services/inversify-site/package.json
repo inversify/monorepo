@@ -6,10 +6,6 @@
   "description": "InversifyJs docs site package",
   "dependencies": {
     "@babel/standalone": "7.29.7",
-    "@docusaurus/core": "3.10.2",
-    "@docusaurus/faster": "3.10.2",
-    "@docusaurus/plugin-content-docs": "3.10.2",
-    "@docusaurus/preset-classic": "3.10.2",
     "@iconify/react": "^6.0.2",
     "@inversifyjs/react-code-runner": "workspace:*",
     "@inversifyjs/code-examples": "workspace:*",
@@ -25,17 +21,14 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.10.2",
-    "@docusaurus/types": "3.10.2",
+    "@mintlify/cli": "latest",
     "@eslint/config-helpers": "0.7.0",
     "@eslint/js": "10.0.1",
-    "@rspack/core": "1.7.12",
     "@types/babel__standalone": "7.1.9",
     "@types/react": "19.2.18",
     "eslint": "10.8.1",
     "eslint-plugin-prettier": "5.5.6",
     "eslint-plugin-simple-import-sort": "14.0.0",
-    "monaco-editor-webpack-plugin": "7.1.1",
     "prettier": "3.9.6",
     "typescript": "6.0.3",
     "typescript-eslint": "8.67.0"
@@ -68,11 +61,10 @@
   "scripts": {
     "deploy": "docusaurus deploy",
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "pnpm run typecheck && docusaurus build",
-    "format": "prettier --write ./src ./*.ts",
-    "lint": "eslint ./src ./docusaurus.config.ts ./sidebars.ts",
-    "serve": "docusaurus serve",
-    "typecheck": "tsc"
+    "start": "mintlify dev",
+    "build": "mintlify build",
+    "preview": "mintlify preview",
+    "format": "prettier --write ./docs ./*.json ./*.ts",
+    "lint": "eslint ./docs"
   }
 }

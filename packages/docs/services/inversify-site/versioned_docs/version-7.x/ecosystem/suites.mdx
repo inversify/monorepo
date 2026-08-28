@@ -3,7 +3,6 @@ sidebar_position: 4
 title: Suites
 ---
 
-import DocumentationButton from '../../../src/components/DocumentationButton';
 
 # Suites
 
@@ -20,10 +19,10 @@ Use Suites when you:
 - Want to test classes with both isolation and selective collaboration
 - Need AI-assisted testing with clear, structured patterns
 
-:::info
+<Info>
 If you need full integration tests with real dependencies and actual InversifyJS containers, traditional
 container configuration may be more appropriate.
-:::
+</Info>
 
 ## Core features
 
@@ -42,9 +41,9 @@ For InversifyJS 7.x:
 npm install -D @suites/unit @suites/di.inversify@^4.0.0 @suites/doubles.jest
 ```
 
-:::info
+<Info>
 Use `@suites/doubles.vitest` or `@suites/doubles.sinon` if you're using Vitest or Sinon instead of Jest.
-:::
+</Info>
 
 Add type references to `global.d.ts`:
 

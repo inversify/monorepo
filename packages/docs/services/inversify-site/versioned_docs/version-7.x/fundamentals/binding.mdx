@@ -9,7 +9,6 @@ import bindingToSyntaxApiToResolvedValueForDbRepositorySource from '@inversifyjs
 import fundamentalsBindingExampleSource from '@inversifyjs/code-examples/generated/examples/v7/fundamentalsBindingExample.ts.txt';
 import fundamentalsBindingFromClassMetadataSource from '@inversifyjs/code-examples/generated/examples/v7/fundamentalsBindingFromClassMetadata.ts.txt';
 import fundamentalsAutobindingSource from '@inversifyjs/code-examples/generated/examples/v7/fundamentalsAutobinding.ts.txt';
-import CodeBlock from '@theme/CodeBlock';
 
 # Binding
 
@@ -39,11 +38,9 @@ Whenever a promise-like value is resolved from a binding, the container will wai
 
 In the example, the `dbConnectionSymbol` database connection is resolved asynchronously. The container waits for promises to be resolved, passing an `AwesomeDbDriverConnection` instance to the resolve value factory instead of a `Promise<AwesomeDbDriverConnection>` one.
 
-:::warning
-
+<Warning>
 Keep in mind async bindings require the use of `Container.getAsync` or `Container.getAllAsync` to resolve any related service.
-
-:::
+</Warning>
 
 ## Binding properties
 

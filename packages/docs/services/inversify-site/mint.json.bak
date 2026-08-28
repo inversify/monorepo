@@ -1,0 +1,121 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "InversifyJS",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.ico",
+  "colors": {
+    "primary": "#0066CC",
+    "light": "#0084FF",
+    "dark": "#004099",
+    "ultraLight": "#EBEBF0",
+    "ultraDark": "#080A11",
+    "background": {
+      "light": "#FFFFFF",
+      "dark": "#080A11"
+    }
+  },
+  "modeToggle": {
+    "default": "dark",
+    "isHidden": false
+  },
+  "theme": "venus",
+  "topbarLinks": [
+    {
+      "name": "Discord",
+      "url": "https://discord.gg/jXcMagAPnm"
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com/inversify/monorepo"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://github.com/inversify/monorepo"
+  },
+  "tabs": [
+    {
+      "name": "Documentation",
+      "url": "docs"
+    },
+    {
+      "name": "Blog",
+      "url": "blog"
+    },
+    {
+      "name": "API Reference",
+      "url": "api"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction/getting-started",
+        "introduction/dependency-inversion"
+      ]
+    },
+    {
+      "group": "Fundamentals",
+      "pages": [
+        "fundamentals/di-hierarchy",
+        "fundamentals/binding",
+        "fundamentals/inheritance",
+        "fundamentals/lifecycle/activation",
+        "fundamentals/lifecycle/deactivation",
+        "fundamentals/snapshot",
+        "fundamentals/plugins"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api/binding-syntax",
+        "api/container",
+        "api/decorators",
+        "api/interfaces"
+      ]
+    },
+    {
+      "group": "Guides",
+      "pages": [
+        "guides/migrating-from-v7",
+        "guides/migrating-from-v6"
+      ]
+    },
+    {
+      "group": "FAQ",
+      "pages": [
+        "faq/requirements",
+        "faq/using-bundlers"
+      ]
+    },
+    {
+      "group": "Ecosystem",
+      "pages": [
+        "ecosystem/framework",
+        "ecosystem/binding-decorators",
+        "ecosystem/strongly-typed",
+        "ecosystem/suites"
+      ]
+    },
+    {
+      "group": "Internals",
+      "pages": [
+        "internals/planning"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "discord": "https://discord.gg/jXcMagAPnm",
+    "github": "https://github.com/inversify/monorepo",
+    "twitter": "https://twitter.com/inversifyjs"
+  },
+  "metadata": {
+    "og:image": "https://mintlify.com/og-image.png",
+    "og:description": "A powerful and lightweight inversion of control container for JavaScript & Node.js apps powered by TypeScript"
+  }
+}

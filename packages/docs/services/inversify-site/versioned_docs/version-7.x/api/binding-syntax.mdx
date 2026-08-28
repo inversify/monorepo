@@ -14,7 +14,6 @@ import bindingToSyntaxApiToSelfSource from '@inversifyjs/code-examples/generated
 import bindingToSyntaxApiToServiceSource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToService.ts.txt';
 import bindingSyntaxApiGetIdentifierSource from '@inversifyjs/code-examples/generated/examples/v7/bindingSyntaxApiGetIdentifier.ts.txt';
 import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/v7/bindingWhenSyntaxApiWhen.ts.txt';
-import CodeBlock from '@theme/CodeBlock';
 
 # Binding Syntax
 
@@ -96,11 +95,9 @@ toDynamicValue(builder: DynamicValueBuilder<T>): BindInWhenOnFluentSyntax<T>;
 
 Binds a function to the given service identifier. Whenever the service is resolved, the function passed will be invoked to build the resolved value.
 
-:::info
-
+<Info>
 Keep in mind a service is not resolved if it's cached in the current scope.
-
-:::
+</Info>
 
 <CodeBlock language="ts">{bindingToSyntaxApiToDynamicValueSource}</CodeBlock>
 
@@ -120,13 +117,13 @@ Binds a factory to the given service identifier. Whenever the service is resolve
 
 ### toProvider
 
-:::warning Deprecated
+<Warning title=":::warning Deprecated">
 
 `toProvider()` is deprecated and will be removed in v8. Use `toFactory()` instead.
 
 Providers exist for historical reasons from v5 when async dependencies weren't supported. In v6+, async dependencies are supported, making providers obsolete. Factories are more flexible and can handle both synchronous and asynchronous operations.
 
-:::
+</Warning>
 
 ```ts
 toProvider(
@@ -230,11 +227,9 @@ onDeactivation(deactivation: BindingDeactivation<T>): BindWhenFluentSyntax<T>;
 
 Sets a binding deactivation handler on a singleton scope binding. The deactivation handler is called when the binding is unbound from a container.
 
-:::warning
-
+<Warning>
 Only singleton scoped bindings can have deactivation handlers. If you try to add a deactivation handler to a non-singleton binding, an error will be thrown.
-
-:::
+</Warning>
 
 ## BindWhenFluentSyntax
 

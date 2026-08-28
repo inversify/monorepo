@@ -16,7 +16,6 @@ import migrationV7ContainerModuleOptionsV7Source from '@inversifyjs/code-example
 import migrationV7ContainerModuleOptionsV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7ContainerModuleOptions.ts.txt';
 import migrationV7ToProviderV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7ToProvider.ts.txt';
 import migrationV7ToProviderV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7ToProvider.ts.txt';
-import CodeBlock from '@theme/CodeBlock';
 
 # Migrating from v7
 
@@ -118,13 +117,11 @@ In v7, `container.unloadSync` was the synchronous variant. In v8, it becomes the
 
 <CodeBlock language="ts">{migrationV7UnloadV8Source}</CodeBlock>
 
-:::tip
-
+<Tip>
 If your codebase predominantly uses the synchronous variants (e.g., `loadSync`, `unbindSync`, `rebindSync`, `unloadSync`), the migration is straightforward: simply remove the `Sync` suffix.
 
 If you mainly use the async variants, rename them by adding the `Async` suffix (e.g., `load` → `loadAsync`, `unbind` → `unbindAsync`).
-
-:::
+</Tip>
 
 ### `ContainerModuleLoadOptions`
 

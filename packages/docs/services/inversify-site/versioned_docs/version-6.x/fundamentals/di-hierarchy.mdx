@@ -5,7 +5,6 @@ title: DI Hierarchy
 import diHierarchySource from '@inversifyjs/code-examples/generated/examples/diHierarchy.ts.txt';
 import diHierarchyAndCachedBindingsSource from '@inversifyjs/code-examples/generated/examples/v6/diHierarchyAndCachedBindings.ts.txt';
 
-import CodeBlock from '@theme/CodeBlock';
 
 # DI Hierarchy
 
@@ -15,21 +14,17 @@ With InversifyJS's hierarchical injection system, you can create a hierarchy of 
 
 When a dependency needs to be injected, InversifyJS starts by looking in the current container for a binding. If the binding is not found, it moves up the hierarchy to the parent container and continues the search. This process continues until a binding is found or the top-level parent container is reached.
 
-:::warning[Binding overrides]
-
+<Warning title="Binding overrides">
 Found bindings might override ancestor bindings even if their constraints are not met. For example, if a named binding is found in the child container for the requested service, that binding overrides parent bindings even if this binding is later discarded in a non-named resolution request.
+</Warning>
 
-:::
-
-:::warning[DI hierarchies and cached bindings]
-
+<Warning title="DI hierarchies and cached bindings">
 When using hierarchical injection, be aware that cached bindings from the first resolution will be used for subsequent resolution, even if the call comes from another child container.
 
 <CodeBlock language="ts">{diHierarchyAndCachedBindingsSource}</CodeBlock>
 
 If this behaviour is unwanted, consider using `ContainerModule` instead. This way, you can load it in both containers. Different containers will have different binding and therefore different cached values.
-
-:::
+</Warning>
 
 By using InversifyJS's hierarchical injection system, you can easily manage complex dependencies and keep your code clean and modular. It provides a flexible and scalable solution for handling dependencies in your TypeScript applications.
 

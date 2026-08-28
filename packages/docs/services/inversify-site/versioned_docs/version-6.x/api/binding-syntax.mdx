@@ -14,7 +14,6 @@ import bindingToSyntaxApiToProviderSource from '@inversifyjs/code-examples/gener
 import bindingToSyntaxApiToSelfSource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToSelf.ts.txt';
 import bindingToSyntaxApiToServiceSource from '@inversifyjs/code-examples/generated/examples/bindingToSyntaxApiToService.ts.txt';
 import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/bindingWhenSyntaxApiWhen.ts.txt';
-import CodeBlock from '@theme/CodeBlock';
 
 # Binding Syntax
 
@@ -74,11 +73,9 @@ toDynamicValue(func: interfaces.DynamicValue<T>): interfaces.BindingInWhenOnSynt
 
 Binds a function to the given service id. Whenever the service is resolved, the function passed will be invoked to build the resolved value.
 
-:::info
-
+<Info>
 Keep in mind a service is not resolved if it's cached in the current scope.
-
-:::
+</Info>
 
 <CodeBlock language="ts">{bindingToSyntaxApiToDynamicValueSource}</CodeBlock>
 
@@ -212,11 +209,9 @@ onDeactivation(fn: (injectable: T) => void | Promise<void>): BindingWhenSyntax<T
 
 Sets a binding deactivation handler on a singleton scope binding. The deactivation handler is called when the binding is unbound from a container.
 
-:::warning
-
+<Warning>
 Only singleton scoped bindings can have deactivation handlers. If you try to add a deactivation handler to a non-singleton binding, an error will be thrown.
-
-:::
+</Warning>
 
 ## BindingWhenSyntax
 

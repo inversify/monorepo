@@ -14,7 +14,6 @@ import containerApiUnbindBindingIdSource from '@inversifyjs/code-examples/genera
 import containerApiUnbindSyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiUnbindSync.ts.txt';
 import containerApiRebindSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiRebind.ts.txt';
 import containerApiRebindSyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiRebindSync.ts.txt';
-import CodeBlock from '@theme/CodeBlock';
 
 # Container
 
@@ -61,11 +60,9 @@ bind<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>
 
 Sets a new binding.
 
-:::info
-
+<Info>
 Unless specified otherwise, binding scopes are [transient](fundamentals/binding.mdx#transient) by default.
-
-:::
+</Info>
 
 ## get
 
