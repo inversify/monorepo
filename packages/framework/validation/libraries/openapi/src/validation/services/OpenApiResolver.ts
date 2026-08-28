@@ -1,20 +1,20 @@
 import { type JsonValue } from '@inversifyjs/json-schema-types';
 
-export interface OpenApiRefResolutionContext {
+interface OpenApiRefResolutionContext {
   readonly $ref: string;
   readonly canonicalId: string;
 }
 
-export interface OpenApiRefResolutionChainEntry extends OpenApiRefResolutionContext {
+interface OpenApiRefResolutionChainEntry extends OpenApiRefResolutionContext {
   readonly value: JsonValue;
 }
 
-export interface OpenApiRefResolutionFailure {
+interface OpenApiRefResolutionFailure {
   readonly reason: string;
   readonly resolutionContextStack: readonly OpenApiRefResolutionContext[];
 }
 
-export interface OpenApiRefResolutionSuccess {
+interface OpenApiRefResolutionSuccess {
   readonly chain: readonly OpenApiRefResolutionChainEntry[];
   readonly value: JsonValue;
 }
