@@ -65,6 +65,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -122,6 +123,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -183,6 +185,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -256,6 +259,7 @@ describe(getHeaderParameterObjects, () => {
         deepResolveReference: vitest
           .fn()
           .mockReturnValueOnce(resolvedParamFixture),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -306,6 +310,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn().mockReturnValueOnce(undefined),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -360,6 +365,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn().mockReturnValueOnce(undefined),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -409,6 +415,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 
@@ -460,6 +467,7 @@ describe(getHeaderParameterObjects, () => {
 
       openApiResolverFixture = {
         deepResolveReference: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
       };
 

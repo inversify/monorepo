@@ -212,6 +212,7 @@ describe(buildQueryParse, () => {
   beforeAll(() => {
     openApiResolverFixture = {
       deepResolveReference: vitest.fn(),
+      resolveOpenApiReference: vitest.fn(),
       resolveReference: vitest.fn(),
     };
   });

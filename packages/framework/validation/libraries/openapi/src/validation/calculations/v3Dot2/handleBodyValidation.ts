@@ -2,6 +2,7 @@ import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import {
   type OpenApi3Dot2Object,
   type OpenApi3Dot2OperationObject,
+  type OpenApi3Dot2ReferenceObject,
   type OpenApi3Dot2RequestBodyObject,
 } from '@inversifyjs/open-api-types/v3Dot2';
 import {
@@ -62,9 +63,16 @@ function getValidationCacheEntryBody(
     const validate: ValidateFunction | undefined = ajv.getSchema(schemaPointer);
 
     if (validate === undefined) {
+      const requestBody:
+        | OpenApi3Dot2RequestBodyObject
+        | OpenApi3Dot2ReferenceObject
+        | undefined = operationObject.requestBody;
+
       throw new InversifyValidationError(
         InversifyValidationErrorKind.unknown,
-        `Unable to find schema for pointer: ${schemaPointer}`,
+        requestBody !== undefined && '$ref' in requestBody
+          ? `Unable to find schema for pointer: ${schemaPointer}. The operation requestBody is an OpenAPI Reference Object ($ref: "${requestBody.$ref}"); AJV looks up this pointer on the document and does not follow OpenAPI $ref`
+          : `Unable to find schema for pointer: ${schemaPointer}`,
       );
     }
 

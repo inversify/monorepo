@@ -568,4 +568,188 @@ describe(DefaultOpenApiResolver, () => {
       });
     });
   });
+
+  describe('having an OpenAPI object with request body components', () => {
+    let openApiObjectFixture: OpenApi3Dot1Object;
+    let defaultOpenApiResolver: DefaultOpenApiResolver;
+    let userBodyFixture: NonNullable<
+      NonNullable<OpenApi3Dot1Object['components']>['requestBodies']
+    >[string];
+
+    beforeAll(() => {
+      userBodyFixture = {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+            },
+          },
+        },
+      };
+
+      openApiObjectFixture = {
+        components: {
+          requestBodies: {
+            User: {
+              $ref: '#/components/requestBodies/UserBody',
+            },
+            UserBody: userBodyFixture,
+          },
+          schemas: {
+            Item: {
+              $anchor: 'item',
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.1.0',
+      };
+
+      defaultOpenApiResolver = new DefaultOpenApiResolver(openApiObjectFixture);
+    });
+
+    describe('.resolveOpenApiReference', () => {
+      describe('when called with a same-document Reference Object', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveOpenApiReference({
+            $ref: '#/components/requestBodies/UserBody',
+          });
+        });
+
+        it('should return the referenced request body', () => {
+          expect(result).toStrictEqual({
+            isRight: true,
+            value: {
+              chain: [
+                {
+                  $ref: '#/components/requestBodies/UserBody',
+                  canonicalId:
+                    'urn:inversifyjs:openapi-v3dot1-spec#/components/requestBodies/UserBody',
+                  value: {
+                    $ref: '#/components/requestBodies/UserBody',
+                  },
+                },
+              ],
+              value: userBodyFixture,
+            },
+          });
+        });
+      });
+
+      describe('when called with a chained Reference Object', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveOpenApiReference({
+            $ref: '#/components/requestBodies/User',
+          });
+        });
+
+        it('should return the deeply referenced request body', () => {
+          expect(result).toStrictEqual({
+            isRight: true,
+            value: {
+              chain: [
+                {
+                  $ref: '#/components/requestBodies/User',
+                  canonicalId:
+                    'urn:inversifyjs:openapi-v3dot1-spec#/components/requestBodies/User',
+                  value: {
+                    $ref: '#/components/requestBodies/User',
+                  },
+                },
+                {
+                  $ref: '#/components/requestBodies/UserBody',
+                  canonicalId:
+                    'urn:inversifyjs:openapi-v3dot1-spec#/components/requestBodies/UserBody',
+                  value: {
+                    $ref: '#/components/requestBodies/UserBody',
+                  },
+                },
+              ],
+              value: userBodyFixture,
+            },
+          });
+        });
+      });
+
+      describe('when called with a Reference Object whose pointer does not exist', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveOpenApiReference({
+            $ref: '#/components/requestBodies/Missing',
+          });
+        });
+
+        it('should return a failure', () => {
+          expect(result).toStrictEqual({
+            isRight: false,
+            value: {
+              reason:
+                'Failed to resolve JSON Pointer: /components/requestBodies/Missing',
+              resolutionContextStack: [
+                {
+                  $ref: '#/components/requestBodies/Missing',
+                  canonicalId:
+                    'urn:inversifyjs:openapi-v3dot1-spec#/components/requestBodies/Missing',
+                },
+              ],
+            },
+          });
+        });
+      });
+
+      describe('when called with a Schema Object that is not an OpenAPI Reference Object', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveOpenApiReference({
+            $ref: '#/components/requestBodies/UserBody',
+            type: 'object',
+          });
+        });
+
+        it('should return a failure', () => {
+          expect(result).toStrictEqual({
+            isRight: false,
+            value: {
+              reason:
+                'Invalid OpenAPI Reference Object: expected an object with a string "$ref" property and optional "summary" and "description" properties',
+              resolutionContextStack: [],
+            },
+          });
+        });
+      });
+
+      describe('when called with a Reference Object whose fragment is an $anchor', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveOpenApiReference({
+            $ref: '#item',
+          });
+        });
+
+        it('should return a failure', () => {
+          expect(result).toStrictEqual({
+            isRight: false,
+            value: {
+              reason:
+                'Invalid fragment: item (OpenAPI reference fragments MUST be JSON Pointers)',
+              resolutionContextStack: [
+                {
+                  $ref: '#item',
+                  canonicalId: 'urn:inversifyjs:openapi-v3dot1-spec#item',
+                },
+              ],
+            },
+          });
+        });
+      });
+    });
+  });
 });

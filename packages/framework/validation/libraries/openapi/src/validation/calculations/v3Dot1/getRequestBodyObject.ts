@@ -1,7 +1,4 @@
-import {
-  type JsonValue,
-  type JsonValueObject,
-} from '@inversifyjs/json-schema-types';
+import { type JsonValue } from '@inversifyjs/json-schema-types';
 import {
   type OpenApi3Dot1OperationObject,
   type OpenApi3Dot1ReferenceObject,
@@ -12,7 +9,10 @@ import {
   InversifyValidationErrorKind,
 } from '@inversifyjs/validation-common';
 
-import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
+import {
+  type OpenApiRefResolutionResult,
+  type OpenApiResolver,
+} from '../../services/OpenApiResolver.js';
 
 export function getRequestBodyObject(
   openApiResolver: OpenApiResolver,
@@ -31,37 +31,34 @@ export function getRequestBodyObject(
     );
   }
 
-  const ref: string | undefined = (
-    requestBodyObject as Partial<OpenApi3Dot1ReferenceObject>
-  ).$ref;
-
-  let derreferencedRequestBodyObject: JsonValueObject | undefined =
-    requestBodyObject as unknown as JsonValueObject;
-
-  if (ref !== undefined) {
-    const resolvedRef: JsonValue | undefined =
-      openApiResolver.deepResolveReference(ref);
-
-    if (resolvedRef === undefined) {
-      throw new InversifyValidationError(
-        InversifyValidationErrorKind.validationFailed,
-        `Could not resolve $ref pointer ${ref} for ${method.toUpperCase()} ${route}`,
-      );
-    }
-
-    if (
-      resolvedRef === null ||
-      typeof resolvedRef !== 'object' ||
-      Array.isArray(resolvedRef)
-    ) {
-      throw new InversifyValidationError(
-        InversifyValidationErrorKind.validationFailed,
-        `Resolved $ref pointer ${ref} is not a valid request body object for ${method.toUpperCase()} ${route}`,
-      );
-    }
-
-    derreferencedRequestBodyObject = resolvedRef;
+  if (!('$ref' in requestBodyObject)) {
+    return requestBodyObject;
   }
 
-  return derreferencedRequestBodyObject as unknown as OpenApi3Dot1RequestBodyObject;
+  const result: OpenApiRefResolutionResult =
+    openApiResolver.resolveOpenApiReference(
+      requestBodyObject as unknown as JsonValue,
+    );
+
+  if (!result.isRight) {
+    throw new InversifyValidationError(
+      InversifyValidationErrorKind.validationFailed,
+      `Could not resolve $ref pointer ${requestBodyObject.$ref} for ${method.toUpperCase()} ${route}: ${result.value.reason}`,
+    );
+  }
+
+  const resolvedRef: JsonValue = result.value.value;
+
+  if (
+    resolvedRef === null ||
+    typeof resolvedRef !== 'object' ||
+    Array.isArray(resolvedRef)
+  ) {
+    throw new InversifyValidationError(
+      InversifyValidationErrorKind.validationFailed,
+      `Resolved $ref pointer ${requestBodyObject.$ref} is not a valid request body object for ${method.toUpperCase()} ${route}`,
+    );
+  }
+
+  return resolvedRef as unknown as OpenApi3Dot1RequestBodyObject;
 }
