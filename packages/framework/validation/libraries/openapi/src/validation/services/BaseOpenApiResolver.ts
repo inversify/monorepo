@@ -2,6 +2,7 @@ import { type JsonValue } from '@inversifyjs/json-schema-types';
 
 import { deepResolveJsonSchemaPointer } from '../calculations/deepResolveJsonSchemaPointer.js';
 import {
+  type JsonSchemaResolutionResult,
   type OpenApiRefResolutionResult,
   type OpenApiResolver,
 } from './OpenApiResolver.js';
@@ -67,6 +68,10 @@ export abstract class BaseOpenApiResolver implements OpenApiResolver {
       typeof object.$ref === 'string'
     );
   }
+
+  public abstract resolveJsonSchema(
+    schema: JsonValue,
+  ): JsonSchemaResolutionResult;
 
   public abstract resolveOpenApiReference(
     reference: JsonValue,

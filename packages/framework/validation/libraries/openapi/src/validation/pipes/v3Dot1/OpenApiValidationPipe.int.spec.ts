@@ -1202,6 +1202,303 @@ describe(OpenApiValidationPipe, () => {
         });
       });
 
+      describe('having an OpenApiValidationPipe (v3.1) in an HTTP server with a $ref query parameter', () => {
+        @Controller('/products')
+        class ProductController {
+          @OasParameter({
+            $ref: '#/components/parameters/SearchParam',
+          })
+          @OasParameter({
+            $ref: '#/components/parameters/LimitParam',
+          })
+          @Get()
+          public async getProducts(
+            @ValidatedQuery() _query: Record<string, unknown>,
+          ): Promise<{ ok: boolean }> {
+            return { ok: true };
+          }
+        }
+
+        let server: Server;
+
+        beforeAll(async () => {
+          const container: Container = new Container();
+
+          container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+          container.bind(ProductController).toSelf().inSingletonScope();
+
+          const openApiObject: OpenApi3Dot1Object = {
+            components: {
+              parameters: {
+                LimitParam: {
+                  in: 'query',
+                  name: 'limit',
+                  required: false,
+                  schema: {
+                    type: 'integer',
+                  },
+                },
+                SearchParam: {
+                  in: 'query',
+                  name: 'search',
+                  required: true,
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+            info: { title: 'Test API', version: '1.0.0' },
+            openapi: '3.1.0',
+          };
+
+          const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+            api: {
+              openApiObject,
+              path: '/docs',
+            },
+          });
+
+          swaggerProvider.provide(container);
+
+          server = await buildServer(
+            container,
+            [ValidationErrorFilter],
+            [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+          );
+        });
+
+        afterAll(async () => {
+          await server.shutdown();
+        });
+
+        describe('when a GET /products request is made with valid query params', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/products?search=widget&limit=10`,
+              {
+                method: 'GET',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(200);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+            await expect(response.json()).resolves.toStrictEqual({ ok: true });
+          });
+        });
+
+        describe('when a GET /products request is made without the required query param', () => {
+          let response: Response;
+          let responseJson: unknown;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/products`,
+              {
+                method: 'GET',
+              },
+            );
+
+            responseJson = await response.json();
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            expect(responseJson).toStrictEqual({
+              message: 'Missing required query: search',
+            });
+          });
+        });
+
+        describe('when a GET /products request is made with an invalid integer query param', () => {
+          let response: Response;
+          let responseJson: unknown;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/products?search=widget&limit=not-a-number`,
+              {
+                method: 'GET',
+              },
+            );
+
+            responseJson = await response.json();
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            expect(responseJson).toStrictEqual({
+              message:
+                '[query: limit, schemaPath: #/type, instancePath: ]: "must be integer"',
+            });
+          });
+        });
+      });
+
+      describe('having an OpenApiValidationPipe (v3.1) in an HTTP server with a $ref request body', () => {
+        interface Message {
+          content: string;
+        }
+
+        @Controller('/messages')
+        class MessageController {
+          @OasRequestBody({
+            $ref: '#/components/requestBodies/MessageBody',
+          })
+          @Post()
+          public async createMessage(
+            @ValidatedBody() message: Message | undefined,
+          ): Promise<Message | undefined> {
+            return message;
+          }
+        }
+
+        let server: Server;
+
+        beforeAll(async () => {
+          const container: Container = new Container();
+
+          container.bind(ValidationErrorFilter).toSelf().inSingletonScope();
+          container.bind(MessageController).toSelf().inSingletonScope();
+
+          const openApiObject: OpenApi3Dot1Object = {
+            components: {
+              requestBodies: {
+                MessageBody: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        additionalProperties: false,
+                        properties: {
+                          content: { maxLength: 100, type: 'string' },
+                        },
+                        required: ['content'],
+                        type: 'object',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            info: { title: 'Test API', version: '1.0.0' },
+            openapi: '3.1.0',
+          };
+
+          const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
+            api: {
+              openApiObject,
+              path: '/docs',
+            },
+          });
+
+          swaggerProvider.provide(container);
+
+          server = await buildServer(
+            container,
+            [ValidationErrorFilter],
+            [new OpenApiValidationPipe(swaggerProvider.openApiObject)],
+          );
+        });
+
+        afterAll(async () => {
+          await server.shutdown();
+        });
+
+        describe('when a valid POST /messages request with body is made', () => {
+          let response: Response;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/messages`,
+              {
+                body: JSON.stringify({ content: 'Hello, world!' }),
+                headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+              },
+            );
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(200);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+            await expect(response.json()).resolves.toStrictEqual({
+              content: 'Hello, world!',
+            });
+          });
+        });
+
+        describe('when an invalid POST /messages request with additional properties is made', () => {
+          let response: Response;
+          let responseJson: unknown;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/messages`,
+              {
+                body: JSON.stringify({
+                  content: 'Hello, world!',
+                  extra: 'not allowed',
+                }),
+                headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+              },
+            );
+
+            responseJson = await response.json();
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+
+            expect(responseJson).toStrictEqual({
+              message:
+                '[schema: #/additionalProperties, instance: ]: "must NOT have additional properties"',
+            });
+          });
+        });
+
+        describe('when an invalid POST /messages request missing a required property is made', () => {
+          let response: Response;
+          let responseJson: unknown;
+
+          beforeAll(async () => {
+            response = await fetch(
+              `http://${server.host}:${server.port.toString()}/messages`,
+              {
+                body: JSON.stringify({}),
+                headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+              },
+            );
+
+            responseJson = await response.json();
+          });
+
+          it('should return expected Response', async () => {
+            expect(response.status).toBe(400);
+            expect(response.headers.get('content-type')).toStrictEqual(
+              expect.stringContaining('application/json'),
+            );
+
+            expect(responseJson).toStrictEqual({
+              message:
+                '[schema: #/required, instance: ]: "must have required property \'content\'"',
+            });
+          });
+        });
+      });
+
       describe('having an OpenApiValidationPipe (v3.1) in an HTTP server with an array of number query param', () => {
         @Controller('/numbers')
         class NumberController {

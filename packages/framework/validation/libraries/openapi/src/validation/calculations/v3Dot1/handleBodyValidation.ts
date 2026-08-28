@@ -2,8 +2,6 @@ import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
 import {
   type OpenApi3Dot1Object,
   type OpenApi3Dot1OperationObject,
-  type OpenApi3Dot1ReferenceObject,
-  type OpenApi3Dot1RequestBodyObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 import {
   InversifyValidationError,
@@ -22,7 +20,10 @@ import {
 } from '../../models/v3Dot1/ValidationCacheEntry.js';
 import { type OpenApiResolver } from '../../services/OpenApiResolver.js';
 import { getOperationObject } from './getOperationObject.js';
-import { getRequestBodyObject } from './getRequestBodyObject.js';
+import {
+  getRequestBodyObject,
+  type ResolvedRequestBodyObject,
+} from './getRequestBodyObject.js';
 
 function getValidationCacheEntryBody(
   ajv: Ajv,
@@ -37,42 +38,32 @@ function getValidationCacheEntryBody(
     route,
   );
 
-  const openApi3Dot1RequestBodyObject: OpenApi3Dot1RequestBodyObject =
+  const resolvedRequestBodyObject: ResolvedRequestBodyObject =
     getRequestBodyObject(openApiResolver, operationObject, method, route);
 
-  const required: boolean = openApi3Dot1RequestBodyObject.required ?? false;
+  const required: boolean =
+    resolvedRequestBodyObject.requestBody.required ?? false;
 
   const contentToValidateMap: Map<string | undefined, ValidateFunction> =
     new Map();
 
   const contentTypes: string[] = Object.keys(
-    openApi3Dot1RequestBodyObject.content,
+    resolvedRequestBodyObject.requestBody.content,
   );
 
+  const requestBodyPointerPrefix: string =
+    resolvedRequestBodyObject.pointerPrefix ??
+    escapeJsonPointerFragments('paths', route, method, 'requestBody');
+
   for (const contentType of contentTypes) {
-    const schemaPointer: string = `${SCHEMA_ID}#/${escapeJsonPointerFragments(
-      'paths',
-      route,
-      method,
-      'requestBody',
-      'content',
-      contentType,
-      'schema',
-    )}`;
+    const schemaPointer: string = `${SCHEMA_ID}#/${requestBodyPointerPrefix}/content/${escapeJsonPointerFragments(contentType)}/schema`;
 
     const validate: ValidateFunction | undefined = ajv.getSchema(schemaPointer);
 
     if (validate === undefined) {
-      const requestBody:
-        | OpenApi3Dot1RequestBodyObject
-        | OpenApi3Dot1ReferenceObject
-        | undefined = operationObject.requestBody;
-
       throw new InversifyValidationError(
         InversifyValidationErrorKind.unknown,
-        requestBody !== undefined && '$ref' in requestBody
-          ? `Unable to find schema for pointer: ${schemaPointer}. The operation requestBody is an OpenAPI Reference Object ($ref: "${requestBody.$ref}"); AJV looks up this pointer on the document and does not follow OpenAPI $ref`
-          : `Unable to find schema for pointer: ${schemaPointer}`,
+        `Unable to find schema for pointer: ${schemaPointer}`,
       );
     }
 

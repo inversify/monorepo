@@ -752,4 +752,187 @@ describe(DefaultOpenApiResolver, () => {
       });
     });
   });
+
+  describe('having an OpenAPI object with JSON Schema $id resources', () => {
+    let defaultOpenApiResolver: DefaultOpenApiResolver;
+    let itemSchemaFixture: JsonSchema;
+    let openApiObjectFixture: OpenApi3Dot2Object;
+    let otherSchemaFixture: JsonSchema;
+
+    beforeAll(() => {
+      itemSchemaFixture = {
+        $id: 'https://example.com/schemas/Item.json',
+        $ref: 'Other.json',
+        type: 'object',
+      };
+      otherSchemaFixture = {
+        $id: 'https://example.com/schemas/Other.json',
+        type: 'string',
+      };
+
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            Item: itemSchemaFixture,
+            Other: otherSchemaFixture,
+          },
+        },
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.2.0',
+      };
+
+      defaultOpenApiResolver = new DefaultOpenApiResolver(openApiObjectFixture);
+    });
+
+    describe('.resolveJsonSchema', () => {
+      describe('when called with a boolean schema', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveJsonSchema(true);
+        });
+
+        it('should return an empty resolution tree', () => {
+          expect(result).toStrictEqual({
+            isRight: true,
+            value: {
+              $dynamicRef: undefined,
+              $ref: undefined,
+            },
+          });
+        });
+      });
+
+      describe('when called with a schema object with no $ref', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveJsonSchema(otherSchemaFixture);
+        });
+
+        it('should return an empty resolution tree', () => {
+          expect(result).toStrictEqual({
+            isRight: true,
+            value: {
+              $dynamicRef: undefined,
+              $ref: undefined,
+            },
+          });
+        });
+      });
+
+      describe('when called with a schema whose $ref targets another schema $id', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveJsonSchema(itemSchemaFixture);
+        });
+
+        it('should return a tree with the referenced schema', () => {
+          expect(result).toMatchObject({
+            isRight: true,
+            value: {
+              $dynamicRef: undefined,
+              $ref: {
+                $dynamicRef: undefined,
+                $ref: undefined,
+                value: otherSchemaFixture,
+              },
+            },
+          });
+        });
+      });
+
+      describe('when called with a schema whose $ref targets a missing resource', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveJsonSchema({
+            $id: 'https://example.com/schemas/MissingRef.json',
+            $ref: 'https://example.com/schemas/DoesNotExist.json',
+          });
+        });
+
+        it('should return a resolution failure', () => {
+          expect(result).toMatchObject({
+            isRight: false,
+            value: {
+              reason:
+                'Failed to resolve resource identified by: https://example.com/schemas/DoesNotExist.json',
+            },
+          });
+        });
+      });
+    });
+  });
+
+  describe('having an OpenAPI object with $self and a schema $ref to that URI', () => {
+    let defaultOpenApiResolver: DefaultOpenApiResolver;
+    let itemSchemaFixture: JsonSchema;
+    let openApiObjectFixture: OpenApi3Dot2Object;
+    let otherSchemaFixture: JsonSchema;
+
+    beforeAll(() => {
+      otherSchemaFixture = {
+        type: 'string',
+      };
+      itemSchemaFixture = {
+        $id: 'https://example.com/schemas/Item.json',
+        $ref: 'https://example.com/api/openapi.json#/components/schemas/Other',
+      };
+      openApiObjectFixture = {
+        $self: 'https://example.com/api/openapi.json',
+        components: {
+          schemas: {
+            Item: itemSchemaFixture,
+            Other: otherSchemaFixture,
+          },
+        },
+        info: { title: 'Test API', version: '1.0.0' },
+        openapi: '3.2.0',
+      };
+
+      defaultOpenApiResolver = new DefaultOpenApiResolver(openApiObjectFixture);
+    });
+
+    describe('.resolveJsonSchema', () => {
+      describe('when called with a schema whose $ref targets the document $self URI', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveJsonSchema(itemSchemaFixture);
+        });
+
+        it('should return a tree with the referenced schema', () => {
+          expect(result).toMatchObject({
+            isRight: true,
+            value: {
+              $dynamicRef: undefined,
+              $ref: {
+                $dynamicRef: undefined,
+                $ref: undefined,
+                value: otherSchemaFixture,
+              },
+            },
+          });
+        });
+      });
+    });
+
+    describe('.resolveReference', () => {
+      describe('when called with the $self URI and a JSON pointer fragment', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = defaultOpenApiResolver.resolveReference(
+            'https://example.com/api/openapi.json#/components/schemas/Other',
+          );
+        });
+
+        it('should return the schema at the JSON pointer', () => {
+          expect(result).toBe(otherSchemaFixture);
+        });
+      });
+    });
+  });
 });
