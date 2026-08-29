@@ -1,4 +1,4 @@
-export default function HomepageSponsors() {
+export const HomepageSponsors = () => {
   return (
     <div className="homepage-sponsors">
       <h2 className="homepage-sponsors-title">Sponsors</h2>
@@ -14,4 +14,4 @@ export default function HomepageSponsors() {
       />
     </div>
   );
-}
+};

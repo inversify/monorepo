@@ -55,7 +55,9 @@
   font-size: 1.125rem;
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .homepage-hero-cta:hover {
@@ -118,8 +120,11 @@
 }
 
 .homepage-sponsors {
+  display: flex;
+  flex-direction: column;
   padding: 2rem 1.5rem 4rem;
   text-align: center;
+  align-items: center;
 }
 
 .homepage-sponsors-title {

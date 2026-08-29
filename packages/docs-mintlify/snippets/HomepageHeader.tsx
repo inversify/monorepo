@@ -1,4 +1,4 @@
-export default function HomepageHeader() {
+export const HomepageHeader = () => {
   return (
     <header className="homepage-hero">
       <div className="homepage-hero-container">
@@ -18,4 +18,4 @@ export default function HomepageHeader() {
       </div>
     </header>
   );
-}
+};
