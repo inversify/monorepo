@@ -19,10 +19,8 @@ describe(buildHeaderParse, () => {
 
     beforeAll(() => {
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
 
       parseMockFixture = vitest.fn();
@@ -80,12 +78,8 @@ describe(buildHeaderParse, () => {
 
     beforeAll(() => {
       openApiResolverFixture = {
-        deepResolveReference: vitest
-          .fn()
-          .mockReturnValueOnce({ type: 'integer' }),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
 
       parseMockFixture = vitest.fn();
