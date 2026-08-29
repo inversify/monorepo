@@ -21,7 +21,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@mintlify/cli": "latest",
+    "@mintlify/cli": "4.0.1444",
     "@eslint/config-helpers": "0.7.0",
     "@eslint/js": "10.0.1",
     "@types/babel__standalone": "7.1.9",
