@@ -17,6 +17,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -29,6 +30,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -41,6 +43,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -53,6 +56,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -65,6 +69,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -79,6 +84,7 @@ describe(inferOpenApiSchemaTypes, () => {
           deepResolveReference: vitest
             .fn<(reference: string) => JsonValue | undefined>()
             .mockReturnValueOnce({ type: 'object' }),
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -91,6 +97,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -108,6 +115,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -120,6 +128,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -142,6 +151,7 @@ describe(inferOpenApiSchemaTypes, () => {
             .mockReturnValueOnce({
               type: ['string', 'number', 'boolean'],
             }),
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -159,6 +169,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -171,6 +182,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -189,6 +201,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -201,6 +214,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -213,6 +227,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -225,6 +240,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -237,6 +253,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -249,6 +266,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -261,6 +279,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -273,6 +292,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -307,6 +327,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -318,6 +339,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -329,6 +351,7 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
