@@ -392,8 +392,9 @@ describe(OpenApiValidationPipe, () => {
             },
           })
           @Post()
+          @ValidatedBody('message')
           public async createMessage(
-            @ValidatedBody() message: Message | undefined,
+            message: Message | undefined,
           ): Promise<Message | undefined> {
             return message;
           }
@@ -535,7 +536,8 @@ describe(OpenApiValidationPipe, () => {
             required: true,
           })
           @Post()
-          public async createItem(@ValidatedBody() item: Item): Promise<Item> {
+          @ValidatedBody('item')
+          public async createItem(item: Item): Promise<Item> {
             return item;
           }
         }
@@ -627,7 +629,8 @@ describe(OpenApiValidationPipe, () => {
             },
           })
           @Post()
-          public async createItem(@ValidatedBody() item: Item): Promise<Item> {
+          @ValidatedBody('item')
+          public async createItem(item: Item): Promise<Item> {
             return item;
           }
         }
@@ -724,7 +727,8 @@ describe(OpenApiValidationPipe, () => {
             required: true,
           })
           @Post()
-          public async createItem(@ValidatedBody() item: Item): Promise<Item> {
+          @ValidatedBody('item')
+          public async createItem(item: Item): Promise<Item> {
             return item;
           }
         }
@@ -863,8 +867,9 @@ describe(OpenApiValidationPipe, () => {
             schema: { type: 'integer' },
           })
           @Get()
+          @ValidatedHeaders('_headers')
           public async getResources(
-            @ValidatedHeaders() _headers: Record<string, unknown>,
+            _headers: Record<string, unknown>,
           ): Promise<{ ok: boolean }> {
             return { ok: true };
           }
@@ -987,8 +992,9 @@ describe(OpenApiValidationPipe, () => {
             schema: { format: 'uuid', type: 'string' },
           })
           @Get('/:userId')
+          @ValidatedParams('_params')
           public async getUser(
-            @ValidatedParams() _params: Record<string, unknown>,
+            _params: Record<string, unknown>,
           ): Promise<{ ok: boolean }> {
             return { ok: true };
           }
@@ -1093,8 +1099,9 @@ describe(OpenApiValidationPipe, () => {
             },
           })
           @Get()
+          @ValidatedQuery('_query')
           public async getProducts(
-            @ValidatedQuery() _query: Record<string, unknown>,
+            _query: Record<string, unknown>,
           ): Promise<{ ok: boolean }> {
             return { ok: true };
           }
@@ -1212,8 +1219,9 @@ describe(OpenApiValidationPipe, () => {
             schema: { items: { type: 'number' }, type: 'array' },
           })
           @Get()
+          @ValidatedQuery('_query')
           public async getNumbers(
-            @ValidatedQuery() _query: Record<string, unknown>,
+            _query: Record<string, unknown>,
           ): Promise<{ ok: boolean }> {
             return { ok: true };
           }
@@ -1334,8 +1342,9 @@ describe(OpenApiValidationPipe, () => {
             },
           })
           @Get()
+          @ValidatedQuery('_query')
           public async getProducts(
-            @ValidatedQuery() _query: Record<string, unknown>,
+            _query: Record<string, unknown>,
           ): Promise<{ ok: boolean }> {
             return { ok: true };
           }

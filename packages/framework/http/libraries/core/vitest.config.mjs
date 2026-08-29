@@ -1,3 +1,4 @@
-import { defaultConfig } from '@inversifyjs/foundation-vitest-config';
+import { buildConfig } from '@inversifyjs/foundation-vitest-config';
+import { vitePlugin as rflctPlugin } from 'rflct/vite';
 
-export default defaultConfig;
+export default buildConfig([rflctPlugin()]);

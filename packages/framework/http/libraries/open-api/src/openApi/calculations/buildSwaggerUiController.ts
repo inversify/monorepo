@@ -3,7 +3,7 @@ import {
   Controller,
   Get,
   type HttpResponse,
-  Params,
+  type RouteParam,
   SetHeader,
 } from '@inversifyjs/http-core';
 import { type Newable } from 'inversify';
@@ -39,10 +39,7 @@ export function buildSwaggerUiController<TOpenApiObject>(
 
     @Get('/resources/:resource')
     public override getSwaggerUiResource(
-      @Params({
-        name: 'resource',
-      })
-      resource: string,
+      resource: RouteParam<string, 'resource'>,
     ): HttpResponse {
       return super.getSwaggerUiResource(resource);
     }

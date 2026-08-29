@@ -6,7 +6,7 @@ import { AddressInfo } from 'node:net';
 import { CatchError, ErrorFilter, Pipe } from '@inversifyjs/framework-core';
 import {
   BadRequestHttpResponse,
-  Body,
+  type BodyParam,
   Controller,
   Post,
 } from '@inversifyjs/http-core';
@@ -106,8 +106,7 @@ describe(ClassValidationPipe, () => {
     class MessageController {
       @Post()
       public async createMessage(
-        @Body()
-        message: Message,
+        message: BodyParam<Message>,
       ): Promise<Message> {
         return message;
       }

@@ -47,8 +47,8 @@ describe('InversifyJS', () => {
       private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        katana: Inject<KatanaInterface>,
-        shuriken: Inject<ShurikenInterface>,
+        katana: KatanaInterface,
+        shuriken: ShurikenInterface,
       ) {
         this._katana = katana;
         this._shuriken = shuriken;
@@ -148,7 +148,7 @@ describe('InversifyJS', () => {
       public _shuriken: ShurikenInterface;
       public _blowgun!: BlowgunInterface;
 
-      constructor(katana: Inject<KatanaInterface>, shuriken: Inject<ShurikenInterface>) {
+      constructor(katana: KatanaInterface, shuriken: ShurikenInterface) {
         this._katana = katana;
         this._shuriken = shuriken;
       }
@@ -198,7 +198,7 @@ describe('InversifyJS', () => {
       private readonly _katana: Katana;
       private readonly _shuriken: Shuriken;
 
-      constructor(katana: Inject<Katana>, shuriken: Inject<Shuriken>) {
+      constructor(katana: Katana, shuriken: Shuriken) {
         this._katana = katana;
         this._shuriken = shuriken;
       }
@@ -255,8 +255,8 @@ describe('InversifyJS', () => {
       private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        katana: Inject<KatanaInterface>,
-        shuriken: Inject<ShurikenInterface>,
+        katana: KatanaInterface,
+        shuriken: ShurikenInterface,
       ) {
         this._katana = katana;
         this._shuriken = shuriken;
@@ -307,8 +307,8 @@ describe('InversifyJS', () => {
       private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        katana: Inject<KatanaInterface>,
-        shuriken: Inject<ShurikenInterface>,
+        katana: KatanaInterface,
+        shuriken: ShurikenInterface,
       ) {
         this._katana = katana;
         this._shuriken = shuriken;
@@ -364,8 +364,8 @@ describe('InversifyJS', () => {
       private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        katana: Inject<KatanaInterface>,
-        shuriken: Inject<ShurikenInterface>,
+        katana: KatanaInterface,
+        shuriken: ShurikenInterface,
       ) {
         this._katana = katana;
         this._shuriken = shuriken;
@@ -471,8 +471,8 @@ describe('InversifyJS', () => {
       private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        katana: Inject<KatanaInterface>,
-        shuriken: Inject<ShurikenInterface>,
+        katana: KatanaInterface,
+        shuriken: ShurikenInterface,
       ) {
         this._katana = katana;
         this._shuriken = shuriken;
@@ -547,7 +547,7 @@ describe('InversifyJS', () => {
 
     class UseSymbol implements Injectable {
       public currentSymbol: symbol;
-      constructor(currentDate: Inject<CurrentSymbol>) {
+      constructor(currentDate: CurrentSymbol) {
         this.currentSymbol = currentDate as unknown as symbol;
       }
       public doSomething() {
@@ -596,7 +596,7 @@ describe('InversifyJS', () => {
     class Katana implements ShortDistanceWeapon, Injectable {
       public handler: KatanaHandler;
       public blade: KatanaBlade;
-      constructor(handler: Inject<KatanaHandler>, blade: Inject<KatanaBlade>) {
+      constructor(handler: KatanaHandler, blade: KatanaBlade) {
         this.handler = handler;
         this.blade = blade;
       }
@@ -616,8 +616,8 @@ describe('InversifyJS', () => {
       public shortDistanceWeaponFactory: ShortDistanceWeaponFactory;
       public longDistanceWeapon: Shuriken;
       constructor(
-        shortDistanceWeaponFactory: Inject<ShortDistanceWeaponFactoryId>,
-        longDistanceWeapon: Inject<LongDistanceWeaponId>,
+        shortDistanceWeaponFactory: ShortDistanceWeaponFactoryId,
+        longDistanceWeapon: LongDistanceWeaponId,
       ) {
         this.shortDistanceWeaponFactory =
           shortDistanceWeaponFactory as unknown as ShortDistanceWeaponFactory;
@@ -664,7 +664,7 @@ describe('InversifyJS', () => {
     class Ninja implements Injectable {
       private readonly _katana: Katana;
 
-      constructor(katana: Inject<NewableKatana>) {
+      constructor(katana: NewableKatana) {
         this._katana = new (katana as unknown as Newable<Katana>)();
       }
 
@@ -719,8 +719,8 @@ describe('InversifyJS', () => {
       private readonly _shuriken: ShurikenInterface;
 
       constructor(
-        katanaFactory: Inject<KatanaFactory>,
-        shuriken: Inject<ShurikenInterface>,
+        katanaFactory: KatanaFactory,
+        shuriken: ShurikenInterface,
       ) {
         this._katana = (katanaFactory as unknown as () => KatanaInterface)();
         this._shuriken = shuriken;
@@ -782,7 +782,7 @@ describe('InversifyJS', () => {
       private readonly _shuriken: Weapon;
 
       constructor(
-        weaponFactory: Inject<WeaponFactory>,
+        weaponFactory: WeaponFactory,
       ) {
         const factory = weaponFactory as unknown as (throwable: boolean) => Weapon;
         this._katana = factory(false);
@@ -839,7 +839,7 @@ describe('InversifyJS', () => {
     class DieselEngine extends Engine implements Injectable {
       public override displacement: number | null;
       private readonly _injectorPump: InjectorPump;
-      constructor(injectorPump: Inject<InjectorPumpId>) {
+      constructor(injectorPump: InjectorPumpId) {
         super();
         this._injectorPump = injectorPump as unknown as InjectorPump;
         this.displacement = null;
@@ -852,7 +852,7 @@ describe('InversifyJS', () => {
     class PetrolEngine extends Engine implements Injectable {
       public override displacement: number | null;
       private readonly _sparkPlugs: SparkPlugs;
-      constructor(sparkPlugs: Inject<SparkPlugsId>) {
+      constructor(sparkPlugs: SparkPlugsId) {
         super();
         this._sparkPlugs = sparkPlugs as unknown as SparkPlugs;
         this.displacement = null;
@@ -869,7 +869,7 @@ describe('InversifyJS', () => {
     class DieselCarFactory implements CarFactory, Injectable {
       private readonly _dieselFactory: (displacement: number) => Engine;
       constructor(
-        factory: Inject<EngineFactory>,
+        factory: EngineFactory,
       ) {
         this._dieselFactory = (factory as unknown as (category: string) => (displacement: number) => Engine)('diesel');
       }
@@ -986,8 +986,8 @@ describe('InversifyJS', () => {
         private readonly _shuriken: ShurikenInterface;
 
         constructor(
-          katana: Inject<KatanaInterface>,
-          shuriken: Inject<ShurikenInterface>,
+          katana: KatanaInterface,
+          shuriken: ShurikenInterface,
         ) {
           this._katana = katana;
           this._shuriken = shuriken;
@@ -1063,8 +1063,8 @@ describe('InversifyJS', () => {
         private readonly _shuriken: ShurikenInterface;
 
         constructor(
-          katana: Inject<Sword>,
-          shuriken: Inject<ShurikenInterface>,
+          katana: Sword,
+          shuriken: ShurikenInterface,
         ) {
           this._katana = katana;
           this._shuriken = shuriken;
@@ -1196,7 +1196,7 @@ describe('InversifyJS', () => {
         private readonly _katana: Katana;
         private readonly _shuriken: Shuriken;
 
-        constructor(katana: Inject<Katana>, shuriken: Inject<Shuriken>) {
+        constructor(katana: Katana, shuriken: Shuriken) {
           this._katana = katana;
           this._shuriken = shuriken;
         }
@@ -1252,7 +1252,7 @@ describe('InversifyJS', () => {
         private readonly _katana: Katana;
         private readonly _shuriken: Shuriken;
 
-        constructor(katana: Inject<Katana>, shuriken: Inject<Shuriken>) {
+        constructor(katana: Katana, shuriken: Shuriken) {
           this._katana = katana;
           this._shuriken = shuriken;
         }
@@ -1383,8 +1383,8 @@ describe('InversifyJS', () => {
         private readonly _shuriken: ShurikenInterface;
 
         constructor(
-          katana: Inject<KatanaInterface>,
-          shuriken: Inject<ShurikenInterface>,
+          katana: KatanaInterface,
+          shuriken: ShurikenInterface,
         ) {
           this._katana = katana;
           this._shuriken = shuriken;
@@ -1455,8 +1455,8 @@ describe('InversifyJS', () => {
         private readonly _shuriken: ShurikenInterface;
 
         constructor(
-          katana: Inject<KatanaInterface>,
-          shuriken: Inject<ShurikenInterface>,
+          katana: KatanaInterface,
+          shuriken: ShurikenInterface,
         ) {
           this._katana = katana;
           this._shuriken = shuriken;
@@ -1735,14 +1735,14 @@ describe('InversifyJS', () => {
     class Samurai implements Warrior, Injectable {
       public weapon: Weapon;
 
-      constructor(weapon: Inject<Weapon>) {
+      constructor(weapon: Weapon) {
         this.weapon = weapon;
       }
     }
 
     class SamuraiMaster extends Samurai implements Warrior, Injectable {
       public isMaster: boolean;
-      constructor(weapon: Inject<Weapon>) {
+      constructor(weapon: Weapon) {
         super(weapon);
         this.isMaster = true;
       }
@@ -1795,7 +1795,7 @@ describe('InversifyJS', () => {
 
     class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(material: Inject<Material>) {
+      constructor(material: Material) {
         this.material = material;
       }
     }
@@ -1885,7 +1885,7 @@ describe('InversifyJS', () => {
 
     class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(material: Inject<Material>) {
+      constructor(material: Material) {
         this.material = material;
       }
     }
@@ -1978,7 +1978,7 @@ describe('InversifyJS', () => {
 
     class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(material: Inject<Material>) {
+      constructor(material: Material) {
         this.material = material;
       }
     }
@@ -1990,7 +1990,7 @@ describe('InversifyJS', () => {
     class NinjaStudent implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(weapon: Inject<Weapon>) {
+      constructor(weapon: Weapon) {
         this.weapon = weapon;
       }
     }
@@ -1998,7 +1998,7 @@ describe('InversifyJS', () => {
     class NinjaMaster implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(weapon: Inject<Weapon>) {
+      constructor(weapon: Weapon) {
         this.weapon = weapon;
       }
     }
@@ -2126,7 +2126,7 @@ describe('InversifyJS', () => {
 
     class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(material: Inject<Material>) {
+      constructor(material: Material) {
         this.material = material;
       }
     }
@@ -2138,7 +2138,7 @@ describe('InversifyJS', () => {
     class NinjaStudent implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(weapon: Inject<Weapon>) {
+      constructor(weapon: Weapon) {
         this.weapon = weapon;
       }
     }
@@ -2146,7 +2146,7 @@ describe('InversifyJS', () => {
     class NinjaMaster implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(weapon: Inject<Weapon>) {
+      constructor(weapon: Weapon) {
         this.weapon = weapon;
       }
     }
@@ -2235,7 +2235,7 @@ describe('InversifyJS', () => {
 
     class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(material: Inject<Material>) {
+      constructor(material: Material) {
         this.material = material;
       }
     }
@@ -2365,7 +2365,7 @@ describe('InversifyJS', () => {
 
     class Sword implements Weapon, Injectable {
       public material: Material;
-      constructor(material: Inject<Material>) {
+      constructor(material: Material) {
         this.material = material;
       }
     }
@@ -2377,7 +2377,7 @@ describe('InversifyJS', () => {
     class NinjaStudent implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(weapon: Inject<Weapon>) {
+      constructor(weapon: Weapon) {
         this.weapon = weapon;
       }
     }
@@ -2385,7 +2385,7 @@ describe('InversifyJS', () => {
     class NinjaMaster implements Ninja, Injectable {
       public weapon: Weapon;
 
-      constructor(weapon: Inject<Weapon>) {
+      constructor(weapon: Weapon) {
         this.weapon = weapon;
       }
     }
@@ -2498,13 +2498,13 @@ describe('InversifyJS', () => {
     class Samurai implements Warrior, Injectable {
       public rank: string;
 
-      constructor(rank: Inject<RankId>) {
+      constructor(rank: RankId) {
         this.rank = rank as unknown as string;
       }
     }
 
     class SamuraiMaster extends Samurai implements Warrior, Injectable {
-      constructor(rank: Inject<RankId>) {
+      constructor(rank: RankId) {
         super(rank);
       }
     }

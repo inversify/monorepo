@@ -6,6 +6,7 @@
   "description": "InversifyJs http Better Auth package",
   "dependencies": {
     "@inversifyjs/http-core": "workspace:*",
+    "rflct": "file:../../../../../../rflct",
     "statuses": "^2.0.2"
   },
   "devDependencies": {
@@ -67,7 +68,7 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "rflct -p tsconfig.esm.json",
     "build:clean": "rimraf lib",
     "format": "prettier --write ./src",
     "lint": "eslint ./src",

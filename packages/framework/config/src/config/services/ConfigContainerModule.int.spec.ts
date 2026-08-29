@@ -4,10 +4,13 @@ import { Container } from 'inversify';
 import { z } from 'zod';
 
 import { type ConfigService } from '../models/ConfigService.js';
-import { configServiceIdentifier } from '../models/configServiceIdentifier.js';
 import { InversifyConfigError } from '../models/InversifyConfigError.js';
 import { object } from '../sources/object.js';
 import { ConfigContainerModule } from './ConfigContainerModule.js';
+
+const configServiceId: unique symbol = Symbol.for(
+  '@inversifyjs/config/test/ConfigService',
+);
 
 describe(ConfigContainerModule, () => {
   describe('.fromOptions', () => {
@@ -21,12 +24,13 @@ describe(ConfigContainerModule, () => {
 
           await container.loadAsync(
             ConfigContainerModule.fromOptions({
+              serviceIdentifier: configServiceId,
               source: object({ PORT: '3000' }),
             }),
           );
 
           result = container
-            .get<ConfigService<{ PORT: string }>>(configServiceIdentifier)
+            .get<ConfigService<{ PORT: string }>>(configServiceId)
             .get();
         });
 
@@ -50,6 +54,7 @@ describe(ConfigContainerModule, () => {
 
           await container.loadAsync(
             ConfigContainerModule.fromOptions({
+              serviceIdentifier: configServiceId,
               source: object({ PORT: '3000' }),
               validate: z.object({
                 PORT: z.coerce.number(),
@@ -58,7 +63,7 @@ describe(ConfigContainerModule, () => {
           );
 
           result = container
-            .get<ConfigService<{ PORT: number }>>(configServiceIdentifier)
+            .get<ConfigService<{ PORT: number }>>(configServiceId)
             .get();
         });
 
@@ -141,6 +146,7 @@ describe(ConfigContainerModule, () => {
 
           await container.loadAsync(
             ConfigContainerModule.fromOptions({
+              serviceIdentifier: configServiceId,
               source: object({ port: '3000' }),
               validate: {
                 validate(input: Record<string, unknown>): { port: number } {
@@ -153,7 +159,7 @@ describe(ConfigContainerModule, () => {
           );
 
           result = container
-            .get<ConfigService<{ port: number }>>(configServiceIdentifier)
+            .get<ConfigService<{ port: number }>>(configServiceId)
             .get();
         });
 

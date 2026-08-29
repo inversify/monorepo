@@ -1,7 +1,7 @@
 import 'reflect-metadata/lite';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { type Inject, type Injectable } from '@inversifyjs/core';
+import { type Injectable } from '@inversifyjs/core';
 
 import { Container } from '../container/services/Container.js';
 
@@ -15,7 +15,7 @@ describe('Container.get should throw on ambiguous binding match', () => {
   class Samurai implements Injectable {
     readonly #katana: Katana;
 
-    constructor(katana: Inject<Katana>) {
+    constructor(katana: Katana) {
       this.#katana = katana;
     }
 

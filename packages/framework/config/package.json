@@ -5,7 +5,8 @@
   },
   "description": "InversifyJS configuration ContainerModule",
   "dependencies": {
-    "@standard-schema/spec": "1.1.0"
+    "@standard-schema/spec": "1.1.0",
+    "rflct": "file:../../../../rflct"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
@@ -54,7 +55,7 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "rflct",
     "build:clean": "rimraf lib",
     "format": "prettier --write ./src",
     "lint": "eslint ./src",

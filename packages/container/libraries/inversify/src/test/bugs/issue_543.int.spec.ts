@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, type Inject, type Injectable } from '../../index.js';
+import { Container, type Injectable } from '../../index.js';
 
 describe('Issue 543', () => {
   it('Should throw correct circular dependency path', () => {
@@ -8,7 +8,7 @@ describe('Issue 543', () => {
 
     class Child2 implements Injectable {
       public circ: unknown;
-      constructor(circ: Inject<Circular>) {
+      constructor(circ: Circular) {
         this.circ = circ;
       }
     }
@@ -17,8 +17,8 @@ describe('Issue 543', () => {
       public irrelevant: Irrelevant;
       public child2: Child2;
       constructor(
-        irrelevant: Inject<Irrelevant>,
-        child2: Inject<Child2>,
+        irrelevant: Irrelevant,
+        child2: Child2,
       ) {
         this.irrelevant = irrelevant;
         this.child2 = child2;
@@ -29,8 +29,8 @@ describe('Issue 543', () => {
       public irrelevant: Irrelevant;
       public child: Child;
       constructor(
-        irrelevant: Inject<Irrelevant>,
-        child: Inject<Child>,
+        irrelevant: Irrelevant,
+        child: Child,
       ) {
         this.irrelevant = irrelevant;
         this.child = child;
@@ -41,8 +41,8 @@ describe('Issue 543', () => {
       public irrelevant: Irrelevant;
       public circ: Circular;
       constructor(
-        irrelevant1: Inject<Irrelevant>,
-        circ: Inject<Circular>,
+        irrelevant1: Irrelevant,
+        circ: Circular,
       ) {
         this.irrelevant = irrelevant1;
         this.circ = circ;

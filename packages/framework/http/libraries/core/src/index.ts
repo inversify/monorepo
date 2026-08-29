@@ -18,7 +18,9 @@ import {
 import { InversifyHttpAdapter } from './http/adapter/InversifyHttpAdapter.js';
 import { buildNormalizedPath } from './http/calculations/buildNormalizedPath.js';
 import { createCustomNativeParameterDecorator } from './http/calculations/createCustomNativeParameterDecorator.js';
+import { createCustomNativeParameterMethodDecorator } from './http/calculations/createCustomNativeParameterMethodDecorator.js';
 import { createCustomParameterDecorator } from './http/calculations/createCustomParameterDecorator.js';
+import { createCustomParameterMethodDecorator } from './http/calculations/createCustomParameterMethodDecorator.js';
 import { All } from './http/decorators/All.js';
 import { Body } from './http/decorators/Body.js';
 import { Controller } from './http/decorators/Controller.js';
@@ -46,7 +48,7 @@ import { type CustomNativeParameterDecoratorHandlerOptions } from './http/models
 import { type CustomParameterDecoratorHandler } from './http/models/CustomParameterDecoratorHandler.js';
 import { type CustomParameterDecoratorHandlerOptions } from './http/models/CustomParameterDecoratorHandlerOptions.js';
 import { type HttpAdapterOptions } from './http/models/HttpAdapterOptions.js';
-import { httpApplicationServiceIdentifier } from './http/models/httpApplicationServiceIdentifier.js';
+import { type HttpApplication } from './http/models/httpApplicationServiceIdentifier.js';
 import { HttpStatusCode } from './http/models/HttpStatusCode.js';
 import { type MiddlewareHandler } from './http/models/MiddlewareHandler.js';
 import { type RequestHandler } from './http/models/RequestHandler.js';
@@ -58,6 +60,13 @@ import { type RouteParams } from './http/models/RouteParams.js';
 import { type RouterParams } from './http/models/RouterParams.js';
 import { routeValueMetadataSymbol } from './http/models/routeValueMetadataSymbol.js';
 import { isHttpResponse } from './httpResponse/calculations/isHttpResponse.js';
+import { type BodyParam } from './reflection/types/RflctTypes.js';
+import { type CookieParam } from './reflection/types/RflctTypes.js';
+import { type HeaderParam } from './reflection/types/RflctTypes.js';
+import { type QueryParam } from './reflection/types/RflctTypes.js';
+import { type RequestParam } from './reflection/types/RflctTypes.js';
+import { type ResponseParam } from './reflection/types/RflctTypes.js';
+import { type RouteParam } from './reflection/types/RflctTypes.js';
 import { AcceptedHttpResponse } from './httpResponse/models/AcceptedHttpResponse.js';
 import { AlreadyReportedHttpResponse } from './httpResponse/models/AlreadyReportedHttpResponse.js';
 import { BadGatewayHttpResponse } from './httpResponse/models/BadGatewayHttpResponse.js';
@@ -102,7 +111,9 @@ import { type ControllerMethodParameterMetadata } from './routerExplorer/model/C
 import { createRouteValueMetadataUtils } from './valueMetadata/calculations/createRouteValueMetadataUtils.js';
 
 export type {
+  BodyParam,
   CatchErrorOptions,
+  CookieParam,
   ControllerMetadata,
   ControllerMethodMetadata,
   ControllerMethodParameterMetadata,
@@ -114,6 +125,7 @@ export type {
   CustomParameterDecoratorHandlerOptions,
   ErrorFilter,
   Guard,
+  HeaderParam,
   HttpAdapterOptions,
   Interceptor,
   InterceptorTransformObject,
@@ -121,8 +133,12 @@ export type {
   MiddlewareHandler,
   Pipe,
   PipeMetadata,
+  QueryParam,
   RequestHandler,
+  RequestParam,
   RequiredOptions,
+  ResponseParam,
+  RouteParam,
   RouteParamOptions,
   RouteParams,
   RouterParams,
@@ -143,7 +159,9 @@ export {
   Controller,
   Cookies,
   createCustomNativeParameterDecorator,
+  createCustomNativeParameterMethodDecorator,
   createCustomParameterDecorator,
+  createCustomParameterMethodDecorator,
   createRouteValueMetadataUtils,
   CreatedHttpResponse,
   Delete,
@@ -159,7 +177,8 @@ export {
   Head,
   Headers,
   HttpResponse,
-  httpApplicationServiceIdentifier,
+  HttpApplication,
+
   HttpStatusCode,
   HttpVersionNotSupportedHttpResponse,
   InsufficientStorageHttpResponse,

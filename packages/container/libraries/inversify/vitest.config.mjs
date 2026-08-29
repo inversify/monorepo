@@ -1,4 +1,4 @@
-import { defaultConfig } from '@inversifyjs/foundation-vitest-config';
+import { buildConfig } from '@inversifyjs/foundation-vitest-config';
 import { transform } from 'rflct/transform';
 
 const rflctOptions = {
@@ -34,13 +34,15 @@ const rflctPlugin = {
   },
 };
 
+const config = buildConfig([rflctPlugin]);
+
 export default {
-  plugins: [rflctPlugin],
+  ...config,
   test: {
-    ...defaultConfig.test,
-    execArgv: [...(defaultConfig.test.execArgv ?? []), '--expose-gc'],
-    projects: defaultConfig.test.projects.map((project) => ({
-      extends: true,
+    ...config.test,
+    execArgv: [...(config.test.execArgv ?? []), '--expose-gc'],
+    projects: config.test.projects.map((project) => ({
+      ...project,
       test: {
         ...project.test,
         execArgv: [...(project.test.execArgv ?? []), '--expose-gc'],

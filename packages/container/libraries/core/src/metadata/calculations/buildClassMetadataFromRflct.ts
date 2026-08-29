@@ -10,6 +10,7 @@ import { type MetadataTag } from '../models/MetadataTag.js';
 import { getDefaultClassMetadata } from './getDefaultClassMetadata.js';
 
 const DESIGN_PARAMTYPES: string = 'design:paramtypes';
+const DESIGN_PROPERTYTYPE: string = 'design:propertytype';
 const DESIGN_PROPERTIES: string = 'design:properties';
 const DESIGN_CLASS: string = 'design:class';
 
@@ -96,11 +97,9 @@ export function buildClassMetadataFromRflct(
   }
 
   for (const propertyKey of propertyKeys) {
-    const propMeta: RflctParamEntry[] | undefined = getOwnReflectMetadata(
-      prototype!,
-      DESIGN_PARAMTYPES,
-      propertyKey,
-    );
+    const propMeta: RflctParamEntry[] | undefined =
+      getOwnReflectMetadata(prototype!, DESIGN_PROPERTYTYPE, propertyKey) ??
+      getOwnReflectMetadata(prototype!, DESIGN_PARAMTYPES, propertyKey);
     if (propMeta !== undefined && propMeta.length > 0) {
       const entry: RflctParamEntry = propMeta[0]!;
       const meta: Record<string, unknown> = entry.metadata;

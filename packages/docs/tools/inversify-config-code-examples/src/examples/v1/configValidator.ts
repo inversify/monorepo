@@ -3,11 +3,11 @@ import {
   ConfigContainerModule,
   type ConfigObject,
   type ConfigService,
-  configServiceIdentifier,
   type ConfigValidator,
   object,
 } from '@inversifyjs/config';
 import { Container } from 'inversify';
+import { resolve } from 'rflct';
 
 interface AppConfig {
   port: number;
@@ -35,6 +35,6 @@ export async function bootstrap(): Promise<AppConfig> {
     }),
   );
 
-  return container.get<ConfigService<AppConfig>>(configServiceIdentifier).get();
+  return container.get<ConfigService<AppConfig>>(resolve<ConfigService>()).get();
 }
 // End-example

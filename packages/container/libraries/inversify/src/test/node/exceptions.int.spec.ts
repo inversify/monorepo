@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, type Inject, type Injectable } from '../../index.js';
+import { Container, type Injectable } from '../../index.js';
 
 describe('Node', () => {
   it('Should throw if circular dependencies found', () => {
     class A implements Injectable {
       public b: unknown;
       public c: unknown;
-      constructor(b: Inject<B>, c: Inject<C>) {
+      constructor(b: B, c: C) {
         this.b = b;
         this.c = c;
       }
@@ -17,14 +17,14 @@ describe('Node', () => {
 
     class C implements Injectable {
       public d: unknown;
-      constructor(d: Inject<D>) {
+      constructor(d: D) {
         this.d = d;
       }
     }
 
     class D implements Injectable {
       public a: unknown;
-      constructor(a: Inject<A>) {
+      constructor(a: A) {
         this.a = a;
       }
     }

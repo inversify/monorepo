@@ -2,8 +2,9 @@ import { randomUUID } from 'node:crypto';
 
 import { inject, injectable } from 'inversify';
 import { type RootDatabase } from 'lmdb';
+import { resolve } from 'rflct';
 
-import { lmdbDbServiceIdentifier } from '../../../../foundation/db/domain/models/lmdbDbServiceIdentifier.js';
+import type { LmdbDb } from '../../../../foundation/db/domain/models/lmdbDbServiceIdentifier.js';
 import { UserPersistenceService } from '../../../domain/services/UserPersistenceService.js';
 import { UserCreateQueryDb } from '../models/UserCreateQueryDb.js';
 import { UserDb } from '../models/UserDb.js';
@@ -12,7 +13,7 @@ import { UserDb } from '../models/UserDb.js';
 export class LmdbUserRepository implements UserPersistenceService {
   readonly #db: RootDatabase;
 
-  constructor(@inject(lmdbDbServiceIdentifier) db: RootDatabase) {
+  constructor(@inject(resolve<LmdbDb>()) db: RootDatabase) {
     this.#db = db;
   }
 

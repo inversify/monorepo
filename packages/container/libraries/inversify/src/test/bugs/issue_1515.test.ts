@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   Container,
-  type Inject,
   type Injectable,
   type InjectMulti,
 } from '../../index.js';
@@ -10,11 +9,11 @@ import {
 describe('Issue 1515', () => {
   it('should properly throw on circular dependency', () => {
     class Circle1 implements Injectable {
-      constructor(public readonly circle2: Inject<Circle2>) {}
+      constructor(public readonly circle2: Circle2) {}
     }
 
     class Circle2 implements Injectable {
-      constructor(public circle1: Inject<Circle1>) {}
+      constructor(public circle1: Circle1) {}
     }
 
     abstract class Multi implements Injectable {}
@@ -25,7 +24,7 @@ describe('Issue 1515', () => {
     class Top implements Injectable {
       constructor(
         public readonly multis: InjectMulti<Multi>,
-        public readonly circle1: Inject<Circle1>,
+        public readonly circle1: Circle1,
       ) {}
     }
 

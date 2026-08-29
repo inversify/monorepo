@@ -12,21 +12,24 @@ import { Container } from 'inversify';
 
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
 import { type Server } from '../../server/models/Server.js';
+import { resolve } from 'rflct';
+
 import { createDirectory } from '../../test/actions/createDirectory.js';
 import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations.js';
 import { removeFileIfExists } from '../../test/actions/removeFileIfExists.js';
 import { type BetterAuth } from '../models/BetterAuth.js';
-import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier.js';
+import type { BetterAuthMiddleware } from '../models/betterAuthMiddlewareServiceIdentifier.js';
 import { type UserSession } from '../models/UserSession.js';
 import { BetterAuthFastifyContainerModule } from '../services/BetterAuthFastifyContainerModule.js';
 import { FastifyUserSession } from './FastifyUserSession.js';
 
 @Controller('/api')
 class SessionTestController {
-  @ApplyMiddleware(betterAuthMiddlewareServiceIdentifier)
+  @ApplyMiddleware(resolve<BetterAuthMiddleware>())
   @Get('/session')
+  @FastifyUserSession('session')
   public async getSession(
-    @FastifyUserSession() session: UserSession<BetterAuthOptions>,
+    session: UserSession<BetterAuthOptions>,
   ): Promise<UserSession<BetterAuthOptions>> {
     return session;
   }

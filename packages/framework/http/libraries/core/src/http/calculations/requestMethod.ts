@@ -8,23 +8,28 @@ import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/c
 import { type ControllerMethodMetadata } from '../../routerExplorer/model/ControllerMethodMetadata.js';
 import { type RequestMethodType } from '../models/RequestMethodType.js';
 import { buildNormalizedPath } from './buildNormalizedPath.js';
+import { decoratorFinalizersMetadataKey } from '@inversifyjs/framework-core';
 
 export function requestMethod(
   requestMethodType: RequestMethodType,
   path?: string,
-): MethodDecorator {
-  return (target: object, methodKey: string | symbol): void => {
+): (value: Function, context: ClassMethodDecoratorContext) => void {
+  return (_value: Function, context: ClassMethodDecoratorContext): void => {
     const controllerMethodMetadata: ControllerMethodMetadata = {
-      methodKey,
+      methodKey: context.name,
       path: buildNormalizedPath(path ?? '/'),
       requestMethodType,
     };
 
-    updateOwnReflectMetadata(
-      target.constructor,
-      controllerMethodMetadataReflectKey,
-      buildEmptyArrayMetadata,
-      buildArrayMetadataWithElement(controllerMethodMetadata),
-    );
+    const finalizers: Array<(cls: object) => void> =
+      ((context.metadata as Record<symbol, unknown>)[decoratorFinalizersMetadataKey] ??= []) as Array<(cls: object) => void>;
+    finalizers.push((cls: object) => {
+      updateOwnReflectMetadata(
+        cls,
+        controllerMethodMetadataReflectKey,
+        buildEmptyArrayMetadata,
+        buildArrayMetadataWithElement(controllerMethodMetadata),
+      );
+    });
   };
 }

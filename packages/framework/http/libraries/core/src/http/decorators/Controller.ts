@@ -5,7 +5,6 @@ import {
 } from '@inversifyjs/reflect-metadata-utils';
 import {
   type BindingScope,
-  injectable,
   type ServiceIdentifier,
 } from 'inversify';
 
@@ -14,20 +13,19 @@ import { type ControllerMetadata } from '../../routerExplorer/model/ControllerMe
 import { buildNormalizedPath } from '../calculations/buildNormalizedPath.js';
 import { type Controller as ControllerModel } from '../models/Controller.js';
 import { type ControllerOptions } from '../models/ControllerOptions.js';
+import { decoratorFinalizersMetadataKey } from '@inversifyjs/framework-core';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function Controller(
   pathOrOptions?: string | ControllerOptions,
-): ClassDecorator {
-  return (target: NewableFunction): void => {
+): (target: Function, context: ClassDecoratorContext) => void {
+  return (target: Function, context: ClassDecoratorContext): void => {
     const controllerMetadata: ControllerMetadata = {
       path: '/',
       priority: 0,
       serviceIdentifier: target as ServiceIdentifier<ControllerModel>,
-      target,
+      target: target as NewableFunction,
     };
-
-    let scope: BindingScope | undefined = undefined;
 
     if (pathOrOptions !== undefined) {
       if (typeof pathOrOptions === 'string') {
@@ -45,12 +43,8 @@ export function Controller(
           controllerMetadata.serviceIdentifier =
             pathOrOptions.serviceIdentifier;
         }
-
-        scope = pathOrOptions.scope;
       }
     }
-
-    injectable(scope)(target);
 
     updateOwnReflectMetadata(
       Reflect,
@@ -58,5 +52,15 @@ export function Controller(
       buildEmptyArrayMetadata,
       buildArrayMetadataWithElement(controllerMetadata),
     );
+
+    // Run method decorator finalizers queued via context.metadata
+    const finalizers = (context.metadata as Record<symbol, unknown>)[decoratorFinalizersMetadataKey] as
+      | Array<(cls: object) => void>
+      | undefined;
+    if (finalizers !== undefined) {
+      for (const fn of finalizers) {
+        fn(target);
+      }
+    }
   };
 }

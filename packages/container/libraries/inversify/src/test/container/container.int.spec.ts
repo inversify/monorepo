@@ -69,7 +69,7 @@ class ArgsCapturing1 implements ArgsCapturingInstance, Injectable {
   public activatedByService: boolean = false;
   public readonly args: unknown[];
 
-  constructor(dep0: Inject<Dependency0>) {
+  constructor(dep0: Dependency0) {
     this.args = [dep0];
   }
 }
@@ -79,7 +79,7 @@ class ArgsCapturing2 implements ArgsCapturingInstance, Injectable {
   public activatedByService: boolean = false;
   public readonly args: unknown[];
 
-  constructor(dep0: Inject<Dependency0>, dep1: Inject<Dependency1>) {
+  constructor(dep0: Dependency0, dep1: Dependency1) {
     this.args = [dep0, dep1];
   }
 }
@@ -90,9 +90,9 @@ class ArgsCapturing3 implements ArgsCapturingInstance, Injectable {
   public readonly args: unknown[];
 
   constructor(
-    dep0: Inject<Dependency0>,
-    dep1: Inject<Dependency1>,
-    dep2: Inject<Dependency2>,
+    dep0: Dependency0,
+    dep1: Dependency1,
+    dep2: Dependency2,
   ) {
     this.args = [dep0, dep1, dep2];
   }
@@ -104,10 +104,10 @@ class ArgsCapturing4 implements ArgsCapturingInstance, Injectable {
   public readonly args: unknown[];
 
   constructor(
-    dep0: Inject<Dependency0>,
-    dep1: Inject<Dependency1>,
-    dep2: Inject<Dependency2>,
-    dep3: Inject<Dependency3>,
+    dep0: Dependency0,
+    dep1: Dependency1,
+    dep2: Dependency2,
+    dep3: Dependency3,
   ) {
     this.args = [dep0, dep1, dep2, dep3];
   }
@@ -119,11 +119,11 @@ class ArgsCapturing5 implements ArgsCapturingInstance, Injectable {
   public readonly args: unknown[];
 
   constructor(
-    dep0: Inject<Dependency0>,
-    dep1: Inject<Dependency1>,
-    dep2: Inject<Dependency2>,
-    dep3: Inject<Dependency3>,
-    dep4: Inject<Dependency4>,
+    dep0: Dependency0,
+    dep1: Dependency1,
+    dep2: Dependency2,
+    dep3: Dependency3,
+    dep4: Dependency4,
   ) {
     this.args = [dep0, dep1, dep2, dep3, dep4];
   }
@@ -209,7 +209,7 @@ class ArgsAndPropsCapturing
   public property1!: Inject<PropertyDependency1>;
   public property2!: Inject<PropertyDependency2>;
 
-  constructor(dep0: Inject<Dependency0>, dep1: Inject<Dependency1>) {
+  constructor(dep0: Dependency0, dep1: Dependency1) {
     this.args = [dep0, dep1];
   }
 }

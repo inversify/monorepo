@@ -9,6 +9,7 @@ import {
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
+import { decoratorFinalizersMetadataKey } from '@inversifyjs/framework-core';
 import { controllerMethodMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodMetadataReflectKey.js';
 import { RequestMethodType } from '../models/RequestMethodType.js';
 import { buildNormalizedPath } from './buildNormalizedPath.js';
@@ -17,17 +18,22 @@ import { requestMethod } from './requestMethod.js';
 describe(requestMethod, () => {
   describe('having a path undefined', () => {
     describe('when called', () => {
-      let targetFixture: object;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
-      let keyFixture: string;
+      let keyFixture: string | symbol;
       let normalizedPathFixture: string;
+      let mockMetadata: Record<symbol, unknown>;
+      let contextFixture: ClassMethodDecoratorContext;
 
       beforeAll(() => {
         keyFixture = 'key-example';
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
-        targetFixture = {};
         normalizedPathFixture = '/';
+        mockMetadata = {};
+        contextFixture = {
+          name: keyFixture,
+          metadata: mockMetadata,
+        } as unknown as ClassMethodDecoratorContext;
 
         vitest
           .mocked(buildNormalizedPath)
@@ -37,7 +43,7 @@ describe(requestMethod, () => {
           .mocked(buildArrayMetadataWithElement)
           .mockReturnValueOnce(callbackFixture);
 
-        requestMethod(RequestMethodType.Get)(targetFixture, keyFixture, {});
+        requestMethod(RequestMethodType.Get)(() => {}, contextFixture);
       });
 
       afterAll(() => {
@@ -48,40 +54,60 @@ describe(requestMethod, () => {
         expect(buildNormalizedPath).toHaveBeenCalledExactlyOnceWith('/');
       });
 
-      it('should call buildArrayMetadataWithElement', () => {
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith({
-          methodKey: keyFixture,
-          path: normalizedPathFixture,
-          requestMethodType: RequestMethodType.Get,
-        });
+      it('should store a finalizer in context.metadata', () => {
+        const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as unknown[];
+        expect(finalizers).toHaveLength(1);
       });
 
-      it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-          targetFixture.constructor,
-          controllerMethodMetadataReflectKey,
-          buildEmptyArrayMetadata,
-          callbackFixture,
-        );
+      describe('when finalizer is called', () => {
+        let classFixture: Function;
+
+        beforeAll(() => {
+          classFixture = class {};
+          const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as Array<(cls: object) => void>;
+          for (const fn of finalizers) fn(classFixture);
+        });
+
+        it('should call buildArrayMetadataWithElement', () => {
+          expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith({
+            methodKey: keyFixture,
+            path: normalizedPathFixture,
+            requestMethodType: RequestMethodType.Get,
+          });
+        });
+
+        it('should call updateOwnReflectMetadata()', () => {
+          expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            classFixture,
+            controllerMethodMetadataReflectKey,
+            buildEmptyArrayMetadata,
+            callbackFixture,
+          );
+        });
       });
     });
   });
 
   describe('having a path defined', () => {
     describe('when called', () => {
-      let targetFixture: object;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
       let pathFixture: string;
-      let keyFixture: string;
+      let keyFixture: string | symbol;
       let normalizedPathFixture: string;
+      let mockMetadata: Record<symbol, unknown>;
+      let contextFixture: ClassMethodDecoratorContext;
 
       beforeAll(() => {
         keyFixture = 'key-example';
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
         pathFixture = '/example';
-        targetFixture = {};
         normalizedPathFixture = '/example';
+        mockMetadata = {};
+        contextFixture = {
+          name: keyFixture,
+          metadata: mockMetadata,
+        } as unknown as ClassMethodDecoratorContext;
 
         vitest
           .mocked(buildNormalizedPath)
@@ -92,9 +118,8 @@ describe(requestMethod, () => {
           .mockReturnValueOnce(callbackFixture);
 
         requestMethod(RequestMethodType.Get, pathFixture)(
-          targetFixture,
-          keyFixture,
-          {},
+          () => {},
+          contextFixture,
         );
       });
 
@@ -108,21 +133,36 @@ describe(requestMethod, () => {
         );
       });
 
-      it('should call buildArrayMetadataWithElement', () => {
-        expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith({
-          methodKey: keyFixture,
-          path: normalizedPathFixture,
-          requestMethodType: RequestMethodType.Get,
-        });
+      it('should store a finalizer in context.metadata', () => {
+        const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as unknown[];
+        expect(finalizers).toHaveLength(1);
       });
 
-      it('should call updateOwnReflectMetadata()', () => {
-        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-          targetFixture.constructor,
-          controllerMethodMetadataReflectKey,
-          buildEmptyArrayMetadata,
-          callbackFixture,
-        );
+      describe('when finalizer is called', () => {
+        let classFixture: Function;
+
+        beforeAll(() => {
+          classFixture = class {};
+          const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as Array<(cls: object) => void>;
+          for (const fn of finalizers) fn(classFixture);
+        });
+
+        it('should call buildArrayMetadataWithElement', () => {
+          expect(buildArrayMetadataWithElement).toHaveBeenCalledExactlyOnceWith({
+            methodKey: keyFixture,
+            path: normalizedPathFixture,
+            requestMethodType: RequestMethodType.Get,
+          });
+        });
+
+        it('should call updateOwnReflectMetadata()', () => {
+          expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+            classFixture,
+            controllerMethodMetadataReflectKey,
+            buildEmptyArrayMetadata,
+            callbackFixture,
+          );
+        });
       });
     });
   });

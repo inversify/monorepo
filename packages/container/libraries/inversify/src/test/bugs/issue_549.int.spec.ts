@@ -8,7 +8,6 @@ import {
 
 import {
   Container,
-  type Inject,
   type Injectable,
 } from '../../index.js';
 
@@ -16,14 +15,14 @@ describe('Issue 549', () => {
   describe('having a circular dependency', () => {
     class A implements Injectable {
       public b: unknown;
-      constructor(b: Inject<B>) {
+      constructor(b: B) {
         this.b = b;
       }
     }
 
     class B implements Injectable {
       public a: unknown;
-      constructor(a: Inject<A>) {
+      constructor(a: A) {
         this.a = a;
       }
     }

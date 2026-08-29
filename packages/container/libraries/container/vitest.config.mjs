@@ -1,4 +1,4 @@
-import { defaultConfig } from '@inversifyjs/foundation-vitest-config';
+import { buildConfig } from '@inversifyjs/foundation-vitest-config';
 import { transform } from 'rflct/transform';
 
 const rflctOptions = {
@@ -31,7 +31,4 @@ const rflctPlugin = {
   },
 };
 
-export default {
-  ...defaultConfig,
-  plugins: [rflctPlugin],
-};
+export default buildConfig([rflctPlugin]);

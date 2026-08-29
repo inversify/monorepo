@@ -1,4 +1,4 @@
-export { betterAuthMiddlewareServiceIdentifier } from './auth/models/betterAuthMiddlewareServiceIdentifier.js';
+export type { BetterAuthMiddleware } from './auth/models/betterAuthMiddlewareServiceIdentifier.js';
 export { FastifyUserSession } from './auth/decorators/FastifyUserSession.js';
 export { ExpressUserSession } from './auth/decorators/ExpressUserSession.js';
 export { HonoUserSession } from './auth/decorators/HonoUserSession.js';

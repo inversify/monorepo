@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   Container,
-  type Inject,
   type Injectable,
   type InjectOptional,
   Newable,
@@ -26,7 +25,7 @@ describe('Issue 928', () => {
 
     abstract class AbstractCls implements Injectable {
       constructor(
-        a: Inject<DepA>,
+        a: DepA,
         b: InjectOptional<DepB> = { b: 0 },
       ) {
         injectedA = a;
@@ -36,9 +35,9 @@ describe('Issue 928', () => {
 
     class Cls extends AbstractCls implements Injectable {
       constructor(
-        c: Inject<DepC>,
+        c: DepC,
         b: InjectOptional<DepB> = { b: 0 },
-        a: Inject<DepA>,
+        a: DepA,
       ) {
         super(a, b);
 

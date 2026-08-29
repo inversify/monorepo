@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 import {
   type BindingConstraints,
   Container,
-  type Inject,
   type Injectable,
   type InjectNamed,
   type InjectTagged,
@@ -97,7 +96,7 @@ describe('Bugs', () => {
       public weapon: Weapon;
       constructor(
         public override rank: InjectNamed<Rank, 'master'>,
-        weapon: Inject<Weapon>,
+        weapon: Weapon,
       ) {
         // length = 2
         super(rank);
@@ -224,7 +223,7 @@ Binding constraints:
 
     class Jungle implements Injectable {
       public animal: Animal;
-      constructor(animal: Inject<Animal>) {
+      constructor(animal: Animal) {
         this.animal = animal;
       }
     }
@@ -289,7 +288,7 @@ Trying to resolve bindings for "Weapon (Root service)"`;
 
     abstract class BaseSoldier implements Injectable {
       public weapon: Weapon;
-      constructor(weapon: Inject<Weapon>) {
+      constructor(weapon: Weapon) {
         this.weapon = weapon;
       }
     }
@@ -504,7 +503,7 @@ Trying to resolve bindings for "Weapon (Root service)"`;
 
     class TypedBl extends BlBase<Type> implements Injectable {
       // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-      constructor(repository: Inject<TypedRepo>) {
+      constructor(repository: TypedRepo) {
         super(repository);
       }
     }
@@ -538,7 +537,7 @@ Trying to resolve bindings for "Weapon (Root service)"`;
     }
 
     class Ninja extends Warrior implements Injectable {
-      constructor(katana: Inject<Katana>) {
+      constructor(katana: Katana) {
         super(katana);
       }
     }

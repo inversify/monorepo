@@ -4,11 +4,12 @@ import {
   type ServiceIdentifier,
 } from 'inversify';
 
+import { resolve } from 'rflct';
+
 import { validateConfig } from '../calculations/validateConfig.js';
 import { type ConfigContainerModuleOptions } from '../models/ConfigContainerModuleOptions.js';
 import { type ConfigObject } from '../models/ConfigObject.js';
 import { type ConfigService } from '../models/ConfigService.js';
-import { configServiceIdentifier } from '../models/configServiceIdentifier.js';
 import { ConfigServiceImplementation } from './ConfigServiceImplementation.js';
 
 export class ConfigContainerModule extends ContainerModule {
@@ -27,7 +28,7 @@ export class ConfigContainerModule extends ContainerModule {
             : await validateConfig(rawConfig, options.validate);
 
         const serviceIdentifier: ServiceIdentifier<ConfigService<unknown>> =
-          options.serviceIdentifier ?? configServiceIdentifier;
+          options.serviceIdentifier ?? resolve<ConfigService<unknown>>();
 
         containerModuleOptions
           .bind(serviceIdentifier)

@@ -52,7 +52,7 @@ Reflect.defineMetadata('design:paramtypes', [
   { type: ServiceIds.constantValue, metadata: {} },
 ], Foo);
 
-Reflect.defineMetadata('design:paramtypes', [
+Reflect.defineMetadata('design:propertytype', [
   { type: ServiceIds.dynamicValue, metadata: {} },
 ], Foo.prototype, 'property');
 

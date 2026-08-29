@@ -8,7 +8,7 @@ import { Container } from '../container/services/Container.js';
 describe('inversify/InversifyJS#1864', () => {
   it('Container unbindAsync request should not throw planning errors', () => {
     class Foo implements Injectable {
-      constructor(_bar: Inject<string>) {}
+      constructor(_bar: Inject<'bar'>) {}
     }
 
     const container: Container = new Container();
@@ -46,7 +46,7 @@ describe('inversify/InversifyJS#1864', () => {
     }
 
     class Bar implements Injectable {
-      constructor(_baz: Inject<string>) {}
+      constructor(_baz: string) {}
     }
 
     const container: Container = new Container();
@@ -72,7 +72,7 @@ describe('inversify/InversifyJS#1864', () => {
     }
 
     class Circular implements Injectable {
-      constructor(_circular: Inject<Circular>) {}
+      constructor(_circular: Circular) {}
     }
 
     const container: Container = new Container();

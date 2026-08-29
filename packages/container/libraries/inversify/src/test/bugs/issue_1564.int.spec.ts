@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, type Inject, type Injectable } from '../../index.js';
+import { Container, type Injectable } from '../../index.js';
 
 describe('Issue 1564', () => {
   it('should not throw on getting async services bound using "toService"', async () => {
@@ -11,13 +11,13 @@ describe('Issue 1564', () => {
     }
 
     class Service1 implements Injectable {
-      constructor(public database: Inject<Database>) {
+      constructor(public database: Database) {
         console.log('new Service1');
       }
     }
 
     class Service2 implements Injectable {
-      constructor(public service1: Inject<Service1>) {
+      constructor(public service1: Service1) {
         console.log('new Service2');
       }
     }

@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 import {
   Controller,
-  createCustomParameterDecorator,
+  createCustomParameterMethodDecorator,
   type CustomParameterDecoratorHandlerOptions,
   Get,
 } from '@inversifyjs/http-core';
@@ -82,51 +82,40 @@ async function buildUwebSocketsServer(container: Container): Promise<Server> {
   );
 }
 
-const readCapturedUrlAfterAwait: () => ParameterDecorator =
-  (): ParameterDecorator =>
-    createCustomParameterDecorator(
-      async (
-        request: HttpRequest,
-        _response: HttpResponse,
-        options: CustomParameterDecoratorHandlerOptions<
-          HttpRequest,
-          HttpResponse
-        >,
-      ): Promise<{ url: string }> => {
-        await Promise.resolve();
+const readCapturedUrlAfterAwaitHandler = async (
+  request: HttpRequest,
+  _response: HttpResponse,
+  options: CustomParameterDecoratorHandlerOptions<HttpRequest, HttpResponse>,
+): Promise<{ url: string }> => {
+  await Promise.resolve();
+  return { url: options.getUrl(request) };
+};
 
-        return {
-          url: options.getUrl(request),
-        };
-      },
-    );
+const readCapturedUrlAfterAwait = createCustomParameterMethodDecorator(
+  readCapturedUrlAfterAwaitHandler,
+);
 
-const readCapturedValuesAfterAwait: () => ParameterDecorator =
-  (): ParameterDecorator =>
-    createCustomParameterDecorator(
-      async (
-        request: HttpRequest,
-        _response: HttpResponse,
-        options: CustomParameterDecoratorHandlerOptions<
-          HttpRequest,
-          HttpResponse
-        >,
-      ): Promise<CapturedRequestValuesResponse> => {
-        await Promise.resolve();
+const readCapturedValuesAfterAwaitHandler = async (
+  request: HttpRequest,
+  _response: HttpResponse,
+  options: CustomParameterDecoratorHandlerOptions<HttpRequest, HttpResponse>,
+): Promise<CapturedRequestValuesResponse> => {
+  await Promise.resolve();
+  return {
+    allParams: {
+      storeId: options.getParams(request, 'storeId') as string | undefined,
+      userId: options.getParams(request, 'userId') as string | undefined,
+    },
+    header: options.getHeaders(request, 'x-request-id'),
+    method: options.getMethod(request),
+    query: options.getQuery(request),
+    url: options.getUrl(request),
+  };
+};
 
-        return {
-          allParams: {
-            storeId: options.getParams(request, 'storeId') as
-              string | undefined,
-            userId: options.getParams(request, 'userId') as string | undefined,
-          },
-          header: options.getHeaders(request, 'x-request-id'),
-          method: options.getMethod(request),
-          query: options.getQuery(request),
-          url: options.getUrl(request),
-        };
-      },
-    );
+const readCapturedValuesAfterAwait = createCustomParameterMethodDecorator(
+  readCapturedValuesAfterAwaitHandler,
+);
 
 describe(CaptureRequestValues, () => {
   describe('having a GET controller method that captures url without query', () => {
@@ -139,8 +128,8 @@ describe(CaptureRequestValues, () => {
           url: true,
         })
         @Get()
+        @readCapturedUrlAfterAwait('capturedRequestValues')
         public async listResources(
-          @readCapturedUrlAfterAwait()
           capturedRequestValues: Pick<CapturedRequestValuesResponse, 'url'>,
         ): Promise<Pick<CapturedRequestValuesResponse, 'url'>> {
           return {
@@ -201,8 +190,8 @@ describe(CaptureRequestValues, () => {
           url: true,
         })
         @Get('/:userId/profile')
+        @readCapturedValuesAfterAwait('capturedRequestValues')
         public async getUserProfile(
-          @readCapturedValuesAfterAwait()
           capturedRequestValues: CapturedRequestValuesResponse,
         ): Promise<CapturedRequestValuesResponse> {
           return capturedRequestValues;

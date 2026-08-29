@@ -1,3 +1,4 @@
+import { decoratorFinalizersMetadataKey } from '@inversifyjs/framework-core';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { routeValueMetadataReflectKey } from '../../reflectMetadata/data/routeValueMetadataReflectKey.js';
@@ -13,13 +14,17 @@ function buildEmptyRouteValueMetadataMap(): Map<
 export function routeValueMetadata(
   metadataKey: string | symbol,
   value: unknown,
-): MethodDecorator {
-  return (target: object, propertyKey: string | symbol): void => {
-    updateOwnReflectMetadata(
-      target.constructor,
-      routeValueMetadataReflectKey,
-      buildEmptyRouteValueMetadataMap,
-      setRouteValueMetadata(propertyKey, metadataKey, value),
-    );
+): (value: Function, context: ClassMethodDecoratorContext) => void {
+  return (_value: Function, context: ClassMethodDecoratorContext): void => {
+    const finalizers: Array<(cls: object) => void> =
+      ((context.metadata as Record<symbol, unknown>)[decoratorFinalizersMetadataKey] ??= []) as Array<(cls: object) => void>;
+    finalizers.push((cls: object) => {
+      updateOwnReflectMetadata(
+        cls,
+        routeValueMetadataReflectKey,
+        buildEmptyRouteValueMetadataMap,
+        setRouteValueMetadata(context.name, metadataKey, value),
+      );
+    });
   };
 }

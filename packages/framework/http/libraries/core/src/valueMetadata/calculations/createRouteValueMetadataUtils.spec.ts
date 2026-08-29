@@ -10,10 +10,10 @@ describe(createRouteValueMetadataUtils, () => {
   describe('decorator', () => {
     let metadataKeyFixture: string;
     let metadataValueFixture: string[];
-    let decoratorFixture: MethodDecorator;
-    let decoratorResult: MethodDecorator;
+    let decoratorFixture: (value: Function, context: ClassMethodDecoratorContext) => void;
+    let decoratorResult: (value: Function, context: ClassMethodDecoratorContext) => void;
     let result: [
-      decorator: (value: string[]) => MethodDecorator,
+      decorator: (value: string[]) => (value: Function, context: ClassMethodDecoratorContext) => void,
       getter: (
         request: Record<string | symbol, unknown>,
       ) => string[] | undefined,
@@ -22,7 +22,7 @@ describe(createRouteValueMetadataUtils, () => {
     beforeAll(() => {
       metadataKeyFixture = 'roles';
       metadataValueFixture = ['admin'];
-      decoratorFixture = vitest.fn() as MethodDecorator;
+      decoratorFixture = vitest.fn() as unknown as (value: Function, context: ClassMethodDecoratorContext) => void;
 
       vitest.mocked(routeValueMetadata).mockReturnValueOnce(decoratorFixture);
 
@@ -72,7 +72,7 @@ describe(createRouteValueMetadataUtils, () => {
 
         beforeAll(() => {
           const [, getter]: [
-            (value: string[]) => MethodDecorator,
+            (value: string[]) => (value: Function, context: ClassMethodDecoratorContext) => void,
             (request: Record<string | symbol, unknown>) => string[] | undefined,
           ] = createRouteValueMetadataUtils<
             Record<string | symbol, unknown>,
@@ -102,7 +102,7 @@ describe(createRouteValueMetadataUtils, () => {
 
         beforeAll(() => {
           const [, getter]: [
-            (value: string[]) => MethodDecorator,
+            (value: string[]) => (value: Function, context: ClassMethodDecoratorContext) => void,
             (request: Record<string | symbol, unknown>) => string[] | undefined,
           ] = createRouteValueMetadataUtils<
             Record<string | symbol, unknown>,
@@ -132,7 +132,7 @@ describe(createRouteValueMetadataUtils, () => {
 
         beforeAll(() => {
           const [, getter]: [
-            (value: string[]) => MethodDecorator,
+            (value: string[]) => (value: Function, context: ClassMethodDecoratorContext) => void,
             (request: Record<string | symbol, unknown>) => string[] | undefined,
           ] = createRouteValueMetadataUtils<
             Record<string | symbol, unknown>,

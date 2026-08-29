@@ -1,7 +1,7 @@
 import 'reflect-metadata/lite';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { bindingScopeValues, type Inject, type Injectable } from '@inversifyjs/core';
+import { bindingScopeValues, type Injectable } from '@inversifyjs/core';
 
 import { Container } from '../container/services/Container.js';
 
@@ -13,20 +13,20 @@ class AsyncDependency {
 
 class Dependency1 implements Injectable {
   constructor(
-    public readonly asyncDependency: Inject<AsyncDependency>,
+    public readonly asyncDependency: AsyncDependency,
   ) {}
 }
 
 class Dependency2 implements Injectable {
   constructor(
-    public readonly asyncDependency: Inject<AsyncDependency>,
+    public readonly asyncDependency: AsyncDependency,
   ) {}
 }
 
 class Application implements Injectable {
   constructor(
-    public readonly dependency1: Inject<Dependency1>,
-    public readonly dependency2: Inject<Dependency2>,
+    public readonly dependency1: Dependency1,
+    public readonly dependency2: Dependency2,
   ) {}
 }
 

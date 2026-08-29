@@ -1,3 +1,1 @@
-export const httpApplicationServiceIdentifier: unique symbol = Symbol.for(
-  '@inversifyjs/http-core/application',
-);
+export type HttpApplication = 'HttpApplication';

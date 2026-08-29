@@ -3,10 +3,10 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
-    "emitDecoratorMetadata": true,
+    "emitDecoratorMetadata": false,
     "esModuleInterop": true,
     "exactOptionalPropertyTypes": true,
-    "experimentalDecorators": true,
+    "experimentalDecorators": false,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": false,
     "lib": ["ES2022"],

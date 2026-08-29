@@ -52,7 +52,7 @@ describe(CatchError, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        CatchError(errorFixture)(targetFixture);
+        CatchError(errorFixture)(targetFixture, { kind: 'class' } as ClassDecoratorContext);
       });
 
       afterAll(() => {
@@ -114,7 +114,7 @@ describe(CatchError, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        CatchError(optionsFixture)(targetFixture);
+        CatchError(optionsFixture)(targetFixture, { kind: 'class' } as ClassDecoratorContext);
       });
 
       afterAll(() => {
@@ -165,7 +165,7 @@ describe(CatchError, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        CatchError(optionsFixture)(targetFixture);
+        CatchError(optionsFixture)(targetFixture, { kind: 'class' } as ClassDecoratorContext);
       });
 
       afterAll(() => {
@@ -225,7 +225,7 @@ describe(CatchError, () => {
           .mocked(injectable)
           .mockReturnValueOnce(classDecoratorMock as ClassDecorator);
 
-        CatchError()(targetFixture);
+        CatchError()(targetFixture, { kind: 'class' } as ClassDecoratorContext);
       });
 
       afterAll(() => {

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { Container, type Inject, type Injectable } from '../../index.js';
+import { Container, type Injectable } from '../../index.js';
 
 const CHILD_CONTAINER_ITERATIONS: number = 50_000;
 /*
@@ -38,7 +38,7 @@ describe('Issue 1810', () => {
 
     class Service implements Injectable {
       constructor(
-        public readonly dependency: Inject<Dependency>,
+        public readonly dependency: Dependency,
       ) {}
     }
 
@@ -98,7 +98,7 @@ describe('Issue 1810', () => {
 
     class Service implements Injectable {
       constructor(
-        public readonly dependency: Inject<Dependency>,
+        public readonly dependency: Dependency,
       ) {}
     }
 

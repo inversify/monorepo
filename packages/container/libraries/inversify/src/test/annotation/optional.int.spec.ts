@@ -28,7 +28,7 @@ describe('optional', () => {
       public katana: Katana;
       public shuriken: Shuriken;
       constructor(
-        katana: Inject<Katana>,
+        katana: Katana,
         shuriken: InjectOptional<Shuriken>,
       ) {
         this.name = 'Ninja';
@@ -77,7 +77,7 @@ describe('optional', () => {
       public katana: Katana;
       public shuriken: Shuriken;
       constructor(
-        katana: Inject<Katana>,
+        katana: Katana,
         shuriken: InjectOptional<Shuriken> = {
           name: 'DefaultShuriken',
         },
