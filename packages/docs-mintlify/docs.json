@@ -16,7 +16,6 @@
         "versions": [
           {
             "version": "Next",
-            "default": true,
             "groups": [
               {
                 "group": "Home",
@@ -29,6 +28,30 @@
                 ]
               }
             ]
+          },
+          {
+            "version": "8.x",
+            "default": true,
+            "groups": [
+              {
+                "group": "Home",
+                "pages": ["index"]
+              },
+              {
+                "group": "Introduction",
+                "pages": [
+                  "versioned_docs/version-8.x/introduction/getting-started"
+                ]
+              }
+            ]
+          },
+          {
+            "version": "7.x",
+            "groups": []
+          },
+          {
+            "version": "6.x",
+            "groups": []
           }
         ]
       }
