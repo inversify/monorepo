@@ -1,3 +1,5 @@
+import { JSX } from 'react';
+
 interface FeatureItem {
   title: string;
   imgSrc: string;
@@ -25,7 +27,11 @@ const FeatureList: FeatureItem[] = [
   },
 ];
 
-function Feature({ title, imgSrc, description }: FeatureItem) {
+function Feature({
+  title,
+  imgSrc,
+  description,
+}: FeatureItem): JSX.Element {
   return (
     <div className="homepage-feature">
       <div className="homepage-feature-image">
@@ -39,7 +45,7 @@ function Feature({ title, imgSrc, description }: FeatureItem) {
   );
 }
 
-export default function HomepageFeatures() {
+export default function HomepageFeatures(): JSX.Element {
   return (
     <section className="homepage-features">
       <div className="homepage-features-container">

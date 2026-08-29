@@ -50,7 +50,8 @@ function collectPages(node, pages = []) {
 }
 
 function assertFavicon(docs) {
-  const favicon = typeof docs.favicon === 'string' ? docs.favicon : '/favicon.ico';
+  const favicon =
+    typeof docs.favicon === 'string' ? docs.favicon : '/favicon.ico';
   const relativePath = favicon.replace(/^\//, '');
   const faviconPath = join(root, relativePath);
   if (!existsSync(faviconPath)) {

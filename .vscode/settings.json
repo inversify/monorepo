@@ -15,5 +15,5 @@
     { "pattern": "./packages/json-schema/libraries/*", "!cwd": false },
     { "pattern": "./packages/open-api/libraries/*", "!cwd": false }
   ],
-  "editor.formatOnSave": false
+  "editor.formatOnSave": true
 }
