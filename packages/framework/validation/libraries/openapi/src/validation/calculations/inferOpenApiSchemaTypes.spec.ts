@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
 import { type JsonValue } from '@inversifyjs/json-schema-types';
 
+import { type JsonSchemaResolutionResult } from '../services/OpenApiResolver.js';
 import { inferOpenApiSchemaTypes } from './inferOpenApiSchemaTypes.js';
 
 describe(inferOpenApiSchemaTypes, () => {
@@ -17,7 +18,15 @@ describe(inferOpenApiSchemaTypes, () => {
       [
         {
           deepResolveReference: (): undefined => undefined,
-          resolveJsonSchema: vitest.fn(),
+          resolveJsonSchema: vitest
+            .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
+            .mockReturnValueOnce({
+              isRight: false,
+              value: {
+                reason: 'Failed to resolve resource',
+                resolutionContextStack: [],
+              },
+            }),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -81,16 +90,144 @@ describe(inferOpenApiSchemaTypes, () => {
       'a $ref schema',
       [
         {
-          deepResolveReference: vitest
-            .fn<(reference: string) => JsonValue | undefined>()
-            .mockReturnValueOnce({ type: 'object' }),
-          resolveJsonSchema: vitest.fn(),
+          deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest
+            .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
+            .mockReturnValueOnce({
+              isRight: true,
+              value: {
+                $dynamicRef: undefined,
+                $ref: {
+                  $dynamicRef: undefined,
+                  $ref: undefined,
+                  dynamicScopeEntries: [],
+                  value: { type: 'object' },
+                },
+              },
+            }),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
         { $ref: '#/components/schemas/Target' },
       ],
       new Set(['object']),
+    ],
+    [
+      'a $ref schema with a local type constraint',
+      [
+        {
+          deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest
+            .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
+            .mockReturnValueOnce({
+              isRight: true,
+              value: {
+                $dynamicRef: undefined,
+                $ref: {
+                  $dynamicRef: undefined,
+                  $ref: undefined,
+                  dynamicScopeEntries: [],
+                  value: { type: ['string', 'number'] },
+                },
+              },
+            }),
+          resolveOpenApiReference: vitest.fn(),
+          resolveReference: (): undefined => undefined,
+        },
+        { $ref: '#/components/schemas/Target', type: 'string' },
+      ],
+      new Set(['string']),
+    ],
+    [
+      'a $ref schema resolving to a chain of further $ref schemas',
+      [
+        {
+          deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest
+            .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
+            .mockReturnValueOnce({
+              isRight: true,
+              value: {
+                $dynamicRef: undefined,
+                $ref: {
+                  $dynamicRef: undefined,
+                  $ref: {
+                    $dynamicRef: undefined,
+                    $ref: undefined,
+                    dynamicScopeEntries: [],
+                    value: { type: 'string' },
+                  },
+                  dynamicScopeEntries: [],
+                  value: {
+                    $ref: '#/components/schemas/Base',
+                    type: ['string', 'number'],
+                  },
+                },
+              },
+            }),
+          resolveOpenApiReference: vitest.fn(),
+          resolveReference: (): undefined => undefined,
+        },
+        { $ref: '#/components/schemas/Target' },
+      ],
+      new Set(['string']),
+    ],
+    [
+      'a $dynamicRef schema',
+      [
+        {
+          deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest
+            .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
+            .mockReturnValueOnce({
+              isRight: true,
+              value: {
+                $dynamicRef: {
+                  $dynamicRef: undefined,
+                  $ref: undefined,
+                  dynamicScopeEntries: [],
+                  value: { type: 'string' },
+                },
+                $ref: undefined,
+              },
+            }),
+          resolveOpenApiReference: vitest.fn(),
+          resolveReference: (): undefined => undefined,
+        },
+        { $dynamicRef: '#meta' },
+      ],
+      new Set(['string']),
+    ],
+    [
+      'a schema with both $ref and $dynamicRef',
+      [
+        {
+          deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest
+            .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
+            .mockReturnValueOnce({
+              isRight: true,
+              value: {
+                $dynamicRef: {
+                  $dynamicRef: undefined,
+                  $ref: undefined,
+                  dynamicScopeEntries: [],
+                  value: { type: ['string', 'number'] },
+                },
+                $ref: {
+                  $dynamicRef: undefined,
+                  $ref: undefined,
+                  dynamicScopeEntries: [],
+                  value: { type: ['string', 'boolean'] },
+                },
+              },
+            }),
+          resolveOpenApiReference: vitest.fn(),
+          resolveReference: (): undefined => undefined,
+        },
+        { $dynamicRef: '#meta', $ref: '#/components/schemas/Target' },
+      ],
+      new Set(['string']),
     ],
     [
       'an allOf schema with overlapping types',
@@ -146,12 +283,21 @@ describe(inferOpenApiSchemaTypes, () => {
       'an allOf schema with $ref entries',
       [
         {
-          deepResolveReference: vitest
-            .fn<(reference: string) => JsonValue | undefined>()
+          deepResolveReference: (): undefined => undefined,
+          resolveJsonSchema: vitest
+            .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
             .mockReturnValueOnce({
-              type: ['string', 'number', 'boolean'],
+              isRight: true,
+              value: {
+                $dynamicRef: undefined,
+                $ref: {
+                  $dynamicRef: undefined,
+                  $ref: undefined,
+                  dynamicScopeEntries: [],
+                  value: { type: ['string', 'number', 'boolean'] },
+                },
+              },
             }),
-          resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
           resolveReference: (): undefined => undefined,
         },
@@ -323,18 +469,6 @@ describe(inferOpenApiSchemaTypes, () => {
 
   describe.each<[string, Parameters<typeof inferOpenApiSchemaTypes>]>([
     [
-      'a schema with $dynamicRef',
-      [
-        {
-          deepResolveReference: (): undefined => undefined,
-          resolveJsonSchema: vitest.fn(),
-          resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
-        },
-        { $dynamicRef: '#meta' },
-      ],
-    ],
-    [
       'a schema with oneOf',
       [
         {
@@ -357,6 +491,35 @@ describe(inferOpenApiSchemaTypes, () => {
         },
         { not: { type: 'string' } },
       ],
+    ],
+    [
+      'a $ref schema whose resolution chain cycles back to itself',
+      (() => {
+        const cyclicSchema: JsonValue = { $ref: '#/Self' };
+
+        return [
+          {
+            deepResolveReference: (): undefined => undefined,
+            resolveJsonSchema: vitest
+              .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
+              .mockReturnValueOnce({
+                isRight: true,
+                value: {
+                  $dynamicRef: undefined,
+                  $ref: {
+                    $dynamicRef: undefined,
+                    $ref: undefined,
+                    dynamicScopeEntries: [],
+                    value: cyclicSchema,
+                  },
+                },
+              }),
+            resolveOpenApiReference: vitest.fn(),
+            resolveReference: (): undefined => undefined,
+          },
+          cyclicSchema,
+        ] as Parameters<typeof inferOpenApiSchemaTypes>;
+      })(),
     ],
   ])(
     'having %s',

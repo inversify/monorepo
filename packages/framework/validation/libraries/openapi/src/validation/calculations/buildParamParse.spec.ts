@@ -80,9 +80,7 @@ describe(buildParamParse, () => {
 
     beforeAll(() => {
       openApiResolverFixture = {
-        deepResolveReference: vitest
-          .fn()
-          .mockReturnValueOnce({ type: 'integer' }),
+        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
         resolveReference: vitest.fn(),
