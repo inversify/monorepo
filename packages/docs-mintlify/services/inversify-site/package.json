@@ -62,7 +62,7 @@
     "start": "node ./scripts/ensure-generated.mjs && mintlify dev",
     "build": "node ./scripts/build.mjs",
     "export": "node ./scripts/ensure-generated.mjs && mintlify export",
-    "format": "prettier --write ./docs ./*.json ./*.ts ./mdx-components.tsx",
+    "format": "prettier --write ./docs ./*.json ./*.ts ./*.css ./*.mdx ./mdx-components.tsx ./src",
     "lint": "eslint ./docs",
     "prebuild": "node ./scripts/ensure-generated.mjs",
     "validate": "mintlify validate"

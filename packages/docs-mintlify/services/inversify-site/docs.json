@@ -18,6 +18,10 @@
             "version": "Next",
             "groups": [
               {
+                "group": "Home",
+                "pages": ["index"]
+              },
+              {
                 "group": "Get Started",
                 "pages": [
                   "docs/introduction/getting-started",
@@ -83,6 +87,10 @@
             "default": true,
             "groups": [
               {
+                "group": "Home",
+                "pages": ["index"]
+              },
+              {
                 "group": "Get Started",
                 "pages": [
                   "versioned_docs/version-8.x/introduction/getting-started",
@@ -146,6 +154,10 @@
             "version": "Version 7.X",
             "groups": [
               {
+                "group": "Home",
+                "pages": ["index"]
+              },
+              {
                 "group": "Get Started",
                 "pages": [
                   "versioned_docs/version-7.x/introduction/getting-started",
@@ -208,6 +220,10 @@
             "version": "Version 6.X",
             "groups": [
               {
+                "group": "Home",
+                "pages": ["index"]
+              },
+              {
                 "group": "Get Started",
                 "pages": [
                   "versioned_docs/version-6.x/introduction/getting-started",
@@ -248,6 +264,10 @@
             "version": "Next",
             "default": true,
             "groups": [
+              {
+                "group": "Home",
+                "pages": ["index"]
+              },
               {
                 "group": "快速入门",
                 "pages": [

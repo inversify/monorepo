@@ -1,0 +1,143 @@
+.homepage-hero {
+  background:
+    linear-gradient(0deg, rgba(0, 80, 132, 0.5), rgba(0, 80, 132, 0.5)),
+    url(/static/img/home-header.jpg);
+  background-size: cover;
+  background-position: center;
+  padding: 4rem 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  color: #ffffff;
+}
+
+@media screen and (max-width: 996px) {
+  .homepage-hero {
+    padding: 2rem 1rem;
+  }
+}
+
+.homepage-hero-container {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.homepage-hero-title {
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+.homepage-hero-subtitle {
+  margin: 1rem 0 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: #ffffff;
+}
+
+.homepage-hero-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.homepage-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #004099;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.homepage-hero-cta:hover {
+  background: #f0f4f8;
+  color: #004099;
+  text-decoration: none;
+}
+
+.homepage-features {
+  display: flex;
+  align-items: center;
+  padding: 2rem 1.5rem;
+  width: 100%;
+}
+
+.homepage-features-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media screen and (max-width: 996px) {
+  .homepage-features-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.homepage-feature {
+  text-align: center;
+}
+
+.homepage-feature-image {
+  display: flex;
+  justify-content: center;
+}
+
+.homepage-feature-img {
+  height: 200px;
+  width: 200px;
+  object-fit: contain;
+}
+
+.homepage-feature-title {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.homepage-feature-description {
+  margin: 0;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+:is(html[data-theme='dark'], .dark) .homepage-feature-description {
+  color: #a1a1aa;
+}
+
+.homepage-sponsors {
+  padding: 2rem 1.5rem 4rem;
+  text-align: center;
+}
+
+.homepage-sponsors-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.homepage-sponsors-subtitle {
+  margin: 0 0 2rem;
+  font-size: 1.1rem;
+  color: #6b7280;
+}
+
+:is(html[data-theme='dark'], .dark) .homepage-sponsors-subtitle {
+  color: #a1a1aa;
+}
+
+.homepage-sponsors-object {
+  max-width: 100%;
+}

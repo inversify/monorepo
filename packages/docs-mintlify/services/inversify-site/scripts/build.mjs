@@ -36,8 +36,9 @@ function loadDocsConfig() {
 
 function collectPages(node, pages = []) {
   if (typeof node === 'string') {
-    // Ignore language/version/group labels that are not page paths
-    if (node.includes('/')) {
+    // Page paths are either nested (contain "/") or root pages like "index".
+    // Ignore language/version/group labels that are not page paths.
+    if (node.includes('/') || node === 'index') {
       pages.push(node);
     }
     return pages;
