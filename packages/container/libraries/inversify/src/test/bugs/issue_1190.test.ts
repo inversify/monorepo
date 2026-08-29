@@ -1,47 +1,41 @@
+import { resolve } from 'rflct';
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable, named, optional } from '../../index.js';
+import {
+  Container,
+  type Inject,
+  type Injectable,
+  type InjectNamed,
+  type InjectOptional,
+} from '../../index.js';
 
 describe('Issue 1190', () => {
   it('should inject a katana as default weapon to ninja', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Weapon: 'Weapon',
-    };
-
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TAG = {
-      throwable: 'throwable',
-    };
-
     interface Weapon {
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
       }
     }
 
-    @injectable()
-    class Ninja {
+    class Ninja implements Injectable {
       public name: string;
       public katana: Katana;
       public shuriken: Shuriken;
       constructor(
-        @inject(TYPES.Weapon) @optional() katana: Weapon,
-        @inject(TYPES.Weapon) @named(TAG.throwable) shuriken: Weapon,
+        katana: InjectOptional<Weapon>,
+        shuriken: InjectNamed<Weapon, 'throwable'>,
       ) {
         this.name = 'Ninja';
         this.katana = katana;
@@ -51,12 +45,12 @@ describe('Issue 1190', () => {
 
     const container: Container = new Container();
 
-    container.bind<Weapon>(TYPES.Weapon).to(Katana).whenDefault();
-    container.bind<Weapon>(TYPES.Weapon).to(Shuriken).whenNamed(TAG.throwable);
+    container.bind(resolve<Weapon>()).to(Katana).whenDefault();
+    container.bind(resolve<Weapon>()).to(Shuriken).whenNamed('throwable');
 
-    container.bind<Ninja>('Ninja').to(Ninja);
+    container.bind(resolve<Ninja>()).to(Ninja);
 
-    const ninja: Ninja = container.get<Ninja>('Ninja');
+    const ninja: Ninja = container.get(resolve<Ninja>());
 
     expect(ninja.katana).toStrictEqual(new Katana());
   });

@@ -13,11 +13,8 @@ import {
   type PipeMetadata,
 } from '@inversifyjs/framework-core';
 import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
-import {
-  type Container,
-  type Newable,
-  type ServiceIdentifier,
-} from 'inversify';
+import { type Container, type Newable, type ServiceIdentifier } from 'inversify';
+import { resolve } from 'rflct';
 
 import { InversifyHttpAdapterError } from '../../error/models/InversifyHttpAdapterError.js';
 import { InversifyHttpAdapterErrorKind } from '../../error/models/InversifyHttpAdapterErrorKind.js';
@@ -42,7 +39,7 @@ import { type ControllerResponse } from '../models/ControllerResponse.js';
 import { type CustomNativeParameterDecoratorHandlerOptions } from '../models/CustomNativeParameterDecoratorHandlerOptions.js';
 import { type CustomParameterDecoratorHandlerOptions } from '../models/CustomParameterDecoratorHandlerOptions.js';
 import { type HttpAdapterOptions } from '../models/HttpAdapterOptions.js';
-import { httpApplicationServiceIdentifier } from '../models/httpApplicationServiceIdentifier.js';
+import type { HttpApplication } from '../models/httpApplicationServiceIdentifier.js';
 import { type HttpStatusCode } from '../models/HttpStatusCode.js';
 import { type MiddlewareHandler } from '../models/MiddlewareHandler.js';
 import { type RequestHandler } from '../models/RequestHandler.js';
@@ -264,16 +261,17 @@ export abstract class InversifyHttpAdapter<
   }
 
   #bindAdapterRelatedServices(): void {
-    if (this.#container.isBound(httpApplicationServiceIdentifier)) {
+    const httpAppId: ServiceIdentifier<TApp> =
+      resolve<HttpApplication>() as ServiceIdentifier<TApp>;
+
+    if (this.#container.isBound(httpAppId)) {
       throw new InversifyHttpAdapterError(
         InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
         'An HTTP server is already registered in the container',
       );
     }
 
-    this.#container
-      .bind<TApp>(httpApplicationServiceIdentifier)
-      .toConstantValue(this._app);
+    this.#container.bind<TApp>(httpAppId).toConstantValue(this._app);
   }
 
   #buildCallRouteHandler(

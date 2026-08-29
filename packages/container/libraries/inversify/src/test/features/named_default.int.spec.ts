@@ -1,22 +1,15 @@
+import { resolve } from 'rflct';
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable, named } from '../../index.js';
+import {
+  Container,
+  type Inject,
+  type Injectable,
+  type InjectNamed,
+} from '../../index.js';
 
 describe('Named default', () => {
   it('Should be able to inject a default to avoid ambiguous binding exceptions', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Warrior: 'Warrior',
-      Weapon: 'Weapon',
-    };
-
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TAG = {
-      chinese: 'chinese',
-      japanese: 'japanese',
-      throwable: 'throwable',
-    };
-
     interface Weapon {
       name: string;
     }
@@ -26,53 +19,49 @@ describe('Named default', () => {
       weapon: Weapon;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
       }
     }
 
-    @injectable()
-    class Samurai implements Warrior {
+    class Samurai implements Warrior, Injectable {
       public name: string;
       public weapon: Weapon;
-      constructor(@inject(TYPES.Weapon) weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         this.name = 'Samurai';
         this.weapon = weapon;
       }
     }
 
-    @injectable()
-    class Ninja implements Warrior {
+    class Ninja implements Warrior, Injectable {
       public name: string;
       public weapon: Weapon;
-      constructor(@inject(TYPES.Weapon) @named(TAG.throwable) weapon: Weapon) {
+      constructor(weapon: InjectNamed<Weapon, 'throwable'>) {
         this.name = 'Ninja';
         this.weapon = weapon;
       }
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>(TYPES.Warrior).to(Ninja).whenNamed(TAG.chinese);
-    container.bind<Warrior>(TYPES.Warrior).to(Samurai).whenNamed(TAG.japanese);
-    container.bind<Weapon>(TYPES.Weapon).to(Shuriken).whenNamed(TAG.throwable);
-    container.bind<Weapon>(TYPES.Weapon).to(Katana).whenDefault();
+    container.bind(resolve<Warrior>()).to(Ninja).whenNamed('chinese');
+    container.bind(resolve<Warrior>()).to(Samurai).whenNamed('japanese');
+    container.bind(resolve<Weapon>()).to(Shuriken).whenNamed('throwable');
+    container.bind(resolve<Weapon>()).to(Katana).whenDefault();
 
-    const ninja: Warrior = container.get<Warrior>(TYPES.Warrior, {
-      name: TAG.chinese,
+    const ninja: Warrior = container.get(resolve<Warrior>(), {
+      name: 'chinese',
     });
-    const samurai: Warrior = container.get<Warrior>(TYPES.Warrior, {
-      name: TAG.japanese,
+    const samurai: Warrior = container.get(resolve<Warrior>(), {
+      name: 'japanese',
     });
 
     expect(ninja.name).toBe('Ninja');
@@ -82,30 +71,18 @@ describe('Named default', () => {
   });
 
   it('Should be able to select a default to avoid ambiguous binding exceptions', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPES = {
-      Weapon: 'Weapon',
-    };
-
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TAG = {
-      throwable: 'throwable',
-    };
-
     interface Weapon {
       name: string;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Katana';
       }
     }
 
-    @injectable()
-    class Shuriken implements Weapon {
+    class Shuriken implements Weapon, Injectable {
       public name: string;
       constructor() {
         this.name = 'Shuriken';
@@ -113,16 +90,16 @@ describe('Named default', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Weapon>(TYPES.Weapon).to(Shuriken).whenNamed(TAG.throwable);
+    container.bind(resolve<Weapon>()).to(Shuriken).whenNamed('throwable');
     container
-      .bind<Weapon>(TYPES.Weapon)
+      .bind(resolve<Weapon>())
       .to(Katana)
       .inSingletonScope()
       .whenDefault();
 
-    const defaultWeapon: Weapon = container.get<Weapon>(TYPES.Weapon);
-    const throwableWeapon: Weapon = container.get<Weapon>(TYPES.Weapon, {
-      name: TAG.throwable,
+    const defaultWeapon: Weapon = container.get(resolve<Weapon>());
+    const throwableWeapon: Weapon = container.get(resolve<Weapon>(), {
+      name: 'throwable',
     });
 
     expect(defaultWeapon.name).toBe('Katana');

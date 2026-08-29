@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 vitest.mock(import('../calculations/buildSetHeaderMetadata.js'));
 
+import { decoratorFinalizersMetadataKey } from '@inversifyjs/framework-core';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { controllerMethodHeaderMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodHeaderMetadataReflectKey.js';
@@ -11,57 +12,68 @@ import { SetHeader } from './SetHeader.js';
 
 describe(SetHeader, () => {
   describe('when called', () => {
-    let controllerFixture: NewableFunction;
-    let controllerMethodKeyFixture: string | symbol;
-    let descriptorFixture: PropertyDescriptor;
+    let mockMetadata: Record<symbol, unknown>;
+    let contextFixture: ClassMethodDecoratorContext;
     let keyFixture: string;
     let valueFixture: string;
-    let callbackFixture: (
-      mapMetadata: Record<string, string>,
-    ) => Record<string, string>;
 
     beforeAll(() => {
-      controllerFixture = class Test {};
-      controllerMethodKeyFixture = 'testMethod';
-      descriptorFixture = {
-        value: 'value-descriptor-example',
-      };
       keyFixture = 'key-example';
       valueFixture = 'value-example';
-      callbackFixture = (
-        mapMetadata: Record<string, string>,
-      ): Record<string, string> => mapMetadata;
+      mockMetadata = {};
+      contextFixture = {
+        name: 'testMethod',
+        metadata: mockMetadata,
+      } as unknown as ClassMethodDecoratorContext;
 
-      vitest
-        .mocked(buildSetHeaderMetadata)
-        .mockReturnValueOnce(callbackFixture);
-
-      SetHeader(keyFixture, valueFixture)(
-        controllerFixture,
-        controllerMethodKeyFixture,
-        descriptorFixture,
-      );
+      SetHeader(keyFixture, valueFixture)(() => {}, contextFixture);
     });
 
     afterAll(() => {
       vitest.clearAllMocks();
     });
 
-    it('should call buildSetHeaderMetadata', () => {
-      expect(buildSetHeaderMetadata).toHaveBeenCalledExactlyOnceWith(
-        keyFixture,
-        valueFixture,
-      );
+    it('should store a finalizer in context.metadata', () => {
+      const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as unknown[];
+      expect(finalizers).toHaveLength(1);
     });
 
-    it('should call setReflectMetadata', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-        controllerFixture.constructor,
-        controllerMethodHeaderMetadataReflectKey,
-        expect.any(Function),
-        callbackFixture,
-        controllerMethodKeyFixture,
-      );
+    describe('when finalizer is called', () => {
+      let classFixture: NewableFunction;
+      let callbackFixture: (
+        mapMetadata: Record<string, string>,
+      ) => Record<string, string>;
+
+      beforeAll(() => {
+        classFixture = class Test {};
+        callbackFixture = (
+          mapMetadata: Record<string, string>,
+        ): Record<string, string> => mapMetadata;
+
+        vitest
+          .mocked(buildSetHeaderMetadata)
+          .mockReturnValueOnce(callbackFixture);
+
+        const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as Array<(cls: object) => void>;
+        for (const fn of finalizers) fn(classFixture);
+      });
+
+      it('should call buildSetHeaderMetadata', () => {
+        expect(buildSetHeaderMetadata).toHaveBeenCalledExactlyOnceWith(
+          keyFixture,
+          valueFixture,
+        );
+      });
+
+      it('should call updateOwnReflectMetadata', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+          classFixture,
+          controllerMethodHeaderMetadataReflectKey,
+          expect.any(Function),
+          callbackFixture,
+          'testMethod',
+        );
+      });
     });
   });
 });

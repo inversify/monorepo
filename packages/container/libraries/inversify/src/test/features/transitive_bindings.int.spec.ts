@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, injectable } from '../../index.js';
+import { Container, type Injectable } from '../../index.js';
 
 describe('Transitive bindings', () => {
   it('Should be able to bind to a service', () => {
-    @injectable()
-    class MySqlDatabaseTransactionLog {
+    class MySqlDatabaseTransactionLog implements Injectable {
       public time: number;
       public name: string;
       constructor() {
@@ -14,14 +13,12 @@ describe('Transitive bindings', () => {
       }
     }
 
-    @injectable()
-    class DatabaseTransactionLog {
+    class DatabaseTransactionLog implements Injectable {
       public time!: number;
       public name!: string;
     }
 
-    @injectable()
-    class TransactionLog {
+    class TransactionLog implements Injectable {
       public time!: number;
       public name!: string;
     }

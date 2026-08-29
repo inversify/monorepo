@@ -1,46 +1,42 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable } from '../../index.js';
+import { Container, type Injectable } from '../../index.js';
 
 describe('Node', () => {
   it('Should throw if circular dependencies found', () => {
-    @injectable()
-    class A {
+    class A implements Injectable {
       public b: unknown;
       public c: unknown;
-      constructor(@inject('B') b: unknown, @inject('C') c: unknown) {
+      constructor(b: B, c: C) {
         this.b = b;
         this.c = c;
       }
     }
 
-    @injectable()
-    class B {}
+    class B implements Injectable {}
 
-    @injectable()
-    class C {
+    class C implements Injectable {
       public d: unknown;
-      constructor(@inject('D') d: unknown) {
+      constructor(d: D) {
         this.d = d;
       }
     }
 
-    @injectable()
-    class D {
+    class D implements Injectable {
       public a: unknown;
-      constructor(@inject('A') a: unknown) {
+      constructor(a: A) {
         this.a = a;
       }
     }
 
     const container: Container = new Container();
-    container.bind<A>('A').to(A);
-    container.bind<B>('B').to(B);
-    container.bind<C>('C').to(C);
-    container.bind<D>('D').to(D);
+    container.bind(A).toSelf();
+    container.bind(B).toSelf();
+    container.bind(C).toSelf();
+    container.bind(D).toSelf();
 
     function willThrow() {
-      const a: A = container.get('A');
+      const a: A = container.get(A);
       return a;
     }
 

@@ -11,6 +11,7 @@ import { type ServiceIdentifier } from 'inversify';
 
 import { classGuardMetadataReflectKey } from '../../reflectMetadata/data/classGuardMetadataReflectKey.js';
 import { classMethodGuardMetadataReflectKey } from '../../reflectMetadata/data/classMethodGuardMetadataReflectKey.js';
+import { decoratorFinalizersMetadataKey } from '../../reflectMetadata/data/decoratorFinalizersMetadataKey.js';
 import { type Guard } from '../models/Guard.js';
 import { UseGuard } from './UseGuard.js';
 
@@ -31,7 +32,7 @@ describe(UseGuard, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseGuard(guardServiceIdentifierFixture)(targetFixture);
+        UseGuard(guardServiceIdentifierFixture)(targetFixture, { kind: 'class' } as DecoratorContext);
       });
 
       afterAll(() => {
@@ -50,7 +51,6 @@ describe(UseGuard, () => {
           classGuardMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,
-          undefined,
         );
       });
     });
@@ -61,16 +61,12 @@ describe(UseGuard, () => {
       let targetFixture: NewableFunction;
       let methodKeyFixture: string | symbol;
       let guardServiceIdentifierFixture: ServiceIdentifier<Guard>;
-      let descriptorFixture: PropertyDescriptor;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
         targetFixture = class TestController {};
         methodKeyFixture = 'testMethod';
         guardServiceIdentifierFixture = Symbol();
-        descriptorFixture = {
-          value: 'value-descriptor-example',
-        };
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
 
@@ -78,11 +74,16 @@ describe(UseGuard, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseGuard(guardServiceIdentifierFixture)(
-          targetFixture,
-          methodKeyFixture,
-          descriptorFixture,
-        );
+        const mockMetadata: Record<symbol, unknown> = {};
+
+        UseGuard(guardServiceIdentifierFixture)(vitest.fn(), {
+          kind: 'method',
+          name: methodKeyFixture,
+          metadata: mockMetadata,
+        } as unknown as DecoratorContext);
+
+        const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as Array<(cls: object) => void>;
+        for (const fn of finalizers) fn(targetFixture);
       });
 
       it('should call buildArrayMetadataWithArray()', () => {
@@ -93,7 +94,7 @@ describe(UseGuard, () => {
 
       it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-          targetFixture.constructor,
+          targetFixture,
           classMethodGuardMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,

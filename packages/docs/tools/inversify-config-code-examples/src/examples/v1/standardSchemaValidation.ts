@@ -5,10 +5,10 @@
 import {
   ConfigContainerModule,
   type ConfigService,
-  configServiceIdentifier,
   object,
 } from '@inversifyjs/config';
 import { Container } from 'inversify';
+import { resolve } from 'rflct';
 import { z } from 'zod';
 
 const appConfigSchema = z.object({
@@ -33,6 +33,6 @@ export async function bootstrap(): Promise<AppConfig> {
     }),
   );
 
-  return container.get<ConfigService<AppConfig>>(configServiceIdentifier).get();
+  return container.get<ConfigService<AppConfig>>(resolve<ConfigService>()).get();
 }
 // End-example

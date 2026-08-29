@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it, vitest } from 'vitest';
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 vitest.mock(import('../actions/setRouteValueMetadata.js'));
 
+import { decoratorFinalizersMetadataKey } from '@inversifyjs/framework-core';
 import { updateOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { routeValueMetadataReflectKey } from '../../reflectMetadata/data/routeValueMetadataReflectKey.js';
@@ -11,33 +12,23 @@ import { routeValueMetadata } from './routeValueMetadata.js';
 
 describe(routeValueMetadata, () => {
   describe('when called', () => {
-    let controllerFixture: object;
-    let controllerMethodKeyFixture: string | symbol;
-    let descriptorFixture: PropertyDescriptor;
+    let mockMetadata: Record<symbol, unknown>;
+    let contextFixture: ClassMethodDecoratorContext;
     let metadataKeyFixture: string;
     let valueFixture: string;
-    let setRouteValueMetadataResultFixture: (
-      metadata: Map<string | symbol, Map<string | symbol, unknown>>,
-    ) => Map<string | symbol, Map<string | symbol, unknown>>;
 
     beforeAll(() => {
-      controllerFixture = class Test {};
-      controllerMethodKeyFixture = 'testMethod';
-      descriptorFixture = {
-        value: 'value-descriptor-example',
-      };
       metadataKeyFixture = 'key-example';
       valueFixture = 'value-example';
-      setRouteValueMetadataResultFixture = vitest.fn();
-
-      vitest
-        .mocked(setRouteValueMetadata)
-        .mockReturnValueOnce(setRouteValueMetadataResultFixture);
+      mockMetadata = {};
+      contextFixture = {
+        name: 'testMethod',
+        metadata: mockMetadata,
+      } as unknown as ClassMethodDecoratorContext;
 
       routeValueMetadata(metadataKeyFixture, valueFixture)(
-        controllerFixture,
-        controllerMethodKeyFixture,
-        descriptorFixture,
+        () => {},
+        contextFixture,
       );
     });
 
@@ -45,21 +36,45 @@ describe(routeValueMetadata, () => {
       vitest.clearAllMocks();
     });
 
-    it('should call setRouteValueMetadata', () => {
-      expect(setRouteValueMetadata).toHaveBeenCalledExactlyOnceWith(
-        controllerMethodKeyFixture,
-        metadataKeyFixture,
-        valueFixture,
-      );
+    it('should store a finalizer in context.metadata', () => {
+      const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as unknown[];
+      expect(finalizers).toHaveLength(1);
     });
 
-    it('should call updateOwnReflectMetadata', () => {
-      expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-        controllerFixture.constructor,
-        routeValueMetadataReflectKey,
-        expect.any(Function),
-        setRouteValueMetadataResultFixture,
-      );
+    describe('when finalizer is called', () => {
+      let classFixture: NewableFunction;
+      let setRouteValueMetadataResultFixture: (
+        metadata: Map<string | symbol, Map<string | symbol, unknown>>,
+      ) => Map<string | symbol, Map<string | symbol, unknown>>;
+
+      beforeAll(() => {
+        classFixture = class Test {};
+        setRouteValueMetadataResultFixture = vitest.fn();
+
+        vitest
+          .mocked(setRouteValueMetadata)
+          .mockReturnValueOnce(setRouteValueMetadataResultFixture);
+
+        const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as Array<(cls: object) => void>;
+        for (const fn of finalizers) fn(classFixture);
+      });
+
+      it('should call setRouteValueMetadata', () => {
+        expect(setRouteValueMetadata).toHaveBeenCalledExactlyOnceWith(
+          'testMethod',
+          metadataKeyFixture,
+          valueFixture,
+        );
+      });
+
+      it('should call updateOwnReflectMetadata', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+          classFixture,
+          routeValueMetadataReflectKey,
+          expect.any(Function),
+          setRouteValueMetadataResultFixture,
+        );
+      });
     });
   });
 });

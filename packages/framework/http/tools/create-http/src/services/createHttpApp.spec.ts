@@ -49,8 +49,8 @@ describe(createHttpApp, () => {
         );
 
         expect(tsconfigContents).toContain('"outDir": "./dist"');
-        expect(tsconfigContents).toContain('"emitDecoratorMetadata": true');
-        expect(tsconfigContents).toContain('"experimentalDecorators": true');
+        expect(tsconfigContents).toContain('"emitDecoratorMetadata": false');
+        expect(tsconfigContents).toContain('"experimentalDecorators": false');
         expect(tsconfigContents).toContain('"types": ["node"]');
 
         const eslintConfigContents: string = await fs.readFile(

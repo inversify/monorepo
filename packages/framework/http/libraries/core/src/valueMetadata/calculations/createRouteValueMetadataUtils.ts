@@ -5,12 +5,12 @@ import { routeValueMetadataSymbol } from '../../http/models/routeValueMetadataSy
 export function createRouteValueMetadataUtils<TRequest, T>(
   key: string | symbol,
 ): [
-  decorator: (value: T) => MethodDecorator,
+  decorator: (value: T) => (value: Function, context: ClassMethodDecoratorContext) => void,
   getter: (request: TRequest) => T | undefined,
 ] {
-  const decorator: (value: T) => MethodDecorator = (
+  const decorator: (value: T) => (value: Function, context: ClassMethodDecoratorContext) => void = (
     value: T,
-  ): MethodDecorator => routeValueMetadata(key, value);
+  ): ((value: Function, context: ClassMethodDecoratorContext) => void) => routeValueMetadata(key, value);
 
   const getter: (request: TRequest) => T | undefined = (
     request: TRequest,

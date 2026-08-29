@@ -7,7 +7,6 @@ import {
   type Newable,
   type ServiceIdentifier,
 } from '@inversifyjs/common';
-import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { type BindingActivation } from '../../binding/models/BindingActivation.js';
 import { bindingScopeValues } from '../../binding/models/BindingScope.js';
@@ -24,9 +23,7 @@ import { BindingService } from '../../binding/services/BindingService.js';
 import { type Writable } from '../../common/models/Writable.js';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
-import { getDefaultClassMetadata } from '../../metadata/calculations/getDefaultClassMetadata.js';
-import { inject } from '../../metadata/decorators/inject.js';
-import { optional } from '../../metadata/decorators/optional.js';
+import { getClassMetadata } from '../../metadata/calculations/getClassMetadata.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
 import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
 import { plan } from '../../planning/actions/plan.js';
@@ -34,7 +31,6 @@ import { type PlanParams } from '../../planning/models/PlanParams.js';
 import { type PlanParamsConstraint } from '../../planning/models/PlanParamsConstraint.js';
 import { type PlanResult } from '../../planning/models/PlanResult.js';
 import { PlanResultCacheService } from '../../planning/services/PlanResultCacheService.js';
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
 import { type GetOptions } from '../models/GetOptions.js';
 import { type OptionalGetOptions } from '../models/OptionalGetOptions.js';
 import { type ResolutionContext } from '../models/ResolutionContext.js';
@@ -56,20 +52,32 @@ enum ServiceIds {
 }
 
 class Foo {
-  @inject(ServiceIds.dynamicValue)
   public readonly property!: symbol;
 
   constructor(
-    @inject(ServiceIds.constantValue)
     _param: symbol,
   ) {}
 }
 
+Reflect.defineMetadata('design:paramtypes', [
+  { type: ServiceIds.constantValue, metadata: {} },
+], Foo);
+
+Reflect.defineMetadata('design:propertytype', [
+  { type: ServiceIds.dynamicValue, metadata: {} },
+], Foo.prototype, 'property');
+
+Reflect.defineMetadata('design:properties', ['property'], Foo);
+
 class Priest {
-  @inject(ServiceIds.nonExistent)
-  @optional()
   public relic: unknown = Symbol.for('relic');
 }
+
+Reflect.defineMetadata('design:propertytype', [
+  { type: ServiceIds.nonExistent, metadata: { optional: true } },
+], Priest.prototype, 'relic');
+
+Reflect.defineMetadata('design:properties', ['relic'], Priest);
 
 describe(resolve, () => {
   let activatedResolvedResult: unknown;
@@ -257,9 +265,7 @@ describe(resolve, () => {
     bindingService.set(serviceRedirectionBinding);
     bindingService.set(serviceRedirectionToNonExistentBinding);
 
-    getClassMetadataFunction = (type: Newable): ClassMetadata =>
-      getOwnReflectMetadata(type, classMetadataReflectKey) ??
-      getDefaultClassMetadata();
+    getClassMetadataFunction = getClassMetadata;
 
     planResultCacheService = new PlanResultCacheService(true);
 

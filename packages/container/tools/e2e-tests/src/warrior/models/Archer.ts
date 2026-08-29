@@ -1,13 +1,12 @@
-import { inject, injectable, named, tagged } from '@inversifyjs/core';
+import { type InjectNamed, type Injectable } from '@inversifyjs/core';
 
-import { Bow } from './Bow';
+import { type Weapon } from './Weapon';
 
-@injectable()
-export class Archer {
+export class Archer implements Injectable {
+  public bow: Weapon;
   constructor(
-    @inject('weapon')
-    @named('bow')
-    @tagged('kind', 'bow')
-    public bow: Bow,
-  ) {}
+    bow: InjectNamed<Weapon, 'bow'>,
+  ) {
+    this.bow = bow;
+  }
 }

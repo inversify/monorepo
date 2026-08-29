@@ -5,11 +5,11 @@ import {
   type MapToResolvedValueInjectOptions,
   type Newable,
 } from 'inversify';
+import { resolve } from 'rflct';
 
 import { buildBetterAuthMiddleware } from '../calculations/buildBetterAuthMiddleware.js';
 import { type BetterAuth } from '../models/BetterAuth.js';
-import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier.js';
-import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier.js';
+import type { BetterAuthMiddleware } from '../models/betterAuthMiddlewareServiceIdentifier.js';
 
 export abstract class BaseBetterAuthContainerModule<
   TOptions extends BetterAuthOptions,
@@ -44,16 +44,16 @@ export abstract class BaseBetterAuthContainerModule<
       ((controllerClass: Newable<unknown>) => Newable<unknown>) | undefined,
   ): void {
     containerModuleOptions
-      .bind(betterAuthServiceIdentifier)
+      .bind(resolve<BetterAuth>())
       .toResolvedValue(factory, params)
       .inSingletonScope();
 
     containerModuleOptions
-      .bind(betterAuthMiddlewareServiceIdentifier)
+      .bind(resolve<BetterAuthMiddleware>())
       .toResolvedValue(
         (betterAuth: BetterAuth<TOptions>) =>
           new (buildBetterAuthMiddleware(betterAuth))(),
-        [betterAuthServiceIdentifier],
+        [resolve<BetterAuth>()],
       )
       .inSingletonScope();
 

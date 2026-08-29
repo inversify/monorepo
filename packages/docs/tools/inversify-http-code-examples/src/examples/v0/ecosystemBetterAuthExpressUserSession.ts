@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Shift-line-spaces-2
 import {
-  betterAuthMiddlewareServiceIdentifier,
+  type BetterAuthMiddleware,
   ExpressUserSession,
   UserSession,
 } from '@inversifyjs/http-better-auth';
 import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
+import { resolve } from 'rflct';
 import { BetterAuthOptions } from 'better-auth';
 
 export async function run(): Promise<void> {
   // Begin-example
   @Controller('/api')
   class UserController {
-    @ApplyMiddleware(betterAuthMiddlewareServiceIdentifier)
+    @ApplyMiddleware(resolve<BetterAuthMiddleware>())
     @Get('/profile')
     public async getProfile(
       @ExpressUserSession() session: UserSession<BetterAuthOptions>,

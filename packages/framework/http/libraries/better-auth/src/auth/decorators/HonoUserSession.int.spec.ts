@@ -12,21 +12,24 @@ import { Container } from 'inversify';
 
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
 import { type Server } from '../../server/models/Server.js';
+import { resolve } from 'rflct';
+
 import { createDirectory } from '../../test/actions/createDirectory.js';
 import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations.js';
 import { removeFileIfExists } from '../../test/actions/removeFileIfExists.js';
 import { type BetterAuth } from '../models/BetterAuth.js';
-import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier.js';
+import type { BetterAuthMiddleware } from '../models/betterAuthMiddlewareServiceIdentifier.js';
 import { type UserSession } from '../models/UserSession.js';
 import { BetterAuthHonoContainerModule } from '../services/BetterAuthHonoContainerModule.js';
 import { HonoUserSession } from './HonoUserSession.js';
 
 @Controller('/api')
 class SessionTestController {
-  @ApplyMiddleware(betterAuthMiddlewareServiceIdentifier)
+  @ApplyMiddleware(resolve<BetterAuthMiddleware>())
   @Get('/session')
+  @HonoUserSession('session')
   public async getSession(
-    @HonoUserSession() session: UserSession<BetterAuthOptions>,
+    session: UserSession<BetterAuthOptions>,
   ): Promise<UserSession<BetterAuthOptions>> {
     return session;
   }

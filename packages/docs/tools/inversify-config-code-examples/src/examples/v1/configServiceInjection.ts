@@ -1,9 +1,7 @@
 // Begin-example
-import {
-  type ConfigService,
-  configServiceIdentifier,
-} from '@inversifyjs/config';
+import { type ConfigService } from '@inversifyjs/config';
 import { inject, injectable } from 'inversify';
+import { resolve } from 'rflct';
 
 interface AppConfig {
   PORT: number;
@@ -14,7 +12,7 @@ export class App {
   readonly #configService: ConfigService<AppConfig>;
 
   constructor(
-    @inject(configServiceIdentifier)
+    @inject(resolve<ConfigService>())
     configService: ConfigService<AppConfig>,
   ) {
     this.#configService = configService;

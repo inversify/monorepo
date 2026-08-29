@@ -11,8 +11,8 @@ import { type CatchErrorOptions } from '../models/CatchErrorOptions.js';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function CatchError(
   errorOrCatchErrorOptions?: Newable<Error> | CatchErrorOptions,
-): ClassDecorator {
-  return (target: NewableFunction): void => {
+): (target: Function, context: ClassDecoratorContext) => void {
+  return (target: NewableFunction, _context?: ClassDecoratorContext): void => {
     let error: Newable<Error> | null = null;
     let scope: BindingScope | undefined = undefined;
 

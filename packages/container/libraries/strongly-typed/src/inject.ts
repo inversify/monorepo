@@ -1,30 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { BindingMap } from './container.js';
 
-type TypedDecorator<T> = <TTarget, TKey, TIndex>(
-  target: TTarget extends new (...args: any[]) => any
-    ? TTarget
-    : TKey extends keyof TTarget
-      ? Record<TKey, T>
-      : never,
-  key: TKey extends keyof TTarget ? TKey : PropertyKey | undefined,
-  indexOrPropertyDescriptor?: TTarget extends new (...args: infer P) => any
-    ? TIndex extends keyof P
-      ? P[TIndex] extends T
-        ? TIndex
-        : never
-      : never
-    : unknown,
-) => void;
+// rflct type aliases — use as type annotations on properties and constructor params.
+// rflct serializes TKey as the service identifier; TypeScript sees Awaited<TMap[TKey]>.
+export type TypedInject<
+  TKey extends keyof TMap,
+  TMap extends BindingMap = BindingMap,
+> = Awaited<TMap[TKey]>;
 
-export type TypedInject<TBindingMap extends BindingMap> = <
-  TKey extends keyof TBindingMap,
->(
-  identifier: TKey,
-) => TypedDecorator<Awaited<TBindingMap[TKey]>>;
-
-export type TypedMultiInject<TBindingMap extends BindingMap> = <
-  TKey extends keyof TBindingMap,
->(
-  identifier: TKey,
-) => TypedDecorator<Array<Awaited<TBindingMap[TKey]>>>;
+export type TypedMultiInject<
+  TKey extends keyof TMap,
+  TMap extends BindingMap = BindingMap,
+> = Array<Awaited<TMap[TKey]>>;

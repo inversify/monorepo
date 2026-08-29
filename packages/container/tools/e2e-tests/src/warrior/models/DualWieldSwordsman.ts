@@ -1,11 +1,15 @@
-import { injectable } from '@inversifyjs/core';
+import { type Injectable } from '@inversifyjs/core';
 
 import { Sword } from './Sword';
 
-@injectable()
-export class DualWieldSwordsman {
+export class DualWieldSwordsman implements Injectable {
+  public leftSword: Sword;
+  public rightSword: Sword;
   constructor(
-    public leftSword: Sword,
-    public rightSword: Sword,
-  ) {}
+    leftSword: Sword,
+    rightSword: Sword,
+  ) {
+    this.leftSword = leftSword;
+    this.rightSword = rightSword;
+  }
 }

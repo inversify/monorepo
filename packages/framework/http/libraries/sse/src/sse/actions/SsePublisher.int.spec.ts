@@ -32,8 +32,8 @@ describe(SsePublisher, () => {
       @Controller('/messages')
       class MessagesController {
         @Get()
+        @SsePublisher('ssePublisher')
         public getMessages(
-          @SsePublisher()
           ssePublisher: (sseOptions: SsePublisherOptions) => unknown,
         ): unknown {
           return ssePublisher({
@@ -143,8 +143,8 @@ describe(SsePublisher, () => {
       @Controller('/messages')
       class MessagesController {
         @Get()
+        @SsePublisher('ssePublisher')
         public getMessages(
-          @SsePublisher()
           ssePublisher: (sseOptions: SsePublisherOptions) => unknown,
         ): unknown {
           return ssePublisher({
@@ -255,8 +255,8 @@ describe(SsePublisher, () => {
       @Controller('/messages')
       class MessagesController {
         @Get()
+        @SsePublisher('ssePublisher')
         public getMessages(
-          @SsePublisher()
           ssePublisher: (sseOptions: SsePublisherOptions) => unknown,
         ): unknown {
           const sseStream: SseStream = new SseStream();
@@ -374,8 +374,8 @@ describe(SsePublisher, () => {
       @Controller('/messages')
       class MessagesController {
         @Get()
+        @SsePublisher('ssePublisher')
         public getMessages(
-          @SsePublisher()
           ssePublisher: (sseOptions: SsePublisherOptions) => unknown,
         ): unknown {
           const sseStream: SseStream = new SseStream();

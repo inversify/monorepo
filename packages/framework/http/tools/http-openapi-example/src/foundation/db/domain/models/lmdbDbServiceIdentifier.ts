@@ -1,1 +1,1 @@
-export const lmdbDbServiceIdentifier: symbol = Symbol.for('lmdbDb');
+export type LmdbDb = 'LmdbDb';

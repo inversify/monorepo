@@ -1,16 +1,16 @@
 import {
   All,
   Controller,
-  Request as InversifyRequest,
-  Response as InversifyResponse,
+  type RequestParam,
+  type ResponseParam,
 } from '@inversifyjs/http-core';
 import { type BetterAuthOptions } from 'better-auth';
-import { inject, type Newable } from 'inversify';
+import { type Newable } from 'inversify';
+import { type Reflect as Inject, type WithReflectMetadata as Injectable } from 'rflct';
 import status from 'statuses';
 import type { HttpRequest, HttpResponse } from 'uWebSockets.js';
 
 import { type BetterAuth } from '../models/BetterAuth.js';
-import { betterAuthServiceIdentifier } from '../models/betterAuthServiceIdentifier.js';
 
 export function buildBetterAuthUwebSocketsController(
   basePath: string,
@@ -20,20 +20,21 @@ export function buildBetterAuthUwebSocketsController(
     path: basePath,
     serviceIdentifier,
   })
-  class BetterAuthUwebSocketsController<TOptions extends BetterAuthOptions> {
+  class BetterAuthUwebSocketsController<TOptions extends BetterAuthOptions>
+    implements Injectable
+  {
     readonly #auth: BetterAuth<TOptions>;
 
     constructor(
-      @inject(betterAuthServiceIdentifier)
-      auth: BetterAuth<TOptions>,
+      auth: Inject<BetterAuth<TOptions>>,
     ) {
       this.#auth = auth;
     }
 
     @All('/*')
     public async handle(
-      @InversifyRequest() request: HttpRequest,
-      @InversifyResponse() response: HttpResponse,
+      request: RequestParam<HttpRequest>,
+      response: ResponseParam<HttpResponse>,
     ): Promise<void> {
       const handlerRequest: Request = await this.#buildRequest(
         request,

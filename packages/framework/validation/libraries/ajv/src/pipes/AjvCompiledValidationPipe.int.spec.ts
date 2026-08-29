@@ -10,7 +10,7 @@ import {
 } from '@inversifyjs/framework-core';
 import {
   BadRequestHttpResponse,
-  Body,
+  type BodyParam,
   Controller,
   Post,
 } from '@inversifyjs/http-core';
@@ -109,17 +109,18 @@ describe(AjvCompiledValidationPipe, () => {
     @Controller('/messages')
     class MessageController {
       @Post()
-      public async createMessage(
-        @Body()
-        @ValidateAjvSchema({
+      @ValidateAjvSchema({
+        message: [{
           $id: 'https://example.com/schemas/message.json',
           $schema: 'https://json-schema.org/draft/2020-12/schema',
           additionalProperties: false,
           properties: { content: { maxLength: 100, type: 'string' } },
           required: ['content'],
           type: 'object',
-        })
-        message: Message,
+        }],
+      })
+      public async createMessage(
+        message: BodyParam<Message>,
       ): Promise<Message> {
         return message;
       }

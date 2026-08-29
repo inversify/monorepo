@@ -34,12 +34,7 @@ export class ClassValidationPipe implements Pipe {
     metadata: PipeMetadata,
   ): Promise<unknown> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    const inputType: Function | undefined = getOwnReflectMetadata<Function[]>(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      metadata.targetClass.prototype,
-      'design:paramtypes',
-      metadata.methodName,
-    )?.[metadata.parameterIndex];
+    const inputType: Function | undefined = this.#resolveParamType(metadata);
 
     if (input == undefined) {
       if (ALLOW_NULLISH_VALUE_TYPES_LIST.includes(inputType)) {
@@ -90,5 +85,27 @@ export class ClassValidationPipe implements Pipe {
     }
 
     return instance;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  #resolveParamType(metadata: PipeMetadata): Function | undefined {
+    // rflct-style metadata: array of { type, metadata } entries
+    const rflctParams: { type: unknown }[] | undefined =
+      getOwnReflectMetadata(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        metadata.targetClass.prototype,
+        'design:paramtypes',
+        metadata.methodName,
+      );
+
+    const entry: { type: unknown } | undefined =
+      rflctParams?.[metadata.parameterIndex];
+
+    if (entry !== undefined && typeof entry === 'object' && 'type' in entry) {
+      return entry.type as Function | undefined;
+    }
+
+    // Legacy tsc emitDecoratorMetadata format: plain Function[]
+    return entry as Function | undefined;
   }
 }

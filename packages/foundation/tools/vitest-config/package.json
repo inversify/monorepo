@@ -5,6 +5,7 @@
   },
   "description": "Common vitest config for inversify monorepo packages",
   "dependencies": {
+    "@swc/core": "^1.16.1",
     "vitest": "4.1.11"
   },
   "devDependencies": {

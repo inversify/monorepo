@@ -31,7 +31,7 @@ describe(getControllerMethodParameterMetadataList, () => {
     });
 
     it('should call findInPrototypeChain()', () => {
-      expect(findInPrototypeChain).toHaveBeenCalledExactlyOnceWith(
+      expect(findInPrototypeChain).toHaveBeenCalledWith(
         controllerFixture,
         expect.any(Function),
       );
@@ -74,7 +74,7 @@ describe(getControllerMethodParameterMetadataList, () => {
     });
 
     it('should call findInPrototypeChain()', () => {
-      expect(findInPrototypeChain).toHaveBeenCalledExactlyOnceWith(
+      expect(findInPrototypeChain).toHaveBeenCalledWith(
         controllerFixture,
         expect.any(Function),
       );

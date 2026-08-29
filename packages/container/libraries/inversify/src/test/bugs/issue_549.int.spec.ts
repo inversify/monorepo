@@ -8,54 +8,31 @@ import {
 
 import {
   Container,
-  inject,
-  injectable,
-  ResolutionContext,
-  ServiceIdentifier,
+  type Injectable,
 } from '../../index.js';
 
 describe('Issue 549', () => {
   describe('having a circular dependency', () => {
-    let firstServiceIdentifier: ServiceIdentifier;
-    let secondServiceIdentifier: ServiceIdentifier;
+    class A implements Injectable {
+      public b: unknown;
+      constructor(b: B) {
+        this.b = b;
+      }
+    }
 
-    let firstClassServiceIdentifier: ServiceIdentifier;
+    class B implements Injectable {
+      public a: unknown;
+      constructor(a: A) {
+        this.a = a;
+      }
+    }
 
     let container: Container;
 
     beforeAll(() => {
-      firstServiceIdentifier = Symbol('FirstService');
-      secondServiceIdentifier = Symbol('SecondService');
-
-      @injectable()
-      class A {
-        public b: unknown;
-        constructor(@inject(secondServiceIdentifier) b: unknown) {
-          this.b = b;
-        }
-      }
-
-      @injectable()
-      class B {
-        public a: unknown;
-        constructor(@inject(firstServiceIdentifier) a: unknown) {
-          this.a = a;
-        }
-      }
-
-      firstClassServiceIdentifier = A;
-
       container = new Container({ defaultScope: bindingScopeValues.Singleton });
       container.bind(A).toSelf();
       container.bind(B).toSelf();
-
-      container
-        .bind(firstServiceIdentifier)
-        .toDynamicValue((ctx: ResolutionContext) => ctx.get(A));
-
-      container
-        .bind(secondServiceIdentifier)
-        .toDynamicValue((ctx: ResolutionContext) => ctx.get(B));
     });
 
     describe('when called', () => {
@@ -63,7 +40,7 @@ describe('Issue 549', () => {
 
       beforeAll(() => {
         try {
-          container.get(firstClassServiceIdentifier);
+          container.get(A);
         } catch (error: unknown) {
           result = error;
         }

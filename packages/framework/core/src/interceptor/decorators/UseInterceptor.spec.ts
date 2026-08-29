@@ -11,6 +11,7 @@ import { type ServiceIdentifier } from 'inversify';
 
 import { classInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classInterceptorMetadataReflectKey.js';
 import { classMethodInterceptorMetadataReflectKey } from '../../reflectMetadata/data/classMethodInterceptorMetadataReflectKey.js';
+import { decoratorFinalizersMetadataKey } from '../../reflectMetadata/data/decoratorFinalizersMetadataKey.js';
 import { type Interceptor } from '../models/Interceptor.js';
 import { UseInterceptor } from './UseInterceptor.js';
 
@@ -31,7 +32,7 @@ describe(UseInterceptor, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseInterceptor(interceptorServiceIdentifier)(targetFixture);
+        UseInterceptor(interceptorServiceIdentifier)(targetFixture, { kind: 'class' } as DecoratorContext);
       });
 
       afterAll(() => {
@@ -50,7 +51,6 @@ describe(UseInterceptor, () => {
           classInterceptorMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,
-          undefined,
         );
       });
     });
@@ -61,16 +61,12 @@ describe(UseInterceptor, () => {
       let targetFixture: NewableFunction;
       let methodKeyFixture: string | symbol;
       let interceptorServiceIdentifier: ServiceIdentifier<Interceptor>;
-      let descriptorFixture: PropertyDescriptor;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
 
       beforeAll(() => {
         targetFixture = class TestController {};
         methodKeyFixture = 'testMethod';
         interceptorServiceIdentifier = Symbol();
-        descriptorFixture = {
-          value: 'value-descriptor-example',
-        };
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
 
@@ -78,11 +74,16 @@ describe(UseInterceptor, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        UseInterceptor(interceptorServiceIdentifier)(
-          targetFixture,
-          methodKeyFixture,
-          descriptorFixture,
-        );
+        const mockMetadata: Record<symbol, unknown> = {};
+
+        UseInterceptor(interceptorServiceIdentifier)(vitest.fn(), {
+          kind: 'method',
+          name: methodKeyFixture,
+          metadata: mockMetadata,
+        } as unknown as DecoratorContext);
+
+        const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as Array<(cls: object) => void>;
+        for (const fn of finalizers) fn(targetFixture);
       });
 
       it('should call buildArrayMetadataWithArray()', () => {
@@ -93,7 +94,7 @@ describe(UseInterceptor, () => {
 
       it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-          targetFixture.constructor,
+          targetFixture,
           classMethodInterceptorMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,

@@ -2,12 +2,13 @@
 /* eslint-disable @typescript-eslint/typedef */
 // Shift-line-spaces-2
 import {
+  type BetterAuthMiddleware,
   BetterAuthHonoContainerModule,
-  betterAuthMiddlewareServiceIdentifier,
   HonoUserSession,
   UserSession,
 } from '@inversifyjs/http-better-auth';
 import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
+import { resolve } from 'rflct';
 import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
 import { betterAuth, BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
@@ -38,7 +39,7 @@ export async function run(): Promise<void> {
   // 3. Create a controller that uses authentication
   @Controller('/api')
   class UserController {
-    @ApplyMiddleware(betterAuthMiddlewareServiceIdentifier)
+    @ApplyMiddleware(resolve<BetterAuthMiddleware>())
     @Get('/profile')
     public async getProfile(
       @HonoUserSession() session: UserSession<typeof options>,

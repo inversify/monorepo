@@ -22,8 +22,9 @@
     "eslint": "10.8.1",
     "inversify": "8.2.3",
     "prettier": "3.9.6",
+    "rflct": "file:../../../../../../rflct",
     "rimraf": "6.1.3",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "vitest": "4.1.11"
   },
   "devEngines": {

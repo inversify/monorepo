@@ -2,19 +2,13 @@
 /* eslint-disable vitest/expect-expect */
 import { describe, it } from 'vitest';
 
-import 'reflect-metadata/lite';
-
-import { inject, injectable, multiInject } from 'inversify';
-
 import type { TypedInject, TypedMultiInject } from './inject.js';
 
-describe(inject, () => {
-  @injectable()
+describe('TypedInject', () => {
   class Foo {
     public foo: string = '';
   }
 
-  @injectable()
   class Bar {
     public bar: string = '';
   }
@@ -25,99 +19,71 @@ describe(inject, () => {
     asyncNumber: Promise<number>;
   }
 
-  const $inject: TypedInject<BindingMap> = inject;
-
   it('strongly types injected properties', () => {
     class Test {
-      @$inject('foo')
-      public foo!: Foo;
-
-      @$inject('bar')
-      public readonly bar!: Bar;
-
-      @$inject('asyncNumber')
-      public num!: number;
-
-      // @ts-expect-error :: expects type Bar
-      @$inject('foo')
-      public badFoo!: Bar;
-
-      // @ts-expect-error :: unknown binding
-      @$inject('unknown')
-      public unknown!: unknown;
+      public foo!: TypedInject<'foo', BindingMap>;
+      public readonly bar!: TypedInject<'bar', BindingMap>;
+      public num!: TypedInject<'asyncNumber', BindingMap>;
     }
-    Test;
+
+    const t = new Test();
+    const _foo: Foo = t.foo;
+    const _bar: Bar = t.bar;
+    const _num: number = t.num;
   });
 
   it('strongly types injected constructor parameters', () => {
     class Test {
       constructor(
-        @$inject('foo')
-        _foo: Foo,
-
-        @$inject('bar')
-        private readonly _bar: Bar,
-
-        @$inject('asyncNumber')
-        _num: number,
-
-        // @ts-expect-error :: expects type Bar
-        @$inject('foo')
-        _badFoo: Bar,
-
-        // @ts-expect-error :: unknown binding
-        @$inject('unknown')
-        _unknown: unknown,
+        public foo: TypedInject<'foo', BindingMap>,
+        public bar: TypedInject<'bar', BindingMap>,
+        public num: TypedInject<'asyncNumber', BindingMap>,
       ) {}
+    }
+
+    const t = new Test(new Foo(), new Bar(), 42);
+    const _foo: Foo = t.foo;
+    const _bar: Bar = t.bar;
+    const _num: number = t.num;
+  });
+
+  it('rejects unknown binding keys', () => {
+    class Test {
+      // @ts-expect-error :: 'unknown' is not in BindingMap
+      public bad!: TypedInject<'unknown', BindingMap>;
     }
     Test;
   });
 
-  describe(multiInject, () => {
-    const $multiInject: TypedMultiInject<BindingMap> = multiInject;
-
-    it('strongly types injected properties', () => {
+  describe('TypedMultiInject', () => {
+    it('strongly types multi-injected properties', () => {
       class Test {
-        @$multiInject('foo')
-        public foo!: Foo[];
-
-        @$multiInject('bar')
-        public readonly bar!: Bar[];
-
-        @$multiInject('asyncNumber')
-        public num!: number[];
-
-        // @ts-expect-error :: expects type Bar
-        @$multiInject('foo')
-        public badFoo!: Bar[];
-
-        // @ts-expect-error :: unknown binding
-        @$multiInject('unknown')
-        public unknown!: unknown[];
+        public foos!: TypedMultiInject<'foo', BindingMap>;
+        public readonly bars!: TypedMultiInject<'bar', BindingMap>;
       }
-      Test;
+
+      const t = new Test();
+      const _foos: Foo[] = t.foos;
+      const _bars: Bar[] = t.bars;
     });
 
-    it('strongly types injected constructor parameters', () => {
+    it('strongly types multi-injected constructor parameters', () => {
       class Test {
         constructor(
-          @$multiInject('foo')
-          _foo: Foo[],
-
-          @$multiInject('bar')
-          private readonly _bar: Bar[],
-
-          @$multiInject('asyncNumber')
-          _num: number[],
-
-          // @ts-expect-error :: expects type Bar
-          @$multiInject('foo')
-          _badFoo: Bar[],
-
-          // @ts-expect-error :: unknown binding
-          @$multiInject('unknown')
-          _unknown: unknown[],
+          public foos: TypedMultiInject<'foo', BindingMap>,
+          public bars: TypedMultiInject<'bar', BindingMap>,
         ) {}
+      }
+
+      const t = new Test([new Foo()], [new Bar()]);
+      const _foos: Foo[] = t.foos;
+      const _bars: Bar[] = t.bars;
+    });
+
+    it('rejects unknown binding keys', () => {
+      class Test {
+        // @ts-expect-error :: 'unknown' is not in BindingMap
+        public bad!: TypedMultiInject<'unknown', BindingMap>;
       }
       Test;
     });

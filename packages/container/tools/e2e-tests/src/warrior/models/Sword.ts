@@ -1,9 +1,8 @@
-import { injectable } from '@inversifyjs/core';
+import { type Injectable } from '@inversifyjs/core';
 
-import { Weapon } from './Weapon';
+import { type Weapon } from './Weapon';
 
-@injectable()
-export class Sword implements Weapon {
+export class Sword implements Weapon, Injectable {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   public damage: number = 10;
 }

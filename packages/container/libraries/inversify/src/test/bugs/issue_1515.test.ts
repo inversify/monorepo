@@ -1,47 +1,46 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable, multiInject } from '../../index.js';
+import {
+  Container,
+  type Injectable,
+  type InjectMulti,
+} from '../../index.js';
 
 describe('Issue 1515', () => {
   it('should properly throw on circular dependency', () => {
-    @injectable()
-    class Circle1 {
-      constructor(@inject('circle-2') public readonly circle2: unknown) {}
+    class Circle1 implements Injectable {
+      constructor(public readonly circle2: Circle2) {}
     }
 
-    @injectable()
-    class Circle2 {
-      constructor(@inject('circle-1') public circle1: unknown) {}
+    class Circle2 implements Injectable {
+      constructor(public circle1: Circle1) {}
     }
 
-    @injectable()
-    class Multi1 {}
-    @injectable()
-    class Multi2 {}
-    @injectable()
-    class Multi3 {}
+    abstract class Multi implements Injectable {}
+    class Multi1 extends Multi {}
+    class Multi2 extends Multi {}
+    class Multi3 extends Multi {}
 
-    @injectable()
-    class Top {
+    class Top implements Injectable {
       constructor(
-        @multiInject('multi-inject') public readonly multis: unknown[],
-        @inject('circle-1') public readonly circle1: unknown,
+        public readonly multis: InjectMulti<Multi>,
+        public readonly circle1: Circle1,
       ) {}
     }
 
     const container: Container = new Container();
 
-    container.bind('multi-inject').to(Multi1);
-    container.bind('multi-inject').to(Multi2);
-    container.bind('multi-inject').to(Multi3);
-    container.bind('circle-1').to(Circle1);
-    container.bind('circle-2').to(Circle2);
+    container.bind(Multi).to(Multi1);
+    container.bind(Multi).to(Multi2);
+    container.bind(Multi).to(Multi3);
+    container.bind(Circle1).toSelf();
+    container.bind(Circle2).toSelf();
     container.bind(Top).toSelf();
 
     expect(() => {
       container.get(Top);
     }).toThrow(
-      'Circular dependency found: Top -> circle-1 -> circle-2 -> circle-1',
+      'Circular dependency found: Top -> Circle1 -> Circle2 -> Circle1',
     );
   });
 });

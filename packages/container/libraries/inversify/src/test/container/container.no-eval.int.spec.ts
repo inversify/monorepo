@@ -7,21 +7,33 @@ import {
 } from '@inversifyjs/container';
 import {
   type BindingActivation,
-  inject,
-  injectable,
+  type Inject,
+  type Injectable,
   type ResolutionContext,
 } from '@inversifyjs/core';
 
 const CONSTRUCTOR_ARITIES: number[] = [0, 1, 2, 3, 4, 5];
 const PROPERTY_ARITIES: number[] = [0, 1, 2, 3, 4, 5];
 
-function buildDependencyIdentifiers(parameterCount: number): string[] {
-  return Array.from(
-    { length: parameterCount },
-    (_value: undefined, index: number): string =>
-      `dependency-${index.toString()}`,
-  );
-}
+// Dependency token classes used as service identifiers
+class Dependency0 {}
+class Dependency1 {}
+class Dependency2 {}
+class Dependency3 {}
+class Dependency4 {}
+
+const DEPENDENCY_CLASSES: Newable<unknown>[] = [
+  Dependency0,
+  Dependency1,
+  Dependency2,
+  Dependency3,
+  Dependency4,
+];
+
+// Property-specific dependency tokens for the combined injection test
+class PropertyDependency0 {}
+class PropertyDependency1 {}
+class PropertyDependency2 {}
 
 function buildExpectedArgs(parameterCount: number): string[] {
   return Array.from(
@@ -46,84 +58,163 @@ interface PropertiesCapturingInstance {
   activatedByService: boolean;
 }
 
-function buildArgsCapturingClass(
-  dependencyIds: string[],
-): Newable<ArgsCapturingInstance> {
-  class ArgsCapturingService implements ArgsCapturingInstance {
-    public activatedByBinding: boolean = false;
-    public activatedByService: boolean = false;
-    public readonly args: unknown[];
-
-    constructor(...args: unknown[]) {
-      this.args = args;
-    }
-  }
-
-  injectable()(ArgsCapturingService);
-
-  dependencyIds.forEach((dependencyId: string, index: number): void => {
-    inject(dependencyId)(ArgsCapturingService, undefined, index);
-  });
-
-  return ArgsCapturingService;
+// Static service classes for each constructor arity (0–5)
+class ArgsCapturing0 implements ArgsCapturingInstance, Injectable {
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public readonly args: unknown[] = [];
 }
 
-function buildPropertiesCapturingClass(
-  dependencyIds: string[],
-): Newable<PropertiesCapturingInstance> {
-  class PropertiesCapturingService implements PropertiesCapturingInstance {
-    [propertyKey: string]: unknown;
+class ArgsCapturing1 implements ArgsCapturingInstance, Injectable {
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public readonly args: unknown[];
 
-    public activatedByBinding: boolean = false;
-    public activatedByService: boolean = false;
+  constructor(dep0: Inject<Dependency0>) {
+    this.args = [dep0];
   }
-
-  injectable()(PropertiesCapturingService);
-
-  dependencyIds.forEach((dependencyId: string, index: number): void => {
-    inject(dependencyId)(
-      PropertiesCapturingService.prototype,
-      buildPropertyKey(index),
-    );
-  });
-
-  return PropertiesCapturingService;
 }
 
-function buildArgsAndPropertiesCapturingClass(
-  constructorDependencyIds: string[],
-  propertyDependencyIds: string[],
-): Newable<ArgsCapturingInstance & PropertiesCapturingInstance> {
-  class ArgsAndPropertiesCapturingService
-    implements ArgsCapturingInstance, PropertiesCapturingInstance
-  {
-    [propertyKey: string]: unknown;
+class ArgsCapturing2 implements ArgsCapturingInstance, Injectable {
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public readonly args: unknown[];
 
-    public activatedByBinding: boolean = false;
-    public activatedByService: boolean = false;
-    public readonly args: unknown[];
-
-    constructor(...args: unknown[]) {
-      this.args = args;
-    }
+  constructor(dep0: Inject<Dependency0>, dep1: Inject<Dependency1>) {
+    this.args = [dep0, dep1];
   }
+}
 
-  injectable()(ArgsAndPropertiesCapturingService);
+class ArgsCapturing3 implements ArgsCapturingInstance, Injectable {
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public readonly args: unknown[];
 
-  constructorDependencyIds.forEach(
-    (dependencyId: string, index: number): void => {
-      inject(dependencyId)(ArgsAndPropertiesCapturingService, undefined, index);
-    },
-  );
+  constructor(
+    dep0: Inject<Dependency0>,
+    dep1: Inject<Dependency1>,
+    dep2: Inject<Dependency2>,
+  ) {
+    this.args = [dep0, dep1, dep2];
+  }
+}
 
-  propertyDependencyIds.forEach((dependencyId: string, index: number): void => {
-    inject(dependencyId)(
-      ArgsAndPropertiesCapturingService.prototype,
-      buildPropertyKey(index),
-    );
-  });
+class ArgsCapturing4 implements ArgsCapturingInstance, Injectable {
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public readonly args: unknown[];
 
-  return ArgsAndPropertiesCapturingService;
+  constructor(
+    dep0: Inject<Dependency0>,
+    dep1: Inject<Dependency1>,
+    dep2: Inject<Dependency2>,
+    dep3: Inject<Dependency3>,
+  ) {
+    this.args = [dep0, dep1, dep2, dep3];
+  }
+}
+
+class ArgsCapturing5 implements ArgsCapturingInstance, Injectable {
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public readonly args: unknown[];
+
+  constructor(
+    dep0: Inject<Dependency0>,
+    dep1: Inject<Dependency1>,
+    dep2: Inject<Dependency2>,
+    dep3: Inject<Dependency3>,
+    dep4: Inject<Dependency4>,
+  ) {
+    this.args = [dep0, dep1, dep2, dep3, dep4];
+  }
+}
+
+const ARGS_CAPTURING_CLASSES: Newable<ArgsCapturingInstance>[] = [
+  ArgsCapturing0,
+  ArgsCapturing1,
+  ArgsCapturing2,
+  ArgsCapturing3,
+  ArgsCapturing4,
+  ArgsCapturing5,
+];
+
+// Static service classes for each property injection arity (0–5)
+class PropsCapturing0 implements PropertiesCapturingInstance, Injectable {
+  [propertyKey: string]: unknown;
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+}
+
+class PropsCapturing1 implements PropertiesCapturingInstance, Injectable {
+  [propertyKey: string]: unknown;
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public property0!: Inject<Dependency0>;
+}
+
+class PropsCapturing2 implements PropertiesCapturingInstance, Injectable {
+  [propertyKey: string]: unknown;
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public property0!: Inject<Dependency0>;
+  public property1!: Inject<Dependency1>;
+}
+
+class PropsCapturing3 implements PropertiesCapturingInstance, Injectable {
+  [propertyKey: string]: unknown;
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public property0!: Inject<Dependency0>;
+  public property1!: Inject<Dependency1>;
+  public property2!: Inject<Dependency2>;
+}
+
+class PropsCapturing4 implements PropertiesCapturingInstance, Injectable {
+  [propertyKey: string]: unknown;
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public property0!: Inject<Dependency0>;
+  public property1!: Inject<Dependency1>;
+  public property2!: Inject<Dependency2>;
+  public property3!: Inject<Dependency3>;
+}
+
+class PropsCapturing5 implements PropertiesCapturingInstance, Injectable {
+  [propertyKey: string]: unknown;
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public property0!: Inject<Dependency0>;
+  public property1!: Inject<Dependency1>;
+  public property2!: Inject<Dependency2>;
+  public property3!: Inject<Dependency3>;
+  public property4!: Inject<Dependency4>;
+}
+
+const PROPS_CAPTURING_CLASSES: Newable<PropertiesCapturingInstance>[] = [
+  PropsCapturing0,
+  PropsCapturing1,
+  PropsCapturing2,
+  PropsCapturing3,
+  PropsCapturing4,
+  PropsCapturing5,
+];
+
+// Combined class for mixed constructor + property injection test
+class ArgsAndPropsCapturing
+  implements ArgsCapturingInstance, PropertiesCapturingInstance, Injectable
+{
+  [propertyKey: string]: unknown;
+  public activatedByBinding: boolean = false;
+  public activatedByService: boolean = false;
+  public readonly args: unknown[];
+  public property0!: Inject<PropertyDependency0>;
+  public property1!: Inject<PropertyDependency1>;
+  public property2!: Inject<PropertyDependency2>;
+
+  constructor(dep0: Inject<Dependency0>, dep1: Inject<Dependency1>) {
+    this.args = [dep0, dep1];
+  }
 }
 
 function buildArgsCapturingResolvedValueFactory(): (
@@ -251,13 +342,12 @@ function buildServiceActivation(): (
 function bindService(
   container: Container,
   kind: ServiceKind,
-  dependencyIds: string[],
+  serviceClass: Newable<ArgsCapturingInstance>,
+  dependencyClasses: Newable<unknown>[],
   resolvedValueServiceId: string,
   scenario: ActivationScenario,
 ): ServiceIdentifier<ArgsCapturingInstance> {
   if (kind === 'instance') {
-    const serviceClass: Newable<ArgsCapturingInstance> =
-      buildArgsCapturingClass(dependencyIds);
     const bindingSyntax: BindInWhenOnFluentSyntax<ArgsCapturingInstance> =
       container.bind(serviceClass).toSelf();
 
@@ -275,7 +365,10 @@ function bindService(
   const bindingSyntax: BindInWhenOnFluentSyntax<ArgsCapturingInstance> =
     container
       .bind<ArgsCapturingInstance>(resolvedValueServiceId)
-      .toResolvedValue(buildArgsCapturingResolvedValueFactory(), dependencyIds);
+      .toResolvedValue(
+        buildArgsCapturingResolvedValueFactory(),
+        dependencyClasses as ServiceIdentifier<unknown>[],
+      );
 
   if (scenario.useBindingActivation) {
     bindingSyntax.onActivation(buildBindingActivation());
@@ -292,27 +385,36 @@ describe(Container, () => {
   describe.each(CONSTRUCTOR_ARITIES)(
     'having a service with %s constructor/factory parameters',
     (parameterCount: number) => {
-      const dependencyIds: string[] =
-        buildDependencyIdentifiers(parameterCount);
+      const dependencyClasses: Newable<unknown>[] = DEPENDENCY_CLASSES.slice(
+        0,
+        parameterCount,
+      );
+      const serviceClass: Newable<ArgsCapturingInstance> =
+        ARGS_CAPTURING_CLASSES[parameterCount]!;
       const expectedArgs: string[] = buildExpectedArgs(parameterCount);
       const resolvedValueServiceId: string = 'resolved-value-service';
 
       function bindSyncDependencies(container: Container): void {
-        dependencyIds.forEach((dependencyId: string, index: number): void => {
-          container
-            .bind<string>(dependencyId)
-            .toConstantValue(expectedArgs[index] as string);
-        });
+        dependencyClasses.forEach(
+          (depClass: Newable<unknown>, index: number): void => {
+            container
+              .bind(depClass)
+              .toConstantValue(expectedArgs[index] as string as never);
+          },
+        );
       }
 
       function bindAsyncDependencies(container: Container): void {
-        dependencyIds.forEach((dependencyId: string, index: number): void => {
-          container
-            .bind<string>(dependencyId)
-            .toDynamicValue(async () =>
-              Promise.resolve(expectedArgs[index] as string),
-            );
-        });
+        dependencyClasses.forEach(
+          (depClass: Newable<unknown>, index: number): void => {
+            container
+              .bind(depClass)
+              .toDynamicValue(
+                async () =>
+                  Promise.resolve(expectedArgs[index] as string) as never,
+              );
+          },
+        );
       }
 
       describe.each(ACTIVATION_SCENARIOS)(
@@ -337,7 +439,8 @@ describe(Container, () => {
                 bindService(
                   container,
                   kind,
-                  dependencyIds,
+                  serviceClass,
+                  dependencyClasses,
                   resolvedValueServiceId,
                   scenario,
                 );
@@ -379,7 +482,8 @@ describe(Container, () => {
               bindService(
                 container,
                 kind,
-                dependencyIds,
+                serviceClass,
+                dependencyClasses,
                 resolvedValueServiceId,
                 {
                   description: 'without a binding or a service activation',
@@ -412,7 +516,10 @@ describe(Container, () => {
   describe.each(PROPERTY_ARITIES)(
     'having a transient instance service with %s property injections and no constructor parameters',
     (propertyCount: number) => {
-      const dependencyIds: string[] = buildDependencyIdentifiers(propertyCount);
+      const dependencyClasses: Newable<unknown>[] = DEPENDENCY_CLASSES.slice(
+        0,
+        propertyCount,
+      );
       const expectedValues: string[] = buildExpectedArgs(propertyCount);
 
       it('should resolve property injections when called', () => {
@@ -420,34 +527,34 @@ describe(Container, () => {
           jitless: true,
         });
 
-        dependencyIds.forEach((dependencyId: string, index: number): void => {
-          container
-            .bind<string>(dependencyId)
-            .toConstantValue(expectedValues[index] as string);
-        });
+        dependencyClasses.forEach(
+          (depClass: Newable<unknown>, index: number): void => {
+            container
+              .bind(depClass)
+              .toConstantValue(expectedValues[index] as string as never);
+          },
+        );
 
         const serviceClass: Newable<PropertiesCapturingInstance> =
-          buildPropertiesCapturingClass(dependencyIds);
+          PROPS_CAPTURING_CLASSES[propertyCount]!;
 
         container.bind(serviceClass).toSelf().inTransientScope();
 
         const instance: PropertiesCapturingInstance =
           container.get(serviceClass);
 
-        dependencyIds.forEach((_dependencyId: string, index: number): void => {
-          expect(instance[buildPropertyKey(index)]).toBe(expectedValues[index]);
-        });
+        dependencyClasses.forEach(
+          (_depClass: Newable<unknown>, index: number): void => {
+            expect(instance[buildPropertyKey(index)]).toBe(
+              expectedValues[index],
+            );
+          },
+        );
       });
     },
   );
 
   it('should resolve a transient instance service with two constructor parameters and three property injections when called', () => {
-    const constructorDependencyIds: string[] = buildDependencyIdentifiers(2);
-    const propertyDependencyIds: string[] = [
-      'property-dependency-0',
-      'property-dependency-1',
-      'property-dependency-2',
-    ];
     const expectedConstructorArgs: string[] = buildExpectedArgs(2);
     const expectedPropertyValues: string[] = [
       'property-value-0',
@@ -459,38 +566,41 @@ describe(Container, () => {
       jitless: true,
     });
 
-    constructorDependencyIds.forEach(
-      (dependencyId: string, index: number): void => {
+    const constructorDepClasses: Newable<unknown>[] = [
+      Dependency0,
+      Dependency1,
+    ];
+    const propertyDepClasses: Newable<unknown>[] = [
+      PropertyDependency0,
+      PropertyDependency1,
+      PropertyDependency2,
+    ];
+
+    constructorDepClasses.forEach(
+      (depClass: Newable<unknown>, index: number): void => {
         container
-          .bind<string>(dependencyId)
-          .toConstantValue(expectedConstructorArgs[index] as string);
+          .bind(depClass)
+          .toConstantValue(expectedConstructorArgs[index] as string as never);
       },
     );
 
-    propertyDependencyIds.forEach(
-      (dependencyId: string, index: number): void => {
+    propertyDepClasses.forEach(
+      (depClass: Newable<unknown>, index: number): void => {
         container
-          .bind<string>(dependencyId)
-          .toConstantValue(expectedPropertyValues[index] as string);
+          .bind(depClass)
+          .toConstantValue(expectedPropertyValues[index] as string as never);
       },
     );
 
-    const serviceClass: Newable<
-      ArgsCapturingInstance & PropertiesCapturingInstance
-    > = buildArgsAndPropertiesCapturingClass(
-      constructorDependencyIds,
-      propertyDependencyIds,
-    );
-
-    container.bind(serviceClass).toSelf().inTransientScope();
+    container.bind(ArgsAndPropsCapturing).toSelf().inTransientScope();
 
     const instance: ArgsCapturingInstance & PropertiesCapturingInstance =
-      container.get(serviceClass);
+      container.get(ArgsAndPropsCapturing);
 
     expect(instance.args).toStrictEqual(expectedConstructorArgs);
 
-    propertyDependencyIds.forEach(
-      (_dependencyId: string, index: number): void => {
+    propertyDepClasses.forEach(
+      (_depClass: Newable<unknown>, index: number): void => {
         expect(instance[buildPropertyKey(index)]).toBe(
           expectedPropertyValues[index],
         );

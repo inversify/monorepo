@@ -1,9 +1,10 @@
 import {
-  betterAuthMiddlewareServiceIdentifier,
+  type BetterAuthMiddleware,
   HonoUserSession,
   UserSession,
 } from '@inversifyjs/http-better-auth';
 import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
+import { resolve } from 'rflct';
 import { BetterAuthOptions } from 'better-auth';
 
 // Begin-example
@@ -20,7 +21,7 @@ export class BadController {
 }
 
 // ✅ This works - middleware properly applied
-@ApplyMiddleware(betterAuthMiddlewareServiceIdentifier)
+@ApplyMiddleware(resolve<BetterAuthMiddleware>())
 @Controller('/api')
 export class GoodController {
   @Get('/profile')

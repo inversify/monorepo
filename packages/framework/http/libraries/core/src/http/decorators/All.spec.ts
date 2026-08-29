@@ -9,12 +9,12 @@ import { All } from './All.js';
 describe(All, () => {
   describe('when called', () => {
     let pathFixture: string | undefined;
-    let methodDecoratorFixture: MethodDecorator;
+    let methodDecoratorFixture: (value: Function, context: ClassMethodDecoratorContext) => void;
     let result: unknown;
 
     beforeAll(() => {
       pathFixture = undefined;
-      methodDecoratorFixture = {} as MethodDecorator;
+      methodDecoratorFixture = {} as (value: Function, context: ClassMethodDecoratorContext) => void;
 
       vitest.mocked(requestMethod).mockReturnValueOnce(methodDecoratorFixture);
 
@@ -32,7 +32,7 @@ describe(All, () => {
       );
     });
 
-    it('should return a MethodDecorator', () => {
+    it('should return a (value: Function, context: ClassMethodDecoratorContext) => void', () => {
       expect(result).toBe(methodDecoratorFixture);
     });
   });

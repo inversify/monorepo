@@ -10,7 +10,7 @@ import {
 } from '@inversifyjs/framework-core';
 import {
   BadRequestHttpResponse,
-  Body,
+  type BodyParam,
   Controller,
   Post,
 } from '@inversifyjs/http-core';
@@ -105,12 +105,13 @@ describe(StandardSchemaValidationPipe, () => {
     @Controller('/messages')
     class MessageController {
       @Post()
-      public async createMessage(
-        @Body()
-        @ValidateStandardSchemaV1(
+      @ValidateStandardSchemaV1({
+        message: [
           zod.object({ content: zod.string().max(100) }).strict(),
-        )
-        message: Message,
+        ],
+      })
+      public async createMessage(
+        message: BodyParam<Message>,
       ): Promise<Message> {
         return message;
       }

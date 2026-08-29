@@ -12,21 +12,24 @@ import { Container } from 'inversify';
 
 import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
 import { type Server } from '../../server/models/Server.js';
+import { resolve } from 'rflct';
+
 import { createDirectory } from '../../test/actions/createDirectory.js';
 import { generateAndRunBetterAuthMigrations } from '../../test/actions/generateBetterAuthMigrations.js';
 import { removeFileIfExists } from '../../test/actions/removeFileIfExists.js';
 import { type BetterAuth } from '../models/BetterAuth.js';
-import { betterAuthMiddlewareServiceIdentifier } from '../models/betterAuthMiddlewareServiceIdentifier.js';
+import type { BetterAuthMiddleware } from '../models/betterAuthMiddlewareServiceIdentifier.js';
 import { type UserSession } from '../models/UserSession.js';
 import { BetterAuthExpressContainerModule } from '../services/BetterAuthExpressContainerModule.js';
 import { ExpressUserSession } from './ExpressUserSession.js';
 
 @Controller('/api')
 class SessionTestController {
-  @ApplyMiddleware(betterAuthMiddlewareServiceIdentifier)
+  @ApplyMiddleware(resolve<BetterAuthMiddleware>())
   @Get('/session')
+  @ExpressUserSession('session')
   public async getSession(
-    @ExpressUserSession() session: UserSession<BetterAuthOptions>,
+    session: UserSession<BetterAuthOptions>,
   ): Promise<UserSession<BetterAuthOptions>> {
     return session;
   }

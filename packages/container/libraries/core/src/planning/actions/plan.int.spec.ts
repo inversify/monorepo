@@ -3,7 +3,6 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import 'reflect-metadata/lite';
 
 import { type Newable } from '@inversifyjs/common';
-import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { bindingScopeValues } from '../../binding/models/BindingScope.js';
 import { bindingTypeValues } from '../../binding/models/BindingType.js';
@@ -18,11 +17,9 @@ import { BindingService } from '../../binding/services/BindingService.js';
 import { type Writable } from '../../common/models/Writable.js';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
-import { getDefaultClassMetadata } from '../../metadata/calculations/getDefaultClassMetadata.js';
-import { inject } from '../../metadata/decorators/inject.js';
+import { getClassMetadata } from '../../metadata/calculations/getClassMetadata.js';
 import { type ClassMetadata } from '../../metadata/models/ClassMetadata.js';
 import { ResolvedValueElementMetadataKind } from '../../metadata/models/ResolvedValueElementMetadataKind.js';
-import { classMetadataReflectKey } from '../../reflectMetadata/data/classMetadataReflectKey.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { type PlanParamsConstraint } from '../models/PlanParamsConstraint.js';
 import { type PlanResult } from '../models/PlanResult.js';
@@ -44,14 +41,22 @@ enum ServiceIds {
 }
 
 class Foo {
-  @inject(ServiceIds.dynamicValue)
   public readonly property!: symbol;
 
   constructor(
-    @inject(ServiceIds.constantValue)
     _param: symbol,
   ) {}
 }
+
+Reflect.defineMetadata('design:paramtypes', [
+  { type: ServiceIds.constantValue, metadata: {} },
+], Foo);
+
+Reflect.defineMetadata('design:propertytype', [
+  { type: ServiceIds.dynamicValue, metadata: {} },
+], Foo.prototype, 'property');
+
+Reflect.defineMetadata('design:properties', ['property'], Foo);
 
 function buildLeafBindingPlanResult(
   binding:
@@ -389,9 +394,7 @@ describe(plan, () => {
     bindingService.set(serviceRedirectionBinding);
     bindingService.set(serviceRedirectionToNonExistentBinding);
 
-    getClassMetadataFunction = (type: Newable): ClassMetadata =>
-      getOwnReflectMetadata(type, classMetadataReflectKey) ??
-      getDefaultClassMetadata();
+    getClassMetadataFunction = getClassMetadata;
 
     planResultCacheService = new PlanResultCacheService(true);
   });

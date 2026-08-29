@@ -1,23 +1,20 @@
+import { resolve } from 'rflct';
 import { describe, expect, it } from 'vitest';
 
 import {
   Container,
-  inject,
-  injectable,
-  ResolutionContext,
+  type Inject,
+  type Injectable,
+  type ResolutionContext,
 } from '../../index.js';
 
 describe('InversifyJS', () => {
   it('Should support the injection of proxied objects', () => {
-    const weaponId: string = 'Weapon';
-    const warriorId: string = 'Warrior';
-
     interface Weapon {
       use(): void;
     }
 
-    @injectable()
-    class Katana implements Weapon {
+    class Katana implements Weapon, Injectable {
       public use() {
         return 'Used Katana!';
       }
@@ -27,20 +24,19 @@ describe('InversifyJS', () => {
       weapon: Weapon;
     }
 
-    @injectable()
-    class Ninja implements Warrior {
+    class Ninja implements Warrior, Injectable {
       public weapon: Weapon;
-      constructor(@inject(weaponId) weapon: Weapon) {
+      constructor(weapon: Inject<Weapon>) {
         this.weapon = weapon;
       }
     }
 
     const container: Container = new Container();
-    container.bind<Warrior>(warriorId).to(Ninja);
+    container.bind(resolve<Warrior>()).to(Ninja);
     const log: string[] = [];
 
     container
-      .bind<Weapon>(weaponId)
+      .bind(resolve<Weapon>())
       .to(Katana)
       .onActivation((_context: ResolutionContext, weapon: Weapon) => {
         const handler: ProxyHandler<() => void> = {
@@ -58,7 +54,7 @@ describe('InversifyJS', () => {
         return weapon;
       });
 
-    const ninja: Warrior = container.get(warriorId);
+    const ninja = container.get(resolve<Warrior>());
     ninja.weapon.use();
 
     expect(log).toHaveLength(2);

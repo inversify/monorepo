@@ -11,6 +11,7 @@ import { type ServiceIdentifier } from 'inversify';
 
 import { classMethodMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMethodMiddlewareMetadataReflectKey.js';
 import { classMiddlewareMetadataReflectKey } from '../../reflectMetadata/data/classMiddlewareMetadataReflectKey.js';
+import { decoratorFinalizersMetadataKey } from '../../reflectMetadata/data/decoratorFinalizersMetadataKey.js';
 import { type Middleware } from '../models/Middleware.js';
 import { ApplyMiddleware } from './ApplyMiddleware.js';
 
@@ -31,7 +32,7 @@ describe(ApplyMiddleware, () => {
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        ApplyMiddleware(middlewareServiceIdentifierFixture)(targetFixture);
+        ApplyMiddleware(middlewareServiceIdentifierFixture)(targetFixture, { kind: 'class' } as DecoratorContext);
       });
 
       afterAll(() => {
@@ -50,7 +51,6 @@ describe(ApplyMiddleware, () => {
           classMiddlewareMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,
-          undefined,
         );
       });
     });
@@ -61,7 +61,6 @@ describe(ApplyMiddleware, () => {
       let controllerFixture: NewableFunction;
       let controllerMethodKeyFixture: string | symbol;
       let callbackFixture: (arrayMetadata: unknown[]) => unknown[];
-      let descriptorFixture: PropertyDescriptor;
       let middlewareServiceIdentifierFixture: ServiceIdentifier<Middleware>;
 
       beforeAll(() => {
@@ -70,19 +69,21 @@ describe(ApplyMiddleware, () => {
         callbackFixture = (arrayMetadata: unknown[]): unknown[] =>
           arrayMetadata;
         middlewareServiceIdentifierFixture = Symbol();
-        descriptorFixture = {
-          value: 'value-descriptor-example',
-        };
 
         vitest
           .mocked(buildArrayMetadataWithArray)
           .mockReturnValueOnce(callbackFixture);
 
-        ApplyMiddleware(middlewareServiceIdentifierFixture)(
-          controllerFixture,
-          controllerMethodKeyFixture,
-          descriptorFixture,
-        );
+        const mockMetadata: Record<symbol, unknown> = {};
+
+        ApplyMiddleware(middlewareServiceIdentifierFixture)(vitest.fn(), {
+          kind: 'method',
+          name: controllerMethodKeyFixture,
+          metadata: mockMetadata,
+        } as unknown as DecoratorContext);
+
+        const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as Array<(cls: object) => void>;
+        for (const fn of finalizers) fn(controllerFixture);
       });
 
       it('should call buildArrayMetadataWithArray()', () => {
@@ -93,7 +94,7 @@ describe(ApplyMiddleware, () => {
 
       it('should call updateOwnReflectMetadata()', () => {
         expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-          controllerFixture.constructor,
+          controllerFixture,
           classMethodMiddlewareMetadataReflectKey,
           buildEmptyArrayMetadata,
           callbackFixture,

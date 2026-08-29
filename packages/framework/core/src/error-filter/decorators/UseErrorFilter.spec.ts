@@ -19,6 +19,7 @@ import { type Newable } from 'inversify';
 
 import { classErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classErrorFilterMetadataReflectKey.js';
 import { classMethodErrorFilterMetadataReflectKey } from '../../reflectMetadata/data/classMethodErrorFilterMetadataReflectKey.js';
+import { decoratorFinalizersMetadataKey } from '../../reflectMetadata/data/decoratorFinalizersMetadataKey.js';
 import { type ErrorFilter } from '../models/ErrorFilter.js';
 import { UseErrorFilter } from './UseErrorFilter.js';
 
@@ -46,7 +47,7 @@ describe(UseErrorFilter, () => {
           .mocked(updateSetMetadataWithList)
           .mockReturnValueOnce(updateSetMetadataWithListResultFixture);
 
-        result = UseErrorFilter(errorFilterFixture)(targetFixture);
+        result = UseErrorFilter(errorFilterFixture)(targetFixture, { kind: 'class' } as DecoratorContext);
       });
 
       afterAll(() => {
@@ -65,7 +66,6 @@ describe(UseErrorFilter, () => {
           classErrorFilterMetadataReflectKey,
           buildEmptySetMetadata,
           updateSetMetadataWithListResultFixture,
-          undefined,
         );
       });
 
@@ -79,23 +79,17 @@ describe(UseErrorFilter, () => {
     let errorFilterFixture: Newable<ErrorFilter>;
     let targetFixture: NewableFunction;
     let methodKeyFixture: string | symbol;
-    let descriptorFixture: PropertyDescriptor;
 
     beforeAll(() => {
       errorFilterFixture = Symbol() as unknown as Newable<ErrorFilter>;
       targetFixture = class TestController {};
       methodKeyFixture = 'testMethod';
-      descriptorFixture = {
-        value: 'value-descriptor-example',
-      };
     });
 
     describe('when called', () => {
       let updateSetMetadataWithListResultFixture: Mock<
         (metadataSet: Set<unknown>) => Set<unknown>
       >;
-
-      let result: unknown;
 
       beforeAll(() => {
         updateSetMetadataWithListResultFixture = vitest.fn();
@@ -104,12 +98,16 @@ describe(UseErrorFilter, () => {
           .mocked(updateSetMetadataWithList)
           .mockReturnValueOnce(updateSetMetadataWithListResultFixture);
 
-        result = UseErrorFilter(errorFilterFixture)(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          targetFixture.prototype,
-          methodKeyFixture,
-          descriptorFixture,
-        );
+        const mockMetadata: Record<symbol, unknown> = {};
+
+        UseErrorFilter(errorFilterFixture)(vitest.fn(), {
+          kind: 'method',
+          name: methodKeyFixture,
+          metadata: mockMetadata,
+        } as unknown as DecoratorContext);
+
+        const finalizers = mockMetadata[decoratorFinalizersMetadataKey] as Array<(cls: object) => void>;
+        for (const fn of finalizers) fn(targetFixture);
       });
 
       it('should call updateSetMetadataWithList()', () => {
@@ -126,10 +124,6 @@ describe(UseErrorFilter, () => {
           updateSetMetadataWithListResultFixture,
           methodKeyFixture,
         );
-      });
-
-      it('should return undefined', () => {
-        expect(result).toBeUndefined();
       });
     });
   });

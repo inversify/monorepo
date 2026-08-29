@@ -1,62 +1,48 @@
 import { describe, expect, it } from 'vitest';
 
-import { Container, inject, injectable } from '../../index.js';
+import { Container, type Injectable } from '../../index.js';
 
 describe('Issue 543', () => {
   it('Should throw correct circular dependency path', () => {
-    // eslint-disable-next-line @typescript-eslint/typedef
-    const TYPE = {
-      Child: Symbol.for('Child'),
-      Child2: Symbol.for('Child2'),
-      Circular: Symbol.for('Circular'),
-      Irrelevant: Symbol.for('Irrelevant1'),
-      Root: Symbol.for('Root'),
-    };
+    class Irrelevant implements Injectable {}
 
-    @injectable()
-    class Irrelevant {}
-
-    @injectable()
-    class Child2 {
+    class Child2 implements Injectable {
       public circ: unknown;
-      constructor(@inject(TYPE.Circular) circ: unknown) {
+      constructor(circ: Circular) {
         this.circ = circ;
       }
     }
 
-    @injectable()
-    class Child {
+    class Child implements Injectable {
       public irrelevant: Irrelevant;
       public child2: Child2;
       constructor(
-        @inject(TYPE.Irrelevant) irrelevant: Irrelevant,
-        @inject(TYPE.Child2) child2: Child2,
+        irrelevant: Irrelevant,
+        child2: Child2,
       ) {
         this.irrelevant = irrelevant;
         this.child2 = child2;
       }
     }
 
-    @injectable()
-    class Circular {
+    class Circular implements Injectable {
       public irrelevant: Irrelevant;
       public child: Child;
       constructor(
-        @inject(TYPE.Irrelevant) irrelevant: Irrelevant,
-        @inject(TYPE.Child) child: Child,
+        irrelevant: Irrelevant,
+        child: Child,
       ) {
         this.irrelevant = irrelevant;
         this.child = child;
       }
     }
 
-    @injectable()
-    class Root {
+    class Root implements Injectable {
       public irrelevant: Irrelevant;
       public circ: Circular;
       constructor(
-        @inject(TYPE.Irrelevant) irrelevant1: Irrelevant,
-        @inject(TYPE.Circular) circ: Circular,
+        irrelevant1: Irrelevant,
+        circ: Circular,
       ) {
         this.irrelevant = irrelevant1;
         this.circ = circ;
@@ -64,18 +50,18 @@ describe('Issue 543', () => {
     }
 
     const container: Container = new Container();
-    container.bind<Root>(TYPE.Root).to(Root);
-    container.bind<Irrelevant>(TYPE.Irrelevant).to(Irrelevant);
-    container.bind<Circular>(TYPE.Circular).to(Circular);
-    container.bind<Child>(TYPE.Child).to(Child);
-    container.bind<Child2>(TYPE.Child2).to(Child2);
+    container.bind(Root).toSelf();
+    container.bind(Irrelevant).toSelf();
+    container.bind(Circular).toSelf();
+    container.bind(Child).toSelf();
+    container.bind(Child2).toSelf();
 
     function throws() {
-      return container.get(TYPE.Root);
+      return container.get(Root);
     }
 
     expect(throws).toThrow(
-      'Circular dependency found: Symbol(Root) -> Symbol(Circular) -> Symbol(Child) -> Symbol(Child2) -> Symbol(Circular)',
+      'Circular dependency found: Root -> Circular -> Child -> Child2 -> Circular',
     );
   });
 });

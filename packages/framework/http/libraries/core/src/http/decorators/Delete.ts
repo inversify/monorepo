@@ -2,6 +2,6 @@ import { requestMethod } from '../calculations/requestMethod.js';
 import { RequestMethodType } from '../models/RequestMethodType.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export const Delete: (path?: string) => MethodDecorator = (
+export const Delete: (path?: string) => (value: Function, context: ClassMethodDecoratorContext) => void = (
   path?: string,
-): MethodDecorator => requestMethod(RequestMethodType.Delete, path);
+): (value: Function, context: ClassMethodDecoratorContext) => void => requestMethod(RequestMethodType.Delete, path);

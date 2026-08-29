@@ -1,16 +1,14 @@
+import 'reflect-metadata/lite';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import 'reflect-metadata/lite';
-
-import { injectable } from '@inversifyjs/core';
+import { type Injectable } from '@inversifyjs/core';
 
 import { Container } from '../container/services/Container.js';
 
 describe('inversify/monorepo#959', () => {
   describe('Parent container autobind with child non-autobind', () => {
     describe('when parent container has autobind enabled and child container has autobind disabled', () => {
-      @injectable()
-      class TestService {
+      class TestService implements Injectable {
         public getValue(): string {
           return 'test-value';
         }
@@ -64,8 +62,7 @@ describe('inversify/monorepo#959', () => {
       });
 
       describe('when parent container does not have autobind but child does', () => {
-        @injectable()
-        class AnotherTestService {
+        class AnotherTestService implements Injectable {
           public getValue(): string {
             return 'another-test-value';
           }
