@@ -1,5 +1,20 @@
 # @inversifyjs/open-api-validation
 
+## 3.6.0
+
+### Minor Changes
+
+- Updated `OpenApiValidationPipe` to rely on OpenApi resolvers
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/json-schema-utils@0.4.0
+  - @inversifyjs/open-api-utils@0.3.0
+  - @inversifyjs/validation-common@3.6.0
+  - @inversifyjs/http-core@5.5.2
+  - @inversifyjs/http-open-api@5.5.2
+
 ## 3.5.4
 
 ### Patch Changes
