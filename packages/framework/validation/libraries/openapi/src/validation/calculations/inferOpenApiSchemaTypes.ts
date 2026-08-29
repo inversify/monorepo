@@ -4,8 +4,15 @@ import {
   type JsonSchemaObject,
   type JsonSchemaType,
 } from '@inversifyjs/json-schema-types/2020-12';
+import {
+  type SchemaResolutionSuccessLinks,
+  type SchemaResolutionSuccessNode,
+} from '@inversifyjs/json-schema-utils/2020-12';
 
-import { type OpenApiResolver } from '../services/OpenApiResolver.js';
+import {
+  type JsonSchemaResolutionResult,
+  type OpenApiResolver,
+} from '../services/OpenApiResolver.js';
 
 const ALL_JSON_SCHEMA_TYPES: Set<JsonSchemaType> = new Set([
   'array',
@@ -21,37 +28,61 @@ export function inferOpenApiSchemaTypes(
   openApiResolver: OpenApiResolver,
   schema: JsonSchema,
 ): Set<JsonSchemaType> {
-  return normalizeNumericTypes(inferTypesFromSchema(openApiResolver, schema));
+  return normalizeNumericTypes(
+    inferTypesFromSchema(openApiResolver, schema, new Set()),
+  );
 }
 
 function inferTypesFromSchema(
   openApiResolver: OpenApiResolver,
   schema: JsonSchema,
+  visitedSchemas: ReadonlySet<JsonSchemaObject>,
 ): Set<JsonSchemaType> {
   if (typeof schema === 'boolean') {
     return schema ? new Set(ALL_JSON_SCHEMA_TYPES) : new Set();
   }
 
-  if (schema.$ref !== undefined) {
-    const derreferencedSchema: JsonValue | undefined =
-      openApiResolver.deepResolveReference(schema.$ref);
+  const nextVisitedSchemas: ReadonlySet<JsonSchemaObject> =
+    addVisitedSchemaOrThrow(visitedSchemas, schema);
 
-    if (derreferencedSchema === undefined) {
-      return new Set();
-    }
+  const ownTypeSet: Set<JsonSchemaType> = inferOwnTypeSet(
+    openApiResolver,
+    schema,
+    nextVisitedSchemas,
+  );
 
-    return inferOpenApiSchemaTypes(
+  if (schema.$ref === undefined && schema.$dynamicRef === undefined) {
+    return ownTypeSet;
+  }
+
+  /*
+   * $ref/$dynamicRef are applicators, not substitutions: the instance must
+   * also satisfy every schema reached by following them, on top of this
+   * schema's own keywords. Embed the whole resolved chain as an implicit
+   * allOf instead of jumping straight to the referenced schema.
+   */
+  const resolutionResult: JsonSchemaResolutionResult =
+    openApiResolver.resolveJsonSchema(schema);
+
+  if (!resolutionResult.isRight) {
+    return new Set();
+  }
+
+  return constrainWithType(
+    ownTypeSet,
+    inferResolutionLinksTypeSet(
       openApiResolver,
-      derreferencedSchema as JsonSchema,
-    );
-  }
+      resolutionResult.value,
+      nextVisitedSchemas,
+    ),
+  );
+}
 
-  if (schema.$dynamicRef !== undefined) {
-    throw new Error(
-      'Unable to determine schema types: "$dynamicRef" is not supported',
-    );
-  }
-
+function inferOwnTypeSet(
+  openApiResolver: OpenApiResolver,
+  schema: JsonSchemaObject,
+  visitedSchemas: ReadonlySet<JsonSchemaObject>,
+): Set<JsonSchemaType> {
   if (schema.oneOf !== undefined) {
     throw new Error(
       'Unable to determine schema types: "oneOf" is not supported',
@@ -66,13 +97,16 @@ function inferTypesFromSchema(
 
   if (schema.allOf !== undefined) {
     return constrainWithType(
-      intersectAll(openApiResolver, schema.allOf),
+      intersectAll(openApiResolver, schema.allOf, visitedSchemas),
       typeSet,
     );
   }
 
   if (schema.anyOf !== undefined) {
-    return constrainWithType(unionAll(openApiResolver, schema.anyOf), typeSet);
+    return constrainWithType(
+      unionAll(openApiResolver, schema.anyOf, visitedSchemas),
+      typeSet,
+    );
   }
 
   if (typeSet !== undefined) {
@@ -80,6 +114,76 @@ function inferTypesFromSchema(
   }
 
   return new Set(ALL_JSON_SCHEMA_TYPES);
+}
+
+function inferResolutionLinksTypeSet(
+  openApiResolver: OpenApiResolver,
+  links: SchemaResolutionSuccessLinks,
+  visitedSchemas: ReadonlySet<JsonSchemaObject>,
+): Set<JsonSchemaType> | undefined {
+  const refTypeSet: Set<JsonSchemaType> | undefined =
+    links.$ref === undefined
+      ? undefined
+      : inferResolutionNodeTypeSet(openApiResolver, links.$ref, visitedSchemas);
+
+  const dynamicRefTypeSet: Set<JsonSchemaType> | undefined =
+    links.$dynamicRef === undefined
+      ? undefined
+      : inferResolutionNodeTypeSet(
+          openApiResolver,
+          links.$dynamicRef,
+          visitedSchemas,
+        );
+
+  if (refTypeSet === undefined) {
+    return dynamicRefTypeSet;
+  }
+
+  return constrainWithType(refTypeSet, dynamicRefTypeSet);
+}
+
+function inferResolutionNodeTypeSet(
+  openApiResolver: OpenApiResolver,
+  node: SchemaResolutionSuccessNode,
+  visitedSchemas: ReadonlySet<JsonSchemaObject>,
+): Set<JsonSchemaType> {
+  const resolvedValue: JsonValue = node.value;
+
+  if (typeof resolvedValue === 'boolean') {
+    return resolvedValue ? new Set(ALL_JSON_SCHEMA_TYPES) : new Set();
+  }
+
+  if (
+    resolvedValue === null ||
+    typeof resolvedValue !== 'object' ||
+    Array.isArray(resolvedValue)
+  ) {
+    return new Set();
+  }
+
+  const schema: JsonSchemaObject = resolvedValue;
+
+  const nextVisitedSchemas: ReadonlySet<JsonSchemaObject> =
+    addVisitedSchemaOrThrow(visitedSchemas, schema);
+
+  return constrainWithType(
+    inferOwnTypeSet(openApiResolver, schema, nextVisitedSchemas),
+    inferResolutionLinksTypeSet(openApiResolver, node, nextVisitedSchemas),
+  );
+}
+
+// Breaks $ref/$dynamicRef cycles reachable through allOf/anyOf compositions.
+function addVisitedSchemaOrThrow(
+  visitedSchemas: ReadonlySet<JsonSchemaObject>,
+  schema: JsonSchemaObject,
+): ReadonlySet<JsonSchemaObject> {
+  if (visitedSchemas.has(schema)) {
+    throw new Error(
+      'Unable to determine schema types: circular schema reference detected',
+    );
+  }
+
+  return new Set(visitedSchemas).add(schema);
 }
 
 function buildTypeSet(
@@ -99,6 +203,7 @@ function buildTypeSet(
 function intersectAll(
   openApiResolver: OpenApiResolver,
   schemas: JsonSchema[],
+  visitedSchemas: ReadonlySet<JsonSchemaObject>,
 ): Set<JsonSchemaType> {
   if (schemas.length === 0) {
     return new Set();
@@ -107,12 +212,14 @@ function intersectAll(
   let result: Set<JsonSchemaType> = inferTypesFromSchema(
     openApiResolver,
     schemas[0] as JsonSchema,
+    visitedSchemas,
   );
 
   for (let i: number = 1; i < schemas.length; i++) {
     const childTypes: Set<JsonSchemaType> = inferTypesFromSchema(
       openApiResolver,
       schemas[i] as JsonSchema,
+      visitedSchemas,
     );
     result = intersectSets(result, childTypes);
   }
@@ -123,11 +230,16 @@ function intersectAll(
 function unionAll(
   openApiResolver: OpenApiResolver,
   schemas: JsonSchema[],
+  visitedSchemas: ReadonlySet<JsonSchemaObject>,
 ): Set<JsonSchemaType> {
   const result: Set<JsonSchemaType> = new Set();
 
   for (const child of schemas) {
-    for (const type of inferTypesFromSchema(openApiResolver, child)) {
+    for (const type of inferTypesFromSchema(
+      openApiResolver,
+      child,
+      visitedSchemas,
+    )) {
       result.add(type);
     }
   }

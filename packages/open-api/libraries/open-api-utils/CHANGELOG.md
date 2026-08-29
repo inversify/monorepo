@@ -1,5 +1,17 @@
 # @inversifyjs/open-api-utils
 
+## 0.3.0
+
+### Minor Changes
+
+- Added `OpenApi3Dot1Resolver`.
+- Added `OpenApi3Dot2Resolver`.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/json-schema-utils@0.4.0
+
 ## 0.2.1
 
 ### Patch Changes

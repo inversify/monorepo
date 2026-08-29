@@ -44,8 +44,6 @@ export type OpenApiRefResolutionResult =
     };
 
 export interface OpenApiResolver {
-  deepResolveReference(reference: string): JsonValue | undefined;
   resolveJsonSchema(schema: JsonValue): JsonSchemaResolutionResult;
   resolveOpenApiReference(reference: JsonValue): OpenApiRefResolutionResult;
-  resolveReference(reference: string): JsonValue | undefined;
 }

@@ -28,8 +28,8 @@ export function buildParamParse(
       {
         const itemsSchemaRef: string = `${schemaRef}/items`;
 
-        const schema: JsonValue | undefined =
-          openApiResolver.deepResolveReference(itemsSchemaRef);
+        const itemsSchema: JsonValue | undefined =
+          typeof schema === 'object' ? schema.items : undefined;
 
         const {
           isNullable,
@@ -39,7 +39,7 @@ export function buildParamParse(
           type: JsonSchemaType;
         } = inferSchemaTypeOrThrow(
           openApiResolver,
-          schema as JsonSchema | undefined,
+          itemsSchema,
           itemsSchemaRef,
         );
 
