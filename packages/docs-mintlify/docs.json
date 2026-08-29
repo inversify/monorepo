@@ -71,6 +71,12 @@
         "language": "zh",
         "groups": [
           {
+            "group": "首页",
+            "pages": [
+              "zh/index"
+            ]
+          },
+          {
             "group": "快速入门",
             "pages": [
               "zh/docs/introduction/getting-started"
