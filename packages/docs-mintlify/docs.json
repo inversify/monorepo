@@ -66,6 +66,17 @@
             ]
           }
         ]
+      },
+      {
+        "language": "zh",
+        "groups": [
+          {
+            "group": "快速入门",
+            "pages": [
+              "zh/docs/introduction/getting-started"
+            ]
+          }
+        ]
       }
     ]
   },
