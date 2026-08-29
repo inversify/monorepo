@@ -1,0 +1,55 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "InversifyJS",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.ico",
+  "colors": {
+    "primary": "#0066CC",
+    "light": "#0084FF",
+    "dark": "#004099",
+    "ultraLight": "#EBEBF0",
+    "ultraDark": "#080A11",
+    "background": {
+      "light": "#FFFFFF",
+      "dark": "#080A11"
+    }
+  },
+  "modeToggle": {
+    "default": "dark",
+    "isHidden": false
+  },
+  "theme": "venus",
+  "topbarLinks": [
+    {
+      "name": "Discord",
+      "url": "https://discord.gg/jXcMagAPnm"
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com/inversify/monorepo"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://github.com/inversify/monorepo"
+  },
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "docs/introduction/getting-started"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "discord": "https://discord.gg/jXcMagAPnm",
+    "github": "https://github.com/inversify/monorepo"
+  },
+  "metadata": {
+    "og:image": "https://mintlify.com/og-image.png",
+    "og:description": "A powerful and lightweight inversion of control container for JavaScript & Node.js apps powered by TypeScript"
+  }
+}

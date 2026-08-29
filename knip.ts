@@ -30,7 +30,7 @@ export default {
     "packages/docs/services/inversify-binding-decorators-site",
     "packages/docs/services/inversify-framework-site",
     "packages/docs/services/inversify-site",
-    "packages/docs-mintlify/services/inversify-site",
+    "packages/docs-mintlify",
   ],
   pnpm: {
     config: ["package.json"],
@@ -71,7 +71,7 @@ export default {
     },
     "packages/docs/services/*": defaultWorkspaceProjectConfig,
     "packages/docs/tools/*": defaultWorkspaceProjectConfig,
-    "packages/docs-mintlify/services/*": defaultWorkspaceProjectConfig,
+    "packages/docs-mintlify": defaultWorkspaceProjectConfig,
     "packages/docs/tools/binding-decorators-code-examples": {
       entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,

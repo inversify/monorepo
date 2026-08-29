@@ -4,7 +4,7 @@ packages:
   - packages/container/tools/*
   - packages/docs/services/*
   - packages/docs/tools/*
-  - packages/docs-mintlify/services/*
+  - packages/docs-mintlify
   - packages/foundation/libraries/*
   - packages/foundation/tools/*
   - packages/framework/*
