@@ -17,7 +17,6 @@ describe(inferOpenApiSchemaTypes, () => {
       'a $ref schema pointing to a non-existent schema',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest
             .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
             .mockReturnValueOnce({
@@ -28,7 +27,6 @@ describe(inferOpenApiSchemaTypes, () => {
               },
             }),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { $ref: '#/components/schemas/NonExistent' },
       ],
@@ -38,10 +36,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'a true schema',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         true,
       ],
@@ -51,10 +47,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'a false schema',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         false,
       ],
@@ -64,10 +58,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'a schema with a single type',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { type: 'string' },
       ],
@@ -77,10 +69,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'a schema with multiple types',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { type: ['string', 'number'] },
       ],
@@ -90,7 +80,6 @@ describe(inferOpenApiSchemaTypes, () => {
       'a $ref schema',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest
             .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
             .mockReturnValueOnce({
@@ -106,7 +95,6 @@ describe(inferOpenApiSchemaTypes, () => {
               },
             }),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { $ref: '#/components/schemas/Target' },
       ],
@@ -116,7 +104,6 @@ describe(inferOpenApiSchemaTypes, () => {
       'a $ref schema with a local type constraint',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest
             .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
             .mockReturnValueOnce({
@@ -132,7 +119,6 @@ describe(inferOpenApiSchemaTypes, () => {
               },
             }),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { $ref: '#/components/schemas/Target', type: 'string' },
       ],
@@ -142,7 +128,6 @@ describe(inferOpenApiSchemaTypes, () => {
       'a $ref schema resolving to a chain of further $ref schemas',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest
             .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
             .mockReturnValueOnce({
@@ -166,7 +151,6 @@ describe(inferOpenApiSchemaTypes, () => {
               },
             }),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { $ref: '#/components/schemas/Target' },
       ],
@@ -176,7 +160,6 @@ describe(inferOpenApiSchemaTypes, () => {
       'a $dynamicRef schema',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest
             .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
             .mockReturnValueOnce({
@@ -192,7 +175,6 @@ describe(inferOpenApiSchemaTypes, () => {
               },
             }),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { $dynamicRef: '#meta' },
       ],
@@ -202,7 +184,6 @@ describe(inferOpenApiSchemaTypes, () => {
       'a schema with both $ref and $dynamicRef',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest
             .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
             .mockReturnValueOnce({
@@ -223,7 +204,6 @@ describe(inferOpenApiSchemaTypes, () => {
               },
             }),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { $dynamicRef: '#meta', $ref: '#/components/schemas/Target' },
       ],
@@ -233,10 +213,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an allOf schema with overlapping types',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         {
           allOf: [
@@ -251,10 +229,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an allOf schema with no overlapping types',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { allOf: [{ type: 'string' }, { type: 'number' }] },
       ],
@@ -264,10 +240,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an allOf schema with a type constraint',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         {
           allOf: [
@@ -283,7 +257,6 @@ describe(inferOpenApiSchemaTypes, () => {
       'an allOf schema with $ref entries',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest
             .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
             .mockReturnValueOnce({
@@ -299,7 +272,6 @@ describe(inferOpenApiSchemaTypes, () => {
               },
             }),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         {
           allOf: [
@@ -314,10 +286,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an anyOf schema',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { anyOf: [{ type: 'string' }, { type: 'number' }] },
       ],
@@ -327,10 +297,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an anyOf schema with a type constraint',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         {
           anyOf: [
@@ -346,10 +314,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an empty schema (no type, no composition)',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         {},
       ],
@@ -359,10 +325,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an allOf schema with a boolean true child',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { allOf: [true, { type: 'string' }] },
       ],
@@ -372,10 +336,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an allOf schema with a boolean false child',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { allOf: [false, { type: 'string' }] },
       ],
@@ -385,10 +347,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'a schema with integer type',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { type: 'integer' },
       ],
@@ -398,10 +358,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an allOf schema with number and integer',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { allOf: [{ type: 'number' }, { type: 'integer' }] },
       ],
@@ -411,10 +369,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an allOf schema with integer and constraint-only',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { allOf: [{ type: 'integer' }, { minimum: 1 }] },
       ],
@@ -424,10 +380,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'an anyOf schema with number and integer',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { anyOf: [{ type: 'number' }, { type: 'integer' }] },
       ],
@@ -437,10 +391,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'a schema with type ["number", "integer"]',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { type: ['number', 'integer'] },
       ],
@@ -472,10 +424,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'a schema with oneOf',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { oneOf: [{ type: 'string' }, { type: 'number' }] },
       ],
@@ -484,10 +434,8 @@ describe(inferOpenApiSchemaTypes, () => {
       'a schema with not',
       [
         {
-          deepResolveReference: (): undefined => undefined,
           resolveJsonSchema: vitest.fn(),
           resolveOpenApiReference: vitest.fn(),
-          resolveReference: (): undefined => undefined,
         },
         { not: { type: 'string' } },
       ],
@@ -499,7 +447,6 @@ describe(inferOpenApiSchemaTypes, () => {
 
         return [
           {
-            deepResolveReference: (): undefined => undefined,
             resolveJsonSchema: vitest
               .fn<(schema: JsonValue) => JsonSchemaResolutionResult>()
               .mockReturnValueOnce({
@@ -515,7 +462,6 @@ describe(inferOpenApiSchemaTypes, () => {
                 },
               }),
             resolveOpenApiReference: vitest.fn(),
-            resolveReference: (): undefined => undefined,
           },
           cyclicSchema,
         ] as Parameters<typeof inferOpenApiSchemaTypes>;

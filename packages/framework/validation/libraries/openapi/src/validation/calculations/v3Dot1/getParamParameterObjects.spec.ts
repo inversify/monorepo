@@ -65,10 +65,8 @@ describe(getParamParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -130,10 +128,8 @@ describe(getParamParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -193,10 +189,8 @@ describe(getParamParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -267,7 +261,6 @@ describe(getParamParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
           isRight: true,
@@ -283,7 +276,6 @@ describe(getParamParameterObjects, () => {
             value: resolvedParamFixture as unknown as JsonValue,
           },
         }),
-        resolveReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -348,7 +340,6 @@ describe(getParamParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
           isRight: true,
@@ -364,7 +355,6 @@ describe(getParamParameterObjects, () => {
             value: resolvedParamFixture as unknown as JsonValue,
           },
         }),
-        resolveReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -425,7 +415,6 @@ describe(getParamParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
           isRight: false,
@@ -434,7 +423,6 @@ describe(getParamParameterObjects, () => {
             resolutionContextStack: [],
           },
         }),
-        resolveReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -497,7 +485,6 @@ describe(getParamParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
           isRight: false,
@@ -506,7 +493,6 @@ describe(getParamParameterObjects, () => {
             resolutionContextStack: [],
           },
         }),
-        resolveReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -566,7 +552,6 @@ describe(getParamParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
           isRight: true,
@@ -575,7 +560,6 @@ describe(getParamParameterObjects, () => {
             value: null,
           },
         }),
-        resolveReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -623,10 +607,8 @@ describe(getParamParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -676,10 +658,8 @@ describe(getParamParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);

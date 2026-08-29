@@ -15,7 +15,6 @@ import {
 import { Uri } from '@inversifyjs/uri';
 
 import { getClosestAncestorId } from '../../calculations/getClosestAncestorId.js';
-import { getClosestAncestorOrNodeId } from '../../calculations/getClosestAncestorOrNodeId.js';
 import { BaseOpenApiResolver } from '../BaseOpenApiResolver.js';
 import {
   type JsonSchemaResolutionResult,
@@ -98,22 +97,6 @@ export class DefaultOpenApiResolver extends BaseOpenApiResolver {
           const idUri: Uri = new Uri(params.schema.$id, baseId);
 
           this.#uriToSchemaMap.set(idUri.toString(), params.schema);
-        }
-
-        if (params.schema.$anchor !== undefined) {
-          const anchorRelatedId: string | undefined =
-            getClosestAncestorOrNodeId(
-              params.rootSchema,
-              params.jsonPointer,
-              undefined,
-            );
-
-          if (anchorRelatedId !== undefined) {
-            this.#uriToSchemaMap.set(
-              `${anchorRelatedId}#${params.schema.$anchor}`,
-              params.schema,
-            );
-          }
         }
       },
     );

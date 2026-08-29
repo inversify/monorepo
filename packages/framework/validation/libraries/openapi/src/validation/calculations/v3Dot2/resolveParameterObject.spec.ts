@@ -31,10 +31,8 @@ describe(resolveParameterObject, () => {
 
     beforeAll(() => {
       openApiResolverMock = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
       parameterFixture = {
         in: 'query',
@@ -89,10 +87,8 @@ describe(resolveParameterObject, () => {
         $ref: '#/components/parameters/Missing',
       };
       openApiResolverMock = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
     });
 
@@ -161,10 +157,8 @@ describe(resolveParameterObject, () => {
         schema: { type: 'integer' },
       };
       openApiResolverMock = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
     });
 
@@ -227,10 +221,8 @@ describe(resolveParameterObject, () => {
         $ref: '#/components/schemas/User',
       };
       openApiResolverMock = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
     });
 
@@ -289,10 +281,8 @@ describe(resolveParameterObject, () => {
         $ref: '#/components/parameters/PageParam',
       };
       openApiResolverMock = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
     });
 
@@ -349,10 +339,8 @@ describe(resolveParameterObject, () => {
         $ref: '#/components/parameters/PageParam',
       };
       openApiResolverMock = {
-        deepResolveReference: vitest.fn(),
         resolveJsonSchema: vitest.fn(),
         resolveOpenApiReference: vitest.fn(),
-        resolveReference: vitest.fn(),
       };
     });
 

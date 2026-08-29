@@ -25,10 +25,8 @@ describe(getRequestBodyObject, () => {
 
   beforeAll(() => {
     openApiResolverMock = {
-      deepResolveReference: vitest.fn(),
       resolveJsonSchema: vitest.fn(),
       resolveOpenApiReference: vitest.fn(),
-      resolveReference: vitest.fn(),
     };
     methodFixture = 'post';
     routeFixture = '/users';
