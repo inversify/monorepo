@@ -1,13 +1,6 @@
 
-# Dependencies
-# Generated at build time
-# Generated files
-# Misc
-# Production
-# Turbo
 .DS_Store
 .cache-loader
-.docusaurus
 .env.development.local
 .env.local
 .env.production.local
