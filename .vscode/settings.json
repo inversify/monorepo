@@ -5,6 +5,7 @@
     { "pattern": "./packages/container/tools/*", "!cwd": false },
     { "pattern": "./packages/docs/services/*", "!cwd": false },
     { "pattern": "./packages/docs/tools/*", "!cwd": false },
+    { "pattern": "./packages/docs-mintlify/services/*", "!cwd": false },
     { "pattern": "./packages/foundation/libraries/*", "!cwd": false },
     { "pattern": "./packages/foundation/tools/*", "!cwd": false },
     { "pattern": "./packages/framework/*", "!cwd": false },

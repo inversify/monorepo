@@ -1,0 +1,84 @@
+---
+sidebar_position: 1
+title: 绑定
+---
+import bindingScopeRequestSource from '@inversifyjs/code-examples/generated/examples/v8/bindingScopeRequest.ts.txt';
+import bindingScopeSingletonSource from '@inversifyjs/code-examples/generated/examples/v8/bindingScopeSingleton.ts.txt';
+import bindingScopeTransientSource from '@inversifyjs/code-examples/generated/examples/v8/bindingScopeTransient.ts.txt';
+import bindingToSyntaxApiToResolvedValueForDbRepositorySource from '@inversifyjs/code-examples/generated/examples/v8/bindingToSyntaxApiToResolvedValueForDbRepository.ts.txt';
+import fundamentalsBindingExampleSource from '@inversifyjs/code-examples/generated/examples/v8/fundamentalsBindingExample.ts.txt';
+import fundamentalsBindingFromClassMetadataSource from '@inversifyjs/code-examples/generated/examples/v8/fundamentalsBindingFromClassMetadata.ts.txt';
+import fundamentalsAutobindingSource from '@inversifyjs/code-examples/generated/examples/v8/fundamentalsAutobinding.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 绑定
+
+绑定表示服务标识符与其解析之间的关系。绑定被添加到容器中，以配置它提供服务。
+
+<CodeBlock language="ts">{fundamentalsBindingExampleSource}</CodeBlock>
+
+当绑定被添加到容器时，容器被配置为通过解析 `Katana` 类来为服务标识符 `Weapon` 提供解析值。`container.bind` 创建一个具有特定属性的新绑定，这些属性将在下面解释。
+
+## 依赖生成的类元数据
+
+使用 TypeScript 时，你可以依赖生成的类元数据，以避免手动指定服务标识符。这是通过在要绑定的类上使用 `inversify` 的 `@injectable` 装饰器来完成的。你需要启用 `emitDecoratorMetadata` TypeScript 编译器选项。
+
+<CodeBlock language="ts">{fundamentalsBindingFromClassMetadataSource}</CodeBlock>
+
+## 自动绑定
+
+InversifyJS 提供了一个称为自动绑定的功能，允许你自动绑定类。每当解析类服务且在规划阶段未找到绑定时，容器会在继续规划阶段之前向请求的类添加类型绑定。此功能默认禁用。要启用它，你需要将 `autoBind` 选项传递给容器，或者在调用 `container.get` 时传递 `autobind` 选项。
+
+<CodeBlock language="ts">{fundamentalsAutobindingSource}</CodeBlock>
+
+## 异步解析绑定
+
+每当从绑定解析出类似 Promise 的值时，容器将等待 Promise 解析，然后再将解析后的值返回给它们的依赖服务：
+
+<CodeBlock language="ts">{bindingToSyntaxApiToResolvedValueForDbRepositorySource}</CodeBlock>
+
+在示例中，`dbConnectionSymbol` 数据库连接是异步解析的。容器等待 Promise 解析，将 `AwesomeDbDriverConnection` 实例传递给解析值工厂，而不是 `Promise<AwesomeDbDriverConnection>`。
+
+:::warning
+
+请记住，异步绑定需要使用 `Container.getAsync` 或 `Container.getAllAsync` 来解析任何相关服务。
+
+:::
+
+## 绑定属性
+
+绑定具有以下属性：
+
+### 服务标识符
+
+提供解析的服务的标识符。
+
+### 作用域
+
+作用域决定了用于决定是解析服务还是提供缓存值的缓存策略。
+
+#### 请求 (Request)
+
+当在同一个 `container.get` 请求中解析服务时，将使用相同的解析值。
+
+<CodeBlock language="ts">{bindingScopeRequestSource}</CodeBlock>
+
+#### 单例 (Singleton)
+
+当解析服务时，将使用相同的缓存解析值。
+
+<CodeBlock language="ts">{bindingScopeSingletonSource}</CodeBlock>
+
+#### 瞬态 (Transient)
+
+当解析服务时，每次都会使用新的解析值。
+
+<CodeBlock language="ts">{bindingScopeTransientSource}</CodeBlock>
+
+### 约束
+
+指定绑定是否用于为给定的服务标识符提供解析值。有关更多信息，请参阅 [API 文档](../api/binding-syntax.mdx#bindwhenfluentsyntax)。
+
+### 生命周期处理程序
+
+在提供解析值或停用单例作用域绑定后调用的处理程序。有关更多信息，请参阅 [API 文档](../api/binding-syntax.mdx#bindonfluentsyntax)。

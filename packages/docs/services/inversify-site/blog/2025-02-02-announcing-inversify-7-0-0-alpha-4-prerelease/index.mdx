@@ -1,0 +1,33 @@
+---
+slug: announcing-inversify-7-0-0-alpha-4-prerelease
+title: Announcing 7.0.0-alpha.4
+authors: [notaphplover]
+tags: [releases]
+---
+import bindingToSyntaxApiToFactorySource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToFactory.ts.txt';
+import bindingToSyntaxApiToResolvedValueForDbRepositorySource from '@inversifyjs/code-examples/generated/examples/v7/bindingToSyntaxApiToResolvedValueForDbRepository.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+In this version, we are announcing a new type of binding!
+
+{/* truncate */}
+
+Several users asked for a way to pass resolved services as arguments to a factory or a provider. [Resolved value bindings](/docs/next/api/binding-syntax#toresolvedvalue) allows providing service dependencies without relying on `ResolutionContext` (formerly known as `Context`).
+
+consider the following example:
+
+<CodeBlock className="language-ts">{bindingToSyntaxApiToResolvedValueForDbRepositorySource}</CodeBlock>
+
+Previously, the most common way to achieve this was by using `Context` base dynamic values. Instead, `toResolvedValue` can be used to achieve the same result.
+
+## Motivation
+
+When `.toResolvedValue` is a good enough solution, using `ResolutionContext` should not be the way to go in these scenarios. `ResolutionContext` is a powerful API, but it comes with a few cons as well.
+
+Every time `ResolutionContext.get` is used, a new resolution is triggered. This resolution is unaware of the parent resolution. Not the end of the world, but this lack of awareness can lead to, for example, not providing the most friendly error messages when a circular dependency is detected if the cycle involves multiple resolution contexts.
+
+On the other hand, `ResolutionContext` based bindings might be useful in more complex scenarios. For example:
+
+<CodeBlock className="language-ts">{bindingToSyntaxApiToFactorySource}</CodeBlock>
+
+Can this be done with `toResolvedValue`? Yes, but it would require extra boilerplate code. You might be interesed in doing so, and implementing your `Engine` factory without relying on `ResolutionContext` would be an excellent way to provide code less coupled to `inversify`. On the other hand, `.toFactory` can be used to achieve the same result with less code.

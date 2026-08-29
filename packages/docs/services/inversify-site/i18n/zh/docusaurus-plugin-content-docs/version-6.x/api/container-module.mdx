@@ -1,0 +1,82 @@
+---
+sidebar_position: 3
+title: 容器模块 (Container Module)
+---
+import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/containerModuleApiExample.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 容器模块 (ContainerModule)
+
+容器模块有助于管理大型应用程序中绑定的复杂性。
+
+## 构造函数
+
+```ts
+constructor(registry: interfaces.ContainerModuleCallBack)
+```
+
+`ContainerModule` 的构造函数参数是一个注册回调，带有用于管理容器模块范围内绑定的函数参数。
+
+### bind
+
+```ts
+bind: interfaces.Bind
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#bind)。
+
+### unbind
+
+```
+unbind: interfaces.Unbind
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#unbind)。
+
+### isBound
+
+```ts
+isBound: interfaces.IsBound
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#isbound)。
+
+### rebind
+
+```ts
+rebind: interfaces.Rebind
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#rebind)。
+
+### unbindAsync
+
+```ts
+unbindAsync: interfaces.UnbindAsync
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#unbindasync)。
+
+### onActivation
+
+```ts
+onActivation: interfaces.Container['onActivation']
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#onactivation)。
+
+### onDeactivation
+
+```ts
+onDeactivation: interfaces.Container['onDeactivation']
+```
+
+有关更多信息，请参阅 [文档](./container.mdx#ondeactivation)。
+
+## 示例：通过 ContainerModule API 绑定服务
+
+当容器模块加载到容器中时，将调用注册回调。这是容器模块注册绑定和处理程序的机会。对 `ContainerModule` 实例使用容器 `load` 方法，对 `AsyncContainerModule` 实例使用容器 `loadAsync` 方法。
+
+当容器模块从容器中卸载时，该容器添加的绑定将被删除，并且每个绑定都将发生 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。容器停用和 [激活处理程序](../fundamentals/lifecycle/activation.mdx) 也将被删除。当有异步停用处理程序或异步 [preDestroy](./decorator.mdx#predestroy) 时，使用 `unloadAsync` 方法进行卸载。
+
+<CodeBlock language="ts">{containerModuleApiExampleSource}</CodeBlock>

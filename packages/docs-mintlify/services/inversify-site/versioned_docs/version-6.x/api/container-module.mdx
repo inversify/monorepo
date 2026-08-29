@@ -1,0 +1,81 @@
+---
+sidebar_position: 3
+title: Container Module
+---
+import containerModuleApiExampleSource from '../../../snippets/code-examples/examples/containerModuleApiExample.ts';
+
+# ContainerModule
+
+Container modules help manage the complexity of bindings in large applications.
+
+## Constructor
+
+```ts
+constructor(registry: interfaces.ContainerModuleCallBack)
+```
+
+The constructor argument for `ContainerModule` is a registration callback with function parameters to manage bindings within the scope of the container module.
+
+### bind
+
+```ts
+bind: interfaces.Bind
+```
+
+Refer to the [docs](./container.mdx#bind) for more information.
+
+### unbind
+
+```
+unbind: interfaces.Unbind
+```
+
+Refer to the [docs](./container.mdx#unbind) for more information.
+
+### isBound
+
+```ts
+isBound: interfaces.IsBound
+```
+
+Refer to the [docs](./container.mdx#isbound) for more information.
+
+### rebind
+
+```ts
+rebind: interfaces.Rebind
+```
+
+Refer to the [docs](./container.mdx#rebind) for more information.
+
+### unbindAsync
+
+```ts
+unbindAsync: interfaces.UnbindAsync
+```
+
+Refer to the [docs](./container.mdx#unbindasync) for more information.
+
+### onActivation
+
+```ts
+onActivation: interfaces.Container['onActivation']
+```
+
+Refer to the [docs](./container.mdx#onactivation) for more information.
+
+### onDeactivation
+
+```ts
+onDeactivation: interfaces.Container['onDeactivation']
+```
+
+Refer to the [docs](./container.mdx#ondeactivation) for more information.
+
+## Example: binding services through ContainerModule API
+
+When a container module is loaded into a Container, the registration callback is invoked. This is the opportunity for the container module to register bindings and handlers. Use the Container `load` method for `ContainerModule` instances and the Container `loadAsync` method for `AsyncContainerModule` instances.
+
+When a container module is unloaded from a Container, the bindings added by that container will be removed, and the [deactivation process](../fundamentals/lifecycle/deactivation.mdx) will occur for each of them. Container deactivation and [activation handlers](../fundamentals/lifecycle/activation.mdx) will also be removed. Use the `unloadAsync` method to unload when there will be an async deactivation handler or async [preDestroy](./decorator.mdx#predestroy).
+
+<CodeBlock language="ts">{containerModuleApiExampleSource}</CodeBlock>

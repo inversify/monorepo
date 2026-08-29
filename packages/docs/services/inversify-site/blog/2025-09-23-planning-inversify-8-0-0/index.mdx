@@ -1,0 +1,94 @@
+---
+slug: planning-inversify-8-0-0
+title: Planning InversifyJS 8 - Feedback Needed!
+authors: [notaphplover]
+tags: [releases]
+---
+
+We're excited to share that we've begun planning the next major release of InversifyJS: **version 8.0.0**! Unlike previous major releases, we're committed to keeping breaking changes to a minimum while focusing on improvements that enhance type safety, consistency, and maintainability.
+
+**We're targeting March 2026 for the InversifyJS 8.0.0 release**, giving us ample time to gather community feedback, refine the proposed changes, and ensure a smooth transition for all users.
+
+{/* truncate */}
+
+![Cast your vote](./cast-your-vote.jpg)
+
+## A Community-Driven Approach
+
+For this release, we're taking a different approach. Instead of planning breaking changes in isolation, **we want your input early in the process**. We believe that gathering community feedback during the planning phase will help us deliver the highest quality software that truly serves your needs.
+
+## Proposed Breaking Changes
+
+We've identified **three specific areas** for potential breaking changes in v8. Each change is designed to improve the library's consistency, type safety, or maintainability:
+
+### 1. Improved Type Safety for Service Identifiers
+
+**[Issue #1071: Update ServiceIdentifier without Function](https://github.com/inversify/monorepo/issues/1071)**
+
+We're proposing to remove the generic `Function` type from `ServiceIdentifier`, which would improve TypeScript's type inference and provide better developer experience. This change would:
+
+- Enhance type safety and IDE support
+- Resolve type system issues reported by the community
+- Require classes with protected/private constructors to use symbols as service identifiers instead
+
+### 2. Consistent Naming Conventions
+
+**[Issue #1049: Rename Container.loadSync and Container.load](https://github.com/inversify/monorepo/issues/1049)**
+
+To align with our established naming patterns, we're considering:
+
+- Renaming `Container.loadSync` to `Container.load` (synchronous by default)
+- Renaming `Container.load` to `Container.loadAsync` (async operations use the "Async" suffix)
+
+This would bring consistency to our API where async methods are clearly marked with the "Async" suffix.
+
+### 3. Library Simplification
+
+**[Issue #1048: Remove Provider](https://github.com/inversify/monorepo/issues/1048)**
+
+Since v6, `Provider` has been superseded by `Factory`, which offers the same functionality with better flexibility. Removing `Provider` would:
+
+- Simplify the library and reduce maintenance overhead
+- Encourage migration to the more powerful `Factory` pattern
+- Reduce the learning curve for new users
+
+## We Need Your Feedback!
+
+These changes are **proposals, not final decisions**. We want to hear from you:
+
+- **Are these changes valuable for your use cases?**
+- **Would any of these changes significantly impact your codebase?**
+- **Do you have suggestions for smoother migration paths?**
+- **Are there other improvements you'd like to see in v8?**
+
+## How to Participate
+
+Visit our GitHub issues tagged with [V8](https://github.com/inversify/monorepo/issues?q=is%3Aissue%20state%3Aopen%20label%3AV8) to:
+
+1. **Comment on individual issues** with your thoughts and use cases
+2. **Share migration concerns** or suggestions
+3. **Propose additional improvements** for v8
+4. **Vote with reactions** (👍/👎) to express your support or concerns
+
+Your feedback directly influences our decisions. Every comment helps us understand the real-world impact of these changes and ensures we're building something that truly serves the InversifyJS community.
+
+## What's Next?
+
+Based on your feedback, we'll:
+
+1. **Refine the proposed changes** to address community concerns
+2. **Provide detailed migration guides** for any breaking changes we decide to implement
+3. **Release alpha/beta versions** throughout 2025 to help you test changes before the final release
+4. **Continue the conversation** as we develop v8 toward our **March 2026 target release**
+
+This timeline gives us plenty of opportunity to iterate on the design, gather real-world feedback from alpha/beta testing, and ensure that v8 delivers meaningful improvements without unnecessary disruption.
+
+## A Collaborative Future
+
+InversifyJS has always been about empowering developers to build better applications through clean dependency injection. Version 8 represents our commitment to evolving the library thoughtfully, with the community at the center of our decision-making process.
+
+**Thank you for being part of the InversifyJS community.** Your projects, contributions, and feedback make this library better every day.
+
+---
+
+**Ready to share your thoughts?** Head over to the [V8 planning issues](https://github.com/inversify/monorepo/issues?q=is%3Aissue%20state%3Aopen%20label%3AV8) and let us know what you think!

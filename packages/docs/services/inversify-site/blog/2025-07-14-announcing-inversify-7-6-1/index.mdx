@@ -1,0 +1,43 @@
+---
+slug: announcing-inversify-7-6-1
+title: Announcing 7.6.1
+authors: [notaphplover]
+tags: [releases]
+---
+import containerApiGetAllChainedSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAllChained.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+We're excited to announce InversifyJS 7.6.1! This release brings enhanced container hierarchy features and improved decorator capabilities.
+
+{/* truncate */}
+
+## Chained Resolution Mode
+
+One of the most significant additions in this release is **chained resolution mode** for container hierarchies. Previously, when resolving multiple services with `getAll()`, InversifyJS would only look in the first container that had bindings for that service identifier.
+
+Now, with the `chained: true` option, you can collect bindings from **all levels** of the container hierarchy:
+
+<CodeBlock language="ts">{containerApiGetAllChainedSource}</CodeBlock>
+
+## Enhanced @multiInject Decorator
+
+The `@multiInject` decorator now supports chained resolution, allowing you to inject services from all levels of the container hierarchy. This is particularly useful in plugin architectures or modular applications:
+
+```ts
+class PluginManager {
+  constructor(
+    @multiInject('Plugin', { chained: true })
+    private plugins: Plugin[]
+  ) {
+    // This will include plugins from both parent and child containers
+  }
+}
+```
+
+This enhancement makes it easy to collect implementations from different container levels without manually calling `getAll()` with chained options.
+
+## API Consistency Improvements
+
+We've updated the Container API to use `GetAllOptions` for `getAll()` and `getAllAsync()` methods, providing better consistency and access to advanced features like chained resolution.
+
+The binding syntax has also been refined with more consistent parameter naming across constraint methods.

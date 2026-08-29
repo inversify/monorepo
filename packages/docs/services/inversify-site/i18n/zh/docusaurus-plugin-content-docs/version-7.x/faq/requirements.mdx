@@ -1,0 +1,56 @@
+---
+sidebar_position: 1
+title: TypeScript 要求
+---
+
+# TypeScript 要求
+
+本页概述了使用 InversifyJS 的 TypeScript 配置要求。
+
+## 必需的 TypeScript 配置
+
+InversifyJS 依赖于 TypeScript 的反射元数据功能。你需要使用以下选项配置 TypeScript 编译器：
+
+### 装饰器支持
+
+在 `tsconfig.json` 中启用实验性装饰器和元数据发射：
+
+```json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    // other options...
+  }
+}
+```
+
+### ES2022 错误支持
+
+InversifyJS 使用需要 ES2022 支持的 `ErrorOptions` 类型。你有两个选择：
+
+1. 将 TypeScript 目标设置为 ES2022 或更高版本：
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    // other options...
+  }
+}
+```
+
+2. 或者，在 TypeScript 配置中包含 ES2022.Error 库：
+
+```json
+{
+  "compilerOptions": {
+    "lib": ["ES2022.Error", /* other libs... */],
+    // other options...
+  }
+}
+```
+
+## 严格模式注意事项
+
+虽然不是必需的，但 InversifyJS 与 TypeScript 的严格模式配合良好。如果你使用的是严格模式，在某些情况下可能需要提供更明确的类型注释。

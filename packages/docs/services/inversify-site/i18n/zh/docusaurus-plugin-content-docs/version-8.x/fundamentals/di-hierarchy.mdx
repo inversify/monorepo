@@ -1,0 +1,67 @@
+---
+sidebar_position: 2
+title: 依赖注入层级
+---
+import containerApiGetAllChainedSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllChained.ts.txt';
+import containerApiGetAllChainedFalseSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllChainedFalse.ts.txt';
+import diHierarchySource from '@inversifyjs/code-examples/generated/examples/v8/diHierarchy.ts.txt';
+import diHierarchyAndCachedBindingsSource from '@inversifyjs/code-examples/generated/examples/v8/diHierarchyAndCachedBindings.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 依赖注入层级
+
+InversifyJS 是一个流行的库，用于在 TypeScript 应用程序中实现控制反转 (IoC) 和依赖注入 (DI)。它支持分层依赖注入，这在复杂的应用程序中是一个强大的工具。
+
+使用 InversifyJS 的分层注入系统，你可以创建一个容器层级结构，其中每个容器都可以有一个父容器。这允许在你的应用程序中更好地组织和分离关注点。
+
+当需要注入依赖项时，InversifyJS 首先在当前容器中查找绑定。如果未找到绑定，它将向上移动到父容器并继续搜索。此过程一直持续到找到绑定或到达顶级父容器为止。
+
+:::warning[绑定覆盖]
+
+找到的绑定可能会覆盖祖先绑定，即使不满足它们的约束。例如，如果在子容器中找到了请求服务的命名绑定，则该绑定将覆盖父绑定，即使该绑定后来在非命名解析请求中被丢弃。
+
+:::
+
+:::warning[DI 层级和缓存绑定]
+
+使用分层注入时，请注意，第一次解析的缓存绑定将用于后续解析，即使调用来自另一个子容器。
+
+<CodeBlock language="ts">{diHierarchyAndCachedBindingsSource}</CodeBlock>
+
+如果不希望这种行为，请考虑改用 `ContainerModule`。这样，你可以在两个容器中加载它。不同的容器将具有不同的绑定，因此具有不同的缓存值。
+
+:::
+
+通过使用 InversifyJS 的分层注入系统，你可以轻松管理复杂的依赖关系，并保持代码整洁和模块化。它为处理 TypeScript 应用程序中的依赖关系提供了灵活且可扩展的解决方案。
+
+<CodeBlock language="ts">{diHierarchySource}</CodeBlock>
+
+## 链式解析模式
+
+在处理容器层级结构时，InversifyJS 支持两种不同的解析模式：**标准解析**和**链式解析**。
+
+### 标准解析模式
+
+在标准解析模式（默认行为）下，InversifyJS 遵循**首次发现**的方法：
+
+1. 首先，它在当前容器中搜索绑定
+2. 如果在当前容器中找到绑定，则仅使用这些绑定
+3. 如果在当前容器中未找到绑定，则向上移动到父容器
+4. 此过程一直持续到找到绑定或到达顶级容器为止
+
+这意味着，如果子容器对某个服务有任何绑定，则父容器对同一服务的绑定将被完全忽略：
+
+<CodeBlock language="ts">{containerApiGetAllChainedFalseSource}</CodeBlock>
+
+### 链式解析模式
+
+链式解析模式允许你从容器层级结构的**所有级别**收集绑定。当使用带有 `chained: true` 选项的 `getAll()` 或 `getAllAsync()` 时：
+
+1. 从当前容器收集绑定
+2. 然后从父容器收集绑定
+3. 这将递归地向上继续整个层级结构
+4. 所有收集到的绑定将被合并并返回
+
+当你想要聚合来自应用程序不同层的服务（例如，来自父容器的核心服务和来自子容器的特定于功能的服务）时，这特别有用。
+
+<CodeBlock language="ts">{containerApiGetAllChainedSource}</CodeBlock>

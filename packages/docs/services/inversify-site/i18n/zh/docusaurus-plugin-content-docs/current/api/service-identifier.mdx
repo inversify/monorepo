@@ -1,0 +1,60 @@
+---
+sidebar_position: 7
+title: ServiceIdentifier
+---
+import serviceIdentifierApiSource from '@inversifyjs/code-examples/generated/examples/v8/serviceIdentifierApi.ts.txt'
+import CodeBlock from '@theme/CodeBlock';
+
+# ServiceIdentifier
+
+## 概述
+
+`ServiceIdentifier` 是一个基本类型，用于标识 InversifyJS 依赖注入容器中的服务。它充当注册、定位和检索服务的键，充当服务注册和解析之间的桥梁。
+
+## 定义
+
+`ServiceIdentifier` 是一个联合类型，可以是以下之一：
+
+```typescript
+type ServiceIdentifier<TInstance = unknown> =
+  | string
+  | symbol
+  | Newable<TInstance>
+  | AbstractNewable<TInstance>;
+```
+
+其中 `Newable` 定义为：
+
+```typescript
+type Newable<
+  TInstance = unknown,
+  TArgs extends unknown[] = any[],
+> = new (...args: TArgs) => TInstance;
+```
+
+## 用法
+
+`ServiceIdentifier` 在整个 InversifyJS API 中用于：
+
+1. **服务注册**：将服务绑定到容器
+2. **服务解析**：从容器中检索服务
+3. **服务配置**：设置激活/停用处理程序
+
+### 示例
+
+<CodeBlock language="ts">{serviceIdentifierApiSource}</CodeBlock>
+
+:::info[类型推断支持]
+
+当使用带有 `ServiceIdentifier<T>` 的泛型时，TypeScript 可以推断解析的类型。在上面的示例中，`firstUserService` 自动类型化为 `UserService`，因为 `UserService` 被推断为 `ServiceIdentifier<UserService>`。
+
+:::
+
+:::warning[赋值缩减类型]
+
+在 TypeScript 中，当分配带有联合注释的变量时，该变量的实际初始类型变为“赋值缩减类型”。
+
+在上面的示例中，`userServiceId` 自动缩减为 `symbol`，因此，`firstUserService` 类型化为 `unknown`。
+使用强制转换可防止此缩减并保持原始类型。以 `fourthUserService` 为例。
+
+:::

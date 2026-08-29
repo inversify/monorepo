@@ -1,0 +1,26 @@
+.heroBanner {
+  background:
+    linear-gradient(
+      0deg,
+      rgb(from var(--ifm-color-primary-darkest) r g b / 0.5),
+      rgb(from var(--ifm-color-primary-darkest) r g b / 0.5)
+    ),
+    url(/static/img/home-header.jpg);
+  background-size: cover;
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem;
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

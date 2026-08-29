@@ -1,0 +1,236 @@
+---
+slug: a-year-of-resolution-performance
+title: A Year of Shaving Nanoseconds Off Dependency Injection
+authors: [notaphplover]
+tags: [performance]
+image: ./cover.png
+---
+
+import MermaidGraph from '../../src/components/MermaidGraph';
+
+Every `container.get()` call has to figure out *how* to build what was asked for. That blueprint is a **plan** — and for a long time, computing it was the single biggest cost of a resolution. Over roughly a year, from InversifyJS 6 through 7 and into 8, planning and resolution were rebuilt from the ground up.
+
+{/* truncate */}
+
+![From tangled resolution graphs to lean, cached plans](./cover.png)
+
+## TL;DR
+
+Every time `container.get()` runs in [InversifyJS](https://github.com/inversify/monorepo), the library has to figure out *how* to build the thing that was asked for: which binding to use, which constructor arguments to inject, which properties to fill in, whether an activation handler needs to run. That blueprint is called a **plan**, and computing it used to be the single biggest cost of a resolution.
+
+Over roughly a year — from InversifyJS 6 through 7 and into 8 — planning and resolution were rebuilt from the ground up: a plan cache, a way to safely reuse cached sub-plans without invalidating everything on every `bind()`/`unbind()` call, and finally a set of specialized, JIT-compiled resolvers that strip out checks the container can prove are unnecessary. The result: **transient, deeply-nested resolutions that used to take milliseconds now take microseconds**, and even simple singleton lookups got 3-4x faster.
+
+This post walks through that year, with the actual code and PRs behind it.
+
+## Act 1 — InversifyJS 6: plan every single time
+
+In InversifyJS 6, there was no persistent plan. Every call to `container.get(TYPE.Something)` walked the binding graph from scratch:
+
+<MermaidGraph
+  id="plan-every-time"
+  source={`sequenceDiagram
+    participant Caller
+    participant Container
+    participant Planner
+    participant Resolver
+
+    Caller->>Container: get(ServiceA)
+    Container->>Planner: plan(ServiceA)
+    Planner->>Planner: walk bindings, constraints, ancestors
+    Planner-->>Container: PlanResult (thrown away after use)
+    Container->>Resolver: resolve(PlanResult)
+    Resolver-->>Caller: instance`}
+/>
+
+For a flat singleton, that overhead is tolerable. For a deep object graph resolved as a `transient` binding — the classic worst case for any DI container — replanning on every single call is brutal. The `container-benchmarks` package in the monorepo still keeps `inversify6` around as a baseline in every benchmark run, and the raw latency numbers tell the story on their own:
+
+| Scenario | inversify6 latency (avg) |
+|---|---|
+| Get service, singleton scope | ~1.0 μs |
+| Get service, transient scope | ~5.9 μs |
+| Get complex service, transient scope (deep graph) | ~5.0 ms |
+| Get complex service with properties, transient scope | ~5.7 ms |
+
+(Figures pulled from the CI benchmark bot on [PR #2023](https://github.com/inversify/monorepo/pull/2023), which still runs `inversify6` as a historical baseline in every release. More on how those numbers evolved below.)
+
+## Act 2 — InversifyJS 7: the `PlanResultCacheService`, and its first, blunt cache invalidation
+
+The first big idea was simple: **don't throw the plan away.** InversifyJS 7 introduced [`PlanResultCacheService`](https://github.com/inversify/monorepo/blob/master/packages/container/libraries/core/src/planning/services/PlanResultCacheService.ts), a service dedicated to storing `PlanResult` objects keyed by service identifier, name and tag:
+
+```ts
+// packages/container/libraries/core/src/planning/services/PlanResultCacheService.ts
+export class PlanResultCacheService {
+  // ...
+  public get(options: GetPlanOptions): PlanResult | undefined {
+    if (options.name === undefined) {
+      if (options.tag === undefined) {
+        return this.#getMapFromMapArray(
+          this.#serviceIdToValuePlanMap,
+          options,
+        ).get(options.serviceIdentifier);
+      }
+      // ...
+    }
+    // ...
+  }
+
+  public set(options: GetPlanOptions, planResult: PlanResult): void {
+    // stores the computed plan the first time it's built
+  }
+
+  public clearCache(): void {
+    for (const map of this.#getMaps()) {
+      map.clear();
+    }
+
+    for (const subscriber of this.#subscribers) {
+      subscriber.clearCache();
+    }
+  }
+}
+```
+
+This alone made repeated resolutions of the *same* service dramatically cheaper — no replanning, just a map lookup.
+
+But there was an obvious problem: what happens when the application calls `container.bind()` or `container.unbind()` after some plans are already cached? A plan can depend on constraints evaluated against *ancestor* bindings (`named`, `tagged`, `when(...)` conditions that inspect the parent request). There was no cheap way to know, in general, whether a newly added or removed binding invalidated an existing cached plan.
+
+So the first shipped strategy was blunt but correct: **any binding service mutation cleared the entire cache** (`clearCache()`, invoked transitively down to child container plan caches via `subscribe`). Safe, but it meant that any application doing incremental binding (feature flags, plugin registration, request-scoped child containers with per-request bindings) paid the full replanning cost again and again.
+
+## Act 3 — Still InversifyJS 7: context-free service nodes
+
+The fix required answering a structural question first: **which plan nodes can safely outlive a binding change, and which can't?**
+
+A useful analogy comes from formal language theory. In the Chomsky hierarchy, a *context-free* grammar production only depends on the symbol being produced — never on the surrounding symbols. [PR #823 — "Update plan to reuse cached service nodes"](https://github.com/inversify/monorepo/pull/823) applied the same idea to planning:
+
+> A `PlanServiceNode` is **context-free** if and only if it can be planned regardless of the state of its ancestors.
+
+Concretely, the planner already tracks whenever a binding constraint calls `BindingConstraints.getAncestor(...)` — that's the exact signal that a node's plan depends on something outside itself. If that call never happens while building a node, the node is context-free and its computed sub-plan can be cached and reused independently of *where* in the tree it's being requested from:
+
+```ts
+// packages/container/libraries/core/src/planning/actions/curryBuildPlanServiceNode.ts
+serviceNode.isContextFree =
+  !bindingConstraintsList.last.elem.getAncestorsCalled;
+```
+
+This had a structural consequence worth calling out: to make nodes safely shareable, **plan nodes could no longer hold a reference to their parent** — a node with a `parent` pointer is implicitly tied to one position in one tree, which defeats the whole point of reusing it elsewhere. So `parent` was removed from `PlanServiceNode` and `BaseBindingNode` entirely, replaced by explicit tracking as the plan is built (for circular-dependency and redirection error messages, among other things).
+
+<MermaidGraph
+  id="context-free-nodes"
+  source={`graph TD
+    A["Root: ServiceA (context-dependent, tagged)"] --> B["ServiceB (context-free)"]
+    A --> C["ServiceC (context-free)"]
+    B --> D["Logger (context-free, shared)"]
+    C --> D
+`}
+/>
+
+*`Logger` is planned once, cached without a parent reference, and reused for both `ServiceB`'s and `ServiceC`'s subtrees — even though the root request depends on ancestor tags that `Logger` itself never inspects.*
+
+With this in place, cache invalidation could finally become surgical instead of total: [`invalidateServiceBinding`](https://github.com/inversify/monorepo/blob/master/packages/container/libraries/core/src/planning/services/PlanResultCacheService.ts) recomputes only the affected map entries and non-context-free nodes, instead of nuking everything. The changelog entry for `@inversifyjs/core@6.0.0` (the release that shipped PR #823) records exactly this:
+
+```
+## 6.0.0
+### Major Changes
+- Updated `PlanServiceNode` with no `parent`
+- Updated `BaseBindingNode` with no `parent`
+### Minor Changes
+- Updated `BasePlanParams` with `setPlan`
+- Updated `PlanResultCacheService` with `invalidateService`
+- update plan to reuse `PlanServiceNode` objects
+```
+
+The benchmark bot commented directly on the PR, and the "get complex service in transient scope" case (the worst-case deep-graph scenario) is the one that moved the most: **~17x** faster than `inversify6`, and meaningfully ahead of the *previous* `inversify7` baseline too — all while using less memory, since shared context-free nodes mean fewer duplicate plan objects sitting in the cache.
+
+## Act 4 — InversifyJS 8: making the resolvers themselves faster
+
+Caching the *plan* only gets halfway. Once a plan exists, the container still needs to *execute* it — walk constructor arguments, inject properties, and, potentially, run activation handlers. InversifyJS 8 attacked that execution path directly, with two complementary techniques.
+
+### 1. Specialized resolvers that skip work the planner already proved unnecessary
+
+The current file behind this optimization is a good example: [`buildNoActivationsResolvedValueBindingNodeResolverJit.ts`](https://github.com/inversify/monorepo/blob/master/packages/container/libraries/core/src/planning/calculations/buildNoActivationsResolvedValueBindingNodeResolverJit.ts). At plan time, the container already knows whether a service identifier has any activation handlers registered:
+
+```ts
+// packages/container/libraries/core/src/planning/models/ResolvedValueBindingNodeImplementation.ts
+const areServiceActivations: boolean =
+  params.operations.getActivations(binding.serviceIdentifier) !== undefined;
+```
+
+Instead of building one generic resolver that always checks `if (activations) { ... }` at *resolve* time — on every single call — the planner now builds a **specialized closure once**, at plan time, that has already made that decision:
+
+```ts
+// packages/container/libraries/core/src/planning/calculations/buildNoActivationsResolvedValueBindingNodeResolverJit.ts
+export function buildNoActivationsResolvedValueBindingNodeResolverJit<TActivated>(
+  node: ResolvedValueBindingNode<ResolvedValueBinding<TActivated>>,
+  areServiceActivations: boolean,
+): (params: ResolutionParams) => Resolved<TActivated> {
+  const resolveActivations = areServiceActivations
+    ? resolveServiceActivations(serviceIdentifier)
+    : undefined;
+
+  // arity-specialized resolvers (0..4 args have dedicated fast paths,
+  // 5+ falls back to a generic loop) to minimize call dispatch overhead
+  // on the hottest resolution path
+  switch (node.binding.metadata.arguments.length) {
+    case ZERO_PARAMS:
+      resolveNode = buildZeroResolvedValueArgumentsResolverJit(node, resolveActivations);
+      break;
+    // ...
+  }
+
+  return resolveScopedWithNoActivations(node.binding, resolveNode);
+}
+```
+
+If there are no activations for that service, `resolveActivations` is `undefined` for the *lifetime of the plan* — the generated function body never contains an activation branch at all, rather than evaluating a branch condition millions of times. The same "no activations" specialization pattern is mirrored for instance bindings and dynamic-value bindings, and it composes with per-arity resolvers (0, 1, 2, 3, 4, or N constructor arguments) so the hottest paths — zero- and one-argument constructors, which dominate most real dependency graphs — get the leanest possible function.
+
+### 2. Actually asking V8 to inline the call, via runtime code generation
+
+The arity-specialized resolvers don't just avoid branches — several of them are generated with `new Function(...)` at plan time, producing small, monomorphic functions that V8's JIT can inline aggressively:
+
+```ts
+// packages/container/libraries/core/src/planning/calculations/buildZeroResolvedValueArgumentsResolverJit.ts
+const buildResolveNode = new Function(
+  `node$${id}`,
+  `return function resolveNode$${id}(params$${id}) {
+    return node$${id}.binding.factory();
+  };`,
+) as (node: ResolvedValueBindingNode<...>) => (params: ResolutionParams) => Resolved<TActivated>;
+
+return buildResolveNode(node);
+```
+
+Every generated resolver gets a unique suffix (`getGeneratedResolverId()`) so V8 doesn't have to de-optimize a polymorphic call site shared across unrelated bindings — each binding effectively gets its own dedicated, monomorphic function shape. This is exactly the kind of low-level trick expected from a JS engine performance deep-dive, applied to a dependency injection container.
+
+Because generating functions via `new Function` needs runtime code evaluation (a problem under strict CSP), InversifyJS 8.2.0 paired this with a `jitless` container option and a non-JIT fallback path, so security-conscious deployments can opt out of the codegen trick without losing the tree of other optimizations (arity specialization, activation skipping, plan caching). See [Announcing InversifyJS 8.2](/blog/announcing-inversify-8-2/) for more on that option.
+
+The `container/core` changelog entries chart the same story release by release:
+
+```
+## 8.1.1  – cached resolver on the binding node + simplified core logic
+           (~20% improvement on transient services with deep dependency graphs)
+## 8.1.3  – forced inlined V8 constructor calls for transient scope
+## 8.2.0  – better inlined constructor calls; instance resolution flow relies
+           on inlined functions also for property-injected services;
+           jitless option added
+## 8.2.1  – resolved-value binding resolution respects `jitless`,
+           avoiding `Function` constructor usage in CSP-restricted environments
+```
+
+## The payoff: a full year of benchmarks, side by side
+
+The `@inversifyjs/container-benchmarks` package runs the same suite — `get service`, `get complex service`, `get complex service with properties`, all in singleton and transient scopes — against every historical major version (`inversify6`, `inversify7`, `inversify8`) plus the in-development `inversifyCurrent`, and against competing containers (NestJS DI, tsyringe, awilix) for context. The most recent run, from the automated release PR [#2023](https://github.com/inversify/monorepo/pull/2023) (CJS build), lines them all up:
+
+| Scenario | inversify6 | inversify7 | inversify8 | current | current vs 6 |
+|---|---|---|---|---|---|
+| Get service, singleton | 1,072 ns | 315 ns | 251 ns | 250 ns | **4.2x** |
+| Get service, transient | 5,853 ns | 595 ns | 300 ns | 270 ns | **22.0x** |
+| Get complex service, transient (deep graph) | 5,016,989 ns | 251,792 ns | 65,969 ns | 39,911 ns | **125.9x** |
+| Get complex service with properties, transient | 5,720,696 ns | 337,682 ns | 78,920 ns | 50,377 ns | **114.9x** |
+
+Reading this left to right *is* the optimization timeline:
+
+- **6 → 7**: the plan cache alone buys ~10-20x on repeat resolutions.
+- **7 → 8**: context-free reuse plus specialized/JIT resolvers buys another **4-8x** on top of that.
+- **8 → current**: incremental refinements (arity specialization for more shapes, more inlining, activation-skip everywhere it's provably safe) keep shaving another 1.3-1.8x, with diminishing but real returns.
+
+Multiply it end to end and the worst-case scenario — a deep, transient object graph, the exact shape that punishes a naive DI container — went from **~5 milliseconds to ~40 microseconds**. That's not a rounding error; it's the difference between a container that has to be architected around and one that can be ignored.

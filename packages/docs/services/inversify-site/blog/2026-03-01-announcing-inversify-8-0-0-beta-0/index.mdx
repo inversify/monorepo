@@ -1,0 +1,109 @@
+---
+slug: announcing-inversify-8-0-0-beta-0
+title: Announcing InversifyJS 8.0.0-beta.0
+authors: [notaphplover]
+tags: [releases]
+---
+
+We're thrilled to announce the first beta of **InversifyJS 8.0.0**! This release delivers on the promises laid out in our [planning post](/blog/planning-inversify-8-0-0), bringing consistent naming conventions, improved type safety, a leaner API surface, and a full move to ES modules. The package is available today on npm.
+
+{/* truncate */}
+
+## Consistent Naming Conventions
+
+This is the most impactful change for existing codebases, and it's worth explaining the history that led to it.
+
+### How we got here
+
+InversifyJS 6 followed a clear convention:
+
+- Unqualified name → synchronous (`load`, `unbind`, …)
+- `Async` suffix → asynchronous (`loadAsync`, `unbindAsync`, …)
+
+When InversifyJS 7 was designed, several methods that had been synchronous in v6 — `load`, `unbind`, `unbindAll`, `unload`, and `rebind` — were mistakenly made asynchronous under the same unqualified names. This was a breaking change that caught many users off guard: code that had been calling `container.load(module)` synchronously suddenly needed to be awaited.
+
+Rather than introduce another breaking change mid-major to revert the rename, the v7.x series addressed this by introducing `Sync`-suffixed variants (`loadSync`, `unbindSync`, …) alongside the existing async names. This preserved backwards compatibility at the cost of an inconsistent API: some operations had a `Sync` suffix to signal synchronous behavior, others had an `Async` suffix, and the unqualified names meant different things for different methods.
+
+### What changes in 8
+
+InversifyJS 8 returns to the original convention and applies it consistently across the whole public API:
+
+| InversifyJS 7 | InversifyJS 8 |
+|---|---|
+| `Container.load` *(async)* | `Container.loadAsync` |
+| `Container.loadSync` | `Container.load` |
+| `Container.unload` *(async)* | `Container.unloadAsync` |
+| `Container.unloadSync` | `Container.unload` |
+| `Container.unbind` *(async)* | `Container.unbindAsync` |
+| `Container.unbindSync` | `Container.unbind` |
+| `Container.unbindAll` *(async)* | `Container.unbindAllAsync` |
+| `Container.unbindAllSync` | `Container.unbindAll` |
+| `Container.rebind` *(async)* | `Container.rebindAsync` |
+| `Container.rebindSync` | `Container.rebind` |
+| `ContainerModuleLoadOptions.unbind` *(async)* | `ContainerModuleLoadOptions.unbindAsync` |
+| `ContainerModuleLoadOptions.unbindSync` | `ContainerModuleLoadOptions.unbind` |
+| `ContainerModuleLoadOptions.rebind` *(async)* | `ContainerModuleLoadOptions.rebindAsync` |
+| `ContainerModuleLoadOptions.rebindSync` | `ContainerModuleLoadOptions.rebind` |
+
+The rule is simple: if an operation has both synchronous and asynchronous variants, the **unqualified name is synchronous** and the **`Async` suffix marks the asynchronous variant**. This matches how the wider JavaScript ecosystem names things and is consistent with how InversifyJS 6 worked.
+
+Updating your code is purely mechanical — a project-wide find-and-replace covering the names above is all that is needed.
+
+## Improved Type Safety for ServiceIdentifier
+
+`ServiceIdentifier<T>` no longer accepts an arbitrary `Function`. A `Function` is now only a valid `ServiceIdentifier<T>` if it satisfies `AbstractNewable<T> | Newable<T>`.
+
+In practice this means using a class directly as a service identifier (the most common pattern) continues to work exactly as before. The only scenario that is affected is using a class with protected or private constructors as a service identifier — in those cases you should switch to a `Symbol` identifier instead.
+
+This narrows a type escape hatch that could hide real mistakes and makes service identifier mismatches detectable at compile time rather than at runtime.
+
+## ESM Only
+
+InversifyJS 8 ships as an **ES module only** package and no longer provides a CommonJS build.
+
+### Why now?
+
+The main historical blocker for ESM-only packages was that `require()` could not load an ES module, forcing many packages to maintain dual CJS/ESM builds. That blocker is essentially gone:
+
+- Node.js versions with `require(esm)` enabled by default (Node.js 20.19.0 and later, or any Node.js 22+ release) support loading ES modules via `require()` from CommonJS files without any extra flags.
+- Node.js 18 reached end-of-life in April 2025 and does not include `require(esm)` support.
+- All major browsers, Deno, and Bun have supported ES modules natively for years.
+
+The e18e community has been [driving the ecosystem-wide migration to ES modules](https://e18e.dev/blog/migrating-the-ecosystem-to-esm.html) and many high-profile packages — `chai`, `vueuse`, numerous ESLint plugins, and others — have already made the switch. InversifyJS 8 joins that movement.
+
+### What this means for you
+
+If you are on a Node.js version **with `require(esm)` enabled by default** (Node.js 20.19.0+ or Node.js 22+), nothing changes on the consumption side — `require('inversify')` will continue to work thanks to `require(esm)`.
+
+If you are on Node.js **18 or earlier**, you have two options:
+
+1. Upgrade Node.js — this is the recommended path.
+2. Replace any synchronous `require('inversify')` calls with dynamic `import('inversify')` where an async boundary is acceptable.
+
+If you are using a bundler (webpack, Rollup, Vite, esbuild, …) you are unaffected — all of them handle ESM packages correctly regardless of your target environment.
+
+## Removed: Provider and ProviderBinding
+
+`Provider` and `ProviderBinding` have been removed. The `Factory` pattern introduced in InversifyJS 7 covers all use cases that `Provider` handled with greater flexibility and a cleaner API. Migrate any `Provider` bindings to `Factory`.
+
+## Getting Started
+
+Install the beta:
+
+```bash
+npm install inversify@8.0.0-beta.0
+```
+
+```bash
+pnpm add inversify@8.0.0-beta.0
+```
+
+```bash
+yarn add inversify@8.0.0-beta.0
+```
+
+## Feedback
+
+This is a beta and we want to hear from you! If you encounter issues or edge cases we haven't considered, please open an issue on the [InversifyJS monorepo](https://github.com/inversify/monorepo). Your testing and feedback during this phase directly shapes the quality of the final 8.0.0 release.
+
+Thank you for your continued support of InversifyJS!

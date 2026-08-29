@@ -1,0 +1,531 @@
+---
+sidebar_position: 2
+title: Container
+---
+import containerApiGetAllSource from '../../../snippets/code-examples/examples/containerApiGetAll.ts';
+import containerApiGetAllAsyncSource from '../../../snippets/code-examples/examples/containerApiGetAllAsync.ts';
+import containerApiGetAllAsyncEnforcedSource from '../../../snippets/code-examples/examples/containerApiGetAllAsyncEnforced.ts';
+import containerApiGetAllEnforcedSource from '../../../snippets/code-examples/examples/containerApiGetAllEnforced.ts';
+import containerApiGetAllNamedSource from '../../../snippets/code-examples/examples/containerApiGetAllNamed.ts';
+import containerApiGetAllNamedAsyncSource from '../../../snippets/code-examples/examples/containerApiGetAllNamedAsync.ts';
+import containerApiGetAllTaggedSource from '../../../snippets/code-examples/examples/containerApiGetAllTagged.ts';
+import containerApiGetAllTaggedAsyncSource from '../../../snippets/code-examples/examples/containerApiGetAllTaggedAsync.ts';
+import containerApiGetAsyncSource from '../../../snippets/code-examples/examples/containerApiGetAsync.ts';
+import containerApiGetNamedAsyncSource from '../../../snippets/code-examples/examples/containerApiGetNamedAsync.ts';
+import containerApiGetNamedSource from '../../../snippets/code-examples/examples/containerApiGetNamed.ts';
+import containerApiGetSource from '../../../snippets/code-examples/examples/containerApiGet.ts';
+import containerApiGetTaggedAsyncSource from '../../../snippets/code-examples/examples/containerApiGetTaggedAsync.ts';
+import containerApiGetTaggedSource from '../../../snippets/code-examples/examples/containerApiGetTagged.ts';
+import containerApiIsBoundSource from '../../../snippets/code-examples/examples/containerApiIsBound.ts';
+import containerApiIsBoundNamedSource from '../../../snippets/code-examples/examples/containerApiIsBoundNamed.ts';
+import containerApiIsBoundTaggedSource from '../../../snippets/code-examples/examples/containerApiIsBoundTagged.ts';
+import containerApiIsCurrentBoundSource from '../../../snippets/code-examples/examples/containerApiIsCurrentBound.ts';
+import containerApiMergeSource from '../../../snippets/code-examples/examples/containerApiMerge.ts';
+import containerApiOptionsAutoBindInjectablePrecedenceSource from '../../../snippets/code-examples/examples/containerApiOptionsAutoBindInjectablePrecedence.ts';
+import containerApiOptionsAutoBindInjectableSource from '../../../snippets/code-examples/examples/containerApiOptionsAutoBindInjectable.ts';
+import containerApiOptionsDefaultScopeSource from '../../../snippets/code-examples/examples/containerApiOptionsDefaultScope.ts';
+import containerApiOnActivationSource from '../../../snippets/code-examples/examples/containerApiOnActivation.ts';
+import containerApiOnDeactivationSource from '../../../snippets/code-examples/examples/containerApiOnDeactivation.ts';
+import containerApiRebindSource from '../../../snippets/code-examples/examples/containerApiRebind.ts';
+import containerApiResolveSource from '../../../snippets/code-examples/examples/containerApiResolve.ts';
+
+# Container
+
+The InversifyJS container is where dependencies are first configured through binding and, possibly later, reconfigured and removed. The container can be worked on directly in this regard or container modules can be utilized.
+You can query the configuration and resolve configured dependencies with the `get` methods.
+You can react to resolutions with container activation handlers and unbinding with container deactivation handlers.
+You can create container hierarchies where container ascendants can supply the dependencies for descendants.
+For testing, state can be saved as a snapshot on a stack and later restored.
+For advanced control, you can apply middleware to intercept the resolution request and the resolved dependency.
+You can even provide your own annotation solution.
+
+## Container Options
+
+Container options can be passed to the Container constructor, and defaults will be provided if you do not or if you do but omit an option.
+Options can be changed after construction and will be shared by child containers created from the Container if you do not provide options for them.
+
+### defaultScope
+
+The default scope is `transient` when binding to/toSelf/toDynamicValue/toService.
+Other bindings can only be bound in `singleton` scope.
+
+You can use container options to change the default scope for the bindings that default to `transient` at the application level:
+
+<CodeBlock language="ts">{containerApiOptionsDefaultScopeSource}</CodeBlock>
+
+### autoBindInjectable
+
+You can use this to activate automatic binding for `@injectable()` decorated classes.
+Whenever an instance is requested via `get`, the container attempts to add a binding if no binding is found for the requested service.
+
+<CodeBlock language="ts">{containerApiOptionsAutoBindInjectableSource}</CodeBlock>
+
+Manually defined bindings will take precedence:
+
+<CodeBlock language="ts">{containerApiOptionsAutoBindInjectablePrecedenceSource}</CodeBlock>
+
+### skipBaseClassChecks
+
+You can use this to skip checking base classes for the `@injectable` property, which is especially useful if any of your `@injectable` classes extend classes that you don't control (third-party classes). By default, this value is `false`.
+
+```ts
+const container = new Container({ skipBaseClassChecks: true });
+```
+
+## Container.merge
+
+```ts
+Container.merge(a: interfaces.Container, b: interfaces.Container, ...containers: interfaces.Container[]): interfaces.Container;
+```
+
+Creates a new Container containing the bindings ( cloned bindings ) of two or more containers:
+
+<CodeBlock language="ts">{containerApiMergeSource}</CodeBlock>
+
+## applyCustomMetadataReader
+
+```ts
+applyCustomMetadataReader(metadataReader: interfaces.MetadataReader): void;
+```
+
+Sets a custom metadata reader. See [middleware](../fundamentals/lifecycle/middleware.mdx).
+
+## applyMiddleware
+
+```ts
+applyMiddleware(...middleware: interfaces.Middleware[]): void;
+```
+
+An advanced feature that can be used for cross cutting concerns. See [middleware](../fundamentals/lifecycle/middleware.mdx).
+
+## bind
+
+```ts
+bind<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): interfaces.BindingToSyntax<T>
+```
+
+Sets a new binding.
+
+<Info>
+Unless specified otherwise, binding scopes are [transient](fundamentals/binding.mdx#transient) by default.
+</Info>
+
+## createChild
+
+```ts
+createChild(containerOptions?: interfaces.ContainerOptions): Container;
+```
+
+Create a [container hierarchy](../fundamentals/di-hierarchy.mdx). Parent `ContainerOptions` are provided by default.
+
+## get
+
+```ts
+get<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T;
+```
+
+Resolves a dependency by its runtime identifier. The runtime identifier must be associated with only one binding and the binding must be synchronously resolved, otherwise an error is thrown.
+
+<CodeBlock language="ts">{containerApiGetSource}</CodeBlock>
+
+## getAsync
+
+```ts
+getAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): Promise<T>;
+```
+
+Resolves a dependency by its runtime identifier. The runtime identifier must be associated with only one binding, otherwise an error is thrown.
+
+<CodeBlock language="ts">{containerApiGetAsyncSource}</CodeBlock>
+
+## getNamed
+
+```ts
+getNamed<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): T;
+```
+
+Resolves a dependency by its runtime identifier that matches the given named constraint. The runtime identifier must be associated with only one binding and the binding must be synchronously resolved, otherwise an error is thrown:
+
+<CodeBlock language="ts">{containerApiGetNamedSource}</CodeBlock>
+
+## getNamedAsync
+
+```ts
+getNamedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): Promise<T>;
+```
+
+Resolves a dependency by its runtime identifier that matches the given named constraint. The runtime identifier must be associated with only one binding, otherwise an error is thrown:
+
+<CodeBlock language="ts">{containerApiGetNamedAsyncSource}</CodeBlock>
+
+## getTagged
+
+```ts
+getTagged<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): T;
+```
+
+Resolves a dependency by its runtime identifier that matches the given tagged constraint. The runtime identifier must be associated with only one binding and the binding must be synchronously resolved, otherwise an error is thrown:
+
+<CodeBlock language="ts">{containerApiGetTaggedSource}</CodeBlock>
+
+## getTaggedAsync
+
+```ts
+getTaggedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): Promise<T>;
+```
+
+Resolves a dependency by its runtime identifier that matches the given tagged constraint. The runtime identifier must be associated with only one binding, otherwise an error is thrown:
+
+<CodeBlock language="ts">{containerApiGetTaggedAsyncSource}</CodeBlock>
+
+## getAll
+
+```ts
+getAll(serviceIdentifier: interfaces.ServiceIdentifier<T>, options?: interfaces.GetAllOptions): T[];
+```
+
+Get all available bindings for a given identifier. All the bindings must be synchronously resolved, otherwise an error is thrown:
+
+<CodeBlock language="ts">{containerApiGetAllSource}</CodeBlock>
+
+Keep in mind `container.getAll` doesn't enforce binding contraints by default in the root level, enable the `enforceBindingConstraints` flag to force this binding constraint check:
+
+<CodeBlock language="ts">{containerApiGetAllEnforcedSource}</CodeBlock>
+
+## getAllAsync
+
+```ts
+getAllAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, options?: interfaces.GetAllOptions): Promise<T[]>
+```
+
+Get all available bindings for a given identifier:
+
+<CodeBlock language="ts">{containerApiGetAllAsyncSource}</CodeBlock>
+
+Keep in mind `container.getAll` doesn't enforce binding contraints by default in the root level, enable the `enforceBindingConstraints` flag to force this binding constraint check:
+
+<CodeBlock language="ts">{containerApiGetAllAsyncEnforcedSource}</CodeBlock>
+
+## getAllNamed
+
+```ts
+getAllNamed<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): T[];
+```
+
+Resolves all the dependencies by its runtime identifier that matches the given named constraint. All the binding must be synchronously resolved, otherwise an error is thrown:
+
+<CodeBlock language="ts">{containerApiGetAllNamedSource}</CodeBlock>
+
+## getAllNamedAsync
+
+```ts
+getAllNamedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): Promise<T[]>;
+```
+
+Resolves all the dependencies by its runtime identifier that matches the given named constraint:
+
+<CodeBlock language="ts">{containerApiGetAllNamedAsyncSource}</CodeBlock>
+
+## getAllTagged
+
+```ts
+getAllTagged<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): T[];
+```
+
+Resolves all the dependencies by its runtime identifier that matches the given tagged constraint. All the binding must be synchronously resolved, otherwise an error is thrown:
+
+<CodeBlock language="ts">{containerApiGetAllTaggedSource}</CodeBlock>
+
+## getAllTaggedAsync
+
+```ts
+getAllTaggedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): Promise<T[]>;
+```
+
+Resolves all the dependencies by its runtime identifier that matches the given tagged constraint:
+
+<CodeBlock language="ts">{containerApiGetAllTaggedAsyncSource}</CodeBlock>
+
+## isBound
+
+```ts
+isBound(serviceIdentifier: interfaces.ServiceIdentifier<unknown>): boolean;
+```
+
+You can use the `isBound` method to check if there are registered bindings for a given service identifier.
+
+<CodeBlock language="ts">{containerApiIsBoundSource}</CodeBlock>
+
+
+## isCurrentBound
+
+```ts
+isCurrentBound(serviceIdentifier: interfaces.ServiceIdentifier<unknown>): boolean;
+```
+
+You can use the `isCurrentBound` method to check if there are registered bindings for a given service identifier only in the current container.
+
+<CodeBlock language="ts">{containerApiIsCurrentBoundSource}</CodeBlock>
+
+## isBoundNamed
+
+```ts
+isBoundNamed(serviceIdentifier: interfaces.ServiceIdentifier<unknown>, named: string): boolean;
+```
+
+You can use the `isBoundNamed` method to check if there are registered bindings for a given service identifier with a given named constraint.
+
+<CodeBlock language="ts">{containerApiIsBoundNamedSource}</CodeBlock>
+
+## isBoundTagged
+
+```ts
+isBoundTagged(serviceIdentifier: interfaces.ServiceIdentifier<unknown>, key: string, value: unknown): boolean;
+```
+
+You can use the `isBoundTagged` method to check if there are registered bindings for a given service identifier with a given tagged constraint.
+
+<CodeBlock language="ts">{containerApiIsBoundTaggedSource}</CodeBlock>
+
+## load
+
+```ts
+load(...modules: interfaces.ContainerModule[]): void;
+```
+
+Calls the registration method of each module. See [ContainerModule API docs](./container-module.mdx)
+
+## loadAsync
+
+```ts
+loadAsync(...modules: interfaces.AsyncContainerModule[]): Promise<void>;
+```
+
+As per load but for asynchronous registration. 
+
+## rebind
+
+```ts
+rebind<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): interfaces.BindingToSyntax<T>;
+```
+
+Replaces all the existing bindings for a given `serviceIdentifier`.
+The function returns an instance of `BindingToSyntax` which allows to create the replacement binding.
+
+<CodeBlock language="ts">{containerApiRebindSource}</CodeBlock>
+
+## rebindAsync
+
+```ts
+rebindAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): Promise<interfaces.BindingToSyntax<T>>;
+```
+
+This is an asynchronous version of rebind. If you know deactivation is asynchronous then this should be used.
+
+## resolve
+
+```ts
+resolve<T>(constructor: interfaces.Newable<T>): T;
+```
+Resolve works the same way `container.get`, but an automatic binding will be added to the container if no bindings are found for the type provided.
+
+<CodeBlock language="ts">{containerApiResolveSource}</CodeBlock>
+
+Please note that it only allows to skip declaring a binding for the root element in the dependency graph (composition root). All the sub-dependencies (e.g. `Katana` in the preceding example) will require a binding to be declared.
+
+## onActivation
+
+```ts
+onActivation<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, onActivation: interfaces.BindingActivation<T>): void;
+```
+
+Adds an activation handler for all services associated to the service identifier.
+
+<CodeBlock language="ts">{containerApiOnActivationSource}</CodeBlock>
+
+## onDeactivation
+
+```ts
+onDeactivation<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, onDeactivation: interfaces.BindingDeactivation<T>): void;
+```
+
+Adds a deactivation handler for a service identifier.
+
+<CodeBlock language="ts">{containerApiOnDeactivationSource}</CodeBlock>
+
+## restore
+
+```ts
+restore(): void;
+```
+
+Restore container state to last snapshot. Refer to the [docs](../fundamentals/snapshot.mdx) for more information.
+
+## snapshot
+
+```ts
+snapshot(): void;
+```
+
+Save the state of the container to be later restored with the restore method. Refer to the [docs](../fundamentals/snapshot.mdx) for more information.
+
+## tryGet
+
+```ts
+tryGet<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T | undefined;
+```
+
+Same as `container.get`, but returns `undefined` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetAsync
+
+```ts
+tryGetAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): Promise<T | undefined>;
+```
+
+Same as `container.getAsync`, but returns `Promise<undefined>` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetNamed
+
+```ts
+tryGetNamed<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): T | undefined;
+```
+
+Same as `container.getNamed`, but returns `undefined` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetNamedAsync
+
+```ts
+tryGetNamedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): Promise<T | undefined>;
+```
+
+Same as `container.getNamedAsync`, but returns `Promise<undefined>` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetTagged
+
+```ts
+tryGetTagged<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): T | undefined;
+```
+
+Same as `container.getTagged`, but returns `undefined` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetTaggedAsync
+
+```ts
+tryGetTaggedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): Promise<T | undefined>
+```
+
+Same as `container.getTaggedAsync`, but returns `Promise<undefined>` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetAll
+
+```ts
+tryGetAll<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, options?: interfaces.GetAllOptions): T[]
+```
+
+Same as `container.getAll`, but returns `[]` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetAllAsync
+
+```ts
+tryGetAllAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, options?: interfaces.GetAllOptions): Promise<T[]>;
+```
+
+Same as `container.getAllAsync`, but returns `Promise<[]>` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetAllNamed
+
+```ts
+tryGetAllNamed<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): T[];
+```
+
+Same as `container.getAllNamed`, but returns `[]` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetAllNamedAsync
+
+```ts
+tryGetAllNamedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): Promise<T[]>;
+```
+
+Same as `container.getAllNamedAsync`, but returns `Promise<[]>` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetAllTagged
+
+```ts
+tryGetAllTagged<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): T[];
+```
+
+Same as `container.getAllTagged`, but returns `[]` in the event no bindings are bound to `serviceIdentifier`.
+
+## tryGetAllTaggedAsync
+
+```ts
+tryGetAllTaggedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): Promise<T[]>;
+```
+
+Same as `container.getAllTaggedAsync`, but returns `Promise<[]>` in the event no bindings are bound to `serviceIdentifier`.
+
+## unbind
+
+```ts
+unbind(serviceIdentifier: interfaces.ServiceIdentifier): void;
+```
+
+Remove all bindings binded in this container to the service identifier.  This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+
+## unbindAsync
+
+```ts
+unbindAsync(serviceIdentifier: interfaces.ServiceIdentifier<unknown>): Promise<void>;
+```
+
+This is the asynchronous version of unbind. If any deactivation realated to this service identifier is asynchronous then this method should be used instead of `container.unbind`.
+
+## unbindAll
+
+```ts
+unbindAll(): void;
+```
+
+Remove all bindings binded in this container.  This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+
+## unbindAllAsync
+
+```ts
+unbindAllAsync(): Promise<void>;
+```
+
+This is the asynchronous version of unbindAll. If any of the container's deactivations is asynchronous then this method should be used instead of `container.unbindAll`.
+
+## unload
+
+```ts
+unload(...modules: interfaces.ContainerModuleBase[]): void;
+```
+
+Removes bindings and handlers added by the modules. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+See [ContainerModule API docs](./container-module.mdx).
+
+## unloadAsync
+
+```ts
+unloadAsync(...modules: interfaces.ContainerModuleBase[]): Promise<void>;
+```
+
+Asynchronous version of unload. If any of the container modules's deactivations is asynchronous then this method should be used instead of `container.unload`.
+
+## parent
+
+```ts
+parent: Container | null;
+```
+
+Access the parent container.
+
+## id
+
+```ts
+id: number;
+```
+
+The container's unique identifier.

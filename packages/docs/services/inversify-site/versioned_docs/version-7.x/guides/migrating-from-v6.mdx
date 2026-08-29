@@ -13,6 +13,7 @@ import migrationToAutoFactorySource from '@inversifyjs/code-examples/generated/e
 import migrationToAutoNamedFactorySource from '@inversifyjs/code-examples/generated/examples/v7/migrationToAutoNamedFactory.ts.txt';
 import migrationToConstructorSource from '@inversifyjs/code-examples/generated/examples/v7/migrationToConstructor.ts.txt';
 import migrationToFunctionSource from '@inversifyjs/code-examples/generated/examples/v7/migrationToFunction.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
 
 # Migrating from v6
 
@@ -87,11 +88,11 @@ Additionally, `Container.getAll` and `Container.getAllAsync` now enforce binding
 
 In v6, `container.getAll` returned all bindings matching the service identifier. In v7, it only returns bindings that match both the service identifier and binding constraints.
 
-<Info>
+:::info
 
 If you need to simulate the old behavior, you can use custom constraints to accomplish this. Refer to this [issue](https://github.com/inversify/InversifyJS/issues/1796#issuecomment-2842402397) for more information.
 
-</Info>
+:::
 
 ### `load` and `unload` Methods
 

@@ -1,0 +1,175 @@
+---
+sidebar_position: 2
+title: 从 v7 迁移
+---
+import migrationV7LoadV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7Load.ts.txt';
+import migrationV7LoadV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7Load.ts.txt';
+import migrationV7UnbindV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7Unbind.ts.txt';
+import migrationV7UnbindV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7Unbind.ts.txt';
+import migrationV7UnbindAllV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7UnbindAll.ts.txt';
+import migrationV7UnbindAllV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7UnbindAll.ts.txt';
+import migrationV7RebindV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7Rebind.ts.txt';
+import migrationV7RebindV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7Rebind.ts.txt';
+import migrationV7UnloadV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7Unload.ts.txt';
+import migrationV7UnloadV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7Unload.ts.txt';
+import migrationV7ContainerModuleOptionsV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7ContainerModuleOptions.ts.txt';
+import migrationV7ContainerModuleOptionsV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7ContainerModuleOptions.ts.txt';
+import migrationV7ToProviderV7Source from '@inversifyjs/code-examples/generated/examples/v7/migrationV7ToProvider.ts.txt';
+import migrationV7ToProviderV8Source from '@inversifyjs/code-examples/generated/examples/v8/migrationV7ToProvider.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 从 v7 迁移
+
+InversifyJS v8 从 v7 引入了一些重大更改。本指南将帮助你将现有的 InversifyJS v7 代码迁移到 v8。
+
+## 更改概述
+
+下表总结了从 v7 到 v8 的主要更改：
+
+| v7                                      | v8                                       | 备注                                                                          |
+|-----------------------------------------|------------------------------------------|----------------------------------------------------------------------------------|
+| `container.load(...)`                   | `container.loadAsync(...)`               | 异步 load 重命名为 `loadAsync`                                                |
+| `container.loadSync(...)`               | `container.load(...)`                    | 同步 load 成为默认的 `load`                                             |
+| `container.unbind(...)`                 | `container.unbindAsync(...)`             | 异步 unbind 重命名为 `unbindAsync`                                            |
+| `container.unbindSync(...)`             | `container.unbind(...)`                  | 同步 unbind 成为默认的 `unbind`                                         |
+| `container.unbindAll()`                 | `container.unbindAllAsync()`             | 异步 unbindAll 重命名为 `unbindAllAsync`                                      |
+| `container.unbindAllSync()`             | `container.unbindAll()`                  | 同步 unbindAll 成为默认的 `unbindAll`                                   |
+| `container.rebind(...)`                 | `container.rebindAsync(...)`             | 异步 rebind 重命名为 `rebindAsync`                                            |
+| `container.rebindSync(...)`             | `container.rebind(...)`                  | 同步 rebind 成为默认的 `rebind`                                         |
+| `container.unload(...)`                 | `container.unloadAsync(...)`             | 异步 unload 重命名为 `unloadAsync`                                            |
+| `container.unloadSync(...)`             | `container.unload(...)`                  | 同步 unload 成为默认的 `unload`                                         |
+| `options.unbind`（异步）                | `options.unbindAsync`                    | `ContainerModuleLoadOptions` 异步 unbind 重命名                                |
+| `options.unbindSync`                    | `options.unbind`                         | `ContainerModuleLoadOptions` 同步 unbind 成为默认                         |
+| `options.rebind`（异步）               | `options.rebindAsync`                    | `ContainerModuleLoadOptions` 异步 rebind 重命名                                |
+| `options.rebindSync`                    | `options.rebind`                         | `ContainerModuleLoadOptions` 同步 rebind 成为默认                         |
+| `ServiceIdentifier` 接受 `Function`  | `ServiceIdentifier` 要求 `Newable` 或 `AbstractNewable` | 更严格的类服务标识符类型            |
+| `.toProvider(...)`                      | `.toFactory(...)` 与异步函数    | `Provider` 类型和 `toProvider` 绑定已删除；请改用 `toFactory`        |
+| CJS/ESM 双包                    | 仅 ESM                                 | 包现在仅支持 ESM；Node.js LTS 支持 `require(esm)`                    |
+
+## 包格式
+
+InversifyJS v8 现在是一个仅支持 ESM 的包。对于大多数用户来说，这不是一个破坏性更改：所有活跃的 Node.js LTS 版本（20.x 及以上）都支持 `require(esm)`，这意味着 CommonJS 项目仍然可以在不做任何更改的情况下使用该包。
+
+有关 CJS → ESM 迁移的更广泛概述，请参阅 [将生态系统迁移到 ES 模块](https://e18e.dev/blog/migrating-the-ecosystem-to-esm.html) 博客文章。
+
+## 容器 API
+
+### 方法重命名：同步优先约定
+
+v8 中最重大的更改是采用了**同步优先命名约定**。在 v7 中，默认方法名称（例如 `load`、`unbind`、`rebind`、`unload`）是异步的并返回 Promise，而同步变体带有 `Sync` 后缀。在 v8 中，这被反转了：默认名称现在是同步的，而异步变体带有 `Async` 后缀。
+
+#### `load` / `loadAsync`
+
+在 v7 中，`container.load` 是异步的。在 v8 中，同步版本成为默认：
+
+**v7：**
+
+<CodeBlock language="ts">{migrationV7LoadV7Source}</CodeBlock>
+
+**v8：**
+
+<CodeBlock language="ts">{migrationV7LoadV8Source}</CodeBlock>
+
+#### `unbind` / `unbindAsync`
+
+在 v7 中，`container.unbindSync` 是同步变体。在 v8 中，它成为默认的 `unbind`：
+
+**v7：**
+
+<CodeBlock language="ts">{migrationV7UnbindV7Source}</CodeBlock>
+
+**v8：**
+
+<CodeBlock language="ts">{migrationV7UnbindV8Source}</CodeBlock>
+
+#### `unbindAll` / `unbindAllAsync`
+
+在 v7 中，`container.unbindAllSync` 是同步变体。在 v8 中，它成为默认的 `unbindAll`：
+
+**v7：**
+
+<CodeBlock language="ts">{migrationV7UnbindAllV7Source}</CodeBlock>
+
+**v8：**
+
+<CodeBlock language="ts">{migrationV7UnbindAllV8Source}</CodeBlock>
+
+#### `rebind` / `rebindAsync`
+
+在 v7 中，`container.rebindSync` 是同步变体。在 v8 中，它成为默认的 `rebind`：
+
+**v7：**
+
+<CodeBlock language="ts">{migrationV7RebindV7Source}</CodeBlock>
+
+**v8：**
+
+<CodeBlock language="ts">{migrationV7RebindV8Source}</CodeBlock>
+
+#### `unload` / `unloadAsync`
+
+在 v7 中，`container.unloadSync` 是同步变体。在 v8 中，它成为默认的 `unload`：
+
+**v7：**
+
+<CodeBlock language="ts">{migrationV7UnloadV7Source}</CodeBlock>
+
+**v8：**
+
+<CodeBlock language="ts">{migrationV7UnloadV8Source}</CodeBlock>
+
+:::tip
+
+如果你的代码库主要使用同步变体（例如 `loadSync`、`unbindSync`、`rebindSync`、`unloadSync`），迁移很简单：只需删除 `Sync` 后缀。
+
+如果你主要使用异步变体，请通过添加 `Async` 后缀来重命名它们（例如 `load` → `loadAsync`、`unbind` → `unbindAsync`）。
+
+:::
+
+### `ContainerModuleLoadOptions`
+
+相同的同步优先约定也适用于 `ContainerModuleLoadOptions`：
+
+**v7：**
+
+<CodeBlock language="ts">{migrationV7ContainerModuleOptionsV7Source}</CodeBlock>
+
+**v8：**
+
+<CodeBlock language="ts">{migrationV7ContainerModuleOptionsV8Source}</CodeBlock>
+
+## `ServiceIdentifier` 类型
+
+在 v7 中，`ServiceIdentifier` 接受任何 `Function` 作为有效的服务标识符。在 v8 中，类型变得更严格：`Function` 仅在满足 `Newable<T>` 或 `AbstractNewable<T>` 时才有效。这提供了更好的类型安全性，并确保只有可构造的类才能用作基于类的服务标识符。
+
+```ts
+// v7 — 接受任何函数
+type ServiceIdentifier<T> = string | symbol | Newable<T> | Function;
+
+// v8 — 仅接受可构造的类
+type ServiceIdentifier<T> = string | symbol | Newable<T> | AbstractNewable<T>;
+```
+
+在实践中，此更改对大多数代码库是透明的，因为服务标识符通常是类、字符串或符号。如果你使用普通函数作为服务标识符，则需要改用字符串或符号标识符。
+
+## 已删除的 `toProvider` 绑定和 `Provider` 类型
+
+`toProvider` 绑定方法和 `Provider` 类型已在 v8 中删除。提供者是返回 `Promise<T>` 的工厂，因此可以使用 `toFactory` 与异步函数实现相同的行为：
+
+**v7：**
+
+<CodeBlock language="ts">{migrationV7ToProviderV7Source}</CodeBlock>
+
+**v8：**
+
+<CodeBlock language="ts">{migrationV7ToProviderV8Source}</CodeBlock>
+
+## 快速迁移清单
+
+1. **更新异步方法调用**：在使用异步版本的地方，将 `load` → `loadAsync`、`unbind` → `unbindAsync`、`rebind` → `rebindAsync`、`unload` → `unloadAsync`、`unbindAll` → `unbindAllAsync` 进行重命名。
+2. **更新同步方法调用**：从 `loadSync`、`unbindSync`、`rebindSync`、`unloadSync`、`unbindAllSync` 中删除 `Sync` 后缀。
+3. **更新 `ContainerModuleLoadOptions` 用法**：对 `unbind`/`unbindSync` → `unbindAsync`/`unbind` 和 `rebind`/`rebindSync` → `rebindAsync`/`rebind` 应用相同的重命名。
+4. **将 `toProvider` 替换为 `toFactory`**：改用 `toFactory` 与异步函数。
+5. **删除 `Provider` 类型导入**：替换为自定义类型或改用 `Factory`。
+6. **检查 `ServiceIdentifier` 用法**：确保你没有使用普通函数作为服务标识符。
+7. **验证 ESM 兼容性**：确保你的项目可以使用 ESM 包（Node.js 20.x+ 支持 `require(esm)`）。

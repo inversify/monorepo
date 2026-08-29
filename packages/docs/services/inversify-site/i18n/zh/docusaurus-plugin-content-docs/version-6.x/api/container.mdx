@@ -1,0 +1,534 @@
+---
+sidebar_position: 2
+title: 容器 (Container)
+---
+import containerApiGetAllSource from '@inversifyjs/code-examples/generated/examples/containerApiGetAll.ts.txt';
+import containerApiGetAllAsyncSource from '@inversifyjs/code-examples/generated/examples/containerApiGetAllAsync.ts.txt';
+import containerApiGetAllAsyncEnforcedSource from '@inversifyjs/code-examples/generated/examples/containerApiGetAllAsyncEnforced.ts.txt';
+import containerApiGetAllEnforcedSource from '@inversifyjs/code-examples/generated/examples/containerApiGetAllEnforced.ts.txt';
+import containerApiGetAllNamedSource from '@inversifyjs/code-examples/generated/examples/containerApiGetAllNamed.ts.txt';
+import containerApiGetAllNamedAsyncSource from '@inversifyjs/code-examples/generated/examples/containerApiGetAllNamedAsync.ts.txt';
+import containerApiGetAllTaggedSource from '@inversifyjs/code-examples/generated/examples/containerApiGetAllTagged.ts.txt';
+import containerApiGetAllTaggedAsyncSource from '@inversifyjs/code-examples/generated/examples/containerApiGetAllTaggedAsync.ts.txt';
+import containerApiGetAsyncSource from '@inversifyjs/code-examples/generated/examples/containerApiGetAsync.ts.txt';
+import containerApiGetNamedAsyncSource from '@inversifyjs/code-examples/generated/examples/containerApiGetNamedAsync.ts.txt';
+import containerApiGetNamedSource from '@inversifyjs/code-examples/generated/examples/containerApiGetNamed.ts.txt';
+import containerApiGetSource from '@inversifyjs/code-examples/generated/examples/containerApiGet.ts.txt';
+import containerApiGetTaggedAsyncSource from '@inversifyjs/code-examples/generated/examples/containerApiGetTaggedAsync.ts.txt';
+import containerApiGetTaggedSource from '@inversifyjs/code-examples/generated/examples/containerApiGetTagged.ts.txt';
+import containerApiIsBoundSource from '@inversifyjs/code-examples/generated/examples/containerApiIsBound.ts.txt';
+import containerApiIsBoundNamedSource from '@inversifyjs/code-examples/generated/examples/containerApiIsBoundNamed.ts.txt';
+import containerApiIsBoundTaggedSource from '@inversifyjs/code-examples/generated/examples/containerApiIsBoundTagged.ts.txt';
+import containerApiIsCurrentBoundSource from '@inversifyjs/code-examples/generated/examples/containerApiIsCurrentBound.ts.txt';
+import containerApiMergeSource from '@inversifyjs/code-examples/generated/examples/containerApiMerge.ts.txt';
+import containerApiOptionsAutoBindInjectablePrecedenceSource from '@inversifyjs/code-examples/generated/examples/containerApiOptionsAutoBindInjectablePrecedence.ts.txt';
+import containerApiOptionsAutoBindInjectableSource from '@inversifyjs/code-examples/generated/examples/containerApiOptionsAutoBindInjectable.ts.txt';
+import containerApiOptionsDefaultScopeSource from '@inversifyjs/code-examples/generated/examples/containerApiOptionsDefaultScope.ts.txt';
+import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/containerApiOnActivation.ts.txt';
+import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/containerApiOnDeactivation.ts.txt';
+import containerApiRebindSource from '@inversifyjs/code-examples/generated/examples/containerApiRebind.ts.txt';
+import containerApiResolveSource from '@inversifyjs/code-examples/generated/examples/containerApiResolve.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# 容器 (Container)
+
+InversifyJS 容器是首先通过绑定配置依赖项的地方，可能稍后会重新配置和删除。在这方面可以直接处理容器，也可以使用容器模块。
+您可以使用 `get` 方法查询配置并解析配置的依赖项。
+您可以使用容器激活处理程序对解析做出反应，并使用容器停用处理程序对解绑做出反应。
+您可以创建容器层次结构，其中容器祖先可以为后代提供依赖项。
+为了进行测试，可以将状态作为快照保存在堆栈上，并在以后恢复。
+为了进行高级控制，您可以应用中间件来拦截解析请求和解析的依赖项。
+您甚至可以提供自己的注释解决方案。
+
+## 容器选项
+
+可以将容器选项传递给 Container 构造函数，如果您不提供或提供但省略了选项，则将提供默认值。
+构建后可以更改选项，如果您不为从 Container 创建的子容器提供选项，则子容器将共享这些选项。
+
+### defaultScope
+
+当绑定到 to/toSelf/toDynamicValue/toService 时，默认作用域为 `transient`。
+其他绑定只能绑定在 `singleton` 作用域中。
+
+您可以使用容器选项在应用程序级别更改默认为 `transient` 的绑定的默认作用域：
+
+<CodeBlock language="ts">{containerApiOptionsDefaultScopeSource}</CodeBlock>
+
+### autoBindInjectable
+
+您可以使用此选项激活 `@injectable()` 装饰类的自动绑定。
+每当通过 `get` 请求实例时，如果未找到请求服务的绑定，容器将尝试添加绑定。
+
+<CodeBlock language="ts">{containerApiOptionsAutoBindInjectableSource}</CodeBlock>
+
+手动定义的绑定将优先：
+
+<CodeBlock language="ts">{containerApiOptionsAutoBindInjectablePrecedenceSource}</CodeBlock>
+
+### skipBaseClassChecks
+
+您可以使用此选项跳过检查基类的 `@injectable` 属性，如果您的任何 `@injectable` 类扩展了您无法控制的类（第三方类），这尤其有用。默认情况下，此值为 `false`。
+
+```ts
+const container = new Container({ skipBaseClassChecks: true });
+```
+
+## Container.merge
+
+```ts
+Container.merge(a: interfaces.Container, b: interfaces.Container, ...containers: interfaces.Container[]): interfaces.Container;
+```
+
+创建一个包含两个或多个容器的绑定（克隆绑定）的新容器：
+
+<CodeBlock language="ts">{containerApiMergeSource}</CodeBlock>
+
+## applyCustomMetadataReader
+
+```ts
+applyCustomMetadataReader(metadataReader: interfaces.MetadataReader): void;
+```
+
+设置自定义元数据读取器。请参阅 [中间件](../fundamentals/lifecycle/middleware.mdx)。
+
+## applyMiddleware
+
+```ts
+applyMiddleware(...middleware: interfaces.Middleware[]): void;
+```
+
+可用于横切关注点的高级功能。请参阅 [中间件](../fundamentals/lifecycle/middleware.mdx)。
+
+## bind
+
+```ts
+bind<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): interfaces.BindingToSyntax<T>
+```
+
+设置新绑定。
+
+:::info
+
+除非另有说明，否则绑定作用域默认为 [transient](../fundamentals/binding.mdx#transient)。
+
+:::
+
+## createChild
+
+```ts
+createChild(containerOptions?: interfaces.ContainerOptions): Container;
+```
+
+创建 [容器层次结构](../fundamentals/di-hierarchy.mdx)。默认提供父 `ContainerOptions`。
+
+## get
+
+```ts
+get<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T;
+```
+
+通过其运行时标识符解析依赖项。运行时标识符必须仅与一个绑定关联，并且绑定必须同步解析，否则将抛出错误。
+
+<CodeBlock language="ts">{containerApiGetSource}</CodeBlock>
+
+## getAsync
+
+```ts
+getAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): Promise<T>;
+```
+
+通过其运行时标识符解析依赖项。运行时标识符必须仅与一个绑定关联，否则将抛出错误。
+
+<CodeBlock language="ts">{containerApiGetAsyncSource}</CodeBlock>
+
+## getNamed
+
+```ts
+getNamed<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): T;
+```
+
+通过与其给定的命名约束匹配的运行时标识符解析依赖项。运行时标识符必须仅与一个绑定关联，并且绑定必须同步解析，否则将抛出错误：
+
+<CodeBlock language="ts">{containerApiGetNamedSource}</CodeBlock>
+
+## getNamedAsync
+
+```ts
+getNamedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): Promise<T>;
+```
+
+通过与其给定的命名约束匹配的运行时标识符解析依赖项。运行时标识符必须仅与一个绑定关联，否则将抛出错误：
+
+<CodeBlock language="ts">{containerApiGetNamedAsyncSource}</CodeBlock>
+
+## getTagged
+
+```ts
+getTagged<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): T;
+```
+
+通过与其给定的标记约束匹配的运行时标识符解析依赖项。运行时标识符必须仅与一个绑定关联，并且绑定必须同步解析，否则将抛出错误：
+
+<CodeBlock language="ts">{containerApiGetTaggedSource}</CodeBlock>
+
+## getTaggedAsync
+
+```ts
+getTaggedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): Promise<T>;
+```
+
+通过与其给定的标记约束匹配的运行时标识符解析依赖项。运行时标识符必须仅与一个绑定关联，否则将抛出错误：
+
+<CodeBlock language="ts">{containerApiGetTaggedAsyncSource}</CodeBlock>
+
+## getAll
+
+```ts
+getAll(serviceIdentifier: interfaces.ServiceIdentifier<T>, options?: interfaces.GetAllOptions): T[];
+```
+
+获取给定标识符的所有可用绑定。所有绑定必须同步解析，否则将抛出错误：
+
+<CodeBlock language="ts">{containerApiGetAllSource}</CodeBlock>
+
+请记住，`container.getAll` 默认情况下不在根级别强制执行绑定约束，启用 `enforceBindingConstraints` 标志以强制执行此绑定约束检查：
+
+<CodeBlock language="ts">{containerApiGetAllEnforcedSource}</CodeBlock>
+
+## getAllAsync
+
+```ts
+getAllAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, options?: interfaces.GetAllOptions): Promise<T[]>
+```
+
+获取给定标识符的所有可用绑定：
+
+<CodeBlock language="ts">{containerApiGetAllAsyncSource}</CodeBlock>
+
+请记住，`container.getAll` 默认情况下不在根级别强制执行绑定约束，启用 `enforceBindingConstraints` 标志以强制执行此绑定约束检查：
+
+<CodeBlock language="ts">{containerApiGetAllAsyncEnforcedSource}</CodeBlock>
+
+## getAllNamed
+
+```ts
+getAllNamed<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): T[];
+```
+
+通过与其给定的命名约束匹配的运行时标识符解析所有依赖项。所有绑定必须同步解析，否则将抛出错误：
+
+<CodeBlock language="ts">{containerApiGetAllNamedSource}</CodeBlock>
+
+## getAllNamedAsync
+
+```ts
+getAllNamedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): Promise<T[]>;
+```
+
+通过与其给定的命名约束匹配的运行时标识符解析所有依赖项：
+
+<CodeBlock language="ts">{containerApiGetAllNamedAsyncSource}</CodeBlock>
+
+## getAllTagged
+
+```ts
+getAllTagged<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): T[];
+```
+
+通过与其给定的标记约束匹配的运行时标识符解析所有依赖项。所有绑定必须同步解析，否则将抛出错误：
+
+<CodeBlock language="ts">{containerApiGetAllTaggedSource}</CodeBlock>
+
+## getAllTaggedAsync
+
+```ts
+getAllTaggedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): Promise<T[]>;
+```
+
+通过与其给定的标记约束匹配的运行时标识符解析所有依赖项：
+
+<CodeBlock language="ts">{containerApiGetAllTaggedAsyncSource}</CodeBlock>
+
+## isBound
+
+```ts
+isBound(serviceIdentifier: interfaces.ServiceIdentifier<unknown>): boolean;
+```
+
+您可以使用 `isBound` 方法检查是否存在给定服务标识符的已注册绑定。
+
+<CodeBlock language="ts">{containerApiIsBoundSource}</CodeBlock>
+
+
+## isCurrentBound
+
+```ts
+isCurrentBound(serviceIdentifier: interfaces.ServiceIdentifier<unknown>): boolean;
+```
+
+您可以使用 `isCurrentBound` 方法检查是否仅在当前容器中存在给定服务标识符的已注册绑定。
+
+<CodeBlock language="ts">{containerApiIsCurrentBoundSource}</CodeBlock>
+
+## isBoundNamed
+
+```ts
+isBoundNamed(serviceIdentifier: interfaces.ServiceIdentifier<unknown>, named: string): boolean;
+```
+
+您可以使用 `isBoundNamed` 方法检查是否存在具有给定命名约束的给定服务标识符的已注册绑定。
+
+<CodeBlock language="ts">{containerApiIsBoundNamedSource}</CodeBlock>
+
+## isBoundTagged
+
+```ts
+isBoundTagged(serviceIdentifier: interfaces.ServiceIdentifier<unknown>, key: string, value: unknown): boolean;
+```
+
+您可以使用 `isBoundTagged` 方法检查是否存在具有给定标记约束的给定服务标识符的已注册绑定。
+
+<CodeBlock language="ts">{containerApiIsBoundTaggedSource}</CodeBlock>
+
+## load
+
+```ts
+load(...modules: interfaces.ContainerModule[]): void;
+```
+
+调用每个模块的注册方法。请参阅 [ContainerModule API 文档](./container-module.mdx)
+
+## loadAsync
+
+```ts
+loadAsync(...modules: interfaces.AsyncContainerModule[]): Promise<void>;
+```
+
+与 load 相同，但用于异步注册。
+
+## rebind
+
+```ts
+rebind<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): interfaces.BindingToSyntax<T>;
+```
+
+替换给定 `serviceIdentifier` 的所有现有绑定。
+该函数返回 `BindingToSyntax` 的实例，允许创建替换绑定。
+
+<CodeBlock language="ts">{containerApiRebindSource}</CodeBlock>
+
+## rebindAsync
+
+```ts
+rebindAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): Promise<interfaces.BindingToSyntax<T>>;
+```
+
+这是 rebind 的异步版本。如果您知道停用是异步的，则应使用此版本。
+
+## resolve
+
+```ts
+resolve<T>(constructor: interfaces.Newable<T>): T;
+```
+Resolve 的工作方式与 `container.get` 相同，但如果未找到所提供类型的绑定，则会自动向容器添加绑定。
+
+<CodeBlock language="ts">{containerApiResolveSource}</CodeBlock>
+
+请注意，它只允许跳过在依赖关系图（组合根）中声明根元素的绑定。所有子依赖项（例如前面示例中的 `Katana`）都需要声明绑定。
+
+## onActivation
+
+```ts
+onActivation<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, onActivation: interfaces.BindingActivation<T>): void;
+```
+
+为与服务标识符关联的所有服务添加激活处理程序。
+
+<CodeBlock language="ts">{containerApiOnActivationSource}</CodeBlock>
+
+## onDeactivation
+
+```ts
+onDeactivation<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, onDeactivation: interfaces.BindingDeactivation<T>): void;
+```
+
+为服务标识符添加停用处理程序。
+
+<CodeBlock language="ts">{containerApiOnDeactivationSource}</CodeBlock>
+
+## restore
+
+```ts
+restore(): void;
+```
+
+将容器状态恢复到上次快照。有关更多信息，请参阅 [文档](../fundamentals/snapshot.mdx)。
+
+## snapshot
+
+```ts
+snapshot(): void;
+```
+
+保存容器的状态以便稍后使用 restore 方法恢复。有关更多信息，请参阅 [文档](../fundamentals/snapshot.mdx)。
+
+## tryGet
+
+```ts
+tryGet<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T | undefined;
+```
+
+与 `container.get` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `undefined`。
+
+## tryGetAsync
+
+```ts
+tryGetAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): Promise<T | undefined>;
+```
+
+与 `container.getAsync` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `Promise<undefined>`。
+
+## tryGetNamed
+
+```ts
+tryGetNamed<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): T | undefined;
+```
+
+与 `container.getNamed` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `undefined`。
+
+## tryGetNamedAsync
+
+```ts
+tryGetNamedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): Promise<T | undefined>;
+```
+
+与 `container.getNamedAsync` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `Promise<undefined>`。
+
+## tryGetTagged
+
+```ts
+tryGetTagged<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): T | undefined;
+```
+
+与 `container.getTagged` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `undefined`。
+
+## tryGetTaggedAsync
+
+```ts
+tryGetTaggedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): Promise<T | undefined>
+```
+
+与 `container.getTaggedAsync` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `Promise<undefined>`。
+
+## tryGetAll
+
+```ts
+tryGetAll<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, options?: interfaces.GetAllOptions): T[]
+```
+
+与 `container.getAll` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `[]`。
+
+## tryGetAllAsync
+
+```ts
+tryGetAllAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, options?: interfaces.GetAllOptions): Promise<T[]>;
+```
+
+与 `container.getAllAsync` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `Promise<[]>`。
+
+## tryGetAllNamed
+
+```ts
+tryGetAllNamed<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): T[];
+```
+
+与 `container.getAllNamed` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `[]`。
+
+## tryGetAllNamedAsync
+
+```ts
+tryGetAllNamedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, named: string | number | symbol): Promise<T[]>;
+```
+
+与 `container.getAllNamedAsync` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `Promise<[]>`。
+
+## tryGetAllTagged
+
+```ts
+tryGetAllTagged<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): T[];
+```
+
+与 `container.getAllTagged` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `[]`。
+
+## tryGetAllTaggedAsync
+
+```ts
+tryGetAllTaggedAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, key: string | number | symbol, value: unknown): Promise<T[]>;
+```
+
+与 `container.getAllTaggedAsync` 相同，但在没有绑定绑定到 `serviceIdentifier` 的情况下返回 `Promise<[]>`。
+
+## unbind
+
+```ts
+unbind(serviceIdentifier: interfaces.ServiceIdentifier): void;
+```
+
+删除此容器中绑定到服务标识符的所有绑定。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+
+## unbindAsync
+
+```ts
+unbindAsync(serviceIdentifier: interfaces.ServiceIdentifier<unknown>): Promise<void>;
+```
+
+这是 unbind 的异步版本。如果与此服务标识符相关的任何停用是异步的，则应使用此方法而不是 `container.unbind`。
+
+## unbindAll
+
+```ts
+unbindAll(): void;
+```
+
+删除此容器中绑定的所有绑定。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+
+## unbindAllAsync
+
+```ts
+unbindAllAsync(): Promise<void>;
+```
+
+这是 unbindAll 的异步版本。如果容器的任何停用是异步的，则应使用此方法而不是 `container.unbindAll`。
+
+## unload
+
+```ts
+unload(...modules: interfaces.ContainerModuleBase[]): void;
+```
+
+删除模块添加的绑定和处理程序。这将导致 [停用过程](../fundamentals/lifecycle/deactivation.mdx)。
+请参阅 [ContainerModule API 文档](./container-module.mdx)。
+
+## unloadAsync
+
+```ts
+unloadAsync(...modules: interfaces.ContainerModuleBase[]): Promise<void>;
+```
+
+unload 的异步版本。如果任何容器模块的停用是异步的，则应使用此方法而不是 `container.unload`。
+
+## parent
+
+```ts
+parent: Container | null;
+```
+
+访问父容器。
+
+## id
+
+```ts
+id: number;
+```
+
+容器的唯一标识符。

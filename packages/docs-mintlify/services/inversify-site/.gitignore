@@ -1,0 +1,27 @@
+
+# Dependencies
+# Generated at build time
+# Generated files
+# Misc
+# Production
+# Turbo
+.DS_Store
+.cache-loader
+.docusaurus
+.env.development.local
+.env.local
+.env.production.local
+.env.test.local
+.mintlify-home
+.mintlify-home/
+.turbo
+/.mintlify
+/build
+/node_modules
+export.zip
+generated
+generated/
+npm-debug.log*
+snippets/code-examples/
+yarn-debug.log*
+yarn-error.log*

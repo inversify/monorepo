@@ -1,0 +1,62 @@
+---
+sidebar_position: 6
+title: LazyServiceIdentifier
+---
+import CodeBlock from '@theme/CodeBlock';
+import lazyServiceIdentifierSource from '@inversifyjs/code-examples/generated/examples/v8/lazyServiceIdentifier.ts.txt';
+
+# LazyServiceIdentifier
+
+## 概述
+
+`LazyServiceIdentifier` 类是一个实用程序，它将服务标识符的解析延迟到依赖注入期间实际需要它们时。其主要目的是防止在类服务标识符完全初始化之前访问它们。
+
+## 问题：过早访问类服务标识符
+
+在 TypeScript/JavaScript 应用程序中，当你在类完全定义之前直接引用该类作为服务标识符时，可能会遇到初始化问题：
+
+```typescript
+// ServiceModule.ts
+import { injectable, inject } from 'inversify';
+
+@injectable()
+export class Service {
+  // Potential issue - Service class used before fully defined
+  constructor(@inject(AnotherService) private dependency: AnotherService) {}
+}
+
+class AnotherService {
+  // Implementation
+}
+```
+
+这可能会导致几个问题：
+
+1. 关于在声明之前使用变量的 TypeScript 错误
+2. 运行时错误，因为类在用作服务标识符时可能尚未完全初始化
+
+## 解决方案：LazyServiceIdentifier
+
+`LazyServiceIdentifier` 通过将服务标识符解析推迟到注入过程实际需要它时来解决此问题：
+
+<CodeBlock language="ts">{lazyServiceIdentifierSource}</CodeBlock>
+
+## API 参考
+
+### 构造函数
+
+```typescript
+constructor(buildServiceId: () => ServiceIdentifier<TInstance>)
+```
+
+- `buildServiceId`：返回 `ServiceIdentifier` 的函数。仅当实际需要服务标识符时才会调用此函数。
+
+### 方法
+
+#### unwrap(): ServiceIdentifier\<TInstance>
+
+通过调用构造函数中提供的函数返回解析的服务标识符。
+
+#### static is\<TInstance>(value: unknown): value is LazyServiceIdentifier\<TInstance>
+
+检查值是否为 `LazyServiceIdentifier` 的实例。
