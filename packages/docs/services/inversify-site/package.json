@@ -16,9 +16,9 @@
     "@inversifyjs/common": "workspace:*",
     "@inversifyjs/core": "workspace:*",
     "@mdx-js/react": "3.1.1",
-    "@swc/wasm-web": "1.15.47",
+    "@swc/wasm-web": "1.16.1",
     "clsx": "2.1.1",
-    "mermaid": "^11.16.1",
+    "mermaid": "^11.17.0",
     "monaco-editor": "0.56.0",
     "prism-react-renderer": "2.4.1",
     "react": "19.2.8",
@@ -38,7 +38,7 @@
     "monaco-editor-webpack-plugin": "7.1.1",
     "prettier": "3.9.6",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.66.0"
+    "typescript-eslint": "8.67.0"
   },
   "homepage": "https://inversify.io",
   "keywords": [

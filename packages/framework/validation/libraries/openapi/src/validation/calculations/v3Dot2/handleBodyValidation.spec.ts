@@ -62,7 +62,8 @@ describe(handleBodyValidation, () => {
     let contentTypeFixture: string;
     let operationObjectFixture: OpenApi3Dot2OperationObject;
     let requestBodyObjectFixture: OpenApi3Dot2RequestBodyObject;
-    let escapedPointerFixture: string;
+    let requestBodyPointerFixture: string;
+    let contentTypePointerFixture: string;
 
     beforeAll(() => {
       pathFixture = '/users';
@@ -84,7 +85,8 @@ describe(handleBodyValidation, () => {
           },
         },
       };
-      escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
+      requestBodyPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody`;
+      contentTypePointerFixture = contentTypeFixture;
     });
 
     describe('when called, and getEntry() returns empty entry and ajv.getSchema() returns undefined', () => {
@@ -101,7 +103,7 @@ describe(handleBodyValidation, () => {
           getSchema: vitest.fn().mockReturnValueOnce(undefined),
         } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
 
-        schemaPointerFixture = `${SCHEMA_ID}#/${escapedPointerFixture}`;
+        schemaPointerFixture = `${SCHEMA_ID}#/${requestBodyPointerFixture}/content/${contentTypePointerFixture}/schema`;
 
         validationCacheEntryFixture = {
           body: undefined,
@@ -117,12 +119,14 @@ describe(handleBodyValidation, () => {
         vitest
           .mocked(getOperationObject)
           .mockReturnValueOnce(operationObjectFixture);
-        vitest
-          .mocked(getRequestBodyObject)
-          .mockReturnValueOnce(requestBodyObjectFixture);
+        vitest.mocked(getRequestBodyObject).mockReturnValueOnce({
+          pointerPrefix: undefined,
+          requestBody: requestBodyObjectFixture,
+        });
         vitest
           .mocked(escapeJsonPointerFragments)
-          .mockReturnValueOnce(escapedPointerFixture);
+          .mockReturnValueOnce(requestBodyPointerFixture)
+          .mockReturnValueOnce(contentTypePointerFixture);
 
         vitest
           .mocked(openApiRouterMock.findRoute)
@@ -170,14 +174,17 @@ describe(handleBodyValidation, () => {
       });
 
       it('should call escapeJsonPointerFragments()', () => {
-        expect(escapeJsonPointerFragments).toHaveBeenCalledExactlyOnceWith(
+        expect(escapeJsonPointerFragments).toHaveBeenCalledTimes(2);
+        expect(escapeJsonPointerFragments).toHaveBeenNthCalledWith(
+          1,
           'paths',
           pathFixture,
           methodFixture,
           'requestBody',
-          'content',
+        );
+        expect(escapeJsonPointerFragments).toHaveBeenNthCalledWith(
+          2,
           contentTypeFixture,
-          'schema',
         );
       });
 
@@ -230,12 +237,14 @@ describe(handleBodyValidation, () => {
         vitest
           .mocked(getOperationObject)
           .mockReturnValueOnce(operationObjectFixture);
-        vitest
-          .mocked(getRequestBodyObject)
-          .mockReturnValueOnce(requestBodyObjectFixture);
+        vitest.mocked(getRequestBodyObject).mockReturnValueOnce({
+          pointerPrefix: undefined,
+          requestBody: requestBodyObjectFixture,
+        });
         vitest
           .mocked(escapeJsonPointerFragments)
-          .mockReturnValueOnce(escapedPointerFixture);
+          .mockReturnValueOnce(requestBodyPointerFixture)
+          .mockReturnValueOnce(contentTypePointerFixture);
 
         vitest
           .mocked(openApiRouterMock.findRoute)
@@ -326,12 +335,14 @@ describe(handleBodyValidation, () => {
         vitest
           .mocked(getOperationObject)
           .mockReturnValueOnce(operationObjectFixture);
-        vitest
-          .mocked(getRequestBodyObject)
-          .mockReturnValueOnce(requestBodyObjectFixture);
+        vitest.mocked(getRequestBodyObject).mockReturnValueOnce({
+          pointerPrefix: undefined,
+          requestBody: requestBodyObjectFixture,
+        });
         vitest
           .mocked(escapeJsonPointerFragments)
-          .mockReturnValueOnce(escapedPointerFixture);
+          .mockReturnValueOnce(requestBodyPointerFixture)
+          .mockReturnValueOnce(contentTypePointerFixture);
 
         vitest
           .mocked(openApiRouterMock.findRoute)
@@ -384,7 +395,8 @@ describe(handleBodyValidation, () => {
     let contentTypeFixture: string;
     let operationObjectFixture: OpenApi3Dot2OperationObject;
     let requestBodyObjectFixture: OpenApi3Dot2RequestBodyObject;
-    let escapedPointerFixture: string;
+    let requestBodyPointerFixture: string;
+    let contentTypePointerFixture: string;
 
     beforeAll(() => {
       pathFixture = '/users';
@@ -406,7 +418,8 @@ describe(handleBodyValidation, () => {
           },
         },
       };
-      escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
+      requestBodyPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody`;
+      contentTypePointerFixture = contentTypeFixture;
     });
 
     describe('when called, and getEntry() returns empty entry and validation succeeds', () => {
@@ -441,12 +454,14 @@ describe(handleBodyValidation, () => {
         vitest
           .mocked(getOperationObject)
           .mockReturnValueOnce(operationObjectFixture);
-        vitest
-          .mocked(getRequestBodyObject)
-          .mockReturnValueOnce(requestBodyObjectFixture);
+        vitest.mocked(getRequestBodyObject).mockReturnValueOnce({
+          pointerPrefix: undefined,
+          requestBody: requestBodyObjectFixture,
+        });
         vitest
           .mocked(escapeJsonPointerFragments)
-          .mockReturnValueOnce(escapedPointerFixture);
+          .mockReturnValueOnce(requestBodyPointerFixture)
+          .mockReturnValueOnce(contentTypePointerFixture);
 
         vitest
           .mocked(openApiRouterMock.findRoute)
@@ -466,14 +481,17 @@ describe(handleBodyValidation, () => {
       });
 
       it('should call escapeJsonPointerFragments()', () => {
-        expect(escapeJsonPointerFragments).toHaveBeenCalledExactlyOnceWith(
+        expect(escapeJsonPointerFragments).toHaveBeenCalledTimes(2);
+        expect(escapeJsonPointerFragments).toHaveBeenNthCalledWith(
+          1,
           'paths',
           pathFixture,
           methodFixture,
           'requestBody',
-          'content',
+        );
+        expect(escapeJsonPointerFragments).toHaveBeenNthCalledWith(
+          2,
           contentTypeFixture,
-          'schema',
         );
       });
 
@@ -490,7 +508,8 @@ describe(handleBodyValidation, () => {
     let contentTypeFixture: string;
     let operationObjectFixture: OpenApi3Dot2OperationObject;
     let requestBodyObjectFixture: OpenApi3Dot2RequestBodyObject;
-    let escapedPointerFixture: string;
+    let requestBodyPointerFixture: string;
+    let contentTypePointerFixture: string;
 
     beforeAll(() => {
       pathFixture = '/users';
@@ -512,7 +531,8 @@ describe(handleBodyValidation, () => {
           },
         },
       };
-      escapedPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody/content/${contentTypeFixture}/schema`;
+      requestBodyPointerFixture = `paths/${pathFixture}/${methodFixture}/requestBody`;
+      contentTypePointerFixture = contentTypeFixture;
     });
 
     describe('when called, and getEntry() returns empty entry', () => {
@@ -547,12 +567,14 @@ describe(handleBodyValidation, () => {
         vitest
           .mocked(getOperationObject)
           .mockReturnValueOnce(operationObjectFixture);
-        vitest
-          .mocked(getRequestBodyObject)
-          .mockReturnValueOnce(requestBodyObjectFixture);
+        vitest.mocked(getRequestBodyObject).mockReturnValueOnce({
+          pointerPrefix: undefined,
+          requestBody: requestBodyObjectFixture,
+        });
         vitest
           .mocked(escapeJsonPointerFragments)
-          .mockReturnValueOnce(escapedPointerFixture);
+          .mockReturnValueOnce(requestBodyPointerFixture)
+          .mockReturnValueOnce(contentTypePointerFixture);
 
         vitest
           .mocked(openApiRouterMock.findRoute)
@@ -573,6 +595,122 @@ describe(handleBodyValidation, () => {
 
       it('should return undefined', () => {
         expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe('having an inputParam with contentType and a resolved request body with a component pointerPrefix', () => {
+    let inputParamFixture: BodyValidationInputParam<unknown>;
+    let pathFixture: string;
+    let methodFixture: string;
+    let contentTypeFixture: string;
+    let operationObjectFixture: OpenApi3Dot2OperationObject;
+    let requestBodyObjectFixture: OpenApi3Dot2RequestBodyObject;
+    let pointerPrefixFixture: string;
+    let contentTypePointerFixture: string;
+
+    beforeAll(() => {
+      pathFixture = '/users';
+      methodFixture = 'post';
+      contentTypeFixture = 'application/json';
+      pointerPrefixFixture = 'components/requestBodies/UserBody';
+      contentTypePointerFixture = contentTypeFixture;
+      inputParamFixture = {
+        body: { name: 'test' },
+        contentType: contentTypeFixture,
+        method: methodFixture,
+        path: pathFixture,
+        type: Symbol() as unknown as BodyValidationInputParam<unknown>['type'],
+      };
+      operationObjectFixture = {
+        requestBody: {
+          $ref: '#/components/requestBodies/UserBody',
+        },
+        responses: {},
+      };
+      requestBodyObjectFixture = {
+        content: {
+          [contentTypeFixture]: {
+            schema: {},
+          },
+        },
+      };
+    });
+
+    describe('when called, and getEntry() returns empty entry and validation succeeds', () => {
+      let ajvMock: Mocked<Ajv>;
+      let getEntryMock: Mock<
+        (path: string, method: string) => ValidationCacheEntry
+      >;
+      let validationCacheEntryFixture: ValidationCacheEntry;
+      let schemaPointerFixture: string;
+      let result: unknown;
+
+      beforeAll(() => {
+        const validateMock: ValidateFunction = Object.assign(
+          vitest.fn().mockReturnValueOnce(true),
+          { errors: null, schema: {} },
+        ) as unknown as ValidateFunction;
+
+        ajvMock = {
+          getSchema: vitest.fn().mockReturnValueOnce(validateMock),
+        } as Partial<Mocked<Ajv>> as Mocked<Ajv>;
+
+        schemaPointerFixture = `${SCHEMA_ID}#/${pointerPrefixFixture}/content/${contentTypePointerFixture}/schema`;
+
+        validationCacheEntryFixture = {
+          body: undefined,
+          headers: undefined,
+          params: undefined,
+          queries: undefined,
+        };
+
+        getEntryMock = vitest
+          .fn<(path: string, method: string) => ValidationCacheEntry>()
+          .mockReturnValueOnce(validationCacheEntryFixture);
+
+        vitest
+          .mocked(getOperationObject)
+          .mockReturnValueOnce(operationObjectFixture);
+        vitest.mocked(getRequestBodyObject).mockReturnValueOnce({
+          pointerPrefix: pointerPrefixFixture,
+          requestBody: requestBodyObjectFixture,
+        });
+        vitest
+          .mocked(escapeJsonPointerFragments)
+          .mockReturnValueOnce(contentTypePointerFixture);
+
+        vitest
+          .mocked(openApiRouterMock.findRoute)
+          .mockReturnValueOnce(pathFixture);
+
+        result = handleBodyValidation(
+          ajvMock,
+          openApiObjectFixture,
+          validationContextFixture,
+          inputParamFixture,
+          getEntryMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call escapeJsonPointerFragments()', () => {
+        expect(escapeJsonPointerFragments).toHaveBeenCalledExactlyOnceWith(
+          contentTypeFixture,
+        );
+      });
+
+      it('should call ajv.getSchema()', () => {
+        expect(ajvMock.getSchema).toHaveBeenCalledExactlyOnceWith(
+          schemaPointerFixture,
+        );
+      });
+
+      it('should return expected result', () => {
+        expect(result).toBe(inputParamFixture.body);
       });
     });
   });

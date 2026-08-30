@@ -1,0 +1,56 @@
+export interface SingleImmutableLinkedListNode<T> {
+  elem: T;
+  previous: SingleImmutableLinkedListNode<T> | undefined;
+}
+
+export class SingleImmutableLinkedList<T> implements Iterable<T> {
+  constructor(
+    public readonly last: SingleImmutableLinkedListNode<T>,
+    public readonly length: number = 1,
+  ) {}
+
+  public concat(elem: T): SingleImmutableLinkedList<T> {
+    return new SingleImmutableLinkedList(
+      {
+        elem,
+        previous: this.last,
+      },
+      this.length + 1,
+    );
+  }
+
+  public [Symbol.iterator](): Iterator<T> {
+    let node: SingleImmutableLinkedListNode<T> | undefined = this.last;
+
+    return {
+      next: (): IteratorResult<T> => {
+        if (node === undefined) {
+          return {
+            done: true,
+            value: undefined,
+          };
+        }
+
+        const elem: T = node.elem;
+        node = node.previous;
+
+        return {
+          done: false,
+          value: elem,
+        };
+      },
+    };
+  }
+
+  public toArray(): T[] {
+    const array: T[] = new Array<T>(this.length);
+
+    let currentIndex: number = this.length;
+
+    for (const elem of this) {
+      array[--currentIndex] = elem;
+    }
+
+    return array;
+  }
+}

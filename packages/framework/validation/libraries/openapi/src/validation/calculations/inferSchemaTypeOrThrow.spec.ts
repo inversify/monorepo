@@ -14,8 +14,8 @@ describe(inferSchemaTypeOrThrow, () => {
 
   beforeAll(() => {
     openApiResolverFixture = {
-      deepResolveReference: vitest.fn(),
-      resolveReference: vitest.fn(),
+      resolveJsonSchema: vitest.fn(),
+      resolveOpenApiReference: vitest.fn(),
     };
   });
 

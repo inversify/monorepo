@@ -5,6 +5,7 @@ vitest.mock(import('./getOperationObject.js'));
 vitest.mock(import('./getPathItemObject.js'));
 
 import { escapeJsonPointerFragments } from '@inversifyjs/json-schema-pointer';
+import { type JsonValue } from '@inversifyjs/json-schema-types';
 import {
   type OpenApi3Dot2Object,
   type OpenApi3Dot2OperationObject,
@@ -64,8 +65,8 @@ describe(getQueryParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
-        resolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -81,6 +82,12 @@ describe(getQueryParameterObjects, () => {
 
     afterAll(() => {
       vitest.clearAllMocks();
+    });
+
+    it('should not call openApiResolver.resolveOpenApiReference()', () => {
+      expect(
+        openApiResolverFixture.resolveOpenApiReference,
+      ).not.toHaveBeenCalled();
     });
 
     it('should return a map with the query parameter', () => {
@@ -120,8 +127,8 @@ describe(getQueryParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
-        resolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -150,10 +157,11 @@ describe(getQueryParameterObjects, () => {
 
   describe('when called, and parameter is a $ref reference', () => {
     let openApiResolverFixture: OpenApiResolver;
+    let refFixture: OpenApi3Dot2ReferenceObject;
     let result: Map<string, QueryParameterEntry>;
 
     beforeAll(() => {
-      const refFixture: OpenApi3Dot2ReferenceObject = {
+      refFixture = {
         $ref: '#/components/parameters/PageParam',
       };
 
@@ -173,10 +181,21 @@ describe(getQueryParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest
-          .fn()
-          .mockReturnValueOnce(resolvedParamFixture),
-        resolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
+          isRight: true,
+          value: {
+            chain: [
+              {
+                $ref: refFixture.$ref,
+                canonicalId:
+                  'urn:inversifyjs:openapi-v3dot2-spec#/components/parameters/PageParam',
+                value: refFixture as unknown as JsonValue,
+              },
+            ],
+            value: resolvedParamFixture as unknown as JsonValue,
+          },
+        }),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -194,24 +213,114 @@ describe(getQueryParameterObjects, () => {
       vitest.clearAllMocks();
     });
 
+    it('should call openApiResolver.resolveOpenApiReference()', () => {
+      expect(
+        openApiResolverFixture.resolveOpenApiReference,
+      ).toHaveBeenCalledExactlyOnceWith(refFixture);
+    });
+
     it('should resolve the $ref and return the query parameter', () => {
       expect(result.size).toBe(1);
       expect(result.has('page')).toBe(true);
     });
 
-    it('should call deepResolveReference', () => {
-      expect(
-        openApiResolverFixture.deepResolveReference,
-      ).toHaveBeenCalledExactlyOnceWith('#/components/parameters/PageParam');
+    it('should return entry with component pointer prefix', () => {
+      const entry: QueryParameterEntry = result.get(
+        'page',
+      ) as QueryParameterEntry;
+
+      expect(entry.pointerPrefix).toBe('components/parameters/PageParam');
     });
   });
 
-  describe('when called, and path item deepResolveReference returns undefined', () => {
+  describe('when called, and path item parameter is a $ref reference', () => {
     let openApiResolverFixture: OpenApiResolver;
+    let refFixture: OpenApi3Dot2ReferenceObject;
+    let result: Map<string, QueryParameterEntry>;
+
+    beforeAll(() => {
+      refFixture = {
+        $ref: '#/components/parameters/PageParam',
+      };
+
+      const resolvedParamFixture: OpenApi3Dot2ParameterObject = {
+        in: 'query',
+        name: 'page',
+        schema: { type: 'integer' },
+      };
+
+      const operationFixture: OpenApi3Dot2OperationObject = {
+        responses: {},
+      };
+
+      const pathItemFixture: OpenApi3Dot2PathItemObject = {
+        get: operationFixture,
+        parameters: [refFixture],
+      };
+
+      openApiResolverFixture = {
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
+          isRight: true,
+          value: {
+            chain: [
+              {
+                $ref: refFixture.$ref,
+                canonicalId:
+                  'urn:inversifyjs:openapi-v3dot2-spec#/components/parameters/PageParam',
+                value: refFixture as unknown as JsonValue,
+              },
+            ],
+            value: resolvedParamFixture as unknown as JsonValue,
+          },
+        }),
+      };
+
+      vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
+      vitest.mocked(getOperationObject).mockReturnValueOnce(operationFixture);
+
+      result = getQueryParameterObjects(
+        openApiObjectFixture,
+        openApiResolverFixture,
+        methodFixture,
+        pathFixture,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call openApiResolver.resolveOpenApiReference()', () => {
+      expect(
+        openApiResolverFixture.resolveOpenApiReference,
+      ).toHaveBeenCalledExactlyOnceWith(refFixture);
+    });
+
+    it('should resolve the $ref and return the query parameter', () => {
+      expect(result.size).toBe(1);
+      expect(result.has('page')).toBe(true);
+    });
+
+    it('should return entry with component pointer prefix', () => {
+      const entry: QueryParameterEntry = result.get(
+        'page',
+      ) as QueryParameterEntry;
+
+      expect(entry.pointerPrefix).toBe('components/parameters/PageParam');
+    });
+  });
+
+  describe('when called, and path item $ref fails to resolve', () => {
+    let openApiResolverFixture: OpenApiResolver;
+    let reasonFixture: string;
+    let refFixture: OpenApi3Dot2ReferenceObject;
     let result: unknown;
 
     beforeAll(() => {
-      const refFixture: OpenApi3Dot2ReferenceObject = {
+      reasonFixture =
+        'Failed to resolve JSON Pointer: /components/parameters/MissingPageParam';
+      refFixture = {
         $ref: '#/components/parameters/MissingPageParam',
       };
 
@@ -225,8 +334,14 @@ describe(getQueryParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn().mockReturnValueOnce(undefined),
-        resolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
+          isRight: false,
+          value: {
+            reason: reasonFixture,
+            resolutionContextStack: [],
+          },
+        }),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -248,11 +363,17 @@ describe(getQueryParameterObjects, () => {
       vitest.clearAllMocks();
     });
 
+    it('should call openApiResolver.resolveOpenApiReference()', () => {
+      expect(
+        openApiResolverFixture.resolveOpenApiReference,
+      ).toHaveBeenCalledExactlyOnceWith(refFixture);
+    });
+
     it('should throw an InversifyOpenApiValidationError', () => {
       const expectedErrorProperties: Partial<InversifyOpenApiValidationError> =
         {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `Unable to resolve query parameter at path: ${pathFixture} and method: ${methodFixture} and index: 0`,
+          message: `Could not resolve $ref pointer ${refFixture.$ref} for parameter at path: ${pathFixture} and method: ${methodFixture} and index: 0: ${reasonFixture}`,
         };
 
       expect(result).toBeInstanceOf(InversifyOpenApiValidationError);
@@ -260,12 +381,16 @@ describe(getQueryParameterObjects, () => {
     });
   });
 
-  describe('when called, and operation deepResolveReference returns undefined', () => {
+  describe('when called, and operation $ref fails to resolve', () => {
     let openApiResolverFixture: OpenApiResolver;
+    let reasonFixture: string;
+    let refFixture: OpenApi3Dot2ReferenceObject;
     let result: unknown;
 
     beforeAll(() => {
-      const refFixture: OpenApi3Dot2ReferenceObject = {
+      reasonFixture =
+        'Failed to resolve JSON Pointer: /components/parameters/MissingPageParam';
+      refFixture = {
         $ref: '#/components/parameters/MissingPageParam',
       };
 
@@ -279,8 +404,81 @@ describe(getQueryParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn().mockReturnValueOnce(undefined),
-        resolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
+          isRight: false,
+          value: {
+            reason: reasonFixture,
+            resolutionContextStack: [],
+          },
+        }),
+      };
+
+      vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
+      vitest.mocked(getOperationObject).mockReturnValueOnce(operationFixture);
+
+      try {
+        getQueryParameterObjects(
+          openApiObjectFixture,
+          openApiResolverFixture,
+          methodFixture,
+          pathFixture,
+        );
+      } catch (error: unknown) {
+        result = error;
+      }
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should call openApiResolver.resolveOpenApiReference()', () => {
+      expect(
+        openApiResolverFixture.resolveOpenApiReference,
+      ).toHaveBeenCalledExactlyOnceWith(refFixture);
+    });
+
+    it('should throw an InversifyOpenApiValidationError', () => {
+      const expectedErrorProperties: Partial<InversifyOpenApiValidationError> =
+        {
+          kind: InversifyValidationErrorKind.validationFailed,
+          message: `Could not resolve $ref pointer ${refFixture.$ref} for parameter at path: ${pathFixture} and method: ${methodFixture} and index: 0: ${reasonFixture}`,
+        };
+
+      expect(result).toBeInstanceOf(InversifyOpenApiValidationError);
+      expect(result).toMatchObject(expectedErrorProperties);
+    });
+  });
+
+  describe('when called, and $ref resolves to a non-object', () => {
+    let openApiResolverFixture: OpenApiResolver;
+    let refFixture: OpenApi3Dot2ReferenceObject;
+    let result: unknown;
+
+    beforeAll(() => {
+      refFixture = {
+        $ref: '#/components/parameters/PageParam',
+      };
+
+      const operationFixture: OpenApi3Dot2OperationObject = {
+        parameters: [refFixture],
+        responses: {},
+      };
+
+      const pathItemFixture: OpenApi3Dot2PathItemObject = {
+        get: operationFixture,
+      };
+
+      openApiResolverFixture = {
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn().mockReturnValueOnce({
+          isRight: true,
+          value: {
+            chain: [],
+            value: null,
+          },
+        }),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
@@ -306,7 +504,7 @@ describe(getQueryParameterObjects, () => {
       const expectedErrorProperties: Partial<InversifyOpenApiValidationError> =
         {
           kind: InversifyValidationErrorKind.validationFailed,
-          message: `Unable to resolve query parameter at path: ${pathFixture} and method: ${methodFixture} and index: 0`,
+          message: `Resolved $ref pointer ${refFixture.$ref} is not a valid parameter object at path: ${pathFixture} and method: ${methodFixture} and index: 0`,
         };
 
       expect(result).toBeInstanceOf(InversifyOpenApiValidationError);
@@ -341,8 +539,8 @@ describe(getQueryParameterObjects, () => {
       };
 
       openApiResolverFixture = {
-        deepResolveReference: vitest.fn(),
-        resolveReference: vitest.fn(),
+        resolveJsonSchema: vitest.fn(),
+        resolveOpenApiReference: vitest.fn(),
       };
 
       vitest.mocked(getPathItemObject).mockReturnValueOnce(pathItemFixture);
