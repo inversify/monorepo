@@ -38,7 +38,7 @@
   },
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "Introduction",
       "pages": [
         "docs/introduction/getting-started"
       ]
