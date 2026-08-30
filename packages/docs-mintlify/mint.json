@@ -39,9 +39,7 @@
   "navigation": [
     {
       "group": "Introduction",
-      "pages": [
-        "docs/introduction/getting-started"
-      ]
+      "pages": ["docs/introduction/getting-started"]
     }
   ],
   "footerSocials": {

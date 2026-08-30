@@ -62,8 +62,8 @@
     "start": "mintlify dev",
     "build": "node ./scripts/build.mjs",
     "export": "mintlify export",
-    "format": "prettier --write ./docs ./*.json ./*.ts ./*.css ./*.mdx ./mdx-components.tsx ./src",
-    "lint": "eslint ./docs",
+    "format": "prettier --write .",
+    "lint": "eslint",
     "validate": "mintlify validate"
   }
 }

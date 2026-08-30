@@ -19,15 +19,11 @@
             "groups": [
               {
                 "group": "Home",
-                "pages": [
-                  "index"
-                ]
+                "pages": ["index"]
               },
               {
                 "group": "Introduction",
-                "pages": [
-                  "docs/introduction/getting-started"
-                ]
+                "pages": ["docs/introduction/getting-started"]
               }
             ]
           },
@@ -72,15 +68,11 @@
         "groups": [
           {
             "group": "首页",
-            "pages": [
-              "zh/index"
-            ]
+            "pages": ["zh/index"]
           },
           {
             "group": "快速入门",
-            "pages": [
-              "zh/docs/introduction/getting-started"
-            ]
+            "pages": ["zh/docs/introduction/getting-started"]
           }
         ]
       }
