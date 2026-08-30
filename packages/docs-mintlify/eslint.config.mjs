@@ -27,6 +27,7 @@ function buildBaseConfig() {
       'simple-import-sort': simpleImportSort,
     },
     rules: {
+      '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       '@typescript-eslint/explicit-member-accessibility': [
         'error',
@@ -113,7 +114,7 @@ function buildBaseConfig() {
         },
       ],
       '@typescript-eslint/typedef': [
-        'error',
+        'off',
         {
           arrayDestructuring: true,
           arrowParameter: true,
