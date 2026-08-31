@@ -37,7 +37,7 @@ Recipe (CLI args / prompts)
           ├─ composeScaffoldDependencies(catalog, httpAdapter, dbAdapter)
           │     └─ writes package.json (only selected deps)
           │
-          ├─ copy static templates (tsconfig, eslint, prettier, gitignore, prisma, docker-compose, …)
+          ├─ copy static templates (tsconfig, eslint, prettier, gitignore, prisma, docker-compose, agent skills, …)
           │
           ├─ generateIndexSource() → src/index.ts
           ├─ generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))
@@ -128,6 +128,7 @@ Copied (sometimes renamed) into the target app:
 | `docker-compose.yml` | `docker-compose.yml` | PostgreSQL service |
 | `prisma.config.ts.template` | `prisma.config.ts` | Prisma 7 config (`prisma/config`) |
 | `prisma/` | `prisma/` | Schema, Todo model, initial migration |
+| `.agents/skills/add-resource/SKILL.md` | `.agents/skills/add-resource/SKILL.md` and `.claude/skills/add-resource/SKILL.md` | Canonical agent skill for adding a complete hexagonal resource; copied to both discovery locations |
 | `package.json` | _(not copied)_ | Catalog only |
 | `package-managers.json` | _(not copied)_ | npm / pnpm catalog only |
 | `yarn-berry.json` | _(not copied)_ | Yarn Berry version catalog |
@@ -296,6 +297,12 @@ pnpm run --filter @inversifyjs/create-http lint
 pnpm run --filter @inversifyjs/create-http build
 ```
 
+The `add-resource` skill also has an opt-in Promptfoo evaluation. It creates disposable Express/PostgreSQL apps, runs the skill against a simple resource and a relational aggregate, then inspects the generated files and runs each app's build and lint commands. It is intentionally separate from the normal test suite because it invokes an external coding model.
+
+```bash
+pnpm run --filter @inversifyjs/create-http eval:skill:add-resource
+```
+
 Important coverage areas:
 
 - Dependency composition includes only the selected adapter (exact versions against a fixture catalog)
@@ -303,6 +310,7 @@ Important coverage areas:
 - Generated package.json shape / adapter membership / `packageManager` prefix — not catalog version pins (Renovate owns those)
 - Yarn scaffolds write `.yarnrc.yml` (`enableScripts: false`, `nodeLinker: node-modules`), `package.json` `dependenciesMeta` from selected `builtDependencies`, and `packageManager` starts with `yarn@`
 - Help text includes citty-defined options (`renderUsage`)
+- Generated apps contain identical `add-resource` skills for agents using the shared `.agents` convention and Claude's `.claude` convention
 - CLI integration (`createHttpCommand.int.spec.ts`): under `tmp/test/createHttpCommand/{npm|yarn|pnpm}/`, scaffold every HTTP adapter × DB adapter into a per-package-manager monorepo, install dependencies once at that root, then build each member and assert compiled `dist/` outputs exist
 
 ## Codecov

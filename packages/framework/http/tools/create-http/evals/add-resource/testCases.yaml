@@ -1,0 +1,25 @@
+- description: Add a Product CRUD resource
+  vars:
+    workspaceDir: ./workspaces/product
+    resourceDirectory: product
+    prismaModels: Product
+    request: >-
+      Add a Product resource using the add-resource skill. A product has a UUID id,
+      unique sku, name, optional description, integer priceCents, active boolean
+      defaulting to true, createdAt, updatedAt, and soft deletion. Add create, get by
+      id, paginated list, update, and delete endpoints under /v1/products. No auth is
+      required. Finish the implementation and run the project's normal validation.
+
+- description: Add an Order aggregate with line items
+  vars:
+    workspaceDir: ./workspaces/order
+    resourceDirectory: order
+    prismaModels: Order,OrderItem
+    request: >-
+      Add an Order resource using the add-resource skill. An order has a UUID id,
+      unique orderNumber, customerEmail, status, createdAt, and updatedAt. Each order
+      owns one or more OrderItem records with a UUID id, productSku, quantity, and
+      integer unitPriceCents. Deleting an order must delete its items. Add create,
+      get by id, and paginated list endpoints under /v1/orders. Create accepts its
+      items and get responses include them. No auth, filtering, or soft deletion is
+      required. Finish the implementation and run the project's normal validation.

@@ -173,6 +173,7 @@ export default {
     "packages/framework/http/tools/create-http": {
       entry: [
         "bin/create-inversify-http.js",
+        "evals/add-resource/*.mjs",
         "src/cli/runCreateHttp.entrypoint.ts",
         "src/index.ts",
       ],

@@ -11,5 +11,9 @@
 # Integration test scaffold output
 /tmp/
 
+# Agent skill evaluation output
+/evals/add-resource/workspaces/
+/evals/add-resource/results/
+
 # Turborepo files
 .turbo/

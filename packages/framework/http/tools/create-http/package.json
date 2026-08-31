@@ -64,6 +64,8 @@
   "scripts": {
     "build": "tsc",
     "build:clean": "rimraf lib",
+    "eval:skill:add-resource": "pnpm run eval:skill:add-resource:prepare && pnpm dlx promptfoo@0.122.2 eval -c ./evals/add-resource/promptfooconfig.yaml --no-cache",
+    "eval:skill:add-resource:prepare": "pnpm run build && node ./evals/add-resource/prepareWorkspaces.mjs",
     "format": "prettier --write ./src",
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean",
