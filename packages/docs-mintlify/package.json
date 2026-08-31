@@ -61,9 +61,7 @@
   },
   "scripts": {
     "start": "mintlify dev",
-    "prestart": "pnpm --filter @inversifyjs/mintlify-code-examples build",
     "build": "node ./scripts/build.mjs",
-    "prebuild": "pnpm --filter @inversifyjs/mintlify-code-examples build",
     "export": "mintlify export",
     "format": "prettier --write .",
     "lint": "eslint",
