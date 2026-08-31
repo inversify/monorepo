@@ -7,7 +7,6 @@ import {
 } from '@inversifyjs/json-schema-types/2020-12';
 import { Uri } from '@inversifyjs/uri';
 
-import { SingleImmutableLinkedList } from '../../../common/models/SingleImmutableLinkedList.js';
 import {
   type DynamicScopeEntry,
   JsonSchemaResolver,
@@ -18,18 +17,20 @@ import {
 function buildDynamicScopeEntries(
   first: DynamicScopeEntry,
   ...rest: DynamicScopeEntry[]
-): SingleImmutableLinkedList<DynamicScopeEntry> {
-  let dynamicScopeEntries: SingleImmutableLinkedList<DynamicScopeEntry> =
-    new SingleImmutableLinkedList({
-      elem: first,
-      previous: undefined,
-    });
+): DynamicScopeEntry[] {
+  return [first, ...rest];
+}
 
-  for (const dynamicScopeEntry of rest) {
-    dynamicScopeEntries = dynamicScopeEntries.concat(dynamicScopeEntry);
-  }
-
-  return dynamicScopeEntries;
+function buildResourceDynamicScopeEntry(id: string): DynamicScopeEntry {
+  return {
+    lexicalScope: {
+      $canonicalId: new Uri(id),
+    },
+    resolutionContext: {
+      $ref: id,
+      isDynamic: false,
+    },
+  };
 }
 
 describe(JsonSchemaResolver, () => {
@@ -60,6 +61,93 @@ describe(JsonSchemaResolver, () => {
             value: {
               $dynamicRef: undefined,
               $ref: undefined,
+              dynamicScopeEntries: [],
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having a boolean schema and an incoming dynamic scope', () => {
+      let incomingDynamicScopeEntriesFixture: DynamicScopeEntry[];
+      let jsonSchemaResolver: JsonSchemaResolver;
+      let schemaFixture: JsonSchema;
+
+      beforeAll(() => {
+        schemaFixture = true;
+        incomingDynamicScopeEntriesFixture = [
+          buildResourceDynamicScopeEntry('https://example.com/parent.json'),
+        ];
+
+        jsonSchemaResolver = new JsonSchemaResolver(() => undefined);
+      });
+
+      describe('when called', () => {
+        let result: Either<ResolutionFailure, SchemaResolutionSuccessTree>;
+
+        beforeAll(() => {
+          result = jsonSchemaResolver.resolveSchema(
+            schemaFixture,
+            incomingDynamicScopeEntriesFixture,
+          );
+        });
+
+        it('should return the incoming dynamic scope', () => {
+          const expected: Either<
+            ResolutionFailure,
+            SchemaResolutionSuccessTree
+          > = {
+            isRight: true,
+            value: {
+              $dynamicRef: undefined,
+              $ref: undefined,
+              dynamicScopeEntries: incomingDynamicScopeEntriesFixture,
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having a schema object without $id, $ref, or $dynamicRef and an incoming dynamic scope', () => {
+      let incomingDynamicScopeEntriesFixture: DynamicScopeEntry[];
+      let jsonSchemaResolver: JsonSchemaResolver;
+      let schemaFixture: JsonSchemaObject;
+
+      beforeAll(() => {
+        schemaFixture = {
+          type: 'string',
+        };
+        incomingDynamicScopeEntriesFixture = [
+          buildResourceDynamicScopeEntry('https://example.com/parent.json'),
+        ];
+
+        jsonSchemaResolver = new JsonSchemaResolver(() => undefined);
+      });
+
+      describe('when called', () => {
+        let result: Either<ResolutionFailure, SchemaResolutionSuccessTree>;
+
+        beforeAll(() => {
+          result = jsonSchemaResolver.resolveSchema(
+            schemaFixture,
+            incomingDynamicScopeEntriesFixture,
+          );
+        });
+
+        it('should return the incoming dynamic scope', () => {
+          const expected: Either<
+            ResolutionFailure,
+            SchemaResolutionSuccessTree
+          > = {
+            isRight: true,
+            value: {
+              $dynamicRef: undefined,
+              $ref: undefined,
+              dynamicScopeEntries: incomingDynamicScopeEntriesFixture,
             },
           };
 
@@ -105,6 +193,37 @@ describe(JsonSchemaResolver, () => {
             value: {
               $dynamicRef: undefined,
               $ref: undefined,
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+
+      describe('when called with the schema already in the incoming dynamic scope', () => {
+        let result: Either<ResolutionFailure, SchemaResolutionSuccessTree>;
+
+        beforeAll(() => {
+          result = jsonSchemaResolver.resolveSchema(schemaFixture, [
+            buildResourceDynamicScopeEntry(schemaIdFixture),
+          ]);
+        });
+
+        it('should not append the same resource twice', () => {
+          const expected: Either<
+            ResolutionFailure,
+            SchemaResolutionSuccessTree
+          > = {
+            isRight: true,
+            value: {
+              $dynamicRef: undefined,
+              $ref: undefined,
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
             },
           };
 
@@ -183,6 +302,9 @@ describe(JsonSchemaResolver, () => {
                 ),
                 value: otherSchemaFixture,
               },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
             },
           };
 
@@ -260,6 +382,9 @@ describe(JsonSchemaResolver, () => {
                 ),
                 value: subschemaFixture,
               },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
             },
           };
 
@@ -318,6 +443,9 @@ describe(JsonSchemaResolver, () => {
             value: {
               $dynamicRef: undefined,
               $ref: undefined,
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
             },
           };
 
@@ -387,6 +515,9 @@ describe(JsonSchemaResolver, () => {
                 ),
                 value: schemaFixture,
               },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
             },
           };
 
@@ -549,6 +680,9 @@ describe(JsonSchemaResolver, () => {
                 ),
                 value: bSchemaFixture,
               },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(aSchemaIdFixture),
+              ],
             },
           };
 
@@ -647,6 +781,9 @@ describe(JsonSchemaResolver, () => {
                 ),
                 value: bSchemaFixture,
               },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(aSchemaIdFixture),
+              ],
             },
           };
 
@@ -710,7 +847,7 @@ describe(JsonSchemaResolver, () => {
                     },
                     resolutionContext: {
                       $ref: strictTreeIdFixture,
-                      isDynamic: true,
+                      isDynamic: false,
                     },
                   },
                   {
@@ -735,6 +872,123 @@ describe(JsonSchemaResolver, () => {
                 value: strictTreeFixture,
               },
               $ref: undefined,
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(strictTreeIdFixture),
+              ],
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having a nested $dynamicRef and an incoming dynamic scope with an outer $dynamicAnchor', () => {
+      let childSchemaFixture: JsonSchemaObject;
+      let jsonSchemaResolver: JsonSchemaResolver;
+      let strictTreeFixture: JsonSchemaObject;
+      let strictTreeIdFixture: string;
+      let treeFixture: JsonSchemaObject;
+      let treeIdFixture: string;
+
+      beforeAll(() => {
+        treeIdFixture = 'https://example.com/tree';
+        strictTreeIdFixture = 'https://example.com/strict-tree';
+        childSchemaFixture = {
+          $dynamicRef: '#node',
+        };
+        treeFixture = {
+          $dynamicAnchor: 'node',
+          $id: treeIdFixture,
+          properties: {
+            child: childSchemaFixture,
+          },
+        };
+        strictTreeFixture = {
+          $dynamicAnchor: 'node',
+          $id: strictTreeIdFixture,
+        };
+
+        const schemaById: Map<string, JsonSchema> = new Map([
+          [strictTreeIdFixture, strictTreeFixture],
+          [treeIdFixture, treeFixture],
+        ]);
+
+        jsonSchemaResolver = new JsonSchemaResolver((id: string) =>
+          schemaById.get(id),
+        );
+      });
+
+      describe('when called', () => {
+        let result: Either<ResolutionFailure, SchemaResolutionSuccessTree>;
+
+        beforeAll(() => {
+          const strictTreeResult: Either<
+            ResolutionFailure,
+            SchemaResolutionSuccessTree
+          > = jsonSchemaResolver.resolveSchema(strictTreeFixture);
+
+          if (!strictTreeResult.isRight) {
+            throw new Error(strictTreeResult.value.reason);
+          }
+
+          const treeResult: Either<
+            ResolutionFailure,
+            SchemaResolutionSuccessTree
+          > = jsonSchemaResolver.resolveSchema(
+            treeFixture,
+            strictTreeResult.value.dynamicScopeEntries,
+          );
+
+          if (!treeResult.isRight) {
+            throw new Error(treeResult.value.reason);
+          }
+
+          result = jsonSchemaResolver.resolveSchema(
+            childSchemaFixture,
+            treeResult.value.dynamicScopeEntries,
+          );
+        });
+
+        it('should retarget the nested $dynamicRef to the outermost $dynamicAnchor', () => {
+          const expected: Either<
+            ResolutionFailure,
+            SchemaResolutionSuccessTree
+          > = {
+            isRight: true,
+            value: {
+              $dynamicRef: {
+                $dynamicRef: undefined,
+                $ref: undefined,
+                dynamicScopeEntries: buildDynamicScopeEntries(
+                  buildResourceDynamicScopeEntry(strictTreeIdFixture),
+                  buildResourceDynamicScopeEntry(treeIdFixture),
+                  {
+                    lexicalScope: {
+                      $canonicalId: new Uri(treeIdFixture),
+                    },
+                    resolutionContext: {
+                      $ref: '#node',
+                      isDynamic: true,
+                    },
+                  },
+                  {
+                    lexicalScope: {
+                      $canonicalId: new Uri(strictTreeIdFixture),
+                    },
+                    resolutionContext: {
+                      $ref: '#node',
+                      isDynamic: true,
+                    },
+                  },
+                ),
+                value: strictTreeFixture,
+              },
+              $ref: undefined,
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(strictTreeIdFixture),
+                buildResourceDynamicScopeEntry(treeIdFixture),
+              ],
             },
           };
 
@@ -805,7 +1059,7 @@ describe(JsonSchemaResolver, () => {
                     },
                     resolutionContext: {
                       $ref: schemaIdFixture,
-                      isDynamic: true,
+                      isDynamic: false,
                     },
                   },
                   {
@@ -845,6 +1099,9 @@ describe(JsonSchemaResolver, () => {
                 ),
                 value: refTargetFixture,
               },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
             },
           };
 
@@ -954,6 +1211,9 @@ describe(JsonSchemaResolver, () => {
                 ),
                 value: fooSchemaFixture,
               },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
             },
           };
 
@@ -1031,6 +1291,9 @@ describe(JsonSchemaResolver, () => {
                 ),
                 value: subschemaFixture,
               },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
             },
           };
 
@@ -1108,6 +1371,9 @@ describe(JsonSchemaResolver, () => {
                 ),
                 value: subschemaFixture,
               },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
             },
           };
 
@@ -1178,7 +1444,7 @@ describe(JsonSchemaResolver, () => {
                     },
                     resolutionContext: {
                       $ref: treeIdFixture,
-                      isDynamic: true,
+                      isDynamic: false,
                     },
                   },
                   {
@@ -1194,6 +1460,9 @@ describe(JsonSchemaResolver, () => {
                 value: otherSubschemaFixture,
               },
               $ref: undefined,
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(treeIdFixture),
+              ],
             },
           };
 
@@ -1430,6 +1699,9 @@ describe(JsonSchemaResolver, () => {
                 ),
                 value: subschemaFixture,
               },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(schemaIdFixture),
+              ],
             },
           };
 
@@ -1551,6 +1823,104 @@ describe(JsonSchemaResolver, () => {
                   $ref: '#/$defs/missing',
                   isDynamic: false,
                 },
+              ],
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having a nested relative $ref and an incoming dynamic scope', () => {
+      let jsonSchemaResolver: JsonSchemaResolver;
+      let otherSchemaFixture: JsonSchemaObject;
+      let otherSchemaIdFixture: string;
+      let parentSchemaFixture: JsonSchemaObject;
+      let parentSchemaIdFixture: string;
+      let childSchemaFixture: JsonSchemaObject;
+
+      beforeAll(() => {
+        parentSchemaIdFixture = 'https://example.com/schema.json';
+        otherSchemaIdFixture = 'https://example.com/other.json';
+        otherSchemaFixture = {
+          $id: otherSchemaIdFixture,
+          type: 'string',
+        };
+        childSchemaFixture = {
+          $ref: 'other.json',
+        };
+        parentSchemaFixture = {
+          $id: parentSchemaIdFixture,
+          properties: {
+            foo: childSchemaFixture,
+          },
+        };
+
+        const schemaById: Map<string, JsonSchema> = new Map([
+          [otherSchemaIdFixture, otherSchemaFixture],
+          [parentSchemaIdFixture, parentSchemaFixture],
+        ]);
+
+        jsonSchemaResolver = new JsonSchemaResolver((id: string) =>
+          schemaById.get(id),
+        );
+      });
+
+      describe('when called', () => {
+        let result: Either<ResolutionFailure, SchemaResolutionSuccessTree>;
+
+        beforeAll(() => {
+          const parentResult: Either<
+            ResolutionFailure,
+            SchemaResolutionSuccessTree
+          > = jsonSchemaResolver.resolveSchema(parentSchemaFixture);
+
+          if (!parentResult.isRight) {
+            throw new Error(parentResult.value.reason);
+          }
+
+          result = jsonSchemaResolver.resolveSchema(
+            childSchemaFixture,
+            parentResult.value.dynamicScopeEntries,
+          );
+        });
+
+        it('should resolve the relative $ref against the parent lexical scope', () => {
+          const expected: Either<
+            ResolutionFailure,
+            SchemaResolutionSuccessTree
+          > = {
+            isRight: true,
+            value: {
+              $dynamicRef: undefined,
+              $ref: {
+                $dynamicRef: undefined,
+                $ref: undefined,
+                dynamicScopeEntries: buildDynamicScopeEntries(
+                  {
+                    lexicalScope: {
+                      $canonicalId: new Uri(parentSchemaIdFixture),
+                    },
+                    resolutionContext: {
+                      $ref: parentSchemaIdFixture,
+                      isDynamic: false,
+                    },
+                  },
+                  {
+                    lexicalScope: {
+                      $canonicalId: new Uri(otherSchemaIdFixture),
+                    },
+                    resolutionContext: {
+                      $ref: 'other.json',
+                      isDynamic: false,
+                    },
+                  },
+                ),
+                value: otherSchemaFixture,
+              },
+              dynamicScopeEntries: [
+                buildResourceDynamicScopeEntry(parentSchemaIdFixture),
               ],
             },
           };

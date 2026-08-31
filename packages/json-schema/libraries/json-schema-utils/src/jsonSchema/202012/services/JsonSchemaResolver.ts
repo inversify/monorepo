@@ -58,11 +58,13 @@ export interface SchemaResolutionSuccessLinks {
 }
 
 export interface SchemaResolutionSuccessNode extends SchemaResolutionSuccessLinks {
-  readonly dynamicScopeEntries: Iterable<DynamicScopeEntry>;
+  readonly dynamicScopeEntries: DynamicScopeEntry[];
   readonly value: JsonValue;
 }
 
-export type SchemaResolutionSuccessTree = SchemaResolutionSuccessLinks;
+export interface SchemaResolutionSuccessTree extends SchemaResolutionSuccessLinks {
+  readonly dynamicScopeEntries: DynamicScopeEntry[];
+}
 
 export class JsonSchemaResolver {
   readonly #idToCacheEntryMap: Map<string, JsonSchemaResolverCacheEntry>;
@@ -75,6 +77,7 @@ export class JsonSchemaResolver {
 
   public resolveSchema(
     schema: JsonValue,
+    dynamicScopeEntries?: DynamicScopeEntry[],
   ): Either<ResolutionFailure, SchemaResolutionSuccessTree> {
     if (
       schema === null ||
@@ -86,46 +89,42 @@ export class JsonSchemaResolver {
         value: {
           $dynamicRef: undefined,
           $ref: undefined,
+          dynamicScopeEntries: dynamicScopeEntries ?? [],
         },
       };
     }
 
+    const jsonSchema: JsonSchemaObject = schema;
+
+    const enterResult: Either<
+      ResolutionFailure,
+      SingleImmutableLinkedList<DynamicScopeEntry> | undefined
+    > = this.#enterSchema(
+      jsonSchema,
+      this.#toDynamicScopeList(dynamicScopeEntries),
+    );
+
+    if (!enterResult.isRight) {
+      return enterResult;
+    }
+
+    const currentScope:
+      SingleImmutableLinkedList<DynamicScopeEntry> | undefined =
+      enterResult.value;
+
     const tree: SchemaResolutionSuccessTree = {
       $dynamicRef: undefined,
       $ref: undefined,
+      dynamicScopeEntries: currentScope?.toArray() ?? [],
     };
-
-    const jsonSchema: JsonSchemaObject = schema;
-
-    if (jsonSchema.$id !== undefined) {
-      let idUri: Uri;
-
-      try {
-        idUri = new Uri(jsonSchema.$id);
-      } catch (_error: unknown) {
-        return {
-          isRight: false,
-          value: this.#buildResolutionFailure(
-            undefined,
-            `Invalid URI: ${jsonSchema.$id}`,
-          ),
-        };
-      }
-
-      // Load root schema to cache
-      this.#tryGetOrCreateCacheEntry(
-        Uri.fromAttributes({
-          ...idUri.attributes,
-          fragment: undefined,
-        }),
-      );
-    }
 
     if (jsonSchema.$dynamicRef !== undefined) {
       const result: Either<ResolutionFailure, ResolutionSuccess> =
-        this.#resolveRootJsonSchemaDynamicRef(
-          jsonSchema as JsonSchemaObject &
-            Required<Pick<JsonSchemaObject, '$dynamicRef'>>,
+        this.#resolveRefHop(
+          jsonSchema.$dynamicRef,
+          true,
+          currentScope,
+          jsonSchema,
         );
 
       if (!result.isRight) {
@@ -135,7 +134,7 @@ export class JsonSchemaResolver {
       tree.$dynamicRef = {
         $dynamicRef: undefined,
         $ref: undefined,
-        dynamicScopeEntries: result.value.dynamicScopeEntries,
+        dynamicScopeEntries: result.value.dynamicScopeEntries.toArray(),
         value: result.value.value,
       };
 
@@ -153,10 +152,7 @@ export class JsonSchemaResolver {
 
     if (jsonSchema.$ref !== undefined) {
       const result: Either<ResolutionFailure, ResolutionSuccess> =
-        this.#resolveRootJsonSchemaRef(
-          jsonSchema as JsonSchemaObject &
-            Required<Pick<JsonSchemaObject, '$ref'>>,
-        );
+        this.#resolveRefHop(jsonSchema.$ref, false, currentScope, jsonSchema);
 
       if (!result.isRight) {
         return result;
@@ -165,7 +161,7 @@ export class JsonSchemaResolver {
       tree.$ref = {
         $dynamicRef: undefined,
         $ref: undefined,
-        dynamicScopeEntries: result.value.dynamicScopeEntries,
+        dynamicScopeEntries: result.value.dynamicScopeEntries.toArray(),
         value: result.value.value,
       };
 
@@ -184,6 +180,62 @@ export class JsonSchemaResolver {
     return {
       isRight: true,
       value: tree,
+    };
+  }
+
+  #appendSchemaIdToDynamicScope(
+    id: string,
+    currentScope: SingleImmutableLinkedList<DynamicScopeEntry> | undefined,
+  ): Either<ResolutionFailure, SingleImmutableLinkedList<DynamicScopeEntry>> {
+    const baseUri: string | undefined =
+      currentScope?.last.elem.lexicalScope.$canonicalId.toString();
+
+    let canonicalUri: Uri;
+
+    try {
+      canonicalUri = Uri.fromAttributes({
+        ...new Uri(id, baseUri).attributes,
+        fragment: undefined,
+      });
+    } catch (_error: unknown) {
+      return {
+        isRight: false,
+        value: this.#buildResolutionFailure(currentScope, `Invalid URI: ${id}`),
+      };
+    }
+
+    if (
+      currentScope !== undefined &&
+      currentScope.last.elem.lexicalScope.$canonicalId.toString() ===
+        canonicalUri.toString()
+    ) {
+      return {
+        isRight: true,
+        value: currentScope,
+      };
+    }
+
+    this.#tryGetOrCreateCacheEntry(canonicalUri);
+
+    const dynamicScopeEntry: DynamicScopeEntry = {
+      lexicalScope: {
+        $canonicalId: canonicalUri,
+      },
+      resolutionContext: {
+        $ref: id,
+        isDynamic: false,
+      },
+    };
+
+    return {
+      isRight: true,
+      value:
+        currentScope === undefined
+          ? new SingleImmutableLinkedList({
+              elem: dynamicScopeEntry,
+              previous: undefined,
+            })
+          : currentScope.concat(dynamicScopeEntry),
     };
   }
 
@@ -306,6 +358,36 @@ export class JsonSchemaResolver {
         ),
       };
     }
+  }
+
+  #enterSchema(
+    schema: JsonValue,
+    currentScope: SingleImmutableLinkedList<DynamicScopeEntry> | undefined,
+  ): Either<
+    ResolutionFailure,
+    SingleImmutableLinkedList<DynamicScopeEntry> | undefined
+  > {
+    if (
+      schema === null ||
+      typeof schema !== 'object' ||
+      Array.isArray(schema)
+    ) {
+      return {
+        isRight: true,
+        value: currentScope,
+      };
+    }
+
+    const jsonSchema: JsonSchemaObject = schema;
+
+    if (jsonSchema.$id === undefined) {
+      return {
+        isRight: true,
+        value: currentScope,
+      };
+    }
+
+    return this.#appendSchemaIdToDynamicScope(jsonSchema.$id, currentScope);
   }
 
   #getAnchorValue(
@@ -784,6 +866,50 @@ export class JsonSchemaResolver {
     return this.#resolve(dynamicScopeEntries);
   }
 
+  #resolveRefHop(
+    ref: string,
+    isDynamic: boolean,
+    currentScope: SingleImmutableLinkedList<DynamicScopeEntry> | undefined,
+    jsonSchema: JsonSchemaObject,
+  ): Either<ResolutionFailure, ResolutionSuccess> {
+    if (currentScope === undefined) {
+      if (isDynamic) {
+        return this.#resolveRootJsonSchemaDynamicRef(
+          jsonSchema as JsonSchemaObject &
+            Required<Pick<JsonSchemaObject, '$dynamicRef'>>,
+        );
+      }
+
+      return this.#resolveRootJsonSchemaRef(
+        jsonSchema as JsonSchemaObject &
+          Required<Pick<JsonSchemaObject, '$ref'>>,
+      );
+    }
+
+    const canonicalIdResult: Either<ResolutionFailure, Uri> =
+      this.#calculateCanonicalId(
+        currentScope,
+        ref,
+        currentScope.last.elem.lexicalScope.$canonicalId.toString(),
+      );
+
+    if (!canonicalIdResult.isRight) {
+      return canonicalIdResult;
+    }
+
+    return this.#resolve(
+      currentScope.concat({
+        lexicalScope: {
+          $canonicalId: canonicalIdResult.value,
+        },
+        resolutionContext: {
+          $ref: ref,
+          isDynamic,
+        },
+      }),
+    );
+  }
+
   #resolveNodeRefs(
     dynamicScopeEntries: SingleImmutableLinkedList<DynamicScopeEntry>,
     node: SchemaResolutionSuccessNode,
@@ -842,7 +968,7 @@ export class JsonSchemaResolver {
       node.$dynamicRef = {
         $dynamicRef: undefined,
         $ref: undefined,
-        dynamicScopeEntries: result.value.dynamicScopeEntries,
+        dynamicScopeEntries: result.value.dynamicScopeEntries.toArray(),
         value: result.value.value,
       };
 
@@ -890,7 +1016,7 @@ export class JsonSchemaResolver {
       node.$ref = {
         $dynamicRef: undefined,
         $ref: undefined,
-        dynamicScopeEntries: result.value.dynamicScopeEntries,
+        dynamicScopeEntries: result.value.dynamicScopeEntries.toArray(),
         value: result.value.value,
       };
 
@@ -973,6 +1099,28 @@ export class JsonSchemaResolver {
       isRight: true,
       value: dynamicScopeEntries,
     };
+  }
+
+  #toDynamicScopeList(
+    dynamicScopeEntries: DynamicScopeEntry[] | undefined,
+  ): SingleImmutableLinkedList<DynamicScopeEntry> | undefined {
+    if (dynamicScopeEntries === undefined || dynamicScopeEntries.length === 0) {
+      return undefined;
+    }
+
+    let dynamicScopeList: SingleImmutableLinkedList<DynamicScopeEntry> =
+      new SingleImmutableLinkedList({
+        elem: dynamicScopeEntries[0] as DynamicScopeEntry,
+        previous: undefined,
+      });
+
+    for (let i: number = 1; i < dynamicScopeEntries.length; ++i) {
+      dynamicScopeList = dynamicScopeList.concat(
+        dynamicScopeEntries[i] as DynamicScopeEntry,
+      );
+    }
+
+    return dynamicScopeList;
   }
 
   #tryGetOrCreateCacheEntry(

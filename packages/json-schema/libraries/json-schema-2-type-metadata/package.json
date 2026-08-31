@@ -5,7 +5,8 @@
   },
   "description": "InversifyJs JSON Schema to type metadata transformer package",
   "dependencies": {
-    "@inversifyjs/json-schema-type-metadata": "workspace:*"
+    "@inversifyjs/json-schema-type-metadata": "workspace:*",
+    "@inversifyjs/json-schema-utils": "workspace:*"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",

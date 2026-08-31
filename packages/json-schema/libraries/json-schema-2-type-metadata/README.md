@@ -17,10 +17,14 @@ own subpath export. Currently supported drafts:
 ## Usage
 
 ```ts
+import { JsonSchemaResolver } from '@inversifyjs/json-schema-utils/2020-12';
 import { transformJsonSchema } from '@inversifyjs/json-schema-2-type-metadata/2020-12';
 
+const schemaById = new Map([
+  [schema.$id, schema],
+]);
+
 const typeMetadata = transformJsonSchema(schema, {
-  jsonSchemaToTypeMap: new Map(),
-  referenceMap: new Map(),
+  resolver: new JsonSchemaResolver((id) => schemaById.get(id)),
 });
 ```
