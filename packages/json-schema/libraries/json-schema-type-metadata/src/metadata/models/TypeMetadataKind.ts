@@ -1,0 +1,15 @@
+export enum TypeMetadataKind {
+  and = 0,
+  anyType = 1,
+  arrayType = 2,
+  booleanType = 3,
+  floatType = 4,
+  integerType = 5,
+  literalType = 6,
+  noneType = 7,
+  objectType = 8,
+  or = 9,
+  propertyType = 10,
+  stringIndexSignatureType = 11,
+  stringType = 12,
+}
