@@ -2553,5 +2553,326 @@ describe(OpenApi3Dot2Resolver, () => {
         });
       });
     });
+
+    describe('having an entry document declaring an absolute $self URI', () => {
+      let documentFixture: JsonValue;
+      let openApi3Dot2Resolver: OpenApi3Dot2Resolver;
+      let petSchemaFixture: JsonValue;
+      let refFixture: JsonValue;
+      let resolveIdMock: Mock<(id: string) => JsonValue | undefined>;
+
+      beforeAll(() => {
+        petSchemaFixture = {
+          type: 'object',
+        };
+        documentFixture = {
+          $self: 'https://example.com/v2/api.json',
+        };
+
+        const documentById: Map<string, JsonValue> = new Map([
+          ['https://example.com/api.json', documentFixture],
+          ['https://example.com/v2/schemas/pet.json', petSchemaFixture],
+        ]);
+
+        resolveIdMock = vitest.fn((id: string) => documentById.get(id));
+
+        openApi3Dot2Resolver = new OpenApi3Dot2Resolver(
+          'https://example.com/api.json',
+          resolveIdMock,
+        );
+
+        refFixture = {
+          $ref: 'schemas/pet.json',
+        };
+      });
+
+      describe('when called', () => {
+        let result: OpenApi3Dot2RefResolutionResult;
+
+        beforeAll(() => {
+          result = openApi3Dot2Resolver.resolveRef(refFixture);
+        });
+
+        it('should rebase relative references to the declared $self base URI', () => {
+          const expected: OpenApi3Dot2RefResolutionResult = {
+            isRight: true,
+            value: {
+              chain: [
+                {
+                  $ref: 'schemas/pet.json',
+                  canonicalId: 'https://example.com/v2/schemas/pet.json',
+                  value: refFixture,
+                },
+              ],
+              value: petSchemaFixture,
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having an entry document declaring a relative $self URI', () => {
+      let documentFixture: JsonValue;
+      let openApi3Dot2Resolver: OpenApi3Dot2Resolver;
+      let petSchemaFixture: JsonValue;
+      let refFixture: JsonValue;
+      let resolveIdMock: Mock<(id: string) => JsonValue | undefined>;
+
+      beforeAll(() => {
+        petSchemaFixture = {
+          type: 'object',
+        };
+        documentFixture = {
+          $self: '../v2/api.json',
+        };
+
+        const documentById: Map<string, JsonValue> = new Map([
+          ['https://example.com/v1/sub/api.json', documentFixture],
+          ['https://example.com/v1/v2/schemas/pet.json', petSchemaFixture],
+        ]);
+
+        resolveIdMock = vitest.fn((id: string) => documentById.get(id));
+
+        openApi3Dot2Resolver = new OpenApi3Dot2Resolver(
+          'https://example.com/v1/sub/api.json',
+          resolveIdMock,
+        );
+
+        refFixture = {
+          $ref: 'schemas/pet.json',
+        };
+      });
+
+      describe('when called', () => {
+        let result: OpenApi3Dot2RefResolutionResult;
+
+        beforeAll(() => {
+          result = openApi3Dot2Resolver.resolveRef(refFixture);
+        });
+
+        it('should resolve the relative $self against retrieval URI and rebase references', () => {
+          const expected: OpenApi3Dot2RefResolutionResult = {
+            isRight: true,
+            value: {
+              chain: [
+                {
+                  $ref: 'schemas/pet.json',
+                  canonicalId: 'https://example.com/v1/v2/schemas/pet.json',
+                  value: refFixture,
+                },
+              ],
+              value: petSchemaFixture,
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having an entry document declaring a root Schema Object $id', () => {
+      let documentFixture: JsonValue;
+      let openApi3Dot2Resolver: OpenApi3Dot2Resolver;
+      let petSchemaFixture: JsonValue;
+      let refFixture: JsonValue;
+      let resolveIdMock: Mock<(id: string) => JsonValue | undefined>;
+
+      beforeAll(() => {
+        petSchemaFixture = {
+          type: 'object',
+        };
+        documentFixture = {
+          $id: 'https://example.com/schemas/root.json',
+        };
+
+        const documentById: Map<string, JsonValue> = new Map([
+          ['https://example.com/api.json', documentFixture],
+          ['https://example.com/schemas/pet.json', petSchemaFixture],
+        ]);
+
+        resolveIdMock = vitest.fn((id: string) => documentById.get(id));
+
+        openApi3Dot2Resolver = new OpenApi3Dot2Resolver(
+          'https://example.com/api.json',
+          resolveIdMock,
+        );
+
+        refFixture = {
+          $ref: 'pet.json',
+        };
+      });
+
+      describe('when called', () => {
+        let result: OpenApi3Dot2RefResolutionResult;
+
+        beforeAll(() => {
+          result = openApi3Dot2Resolver.resolveRef(refFixture);
+        });
+
+        it('should rebase relative references to the declared $id base URI', () => {
+          const expected: OpenApi3Dot2RefResolutionResult = {
+            isRight: true,
+            value: {
+              chain: [
+                {
+                  $ref: 'pet.json',
+                  canonicalId: 'https://example.com/schemas/pet.json',
+                  value: refFixture,
+                },
+              ],
+              value: petSchemaFixture,
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having a document declaring an invalid non-string $self property', () => {
+      let documentFixture: JsonValue;
+      let openApi3Dot2Resolver: OpenApi3Dot2Resolver;
+      let refFixture: JsonValue;
+      let resolveIdMock: Mock<(id: string) => JsonValue | undefined>;
+
+      beforeAll(() => {
+        documentFixture = {
+          $self: 12345,
+        };
+
+        const documentById: Map<string, JsonValue> = new Map([
+          ['https://example.com/api.json', documentFixture],
+        ]);
+
+        resolveIdMock = vitest.fn((id: string) => documentById.get(id));
+
+        openApi3Dot2Resolver = new OpenApi3Dot2Resolver(
+          'https://example.com/api.json',
+          resolveIdMock,
+        );
+
+        refFixture = {
+          $ref: '#/components/schemas/Pet',
+        };
+      });
+
+      describe('when called', () => {
+        let result: OpenApi3Dot2RefResolutionResult;
+
+        beforeAll(() => {
+          result = openApi3Dot2Resolver.resolveRef(refFixture);
+        });
+
+        it('should return a resolution failure', () => {
+          const expected: OpenApi3Dot2RefResolutionResult = {
+            isRight: false,
+            value: {
+              reason: 'Invalid $self URI: 12345',
+              resolutionContextStack: [],
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having a document declaring an invalid non-string $id property', () => {
+      let documentFixture: JsonValue;
+      let openApi3Dot2Resolver: OpenApi3Dot2Resolver;
+      let refFixture: JsonValue;
+      let resolveIdMock: Mock<(id: string) => JsonValue | undefined>;
+
+      beforeAll(() => {
+        documentFixture = {
+          $id: true,
+        };
+
+        const documentById: Map<string, JsonValue> = new Map([
+          ['https://example.com/api.json', documentFixture],
+        ]);
+
+        resolveIdMock = vitest.fn((id: string) => documentById.get(id));
+
+        openApi3Dot2Resolver = new OpenApi3Dot2Resolver(
+          'https://example.com/api.json',
+          resolveIdMock,
+        );
+
+        refFixture = {
+          $ref: '#/components/schemas/Pet',
+        };
+      });
+
+      describe('when called', () => {
+        let result: OpenApi3Dot2RefResolutionResult;
+
+        beforeAll(() => {
+          result = openApi3Dot2Resolver.resolveRef(refFixture);
+        });
+
+        it('should return a resolution failure', () => {
+          const expected: OpenApi3Dot2RefResolutionResult = {
+            isRight: false,
+            value: {
+              reason: 'Invalid $id URI: true',
+              resolutionContextStack: [],
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having a document declaring an unparseable $self URI', () => {
+      let documentFixture: JsonValue;
+      let openApi3Dot2Resolver: OpenApi3Dot2Resolver;
+      let refFixture: JsonValue;
+      let resolveIdMock: Mock<(id: string) => JsonValue | undefined>;
+
+      beforeAll(() => {
+        documentFixture = {
+          $self: 'ht tp://invalid',
+        };
+
+        const documentById: Map<string, JsonValue> = new Map([
+          ['https://example.com/api.json', documentFixture],
+        ]);
+
+        resolveIdMock = vitest.fn((id: string) => documentById.get(id));
+
+        openApi3Dot2Resolver = new OpenApi3Dot2Resolver(
+          'https://example.com/api.json',
+          resolveIdMock,
+        );
+
+        refFixture = {
+          $ref: '#/components/schemas/Pet',
+        };
+      });
+
+      describe('when called', () => {
+        let result: OpenApi3Dot2RefResolutionResult;
+
+        beforeAll(() => {
+          result = openApi3Dot2Resolver.resolveRef(refFixture);
+        });
+
+        it('should return a resolution failure', () => {
+          const expected: OpenApi3Dot2RefResolutionResult = {
+            isRight: false,
+            value: {
+              reason: 'Invalid $self URI: ht tp://invalid',
+              resolutionContextStack: [],
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
   });
 });

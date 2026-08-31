@@ -373,10 +373,22 @@ export class OpenApi3Dot2Resolver {
     let declaredField: '$id' | '$self';
     let declaredUri: string;
 
-    if (typeof document['$self'] === 'string') {
+    if (document['$self'] !== undefined) {
+      if (typeof document['$self'] !== 'string') {
+        return {
+          isRight: false,
+          value: `Invalid $self URI: ${JSON.stringify(document['$self'])}`,
+        };
+      }
       declaredField = '$self';
       declaredUri = document['$self'];
-    } else if (typeof document['$id'] === 'string') {
+    } else if (document['$id'] !== undefined) {
+      if (typeof document['$id'] !== 'string') {
+        return {
+          isRight: false,
+          value: `Invalid $id URI: ${JSON.stringify(document['$id'])}`,
+        };
+      }
       declaredField = '$id';
       declaredUri = document['$id'];
     } else {
