@@ -58,6 +58,24 @@
                 "pages": [
                   "versioned_docs/version-6.x/introduction/getting-started"
                 ]
+              },
+              {
+                "group": "Fundamentals",
+                "pages": [
+                  "versioned_docs/version-6.x/fundamentals/binding",
+                  "versioned_docs/version-6.x/fundamentals/di-hierarchy",
+                  {
+                    "group": "Lifecycle",
+                    "pages": [
+                      "versioned_docs/version-6.x/fundamentals/lifecycle/activation",
+                      "versioned_docs/version-6.x/fundamentals/lifecycle/deactivation",
+                      "versioned_docs/version-6.x/fundamentals/lifecycle/middleware"
+                    ]
+                  },
+                  "versioned_docs/version-6.x/fundamentals/inheritance",
+                  "versioned_docs/version-6.x/fundamentals/snapshot"
+
+                ]
               }
             ]
           }

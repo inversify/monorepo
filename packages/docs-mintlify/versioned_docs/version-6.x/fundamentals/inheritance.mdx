@@ -1,0 +1,52 @@
+---
+sidebar_position: 4
+title: Inheritance
+---
+# Inheritance
+
+Inheritance can be achieved as long as constructor parameters are properly decorated. There are two ways to ensure this:
+
+- The number of decorated constructor arguments in a derived class is greater than or equal to the number of constructor arguments in its base class.
+- The [skipBaseClassChecks](../api/container.mdx#skipbaseclasschecks) option is enabled.
+
+## Example of incorrect inheritance injection
+
+```ts
+@injectable()
+class Warrior {
+  public rank: string;
+  constructor(rank: string) { // args count = 1
+    this.rank = rank;
+  }
+}
+
+@injectable()
+class SamuraiMaster extends Warrior {
+  constructor() { // args count = 0
+    super("master");
+  }
+}
+```
+
+When trying to get a `SamuraiMaster`, the container throws an error indicating that the constructor parameters are not properly decorated.
+
+## Using the @unmanaged decorator
+
+The [unmanaged](../api/decorator.mdx#unmanaged) decorator tells Inversify that a base type constructor parameter should not be managed. This is often the case when dealing with inheritance hierarchies where only leaf types are injected.
+
+```ts
+@injectable()
+class Warrior {
+  public rank: string;
+  constructor(@unmanaged() rank: string) { // args count = 0, unmanaged args are not included
+    this.rank = rank;
+  }
+}
+
+@injectable()
+class SamuraiMaster extends Warrior {
+  constructor() { // args count = 0
+    super("master");
+  }
+}
+```
