@@ -1,10 +1,7 @@
-import { execFile } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
 
-const execFileAsync = promisify(execFile);
 const evalRoot = path.dirname(fileURLToPath(import.meta.url));
 
 async function pathExists(filePath) {
@@ -34,23 +31,19 @@ async function collectTypeScriptFiles(directoryPath) {
   return files;
 }
 
-async function runProjectCommand(workspacePath, command) {
-  try {
-    await execFileAsync(
-      process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
-      ['run', command],
-      { cwd: workspacePath, timeout: 120_000 },
-    );
-    return { pass: true, score: 1, reason: `pnpm run ${command} passed` };
-  } catch (error) {
-    const detail =
-      error?.stderr || error?.stdout || error?.message || String(error);
-    return {
-      pass: false,
-      score: 0,
-      reason: `pnpm run ${command} failed: ${String(detail).slice(-1200)}`,
-    };
+async function directoryContainsTypeScript(directoryPath) {
+  if (!(await pathExists(directoryPath))) {
+    return false;
   }
+
+  return (await collectTypeScriptFiles(directoryPath)).length > 0;
+}
+
+function extractPrismaModel(schema, modelName) {
+  const escapedName = modelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return schema.match(
+    new RegExp(`\\bmodel\\s+${escapedName}\\s*\\{([\\s\\S]*?)\\n\\}`),
+  )?.[1];
 }
 
 export default async function assertResource(_output, context) {
@@ -80,52 +73,109 @@ export default async function assertResource(_output, context) {
   ];
 
   for (const relativeDirectory of requiredDirectories) {
-    const exists = await pathExists(path.join(resourceRoot, relativeDirectory));
+    const containsSource = await directoryContainsTypeScript(
+      path.join(resourceRoot, relativeDirectory),
+    );
     results.push({
-      pass: exists,
-      score: exists ? 1 : 0,
-      reason: exists
-        ? `${relativeDirectory} exists`
-        : `${relativeDirectory} is missing`,
+      pass: containsSource,
+      score: containsSource ? 1 : 0,
+      reason: containsSource
+        ? `${relativeDirectory} contains TypeScript source`
+        : `${relativeDirectory} has no TypeScript source`,
     });
   }
 
   const schema = await fs.readFile(prismaSchemaPath, 'utf8');
-  for (const modelName of context.vars.prismaModels.split(',')) {
-    const modelPattern = new RegExp(`\\bmodel\\s+${modelName.trim()}\\s*\\{`);
-    const exists = modelPattern.test(schema);
+  const modelFields = JSON.parse(context.vars.modelFields);
+  for (const [modelName, expectedFields] of Object.entries(modelFields)) {
+    const modelBody = extractPrismaModel(schema, modelName);
+    const missingFields =
+      modelBody === undefined
+        ? expectedFields
+        : expectedFields.filter(
+            (fieldName) =>
+              !new RegExp(`^\\s*${fieldName}\\s+`, 'm').test(modelBody),
+          );
     results.push({
-      pass: exists,
-      score: exists ? 1 : 0,
-      reason: exists
-        ? `Prisma model ${modelName.trim()} exists`
-        : `Prisma model ${modelName.trim()} is missing`,
+      pass: modelBody !== undefined && missingFields.length === 0,
+      score: modelBody !== undefined && missingFields.length === 0 ? 1 : 0,
+      reason:
+        modelBody === undefined
+          ? `Prisma model ${modelName} is missing`
+          : missingFields.length === 0
+            ? `Prisma model ${modelName} has its required fields`
+            : `Prisma model ${modelName} is missing fields: ${missingFields.join(', ')}`,
+    });
+  }
+
+  const fieldRules = JSON.parse(context.vars.fieldRules);
+  for (const [modelName, fields] of Object.entries(fieldRules)) {
+    const modelBody = extractPrismaModel(schema, modelName) ?? '';
+    for (const [fieldName, expectedFragments] of Object.entries(fields)) {
+      const fieldLine = modelBody.match(
+        new RegExp(`^\\s*${fieldName}\\s+.*$`, 'm'),
+      )?.[0];
+      const missingFragments =
+        fieldLine === undefined
+          ? expectedFragments
+          : expectedFragments.filter(
+              (fragment) => !fieldLine.includes(fragment),
+            );
+      results.push({
+        pass: fieldLine !== undefined && missingFragments.length === 0,
+        score: fieldLine !== undefined && missingFragments.length === 0 ? 1 : 0,
+        reason:
+          fieldLine === undefined
+            ? `${modelName}.${fieldName} is missing`
+            : missingFragments.length === 0
+              ? `${modelName}.${fieldName} satisfies its contract`
+              : `${modelName}.${fieldName} is missing: ${missingFragments.join(', ')}`,
+      });
+    }
+  }
+
+  if (context.vars.requiresCascade === 'true') {
+    const hasCascade = /@relation\([^)]*onDelete:\s*Cascade[^)]*\)/.test(
+      schema,
+    );
+    results.push({
+      pass: hasCascade,
+      score: hasCascade ? 1 : 0,
+      reason: hasCascade
+        ? 'the owned relation uses cascade deletion'
+        : 'the owned relation does not declare cascade deletion',
     });
   }
 
   const bootstrap = await fs.readFile(bootstrapPath, 'utf8');
-  const hasResourceWiring = bootstrap
-    .toLowerCase()
-    .includes(context.vars.resourceDirectory.toLowerCase());
-  results.push({
-    pass: hasResourceWiring,
-    score: hasResourceWiring ? 1 : 0,
-    reason: hasResourceWiring
-      ? 'resource modules are referenced by bootstrap'
-      : 'resource modules are not referenced by bootstrap',
-  });
+  const resourceName = context.vars.resourceName;
+  for (const moduleName of [
+    `${resourceName}ContainerModule`,
+    `${resourceName}PrismaContainerModule`,
+  ]) {
+    const isLoaded = new RegExp(`new\\s+${moduleName}\\s*\\(`).test(bootstrap);
+    results.push({
+      pass: isLoaded,
+      score: isLoaded ? 1 : 0,
+      reason: isLoaded
+        ? `${moduleName} is loaded by bootstrap`
+        : `${moduleName} is not loaded by bootstrap`,
+    });
+  }
 
   if (await pathExists(resourceRoot)) {
     const sourceFiles = await collectTypeScriptFiles(resourceRoot);
     const boundaryViolations = [];
+    let combinedSource = '';
 
     for (const sourcePath of sourceFiles) {
       const relativePath = path.relative(resourceRoot, sourcePath);
+      const source = await fs.readFile(sourcePath, 'utf8');
+      combinedSource += `\n${source}`;
       if (
         relativePath.startsWith(`domain${path.sep}`) ||
         relativePath.startsWith(`application${path.sep}`)
       ) {
-        const source = await fs.readFile(sourcePath, 'utf8');
         if (
           source.includes('/generated/prisma/') ||
           source.includes('@inversifyjs/http')
@@ -143,18 +193,26 @@ export default async function assertResource(_output, context) {
           ? 'domain and application layers are independent of Prisma and HTTP'
           : `architecture boundary violations: ${boundaryViolations.join(', ')}`,
     });
-  }
 
-  if (await pathExists(path.join(workspacePath, 'node_modules'))) {
-    results.push(await runProjectCommand(workspacePath, 'build'));
-    results.push(await runProjectCommand(workspacePath, 'lint'));
-  } else {
+    const hasExpectedRoute = combinedSource.includes(context.vars.routePrefix);
     results.push({
-      pass: false,
-      score: 0,
-      reason:
-        'dependencies are not installed; run the workspace preparation script',
+      pass: hasExpectedRoute,
+      score: hasExpectedRoute ? 1 : 0,
+      reason: hasExpectedRoute
+        ? `controller declares ${context.vars.routePrefix}`
+        : `controller does not declare ${context.vars.routePrefix}`,
     });
+
+    for (const decorator of JSON.parse(context.vars.expectedDecorators)) {
+      const isDeclared = combinedSource.includes(`@${decorator}(`);
+      results.push({
+        pass: isDeclared,
+        score: isDeclared ? 1 : 0,
+        reason: isDeclared
+          ? `controller declares an @${decorator} endpoint`
+          : `controller does not declare an @${decorator} endpoint`,
+      });
+    }
   }
 
   const passed = results.every((result) => result.pass);

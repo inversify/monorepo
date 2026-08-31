@@ -297,7 +297,7 @@ pnpm run --filter @inversifyjs/create-http lint
 pnpm run --filter @inversifyjs/create-http build
 ```
 
-The `add-resource` skill also has an opt-in Promptfoo evaluation. It creates disposable Express/PostgreSQL apps, runs the skill against a simple resource and a relational aggregate, then inspects the generated files and runs each app's build and lint commands. It is intentionally separate from the normal test suite because it invokes an external coding model.
+The `add-resource` skill also has an opt-in Promptfoo evaluation. It creates disposable Express/PostgreSQL apps, runs the skill against a simple resource and a relational aggregate, then inspects the generated files for the requested contract and architectural boundaries. The agent runs the generated app's normal validation inside its provider sandbox; the host-side assertions never execute model-modified project scripts. The evaluation is intentionally separate from the normal test suite because it invokes an external coding model.
 
 ```bash
 pnpm run --filter @inversifyjs/create-http eval:skill:add-resource

@@ -34,11 +34,9 @@ for (const name of ['product', 'order']) {
     targetPath: workspacePath,
   });
 
-  if (process.env.SKILL_EVAL_SKIP_INSTALL !== '1') {
-    await execFileAsync(
-      process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
-      ['install', '--ignore-scripts'],
-      { cwd: workspacePath },
-    );
-  }
+  await execFileAsync(
+    process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
+    ['install', '--ignore-scripts'],
+    { cwd: workspacePath },
+  );
 }

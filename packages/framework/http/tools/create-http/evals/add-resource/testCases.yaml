@@ -2,7 +2,12 @@
   vars:
     workspaceDir: ./workspaces/product
     resourceDirectory: product
-    prismaModels: Product
+    resourceName: Product
+    routePrefix: /v1/products
+    requiresCascade: 'false'
+    modelFields: '{"Product":["id","sku","name","description","priceCents","active","created_at","updated_at","deleted_at"]}'
+    fieldRules: '{"Product":{"id":["@id","@default(uuid())"],"sku":["@unique"],"active":["@default(true)"],"deleted_at":["DateTime?"]}}'
+    expectedDecorators: '["Post","Get","Patch","Delete"]'
     request: >-
       Add a Product resource using the add-resource skill. A product has a UUID id,
       unique sku, name, optional description, integer priceCents, active boolean
@@ -14,7 +19,12 @@
   vars:
     workspaceDir: ./workspaces/order
     resourceDirectory: order
-    prismaModels: Order,OrderItem
+    resourceName: Order
+    routePrefix: /v1/orders
+    requiresCascade: 'true'
+    modelFields: '{"Order":["id","orderNumber","customerEmail","status","created_at","updated_at","items"],"OrderItem":["id","orderId","productSku","quantity","unitPriceCents","order"]}'
+    fieldRules: '{"Order":{"id":["@id","@default(uuid())"],"orderNumber":["@unique"],"items":["OrderItem[]"]},"OrderItem":{"id":["@id","@default(uuid())"],"orderId":["@db.Uuid"],"order":["@relation","onDelete: Cascade"]}}'
+    expectedDecorators: '["Post","Get"]'
     request: >-
       Add an Order resource using the add-resource skill. An order has a UUID id,
       unique orderNumber, customerEmail, status, createdAt, and updatedAt. Each order
