@@ -2874,5 +2874,53 @@ describe(OpenApi3Dot2Resolver, () => {
         });
       });
     });
+
+    describe('having a document declaring an unparseable $id URI', () => {
+      let documentFixture: JsonValue;
+      let openApi3Dot2Resolver: OpenApi3Dot2Resolver;
+      let refFixture: JsonValue;
+      let resolveIdMock: Mock<(id: string) => JsonValue | undefined>;
+
+      beforeAll(() => {
+        documentFixture = {
+          $id: 'ht tp://invalid',
+        };
+
+        const documentById: Map<string, JsonValue> = new Map([
+          ['https://example.com/api.json', documentFixture],
+        ]);
+
+        resolveIdMock = vitest.fn((id: string) => documentById.get(id));
+
+        openApi3Dot2Resolver = new OpenApi3Dot2Resolver(
+          'https://example.com/api.json',
+          resolveIdMock,
+        );
+
+        refFixture = {
+          $ref: '#/components/schemas/Pet',
+        };
+      });
+
+      describe('when called', () => {
+        let result: OpenApi3Dot2RefResolutionResult;
+
+        beforeAll(() => {
+          result = openApi3Dot2Resolver.resolveRef(refFixture);
+        });
+
+        it('should return a resolution failure', () => {
+          const expected: OpenApi3Dot2RefResolutionResult = {
+            isRight: false,
+            value: {
+              reason: 'Invalid $id URI: ht tp://invalid',
+              resolutionContextStack: [],
+            },
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
   });
 });
