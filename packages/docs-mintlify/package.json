@@ -8,7 +8,7 @@
     "@babel/standalone": "7.29.7",
     "@iconify/react": "^6.0.2",
     "@inversifyjs/react-code-runner": "workspace:*",
-    "@inversifyjs/code-examples": "workspace:*",
+    "@inversifyjs/mintlify-code-examples": "workspace:*",
     "@inversifyjs/common": "workspace:*",
     "@inversifyjs/core": "workspace:*",
     "@mdx-js/react": "3.1.1",
@@ -29,6 +29,7 @@
     "eslint": "10.8.1",
     "eslint-plugin-prettier": "5.5.6",
     "eslint-plugin-simple-import-sort": "14.0.0",
+    "glob": "13.0.6",
     "prettier": "3.9.6",
     "typescript": "6.0.3",
     "typescript-eslint": "8.67.0"
@@ -60,7 +61,9 @@
   },
   "scripts": {
     "start": "mintlify dev",
+    "prestart": "pnpm --filter @inversifyjs/mintlify-code-examples build",
     "build": "node ./scripts/build.mjs",
+    "prebuild": "pnpm --filter @inversifyjs/mintlify-code-examples build",
     "export": "mintlify export",
     "format": "prettier --write .",
     "lint": "eslint",

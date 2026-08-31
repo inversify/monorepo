@@ -16,5 +16,6 @@ generated
 generated/
 npm-debug.log*
 snippets/code-examples/
+/code-examples/
 yarn-debug.log*
 yarn-error.log*
