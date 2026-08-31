@@ -1,14 +1,50 @@
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 export interface CustomCodeBlockProps {
-  filename: string;
+  filename?: string;
   language?: string;
+  children?: ReactNode;
 }
 
 export const ExampleCodeBlock = ({
   filename,
-  language = 'ts',
+  language,
+  children,
 }: CustomCodeBlockProps) => {
+  const extractInlineSource = (node: ReactNode): string | null => {
+    if (node === null || node === undefined || typeof node === 'boolean') {
+      return null;
+    }
+    if (typeof node === 'string') {
+      return node;
+    }
+    if (typeof node === 'number') {
+      return String(node);
+    }
+    if (Array.isArray(node)) {
+      const parts: string[] = [];
+      for (const child of node) {
+        const inner = extractInlineSource(child as ReactNode);
+        if (inner !== null) parts.push(inner);
+      }
+      return parts.length === 0 ? null : parts.join('');
+    }
+    const asElement = node as { props?: { children?: ReactNode } };
+    if (asElement.props !== undefined) {
+      return extractInlineSource(asElement.props.children);
+    }
+    return null;
+  };
+
+  const inlineSourceRaw = extractInlineSource(children);
+  const inlineSource =
+    inlineSourceRaw === null
+      ? null
+      : inlineSourceRaw.replace(/^\n+/u, '').replace(/\s+$/u, '') === ''
+        ? null
+        : inlineSourceRaw;
+  const resolvedLanguage =
+    language ?? (inlineSource !== null ? 'bash' : 'ts');
   const languageAliases: Record<string, string> = {
     js: 'javascript',
     jsx: 'jsx',
@@ -17,7 +53,7 @@ export const ExampleCodeBlock = ({
     ts: 'typescript',
     tsx: 'tsx',
   };
-  const prismLanguage = languageAliases[language] ?? language;
+  const prismLanguage = languageAliases[resolvedLanguage] ?? resolvedLanguage;
 
   const [codeHtml, setCodeHtml] = useState<string>('');
   const [rawCode, setRawCode] = useState<string>('');
@@ -155,6 +191,41 @@ export const ExampleCodeBlock = ({
 
     ensureTheme();
 
+    const highlightAndSet = async (trimmed: string): Promise<void> => {
+      setRawCode(trimmed);
+      try {
+        const Prism = await loadPrism();
+        if (cancelled) return;
+        const grammar =
+          Prism.languages[prismLanguage] ?? Prism.languages.typescript;
+        if (grammar === undefined) {
+          setCodeHtml(escapeHtml(trimmed));
+          return;
+        }
+        const html: string = Prism.highlight(trimmed, grammar, prismLanguage);
+        setCodeHtml(html);
+      } catch (_err: unknown) {
+        if (!cancelled) {
+          setCodeHtml(escapeHtml(trimmed));
+        }
+      }
+    };
+
+    if (inlineSource !== null) {
+      const trimmed = inlineSource.replace(/\s+$/u, '');
+      void highlightAndSet(trimmed);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    if (filename === undefined) {
+      setError('ExampleCodeBlock requires either a filename prop or inline children');
+      return () => {
+        cancelled = true;
+      };
+    }
+
     fetch(filename)
       .then((res) => {
         if (!res.ok) {
@@ -165,24 +236,7 @@ export const ExampleCodeBlock = ({
       .then(async (text) => {
         if (cancelled) return;
         const trimmed = text.replace(/\s+$/u, '');
-        setRawCode(trimmed);
-        try {
-          const Prism = await loadPrism();
-          if (cancelled) return;
-          const grammar =
-            Prism.languages[prismLanguage] ??
-            Prism.languages.typescript;
-          if (grammar === undefined) {
-            setCodeHtml(escapeHtml(trimmed));
-            return;
-          }
-          const html: string = Prism.highlight(trimmed, grammar, prismLanguage);
-          setCodeHtml(html);
-        } catch (_err: unknown) {
-          if (!cancelled) {
-            setCodeHtml(escapeHtml(trimmed));
-          }
-        }
+        await highlightAndSet(trimmed);
       })
       .catch((err: unknown) => {
         if (!cancelled) {
@@ -193,7 +247,7 @@ export const ExampleCodeBlock = ({
     return () => {
       cancelled = true;
     };
-  }, [filename, prismLanguage]);
+  }, [filename, prismLanguage, inlineSource]);
 
   const handleCopy = () => {
     if (rawCode === '') return;
