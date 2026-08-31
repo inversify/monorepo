@@ -1,0 +1,126 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "palm",
+  "name": "InversifyJS",
+  "colors": {
+    "primary": "#0066CC",
+    "light": "#0084FF",
+    "dark": "#004099"
+  },
+  "favicon": "/favicon.ico",
+  "navigation": {
+    "languages": [
+      {
+        "language": "en",
+        "default": true,
+        "versions": [
+          {
+            "version": "Next",
+            "groups": [
+              {
+                "group": "Home",
+                "pages": ["index"]
+              },
+              {
+                "group": "Introduction",
+                "pages": ["docs/introduction/getting-started"]
+              }
+            ]
+          },
+          {
+            "version": "8.x",
+            "default": true,
+            "groups": [
+              {
+                "group": "Introduction",
+                "pages": [
+                  "versioned_docs/version-8.x/introduction/getting-started"
+                ]
+              }
+            ]
+          },
+          {
+            "version": "7.x",
+            "groups": [
+              {
+                "group": "Introduction",
+                "pages": [
+                  "versioned_docs/version-7.x/introduction/getting-started"
+                ]
+              }
+            ]
+          },
+          {
+            "version": "6.x",
+            "groups": [
+              {
+                "group": "Introduction",
+                "pages": [
+                  "versioned_docs/version-6.x/introduction/getting-started"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "language": "zh",
+        "groups": [
+          {
+            "group": "首页",
+            "pages": ["zh/index"]
+          },
+          {
+            "group": "快速入门",
+            "pages": ["zh/docs/introduction/getting-started"]
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/static/img/logo.svg",
+    "dark": "/static/img/logo.svg"
+  },
+  "appearance": {
+    "default": "dark",
+    "strict": false
+  },
+  "background": {
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#080A11"
+    }
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Discord",
+        "href": "https://discord.gg/jXcMagAPnm"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/inversify/monorepo"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Get Started",
+      "href": "https://github.com/inversify/monorepo"
+    }
+  },
+  "seo": {
+    "metatags": {
+      "og:image": "https://mintlify.com/og-image.png",
+      "og:description": "A powerful and lightweight inversion of control container for JavaScript & Node.js apps powered by TypeScript"
+    },
+    "indexing": "navigable"
+  },
+  "footer": {
+    "socials": {
+      "discord": "https://discord.gg/jXcMagAPnm",
+      "github": "https://github.com/inversify/monorepo",
+      "twitter": "https://twitter.com/inversifyjs"
+    }
+  }
+}
