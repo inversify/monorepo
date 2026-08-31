@@ -3,7 +3,7 @@ sidebar_position: 1
 title: 快速入门
 ---
 
-import gettingStartedSource from '@inversifyjs/code-examples/generated/examples/v8/gettingStarted.ts.txt';
+import { ExampleCodeBlock } from '/snippets/ExampleCodeBlock.tsx';
 
 # 快速入门
 
@@ -23,7 +23,10 @@ npm install inversify reflect-metadata
   选项以使用此库。
 </Warning>
 
-<CodeBlock language="ts">{gettingStartedSource}</CodeBlock>
+<ExampleCodeBlock
+  filename="/code-examples/v8/gettingStarted.ts.txt"
+  language="ts"
+/>
 
 `@injectable` 装饰器允许 `Katana` 和 `Ninja` 类都用作容器绑定。`@inject` 装饰器提供有关 `Ninja` 依赖项的元数据，因此容器知道应该提供 `Katana` 作为 `Ninja` 构造函数的第一个参数。
 
