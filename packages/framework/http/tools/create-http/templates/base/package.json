@@ -15,13 +15,13 @@
     "@inversifyjs/logger": "2.0.0",
     "@inversifyjs/open-api-validation": "3.5.4",
     "@inversifyjs/prisma": "1.0.0",
-    "@prisma/adapter-pg": "7.9.1",
-    "@prisma/client": "7.9.1",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
     "express": "5.2.1",
     "fastify": "5.12.1",
-    "hono": "4.13.3",
+    "hono": "4.13.5",
     "inversify": "8.2.3",
     "pg": "8.23.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.69.0",
@@ -32,13 +32,13 @@
     "@eslint/js": "10.0.1",
     "@types/express": "5.0.6",
     "@types/node": "24.13.3",
-    "eslint": "10.8.1",
+    "eslint": "10.9.1",
     "eslint-config-prettier": "10.1.8",
     "dotenv": "17.4.2",
     "eslint-plugin-prettier": "5.5.6",
     "prettier": "3.9.6",
-    "prisma": "7.9.1",
+    "prisma": "7.10.0",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.67.0"
+    "typescript-eslint": "8.68.0"
   }
 }
