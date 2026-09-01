@@ -352,6 +352,25 @@ describe(printTypeMetadata, () => {
       '{ id: string; [key: string]: string }',
     ],
     [
+      'an and TypeMetadata with an optional propertyType and a stringIndexSignatureType',
+      {
+        children: [
+          {
+            child: { kind: TypeMetadataKind.stringType },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'id',
+          },
+          {
+            child: { kind: TypeMetadataKind.stringType },
+            kind: TypeMetadataKind.stringIndexSignatureType,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      '{ id?: string; [key: string]: string | undefined }',
+    ],
+    [
       'an and TypeMetadata with a never stringIndexSignatureType',
       {
         children: [

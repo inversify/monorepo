@@ -28,10 +28,13 @@ function generateTransformJsonSchemaContext(
   };
 }
 
-function getTypeScriptDiagnosticMessages(source: string): string[] {
+function getTypeScriptDiagnosticMessages(
+  source: string,
+  exactOptionalPropertyTypes: boolean = true,
+): string[] {
   const fileName: string = 'generated.ts';
   const compilerOptions: ts.CompilerOptions = {
-    exactOptionalPropertyTypes: true,
+    exactOptionalPropertyTypes,
     module: ts.ModuleKind.ESNext,
     noEmit: true,
     noLib: true,
@@ -539,7 +542,7 @@ describe(transformJsonSchemaToTypeScript, () => {
         },
         type: 'object',
       },
-      'export type Root = { [key: string]: string; id?: string };',
+      'export type Root = { [key: string]: string | undefined; id?: string };',
     ],
     [
       'an object schema with quoted and reserved property names',
@@ -1067,6 +1070,103 @@ describe(transformJsonSchemaToTypeScript, () => {
         expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
           [],
         );
+      });
+    });
+  });
+
+  describe('having an object schema with a const object property and structured additionalProperties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        additionalProperties: {
+          properties: {
+            name: {
+              type: 'string',
+            },
+          },
+          required: ['name'],
+          type: 'object',
+        },
+        properties: {
+          data: {
+            const: {
+              name: 'x',
+            },
+          },
+        },
+        required: ['data'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should return the expected TypeScript module', () => {
+        expect(result).toBe(
+          'export type Root = { [key: string]: { name: string }; data: { name: "x" } };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an object schema with optional properties and additionalProperties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        additionalProperties: {
+          type: 'string',
+        },
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should return the expected TypeScript module', () => {
+        expect(result).toBe(
+          'export type Root = { [key: string]: string | undefined; id?: string };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+
+      it('should return a TypeScript module that compiles without exactOptionalPropertyTypes', () => {
+        expect(
+          getTypeScriptDiagnosticMessages(result as string, false),
+        ).toStrictEqual([]);
       });
     });
   });

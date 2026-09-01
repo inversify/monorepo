@@ -125,6 +125,7 @@ function printAndTypeMetadata(
   const objectMembers: string[] = [];
   const otherPrintedTypeMetadata: string[] = [];
   const propertyTypeMetadata: PropertyTypeMetadata[] = [];
+  const stringIndexSignatureMemberIndexes: number[] = [];
   const stringIndexSignatureTypeMetadata: StringIndexSignatureTypeMetadata[] =
     [];
   let hasNeverStringIndexSignature: boolean = false;
@@ -142,6 +143,7 @@ function printAndTypeMetadata(
         new Set(),
         objectMembers,
         propertyTypeMetadata,
+        stringIndexSignatureMemberIndexes,
         stringIndexSignatureTypeMetadata,
         context,
       );
@@ -158,9 +160,11 @@ function printAndTypeMetadata(
         // object type stays valid TypeScript (`foo: string` is not `never`).
         hasNeverStringIndexSignature = true;
       } else {
-        stringIndexSignatureTypeMetadata.push(child);
-        objectMembers.push(
-          `[key: string]: ${printTypeMetadata(child.child, context)}`,
+        queueStringIndexSignatureMember(
+          child,
+          objectMembers,
+          stringIndexSignatureMemberIndexes,
+          stringIndexSignatureTypeMetadata,
         );
       }
     } else if (child.kind === TypeMetadataKind.objectType) {
@@ -174,6 +178,14 @@ function printAndTypeMetadata(
 
   assertPropertyTypesAssignableToStringIndexSignatures(
     propertyTypeMetadata,
+    stringIndexSignatureTypeMetadata,
+    context,
+  );
+
+  fillStringIndexSignatureMembers(
+    objectMembers,
+    propertyTypeMetadata,
+    stringIndexSignatureMemberIndexes,
     stringIndexSignatureTypeMetadata,
     context,
   );
@@ -225,6 +237,7 @@ function collectObjectMembersFromAnd(
   visitedTypeMetadata: Set<TypeMetadata>,
   objectMembers: string[],
   propertyTypeMetadata: PropertyTypeMetadata[],
+  stringIndexSignatureMemberIndexes: number[],
   stringIndexSignatureTypeMetadata: StringIndexSignatureTypeMetadata[],
   context: PrintTypeMetadataContext,
 ): void {
@@ -241,9 +254,11 @@ function collectObjectMembersFromAnd(
         objectMembers.push(printPropertyMember(child, context));
       } else if (child.kind === TypeMetadataKind.stringIndexSignatureType) {
         if (child.child.kind !== TypeMetadataKind.noneType) {
-          stringIndexSignatureTypeMetadata.push(child);
-          objectMembers.push(
-            `[key: string]: ${printTypeMetadata(child.child, context)}`,
+          queueStringIndexSignatureMember(
+            child,
+            objectMembers,
+            stringIndexSignatureMemberIndexes,
+            stringIndexSignatureTypeMetadata,
           );
         }
       } else if (child.kind === TypeMetadataKind.and) {
@@ -253,12 +268,62 @@ function collectObjectMembersFromAnd(
           visitedTypeMetadata,
           objectMembers,
           propertyTypeMetadata,
+          stringIndexSignatureMemberIndexes,
           stringIndexSignatureTypeMetadata,
           context,
         );
       }
     }
   }
+}
+
+function fillStringIndexSignatureMembers(
+  objectMembers: string[],
+  propertyTypeMetadata: PropertyTypeMetadata[],
+  stringIndexSignatureMemberIndexes: number[],
+  stringIndexSignatureTypeMetadata: StringIndexSignatureTypeMetadata[],
+  context: PrintTypeMetadataContext,
+): void {
+  const hasOptionalProperty: boolean = propertyTypeMetadata.some(
+    (property: PropertyTypeMetadata) => property.isOptional,
+  );
+
+  for (const [
+    index,
+    indexTypeMetadata,
+  ] of stringIndexSignatureTypeMetadata.entries()) {
+    objectMembers[stringIndexSignatureMemberIndexes[index] as number] =
+      printStringIndexSignatureMember(
+        indexTypeMetadata,
+        hasOptionalProperty,
+        context,
+      );
+  }
+}
+
+function queueStringIndexSignatureMember(
+  typeMetadata: StringIndexSignatureTypeMetadata,
+  objectMembers: string[],
+  stringIndexSignatureMemberIndexes: number[],
+  stringIndexSignatureTypeMetadata: StringIndexSignatureTypeMetadata[],
+): void {
+  stringIndexSignatureTypeMetadata.push(typeMetadata);
+  stringIndexSignatureMemberIndexes.push(objectMembers.length);
+  objectMembers.push('');
+}
+
+function printStringIndexSignatureMember(
+  typeMetadata: StringIndexSignatureTypeMetadata,
+  hasOptionalProperty: boolean,
+  context: PrintTypeMetadataContext,
+): string {
+  const printedChild: string = printTypeMetadata(typeMetadata.child, context);
+
+  if (hasOptionalProperty) {
+    return `[key: string]: ${printedChild} | undefined`;
+  }
+
+  return `[key: string]: ${printedChild}`;
 }
 
 function doesTypeMetadataReach(

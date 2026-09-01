@@ -113,6 +113,74 @@ describe(isTypeMetadataAssignableTo, () => {
       true,
     ],
     [
+      'an object literalType TypeMetadata to a required name propertyType TypeMetadata',
+      { kind: TypeMetadataKind.literalType, literal: { name: 'x' } },
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        isOptional: false,
+        kind: TypeMetadataKind.propertyType,
+        property: 'name',
+      },
+      true,
+    ],
+    [
+      'an empty object literalType TypeMetadata to a required name propertyType TypeMetadata',
+      { kind: TypeMetadataKind.literalType, literal: {} },
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        isOptional: false,
+        kind: TypeMetadataKind.propertyType,
+        property: 'name',
+      },
+      false,
+    ],
+    [
+      'an empty object literalType TypeMetadata to an optional name propertyType TypeMetadata',
+      { kind: TypeMetadataKind.literalType, literal: {} },
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        isOptional: true,
+        kind: TypeMetadataKind.propertyType,
+        property: 'name',
+      },
+      true,
+    ],
+    [
+      'an object literalType TypeMetadata to a stringIndexSignatureType TypeMetadata of stringType',
+      { kind: TypeMetadataKind.literalType, literal: { foo: 'bar' } },
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.stringIndexSignatureType,
+      },
+      true,
+    ],
+    [
+      'an object literalType TypeMetadata with a number value to a stringIndexSignatureType TypeMetadata of stringType',
+      { kind: TypeMetadataKind.literalType, literal: { foo: 1 } },
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.stringIndexSignatureType,
+      },
+      false,
+    ],
+    [
+      'an object literalType TypeMetadata to an and TypeMetadata of a required name propertyType and objectType',
+      { kind: TypeMetadataKind.literalType, literal: { name: 'x' } },
+      {
+        children: [
+          {
+            child: { kind: TypeMetadataKind.stringType },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'name',
+          },
+          { kind: TypeMetadataKind.objectType },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      true,
+    ],
+    [
       'an array literalType TypeMetadata to an arrayType TypeMetadata of stringType',
       { kind: TypeMetadataKind.literalType, literal: ['foo'] },
       {

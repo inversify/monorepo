@@ -236,7 +236,33 @@ function isLiteralAssignableTo(
     return false;
   }
 
-  return targetTypeMetadata.kind === TypeMetadataKind.objectType;
+  if (targetTypeMetadata.kind === TypeMetadataKind.objectType) {
+    return true;
+  }
+
+  if (targetTypeMetadata.kind === TypeMetadataKind.propertyType) {
+    if (!Object.hasOwn(literal, targetTypeMetadata.property)) {
+      return targetTypeMetadata.isOptional;
+    }
+
+    return isLiteralAssignableTo(
+      literal[targetTypeMetadata.property] as JsonValue,
+      targetTypeMetadata.child,
+      visitedTypeMetadata,
+    );
+  }
+
+  if (targetTypeMetadata.kind === TypeMetadataKind.stringIndexSignatureType) {
+    return Object.values(literal).every((value: JsonValue) =>
+      isLiteralAssignableTo(
+        value,
+        targetTypeMetadata.child,
+        visitedTypeMetadata,
+      ),
+    );
+  }
+
+  return false;
 }
 
 function isNumberTypeMetadata(typeMetadata: TypeMetadata): boolean {
