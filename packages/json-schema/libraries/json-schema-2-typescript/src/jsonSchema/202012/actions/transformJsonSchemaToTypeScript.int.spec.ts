@@ -275,6 +275,87 @@ describe(transformJsonSchemaToTypeScript, () => {
       'export type Root = { foo?: string; bar?: number };',
     ],
     [
+      'an allOf schema of overlapping properties of the same type',
+      {
+        allOf: [
+          {
+            properties: {
+              bar: {
+                type: 'boolean',
+              },
+              foo: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              foo: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              bar: {
+                type: 'boolean',
+              },
+              foo: {
+                type: 'string',
+              },
+            },
+          },
+        ],
+      },
+      'export type Root = { bar?: boolean; foo?: string };',
+    ],
+    [
+      'an allOf schema of overlapping required properties of disjoint types',
+      {
+        allOf: [
+          {
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+            required: ['id'],
+          },
+          {
+            properties: {
+              id: {
+                type: 'number',
+              },
+            },
+            required: ['id'],
+          },
+        ],
+      },
+      'export type Root = never;',
+    ],
+    [
+      'an allOf schema of overlapping optional properties of disjoint types',
+      {
+        allOf: [
+          {
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              id: {
+                type: 'number',
+              },
+            },
+          },
+        ],
+      },
+      'export type Root = { id?: never };',
+    ],
+    [
       'an allOf schema including true',
       {
         allOf: [
@@ -1100,6 +1181,60 @@ describe(transformJsonSchemaToTypeScript, () => {
         expect(result).toBeInstanceOf(Error);
         expect((result as Error).message).toBe(
           'Failed to resolve resource identified by: https://example.com/missing (https://example.com/schema -> https://example.com/missing)',
+        );
+      });
+    });
+  });
+
+  describe('having a string schema allOf a self-referencing anyOf schema', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+    let loopJsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      loopJsonSchemaFixture = {
+        $id: 'https://example.com/loop',
+        anyOf: [
+          {
+            type: 'boolean',
+          },
+          {
+            $ref: '#',
+          },
+        ],
+      };
+      jsonSchemaFixture = {
+        $id: 'https://example.com/schema',
+        allOf: [
+          {
+            type: 'string',
+          },
+          {
+            $ref: 'https://example.com/loop',
+          },
+        ],
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([
+            jsonSchemaFixture,
+            loopJsonSchemaFixture,
+          ]),
+        );
+      });
+
+      it('should return the expected TypeScript module', () => {
+        expect(result).toBe('export type Root = never;');
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
         );
       });
     });

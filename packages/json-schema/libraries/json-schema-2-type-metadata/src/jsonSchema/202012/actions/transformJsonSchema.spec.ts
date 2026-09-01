@@ -347,6 +347,116 @@ describe(transformJsonSchema, () => {
       },
     ],
     [
+      'an schema with allOf overlapping properties of the same type',
+      {
+        allOf: [
+          {
+            properties: {
+              bar: {
+                type: 'boolean',
+              },
+              foo: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              foo: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              bar: {
+                type: 'boolean',
+              },
+              foo: {
+                type: 'string',
+              },
+            },
+          },
+        ],
+      },
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.booleanType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'bar',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+    ],
+    [
+      'an schema with allOf overlapping required properties of disjoint types',
+      {
+        allOf: [
+          {
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+            required: ['id'],
+          },
+          {
+            properties: {
+              id: {
+                type: 'number',
+              },
+            },
+            required: ['id'],
+          },
+        ],
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an schema with allOf overlapping optional properties of disjoint types',
+      {
+        allOf: [
+          {
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              id: {
+                type: 'number',
+              },
+            },
+          },
+        ],
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        isOptional: true,
+        kind: TypeMetadataKind.propertyType,
+        property: 'id',
+      },
+    ],
+    [
       'an schema with allOf including a boolean true schema',
       {
         allOf: [
@@ -1405,6 +1515,58 @@ describe(transformJsonSchema, () => {
         expect((result as Error).message).toBe(
           'Duplicated TypeMetadata id "Foo"',
         );
+      });
+    });
+  });
+
+  describe('having a string schema allOf a self-referencing anyOf schema', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+    let loopJsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      loopJsonSchemaFixture = {
+        $id: 'https://example.com/loop',
+        anyOf: [
+          {
+            type: 'boolean',
+          },
+          {
+            $ref: '#',
+          },
+        ],
+      };
+      jsonSchemaFixture = {
+        $id: 'https://example.com/schema',
+        allOf: [
+          {
+            type: 'string',
+          },
+          {
+            $ref: 'https://example.com/loop',
+          },
+        ],
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([
+            jsonSchemaFixture,
+            loopJsonSchemaFixture,
+          ]),
+        );
+      });
+
+      it('should return noneType TypeMetadata', () => {
+        const expected: TypeMetadata = {
+          kind: TypeMetadataKind.noneType,
+        };
+
+        expect(result).toStrictEqual(expected);
       });
     });
   });

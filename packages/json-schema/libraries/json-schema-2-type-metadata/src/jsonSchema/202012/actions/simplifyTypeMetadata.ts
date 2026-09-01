@@ -2,6 +2,7 @@ import {
   type AndTypeMetadata,
   type ArrayTypeMetadata,
   type OrTypeMetadata,
+  type PropertyTypeMetadata,
   type TypeMetadata,
   TypeMetadataKind,
 } from '@inversifyjs/json-schema-type-metadata';
@@ -146,7 +147,8 @@ function intersectAndTypes(
   }
 
   const hasOrChild: boolean = typeMetadata.children.some(
-    (child: TypeMetadata) => child.kind === TypeMetadataKind.or,
+    (child: TypeMetadata) =>
+      canDistributeJsonSchemaInstanceTypeIntoOr(child, ancestorTypeMetadataSet),
   );
 
   const nextChildren: TypeMetadata[] = [];
@@ -158,7 +160,9 @@ function intersectAndTypes(
         nextChildren.push(mergedJsonSchemaInstanceType);
         insertedMergedJsonSchemaInstanceType = true;
       }
-    } else if (hasOrChild && child.kind === TypeMetadataKind.or) {
+    } else if (
+      canDistributeJsonSchemaInstanceTypeIntoOr(child, ancestorTypeMetadataSet)
+    ) {
       nextChildren.push(
         distributeJsonSchemaInstanceTypeIntoOr(
           mergedJsonSchemaInstanceType,
@@ -173,6 +177,99 @@ function intersectAndTypes(
   }
 
   typeMetadata.children = nextChildren;
+}
+
+function intersectAndPropertyTypes(
+  typeMetadata: AndTypeMetadata,
+  ancestorTypeMetadataSet: Set<TypeMetadata>,
+  simplifiedTypeMetadataSet: Set<TypeMetadata>,
+): void {
+  const propertyTypeMetadataByProperty: Map<string, PropertyTypeMetadata[]> =
+    new Map();
+
+  for (const child of typeMetadata.children) {
+    if (child.kind === TypeMetadataKind.propertyType) {
+      const propertyTypeMetadata: PropertyTypeMetadata[] =
+        propertyTypeMetadataByProperty.get(child.property) ?? [];
+
+      propertyTypeMetadata.push(child);
+      propertyTypeMetadataByProperty.set(child.property, propertyTypeMetadata);
+    }
+  }
+
+  const insertedPropertySet: Set<string> = new Set();
+  const nextChildren: TypeMetadata[] = [];
+
+  for (const child of typeMetadata.children) {
+    if (child.kind === TypeMetadataKind.propertyType) {
+      if (!insertedPropertySet.has(child.property)) {
+        insertedPropertySet.add(child.property);
+
+        const mergedPropertyTypeMetadata: TypeMetadata =
+          intersectPropertyTypeMetadata(
+            propertyTypeMetadataByProperty.get(
+              child.property,
+            ) as PropertyTypeMetadata[],
+            ancestorTypeMetadataSet,
+            simplifiedTypeMetadataSet,
+          );
+
+        if (mergedPropertyTypeMetadata.kind === TypeMetadataKind.noneType) {
+          copyTypeMetadataOnto(typeMetadata, mergedPropertyTypeMetadata);
+
+          return;
+        }
+
+        nextChildren.push(mergedPropertyTypeMetadata);
+      }
+    } else {
+      nextChildren.push(child);
+    }
+  }
+
+  typeMetadata.children = nextChildren;
+}
+
+function intersectPropertyTypeMetadata(
+  propertyTypeMetadata: PropertyTypeMetadata[],
+  ancestorTypeMetadataSet: Set<TypeMetadata>,
+  simplifiedTypeMetadataSet: Set<TypeMetadata>,
+): TypeMetadata {
+  const firstPropertyTypeMetadata: PropertyTypeMetadata =
+    propertyTypeMetadata[0] as PropertyTypeMetadata;
+  const isOptional: boolean = propertyTypeMetadata.every(
+    (property: PropertyTypeMetadata) => property.isOptional,
+  );
+
+  let child: TypeMetadata;
+
+  if (propertyTypeMetadata.length === 1) {
+    child = firstPropertyTypeMetadata.child;
+  } else {
+    const childConstraint: AndTypeMetadata = {
+      children: propertyTypeMetadata.map(
+        (property: PropertyTypeMetadata) => property.child,
+      ),
+      kind: TypeMetadataKind.and,
+    };
+
+    child = simplifyTypeMetadataRecursive(
+      childConstraint,
+      ancestorTypeMetadataSet,
+      simplifiedTypeMetadataSet,
+    );
+  }
+
+  if (child.kind === TypeMetadataKind.noneType && !isOptional) {
+    return {
+      kind: TypeMetadataKind.noneType,
+    };
+  }
+
+  firstPropertyTypeMetadata.child = child;
+  firstPropertyTypeMetadata.isOptional = isOptional;
+
+  return firstPropertyTypeMetadata;
 }
 
 function intersectJsonSchemaInstanceTypes(
@@ -232,6 +329,17 @@ function intersectJsonSchemaInstanceTypes(
         kind: TypeMetadataKind.noneType,
       };
   }
+}
+
+function canDistributeJsonSchemaInstanceTypeIntoOr(
+  typeMetadata: TypeMetadata,
+  ancestorTypeMetadataSet: Set<TypeMetadata>,
+): typeMetadata is OrTypeMetadata {
+  return (
+    typeMetadata.kind === TypeMetadataKind.or &&
+    !ancestorTypeMetadataSet.has(typeMetadata) &&
+    !isTypeMetadataCyclic(typeMetadata)
+  );
 }
 
 function isJsonSchemaInstanceType(typeMetadata: TypeMetadata): boolean {
@@ -300,6 +408,14 @@ function simplifyAndTypeMetadata(
     simplifiedTypeMetadataSet,
   );
 
+  if ((typeMetadata as TypeMetadataMutable).kind === TypeMetadataKind.and) {
+    intersectAndPropertyTypes(
+      typeMetadata,
+      ancestorTypeMetadataSet,
+      simplifiedTypeMetadataSet,
+    );
+  }
+
   if ((typeMetadata as TypeMetadataMutable).kind !== TypeMetadataKind.and) {
     return typeMetadata;
   }
@@ -331,12 +447,14 @@ function simplifyAnyAndNoneOr(typeMetadata: OrTypeMetadata): TypeMetadata {
   const simplifiedChildren: TypeMetadata[] = [];
 
   for (const child of typeMetadata.children) {
-    if (child.kind === TypeMetadataKind.anyType) {
-      return copyTypeMetadataOnto(typeMetadata, {
-        kind: TypeMetadataKind.anyType,
-      });
-    } else if (child.kind !== TypeMetadataKind.noneType) {
-      simplifiedChildren.push(child);
+    if (child !== typeMetadata) {
+      if (child.kind === TypeMetadataKind.anyType) {
+        return copyTypeMetadataOnto(typeMetadata, {
+          kind: TypeMetadataKind.anyType,
+        });
+      } else if (child.kind !== TypeMetadataKind.noneType) {
+        simplifiedChildren.push(child);
+      }
     }
   }
 

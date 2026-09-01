@@ -334,6 +334,251 @@ describe(simplifyTypeMetadata, () => {
       },
     ],
     [
+      'an and TypeMetadata with three foo propertyType children and two bar propertyType children',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.booleanType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'bar',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'bar',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.noneType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'bar',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+    ],
+    [
+      'an and TypeMetadata with required stringType and numberType id propertyType children',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'id',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.floatType,
+            },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'id',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an and TypeMetadata with optional and required stringType foo propertyType children',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.stringType,
+        },
+        isOptional: false,
+        kind: TypeMetadataKind.propertyType,
+        property: 'foo',
+      },
+    ],
+    [
+      'an and TypeMetadata with optional stringType and numberType id propertyType children',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'id',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.floatType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'id',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        isOptional: true,
+        kind: TypeMetadataKind.propertyType,
+        property: 'id',
+      },
+    ],
+    [
+      'an and TypeMetadata with a required noneType id propertyType child',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.noneType,
+            },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'id',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'name',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'a nested and TypeMetadata with overlapping foo propertyType children',
+      {
+        children: [
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'foo',
+              },
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'bar',
+              },
+            ],
+            kind: TypeMetadataKind.and,
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.floatType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.noneType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'bar',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+    ],
+    [
       'a nested and TypeMetadata whose inner and has an id',
       {
         children: [
@@ -1066,6 +1311,37 @@ describe(simplifyTypeMetadata, () => {
     });
   });
 
+  describe('having a circular or TypeMetadata with a booleanType child', () => {
+    let typeMetadataFixture: OrTypeMetadata;
+
+    beforeAll(() => {
+      typeMetadataFixture = {
+        children: [],
+        kind: TypeMetadataKind.or,
+      };
+
+      typeMetadataFixture.children.push(typeMetadataFixture, {
+        kind: TypeMetadataKind.booleanType,
+      });
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = simplifyTypeMetadata(typeMetadataFixture);
+      });
+
+      it('should return booleanType TypeMetadata', () => {
+        const expected: TypeMetadata = {
+          kind: TypeMetadataKind.booleanType,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
+
   describe('having a circular and TypeMetadata with a noneType child', () => {
     let typeMetadataFixture: AndTypeMetadata;
 
@@ -1147,6 +1423,49 @@ describe(simplifyTypeMetadata, () => {
 
       it('should return the same and TypeMetadata', () => {
         expect(result).toStrictEqual(typeMetadataFixture);
+      });
+    });
+  });
+
+  describe('having an and TypeMetadata of a stringType and a self-referencing or TypeMetadata', () => {
+    let orTypeMetadataFixture: OrTypeMetadata;
+    let typeMetadataFixture: AndTypeMetadata;
+
+    beforeAll(() => {
+      orTypeMetadataFixture = {
+        children: [],
+        kind: TypeMetadataKind.or,
+      };
+      orTypeMetadataFixture.children.push(
+        {
+          kind: TypeMetadataKind.booleanType,
+        },
+        orTypeMetadataFixture,
+      );
+      typeMetadataFixture = {
+        children: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          orTypeMetadataFixture,
+        ],
+        kind: TypeMetadataKind.and,
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = simplifyTypeMetadata(typeMetadataFixture);
+      });
+
+      it('should return noneType TypeMetadata', () => {
+        const expected: TypeMetadata = {
+          kind: TypeMetadataKind.noneType,
+        };
+
+        expect(result).toStrictEqual(expected);
       });
     });
   });
