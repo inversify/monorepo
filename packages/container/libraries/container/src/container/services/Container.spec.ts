@@ -410,8 +410,8 @@ describe(Container, () => {
 
         it('should call PlanResultCacheService()', () => {
           expect(PlanResultCacheService).toHaveBeenCalledTimes(2);
-          expect(PlanResultCacheService).toHaveBeenNthCalledWith(1, false);
-          expect(PlanResultCacheService).toHaveBeenNthCalledWith(2, false);
+          expect(PlanResultCacheService).toHaveBeenNthCalledWith(1, true);
+          expect(PlanResultCacheService).toHaveBeenNthCalledWith(2, true);
         });
 
         it('should call planResultCacheService.subscribe()', () => {
@@ -495,7 +495,7 @@ describe(Container, () => {
         });
 
         it('should call PlanResultCacheService()', () => {
-          expect(PlanResultCacheService).toHaveBeenCalledExactlyOnceWith(false);
+          expect(PlanResultCacheService).toHaveBeenCalledExactlyOnceWith(true);
         });
 
         it('should not call planResultCacheService.subscribe()', () => {
@@ -510,6 +510,38 @@ describe(Container, () => {
             expect.any(PlanResultCacheService),
           );
         });
+      });
+    });
+
+    describe('having jitless true option', () => {
+      beforeAll(() => {
+        new Container({
+          jitless: true,
+        });
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call PlanResultCacheService() with false', () => {
+        expect(PlanResultCacheService).toHaveBeenCalledExactlyOnceWith(false);
+      });
+    });
+
+    describe('having jitless false option', () => {
+      beforeAll(() => {
+        new Container({
+          jitless: false,
+        });
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call PlanResultCacheService() with true', () => {
+        expect(PlanResultCacheService).toHaveBeenCalledExactlyOnceWith(true);
       });
     });
   });

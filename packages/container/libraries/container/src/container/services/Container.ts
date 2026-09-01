@@ -30,7 +30,7 @@ import { ServiceResolutionManager } from './ServiceResolutionManager.js';
 import { SnapshotManager } from './SnapshotManager.js';
 
 const DEFAULT_DEFAULT_SCOPE: BindingScope = bindingScopeValues.Transient;
-const DEFAULT_JITLESS: boolean = true;
+const DEFAULT_JITLESS: boolean = false;
 
 export class Container {
   readonly #bindingManager: BindingManager;
