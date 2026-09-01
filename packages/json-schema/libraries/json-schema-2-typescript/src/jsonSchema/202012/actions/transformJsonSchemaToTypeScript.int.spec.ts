@@ -185,7 +185,44 @@ describe(transformJsonSchemaToTypeScript, () => {
         },
         type: ['array', 'null'],
       },
-      'export type Root = (string[] | boolean | number | null | object | string) & (unknown[] | null);',
+      'export type Root = string[] | null;',
+    ],
+    [
+      'a titled nullable array schema with string items',
+      {
+        items: {
+          type: 'string',
+        },
+        title: 'Names',
+        type: ['array', 'null'],
+      },
+      'export type Names = string[] | null;',
+    ],
+    [
+      'an allOf items schema and a nullable array type',
+      {
+        allOf: [
+          {
+            items: {
+              type: 'string',
+            },
+          },
+          {
+            type: ['array', 'null'],
+          },
+        ],
+      },
+      'export type Root = string[] | null;',
+    ],
+    [
+      'a nullable array schema with union items',
+      {
+        items: {
+          type: ['string', 'number'],
+        },
+        type: ['array', 'null'],
+      },
+      'export type Root = (string | number)[] | null;',
     ],
     [
       'a titled array schema',
@@ -357,6 +394,20 @@ describe(transformJsonSchemaToTypeScript, () => {
         ],
       },
       'export type Root = { id?: never };',
+    ],
+    [
+      'an allOf schema of overlapping type unions',
+      {
+        allOf: [
+          {
+            type: ['string', 'number'],
+          },
+          {
+            type: ['number', 'boolean'],
+          },
+        ],
+      },
+      'export type Root = number;',
     ],
     [
       'an allOf schema including true',

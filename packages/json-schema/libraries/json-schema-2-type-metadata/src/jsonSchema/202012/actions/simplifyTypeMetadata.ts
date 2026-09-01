@@ -82,6 +82,89 @@ function distributeJsonSchemaInstanceTypeIntoOr(
   );
 }
 
+function canFoldJsonSchemaInstanceShapedOr(
+  typeMetadata: TypeMetadata,
+  ancestorTypeMetadataSet: Set<TypeMetadata>,
+): typeMetadata is OrTypeMetadata {
+  return (
+    canDistributeJsonSchemaInstanceTypeIntoOr(
+      typeMetadata,
+      ancestorTypeMetadataSet,
+    ) &&
+    typeMetadata.id === undefined &&
+    isJsonSchemaInstanceShapedType(typeMetadata)
+  );
+}
+
+function canJsonSchemaInstanceKindsMeet(
+  left: TypeMetadata,
+  right: TypeMetadata,
+): boolean {
+  const leftKind: TypeMetadataKind | undefined =
+    getJsonSchemaInstanceTypeKind(left);
+  const rightKind: TypeMetadataKind | undefined =
+    getJsonSchemaInstanceTypeKind(right);
+
+  if (leftKind === undefined || rightKind === undefined) {
+    return true;
+  }
+
+  if (leftKind === rightKind) {
+    return true;
+  }
+
+  return (
+    (leftKind === TypeMetadataKind.integerType &&
+      rightKind === TypeMetadataKind.floatType) ||
+    (leftKind === TypeMetadataKind.floatType &&
+      rightKind === TypeMetadataKind.integerType)
+  );
+}
+
+function cartesianJsonSchemaInstanceShapedOrs(
+  left: OrTypeMetadata,
+  right: OrTypeMetadata,
+  ancestorTypeMetadataSet: Set<TypeMetadata>,
+  simplifiedTypeMetadataSet: Set<TypeMetadata>,
+): TypeMetadata {
+  const children: TypeMetadata[] = [];
+
+  for (const leftBranch of left.children) {
+    for (const rightBranch of right.children) {
+      if (!canJsonSchemaInstanceKindsMeet(leftBranch, rightBranch)) {
+        continue;
+      }
+
+      const productTypeMetadata: AndTypeMetadata = {
+        children: [leftBranch, rightBranch],
+        kind: TypeMetadataKind.and,
+      };
+
+      const simplifiedProductTypeMetadata: TypeMetadata =
+        simplifyTypeMetadataRecursive(
+          productTypeMetadata,
+          ancestorTypeMetadataSet,
+          simplifiedTypeMetadataSet,
+        );
+
+      if (simplifiedProductTypeMetadata.kind !== TypeMetadataKind.noneType) {
+        children.push(simplifiedProductTypeMetadata);
+      }
+    }
+  }
+
+  const distributedOrTypeMetadata: OrTypeMetadata = {
+    children,
+    kind: TypeMetadataKind.or,
+  };
+
+  return simplifyTypeMetadataRecursive(
+    distributedOrTypeMetadata,
+    ancestorTypeMetadataSet,
+    simplifiedTypeMetadataSet,
+  );
+}
+
 function flattenSameKindChildren(
   typeMetadata: AndTypeMetadata | OrTypeMetadata,
   ancestorTypeMetadataSet: Set<TypeMetadata>,
@@ -104,6 +187,39 @@ function flattenSameKindChildren(
   typeMetadata.children = flattenedChildren;
 }
 
+function foldJsonSchemaInstanceShapedTerms(
+  terms: TypeMetadata[],
+  ancestorTypeMetadataSet: Set<TypeMetadata>,
+  simplifiedTypeMetadataSet: Set<TypeMetadata>,
+): TypeMetadata {
+  let foldedTypeMetadata: TypeMetadata = terms[0] as TypeMetadata;
+
+  for (let i: number = 1; i < terms.length; i++) {
+    foldedTypeMetadata = intersectJsonSchemaInstanceShapedTerms(
+      foldedTypeMetadata,
+      terms[i] as TypeMetadata,
+      ancestorTypeMetadataSet,
+      simplifiedTypeMetadataSet,
+    );
+
+    if (foldedTypeMetadata.kind === TypeMetadataKind.noneType) {
+      return foldedTypeMetadata;
+    }
+  }
+
+  return foldedTypeMetadata;
+}
+
+function getJsonSchemaInstanceTypeKind(
+  typeMetadata: TypeMetadata,
+): TypeMetadataKind | undefined {
+  if (isJsonSchemaInstanceType(typeMetadata)) {
+    return typeMetadata.kind;
+  }
+
+  return undefined;
+}
+
 function intersectAndTypes(
   typeMetadata: AndTypeMetadata,
   ancestorTypeMetadataSet: Set<TypeMetadata>,
@@ -120,6 +236,8 @@ function intersectAndTypes(
   }
 
   let mergedJsonSchemaInstanceType: TypeMetadata | undefined;
+  const foldableOrTypeMetadata: OrTypeMetadata[] = [];
+  const otherChildren: TypeMetadata[] = [];
 
   for (const child of typeMetadata.children) {
     if (isJsonSchemaInstanceType(child)) {
@@ -139,33 +257,79 @@ function intersectAndTypes(
           return;
         }
       }
+    } else if (
+      canFoldJsonSchemaInstanceShapedOr(child, ancestorTypeMetadataSet)
+    ) {
+      foldableOrTypeMetadata.push(child);
+    } else {
+      otherChildren.push(child);
     }
   }
 
-  if (mergedJsonSchemaInstanceType === undefined) {
+  if (
+    mergedJsonSchemaInstanceType === undefined &&
+    (foldableOrTypeMetadata.length === 0 || foldableOrTypeMetadata.length === 1)
+  ) {
     return;
   }
 
-  const hasOrChild: boolean = typeMetadata.children.some(
-    (child: TypeMetadata) =>
+  let foldedTypeMetadata: TypeMetadata;
+
+  if (
+    mergedJsonSchemaInstanceType !== undefined &&
+    foldableOrTypeMetadata.length === 0
+  ) {
+    foldedTypeMetadata = mergedJsonSchemaInstanceType;
+  } else {
+    const terms: TypeMetadata[] =
+      mergedJsonSchemaInstanceType === undefined
+        ? foldableOrTypeMetadata
+        : [mergedJsonSchemaInstanceType, ...foldableOrTypeMetadata];
+
+    foldedTypeMetadata = foldJsonSchemaInstanceShapedTerms(
+      terms,
+      ancestorTypeMetadataSet,
+      simplifiedTypeMetadataSet,
+    );
+
+    if (foldedTypeMetadata.kind === TypeMetadataKind.noneType) {
+      copyTypeMetadataOnto(typeMetadata, foldedTypeMetadata);
+
+      return;
+    }
+  }
+
+  const shouldDistributeFoldedInstanceTypeIntoOtherOrs: boolean =
+    isJsonSchemaInstanceType(foldedTypeMetadata) &&
+    otherChildren.some((child: TypeMetadata) =>
       canDistributeJsonSchemaInstanceTypeIntoOr(child, ancestorTypeMetadataSet),
+    );
+  const foldableOrTypeMetadataSet: Set<TypeMetadata> = new Set(
+    foldableOrTypeMetadata,
   );
 
   const nextChildren: TypeMetadata[] = [];
-  let insertedMergedJsonSchemaInstanceType: boolean = false;
+  let insertedFoldedTypeMetadata: boolean = false;
 
   for (const child of typeMetadata.children) {
-    if (isJsonSchemaInstanceType(child)) {
-      if (!hasOrChild && !insertedMergedJsonSchemaInstanceType) {
-        nextChildren.push(mergedJsonSchemaInstanceType);
-        insertedMergedJsonSchemaInstanceType = true;
+    if (
+      isJsonSchemaInstanceType(child) ||
+      foldableOrTypeMetadataSet.has(child)
+    ) {
+      if (
+        !shouldDistributeFoldedInstanceTypeIntoOtherOrs &&
+        !insertedFoldedTypeMetadata
+      ) {
+        nextChildren.push(foldedTypeMetadata);
+        insertedFoldedTypeMetadata = true;
       }
     } else if (
+      shouldDistributeFoldedInstanceTypeIntoOtherOrs &&
       canDistributeJsonSchemaInstanceTypeIntoOr(child, ancestorTypeMetadataSet)
     ) {
       nextChildren.push(
         distributeJsonSchemaInstanceTypeIntoOr(
-          mergedJsonSchemaInstanceType,
+          foldedTypeMetadata,
           child,
           ancestorTypeMetadataSet,
           simplifiedTypeMetadataSet,
@@ -177,6 +341,69 @@ function intersectAndTypes(
   }
 
   typeMetadata.children = nextChildren;
+}
+
+function intersectJsonSchemaInstanceShapedTerms(
+  left: TypeMetadata,
+  right: TypeMetadata,
+  ancestorTypeMetadataSet: Set<TypeMetadata>,
+  simplifiedTypeMetadataSet: Set<TypeMetadata>,
+): TypeMetadata {
+  if (
+    canFoldJsonSchemaInstanceShapedOr(left, ancestorTypeMetadataSet) &&
+    canFoldJsonSchemaInstanceShapedOr(right, ancestorTypeMetadataSet)
+  ) {
+    return cartesianJsonSchemaInstanceShapedOrs(
+      left,
+      right,
+      ancestorTypeMetadataSet,
+      simplifiedTypeMetadataSet,
+    );
+  }
+
+  if (
+    canFoldJsonSchemaInstanceShapedOr(left, ancestorTypeMetadataSet) &&
+    isJsonSchemaInstanceType(right)
+  ) {
+    return distributeJsonSchemaInstanceTypeIntoOr(
+      right,
+      left,
+      ancestorTypeMetadataSet,
+      simplifiedTypeMetadataSet,
+    );
+  }
+
+  if (
+    canFoldJsonSchemaInstanceShapedOr(right, ancestorTypeMetadataSet) &&
+    isJsonSchemaInstanceType(left)
+  ) {
+    return distributeJsonSchemaInstanceTypeIntoOr(
+      left,
+      right,
+      ancestorTypeMetadataSet,
+      simplifiedTypeMetadataSet,
+    );
+  }
+
+  if (isJsonSchemaInstanceType(left) && isJsonSchemaInstanceType(right)) {
+    return intersectJsonSchemaInstanceTypes(
+      left,
+      right,
+      ancestorTypeMetadataSet,
+      simplifiedTypeMetadataSet,
+    );
+  }
+
+  const fallbackTypeMetadata: AndTypeMetadata = {
+    children: [left, right],
+    kind: TypeMetadataKind.and,
+  };
+
+  return simplifyTypeMetadataRecursive(
+    fallbackTypeMetadata,
+    ancestorTypeMetadataSet,
+    simplifiedTypeMetadataSet,
+  );
 }
 
 function intersectAndPropertyTypes(
@@ -339,6 +566,32 @@ function canDistributeJsonSchemaInstanceTypeIntoOr(
     typeMetadata.kind === TypeMetadataKind.or &&
     !ancestorTypeMetadataSet.has(typeMetadata) &&
     !isTypeMetadataCyclic(typeMetadata)
+  );
+}
+
+function isJsonSchemaInstanceShapedType(
+  typeMetadata: TypeMetadata,
+  visitedTypeMetadataSet: Set<TypeMetadata> = new Set(),
+): boolean {
+  if (isJsonSchemaInstanceType(typeMetadata)) {
+    return true;
+  }
+
+  if (
+    typeMetadata.kind !== TypeMetadataKind.and &&
+    typeMetadata.kind !== TypeMetadataKind.or
+  ) {
+    return false;
+  }
+
+  if (visitedTypeMetadataSet.has(typeMetadata)) {
+    return false;
+  }
+
+  visitedTypeMetadataSet.add(typeMetadata);
+
+  return typeMetadata.children.every((child: TypeMetadata) =>
+    isJsonSchemaInstanceShapedType(child, visitedTypeMetadataSet),
   );
 }
 
