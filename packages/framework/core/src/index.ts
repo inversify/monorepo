@@ -1,3 +1,5 @@
+export { getErrorDiscriminatorMetadata } from './error/calculations/getErrorDiscriminatorMetadata.js';
+export { Discriminated } from './error/decorators/Discriminated.js';
 export { getCatchErrorMetadata } from './error-filter/calculations/getCatchErrorMetadata.js';
 export { getClassErrorFilterMetadata } from './error-filter/calculations/getClassErrorFilterMetadata.js';
 export { getClassMethodErrorFilterMetadata } from './error-filter/calculations/getClassMethodErrorFilterMetadata.js';
@@ -16,6 +18,7 @@ export { ApplyMiddleware } from './middleware/decorators/ApplyMiddleware.js';
 export { MiddlewarePhase } from './middleware/models/MiddlewarePhase.js';
 export { isPipe } from './pipe/typeguard/isPipe.js';
 
+export type { DiscriminatedError } from './error/models/DiscriminatedError.js';
 export type { CatchErrorOptions } from './error-filter/models/CatchErrorOptions.js';
 export type { ErrorFilter } from './error-filter/models/ErrorFilter.js';
 export type { Guard } from './guard/models/Guard.js';

@@ -1,10 +1,30 @@
-import { type ErrorFilter } from '@inversifyjs/framework-core';
+import {
+  type ErrorFilter,
+  getErrorDiscriminatorMetadata,
+} from '@inversifyjs/framework-core';
 import { getBaseType } from '@inversifyjs/prototype-utils';
 import { type Container, type Newable } from 'inversify';
 
-function* getErrorBaseTypeChain(
+function* getErrorMatchCandidates(
   error: unknown,
-): Generator<Newable<Error> | null> {
+): Generator<Newable<Error> | string | symbol | null> {
+  if (typeof error === 'object' && error !== null) {
+    const errorConstructor: NewableFunction | undefined = (
+      error as { constructor?: NewableFunction }
+    ).constructor;
+
+    if (errorConstructor !== undefined) {
+      const discriminators: (string | symbol)[] | undefined =
+        getErrorDiscriminatorMetadata(errorConstructor);
+
+      if (discriminators !== undefined) {
+        for (const discriminator of discriminators) {
+          yield discriminator;
+        }
+      }
+    }
+  }
+
   if (error instanceof Error) {
     let currentType: Newable<Error> = error.constructor as Newable<Error>;
 
@@ -27,10 +47,12 @@ export async function getErrorFilterForError<TRequest, TResponse, TResult>(
     ErrorFilter | Newable<ErrorFilter>
   >[],
 ): Promise<ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined> {
-  for (const errorType of getErrorBaseTypeChain(error)) {
+  for (const candidate of getErrorMatchCandidates(error)) {
     for (const errorToFilterMap of errorToFilterMapList) {
       const errorFilterOrType: ErrorFilter | Newable<ErrorFilter> | undefined =
-        errorToFilterMap.get(errorType);
+        (
+          errorToFilterMap as Map<unknown, ErrorFilter | Newable<ErrorFilter>>
+        ).get(candidate);
 
       if (errorFilterOrType !== undefined) {
         if (typeof errorFilterOrType === 'function') {

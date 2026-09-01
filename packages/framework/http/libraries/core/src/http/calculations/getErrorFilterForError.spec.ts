@@ -8,9 +8,13 @@ import {
   vitest,
 } from 'vitest';
 
+vitest.mock(import('@inversifyjs/framework-core'));
 vitest.mock(import('@inversifyjs/prototype-utils'));
 
-import { type ErrorFilter } from '@inversifyjs/framework-core';
+import {
+  type ErrorFilter,
+  getErrorDiscriminatorMetadata,
+} from '@inversifyjs/framework-core';
 import { getBaseType } from '@inversifyjs/prototype-utils';
 import { type Container, type Newable } from 'inversify';
 
@@ -334,6 +338,112 @@ describe(getErrorFilterForError, () => {
 
       it('should return the error filter instance from second map', () => {
         expect(result).toBe(errorFilterFixture);
+      });
+    });
+  });
+
+  describe('having a discriminated error instance matching a discriminator key', () => {
+    describe('when called', () => {
+      class DiscriminatedCustomError extends Error {}
+
+      let errorFixture: DiscriminatedCustomError;
+      let errorFilterFixture: ErrorFilter;
+      let errorToFilterMapListFixture: Map<
+        Newable<Error> | null,
+        ErrorFilter | Newable<ErrorFilter>
+      >[];
+
+      let result: unknown;
+
+      beforeAll(async () => {
+        errorFixture = new DiscriminatedCustomError('Discriminated error');
+        errorFilterFixture = {
+          catch: vitest.fn(),
+        };
+
+        vitest
+          .mocked(getErrorDiscriminatorMetadata)
+          .mockReturnValueOnce(['custom-discriminator']);
+
+        errorToFilterMapListFixture = [
+          new Map([
+            [
+              'custom-discriminator' as unknown as Newable<Error>,
+              errorFilterFixture,
+            ],
+          ]),
+        ];
+
+        result = await getErrorFilterForError(
+          containerMock,
+          errorFixture,
+          errorToFilterMapListFixture,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should return the matching error filter via discriminator', () => {
+        expect(result).toBe(errorFilterFixture);
+      });
+    });
+  });
+
+  describe('having a child discriminated error with both child and parent filters registered', () => {
+    describe('when called', () => {
+      class ChildDiscriminatedError extends Error {}
+
+      let errorFixture: ChildDiscriminatedError;
+      let childFilterFixture: ErrorFilter;
+      let parentFilterFixture: ErrorFilter;
+      let errorToFilterMapListFixture: Map<
+        Newable<Error> | null,
+        ErrorFilter | Newable<ErrorFilter>
+      >[];
+
+      let result: unknown;
+
+      beforeAll(async () => {
+        errorFixture = new ChildDiscriminatedError('Child error');
+        childFilterFixture = {
+          catch: vitest.fn(),
+        };
+        parentFilterFixture = {
+          catch: vitest.fn(),
+        };
+
+        vitest
+          .mocked(getErrorDiscriminatorMetadata)
+          .mockReturnValueOnce(['child-discriminator', 'parent-discriminator']);
+
+        errorToFilterMapListFixture = [
+          new Map([
+            [
+              'child-discriminator' as unknown as Newable<Error>,
+              childFilterFixture,
+            ],
+            [
+              'parent-discriminator' as unknown as Newable<Error>,
+              parentFilterFixture,
+            ],
+          ]),
+        ];
+
+        result = await getErrorFilterForError(
+          containerMock,
+          errorFixture,
+          errorToFilterMapListFixture,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should prioritize the child discriminator filter over the parent filter', () => {
+        expect(result).toBe(childFilterFixture);
       });
     });
   });

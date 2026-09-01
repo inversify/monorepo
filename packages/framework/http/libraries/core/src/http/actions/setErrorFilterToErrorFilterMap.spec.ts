@@ -5,6 +5,7 @@ vitest.mock(import('@inversifyjs/framework-core'));
 import {
   type ErrorFilter,
   getCatchErrorMetadata,
+  getErrorDiscriminatorMetadata,
 } from '@inversifyjs/framework-core';
 import { type Logger } from '@inversifyjs/logger';
 import { type Newable } from 'inversify';
@@ -143,6 +144,49 @@ describe(setErrorFilterToErrorFilterMap, () => {
       expect(
         errorTypeToGlobalErrorFilterMapFixture.get(customErrorFixture),
       ).toBe(errorFilterFixture);
+    });
+  });
+
+  describe('when called, and error type has discriminator metadata', () => {
+    let errorTypeToGlobalErrorFilterMapFixture: Map<
+      Newable<Error> | null,
+      Newable<ErrorFilter>
+    >;
+    let errorFilterFixture: Newable<ErrorFilter>;
+    let customErrorFixture: Newable<Error>;
+    let errorTypesFixture: Set<Newable<Error> | null>;
+
+    beforeAll(() => {
+      errorTypeToGlobalErrorFilterMapFixture = new Map();
+      errorFilterFixture = class TestErrorFilter {} as Newable<ErrorFilter>;
+      customErrorFixture = class DiscriminatedError extends Error {};
+      errorTypesFixture = new Set([customErrorFixture]);
+
+      vitest
+        .mocked(getCatchErrorMetadata)
+        .mockReturnValueOnce(errorTypesFixture);
+
+      vitest
+        .mocked(getErrorDiscriminatorMetadata)
+        .mockReturnValueOnce(['custom-discriminator-key']);
+
+      setErrorFilterToErrorFilterMap(
+        loggerMock,
+        errorTypeToGlobalErrorFilterMapFixture,
+        errorFilterFixture,
+      );
+    });
+
+    it('should register error filter under both class constructor and discriminator string', () => {
+      const filterMap: Map<unknown, unknown> =
+        errorTypeToGlobalErrorFilterMapFixture;
+
+      expect(
+        errorTypeToGlobalErrorFilterMapFixture.get(customErrorFixture),
+      ).toBe(errorFilterFixture);
+      expect(filterMap.get('custom-discriminator-key')).toBe(
+        errorFilterFixture,
+      );
     });
   });
 });
