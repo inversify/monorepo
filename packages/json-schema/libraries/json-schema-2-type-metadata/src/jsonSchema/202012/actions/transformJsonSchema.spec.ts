@@ -347,6 +347,116 @@ describe(transformJsonSchema, () => {
       },
     ],
     [
+      'an schema with allOf overlapping properties of the same type',
+      {
+        allOf: [
+          {
+            properties: {
+              bar: {
+                type: 'boolean',
+              },
+              foo: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              foo: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              bar: {
+                type: 'boolean',
+              },
+              foo: {
+                type: 'string',
+              },
+            },
+          },
+        ],
+      },
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.booleanType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'bar',
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+    ],
+    [
+      'an schema with allOf overlapping required properties of disjoint types',
+      {
+        allOf: [
+          {
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+            required: ['id'],
+          },
+          {
+            properties: {
+              id: {
+                type: 'number',
+              },
+            },
+            required: ['id'],
+          },
+        ],
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an schema with allOf overlapping optional properties of disjoint types',
+      {
+        allOf: [
+          {
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              id: {
+                type: 'number',
+              },
+            },
+          },
+        ],
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        isOptional: true,
+        kind: TypeMetadataKind.propertyType,
+        property: 'id',
+      },
+    ],
+    [
       'an schema with allOf including a boolean true schema',
       {
         allOf: [
@@ -597,6 +707,9 @@ describe(transformJsonSchema, () => {
             kind: TypeMetadataKind.arrayType,
           },
           {
+            kind: TypeMetadataKind.booleanType,
+          },
+          {
             kind: TypeMetadataKind.floatType,
           },
           {
@@ -611,6 +724,62 @@ describe(transformJsonSchema, () => {
           },
         ],
         kind: TypeMetadataKind.or,
+      },
+    ],
+    [
+      'an schema with type array and items',
+      {
+        items: {
+          type: 'string',
+        },
+        type: 'array',
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.stringType,
+        },
+        kind: TypeMetadataKind.arrayType,
+      },
+    ],
+    [
+      'an schema with a title, type array and items',
+      {
+        items: {
+          type: 'string',
+        },
+        title: 'Foo',
+        type: 'array',
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.stringType,
+        },
+        id: 'Foo',
+        kind: TypeMetadataKind.arrayType,
+      },
+    ],
+    [
+      'an schema with type object and items',
+      {
+        items: {
+          type: 'string',
+        },
+        type: 'object',
+      },
+      {
+        kind: TypeMetadataKind.objectType,
+      },
+    ],
+    [
+      'an schema with type integer and items',
+      {
+        items: {
+          type: 'string',
+        },
+        type: 'integer',
+      },
+      {
+        kind: TypeMetadataKind.integerType,
       },
     ],
     [
@@ -764,17 +933,9 @@ describe(transformJsonSchema, () => {
         );
       });
 
-      it('should return an and TypeMetadata', () => {
+      it('should return noneType TypeMetadata', () => {
         const expected: TypeMetadata = {
-          children: [
-            {
-              kind: TypeMetadataKind.objectType,
-            },
-            {
-              kind: TypeMetadataKind.stringType,
-            },
-          ],
-          kind: TypeMetadataKind.and,
+          kind: TypeMetadataKind.noneType,
         };
 
         expect(result).toStrictEqual(expected);
@@ -817,17 +978,9 @@ describe(transformJsonSchema, () => {
         );
       });
 
-      it('should return an and TypeMetadata with the $dynamicRef constraint first', () => {
+      it('should return noneType TypeMetadata', () => {
         const expected: TypeMetadata = {
-          children: [
-            {
-              kind: TypeMetadataKind.floatType,
-            },
-            {
-              kind: TypeMetadataKind.stringType,
-            },
-          ],
-          kind: TypeMetadataKind.and,
+          kind: TypeMetadataKind.noneType,
         };
 
         expect(result).toStrictEqual(expected);
@@ -1362,6 +1515,58 @@ describe(transformJsonSchema, () => {
         expect((result as Error).message).toBe(
           'Duplicated TypeMetadata id "Foo"',
         );
+      });
+    });
+  });
+
+  describe('having a string schema allOf a self-referencing anyOf schema', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+    let loopJsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      loopJsonSchemaFixture = {
+        $id: 'https://example.com/loop',
+        anyOf: [
+          {
+            type: 'boolean',
+          },
+          {
+            $ref: '#',
+          },
+        ],
+      };
+      jsonSchemaFixture = {
+        $id: 'https://example.com/schema',
+        allOf: [
+          {
+            type: 'string',
+          },
+          {
+            $ref: 'https://example.com/loop',
+          },
+        ],
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([
+            jsonSchemaFixture,
+            loopJsonSchemaFixture,
+          ]),
+        );
+      });
+
+      it('should return noneType TypeMetadata', () => {
+        const expected: TypeMetadata = {
+          kind: TypeMetadataKind.noneType,
+        };
+
+        expect(result).toStrictEqual(expected);
       });
     });
   });

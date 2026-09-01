@@ -225,6 +225,9 @@ function handleJsonSchemaItems(
           kind: TypeMetadataKind.arrayType,
         },
         {
+          kind: TypeMetadataKind.booleanType,
+        },
+        {
           kind: TypeMetadataKind.floatType,
         },
         {
