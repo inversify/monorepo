@@ -1155,6 +1155,267 @@ describe(simplifyTypeMetadata, () => {
         kind: TypeMetadataKind.and,
       },
       {
+        kind: TypeMetadataKind.integerType,
+      },
+    ],
+    [
+      'an and TypeMetadata with two disjoint or children',
+      {
+        children: [
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.booleanType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+              {
+                kind: TypeMetadataKind.objectType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an and TypeMetadata with an items-like or child and a type-like or child',
+      {
+        children: [
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                kind: TypeMetadataKind.arrayType,
+              },
+              {
+                kind: TypeMetadataKind.booleanType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+              {
+                kind: TypeMetadataKind.objectType,
+              },
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.anyType,
+                },
+                kind: TypeMetadataKind.arrayType,
+              },
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            kind: TypeMetadataKind.arrayType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: null,
+          },
+        ],
+        kind: TypeMetadataKind.or,
+      },
+    ],
+    [
+      'an and TypeMetadata with a nested and arrayType or branch',
+      {
+        children: [
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                kind: TypeMetadataKind.arrayType,
+              },
+              {
+                kind: TypeMetadataKind.booleanType,
+              },
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                children: [
+                  {
+                    child: {
+                      kind: TypeMetadataKind.anyType,
+                    },
+                    kind: TypeMetadataKind.arrayType,
+                  },
+                  {
+                    child: {
+                      kind: TypeMetadataKind.stringType,
+                    },
+                    kind: TypeMetadataKind.arrayType,
+                  },
+                ],
+                kind: TypeMetadataKind.and,
+              },
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            kind: TypeMetadataKind.arrayType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: null,
+          },
+        ],
+        kind: TypeMetadataKind.or,
+      },
+    ],
+    [
+      'an and TypeMetadata with two items-like or children',
+      {
+        children: [
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                kind: TypeMetadataKind.arrayType,
+              },
+              {
+                kind: TypeMetadataKind.booleanType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+              {
+                kind: TypeMetadataKind.objectType,
+              },
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.floatType,
+                },
+                kind: TypeMetadataKind.arrayType,
+              },
+              {
+                kind: TypeMetadataKind.booleanType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+              {
+                kind: TypeMetadataKind.objectType,
+              },
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.noneType,
+            },
+            kind: TypeMetadataKind.arrayType,
+          },
+          {
+            kind: TypeMetadataKind.booleanType,
+          },
+          {
+            kind: TypeMetadataKind.floatType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: null,
+          },
+          {
+            kind: TypeMetadataKind.objectType,
+          },
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+        ],
+        kind: TypeMetadataKind.or,
+      },
+    ],
+    [
+      'an and TypeMetadata with two or children and a propertyType child',
+      {
         children: [
           {
             children: [
@@ -1170,12 +1431,272 @@ describe(simplifyTypeMetadata, () => {
           {
             children: [
               {
-                kind: TypeMetadataKind.booleanType,
+                kind: TypeMetadataKind.stringType,
               },
               {
-                kind: TypeMetadataKind.integerType,
+                kind: TypeMetadataKind.literalType,
+                literal: null,
               },
             ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+    ],
+    [
+      'an and TypeMetadata with two propertyType or children',
+      {
+        children: [
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'foo',
+              },
+              {
+                child: {
+                  kind: TypeMetadataKind.floatType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'bar',
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.booleanType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'baz',
+              },
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'qux',
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        children: [
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'foo',
+              },
+              {
+                child: {
+                  kind: TypeMetadataKind.floatType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'bar',
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.booleanType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'baz',
+              },
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'qux',
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+    ],
+    [
+      'an and TypeMetadata with an instance-shaped or child and a propertyType or child',
+      {
+        children: [
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'foo',
+              },
+              {
+                child: {
+                  kind: TypeMetadataKind.floatType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'bar',
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        children: [
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                child: {
+                  kind: TypeMetadataKind.stringType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'foo',
+              },
+              {
+                child: {
+                  kind: TypeMetadataKind.floatType,
+                },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'bar',
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+    ],
+    [
+      'an and TypeMetadata with a foldable or child and a named or child',
+      {
+        children: [
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+            ],
+            id: 'Foo',
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        children: [
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+            ],
+            id: 'Foo',
             kind: TypeMetadataKind.or,
           },
         ],

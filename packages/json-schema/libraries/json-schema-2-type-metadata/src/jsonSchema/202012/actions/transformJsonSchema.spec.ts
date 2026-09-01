@@ -742,6 +742,30 @@ describe(transformJsonSchema, () => {
       },
     ],
     [
+      'an schema with type array or null and items',
+      {
+        items: {
+          type: 'string',
+        },
+        type: ['array', 'null'],
+      },
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            kind: TypeMetadataKind.arrayType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: null,
+          },
+        ],
+        kind: TypeMetadataKind.or,
+      },
+    ],
+    [
       'an schema with a title, type array and items',
       {
         items: {
