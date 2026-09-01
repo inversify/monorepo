@@ -9,4 +9,6 @@ This package provides an intermediate representation (`TypeMetadata`) used to
 describe structural types independently of any specific JSON Schema draft.
 It's consumed by transformer packages such as
 [`@inversifyjs/json-schema-2-type-metadata`](../json-schema-2-type-metadata),
-which map a given JSON Schema draft onto this representation.
+which map a given JSON Schema draft onto this representation, and
+[`@inversifyjs/json-schema-2-typescript`](../json-schema-2-typescript),
+which prints TypeScript type declarations from it.

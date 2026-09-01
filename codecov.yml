@@ -59,6 +59,9 @@ coverage:
       '@inversifyjs/json-schema-2-type-metadata':
         flags:
           - '@inversifyjs/json-schema-2-type-metadata'
+      '@inversifyjs/json-schema-2-typescript':
+        flags:
+          - '@inversifyjs/json-schema-2-typescript'
       '@inversifyjs/json-schema-pointer':
         flags:
           - '@inversifyjs/json-schema-pointer'
@@ -150,6 +153,9 @@ flags:
   '@inversifyjs/json-schema-2-type-metadata':
     paths:
       - packages/json-schema/libraries/json-schema-2-type-metadata
+  '@inversifyjs/json-schema-2-typescript':
+    paths:
+      - packages/json-schema/libraries/json-schema-2-typescript
   '@inversifyjs/json-schema-pointer':
     paths:
       - packages/json-schema/libraries/json-schema-pointer
