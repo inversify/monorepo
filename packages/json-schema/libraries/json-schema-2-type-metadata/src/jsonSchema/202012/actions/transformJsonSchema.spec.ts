@@ -597,6 +597,9 @@ describe(transformJsonSchema, () => {
             kind: TypeMetadataKind.arrayType,
           },
           {
+            kind: TypeMetadataKind.booleanType,
+          },
+          {
             kind: TypeMetadataKind.floatType,
           },
           {
@@ -611,6 +614,62 @@ describe(transformJsonSchema, () => {
           },
         ],
         kind: TypeMetadataKind.or,
+      },
+    ],
+    [
+      'an schema with type array and items',
+      {
+        items: {
+          type: 'string',
+        },
+        type: 'array',
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.stringType,
+        },
+        kind: TypeMetadataKind.arrayType,
+      },
+    ],
+    [
+      'an schema with a title, type array and items',
+      {
+        items: {
+          type: 'string',
+        },
+        title: 'Foo',
+        type: 'array',
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.stringType,
+        },
+        id: 'Foo',
+        kind: TypeMetadataKind.arrayType,
+      },
+    ],
+    [
+      'an schema with type object and items',
+      {
+        items: {
+          type: 'string',
+        },
+        type: 'object',
+      },
+      {
+        kind: TypeMetadataKind.objectType,
+      },
+    ],
+    [
+      'an schema with type integer and items',
+      {
+        items: {
+          type: 'string',
+        },
+        type: 'integer',
+      },
+      {
+        kind: TypeMetadataKind.integerType,
       },
     ],
     [
@@ -764,17 +823,9 @@ describe(transformJsonSchema, () => {
         );
       });
 
-      it('should return an and TypeMetadata', () => {
+      it('should return noneType TypeMetadata', () => {
         const expected: TypeMetadata = {
-          children: [
-            {
-              kind: TypeMetadataKind.objectType,
-            },
-            {
-              kind: TypeMetadataKind.stringType,
-            },
-          ],
-          kind: TypeMetadataKind.and,
+          kind: TypeMetadataKind.noneType,
         };
 
         expect(result).toStrictEqual(expected);
@@ -817,17 +868,9 @@ describe(transformJsonSchema, () => {
         );
       });
 
-      it('should return an and TypeMetadata with the $dynamicRef constraint first', () => {
+      it('should return noneType TypeMetadata', () => {
         const expected: TypeMetadata = {
-          children: [
-            {
-              kind: TypeMetadataKind.floatType,
-            },
-            {
-              kind: TypeMetadataKind.stringType,
-            },
-          ],
-          kind: TypeMetadataKind.and,
+          kind: TypeMetadataKind.noneType,
         };
 
         expect(result).toStrictEqual(expected);
