@@ -1,5 +1,12 @@
 # @inversifyjs/ajv-validation
 
+## 3.6.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/validation-common@3.6.1
+
 ## 3.6.0
 
 ### Patch Changes
