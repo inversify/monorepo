@@ -18,7 +18,6 @@ export { ApplyMiddleware } from './middleware/decorators/ApplyMiddleware.js';
 export { MiddlewarePhase } from './middleware/models/MiddlewarePhase.js';
 export { isPipe } from './pipe/typeguard/isPipe.js';
 
-export type { DiscriminatedError } from './error/models/DiscriminatedError.js';
 export type { CatchErrorOptions } from './error-filter/models/CatchErrorOptions.js';
 export type { ErrorFilter } from './error-filter/models/ErrorFilter.js';
 export type { Guard } from './guard/models/Guard.js';

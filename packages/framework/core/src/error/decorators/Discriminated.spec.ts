@@ -13,40 +13,42 @@ import { buildErrorDiscriminatorMetadata } from '../calculations/buildErrorDiscr
 import { Discriminated } from './Discriminated.js';
 
 describe(Discriminated, () => {
-  describe('when called', () => {
+  describe('having a class target', () => {
     let discriminatorFixture: string;
     let targetFixture: NewableFunction;
     let callbackFixture: (arr: (string | symbol)[]) => (string | symbol)[];
 
-    beforeAll(() => {
-      discriminatorFixture = 'my-error-discriminator';
-      targetFixture = class TestError extends Error {};
-      callbackFixture = (arr: (string | symbol)[]) => arr;
+    describe('when called', () => {
+      beforeAll(() => {
+        discriminatorFixture = 'my-error-discriminator';
+        targetFixture = class TestError extends Error {};
+        callbackFixture = (arr: (string | symbol)[]) => arr;
 
-      vitest
-        .mocked(buildErrorDiscriminatorMetadata)
-        .mockReturnValueOnce(callbackFixture);
+        vitest
+          .mocked(buildErrorDiscriminatorMetadata)
+          .mockReturnValueOnce(callbackFixture);
 
-      Discriminated(discriminatorFixture)(targetFixture);
-    });
+        Discriminated(discriminatorFixture)(targetFixture);
+      });
 
-    afterAll(() => {
-      vitest.clearAllMocks();
-    });
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
 
-    it('should call buildErrorDiscriminatorMetadata', () => {
-      expect(buildErrorDiscriminatorMetadata).toHaveBeenCalledExactlyOnceWith(
-        discriminatorFixture,
-      );
-    });
+      it('should call buildErrorDiscriminatorMetadata', () => {
+        expect(buildErrorDiscriminatorMetadata).toHaveBeenCalledExactlyOnceWith(
+          discriminatorFixture,
+        );
+      });
 
-    it('should call updateReflectMetadata', () => {
-      expect(updateReflectMetadata).toHaveBeenCalledExactlyOnceWith(
-        targetFixture,
-        errorDiscriminatorMetadataReflectKey,
-        buildEmptyArrayMetadata,
-        callbackFixture,
-      );
+      it('should call updateReflectMetadata', () => {
+        expect(updateReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+          targetFixture,
+          errorDiscriminatorMetadataReflectKey,
+          buildEmptyArrayMetadata,
+          callbackFixture,
+        );
+      });
     });
   });
 });

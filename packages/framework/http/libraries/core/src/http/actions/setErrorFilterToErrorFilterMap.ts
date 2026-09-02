@@ -8,6 +8,10 @@ import { type Newable } from 'inversify';
 
 export function setErrorFilterToErrorFilterMap(
   logger: Logger,
+  errorDiscriminatorToErrorFilterMap: Map<
+    string | symbol,
+    ErrorFilter | Newable<ErrorFilter>
+  >,
   errorTypeToErrorFilterMap: Map<
     Newable<Error> | null,
     ErrorFilter | Newable<ErrorFilter>
@@ -18,9 +22,18 @@ export function setErrorFilterToErrorFilterMap(
     getCatchErrorMetadata(errorFilter);
 
   for (const errorType of errorTypes) {
-    const keysToRegister: (Newable<Error> | string | symbol | null)[] = [
-      errorType,
-    ];
+    const existingErrorFilter: ErrorFilter | Newable<ErrorFilter> | undefined =
+      errorTypeToErrorFilterMap.get(errorType);
+
+    if (existingErrorFilter === undefined) {
+      errorTypeToErrorFilterMap.set(errorType, errorFilter);
+    } else {
+      const errorTypeName: string =
+        errorType === null ? 'null (catch-all)' : errorType.name;
+      logger.warn(
+        `Error filter '${errorFilter.name}' was not registered for error type '${errorTypeName}' because an error filter is already registered for this error type.`,
+      );
+    }
 
     if (errorType !== null) {
       const discriminators: (string | symbol)[] | undefined =
@@ -28,32 +41,10 @@ export function setErrorFilterToErrorFilterMap(
 
       if (discriminators !== undefined) {
         for (const discriminator of discriminators) {
-          if (!keysToRegister.includes(discriminator)) {
-            keysToRegister.push(discriminator);
+          if (!errorDiscriminatorToErrorFilterMap.has(discriminator)) {
+            errorDiscriminatorToErrorFilterMap.set(discriminator, errorFilter);
           }
         }
-      }
-    }
-
-    const errorTypeToFilterMap: Map<
-      unknown,
-      ErrorFilter | Newable<ErrorFilter>
-    > = errorTypeToErrorFilterMap;
-
-    for (const key of keysToRegister) {
-      const existingErrorFilter:
-        ErrorFilter | Newable<ErrorFilter> | undefined =
-        errorTypeToFilterMap.get(key);
-
-      if (existingErrorFilter === undefined) {
-        errorTypeToFilterMap.set(key, errorFilter);
-      } else if (key === errorType) {
-        const errorTypeName: string =
-          errorType === null ? 'null (catch-all)' : errorType.name;
-
-        logger.warn(
-          `Error filter '${errorFilter.name}' was not registered for error type '${errorTypeName}' because an error filter is already registered for this error type.`,
-        );
       }
     }
   }

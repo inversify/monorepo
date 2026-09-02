@@ -59,6 +59,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -99,6 +100,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -152,6 +154,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -198,6 +201,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -238,6 +242,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -287,6 +292,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -328,6 +334,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -348,8 +355,8 @@ describe(getErrorFilterForError, () => {
 
       let errorFixture: DiscriminatedCustomError;
       let errorFilterFixture: ErrorFilter;
-      let errorToFilterMapListFixture: Map<
-        Newable<Error> | null,
+      let errorDiscriminatorToFilterMapListFixture: Map<
+        string | symbol,
         ErrorFilter | Newable<ErrorFilter>
       >[];
 
@@ -365,19 +372,15 @@ describe(getErrorFilterForError, () => {
           .mocked(getErrorDiscriminatorMetadata)
           .mockReturnValueOnce(['custom-discriminator']);
 
-        errorToFilterMapListFixture = [
-          new Map([
-            [
-              'custom-discriminator' as unknown as Newable<Error>,
-              errorFilterFixture,
-            ],
-          ]),
+        errorDiscriminatorToFilterMapListFixture = [
+          new Map([['custom-discriminator', errorFilterFixture]]),
         ];
 
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
-          errorToFilterMapListFixture,
+          errorDiscriminatorToFilterMapListFixture,
+          [],
         );
       });
 
@@ -398,8 +401,8 @@ describe(getErrorFilterForError, () => {
       let errorFixture: ChildDiscriminatedError;
       let childFilterFixture: ErrorFilter;
       let parentFilterFixture: ErrorFilter;
-      let errorToFilterMapListFixture: Map<
-        Newable<Error> | null,
+      let errorDiscriminatorToFilterMapListFixture: Map<
+        string | symbol,
         ErrorFilter | Newable<ErrorFilter>
       >[];
 
@@ -418,23 +421,18 @@ describe(getErrorFilterForError, () => {
           .mocked(getErrorDiscriminatorMetadata)
           .mockReturnValueOnce(['child-discriminator', 'parent-discriminator']);
 
-        errorToFilterMapListFixture = [
+        errorDiscriminatorToFilterMapListFixture = [
           new Map([
-            [
-              'child-discriminator' as unknown as Newable<Error>,
-              childFilterFixture,
-            ],
-            [
-              'parent-discriminator' as unknown as Newable<Error>,
-              parentFilterFixture,
-            ],
+            ['child-discriminator', childFilterFixture],
+            ['parent-discriminator', parentFilterFixture],
           ]),
         ];
 
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
-          errorToFilterMapListFixture,
+          errorDiscriminatorToFilterMapListFixture,
+          [],
         );
       });
 

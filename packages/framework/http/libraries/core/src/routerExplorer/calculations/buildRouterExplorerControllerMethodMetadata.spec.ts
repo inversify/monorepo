@@ -277,6 +277,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         loggerFixture,
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
+        expect.any(Map),
       );
     });
 
@@ -291,6 +292,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
 
     it('should return RouterExplorerControllerMethodMetadata', () => {
       const expected: RouterExplorerControllerMethodMetadata = {
+        errorDiscriminatorToErrorFilterMap: expect.any(Map),
         errorTypeToErrorFilterMap: errorTypeToErrorFilterMapFixture,
         guardList: controllerMethodGuardListFixture,
         headerMetadataList: headerMetadataFixture,
