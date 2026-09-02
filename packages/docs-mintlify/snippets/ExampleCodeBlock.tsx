@@ -43,8 +43,7 @@ export const ExampleCodeBlock = ({
       : inlineSourceRaw.replace(/^\n+/u, '').replace(/\s+$/u, '') === ''
         ? null
         : inlineSourceRaw;
-  const resolvedLanguage =
-    language ?? (inlineSource !== null ? 'bash' : 'ts');
+  const resolvedLanguage = language ?? (inlineSource !== null ? 'bash' : 'ts');
   const languageAliases: Record<string, string> = {
     js: 'javascript',
     jsx: 'jsx',
@@ -126,18 +125,22 @@ export const ExampleCodeBlock = ({
       document.head.appendChild(style);
     };
 
-    const loadScript = (id: string, src: string): Promise<void> => {
+    const loadScript = async (id: string, src: string): Promise<void> => {
       return new Promise((resolve, reject) => {
-        const existing = document.getElementById(id) as HTMLScriptElement | null;
+        const existing = document.getElementById(
+          id,
+        ) as HTMLScriptElement | null;
         if (existing !== null) {
           if (existing.dataset.loaded === 'true') {
             resolve();
             return;
           }
-          existing.addEventListener('load', () => resolve());
-          existing.addEventListener('error', () =>
-            reject(new Error('failed to load ' + src)),
-          );
+          existing.addEventListener('load', () => {
+            resolve();
+          });
+          existing.addEventListener('error', () => {
+            reject(new Error('failed to load ' + src));
+          });
           return;
         }
         const el = document.createElement('script');
@@ -148,9 +151,9 @@ export const ExampleCodeBlock = ({
           el.dataset.loaded = 'true';
           resolve();
         });
-        el.addEventListener('error', () =>
-          reject(new Error('failed to load ' + src)),
-        );
+        el.addEventListener('error', () => {
+          reject(new Error('failed to load ' + src));
+        });
         document.head.appendChild(el);
       });
     };
@@ -220,14 +223,16 @@ export const ExampleCodeBlock = ({
     }
 
     if (filename === undefined) {
-      setError('ExampleCodeBlock requires either a filename prop or inline children');
+      setError(
+        'ExampleCodeBlock requires either a filename prop or inline children',
+      );
       return () => {
         cancelled = true;
       };
     }
 
     fetch(filename)
-      .then((res) => {
+      .then(async (res) => {
         if (!res.ok) {
           throw new Error('HTTP ' + String(res.status));
         }
@@ -253,7 +258,9 @@ export const ExampleCodeBlock = ({
     if (rawCode === '') return;
     void navigator.clipboard.writeText(rawCode).then(() => {
       setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      setTimeout(() => {
+        setCopied(false);
+      }, 1500);
     });
   };
 
@@ -333,9 +340,9 @@ export const ExampleCodeBlock = ({
             <div className="font-mono whitespace-pre leading-6 text-gray-900 dark:text-gray-100">
               <pre
                 style={{
-                  margin: 0,
                   background: 'transparent',
                   color: 'inherit',
+                  margin: 0,
                 }}
               >
                 <code
