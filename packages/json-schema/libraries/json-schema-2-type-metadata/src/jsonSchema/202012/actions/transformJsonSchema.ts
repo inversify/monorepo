@@ -579,6 +579,54 @@ function isUntitledRefOnlySchema(schema: JsonSchemaObject): boolean {
   return hasRefKeyword;
 }
 
+function replaceTypeMetadataReferences(
+  typeMetadata: TypeMetadata,
+  fromTypeMetadata: TypeMetadata,
+  toTypeMetadata: TypeMetadata,
+): void {
+  if (fromTypeMetadata === toTypeMetadata) {
+    return;
+  }
+
+  const seenTypeMetadataSet: Set<TypeMetadata> = new Set();
+
+  function visit(node: TypeMetadata): void {
+    if (seenTypeMetadataSet.has(node) || node === fromTypeMetadata) {
+      return;
+    }
+
+    seenTypeMetadataSet.add(node);
+
+    switch (node.kind) {
+      case TypeMetadataKind.and:
+      case TypeMetadataKind.or:
+        for (let i: number = 0; i < node.children.length; i += 1) {
+          const child: TypeMetadata = node.children[i] as TypeMetadata;
+
+          if (child === fromTypeMetadata) {
+            node.children[i] = toTypeMetadata;
+          } else {
+            visit(child);
+          }
+        }
+        break;
+      case TypeMetadataKind.arrayType:
+      case TypeMetadataKind.propertyType:
+      case TypeMetadataKind.stringIndexSignatureType:
+        if (node.child === fromTypeMetadata) {
+          node.child = toTypeMetadata;
+        } else {
+          visit(node.child);
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  visit(typeMetadata);
+}
+
 function reuseUntitledRefOnlyChild(
   schema: JsonSchemaObject,
   typeConstraints: TypeMetadata[],
@@ -592,14 +640,18 @@ function reuseUntitledRefOnlyChild(
     return false;
   }
 
+  const childTypeMetadata: TypeMetadata = typeConstraints[0];
+
   /*
-   * Copy onto the in-progress placeholder so cycles that already captured
-   * it stay complete, then reuse the child so shared schemas stay one
-   * TypeMetadata node.
+   * Cycles may already hold the wrapper placeholder. Retarget those edges
+   * onto the child so the titled schema stays the only TypeMetadata node.
+   * Do not copy the child onto the placeholder: that duplicates ids and
+   * leaves two nodes for the same schema.
    */
-  Object.assign<Partial<TypeMetadata>, TypeMetadata>(
-    typeMetadataPartial,
-    typeConstraints[0],
+  replaceTypeMetadataReferences(
+    childTypeMetadata,
+    typeMetadataPartial as TypeMetadata,
+    childTypeMetadata,
   );
 
   return true;
