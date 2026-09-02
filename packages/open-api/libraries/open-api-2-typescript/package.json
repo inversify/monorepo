@@ -3,15 +3,20 @@
   "bugs": {
     "url": "https://github.com/inversify/monorepo/issues"
   },
-  "description": "InversifyJs JSON Schema to type metadata transformer package",
+  "description": "InversifyJs OpenAPI to TypeScript transformer package",
   "dependencies": {
+    "@inversifyjs/json-schema-2-type-metadata": "workspace:*",
+    "@inversifyjs/json-schema-2-typescript": "workspace:*",
+    "@inversifyjs/json-schema-pointer": "workspace:*",
     "@inversifyjs/json-schema-type-metadata": "workspace:*",
-    "@inversifyjs/json-schema-utils": "workspace:*"
+    "@inversifyjs/json-schema-types": "workspace:*",
+    "@inversifyjs/json-schema-utils": "workspace:*",
+    "@inversifyjs/open-api-types": "workspace:*",
+    "@inversifyjs/open-api-utils": "workspace:*",
+    "@inversifyjs/uri": "workspace:*"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "@inversifyjs/json-schema-types": "workspace:*",
-    "@inversifyjs/uri": "workspace:*",
     "@stryker-mutator/core": "10.0.0",
     "@stryker-mutator/vitest-runner": "10.0.0",
     "@stryker-mutator/typescript-checker": "10.0.0",
@@ -25,11 +30,10 @@
   },
   "homepage": "https://inversify.io",
   "keywords": [
-    "json",
-    "schema",
+    "oas",
+    "openapi",
     "transformer",
-    "type",
-    "metadata"
+    "typescript"
   ],
   "devEngines": {
     "node": "^24.10.0",
@@ -37,9 +41,11 @@
   },
   "license": "MIT",
   "exports": {
-    "./2020-12": "./lib/jsonSchema/202012/index.js"
+    ".": "./lib/index.js",
+    "./v3Dot1": "./lib/openApi/v3Dot1/index.js",
+    "./v3Dot2": "./lib/openApi/v3Dot2/index.js"
   },
-  "name": "@inversifyjs/json-schema-2-type-metadata",
+  "name": "@inversifyjs/open-api-2-typescript",
   "publishConfig": {
     "access": "public"
   },

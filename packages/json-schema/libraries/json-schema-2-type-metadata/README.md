@@ -27,4 +27,8 @@ const schemaById = new Map([
 const typeMetadata = transformJsonSchema(schema, {
   resolver: new JsonSchemaResolver((id) => schemaById.get(id)),
 });
+
+// Optional `dynamicScopeEntries` sets the initial JSON Schema lexical
+// scope, so fragment-only `$ref` values such as `#/components/schemas/User`
+// resolve against a host document URI.
 ```
