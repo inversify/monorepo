@@ -870,6 +870,66 @@ describe(transformJsonSchemaToTypeScript, () => {
     });
   });
 
+  describe('having a titled schema both as an anyOf sibling and via untitled $ref', () => {
+    let addressJsonSchemaFixture: JsonSchemaObject;
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      addressJsonSchemaFixture = {
+        $id: 'https://example.com/address',
+        properties: {
+          city: {
+            type: 'string',
+          },
+        },
+        required: ['city'],
+        title: 'Address',
+        type: 'object',
+      };
+      jsonSchemaFixture = {
+        anyOf: [
+          addressJsonSchemaFixture,
+          {
+            properties: {
+              address: {
+                $ref: 'https://example.com/address',
+              },
+              id: {
+                type: 'string',
+              },
+            },
+            required: ['address', 'id'],
+            title: 'User',
+            type: 'object',
+          },
+        ],
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([addressJsonSchemaFixture]),
+        );
+      });
+
+      it('should reuse the titled alias for the $ref', () => {
+        expect(result).toBe(
+          'export type Address = { city: string };\nexport type User = { address: Address; id: string };\nexport type Root = Address | User;',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
   describe('having a schema that $ref an untitled schema', () => {
     let jsonSchemaFixture: JsonSchemaObject;
     let referencedJsonSchemaFixture: JsonSchemaObject;

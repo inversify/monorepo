@@ -24,13 +24,35 @@ import { simplifyTypeMetadata } from './simplifyTypeMetadata.js';
 
 const DYNAMIC_SCOPE_KEY_SEPARATOR: string = '|';
 
+/*
+ * Annotation and identity keywords that do not add TypeMetadata constraints.
+ * Unknown keys opt out of untitled `$ref` reuse so new applicators do not
+ * get dropped when they start producing constraints later.
+ */
+const UNTITLED_REF_WRAPPER_IGNORED_KEYS: ReadonlySet<string> = new Set([
+  '$anchor',
+  '$comment',
+  '$comments',
+  '$defs',
+  '$dynamicAnchor',
+  '$id',
+  '$schema',
+  '$vocabulary',
+  'default',
+  'deprecated',
+  'description',
+  'examples',
+  'readOnly',
+  'writeOnly',
+]);
+
 export function transformJsonSchema(
   schema: JsonRootSchema | JsonSchema,
   context: TransformJsonSchemaContext,
 ): TypeMetadata {
   return simplifyTypeMetadata(
     transformJsonSchemaNode(schema, {
-      dynamicScopeEntries: [],
+      dynamicScopeEntries: context.dynamicScopeEntries ?? [],
       inProgressJsonSchemaToTypeMap: new Map(),
       jsonSchemaToTypeMap: new Map(),
       resolver: context.resolver,
@@ -517,17 +539,70 @@ function transformObjectJsonSchema(
   );
   handleValidationVocabularyProperties(schema, typeConstraints);
 
-  const typeMetadata: TypeMetadata = buildTypeMetadata(
-    id,
-    typeMetadataPartial,
+  const typeMetadata: TypeMetadata = reuseUntitledRefOnlyChild(
+    schema,
     typeConstraints,
-    scopedContext.typeMetadataIdSet,
-  );
+    typeMetadataPartial,
+  )
+    ? (typeConstraints[0] as TypeMetadata)
+    : buildTypeMetadata(
+        id,
+        typeMetadataPartial,
+        typeConstraints,
+        scopedContext.typeMetadataIdSet,
+      );
 
   scopedTypeMetadataMap.set(dynamicScopeKey, typeMetadata);
   inProgressScopedTypeMetadataMap.delete(dynamicScopeKey);
 
   return typeMetadata;
+}
+
+function isUntitledRefOnlySchema(schema: JsonSchemaObject): boolean {
+  if (schema.title !== undefined) {
+    return false;
+  }
+
+  let hasRefKeyword: boolean = false;
+
+  for (const key of Object.keys(schema)) {
+    if (key === '$ref' || key === '$dynamicRef') {
+      hasRefKeyword = true;
+      continue;
+    }
+
+    if (!UNTITLED_REF_WRAPPER_IGNORED_KEYS.has(key)) {
+      return false;
+    }
+  }
+
+  return hasRefKeyword;
+}
+
+function reuseUntitledRefOnlyChild(
+  schema: JsonSchemaObject,
+  typeConstraints: TypeMetadata[],
+  typeMetadataPartial: Partial<TypeMetadata>,
+): boolean {
+  if (
+    !isUntitledRefOnlySchema(schema) ||
+    typeConstraints.length !== 1 ||
+    typeConstraints[0]?.kind === undefined
+  ) {
+    return false;
+  }
+
+  /*
+   * Copy onto the in-progress placeholder so cycles that already captured
+   * it stay complete, then reuse the child so shared schemas stay one
+   * TypeMetadata node.
+   */
+  Object.assign<Partial<TypeMetadata>, TypeMetadata>(
+    typeMetadataPartial,
+    typeConstraints[0],
+  );
+
+  return true;
 }
 
 function transformResolvedSchema(

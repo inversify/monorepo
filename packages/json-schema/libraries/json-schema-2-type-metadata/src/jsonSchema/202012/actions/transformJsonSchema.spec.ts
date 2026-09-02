@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
   type AndTypeMetadata,
+  type OrTypeMetadata,
   type PropertyTypeMetadata,
   type TypeMetadata,
   TypeMetadataKind,
@@ -11,7 +12,11 @@ import {
   type JsonSchemaBoolean,
   type JsonSchemaObject,
 } from '@inversifyjs/json-schema-types/2020-12';
-import { JsonSchemaResolver } from '@inversifyjs/json-schema-utils/2020-12';
+import {
+  type DynamicScopeEntry,
+  JsonSchemaResolver,
+} from '@inversifyjs/json-schema-utils/2020-12';
+import { Uri } from '@inversifyjs/uri';
 
 import { type TransformJsonSchemaContext } from '../models/TransformJsonSchemaContext.js';
 import { transformJsonSchema } from './transformJsonSchema.js';
@@ -157,23 +162,13 @@ describe(transformJsonSchema, () => {
       });
 
       it('should return TypeMetadata', () => {
-        const inner: AndTypeMetadata = {
+        const expected: AndTypeMetadata = {
           children: [],
           kind: TypeMetadataKind.and,
         };
-        inner.children.push(inner, {
+        expected.children.push(expected, {
           kind: TypeMetadataKind.objectType,
         });
-
-        const expected: AndTypeMetadata = {
-          children: [
-            inner,
-            {
-              kind: TypeMetadataKind.objectType,
-            },
-          ],
-          kind: TypeMetadataKind.and,
-        };
 
         expect(result).toStrictEqual(expected);
       });
@@ -928,6 +923,170 @@ describe(transformJsonSchema, () => {
     });
   });
 
+  describe('having a titled schema both as an anyOf sibling and via untitled $ref', () => {
+    let addressJsonSchemaFixture: JsonSchemaObject;
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      addressJsonSchemaFixture = {
+        $id: 'https://example.com/address',
+        title: 'Address',
+        type: 'string',
+      };
+      jsonSchemaFixture = {
+        anyOf: [
+          addressJsonSchemaFixture,
+          {
+            properties: {
+              address: {
+                $ref: 'https://example.com/address',
+              },
+            },
+            required: ['address'],
+            title: 'User',
+            type: 'object',
+          },
+        ],
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([addressJsonSchemaFixture]),
+        );
+      });
+
+      it('should reuse the titled TypeMetadata for the $ref', () => {
+        const resultTypeMetadata: OrTypeMetadata = result as OrTypeMetadata;
+        const addressTypeMetadata: TypeMetadata = resultTypeMetadata
+          .children[0] as TypeMetadata;
+        const userTypeMetadata: AndTypeMetadata = resultTypeMetadata
+          .children[1] as AndTypeMetadata;
+        const addressPropertyTypeMetadata: PropertyTypeMetadata =
+          userTypeMetadata.children.find(
+            (child: TypeMetadata) =>
+              child.kind === TypeMetadataKind.propertyType,
+          ) as PropertyTypeMetadata;
+
+        expect(addressPropertyTypeMetadata.child).toBe(addressTypeMetadata);
+      });
+    });
+  });
+
+  describe('having a titled schema both as an anyOf sibling and via untitled $ref with annotation keywords', () => {
+    let addressJsonSchemaFixture: JsonSchemaObject;
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      addressJsonSchemaFixture = {
+        $id: 'https://example.com/address',
+        title: 'Address',
+        type: 'string',
+      };
+      jsonSchemaFixture = {
+        anyOf: [
+          addressJsonSchemaFixture,
+          {
+            properties: {
+              address: {
+                $ref: 'https://example.com/address',
+                description: 'Home address',
+              },
+            },
+            required: ['address'],
+            title: 'User',
+            type: 'object',
+          },
+        ],
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([addressJsonSchemaFixture]),
+        );
+      });
+
+      it('should reuse the titled TypeMetadata for the $ref', () => {
+        const resultTypeMetadata: OrTypeMetadata = result as OrTypeMetadata;
+        const addressTypeMetadata: TypeMetadata = resultTypeMetadata
+          .children[0] as TypeMetadata;
+        const userTypeMetadata: AndTypeMetadata = resultTypeMetadata
+          .children[1] as AndTypeMetadata;
+        const addressPropertyTypeMetadata: PropertyTypeMetadata =
+          userTypeMetadata.children.find(
+            (child: TypeMetadata) =>
+              child.kind === TypeMetadataKind.propertyType,
+          ) as PropertyTypeMetadata;
+
+        expect(addressPropertyTypeMetadata.child).toBe(addressTypeMetadata);
+      });
+    });
+  });
+
+  describe('having a titled schema both as an anyOf sibling and via untitled $ref with a sibling applicator', () => {
+    let addressJsonSchemaFixture: JsonSchemaObject;
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      addressJsonSchemaFixture = {
+        $id: 'https://example.com/address',
+        title: 'Address',
+        type: 'string',
+      };
+      jsonSchemaFixture = {
+        anyOf: [
+          addressJsonSchemaFixture,
+          {
+            properties: {
+              address: {
+                $ref: 'https://example.com/address',
+                not: false,
+              },
+            },
+            required: ['address'],
+            title: 'User',
+            type: 'object',
+          },
+        ],
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([addressJsonSchemaFixture]),
+        );
+      });
+
+      it('should not reuse the titled TypeMetadata for the $ref', () => {
+        const resultTypeMetadata: OrTypeMetadata = result as OrTypeMetadata;
+        const addressTypeMetadata: TypeMetadata = resultTypeMetadata
+          .children[0] as TypeMetadata;
+        const userTypeMetadata: AndTypeMetadata = resultTypeMetadata
+          .children[1] as AndTypeMetadata;
+        const addressPropertyTypeMetadata: PropertyTypeMetadata =
+          userTypeMetadata.children.find(
+            (child: TypeMetadata) =>
+              child.kind === TypeMetadataKind.propertyType,
+          ) as PropertyTypeMetadata;
+
+        expect(addressPropertyTypeMetadata.child).not.toBe(addressTypeMetadata);
+      });
+    });
+  });
+
   describe('having a $ref with a sibling type keyword', () => {
     let jsonSchemaFixture: JsonSchemaObject;
     let referencedJsonSchemaFixture: JsonSchemaObject;
@@ -1403,32 +1562,20 @@ describe(transformJsonSchema, () => {
       });
 
       it('should return a circular TypeMetadata', () => {
-        const innerA: PropertyTypeMetadata = {
-          child: {
-            child: undefined as unknown as TypeMetadata,
-            isOptional: false,
-            kind: TypeMetadataKind.propertyType,
-            property: 'toA',
-          },
-          isOptional: false,
-          kind: TypeMetadataKind.propertyType,
-          property: 'toB',
-        };
-        (innerA.child as PropertyTypeMetadata).child = innerA;
+        const resultTypeMetadata: PropertyTypeMetadata =
+          result as PropertyTypeMetadata;
+        const referencedPropertyTypeMetadata: PropertyTypeMetadata =
+          resultTypeMetadata.child as PropertyTypeMetadata;
+        const innerPropertyTypeMetadata: PropertyTypeMetadata =
+          referencedPropertyTypeMetadata.child as PropertyTypeMetadata;
 
-        const expected: PropertyTypeMetadata = {
-          child: {
-            child: innerA,
-            isOptional: false,
-            kind: TypeMetadataKind.propertyType,
-            property: 'toA',
-          },
-          isOptional: false,
-          kind: TypeMetadataKind.propertyType,
-          property: 'toB',
-        };
-
-        expect(result).toStrictEqual(expected);
+        expect(resultTypeMetadata.kind).toBe(TypeMetadataKind.propertyType);
+        expect(resultTypeMetadata.property).toBe('toB');
+        expect(referencedPropertyTypeMetadata.property).toBe('toA');
+        expect(innerPropertyTypeMetadata.property).toBe('toB');
+        expect(innerPropertyTypeMetadata.child).toBe(
+          referencedPropertyTypeMetadata,
+        );
       });
     });
   });
@@ -1588,6 +1735,73 @@ describe(transformJsonSchema, () => {
       it('should return noneType TypeMetadata', () => {
         const expected: TypeMetadata = {
           kind: TypeMetadataKind.noneType,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
+
+  describe('having a $ref JSON Pointer into a document provided via dynamic scope', () => {
+    let documentUriFixture: string;
+    let jsonSchemaFixture: JsonSchemaObject;
+    let openApiDocumentFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      documentUriFixture = 'urn:inversifyjs:openapi-v3dot1-spec';
+      openApiDocumentFixture = {
+        components: {
+          schemas: {
+            Address: {
+              title: 'Address',
+              type: 'string',
+            },
+          },
+        },
+      };
+      jsonSchemaFixture = {
+        properties: {
+          address: {
+            $ref: '#/components/schemas/Address',
+          },
+        },
+        required: ['address'],
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        const dynamicScopeEntries: DynamicScopeEntry[] = [
+          {
+            lexicalScope: {
+              $canonicalId: new Uri(documentUriFixture),
+            },
+            resolutionContext: {
+              $ref: documentUriFixture,
+              isDynamic: false,
+            },
+          },
+        ];
+
+        result = transformJsonSchema(jsonSchemaFixture, {
+          dynamicScopeEntries,
+          resolver: new JsonSchemaResolver((id: string) =>
+            id === documentUriFixture ? openApiDocumentFixture : undefined,
+          ),
+        });
+      });
+
+      it('should resolve the pointer against the document URI', () => {
+        const expected: TypeMetadata = {
+          child: {
+            id: 'Address',
+            kind: TypeMetadataKind.stringType,
+          },
+          isOptional: false,
+          kind: TypeMetadataKind.propertyType,
+          property: 'address',
         };
 
         expect(result).toStrictEqual(expected);
