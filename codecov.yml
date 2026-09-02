@@ -71,6 +71,9 @@ coverage:
       '@inversifyjs/logger':
         flags:
           - '@inversifyjs/logger'
+      '@inversifyjs/open-api-2-typescript':
+        flags:
+          - '@inversifyjs/open-api-2-typescript'
       '@inversifyjs/open-api-utils':
         flags:
           - '@inversifyjs/open-api-utils'
@@ -165,9 +168,13 @@ flags:
   '@inversifyjs/logger':
     paths:
       - packages/logger
+  '@inversifyjs/open-api-2-typescript':
+    paths:
+      - packages/open-api/libraries/open-api-2-typescript
   '@inversifyjs/open-api-utils':
     paths:
       - packages/open-api/libraries/open-api-utils
+
   '@inversifyjs/open-api-validation':
     paths:
       - packages/framework/validation/libraries/openapi
