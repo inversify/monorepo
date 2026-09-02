@@ -2,7 +2,11 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import 'reflect-metadata/lite';
 
-import { injectable, multiInject } from '@inversifyjs/core';
+import {
+  type BindingConstraints,
+  injectable,
+  multiInject,
+} from '@inversifyjs/core';
 
 import {
   ContainerModule,
@@ -273,6 +277,125 @@ Binding constraints:
         it('should provide an arsenal with no guns after unloading the module', () => {
           expect(arsenal).toBeInstanceOf(Arsenal);
           expect(arsenal.guns).toStrictEqual([]);
+        });
+      });
+    });
+  });
+
+  describe('.getAll', () => {
+    describe('when container has only named bindings for the same identifier', () => {
+      let container: Container;
+
+      beforeAll(() => {
+        container = new Container();
+
+        container
+          .bind('foo')
+          .toConstantValue('bar')
+          .when(
+            (metadata: BindingConstraints): boolean =>
+              metadata.name === undefined,
+          );
+
+        container
+          .bind('Intl')
+          .toConstantValue({ hello: 'bonjour' })
+          .whenNamed('fr');
+        container
+          .bind('Intl')
+          .toConstantValue({ goodbye: 'au revoir' })
+          .whenNamed('fr');
+        container
+          .bind('Intl')
+          .toConstantValue({ hello: 'hola' })
+          .whenNamed('es');
+        container
+          .bind('Intl')
+          .toConstantValue({ goodbye: 'adios' })
+          .whenNamed('es');
+      });
+
+      describe('when called with no name option', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = container.getAll('Intl');
+        });
+
+        it('should return no bindings', () => {
+          expect(result).toStrictEqual([]);
+        });
+      });
+
+      describe('when called with name "fr"', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = container.getAll('Intl', { name: 'fr' });
+        });
+
+        it('should return only bindings named "fr"', () => {
+          expect(result).toStrictEqual([
+            { hello: 'bonjour' },
+            { goodbye: 'au revoir' },
+          ]);
+        });
+      });
+
+      describe('when called with name "es"', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = container.getAll('Intl', { name: 'es' });
+        });
+
+        it('should return only bindings named "es"', () => {
+          expect(result).toStrictEqual([
+            { hello: 'hola' },
+            { goodbye: 'adios' },
+          ]);
+        });
+      });
+    });
+
+    describe('when container has an unconstrained binding and named bindings for the same identifier', () => {
+      let container: Container;
+
+      beforeAll(() => {
+        container = new Container();
+
+        container.bind('Intl').toConstantValue({ hello: 'hello' });
+        container
+          .bind('Intl')
+          .toConstantValue({ hello: 'bonjour' })
+          .whenNamed('fr');
+        container
+          .bind('Intl')
+          .toConstantValue({ hello: 'hola' })
+          .whenNamed('es');
+      });
+
+      describe('when called with no name option', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = container.getAll('Intl');
+        });
+
+        it('should return only the unconstrained binding', () => {
+          expect(result).toStrictEqual([{ hello: 'hello' }]);
+        });
+      });
+
+      describe('when called with name "es"', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = container.getAll('Intl', { name: 'es' });
+        });
+
+        it('should return the unconstrained binding and the bindings named "es"', () => {
+          expect(result).toStrictEqual([{ hello: 'hello' }, { hello: 'hola' }]);
         });
       });
     });
