@@ -1,5 +1,13 @@
 # @inversifyjs/open-api-utils
 
+## 0.3.1
+
+### Patch Changes
+
+- Fixed OpenAPI 3.2 document base URI validation for declared `$self` and `$id` values
+- Updated dependencies
+  - @inversifyjs/json-schema-utils@0.5.0
+
 ## 0.3.0
 
 ### Minor Changes

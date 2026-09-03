@@ -1,6 +1,8 @@
----
-"@inversifyjs/json-schema-type-metadata": minor
----
+# @inversifyjs/json-schema-type-metadata
+
+## 0.2.0
+
+### Minor Changes
 
 - Added `AndTypeMetadata`.
 - Added `AnyTypeMetadata`.
