@@ -173,7 +173,7 @@ function buildBaseConfig() {
 const baseRules = buildBaseConfig();
 
 export default defineConfig(
-  globalIgnores(['vite.config.ts']),
+  globalIgnores(['vite.config.ts', 'tools/inversify-code-examples/**']),
   {
     ...baseRules,
     files: ['**/*.{ts,tsx}'],

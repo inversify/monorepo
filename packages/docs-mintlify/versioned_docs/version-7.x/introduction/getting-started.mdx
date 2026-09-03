@@ -3,16 +3,13 @@ sidebar_position: 1
 title: Getting started
 ---
 
-import CodeBlock from '@theme/CodeBlock';
-import gettingStartedSource from '@inversifyjs/code-examples/generated/examples/v7/gettingStarted.ts.txt';
+import { ExampleCodeBlock } from '/snippets/ExampleCodeBlock.tsx';
 
 # Getting started
 
 Start by installing `inversify` and `reflect-metadata`:
 
-```bash
-npm install inversify reflect-metadata
-```
+<ExampleCodeBlock language="bash">npm install inversify reflect-metadata</ExampleCodeBlock>
 
 Next, initialize your first container and add some bindings:
 
@@ -21,7 +18,10 @@ Make sure to enable [Experimental decorators](https://www.typescriptlang.org/tsc
 
 </Warning>
 
-<CodeBlock language="ts">{gettingStartedSource}</CodeBlock>
+<ExampleCodeBlock
+  filename="/code-examples/v7/gettingStarted.ts.txt"
+  language="ts"
+/>
 
 The `@injectable` decorator allows both `Katana` and `Ninja` classes to be used as container bindings. The `@inject` decorator provides metadata about `Ninja` dependencies, so the container knows that a `Katana` should be provided as the first argument of `Ninja`'s constructor.
 

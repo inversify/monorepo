@@ -58,6 +58,12 @@
                 "pages": [
                   "versioned_docs/version-6.x/introduction/getting-started"
                 ]
+              },
+              {
+                "group": "Fundamentals",
+                "pages": [
+                  "versioned_docs/version-6.x/fundamentals/binding"
+                ]
               }
             ]
           }

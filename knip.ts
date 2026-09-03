@@ -72,6 +72,11 @@ export default {
     "packages/docs/services/*": defaultWorkspaceProjectConfig,
     "packages/docs/tools/*": defaultWorkspaceProjectConfig,
     "packages/docs-mintlify": defaultWorkspaceProjectConfig,
+    "packages/docs-mintlify/tools/inversify-code-examples": {
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/docs/tools/binding-decorators-code-examples": {
       entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,

@@ -5,6 +5,7 @@ packages:
   - packages/docs/services/*
   - packages/docs/tools/*
   - packages/docs-mintlify
+  - packages/docs-mintlify/tools/*
   - packages/foundation/libraries/*
   - packages/foundation/tools/*
   - packages/framework/*
