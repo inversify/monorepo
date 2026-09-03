@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Getting started
 ---
 
+import GettingStartedSource from '../../snippets/code-examples/examples/v8/gettingStarted.ts.md'
+
 # Getting started
 
 Start by installing `inversify` and `reflect-metadata`:
@@ -20,6 +22,8 @@ Next, initialize your first container and add some bindings:
   Metadata](https://www.typescriptlang.org/tsconfig/#emitDecoratorMetadata)
   options in your `tsconfig.json` to use this library.
 </Warning>
+
+<GettingStartedSource />
 
 The `@injectable` decorator allows both `Katana` and `Ninja` classes to be used as container bindings. The `@inject` decorator provides metadata about `Ninja` dependencies, so the container knows that a `Katana` should be provided as the first argument of `Ninja`'s constructor.
 
