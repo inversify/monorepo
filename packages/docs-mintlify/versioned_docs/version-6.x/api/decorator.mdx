@@ -1,0 +1,175 @@
+---
+sidebar_position: 4
+title: Decorator
+---
+
+import DecoratorApiInjectConstructorArgumentSource from '../../../snippets/code-examples/examples/decoratorApiInjectConstructorArgument.ts.md'
+import DecoratorApiInjectPropertySource from '../../../snippets/code-examples/examples/decoratorApiInjectProperty.ts.md'
+import DecoratorApiMultiInjectPropertySource from '../../../snippets/code-examples/examples/decoratorApiMultiInjectProperty.ts.md'
+import DecoratorApiNamedSource from '../../../snippets/code-examples/examples/decoratorApiNamed.ts.md'
+import DecoratorApiOptionalSource from '../../../snippets/code-examples/examples/decoratorApiOptional.ts.md'
+import DecoratorApiPostConstructSource from '../../../snippets/code-examples/examples/decoratorApiPostConstruct.ts.md'
+import DecoratorApiPreDestroySource from '../../../snippets/code-examples/examples/decoratorApiPreDestroy.ts.md'
+import DecoratorApiTaggedSource from '../../../snippets/code-examples/examples/decoratorApiTagged.ts.md'
+import DecoratorApiUnmanagedSource from '../../../snippets/code-examples/examples/decoratorApiUnmanaged.ts.md'
+
+# Decorators
+
+This section covers Inversify decorators used to provide class metadata.
+
+## injectable
+
+Decorator used to set class metadata so containers can receive class-emitted metadata.
+
+It's highly recommended to annotate every class provided as a service with the `@injectable` decorator. However, it's not mandatory in every single case.
+
+### When is injectable mandatory?
+
+Whenever class-emitted metadata is expected.
+
+Consider the following sample code:
+
+```ts
+import 'reflect-metadata/lite';
+import { injectable } from 'inversify';
+
+@injectable()
+class B {
+  readonly foo: string = 'foo';
+}
+
+@injectable()
+class A {
+  constructor(public readonly b: B) {}
+}
+```
+
+A CommonJS transpilation with the [emitDecoratorMetadata](https://www.typescriptlang.org/tsconfig/#emitDecoratorMetadata) option enabled might look like this:
+
+```js
+Object.defineProperty(exports, '__esModule', { value: true });
+require('reflect-metadata');
+const inversify_1 = require('inversify');
+let B = class B {
+  foo = 'foo';
+};
+B = __decorate([(0, inversify_1.injectable)()], B);
+let A = class A {
+  b;
+  constructor(b) {
+    this.b = b;
+  }
+};
+A = __decorate(
+  [(0, inversify_1.injectable)(), __metadata('design:paramtypes', [B])],
+  A,
+);
+```
+
+TypeScript emits class metadata if and only if there are any class decorators applied to the target class. If we remove the `@injectable` from `A`, the transpiled code looks very different:
+
+```js
+Object.defineProperty(exports, '__esModule', { value: true });
+require('reflect-metadata');
+class B {
+  foo = 'foo';
+}
+class A {
+  b;
+  constructor(b) {
+    this.b = b;
+  }
+}
+```
+
+This time, no class metadata is emitted even if the `emitDecoratorMetadata` TypeScript option is enabled, causing trouble at execution time.
+
+## inject
+
+Decorator used to establish a relation between a constructor argument or a class property and a service ID.
+
+When resolving an instance of the class, the target constructor argument or property will be resolved in the same way [container.get](./container.mdx#get) behaves.
+
+### Example: decorating a class constructor argument
+
+<DecoratorApiInjectConstructorArgumentSource />
+
+### Example: decorating a property
+
+<DecoratorApiInjectPropertySource />
+
+## multiInject
+
+Decorator used to establish a relation between a constructor argument or a class property and a service ID.
+
+When resolving an instance of the class, the target constructor argument or property will be resolved in the same way [container.getAll](./container.mdx#getall) behaves with the `enforceBindingConstraints` flag enabled.
+
+### Example: decorating a property
+
+<DecoratorApiMultiInjectPropertySource />
+
+## named
+
+Decorator used to establish a relation between a constructor argument or a class property and a metadata name.
+
+<DecoratorApiNamedSource />
+
+## optional
+
+Decorator used to establish that a target constructor argument or property is optional and, therefore, it shall not be resolved if no bindings are found for the associated service ID.
+
+<DecoratorApiOptionalSource />
+
+## postConstruct
+
+Decorator used to establish an activation handler for the target class. Refer to the [docs](../fundamentals/lifecycle/activation.mdx) for more information.
+
+<DecoratorApiPostConstructSource />
+
+## preDestroy
+
+Decorator used to establish a deactivation handler for the target class. Refer to the [docs](../fundamentals/lifecycle/deactivation.mdx) for more information.
+
+<DecoratorApiPreDestroySource />
+
+## tagged
+
+Decorator used to establish a relation between a constructor argument or a class property and a metadata tag.
+
+<DecoratorApiTaggedSource />
+
+## targetName
+
+Decorator used to establish a relation between a constructor argument or a class property name at design time.
+
+Bundlers might minify code, altering class property names. This decorator keeps track of the original name.
+
+This property is kept in the `name` property of the `target` request in a binding constraint.
+
+```ts
+@injectable()
+class Ninja implements Ninja {
+  public katana: Weapon;
+  public shuriken: Weapon;
+  constructor(
+    @inject('Weapon') @targetName('katana') katana: Weapon,
+    @inject('Weapon') @targetName('shuriken') shuriken: Weapon,
+  ) {
+    this.katana = katana;
+    this.shuriken = shuriken;
+  }
+}
+
+container
+  .bind<Weapon>('Weapon')
+  .to(Katana)
+  .when((request: interfaces.Request) => {
+    return request.target.name.equals('katana');
+  });
+```
+
+## unmanaged
+
+Decorator used to establish that Inversify should not inject the target constructor argument or property whatsoever.
+
+<DecoratorApiUnmanagedSource />
