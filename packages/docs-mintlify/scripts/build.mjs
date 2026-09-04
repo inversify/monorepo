@@ -81,7 +81,61 @@ function assertPagesExist(docs) {
   console.log(`checked ${pages.length} navigation pages`);
 }
 
+function assertGeneratedCodeExamplesAreStaged() {
+  if (process.env.CI === undefined || process.env.CI === '') {
+    return;
+  }
+
+  const result = spawnSync(
+    'git',
+    [
+      'status',
+      '--porcelain',
+      '--untracked-files=all',
+      '--',
+      'snippets/code-examples',
+    ],
+    {
+      cwd: root,
+      encoding: 'utf8',
+    },
+  );
+
+  if (result.error !== undefined) {
+    fail(`unable to check generated code examples: ${result.error.message}`);
+  }
+
+  if (result.status !== 0) {
+    fail(
+      `unable to check generated code examples: ${result.stderr.trim() || `git exited with ${result.status}`}`,
+    );
+  }
+
+  const dirty = result.stdout.split('\n').filter((line) => {
+    if (line === '') {
+      return false;
+    }
+
+    // Untracked files are created and not staged.
+    if (line.startsWith('??')) {
+      return true;
+    }
+
+    // Porcelain format is "XY path"; Y is the unstaged status.
+    return line.length >= 2 && line[1] !== ' ';
+  });
+
+  if (dirty.length > 0) {
+    fail(
+      `generated code examples have unstaged changes. Run \`pnpm run generate:code:examples\` and commit the result.\n${dirty.join('\n')}`,
+    );
+  }
+
+  console.log('generated code examples are clean');
+}
+
 const docs = loadDocsConfig();
 assertFavicon(docs);
 assertPagesExist(docs);
+assertGeneratedCodeExamplesAreStaged();
 console.log('mintlify docs build checks passed');
