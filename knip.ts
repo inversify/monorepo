@@ -175,9 +175,12 @@ export default {
     "packages/framework/http/tools/create-http": {
       entry: [
         "bin/create-inversify-http.js",
+        "evals/add-resource/*.mjs",
+        "evals/add-resource/providers/*.mjs",
         "src/cli/runCreateHttp.entrypoint.ts",
         "src/index.ts",
       ],
+      ignoreDependencies: ["@openai/codex-sdk", "@opencode-ai/sdk"],
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/framework/validation/libraries/*": defaultWorkspaceProjectConfig,

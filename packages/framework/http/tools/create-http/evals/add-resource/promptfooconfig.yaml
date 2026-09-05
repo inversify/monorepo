@@ -1,0 +1,20 @@
+description: Evaluate the generated add-resource agent skill
+
+prompts:
+  - '{{request}}'
+
+providers:
+  - file://providers/opencode.yaml
+
+outputPath: ./results/eval.json
+
+defaultTest:
+  options:
+    disableVarExpansion: true
+  assert:
+    - type: skill-used
+      value: add-resource
+    - type: javascript
+      value: file://assertResource.mjs
+
+tests: file://testCases.yaml

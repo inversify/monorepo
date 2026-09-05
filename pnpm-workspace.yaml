@@ -34,6 +34,9 @@ allowBuilds:
   msgpackr-extract: false
   keytar: true
   puppeteer: true
+  '@playwright/browser-chromium': false
+  onnxruntime-node: false
+  protobufjs: false
 
 minimumReleaseAge: 1440
 overrides:

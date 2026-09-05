@@ -14,10 +14,14 @@
     "ts-morph": "28.0.0"
   },
   "devDependencies": {
+    "@cursor/sdk": "1.0.31",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
+    "@openai/codex-sdk": "0.153.2",
+    "@opencode-ai/sdk": "1.18.28",
     "@types/node": "24.13.3",
     "@vitest/coverage-v8": "4.1.11",
     "eslint": "10.9.1",
+    "promptfoo": "0.122.2",
     "rimraf": "6.1.3",
     "typescript": "6.0.3",
     "vitest": "4.1.11"
@@ -64,6 +68,8 @@
   "scripts": {
     "build": "tsc",
     "build:clean": "rimraf lib",
+    "eval:skill:add-resource": "pnpm run eval:skill:add-resource:prepare && node ./evals/add-resource/runEval.mjs",
+    "eval:skill:add-resource:prepare": "pnpm run build && node ./evals/add-resource/prepareWorkspaces.mjs",
     "format": "prettier --write ./src",
     "lint": "eslint ./src",
     "prebuild": "pnpm run build:clean",

@@ -1,0 +1,19 @@
+id: opencode:sdk
+config:
+  working_dir: '{{workspaceDir}}'
+  agent: build
+  tools:
+    bash: true
+    edit: true
+    glob: true
+    grep: true
+    list: true
+    patch: true
+    read: true
+    skill: true
+    write: true
+  permission:
+    bash: allow
+    edit: allow
+    external_directory: deny
+    skill: allow

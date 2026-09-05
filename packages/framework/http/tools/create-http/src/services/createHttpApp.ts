@@ -182,6 +182,13 @@ export async function createHttpApp(
     'prisma.config.ts',
   );
   await copyTemplateDirectory('prisma', projectPath, baseTemplateRoot);
+  await copyTemplateDirectory('.agents/skills', projectPath, baseTemplateRoot);
+  await copyTemplateFile(
+    '.agents/skills/add-resource/SKILL.md',
+    projectPath,
+    baseTemplateRoot,
+    '.claude/skills/add-resource/SKILL.md',
+  );
 
   if (packageManager === PackageManager.pnpm) {
     await fs.writeFile(
