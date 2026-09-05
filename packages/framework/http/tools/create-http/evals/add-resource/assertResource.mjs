@@ -234,8 +234,7 @@ export default async function assertResource(_output, context) {
           fieldAttribute === undefined
             ? expectedFragments
             : expectedFragments.filter(
-                (fragment) =>
-                  !fieldContainsFragment(fieldAttribute, fragment),
+                (fragment) => !fieldContainsFragment(fieldAttribute, fragment),
               );
         results.push({
           pass: fieldAttribute !== undefined && missingFragments.length === 0,
