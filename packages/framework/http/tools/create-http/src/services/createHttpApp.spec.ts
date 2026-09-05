@@ -58,6 +58,10 @@ describe(createHttpApp, () => {
         expect(agentSkillContents).toContain(
           'Keep HTTP decorators and request models out of domain and application layers.',
         );
+        expect(agentSkillContents).toContain('Prisma columns are snake_case');
+        expect(agentSkillContents).toContain(
+          'do not copy that as camelCase in Prisma',
+        );
 
         const tsconfigContents: string = await fs.readFile(
           path.join(projectPath, 'tsconfig.json'),

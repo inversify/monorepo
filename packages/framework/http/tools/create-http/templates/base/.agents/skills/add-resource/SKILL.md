@@ -33,6 +33,8 @@ Ask a focused question only when a missing choice would materially change the pu
 ## Preserve project conventions
 
 - Keep `.js` extensions in TypeScript import specifiers.
+- Prisma columns are snake_case (`created_at`, `order_number`, `price_cents`). Todo only uses single-word columns (`title`, `completed`); do not copy that as camelCase in Prisma (`priceCents`). Map snake_case columns to camelCase in the domain and API layers.
+- Put owned child records in the same resource folder as the aggregate root.
 - Match the Todo resource's pagination and soft-delete behavior when those features are requested.
 - Use API builders to map domain values to versioned response models.
 - Keep HTTP decorators and request models out of domain and application layers.

@@ -1,0 +1,106 @@
+name: Evaluate create-http add-resource skill
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.eval_agent }}
+  cancel-in-progress: false
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Must match your username"
+        required: true
+        type: choice
+        options:
+          - notaphplover
+      eval_agent:
+        description: "Coding agent backend"
+        required: true
+        type: choice
+        default: opencode
+        options:
+          - opencode
+          - codex
+          - cursor
+
+permissions:
+  contents: read
+
+jobs:
+  eval-add-resource:
+    name: Evaluate add-resource skill
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment:
+      name: ${{ inputs.environment }}
+    steps:
+      - name: Validate environment matches actor
+        run: |
+          echo "Actor: ${{ github.actor }}"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Eval agent: ${{ inputs.eval_agent }}"
+
+          if [ "${{ inputs.environment }}" != "${{ github.actor }}" ]; then
+            echo "::error::Environment must match your username"
+            exit 1
+          fi
+
+      - name: Verify agent credentials
+        env:
+          EVAL_AGENT: ${{ inputs.eval_agent }}
+          CURSOR_API_KEY: ${{ inputs.eval_agent == 'cursor' && secrets.CURSOR_API_KEY || '' }}
+          OPENAI_API_KEY: ${{ (inputs.eval_agent == 'codex' || inputs.eval_agent == 'opencode') && secrets.OPENAI_API_KEY || '' }}
+          ANTHROPIC_API_KEY: ${{ inputs.eval_agent == 'opencode' && secrets.ANTHROPIC_API_KEY || '' }}
+        run: |
+          missing=0
+
+          if [ "$EVAL_AGENT" = "cursor" ] && [ -z "$CURSOR_API_KEY" ]; then
+            echo "::error::CURSOR_API_KEY is required for eval_agent=cursor"
+            missing=1
+          fi
+
+          if [ "$EVAL_AGENT" = "codex" ] && [ -z "$OPENAI_API_KEY" ]; then
+            echo "::error::OPENAI_API_KEY is required for eval_agent=codex"
+            missing=1
+          fi
+
+          if [ "$EVAL_AGENT" = "opencode" ]; then
+            if [ -z "$OPENAI_API_KEY" ]; then
+              echo "::error::OPENAI_API_KEY is required for eval_agent=opencode"
+              missing=1
+            fi
+
+            if [ -z "$ANTHROPIC_API_KEY" ]; then
+              echo "::error::ANTHROPIC_API_KEY is required for eval_agent=opencode"
+              missing=1
+            fi
+          fi
+
+          exit "$missing"
+
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - uses: ./.github/actions/setup
+
+      - name: Install OpenCode CLI
+        if: ${{ inputs.eval_agent == 'opencode' }}
+        run: npm install --global opencode-ai@1.18.28
+
+      - name: Run add-resource skill eval
+        working-directory: packages/framework/http/tools/create-http
+        env:
+          EVAL_AGENT: ${{ inputs.eval_agent }}
+          CURSOR_API_KEY: ${{ inputs.eval_agent == 'cursor' && secrets.CURSOR_API_KEY || '' }}
+          OPENAI_API_KEY: ${{ (inputs.eval_agent == 'codex' || inputs.eval_agent == 'opencode') && secrets.OPENAI_API_KEY || '' }}
+          ANTHROPIC_API_KEY: ${{ inputs.eval_agent == 'opencode' && secrets.ANTHROPIC_API_KEY || '' }}
+        run: pnpm run eval:skill:add-resource
+
+      - name: Upload eval results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: add-resource-eval-${{ inputs.eval_agent }}
+          path: |
+            packages/framework/http/tools/create-http/evals/add-resource/results/
+            !packages/framework/http/tools/create-http/evals/add-resource/results/.promptfoo
+            !packages/framework/http/tools/create-http/evals/add-resource/results/.promptfoo/**
+          if-no-files-found: warn

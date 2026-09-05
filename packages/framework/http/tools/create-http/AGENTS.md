@@ -299,9 +299,15 @@ pnpm run --filter @inversifyjs/create-http build
 
 The `add-resource` skill also has an opt-in Promptfoo evaluation. It creates disposable Express/PostgreSQL apps, runs the skill against a simple resource and a relational aggregate, then inspects the generated files for the requested contract and architectural boundaries. The agent runs the generated app's normal validation inside its provider sandbox; the host-side assertions never execute model-modified project scripts. The evaluation is intentionally separate from the normal test suite because it invokes an external coding model.
 
+The default coding agent is OpenCode (`opencode:sdk`). Swap agents with `EVAL_AGENT=opencode|codex|cursor`. OpenCode needs the OpenCode CLI plus its configured model credentials. Codex needs an OpenAI/Codex key. Cursor needs `CURSOR_API_KEY`. Codex uses `danger-full-access` so the run is not blocked by Ubuntu 24.04 `bwrap` AppArmor restrictions; isolation is the disposable workspace.
+
 ```bash
 pnpm run --filter @inversifyjs/create-http eval:skill:add-resource
+EVAL_AGENT=codex pnpm run --filter @inversifyjs/create-http eval:skill:add-resource
+EVAL_AGENT=cursor pnpm run --filter @inversifyjs/create-http eval:skill:add-resource
 ```
+
+GitHub Actions: `Evaluate create-http add-resource skill` (`workflow_dispatch`). Choose environment `notaphplover` (must match the actor) and `eval_agent` `opencode|codex|cursor`. The job checks the mapped environment secret is present (`CURSOR_API_KEY` for Cursor, `OPENAI_API_KEY` for Codex, `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` for OpenCode), then uploads `evals/add-resource/results/` except Promptfoo's local `.promptfoo` database. The Cursor provider is `providers/cursorProvider.mjs`; do not wrap it in a YAML `id`. Cursor uses `settingSources: []` so it does not inherit this monorepo's skill catalog, tells the agent to read `.agents/skills/add-resource/SKILL.md` in the disposable workspace, and counts `skill-used` only when that workspace copy (or the `.claude` twin) is read.
 
 Important coverage areas:
 

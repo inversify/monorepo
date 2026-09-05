@@ -4,14 +4,9 @@ prompts:
   - '{{request}}'
 
 providers:
-  - id: openai:codex-sdk
-    config:
-      working_dir: '{{workspaceDir}}'
-      skip_git_repo_check: true
-      sandbox_mode: workspace-write
-      approval_policy: never
-      network_access_enabled: false
-      enable_streaming: true
+  - file://providers/opencode.yaml
+
+outputPath: ./results/eval.json
 
 defaultTest:
   options:
