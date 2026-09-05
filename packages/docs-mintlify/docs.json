@@ -45,7 +45,65 @@
               {
                 "group": "Introduction",
                 "pages": [
-                  "versioned_docs/version-7.x/introduction/getting-started"
+                  "versioned_docs/version-7.x/introduction/getting-started",
+                  "versioned_docs/version-7.x/introduction/dependency-inversion"
+                ]
+              },
+              {
+                "group": "Fundamentals",
+                "pages": [
+                  "versioned_docs/version-7.x/fundamentals/binding",
+                  "versioned_docs/version-7.x/fundamentals/di-hierarchy",
+                  {
+                    "group": "Lifecycle",
+                    "pages": [
+                      "versioned_docs/version-7.x/fundamentals/lifecycle/activation",
+                      "versioned_docs/version-7.x/fundamentals/lifecycle/deactivation"
+                    ]
+                  },
+                  "versioned_docs/version-7.x/fundamentals/inheritance",
+                  "versioned_docs/version-7.x/fundamentals/plugins",
+                  "versioned_docs/version-7.x/fundamentals/snapshot"
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "versioned_docs/version-7.x/api/binding-syntax",
+                  "versioned_docs/version-7.x/api/container",
+                  "versioned_docs/version-7.x/api/container-module",
+                  "versioned_docs/version-7.x/api/decorator",
+                  "versioned_docs/version-7.x/api/decorate",
+                  "versioned_docs/version-7.x/api/lazy-service-identifier",
+                  "versioned_docs/version-7.x/api/service-identifier"
+                ]
+              },
+              {
+                "group": "FAQ",
+                "pages": [
+                  "versioned_docs/version-7.x/faq/requirements",
+                  "versioned_docs/version-7.x/faq/using-bundlers"
+                ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
+                  "versioned_docs/version-7.x/guides/migrating-from-v6"
+                ]
+              },
+              {
+                "group": "Ecosystem",
+                "pages": [
+                  "versioned_docs/version-7.x/ecosystem/binding-decorators",
+                  "versioned_docs/version-7.x/ecosystem/framework",
+                  "versioned_docs/version-7.x/ecosystem/strongly-typed",
+                  "versioned_docs/version-7.x/ecosystem/suites"
+                ]
+              },
+              {
+                "group": "Internals",
+                "pages": [
+                  "versioned_docs/version-7.x/internals/planning"
                 ]
               }
             ]

@@ -1,0 +1,90 @@
+---
+sidebar_position: 5
+title: Plugins
+---
+
+# Plugins
+
+InversifyJS provides a plugin system that allows you to extend the container's functionality. Plugins can add new methods to the container, hook into the container's lifecycle, and interact with the container's internal services.
+
+## Creating a Plugin
+
+:::danger
+
+Plugins are, at the moment, an experimental feature and may change in future releases. Use them at your own risk.
+
+:::
+
+To create a plugin, you need to extend the `Plugin` class from `@inversifyjs/plugin` and implement the `load` method. The `load` method receives a `PluginApi` object that allows the plugin to define new methods on the container and hook into the container's resolution process.
+
+```typescript
+import { Plugin, PluginApi, PluginContext } from '@inversifyjs/plugin';
+import { Container } from 'inversify';
+
+// Extend the container with plugin defined methods
+declare module 'inversify' {
+  interface Container {
+    myMethod(...args: any[]): string;
+  }
+}
+
+class MyPlugin extends Plugin<Container> {
+  public load(api: PluginApi): void {
+    // Define a new method on the container
+    api.define('myMethod', (...args) => {
+      // Implementation of the method
+      return 'Result of myMethod';
+    });
+
+    // Hook into the container's plan phase
+    api.onPlan((options, result) => {
+      // Do something with the plan result
+      console.log(`Planning resolution for ${String(options.serviceId)}`);
+    });
+  }
+}
+```
+
+## Plugin Context
+
+When a plugin is created, it receives a container instance and a plugin context. The plugin context provides access to the container's internal services:
+
+- `activationService`: Manages the activation handlers for services (binding activation is set in the binding).
+- `bindingService`: Manages the bindings in the container.
+- `deactivationService`: Manages the deactivation handlers for services (binding deactivation is set in the binding).
+- `planResultCacheService`: Manages the cache of plan results.
+
+These services allow plugins to interact with the container's core functionality and provide advanced extensions.
+
+## Registering a Plugin
+
+To use a plugin, you need to register it with the container using the `register` method:
+
+```typescript
+const container = new Container();
+container.register(MyPlugin);
+```
+
+Once registered, the plugin can add methods to the container, hook into the container's lifecycle, and modify the container's behavior.
+
+## Plugin API
+
+The `PluginApi` interface provides the following methods:
+
+### define
+
+```typescript
+define(name: string | symbol, method: (...args: any[]) => unknown): void
+```
+
+Defines a new method on the container. The method will be available on the container instance after the plugin is registered.
+
+### onPlan
+
+```typescript
+onPlan(handler: (options: GetPlanOptions, result: PlanResult) => void): void
+```
+
+Registers a handler that is called when the container plans a resolution. This can be used to modify the resolution plan or perform additional actions during the resolution process.
+
+Plugins provide a clean way to extend InversifyJS without modifying its core code, allowing for modular and maintainable extensions.
