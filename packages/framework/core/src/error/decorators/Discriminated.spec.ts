@@ -5,7 +5,7 @@ vitest.mock(import('../calculations/buildErrorDiscriminatorMetadata.js'));
 
 import {
   buildEmptyArrayMetadata,
-  updateReflectMetadata,
+  updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
 import { errorDiscriminatorMetadataReflectKey } from '../../reflectMetadata/data/errorDiscriminatorMetadataReflectKey.js';
@@ -41,8 +41,8 @@ describe(Discriminated, () => {
         );
       });
 
-      it('should call updateReflectMetadata', () => {
-        expect(updateReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+      it('should call updateOwnReflectMetadata', () => {
+        expect(updateOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
           targetFixture,
           errorDiscriminatorMetadataReflectKey,
           buildEmptyArrayMetadata,

@@ -11,18 +11,18 @@ describe(buildErrorDiscriminatorMetadata, () => {
     describe('when called', () => {
       beforeAll(() => {
         discriminatorFixture = 'child-error';
-        discriminatorsFixture = ['parent-error'];
+        discriminatorsFixture = ['sibling-error'];
         result = buildErrorDiscriminatorMetadata(discriminatorFixture)(
           discriminatorsFixture,
         );
       });
 
-      it('should return the discriminator before inherited metadata', () => {
-        expect(result).toStrictEqual(['child-error', 'parent-error']);
+      it('should return the discriminator before existing own metadata', () => {
+        expect(result).toStrictEqual(['child-error', 'sibling-error']);
       });
 
-      it('should not mutate inherited metadata', () => {
-        expect(discriminatorsFixture).toStrictEqual(['parent-error']);
+      it('should not mutate existing own metadata', () => {
+        expect(discriminatorsFixture).toStrictEqual(['sibling-error']);
         expect(result).not.toBe(discriminatorsFixture);
       });
     });

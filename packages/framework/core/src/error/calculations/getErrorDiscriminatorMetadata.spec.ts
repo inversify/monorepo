@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
-import { getReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
+import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 
 import { errorDiscriminatorMetadataReflectKey } from '../../reflectMetadata/data/errorDiscriminatorMetadataReflectKey.js';
 import { getErrorDiscriminatorMetadata } from './getErrorDiscriminatorMetadata.js';
@@ -18,13 +18,13 @@ describe(getErrorDiscriminatorMetadata, () => {
       targetFixture = class TestError extends Error {};
       expectedResult = ['test-error'];
 
-      vitest.mocked(getReflectMetadata).mockReturnValueOnce(expectedResult);
+      vitest.mocked(getOwnReflectMetadata).mockReturnValueOnce(expectedResult);
 
       result = getErrorDiscriminatorMetadata(targetFixture);
     });
 
-    it('should call getReflectMetadata', () => {
-      expect(getReflectMetadata).toHaveBeenCalledExactlyOnceWith(
+    it('should call getOwnReflectMetadata', () => {
+      expect(getOwnReflectMetadata).toHaveBeenCalledExactlyOnceWith(
         targetFixture,
         errorDiscriminatorMetadataReflectKey,
       );
