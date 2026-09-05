@@ -1,0 +1,59 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJs Mintlify docs site package",
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@inversifyjs/code-examples": "workspace:*",
+    "@mintlify/cli": "4.0.1444",
+    "@eslint/config-helpers": "0.7.0",
+    "@eslint/js": "10.0.1",
+    "@types/react": "19.2.18",
+    "eslint": "10.8.1",
+    "eslint-plugin-prettier": "5.5.6",
+    "eslint-plugin-simple-import-sort": "14.0.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.67.0"
+  },
+  "homepage": "https://inversify.io",
+  "keywords": [
+    "dependency injection",
+    "dependency inversion",
+    "di",
+    "inversion of control container",
+    "ioc",
+    "javascript",
+    "node",
+    "typescript"
+  ],
+  "devEngines": {
+    "node": "^24.10.0",
+    "pnpm": "^11.0.0"
+  },
+  "license": "MIT",
+  "name": "@inversifyjs/inversify-mintlify-docs-site",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "start": "mintlify dev",
+    "build": "node ./scripts/build.mjs && tsc",
+    "export": "mintlify export",
+    "format": "prettier --write .",
+    "generate:code:examples": "node ./scripts/generateCodeExamples.mjs",
+    "lint": "eslint",
+    "prebuild": "pnpm run generate:code:examples",
+    "validate": "mintlify validate"
+  }
+}

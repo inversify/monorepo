@@ -13,7 +13,9 @@ import { type Readable } from 'node:stream';
 import {
   ApplyMiddleware,
   CatchError,
+  Discriminated,
   type ErrorFilter,
+  getErrorDiscriminatorMetadata,
   type Guard,
   type Middleware,
   UseErrorFilter,
@@ -205,6 +207,137 @@ class TestSharedHandleErrorController {
   }
 }
 
+@Discriminated('foo')
+class FooError extends Error {}
+
+@Discriminated('foo-child')
+class FooChildError extends FooError {}
+
+@CatchError(FooChildError)
+class ChildFilter implements ErrorFilter<
+  FooChildError,
+  TestRequest,
+  TestResponse,
+  void
+> {
+  public static readonly catchMock: Mock<
+    (error: FooChildError, request: TestRequest, response: TestResponse) => void
+  > = vitest.fn();
+
+  public catch(
+    error: FooChildError,
+    request: TestRequest,
+    response: TestResponse,
+  ): void {
+    ChildFilter.catchMock(error, request, response);
+  }
+}
+
+@CatchError(FooError)
+class ParentFilter implements ErrorFilter<
+  FooError,
+  TestRequest,
+  TestResponse,
+  void
+> {
+  public static readonly catchMock: Mock<
+    (error: FooError, request: TestRequest, response: TestResponse) => void
+  > = vitest.fn();
+
+  public catch(
+    error: FooError,
+    request: TestRequest,
+    response: TestResponse,
+  ): void {
+    ParentFilter.catchMock(error, request, response);
+  }
+}
+
+@Controller('/users')
+@UseErrorFilter(ParentFilter)
+class UsersController {
+  @Get()
+  @UseErrorFilter(ChildFilter)
+  public list(): string {
+    throw new FooError();
+  }
+}
+
+class SpecialFooError extends FooError {}
+
+@CatchError(SpecialFooError)
+class SpecialFilter implements ErrorFilter<
+  SpecialFooError,
+  TestRequest,
+  TestResponse,
+  void
+> {
+  public static readonly catchMock: Mock<
+    (
+      error: SpecialFooError,
+      request: TestRequest,
+      response: TestResponse,
+    ) => void
+  > = vitest.fn();
+
+  public catch(
+    error: SpecialFooError,
+    request: TestRequest,
+    response: TestResponse,
+  ): void {
+    SpecialFilter.catchMock(error, request, response);
+  }
+}
+
+@Controller('/special')
+@UseErrorFilter(ParentFilter)
+class SpecialFooController {
+  @Get()
+  @UseErrorFilter(SpecialFilter)
+  public list(): string {
+    return 'ok';
+  }
+}
+
+@Discriminated('phantom-foo')
+class FooErrorCopy1 extends Error {}
+
+@Discriminated('phantom-foo')
+class FooErrorCopy2 extends Error {}
+
+@CatchError(FooErrorCopy1)
+class PhantomFooFilter implements ErrorFilter<
+  FooErrorCopy1,
+  TestRequest,
+  TestResponse,
+  void
+> {
+  public static readonly catchMock: Mock<
+    (
+      error: FooErrorCopy1 | FooErrorCopy2,
+      request: TestRequest,
+      response: TestResponse,
+    ) => void
+  > = vitest.fn();
+
+  public catch(
+    error: FooErrorCopy1,
+    request: TestRequest,
+    response: TestResponse,
+  ): void {
+    PhantomFooFilter.catchMock(error, request, response);
+  }
+}
+
+@Controller('/phantom')
+@UseErrorFilter(PhantomFooFilter)
+class PhantomController {
+  @Get()
+  public get(): string {
+    return 'ok';
+  }
+}
+
 function buildContainer(): Container {
   const container: Container = new Container();
 
@@ -220,6 +353,35 @@ function buildSharedHandleErrorContainer(): Container {
   container.bind(TestGuard).toSelf().inSingletonScope();
   container.bind(TestMiddleware).toSelf().inSingletonScope();
   container.bind(TestSharedHandleErrorController).toSelf().inSingletonScope();
+
+  return container;
+}
+
+function buildDiscriminatedErrorContainer(): Container {
+  const container: Container = new Container();
+
+  container.bind(ChildFilter).toSelf().inSingletonScope();
+  container.bind(ParentFilter).toSelf().inSingletonScope();
+  container.bind(UsersController).toSelf().inSingletonScope();
+
+  return container;
+}
+
+function buildSpecialFooErrorContainer(): Container {
+  const container: Container = new Container();
+
+  container.bind(SpecialFilter).toSelf().inSingletonScope();
+  container.bind(ParentFilter).toSelf().inSingletonScope();
+  container.bind(SpecialFooController).toSelf().inSingletonScope();
+
+  return container;
+}
+
+function buildPhantomConstructorErrorContainer(): Container {
+  const container: Container = new Container();
+
+  container.bind(PhantomFooFilter).toSelf().inSingletonScope();
+  container.bind(PhantomController).toSelf().inSingletonScope();
 
   return container;
 }
@@ -364,6 +526,244 @@ describe(InversifyHttpAdapter, () => {
         it('should handle the error with the route error filter', () => {
           expect(TestErrorFilter.catchMock).toHaveBeenCalledExactlyOnceWith(
             TestGuard.errorFixture,
+            requestFixture,
+            responseFixture,
+          );
+        });
+      });
+    });
+
+    describe('having a method child filter and a controller parent filter', () => {
+      let routeParams: RouteParams<TestRequest, TestResponse, () => void, void>;
+      let requestFixture: TestRequest;
+      let responseFixture: TestResponse;
+
+      beforeAll(async () => {
+        const adapter: TestHttpAdapter = new TestHttpAdapter(
+          buildDiscriminatedErrorContainer(),
+        );
+
+        await adapter.build();
+
+        [routeParams] = adapter.routerParamsList[0]?.routeParamsList as [
+          RouteParams<TestRequest, TestResponse, () => void, void>,
+        ];
+
+        requestFixture = { id: 'request' };
+        responseFixture = { id: 'response' };
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should store own child discriminators without flattened parent metadata', () => {
+        expect(getErrorDiscriminatorMetadata(FooChildError)).toStrictEqual([
+          'foo-child',
+        ]);
+        expect(getErrorDiscriminatorMetadata(FooError)).toStrictEqual(['foo']);
+      });
+
+      describe('when handleError is called with a parent FooError', () => {
+        let errorFixture: FooError;
+
+        beforeAll(async () => {
+          errorFixture = new FooError();
+
+          await routeParams.handleError(
+            requestFixture,
+            responseFixture,
+            errorFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should handle the error with the parent error filter', () => {
+          expect(ParentFilter.catchMock).toHaveBeenCalledExactlyOnceWith(
+            errorFixture,
+            requestFixture,
+            responseFixture,
+          );
+        });
+
+        it('should not handle the error with the child error filter', () => {
+          expect(ChildFilter.catchMock).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('when handleError is called with a child FooChildError', () => {
+        let errorFixture: FooChildError;
+
+        beforeAll(async () => {
+          errorFixture = new FooChildError();
+
+          await routeParams.handleError(
+            requestFixture,
+            responseFixture,
+            errorFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should handle the error with the child error filter', () => {
+          expect(ChildFilter.catchMock).toHaveBeenCalledExactlyOnceWith(
+            errorFixture,
+            requestFixture,
+            responseFixture,
+          );
+        });
+
+        it('should not handle the error with the parent error filter', () => {
+          expect(ParentFilter.catchMock).not.toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('having an undecorated child type filter and a parent discriminator filter', () => {
+      let routeParams: RouteParams<TestRequest, TestResponse, () => void, void>;
+      let requestFixture: TestRequest;
+      let responseFixture: TestResponse;
+
+      beforeAll(async () => {
+        const adapter: TestHttpAdapter = new TestHttpAdapter(
+          buildSpecialFooErrorContainer(),
+        );
+
+        await adapter.build();
+
+        [routeParams] = adapter.routerParamsList[0]?.routeParamsList as [
+          RouteParams<TestRequest, TestResponse, () => void, void>,
+        ];
+
+        requestFixture = { id: 'request' };
+        responseFixture = { id: 'response' };
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      describe('when handleError is called with a SpecialFooError', () => {
+        let errorFixture: SpecialFooError;
+
+        beforeAll(async () => {
+          errorFixture = new SpecialFooError();
+
+          await routeParams.handleError(
+            requestFixture,
+            responseFixture,
+            errorFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should handle the error with the more specific type filter', () => {
+          expect(SpecialFilter.catchMock).toHaveBeenCalledExactlyOnceWith(
+            errorFixture,
+            requestFixture,
+            responseFixture,
+          );
+        });
+
+        it('should not handle the error with the parent error filter', () => {
+          expect(ParentFilter.catchMock).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('when handleError is called with a parent FooError', () => {
+        let errorFixture: FooError;
+
+        beforeAll(async () => {
+          errorFixture = new FooError();
+
+          await routeParams.handleError(
+            requestFixture,
+            responseFixture,
+            errorFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should handle the error with the parent error filter', () => {
+          expect(ParentFilter.catchMock).toHaveBeenCalledExactlyOnceWith(
+            errorFixture,
+            requestFixture,
+            responseFixture,
+          );
+        });
+
+        it('should not handle the error with the child type filter', () => {
+          expect(SpecialFilter.catchMock).not.toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('having a filter registered for a phantom constructor copy', () => {
+      let routeParams: RouteParams<TestRequest, TestResponse, () => void, void>;
+      let requestFixture: TestRequest;
+      let responseFixture: TestResponse;
+
+      beforeAll(async () => {
+        const adapter: TestHttpAdapter = new TestHttpAdapter(
+          buildPhantomConstructorErrorContainer(),
+        );
+
+        await adapter.build();
+
+        [routeParams] = adapter.routerParamsList[0]?.routeParamsList as [
+          RouteParams<TestRequest, TestResponse, () => void, void>,
+        ];
+
+        requestFixture = { id: 'request' };
+        responseFixture = { id: 'response' };
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should treat the two constructors as distinct types', () => {
+        expect(new FooErrorCopy2() instanceof FooErrorCopy1).toBe(false);
+        expect(getErrorDiscriminatorMetadata(FooErrorCopy1)).toStrictEqual([
+          'phantom-foo',
+        ]);
+        expect(getErrorDiscriminatorMetadata(FooErrorCopy2)).toStrictEqual([
+          'phantom-foo',
+        ]);
+      });
+
+      describe('when handleError is called with the other constructor copy', () => {
+        let errorFixture: FooErrorCopy2;
+
+        beforeAll(async () => {
+          errorFixture = new FooErrorCopy2();
+
+          await routeParams.handleError(
+            requestFixture,
+            responseFixture,
+            errorFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should handle the error with the filter registered for the first copy', () => {
+          expect(PhantomFooFilter.catchMock).toHaveBeenCalledExactlyOnceWith(
+            errorFixture,
             requestFixture,
             responseFixture,
           );

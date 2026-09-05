@@ -1,3 +1,5 @@
+export { getErrorDiscriminatorMetadata } from './error/calculations/getErrorDiscriminatorMetadata.js';
+export { Discriminated } from './error/decorators/Discriminated.js';
 export { getCatchErrorMetadata } from './error-filter/calculations/getCatchErrorMetadata.js';
 export { getClassErrorFilterMetadata } from './error-filter/calculations/getClassErrorFilterMetadata.js';
 export { getClassMethodErrorFilterMetadata } from './error-filter/calculations/getClassMethodErrorFilterMetadata.js';

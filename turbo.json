@@ -11,6 +11,11 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/docs-mintlify#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["scripts/**/*.{mjs,js}", "src/**/*.{cts,mts,ts}"],
+      "outputs": ["snippets/generated/**"]
+    },
     "@inversifyjs/react-code-runner#build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{css,cts,mts,ts,tsx}", "vite.config.ts"],
@@ -171,6 +176,20 @@
         "versioned_sidebars/**"
       ],
       "outputs": ["build/**"]
+    },
+    "@inversifyjs/inversify-mintlify-docs-site#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "docs/**",
+        "docs.json",
+        "mint.json",
+        "mdx-components.tsx",
+        "src/**/*.{css,cts,mts,ts,tsx}",
+        "static/**",
+        "versioned_docs/**",
+        "zh/**"
+      ],
+      "outputs": [".mintlify/**", "build/**"]
     },
     "format": {
       "inputs": ["src/**/*.{cts,mts,ts}", "prettier.config.{cjs,mjs,js,json}"],

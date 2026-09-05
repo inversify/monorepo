@@ -18,6 +18,10 @@ describe(buildErrorTypeToErrorFilterMap, () => {
   let targetFixture: NewableFunction;
   let methodKeyFixture: string;
   let loggerFixture: Logger;
+  let errorDiscriminatorToErrorFilterMapFixture: Map<
+    string | symbol,
+    Newable<ErrorFilter>
+  >;
 
   beforeAll(() => {
     targetFixture = class TestController {};
@@ -35,6 +39,7 @@ describe(buildErrorTypeToErrorFilterMap, () => {
     let result: unknown;
 
     beforeAll(() => {
+      errorDiscriminatorToErrorFilterMapFixture = new Map();
       methodErrorFilter1Fixture =
         class MethodErrorFilter1 {} as Newable<ErrorFilter>;
       methodErrorFilter2Fixture =
@@ -64,6 +69,7 @@ describe(buildErrorTypeToErrorFilterMap, () => {
         loggerFixture,
         targetFixture,
         methodKeyFixture,
+        errorDiscriminatorToErrorFilterMapFixture,
       );
     });
 
@@ -89,24 +95,28 @@ describe(buildErrorTypeToErrorFilterMap, () => {
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         1,
         loggerFixture,
+        errorDiscriminatorToErrorFilterMapFixture,
         expect.any(Map),
         methodErrorFilter1Fixture,
       );
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         2,
         loggerFixture,
+        errorDiscriminatorToErrorFilterMapFixture,
         expect.any(Map),
         methodErrorFilter2Fixture,
       );
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         3,
         loggerFixture,
+        errorDiscriminatorToErrorFilterMapFixture,
         expect.any(Map),
         classErrorFilter1Fixture,
       );
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         4,
         loggerFixture,
+        errorDiscriminatorToErrorFilterMapFixture,
         expect.any(Map),
         classErrorFilter2Fixture,
       );
@@ -124,6 +134,7 @@ describe(buildErrorTypeToErrorFilterMap, () => {
     let result: unknown;
 
     beforeAll(() => {
+      errorDiscriminatorToErrorFilterMapFixture = new Map();
       methodErrorFilterSetFixture = new Set();
       classErrorFilter1Fixture =
         class ClassErrorFilter1 {} as Newable<ErrorFilter>;
@@ -141,6 +152,7 @@ describe(buildErrorTypeToErrorFilterMap, () => {
         loggerFixture,
         targetFixture,
         methodKeyFixture,
+        errorDiscriminatorToErrorFilterMapFixture,
       );
     });
 
@@ -164,6 +176,7 @@ describe(buildErrorTypeToErrorFilterMap, () => {
     it('should call setErrorFilterToErrorFilterMap() for class filters only', () => {
       expect(setErrorFilterToErrorFilterMap).toHaveBeenCalledExactlyOnceWith(
         loggerFixture,
+        errorDiscriminatorToErrorFilterMapFixture,
         expect.any(Map),
         classErrorFilter1Fixture,
       );
@@ -180,6 +193,7 @@ describe(buildErrorTypeToErrorFilterMap, () => {
     let result: unknown;
 
     beforeAll(() => {
+      errorDiscriminatorToErrorFilterMapFixture = new Map();
       methodErrorFilterSetFixture = new Set();
       classErrorFilterSetFixture = new Set();
 
@@ -195,6 +209,7 @@ describe(buildErrorTypeToErrorFilterMap, () => {
         loggerFixture,
         targetFixture,
         methodKeyFixture,
+        errorDiscriminatorToErrorFilterMapFixture,
       );
     });
 
