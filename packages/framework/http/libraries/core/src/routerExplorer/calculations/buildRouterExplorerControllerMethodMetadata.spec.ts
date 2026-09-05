@@ -77,6 +77,10 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
     let controllerMethodMiddlewareOptionsFixture: MiddlewareOptions;
     let headerMetadataFixture: Record<string, string>;
     let useNativeHandlerFixture: boolean;
+    let errorDiscriminatorToErrorFilterMapFixture: Map<
+      string | symbol,
+      Newable<ErrorFilter>
+    >;
     let errorTypeToErrorFilterMapFixture: Map<
       Newable<Error> | null,
       Newable<ErrorFilter>
@@ -85,7 +89,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
       string | symbol,
       unknown
     >;
-    let result: unknown;
+    let result: RouterExplorerControllerMethodMetadata;
 
     beforeAll(() => {
       controllerMethodParameterMetadataListFixture = [];
@@ -181,6 +185,8 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         controllerMetadataFixture,
         controllerMethodMetadataFixture,
       );
+      errorDiscriminatorToErrorFilterMapFixture =
+        result.errorDiscriminatorToErrorFilterMap;
     });
 
     afterAll(() => {
@@ -277,6 +283,7 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
         loggerFixture,
         controllerMetadataFixture.target,
         controllerMethodMetadataFixture.methodKey,
+        errorDiscriminatorToErrorFilterMapFixture,
       );
     });
 
@@ -291,6 +298,8 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
 
     it('should return RouterExplorerControllerMethodMetadata', () => {
       const expected: RouterExplorerControllerMethodMetadata = {
+        errorDiscriminatorToErrorFilterMap:
+          errorDiscriminatorToErrorFilterMapFixture,
         errorTypeToErrorFilterMap: errorTypeToErrorFilterMapFixture,
         guardList: controllerMethodGuardListFixture,
         headerMetadataList: headerMetadataFixture,

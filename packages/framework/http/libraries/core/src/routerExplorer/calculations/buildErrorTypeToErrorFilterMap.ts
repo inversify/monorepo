@@ -12,6 +12,10 @@ export function buildErrorTypeToErrorFilterMap(
   logger: Logger,
   target: NewableFunction,
   methodKey: string | symbol,
+  errorDiscriminatorToErrorFilterMap: Map<
+    string | symbol,
+    Newable<ErrorFilter>
+  >,
 ): Map<Newable<Error> | null, Newable<ErrorFilter>> {
   const errorTypeToErrorFilterMap: Map<
     Newable<Error> | null,
@@ -24,6 +28,7 @@ export function buildErrorTypeToErrorFilterMap(
   )) {
     setErrorFilterToErrorFilterMap(
       logger,
+      errorDiscriminatorToErrorFilterMap,
       errorTypeToErrorFilterMap,
       errorFilter,
     );
@@ -32,6 +37,7 @@ export function buildErrorTypeToErrorFilterMap(
   for (const errorFilter of getClassErrorFilterMetadata(target)) {
     setErrorFilterToErrorFilterMap(
       logger,
+      errorDiscriminatorToErrorFilterMap,
       errorTypeToErrorFilterMap,
       errorFilter,
     );

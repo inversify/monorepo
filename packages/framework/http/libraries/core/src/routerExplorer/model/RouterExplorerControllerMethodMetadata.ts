@@ -15,6 +15,10 @@ export interface RouterExplorerControllerMethodMetadata<
   TResponse = unknown,
   TResult = unknown,
 > {
+  readonly errorDiscriminatorToErrorFilterMap: Map<
+    string | symbol,
+    Newable<ErrorFilter>
+  >;
   readonly errorTypeToErrorFilterMap: Map<
     Newable<Error> | null,
     Newable<ErrorFilter>
