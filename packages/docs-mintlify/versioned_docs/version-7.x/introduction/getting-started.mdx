@@ -3,8 +3,7 @@ sidebar_position: 1
 title: Getting started
 ---
 
-import CodeBlock from '@theme/CodeBlock';
-import gettingStartedSource from '@inversifyjs/code-examples/generated/examples/v7/gettingStarted.ts.txt';
+import GettingStartedSource from '../../../snippets/code-examples/examples/v7/gettingStarted.ts.md'
 
 # Getting started
 
@@ -21,7 +20,7 @@ Make sure to enable [Experimental decorators](https://www.typescriptlang.org/tsc
 
 </Warning>
 
-<CodeBlock language="ts">{gettingStartedSource}</CodeBlock>
+<GettingStartedSource />
 
 The `@injectable` decorator allows both `Katana` and `Ninja` classes to be used as container bindings. The `@inject` decorator provides metadata about `Ninja` dependencies, so the container knows that a `Katana` should be provided as the first argument of `Ninja`'s constructor.
 

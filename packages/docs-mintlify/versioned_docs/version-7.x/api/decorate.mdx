@@ -2,11 +2,11 @@
 sidebar_position: 5
 title: decorate
 ---
-import decorateClassDecoratorSource from '@inversifyjs/code-examples/generated/examples/v7/decorateClassDecorator.ts.txt';
-import decorateParameterDecoratorSource from '@inversifyjs/code-examples/generated/examples/v7/decorateParameterDecorator.ts.txt';
-import decoratePropertyDecoratorSource from '@inversifyjs/code-examples/generated/examples/v7/decoratePropertyDecorator.ts.txt';
-import decorateMethodDecoratorSource from '@inversifyjs/code-examples/generated/examples/v7/decorateMethodDecorator.ts.txt';
-import CodeBlock from '@theme/CodeBlock';
+
+import DecorateClassDecoratorSource from '../../../snippets/code-examples/examples/v7/decorateClassDecorator.ts.md'
+import DecorateParameterDecoratorSource from '../../../snippets/code-examples/examples/v7/decorateParameterDecorator.ts.md'
+import DecoratePropertyDecoratorSource from '../../../snippets/code-examples/examples/v7/decoratePropertyDecorator.ts.md'
+import DecorateMethodDecoratorSource from '../../../snippets/code-examples/examples/v7/decorateMethodDecorator.ts.md'
 
 # decorate
 
@@ -55,25 +55,25 @@ export function decorate(
 
 Use this to apply class-level decorators like `@injectable()`:
 
-<CodeBlock language="ts">{decorateClassDecoratorSource}</CodeBlock>
+<DecorateClassDecoratorSource />
 
 ### Applying ParameterDecorator
 
 Use this to apply decorators to constructor parameters like `@inject()`:
 
-<CodeBlock language="ts">{decorateParameterDecoratorSource}</CodeBlock>
+<DecorateParameterDecoratorSource />
 
 ### Applying PropertyDecorator
 
 Use this to apply decorators to class properties like `@inject()`:
 
-<CodeBlock language="ts">{decoratePropertyDecoratorSource}</CodeBlock>
+<DecoratePropertyDecoratorSource />
 
 ### Applying MethodDecorator
 
 Use this to apply decorators to class methods:
 
-<CodeBlock language="ts">{decorateMethodDecoratorSource}</CodeBlock>
+<DecorateMethodDecoratorSource />
 
 ## Use Cases
 

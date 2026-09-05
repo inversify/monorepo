@@ -2,12 +2,12 @@
 sidebar_position: 2
 title: Deactivation
 ---
-import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiOnDeactivation.ts.txt';
-import CodeBlock from '@theme/CodeBlock';
+
+import ContainerApiOnDeactivationSource from '../../../../snippets/code-examples/examples/v7/containerApiOnDeactivation.ts.md'
 
 Whenever a singleton scoped service is unbound, the deactivation event is dispatched. A deactivation handler receives a resolved value and returns nothing.
 
-<CodeBlock language="ts">{containerApiOnDeactivationSource}</CodeBlock>
+<ContainerApiOnDeactivationSource />
 
 It's possible to add a deactivation handler in multiple ways
 

@@ -2,18 +2,18 @@
 sidebar_position: 1
 title: Migrating from v6
 ---
-import bindingOnSyntaxApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v7/bindingOnSyntaxApiOnActivation.ts.txt';
-import bindingWhenSyntaxApiWhenSource from '@inversifyjs/code-examples/generated/examples/v7/bindingWhenSyntaxApiWhen.ts.txt';
-import containerApiGetAllWithNamedBindingsSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAllWithNamedBindings.ts.txt';
-import containerApiGetNamedSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetNamed.ts.txt';
-import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v7/containerModuleApiExample.ts.txt';
-import diHierarchySource from '@inversifyjs/code-examples/generated/examples/v7/diHierarchy.ts.txt';
-import fundamentalsAutobindingSource from '@inversifyjs/code-examples/generated/examples/v7/fundamentalsAutobinding.ts.txt';
-import migrationToAutoFactorySource from '@inversifyjs/code-examples/generated/examples/v7/migrationToAutoFactory.ts.txt';
-import migrationToAutoNamedFactorySource from '@inversifyjs/code-examples/generated/examples/v7/migrationToAutoNamedFactory.ts.txt';
-import migrationToConstructorSource from '@inversifyjs/code-examples/generated/examples/v7/migrationToConstructor.ts.txt';
-import migrationToFunctionSource from '@inversifyjs/code-examples/generated/examples/v7/migrationToFunction.ts.txt';
-import CodeBlock from '@theme/CodeBlock';
+
+import BindingOnSyntaxApiOnActivationSource from '../../../snippets/code-examples/examples/v7/bindingOnSyntaxApiOnActivation.ts.md'
+import BindingWhenSyntaxApiWhenSource from '../../../snippets/code-examples/examples/v7/bindingWhenSyntaxApiWhen.ts.md'
+import ContainerApiGetAllWithNamedBindingsSource from '../../../snippets/code-examples/examples/v7/containerApiGetAllWithNamedBindings.ts.md'
+import ContainerApiGetNamedSource from '../../../snippets/code-examples/examples/v7/containerApiGetNamed.ts.md'
+import ContainerModuleApiExampleSource from '../../../snippets/code-examples/examples/v7/containerModuleApiExample.ts.md'
+import DiHierarchySource from '../../../snippets/code-examples/examples/v7/diHierarchy.ts.md'
+import FundamentalsAutobindingSource from '../../../snippets/code-examples/examples/v7/fundamentalsAutobinding.ts.md'
+import MigrationToAutoFactorySource from '../../../snippets/code-examples/examples/v7/migrationToAutoFactory.ts.md'
+import MigrationToAutoNamedFactorySource from '../../../snippets/code-examples/examples/v7/migrationToAutoNamedFactory.ts.md'
+import MigrationToConstructorSource from '../../../snippets/code-examples/examples/v7/migrationToConstructor.ts.md'
+import MigrationToFunctionSource from '../../../snippets/code-examples/examples/v7/migrationToFunction.ts.md'
 
 # Migrating from v6
 
@@ -62,7 +62,7 @@ In v6, autobinding was enabled by passing the `autoBindInjectable` option to the
 
 In v6, `container.resolve` automatically bound the resolved service to the container. In v7, this behavior has been removed. To enable it, pass the `autobind` option.
 
-<CodeBlock language="ts">{fundamentalsAutobindingSource}</CodeBlock>
+<FundamentalsAutobindingSource />
 
 ### Custom Metadata and Middlewares
 
@@ -80,25 +80,25 @@ The `Container.getNamed`, `Container.getTagged`, `Container.tryGet`, `Container.
 
 Similarly, `Container.getAll`, `Container.getAllAsync`, and `Container.getAsync` now accept a `GetOptions` object to specify names or tags.
 
-<CodeBlock language="ts">{containerApiGetNamedSource}</CodeBlock>
+<ContainerApiGetNamedSource />
 
 Additionally, `Container.getAll` and `Container.getAllAsync` now enforce binding constraints. For example:
 
-<CodeBlock language="ts">{containerApiGetAllWithNamedBindingsSource}</CodeBlock>
+<ContainerApiGetAllWithNamedBindingsSource />
 
 In v6, `container.getAll` returned all bindings matching the service identifier. In v7, it only returns bindings that match both the service identifier and binding constraints.
 
-:::info
+<Info>
 
 If you need to simulate the old behavior, you can use custom constraints to accomplish this. Refer to this [issue](https://github.com/inversify/InversifyJS/issues/1796#issuecomment-2842402397) for more information.
 
-:::
+</Info>
 
 ### `load` and `unload` Methods
 
 These methods are now asynchronous and return a Promise. Synchronous alternatives, `loadSync` and `unloadSync`, are also available.
 
-<CodeBlock language="ts">{containerModuleApiExampleSource}</CodeBlock>
+<ContainerModuleApiExampleSource />
 
 ### `rebind` Method
 
@@ -112,13 +112,13 @@ The `Container.unbind` method is now asynchronous and returns a Promise. A synch
 
 In v6, child containers were created using the `createChild` method. In v7, this method has been removed. Instead, pass the parent container to the constructor of the child container.
 
-<CodeBlock language="ts">{diHierarchySource}</CodeBlock>
+<DiHierarchySource />
 
 ## ContainerModule API
 
 Container module load options are now passed as an object.
 
-<CodeBlock language="ts">{containerModuleApiExampleSource}</CodeBlock>
+<ContainerModuleApiExampleSource />
 
 ## BindingFluentSyntax API
 
@@ -126,13 +126,13 @@ Container module load options are now passed as an object.
 
 The `Context` class has been replaced by `ResolutionContext` to simplify the API and hide internal data structures.
 
-<CodeBlock language="ts">{bindingOnSyntaxApiOnActivationSource}</CodeBlock>
+<BindingOnSyntaxApiOnActivationSource />
 
 ### `BindingConstraints` Instead of `interfaces.Request`
 
 The `Request` object has been replaced by `BindingConstraints` to simplify the API and hide internal data structures.
 
-<CodeBlock language="ts">{bindingWhenSyntaxApiWhenSource}</CodeBlock>
+<BindingWhenSyntaxApiWhenSource />
 
 ### Removed Binding Methods
 
@@ -142,25 +142,25 @@ Several binding methods have been removed in v7 to simplify the API. Here's how 
 
 The `toAutoFactory` method has been removed. Use `toFactory` with `ResolutionContext.get()` instead:
 
-<CodeBlock language="ts">{migrationToAutoFactorySource}</CodeBlock>
+<MigrationToAutoFactorySource />
 
 #### `toAutoNamedFactory`
 
 Similarly, `toAutoNamedFactory` has been removed. Use `toFactory` with named resolution:
 
-<CodeBlock language="ts">{migrationToAutoNamedFactorySource}</CodeBlock>
+<MigrationToAutoNamedFactorySource />
 
 #### `toConstructor`
 
 The `toConstructor` method has been removed. Since a constructor is just a value (a callable one), use `toConstantValue` instead:
 
-<CodeBlock language="ts">{migrationToConstructorSource}</CodeBlock>
+<MigrationToConstructorSource />
 
 #### `toFunction`
 
 The `toFunction` method has been removed. Since a function is just a value, use `toConstantValue` instead:
 
-<CodeBlock language="ts">{migrationToFunctionSource}</CodeBlock>
+<MigrationToFunctionSource />
 
 ## Decorators API
 

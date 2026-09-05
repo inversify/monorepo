@@ -2,8 +2,8 @@
 sidebar_position: 7
 title: ServiceIdentifier
 ---
-import serviceIdentifierApiSource from '@inversifyjs/code-examples/generated/examples/v7/serviceIdentifierApi.ts.txt'
-import CodeBlock from '@theme/CodeBlock';
+
+import ServiceIdentifierApiSource from '../../../snippets/code-examples/examples/v7/serviceIdentifierApi.ts.md'
 
 # ServiceIdentifier
 
@@ -42,19 +42,21 @@ type Newable<
 
 ### Examples
 
-<CodeBlock language="ts">{serviceIdentifierApiSource}</CodeBlock>
+<ServiceIdentifierApiSource />
 
-:::info[Type Inference support]
+<Info>
+**Type Inference support**
 
 When using generics with `ServiceIdentifier<T>`, TypeScript can infer the resolved type. In the example above, `firstUserService` is automatically typed as `UserService` because `UserService` is inferred as `ServiceIdentifier<UserService>`.
 
-:::
+</Info>
 
-:::warning[Assignment reduced type]
+<Warning>
+**Assignment reduced type**
 
 In TypeScript, when a variable annotated with a union is assigned, the actual initial type of that variable becomes "an assignment reduced type".
 
 In the example above, `userServiceId` is automatically reduced as `symbol` and therefore, `firstUserService` is typed as `unknown`.
 Using a casting prevents this reduction and maintains the original type. Consider `fourthUserService` as an example.
 
-:::
+</Warning>

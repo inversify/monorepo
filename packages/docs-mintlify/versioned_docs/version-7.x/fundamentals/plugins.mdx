@@ -2,18 +2,17 @@
 sidebar_position: 5
 title: Plugins
 ---
-
 # Plugins
 
 InversifyJS provides a plugin system that allows you to extend the container's functionality. Plugins can add new methods to the container, hook into the container's lifecycle, and interact with the container's internal services.
 
 ## Creating a Plugin
 
-:::danger
+<Danger>
 
 Plugins are, at the moment, an experimental feature and may change in future releases. Use them at your own risk.
 
-:::
+</Danger>
 
 To create a plugin, you need to extend the `Plugin` class from `@inversifyjs/plugin` and implement the `load` method. The `load` method receives a `PluginApi` object that allows the plugin to define new methods on the container and hook into the container's resolution process.
 

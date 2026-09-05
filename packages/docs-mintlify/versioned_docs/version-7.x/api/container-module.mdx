@@ -2,8 +2,8 @@
 sidebar_position: 3
 title: Container Module
 ---
-import containerModuleApiExampleSource from '@inversifyjs/code-examples/generated/examples/v7/containerModuleApiExample.ts.txt';
-import CodeBlock from '@theme/CodeBlock';
+
+import ContainerModuleApiExampleSource from '../../../snippets/code-examples/examples/v7/containerModuleApiExample.ts.md'
 
 # ContainerModule
 
@@ -85,4 +85,4 @@ When a container module is loaded into a Container, the load callback is invoked
 
 When a container module is unloaded from a Container, the bindings added by that container will be removed, and the [deactivation process](../fundamentals/lifecycle/deactivation.mdx) will occur for each of them. Container deactivation and [activation handlers](../fundamentals/lifecycle/activation.mdx) will also be removed.
 
-<CodeBlock language="ts">{containerModuleApiExampleSource}</CodeBlock>
+<ContainerModuleApiExampleSource />

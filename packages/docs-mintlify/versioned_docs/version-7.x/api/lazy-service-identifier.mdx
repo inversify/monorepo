@@ -2,8 +2,8 @@
 sidebar_position: 6
 title: LazyServiceIdentifier
 ---
-import CodeBlock from '@theme/CodeBlock';
-import lazyServiceIdentifierSource from '@inversifyjs/code-examples/generated/examples/v7/lazyServiceIdentifier.ts.txt';
+
+import LazyServiceIdentifierSource from '../../../snippets/code-examples/examples/v7/lazyServiceIdentifier.ts.md'
 
 # LazyServiceIdentifier
 
@@ -39,7 +39,7 @@ This can lead to several issues:
 
 `LazyServiceIdentifier` solves this problem by deferring the service identifier resolution until the injection process actually requires it:
 
-<CodeBlock language="ts">{lazyServiceIdentifierSource}</CodeBlock>
+<LazyServiceIdentifierSource />
 
 ## API Reference
 

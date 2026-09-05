@@ -2,6 +2,7 @@
 sidebar_position: 3
 title: Strongly Typed Container
 ---
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -183,9 +184,9 @@ class MyService {
 }
 ```
 
-:::note
+<Note>
 Private properties cannot be strongly typed due to TypeScript decorator limitations. Use public properties (optionally prefixed with underscore) or fall back to the regular `@inject()` decorator for private properties.
-:::
+</Note>
 
 ## Advanced usage
 

@@ -2,19 +2,19 @@
 sidebar_position: 2
 title: Container
 ---
-import containerApiGetAllSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAll.ts.txt';
-import containerApiGetAllAsyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAllAsync.ts.txt';
-import containerApiGetAsyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGetAsync.ts.txt';
-import containerApiGetSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiGet.ts.txt';
-import containerApiIsBoundSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiIsBound.ts.txt';
-import containerApiIsCurrentBoundSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiIsCurrentBound.ts.txt';
-import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiOnActivation.ts.txt';
-import containerApiOnDeactivationSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiOnDeactivation.ts.txt';
-import containerApiUnbindBindingIdSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiUnbindBindingId.ts.txt';
-import containerApiUnbindSyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiUnbindSync.ts.txt';
-import containerApiRebindSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiRebind.ts.txt';
-import containerApiRebindSyncSource from '@inversifyjs/code-examples/generated/examples/v7/containerApiRebindSync.ts.txt';
-import CodeBlock from '@theme/CodeBlock';
+
+import ContainerApiGetAllSource from '../../../snippets/code-examples/examples/v7/containerApiGetAll.ts.md'
+import ContainerApiGetAllAsyncSource from '../../../snippets/code-examples/examples/v7/containerApiGetAllAsync.ts.md'
+import ContainerApiGetAsyncSource from '../../../snippets/code-examples/examples/v7/containerApiGetAsync.ts.md'
+import ContainerApiGetSource from '../../../snippets/code-examples/examples/v7/containerApiGet.ts.md'
+import ContainerApiIsBoundSource from '../../../snippets/code-examples/examples/v7/containerApiIsBound.ts.md'
+import ContainerApiIsCurrentBoundSource from '../../../snippets/code-examples/examples/v7/containerApiIsCurrentBound.ts.md'
+import ContainerApiOnActivationSource from '../../../snippets/code-examples/examples/v7/containerApiOnActivation.ts.md'
+import ContainerApiOnDeactivationSource from '../../../snippets/code-examples/examples/v7/containerApiOnDeactivation.ts.md'
+import ContainerApiUnbindBindingIdSource from '../../../snippets/code-examples/examples/v7/containerApiUnbindBindingId.ts.md'
+import ContainerApiUnbindSyncSource from '../../../snippets/code-examples/examples/v7/containerApiUnbindSync.ts.md'
+import ContainerApiRebindSource from '../../../snippets/code-examples/examples/v7/containerApiRebind.ts.md'
+import ContainerApiRebindSyncSource from '../../../snippets/code-examples/examples/v7/containerApiRebindSync.ts.md'
 
 # Container
 
@@ -61,11 +61,11 @@ bind<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>
 
 Sets a new binding.
 
-:::info
+<Info>
 
 Unless specified otherwise, binding scopes are [transient](fundamentals/binding.mdx#transient) by default.
 
-:::
+</Info>
 
 ## get
 
@@ -76,7 +76,7 @@ get<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetOptions): T;
 
 Resolves a dependency by its runtime identifier. The runtime identifier must be associated with only one binding and the binding must be synchronously resolved, otherwise an error is thrown.
 
-<CodeBlock language="ts">{containerApiGetSource}</CodeBlock>
+<ContainerApiGetSource />
 
 ## getAsync
 
@@ -87,7 +87,7 @@ getAsync<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetOptions): Prom
 
 Resolves a dependency by its runtime identifier. The runtime identifier must be associated with only one binding, otherwise an error is thrown.
 
-<CodeBlock language="ts">{containerApiGetAsyncSource}</CodeBlock>
+<ContainerApiGetAsyncSource />
 
 ## getAll
 
@@ -97,7 +97,7 @@ getAll<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetAllOptions): T[]
 
 Get all available bindings for a given identifier. All the bindings must be synchronously resolved, otherwise an error is thrown:
 
-<CodeBlock language="ts">{containerApiGetAllSource}</CodeBlock>
+<ContainerApiGetAllSource />
 
 ## getAllAsync
 
@@ -107,7 +107,7 @@ getAllAsync<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetAllOptions)
 
 Get all available bindings for a given identifier:
 
-<CodeBlock language="ts">{containerApiGetAllAsyncSource}</CodeBlock>
+<ContainerApiGetAllAsyncSource />
 
 ## isBound
 
@@ -117,7 +117,7 @@ isBound(serviceIdentifier: ServiceIdentifier<unknown>, options?: IsBoundOptions)
 
 You can use the `isBound` method to check if there are registered bindings for a given service identifier.
 
-<CodeBlock language="ts">{containerApiIsBoundSource}</CodeBlock>
+<ContainerApiIsBoundSource />
 
 
 ## isCurrentBound
@@ -128,7 +128,7 @@ isCurrentBound(serviceIdentifier: ServiceIdentifier<unknown>, options?: IsBoundO
 
 You can use the `isCurrentBound` method to check if there are registered bindings for a given service identifier only in the current container.
 
-<CodeBlock language="ts">{containerApiIsCurrentBoundSource}</CodeBlock>
+<ContainerApiIsCurrentBoundSource />
 
 ## load
 
@@ -154,7 +154,7 @@ onActivation<T>(serviceIdentifier: ServiceIdentifier<T>, onActivation: BindingAc
 
 Adds an activation handler for all services associated to the service identifier.
 
-<CodeBlock language="ts">{containerApiOnActivationSource}</CodeBlock>
+<ContainerApiOnActivationSource />
 
 ## onDeactivation
 
@@ -164,7 +164,7 @@ onDeactivation<T>(serviceIdentifier: ServiceIdentifier<T>, onDeactivation: Bindi
 
 Adds a deactivation handler for a service identifier.
 
-<CodeBlock language="ts">{containerApiOnDeactivationSource}</CodeBlock>
+<ContainerApiOnDeactivationSource />
 
 ## rebind
 
@@ -174,7 +174,7 @@ async rebind<T>(serviceIdentifier: ServiceIdentifier<T>): Promise<BindToFluentSy
 
 Convenience method that unbinds a service identifier and then creates a new binding for it. This is equivalent to calling `await container.unbind(serviceId)` followed by `container.bind(serviceId)`, but in a single method. Returns a binding builder to continue configuring the new binding.
 
-<CodeBlock language="ts">{containerApiRebindSource}</CodeBlock>
+<ContainerApiRebindSource />
 
 ## rebindSync
 
@@ -184,7 +184,7 @@ rebindSync<T>(serviceIdentifier: ServiceIdentifier<T>): BindToFluentSyntax<T>;
 
 Synchronous version of `rebind`. Unbinds a service identifier synchronously and then creates a new binding for it. Will throw an error if the unbind operation would be asynchronous. Returns a binding builder to continue configuring the new binding.
 
-<CodeBlock language="ts">{containerApiRebindSyncSource}</CodeBlock>
+<ContainerApiRebindSyncSource />
 
 ## register
 
@@ -224,7 +224,7 @@ This will result in the [deactivation process](../fundamentals/lifecycle/deactiv
 
 ### Example: Unbind a binding by its identifier
 
-<CodeBlock language="ts">{containerApiUnbindBindingIdSource}</CodeBlock>
+<ContainerApiUnbindBindingIdSource />
 
 ## unbindAll
 
@@ -250,7 +250,7 @@ unbindSync(identifier: BindingIdentifier | ServiceIdentifier): void;
 
 Removes bindings from the container synchronously. This method works like `unbind` but does not return a Promise. If the unbinding operation would be asynchronous (e.g., due to deactivation handlers), it will throw an error. Use this method when you know the operation won't involve async deactivations.
 
-<CodeBlock language="ts">{containerApiUnbindSyncSource}</CodeBlock>
+<ContainerApiUnbindSyncSource />
 
 ## unload
 
