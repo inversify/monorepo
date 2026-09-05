@@ -5,6 +5,7 @@ vitest.mock(import('@inversifyjs/framework-core'));
 import {
   type ErrorFilter,
   getCatchErrorMetadata,
+  getErrorDiscriminatorMetadata,
 } from '@inversifyjs/framework-core';
 import { type Logger } from '@inversifyjs/logger';
 import { type Newable } from 'inversify';
@@ -12,6 +13,10 @@ import { type Newable } from 'inversify';
 import { setErrorFilterToErrorFilterMap } from './setErrorFilterToErrorFilterMap.js';
 
 describe(setErrorFilterToErrorFilterMap, () => {
+  let errorDiscriminatorToErrorFilterMapFixture: Map<
+    string | symbol,
+    Newable<ErrorFilter>
+  >;
   let loggerMock: Mocked<Logger>;
 
   beforeAll(() => {
@@ -29,6 +34,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
     let errorTypesFixture: Set<Newable<Error> | null>;
 
     beforeAll(() => {
+      errorDiscriminatorToErrorFilterMapFixture = new Map();
       errorTypeToGlobalErrorFilterMapFixture = new Map();
       errorFilterFixture = class TestErrorFilter {} as Newable<ErrorFilter>;
       errorTypesFixture = new Set([Error, null]);
@@ -39,6 +45,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
 
       setErrorFilterToErrorFilterMap(
         loggerMock,
+        errorDiscriminatorToErrorFilterMapFixture,
         errorTypeToGlobalErrorFilterMapFixture,
         errorFilterFixture,
       );
@@ -70,6 +77,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
     let errorTypesFixture: Set<Newable<Error> | null>;
 
     beforeAll(() => {
+      errorDiscriminatorToErrorFilterMapFixture = new Map();
       errorTypeToGlobalErrorFilterMapFixture = new Map();
       existingErrorFilterFixture =
         class ExistingErrorFilter {} as Newable<ErrorFilter>;
@@ -87,6 +95,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
 
       setErrorFilterToErrorFilterMap(
         loggerMock,
+        errorDiscriminatorToErrorFilterMapFixture,
         errorTypeToGlobalErrorFilterMapFixture,
         errorFilterFixture,
       );
@@ -110,6 +119,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
     let customErrorFixture: Newable<Error>;
 
     beforeAll(() => {
+      errorDiscriminatorToErrorFilterMapFixture = new Map();
       errorTypeToGlobalErrorFilterMapFixture = new Map();
       existingErrorFilterFixture =
         class ExistingErrorFilter {} as Newable<ErrorFilter>;
@@ -128,6 +138,7 @@ describe(setErrorFilterToErrorFilterMap, () => {
 
       setErrorFilterToErrorFilterMap(
         loggerMock,
+        errorDiscriminatorToErrorFilterMapFixture,
         errorTypeToGlobalErrorFilterMapFixture,
         errorFilterFixture,
       );
@@ -143,6 +154,52 @@ describe(setErrorFilterToErrorFilterMap, () => {
       expect(
         errorTypeToGlobalErrorFilterMapFixture.get(customErrorFixture),
       ).toBe(errorFilterFixture);
+    });
+  });
+
+  describe('having an error type with discriminator metadata', () => {
+    describe('when called', () => {
+      let errorTypeToGlobalErrorFilterMapFixture: Map<
+        Newable<Error> | null,
+        Newable<ErrorFilter>
+      >;
+      let errorFilterFixture: Newable<ErrorFilter>;
+      let customErrorFixture: Newable<Error>;
+      let errorTypesFixture: Set<Newable<Error> | null>;
+
+      beforeAll(() => {
+        errorDiscriminatorToErrorFilterMapFixture = new Map();
+        errorTypeToGlobalErrorFilterMapFixture = new Map();
+        errorFilterFixture = class TestErrorFilter {} as Newable<ErrorFilter>;
+        customErrorFixture = class DiscriminatedError extends Error {};
+        errorTypesFixture = new Set([customErrorFixture]);
+
+        vitest
+          .mocked(getCatchErrorMetadata)
+          .mockReturnValueOnce(errorTypesFixture);
+
+        vitest
+          .mocked(getErrorDiscriminatorMetadata)
+          .mockReturnValueOnce(['custom-discriminator-key']);
+
+        setErrorFilterToErrorFilterMap(
+          loggerMock,
+          errorDiscriminatorToErrorFilterMapFixture,
+          errorTypeToGlobalErrorFilterMapFixture,
+          errorFilterFixture,
+        );
+      });
+
+      it('should register error filter in the type and discriminator maps', () => {
+        expect(
+          errorTypeToGlobalErrorFilterMapFixture.get(customErrorFixture),
+        ).toBe(errorFilterFixture);
+        expect(
+          errorDiscriminatorToErrorFilterMapFixture.get(
+            'custom-discriminator-key',
+          ),
+        ).toBe(errorFilterFixture);
+      });
     });
   });
 });

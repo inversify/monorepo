@@ -8,9 +8,13 @@ import {
   vitest,
 } from 'vitest';
 
+vitest.mock(import('@inversifyjs/framework-core'));
 vitest.mock(import('@inversifyjs/prototype-utils'));
 
-import { type ErrorFilter } from '@inversifyjs/framework-core';
+import {
+  type ErrorFilter,
+  getErrorDiscriminatorMetadata,
+} from '@inversifyjs/framework-core';
 import { getBaseType } from '@inversifyjs/prototype-utils';
 import { type Container, type Newable } from 'inversify';
 
@@ -55,6 +59,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -90,11 +95,12 @@ describe(getErrorFilterForError, () => {
 
         errorToFilterMapListFixture = [new Map([[Error, errorFilterFixture]])];
 
-        vitest.mocked(getBaseType).mockReturnValueOnce(Error);
+        vitest.mocked(getBaseType).mockReturnValue(Error);
 
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -104,7 +110,8 @@ describe(getErrorFilterForError, () => {
       });
 
       it('should call getBaseType()', () => {
-        expect(getBaseType).toHaveBeenCalledExactlyOnceWith(CustomError);
+        expect(getBaseType).toHaveBeenCalledTimes(1);
+        expect(getBaseType).toHaveBeenCalledWith(CustomError);
       });
 
       it('should return expected result', () => {
@@ -148,6 +155,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -189,11 +197,12 @@ describe(getErrorFilterForError, () => {
 
         errorToFilterMapListFixture = [new Map([[null, errorFilterFixture]])];
 
-        vitest.mocked(getBaseType).mockReturnValueOnce(Error);
+        vitest.mocked(getBaseType).mockReturnValue(Error);
 
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -203,7 +212,8 @@ describe(getErrorFilterForError, () => {
       });
 
       it('should call getBaseType()', () => {
-        expect(getBaseType).toHaveBeenCalledExactlyOnceWith(CustomError);
+        expect(getBaseType).toHaveBeenCalledTimes(1);
+        expect(getBaseType).toHaveBeenCalledWith(CustomError);
       });
 
       it('should return expected result', () => {
@@ -229,11 +239,12 @@ describe(getErrorFilterForError, () => {
 
         errorToFilterMapListFixture = [new Map()];
 
-        vitest.mocked(getBaseType).mockReturnValueOnce(Error);
+        vitest.mocked(getBaseType).mockReturnValue(Error);
 
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -243,7 +254,8 @@ describe(getErrorFilterForError, () => {
       });
 
       it('should call getBaseType()', () => {
-        expect(getBaseType).toHaveBeenCalledExactlyOnceWith(CustomError);
+        expect(getBaseType).toHaveBeenCalledTimes(1);
+        expect(getBaseType).toHaveBeenCalledWith(CustomError);
       });
 
       it('should return expected result', () => {
@@ -283,6 +295,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -324,6 +337,7 @@ describe(getErrorFilterForError, () => {
         result = await getErrorFilterForError(
           containerMock,
           errorFixture,
+          [],
           errorToFilterMapListFixture,
         );
       });
@@ -334,6 +348,240 @@ describe(getErrorFilterForError, () => {
 
       it('should return the error filter instance from second map', () => {
         expect(result).toBe(errorFilterFixture);
+      });
+    });
+  });
+
+  describe('having a discriminated error instance matching a discriminator key', () => {
+    describe('when called', () => {
+      class DiscriminatedCustomError extends Error {}
+
+      let errorFixture: DiscriminatedCustomError;
+      let errorFilterFixture: ErrorFilter;
+      let errorDiscriminatorToFilterMapListFixture: Map<
+        string | symbol,
+        ErrorFilter | Newable<ErrorFilter>
+      >[];
+
+      let result: unknown;
+
+      beforeAll(async () => {
+        errorFixture = new DiscriminatedCustomError('Discriminated error');
+        errorFilterFixture = {
+          catch: vitest.fn(),
+        };
+
+        vitest
+          .mocked(getErrorDiscriminatorMetadata)
+          .mockReturnValueOnce(['custom-discriminator']);
+
+        errorDiscriminatorToFilterMapListFixture = [
+          new Map([['custom-discriminator', errorFilterFixture]]),
+        ];
+
+        result = await getErrorFilterForError(
+          containerMock,
+          errorFixture,
+          errorDiscriminatorToFilterMapListFixture,
+          [],
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should return the matching error filter via discriminator', () => {
+        expect(result).toBe(errorFilterFixture);
+      });
+    });
+  });
+
+  describe('having a child discriminated error with both child and parent filters registered', () => {
+    class FooError extends Error {}
+    class FooChildError extends FooError {}
+
+    let childFilterFixture: ErrorFilter;
+    let parentFilterFixture: ErrorFilter;
+    let errorDiscriminatorToFilterMapListFixture: Map<
+      string | symbol,
+      ErrorFilter | Newable<ErrorFilter>
+    >[];
+
+    beforeAll(() => {
+      childFilterFixture = {
+        catch: vitest.fn(),
+      };
+      parentFilterFixture = {
+        catch: vitest.fn(),
+      };
+
+      vitest
+        .mocked(getErrorDiscriminatorMetadata)
+        .mockImplementation((target: NewableFunction) => {
+          if (target === FooChildError) {
+            return ['foo-child'];
+          }
+
+          if (target === FooError) {
+            return ['foo'];
+          }
+
+          return undefined;
+        });
+
+      vitest.mocked(getBaseType).mockImplementation((type: Newable) => {
+        if (type === FooChildError) {
+          return FooError;
+        }
+
+        return Error;
+      });
+
+      errorDiscriminatorToFilterMapListFixture = [
+        new Map([
+          ['foo-child', childFilterFixture],
+          ['foo', parentFilterFixture],
+        ]),
+      ];
+    });
+
+    afterAll(() => {
+      vitest.mocked(getErrorDiscriminatorMetadata).mockReset();
+      vitest.mocked(getBaseType).mockReset();
+    });
+
+    describe('having a parent FooError instance', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          result = await getErrorFilterForError(
+            containerMock,
+            new FooError('parent error'),
+            errorDiscriminatorToFilterMapListFixture,
+            [],
+          );
+        });
+
+        it('should return the parent error filter', () => {
+          expect(result).toBe(parentFilterFixture);
+        });
+      });
+    });
+
+    describe('having a child FooChildError instance', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          result = await getErrorFilterForError(
+            containerMock,
+            new FooChildError('child error'),
+            errorDiscriminatorToFilterMapListFixture,
+            [],
+          );
+        });
+
+        it('should return the child error filter', () => {
+          expect(result).toBe(childFilterFixture);
+        });
+      });
+    });
+  });
+
+  describe('having an undecorated child error with a type filter and a parent discriminator filter', () => {
+    class FooError extends Error {}
+    class SpecialFooError extends FooError {}
+
+    let specialFilterFixture: ErrorFilter;
+    let parentFilterFixture: ErrorFilter;
+    let errorDiscriminatorToFilterMapListFixture: Map<
+      string | symbol,
+      ErrorFilter | Newable<ErrorFilter>
+    >[];
+    let errorToFilterMapListFixture: Map<
+      Newable<Error> | null,
+      ErrorFilter | Newable<ErrorFilter>
+    >[];
+
+    beforeAll(() => {
+      specialFilterFixture = {
+        catch: vitest.fn(),
+      };
+      parentFilterFixture = {
+        catch: vitest.fn(),
+      };
+
+      vitest
+        .mocked(getErrorDiscriminatorMetadata)
+        .mockImplementation((target: NewableFunction) => {
+          if (target === FooError) {
+            return ['foo'];
+          }
+
+          return undefined;
+        });
+
+      vitest.mocked(getBaseType).mockImplementation((type: Newable) => {
+        if (type === SpecialFooError) {
+          return FooError;
+        }
+
+        return Error;
+      });
+
+      errorDiscriminatorToFilterMapListFixture = [
+        new Map([['foo', parentFilterFixture]]),
+      ];
+      errorToFilterMapListFixture = [
+        new Map([
+          [SpecialFooError, specialFilterFixture],
+          [FooError, parentFilterFixture],
+        ]),
+      ];
+    });
+
+    afterAll(() => {
+      vitest.mocked(getErrorDiscriminatorMetadata).mockReset();
+      vitest.mocked(getBaseType).mockReset();
+    });
+
+    describe('having a SpecialFooError instance', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          result = await getErrorFilterForError(
+            containerMock,
+            new SpecialFooError('special error'),
+            errorDiscriminatorToFilterMapListFixture,
+            errorToFilterMapListFixture,
+          );
+        });
+
+        it('should return the more specific type filter', () => {
+          expect(result).toBe(specialFilterFixture);
+        });
+      });
+    });
+
+    describe('having a parent FooError instance', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          result = await getErrorFilterForError(
+            containerMock,
+            new FooError('parent error'),
+            errorDiscriminatorToFilterMapListFixture,
+            errorToFilterMapListFixture,
+          );
+        });
+
+        it('should return the parent discriminator filter', () => {
+          expect(result).toBe(parentFilterFixture);
+        });
       });
     });
   });

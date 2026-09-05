@@ -80,6 +80,10 @@ export abstract class InversifyHttpAdapter<
     Newable<Error> | null,
     ErrorFilter | Newable<ErrorFilter>
   >;
+  readonly #errorDiscriminatorToGlobalErrorFilterMap: Map<
+    string | symbol,
+    ErrorFilter | Newable<ErrorFilter>
+  >;
   readonly #globalGuardList: ServiceIdentifier<Guard<TRequest>>[];
   readonly #globalInterceptorList: ServiceIdentifier<
     Interceptor<TRequest, TResponse>
@@ -120,6 +124,7 @@ export abstract class InversifyHttpAdapter<
     this.#globalInterceptorList = [];
     this.#globalPipeList = [];
     this.#errorTypeToGlobalErrorFilterMap = new Map();
+    this.#errorDiscriminatorToGlobalErrorFilterMap = new Map();
     this._logger = this.#buildLogger(this.httpAdapterOptions);
     this.#isBuilt = false;
     this.#postHandlerMiddlewareList = [];
@@ -726,12 +731,21 @@ export abstract class InversifyHttpAdapter<
 
   async #getErrorFilterForError(
     error: unknown,
+    errorDiscriminatorToFilterMapList: Map<
+      string | symbol,
+      ErrorFilter | Newable<ErrorFilter>
+    >[],
     errorToFilterMapList: Map<
       Newable<Error> | null,
       ErrorFilter | Newable<ErrorFilter>
     >[],
   ): Promise<ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined> {
-    return getErrorFilterForError(this.#container, error, errorToFilterMapList);
+    return getErrorFilterForError(
+      this.#container,
+      error,
+      errorDiscriminatorToFilterMapList,
+      errorToFilterMapList,
+    );
   }
 
   #buildGlobalHandleError(): (
@@ -750,9 +764,11 @@ export abstract class InversifyHttpAdapter<
     ): Promise<TResult> => {
       const errorFilter:
         ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined =
-        await this.#getErrorFilterForError(error, [
-          this.#errorTypeToGlobalErrorFilterMap,
-        ]);
+        await this.#getErrorFilterForError(
+          error,
+          [this.#errorDiscriminatorToGlobalErrorFilterMap],
+          [this.#errorTypeToGlobalErrorFilterMap],
+        );
 
       if (errorFilter === undefined) {
         this.#printError(error);
@@ -845,10 +861,17 @@ export abstract class InversifyHttpAdapter<
     ): Promise<TResult> => {
       const errorFilter:
         ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined =
-        await this.#getErrorFilterForError(error, [
-          routerExplorerControllerMethodMetadata.errorTypeToErrorFilterMap,
-          this.#errorTypeToGlobalErrorFilterMap,
-        ]);
+        await this.#getErrorFilterForError(
+          error,
+          [
+            routerExplorerControllerMethodMetadata.errorDiscriminatorToErrorFilterMap,
+            this.#errorDiscriminatorToGlobalErrorFilterMap,
+          ],
+          [
+            routerExplorerControllerMethodMetadata.errorTypeToErrorFilterMap,
+            this.#errorTypeToGlobalErrorFilterMap,
+          ],
+        );
 
       if (errorFilter === undefined) {
         this.#printError(error);
@@ -1093,6 +1116,7 @@ export abstract class InversifyHttpAdapter<
   #setGlobalErrorFilter(errorFilter: Newable<ErrorFilter>): void {
     setErrorFilterToErrorFilterMap(
       this._logger,
+      this.#errorDiscriminatorToGlobalErrorFilterMap,
       this.#errorTypeToGlobalErrorFilterMap,
       errorFilter,
     );

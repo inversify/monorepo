@@ -86,6 +86,10 @@ export function buildRouterExplorerControllerMethodMetadata<
     controllerMethodMetadata.methodKey,
   );
 
+  const errorDiscriminatorToErrorFilterMap: Map<
+    string | symbol,
+    Newable<ErrorFilter>
+  > = new Map();
   const errorTypeToErrorFilterMap: Map<
     Newable<Error> | null,
     Newable<ErrorFilter>
@@ -93,6 +97,7 @@ export function buildRouterExplorerControllerMethodMetadata<
     logger,
     controllerMetadata.target,
     controllerMethodMetadata.methodKey,
+    errorDiscriminatorToErrorFilterMap,
   );
 
   const controllerMethodMiddlewareOptions: MiddlewareOptions =
@@ -118,6 +123,7 @@ export function buildRouterExplorerControllerMethodMetadata<
     ) ?? new Map<string | symbol, unknown>();
 
   return {
+    errorDiscriminatorToErrorFilterMap,
     errorTypeToErrorFilterMap,
     guardList: controllerMethodGuardList,
     headerMetadataList,
