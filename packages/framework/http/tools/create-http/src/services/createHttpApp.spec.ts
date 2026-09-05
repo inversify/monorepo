@@ -43,6 +43,26 @@ describe(createHttpApp, () => {
           'utf8',
         );
 
+        const agentSkillContents: string = await fs.readFile(
+          path.join(projectPath, '.agents/skills/add-resource/SKILL.md'),
+          'utf8',
+        );
+        const claudeSkillContents: string = await fs.readFile(
+          path.join(projectPath, '.claude/skills/add-resource/SKILL.md'),
+          'utf8',
+        );
+
+        expect(claudeSkillContents).toBe(agentSkillContents);
+        expect(agentSkillContents).toContain('name: add-resource');
+        expect(agentSkillContents).toContain('prisma/schema.prisma');
+        expect(agentSkillContents).toContain(
+          'Keep HTTP decorators and request models out of domain and application layers.',
+        );
+        expect(agentSkillContents).toContain('Prisma columns are snake_case');
+        expect(agentSkillContents).toContain(
+          'do not copy that as camelCase in Prisma',
+        );
+
         const tsconfigContents: string = await fs.readFile(
           path.join(projectPath, 'tsconfig.json'),
           'utf8',
