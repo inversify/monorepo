@@ -93,9 +93,54 @@ function isRelationForeignKey(columnName, fieldRules) {
   });
 }
 
-function findPrismaFieldLine(modelBody, fieldName) {
+function findPrismaFieldMatch(modelBody, fieldName) {
   const escapedName = fieldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return modelBody.match(new RegExp(`^\\s*${escapedName}\\s+.*$`, 'm'))?.[0];
+  return new RegExp(`^[^\\S\\n]*${escapedName}\\s+.*$`, 'm').exec(modelBody);
+}
+
+function findPrismaFieldLine(modelBody, fieldName) {
+  return findPrismaFieldMatch(modelBody, fieldName)?.[0];
+}
+
+function extractPrismaFieldAttribute(modelBody, fieldName) {
+  const match = findPrismaFieldMatch(modelBody, fieldName);
+
+  if (match === null) {
+    return undefined;
+  }
+
+  let depth = 0;
+  let end = match.index;
+
+  for (let index = match.index; index < modelBody.length; index++) {
+    const character = modelBody[index];
+
+    if (character === '(') {
+      depth += 1;
+    } else if (character === ')') {
+      depth -= 1;
+    }
+
+    if (character === '\n' && depth <= 0) {
+      break;
+    }
+
+    end = index + 1;
+  }
+
+  return modelBody.slice(match.index, end);
+}
+
+function extractPrismaFieldType(fieldAttribute) {
+  return /^\s*\S+\s+(\S+)/.exec(fieldAttribute)?.[1];
+}
+
+function fieldContainsFragment(fieldAttribute, fragment) {
+  if (fragment.startsWith('@') || fragment.includes(':')) {
+    return fieldAttribute.includes(fragment);
+  }
+
+  return extractPrismaFieldType(fieldAttribute) === fragment;
 }
 
 async function readTextIfExists(filePath) {
@@ -181,19 +226,25 @@ export default async function assertResource(_output, context) {
     for (const [modelName, fields] of Object.entries(fieldRules)) {
       const modelBody = extractPrismaModel(schema, modelName) ?? '';
       for (const [fieldName, expectedFragments] of Object.entries(fields)) {
-        const fieldLine = findPrismaFieldLine(modelBody, fieldName);
+        const fieldAttribute = extractPrismaFieldAttribute(
+          modelBody,
+          fieldName,
+        );
         const missingFragments =
-          fieldLine === undefined
+          fieldAttribute === undefined
             ? expectedFragments
             : expectedFragments.filter(
-                (fragment) => !fieldLine.includes(fragment),
+                (fragment) =>
+                  !fieldContainsFragment(fieldAttribute, fragment),
               );
         results.push({
-          pass: fieldLine !== undefined && missingFragments.length === 0,
+          pass: fieldAttribute !== undefined && missingFragments.length === 0,
           score:
-            fieldLine !== undefined && missingFragments.length === 0 ? 1 : 0,
+            fieldAttribute !== undefined && missingFragments.length === 0
+              ? 1
+              : 0,
           reason:
-            fieldLine === undefined
+            fieldAttribute === undefined
               ? `${modelName}.${fieldName} is missing`
               : missingFragments.length === 0
                 ? `${modelName}.${fieldName} satisfies its contract`
@@ -230,7 +281,9 @@ export default async function assertResource(_output, context) {
       `${resourceName}ContainerModule`,
       `${resourceName}PrismaContainerModule`,
     ]) {
-      const isLoaded = new RegExp(`new\\s+${moduleName}\\s*\\(`).test(bootstrap);
+      const isLoaded = new RegExp(`new\\s+${moduleName}\\s*\\(`).test(
+        bootstrap,
+      );
       results.push({
         pass: isLoaded,
         score: isLoaded ? 1 : 0,

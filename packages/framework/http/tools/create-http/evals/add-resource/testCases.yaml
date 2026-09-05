@@ -6,7 +6,7 @@
     routePrefix: /v1/products
     requiresCascade: 'false'
     modelFields: '{"Product":["id","sku","name","description","price_cents","active","created_at","updated_at","deleted_at"]}'
-    fieldRules: '{"Product":{"id":["@id","@default(uuid())"],"sku":["@unique"],"active":["@default(true)"],"deleted_at":["DateTime?"]}}'
+    fieldRules: '{"Product":{"id":["String","@id","@default(uuid())"],"sku":["String","@unique"],"name":["String"],"description":["String?"],"price_cents":["Int"],"active":["Boolean","@default(true)"],"created_at":["DateTime"],"updated_at":["DateTime"],"deleted_at":["DateTime?"]}}'
     expectedDecorators: '["Post","Get","Patch","Delete"]'
     request: >-
       Add a Product resource using the add-resource skill. A product has a UUID id,
@@ -24,7 +24,7 @@
     routePrefix: /v1/orders
     requiresCascade: 'true'
     modelFields: '{"Order":["id","order_number","customer_email","status","created_at","updated_at","items"],"OrderItem":["id","order_id","product_sku","quantity","unit_price_cents","order"]}'
-    fieldRules: '{"Order":{"id":["@id","@default(uuid())"],"order_number":["@unique"],"items":["OrderItem[]"]},"OrderItem":{"id":["@id","@default(uuid())"],"order_id":["@db.Uuid"],"order":["@relation","onDelete: Cascade"]}}'
+    fieldRules: '{"Order":{"id":["String","@id","@default(uuid())"],"order_number":["String","@unique"],"customer_email":["String"],"status":["String"],"created_at":["DateTime"],"updated_at":["DateTime"],"items":["OrderItem[]"]},"OrderItem":{"id":["String","@id","@default(uuid())"],"order_id":["String","@db.Uuid"],"product_sku":["String"],"quantity":["Int"],"unit_price_cents":["Int"],"order":["Order","@relation","onDelete: Cascade"]}}'
     expectedDecorators: '["Post","Get"]'
     nestedField: items
     request: >-
