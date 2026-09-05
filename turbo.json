@@ -11,6 +11,11 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/docs-mintlify#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["scripts/**/*.{mjs,js}", "src/**/*.{cts,mts,ts}"],
+      "outputs": ["snippets/generated/**"]
+    },
     "@inversifyjs/react-code-runner#build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{css,cts,mts,ts,tsx}", "vite.config.ts"],

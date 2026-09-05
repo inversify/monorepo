@@ -5,7 +5,7 @@
     "lib": ["DOM", "ES2022"],
     "noEmit": true,
     "noPropertyAccessFromIndexSignature": false,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "tsBuildInfoFile": "tsconfig.esm.tsbuildinfo"
   },
   "exclude": [".docusaurus", "build"]

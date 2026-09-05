@@ -59,6 +59,9 @@ coverage:
       '@inversifyjs/json-schema-2-type-metadata':
         flags:
           - '@inversifyjs/json-schema-2-type-metadata'
+      '@inversifyjs/json-schema-2-typescript':
+        flags:
+          - '@inversifyjs/json-schema-2-typescript'
       '@inversifyjs/json-schema-pointer':
         flags:
           - '@inversifyjs/json-schema-pointer'
@@ -68,6 +71,9 @@ coverage:
       '@inversifyjs/logger':
         flags:
           - '@inversifyjs/logger'
+      '@inversifyjs/open-api-2-typescript':
+        flags:
+          - '@inversifyjs/open-api-2-typescript'
       '@inversifyjs/open-api-utils':
         flags:
           - '@inversifyjs/open-api-utils'
@@ -150,6 +156,9 @@ flags:
   '@inversifyjs/json-schema-2-type-metadata':
     paths:
       - packages/json-schema/libraries/json-schema-2-type-metadata
+  '@inversifyjs/json-schema-2-typescript':
+    paths:
+      - packages/json-schema/libraries/json-schema-2-typescript
   '@inversifyjs/json-schema-pointer':
     paths:
       - packages/json-schema/libraries/json-schema-pointer
@@ -159,9 +168,13 @@ flags:
   '@inversifyjs/logger':
     paths:
       - packages/logger
+  '@inversifyjs/open-api-2-typescript':
+    paths:
+      - packages/open-api/libraries/open-api-2-typescript
   '@inversifyjs/open-api-utils':
     paths:
       - packages/open-api/libraries/open-api-utils
+
   '@inversifyjs/open-api-validation':
     paths:
       - packages/framework/validation/libraries/openapi

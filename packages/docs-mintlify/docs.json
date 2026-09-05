@@ -56,7 +56,36 @@
               {
                 "group": "Introduction",
                 "pages": [
-                  "versioned_docs/version-6.x/introduction/getting-started"
+                  "versioned_docs/version-6.x/introduction/getting-started",
+                  "versioned_docs/version-6.x/introduction/dependency-inversion"
+                ]
+              },
+              {
+                "group": "Fundamentals",
+                "pages": [
+                  "versioned_docs/version-6.x/fundamentals/binding",
+                  "versioned_docs/version-6.x/fundamentals/di-hierarchy",
+                  {
+                    "group": "Lifecycle",
+                    "pages": [
+                      "versioned_docs/version-6.x/fundamentals/lifecycle/activation",
+                      "versioned_docs/version-6.x/fundamentals/lifecycle/deactivation",
+                      "versioned_docs/version-6.x/fundamentals/lifecycle/middleware"
+                    ]
+                  },
+                  "versioned_docs/version-6.x/fundamentals/inheritance",
+                  "versioned_docs/version-6.x/fundamentals/snapshot"
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "versioned_docs/version-6.x/api/binding-syntax",
+                  "versioned_docs/version-6.x/api/container",
+                  "versioned_docs/version-6.x/api/container-module",
+                  "versioned_docs/version-6.x/api/decorator",
+                  "versioned_docs/version-6.x/api/lazy-service-identifier",
+                  "versioned_docs/version-6.x/api/service-identifier"
                 ]
               }
             ]
