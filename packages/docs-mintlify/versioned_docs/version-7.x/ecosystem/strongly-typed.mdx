@@ -3,9 +3,6 @@ sidebar_position: 3
 title: Strongly Typed Container
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # Strongly Typed Container
 
 The `@inversifyjs/strongly-typed` package adds TypeScript type definitions that bring compile-time type safety to your InversifyJS Container and `@inject()` decorators. With this package, you define a binding map that serves as a contract for your container, ensuring that bindings, retrievals, and injections are all type-checked at compile time.
@@ -45,27 +42,27 @@ Can be used as a direct import or as type assertions to keep the library out of 
 ## Installation
 
 <Tabs>
-  <TabItem value="npm" label="npm">
+  <Tab title="npm" label="npm">
 
 ```bash
 npm install @inversifyjs/strongly-typed
 ```
 
-  </TabItem>
-  <TabItem value="pnpm" label="pnpm">
+  </Tab>
+  <Tab title="pnpm" label="pnpm">
 
 ```bash
 pnpm add @inversifyjs/strongly-typed
 ```
 
-  </TabItem>
-  <TabItem value="yarn" label="yarn">
+  </Tab>
+  <Tab title="yarn" label="yarn">
 
 ```bash
 yarn add @inversifyjs/strongly-typed
 ```
 
-  </TabItem>
+  </Tab>
 </Tabs>
 
 ## Quick start
@@ -144,7 +141,10 @@ To use strongly-typed decorators, re-export the `inject` and `multiInject` decor
 
 ```typescript
 import { inject, multiInject } from 'inversify';
-import type { TypedInject, TypedMultiInject } from '@inversifyjs/strongly-typed';
+import type {
+  TypedInject,
+  TypedMultiInject,
+} from '@inversifyjs/strongly-typed';
 
 export const $inject = inject as TypedInject<BindingMap>;
 export const $multiInject = multiInject as TypedMultiInject<BindingMap>;
@@ -185,7 +185,9 @@ class MyService {
 ```
 
 <Note>
-Private properties cannot be strongly typed due to TypeScript decorator limitations. Use public properties (optionally prefixed with underscore) or fall back to the regular `@inject()` decorator for private properties.
+  Private properties cannot be strongly typed due to TypeScript decorator
+  limitations. Use public properties (optionally prefixed with underscore) or
+  fall back to the regular `@inject()` decorator for private properties.
 </Note>
 
 ## Advanced usage
@@ -240,12 +242,10 @@ Create strongly-typed container modules:
 ```typescript
 import { TypedContainerModule } from '@inversifyjs/strongly-typed';
 
-const myModule = new TypedContainerModule<BindingMap>(
-  (bind) => {
-    bind('foo').toConstantValue({ foo: 'value' });
-    bind('bar').toConstantValue({ bar: 'value' });
-  }
-);
+const myModule = new TypedContainerModule<BindingMap>((bind) => {
+  bind('foo').toConstantValue({ foo: 'value' });
+  bind('bar').toConstantValue({ bar: 'value' });
+});
 
 await container.load(myModule);
 ```
