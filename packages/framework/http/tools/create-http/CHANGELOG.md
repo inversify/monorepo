@@ -1,5 +1,11 @@
 # @inversifyjs/create-http
 
+## 0.6.0
+
+### Minor Changes
+
+Add an `add-resource` agent skill to generated HTTP applications for implementing complete Prisma-backed resources with the scaffold's hexagonal architecture.
+
 ## 0.5.0
 
 ### Minor Changes
