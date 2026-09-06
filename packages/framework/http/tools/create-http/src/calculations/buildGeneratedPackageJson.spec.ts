@@ -36,10 +36,12 @@ describe(buildGeneratedPackageJson, () => {
           packageManager: 'pnpm@11.18.0',
           private: true,
           scripts: {
-            build: 'prisma generate && tsc',
+            build:
+              'prisma generate && tsx src/app/scripts/generateApiTypes.ts && tsc',
             'db:generate': 'prisma generate',
             'db:migrate': 'prisma migrate deploy',
             format: 'prettier --write ./src',
+            'generate:api': 'tsx src/app/scripts/generateApiTypes.ts',
             lint: 'eslint ./src',
             serve: 'node ./dist/index.js',
           },

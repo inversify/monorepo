@@ -18,21 +18,4 @@ export class BootstrapSourceModelFixtures {
   public static get withHttpAdapterUwebsockets(): BootstrapSourceModel {
     return createBootstrapSourceModel(HttpAdapter.uwebsockets);
   }
-
-  public static get withUseCaseExtraInitializeContainerBodyStatements(): BootstrapSourceModel {
-    return {
-      adapter: BootstrapSourceModelFixtures.withHttpAdapterExpress.adapter,
-      applicationType: 'express.Application',
-      imports: [
-        {
-          moduleSpecifier: 'inversify',
-          namedImports: [{ name: 'Container' }],
-        },
-      ],
-      initializeContainerBodyStatements: [
-        'container.load(new UserContainerModule());',
-      ],
-      listenStatements: ['app.listen(PORT);'],
-    };
-  }
 }

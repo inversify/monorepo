@@ -26,6 +26,9 @@ describe(createYarnRcSourceModel, () => {
             '@scarf/scarf': {
               built: true,
             },
+            esbuild: {
+              built: true,
+            },
             prisma: {
               built: true,
             },
@@ -53,6 +56,9 @@ describe(createYarnRcSourceModel, () => {
               built: true,
             },
             '@scarf/scarf': {
+              built: true,
+            },
+            esbuild: {
               built: true,
             },
             prisma: {

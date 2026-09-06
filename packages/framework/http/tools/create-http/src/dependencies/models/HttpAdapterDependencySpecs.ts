@@ -25,15 +25,22 @@ export const BASE_DEPENDENCY_NAMES: readonly string[] = [
 ];
 
 /**
+ * Always-allowed install-time scripts (tsx → esbuild). Adapter/DB specs may add more.
+ */
+export const BASE_BUILT_DEPENDENCY_NAMES: readonly string[] = ['esbuild'];
+
+/**
  * Always-installed tooling/dev dependencies.
  */
 export const BASE_DEV_DEPENDENCY_NAMES: readonly string[] = [
   '@eslint/js',
+  '@inversifyjs/open-api-2-typescript',
   '@types/node',
   'eslint',
   'eslint-config-prettier',
   'eslint-plugin-prettier',
   'prettier',
+  'tsx',
   'typescript',
   'typescript-eslint',
 ];

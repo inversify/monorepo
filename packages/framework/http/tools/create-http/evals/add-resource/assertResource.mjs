@@ -159,12 +159,12 @@ export default async function assertResource(_output, context) {
     context.vars.resourceDirectory,
   );
   const prismaSchemaPath = path.join(workspacePath, 'prisma', 'schema.prisma');
-  const bootstrapPath = path.join(
+  const initializeContainerPath = path.join(
     workspacePath,
     'src',
     'app',
     'scripts',
-    'bootstrap.ts',
+    'initializeContainer.ts',
   );
   const results = [];
 
@@ -266,14 +266,14 @@ export default async function assertResource(_output, context) {
     }
   }
 
-  const bootstrap = await readTextIfExists(bootstrapPath);
+  const initializeContainer = await readTextIfExists(initializeContainerPath);
   const resourceName = context.vars.resourceName;
 
-  if (bootstrap === undefined) {
+  if (initializeContainer === undefined) {
     results.push({
       pass: false,
       score: 0,
-      reason: 'src/app/scripts/bootstrap.ts is missing',
+      reason: 'src/app/scripts/initializeContainer.ts is missing',
     });
   } else {
     for (const moduleName of [
@@ -281,14 +281,14 @@ export default async function assertResource(_output, context) {
       `${resourceName}PrismaContainerModule`,
     ]) {
       const isLoaded = new RegExp(`new\\s+${moduleName}\\s*\\(`).test(
-        bootstrap,
+        initializeContainer,
       );
       results.push({
         pass: isLoaded,
         score: isLoaded ? 1 : 0,
         reason: isLoaded
-          ? `${moduleName} is loaded by bootstrap`
-          : `${moduleName} is not loaded by bootstrap`,
+          ? `${moduleName} is loaded by initializeContainer`
+          : `${moduleName} is not loaded by initializeContainer`,
       });
     }
   }

@@ -50,7 +50,10 @@ Recipe (CLI args / prompts)
           ├─ writeCommonSourceFiles() → shared Builder interface
           ├─ writeTodoSourceFiles(createTodoControllerSourceModel(adapter))
           │     └─ ts-morph TodoController; uwebsockets adds @CaptureRequestValues
-          ├─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter, dbAdapter))
+          ├─ writeInitializeContainerSourceFile(createInitializeContainerSourceModel(dbAdapter))
+          ├─ writeProvideOpenApiSourceFile()
+          ├─ writeGenerateApiTypesSourceFile()
+          ├─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter))
           │     └─ ts-morph from BootstrapSourceModel
           │
           └─ formatGeneratedProjectSources() → prettier over `src/**/*.ts`
@@ -98,7 +101,7 @@ Scaffolded apps must **not** receive every possible dependency. Versions live in
 `src/dependencies/models/HttpAdapterDependencySpecs.ts`:
 
 - `BASE_DEPENDENCY_NAMES` / `BASE_DEV_DEPENDENCY_NAMES` — always installed
-- `HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS` — per-adapter package **names** only; optional `builtDependencies` lists packages that need install-time scripts (Yarn `package.json` `dependenciesMeta.built`)
+- `BASE_BUILT_DEPENDENCY_NAMES` / `HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS` — per-adapter package **names** only; optional `builtDependencies` lists packages that need install-time scripts (Yarn `package.json` `dependenciesMeta.built`; also pnpm `allowBuilds`)
 
 `composeScaffoldDependencies(catalog, httpAdapter, dbAdapter)` picks catalog versions for base + selected HTTP and DB adapters only.
 
@@ -133,7 +136,7 @@ Copied (sometimes renamed) into the target app:
 | `package-managers.json` | _(not copied)_ | npm / pnpm catalog only |
 | `yarn-berry.json` | _(not copied)_ | Yarn Berry version catalog |
 
-Prisma uses the `prisma-client` generator (`output = "../src/generated/prisma"`, ESM + `.ts` sources with `.js` import extensions) so `tsc` emits the client into `dist/generated/prisma`. The folder is gitignored. Scripts: `build` runs `prisma generate && tsc`; also `db:generate`, `db:migrate`. Import `PrismaClient` from `generated/prisma/client.js`.
+Prisma uses the `prisma-client` generator (`output = "../src/generated/prisma"`, ESM + `.ts` sources with `.js` import extensions) so `tsc` emits the client into `dist/generated/prisma`. The folder is gitignored. Scripts: `build` runs `prisma generate && tsx src/app/scripts/generateApiTypes.ts && tsc`; also `generate:api`, `db:generate`, `db:migrate`. Import `PrismaClient` from `generated/prisma/client.js`. OpenAPI TypeScript types are written to `src/generated/api/index.ts`.
 
 Generated (not copied from templates):
 
@@ -142,7 +145,10 @@ Generated (not copied from templates):
 | `src/index.ts` | `generateIndexSource()` — top-level `await bootstrap()` |
 | `pnpm-workspace.yaml` | `generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))` — **pnpm only**; `allowBuilds` + adapter knobs |
 | `.yarnrc.yml` | `generateYarnRcSource()` — **yarn only**; `enableScripts: false`, `nodeLinker: node-modules`. Selected `builtDependencies` go in generated `package.json` `dependenciesMeta` (Yarn rejects that field in `.yarnrc.yml`) |
-| `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter, dbAdapter))` |
+| `src/app/scripts/initializeContainer.ts` | `generateInitializeContainerSource(createInitializeContainerSourceModel(dbAdapter))` — exported `initializeContainer` |
+| `src/app/scripts/provideOpenApi.ts` | `generateProvideOpenApiSource()` — builds `SwaggerUiProvider` and calls `provide(container)` |
+| `src/app/scripts/generateApiTypes.ts` | `generateApiTypesSource()` — OpenAPI → TypeScript via `@inversifyjs/open-api-2-typescript` |
+| `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter))` |
 | `src/logger/models/loggerFactoryIdentifier.ts` | Factory service identifier |
 | `src/logger/containerModules/LoggerContainerModule.ts` | Binds `(context: string) => Logger` → `ConsoleLogger` |
 | `src/status/domain/models/Status.ts` | Domain model |
@@ -164,6 +170,7 @@ Generated (not copied from templates):
 | `src/todo/adapter/prisma/builders/TodoFromPrismaTodoBuilder.ts` | Maps Prisma `Todo` to domain `Todo` |
 | `src/todo/adapter/inversify/containerModules/TodoContainerModule.ts` | Binds controller and `TodoV1FromTodoBuilder` |
 | `src/todo/adapter/inversify/containerModules/TodoPrismaContainerModule.ts` | Binds port → Prisma adapter and `TodoFromPrismaTodoBuilder` |
+| `src/generated/api/index.ts` | Generated at build time from the OpenAPI object (`generate:api`) |
 
 **Why `.template` for eslint/prettier configs?**  
 ESLint flat config loads the nearest `eslint.config.*`. If the template keeps a real `eslint.config.mjs` under `templates/`, lint-staged/ESLint will try to load it (and fail — `@eslint/js` is not installed there). Rename on copy.
@@ -187,12 +194,33 @@ Variable TypeScript (decorators, DI wiring, adapters) and recipe-specific config
 - Model: `PnpmWorkspaceSourceModel` (`allowBuilds`, optional `blockExoticSubdeps`, …)
 - Printer: `generatePnpmWorkspaceSource()` → `pnpm-workspace.yaml`
 - uwebsockets sets `blockExoticSubdeps: false` so git-hosted `uWebSockets.js` can install under pnpm 11+
+- Base `allowBuilds` includes Prisma packages and `esbuild` (needed by `tsx` for `generate:api`; pnpm 10+ ignores blocked build scripts)
+
+Container initialization generation:
+
+- Model factory: `createInitializeContainerSourceModel(dbAdapter)`
+- Model: `InitializeContainerSourceModel` (`imports`, optional container body)
+- Printer: `generateInitializeContainerSource()` → `src/app/scripts/initializeContainer.ts`
+- Writer: `writeInitializeContainerSourceFile(projectPath, model)`
+- Exports `initializeContainer` and `AppConfig` so bootstrap and OpenAPI type generation share the same container
+
+OpenAPI provider generation:
+
+- Printer: `generateProvideOpenApiSource()` → `src/app/scripts/provideOpenApi.ts`
+- `provideOpenApi(container)` constructs `SwaggerUiProvider` (`/docs`), calls `provide(container)`, and returns the provider
+
+OpenAPI TypeScript generation:
+
+- Printer: `generateApiTypesSource()` → `src/app/scripts/generateApiTypes.ts`
+- Script loads the container, gets the OpenAPI object from `provideOpenApi`, prints types with `@inversifyjs/open-api-2-typescript/v3Dot2`, formats them with Prettier, and writes `src/generated/api/index.ts`
+- Scaffolded `generate:api` script: `tsx src/app/scripts/generateApiTypes.ts`
+- Scaffolded `build` runs `generate:api` before `tsc` (`prisma generate && …` when using Prisma)
 
 Bootstrap generation:
 
 - Specs: `HTTP_ADAPTER_BOOTSTRAP_SPECS` — per-adapter imports, options, listen statements
-- Model factory: `createBootstrapSourceModel(httpAdapter, dbAdapter)`
-- Model: `BootstrapSourceModel` (`imports`, `adapter`, `applicationType`, `listenStatements`, optional container body)
+- Model factory: `createBootstrapSourceModel(httpAdapter)`
+- Model: `BootstrapSourceModel` (`imports`, `adapter`, `applicationType`, `listenStatements`)
 - Printer: `generateBootstrapSource()` → `src/app/scripts/bootstrap.ts`
 - Writer: `writeBootstrapSourceFile(projectPath, model)`
 - Entry: `generateIndexSource()` → `src/index.ts` uses top-level `await bootstrap()`
@@ -205,14 +233,17 @@ TodoController generation:
 - uwebsockets sets `@CaptureRequestValues` on POST and PATCH only (the endpoints that read the body). Capturing `url` also captures query, which the adapter needs to rebuild the URL. GET and DELETE do not consume the body, so they do not need the decorator.
 - uwebsockets sets `@SetHeader('Content-Type', 'application/json')` on JSON-returning endpoints (`POST`, `GET`, `PATCH`). `_replyJson` does not set that header. `DELETE` returns 204 No Content and does not need it.
 
-Generated bootstrap always includes:
+Generated app scripts always include:
 
-1. Non-exported `async initializeContainer(): Promise<Container>` that loads config, `LoggerContainerModule` (ConsoleLogger factory whose `logTypes` come from `LOG_LEVELS`), `PrismaContainerModule` (for `prisma+postgresql`), `StatusContainerModule`, and todo modules
-2. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter, registers `SwaggerUiProvider` (`/docs`), installs `OpenApiValidationPipe` + `InversifyValidationErrorFilter`, and listens via the bound logger factory
+1. Exported `async initializeContainer(): Promise<Container>` that loads config, `LoggerContainerModule` (ConsoleLogger factory whose `logTypes` come from `LOG_LEVELS`), `PrismaContainerModule` (for `prisma+postgresql`), `StatusContainerModule`, and todo modules
+2. Exported `provideOpenApi(container)` that registers `SwaggerUiProvider` (`/docs`) and returns the populated provider
+3. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter, calls `provideOpenApi`, installs `OpenApiValidationPipe` + `InversifyValidationErrorFilter`, and listens via the bound logger factory
+4. `generateApiTypes.ts` that reuses `initializeContainer` and `provideOpenApi` to emit Prettier-formatted types at `src/generated/api`
 
 `@inversifyjs/logger` and `winston` are base dependencies (ConsoleLogger factory bound from `LOG_LEVELS`).
 `@inversifyjs/http-core` is a base dependency (for `@Controller` / `@Get` / `@Post` on scaffolded controllers).
 `@inversifyjs/http-open-api` is a base dependency (OpenAPI 3.2 decorators + `SwaggerUiProvider` via `/v3Dot2`).
+`@inversifyjs/open-api-2-typescript` and `tsx` are base dev dependencies (OpenAPI → TypeScript generation).
 `@inversifyjs/open-api-validation`, `@inversifyjs/http-validation`, `ajv`, and `ajv-formats` are base dependencies (OpenAPI-driven request validation; pipe from `/v3Dot2`).
 `@inversifyjs/prisma` is a DB-adapter dependency (binds `PrismaClient` via `PrismaContainerModule`).
 
@@ -225,8 +256,8 @@ Listen APIs differ by adapter (Express `app.listen`, Fastify `await app.listen`,
 To extend bootstrap later (more container modules, pipes, controllers):
 
 1. Add generators for the new source files (like status / todo)
-2. Extend `createBootstrapSourceModel` imports + `initializeContainerBodyStatements`
-3. Keep printing in `generateBootstrapSource`
+2. Extend `createInitializeContainerSourceModel` imports + `initializeContainerBodyStatements`
+3. Keep HTTP adapter printing in `generateBootstrapSource`
 4. Avoid forking full file templates per adapter combination
 
 ### Status resource layout

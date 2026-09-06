@@ -15,6 +15,7 @@ import {
 } from '../dependencies/calculations/composeScaffoldDependencies.js';
 import { type DependencyCatalog } from '../dependencies/models/DependencyCatalog.js';
 import { createBootstrapSourceModel } from '../generation/calculations/createBootstrapSourceModel.js';
+import { createInitializeContainerSourceModel } from '../generation/calculations/createInitializeContainerSourceModel.js';
 import { createPnpmWorkspaceSourceModel } from '../generation/calculations/createPnpmWorkspaceSourceModel.js';
 import { createTodoControllerSourceModel } from '../generation/calculations/createTodoControllerSourceModel.js';
 import { createYarnRcSourceModel } from '../generation/calculations/createYarnRcSourceModel.js';
@@ -28,7 +29,10 @@ import { type PackageManagersVersions } from '../models/PackageManagersVersions.
 import { formatGeneratedProjectSources } from './formatGeneratedProjectSources.js';
 import { writeBootstrapSourceFile } from './writeBootstrapSourceFile.js';
 import { writeCommonSourceFiles } from './writeCommonSourceFiles.js';
+import { writeGenerateApiTypesSourceFile } from './writeGenerateApiTypesSourceFile.js';
+import { writeInitializeContainerSourceFile } from './writeInitializeContainerSourceFile.js';
 import { writeLoggerSourceFiles } from './writeLoggerSourceFiles.js';
+import { writeProvideOpenApiSourceFile } from './writeProvideOpenApiSourceFile.js';
 import { writeStatusSourceFiles } from './writeStatusSourceFiles.js';
 import { writeTodoSourceFiles } from './writeTodoSourceFiles.js';
 
@@ -220,9 +224,15 @@ export async function createHttpApp(
     projectPath,
     createTodoControllerSourceModel(options.httpAdapter),
   );
+  await writeInitializeContainerSourceFile(
+    projectPath,
+    createInitializeContainerSourceModel(options.dbAdapter),
+  );
+  await writeProvideOpenApiSourceFile(projectPath);
+  await writeGenerateApiTypesSourceFile(projectPath);
   await writeBootstrapSourceFile(
     projectPath,
-    createBootstrapSourceModel(options.httpAdapter, options.dbAdapter),
+    createBootstrapSourceModel(options.httpAdapter),
   );
   await formatGeneratedProjectSources(projectPath);
 

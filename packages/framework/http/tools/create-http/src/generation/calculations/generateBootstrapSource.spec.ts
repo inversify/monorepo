@@ -12,44 +12,24 @@ describe(generateBootstrapSource, () => {
         result = await BootstrapSourceFixtures.withHttpAdapterExpress();
       });
 
-      it('should generate initializeContainer and adapter bootstrap', () => {
+      it('should generate adapter bootstrap that reuses initializeContainer and provideOpenApi', () => {
         expect(result).toContain(
           "import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';",
         );
         expect(result).toContain("import type express from 'express';");
         expect(result).toContain("import { Container } from 'inversify';");
+        expect(result).toContain("from './initializeContainer.js'");
+        expect(result).toContain('initializeContainer');
+        expect(result).toContain('AppConfig');
         expect(result).toContain(
-          "import { StatusContainerModule } from '../../status/adapter/inversify/containerModules/StatusContainerModule.js';",
-        );
-        expect(result).toContain(
-          "import { PrismaContainerModule } from '@inversifyjs/prisma';",
-        );
-        expect(result).toContain(
-          "import { PrismaPg } from '@prisma/adapter-pg';",
-        );
-        expect(result).toContain(
-          "import { PrismaClient } from '../../generated/prisma/client.js';",
-        );
-        expect(result).toContain(
-          "import { TodoContainerModule } from '../../todo/adapter/inversify/containerModules/TodoContainerModule.js';",
-        );
-        expect(result).toContain(
-          "import { TodoPrismaContainerModule } from '../../todo/adapter/inversify/containerModules/TodoPrismaContainerModule.js';",
+          "import { provideOpenApi } from './provideOpenApi.js';",
         );
         expect(result).toContain("from '@inversifyjs/config'");
-        expect(result).toContain('ConfigContainerModule');
         expect(result).toContain('ConfigService');
         expect(result).toContain('configServiceIdentifier');
         expect(result).toContain("from '@inversifyjs/logger'");
-        expect(result).toContain('LogLevel');
         expect(result).toContain(
           "import { loggerFactoryIdentifier } from '../../logger/models/loggerFactoryIdentifier.js';",
-        );
-        expect(result).toContain(
-          "import { LoggerContainerModule } from '../../logger/containerModules/LoggerContainerModule.js';",
-        );
-        expect(result).toContain(
-          "import { envFile } from '@inversifyjs/config-dotenv';",
         );
         expect(result).toContain(
           "import { SwaggerUiProvider } from '@inversifyjs/http-open-api/v3Dot2';",
@@ -60,51 +40,12 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain(
           "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot2';",
         );
-        expect(result).toContain("import { z } from 'zod';");
-        expect(result).toContain('appConfigSchema');
-        expect(result).toContain('DATABASE_URL: z.string().min(1)');
-        expect(result).toContain('LOG_LEVELS:');
-        expect(result).toContain("default('error,warn,info')");
-        expect(result).toContain('LogLevel.ERROR');
-        expect(result).toContain('LogLevel.SILLY');
-        expect(result).toContain(
-          'type AppConfig = z.infer<typeof appConfigSchema>',
-        );
-        expect(result).toContain('configModule');
-        expect(result).toContain('ConfigObject');
-        expect(result).toContain(
-          'ConfigContainerModule.fromOptions<AppConfig>({',
-        );
-        expect(result).toContain(
-          'validate: (input: ConfigObject): AppConfig => appConfigSchema.parse(input)',
-        );
-        expect(result).toContain(
-          'async function initializeContainer(): Promise<Container>',
-        );
-        expect(result).toContain(
-          'const container: Container = new Container();',
-        );
-        expect(result).toContain('await container.loadAsync(configModule);');
-        expect(result).toContain('const { LOG_LEVELS } = configService.get();');
-        expect(result).toContain(
-          'container.load(new LoggerContainerModule({ logTypes: LOG_LEVELS }));',
-        );
-        expect(result).toContain(
-          'const { DATABASE_URL } = configService.get();',
-        );
-        expect(result).toContain('new PrismaContainerModule({');
-        expect(result).toContain(
-          'container.load(new StatusContainerModule());',
-        );
-        expect(result).toContain('container.load(new TodoContainerModule());');
-        expect(result).toContain(
-          'container.load(new TodoPrismaContainerModule());',
-        );
-        expect(result).toContain('return container;');
-        expect(result).not.toContain('export function initializeContainer');
+        expect(result).not.toContain('appConfigSchema');
+        expect(result).not.toContain('ConfigContainerModule');
         expect(result).not.toContain(
           'export async function initializeContainer',
         );
+        expect(result).not.toContain('async function initializeContainer');
         expect(result).toContain(
           'export async function bootstrap(): Promise<void>',
         );
@@ -114,7 +55,6 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain(
           'container.bind(InversifyValidationErrorFilter).toSelf().inSingletonScope();',
         );
-        expect(result).toContain('configServiceIdentifier');
         expect(result).toContain('const { PORT } = configService.get();');
         expect(result).toContain(
           'const loggerFactory: (context: string) => Logger = container.get(',
@@ -131,10 +71,10 @@ describe(generateBootstrapSource, () => {
           'const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(',
         );
         expect(result).toContain(
-          'const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({',
+          'const swaggerProvider: SwaggerUiProvider = provideOpenApi(container);',
         );
-        expect(result).toContain("path: '/docs'");
-        expect(result).toContain('swaggerProvider.provide(container);');
+        expect(result).not.toContain('new SwaggerUiProvider({');
+        expect(result).not.toContain('swaggerProvider.provide(container);');
         expect(result).toContain('adapter.useGlobalPipe(');
         expect(result).toContain(
           'new OpenApiValidationPipe(swaggerProvider.openApiObject)',
@@ -146,17 +86,12 @@ describe(generateBootstrapSource, () => {
           'const app: express.Application = await adapter.build();',
         );
         expect(result).toContain('app.listen(PORT,');
-        expect(result).toMatch(
-          /^ {2}const container: Container = new Container\(\);$/m,
-        );
-        expect(result).toMatch(/^ {2}DATABASE_URL:/m);
-        expect(result).toMatch(/^ {2}NODE_ENV:/m);
 
         const adapterIndex: number = result.indexOf(
           'const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(',
         );
         const provideIndex: number = result.indexOf(
-          'swaggerProvider.provide(container);',
+          'const swaggerProvider: SwaggerUiProvider = provideOpenApi(container);',
         );
         const validationPipeIndex: number = result.indexOf(
           'adapter.useGlobalPipe(',
@@ -247,38 +182,6 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain("logger.error('Failed to start server');");
         expect(result).not.toContain('console.log');
         expect(result).not.toContain('console.error');
-      });
-    });
-  });
-
-  describe('having extra initializeContainer body statements', () => {
-    describe('when called', () => {
-      let result: string;
-
-      beforeAll(async () => {
-        result =
-          await BootstrapSourceFixtures.withUseCaseExtraInitializeContainerBodyStatements();
-      });
-
-      it('should include the extra statements after loading the config module', () => {
-        expect(result).toContain('await container.loadAsync(configModule);');
-        expect(result).toContain('container.load(new UserContainerModule());');
-
-        const containerIndex: number = result.indexOf(
-          'const container: Container = new Container();',
-        );
-        const configLoadIndex: number = result.indexOf(
-          'await container.loadAsync(configModule);',
-        );
-        const loadIndex: number = result.indexOf(
-          'container.load(new UserContainerModule());',
-        );
-        const returnIndex: number = result.indexOf('return container;');
-
-        expect(containerIndex).toBeGreaterThan(-1);
-        expect(configLoadIndex).toBeGreaterThan(containerIndex);
-        expect(loadIndex).toBeGreaterThan(configLoadIndex);
-        expect(returnIndex).toBeGreaterThan(loadIndex);
       });
     });
   });

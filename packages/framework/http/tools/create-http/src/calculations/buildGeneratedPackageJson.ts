@@ -1,16 +1,20 @@
 import { DbAdapter } from '../models/DbAdapter.js';
 import { type PackageManager } from '../models/PackageManager.js';
 
+const GENERATE_API_TYPES_COMMAND: string =
+  'tsx src/app/scripts/generateApiTypes.ts';
+
 const BASE_SCRIPTS: Record<string, string> = {
-  build: 'tsc',
+  build: `${GENERATE_API_TYPES_COMMAND} && tsc`,
   format: 'prettier --write ./src',
+  'generate:api': GENERATE_API_TYPES_COMMAND,
   lint: 'eslint ./src',
   serve: 'node ./dist/index.js',
 };
 
 const DB_ADAPTER_SCRIPTS: Record<DbAdapter, Record<string, string>> = {
   [DbAdapter.prismaPostgresql]: {
-    build: 'prisma generate && tsc',
+    build: `prisma generate && ${GENERATE_API_TYPES_COMMAND} && tsc`,
     'db:generate': 'prisma generate',
     'db:migrate': 'prisma migrate deploy',
   },

@@ -17,6 +17,7 @@ describe(createPnpmWorkspaceSourceModel, () => {
           allowBuilds: {
             '@prisma/engines': true,
             '@scarf/scarf': true,
+            esbuild: true,
             prisma: true,
           },
         });
@@ -38,6 +39,7 @@ describe(createPnpmWorkspaceSourceModel, () => {
           allowBuilds: {
             '@prisma/engines': true,
             '@scarf/scarf': true,
+            esbuild: true,
             prisma: true,
           },
           blockExoticSubdeps: false,

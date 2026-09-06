@@ -56,6 +56,9 @@ describe(createHttpApp, () => {
         expect(agentSkillContents).toContain('name: add-resource');
         expect(agentSkillContents).toContain('prisma/schema.prisma');
         expect(agentSkillContents).toContain(
+          'src/app/scripts/initializeContainer.ts',
+        );
+        expect(agentSkillContents).toContain(
           'Keep HTTP decorators and request models out of domain and application layers.',
         );
         expect(agentSkillContents).toContain('Prisma columns are snake_case');
@@ -101,13 +104,50 @@ describe(createHttpApp, () => {
         );
         expect(indexSource).toContain('await bootstrap();');
 
+        const initializeContainerSource: string = await fs.readFile(
+          path.join(projectPath, 'src/app/scripts/initializeContainer.ts'),
+          'utf8',
+        );
+        const provideOpenApiSource: string = await fs.readFile(
+          path.join(projectPath, 'src/app/scripts/provideOpenApi.ts'),
+          'utf8',
+        );
+        const generateApiTypesSource: string = await fs.readFile(
+          path.join(projectPath, 'src/app/scripts/generateApiTypes.ts'),
+          'utf8',
+        );
         const bootstrapSource: string = await fs.readFile(
           path.join(projectPath, 'src/app/scripts/bootstrap.ts'),
           'utf8',
         );
 
+        expect(initializeContainerSource).toContain(
+          'export async function initializeContainer(): Promise<Container>',
+        );
+        expect(initializeContainerSource).toContain(
+          'export type AppConfig = z.infer<typeof appConfigSchema>',
+        );
+        expect(provideOpenApiSource).toContain(
+          'export function provideOpenApi(container: Container): SwaggerUiProvider',
+        );
+        expect(generateApiTypesSource).toContain(
+          "import { transformOpenApiToTypeScript } from '@inversifyjs/open-api-2-typescript/v3Dot2';",
+        );
+        expect(generateApiTypesSource).toContain(
+          'const container: Container = await initializeContainer();',
+        );
+        expect(generateApiTypesSource).toContain(
+          'const swaggerUiProvider: SwaggerUiProvider = provideOpenApi(container);',
+        );
+        expect(generateApiTypesSource).toContain('prettier.format(');
+        expect(generateApiTypesSource).toContain("'src'");
+        expect(generateApiTypesSource).toContain("'generated'");
+        expect(generateApiTypesSource).toContain("'api'");
+        expect(bootstrapSource).toContain("from './initializeContainer.js'");
+        expect(bootstrapSource).toContain('initializeContainer');
+        expect(bootstrapSource).toContain('AppConfig');
         expect(bootstrapSource).toContain(
-          'async function initializeContainer(): Promise<Container>',
+          "import { provideOpenApi } from './provideOpenApi.js';",
         );
         expect(bootstrapSource).toContain(
           'export async function bootstrap(): Promise<void>',
@@ -117,53 +157,53 @@ describe(createHttpApp, () => {
           'const app: express.Application = await adapter.build();',
         );
         expect(bootstrapSource).toContain("from '@inversifyjs/config'");
-        expect(bootstrapSource).toContain('ConfigContainerModule');
         expect(bootstrapSource).toContain('configServiceIdentifier');
-        expect(bootstrapSource).toMatch(
+        expect(initializeContainerSource).toContain('ConfigContainerModule');
+        expect(initializeContainerSource).toMatch(
           /^ {2}const container: Container = new Container\(\);$/m,
         );
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain(
           "import { envFile } from '@inversifyjs/config-dotenv';",
         );
-        expect(bootstrapSource).toContain("import { z } from 'zod';");
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain("import { z } from 'zod';");
+        expect(initializeContainerSource).toContain(
           'await container.loadAsync(configModule);',
         );
-        expect(bootstrapSource).toContain('DATABASE_URL');
-        expect(bootstrapSource).toContain('LOG_LEVELS');
+        expect(initializeContainerSource).toContain('DATABASE_URL');
+        expect(initializeContainerSource).toContain('LOG_LEVELS');
         expect(bootstrapSource).toContain("from '@inversifyjs/logger'");
-        expect(bootstrapSource).toContain('LoggerContainerModule');
+        expect(initializeContainerSource).toContain('LoggerContainerModule');
         expect(bootstrapSource).toContain('loggerFactoryIdentifier');
         expect(bootstrapSource).toContain(
           "const logger: Logger = loggerFactory('Bootstrap');",
         );
         expect(bootstrapSource).toContain('logger.info(');
         expect(bootstrapSource).not.toContain('console.log');
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain(
           "import { PrismaContainerModule } from '@inversifyjs/prisma';",
         );
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain(
           "import { PrismaPg } from '@prisma/adapter-pg';",
         );
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain(
           "import { PrismaClient } from '../../generated/prisma/client.js';",
         );
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain(
           "import { StatusContainerModule } from '../../status/adapter/inversify/containerModules/StatusContainerModule.js';",
         );
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain(
           "import { TodoContainerModule } from '../../todo/adapter/inversify/containerModules/TodoContainerModule.js';",
         );
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain(
           "import { TodoPrismaContainerModule } from '../../todo/adapter/inversify/containerModules/TodoPrismaContainerModule.js';",
         );
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain(
           'container.load(new StatusContainerModule());',
         );
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain(
           'container.load(new TodoContainerModule());',
         );
-        expect(bootstrapSource).toContain(
+        expect(initializeContainerSource).toContain(
           'container.load(new TodoPrismaContainerModule());',
         );
         expect(bootstrapSource).toContain(
@@ -182,11 +222,11 @@ describe(createHttpApp, () => {
           "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot2';",
         );
         expect(bootstrapSource).toContain(
-          'const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({',
+          'const swaggerProvider: SwaggerUiProvider = provideOpenApi(container);',
         );
-        expect(bootstrapSource).toContain("path: '/docs'");
-        expect(bootstrapSource).toContain(
-          'swaggerProvider.provide(container);',
+        expect(provideOpenApiSource).toContain("path: '/docs'");
+        expect(provideOpenApiSource).toContain(
+          'swaggerUiProvider.provide(container);',
         );
         expect(bootstrapSource).toContain('adapter.useGlobalPipe(');
         expect(bootstrapSource).toContain(
@@ -517,6 +557,7 @@ describe(createHttpApp, () => {
 
         expect(pnpmWorkspaceContents).toContain('allowBuilds:');
         expect(pnpmWorkspaceContents).toContain('prisma: true');
+        expect(pnpmWorkspaceContents).toContain('esbuild: true');
         expect(pnpmWorkspaceContents).toContain("'@prisma/engines': true");
         expect(pnpmWorkspaceContents).not.toContain('blockExoticSubdeps');
 
@@ -571,10 +612,12 @@ describe(createHttpApp, () => {
           name: 'demo-app',
           packageManager: expect.stringMatching(/^pnpm@/) as string,
           scripts: {
-            build: 'prisma generate && tsc',
+            build:
+              'prisma generate && tsx src/app/scripts/generateApiTypes.ts && tsc',
             'db:generate': 'prisma generate',
             'db:migrate': 'prisma migrate deploy',
             format: 'prettier --write ./src',
+            'generate:api': 'tsx src/app/scripts/generateApiTypes.ts',
             lint: 'eslint ./src',
             serve: 'node ./dist/index.js',
           },
@@ -591,6 +634,7 @@ describe(createHttpApp, () => {
           (packageJson as { devDependencies: Record<string, string> })
             .devDependencies,
         ).toMatchObject({
+          '@inversifyjs/open-api-2-typescript': expect.any(String) as string,
           '@types/express': expect.any(String) as string,
           dotenv: expect.any(String) as string,
           eslint: expect.any(String) as string,
@@ -598,6 +642,7 @@ describe(createHttpApp, () => {
           'eslint-plugin-prettier': expect.any(String) as string,
           prettier: expect.any(String) as string,
           prisma: expect.any(String) as string,
+          tsx: expect.any(String) as string,
           typescript: expect.any(String) as string,
         });
       });
@@ -638,6 +683,9 @@ describe(createHttpApp, () => {
               built: true,
             },
             '@scarf/scarf': {
+              built: true,
+            },
+            esbuild: {
               built: true,
             },
             prisma: {

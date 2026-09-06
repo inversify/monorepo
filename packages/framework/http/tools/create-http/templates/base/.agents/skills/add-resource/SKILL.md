@@ -5,7 +5,7 @@ description: Add a complete persistence-backed HTTP resource to an app generated
 
 # Add a resource
 
-Treat `src/todo`, `src/app/scripts/bootstrap.ts`, and `prisma/schema.prisma` as the working reference. Preserve the generated app's hexagonal boundaries and local naming conventions instead of introducing a second architecture.
+Treat `src/todo`, `src/app/scripts/initializeContainer.ts`, `src/app/scripts/bootstrap.ts`, and `prisma/schema.prisma` as the working reference. Preserve the generated app's hexagonal boundaries and local naming conventions instead of introducing a second architecture.
 
 ## Establish the contract
 
@@ -27,7 +27,7 @@ Ask a focused question only when a missing choice would materially change the pu
 5. Add request and response API models with the OpenAPI 3.2 schema decorators used by the Todo resource. Do not expose generated Prisma types from the API.
 6. Add a domain-to-API builder and controller. Use validated request decorators, explicit OpenAPI operation metadata, and the existing not-found response convention.
 7. Add separate Inversify container modules for API bindings and Prisma persistence bindings.
-8. Import and load both modules in `src/app/scripts/bootstrap.ts`.
+8. Import and load both modules in `src/app/scripts/initializeContainer.ts`.
 9. Add focused tests when the generated project already has a test setup. Do not introduce a new test framework solely for this resource unless requested.
 
 ## Preserve project conventions
@@ -44,4 +44,4 @@ Ask a focused question only when a missing choice would materially change the pu
 
 ## Validate
 
-Format the changed files, regenerate the Prisma client, then run the project's build and lint commands. Run existing tests when present. Report the migration status and any validation that could not run, along with the concrete reason.
+Format the changed files, regenerate the Prisma client, then run the project's build and lint commands. Build already regenerates OpenAPI TypeScript types at `src/generated/api`. Run existing tests when present. Report the migration status and any validation that could not run, along with the concrete reason.

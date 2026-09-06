@@ -1,51 +1,9 @@
 import prettier from 'prettier';
-import {
-  type ImportDeclarationStructure,
-  type OptionalKind,
-  Project,
-  QuoteKind,
-  type SourceFile,
-  VariableDeclarationKind,
-} from 'ts-morph';
+import { Project, QuoteKind, type SourceFile } from 'ts-morph';
 
-import {
-  type BootstrapSourceModel,
-  type SourceImport,
-  type SourceNamedImport,
-} from '../models/BootstrapSourceModel.js';
+import { type BootstrapSourceModel } from '../models/BootstrapSourceModel.js';
 import { SCAFFOLD_PRETTIER_OPTIONS } from '../models/scaffoldPrettierOptions.js';
-
-function toImportDeclarationStructure(
-  sourceImport: SourceImport,
-): OptionalKind<ImportDeclarationStructure> {
-  return {
-    ...(sourceImport.defaultImport === undefined
-      ? {}
-      : { defaultImport: sourceImport.defaultImport }),
-    ...(sourceImport.isTypeOnly === undefined
-      ? {}
-      : { isTypeOnly: sourceImport.isTypeOnly }),
-    moduleSpecifier: sourceImport.moduleSpecifier,
-    ...(sourceImport.namedImports === undefined
-      ? {}
-      : {
-          namedImports: sourceImport.namedImports.map(
-            (namedImport: SourceNamedImport) => ({
-              ...(namedImport.alias === undefined
-                ? {}
-                : { alias: namedImport.alias }),
-              ...(namedImport.isTypeOnly === undefined
-                ? {}
-                : { isTypeOnly: namedImport.isTypeOnly }),
-              name: namedImport.name,
-            }),
-          ),
-        }),
-    ...(sourceImport.namespaceImport === undefined
-      ? {}
-      : { namespaceImport: sourceImport.namespaceImport }),
-  };
-}
+import { toImportDeclarationStructure } from './toImportDeclarationStructure.js';
 
 export async function generateBootstrapSource(
   model: BootstrapSourceModel,
@@ -65,10 +23,21 @@ export async function generateBootstrapSource(
   }
 
   sourceFile.addImportDeclaration({
+    moduleSpecifier: './initializeContainer.js',
+    namedImports: [
+      { isTypeOnly: true, name: 'AppConfig' },
+      { name: 'initializeContainer' },
+    ],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: './provideOpenApi.js',
+    namedImports: [{ name: 'provideOpenApi' }],
+  });
+
+  sourceFile.addImportDeclaration({
     moduleSpecifier: '@inversifyjs/config',
     namedImports: [
-      { name: 'ConfigContainerModule' },
-      { isTypeOnly: true, name: 'ConfigObject' },
       { isTypeOnly: true, name: 'ConfigService' },
       { name: 'configServiceIdentifier' },
     ],
@@ -76,17 +45,12 @@ export async function generateBootstrapSource(
 
   sourceFile.addImportDeclaration({
     moduleSpecifier: '@inversifyjs/logger',
-    namedImports: [{ isTypeOnly: true, name: 'Logger' }, { name: 'LogLevel' }],
+    namedImports: [{ isTypeOnly: true, name: 'Logger' }],
   });
 
   sourceFile.addImportDeclaration({
     moduleSpecifier: '../../logger/models/loggerFactoryIdentifier.js',
     namedImports: [{ name: 'loggerFactoryIdentifier' }],
-  });
-
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: '@inversifyjs/config-dotenv',
-    namedImports: [{ name: 'envFile' }],
   });
 
   sourceFile.addImportDeclaration({
@@ -102,79 +66,6 @@ export async function generateBootstrapSource(
   sourceFile.addImportDeclaration({
     moduleSpecifier: '@inversifyjs/open-api-validation/v3Dot2',
     namedImports: [{ name: 'OpenApiValidationPipe' }],
-  });
-
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: 'zod',
-    namedImports: [{ name: 'z' }],
-  });
-
-  sourceFile.addVariableStatement({
-    declarationKind: VariableDeclarationKind.Const,
-    declarations: [
-      {
-        initializer: `z.object({
-  DATABASE_URL: z.string().min(1),
-  LOG_LEVELS: z
-    .string()
-    .default('error,warn,info')
-    .transform((value: string) =>
-      value.split(',').map((level: string) => level.trim()),
-    )
-    .pipe(
-      z.array(
-        z.enum([
-          LogLevel.ERROR,
-          LogLevel.WARN,
-          LogLevel.INFO,
-          LogLevel.HTTP,
-          LogLevel.VERBOSE,
-          LogLevel.DEBUG,
-          LogLevel.SILLY,
-        ]),
-      ),
-    ),
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.coerce.number().min(1).max(65535).default(3000),
-})`,
-        name: 'appConfigSchema',
-      },
-    ],
-  });
-
-  sourceFile.addTypeAlias({
-    name: 'AppConfig',
-    type: 'z.infer<typeof appConfigSchema>',
-  });
-
-  sourceFile.addVariableStatement({
-    declarationKind: VariableDeclarationKind.Const,
-    declarations: [
-      {
-        initializer: `ConfigContainerModule.fromOptions<AppConfig>({
-  source: envFile(),
-  validate: {
-    validate: (input: ConfigObject): AppConfig => appConfigSchema.parse(input),
-  },
-})`,
-        name: 'configModule',
-      },
-    ],
-  });
-
-  const initializeContainerBodyStatements: string[] = [
-    'const container: Container = new Container();',
-    'await container.loadAsync(configModule);',
-    ...(model.initializeContainerBodyStatements ?? []),
-    'return container;',
-  ];
-
-  sourceFile.addFunction({
-    isAsync: true,
-    isExported: false,
-    name: 'initializeContainer',
-    returnType: 'Promise<Container>',
-    statements: initializeContainerBodyStatements,
   });
 
   const applicationDeclaration: string =
@@ -193,22 +84,7 @@ export async function generateBootstrapSource(
   container,
   ${model.adapter.optionsObjectLiteral},
 );`,
-    `const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
-  api: {
-    openApiObject: {
-      info: {
-        title: 'API',
-        version: '1.0.0',
-      },
-      openapi: '3.2.0',
-    },
-    path: '/docs',
-  },
-  ui: {
-    title: 'API docs',
-  },
-});`,
-    'swaggerProvider.provide(container);',
+    'const swaggerProvider: SwaggerUiProvider = provideOpenApi(container);',
     'adapter.useGlobalPipe(new OpenApiValidationPipe(swaggerProvider.openApiObject));',
     'adapter.useGlobalFilters(InversifyValidationErrorFilter);',
     applicationDeclaration,

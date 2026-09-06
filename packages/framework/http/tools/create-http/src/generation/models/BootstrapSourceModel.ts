@@ -36,11 +36,6 @@ export interface BootstrapSourceModel {
    * Omit to let TypeScript infer the type (useful for uWebSockets).
    */
   applicationType?: string;
-  /**
-   * Extra statements inside `initializeContainer` after `new Container()`,
-   * before the return. Useful for `container.load(...)`, pipe registration, etc.
-   */
-  initializeContainerBodyStatements?: readonly string[];
   imports: readonly SourceImport[];
   /**
    * Statements after `const app = await adapter.build()`.

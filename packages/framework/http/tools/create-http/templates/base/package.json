@@ -30,14 +30,16 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@inversifyjs/open-api-2-typescript": "0.2.0",
     "@types/express": "5.0.6",
     "@types/node": "24.13.3",
+    "dotenv": "17.4.2",
     "eslint": "10.9.1",
     "eslint-config-prettier": "10.1.8",
-    "dotenv": "17.4.2",
     "eslint-plugin-prettier": "5.5.6",
     "prettier": "3.9.6",
     "prisma": "7.10.0",
+    "tsx": "4.23.13",
     "typescript": "6.0.3",
     "typescript-eslint": "8.68.0"
   }

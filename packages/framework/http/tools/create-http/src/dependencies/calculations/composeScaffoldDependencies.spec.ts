@@ -39,6 +39,7 @@ describe(composeScaffoldDependencies, () => {
       },
       devDependencies: {
         '@eslint/js': '10.0.1',
+        '@inversifyjs/open-api-2-typescript': '0.2.0',
         '@types/express': '5.0.6',
         '@types/node': '24.13.3',
         dotenv: '17.4.2',
@@ -47,6 +48,7 @@ describe(composeScaffoldDependencies, () => {
         'eslint-plugin-prettier': '5.5.6',
         prettier: '3.9.6',
         prisma: '7.9.1',
+        tsx: '4.23.13',
         typescript: '6.0.3',
         'typescript-eslint': '8.65.0',
       },
@@ -87,9 +89,11 @@ describe(composeScaffoldDependencies, () => {
           zod: '4.4.3',
         });
         expect(result.devDependencies).toMatchObject({
+          '@inversifyjs/open-api-2-typescript': '0.2.0',
           '@types/express': '5.0.6',
           dotenv: '17.4.2',
           prisma: '7.9.1',
+          tsx: '4.23.13',
           typescript: '6.0.3',
         });
         expect(result.dependencies).not.toHaveProperty('fastify');
@@ -137,8 +141,10 @@ describe(composeScaffoldDependencies, () => {
         });
         expect(result.devDependencies).not.toHaveProperty('@types/express');
         expect(result.devDependencies).toMatchObject({
+          '@inversifyjs/open-api-2-typescript': '0.2.0',
           dotenv: '17.4.2',
           prisma: '7.9.1',
+          tsx: '4.23.13',
         });
       });
     });

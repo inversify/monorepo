@@ -4,6 +4,7 @@ import { type PnpmWorkspaceSourceModel } from '../models/PnpmWorkspaceSourceMode
 const BASE_ALLOW_BUILDS: Readonly<Record<string, boolean>> = {
   '@prisma/engines': true,
   '@scarf/scarf': true,
+  esbuild: true,
   prisma: true,
 };
 

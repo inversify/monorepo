@@ -25,10 +25,4 @@ export class BootstrapSourceFixtures {
       BootstrapSourceModelFixtures.withHttpAdapterUwebsockets,
     );
   }
-
-  public static async withUseCaseExtraInitializeContainerBodyStatements(): Promise<string> {
-    return generateBootstrapSource(
-      BootstrapSourceModelFixtures.withUseCaseExtraInitializeContainerBodyStatements,
-    );
-  }
 }
