@@ -21,6 +21,7 @@ import {
 import { type TransformJsonSchemaContext } from '../models/TransformJsonSchemaContext.js';
 import { type TransformJsonSchemaInternalContext } from '../models/TransformJsonSchemaInternalContext.js';
 import { simplifyTypeMetadata } from './simplifyTypeMetadata.js';
+import { unifyCollidingTypeMetadataIds } from './unifyCollidingTypeMetadataIds.js';
 
 const DYNAMIC_SCOPE_KEY_SEPARATOR: string = '|';
 
@@ -50,32 +51,33 @@ export function transformJsonSchema(
   schema: JsonRootSchema | JsonSchema,
   context: TransformJsonSchemaContext,
 ): TypeMetadata {
-  return simplifyTypeMetadata(
-    transformJsonSchemaNode(schema, {
-      dynamicScopeEntries: context.dynamicScopeEntries ?? [],
-      inProgressJsonSchemaToTypeMap: new Map(),
-      jsonSchemaToTypeMap: new Map(),
-      resolver: context.resolver,
-      typeMetadataIdSet: new Set(),
-    }),
+  const titledTypeMetadata: TypeMetadata[] = [];
+
+  return unifyCollidingTypeMetadataIds(
+    simplifyTypeMetadata(
+      transformJsonSchemaNode(schema, {
+        dynamicScopeEntries: context.dynamicScopeEntries ?? [],
+        inProgressJsonSchemaToTypeMap: new Map(),
+        jsonSchemaToTypeMap: new Map(),
+        resolver: context.resolver,
+        titledTypeMetadata,
+      }),
+    ),
+    titledTypeMetadata,
   );
 }
 
 function assignTypeMetadataId(
   typeMetadata: Partial<TypeMetadata>,
   id: string | undefined,
-  typeMetadataIdSet: Set<string>,
+  titledTypeMetadata: TypeMetadata[],
 ): void {
   if (id === undefined || typeMetadata.id !== undefined) {
     return;
   }
 
-  if (typeMetadataIdSet.has(id)) {
-    throw new Error(`Duplicated TypeMetadata id "${id}"`);
-  }
-
-  typeMetadataIdSet.add(id);
   typeMetadata.id = id;
+  titledTypeMetadata.push(typeMetadata as TypeMetadata);
 }
 
 function assertJsonSchema(
@@ -136,7 +138,7 @@ function buildTypeMetadata(
   id: string | undefined,
   typeMetadataPartial: Partial<TypeMetadata>,
   typeConstraints: TypeMetadata[],
-  typeMetadataIdSet: Set<string>,
+  titledTypeMetadata: TypeMetadata[],
 ): TypeMetadata {
   let typeMetadata: TypeMetadata;
 
@@ -161,7 +163,7 @@ function buildTypeMetadata(
          * Cycle to another in-progress schema. Keep that node so applicators
          * such as properties can close the loop once the target is completed.
          */
-        assignTypeMetadataId(childType, id, typeMetadataIdSet);
+        assignTypeMetadataId(childType, id, titledTypeMetadata);
 
         return childType as TypeMetadata;
       }
@@ -175,7 +177,7 @@ function buildTypeMetadata(
     };
   }
 
-  assignTypeMetadataId(typeMetadataPartial, id, typeMetadataIdSet);
+  assignTypeMetadataId(typeMetadataPartial, id, titledTypeMetadata);
 
   const typeMetadataId: string | undefined = typeMetadataPartial.id;
 
@@ -549,7 +551,7 @@ function transformObjectJsonSchema(
         id,
         typeMetadataPartial,
         typeConstraints,
-        scopedContext.typeMetadataIdSet,
+        scopedContext.titledTypeMetadata,
       );
 
   scopedTypeMetadataMap.set(dynamicScopeKey, typeMetadata);

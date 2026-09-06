@@ -139,6 +139,136 @@ describe(transformOpenApiToTypeScript, () => {
     },
   );
 
+  describe('having a component schema referenced as array items', () => {
+    let openApiObjectFixture: OpenApi3Dot1Object;
+
+    beforeAll(() => {
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            PaginatedTodosV1Response: {
+              properties: {
+                items: {
+                  items: {
+                    $ref: '#/components/schemas/TodoV1',
+                  },
+                  type: 'array',
+                },
+              },
+              required: ['items'],
+              type: 'object',
+            },
+            TodoV1: {
+              properties: {
+                id: {
+                  type: 'string',
+                },
+                title: {
+                  type: 'string',
+                },
+              },
+              required: ['id', 'title'],
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformOpenApiToTypeScript(openApiObjectFixture);
+      });
+
+      it('should reuse TodoV1 for the array items', () => {
+        expect(result).toBe(
+          'export type PaginatedTodosV1Response = { items: TodoV1[] };\nexport type TodoV1 = { id: string; title: string };\nexport type Root = PaginatedTodosV1Response | TodoV1;',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having a component schema with nested object and array properties referenced as array items', () => {
+    let openApiObjectFixture: OpenApi3Dot1Object;
+
+    beforeAll(() => {
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            PaginatedTodosV1Response: {
+              properties: {
+                items: {
+                  items: {
+                    $ref: '#/components/schemas/TodoV1',
+                  },
+                  type: 'array',
+                },
+              },
+              required: ['items'],
+              type: 'object',
+            },
+            TodoV1: {
+              properties: {
+                address: {
+                  properties: {
+                    city: {
+                      type: 'string',
+                    },
+                  },
+                  required: ['city'],
+                  type: 'object',
+                },
+                tags: {
+                  items: {
+                    type: 'string',
+                  },
+                  type: 'array',
+                },
+                title: {
+                  type: 'string',
+                },
+              },
+              required: ['address', 'tags', 'title'],
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformOpenApiToTypeScript(openApiObjectFixture);
+      });
+
+      it('should reuse TodoV1 including its nested object and array properties', () => {
+        expect(result).toBe(
+          'export type PaginatedTodosV1Response = { items: TodoV1[] };\nexport type TodoV1 = { address: { city: string }; tags: string[]; title: string };\nexport type Root = PaginatedTodosV1Response | TodoV1;',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
   describe('having component schemas that $ref each other', () => {
     let openApiObjectFixture: OpenApi3Dot1Object;
 

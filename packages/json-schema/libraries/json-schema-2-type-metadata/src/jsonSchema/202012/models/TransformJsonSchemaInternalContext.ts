@@ -17,5 +17,5 @@ export interface TransformJsonSchemaInternalContext extends TransformJsonSchemaC
     JsonRootSchema | JsonSchema,
     Map<string, TypeMetadata>
   >;
-  typeMetadataIdSet: Set<string>;
+  titledTypeMetadata: TypeMetadata[];
 }
