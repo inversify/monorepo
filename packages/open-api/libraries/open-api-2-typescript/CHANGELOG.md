@@ -1,5 +1,13 @@
 # @inversifyjs/open-api-2-typescript
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/json-schema-2-type-metadata@0.3.0
+  - @inversifyjs/json-schema-2-typescript@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
