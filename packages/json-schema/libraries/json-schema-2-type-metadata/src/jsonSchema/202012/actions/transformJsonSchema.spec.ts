@@ -1070,7 +1070,7 @@ describe(transformJsonSchema, () => {
         );
       });
 
-      it('should not reuse the titled TypeMetadata for the $ref', () => {
+      it('should unify the titled TypeMetadata for the $ref', () => {
         const resultTypeMetadata: OrTypeMetadata = result as OrTypeMetadata;
         const addressTypeMetadata: TypeMetadata = resultTypeMetadata
           .children[0] as TypeMetadata;
@@ -1082,7 +1082,7 @@ describe(transformJsonSchema, () => {
               child.kind === TypeMetadataKind.propertyType,
           ) as PropertyTypeMetadata;
 
-        expect(addressPropertyTypeMetadata.child).not.toBe(addressTypeMetadata);
+        expect(addressPropertyTypeMetadata.child).toBe(addressTypeMetadata);
       });
     });
   });
@@ -1649,7 +1649,7 @@ describe(transformJsonSchema, () => {
     });
   });
 
-  describe('having two schemas with the same title', () => {
+  describe('having two inequivalent schemas with the same title', () => {
     let jsonSchemaFixture: JsonSchemaObject;
 
     beforeAll(() => {
@@ -1686,6 +1686,188 @@ describe(transformJsonSchema, () => {
         expect((result as Error).message).toBe(
           'Duplicated TypeMetadata id "Foo"',
         );
+      });
+    });
+  });
+
+  describe('having two equivalent schemas with the same title', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            title: 'Foo',
+            type: 'string',
+          },
+          b: {
+            title: 'Foo',
+            type: 'string',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should reuse one TypeMetadata node for both properties', () => {
+        const resultTypeMetadata: AndTypeMetadata = result as AndTypeMetadata;
+        const firstPropertyTypeMetadata: PropertyTypeMetadata =
+          resultTypeMetadata.children.find(
+            (child: TypeMetadata) =>
+              child.kind === TypeMetadataKind.propertyType &&
+              child.property === 'a',
+          ) as PropertyTypeMetadata;
+        const secondPropertyTypeMetadata: PropertyTypeMetadata =
+          resultTypeMetadata.children.find(
+            (child: TypeMetadata) =>
+              child.kind === TypeMetadataKind.propertyType &&
+              child.property === 'b',
+          ) as PropertyTypeMetadata;
+
+        expect(firstPropertyTypeMetadata.child).toBe(
+          secondPropertyTypeMetadata.child,
+        );
+        expect(firstPropertyTypeMetadata.child.id).toBe('Foo');
+      });
+    });
+  });
+
+  describe('having two equivalent schemas with different titles', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          person: {
+            title: 'Person',
+            type: 'string',
+          },
+          user: {
+            title: 'User',
+            type: 'string',
+          },
+        },
+        required: ['person', 'user'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should keep both named TypeMetadata nodes', () => {
+        const resultTypeMetadata: AndTypeMetadata = result as AndTypeMetadata;
+        const personPropertyTypeMetadata: PropertyTypeMetadata =
+          resultTypeMetadata.children.find(
+            (child: TypeMetadata) =>
+              child.kind === TypeMetadataKind.propertyType &&
+              child.property === 'person',
+          ) as PropertyTypeMetadata;
+        const userPropertyTypeMetadata: PropertyTypeMetadata =
+          resultTypeMetadata.children.find(
+            (child: TypeMetadata) =>
+              child.kind === TypeMetadataKind.propertyType &&
+              child.property === 'user',
+          ) as PropertyTypeMetadata;
+
+        expect(personPropertyTypeMetadata.child).not.toBe(
+          userPropertyTypeMetadata.child,
+        );
+        expect(personPropertyTypeMetadata.child.id).toBe('Person');
+        expect(userPropertyTypeMetadata.child.id).toBe('User');
+      });
+    });
+  });
+
+  describe('having a titled schema both as a property and as array items via $ref', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+    let todoJsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      todoJsonSchemaFixture = {
+        $id: 'https://example.com/todo',
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+        required: ['id'],
+        title: 'TodoV1',
+        type: 'object',
+      };
+      jsonSchemaFixture = {
+        $id: 'https://example.com/root',
+        properties: {
+          items: {
+            items: {
+              $ref: 'https://example.com/todo',
+            },
+            type: 'array',
+          },
+          todo: {
+            $ref: 'https://example.com/todo',
+          },
+        },
+        required: ['items', 'todo'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([
+            jsonSchemaFixture,
+            todoJsonSchemaFixture,
+          ]),
+        );
+      });
+
+      it('should reuse one TypeMetadata node for the property and the array items', () => {
+        const resultTypeMetadata: AndTypeMetadata = result as AndTypeMetadata;
+        const itemsPropertyTypeMetadata: PropertyTypeMetadata =
+          resultTypeMetadata.children.find(
+            (child: TypeMetadata) =>
+              child.kind === TypeMetadataKind.propertyType &&
+              child.property === 'items',
+          ) as PropertyTypeMetadata;
+        const todoPropertyTypeMetadata: PropertyTypeMetadata =
+          resultTypeMetadata.children.find(
+            (child: TypeMetadata) =>
+              child.kind === TypeMetadataKind.propertyType &&
+              child.property === 'todo',
+          ) as PropertyTypeMetadata;
+
+        expect(itemsPropertyTypeMetadata.child.kind).toBe(
+          TypeMetadataKind.arrayType,
+        );
+        expect(
+          itemsPropertyTypeMetadata.child.kind === TypeMetadataKind.arrayType
+            ? itemsPropertyTypeMetadata.child.child
+            : undefined,
+        ).toBe(todoPropertyTypeMetadata.child);
+        expect(todoPropertyTypeMetadata.child.id).toBe('TodoV1');
       });
     });
   });

@@ -1323,7 +1323,7 @@ describe(transformJsonSchemaToTypeScript, () => {
     });
   });
 
-  describe('having two schemas with the same title', () => {
+  describe('having two inequivalent schemas with the same title', () => {
     let jsonSchemaFixture: JsonSchemaObject;
 
     beforeAll(() => {
@@ -1359,6 +1359,653 @@ describe(transformJsonSchemaToTypeScript, () => {
         expect(result).toBeInstanceOf(Error);
         expect((result as Error).message).toBe(
           'Duplicated TypeMetadata id "Foo"',
+        );
+      });
+    });
+  });
+
+  describe('having two equivalent schemas with the same title', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            title: 'Foo',
+            type: 'string',
+          },
+          b: {
+            title: 'Foo',
+            type: 'string',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should reuse one type alias', () => {
+        expect(result).toBe(
+          'export type Foo = string;\nexport type Root = { a: Foo; b: Foo };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having two equivalent schemas with different titles', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          person: {
+            title: 'Person',
+            type: 'string',
+          },
+          user: {
+            title: 'User',
+            type: 'string',
+          },
+        },
+        required: ['person', 'user'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should keep both type aliases', () => {
+        expect(result).toBe(
+          'export type Person = string;\nexport type User = string;\nexport type Root = { person: Person; user: User };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having a titled schema both as a property and as array items via $ref', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+    let todoJsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      todoJsonSchemaFixture = {
+        $id: 'https://example.com/todo',
+        properties: {
+          completed: {
+            type: 'boolean',
+          },
+          id: {
+            type: 'string',
+          },
+        },
+        required: ['completed', 'id'],
+        title: 'TodoV1',
+        type: 'object',
+      };
+      jsonSchemaFixture = {
+        $id: 'https://example.com/root',
+        properties: {
+          items: {
+            items: {
+              $ref: 'https://example.com/todo',
+            },
+            type: 'array',
+          },
+          todo: {
+            $ref: 'https://example.com/todo',
+          },
+        },
+        required: ['items', 'todo'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([
+            jsonSchemaFixture,
+            todoJsonSchemaFixture,
+          ]),
+        );
+      });
+
+      it('should reuse one TodoV1 alias for the property and the array items', () => {
+        expect(result).toBe(
+          'export type TodoV1 = { completed: boolean; id: string };\nexport type Root = { items: TodoV1[]; todo: TodoV1 };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having two equivalent titled object schemas with nested object properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should reuse one Foo alias for both nested objects', () => {
+        expect(result).toBe(
+          'export type Foo = { address: { city: string } };\nexport type Root = { a: Foo; b: Foo };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having two titled object schemas that differ in a nested object property', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'number',
+                  },
+                },
+                required: ['city'],
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        try {
+          transformJsonSchemaToTypeScript(
+            jsonSchemaFixture,
+            generateTransformJsonSchemaContext(),
+          );
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        expect(result).toBeInstanceOf(Error);
+        expect((result as Error).message).toBe(
+          'Duplicated TypeMetadata id "Foo"',
+        );
+      });
+    });
+  });
+
+  describe('having two equivalent titled object schemas with array properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              tags: {
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+            },
+            required: ['tags'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              tags: {
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+            },
+            required: ['tags'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should reuse one Foo alias for both array properties', () => {
+        expect(result).toBe(
+          'export type Foo = { tags: string[] };\nexport type Root = { a: Foo; b: Foo };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having two equivalent titled object schemas with array of object properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              items: {
+                items: {
+                  properties: {
+                    id: {
+                      type: 'string',
+                    },
+                  },
+                  required: ['id'],
+                  type: 'object',
+                },
+                type: 'array',
+              },
+            },
+            required: ['items'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              items: {
+                items: {
+                  properties: {
+                    id: {
+                      type: 'string',
+                    },
+                  },
+                  required: ['id'],
+                  type: 'object',
+                },
+                type: 'array',
+              },
+            },
+            required: ['items'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should reuse one Foo alias for both array of object properties', () => {
+        expect(result).toBe(
+          'export type Foo = { items: { id: string }[] };\nexport type Root = { a: Foo; b: Foo };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having two titled object schemas that differ in an array item type', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              items: {
+                items: {
+                  properties: {
+                    id: {
+                      type: 'string',
+                    },
+                  },
+                  required: ['id'],
+                  type: 'object',
+                },
+                type: 'array',
+              },
+            },
+            required: ['items'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              items: {
+                items: {
+                  properties: {
+                    id: {
+                      type: 'number',
+                    },
+                  },
+                  required: ['id'],
+                  type: 'object',
+                },
+                type: 'array',
+              },
+            },
+            required: ['items'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        try {
+          transformJsonSchemaToTypeScript(
+            jsonSchemaFixture,
+            generateTransformJsonSchemaContext(),
+          );
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        expect(result).toBeInstanceOf(Error);
+        expect((result as Error).message).toBe(
+          'Duplicated TypeMetadata id "Foo"',
+        );
+      });
+    });
+  });
+
+  describe('having two equivalent titled object schemas with nested titled object and array properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                title: 'Address',
+                type: 'object',
+              },
+              tags: {
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+            },
+            required: ['address', 'tags'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                title: 'Address',
+                type: 'object',
+              },
+              tags: {
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+            },
+            required: ['address', 'tags'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should reuse Foo and Address aliases', () => {
+        expect(result).toBe(
+          'export type Foo = { address: Address; tags: string[] };\nexport type Address = { city: string };\nexport type Root = { a: Foo; b: Foo };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having two titled object schemas with the same nested title and a different nested property type', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                title: 'Address',
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'number',
+                  },
+                },
+                required: ['city'],
+                title: 'Address',
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        try {
+          transformJsonSchemaToTypeScript(
+            jsonSchemaFixture,
+            generateTransformJsonSchemaContext(),
+          );
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        expect(result).toBeInstanceOf(Error);
+        expect((result as Error).message).toBe(
+          'Duplicated TypeMetadata id "Address"',
         );
       });
     });

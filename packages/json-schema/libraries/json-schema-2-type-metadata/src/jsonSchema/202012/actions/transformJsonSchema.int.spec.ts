@@ -196,4 +196,536 @@ describe(transformJsonSchema, () => {
       });
     });
   });
+
+  describe('having two equivalent titled object schemas with nested object properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should reuse one TypeMetadata node for both titled objects', () => {
+        const firstFooTypeMetadata: TypeMetadata | undefined =
+          findPropertyTypeMetadata(result as TypeMetadata, 'a')?.child;
+        const secondFooTypeMetadata: TypeMetadata | undefined =
+          findPropertyTypeMetadata(result as TypeMetadata, 'b')?.child;
+
+        expect(firstFooTypeMetadata).toBe(secondFooTypeMetadata);
+        expect(firstFooTypeMetadata?.id).toBe('Foo');
+      });
+
+      it('should keep TypeMetadata ids unique', () => {
+        const typeMetadataIds: string[] = collectTypeMetadata(
+          result as TypeMetadata,
+        )
+          .map((typeMetadata: TypeMetadata) => typeMetadata.id)
+          .filter((id: string | undefined): id is string => id !== undefined);
+
+        expect(typeMetadataIds).toStrictEqual([...new Set(typeMetadataIds)]);
+      });
+    });
+  });
+
+  describe('having two titled object schemas that differ in a nested object property', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'number',
+                  },
+                },
+                required: ['city'],
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        try {
+          transformJsonSchema(
+            jsonSchemaFixture,
+            generateTransformJsonSchemaContext(),
+          );
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        expect(result).toBeInstanceOf(Error);
+        expect((result as Error).message).toBe(
+          'Duplicated TypeMetadata id "Foo"',
+        );
+      });
+    });
+  });
+
+  describe('having two equivalent titled object schemas with array properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              tags: {
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+            },
+            required: ['tags'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              tags: {
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+            },
+            required: ['tags'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should reuse one TypeMetadata node for both titled objects', () => {
+        const firstFooTypeMetadata: TypeMetadata | undefined =
+          findPropertyTypeMetadata(result as TypeMetadata, 'a')?.child;
+        const secondFooTypeMetadata: TypeMetadata | undefined =
+          findPropertyTypeMetadata(result as TypeMetadata, 'b')?.child;
+
+        expect(firstFooTypeMetadata).toBe(secondFooTypeMetadata);
+        expect(firstFooTypeMetadata?.id).toBe('Foo');
+      });
+
+      it('should keep TypeMetadata ids unique', () => {
+        const typeMetadataIds: string[] = collectTypeMetadata(
+          result as TypeMetadata,
+        )
+          .map((typeMetadata: TypeMetadata) => typeMetadata.id)
+          .filter((id: string | undefined): id is string => id !== undefined);
+
+        expect(typeMetadataIds).toStrictEqual([...new Set(typeMetadataIds)]);
+      });
+    });
+  });
+
+  describe('having two equivalent titled object schemas with array of object properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              items: {
+                items: {
+                  properties: {
+                    id: {
+                      type: 'string',
+                    },
+                  },
+                  required: ['id'],
+                  type: 'object',
+                },
+                type: 'array',
+              },
+            },
+            required: ['items'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              items: {
+                items: {
+                  properties: {
+                    id: {
+                      type: 'string',
+                    },
+                  },
+                  required: ['id'],
+                  type: 'object',
+                },
+                type: 'array',
+              },
+            },
+            required: ['items'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should reuse one TypeMetadata node for both titled objects', () => {
+        const firstFooTypeMetadata: TypeMetadata | undefined =
+          findPropertyTypeMetadata(result as TypeMetadata, 'a')?.child;
+        const secondFooTypeMetadata: TypeMetadata | undefined =
+          findPropertyTypeMetadata(result as TypeMetadata, 'b')?.child;
+
+        expect(firstFooTypeMetadata).toBe(secondFooTypeMetadata);
+        expect(firstFooTypeMetadata?.id).toBe('Foo');
+      });
+
+      it('should keep TypeMetadata ids unique', () => {
+        const typeMetadataIds: string[] = collectTypeMetadata(
+          result as TypeMetadata,
+        )
+          .map((typeMetadata: TypeMetadata) => typeMetadata.id)
+          .filter((id: string | undefined): id is string => id !== undefined);
+
+        expect(typeMetadataIds).toStrictEqual([...new Set(typeMetadataIds)]);
+      });
+    });
+  });
+
+  describe('having two titled object schemas that differ in an array item type', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              items: {
+                items: {
+                  properties: {
+                    id: {
+                      type: 'string',
+                    },
+                  },
+                  required: ['id'],
+                  type: 'object',
+                },
+                type: 'array',
+              },
+            },
+            required: ['items'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              items: {
+                items: {
+                  properties: {
+                    id: {
+                      type: 'number',
+                    },
+                  },
+                  required: ['id'],
+                  type: 'object',
+                },
+                type: 'array',
+              },
+            },
+            required: ['items'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        try {
+          transformJsonSchema(
+            jsonSchemaFixture,
+            generateTransformJsonSchemaContext(),
+          );
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        expect(result).toBeInstanceOf(Error);
+        expect((result as Error).message).toBe(
+          'Duplicated TypeMetadata id "Foo"',
+        );
+      });
+    });
+  });
+
+  describe('having two equivalent titled object schemas with nested titled object and array properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                title: 'Address',
+                type: 'object',
+              },
+              tags: {
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+            },
+            required: ['address', 'tags'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                title: 'Address',
+                type: 'object',
+              },
+              tags: {
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+            },
+            required: ['address', 'tags'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchema(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should reuse one TypeMetadata node for both titled objects and both nested titles', () => {
+        const firstFooTypeMetadata: TypeMetadata | undefined =
+          findPropertyTypeMetadata(result as TypeMetadata, 'a')?.child;
+        const secondFooTypeMetadata: TypeMetadata | undefined =
+          findPropertyTypeMetadata(result as TypeMetadata, 'b')?.child;
+        const addressTypeMetadata: TypeMetadata | undefined =
+          firstFooTypeMetadata === undefined
+            ? undefined
+            : findPropertyTypeMetadata(firstFooTypeMetadata, 'address')?.child;
+
+        expect(firstFooTypeMetadata).toBe(secondFooTypeMetadata);
+        expect(firstFooTypeMetadata?.id).toBe('Foo');
+        expect(addressTypeMetadata?.id).toBe('Address');
+      });
+
+      it('should keep TypeMetadata ids unique', () => {
+        const typeMetadataIds: string[] = collectTypeMetadata(
+          result as TypeMetadata,
+        )
+          .map((typeMetadata: TypeMetadata) => typeMetadata.id)
+          .filter((id: string | undefined): id is string => id !== undefined);
+
+        expect(typeMetadataIds).toStrictEqual([...new Set(typeMetadataIds)]);
+      });
+    });
+  });
+
+  describe('having two titled object schemas with the same nested title and a different nested property type', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          a: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'string',
+                  },
+                },
+                required: ['city'],
+                title: 'Address',
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+          b: {
+            properties: {
+              address: {
+                properties: {
+                  city: {
+                    type: 'number',
+                  },
+                },
+                required: ['city'],
+                title: 'Address',
+                type: 'object',
+              },
+            },
+            required: ['address'],
+            title: 'Foo',
+            type: 'object',
+          },
+        },
+        required: ['a', 'b'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        try {
+          transformJsonSchema(
+            jsonSchemaFixture,
+            generateTransformJsonSchemaContext(),
+          );
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        expect(result).toBeInstanceOf(Error);
+        expect((result as Error).message).toBe(
+          'Duplicated TypeMetadata id "Address"',
+        );
+      });
+    });
+  });
 });
