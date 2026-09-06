@@ -3,7 +3,7 @@ import {
   TypeMetadataKind,
 } from '@inversifyjs/json-schema-type-metadata';
 
-export function duplicatedTypeMetadataIdError(id: string): Error {
+function duplicatedTypeMetadataIdError(id: string): Error {
   return new Error(`Duplicated TypeMetadata id "${id}"`);
 }
 
