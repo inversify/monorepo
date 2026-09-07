@@ -15,7 +15,7 @@
     "@inversifyjs/http-uwebsockets": "workspace:*",
     "express": "^5.2.1",
     "express4": "npm:express@4.22.2",
-    "fastify": "^5.12.1",
+    "fastify": "^5.12.3",
     "hono": "^4.13.5",
     "inversify": "8.2.3",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.69.0"

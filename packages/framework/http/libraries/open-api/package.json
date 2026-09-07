@@ -10,7 +10,7 @@
     "@inversifyjs/logger": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "1.5.0",
     "mime-types": "^3.0.2",
-    "swagger-ui-dist": "^5.32.14"
+    "swagger-ui-dist": "^5.32.15"
   },
   "devDependencies": {
     "@hono/node-server": "2.1.1",
@@ -33,7 +33,7 @@
     "eslint": "10.9.1",
     "express": "5.2.1",
     "express4": "npm:express@4.22.2",
-    "fastify": "5.12.1",
+    "fastify": "5.12.3",
     "hono": "4.13.5",
     "prettier": "3.9.6",
     "rimraf": "6.1.3",
