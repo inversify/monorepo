@@ -44,7 +44,7 @@
   },
   "name": "@inversifyjs/http-fastify",
   "peerDependencies": {
-    "fastify": "^5.12.1",
+    "fastify": "^5.12.3",
     "inversify": "^8.2.3"
   },
   "publishConfig": {

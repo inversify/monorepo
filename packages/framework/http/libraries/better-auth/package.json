@@ -27,7 +27,7 @@
     "@vitest/coverage-v8": "5.0.0",
     "better-sqlite3": "^13.0.3",
     "eslint": "10.9.1",
-    "fastify": "5.12.1",
+    "fastify": "5.12.3",
     "hono": "4.13.5",
     "prettier": "3.9.6",
     "rimraf": "6.1.3",

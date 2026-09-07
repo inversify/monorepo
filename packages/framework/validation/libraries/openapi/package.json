@@ -34,7 +34,7 @@
     "eslint": "10.9.1",
     "express": "5.2.1",
     "express4": "npm:express@4.22.2",
-    "fastify": "5.12.1",
+    "fastify": "5.12.3",
     "hono": "4.13.5",
     "inversify": "8.2.3",
     "prettier": "3.9.6",
