@@ -78,7 +78,8 @@ describe(SwaggerUiProvider, () => {
         );
 
         try {
-          void swaggerUiProvider.openApiObject;
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          swaggerUiProvider.openApiObject;
         } catch (error: unknown) {
           result = error;
         }
