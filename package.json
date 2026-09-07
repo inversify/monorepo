@@ -5,7 +5,7 @@
   },
   "description": "A powerful and lightweight inversion of control container for JavaScript & Node.js apps powered by TypeScript",
   "devDependencies": {
-    "@changesets/cli": "3.0.1",
+    "@changesets/cli": "3.0.2",
     "@commitlint/cli": "21.2.2",
     "@commitlint/config-conventional": "21.2.2",
     "@commitlint/prompt-cli": "21.2.2",
@@ -17,7 +17,7 @@
     "@inversifyjs/foundation-typescript-config": "workspace:*",
     "@inversifyjs/foundation-vitest-config": "workspace:*",
     "husky": "9.1.7",
-    "knip": "6.32.3",
+    "knip": "6.34.0",
     "lint-staged": "17.4.1",
     "sponsorkit": "18.0.0",
     "turbo": "2.10.12"
@@ -26,7 +26,7 @@
   "keywords": [],
   "license": "MIT",
   "name": "root",
-  "packageManager": "pnpm@11.24.0",
+  "packageManager": "pnpm@12.3.3",
   "private": true,
   "repository": {
     "type": "git",

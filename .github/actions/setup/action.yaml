@@ -21,11 +21,13 @@ runs:
       name: Install pnpm
       with:
         run_install: false
+        standalone: true
 
     - name: Get pnpm store directory
       id: pnpm-cache
       run: |
-        echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+        pnpm_cache_dir="$(pnpm store path)"
+        echo "pnpm_cache_dir=${pnpm_cache_dir}" >> "$GITHUB_OUTPUT"
       shell: bash
 
     - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5

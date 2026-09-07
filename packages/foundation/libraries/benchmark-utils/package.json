@@ -21,7 +21,7 @@
     "url": "https://github.com/inversify/monorepo/issues"
   },
   "dependencies": {
-    "tinybench": "6.1.3"
+    "tinybench": "6.1.5"
   },
   "devDependencies": {
     "@types/node": "24.13.3",
@@ -33,7 +33,7 @@
   },
   "devEngines": {
     "node": "^24.10.0",
-    "pnpm": "^11.0.0"
+    "pnpm": "^12.0.0"
   },
   "homepage": "https://inversify.io",
   "private": true,
