@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 
 export const defaultConfig = defineConfig({
   test: {
+    clearMocks: false,
     coverage: {
       all: false,
       exclude: ['src/**/*Fixtures.ts'],
@@ -49,6 +50,7 @@ export const defaultConfig = defineConfig({
 
 export const strykerConfig = defineConfig({
   test: {
+    clearMocks: false,
     exclude: ['src/**/*.int.spec.ts'],
     include: ['src/**/*.spec.ts'],
     coverage: {

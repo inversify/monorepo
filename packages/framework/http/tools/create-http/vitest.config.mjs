@@ -11,6 +11,7 @@ export default defineConfig({
       all: false,
       exclude: ['src/**/*Fixtures.ts'],
     },
+    clearMocks: false,
     passWithNoTests: true,
     projects: [
       {
