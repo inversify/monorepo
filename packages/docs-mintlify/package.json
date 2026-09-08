@@ -10,11 +10,11 @@
   },
   "devDependencies": {
     "@inversifyjs/code-examples": "workspace:*",
-    "@mintlify/cli": "4.0.1476",
+    "@mintlify/cli": "4.0.1477",
     "@eslint/config-helpers": "0.7.0",
     "@eslint/js": "10.0.1",
     "@types/react": "19.2.18",
-    "eslint": "10.9.1",
+    "eslint": "10.10.0",
     "eslint-plugin-prettier": "5.5.6",
     "eslint-plugin-simple-import-sort": "14.0.0",
     "prettier": "3.9.6",
