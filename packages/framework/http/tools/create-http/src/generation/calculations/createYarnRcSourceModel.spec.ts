@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { ApiStyle } from '../../models/ApiStyle.js';
 import { DbAdapter } from '../../models/DbAdapter.js';
 import { HttpAdapter } from '../../models/HttpAdapter.js';
 import { type YarnRcSourceModel } from '../models/YarnRcSourceModel.js';
@@ -14,6 +15,7 @@ describe(createYarnRcSourceModel, () => {
         result = createYarnRcSourceModel(
           HttpAdapter.express,
           DbAdapter.prismaPostgresql,
+          ApiStyle.codeFirst,
         );
       });
 
@@ -24,9 +26,6 @@ describe(createYarnRcSourceModel, () => {
               built: true,
             },
             '@scarf/scarf': {
-              built: true,
-            },
-            esbuild: {
               built: true,
             },
             prisma: {
@@ -46,6 +45,7 @@ describe(createYarnRcSourceModel, () => {
         result = createYarnRcSourceModel(
           HttpAdapter.uwebsockets,
           DbAdapter.prismaPostgresql,
+          ApiStyle.codeFirst,
         );
       });
 
@@ -58,15 +58,37 @@ describe(createYarnRcSourceModel, () => {
             '@scarf/scarf': {
               built: true,
             },
-            esbuild: {
-              built: true,
-            },
             prisma: {
               built: true,
             },
             'uWebSockets.js': {
               built: true,
             },
+          },
+        });
+      });
+    });
+  });
+
+  describe('having the express adapter, prisma+postgresql, and schema-first', () => {
+    describe('when called', () => {
+      let result: YarnRcSourceModel;
+
+      beforeAll(() => {
+        result = createYarnRcSourceModel(
+          HttpAdapter.express,
+          DbAdapter.prismaPostgresql,
+          ApiStyle.schemaFirst,
+        );
+      });
+
+      it('should include esbuild among built dependencies', () => {
+        expect(result.dependenciesMeta).toMatchObject({
+          esbuild: {
+            built: true,
+          },
+          prisma: {
+            built: true,
           },
         });
       });

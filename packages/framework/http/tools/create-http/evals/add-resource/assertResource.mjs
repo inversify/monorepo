@@ -151,7 +151,174 @@ async function readTextIfExists(filePath) {
   return fs.readFile(filePath, 'utf8');
 }
 
+function resolveApiStyle(vars) {
+  const apiStyle = vars.apiStyle;
+
+  if (apiStyle !== 'code-first' && apiStyle !== 'schema-first') {
+    throw new Error(
+      `Unknown apiStyle="${String(apiStyle)}". Expected "code-first" or "schema-first".`,
+    );
+  }
+
+  return apiStyle;
+}
+
+function pushCheck(results, pass, reason) {
+  results.push({
+    pass,
+    score: pass ? 1 : 0,
+    reason,
+  });
+}
+
+async function assertApiStyleContract(results, options) {
+  const generateApiTypesPath = path.join(
+    options.workspacePath,
+    'src',
+    'app',
+    'scripts',
+    'generateApiTypes.ts',
+  );
+  const generatedApiTypesPath = path.join(
+    options.workspacePath,
+    'src',
+    'generated',
+    'api',
+    'index.ts',
+  );
+  const provideOpenApiPath = path.join(
+    options.workspacePath,
+    'src',
+    'app',
+    'scripts',
+    'provideOpenApi.ts',
+  );
+  const generateApiTypesExists = await pathExists(generateApiTypesPath);
+  const generatedApiTypes = await readTextIfExists(generatedApiTypesPath);
+  const provideOpenApi = await readTextIfExists(provideOpenApiPath);
+  const hasOasSchema = options.apiModelsSource.includes('@OasSchema');
+  const hasToSchema = options.apiSource.includes('toSchema(');
+  const hasComponentRef = options.apiSource.includes(
+    '#/components/schemas/',
+  );
+  const importsGeneratedApi = options.apiSource.includes('generated/api');
+
+  if (options.apiStyle === 'code-first') {
+    pushCheck(
+      results,
+      hasOasSchema,
+      hasOasSchema
+        ? 'code-first API models use @OasSchema'
+        : 'code-first API models do not use @OasSchema',
+    );
+    pushCheck(
+      results,
+      hasToSchema,
+      hasToSchema
+        ? 'code-first controllers call toSchema'
+        : 'code-first controllers do not call toSchema',
+    );
+    pushCheck(
+      results,
+      !hasComponentRef,
+      hasComponentRef
+        ? 'code-first controllers reference component schemas'
+        : 'code-first controllers do not $ref component schemas',
+    );
+    pushCheck(
+      results,
+      !importsGeneratedApi,
+      importsGeneratedApi
+        ? 'code-first API code imports generated/api'
+        : 'code-first API code does not import generated/api',
+    );
+    pushCheck(
+      results,
+      !generateApiTypesExists,
+      generateApiTypesExists
+        ? 'code-first workspace has generateApiTypes.ts'
+        : 'code-first workspace does not include generateApiTypes.ts',
+    );
+    pushCheck(
+      results,
+      generatedApiTypes === undefined,
+      generatedApiTypes === undefined
+        ? 'code-first workspace does not include src/generated/api'
+        : 'code-first workspace includes src/generated/api',
+    );
+    return;
+  }
+
+  const hasJsonSchemaExport = /export const \w+Schema/.test(
+    options.apiModelsSource,
+  );
+  const provideOpenApiImportsResource =
+    provideOpenApi !== undefined &&
+    provideOpenApi.includes(`${options.resourceDirectory}/api/models`);
+  const generatedTypesMentionResource =
+    generatedApiTypes !== undefined &&
+    hasIdentifier(generatedApiTypes, `${options.resourceName}V1`);
+
+  pushCheck(
+    results,
+    hasJsonSchemaExport,
+    hasJsonSchemaExport
+      ? 'schema-first API models export JSON schemas'
+      : 'schema-first API models do not export JSON schemas',
+  );
+  pushCheck(
+    results,
+    !hasOasSchema,
+    hasOasSchema
+      ? 'schema-first API models still use @OasSchema'
+      : 'schema-first API models do not use @OasSchema',
+  );
+  pushCheck(
+    results,
+    hasComponentRef,
+    hasComponentRef
+      ? 'schema-first controllers $ref component schemas'
+      : 'schema-first controllers do not $ref component schemas',
+  );
+  pushCheck(
+    results,
+    !hasToSchema,
+    hasToSchema
+      ? 'schema-first controllers still call toSchema'
+      : 'schema-first controllers do not call toSchema',
+  );
+  pushCheck(
+    results,
+    importsGeneratedApi,
+    importsGeneratedApi
+      ? 'schema-first API code imports generated/api'
+      : 'schema-first API code does not import generated/api',
+  );
+  pushCheck(
+    results,
+    generateApiTypesExists,
+    generateApiTypesExists
+      ? 'schema-first workspace includes generateApiTypes.ts'
+      : 'schema-first workspace is missing generateApiTypes.ts',
+  );
+  pushCheck(
+    results,
+    generatedTypesMentionResource,
+    generatedTypesMentionResource
+      ? `src/generated/api declares ${options.resourceName}V1`
+      : `src/generated/api does not declare ${options.resourceName}V1`,
+  );
+  pushCheck(
+    results,
+    provideOpenApiImportsResource,
+    provideOpenApiImportsResource
+      ? 'provideOpenApi loads the resource JSON schemas'
+      : 'provideOpenApi does not import the resource JSON schemas',
+  );
+}
+
 export default async function assertResource(_output, context) {
+  const apiStyle = resolveApiStyle(context.vars);
   const workspacePath = path.resolve(evalRoot, context.vars.workspaceDir);
   const resourceRoot = path.join(
     workspacePath,
@@ -304,6 +471,7 @@ export default async function assertResource(_output, context) {
     let combinedSource = '';
     let createRequestSource = '';
     let responseModelSource = '';
+    let apiModelsSource = '';
 
     for (const sourcePath of sourceFiles) {
       const relativePath = path.relative(resourceRoot, sourcePath);
@@ -316,6 +484,7 @@ export default async function assertResource(_output, context) {
       }
 
       if (relativePath.startsWith(`api${path.sep}models${path.sep}`)) {
+        apiModelsSource += `\n${source}`;
         const fileName = path.basename(sourcePath);
         if (/create/i.test(fileName)) {
           createRequestSource += `\n${source}`;
@@ -444,6 +613,15 @@ export default async function assertResource(_output, context) {
           : `controller does not declare an @${decorator} endpoint`,
       });
     }
+
+    await assertApiStyleContract(results, {
+      apiModelsSource,
+      apiSource: layerSources.api,
+      apiStyle,
+      resourceDirectory: context.vars.resourceDirectory,
+      resourceName,
+      workspacePath,
+    });
   }
 
   const passed = results.every((result) => result.pass);

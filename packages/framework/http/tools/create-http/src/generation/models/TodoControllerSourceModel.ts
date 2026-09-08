@@ -1,4 +1,5 @@
 import { type SourceImport } from './BootstrapSourceModel.js';
+import { type OpenApiSchemaBindingKind } from './OpenApiSchemaBindingKind.js';
 
 /**
  * Options mirrored from `@inversifyjs/http-uwebsockets` `CaptureRequestValuesOptions`.
@@ -27,9 +28,18 @@ export type TodoControllerMethodName =
  */
 export interface TodoControllerSourceModel {
   /**
+   * Request/response TypeScript types. Class models for code-first, generated
+   * `src/generated/api` types for schema-first.
+   */
+  apiTypeImports: readonly SourceImport[];
+  /**
    * Extra imports (e.g. `CaptureRequestValues` for uwebsockets).
    */
   imports: readonly SourceImport[];
+  /**
+   * How named schemas are attached to `@OasRequestBody` / `@OasResponse`.
+   */
+  openApiSchemaBindingKind: OpenApiSchemaBindingKind;
   /**
    * Per-method `@CaptureRequestValues` options. Empty when the adapter does
    * not require request-value capture before awaits.

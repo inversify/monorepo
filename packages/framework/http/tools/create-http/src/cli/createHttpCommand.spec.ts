@@ -22,6 +22,8 @@ describe(renderUsage, () => {
         expect(result).toContain('express|fastify|hono|uwebsockets');
         expect(result).toContain('--db');
         expect(result).toContain('prisma+postgresql');
+        expect(result).toContain('--apiStyle');
+        expect(result).toContain('code-first|schema-first');
       });
     });
   });

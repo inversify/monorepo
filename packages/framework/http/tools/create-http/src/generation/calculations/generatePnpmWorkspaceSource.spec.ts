@@ -22,7 +22,7 @@ describe(generatePnpmWorkspaceSource, () => {
 
       it('should print allowBuilds without blockExoticSubdeps', () => {
         expect(result)
-          .toBe(`# Allow Prisma and esbuild (tsx) install scripts (pnpm 10+ blocks them by default).
+          .toBe(`# Allow Prisma install scripts (pnpm 10+ blocks them by default).
 allowBuilds:
   '@prisma/engines': true
   '@scarf/scarf': true
@@ -52,7 +52,7 @@ allowBuilds:
 
       it('should print blockExoticSubdeps after allowBuilds', () => {
         expect(result)
-          .toBe(`# Allow Prisma and esbuild (tsx) install scripts (pnpm 10+ blocks them by default).
+          .toBe(`# Allow Prisma install scripts (pnpm 10+ blocks them by default).
 allowBuilds:
   '@prisma/engines': true
   '@scarf/scarf': true

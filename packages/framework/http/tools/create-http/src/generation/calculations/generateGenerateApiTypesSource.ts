@@ -1,14 +1,4 @@
-import {
-  GENERATED_API_DIRECTORY_SEGMENTS,
-  GENERATED_API_SOURCE_FILE_NAME,
-} from '../models/generatedApiTypesPath.js';
-
-const GENERATED_API_DIRECTORY_SEGMENTS_LITERAL: string =
-  GENERATED_API_DIRECTORY_SEGMENTS.map(
-    (segment: string) => `'${segment}'`,
-  ).join(', ');
-
-export function generateApiTypesSource(): string {
+export function generateGenerateApiTypesSource(): string {
   return `import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -22,11 +12,13 @@ import { provideOpenApi } from './provideOpenApi.js';
 
 const GENERATED_API_DIRECTORY_PATH: string = path.join(
   process.cwd(),
-  ${GENERATED_API_DIRECTORY_SEGMENTS_LITERAL},
+  'src',
+  'generated',
+  'api',
 );
 const GENERATED_API_SOURCE_PATH: string = path.join(
   GENERATED_API_DIRECTORY_PATH,
-  '${GENERATED_API_SOURCE_FILE_NAME}',
+  'index.ts',
 );
 
 const container: Container = await initializeContainer();
@@ -36,8 +28,9 @@ const generatedApiSource: string = transformOpenApiToTypeScript(
   swaggerUiProvider.openApiObject,
 );
 
-const prettierOptions: prettier.Options | null =
-  await prettier.resolveConfig(GENERATED_API_SOURCE_PATH);
+const prettierOptions: prettier.Options | null = await prettier.resolveConfig(
+  GENERATED_API_SOURCE_PATH,
+);
 
 const formattedGeneratedApiSource: string = await prettier.format(
   generatedApiSource,

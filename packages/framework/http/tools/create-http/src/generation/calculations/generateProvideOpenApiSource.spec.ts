@@ -26,6 +26,27 @@ describe(generateProvideOpenApiSource, () => {
       expect(result).toContain("path: '/docs'");
       expect(result).toContain('swaggerUiProvider.provide(container);');
       expect(result).toContain('return swaggerUiProvider;');
+      expect(result).not.toContain('components:');
+    });
+  });
+
+  describe('when called with a schema-first model', () => {
+    let result: string;
+
+    beforeAll(() => {
+      result = ProvideOpenApiSourceFixtures.withApiStyleSchemaFirst;
+    });
+
+    it('should seed components.schemas from JSON schema modules', () => {
+      expect(result).toContain(
+        "import { statusSchemaV1 } from '../../status/api/models/StatusSchemaV1.js';",
+      );
+      expect(result).toContain(
+        "import { todoSchemaV1 } from '../../todo/api/models/TodoSchemaV1.js';",
+      );
+      expect(result).toContain('StatusV1: statusSchemaV1');
+      expect(result).toContain('TodoV1: todoSchemaV1');
+      expect(result).toContain('components:');
     });
   });
 });

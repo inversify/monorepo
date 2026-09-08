@@ -14,6 +14,7 @@ import {
   type SourceImport,
   type SourceNamedImport,
 } from '../models/BootstrapSourceModel.js';
+import { OpenApiSchemaBindingKind } from '../models/OpenApiSchemaBindingKind.js';
 import { SCAFFOLD_PRETTIER_OPTIONS } from '../models/scaffoldPrettierOptions.js';
 import {
   type CaptureRequestValuesSourceModel,
@@ -131,6 +132,48 @@ function hasMethodHeaders(model: TodoControllerSourceModel): boolean {
   );
 }
 
+function usesToSchema(model: TodoControllerSourceModel): boolean {
+  return model.openApiSchemaBindingKind === OpenApiSchemaBindingKind.toSchema;
+}
+
+function buildJsonContentSchemaExpression(
+  model: TodoControllerSourceModel,
+  schemaName: string,
+): string {
+  if (usesToSchema(model)) {
+    return `toSchema(${schemaName})`;
+  }
+
+  return `{
+        $ref: '#/components/schemas/${schemaName}',
+      }`;
+}
+
+function buildJsonContentOpenApiBlock(
+  model: TodoControllerSourceModel,
+  schemaName: string,
+  extraProperties: string,
+): string {
+  const schemaExpression: string = buildJsonContentSchemaExpression(
+    model,
+    schemaName,
+  );
+  const blockBody: string = `{
+  content: {
+    'application/json': {
+      schema: ${schemaExpression},
+    },
+  },
+  ${extraProperties}
+}`;
+
+  if (usesToSchema(model)) {
+    return `(toSchema: ToSchemaFunction) => (${blockBody})`;
+  }
+
+  return blockBody;
+}
+
 function buildCreateTodoMethod(
   model: TodoControllerSourceModel,
 ): OptionalKind<MethodDeclarationStructure> {
@@ -145,29 +188,22 @@ function buildCreateTodoMethod(
       { arguments: ["'Todos'"], name: 'OasTag' },
       {
         arguments: [
-          `(toSchema: ToSchemaFunction) => ({
-  content: {
-    'application/json': {
-      schema: toSchema(CreateTodoV1RequestBody),
-    },
-  },
-  description: 'Todo create request',
-  required: true,
-})`,
+          buildJsonContentOpenApiBlock(
+            model,
+            'CreateTodoV1RequestBody',
+            "description: 'Todo create request',\n  required: true,",
+          ),
         ],
         name: 'OasRequestBody',
       },
       {
         arguments: [
           `HttpStatusCode.CREATED`,
-          `(toSchema: ToSchemaFunction) => ({
-  content: {
-    'application/json': {
-      schema: toSchema(TodoV1),
-    },
-  },
-  description: 'Todo created',
-})`,
+          buildJsonContentOpenApiBlock(
+            model,
+            'TodoV1',
+            "description: 'Todo created',",
+          ),
         ],
         name: 'OasResponse',
       },
@@ -308,14 +344,11 @@ function buildGetTodoMethod(
       {
         arguments: [
           'HttpStatusCode.OK',
-          `(toSchema: ToSchemaFunction) => ({
-  content: {
-    'application/json': {
-      schema: toSchema(TodoV1),
-    },
-  },
-  description: 'Todo found',
-})`,
+          buildJsonContentOpenApiBlock(
+            model,
+            'TodoV1',
+            "description: 'Todo found',",
+          ),
         ],
         name: 'OasResponse',
       },
@@ -406,14 +439,11 @@ function buildListTodosMethod(
       {
         arguments: [
           'HttpStatusCode.OK',
-          `(toSchema: ToSchemaFunction) => ({
-  content: {
-    'application/json': {
-      schema: toSchema(PaginatedTodosV1Response),
-    },
-  },
-  description: 'Paginated todos',
-})`,
+          buildJsonContentOpenApiBlock(
+            model,
+            'PaginatedTodosV1Response',
+            "description: 'Paginated todos',",
+          ),
         ],
         name: 'OasResponse',
       },
@@ -480,29 +510,22 @@ function buildUpdateTodoMethod(
       },
       {
         arguments: [
-          `(toSchema: ToSchemaFunction) => ({
-  content: {
-    'application/json': {
-      schema: toSchema(UpdateTodoV1RequestBody),
-    },
-  },
-  description: 'Todo update request',
-  required: true,
-})`,
+          buildJsonContentOpenApiBlock(
+            model,
+            'UpdateTodoV1RequestBody',
+            "description: 'Todo update request',\n  required: true,",
+          ),
         ],
         name: 'OasRequestBody',
       },
       {
         arguments: [
           'HttpStatusCode.OK',
-          `(toSchema: ToSchemaFunction) => ({
-  content: {
-    'application/json': {
-      schema: toSchema(TodoV1),
-    },
-  },
-  description: 'Todo updated',
-})`,
+          buildJsonContentOpenApiBlock(
+            model,
+            'TodoV1',
+            "description: 'Todo updated',",
+          ),
         ],
         name: 'OasResponse',
       },
@@ -603,7 +626,9 @@ export async function generateTodoControllerSource(
       { name: 'OasResponse' },
       { name: 'OasSummary' },
       { name: 'OasTag' },
-      { isTypeOnly: true, name: 'ToSchemaFunction' },
+      ...(usesToSchema(model)
+        ? [{ isTypeOnly: true, name: 'ToSchemaFunction' }]
+        : []),
     ],
   });
 
@@ -647,25 +672,11 @@ export async function generateTodoControllerSource(
     namedImports: [{ name: 'TodoV1FromTodoBuilder' }],
   });
 
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: '../models/CreateTodoV1RequestBody.js',
-    namedImports: [{ name: 'CreateTodoV1RequestBody' }],
-  });
-
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: '../models/PaginatedTodosV1Response.js',
-    namedImports: [{ name: 'PaginatedTodosV1Response' }],
-  });
-
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: '../models/TodoV1.js',
-    namedImports: [{ name: 'TodoV1' }],
-  });
-
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: '../models/UpdateTodoV1RequestBody.js',
-    namedImports: [{ name: 'UpdateTodoV1RequestBody' }],
-  });
+  for (const apiTypeImport of model.apiTypeImports) {
+    sourceFile.addImportDeclaration(
+      toImportDeclarationStructure(apiTypeImport),
+    );
+  }
 
   sourceFile.addInterface({
     name: 'ListTodosQuery',

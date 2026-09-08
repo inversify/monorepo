@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { ApiStyle } from '../models/ApiStyle.js';
 import { DbAdapter } from '../models/DbAdapter.js';
 import { PackageManager } from '../models/PackageManager.js';
 import { buildGeneratedPackageJson } from './buildGeneratedPackageJson.js';
@@ -21,6 +22,7 @@ describe(buildGeneratedPackageJson, () => {
             typescript: '6.0.3',
           },
           DbAdapter.prismaPostgresql,
+          ApiStyle.codeFirst,
         );
       });
 
@@ -36,12 +38,10 @@ describe(buildGeneratedPackageJson, () => {
           packageManager: 'pnpm@11.18.0',
           private: true,
           scripts: {
-            build:
-              'prisma generate && tsx src/app/scripts/generateApiTypes.ts && tsc',
+            build: 'prisma generate && tsc',
             'db:generate': 'prisma generate',
             'db:migrate': 'prisma migrate deploy',
             format: 'prettier --write ./src',
-            'generate:api': 'tsx src/app/scripts/generateApiTypes.ts',
             lint: 'eslint ./src',
             serve: 'node ./dist/index.js',
           },
@@ -68,6 +68,7 @@ describe(buildGeneratedPackageJson, () => {
             typescript: '6.0.3',
           },
           DbAdapter.prismaPostgresql,
+          ApiStyle.codeFirst,
           {
             prisma: {
               built: true,
@@ -84,6 +85,38 @@ describe(buildGeneratedPackageJson, () => {
             },
           },
           packageManager: 'yarn@4.18.0',
+        });
+      });
+    });
+  });
+
+  describe('having prisma+postgresql and schema-first', () => {
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = buildGeneratedPackageJson(
+          'demo-app',
+          PackageManager.pnpm,
+          '11.18.0',
+          {
+            inversify: '8.2.3',
+          },
+          {
+            typescript: '6.0.3',
+          },
+          DbAdapter.prismaPostgresql,
+          ApiStyle.schemaFirst,
+        );
+      });
+
+      it('should include generate:api and run it before tsc', () => {
+        expect(result).toMatchObject({
+          scripts: {
+            build:
+              'prisma generate && tsx src/app/scripts/generateApiTypes.ts && tsc',
+            'generate:api': 'tsx src/app/scripts/generateApiTypes.ts',
+          },
         });
       });
     });
