@@ -198,9 +198,7 @@ async function assertApiStyleContract(results, options) {
   const provideOpenApi = await readTextIfExists(provideOpenApiPath);
   const hasOasSchema = options.apiModelsSource.includes('@OasSchema');
   const hasToSchema = options.apiSource.includes('toSchema(');
-  const hasComponentRef = options.apiSource.includes(
-    '#/components/schemas/',
-  );
+  const hasComponentRef = options.apiSource.includes('#/components/schemas/');
   const importsGeneratedApi = options.apiSource.includes('generated/api');
 
   if (options.apiStyle === 'code-first') {
