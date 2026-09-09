@@ -11,7 +11,9 @@ describe(generateTodoSchemaV1Source, () => {
     });
 
     it('should generate a TodoV1 JSON schema with date-time fields', () => {
-      expect(result).toContain('export const todoSchemaV1');
+      expect(result).toContain(
+        'export const todoSchemaV1: OpenApi3Dot2SchemaObject',
+      );
       expect(result).toContain("format: 'uuid'");
       expect(result).toContain("format: 'date-time'");
       expect(result).toContain("type: ['string', 'null']");

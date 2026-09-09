@@ -11,7 +11,9 @@ describe(generateCreateTodoV1RequestBodySchemaSource, () => {
     });
 
     it('should generate a create-todo request JSON schema', () => {
-      expect(result).toContain('export const createTodoV1RequestBodySchema');
+      expect(result).toContain(
+        'export const createTodoV1RequestBodySchema: OpenApi3Dot2SchemaObject',
+      );
       expect(result).toContain("required: ['description', 'title']");
     });
   });

@@ -1,5 +1,7 @@
 export function generateTodoSchemaV1Source(): string {
-  return `export const todoSchemaV1 = {
+  return `import { type OpenApi3Dot2SchemaObject } from '@inversifyjs/open-api-types/v3Dot2';
+
+export const todoSchemaV1: OpenApi3Dot2SchemaObject = {
   properties: {
     completed: {
       type: 'boolean',

@@ -13,6 +13,7 @@
     "@inversifyjs/http-uwebsockets": "5.5.3",
     "@inversifyjs/http-validation": "5.5.3",
     "@inversifyjs/logger": "2.0.0",
+    "@inversifyjs/open-api-types": "2.0.0",
     "@inversifyjs/open-api-validation": "3.6.1",
     "@inversifyjs/prisma": "1.0.0",
     "@prisma/adapter-pg": "7.10.0",

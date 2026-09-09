@@ -23,6 +23,7 @@ describe(composeScaffoldDependencies, () => {
         '@inversifyjs/http-uwebsockets': '5.4.8',
         '@inversifyjs/http-validation': '5.4.8',
         '@inversifyjs/logger': '2.0.0',
+        '@inversifyjs/open-api-types': '2.0.0',
         '@inversifyjs/open-api-validation': '3.5.2',
         '@inversifyjs/prisma': '1.0.0',
         '@prisma/adapter-pg': '7.9.1',
@@ -96,6 +97,9 @@ describe(composeScaffoldDependencies, () => {
           prisma: '7.9.1',
           typescript: '6.0.3',
         });
+        expect(result.dependencies).not.toHaveProperty(
+          '@inversifyjs/open-api-types',
+        );
         expect(result.devDependencies).not.toHaveProperty(
           '@inversifyjs/open-api-2-typescript',
         );
@@ -145,6 +149,9 @@ describe(composeScaffoldDependencies, () => {
           zod: '4.4.3',
         });
         expect(result.devDependencies).not.toHaveProperty('@types/express');
+        expect(result.dependencies).not.toHaveProperty(
+          '@inversifyjs/open-api-types',
+        );
         expect(result.devDependencies).not.toHaveProperty(
           '@inversifyjs/open-api-2-typescript',
         );
@@ -170,7 +177,10 @@ describe(composeScaffoldDependencies, () => {
         );
       });
 
-      it('should include openapi-2-typescript and tsx', () => {
+      it('should include openapi-2-typescript, open-api-types, and tsx', () => {
+        expect(result.dependencies).toMatchObject({
+          '@inversifyjs/open-api-types': '2.0.0',
+        });
         expect(result.devDependencies).toMatchObject({
           '@inversifyjs/open-api-2-typescript': '0.2.0',
           tsx: '4.23.13',

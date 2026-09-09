@@ -107,7 +107,7 @@ Scaffolded apps must **not** receive every possible dependency. Versions live in
 - `BASE_DEPENDENCY_NAMES` / `BASE_DEV_DEPENDENCY_NAMES` — always installed
 - `BASE_BUILT_DEPENDENCY_NAMES` / `HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS` / `API_STYLE_DEPENDENCY_SPECS` — per-adapter or per-API-style package **names** only; optional `builtDependencies` lists packages that need install-time scripts (Yarn `package.json` `dependenciesMeta.built`; also pnpm `allowBuilds`). Schema-first allow-lists `esbuild` because `tsx` needs it.
 
-`composeScaffoldDependencies(catalog, httpAdapter, dbAdapter, apiStyle)` picks catalog versions for base + selected HTTP adapter, DB adapter, and API style only. Schema-first adds `@inversifyjs/open-api-2-typescript` and `tsx`.
+`composeScaffoldDependencies(catalog, httpAdapter, dbAdapter, apiStyle)` picks catalog versions for base + selected HTTP adapter, DB adapter, and API style only. Schema-first adds `@inversifyjs/open-api-types`, `@inversifyjs/open-api-2-typescript`, and `tsx`.
 
 ### Adding a new optional feature (e.g. validator) or DB adapter
 
@@ -143,7 +143,7 @@ Copied (sometimes renamed) into the target app:
 Two API recipes:
 
 - **Code first** (default, `--apiStyle code-first`): OpenAPI models are decorated TypeScript classes. Controllers and builders use those classes as types and `toSchema(Class)`. No `openapi-2-typescript`, no `src/generated/api`.
-- **Schema first** (`--apiStyle schema-first`): models are JSON Schema objects (`TodoSchemaV1.ts` exporting `todoSchemaV1`). `provideOpenApi` seeds them as `components.schemas`. Controllers `$ref` `#/components/schemas/<Name>` and import TypeScript types from `src/generated/api`. The chicken-and-egg cycle is solved by scaffolding `export type <Name> = any` stubs, then `generate:api` (`new Container()` + `provideOpenApi` + `transformOpenApiToTypeScript`) overwrites them without loading runtime app config. Builders serialize domain `Date` values to ISO strings.
+- **Schema first** (`--apiStyle schema-first`): models are JSON Schema objects (`TodoSchemaV1.ts` exporting `todoSchemaV1: OpenApi3Dot2SchemaObject`). `provideOpenApi` seeds them as `components.schemas`. Controllers `$ref` `#/components/schemas/<Name>` and import TypeScript types from `src/generated/api`. The chicken-and-egg cycle is solved by scaffolding `export type <Name> = any` stubs, then `generate:api` (`new Container()` + `provideOpenApi` + `transformOpenApiToTypeScript`) overwrites them without loading runtime app config. Builders serialize domain `Date` values to ISO strings.
 
 Prisma uses the `prisma-client` generator (`output = "../src/generated/prisma"`, ESM + `.ts` sources with `.js` import extensions) so `tsc` emits the client into `dist/generated/prisma`. Gitignore only `src/generated/prisma/` so schema-first API stubs can be committed. Scripts: code-first `build` is `prisma generate && tsc`; schema-first `build` is `prisma generate && tsx src/app/scripts/generateApiTypes.ts && tsc` plus `generate:api`. Import `PrismaClient` from `generated/prisma/client.js`.
 
@@ -253,6 +253,7 @@ Generated app scripts always include:
 `@inversifyjs/logger` and `winston` are base dependencies (ConsoleLogger factory bound from `LOG_LEVELS`).
 `@inversifyjs/http-core` is a base dependency (for `@Controller` / `@Get` / `@Post` on scaffolded controllers).
 `@inversifyjs/http-open-api` is a base dependency (OpenAPI 3.2 decorators + `SwaggerUiProvider` via `/v3Dot2`).
+`@inversifyjs/open-api-types` is a schema-first dependency so JSON schema modules can be typed as `OpenApi3Dot2SchemaObject`.
 `@inversifyjs/open-api-validation`, `@inversifyjs/http-validation`, `ajv`, and `ajv-formats` are base dependencies (OpenAPI-driven request validation; pipe from `/v3Dot2`).
 `@inversifyjs/prisma` is a DB-adapter dependency (binds `PrismaClient` via `PrismaContainerModule`).
 

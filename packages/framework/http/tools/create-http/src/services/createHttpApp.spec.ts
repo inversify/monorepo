@@ -628,6 +628,10 @@ describe(createHttpApp, () => {
         expect(
           (packageJson as { dependencies: Record<string, string> })
             .dependencies,
+        ).not.toHaveProperty('@inversifyjs/open-api-types');
+        expect(
+          (packageJson as { dependencies: Record<string, string> })
+            .dependencies,
         ).not.toHaveProperty('fastify');
         expect(
           (packageJson as { dependencies: Record<string, string> })
@@ -758,6 +762,12 @@ describe(createHttpApp, () => {
           },
         });
         expect(
+          (packageJson as { dependencies: Record<string, string> })
+            .dependencies,
+        ).toMatchObject({
+          '@inversifyjs/open-api-types': expect.any(String) as string,
+        });
+        expect(
           (packageJson as { devDependencies: Record<string, string> })
             .devDependencies,
         ).toMatchObject({
@@ -850,7 +860,9 @@ describe(createHttpApp, () => {
             path.join(projectPath, 'src/todo/api/models/TodoSchemaV1.ts'),
             'utf8',
           ),
-        ).resolves.toContain('export const todoSchemaV1');
+        ).resolves.toContain(
+          'export const todoSchemaV1: OpenApi3Dot2SchemaObject',
+        );
         await expect(
           fs.access(path.join(projectPath, 'src/todo/api/models/TodoV1.ts')),
         ).rejects.toMatchObject({

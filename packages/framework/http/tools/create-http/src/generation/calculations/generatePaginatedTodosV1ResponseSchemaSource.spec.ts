@@ -11,7 +11,9 @@ describe(generatePaginatedTodosV1ResponseSchemaSource, () => {
     });
 
     it('should generate a paginated response schema that $refs TodoV1', () => {
-      expect(result).toContain('export const paginatedTodosV1ResponseSchema');
+      expect(result).toContain(
+        'export const paginatedTodosV1ResponseSchema: OpenApi3Dot2SchemaObject',
+      );
       expect(result).toContain("$ref: '#/components/schemas/TodoV1'");
       expect(result).toContain('pageSize');
     });

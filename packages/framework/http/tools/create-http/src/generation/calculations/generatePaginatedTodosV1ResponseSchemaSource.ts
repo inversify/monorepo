@@ -1,5 +1,7 @@
 export function generatePaginatedTodosV1ResponseSchemaSource(): string {
-  return `export const paginatedTodosV1ResponseSchema = {
+  return `import { type OpenApi3Dot2SchemaObject } from '@inversifyjs/open-api-types/v3Dot2';
+
+export const paginatedTodosV1ResponseSchema: OpenApi3Dot2SchemaObject = {
   properties: {
     items: {
       items: {

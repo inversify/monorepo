@@ -17,7 +17,7 @@ export const API_STYLE_DEPENDENCY_SPECS: Record<
   },
   [ApiStyle.schemaFirst]: {
     builtDependencies: ['esbuild'],
-    dependencies: [],
+    dependencies: ['@inversifyjs/open-api-types'],
     devDependencies: ['@inversifyjs/open-api-2-typescript', 'tsx'],
   },
 };
