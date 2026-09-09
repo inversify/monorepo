@@ -66,6 +66,9 @@ describe(createHttpApp, () => {
         expect(agentSkillContents).toContain(
           'Keep HTTP decorators and request models out of domain and application layers.',
         );
+        expect(agentSkillContents).toContain(
+          'Domain models must be interfaces, not classes.',
+        );
         expect(agentSkillContents).not.toContain('This app is schema first.');
         expect(agentSkillContents).toContain('Prisma columns are snake_case');
         expect(agentSkillContents).toContain(
@@ -261,7 +264,7 @@ describe(createHttpApp, () => {
             path.join(projectPath, 'src/status/domain/models/Status.ts'),
             'utf8',
           ),
-        ).resolves.toContain('export class Status');
+        ).resolves.toContain('export interface Status');
         await expect(
           fs.readFile(
             path.join(
@@ -325,13 +328,13 @@ describe(createHttpApp, () => {
             path.join(projectPath, 'src/todo/domain/models/Todo.ts'),
             'utf8',
           ),
-        ).resolves.toContain('export class Todo');
+        ).resolves.toContain('export interface Todo');
         await expect(
           fs.readFile(
             path.join(projectPath, 'src/todo/domain/models/Todo.ts'),
             'utf8',
           ),
-        ).resolves.toContain('public createdAt!: Date');
+        ).resolves.toContain('createdAt: Date');
         await expect(
           fs.readFile(
             path.join(projectPath, 'src/common/domain/modules/Builder.ts'),
@@ -832,6 +835,9 @@ describe(createHttpApp, () => {
         expect(todoBuilderSource).toContain('toISOString()');
         expect(skillContents).toBe(claudeSkillContents);
         expect(skillContents).toContain('This app is schema first.');
+        expect(skillContents).toContain(
+          'Domain models must be interfaces, not classes.',
+        );
         expect(skillContents).toContain('export type <Name> = any;');
         expect(skillContents).toContain('src/generated/api/index.ts');
         expect(skillContents).not.toContain(

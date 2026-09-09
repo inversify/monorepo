@@ -16,6 +16,7 @@ describe(generateAddResourceSkillSource, () => {
       expect(result).toContain(
         'Add request and response API models with the OpenAPI 3.2 schema decorators',
       );
+      expect(result).toContain('Domain models must be interfaces, not classes.');
       expect(result).not.toContain('This app is schema first.');
     });
   });
@@ -33,6 +34,7 @@ describe(generateAddResourceSkillSource, () => {
       expect(result).toContain('export type <Name> = any;');
       expect(result).toContain('components.schemas.<Name>');
       expect(result).toContain('generate:api');
+      expect(result).toContain('Domain models must be interfaces, not classes.');
       expect(result).not.toContain(
         'Add request and response API models with the OpenAPI 3.2 schema decorators',
       );

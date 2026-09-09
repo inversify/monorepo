@@ -11,15 +11,16 @@ describe(generateTodoDomainModelSource, () => {
       result = TodoDomainModelSourceFixtures.any;
     });
 
-    it('should generate a Todo class with camelCase fields', () => {
-      expect(result).toContain('export class Todo');
-      expect(result).toContain('public id!: string;');
-      expect(result).toContain('public title!: string;');
-      expect(result).toContain('public description!: string;');
-      expect(result).toContain('public completed!: boolean;');
-      expect(result).toContain('public createdAt!: Date;');
-      expect(result).toContain('public deletedAt!: Date | null;');
-      expect(result).toContain('public updatedAt!: Date;');
+    it('should generate a Todo interface with camelCase fields', () => {
+      expect(result).toContain('export interface Todo');
+      expect(result).toContain('id: string;');
+      expect(result).toContain('title: string;');
+      expect(result).toContain('description: string;');
+      expect(result).toContain('completed: boolean;');
+      expect(result).toContain('createdAt: Date;');
+      expect(result).toContain('deletedAt: Date | null;');
+      expect(result).toContain('updatedAt: Date;');
+      expect(result).not.toContain('export class Todo');
       expect(result).not.toContain('created_at');
       expect(result).not.toContain('deleted_at');
       expect(result).not.toContain('updated_at');

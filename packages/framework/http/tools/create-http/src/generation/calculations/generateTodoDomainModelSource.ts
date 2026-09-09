@@ -1,12 +1,12 @@
 export function generateTodoDomainModelSource(): string {
-  return `export class Todo {
-  public id!: string;
-  public title!: string;
-  public description!: string;
-  public completed!: boolean;
-  public createdAt!: Date;
-  public deletedAt!: Date | null;
-  public updatedAt!: Date;
+  return `export interface Todo {
+  id: string;
+  title: string;
+  description: string;
+  completed: boolean;
+  createdAt: Date;
+  deletedAt: Date | null;
+  updatedAt: Date;
 }
 `;
 }

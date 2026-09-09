@@ -162,14 +162,14 @@ Generated (not copied from templates):
 | `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter))` |
 | `src/logger/models/loggerFactoryIdentifier.ts` | Factory service identifier |
 | `src/logger/containerModules/LoggerContainerModule.ts` | Binds `(context: string) => Logger` → `ConsoleLogger` |
-| `src/status/domain/models/Status.ts` | Domain model |
+| `src/status/domain/models/Status.ts` | Domain interface |
 | `src/status/api/models/StatusV1.ts` | code-first: `GET /v1/status` response class and OpenAPI schema |
 | `src/status/api/models/StatusSchemaV1.ts` | schema-first: `statusSchemaV1` JSON Schema |
 | `src/status/api/builders/StatusV1FromStatusBuilder.ts` | Maps domain `Status` to `StatusV1` |
 | `src/status/api/controllers/StatusController.ts` | `generateStatusControllerSource()` — `GET /v1/status` → `{ status: 'ok' }` |
 | `src/status/adapter/inversify/containerModules/StatusContainerModule.ts` | Binds controller and `StatusV1FromStatusBuilder` |
 | `src/common/domain/modules/Builder.ts` | Shared `Builder<TInput, TOutput>` mapping contract |
-| `src/todo/domain/models/Todo.ts` | Domain model (camelCase timestamps) |
+| `src/todo/domain/models/Todo.ts` | Domain interface (camelCase timestamps) |
 | `src/todo/application/ports/TodoPersistencePort.ts` | Persistence port |
 | `src/todo/application/models/todoPersistencePortIdentifier.ts` | Port service identifier |
 | `src/todo/api/models/TodoV1.ts` | code-first: `GET/POST/PATCH /v1/todos` response class and OpenAPI schema |
@@ -305,6 +305,8 @@ src/todo/
   adapter/inversify/containerModules/TodoPrismaContainerModule.ts
 ```
 
+Domain models (`Status`, `Todo`, and any resource added later) must be interfaces, not classes.
+
 `TodoPersistencePort` keeps HTTP and application code independent of Prisma so future DB adapters can bind a different implementation.
 
 ## Post-scaffold pipeline
@@ -342,7 +344,7 @@ pnpm run --filter @inversifyjs/create-http lint
 pnpm run --filter @inversifyjs/create-http build
 ```
 
-The `add-resource` skill also has an opt-in Promptfoo evaluation. It creates disposable Express/PostgreSQL apps for **both API styles** (`code-first` and `schema-first`), runs the matching generated skill against a simple resource and a relational aggregate in each recipe, then inspects the generated files for the requested contract, architectural boundaries, and recipe-specific API modeling (`@OasSchema` / `toSchema` vs JSON schemas / `$ref` / `src/generated/api`). The agent runs the generated app's normal validation inside its provider sandbox; the host-side assertions never execute model-modified project scripts. The evaluation is intentionally separate from the normal test suite because it invokes an external coding model.
+The `add-resource` skill also has an opt-in Promptfoo evaluation. It creates disposable Express/PostgreSQL apps for **both API styles** (`code-first` and `schema-first`), runs the matching generated skill against a simple resource and a relational aggregate in each recipe, then inspects the generated files for the requested contract, architectural boundaries, domain interfaces (not classes), and recipe-specific API modeling (`@OasSchema` / `toSchema` vs JSON schemas / `$ref` / `src/generated/api`). The agent runs the generated app's normal validation inside its provider sandbox; the host-side assertions never execute model-modified project scripts. The evaluation is intentionally separate from the normal test suite because it invokes an external coding model.
 
 The default coding agent is OpenCode (`opencode:sdk`). Swap agents with `EVAL_AGENT=opencode|codex|cursor`. OpenCode needs the OpenCode CLI plus its configured model credentials. Codex needs an OpenAI/Codex key. Cursor needs `CURSOR_API_KEY`. Codex uses `danger-full-access` so the run is not blocked by Ubuntu 24.04 `bwrap` AppArmor restrictions; isolation is the disposable workspace.
 

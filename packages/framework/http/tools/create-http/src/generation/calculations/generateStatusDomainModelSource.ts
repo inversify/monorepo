@@ -1,6 +1,6 @@
 export function generateStatusDomainModelSource(): string {
-  return `export class Status {
-  public status!: string;
+  return `export interface Status {
+  status: string;
 }
 `;
 }

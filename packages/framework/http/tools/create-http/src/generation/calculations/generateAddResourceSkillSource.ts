@@ -23,7 +23,7 @@ Ask a focused question only when a missing choice would materially change the pu
 ## Implement the vertical slice
 
 1. Update \`prisma/schema.prisma\`. Create a new migration when a database-backed migration command is available. Never rewrite an existing migration and never invent migration SQL when the database is unavailable.
-2. Add a domain model under \`src/<resource>/domain/models\`. Keep it independent of Prisma and HTTP concerns.
+2. Add a domain interface under \`src/<resource>/domain/models\`. Domain models must be interfaces, not classes. Keep them independent of Prisma and HTTP concerns.
 3. Define the persistence contract under \`application/ports\` and its service identifier under \`application/models\`.
 4. Implement the Prisma adapter and a builder that maps Prisma records to the domain model. Keep database names such as \`created_at\` behind this boundary.
 5. Add request and response API models with the OpenAPI 3.2 schema decorators used by the Todo resource. Do not expose generated Prisma types from the API.
@@ -35,6 +35,7 @@ Ask a focused question only when a missing choice would materially change the pu
 ## Preserve project conventions
 
 - Keep \`.js\` extensions in TypeScript import specifiers.
+- Domain models must be interfaces, not classes.
 - Prisma columns are snake_case (\`created_at\`, \`order_number\`, \`price_cents\`). Todo only uses single-word columns (\`title\`, \`completed\`); do not copy that as camelCase in Prisma (\`priceCents\`). Map snake_case columns to camelCase in the domain and API layers.
 - Put owned child records in the same resource folder as the aggregate root.
 - Match the Todo resource's pagination and soft-delete behavior when those features are requested.
@@ -74,7 +75,7 @@ Ask a focused question only when a missing choice would materially change the pu
 ## Implement the vertical slice
 
 1. Update \`prisma/schema.prisma\`. Create a new migration when a database-backed migration command is available. Never rewrite an existing migration and never invent migration SQL when the database is unavailable.
-2. Add a domain model under \`src/<resource>/domain/models\`. Keep it independent of Prisma and HTTP concerns.
+2. Add a domain interface under \`src/<resource>/domain/models\`. Domain models must be interfaces, not classes. Keep them independent of Prisma and HTTP concerns.
 3. Define the persistence contract under \`application/ports\` and its service identifier under \`application/models\`.
 4. Implement the Prisma adapter and a builder that maps Prisma records to the domain model. Keep database names such as \`created_at\` behind this boundary.
 5. Add request and response JSON schemas under \`src/<resource>/api/models\` (for example \`ProductSchemaV1.ts\` exporting \`productSchemaV1\`). Register each named schema on \`SwaggerUiProvider\` in \`src/app/scripts/provideOpenApi.ts\` as \`components.schemas.<Name>\`.
@@ -87,6 +88,7 @@ Ask a focused question only when a missing choice would materially change the pu
 ## Preserve project conventions
 
 - Keep \`.js\` extensions in TypeScript import specifiers.
+- Domain models must be interfaces, not classes.
 - Prisma columns are snake_case (\`created_at\`, \`order_number\`, \`price_cents\`). Todo only uses single-word columns (\`title\`, \`completed\`); do not copy that as camelCase in Prisma (\`priceCents\`). Map snake_case columns to camelCase in the domain and API layers.
 - Put owned child records in the same resource folder as the aggregate root.
 - Match the Todo resource's pagination and soft-delete behavior when those features are requested.

@@ -583,6 +583,19 @@ export default async function assertResource(_output, context) {
       });
     }
 
+    const hasDomainInterface = /export\s+interface\s+\w+/.test(
+      layerSources.domain,
+    );
+    const hasDomainClass = /export\s+class\s+\w+/.test(layerSources.domain);
+    results.push({
+      pass: hasDomainInterface && !hasDomainClass,
+      score: hasDomainInterface && !hasDomainClass ? 1 : 0,
+      reason:
+        hasDomainInterface && !hasDomainClass
+          ? 'domain models are interfaces'
+          : 'domain models must be interfaces, not classes',
+    });
+
     results.push({
       pass: boundaryViolations.length === 0,
       score: boundaryViolations.length === 0 ? 1 : 0,
