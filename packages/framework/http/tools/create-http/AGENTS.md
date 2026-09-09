@@ -143,7 +143,7 @@ Copied (sometimes renamed) into the target app:
 Two API recipes:
 
 - **Code first** (default, `--apiStyle code-first`): OpenAPI models are decorated TypeScript classes. Controllers and builders use those classes as types and `toSchema(Class)`. No `openapi-2-typescript`, no `src/generated/api`.
-- **Schema first** (`--apiStyle schema-first`): models are JSON Schema objects (`TodoSchemaV1.ts` exporting `todoSchemaV1`). `provideOpenApi` seeds them as `components.schemas`. Controllers `$ref` `#/components/schemas/<Name>` and import TypeScript types from `src/generated/api`. The chicken-and-egg cycle is solved by scaffolding `export type <Name> = any` stubs, then `generate:api` (`initializeContainer` + `provideOpenApi` + `transformOpenApiToTypeScript`) overwrites them. Builders serialize domain `Date` values to ISO strings.
+- **Schema first** (`--apiStyle schema-first`): models are JSON Schema objects (`TodoSchemaV1.ts` exporting `todoSchemaV1`). `provideOpenApi` seeds them as `components.schemas`. Controllers `$ref` `#/components/schemas/<Name>` and import TypeScript types from `src/generated/api`. The chicken-and-egg cycle is solved by scaffolding `export type <Name> = any` stubs, then `generate:api` (`new Container()` + `provideOpenApi` + `transformOpenApiToTypeScript`) overwrites them without loading runtime app config. Builders serialize domain `Date` values to ISO strings.
 
 Prisma uses the `prisma-client` generator (`output = "../src/generated/prisma"`, ESM + `.ts` sources with `.js` import extensions) so `tsc` emits the client into `dist/generated/prisma`. Gitignore only `src/generated/prisma/` so schema-first API stubs can be committed. Scripts: code-first `build` is `prisma generate && tsc`; schema-first `build` is `prisma generate && tsx src/app/scripts/generateApiTypes.ts && tsc` plus `generate:api`. Import `PrismaClient` from `generated/prisma/client.js`.
 
@@ -156,7 +156,7 @@ Generated (not copied from templates):
 | `.yarnrc.yml` | `generateYarnRcSource()` — **yarn only**; `enableScripts: false`, `nodeLinker: node-modules`. Selected `builtDependencies` go in generated `package.json` `dependenciesMeta` (Yarn rejects that field in `.yarnrc.yml`) |
 | `src/app/scripts/initializeContainer.ts` | `generateInitializeContainerSource(createInitializeContainerSourceModel(dbAdapter))` — exported `initializeContainer` |
 | `src/app/scripts/provideOpenApi.ts` | `generateProvideOpenApiSource(createProvideOpenApiSourceModel(apiStyle))` — builds `SwaggerUiProvider` and calls `provide(container)`; schema-first seeds `components.schemas` |
-| `src/app/scripts/generateApiTypes.ts` | schema-first only — boots the container, calls `provideOpenApi`, writes `src/generated/api/index.ts` |
+| `src/app/scripts/generateApiTypes.ts` | schema-first only — `new Container()` + `provideOpenApi` + `transformOpenApiToTypeScript`, writes `src/generated/api/index.ts` |
 | `src/generated/api/index.ts` | schema-first only — initial `export type <Name> = any` stubs, overwritten by `generate:api` |
 | `.agents/skills/add-resource/SKILL.md` and `.claude/skills/add-resource/SKILL.md` | `generateAddResourceSkillSource(apiStyle)` |
 | `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter))` |

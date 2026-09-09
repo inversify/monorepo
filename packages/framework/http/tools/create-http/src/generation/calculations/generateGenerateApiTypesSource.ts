@@ -4,10 +4,9 @@ import path from 'node:path';
 
 import { type SwaggerUiProvider } from '@inversifyjs/http-open-api/v3Dot2';
 import { transformOpenApiToTypeScript } from '@inversifyjs/open-api-2-typescript/v3Dot2';
-import { type Container } from 'inversify';
+import { Container } from 'inversify';
 import prettier from 'prettier';
 
-import { initializeContainer } from './initializeContainer.js';
 import { provideOpenApi } from './provideOpenApi.js';
 
 const GENERATED_API_DIRECTORY_PATH: string = path.join(
@@ -21,7 +20,7 @@ const GENERATED_API_SOURCE_PATH: string = path.join(
   'index.ts',
 );
 
-const container: Container = await initializeContainer();
+const container: Container = new Container();
 const swaggerUiProvider: SwaggerUiProvider = provideOpenApi(container);
 
 const generatedApiSource: string = transformOpenApiToTypeScript(

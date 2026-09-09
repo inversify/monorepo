@@ -811,6 +811,9 @@ describe(createHttpApp, () => {
         expect(generateApiTypesSource).toContain(
           'transformOpenApiToTypeScript',
         );
+        expect(generateApiTypesSource).toContain('new Container()');
+        expect(generateApiTypesSource).toContain('provideOpenApi(container)');
+        expect(generateApiTypesSource).not.toContain('initializeContainer');
         expect(generatedApiTypesSource).toContain('export type TodoV1 = any;');
         expect(generatedApiTypesSource).toContain('export type Root = any;');
         expect(provideOpenApiSource).toContain('TodoV1: todoSchemaV1');
