@@ -808,7 +808,9 @@ describe(createHttpApp, () => {
         expect(generateApiTypesSource).toContain(
           "from '@inversifyjs/open-api-2-typescript/v3Dot2'",
         );
-        expect(generateApiTypesSource).toContain('transformOpenApiToTypeScript');
+        expect(generateApiTypesSource).toContain(
+          'transformOpenApiToTypeScript',
+        );
         expect(generatedApiTypesSource).toContain('export type TodoV1 = any;');
         expect(generatedApiTypesSource).toContain('export type Root = any;');
         expect(provideOpenApiSource).toContain('TodoV1: todoSchemaV1');
@@ -846,7 +848,9 @@ describe(createHttpApp, () => {
           code: 'ENOENT',
         });
         await expect(
-          fs.access(path.join(projectPath, 'src/status/api/models/StatusV1.ts')),
+          fs.access(
+            path.join(projectPath, 'src/status/api/models/StatusV1.ts'),
+          ),
         ).rejects.toMatchObject({
           code: 'ENOENT',
         });
