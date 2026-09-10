@@ -1,4 +1,4 @@
-``` ts
+```ts
 class Katana {}
 
 const parentContainer: Container = new Container();

@@ -1,4 +1,4 @@
-``` ts
+```ts
 const divisor: string = 'divisor';
 const invalidDivisor: string = 'InvalidDivisor';
 const validDivisor: string = 'ValidDivisor';

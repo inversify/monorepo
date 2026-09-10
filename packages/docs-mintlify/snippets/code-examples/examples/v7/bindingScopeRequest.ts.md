@@ -1,4 +1,4 @@
-``` ts
+```ts
 export class LegendaryWarrior {
   constructor(
     @inject('Weapon') public readonly firstWeapon: Weapon,

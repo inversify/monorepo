@@ -1,4 +1,4 @@
-``` ts
+```ts
 const container: Container = new Container();
 
 // The identifier can be used to unbind this specific binding later

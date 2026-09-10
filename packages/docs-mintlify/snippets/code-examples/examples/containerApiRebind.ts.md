@@ -1,4 +1,4 @@
-``` ts
+```ts
 const serviceId: string = 'serviceId';
 
 const container: Container = new Container();

@@ -1,4 +1,4 @@
-``` ts
+```ts
 const module: ContainerModule = new ContainerModule(
   (options: ContainerModuleLoadOptions) => {
     // v8: sync unbind and rebind (default)

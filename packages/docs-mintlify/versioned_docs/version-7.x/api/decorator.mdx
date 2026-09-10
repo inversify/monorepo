@@ -3,19 +3,19 @@ sidebar_position: 4
 title: Decorator
 ---
 
-import DecoratorApiInjectConstructorArgumentSource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectConstructorArgument.ts.md'
-import DecoratorApiInjectFromBaseConstructorArgumentSource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectFromBaseConstructorArguments.ts.md'
-import DecoratorApiInjectFromBasePropertiesSource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectFromBaseProperties.ts.md'
-import DecoratorApiInjectFromHierarchyConstructorArgumentSource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectFromHierarchyConstructorArguments.ts.md'
-import DecoratorApiInjectFromHierarchyPropertiesSource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectFromHierarchyProperties.ts.md'
-import DecoratorApiInjectPropertySource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectProperty.ts.md'
-import DecoratorApiMultiInjectPropertySource from '../../../snippets/code-examples/examples/v7/decoratorApiMultiInjectProperty.ts.md'
-import DecoratorApiNamedSource from '../../../snippets/code-examples/examples/v7/decoratorApiNamed.ts.md'
-import DecoratorApiOptionalSource from '../../../snippets/code-examples/examples/v7/decoratorApiOptional.ts.md'
-import DecoratorApiPostConstructSource from '../../../snippets/code-examples/examples/v7/decoratorApiPostConstruct.ts.md'
-import DecoratorApiPreDestroySource from '../../../snippets/code-examples/examples/v7/decoratorApiPreDestroy.ts.md'
-import DecoratorApiTaggedSource from '../../../snippets/code-examples/examples/v7/decoratorApiTagged.ts.md'
-import DecoratorApiUnmanagedSource from '../../../snippets/code-examples/examples/v7/decoratorApiUnmanaged.ts.md'
+import DecoratorApiInjectConstructorArgumentSource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectConstructorArgument.ts.md';
+import DecoratorApiInjectFromBaseConstructorArgumentSource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectFromBaseConstructorArguments.ts.md';
+import DecoratorApiInjectFromBasePropertiesSource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectFromBaseProperties.ts.md';
+import DecoratorApiInjectFromHierarchyConstructorArgumentSource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectFromHierarchyConstructorArguments.ts.md';
+import DecoratorApiInjectFromHierarchyPropertiesSource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectFromHierarchyProperties.ts.md';
+import DecoratorApiInjectPropertySource from '../../../snippets/code-examples/examples/v7/decoratorApiInjectProperty.ts.md';
+import DecoratorApiMultiInjectPropertySource from '../../../snippets/code-examples/examples/v7/decoratorApiMultiInjectProperty.ts.md';
+import DecoratorApiNamedSource from '../../../snippets/code-examples/examples/v7/decoratorApiNamed.ts.md';
+import DecoratorApiOptionalSource from '../../../snippets/code-examples/examples/v7/decoratorApiOptional.ts.md';
+import DecoratorApiPostConstructSource from '../../../snippets/code-examples/examples/v7/decoratorApiPostConstruct.ts.md';
+import DecoratorApiPreDestroySource from '../../../snippets/code-examples/examples/v7/decoratorApiPreDestroy.ts.md';
+import DecoratorApiTaggedSource from '../../../snippets/code-examples/examples/v7/decoratorApiTagged.ts.md';
+import DecoratorApiUnmanagedSource from '../../../snippets/code-examples/examples/v7/decoratorApiUnmanaged.ts.md';
 
 # Decorators
 
@@ -39,6 +39,7 @@ class MyService {
 ```
 
 Valid scope values are:
+
 - `'Singleton'`: The container will create only one instance and will return that instance for all requests.
 - `'Transient'`: The container will create a new instance for each request.
 - `'Request'`: The container will create an instance for each unique request (useful in web applications with request scoping).
@@ -66,38 +67,36 @@ class A {
 A CommonJS transpilation with the [emitDecoratorMetadata](https://www.typescriptlang.org/tsconfig/#emitDecoratorMetadata) option enabled might look like this:
 
 ```js
-Object.defineProperty(exports, "__esModule", { value: true });
-const inversify_1 = require("inversify");
+Object.defineProperty(exports, '__esModule', { value: true });
+const inversify_1 = require('inversify');
 let B = class B {
-    foo = 'foo';
+  foo = 'foo';
 };
-B = __decorate([
-    (0, inversify_1.injectable)()
-], B);
+B = __decorate([(0, inversify_1.injectable)()], B);
 let A = class A {
-    b;
-    constructor(b) {
-        this.b = b;
-    }
+  b;
+  constructor(b) {
+    this.b = b;
+  }
 };
-A = __decorate([
-    (0, inversify_1.injectable)(),
-    __metadata("design:paramtypes", [B])
-], A);
+A = __decorate(
+  [(0, inversify_1.injectable)(), __metadata('design:paramtypes', [B])],
+  A,
+);
 ```
 
 TypeScript emits class metadata if and only if there are any class decorators applied to the target class. If we remove the `@injectable` from `A`, the transpiled code looks very different:
 
 ```js
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, '__esModule', { value: true });
 class B {
-    foo = 'foo';
+  foo = 'foo';
 }
 class A {
-    b;
-    constructor(b) {
-        this.b = b;
-    }
+  b;
+  constructor(b) {
+    this.b = b;
+  }
 }
 ```
 

@@ -2,6 +2,7 @@
 sidebar_position: 1
 title: Planning phase
 ---
+
 # Planning Phase
 
 The planning phase is a critical step that occurs every time you request a service from an InversifyJS container. Before any instances are created or values are resolved, InversifyJS builds a comprehensive **plan tree** that maps out exactly how to satisfy your dependency request.
@@ -80,17 +81,19 @@ A complete plan result contains:
 ```typescript
 interface PlanResult {
   tree: {
-    root: PlanServiceNode
-  }
+    root: PlanServiceNode;
+  };
 }
 ```
 
 Each `PlanServiceNode` includes:
+
 - `serviceIdentifier`: The service being resolved
 - `bindings`: One or more binding nodes describing how to resolve it
 - `isContextFree`: Whether this node depends on resolution context
 
 Each binding node contains:
+
 - `binding`: The actual binding instance
 - Type-specific metadata (class metadata, parameters, property injections, etc.)
 - Child service nodes for dependencies

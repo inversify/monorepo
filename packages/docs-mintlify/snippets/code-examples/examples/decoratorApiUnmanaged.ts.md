@@ -1,4 +1,4 @@
-``` ts
+```ts
 import { Container, injectable, unmanaged } from 'inversify';
 
 @injectable()

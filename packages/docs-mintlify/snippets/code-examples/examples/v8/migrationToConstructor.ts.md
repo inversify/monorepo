@@ -1,4 +1,4 @@
-``` ts
+```ts
 const container: Container = new Container();
 
 // v6: container.bind('WeaponConstructor').toConstructor(Katana);

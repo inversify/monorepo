@@ -1,4 +1,4 @@
-``` ts
+```ts
 const divisor: string = 'divisor';
 const container: Container = new Container();
 

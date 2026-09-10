@@ -1,4 +1,4 @@
-``` ts
+```ts
 export class Katana {
   public readonly damage: number = 10;
 }

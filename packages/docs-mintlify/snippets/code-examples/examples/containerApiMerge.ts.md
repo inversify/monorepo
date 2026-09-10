@@ -1,4 +1,4 @@
-``` ts
+```ts
 @injectable()
 class Ninja {
   public readonly name: string = 'Ninja';

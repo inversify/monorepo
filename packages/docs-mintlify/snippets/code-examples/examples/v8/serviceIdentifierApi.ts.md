@@ -1,4 +1,4 @@
-``` ts
+```ts
 container.bind(UserService).toSelf();
 
 // Using a string as a service identifier

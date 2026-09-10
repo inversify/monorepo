@@ -1,4 +1,4 @@
-``` ts
+```ts
 interface Warrior {
   kind: string;
 }

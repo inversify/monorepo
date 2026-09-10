@@ -3,7 +3,7 @@ sidebar_position: 3
 title: Container Module
 ---
 
-import ContainerModuleApiExampleSource from '../../../snippets/code-examples/examples/v7/containerModuleApiExample.ts.md'
+import ContainerModuleApiExampleSource from '../../../snippets/code-examples/examples/v7/containerModuleApiExample.ts.md';
 
 # ContainerModule
 
@@ -34,7 +34,7 @@ Options to be passed to the load callback. It contains the following properties:
 ### bind
 
 ```ts
-bind: <T>(serviceIdentifier: ServiceIdentifier<T>) => BindToFluentSyntax<T>
+bind: <T>(serviceIdentifier: ServiceIdentifier<T>) => BindToFluentSyntax<T>;
 ```
 
 Refer to the [docs](./container.mdx#bind) for more information.
@@ -42,7 +42,8 @@ Refer to the [docs](./container.mdx#bind) for more information.
 ### isBound
 
 ```ts
-isBound: (serviceIdentifier: ServiceIdentifier, options?: IsBoundOptions) => boolean
+isBound: (serviceIdentifier: ServiceIdentifier, options?: IsBoundOptions) =>
+  boolean;
 ```
 
 Refer to the [docs](./container.mdx#isbound) for more information.
@@ -66,7 +67,7 @@ Refer to the [docs](./container.mdx#ondeactivation) for more information.
 ### unbind
 
 ```ts
-unbind: (serviceIdentifier: ServiceIdentifier) => Promise<void>
+unbind: (serviceIdentifier: ServiceIdentifier) => Promise<void>;
 ```
 
 Refer to the [docs](./container.mdx#unbind) for more information.

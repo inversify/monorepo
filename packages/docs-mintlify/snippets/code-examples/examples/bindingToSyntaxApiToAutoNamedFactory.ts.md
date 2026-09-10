@@ -1,4 +1,4 @@
-``` ts
+```ts
 @injectable()
 class Ninja implements Ninja {
   readonly #katana: Katana;

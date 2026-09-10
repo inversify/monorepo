@@ -3,10 +3,10 @@ sidebar_position: 2
 title: DI Hierarchy
 ---
 
-import ContainerApiGetAllChainedSource from '../../../snippets/code-examples/examples/v7/containerApiGetAllChained.ts.md'
-import ContainerApiGetAllChainedFalseSource from '../../../snippets/code-examples/examples/v7/containerApiGetAllChainedFalse.ts.md'
-import DiHierarchySource from '../../../snippets/code-examples/examples/v7/diHierarchy.ts.md'
-import DiHierarchyAndCachedBindingsSource from '../../../snippets/code-examples/examples/v7/diHierarchyAndCachedBindings.ts.md'
+import ContainerApiGetAllChainedSource from '../../../snippets/code-examples/examples/v7/containerApiGetAllChained.ts.md';
+import ContainerApiGetAllChainedFalseSource from '../../../snippets/code-examples/examples/v7/containerApiGetAllChainedFalse.ts.md';
+import DiHierarchySource from '../../../snippets/code-examples/examples/v7/diHierarchy.ts.md';
+import DiHierarchyAndCachedBindingsSource from '../../../snippets/code-examples/examples/v7/diHierarchyAndCachedBindings.ts.md';
 
 # DI Hierarchy
 
@@ -60,11 +60,10 @@ This means that if a child container has any bindings for a service, the parent 
 Chained resolution mode allows you to collect bindings from **all levels** of the container hierarchy. When using `getAll()` or `getAllAsync()` with the `chained: true` option:
 
 1. Bindings are collected from the current container
-2. Then bindings are collected from the parent container  
+2. Then bindings are collected from the parent container
 3. This continues recursively up the entire hierarchy
 4. All collected bindings are combined and returned
 
 This is particularly useful when you want to aggregate services from different layers of your application (e.g., core services from a parent container and feature-specific services from child containers).
 
 <ContainerApiGetAllChainedSource />
-

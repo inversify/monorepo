@@ -1,4 +1,4 @@
-``` ts
+```ts
 const ninjaId: symbol = Symbol.for('Ninja');
 const weaponId: symbol = Symbol.for('Weapon');
 

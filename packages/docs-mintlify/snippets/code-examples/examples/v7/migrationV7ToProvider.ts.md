@@ -1,4 +1,4 @@
-``` ts
+```ts
 export const container: Container = new Container();
 
 container.bind<Sword>('Sword').to(Katana);

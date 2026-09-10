@@ -1,4 +1,4 @@
-``` ts
+```ts
 const weaponsModule: ContainerModule = new ContainerModule(
   (options: ContainerModuleLoadOptions) => {
     options.bind<Katana>('Weapon').to(Katana);

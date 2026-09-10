@@ -1,4 +1,4 @@
-``` ts
+```ts
 @injectable()
 class Samurai {
   constructor(

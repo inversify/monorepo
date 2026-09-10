@@ -1,9 +1,9 @@
-``` ts
+```ts
 const bindingIdentifier: BindingIdentifier = container
-    .bind('MyService')
-    .to(MyServiceImpl)
-    .getIdentifier();
+  .bind('MyService')
+  .to(MyServiceImpl)
+  .getIdentifier();
 
-  // Later, unbind just this specific binding
-  container.unbind(bindingIdentifier);
+// Later, unbind just this specific binding
+container.unbind(bindingIdentifier);
 ```

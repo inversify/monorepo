@@ -1,4 +1,4 @@
-``` ts
+```ts
 import { inject, injectable, LazyServiceIdentifier } from 'inversify';
 
 @injectable()
