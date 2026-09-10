@@ -7,6 +7,14 @@ import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNod
 import { buildZeroResolvedValueArgumentsResolver } from './buildZeroResolvedValueArgumentsResolver.js';
 
 class TestFixtures {
+  public static get params(): ResolutionParams {
+    return Symbol() as unknown as ResolutionParams;
+  }
+
+  public static get resolvedValue(): object {
+    return {};
+  }
+
   public static node(
     factory: () => object,
   ): ResolvedValueBindingNode<ResolvedValueBinding<object>> {
@@ -19,14 +27,6 @@ class TestFixtures {
       },
       params: [],
     } as unknown as ResolvedValueBindingNode<ResolvedValueBinding<object>>;
-  }
-
-  public static get params(): ResolutionParams {
-    return Symbol() as unknown as ResolutionParams;
-  }
-
-  public static get resolvedValue(): object {
-    return {};
   }
 }
 
