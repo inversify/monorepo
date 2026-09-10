@@ -3,18 +3,18 @@ sidebar_position: 2
 title: Container
 ---
 
-import ContainerApiGetAllSource from '../../../snippets/code-examples/examples/v7/containerApiGetAll.ts.md'
-import ContainerApiGetAllAsyncSource from '../../../snippets/code-examples/examples/v7/containerApiGetAllAsync.ts.md'
-import ContainerApiGetAsyncSource from '../../../snippets/code-examples/examples/v7/containerApiGetAsync.ts.md'
-import ContainerApiGetSource from '../../../snippets/code-examples/examples/v7/containerApiGet.ts.md'
-import ContainerApiIsBoundSource from '../../../snippets/code-examples/examples/v7/containerApiIsBound.ts.md'
-import ContainerApiIsCurrentBoundSource from '../../../snippets/code-examples/examples/v7/containerApiIsCurrentBound.ts.md'
-import ContainerApiOnActivationSource from '../../../snippets/code-examples/examples/v7/containerApiOnActivation.ts.md'
-import ContainerApiOnDeactivationSource from '../../../snippets/code-examples/examples/v7/containerApiOnDeactivation.ts.md'
-import ContainerApiUnbindBindingIdSource from '../../../snippets/code-examples/examples/v7/containerApiUnbindBindingId.ts.md'
-import ContainerApiUnbindSyncSource from '../../../snippets/code-examples/examples/v7/containerApiUnbindSync.ts.md'
-import ContainerApiRebindSource from '../../../snippets/code-examples/examples/v7/containerApiRebind.ts.md'
-import ContainerApiRebindSyncSource from '../../../snippets/code-examples/examples/v7/containerApiRebindSync.ts.md'
+import ContainerApiGetAllSource from '../../../snippets/code-examples/examples/v7/containerApiGetAll.ts.md';
+import ContainerApiGetAllAsyncSource from '../../../snippets/code-examples/examples/v7/containerApiGetAllAsync.ts.md';
+import ContainerApiGetAsyncSource from '../../../snippets/code-examples/examples/v7/containerApiGetAsync.ts.md';
+import ContainerApiGetSource from '../../../snippets/code-examples/examples/v7/containerApiGet.ts.md';
+import ContainerApiIsBoundSource from '../../../snippets/code-examples/examples/v7/containerApiIsBound.ts.md';
+import ContainerApiIsCurrentBoundSource from '../../../snippets/code-examples/examples/v7/containerApiIsCurrentBound.ts.md';
+import ContainerApiOnActivationSource from '../../../snippets/code-examples/examples/v7/containerApiOnActivation.ts.md';
+import ContainerApiOnDeactivationSource from '../../../snippets/code-examples/examples/v7/containerApiOnDeactivation.ts.md';
+import ContainerApiUnbindBindingIdSource from '../../../snippets/code-examples/examples/v7/containerApiUnbindBindingId.ts.md';
+import ContainerApiUnbindSyncSource from '../../../snippets/code-examples/examples/v7/containerApiUnbindSync.ts.md';
+import ContainerApiRebindSource from '../../../snippets/code-examples/examples/v7/containerApiRebind.ts.md';
+import ContainerApiRebindSyncSource from '../../../snippets/code-examples/examples/v7/containerApiRebindSync.ts.md';
 
 # Container
 
@@ -119,7 +119,6 @@ You can use the `isBound` method to check if there are registered bindings for a
 
 <ContainerApiIsBoundSource />
 
-
 ## isCurrentBound
 
 ```ts
@@ -217,6 +216,7 @@ unbind(identifier: BindingIdentifier | ServiceIdentifier): Promise<void>;
 ```
 
 Removes bindings from the container. When passed:
+
 - A service identifier: removes all bindings bound to that service identifier
 - A binding identifier: removes the specific binding associated with that identifier
 
@@ -232,7 +232,7 @@ This will result in the [deactivation process](../fundamentals/lifecycle/deactiv
 unbindAll(): Promise<void>;
 ```
 
-Remove all bindings binded in this container.  This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
+Remove all bindings binded in this container. This will result in the [deactivation process](../fundamentals/lifecycle/deactivation.mdx).
 
 ## unbindAllSync
 

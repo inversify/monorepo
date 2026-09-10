@@ -1,4 +1,4 @@
-``` ts
+```ts
 class Katana implements Weapon {
   public readonly damage: number = 10;
 }

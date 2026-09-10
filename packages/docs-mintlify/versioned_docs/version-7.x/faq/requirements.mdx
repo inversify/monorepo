@@ -2,6 +2,7 @@
 sidebar_position: 1
 title: TypeScript Requirements
 ---
+
 # TypeScript Requirements
 
 This page outlines the TypeScript configuration requirements for using InversifyJS.
@@ -18,7 +19,7 @@ Enable experimental decorators and metadata emission in your `tsconfig.json`:
 {
   "compilerOptions": {
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+    "emitDecoratorMetadata": true
     // other options...
   }
 }
@@ -33,7 +34,7 @@ InversifyJS uses the `ErrorOptions` type which requires ES2022 support. You have
 ```json
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2022"
     // other options...
   }
 }
@@ -44,7 +45,7 @@ InversifyJS uses the `ErrorOptions` type which requires ES2022 support. You have
 ```json
 {
   "compilerOptions": {
-    "lib": ["ES2022.Error", /* other libs... */],
+    "lib": ["ES2022.Error" /* other libs... */]
     // other options...
   }
 }
@@ -52,4 +53,4 @@ InversifyJS uses the `ErrorOptions` type which requires ES2022 support. You have
 
 ## Strict Mode Considerations
 
-While not required, InversifyJS works well with TypeScript's strict mode. If you're using strict mode, you might need to provide more explicit type annotations in some cases. 
+While not required, InversifyJS works well with TypeScript's strict mode. If you're using strict mode, you might need to provide more explicit type annotations in some cases.

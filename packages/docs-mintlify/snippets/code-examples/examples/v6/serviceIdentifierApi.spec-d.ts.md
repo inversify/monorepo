@@ -1,4 +1,4 @@
-``` ts
+```ts
 import { describe, expectTypeOf, it } from 'vitest';
 
 import {

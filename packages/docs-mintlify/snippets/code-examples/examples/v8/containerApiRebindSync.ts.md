@@ -1,4 +1,4 @@
-``` ts
+```ts
 const container: Container = new Container();
 
 // Create initial binding

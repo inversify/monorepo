@@ -1,4 +1,4 @@
-``` ts
+```ts
 const warriorsModule: ContainerModule = new ContainerModule(
   (bind: interfaces.Bind) => {
     bind<Ninja>('Ninja').to(Ninja);

@@ -1,4 +1,4 @@
-``` ts
+```ts
 class Katana {
   public material!: string;
   public damage!: number;

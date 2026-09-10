@@ -1,4 +1,4 @@
-``` ts
+```ts
 @injectable()
 export class Ninja {
   readonly #katana: Katana;

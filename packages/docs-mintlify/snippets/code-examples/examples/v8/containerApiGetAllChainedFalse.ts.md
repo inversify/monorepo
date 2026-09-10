@@ -1,4 +1,4 @@
-``` ts
+```ts
 const parentContainer: Container = new Container();
 
 const container: Container = new Container({

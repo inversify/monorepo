@@ -1,4 +1,4 @@
-``` ts
+```ts
 container.bind<Engine>('Engine').to(PetrolEngine).whenNamed('petrol');
 container.bind<Engine>('Engine').to(DieselEngine).whenNamed('diesel');
 

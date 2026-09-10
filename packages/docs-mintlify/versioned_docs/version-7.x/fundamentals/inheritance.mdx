@@ -2,6 +2,7 @@
 sidebar_position: 4
 title: Inheritance
 ---
+
 # Inheritance
 
 Inheritance can be achieved relying on the `@injectFromBase` decorator. This decorator allows you to inject dependencies from the base class. Refer to the [API documentation](../api/decorator.mdx#injectfrombase) for more information.
@@ -9,6 +10,7 @@ Inheritance can be achieved relying on the `@injectFromBase` decorator. This dec
 Previous versions of inversify used to provide implicitly injection inheritance. However, this approach was deprecated in favor of the `@injectFromBase` decorator.
 
 ## Motivation
+
 Decorators are not designed to be inherited. Class inheritance doesn't play well with the former approach. The `@injectFromBase` decorator allows the developer whether or not decoration inheritance should be provided.
 
 In exchange of implicit inheritance, previous inversify versions performed multiple checks to ensure every class argument was injected. Some edge case scenarios forced to declare unmanaged parent constructor arguments so inversify could bypass these checks.

@@ -191,6 +191,18 @@
       ],
       "outputs": [".mintlify/**", "build/**"]
     },
+    "@inversifyjs/inversify-mintlify-docs-site#format": {
+      "inputs": ["$TURBO_DEFAULT$", "prettier.config.{cjs,mjs,js,json}"],
+      "outputs": []
+    },
+    "@inversifyjs/inversify-mintlify-docs-site#lint": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "eslint.config.{cjs,mjs,js,json}",
+        "prettier.config.{cjs,mjs,js,json}"
+      ]
+    },
     "format": {
       "inputs": ["src/**/*.{cts,mts,ts}", "prettier.config.{cjs,mjs,js,json}"],
       "outputs": ["src/**/*.{cts,mts,ts}"]

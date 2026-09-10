@@ -3,17 +3,17 @@ sidebar_position: 1
 title: Migrating from v6
 ---
 
-import BindingOnSyntaxApiOnActivationSource from '../../../snippets/code-examples/examples/v7/bindingOnSyntaxApiOnActivation.ts.md'
-import BindingWhenSyntaxApiWhenSource from '../../../snippets/code-examples/examples/v7/bindingWhenSyntaxApiWhen.ts.md'
-import ContainerApiGetAllWithNamedBindingsSource from '../../../snippets/code-examples/examples/v7/containerApiGetAllWithNamedBindings.ts.md'
-import ContainerApiGetNamedSource from '../../../snippets/code-examples/examples/v7/containerApiGetNamed.ts.md'
-import ContainerModuleApiExampleSource from '../../../snippets/code-examples/examples/v7/containerModuleApiExample.ts.md'
-import DiHierarchySource from '../../../snippets/code-examples/examples/v7/diHierarchy.ts.md'
-import FundamentalsAutobindingSource from '../../../snippets/code-examples/examples/v7/fundamentalsAutobinding.ts.md'
-import MigrationToAutoFactorySource from '../../../snippets/code-examples/examples/v7/migrationToAutoFactory.ts.md'
-import MigrationToAutoNamedFactorySource from '../../../snippets/code-examples/examples/v7/migrationToAutoNamedFactory.ts.md'
-import MigrationToConstructorSource from '../../../snippets/code-examples/examples/v7/migrationToConstructor.ts.md'
-import MigrationToFunctionSource from '../../../snippets/code-examples/examples/v7/migrationToFunction.ts.md'
+import BindingOnSyntaxApiOnActivationSource from '../../../snippets/code-examples/examples/v7/bindingOnSyntaxApiOnActivation.ts.md';
+import BindingWhenSyntaxApiWhenSource from '../../../snippets/code-examples/examples/v7/bindingWhenSyntaxApiWhen.ts.md';
+import ContainerApiGetAllWithNamedBindingsSource from '../../../snippets/code-examples/examples/v7/containerApiGetAllWithNamedBindings.ts.md';
+import ContainerApiGetNamedSource from '../../../snippets/code-examples/examples/v7/containerApiGetNamed.ts.md';
+import ContainerModuleApiExampleSource from '../../../snippets/code-examples/examples/v7/containerModuleApiExample.ts.md';
+import DiHierarchySource from '../../../snippets/code-examples/examples/v7/diHierarchy.ts.md';
+import FundamentalsAutobindingSource from '../../../snippets/code-examples/examples/v7/fundamentalsAutobinding.ts.md';
+import MigrationToAutoFactorySource from '../../../snippets/code-examples/examples/v7/migrationToAutoFactory.ts.md';
+import MigrationToAutoNamedFactorySource from '../../../snippets/code-examples/examples/v7/migrationToAutoNamedFactory.ts.md';
+import MigrationToConstructorSource from '../../../snippets/code-examples/examples/v7/migrationToConstructor.ts.md';
+import MigrationToFunctionSource from '../../../snippets/code-examples/examples/v7/migrationToFunction.ts.md';
 
 # Migrating from v6
 
@@ -23,36 +23,36 @@ InversifyJS v7 introduces several breaking changes. This guide will help you mig
 
 The following table summarizes the key changes from v6 to v7:
 
-| v6                                    | v7                                       | Comment                                                          |
-|---------------------------------------|------------------------------------------|------------------------------------------------------------------|
-| `autoBindInjectable` option           | `autobind` option                        | Renamed container constructor option                             |
-| `container.resolve(X)`                | `container.get(X, { autobind: true })`   | `resolve` replaced by `get` with `autobind` option               |
-| Custom metadata and middlewares       | No direct replacement                    | Removed to simplify the library and avoid exposing internal data structures |
-| `container.isBoundNamed`              | `container.isBound(X, { name: ... })`    | Merged all `isBound` variants with an options parameter          |
-| `container.isBoundTagged`             | `container.isBound(X, { tag: ... })`     | Merged all `isBound` variants with an options parameter          |
-| `container.getNamed`                  | `container.get(X, { name: ... })`        | Merged all `get` variants with an options parameter              |
-| `container.getTagged`                 | `container.get(X, { tag: ... })`         | Merged all `get` variants with an options parameter              |
-| `container.tryGet`                    | `container.get(X, { optional: true })`   | Added `optional` flag for optional `get`                         |
-| `container.tryGetNamed`               | `container.get(X, { name: ..., optional: true })` | Combined named and optional parameters                  |
-| `container.tryGetTagged`              | `container.get(X, { tag: ..., optional: true })`  | Combined tagged and optional parameters                 |
-| `container.load`                      | `await container.load`                   | Now returns a Promise                                            |
-| `container.load`                      | `container.loadSync`                     | Synchronous alternative to async `load`                          |
-| `container.unload`                    | `await container.unload`                 | Now returns a Promise                                            |
-| `container.unload`                    | `container.unloadSync`                   | Synchronous alternative to async `unload`                        |
-| `container.rebind`                    | `await container.rebind` or `container.rebindSync` | Now async, with a sync alternative                     |
-| `container.unbind`                    | `await container.unbind` or `container.unbindSync` | Now async, with a sync alternative                     |
-| `container.createChild()`             | `new Container({ parent: container })`   | Child containers created via constructor                         |
-| `.toAutoFactory(X)`                   | `.toFactory((ctx) => () => ctx.get(X))`  | Use `toFactory` with `ResolutionContext.get()`                   |
-| `.toAutoNamedFactory(X)`              | `.toFactory((ctx) => (name) => ctx.get(X, { name }))` | Use `toFactory` with named resolution         |
-| `.toConstructor(X)`                   | `.toConstantValue(X)`                    | Bind constructors as constant values                             |
-| `.toFunction(fn)`                     | `.toConstantValue(fn)`                   | Bind functions as constant values                                |
-| `interfaces.Context`                  | `ResolutionContext`                      | Updated context parameter type in the binding API                |
-| `interfaces.Request`                  | `BindingConstraints`                     | Updated binding constraint parameter type                        |
-| `interfaces.Provider<T>`              | `Provider<T>`                            | Directly exported, no longer under `interfaces` namespace        |
-| `interfaces.Factory<T>`               | `Factory<T>`                             | Directly exported, no longer under `interfaces` namespace        |
-| `interfaces.Newable<T>`               | `Newable<T>`                             | Directly exported, no longer under `interfaces` namespace        |
-| Implicit injection inheritance        | `@injectFromBase` decorator              | Explicit inheritance with a decorator                            |
-| `import { interfaces } from "inversify";` | `import { ... } from "inversify";`   | Removed `interfaces` namespace, use direct imports               |
+| v6                                        | v7                                                    | Comment                                                                     |
+| ----------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------- |
+| `autoBindInjectable` option               | `autobind` option                                     | Renamed container constructor option                                        |
+| `container.resolve(X)`                    | `container.get(X, { autobind: true })`                | `resolve` replaced by `get` with `autobind` option                          |
+| Custom metadata and middlewares           | No direct replacement                                 | Removed to simplify the library and avoid exposing internal data structures |
+| `container.isBoundNamed`                  | `container.isBound(X, { name: ... })`                 | Merged all `isBound` variants with an options parameter                     |
+| `container.isBoundTagged`                 | `container.isBound(X, { tag: ... })`                  | Merged all `isBound` variants with an options parameter                     |
+| `container.getNamed`                      | `container.get(X, { name: ... })`                     | Merged all `get` variants with an options parameter                         |
+| `container.getTagged`                     | `container.get(X, { tag: ... })`                      | Merged all `get` variants with an options parameter                         |
+| `container.tryGet`                        | `container.get(X, { optional: true })`                | Added `optional` flag for optional `get`                                    |
+| `container.tryGetNamed`                   | `container.get(X, { name: ..., optional: true })`     | Combined named and optional parameters                                      |
+| `container.tryGetTagged`                  | `container.get(X, { tag: ..., optional: true })`      | Combined tagged and optional parameters                                     |
+| `container.load`                          | `await container.load`                                | Now returns a Promise                                                       |
+| `container.load`                          | `container.loadSync`                                  | Synchronous alternative to async `load`                                     |
+| `container.unload`                        | `await container.unload`                              | Now returns a Promise                                                       |
+| `container.unload`                        | `container.unloadSync`                                | Synchronous alternative to async `unload`                                   |
+| `container.rebind`                        | `await container.rebind` or `container.rebindSync`    | Now async, with a sync alternative                                          |
+| `container.unbind`                        | `await container.unbind` or `container.unbindSync`    | Now async, with a sync alternative                                          |
+| `container.createChild()`                 | `new Container({ parent: container })`                | Child containers created via constructor                                    |
+| `.toAutoFactory(X)`                       | `.toFactory((ctx) => () => ctx.get(X))`               | Use `toFactory` with `ResolutionContext.get()`                              |
+| `.toAutoNamedFactory(X)`                  | `.toFactory((ctx) => (name) => ctx.get(X, { name }))` | Use `toFactory` with named resolution                                       |
+| `.toConstructor(X)`                       | `.toConstantValue(X)`                                 | Bind constructors as constant values                                        |
+| `.toFunction(fn)`                         | `.toConstantValue(fn)`                                | Bind functions as constant values                                           |
+| `interfaces.Context`                      | `ResolutionContext`                                   | Updated context parameter type in the binding API                           |
+| `interfaces.Request`                      | `BindingConstraints`                                  | Updated binding constraint parameter type                                   |
+| `interfaces.Provider<T>`                  | `Provider<T>`                                         | Directly exported, no longer under `interfaces` namespace                   |
+| `interfaces.Factory<T>`                   | `Factory<T>`                                          | Directly exported, no longer under `interfaces` namespace                   |
+| `interfaces.Newable<T>`                   | `Newable<T>`                                          | Directly exported, no longer under `interfaces` namespace                   |
+| Implicit injection inheritance            | `@injectFromBase` decorator                           | Explicit inheritance with a decorator                                       |
+| `import { interfaces } from "inversify";` | `import { ... } from "inversify";`                    | Removed `interfaces` namespace, use direct imports                          |
 
 ## Container API
 

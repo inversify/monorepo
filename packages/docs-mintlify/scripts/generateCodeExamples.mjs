@@ -10,6 +10,8 @@ import { createRequire } from 'node:module';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import prettier from 'prettier';
+
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const snippetsRoot = join(root, 'snippets', 'code-examples');
 
@@ -68,13 +70,16 @@ async function collectTxtFiles(directory, files = []) {
 
 function toSnippet(content) {
   const code = content.endsWith('\n') ? content : `${content}\n`;
-  return `\`\`\` ts\n${code}\`\`\`\n`;
+  return `\`\`\`ts\n${code}\`\`\`\n`;
 }
 
 async function writeSnippets(generatedDir) {
   await rm(snippetsRoot, { recursive: true, force: true });
 
   const txtFiles = await collectTxtFiles(generatedDir);
+  const prettierConfig = await prettier.resolveConfig(
+    join(snippetsRoot, 'example.md'),
+  );
 
   await Promise.all(
     txtFiles.map(async (txtPath) => {
@@ -85,7 +90,12 @@ async function writeSnippets(generatedDir) {
       );
 
       await mkdir(dirname(snippetPath), { recursive: true });
-      await writeFile(snippetPath, toSnippet(await readFile(txtPath, 'utf8')));
+      const snippet = toSnippet(await readFile(txtPath, 'utf8'));
+      const formatted = await prettier.format(snippet, {
+        ...prettierConfig,
+        filepath: snippetPath,
+      });
+      await writeFile(snippetPath, formatted);
     }),
   );
 

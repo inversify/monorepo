@@ -3,10 +3,10 @@ sidebar_position: 5
 title: decorate
 ---
 
-import DecorateClassDecoratorSource from '../../../snippets/code-examples/examples/v7/decorateClassDecorator.ts.md'
-import DecorateParameterDecoratorSource from '../../../snippets/code-examples/examples/v7/decorateParameterDecorator.ts.md'
-import DecoratePropertyDecoratorSource from '../../../snippets/code-examples/examples/v7/decoratePropertyDecorator.ts.md'
-import DecorateMethodDecoratorSource from '../../../snippets/code-examples/examples/v7/decorateMethodDecorator.ts.md'
+import DecorateClassDecoratorSource from '../../../snippets/code-examples/examples/v7/decorateClassDecorator.ts.md';
+import DecorateParameterDecoratorSource from '../../../snippets/code-examples/examples/v7/decorateParameterDecorator.ts.md';
+import DecoratePropertyDecoratorSource from '../../../snippets/code-examples/examples/v7/decoratePropertyDecorator.ts.md';
+import DecorateMethodDecoratorSource from '../../../snippets/code-examples/examples/v7/decorateMethodDecorator.ts.md';
 
 # decorate
 
@@ -26,19 +26,23 @@ The `decorate` function has multiple overloads to handle different decorator typ
 ```typescript
 function decorate(
   decorators: ClassDecorator | ClassDecorator[],
-  target: Function
+  target: Function,
 ): void;
 
 function decorate(
   decorators: ParameterDecorator | ParameterDecorator[],
   target: Function,
-  parameterIndex: number
+  parameterIndex: number,
 ): void;
 
 function decorate(
-  decorators: MethodDecorator | PropertyDecorator | MethodDecorator[] | PropertyDecorator[],
+  decorators:
+    | MethodDecorator
+    | PropertyDecorator
+    | MethodDecorator[]
+    | PropertyDecorator[],
   target: Function,
-  property: string | symbol
+  property: string | symbol,
 ): void;
 
 export function decorate(

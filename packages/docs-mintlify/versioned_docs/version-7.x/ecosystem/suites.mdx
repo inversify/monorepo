@@ -14,6 +14,7 @@ test logic rather than infrastructure, boilerplate and setup.
 ## When to use it
 
 Use Suites when you:
+
 - Need fast, maintainable unit tests for InversifyJS classes
 - Want compile-time type safety for all mocked dependencies
 - Need to eliminate repetitive mock setup boilerplate
@@ -21,8 +22,9 @@ Use Suites when you:
 - Need AI-assisted testing with clear, structured patterns
 
 <Info>
-If you need full integration tests with real dependencies and actual InversifyJS containers, traditional
-container configuration may be more appropriate.
+  If you need full integration tests with real dependencies and actual
+  InversifyJS containers, traditional container configuration may be more
+  appropriate.
 </Info>
 
 ## Core features
@@ -43,7 +45,8 @@ npm install -D @suites/unit @suites/di.inversify@^4.0.0 @suites/doubles.jest
 ```
 
 <Info>
-Use `@suites/doubles.vitest` or `@suites/doubles.sinon` if you're using Vitest or Sinon instead of Jest.
+  Use `@suites/doubles.vitest` or `@suites/doubles.sinon` if you're using Vitest
+  or Sinon instead of Jest.
 </Info>
 
 Add type references to `global.d.ts`:
@@ -64,7 +67,7 @@ Test a class in complete isolation with all dependencies automatically mocked:
 class OrderService {
   constructor(
     private readonly paymentGateway: PaymentGateway,
-    private readonly inventoryService: InventoryService
+    private readonly inventoryService: InventoryService,
   ) {}
 
   async processOrder(orderId: string) {
@@ -121,7 +124,7 @@ class PriceCalculator {
 class OrderService {
   constructor(
     private calculator: PriceCalculator,
-    private paymentGateway: PaymentGateway
+    private paymentGateway: PaymentGateway,
   ) {}
 
   async processOrder(items: Item[]) {
@@ -140,8 +143,8 @@ describe('Order Service Sociable Unit Spec', () => {
 
   beforeAll(async () => {
     const { unit, unitRef } = await TestBed.sociable(OrderService)
-      .collaborate()                    // All business logic collaborates
-      .exclude([PaymentGateway])        // Exclude external services
+      .collaborate() // All business logic collaborates
+      .exclude([PaymentGateway]) // Exclude external services
       .compile();
 
     orderService = unit;
@@ -151,10 +154,7 @@ describe('Order Service Sociable Unit Spec', () => {
   it('should calculate and charge correct total', async () => {
     paymentGateway.charge.mockResolvedValue({ success: true });
 
-    await orderService.processOrder([
-      { price: 10 },
-      { price: 20 }
-    ]);
+    await orderService.processOrder([{ price: 10 }, { price: 20 }]);
 
     // Real calculator logic executed, only gateway is mocked
     expect(paymentGateway.charge).toHaveBeenCalledWith(30);
@@ -170,8 +170,8 @@ Token-injected dependencies are always auto-mocked (read more about [Dependency 
 @injectable()
 class PaymentService {
   constructor(
-    private validator: PaymentValidator,              // Class dependency
-    @inject('DATABASE') private database: Database,   // Token dependency
+    private validator: PaymentValidator, // Class dependency
+    @inject('DATABASE') private database: Database, // Token dependency
   ) {}
 }
 
@@ -184,8 +184,8 @@ describe('PaymentService', () => {
     const { unit, unitRef } = await TestBed.solitary(PaymentService).compile();
 
     service = unit;
-    validator = unitRef.get(PaymentValidator);      // By class
-    database = unitRef.get<Database>('DATABASE');   // By token
+    validator = unitRef.get(PaymentValidator); // By class
+    database = unitRef.get<Database>('DATABASE'); // By token
   });
 });
 ```
@@ -199,7 +199,7 @@ Suites fully supports InversifyJS metadata patterns for tagged and named binding
 class Ninja {
   constructor(
     @inject('Weapon') @tagged('canThrow', false) private katana: Weapon,
-    @inject('Weapon') @tagged('canThrow', true) private shuriken: Weapon
+    @inject('Weapon') @tagged('canThrow', true) private shuriken: Weapon,
   ) {}
 }
 
@@ -231,8 +231,8 @@ You can also configure mocks with metadata before compilation:
 ```typescript
 await TestBed.solitary(Ninja)
   .mock<Weapon>('Weapon', { canThrow: true })
-  .impl(stub => ({
-    attack: stub.mockReturnValue('shuriken attack!')
+  .impl((stub) => ({
+    attack: stub.mockReturnValue('shuriken attack!'),
   }))
   .compile();
 ```

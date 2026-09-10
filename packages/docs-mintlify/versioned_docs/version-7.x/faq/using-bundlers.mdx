@@ -2,6 +2,7 @@
 sidebar_position: 2
 title: Using bundlers
 ---
+
 # Using bundlers
 
 InversifyJS can be used with any bundler that supports transpiling TypeScript legacy decorators and emitting TypeScript class metadata.
@@ -26,8 +27,8 @@ You can use the `@rollup/plugin-typescript` plugin to successfully transpile Typ
 Vite uses esbuild under the hood, so it also does not support transpiling TypeScript legacy decorators. However, you can use the `unplugin-swc` plugin to transpile TypeScript legacy decorators.
 
 ```ts title="vite.config.ts"
-import swc from "unplugin-swc";
-import { defineConfig } from "vite";
+import swc from 'unplugin-swc';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [

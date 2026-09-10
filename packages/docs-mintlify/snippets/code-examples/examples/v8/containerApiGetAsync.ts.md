@@ -1,4 +1,4 @@
-``` ts
+```ts
 async function buildLevel1(): Promise<Level1> {
   return new Level1();
 }

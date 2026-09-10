@@ -1,4 +1,4 @@
-``` ts
+```ts
 const warriorsModule: ContainerModule = new ContainerModule(
   (options: ContainerModuleLoadOptions) => {
     options.bind<Ninja>('Ninja').to(Ninja);

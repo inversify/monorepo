@@ -1,4 +1,4 @@
-``` ts
+```ts
 @injectable()
 class Katana {
   public use(): string {

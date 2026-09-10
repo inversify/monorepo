@@ -1,4 +1,4 @@
-``` ts
+```ts
 import { Container, inject, injectable, ServiceIdentifier } from 'inversify';
 
 interface Weapon {

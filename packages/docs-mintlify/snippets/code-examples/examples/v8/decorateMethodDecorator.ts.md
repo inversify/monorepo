@@ -1,4 +1,4 @@
-``` ts
+```ts
 @injectable()
 class Katana implements Weapon {
   private _damage: number = 10;

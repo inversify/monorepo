@@ -87,9 +87,7 @@
               },
               {
                 "group": "Guides",
-                "pages": [
-                  "versioned_docs/version-7.x/guides/migrating-from-v6"
-                ]
+                "pages": ["versioned_docs/version-7.x/guides/migrating-from-v6"]
               },
               {
                 "group": "Ecosystem",
@@ -102,9 +100,7 @@
               },
               {
                 "group": "Internals",
-                "pages": [
-                  "versioned_docs/version-7.x/internals/planning"
-                ]
+                "pages": ["versioned_docs/version-7.x/internals/planning"]
               }
             ]
           },

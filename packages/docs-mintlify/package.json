@@ -11,15 +11,10 @@
   "devDependencies": {
     "@inversifyjs/code-examples": "workspace:*",
     "@mintlify/cli": "4.0.1477",
-    "@eslint/config-helpers": "0.7.0",
-    "@eslint/js": "10.0.1",
     "@types/react": "19.2.18",
     "eslint": "10.10.0",
-    "eslint-plugin-prettier": "5.5.6",
-    "eslint-plugin-simple-import-sort": "14.0.0",
     "prettier": "3.9.6",
-    "typescript": "6.0.3",
-    "typescript-eslint": "8.69.0"
+    "typescript": "6.0.3"
   },
   "homepage": "https://inversify.io",
   "keywords": [
@@ -52,7 +47,7 @@
     "export": "mintlify export",
     "format": "prettier --write .",
     "generate:code:examples": "node ./scripts/generateCodeExamples.mjs",
-    "lint": "eslint",
+    "lint": "eslint .",
     "prebuild": "pnpm run generate:code:examples",
     "validate": "mintlify validate"
   }
