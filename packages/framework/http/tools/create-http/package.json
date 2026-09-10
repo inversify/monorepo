@@ -8,7 +8,7 @@
   },
   "description": "Scaffold an InversifyJS HTTP application",
   "dependencies": {
-    "@clack/prompts": "1.7.0",
+    "@clack/prompts": "1.8.0",
     "citty": "0.2.2",
     "prettier": "3.9.6",
     "ts-morph": "28.0.0"
@@ -16,8 +16,8 @@
   "devDependencies": {
     "@cursor/sdk": "1.0.31",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "@openai/codex-sdk": "0.153.3",
-    "@opencode-ai/sdk": "1.18.28",
+    "@openai/codex-sdk": "0.153.4",
+    "@opencode-ai/sdk": "1.18.29",
     "@types/node": "24.13.3",
     "@vitest/coverage-v8": "5.0.0",
     "eslint": "10.10.0",
