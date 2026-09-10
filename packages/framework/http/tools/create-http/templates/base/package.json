@@ -5,16 +5,16 @@
     "@hono/node-server": "2.1.1",
     "@inversifyjs/config": "1.0.0",
     "@inversifyjs/config-dotenv": "1.0.0",
-    "@inversifyjs/http-core": "5.5.3",
-    "@inversifyjs/http-express": "5.5.3",
-    "@inversifyjs/http-fastify": "5.5.3",
-    "@inversifyjs/http-hono": "5.5.3",
-    "@inversifyjs/http-open-api": "5.5.3",
-    "@inversifyjs/http-uwebsockets": "5.5.3",
-    "@inversifyjs/http-validation": "5.5.3",
+    "@inversifyjs/http-core": "5.6.0",
+    "@inversifyjs/http-express": "5.6.0",
+    "@inversifyjs/http-fastify": "5.6.0",
+    "@inversifyjs/http-hono": "5.6.0",
+    "@inversifyjs/http-open-api": "5.6.0",
+    "@inversifyjs/http-uwebsockets": "5.6.0",
+    "@inversifyjs/http-validation": "5.6.0",
     "@inversifyjs/logger": "2.0.0",
     "@inversifyjs/open-api-types": "2.0.0",
-    "@inversifyjs/open-api-validation": "3.6.1",
+    "@inversifyjs/open-api-validation": "3.6.2",
     "@inversifyjs/prisma": "1.0.0",
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@inversifyjs/open-api-2-typescript": "0.2.0",
+    "@inversifyjs/open-api-2-typescript": "0.2.1",
     "@types/express": "5.0.6",
     "@types/node": "24.13.3",
     "dotenv": "17.4.2",
@@ -42,6 +42,6 @@
     "prisma": "7.10.0",
     "tsx": "4.23.13",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.69.0"
+    "typescript-eslint": "8.70.0"
   }
 }
