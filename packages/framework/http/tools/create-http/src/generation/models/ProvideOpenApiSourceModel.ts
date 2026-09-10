@@ -1,6 +1,6 @@
 import { type SourceImport } from './BootstrapSourceModel.js';
 
-export interface ProvideOpenApiComponentSchemaSourceModel {
+interface ProvideOpenApiComponentSchemaSourceModel {
   identifier: string;
   name: string;
 }
