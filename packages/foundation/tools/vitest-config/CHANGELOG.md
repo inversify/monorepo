@@ -1,5 +1,11 @@
 # @inversifyjs/foundation-vitest-config
 
+## 0.2.3
+
+### Patch Changes
+
+- Updated config with `clearMocks` value to `false`
+
 ## 0.2.2
 
 ### Patch Changes

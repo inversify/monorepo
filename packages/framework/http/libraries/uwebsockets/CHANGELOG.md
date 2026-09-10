@@ -1,5 +1,13 @@
 # @inversifyjs/http-uwebsockets
 
+## 5.6.1
+
+### Patch Changes
+
+- Updated `InversifyUwebSocketsHttpAdapter` to allow sending http body separator on chunked responses
+- Updated dependencies
+  - @inversifyjs/http-core@5.6.1
+
 ## 5.6.0
 
 ### Patch Changes

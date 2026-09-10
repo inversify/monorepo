@@ -1,5 +1,11 @@
 # @inversifyjs/create-http
 
+## 0.7.0
+
+### Minor Changes
+
+- Added api model option to allow schema first generation
+
 ## 0.6.0
 
 ### Minor Changes
