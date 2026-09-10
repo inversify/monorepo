@@ -245,18 +245,11 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
 
   protected _sendBodySeparator(
     _request: HttpRequest,
-    _response: HttpResponse,
+    response: HttpResponse,
   ): void {
-    /*
-     * Once https://github.com/uNetworking/uWebSockets/pull/1897 is merged and released,
-     * we can implement this method to use `response.beginWrite()`.
-     * For now, we log a warning if logger is enabled.
-     */
-    if (this.httpAdapterOptions.logger !== false) {
-      this._logger.warn(
-        'Unable to send body separator. Headers will be delivered with the first chunk of the body.',
-      );
-    }
+    response.cork((): void => {
+      response.beginWrite();
+    });
   }
 
   protected _setStatus(
