@@ -514,9 +514,10 @@ describe(createHttpApp, () => {
         );
 
         expect(gitIgnoreContents).toContain('node_modules/');
-        expect(gitIgnoreContents).toContain('generated/');
         expect(gitIgnoreContents).toContain('src/generated/prisma/');
+        expect(gitIgnoreContents).not.toMatch(/^generated\/$/m);
         expect(gitIgnoreContents).not.toContain('src/generated/\n');
+        expect(gitIgnoreContents).not.toContain('src/generated/api');
         expect(gitIgnoreContents).toContain('npm-debug.log*');
         expect(gitIgnoreContents).toContain('yarn-debug.log*');
         expect(gitIgnoreContents).toContain('.pnpm-debug.log*');

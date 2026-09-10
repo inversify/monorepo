@@ -19,7 +19,7 @@ Current recipe knobs:
 - **Package manager**: `npm` | `pnpm` | `yarn`
 - **HTTP adapter**: `express` | `fastify` | `hono` | `uwebsockets`
 - **Database adapter**: `prisma+postgresql` (default; `prisma+sqlite` planned)
-- **API style**: `code-first` (default) | `schema-first`
+- **API style**: `code-first` | `schema-first` (prompted when `--apiStyle` is omitted; initial value `code-first`)
 
 Scaffolded apps include a `todo` resource (`GET /v1/todos`, `GET /v1/todos/:id`, `POST /v1/todos`, `PATCH /v1/todos/:id`, `DELETE /v1/todos/:id`) wired via Ports + `@inversifyjs/prisma`, OpenAPI docs at `/docs` via `SwaggerUiProvider`, and request validation via `OpenApiValidationPipe` + `@ValidatedBody()` / `@ValidatedParams()` / `@ValidatedQuery()`.
 

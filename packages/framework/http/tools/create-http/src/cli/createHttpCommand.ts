@@ -43,7 +43,6 @@ const createHttpArgs: ArgsDef = {
     type: 'enum',
   },
   apiStyle: {
-    default: DEFAULT_API_STYLE,
     description:
       'API modeling style: decorated classes (code-first) or JSON schemas (schema-first)',
     options: [...API_STYLES],
