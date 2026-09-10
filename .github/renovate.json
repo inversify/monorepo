@@ -13,23 +13,25 @@
     },
     {
       "customType": "regex",
-      "description": "Update node version tracked in package.json engines field",
+      "description": "Update node version tracked in package.json devEngines field",
       "managerFilePatterns": ["/(^|/)package\\.json$/"],
       "matchStrings": [
         "\"devEngines\"\\s*:\\s*\\{[\\s\\S]*?\"node\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
       ],
       "depNameTemplate": "node",
-      "datasourceTemplate": "node-version"
+      "datasourceTemplate": "node-version",
+      "versioningTemplate": "npm"
     },
     {
       "customType": "regex",
-      "description": "Update pnpm version tracked in package.json engines field",
+      "description": "Update pnpm version tracked in package.json devEngines field",
       "managerFilePatterns": ["/(^|/)package\\.json$/"],
       "matchStrings": [
         "\"devEngines\"\\s*:\\s*\\{[\\s\\S]*?\"pnpm\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
       ],
       "depNameTemplate": "pnpm",
-      "datasourceTemplate": "npm"
+      "datasourceTemplate": "npm",
+      "versioningTemplate": "npm"
     },
     {
       "customType": "regex",
