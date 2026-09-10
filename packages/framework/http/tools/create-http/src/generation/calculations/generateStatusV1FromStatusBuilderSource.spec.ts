@@ -29,4 +29,19 @@ describe(generateStatusV1FromStatusBuilderSource, () => {
       expect(result).toContain('status: input.status');
     });
   });
+
+  describe('when called with schema-first', () => {
+    let result: string;
+
+    beforeAll(() => {
+      result = StatusV1FromStatusBuilderSourceFixtures.withApiStyleSchemaFirst;
+    });
+
+    it('should import StatusV1 from generated API types', () => {
+      expect(result).toContain(
+        "import { type StatusV1 } from '../../../generated/api/index.js';",
+      );
+      expect(result).not.toContain("from '../models/StatusV1.js'");
+    });
+  });
 });

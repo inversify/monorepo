@@ -1,7 +1,9 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { generateCreateTodoV1RequestBodySchemaSource } from '../generation/calculations/generateCreateTodoV1RequestBodySchemaSource.js';
 import { generateCreateTodoV1RequestBodySource } from '../generation/calculations/generateCreateTodoV1RequestBodySource.js';
+import { generatePaginatedTodosV1ResponseSchemaSource } from '../generation/calculations/generatePaginatedTodosV1ResponseSchemaSource.js';
 import { generatePaginatedTodosV1ResponseSource } from '../generation/calculations/generatePaginatedTodosV1ResponseSource.js';
 import { generatePrismaTodoPersistenceAdapterSource } from '../generation/calculations/generatePrismaTodoPersistenceAdapterSource.js';
 import { generateTodoContainerModuleSource } from '../generation/calculations/generateTodoContainerModuleSource.js';
@@ -11,55 +13,80 @@ import { generateTodoFromPrismaTodoBuilderSource } from '../generation/calculati
 import { generateTodoPersistencePortIdentifierSource } from '../generation/calculations/generateTodoPersistencePortIdentifierSource.js';
 import { generateTodoPersistencePortSource } from '../generation/calculations/generateTodoPersistencePortSource.js';
 import { generateTodoPrismaContainerModuleSource } from '../generation/calculations/generateTodoPrismaContainerModuleSource.js';
+import { generateTodoSchemaV1Source } from '../generation/calculations/generateTodoSchemaV1Source.js';
 import { generateTodoV1FromTodoBuilderSource } from '../generation/calculations/generateTodoV1FromTodoBuilderSource.js';
 import { generateTodoV1Source } from '../generation/calculations/generateTodoV1Source.js';
+import { generateUpdateTodoV1RequestBodySchemaSource } from '../generation/calculations/generateUpdateTodoV1RequestBodySchemaSource.js';
 import { generateUpdateTodoV1RequestBodySource } from '../generation/calculations/generateUpdateTodoV1RequestBodySource.js';
 import { type TodoControllerSourceModel } from '../generation/models/TodoControllerSourceModel.js';
+import { ApiStyle } from '../models/ApiStyle.js';
 
-const TODO_SOURCE_FILES: ReadonlyArray<readonly [string, () => string]> = [
-  ['src/todo/domain/models/Todo.ts', generateTodoDomainModelSource],
+const TODO_SHARED_SOURCE_FILES: ReadonlyArray<readonly [string, () => string]> =
   [
-    'src/todo/application/ports/TodoPersistencePort.ts',
-    generateTodoPersistencePortSource,
-  ],
-  [
-    'src/todo/application/models/todoPersistencePortIdentifier.ts',
-    generateTodoPersistencePortIdentifierSource,
-  ],
-  ['src/todo/api/models/TodoV1.ts', generateTodoV1Source],
-  [
-    'src/todo/api/models/CreateTodoV1RequestBody.ts',
-    generateCreateTodoV1RequestBodySource,
-  ],
-  [
-    'src/todo/api/models/PaginatedTodosV1Response.ts',
-    generatePaginatedTodosV1ResponseSource,
-  ],
-  [
-    'src/todo/api/models/UpdateTodoV1RequestBody.ts',
-    generateUpdateTodoV1RequestBodySource,
-  ],
-  [
-    'src/todo/api/builders/TodoV1FromTodoBuilder.ts',
-    generateTodoV1FromTodoBuilderSource,
-  ],
-  [
-    'src/todo/adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts',
-    generatePrismaTodoPersistenceAdapterSource,
-  ],
-  [
-    'src/todo/adapter/prisma/builders/TodoFromPrismaTodoBuilder.ts',
-    generateTodoFromPrismaTodoBuilderSource,
-  ],
-  [
-    'src/todo/adapter/inversify/containerModules/TodoContainerModule.ts',
-    generateTodoContainerModuleSource,
-  ],
-  [
-    'src/todo/adapter/inversify/containerModules/TodoPrismaContainerModule.ts',
-    generateTodoPrismaContainerModuleSource,
-  ],
-];
+    ['src/todo/domain/models/Todo.ts', generateTodoDomainModelSource],
+    [
+      'src/todo/application/ports/TodoPersistencePort.ts',
+      generateTodoPersistencePortSource,
+    ],
+    [
+      'src/todo/application/models/todoPersistencePortIdentifier.ts',
+      generateTodoPersistencePortIdentifierSource,
+    ],
+    [
+      'src/todo/adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts',
+      generatePrismaTodoPersistenceAdapterSource,
+    ],
+    [
+      'src/todo/adapter/prisma/builders/TodoFromPrismaTodoBuilder.ts',
+      generateTodoFromPrismaTodoBuilderSource,
+    ],
+    [
+      'src/todo/adapter/inversify/containerModules/TodoContainerModule.ts',
+      generateTodoContainerModuleSource,
+    ],
+    [
+      'src/todo/adapter/inversify/containerModules/TodoPrismaContainerModule.ts',
+      generateTodoPrismaContainerModuleSource,
+    ],
+  ];
+
+function createTodoApiModelSourceFiles(
+  apiStyle: ApiStyle,
+): ReadonlyArray<readonly [string, string]> {
+  if (apiStyle === ApiStyle.schemaFirst) {
+    return [
+      ['src/todo/api/models/TodoSchemaV1.ts', generateTodoSchemaV1Source()],
+      [
+        'src/todo/api/models/CreateTodoV1RequestBodySchema.ts',
+        generateCreateTodoV1RequestBodySchemaSource(),
+      ],
+      [
+        'src/todo/api/models/PaginatedTodosV1ResponseSchema.ts',
+        generatePaginatedTodosV1ResponseSchemaSource(),
+      ],
+      [
+        'src/todo/api/models/UpdateTodoV1RequestBodySchema.ts',
+        generateUpdateTodoV1RequestBodySchemaSource(),
+      ],
+    ];
+  }
+
+  return [
+    ['src/todo/api/models/TodoV1.ts', generateTodoV1Source()],
+    [
+      'src/todo/api/models/CreateTodoV1RequestBody.ts',
+      generateCreateTodoV1RequestBodySource(),
+    ],
+    [
+      'src/todo/api/models/PaginatedTodosV1Response.ts',
+      generatePaginatedTodosV1ResponseSource(),
+    ],
+    [
+      'src/todo/api/models/UpdateTodoV1RequestBody.ts',
+      generateUpdateTodoV1RequestBodySource(),
+    ],
+  ];
+}
 
 const TODO_CONTROLLER_SOURCE_RELATIVE_PATH: string =
   'src/todo/api/controllers/TodoController.ts';
@@ -67,9 +94,10 @@ const TODO_CONTROLLER_SOURCE_RELATIVE_PATH: string =
 export async function writeTodoSourceFiles(
   projectPath: string,
   todoControllerSourceModel: TodoControllerSourceModel,
+  apiStyle: ApiStyle,
 ): Promise<void> {
   await Promise.all([
-    ...TODO_SOURCE_FILES.map(
+    ...TODO_SHARED_SOURCE_FILES.map(
       async ([relativePath, generateSource]: readonly [
         string,
         () => string,
@@ -80,6 +108,30 @@ export async function writeTodoSourceFiles(
         await fs.writeFile(absolutePath, generateSource(), 'utf8');
       },
     ),
+    ...createTodoApiModelSourceFiles(apiStyle).map(
+      async ([relativePath, source]: readonly [
+        string,
+        string,
+      ]): Promise<void> => {
+        const absolutePath: string = path.join(projectPath, relativePath);
+
+        await fs.mkdir(path.dirname(absolutePath), { recursive: true });
+        await fs.writeFile(absolutePath, source, 'utf8');
+      },
+    ),
+    (async (): Promise<void> => {
+      const builderPath: string = path.join(
+        projectPath,
+        'src/todo/api/builders/TodoV1FromTodoBuilder.ts',
+      );
+
+      await fs.mkdir(path.dirname(builderPath), { recursive: true });
+      await fs.writeFile(
+        builderPath,
+        generateTodoV1FromTodoBuilderSource(apiStyle),
+        'utf8',
+      );
+    })(),
     (async (): Promise<void> => {
       const absolutePath: string = path.join(
         projectPath,

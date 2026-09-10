@@ -31,4 +31,22 @@ describe(generateTodoV1FromTodoBuilderSource, () => {
       expect(result).toContain('updatedAt: input.updatedAt');
     });
   });
+
+  describe('when called with schema-first', () => {
+    let result: string;
+
+    beforeAll(() => {
+      result = TodoV1FromTodoBuilderSourceFixtures.withApiStyleSchemaFirst;
+    });
+
+    it('should import TodoV1 from generated API types and serialize dates', () => {
+      expect(result).toContain(
+        "import { type TodoV1 } from '../../../generated/api/index.js';",
+      );
+      expect(result).not.toContain("from '../models/TodoV1.js'");
+      expect(result).toContain('createdAt: input.createdAt.toISOString()');
+      expect(result).toContain('input.deletedAt.toISOString()');
+      expect(result).toContain('updatedAt: input.updatedAt.toISOString()');
+    });
+  });
 });

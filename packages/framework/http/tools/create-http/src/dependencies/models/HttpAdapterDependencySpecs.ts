@@ -25,6 +25,11 @@ export const BASE_DEPENDENCY_NAMES: readonly string[] = [
 ];
 
 /**
+ * Always-allowed install-time scripts. Adapter/DB specs may add more.
+ */
+export const BASE_BUILT_DEPENDENCY_NAMES: readonly string[] = [];
+
+/**
  * Always-installed tooling/dev dependencies.
  */
 export const BASE_DEV_DEPENDENCY_NAMES: readonly string[] = [

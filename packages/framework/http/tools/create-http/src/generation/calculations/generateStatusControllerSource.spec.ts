@@ -42,4 +42,22 @@ describe(generateStatusControllerSource, () => {
       );
     });
   });
+
+  describe('when called with a schema-first model', () => {
+    let result: string;
+
+    beforeAll(() => {
+      result = StatusControllerSourceFixtures.withApiStyleSchemaFirst;
+    });
+
+    it('should import generated types and reference component schemas', () => {
+      expect(result).toContain(
+        "import type { StatusV1 } from '../../../generated/api/index.js';",
+      );
+      expect(result).not.toContain("from '../models/StatusV1.js'");
+      expect(result).not.toContain('ToSchemaFunction');
+      expect(result).not.toContain('toSchema(StatusV1)');
+      expect(result).toContain("$ref: '#/components/schemas/StatusV1'");
+    });
+  });
 });

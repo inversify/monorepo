@@ -144,4 +144,32 @@ describe(generateTodoControllerSource, () => {
       });
     });
   });
+
+  describe('having a schema-first express TodoController source model', () => {
+    describe('when called', () => {
+      let result: string;
+
+      beforeAll(async () => {
+        result =
+          await TodoControllerSourceFixtures.withSchemaFirstHttpAdapterExpress();
+      });
+
+      it('should import generated types and reference component schemas', () => {
+        expect(result).toContain("from '../../../generated/api/index.js'");
+        expect(result).not.toContain("from '../models/TodoV1.js'");
+        expect(result).not.toContain('ToSchemaFunction');
+        expect(result).not.toContain('toSchema(TodoV1)');
+        expect(result).toContain("$ref: '#/components/schemas/TodoV1'");
+        expect(result).toContain(
+          "$ref: '#/components/schemas/CreateTodoV1RequestBody'",
+        );
+        expect(result).toContain(
+          "$ref: '#/components/schemas/PaginatedTodosV1Response'",
+        );
+        expect(result).toContain(
+          "$ref: '#/components/schemas/UpdateTodoV1RequestBody'",
+        );
+      });
+    });
+  });
 });

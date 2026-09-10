@@ -15,20 +15,28 @@ import {
 } from '../dependencies/calculations/composeScaffoldDependencies.js';
 import { type DependencyCatalog } from '../dependencies/models/DependencyCatalog.js';
 import { createBootstrapSourceModel } from '../generation/calculations/createBootstrapSourceModel.js';
+import { createInitializeContainerSourceModel } from '../generation/calculations/createInitializeContainerSourceModel.js';
 import { createPnpmWorkspaceSourceModel } from '../generation/calculations/createPnpmWorkspaceSourceModel.js';
+import { createProvideOpenApiSourceModel } from '../generation/calculations/createProvideOpenApiSourceModel.js';
 import { createTodoControllerSourceModel } from '../generation/calculations/createTodoControllerSourceModel.js';
 import { createYarnRcSourceModel } from '../generation/calculations/createYarnRcSourceModel.js';
 import { generateIndexSource } from '../generation/calculations/generateIndexSource.js';
 import { generatePnpmWorkspaceSource } from '../generation/calculations/generatePnpmWorkspaceSource.js';
 import { generateYarnRcSource } from '../generation/calculations/generateYarnRcSource.js';
 import { type YarnRcSourceModel } from '../generation/models/YarnRcSourceModel.js';
+import { ApiStyle } from '../models/ApiStyle.js';
 import { type CreateHttpAppOptions } from '../models/CreateHttpAppOptions.js';
 import { PackageManager } from '../models/PackageManager.js';
 import { type PackageManagersVersions } from '../models/PackageManagersVersions.js';
 import { formatGeneratedProjectSources } from './formatGeneratedProjectSources.js';
+import { writeAddResourceSkillFiles } from './writeAddResourceSkillFiles.js';
 import { writeBootstrapSourceFile } from './writeBootstrapSourceFile.js';
 import { writeCommonSourceFiles } from './writeCommonSourceFiles.js';
+import { writeGenerateApiTypesSourceFile } from './writeGenerateApiTypesSourceFile.js';
+import { writeInitialApiTypesSourceFile } from './writeInitialApiTypesSourceFile.js';
+import { writeInitializeContainerSourceFile } from './writeInitializeContainerSourceFile.js';
 import { writeLoggerSourceFiles } from './writeLoggerSourceFiles.js';
+import { writeProvideOpenApiSourceFile } from './writeProvideOpenApiSourceFile.js';
 import { writeStatusSourceFiles } from './writeStatusSourceFiles.js';
 import { writeTodoSourceFiles } from './writeTodoSourceFiles.js';
 
@@ -120,11 +128,16 @@ export async function createHttpApp(
       dependencyCatalog,
       options.httpAdapter,
       options.dbAdapter,
+      options.apiStyle,
     );
 
   const yarnRcSourceModel: YarnRcSourceModel | undefined =
     packageManager === PackageManager.yarn
-      ? createYarnRcSourceModel(options.httpAdapter, options.dbAdapter)
+      ? createYarnRcSourceModel(
+          options.httpAdapter,
+          options.dbAdapter,
+          options.apiStyle,
+        )
       : undefined;
 
   const generatedPackageJson: Record<string, unknown> =
@@ -135,6 +148,7 @@ export async function createHttpApp(
       composedDependencies.dependencies,
       composedDependencies.devDependencies,
       options.dbAdapter,
+      options.apiStyle,
       yarnRcSourceModel === undefined
         ? undefined
         : yarnRcSourceModel.dependenciesMeta,
@@ -182,19 +196,13 @@ export async function createHttpApp(
     'prisma.config.ts',
   );
   await copyTemplateDirectory('prisma', projectPath, baseTemplateRoot);
-  await copyTemplateDirectory('.agents/skills', projectPath, baseTemplateRoot);
-  await copyTemplateFile(
-    '.agents/skills/add-resource/SKILL.md',
-    projectPath,
-    baseTemplateRoot,
-    '.claude/skills/add-resource/SKILL.md',
-  );
+  await writeAddResourceSkillFiles(projectPath, options.apiStyle);
 
   if (packageManager === PackageManager.pnpm) {
     await fs.writeFile(
       path.join(projectPath, 'pnpm-workspace.yaml'),
       generatePnpmWorkspaceSource(
-        createPnpmWorkspaceSourceModel(options.httpAdapter),
+        createPnpmWorkspaceSourceModel(options.httpAdapter, options.apiStyle),
       ),
       'utf8',
     );
@@ -214,15 +222,30 @@ export async function createHttpApp(
     'utf8',
   );
   await writeLoggerSourceFiles(projectPath);
-  await writeStatusSourceFiles(projectPath);
+  await writeStatusSourceFiles(projectPath, options.apiStyle);
   await writeCommonSourceFiles(projectPath);
   await writeTodoSourceFiles(
     projectPath,
-    createTodoControllerSourceModel(options.httpAdapter),
+    createTodoControllerSourceModel(options.httpAdapter, options.apiStyle),
+    options.apiStyle,
   );
+  await writeInitializeContainerSourceFile(
+    projectPath,
+    createInitializeContainerSourceModel(options.dbAdapter),
+  );
+  await writeProvideOpenApiSourceFile(
+    projectPath,
+    createProvideOpenApiSourceModel(options.apiStyle),
+  );
+
+  if (options.apiStyle === ApiStyle.schemaFirst) {
+    await writeGenerateApiTypesSourceFile(projectPath);
+    await writeInitialApiTypesSourceFile(projectPath);
+  }
+
   await writeBootstrapSourceFile(
     projectPath,
-    createBootstrapSourceModel(options.httpAdapter, options.dbAdapter),
+    createBootstrapSourceModel(options.httpAdapter),
   );
   await formatGeneratedProjectSources(projectPath);
 

@@ -151,7 +151,172 @@ async function readTextIfExists(filePath) {
   return fs.readFile(filePath, 'utf8');
 }
 
+function resolveApiStyle(vars) {
+  const apiStyle = vars.apiStyle;
+
+  if (apiStyle !== 'code-first' && apiStyle !== 'schema-first') {
+    throw new Error(
+      `Unknown apiStyle="${String(apiStyle)}". Expected "code-first" or "schema-first".`,
+    );
+  }
+
+  return apiStyle;
+}
+
+function pushCheck(results, pass, reason) {
+  results.push({
+    pass,
+    score: pass ? 1 : 0,
+    reason,
+  });
+}
+
+async function assertApiStyleContract(results, options) {
+  const generateApiTypesPath = path.join(
+    options.workspacePath,
+    'src',
+    'app',
+    'scripts',
+    'generateApiTypes.ts',
+  );
+  const generatedApiTypesPath = path.join(
+    options.workspacePath,
+    'src',
+    'generated',
+    'api',
+    'index.ts',
+  );
+  const provideOpenApiPath = path.join(
+    options.workspacePath,
+    'src',
+    'app',
+    'scripts',
+    'provideOpenApi.ts',
+  );
+  const generateApiTypesExists = await pathExists(generateApiTypesPath);
+  const generatedApiTypes = await readTextIfExists(generatedApiTypesPath);
+  const provideOpenApi = await readTextIfExists(provideOpenApiPath);
+  const hasOasSchema = options.apiModelsSource.includes('@OasSchema');
+  const hasToSchema = options.apiSource.includes('toSchema(');
+  const hasComponentRef = options.apiSource.includes('#/components/schemas/');
+  const importsGeneratedApi = options.apiSource.includes('generated/api');
+
+  if (options.apiStyle === 'code-first') {
+    pushCheck(
+      results,
+      hasOasSchema,
+      hasOasSchema
+        ? 'code-first API models use @OasSchema'
+        : 'code-first API models do not use @OasSchema',
+    );
+    pushCheck(
+      results,
+      hasToSchema,
+      hasToSchema
+        ? 'code-first controllers call toSchema'
+        : 'code-first controllers do not call toSchema',
+    );
+    pushCheck(
+      results,
+      !hasComponentRef,
+      hasComponentRef
+        ? 'code-first controllers reference component schemas'
+        : 'code-first controllers do not $ref component schemas',
+    );
+    pushCheck(
+      results,
+      !importsGeneratedApi,
+      importsGeneratedApi
+        ? 'code-first API code imports generated/api'
+        : 'code-first API code does not import generated/api',
+    );
+    pushCheck(
+      results,
+      !generateApiTypesExists,
+      generateApiTypesExists
+        ? 'code-first workspace has generateApiTypes.ts'
+        : 'code-first workspace does not include generateApiTypes.ts',
+    );
+    pushCheck(
+      results,
+      generatedApiTypes === undefined,
+      generatedApiTypes === undefined
+        ? 'code-first workspace does not include src/generated/api'
+        : 'code-first workspace includes src/generated/api',
+    );
+    return;
+  }
+
+  const hasJsonSchemaExport = /export const \w+Schema/.test(
+    options.apiModelsSource,
+  );
+  const provideOpenApiImportsResource =
+    provideOpenApi !== undefined &&
+    provideOpenApi.includes(`${options.resourceDirectory}/api/models`);
+  const generatedTypesMentionResource =
+    generatedApiTypes !== undefined &&
+    hasIdentifier(generatedApiTypes, `${options.resourceName}V1`);
+
+  pushCheck(
+    results,
+    hasJsonSchemaExport,
+    hasJsonSchemaExport
+      ? 'schema-first API models export JSON schemas'
+      : 'schema-first API models do not export JSON schemas',
+  );
+  pushCheck(
+    results,
+    !hasOasSchema,
+    hasOasSchema
+      ? 'schema-first API models still use @OasSchema'
+      : 'schema-first API models do not use @OasSchema',
+  );
+  pushCheck(
+    results,
+    hasComponentRef,
+    hasComponentRef
+      ? 'schema-first controllers $ref component schemas'
+      : 'schema-first controllers do not $ref component schemas',
+  );
+  pushCheck(
+    results,
+    !hasToSchema,
+    hasToSchema
+      ? 'schema-first controllers still call toSchema'
+      : 'schema-first controllers do not call toSchema',
+  );
+  pushCheck(
+    results,
+    importsGeneratedApi,
+    importsGeneratedApi
+      ? 'schema-first API code imports generated/api'
+      : 'schema-first API code does not import generated/api',
+  );
+  pushCheck(
+    results,
+    generateApiTypesExists,
+    generateApiTypesExists
+      ? 'schema-first workspace includes generateApiTypes.ts'
+      : 'schema-first workspace is missing generateApiTypes.ts',
+  );
+  pushCheck(
+    results,
+    generatedTypesMentionResource,
+    generatedTypesMentionResource
+      ? `src/generated/api declares ${options.resourceName}V1`
+      : `src/generated/api does not declare ${options.resourceName}V1`,
+  );
+  pushCheck(
+    results,
+    provideOpenApiImportsResource,
+    provideOpenApiImportsResource
+      ? 'provideOpenApi loads the resource JSON schemas'
+      : 'provideOpenApi does not import the resource JSON schemas',
+  );
+}
+
 export default async function assertResource(_output, context) {
+  const apiStyle = resolveApiStyle(context.vars);
   const workspacePath = path.resolve(evalRoot, context.vars.workspaceDir);
   const resourceRoot = path.join(
     workspacePath,
@@ -159,12 +324,12 @@ export default async function assertResource(_output, context) {
     context.vars.resourceDirectory,
   );
   const prismaSchemaPath = path.join(workspacePath, 'prisma', 'schema.prisma');
-  const bootstrapPath = path.join(
+  const initializeContainerPath = path.join(
     workspacePath,
     'src',
     'app',
     'scripts',
-    'bootstrap.ts',
+    'initializeContainer.ts',
   );
   const results = [];
 
@@ -266,14 +431,14 @@ export default async function assertResource(_output, context) {
     }
   }
 
-  const bootstrap = await readTextIfExists(bootstrapPath);
+  const initializeContainer = await readTextIfExists(initializeContainerPath);
   const resourceName = context.vars.resourceName;
 
-  if (bootstrap === undefined) {
+  if (initializeContainer === undefined) {
     results.push({
       pass: false,
       score: 0,
-      reason: 'src/app/scripts/bootstrap.ts is missing',
+      reason: 'src/app/scripts/initializeContainer.ts is missing',
     });
   } else {
     for (const moduleName of [
@@ -281,14 +446,14 @@ export default async function assertResource(_output, context) {
       `${resourceName}PrismaContainerModule`,
     ]) {
       const isLoaded = new RegExp(`new\\s+${moduleName}\\s*\\(`).test(
-        bootstrap,
+        initializeContainer,
       );
       results.push({
         pass: isLoaded,
         score: isLoaded ? 1 : 0,
         reason: isLoaded
-          ? `${moduleName} is loaded by bootstrap`
-          : `${moduleName} is not loaded by bootstrap`,
+          ? `${moduleName} is loaded by initializeContainer`
+          : `${moduleName} is not loaded by initializeContainer`,
       });
     }
   }
@@ -304,6 +469,7 @@ export default async function assertResource(_output, context) {
     let combinedSource = '';
     let createRequestSource = '';
     let responseModelSource = '';
+    let apiModelsSource = '';
 
     for (const sourcePath of sourceFiles) {
       const relativePath = path.relative(resourceRoot, sourcePath);
@@ -316,6 +482,7 @@ export default async function assertResource(_output, context) {
       }
 
       if (relativePath.startsWith(`api${path.sep}models${path.sep}`)) {
+        apiModelsSource += `\n${source}`;
         const fileName = path.basename(sourcePath);
         if (/create/i.test(fileName)) {
           createRequestSource += `\n${source}`;
@@ -416,6 +583,19 @@ export default async function assertResource(_output, context) {
       });
     }
 
+    const hasDomainInterface = /export\s+interface\s+\w+/.test(
+      layerSources.domain,
+    );
+    const hasDomainClass = /export\s+class\s+\w+/.test(layerSources.domain);
+    results.push({
+      pass: hasDomainInterface && !hasDomainClass,
+      score: hasDomainInterface && !hasDomainClass ? 1 : 0,
+      reason:
+        hasDomainInterface && !hasDomainClass
+          ? 'domain models are interfaces'
+          : 'domain models must be interfaces, not classes',
+    });
+
     results.push({
       pass: boundaryViolations.length === 0,
       score: boundaryViolations.length === 0 ? 1 : 0,
@@ -444,6 +624,15 @@ export default async function assertResource(_output, context) {
           : `controller does not declare an @${decorator} endpoint`,
       });
     }
+
+    await assertApiStyleContract(results, {
+      apiModelsSource,
+      apiSource: layerSources.api,
+      apiStyle,
+      resourceDirectory: context.vars.resourceDirectory,
+      resourceName,
+      workspacePath,
+    });
   }
 
   const passed = results.every((result) => result.pass);

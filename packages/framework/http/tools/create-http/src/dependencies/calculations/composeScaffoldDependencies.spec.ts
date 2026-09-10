@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { ApiStyle } from '../../models/ApiStyle.js';
 import { DbAdapter } from '../../models/DbAdapter.js';
 import { HttpAdapter } from '../../models/HttpAdapter.js';
 import { type DependencyCatalog } from '../models/DependencyCatalog.js';
@@ -22,6 +23,7 @@ describe(composeScaffoldDependencies, () => {
         '@inversifyjs/http-uwebsockets': '5.4.8',
         '@inversifyjs/http-validation': '5.4.8',
         '@inversifyjs/logger': '2.0.0',
+        '@inversifyjs/open-api-types': '2.0.0',
         '@inversifyjs/open-api-validation': '3.5.2',
         '@inversifyjs/prisma': '1.0.0',
         '@prisma/adapter-pg': '7.9.1',
@@ -39,6 +41,7 @@ describe(composeScaffoldDependencies, () => {
       },
       devDependencies: {
         '@eslint/js': '10.0.1',
+        '@inversifyjs/open-api-2-typescript': '0.2.0',
         '@types/express': '5.0.6',
         '@types/node': '24.13.3',
         dotenv: '17.4.2',
@@ -47,6 +50,7 @@ describe(composeScaffoldDependencies, () => {
         'eslint-plugin-prettier': '5.5.6',
         prettier: '3.9.6',
         prisma: '7.9.1',
+        tsx: '4.23.13',
         typescript: '6.0.3',
         'typescript-eslint': '8.65.0',
       },
@@ -62,6 +66,7 @@ describe(composeScaffoldDependencies, () => {
           catalogFixture,
           HttpAdapter.express,
           DbAdapter.prismaPostgresql,
+          ApiStyle.codeFirst,
         );
       });
 
@@ -92,6 +97,13 @@ describe(composeScaffoldDependencies, () => {
           prisma: '7.9.1',
           typescript: '6.0.3',
         });
+        expect(result.dependencies).not.toHaveProperty(
+          '@inversifyjs/open-api-types',
+        );
+        expect(result.devDependencies).not.toHaveProperty(
+          '@inversifyjs/open-api-2-typescript',
+        );
+        expect(result.devDependencies).not.toHaveProperty('tsx');
         expect(result.dependencies).not.toHaveProperty('fastify');
         expect(result.dependencies).not.toHaveProperty('hono');
         expect(result.dependencies).not.toHaveProperty(
@@ -110,6 +122,7 @@ describe(composeScaffoldDependencies, () => {
           catalogFixture,
           HttpAdapter.hono,
           DbAdapter.prismaPostgresql,
+          ApiStyle.codeFirst,
         );
       });
 
@@ -136,9 +149,41 @@ describe(composeScaffoldDependencies, () => {
           zod: '4.4.3',
         });
         expect(result.devDependencies).not.toHaveProperty('@types/express');
+        expect(result.dependencies).not.toHaveProperty(
+          '@inversifyjs/open-api-types',
+        );
+        expect(result.devDependencies).not.toHaveProperty(
+          '@inversifyjs/open-api-2-typescript',
+        );
+        expect(result.devDependencies).not.toHaveProperty('tsx');
         expect(result.devDependencies).toMatchObject({
           dotenv: '17.4.2',
           prisma: '7.9.1',
+        });
+      });
+    });
+  });
+
+  describe('having the express adapter, prisma+postgresql, and schema-first', () => {
+    describe('when called', () => {
+      let result: ReturnType<typeof composeScaffoldDependencies>;
+
+      beforeAll(() => {
+        result = composeScaffoldDependencies(
+          catalogFixture,
+          HttpAdapter.express,
+          DbAdapter.prismaPostgresql,
+          ApiStyle.schemaFirst,
+        );
+      });
+
+      it('should include openapi-2-typescript, open-api-types, and tsx', () => {
+        expect(result.dependencies).toMatchObject({
+          '@inversifyjs/open-api-types': '2.0.0',
+        });
+        expect(result.devDependencies).toMatchObject({
+          '@inversifyjs/open-api-2-typescript': '0.2.0',
+          tsx: '4.23.13',
         });
       });
     });

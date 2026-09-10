@@ -19,6 +19,7 @@ Current recipe knobs:
 - **Package manager**: `npm` | `pnpm` | `yarn`
 - **HTTP adapter**: `express` | `fastify` | `hono` | `uwebsockets`
 - **Database adapter**: `prisma+postgresql` (default; `prisma+sqlite` planned)
+- **API style**: `code-first` | `schema-first` (prompted when `--apiStyle` is omitted; initial value `code-first`)
 
 Scaffolded apps include a `todo` resource (`GET /v1/todos`, `GET /v1/todos/:id`, `POST /v1/todos`, `PATCH /v1/todos/:id`, `DELETE /v1/todos/:id`) wired via Ports + `@inversifyjs/prisma`, OpenAPI docs at `/docs` via `SwaggerUiProvider`, and request validation via `OpenApiValidationPipe` + `@ValidatedBody()` / `@ValidatedParams()` / `@ValidatedQuery()`.
 
@@ -34,23 +35,29 @@ Recipe (CLI args / prompts)
 │ createHttpApp     │  orchestrates file generation
 └─────────┬─────────┘
           │
-          ├─ composeScaffoldDependencies(catalog, httpAdapter, dbAdapter)
+          ├─ composeScaffoldDependencies(catalog, httpAdapter, dbAdapter, apiStyle)
           │     └─ writes package.json (only selected deps)
           │
-          ├─ copy static templates (tsconfig, eslint, prettier, gitignore, prisma, docker-compose, agent skills, …)
+          ├─ copy static templates (tsconfig, eslint, prettier, gitignore, prisma, docker-compose, …)
+          ├─ writeAddResourceSkillFiles(apiStyle)
+          │     └─ generateAddResourceSkillSource(apiStyle) → .agents and .claude
           │
           ├─ generateIndexSource() → src/index.ts
-          ├─ generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))
+          ├─ generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter, apiStyle))
           │     └─ pnpm only; allowBuilds + adapter knobs (e.g. blockExoticSubdeps)
+          │     └─ schema-first adds esbuild (tsx)
           ├─ generateYarnRcSource() → .yarnrc.yml
           │     └─ yarn only; enableScripts: false, nodeLinker: node-modules
-          │     └─ package.json dependenciesMeta from createYarnRcSourceModel(adapter, dbAdapter)
+          │     └─ package.json dependenciesMeta from createYarnRcSourceModel(adapter, dbAdapter, apiStyle)
           ├─ writeLoggerSourceFiles() → logger factory identifier + container module
-          ├─ writeStatusSourceFiles() → status domain, v1 API, builder, controller, container module
+          ├─ writeStatusSourceFiles(apiStyle) → status domain, v1 API, builder, controller, container module
           ├─ writeCommonSourceFiles() → shared Builder interface
-          ├─ writeTodoSourceFiles(createTodoControllerSourceModel(adapter))
+          ├─ writeTodoSourceFiles(createTodoControllerSourceModel(adapter, apiStyle), apiStyle)
           │     └─ ts-morph TodoController; uwebsockets adds @CaptureRequestValues
-          ├─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter, dbAdapter))
+          ├─ writeInitializeContainerSourceFile(createInitializeContainerSourceModel(dbAdapter))
+          ├─ writeProvideOpenApiSourceFile(createProvideOpenApiSourceModel(apiStyle))
+          ├─ schema-first only: writeGenerateApiTypesSourceFile + writeInitialApiTypesSourceFile
+          ├─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter))
           │     └─ ts-morph from BootstrapSourceModel
           │
           └─ formatGeneratedProjectSources() → prettier over `src/**/*.ts`
@@ -68,7 +75,7 @@ Recipe (CLI args / prompts)
 | `src/dependencies/` | Renovate catalog composition (recipe → dep subset) |
 | `src/generation/` | Programmatic TS generation (ts-morph + source models) |
 | `src/calculations/` | Pure helpers (paths, package.json shape, PM commands) |
-| `src/models/` | Shared enums (`HttpAdapter`, `DbAdapter`, `PackageManager`) and options |
+| `src/models/` | Shared enums (`HttpAdapter`, `DbAdapter`, `PackageManager`, `ApiStyle`) and options |
 | `templates/base/` | Static files + Renovate-tracked version catalogs |
 
 ### CLI stack
@@ -95,18 +102,18 @@ Scaffolded apps must **not** receive every possible dependency. Versions live in
 
 ### Recipe specs
 
-`src/dependencies/models/HttpAdapterDependencySpecs.ts`:
+`src/dependencies/models/HttpAdapterDependencySpecs.ts` and `ApiStyleDependencySpecs.ts`:
 
 - `BASE_DEPENDENCY_NAMES` / `BASE_DEV_DEPENDENCY_NAMES` — always installed
-- `HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS` — per-adapter package **names** only; optional `builtDependencies` lists packages that need install-time scripts (Yarn `package.json` `dependenciesMeta.built`)
+- `BASE_BUILT_DEPENDENCY_NAMES` / `HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS` / `API_STYLE_DEPENDENCY_SPECS` — per-adapter or per-API-style package **names** only; optional `builtDependencies` lists packages that need install-time scripts (Yarn `package.json` `dependenciesMeta.built`; also pnpm `allowBuilds`). Schema-first allow-lists `esbuild` because `tsx` needs it.
 
-`composeScaffoldDependencies(catalog, httpAdapter, dbAdapter)` picks catalog versions for base + selected HTTP and DB adapters only.
+`composeScaffoldDependencies(catalog, httpAdapter, dbAdapter, apiStyle)` picks catalog versions for base + selected HTTP adapter, DB adapter, and API style only. Schema-first adds `@inversifyjs/open-api-types`, `@inversifyjs/open-api-2-typescript`, and `tsx`.
 
 ### Adding a new optional feature (e.g. validator) or DB adapter
 
 1. Add package versions to `templates/base/package.json` (catalog)
-2. Add a feature/adapter spec listing package names (`HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS`)
-3. Extend the recipe / CLI option (`DbAdapter` enum / `HTTP_ADAPTERS`)
+2. Add a feature/adapter spec listing package names (`HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS` / `API_STYLE_DEPENDENCY_SPECS`)
+3. Extend the recipe / CLI option (`DbAdapter` enum / `HTTP_ADAPTERS` / `API_STYLES`)
 4. Call composition when building generated `package.json`
 5. Add unit tests that assert **included** and **excluded** packages
 
@@ -128,36 +135,51 @@ Copied (sometimes renamed) into the target app:
 | `docker-compose.yml` | `docker-compose.yml` | PostgreSQL service |
 | `prisma.config.ts.template` | `prisma.config.ts` | Prisma 7 config (`prisma/config`) |
 | `prisma/` | `prisma/` | Schema, Todo model, initial migration |
-| `.agents/skills/add-resource/SKILL.md` | `.agents/skills/add-resource/SKILL.md` and `.claude/skills/add-resource/SKILL.md` | Canonical agent skill for adding a complete hexagonal resource; copied to both discovery locations |
+| _(none — generated)_ | `.agents/skills/add-resource/SKILL.md` and `.claude/skills/add-resource/SKILL.md` | `generateAddResourceSkillSource(apiStyle)` writes the matching recipe skill to both discovery locations |
 | `package.json` | _(not copied)_ | Catalog only |
 | `package-managers.json` | _(not copied)_ | npm / pnpm catalog only |
 | `yarn-berry.json` | _(not copied)_ | Yarn Berry version catalog |
 
-Prisma uses the `prisma-client` generator (`output = "../src/generated/prisma"`, ESM + `.ts` sources with `.js` import extensions) so `tsc` emits the client into `dist/generated/prisma`. The folder is gitignored. Scripts: `build` runs `prisma generate && tsc`; also `db:generate`, `db:migrate`. Import `PrismaClient` from `generated/prisma/client.js`.
+Two API recipes:
+
+- **Code first** (default, `--apiStyle code-first`): OpenAPI models are decorated TypeScript classes. Controllers and builders use those classes as types and `toSchema(Class)`. No `openapi-2-typescript`, no `src/generated/api`.
+- **Schema first** (`--apiStyle schema-first`): models are JSON Schema objects (`TodoSchemaV1.ts` exporting `todoSchemaV1: OpenApi3Dot2SchemaObject`). `provideOpenApi` seeds them as `components.schemas`. Controllers `$ref` `#/components/schemas/<Name>` and import TypeScript types from `src/generated/api`. The chicken-and-egg cycle is solved by scaffolding `export type <Name> = any` stubs, then `generate:api` (`new Container()` + `provideOpenApi` + `transformOpenApiToTypeScript`) overwrites them without loading runtime app config. Builders serialize domain `Date` values to ISO strings.
+
+Prisma uses the `prisma-client` generator (`output = "../src/generated/prisma"`, ESM + `.ts` sources with `.js` import extensions) so `tsc` emits the client into `dist/generated/prisma`. Gitignore only `src/generated/prisma/` so schema-first API stubs can be committed. Scripts: code-first `build` is `prisma generate && tsc`; schema-first `build` is `prisma generate && tsx src/app/scripts/generateApiTypes.ts && tsc` plus `generate:api`. Import `PrismaClient` from `generated/prisma/client.js`.
 
 Generated (not copied from templates):
 
 | Generated path | Source |
 |---|---|
 | `src/index.ts` | `generateIndexSource()` — top-level `await bootstrap()` |
-| `pnpm-workspace.yaml` | `generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter))` — **pnpm only**; `allowBuilds` + adapter knobs |
+| `pnpm-workspace.yaml` | `generatePnpmWorkspaceSource(createPnpmWorkspaceSourceModel(adapter, apiStyle))` — **pnpm only**; `allowBuilds` + adapter knobs |
 | `.yarnrc.yml` | `generateYarnRcSource()` — **yarn only**; `enableScripts: false`, `nodeLinker: node-modules`. Selected `builtDependencies` go in generated `package.json` `dependenciesMeta` (Yarn rejects that field in `.yarnrc.yml`) |
-| `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter, dbAdapter))` |
+| `src/app/scripts/initializeContainer.ts` | `generateInitializeContainerSource(createInitializeContainerSourceModel(dbAdapter))` — exported `initializeContainer` |
+| `src/app/scripts/provideOpenApi.ts` | `generateProvideOpenApiSource(createProvideOpenApiSourceModel(apiStyle))` — builds `SwaggerUiProvider` and calls `provide(container)`; schema-first seeds `components.schemas` |
+| `src/app/scripts/generateApiTypes.ts` | schema-first only — `new Container()` + `provideOpenApi` + `transformOpenApiToTypeScript`, writes `src/generated/api/index.ts` |
+| `src/generated/api/index.ts` | schema-first only — initial `export type <Name> = any` stubs, overwritten by `generate:api` |
+| `.agents/skills/add-resource/SKILL.md` and `.claude/skills/add-resource/SKILL.md` | `generateAddResourceSkillSource(apiStyle)` |
+| `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter))` |
 | `src/logger/models/loggerFactoryIdentifier.ts` | Factory service identifier |
 | `src/logger/containerModules/LoggerContainerModule.ts` | Binds `(context: string) => Logger` → `ConsoleLogger` |
-| `src/status/domain/models/Status.ts` | Domain model |
-| `src/status/api/models/StatusV1.ts` | `GET /v1/status` response |
+| `src/status/domain/models/Status.ts` | Domain interface |
+| `src/status/api/models/StatusV1.ts` | code-first: `GET /v1/status` response class and OpenAPI schema |
+| `src/status/api/models/StatusSchemaV1.ts` | schema-first: `statusSchemaV1` JSON Schema |
 | `src/status/api/builders/StatusV1FromStatusBuilder.ts` | Maps domain `Status` to `StatusV1` |
 | `src/status/api/controllers/StatusController.ts` | `generateStatusControllerSource()` — `GET /v1/status` → `{ status: 'ok' }` |
 | `src/status/adapter/inversify/containerModules/StatusContainerModule.ts` | Binds controller and `StatusV1FromStatusBuilder` |
 | `src/common/domain/modules/Builder.ts` | Shared `Builder<TInput, TOutput>` mapping contract |
-| `src/todo/domain/models/Todo.ts` | Domain model (camelCase timestamps) |
+| `src/todo/domain/models/Todo.ts` | Domain interface (camelCase timestamps) |
 | `src/todo/application/ports/TodoPersistencePort.ts` | Persistence port |
 | `src/todo/application/models/todoPersistencePortIdentifier.ts` | Port service identifier |
-| `src/todo/api/models/TodoV1.ts` | `GET/POST/PATCH /v1/todos` response |
-| `src/todo/api/models/CreateTodoV1RequestBody.ts` | `POST /v1/todos` body |
-| `src/todo/api/models/PaginatedTodosV1Response.ts` | `GET /v1/todos` response |
-| `src/todo/api/models/UpdateTodoV1RequestBody.ts` | `PATCH /v1/todos/:id` body |
+| `src/todo/api/models/TodoV1.ts` | code-first: `GET/POST/PATCH /v1/todos` response class and OpenAPI schema |
+| `src/todo/api/models/CreateTodoV1RequestBody.ts` | code-first: `POST /v1/todos` body class and OpenAPI schema |
+| `src/todo/api/models/PaginatedTodosV1Response.ts` | code-first: `GET /v1/todos` response class and OpenAPI schema |
+| `src/todo/api/models/UpdateTodoV1RequestBody.ts` | code-first: `PATCH /v1/todos/:id` body class and OpenAPI schema |
+| `src/todo/api/models/TodoSchemaV1.ts` | schema-first: `todoSchemaV1` JSON Schema |
+| `src/todo/api/models/CreateTodoV1RequestBodySchema.ts` | schema-first: create-todo JSON Schema |
+| `src/todo/api/models/PaginatedTodosV1ResponseSchema.ts` | schema-first: list-todos JSON Schema (`items` `$ref`s `TodoV1`) |
+| `src/todo/api/models/UpdateTodoV1RequestBodySchema.ts` | schema-first: update-todo JSON Schema |
 | `src/todo/api/builders/TodoV1FromTodoBuilder.ts` | Maps domain `Todo` to `TodoV1` |
 | `src/todo/api/controllers/TodoController.ts` | `generateTodoControllerSource(createTodoControllerSourceModel(adapter))` — `GET /v1/todos`, `GET /v1/todos/:id`, `POST /v1/todos`, `PATCH /v1/todos/:id`, `DELETE /v1/todos/:id`; uwebsockets adds `@CaptureRequestValues` on POST and PATCH so `@ValidatedBody` can still read method/url/headers/(params) after the body is consumed, and `@SetHeader('Content-Type', 'application/json')` on JSON replies |
 | `src/todo/adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts` | Prisma port adapter (soft delete via `deleted_at`) |
@@ -183,36 +205,55 @@ Variable TypeScript (decorators, DI wiring, adapters) and recipe-specific config
 
 `pnpm-workspace.yaml` generation (pnpm only):
 
-- Model factory: `createPnpmWorkspaceSourceModel(httpAdapter)`
+- Model factory: `createPnpmWorkspaceSourceModel(httpAdapter, apiStyle)`
 - Model: `PnpmWorkspaceSourceModel` (`allowBuilds`, optional `blockExoticSubdeps`, …)
 - Printer: `generatePnpmWorkspaceSource()` → `pnpm-workspace.yaml`
 - uwebsockets sets `blockExoticSubdeps: false` so git-hosted `uWebSockets.js` can install under pnpm 11+
+- Base `allowBuilds` includes Prisma packages (pnpm 10+ ignores blocked build scripts)
+
+Container initialization generation:
+
+- Model factory: `createInitializeContainerSourceModel(dbAdapter)`
+- Model: `InitializeContainerSourceModel` (`imports`, optional container body)
+- Printer: `generateInitializeContainerSource()` → `src/app/scripts/initializeContainer.ts`
+- Writer: `writeInitializeContainerSourceFile(projectPath, model)`
+- Exports `initializeContainer` and `AppConfig` so bootstrap and `provideOpenApi` share the same container
+
+OpenAPI provider generation:
+
+- Model factory: `createProvideOpenApiSourceModel(apiStyle)`
+- Printer: `generateProvideOpenApiSource(model)` → `src/app/scripts/provideOpenApi.ts`
+- `provideOpenApi(container)` constructs `SwaggerUiProvider` (`/docs`), calls `provide(container)`, and returns the provider
+- Schema-first seeds `components.schemas` from JSON schema modules so controllers can `$ref` them. `provide()` keeps those entries (`mergeOpenApiTypeSchema` skips a name that already exists).
 
 Bootstrap generation:
 
 - Specs: `HTTP_ADAPTER_BOOTSTRAP_SPECS` — per-adapter imports, options, listen statements
-- Model factory: `createBootstrapSourceModel(httpAdapter, dbAdapter)`
-- Model: `BootstrapSourceModel` (`imports`, `adapter`, `applicationType`, `listenStatements`, optional container body)
+- Model factory: `createBootstrapSourceModel(httpAdapter)`
+- Model: `BootstrapSourceModel` (`imports`, `adapter`, `applicationType`, `listenStatements`)
 - Printer: `generateBootstrapSource()` → `src/app/scripts/bootstrap.ts`
 - Writer: `writeBootstrapSourceFile(projectPath, model)`
 - Entry: `generateIndexSource()` → `src/index.ts` uses top-level `await bootstrap()`
 
 TodoController generation:
 
-- Model factory: `createTodoControllerSourceModel(httpAdapter)`
-- Model: `TodoControllerSourceModel` (`imports`, `methodCaptureRequestValues`, `methodHeaders`)
+- Model factory: `createTodoControllerSourceModel(httpAdapter, apiStyle)`
+- Model: `TodoControllerSourceModel` (`imports`, `apiTypeImports`, `openApiSchemaBindingKind`, `methodCaptureRequestValues`, `methodHeaders`)
 - Printer: `generateTodoControllerSource()` → `src/todo/api/controllers/TodoController.ts`
+- Code-first binds request/response schemas with `toSchema(Class)`. Schema-first uses `$ref: '#/components/schemas/<Name>'` and imports types from `src/generated/api`.
 - uwebsockets sets `@CaptureRequestValues` on POST and PATCH only (the endpoints that read the body). Capturing `url` also captures query, which the adapter needs to rebuild the URL. GET and DELETE do not consume the body, so they do not need the decorator.
 - uwebsockets sets `@SetHeader('Content-Type', 'application/json')` on JSON-returning endpoints (`POST`, `GET`, `PATCH`). `_replyJson` does not set that header. `DELETE` returns 204 No Content and does not need it.
 
-Generated bootstrap always includes:
+Generated app scripts always include:
 
-1. Non-exported `async initializeContainer(): Promise<Container>` that loads config, `LoggerContainerModule` (ConsoleLogger factory whose `logTypes` come from `LOG_LEVELS`), `PrismaContainerModule` (for `prisma+postgresql`), `StatusContainerModule`, and todo modules
-2. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter, registers `SwaggerUiProvider` (`/docs`), installs `OpenApiValidationPipe` + `InversifyValidationErrorFilter`, and listens via the bound logger factory
+1. Exported `async initializeContainer(): Promise<Container>` that loads config, `LoggerContainerModule` (ConsoleLogger factory whose `logTypes` come from `LOG_LEVELS`), `PrismaContainerModule` (for `prisma+postgresql`), `StatusContainerModule`, and todo modules
+2. Exported `provideOpenApi(container)` that registers `SwaggerUiProvider` (`/docs`) and returns the populated provider
+3. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter, calls `provideOpenApi`, installs `OpenApiValidationPipe` + `InversifyValidationErrorFilter`, and listens via the bound logger factory
 
 `@inversifyjs/logger` and `winston` are base dependencies (ConsoleLogger factory bound from `LOG_LEVELS`).
 `@inversifyjs/http-core` is a base dependency (for `@Controller` / `@Get` / `@Post` on scaffolded controllers).
 `@inversifyjs/http-open-api` is a base dependency (OpenAPI 3.2 decorators + `SwaggerUiProvider` via `/v3Dot2`).
+`@inversifyjs/open-api-types` is a schema-first dependency so JSON schema modules can be typed as `OpenApi3Dot2SchemaObject`.
 `@inversifyjs/open-api-validation`, `@inversifyjs/http-validation`, `ajv`, and `ajv-formats` are base dependencies (OpenAPI-driven request validation; pipe from `/v3Dot2`).
 `@inversifyjs/prisma` is a DB-adapter dependency (binds `PrismaClient` via `PrismaContainerModule`).
 
@@ -225,8 +266,8 @@ Listen APIs differ by adapter (Express `app.listen`, Fastify `await app.listen`,
 To extend bootstrap later (more container modules, pipes, controllers):
 
 1. Add generators for the new source files (like status / todo)
-2. Extend `createBootstrapSourceModel` imports + `initializeContainerBodyStatements`
-3. Keep printing in `generateBootstrapSource`
+2. Extend `createInitializeContainerSourceModel` imports + `initializeContainerBodyStatements`
+3. Keep HTTP adapter printing in `generateBootstrapSource`
 4. Avoid forking full file templates per adapter combination
 
 ### Status resource layout
@@ -236,7 +277,8 @@ src/status/
   domain/models/Status.ts
   api/controllers/StatusController.ts
   api/builders/StatusV1FromStatusBuilder.ts
-  api/models/StatusV1.ts
+  api/models/StatusV1.ts            # code-first
+  api/models/StatusSchemaV1.ts      # schema-first
   adapter/inversify/containerModules/StatusContainerModule.ts
 ```
 
@@ -250,15 +292,21 @@ src/todo/
   application/models/todoPersistencePortIdentifier.ts
   api/controllers/TodoController.ts
   api/builders/TodoV1FromTodoBuilder.ts
-  api/models/TodoV1.ts
-  api/models/CreateTodoV1RequestBody.ts
-  api/models/PaginatedTodosV1Response.ts
-  api/models/UpdateTodoV1RequestBody.ts
+  api/models/TodoV1.ts                              # code-first
+  api/models/CreateTodoV1RequestBody.ts             # code-first
+  api/models/PaginatedTodosV1Response.ts            # code-first
+  api/models/UpdateTodoV1RequestBody.ts             # code-first
+  api/models/TodoSchemaV1.ts                        # schema-first
+  api/models/CreateTodoV1RequestBodySchema.ts       # schema-first
+  api/models/PaginatedTodosV1ResponseSchema.ts      # schema-first
+  api/models/UpdateTodoV1RequestBodySchema.ts       # schema-first
   adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts
   adapter/prisma/builders/TodoFromPrismaTodoBuilder.ts
   adapter/inversify/containerModules/TodoContainerModule.ts
   adapter/inversify/containerModules/TodoPrismaContainerModule.ts
 ```
+
+Domain models (`Status`, `Todo`, and any resource added later) must be interfaces, not classes.
 
 `TodoPersistencePort` keeps HTTP and application code independent of Prisma so future DB adapters can bind a different implementation.
 
@@ -269,7 +317,7 @@ Owned by `createHttpCommand` (spinners per step):
 1. Create project files (`createHttpApp`)
 2. `git init` (soft-fail if git missing)
 3. Install with selected package manager (Yarn scaffolds assume Corepack is enabled so `packageManager: yarn@<berry>` is honored)
-4. `build` (`tsc`)
+4. `build` (`tsc`, plus `generate:api` when schema-first)
 5. Initial commit (soft-fail if git identity missing)
 
 Package manager commands: `getInstallCommand` / `getBuildCommand` + `runCommandInvocation`.
@@ -297,7 +345,7 @@ pnpm run --filter @inversifyjs/create-http lint
 pnpm run --filter @inversifyjs/create-http build
 ```
 
-The `add-resource` skill also has an opt-in Promptfoo evaluation. It creates disposable Express/PostgreSQL apps, runs the skill against a simple resource and a relational aggregate, then inspects the generated files for the requested contract and architectural boundaries. The agent runs the generated app's normal validation inside its provider sandbox; the host-side assertions never execute model-modified project scripts. The evaluation is intentionally separate from the normal test suite because it invokes an external coding model.
+The `add-resource` skill also has an opt-in Promptfoo evaluation. It creates disposable Express/PostgreSQL apps for **both API styles** (`code-first` and `schema-first`), runs the matching generated skill against a simple resource and a relational aggregate in each recipe, then inspects the generated files for the requested contract, architectural boundaries, domain interfaces (not classes), and recipe-specific API modeling (`@OasSchema` / `toSchema` vs JSON schemas / `$ref` / `src/generated/api`). The agent runs the generated app's normal validation inside its provider sandbox; the host-side assertions never execute model-modified project scripts. The evaluation is intentionally separate from the normal test suite because it invokes an external coding model.
 
 The default coding agent is OpenCode (`opencode:sdk`). Swap agents with `EVAL_AGENT=opencode|codex|cursor`. OpenCode needs the OpenCode CLI plus its configured model credentials. Codex needs an OpenAI/Codex key. Cursor needs `CURSOR_API_KEY`. Codex uses `danger-full-access` so the run is not blocked by Ubuntu 24.04 `bwrap` AppArmor restrictions; isolation is the disposable workspace.
 
@@ -316,7 +364,7 @@ Important coverage areas:
 - Generated package.json shape / adapter membership / `packageManager` prefix — not catalog version pins (Renovate owns those)
 - Yarn scaffolds write `.yarnrc.yml` (`enableScripts: false`, `nodeLinker: node-modules`), `package.json` `dependenciesMeta` from selected `builtDependencies`, and `packageManager` starts with `yarn@`
 - Help text includes citty-defined options (`renderUsage`)
-- Generated apps contain identical `add-resource` skills for agents using the shared `.agents` convention and Claude's `.claude` convention
+- Generated apps contain identical `add-resource` skills for agents using the shared `.agents` convention and Claude's `.claude` convention, and the skill content matches the selected API style
 - CLI integration (`createHttpCommand.int.spec.ts`): under `tmp/test/createHttpCommand/{npm|yarn|pnpm}/`, scaffold every HTTP adapter × DB adapter into a per-package-manager monorepo, install dependencies once at that root, then build each member and assert compiled `dist/` outputs exist
 
 ## Codecov
@@ -342,6 +390,7 @@ Edit `templates/base/package.json`, `package-managers.json`, or `yarn-berry.json
 ```bash
 pnpm run --filter @inversifyjs/create-http build
 node packages/framework/http/tools/create-http/bin/create-inversify-http.js /tmp/demo-app --pm pnpm --adapter express
+node packages/framework/http/tools/create-http/bin/create-inversify-http.js /tmp/demo-app-schema --pm pnpm --adapter express --apiStyle schema-first
 ```
 
 ## Important constraints

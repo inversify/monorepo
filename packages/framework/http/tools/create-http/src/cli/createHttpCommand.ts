@@ -5,6 +5,11 @@ import { type ArgsDef, type CommandDef, defineCommand } from 'citty';
 
 import { isMissingGitIdentityError } from '../calculations/isMissingGitIdentityError.js';
 import {
+  API_STYLES,
+  type ApiStyle,
+  DEFAULT_API_STYLE,
+} from '../models/ApiStyle.js';
+import {
   DB_ADAPTERS,
   type DbAdapter,
   DEFAULT_DB_ADAPTER,
@@ -35,6 +40,12 @@ const createHttpArgs: ArgsDef = {
     alias: 'a',
     description: 'HTTP adapter to install and configure',
     options: [...HTTP_ADAPTERS],
+    type: 'enum',
+  },
+  apiStyle: {
+    description:
+      'API modeling style: decorated classes (code-first) or JSON schemas (schema-first)',
+    options: [...API_STYLES],
     type: 'enum',
   },
   db: {
@@ -75,6 +86,13 @@ function isDbAdapter(value: unknown): value is DbAdapter {
   return (
     typeof value === 'string' &&
     (DB_ADAPTERS as readonly string[]).includes(value)
+  );
+}
+
+function isApiStyle(value: unknown): value is ApiStyle {
+  return (
+    typeof value === 'string' &&
+    (API_STYLES as readonly string[]).includes(value)
   );
 }
 
@@ -178,6 +196,38 @@ async function resolveDbAdapter(
   return dbAdapterSelection;
 }
 
+async function resolveApiStyle(
+  apiStyleArg: string | undefined,
+): Promise<ApiStyle | undefined> {
+  if (apiStyleArg !== undefined) {
+    if (!isApiStyle(apiStyleArg)) {
+      throw new Error(`Unsupported API style: ${apiStyleArg}`);
+    }
+
+    return apiStyleArg;
+  }
+
+  const apiStyleSelection: ApiStyle | symbol = await clack.select({
+    initialValue: DEFAULT_API_STYLE,
+    message: 'Choose an API modeling style',
+    options: API_STYLES.map((apiStyle: ApiStyle) => ({
+      label: apiStyle,
+      value: apiStyle,
+    })),
+  });
+
+  if (clack.isCancel(apiStyleSelection)) {
+    clack.cancel('Scaffold cancelled.');
+    return undefined;
+  }
+
+  if (!isApiStyle(apiStyleSelection)) {
+    throw new Error(`Unsupported API style: ${String(apiStyleSelection)}`);
+  }
+
+  return apiStyleSelection;
+}
+
 export const createHttpCommand: CommandDef = defineCommand({
   args: createHttpArgs,
   meta: {
@@ -220,6 +270,15 @@ export const createHttpCommand: CommandDef = defineCommand({
       return;
     }
 
+    const apiStyleArg: unknown = args['apiStyle'];
+    const apiStyle: ApiStyle | undefined = await resolveApiStyle(
+      typeof apiStyleArg === 'string' ? apiStyleArg : undefined,
+    );
+
+    if (apiStyle === undefined) {
+      return;
+    }
+
     clack.intro('create-inversify-http');
 
     const spinner: ReturnType<typeof clack.spinner> = clack.spinner();
@@ -229,6 +288,7 @@ export const createHttpCommand: CommandDef = defineCommand({
 
     try {
       projectPath = await createHttpApp({
+        apiStyle,
         dbAdapter,
         httpAdapter,
         packageManager,

@@ -13,4 +13,10 @@ export class TodoControllerSourceFixtures {
       TodoControllerSourceModelFixtures.withHttpAdapterUwebsockets,
     );
   }
+
+  public static async withSchemaFirstHttpAdapterExpress(): Promise<string> {
+    return generateTodoControllerSource(
+      TodoControllerSourceModelFixtures.withSchemaFirstHttpAdapterExpress,
+    );
+  }
 }

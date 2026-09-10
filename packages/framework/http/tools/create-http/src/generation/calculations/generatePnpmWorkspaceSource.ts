@@ -12,7 +12,7 @@ export function generatePnpmWorkspaceSource(
   model: PnpmWorkspaceSourceModel,
 ): string {
   const lines: string[] = [
-    '# Allow Prisma install scripts (pnpm 10+ blocks dependency build scripts by default).',
+    '# Allow Prisma install scripts (pnpm 10+ blocks them by default).',
     'allowBuilds:',
   ];
 

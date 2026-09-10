@@ -1,4 +1,7 @@
+import { ApiStyle } from '../../models/ApiStyle.js';
 import { HttpAdapter } from '../../models/HttpAdapter.js';
+import { type SourceImport } from '../models/BootstrapSourceModel.js';
+import { OpenApiSchemaBindingKind } from '../models/OpenApiSchemaBindingKind.js';
 import {
   type CaptureRequestValuesSourceModel,
   type SetHeaderSourceModel,
@@ -38,12 +41,70 @@ const UWEBSOCKETS_METHOD_HEADERS: Readonly<
   updateTodo: [JSON_CONTENT_TYPE_HEADER],
 };
 
+const CODE_FIRST_API_TYPE_IMPORTS: readonly SourceImport[] = [
+  {
+    moduleSpecifier: '../models/CreateTodoV1RequestBody.js',
+    namedImports: [{ name: 'CreateTodoV1RequestBody' }],
+  },
+  {
+    moduleSpecifier: '../models/PaginatedTodosV1Response.js',
+    namedImports: [{ name: 'PaginatedTodosV1Response' }],
+  },
+  {
+    moduleSpecifier: '../models/TodoV1.js',
+    namedImports: [{ name: 'TodoV1' }],
+  },
+  {
+    moduleSpecifier: '../models/UpdateTodoV1RequestBody.js',
+    namedImports: [{ name: 'UpdateTodoV1RequestBody' }],
+  },
+];
+
+const SCHEMA_FIRST_API_TYPE_IMPORTS: readonly SourceImport[] = [
+  {
+    isTypeOnly: true,
+    moduleSpecifier: '../../../generated/api/index.js',
+    namedImports: [
+      { name: 'CreateTodoV1RequestBody' },
+      { name: 'PaginatedTodosV1Response' },
+      { name: 'TodoV1' },
+      { name: 'UpdateTodoV1RequestBody' },
+    ],
+  },
+];
+
+function createApiTypeSourceModel(
+  apiStyle: ApiStyle,
+): Pick<
+  TodoControllerSourceModel,
+  'apiTypeImports' | 'openApiSchemaBindingKind'
+> {
+  if (apiStyle === ApiStyle.schemaFirst) {
+    return {
+      apiTypeImports: SCHEMA_FIRST_API_TYPE_IMPORTS,
+      openApiSchemaBindingKind: OpenApiSchemaBindingKind.componentRef,
+    };
+  }
+
+  return {
+    apiTypeImports: CODE_FIRST_API_TYPE_IMPORTS,
+    openApiSchemaBindingKind: OpenApiSchemaBindingKind.toSchema,
+  };
+}
+
 export function createTodoControllerSourceModel(
   httpAdapter: HttpAdapter,
+  apiStyle: ApiStyle,
 ): TodoControllerSourceModel {
+  const apiTypeSourceModel: Pick<
+    TodoControllerSourceModel,
+    'apiTypeImports' | 'openApiSchemaBindingKind'
+  > = createApiTypeSourceModel(apiStyle);
+
   switch (httpAdapter) {
     case HttpAdapter.uwebsockets:
       return {
+        ...apiTypeSourceModel,
         imports: [
           {
             moduleSpecifier: '@inversifyjs/http-uwebsockets',
@@ -55,6 +116,7 @@ export function createTodoControllerSourceModel(
       };
     default:
       return {
+        ...apiTypeSourceModel,
         imports: [],
         methodCaptureRequestValues: {},
         methodHeaders: {},

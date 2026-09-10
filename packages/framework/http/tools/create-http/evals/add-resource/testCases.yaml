@@ -1,6 +1,7 @@
-- description: Add a Product CRUD resource
-  vars:
-    workspaceDir: ./workspaces/product
+- description: Add a Product CRUD resource (code-first)
+  vars: &product-vars
+    workspaceDir: ./workspaces/code-first/product
+    apiStyle: code-first
     resourceDirectory: product
     resourceName: Product
     routePrefix: /v1/products
@@ -16,9 +17,16 @@
       id, paginated list, update, and delete endpoints under /v1/products. No auth is
       required. Finish the implementation and run the project's normal validation.
 
-- description: Add an Order aggregate with line items
+- description: Add a Product CRUD resource (schema-first)
   vars:
-    workspaceDir: ./workspaces/order
+    <<: *product-vars
+    workspaceDir: ./workspaces/schema-first/product
+    apiStyle: schema-first
+
+- description: Add an Order aggregate with line items (code-first)
+  vars: &order-vars
+    workspaceDir: ./workspaces/code-first/order
+    apiStyle: code-first
     resourceDirectory: order
     resourceName: Order
     routePrefix: /v1/orders
@@ -36,3 +44,9 @@
       items and get responses include them. Persist columns in snake_case. No auth,
       filtering, or soft deletion is required. Finish the implementation and run the
       project's normal validation.
+
+- description: Add an Order aggregate with line items (schema-first)
+  vars:
+    <<: *order-vars
+    workspaceDir: ./workspaces/schema-first/order
+    apiStyle: schema-first

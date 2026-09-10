@@ -47,27 +47,27 @@ Generated Yarn projects use Yarn Berry. Enable [Corepack](https://nodejs.org/api
   </TabItem>
 </Tabs>
 
-The CLI prompts for a package manager (`npm`, `pnpm`, or `yarn`) and an HTTP adapter (`express`, `fastify`, `hono`, or `uwebsockets`). You can also pass them as flags:
+The CLI prompts for a package manager (`npm`, `pnpm`, or `yarn`), an HTTP adapter (`express`, `fastify`, `hono`, or `uwebsockets`), and an API modeling style (`code-first` or `schema-first`). You can also pass them as flags:
 
 <Tabs groupId="package-manager">
   <TabItem value="npm" label="npm">
 
 ```bash
-npm create @inversifyjs/http@latest my-app -- --pm npm --adapter express
+npm create @inversifyjs/http@latest my-app -- --pm npm --adapter express --apiStyle code-first
 ```
 
   </TabItem>
   <TabItem value="pnpm" label="pnpm">
 
 ```bash
-pnpm create @inversifyjs/http my-app --pm pnpm --adapter express
+pnpm create @inversifyjs/http my-app --pm pnpm --adapter express --apiStyle code-first
 ```
 
   </TabItem>
   <TabItem value="yarn" label="yarn">
 
 ```bash
-yarn create @inversifyjs/http my-app --pm yarn --adapter express
+yarn create @inversifyjs/http my-app --pm yarn --adapter express --apiStyle code-first
 ```
 
   </TabItem>

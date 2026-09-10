@@ -11,9 +11,10 @@ describe(generateStatusDomainModelSource, () => {
       result = StatusDomainModelSourceFixtures.any;
     });
 
-    it('should generate a Status class with a status field', () => {
-      expect(result).toContain('export class Status');
-      expect(result).toContain('public status!: string;');
+    it('should generate a Status interface with a status field', () => {
+      expect(result).toContain('export interface Status');
+      expect(result).toContain('status: string;');
+      expect(result).not.toContain('export class Status');
       expect(result).not.toContain('@inversifyjs/http-open-api');
     });
   });
