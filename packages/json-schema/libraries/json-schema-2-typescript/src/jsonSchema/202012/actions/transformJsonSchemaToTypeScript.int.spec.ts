@@ -252,6 +252,182 @@ describe(transformJsonSchemaToTypeScript, () => {
       },
       'export type User = { id: string };\nexport type Root = User[];',
     ],
+    [
+      'an array schema with prefixItems',
+      {
+        prefixItems: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ],
+        type: 'array',
+      },
+      'export type Root = [string, number, ...unknown[]];',
+    ],
+    [
+      'an array schema with prefixItems and items false',
+      {
+        items: false,
+        prefixItems: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ],
+        type: 'array',
+      },
+      'export type Root = [string, number];',
+    ],
+    [
+      'an array schema with prefixItems and items',
+      {
+        items: {
+          type: 'boolean',
+        },
+        prefixItems: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ],
+        type: 'array',
+      },
+      'export type Root = [string, number, ...boolean[]];',
+    ],
+    [
+      'a nullable array schema with prefixItems and items false',
+      {
+        items: false,
+        prefixItems: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ],
+        type: ['array', 'null'],
+      },
+      'export type Root = [string, number] | null;',
+    ],
+    [
+      'a titled array schema with prefixItems and items false',
+      {
+        items: false,
+        prefixItems: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ],
+        title: 'Pair',
+        type: 'array',
+      },
+      'export type Pair = [string, number];',
+    ],
+    [
+      'an array schema with a union prefixItem',
+      {
+        items: false,
+        prefixItems: [
+          {
+            type: ['string', 'number'],
+          },
+          {
+            type: 'boolean',
+          },
+        ],
+        type: 'array',
+      },
+      'export type Root = [string | number, boolean];',
+    ],
+    [
+      'an array schema with nested prefixItems',
+      {
+        items: false,
+        prefixItems: [
+          {
+            items: false,
+            prefixItems: [
+              {
+                type: 'string',
+              },
+              {
+                type: 'number',
+              },
+            ],
+            type: 'array',
+          },
+          {
+            type: 'boolean',
+          },
+        ],
+        type: 'array',
+      },
+      'export type Root = [[string, number], boolean];',
+    ],
+    [
+      'an array schema with titled prefixItems',
+      {
+        items: false,
+        prefixItems: [
+          {
+            title: 'Id',
+            type: 'string',
+          },
+          {
+            title: 'Score',
+            type: 'number',
+          },
+        ],
+        type: 'array',
+      },
+      'export type Id = string;\nexport type Score = number;\nexport type Root = [Id, Score];',
+    ],
+    [
+      'a prefixItems schema without a type keyword',
+      {
+        items: false,
+        prefixItems: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ],
+      },
+      'export type Root = [string, number] | boolean | number | null | object | string;',
+    ],
+    [
+      'an object schema with prefixItems',
+      {
+        prefixItems: [
+          {
+            type: 'string',
+          },
+        ],
+        type: 'object',
+      },
+      'export type Root = object;',
+    ],
+    [
+      'an array schema with a never prefixItem',
+      {
+        prefixItems: [true, false],
+        type: 'array',
+      },
+      'export type Root = never;',
+    ],
     ['a const string schema', { const: 'foo' }, 'export type Root = "foo";'],
     ['a const number schema', { const: 1 }, 'export type Root = 1;'],
     ['a const boolean schema', { const: true }, 'export type Root = true;'],
@@ -1505,6 +1681,126 @@ describe(transformJsonSchemaToTypeScript, () => {
       it('should reuse one TodoV1 alias for the property and the array items', () => {
         expect(result).toBe(
           'export type TodoV1 = { completed: boolean; id: string };\nexport type Root = { items: TodoV1[]; todo: TodoV1 };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having a titled schema used both as a property and as a prefixItem via $ref', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+    let todoJsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      todoJsonSchemaFixture = {
+        $id: 'https://example.com/todo',
+        properties: {
+          completed: {
+            type: 'boolean',
+          },
+          id: {
+            type: 'string',
+          },
+        },
+        required: ['completed', 'id'],
+        title: 'TodoV1',
+        type: 'object',
+      };
+      jsonSchemaFixture = {
+        $id: 'https://example.com/root',
+        properties: {
+          pair: {
+            items: false,
+            prefixItems: [
+              {
+                $ref: 'https://example.com/todo',
+              },
+              {
+                type: 'string',
+              },
+            ],
+            type: 'array',
+          },
+          todo: {
+            $ref: 'https://example.com/todo',
+          },
+        },
+        required: ['pair', 'todo'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([
+            jsonSchemaFixture,
+            todoJsonSchemaFixture,
+          ]),
+        );
+      });
+
+      it('should reuse one TodoV1 alias for the property and the tuple prefix item', () => {
+        expect(result).toBe(
+          'export type TodoV1 = { completed: boolean; id: string };\nexport type Root = { pair: [TodoV1, string]; todo: TodoV1 };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having a titled tuple schema whose first prefix item recursively references the tuple', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        $id: 'https://example.com/pair',
+        items: false,
+        prefixItems: [
+          {
+            properties: {
+              next: {
+                $ref: '#',
+              },
+            },
+            required: ['next'],
+            type: 'object',
+          },
+          {
+            type: 'string',
+          },
+        ],
+        title: 'Pair',
+        type: 'array',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([jsonSchemaFixture]),
+        );
+      });
+
+      it('should print a tuple that recursively contains itself', () => {
+        expect(result).toBe(
+          'export type Pair = [Type1, string];\nexport type Type1 = { next: Pair };',
         );
       });
 

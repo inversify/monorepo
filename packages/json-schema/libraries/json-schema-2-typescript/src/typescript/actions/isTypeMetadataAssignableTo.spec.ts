@@ -223,6 +223,112 @@ describe(isTypeMetadataAssignableTo, () => {
       true,
     ],
     [
+      'a closed prefixItems arrayType TypeMetadata to a matching closed prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'a closed prefixItems arrayType TypeMetadata to an open prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'an open prefixItems arrayType TypeMetadata to a closed prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'a mismatched closed prefixItems arrayType TypeMetadata to a closed prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.booleanType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'a matching tuple literalType TypeMetadata to a closed prefixItems arrayType TypeMetadata',
+      { kind: TypeMetadataKind.literalType, literal: ['foo', 1] },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'a short array literalType TypeMetadata to a closed prefixItems arrayType TypeMetadata',
+      { kind: TypeMetadataKind.literalType, literal: ['foo'] },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
       'a stringType TypeMetadata to an or TypeMetadata of stringType and booleanType',
       { kind: TypeMetadataKind.stringType },
       {

@@ -1,5 +1,6 @@
 import {
   type AndTypeMetadata,
+  type ArrayTypeMetadata,
   type PropertyTypeMetadata,
   type StringIndexSignatureTypeMetadata,
   type TypeMetadata,
@@ -38,7 +39,7 @@ export function printTypeMetadataExpanded(
     case TypeMetadataKind.anyType:
       return 'unknown';
     case TypeMetadataKind.arrayType:
-      return `${parenthesizeArrayElement(typeMetadata.child, context)}[]`;
+      return printArrayTypeMetadata(typeMetadata, context);
     case TypeMetadataKind.booleanType:
       return 'boolean';
     case TypeMetadataKind.floatType:
@@ -61,6 +62,28 @@ export function printTypeMetadataExpanded(
     case TypeMetadataKind.stringType:
       return 'string';
   }
+}
+
+function printArrayTypeMetadata(
+  typeMetadata: ArrayTypeMetadata,
+  context: PrintTypeMetadataContext,
+): string {
+  if (
+    typeMetadata.prefixItems === undefined ||
+    typeMetadata.prefixItems.length === 0
+  ) {
+    return `${parenthesizeArrayElement(typeMetadata.child, context)}[]`;
+  }
+
+  const printedPrefixItems: string[] = typeMetadata.prefixItems.map(
+    (prefixItem: TypeMetadata) => printTypeMetadata(prefixItem, context),
+  );
+
+  if (typeMetadata.child.kind === TypeMetadataKind.noneType) {
+    return `[${printedPrefixItems.join(', ')}]`;
+  }
+
+  return `[${printedPrefixItems.join(', ')}, ...${parenthesizeArrayElement(typeMetadata.child, context)}[]]`;
 }
 
 function parenthesizeArrayElement(

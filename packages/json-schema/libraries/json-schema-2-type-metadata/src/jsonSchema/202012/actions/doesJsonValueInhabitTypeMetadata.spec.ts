@@ -116,6 +116,84 @@ describe(doesJsonValueInhabitTypeMetadata, () => {
       },
       false,
     ],
+    [
+      'a matching tuple value and a closed prefixItems arrayType TypeMetadata',
+      ['foo', 1],
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'a short array and a closed prefixItems arrayType TypeMetadata',
+      ['foo'],
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'a long array and a closed prefixItems arrayType TypeMetadata',
+      ['foo', 1, true],
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'a mismatched tuple value and a closed prefixItems arrayType TypeMetadata',
+      ['foo', 'bar'],
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'a tuple with extra rest items and an open prefixItems arrayType TypeMetadata',
+      ['foo', 1, true, false],
+      {
+        child: { kind: TypeMetadataKind.booleanType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'a tuple with a mismatched rest item and an open prefixItems arrayType TypeMetadata',
+      ['foo', 1, 'bar'],
+      {
+        child: { kind: TypeMetadataKind.booleanType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
   ])(
     'having %s',
     (

@@ -1,4 +1,5 @@
 import {
+  type ArrayTypeMetadata,
   type TypeMetadata,
   TypeMetadataKind,
 } from '@inversifyjs/json-schema-type-metadata';
@@ -230,44 +231,71 @@ function handleApplicatorVocabularyProperties(
   typeConstraints: TypeMetadata[],
   resolutionTree: SchemaResolutionSuccessTree,
 ): void {
-  handleJsonSchemaItems(schema, context, typeConstraints);
+  handleJsonSchemaArrayApplicators(schema, context, typeConstraints);
   handleJsonSchemaProperties(schema, context, typeConstraints);
   handleJsonSchemaSubschemas(schema, context, typeConstraints);
   handleJsonSchemaRefs(resolutionTree, context, typeConstraints);
 }
 
-function handleJsonSchemaItems(
+function createArrayApplicatorConstraint(
+  arrayTypeMetadata: ArrayTypeMetadata,
+): TypeMetadata {
+  return {
+    children: [
+      arrayTypeMetadata,
+      {
+        kind: TypeMetadataKind.booleanType,
+      },
+      {
+        kind: TypeMetadataKind.floatType,
+      },
+      {
+        kind: TypeMetadataKind.literalType,
+        literal: null,
+      },
+      {
+        kind: TypeMetadataKind.objectType,
+      },
+      {
+        kind: TypeMetadataKind.stringType,
+      },
+    ],
+    kind: TypeMetadataKind.or,
+  };
+}
+
+function handleJsonSchemaArrayApplicators(
   schema: JsonSchemaObject,
   context: TransformJsonSchemaInternalContext,
   typeConstraints: TypeMetadata[],
 ): void {
-  if (schema.items !== undefined) {
-    typeConstraints.push({
-      children: [
-        {
-          child: transformJsonSchemaNode(schema.items, context),
-          kind: TypeMetadataKind.arrayType,
-        },
-        {
-          kind: TypeMetadataKind.booleanType,
-        },
-        {
-          kind: TypeMetadataKind.floatType,
-        },
-        {
-          kind: TypeMetadataKind.literalType,
-          literal: null,
-        },
-        {
-          kind: TypeMetadataKind.objectType,
-        },
-        {
-          kind: TypeMetadataKind.stringType,
-        },
-      ],
-      kind: TypeMetadataKind.or,
-    });
+  if (schema.items === undefined && schema.prefixItems === undefined) {
+    return;
   }
+
+  const arrayTypeMetadata: ArrayTypeMetadata = {
+    child:
+      schema.items === undefined
+        ? {
+            kind: TypeMetadataKind.anyType,
+          }
+        : transformJsonSchemaNode(schema.items, context),
+    kind: TypeMetadataKind.arrayType,
+  };
+
+  if (schema.prefixItems !== undefined) {
+    arrayTypeMetadata.prefixItems = schema.prefixItems.map(
+      (prefixItemSchema: JsonSchema) =>
+        transformJsonSchemaNode(prefixItemSchema, context),
+    );
+  }
+
+  if (schema.type === 'array') {
+    typeConstraints.push(arrayTypeMetadata);
+    return;
+  }
+
+  typeConstraints.push(createArrayApplicatorConstraint(arrayTypeMetadata));
 }
 
 function handleJsonSchemaAdditionalProperties(
@@ -613,6 +641,26 @@ function replaceTypeMetadataReferences(
         }
         break;
       case TypeMetadataKind.arrayType:
+        if (node.prefixItems !== undefined) {
+          for (let i: number = 0; i < node.prefixItems.length; i += 1) {
+            const prefixItem: TypeMetadata = node.prefixItems[
+              i
+            ] as TypeMetadata;
+
+            if (prefixItem === fromTypeMetadata) {
+              node.prefixItems[i] = toTypeMetadata;
+            } else {
+              visit(prefixItem);
+            }
+          }
+        }
+
+        if (node.child === fromTypeMetadata) {
+          node.child = toTypeMetadata;
+        } else {
+          visit(node.child);
+        }
+        break;
       case TypeMetadataKind.propertyType:
       case TypeMetadataKind.stringIndexSignatureType:
         if (node.child === fromTypeMetadata) {

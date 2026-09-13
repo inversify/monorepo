@@ -1,4 +1,5 @@
 import {
+  type ArrayTypeMetadata,
   type TypeMetadata,
   TypeMetadataKind,
 } from '@inversifyjs/json-schema-type-metadata';
@@ -91,9 +92,9 @@ function isAssignable(
     }
 
     if (targetTypeMetadata.kind === TypeMetadataKind.arrayType) {
-      return isAssignable(
-        sourceTypeMetadata.child,
-        targetTypeMetadata.child,
+      return isArrayTypeMetadataAssignableTo(
+        sourceTypeMetadata,
+        targetTypeMetadata,
         visitedTypeMetadata,
       );
     }
@@ -149,6 +150,62 @@ function isAssignable(
   }
 
   return sourceTypeMetadata.kind === targetTypeMetadata.kind;
+}
+
+function getArrayItemTypeMetadata(
+  typeMetadata: ArrayTypeMetadata,
+  index: number,
+): TypeMetadata {
+  return typeMetadata.prefixItems?.[index] ?? typeMetadata.child;
+}
+
+function isArrayTypeMetadataAssignableTo(
+  sourceTypeMetadata: ArrayTypeMetadata,
+  targetTypeMetadata: ArrayTypeMetadata,
+  visitedTypeMetadata: WeakMap<TypeMetadata, Set<TypeMetadata>>,
+): boolean {
+  const prefixItemsLength: number = Math.max(
+    sourceTypeMetadata.prefixItems?.length ?? 0,
+    targetTypeMetadata.prefixItems?.length ?? 0,
+  );
+
+  for (let i: number = 0; i < prefixItemsLength; i += 1) {
+    if (
+      !isAssignable(
+        getArrayItemTypeMetadata(sourceTypeMetadata, i),
+        getArrayItemTypeMetadata(targetTypeMetadata, i),
+        visitedTypeMetadata,
+      )
+    ) {
+      return false;
+    }
+  }
+
+  return isAssignable(
+    sourceTypeMetadata.child,
+    targetTypeMetadata.child,
+    visitedTypeMetadata,
+  );
+}
+
+function isArrayLiteralAssignableTo(
+  literal: JsonValue[],
+  targetTypeMetadata: ArrayTypeMetadata,
+  visitedTypeMetadata: WeakMap<TypeMetadata, Set<TypeMetadata>>,
+): boolean {
+  const prefixItems: TypeMetadata[] = targetTypeMetadata.prefixItems ?? [];
+
+  if (literal.length < prefixItems.length) {
+    return false;
+  }
+
+  return literal.every((item: JsonValue, index: number) =>
+    isLiteralAssignableTo(
+      item,
+      prefixItems[index] ?? targetTypeMetadata.child,
+      visitedTypeMetadata,
+    ),
+  );
 }
 
 function isJsonValueEqual(left: JsonValue, right: JsonValue): boolean {
@@ -224,12 +281,10 @@ function isLiteralAssignableTo(
     }
 
     if (targetTypeMetadata.kind === TypeMetadataKind.arrayType) {
-      return literal.every((item: JsonValue) =>
-        isLiteralAssignableTo(
-          item,
-          targetTypeMetadata.child,
-          visitedTypeMetadata,
-        ),
+      return isArrayLiteralAssignableTo(
+        literal,
+        targetTypeMetadata,
+        visitedTypeMetadata,
       );
     }
 

@@ -248,6 +248,42 @@ describe(collectNamedTypeMetadata, () => {
     });
   });
 
+  describe('having a prefixItems arrayType TypeMetadata with a titled prefix item', () => {
+    let prefixItemTypeMetadataFixture: TypeMetadata;
+    let typeMetadataFixture: TypeMetadata;
+
+    beforeAll(() => {
+      prefixItemTypeMetadataFixture = {
+        id: 'Id',
+        kind: TypeMetadataKind.stringType,
+      };
+      typeMetadataFixture = {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          prefixItemTypeMetadataFixture,
+          {
+            kind: TypeMetadataKind.floatType,
+          },
+        ],
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = collectNamedTypeMetadata(typeMetadataFixture);
+      });
+
+      it('should return the titled prefix item', () => {
+        expect(result).toStrictEqual([prefixItemTypeMetadataFixture]);
+      });
+    });
+  });
+
   describe('having a circular and TypeMetadata', () => {
     let typeMetadataFixture: AndTypeMetadata;
 

@@ -1,5 +1,6 @@
 import {
   type AndTypeMetadata,
+  type ArrayTypeMetadata,
   type StringIndexSignatureTypeMetadata,
   type TypeMetadata,
   TypeMetadataKind,
@@ -69,15 +70,10 @@ function doesJsonValueInhabitTypeMetadataWhileVisiting(
     case TypeMetadataKind.anyType:
       return true;
     case TypeMetadataKind.arrayType:
-      return (
-        Array.isArray(value) &&
-        value.every((item: JsonValue) =>
-          doesJsonValueInhabitTypeMetadataRecursive(
-            item,
-            typeMetadata.child,
-            visitingTypeMetadataValues,
-          ),
-        )
+      return doesJsonValueInhabitArrayTypeMetadata(
+        value,
+        typeMetadata,
+        visitingTypeMetadataValues,
       );
     case TypeMetadataKind.booleanType:
       return typeof value === 'boolean';
@@ -123,6 +119,30 @@ function doesJsonValueInhabitTypeMetadataWhileVisiting(
     case TypeMetadataKind.stringType:
       return typeof value === 'string';
   }
+}
+
+function doesJsonValueInhabitArrayTypeMetadata(
+  value: JsonValue,
+  typeMetadata: ArrayTypeMetadata,
+  visitingTypeMetadataValues: Map<TypeMetadata, Set<JsonValue>>,
+): boolean {
+  if (!Array.isArray(value)) {
+    return false;
+  }
+
+  const prefixItems: TypeMetadata[] = typeMetadata.prefixItems ?? [];
+
+  if (value.length < prefixItems.length) {
+    return false;
+  }
+
+  return value.every((item: JsonValue, index: number) =>
+    doesJsonValueInhabitTypeMetadataRecursive(
+      item,
+      prefixItems[index] ?? typeMetadata.child,
+      visitingTypeMetadataValues,
+    ),
+  );
 }
 
 function doesJsonValueInhabitAndTypeMetadata(

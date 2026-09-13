@@ -84,6 +84,30 @@ describe(transformTypeMetadataToTypeScript, () => {
       'export type Root = (string | number)[];',
     ],
     [
+      'a closed prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      'export type Root = [string, number];',
+    ],
+    [
+      'an open prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      'export type Root = [string, number, ...unknown[]];',
+    ],
+    [
       'an or TypeMetadata',
       {
         children: [

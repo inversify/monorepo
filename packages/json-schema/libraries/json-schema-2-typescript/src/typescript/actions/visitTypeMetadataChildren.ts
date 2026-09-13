@@ -15,6 +15,14 @@ export function visitTypeMetadataChildren(
       }
       break;
     case TypeMetadataKind.arrayType:
+      if (typeMetadata.prefixItems !== undefined) {
+        for (const prefixItem of typeMetadata.prefixItems) {
+          visit(prefixItem);
+        }
+      }
+
+      visit(typeMetadata.child);
+      break;
     case TypeMetadataKind.propertyType:
     case TypeMetadataKind.stringIndexSignatureType:
       visit(typeMetadata.child);

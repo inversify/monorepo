@@ -113,7 +113,19 @@ function buildChildSignature(
         .map((child: TypeMetadata) => requireBlockId(child, nodeToBlockId))
         .sort((left: number, right: number) => left - right)
         .join(',');
-    case TypeMetadataKind.arrayType:
+    case TypeMetadataKind.arrayType: {
+      const prefixItemsSignature: string = (typeMetadata.prefixItems ?? [])
+        .map((prefixItem: TypeMetadata) =>
+          requireBlockId(prefixItem, nodeToBlockId),
+        )
+        .join(',');
+
+      if (prefixItemsSignature.length === 0) {
+        return requireBlockId(typeMetadata.child, nodeToBlockId).toString();
+      }
+
+      return `${prefixItemsSignature}|${requireBlockId(typeMetadata.child, nodeToBlockId).toString()}`;
+    }
     case TypeMetadataKind.propertyType:
     case TypeMetadataKind.stringIndexSignatureType:
       return requireBlockId(typeMetadata.child, nodeToBlockId).toString();
@@ -264,6 +276,27 @@ function retargetTypeMetadata(
         }
         break;
       case TypeMetadataKind.arrayType:
+        if (node.prefixItems !== undefined) {
+          for (let i: number = 0; i < node.prefixItems.length; i += 1) {
+            const prefixItem: TypeMetadata = node.prefixItems[
+              i
+            ] as TypeMetadata;
+            const retargetedPrefixItem: TypeMetadata =
+              retargetMap.get(prefixItem) ?? prefixItem;
+
+            node.prefixItems[i] = retargetedPrefixItem;
+            visit(retargetedPrefixItem);
+          }
+        }
+
+        {
+          const retargetedChild: TypeMetadata =
+            retargetMap.get(node.child) ?? node.child;
+
+          node.child = retargetedChild;
+          visit(retargetedChild);
+        }
+        break;
       case TypeMetadataKind.propertyType:
       case TypeMetadataKind.stringIndexSignatureType: {
         const retargetedChild: TypeMetadata =
@@ -295,6 +328,14 @@ function visitTypeMetadataChildren(
       }
       break;
     case TypeMetadataKind.arrayType:
+      if (typeMetadata.prefixItems !== undefined) {
+        for (const prefixItem of typeMetadata.prefixItems) {
+          visit(prefixItem);
+        }
+      }
+
+      visit(typeMetadata.child);
+      break;
     case TypeMetadataKind.propertyType:
     case TypeMetadataKind.stringIndexSignatureType:
       visit(typeMetadata.child);

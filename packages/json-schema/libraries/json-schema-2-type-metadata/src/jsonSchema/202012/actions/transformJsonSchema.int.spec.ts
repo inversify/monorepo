@@ -53,6 +53,18 @@ function collectTypeMetadata(
       }
       break;
     case TypeMetadataKind.arrayType:
+      if (typeMetadata.prefixItems !== undefined) {
+        for (const prefixItem of typeMetadata.prefixItems) {
+          collectedTypeMetadata.push(
+            ...collectTypeMetadata(prefixItem, seenTypeMetadataSet),
+          );
+        }
+      }
+
+      collectedTypeMetadata.push(
+        ...collectTypeMetadata(typeMetadata.child, seenTypeMetadataSet),
+      );
+      break;
     case TypeMetadataKind.propertyType:
     case TypeMetadataKind.stringIndexSignatureType:
       collectedTypeMetadata.push(

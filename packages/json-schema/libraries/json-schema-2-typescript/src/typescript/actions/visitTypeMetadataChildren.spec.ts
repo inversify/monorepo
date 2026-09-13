@@ -101,6 +101,47 @@ describe(visitTypeMetadataChildren, () => {
     },
   );
 
+  describe('having an arrayType TypeMetadata with prefixItems', () => {
+    let firstPrefixItemFixture: TypeMetadata;
+    let secondPrefixItemFixture: TypeMetadata;
+    let restItemFixture: TypeMetadata;
+    let typeMetadataFixture: TypeMetadata;
+
+    beforeAll(() => {
+      firstPrefixItemFixture = {
+        kind: TypeMetadataKind.stringType,
+      };
+      secondPrefixItemFixture = {
+        kind: TypeMetadataKind.floatType,
+      };
+      restItemFixture = {
+        kind: TypeMetadataKind.booleanType,
+      };
+      typeMetadataFixture = {
+        child: restItemFixture,
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [firstPrefixItemFixture, secondPrefixItemFixture],
+      };
+    });
+
+    describe('when called', () => {
+      beforeAll(() => {
+        visitTypeMetadataChildren(typeMetadataFixture, visitMock);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call visit() with each prefix item and the rest child in order', () => {
+        expect(visitMock).toHaveBeenCalledTimes(3);
+        expect(visitMock).toHaveBeenNthCalledWith(1, firstPrefixItemFixture);
+        expect(visitMock).toHaveBeenNthCalledWith(2, secondPrefixItemFixture);
+        expect(visitMock).toHaveBeenNthCalledWith(3, restItemFixture);
+      });
+    });
+  });
+
   describe('having an and TypeMetadata with no children', () => {
     let typeMetadataFixture: TypeMetadata;
 
