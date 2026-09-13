@@ -206,8 +206,8 @@ describe(collectNamedTypeMetadata, () => {
         result = collectNamedTypeMetadata(typeMetadataFixture);
       });
 
-      it('should return the shared child', () => {
-        expect(result).toStrictEqual([sharedTypeMetadataFixture]);
+      it('should not name the shared untitled primitive TypeMetadata', () => {
+        expect(result).toStrictEqual([]);
       });
     });
   });

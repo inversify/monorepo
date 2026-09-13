@@ -342,4 +342,220 @@ describe(transformOpenApiToTypeScript, () => {
       });
     });
   });
+
+  describe('having three string enum component schemas', () => {
+    let openApiObjectFixture: OpenApi3Dot2Object;
+
+    beforeAll(() => {
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            Color: {
+              enum: ['red', 'green'],
+              type: 'string',
+            },
+            Size: {
+              enum: ['s', 'm'],
+              type: 'string',
+            },
+            Status: {
+              enum: ['on', 'off'],
+              type: 'string',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.2.0',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformOpenApiToTypeScript(openApiObjectFixture);
+      });
+
+      it('should absorb each string enum without Type1, Type2, or Type3 aliases', () => {
+        expect(result).toBe(
+          'export type Color = "red" | "green";\nexport type Size = "s" | "m";\nexport type Status = "on" | "off";\nexport type Root = Color | Size | Status;',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having a component schema with a string const property', () => {
+    let openApiObjectFixture: OpenApi3Dot2Object;
+
+    beforeAll(() => {
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            ReviewGroupDimensionV1: {
+              properties: {
+                kind: {
+                  const: 'discreteNumericRange',
+                  type: 'string',
+                },
+                name: {
+                  type: 'string',
+                },
+              },
+              required: ['kind', 'name'],
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.2.0',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformOpenApiToTypeScript(openApiObjectFixture);
+      });
+
+      it('should emit the const literal without intersecting string', () => {
+        expect(result).toBe(
+          'export type ReviewGroupDimensionV1 = { kind: "discreteNumericRange"; name: string };\nexport type Root = ReviewGroupDimensionV1;',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having a component schema with a nested object const', () => {
+    let openApiObjectFixture: OpenApi3Dot2Object;
+
+    beforeAll(() => {
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            DefaultReviewPolicyV1: {
+              additionalProperties: false,
+              const: {
+                limits: {
+                  maxAttachments: 3,
+                  maxDescriptionSize: 2000,
+                },
+                mode: 'moderated',
+              },
+              properties: {
+                limits: {
+                  additionalProperties: false,
+                  properties: {
+                    maxAttachments: {
+                      type: 'integer',
+                    },
+                    maxDescriptionSize: {
+                      type: 'integer',
+                    },
+                  },
+                  required: ['maxAttachments', 'maxDescriptionSize'],
+                  type: 'object',
+                },
+                mode: {
+                  enum: ['moderated', 'open'],
+                  type: 'string',
+                },
+              },
+              required: ['limits', 'mode'],
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.2.0',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformOpenApiToTypeScript(openApiObjectFixture);
+      });
+
+      it('should emit the object const without intersecting object constraints', () => {
+        expect(result).toBe(
+          'export type DefaultReviewPolicyV1 = { limits: { maxAttachments: 3; maxDescriptionSize: 2000 }; mode: "moderated" };\nexport type Root = DefaultReviewPolicyV1;',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having a component schema with two properties that $ref the same string enum and a matching const', () => {
+    let openApiObjectFixture: OpenApi3Dot2Object;
+
+    beforeAll(() => {
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            Color: {
+              enum: ['red', 'green'],
+              type: 'string',
+            },
+            FlagPair: {
+              const: {
+                primary: 'red',
+                secondary: 'red',
+              },
+              properties: {
+                primary: {
+                  $ref: '#/components/schemas/Color',
+                },
+                secondary: {
+                  $ref: '#/components/schemas/Color',
+                },
+              },
+              required: ['primary', 'secondary'],
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.2.0',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformOpenApiToTypeScript(openApiObjectFixture);
+      });
+
+      it('should absorb the object const against the shared enum component', () => {
+        expect(result).toBe(
+          'export type Color = "red" | "green";\nexport type FlagPair = { primary: "red"; secondary: "red" };\nexport type Root = Color | FlagPair;',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
 });

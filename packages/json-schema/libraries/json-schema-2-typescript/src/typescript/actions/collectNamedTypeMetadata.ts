@@ -66,7 +66,8 @@ function shouldNameTypeMetadata(
 
   if (
     typeMetadata.kind === TypeMetadataKind.propertyType ||
-    typeMetadata.kind === TypeMetadataKind.stringIndexSignatureType
+    typeMetadata.kind === TypeMetadataKind.stringIndexSignatureType ||
+    isLeafTypeMetadata(typeMetadata)
   ) {
     return false;
   }
@@ -75,4 +76,20 @@ function shouldNameTypeMetadata(
     (visitCountMap.get(typeMetadata) ?? 0) > 1 ||
     cyclicTypeMetadataSet.has(typeMetadata)
   );
+}
+
+function isLeafTypeMetadata(typeMetadata: TypeMetadata): boolean {
+  switch (typeMetadata.kind) {
+    case TypeMetadataKind.anyType:
+    case TypeMetadataKind.booleanType:
+    case TypeMetadataKind.floatType:
+    case TypeMetadataKind.integerType:
+    case TypeMetadataKind.literalType:
+    case TypeMetadataKind.noneType:
+    case TypeMetadataKind.objectType:
+    case TypeMetadataKind.stringType:
+      return true;
+    default:
+      return false;
+  }
 }

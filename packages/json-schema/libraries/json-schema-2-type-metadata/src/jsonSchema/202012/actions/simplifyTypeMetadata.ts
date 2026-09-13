@@ -1,12 +1,16 @@
 import {
   type AndTypeMetadata,
   type ArrayTypeMetadata,
+  type LiteralTypeMetadata,
   type OrTypeMetadata,
   type PropertyTypeMetadata,
   type TypeMetadata,
   TypeMetadataKind,
 } from '@inversifyjs/json-schema-type-metadata';
 import { type JsonValue } from '@inversifyjs/json-schema-types';
+
+import { areJsonValuesEqual } from './areJsonValuesEqual.js';
+import { doesJsonValueInhabitTypeMetadata } from './doesJsonValueInhabitTypeMetadata.js';
 
 interface TypeMetadataMutable {
   child?: TypeMetadata;
@@ -176,7 +180,9 @@ function flattenSameKindChildren(
       child.kind === typeMetadata.kind &&
       child.id === undefined &&
       !ancestorTypeMetadataSet.has(child) &&
-      !isTypeMetadataCyclic(child)
+      !isTypeMetadataCyclic(child) &&
+      !hasStringIndexSignatureChild(child) &&
+      !hasStringIndexSignatureChild(typeMetadata)
     ) {
       flattenedChildren.push(...child.children);
     } else {
@@ -546,11 +552,20 @@ function intersectJsonSchemaInstanceTypes(
       return {
         kind: left.kind,
       };
-    case TypeMetadataKind.literalType:
+    case TypeMetadataKind.literalType: {
+      const rightLiteral: JsonValue = (right as LiteralTypeMetadata).literal;
+
+      if (!areJsonValuesEqual(left.literal, rightLiteral)) {
+        return {
+          kind: TypeMetadataKind.noneType,
+        };
+      }
+
       return {
         kind: TypeMetadataKind.literalType,
-        literal: null,
+        literal: left.literal,
       };
+    }
     default:
       return {
         kind: TypeMetadataKind.noneType,
@@ -611,6 +626,22 @@ function isJsonSchemaInstanceType(typeMetadata: TypeMetadata): boolean {
   }
 }
 
+function hasStringIndexSignatureChild(
+  typeMetadata: AndTypeMetadata | OrTypeMetadata,
+): boolean {
+  return typeMetadata.children.some(
+    (child: TypeMetadata) =>
+      child.kind === TypeMetadataKind.stringIndexSignatureType,
+  );
+}
+
+function isObjectConstraintTypeMetadata(typeMetadata: TypeMetadata): boolean {
+  return (
+    typeMetadata.kind === TypeMetadataKind.propertyType ||
+    typeMetadata.kind === TypeMetadataKind.stringIndexSignatureType
+  );
+}
+
 function isTypeMetadataCyclic(typeMetadata: TypeMetadata): boolean {
   const visitedTypeMetadataSet: Set<TypeMetadata> = new Set();
 
@@ -641,18 +672,88 @@ function isTypeMetadataCyclic(typeMetadata: TypeMetadata): boolean {
   return visit(typeMetadata);
 }
 
+function absorbLiteralTypeMetadataFromAnd(
+  typeMetadata: AndTypeMetadata,
+): TypeMetadata | undefined {
+  const literalTypeMetadata: LiteralTypeMetadata[] = [];
+
+  for (const child of typeMetadata.children) {
+    if (child.kind === TypeMetadataKind.literalType) {
+      literalTypeMetadata.push(child);
+    }
+  }
+
+  if (literalTypeMetadata.length === 0) {
+    return undefined;
+  }
+
+  const firstLiteralTypeMetadata: LiteralTypeMetadata =
+    literalTypeMetadata[0] as LiteralTypeMetadata;
+
+  for (const child of literalTypeMetadata) {
+    if (!areJsonValuesEqual(firstLiteralTypeMetadata.literal, child.literal)) {
+      return {
+        kind: TypeMetadataKind.noneType,
+      };
+    }
+  }
+
+  const otherChildren: TypeMetadata[] = typeMetadata.children.filter(
+    (child: TypeMetadata) =>
+      child.kind !== TypeMetadataKind.literalType ||
+      !areJsonValuesEqual(firstLiteralTypeMetadata.literal, child.literal),
+  );
+
+  if (otherChildren.length === 0) {
+    return firstLiteralTypeMetadata;
+  }
+
+  const constraintTypeMetadata: TypeMetadata =
+    otherChildren.length === 1
+      ? (otherChildren[0] as TypeMetadata)
+      : {
+          children: otherChildren,
+          kind: TypeMetadataKind.and,
+        };
+
+  if (
+    !doesJsonValueInhabitTypeMetadata(
+      firstLiteralTypeMetadata.literal,
+      constraintTypeMetadata,
+    )
+  ) {
+    return {
+      kind: TypeMetadataKind.noneType,
+    };
+  }
+
+  return firstLiteralTypeMetadata;
+}
+
 function simplifyAndTypeMetadata(
   typeMetadata: AndTypeMetadata,
   ancestorTypeMetadataSet: Set<TypeMetadata>,
   simplifiedTypeMetadataSet: Set<TypeMetadata>,
+  parentHasStringIndexSignature: boolean,
 ): TypeMetadata {
+  const hasStringIndexSignature: boolean =
+    hasStringIndexSignatureChild(typeMetadata);
+
   typeMetadata.children = typeMetadata.children.map((child: TypeMetadata) =>
     simplifyTypeMetadataRecursive(
       child,
       ancestorTypeMetadataSet,
       simplifiedTypeMetadataSet,
+      hasStringIndexSignature,
     ),
   );
+
+  const absorbedTypeMetadata: TypeMetadata | undefined =
+    absorbLiteralTypeMetadataFromAnd(typeMetadata);
+
+  if (absorbedTypeMetadata !== undefined) {
+    return copyTypeMetadataOnto(typeMetadata, absorbedTypeMetadata);
+  }
 
   flattenSameKindChildren(typeMetadata, ancestorTypeMetadataSet);
   intersectAndTypes(
@@ -673,10 +774,20 @@ function simplifyAndTypeMetadata(
     return typeMetadata;
   }
 
-  return simplifyAnyAndNoneAnd(typeMetadata);
+  const absorbedFoldedTypeMetadata: TypeMetadata | undefined =
+    absorbLiteralTypeMetadataFromAnd(typeMetadata);
+
+  if (absorbedFoldedTypeMetadata !== undefined) {
+    return copyTypeMetadataOnto(typeMetadata, absorbedFoldedTypeMetadata);
+  }
+
+  return simplifyAnyAndNoneAnd(typeMetadata, parentHasStringIndexSignature);
 }
 
-function simplifyAnyAndNoneAnd(typeMetadata: AndTypeMetadata): TypeMetadata {
+function simplifyAnyAndNoneAnd(
+  typeMetadata: AndTypeMetadata,
+  parentHasStringIndexSignature: boolean,
+): TypeMetadata {
   const simplifiedChildren: TypeMetadata[] = [];
 
   for (const child of typeMetadata.children) {
@@ -693,6 +804,7 @@ function simplifyAnyAndNoneAnd(typeMetadata: AndTypeMetadata): TypeMetadata {
     typeMetadata,
     simplifiedChildren,
     TypeMetadataKind.anyType,
+    parentHasStringIndexSignature,
   );
 }
 
@@ -715,6 +827,7 @@ function simplifyAnyAndNoneOr(typeMetadata: OrTypeMetadata): TypeMetadata {
     typeMetadata,
     simplifiedChildren,
     TypeMetadataKind.noneType,
+    false,
   );
 }
 
@@ -722,6 +835,7 @@ function simplifyManyChildrenTypeMetadata(
   typeMetadata: AndTypeMetadata | OrTypeMetadata,
   simplifiedChildren: TypeMetadata[],
   emptyKind: TypeMetadataKind.anyType | TypeMetadataKind.noneType,
+  parentHasStringIndexSignature: boolean,
 ): TypeMetadata {
   if (simplifiedChildren.length === 0) {
     return copyTypeMetadataOnto(typeMetadata, {
@@ -729,11 +843,16 @@ function simplifyManyChildrenTypeMetadata(
     });
   }
 
-  if (simplifiedChildren.length === 1) {
-    return copyTypeMetadataOnto(
-      typeMetadata,
-      simplifiedChildren[0] as TypeMetadata,
-    );
+  const singleChild: TypeMetadata | undefined = simplifiedChildren[0];
+
+  if (
+    simplifiedChildren.length === 1 &&
+    singleChild !== undefined &&
+    (typeMetadata.kind === TypeMetadataKind.or ||
+      !parentHasStringIndexSignature ||
+      !isObjectConstraintTypeMetadata(singleChild))
+  ) {
+    return copyTypeMetadataOnto(typeMetadata, singleChild);
   }
 
   typeMetadata.children = simplifiedChildren;
@@ -763,6 +882,7 @@ function simplifyTypeMetadataRecursive(
   typeMetadata: TypeMetadata,
   ancestorTypeMetadataSet: Set<TypeMetadata>,
   simplifiedTypeMetadataSet: Set<TypeMetadata>,
+  parentHasStringIndexSignature: boolean = false,
 ): TypeMetadata {
   if (
     ancestorTypeMetadataSet.has(typeMetadata) ||
@@ -788,6 +908,7 @@ function simplifyTypeMetadataRecursive(
         typeMetadata,
         ancestorTypeMetadataSet,
         simplifiedTypeMetadataSet,
+        parentHasStringIndexSignature,
       );
       break;
     case TypeMetadataKind.arrayType:
