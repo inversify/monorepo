@@ -6,7 +6,9 @@ import {
   type TypeMetadata,
   TypeMetadataKind,
 } from '@inversifyjs/json-schema-type-metadata';
+import { type JsonValue } from '@inversifyjs/json-schema-types';
 
+import { doesJsonValueInhabitTypeMetadata } from './doesJsonValueInhabitTypeMetadata.js';
 import { simplifyTypeMetadata } from './simplifyTypeMetadata.js';
 
 describe(simplifyTypeMetadata, () => {
@@ -836,6 +838,70 @@ describe(simplifyTypeMetadata, () => {
       },
     ],
     [
+      'an and TypeMetadata of instance-shaped or children that share a null literalType branch',
+      {
+        children: [
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+              {
+                kind: TypeMetadataKind.booleanType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.literalType,
+        literal: null,
+      },
+    ],
+    [
+      'an and TypeMetadata of a null literalType or and a stringType or',
+      {
+        children: [
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: null,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
       'an and TypeMetadata with stringType and null literalType children',
       {
         children: [
@@ -868,16 +934,293 @@ describe(simplifyTypeMetadata, () => {
         kind: TypeMetadataKind.and,
       },
       {
+        kind: TypeMetadataKind.literalType,
+        literal: 'foo',
+      },
+    ],
+    [
+      'an and TypeMetadata with stringType and a number literalType child',
+      {
         children: [
           {
             kind: TypeMetadataKind.stringType,
           },
           {
             kind: TypeMetadataKind.literalType,
-            literal: 'foo',
+            literal: 1,
           },
         ],
         kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an and TypeMetadata with objectType and an object literalType child',
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.objectType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: { foo: 'bar' },
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.literalType,
+        literal: { foo: 'bar' },
+      },
+    ],
+    [
+      'an and TypeMetadata with objectType and an array literalType child',
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.objectType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: [1, 2],
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an and TypeMetadata with two equal object literalType children',
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: { foo: { items: [1] } },
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: { foo: { items: [1] } },
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.literalType,
+        literal: { foo: { items: [1] } },
+      },
+    ],
+    [
+      'an and TypeMetadata with two different object literalType children',
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: { foo: 1 },
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: { foo: 2 },
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an and TypeMetadata with an object literalType child and a matching propertyType child',
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.objectType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: { name: 'alpha', tags: ['x'] },
+          },
+          {
+            child: { kind: TypeMetadataKind.stringType },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'name',
+          },
+          {
+            child: {
+              child: { kind: TypeMetadataKind.stringType },
+              kind: TypeMetadataKind.arrayType,
+            },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'tags',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.literalType,
+        literal: { name: 'alpha', tags: ['x'] },
+      },
+    ],
+    [
+      'an and TypeMetadata with an object literalType child and a mismatching propertyType child',
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.objectType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: { name: 1 },
+          },
+          {
+            child: { kind: TypeMetadataKind.stringType },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'name',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an and TypeMetadata with an object literalType child, declared properties, and a never stringIndexSignatureType',
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.objectType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: { name: 'alpha' },
+          },
+          {
+            child: { kind: TypeMetadataKind.stringType },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'name',
+          },
+          {
+            child: { kind: TypeMetadataKind.noneType },
+            kind: TypeMetadataKind.stringIndexSignatureType,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.literalType,
+        literal: { name: 'alpha' },
+      },
+    ],
+    [
+      'an and TypeMetadata with an object literalType child that has an additional property and a never stringIndexSignatureType',
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.objectType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: { extra: true, name: 'alpha' },
+          },
+          {
+            child: { kind: TypeMetadataKind.stringType },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'name',
+          },
+          {
+            child: { kind: TypeMetadataKind.noneType },
+            kind: TypeMetadataKind.stringIndexSignatureType,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an and TypeMetadata with an array literalType child and a matching arrayType child',
+      {
+        children: [
+          {
+            child: { kind: TypeMetadataKind.integerType },
+            kind: TypeMetadataKind.arrayType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: [1, 2],
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.literalType,
+        literal: [1, 2],
+      },
+    ],
+    [
+      'an and TypeMetadata with an array literalType child and a mismatching arrayType child',
+      {
+        children: [
+          {
+            child: { kind: TypeMetadataKind.integerType },
+            kind: TypeMetadataKind.arrayType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: [1, 'a'],
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an and TypeMetadata with stringType and an or of string literalType children',
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            children: [
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: 'a',
+              },
+              {
+                kind: TypeMetadataKind.literalType,
+                literal: 'b',
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        children: [
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: 'a',
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: 'b',
+          },
+        ],
+        kind: TypeMetadataKind.or,
       },
     ],
     [
@@ -1773,6 +2116,401 @@ describe(simplifyTypeMetadata, () => {
       });
     },
   );
+
+  describe('having an and TypeMetadata of two closed object TypeMetadata children and an object literalType child with both properties', () => {
+    let typeMetadataFixture: TypeMetadata;
+
+    beforeAll(() => {
+      typeMetadataFixture = {
+        children: [
+          {
+            children: [
+              { kind: TypeMetadataKind.objectType },
+              {
+                child: { kind: TypeMetadataKind.stringType },
+                isOptional: false,
+                kind: TypeMetadataKind.propertyType,
+                property: 'foo',
+              },
+              {
+                child: { kind: TypeMetadataKind.noneType },
+                kind: TypeMetadataKind.stringIndexSignatureType,
+              },
+            ],
+            kind: TypeMetadataKind.and,
+          },
+          {
+            children: [
+              { kind: TypeMetadataKind.objectType },
+              {
+                child: { kind: TypeMetadataKind.integerType },
+                isOptional: false,
+                kind: TypeMetadataKind.propertyType,
+                property: 'bar',
+              },
+              {
+                child: { kind: TypeMetadataKind.noneType },
+                kind: TypeMetadataKind.stringIndexSignatureType,
+              },
+            ],
+            kind: TypeMetadataKind.and,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: {
+              bar: 2,
+              foo: 'x',
+            },
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = simplifyTypeMetadata(typeMetadataFixture);
+      });
+
+      it('should return noneType TypeMetadata', () => {
+        const expected: TypeMetadata = {
+          kind: TypeMetadataKind.noneType,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
+
+  describe('having an and TypeMetadata of a closed object and an open allOf property bag', () => {
+    let typeMetadataFixture: TypeMetadata;
+
+    beforeAll(() => {
+      typeMetadataFixture = {
+        children: [
+          { kind: TypeMetadataKind.objectType },
+          {
+            child: { kind: TypeMetadataKind.stringType },
+            isOptional: true,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+          {
+            child: { kind: TypeMetadataKind.noneType },
+            kind: TypeMetadataKind.stringIndexSignatureType,
+          },
+          {
+            children: [
+              {
+                child: { kind: TypeMetadataKind.floatType },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'bar',
+              },
+            ],
+            kind: TypeMetadataKind.and,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      };
+    });
+
+    describe('when called', () => {
+      let result: TypeMetadata;
+
+      beforeAll(() => {
+        result = simplifyTypeMetadata(typeMetadataFixture);
+      });
+
+      it('should keep the open property bag out of the parent additionalProperties scope', () => {
+        const valueWithOnlyDeclaredParentProperty: JsonValue = {
+          foo: 'x',
+        };
+        const valueWithAllOfProperty: JsonValue = {
+          bar: 1,
+          foo: 'x',
+        };
+
+        expect(
+          doesJsonValueInhabitTypeMetadata(
+            valueWithOnlyDeclaredParentProperty,
+            result,
+          ),
+        ).toBe(true);
+        expect(
+          doesJsonValueInhabitTypeMetadata(valueWithAllOfProperty, result),
+        ).toBe(false);
+      });
+    });
+  });
+
+  describe('having an and TypeMetadata of a closed object, an open allOf property bag, and a const with both properties', () => {
+    let typeMetadataFixture: TypeMetadata;
+
+    beforeAll(() => {
+      typeMetadataFixture = {
+        children: [
+          { kind: TypeMetadataKind.objectType },
+          {
+            child: { kind: TypeMetadataKind.stringType },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'foo',
+          },
+          {
+            child: { kind: TypeMetadataKind.noneType },
+            kind: TypeMetadataKind.stringIndexSignatureType,
+          },
+          {
+            children: [
+              {
+                child: { kind: TypeMetadataKind.floatType },
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'bar',
+              },
+            ],
+            kind: TypeMetadataKind.and,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: {
+              bar: 1,
+              foo: 'x',
+            },
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = simplifyTypeMetadata(typeMetadataFixture);
+      });
+
+      it('should return noneType TypeMetadata', () => {
+        const expected: TypeMetadata = {
+          kind: TypeMetadataKind.noneType,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
+
+  describe('having an and TypeMetadata with two propertyType children that share an or TypeMetadata and a matching object literalType', () => {
+    let colorTypeMetadataFixture: OrTypeMetadata;
+    let typeMetadataFixture: TypeMetadata;
+
+    beforeAll(() => {
+      colorTypeMetadataFixture = {
+        children: [
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: 'red',
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: 'green',
+          },
+        ],
+        kind: TypeMetadataKind.or,
+      };
+      typeMetadataFixture = {
+        children: [
+          { kind: TypeMetadataKind.objectType },
+          {
+            child: colorTypeMetadataFixture,
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'primary',
+          },
+          {
+            child: colorTypeMetadataFixture,
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'secondary',
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: {
+              primary: 'red',
+              secondary: 'red',
+            },
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = simplifyTypeMetadata(typeMetadataFixture);
+      });
+
+      it('should absorb the object literalType', () => {
+        const expected: TypeMetadata = {
+          kind: TypeMetadataKind.literalType,
+          literal: {
+            primary: 'red',
+            secondary: 'red',
+          },
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
+
+  describe('having an and TypeMetadata of an or of shared stringType propertyType children and a mismatching object literalType', () => {
+    let stringTypeMetadataFixture: TypeMetadata;
+    let typeMetadataFixture: TypeMetadata;
+
+    beforeAll(() => {
+      stringTypeMetadataFixture = {
+        kind: TypeMetadataKind.stringType,
+      };
+      typeMetadataFixture = {
+        children: [
+          {
+            children: [
+              {
+                child: stringTypeMetadataFixture,
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'foo',
+              },
+              {
+                child: stringTypeMetadataFixture,
+                isOptional: true,
+                kind: TypeMetadataKind.propertyType,
+                property: 'bar',
+              },
+            ],
+            kind: TypeMetadataKind.or,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: {
+              bar: 1,
+              foo: 1,
+            },
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = simplifyTypeMetadata(typeMetadataFixture);
+      });
+
+      it('should return noneType TypeMetadata', () => {
+        const expected: TypeMetadata = {
+          kind: TypeMetadataKind.noneType,
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
+
+  describe('having an and TypeMetadata of the same or TypeMetadata twice and a matching literalType', () => {
+    let colorTypeMetadataFixture: OrTypeMetadata;
+    let typeMetadataFixture: TypeMetadata;
+
+    beforeAll(() => {
+      colorTypeMetadataFixture = {
+        children: [
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: 'red',
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: 'green',
+          },
+        ],
+        kind: TypeMetadataKind.or,
+      };
+      typeMetadataFixture = {
+        children: [
+          colorTypeMetadataFixture,
+          colorTypeMetadataFixture,
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: 'red',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = simplifyTypeMetadata(typeMetadataFixture);
+      });
+
+      it('should absorb the literalType', () => {
+        const expected: TypeMetadata = {
+          kind: TypeMetadataKind.literalType,
+          literal: 'red',
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
+
+  describe('having a titled and TypeMetadata with stringType and a literalType child', () => {
+    let typeMetadataFixture: TypeMetadata;
+
+    beforeAll(() => {
+      typeMetadataFixture = {
+        children: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: 'discreteNumericRange',
+          },
+        ],
+        id: 'Kind',
+        kind: TypeMetadataKind.and,
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = simplifyTypeMetadata(typeMetadataFixture);
+      });
+
+      it('should keep the TypeMetadata id on the absorbed literalType', () => {
+        const expected: TypeMetadata = {
+          id: 'Kind',
+          kind: TypeMetadataKind.literalType,
+          literal: 'discreteNumericRange',
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
 
   describe('having a circular and TypeMetadata with an objectType child', () => {
     let typeMetadataFixture: AndTypeMetadata;

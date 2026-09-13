@@ -282,7 +282,7 @@ describe(transformJsonSchemaToTypeScript, () => {
         enum: ['a', 'b'],
         type: 'string',
       },
-      'export type Type1 = string;\nexport type Root = (Type1 & "a") | (Type1 & "b");',
+      'export type Root = "a" | "b";',
     ],
     [
       'a string schema with a const',
@@ -290,7 +290,7 @@ describe(transformJsonSchemaToTypeScript, () => {
         const: 'foo',
         type: 'string',
       },
-      'export type Root = "foo" & string;',
+      'export type Root = "foo";',
     ],
     [
       'an allOf schema of properties',
@@ -2088,6 +2088,664 @@ describe(transformJsonSchemaToTypeScript, () => {
 
       it('should return the expected TypeScript module', () => {
         expect(result).toBe('export type Root = never;');
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an object schema with three string enum properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          color: {
+            enum: ['red', 'green'],
+            type: 'string',
+          },
+          size: {
+            enum: ['s', 'm'],
+            type: 'string',
+          },
+          status: {
+            enum: ['on', 'off'],
+            type: 'string',
+          },
+        },
+        required: ['color', 'size', 'status'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should absorb each string enum without Type1, Type2, or Type3 aliases', () => {
+        expect(result).toBe(
+          'export type Root = { color: "red" | "green"; size: "s" | "m"; status: "on" | "off" };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an object schema with a string const property', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        properties: {
+          kind: {
+            const: 'discreteNumericRange',
+            type: 'string',
+          },
+          name: {
+            type: 'string',
+          },
+        },
+        required: ['kind', 'name'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should emit the const literal without intersecting string', () => {
+        expect(result).toBe(
+          'export type Root = { kind: "discreteNumericRange"; name: string };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an object schema with a nested object const that satisfies properties, items, and additionalProperties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        additionalProperties: false,
+        const: {
+          user: {
+            tags: ['reader', 'writer'],
+            username: 'ada',
+          },
+        },
+        properties: {
+          user: {
+            additionalProperties: false,
+            properties: {
+              tags: {
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+              username: {
+                type: 'string',
+              },
+            },
+            required: ['tags', 'username'],
+            type: 'object',
+          },
+        },
+        required: ['user'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should emit the object const without intersecting object constraints', () => {
+        expect(result).toBe(
+          'export type Root = { user: { tags: ["reader", "writer"]; username: "ada" } };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an object schema with a nested object const whose array items do not inhabit the items schema', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        additionalProperties: false,
+        const: {
+          user: {
+            tags: ['reader', 1],
+            username: 'ada',
+          },
+        },
+        properties: {
+          user: {
+            additionalProperties: false,
+            properties: {
+              tags: {
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+              username: {
+                type: 'string',
+              },
+            },
+            required: ['tags', 'username'],
+            type: 'object',
+          },
+        },
+        required: ['user'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should return never', () => {
+        expect(result).toBe('export type Root = never;');
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an object schema with a const that includes an additional property when additionalProperties is false', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        additionalProperties: false,
+        const: {
+          extra: true,
+          name: 'alpha',
+        },
+        properties: {
+          name: {
+            type: 'string',
+          },
+        },
+        required: ['name'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should return never', () => {
+        expect(result).toBe('export type Root = never;');
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an allOf of two additionalProperties false schemas and a const object with both properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        allOf: [
+          {
+            additionalProperties: false,
+            properties: {
+              foo: {
+                type: 'string',
+              },
+            },
+            required: ['foo'],
+            type: 'object',
+          },
+          {
+            additionalProperties: false,
+            properties: {
+              bar: {
+                type: 'integer',
+              },
+            },
+            required: ['bar'],
+            type: 'object',
+          },
+        ],
+        const: {
+          bar: 2,
+          foo: 'x',
+        },
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should return never', () => {
+        expect(result).toBe('export type Root = never;');
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an object schema with a const array of objects and matching items', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        const: [
+          {
+            id: 'a',
+            value: 1,
+          },
+          {
+            id: 'b',
+            value: 2,
+          },
+        ],
+        items: {
+          additionalProperties: false,
+          properties: {
+            id: {
+              type: 'string',
+            },
+            value: {
+              type: 'integer',
+            },
+          },
+          required: ['id', 'value'],
+          type: 'object',
+        },
+        type: 'array',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should emit the array const', () => {
+        expect(result).toBe(
+          'export type Root = [{ id: "a"; value: 1 }, { id: "b"; value: 2 }];',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an object schema with a const that is not one of the enum objects', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        const: {
+          kind: 'other',
+        },
+        enum: [
+          {
+            kind: 'alpha',
+          },
+          {
+            kind: 'beta',
+          },
+        ],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should return never', () => {
+        expect(result).toBe('export type Root = never;');
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an object schema with two properties that $ref the same string enum and a matching const', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        $defs: {
+          Color: {
+            enum: ['red', 'green'],
+            title: 'Color',
+            type: 'string',
+          },
+        },
+        $id: 'https://example.com/flag-pair',
+        const: {
+          primary: 'red',
+          secondary: 'red',
+        },
+        properties: {
+          primary: {
+            $ref: '#/$defs/Color',
+          },
+          secondary: {
+            $ref: '#/$defs/Color',
+          },
+        },
+        required: ['primary', 'secondary'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([jsonSchemaFixture]),
+        );
+      });
+
+      it('should absorb the object const against the shared enum TypeMetadata', () => {
+        expect(result).toBe(
+          'export type Root = { primary: "red"; secondary: "red" };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an anyOf of two $ref string properties and a const that matches neither', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        $defs: {
+          Name: {
+            type: 'string',
+          },
+        },
+        $id: 'https://example.com/any-of-name',
+        anyOf: [
+          {
+            properties: {
+              foo: {
+                $ref: '#/$defs/Name',
+              },
+            },
+          },
+          {
+            properties: {
+              bar: {
+                $ref: '#/$defs/Name',
+              },
+            },
+          },
+        ],
+        const: {
+          bar: 1,
+          foo: 1,
+        },
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([jsonSchemaFixture]),
+        );
+      });
+
+      it('should return never', () => {
+        expect(result).toBe('export type Root = never;');
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having a closed object allOf an open property bag', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        additionalProperties: false,
+        allOf: [
+          {
+            properties: {
+              bar: {
+                type: 'number',
+              },
+            },
+          },
+        ],
+        properties: {
+          foo: {
+            type: 'string',
+          },
+        },
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should keep the allOf properties outside the parent object type', () => {
+        expect(result).toBe(
+          'export type Root = { foo?: string } & { bar?: number };',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having a closed object allOf an open property bag and a const with both properties', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        additionalProperties: false,
+        allOf: [
+          {
+            properties: {
+              bar: {
+                type: 'number',
+              },
+            },
+          },
+        ],
+        const: {
+          bar: 1,
+          foo: 'x',
+        },
+        properties: {
+          foo: {
+            type: 'string',
+          },
+        },
+        required: ['foo'],
+        type: 'object',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext(),
+        );
+      });
+
+      it('should return never', () => {
+        expect(result).toBe('export type Root = never;');
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having an allOf of the same $ref string enum twice and a matching const', () => {
+    let jsonSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      jsonSchemaFixture = {
+        $defs: {
+          Color: {
+            enum: ['red', 'green'],
+            type: 'string',
+          },
+        },
+        $id: 'https://example.com/color-twice',
+        allOf: [
+          {
+            $ref: '#/$defs/Color',
+          },
+          {
+            $ref: '#/$defs/Color',
+          },
+        ],
+        const: 'red',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformJsonSchemaToTypeScript(
+          jsonSchemaFixture,
+          generateTransformJsonSchemaContext([jsonSchemaFixture]),
+        );
+      });
+
+      it('should absorb the const against the reused enum TypeMetadata', () => {
+        expect(result).toBe('export type Root = "red";');
       });
 
       it('should return a TypeScript module that compiles', () => {

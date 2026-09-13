@@ -445,9 +445,9 @@ describe(transformTypeMetadataToTypeScript, () => {
         result = transformTypeMetadataToTypeScript(typeMetadataFixture);
       });
 
-      it('should return a named alias for the shared child', () => {
+      it('should inline the shared untitled primitive TypeMetadata', () => {
         expect(result).toBe(
-          'export type Type1 = string;\nexport type Root = { foo?: Type1; bar?: Type1 };',
+          'export type Root = { foo?: string; bar?: string };',
         );
       });
     });
