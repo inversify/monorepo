@@ -1,5 +1,14 @@
 # @inversifyjs/json-schema-2-typescript
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated metadata parse flow with literal type intersection algorithm.
+- Updated metadata parse flow with non titled type simplification algorithm.
+- Updated dependencies
+  - @inversifyjs/json-schema-2-type-metadata@0.3.1
+
 ## 0.2.1
 
 ### Patch Changes
