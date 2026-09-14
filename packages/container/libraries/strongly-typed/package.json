@@ -6,7 +6,7 @@
   "description": "InversifyJs strong type definitions",
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "@types/node": "24.13.3",
+    "@types/node": "24.13.4",
     "@vitest/coverage-v8": "5.0.0",
     "eslint": "10.10.0",
     "prettier": "3.9.6",
