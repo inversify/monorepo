@@ -11,7 +11,7 @@
     "@inversifyjs/prisma": "1.0.0",
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
-    "@types/node": "24.13.3",
+    "@types/node": "24.13.4",
     "@vitest/coverage-v8": "5.0.0",
     "eslint": "10.10.0",
     "glob": "13.0.6",

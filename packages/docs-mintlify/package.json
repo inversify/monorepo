@@ -5,13 +5,13 @@
   },
   "description": "InversifyJs Mintlify docs site package",
   "dependencies": {
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@inversifyjs/code-examples": "workspace:*",
-    "@mintlify/cli": "4.0.1479",
-    "@types/react": "19.2.18",
+    "@mintlify/cli": "4.0.1489",
+    "@types/react": "19.3.0",
     "eslint": "10.10.0",
     "prettier": "3.9.6",
     "typescript": "6.0.3"
