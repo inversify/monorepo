@@ -160,6 +160,115 @@ describe(printTypeMetadata, () => {
       '{ id: string }[]',
     ],
     [
+      'a closed prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      '[] | [string] | [string, number]',
+    ],
+    [
+      'a closed prefixItems arrayType TypeMetadata with minItems',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      '[string, number]',
+    ],
+    [
+      'an open prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      '[] | [string] | [string, number, ...unknown[]]',
+    ],
+    [
+      'a prefixItems arrayType TypeMetadata with a rest type',
+      {
+        child: { kind: TypeMetadataKind.booleanType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      '[] | [string] | [string, number, ...boolean[]]',
+    ],
+    [
+      'a prefixItems arrayType TypeMetadata with a union rest type',
+      {
+        child: {
+          children: [
+            { kind: TypeMetadataKind.stringType },
+            { kind: TypeMetadataKind.floatType },
+          ],
+          kind: TypeMetadataKind.or,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [{ kind: TypeMetadataKind.booleanType }],
+      },
+      '[] | [boolean, ...(string | number)[]]',
+    ],
+    [
+      'a nested closed prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          {
+            child: { kind: TypeMetadataKind.noneType },
+            kind: TypeMetadataKind.arrayType,
+            prefixItems: [
+              { kind: TypeMetadataKind.stringType },
+              { kind: TypeMetadataKind.floatType },
+            ],
+          },
+          { kind: TypeMetadataKind.booleanType },
+        ],
+      },
+      '[] | [([] | [string] | [string, number])] | [([] | [string] | [string, number]), boolean]',
+    ],
+    [
+      'a minItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+      },
+      '[string, string, ...string[]]',
+    ],
+    [
+      'a maxItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 2,
+      },
+      '[] | [string] | [string, string]',
+    ],
+    [
+      'a noneType items arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+      },
+      '[]',
+    ],
+    [
       'an or TypeMetadata',
       {
         children: [
@@ -455,6 +564,45 @@ describe(printTypeMetadata, () => {
 
       it('should not parenthesize the named array element', () => {
         expect(result).toBe('Foo[]');
+      });
+    });
+  });
+
+  describe('having a closed prefixItems arrayType TypeMetadata with a named prefix item', () => {
+    let prefixItemTypeMetadataFixture: TypeMetadata;
+    let typeMetadataFixture: TypeMetadata;
+    let contextFixture: PrintTypeMetadataContext;
+
+    beforeAll(() => {
+      prefixItemTypeMetadataFixture = {
+        children: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+        kind: TypeMetadataKind.or,
+      };
+      typeMetadataFixture = {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          prefixItemTypeMetadataFixture,
+          { kind: TypeMetadataKind.booleanType },
+        ],
+      };
+      contextFixture = generatePrintTypeMetadataContext([
+        [prefixItemTypeMetadataFixture, 'Foo'],
+      ]);
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = printTypeMetadata(typeMetadataFixture, contextFixture);
+      });
+
+      it('should print the named prefix item without expanding it', () => {
+        expect(result).toBe('[] | [Foo] | [Foo, boolean]');
       });
     });
   });

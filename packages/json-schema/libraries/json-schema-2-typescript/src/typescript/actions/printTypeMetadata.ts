@@ -1,5 +1,6 @@
 import {
   type AndTypeMetadata,
+  type ArrayTypeMetadata,
   type PropertyTypeMetadata,
   type StringIndexSignatureTypeMetadata,
   type TypeMetadata,
@@ -7,6 +8,12 @@ import {
 } from '@inversifyjs/json-schema-type-metadata';
 
 import { type PrintTypeMetadataContext } from '../models/PrintTypeMetadataContext.js';
+import {
+  doesArrayTypeMetadataPrintAsUnion,
+  getArrayTypeMetadataItem,
+  getArrayTypeMetadataMaxItems,
+  getArrayTypeMetadataMinItems,
+} from './getArrayTypeMetadataBounds.js';
 import { isTypeMetadataAssignableTo } from './isTypeMetadataAssignableTo.js';
 import {
   printJsonValueLiteral,
@@ -38,7 +45,7 @@ export function printTypeMetadataExpanded(
     case TypeMetadataKind.anyType:
       return 'unknown';
     case TypeMetadataKind.arrayType:
-      return `${parenthesizeArrayElement(typeMetadata.child, context)}[]`;
+      return printArrayTypeMetadata(typeMetadata, context);
     case TypeMetadataKind.booleanType:
       return 'boolean';
     case TypeMetadataKind.floatType:
@@ -63,6 +70,87 @@ export function printTypeMetadataExpanded(
   }
 }
 
+function printArrayTypeMetadata(
+  typeMetadata: ArrayTypeMetadata,
+  context: PrintTypeMetadataContext,
+): string {
+  const minItems: number = getArrayTypeMetadataMinItems(typeMetadata);
+  const maxItems: number = getArrayTypeMetadataMaxItems(typeMetadata);
+  const prefixItemsLength: number = typeMetadata.prefixItems?.length ?? 0;
+  const hasUnboundedRest: boolean =
+    typeMetadata.child.kind !== TypeMetadataKind.noneType &&
+    maxItems === Number.POSITIVE_INFINITY;
+
+  if (minItems > maxItems) {
+    return 'never';
+  }
+
+  if (prefixItemsLength === 0 && minItems === 0 && hasUnboundedRest) {
+    return `${parenthesizeArrayElement(typeMetadata.child, context)}[]`;
+  }
+
+  const printedTupleBranches: string[] = [];
+
+  if (hasUnboundedRest) {
+    for (
+      let length: number = minItems;
+      length < prefixItemsLength;
+      length += 1
+    ) {
+      printedTupleBranches.push(
+        printTupleOfLength(typeMetadata, length, false, context),
+      );
+    }
+
+    printedTupleBranches.push(
+      printTupleOfLength(
+        typeMetadata,
+        Math.max(minItems, prefixItemsLength),
+        true,
+        context,
+      ),
+    );
+  } else {
+    for (let length: number = minItems; length <= maxItems; length += 1) {
+      printedTupleBranches.push(
+        printTupleOfLength(typeMetadata, length, false, context),
+      );
+    }
+  }
+
+  return printedTupleBranches.join(' | ');
+}
+
+function printTupleOfLength(
+  typeMetadata: ArrayTypeMetadata,
+  length: number,
+  openRest: boolean,
+  context: PrintTypeMetadataContext,
+): string {
+  if (length === 0 && !openRest) {
+    return '[]';
+  }
+
+  const printedItems: string[] = [];
+
+  for (let index: number = 0; index < length; index += 1) {
+    printedItems.push(
+      parenthesizeArrayElement(
+        getArrayTypeMetadataItem(typeMetadata, index),
+        context,
+      ),
+    );
+  }
+
+  if (openRest) {
+    printedItems.push(
+      `...${parenthesizeArrayElement(typeMetadata.child, context)}[]`,
+    );
+  }
+
+  return `[${printedItems.join(', ')}]`;
+}
+
 function parenthesizeArrayElement(
   typeMetadata: TypeMetadata,
   context: PrintTypeMetadataContext,
@@ -81,6 +169,13 @@ function parenthesizeArrayElement(
     return `(${printed})`;
   }
 
+  if (
+    typeMetadata.kind === TypeMetadataKind.arrayType &&
+    doesArrayTypeMetadataPrintAsUnion(typeMetadata)
+  ) {
+    return `(${printed})`;
+  }
+
   return printed;
 }
 
@@ -95,6 +190,13 @@ function parenthesizeIntersectionMember(
   }
 
   if (typeMetadata.kind === TypeMetadataKind.or) {
+    return `(${printed})`;
+  }
+
+  if (
+    typeMetadata.kind === TypeMetadataKind.arrayType &&
+    doesArrayTypeMetadataPrintAsUnion(typeMetadata)
+  ) {
     return `(${printed})`;
   }
 

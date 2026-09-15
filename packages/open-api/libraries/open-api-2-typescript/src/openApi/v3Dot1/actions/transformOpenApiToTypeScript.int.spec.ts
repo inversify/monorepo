@@ -116,6 +116,104 @@ describe(transformOpenApiToTypeScript, () => {
       },
       'export type Allowed = unknown;\nexport type Denied = never;\nexport type Root = Allowed | Denied;',
     ],
+    [
+      'a closed tuple component schema',
+      {
+        components: {
+          schemas: {
+            Pair: {
+              items: false,
+              prefixItems: [
+                {
+                  type: 'string',
+                },
+                {
+                  type: 'number',
+                },
+              ],
+              type: 'array',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+      },
+      'export type Pair = [] | [string] | [string, number];\nexport type Root = Pair;',
+    ],
+    [
+      'a required closed tuple component schema',
+      {
+        components: {
+          schemas: {
+            Pair: {
+              items: false,
+              minItems: 2,
+              prefixItems: [
+                {
+                  type: 'string',
+                },
+                {
+                  type: 'number',
+                },
+              ],
+              type: 'array',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+      },
+      'export type Pair = [string, number];\nexport type Root = Pair;',
+    ],
+    [
+      'an open tuple component schema',
+      {
+        components: {
+          schemas: {
+            Coordinates: {
+              prefixItems: [
+                {
+                  type: 'number',
+                },
+                {
+                  type: 'number',
+                },
+              ],
+              type: 'array',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+      },
+      'export type Coordinates = [] | [number] | [number, number, ...unknown[]];\nexport type Root = Coordinates;',
+    ],
+    [
+      'a tuple component schema with rest items',
+      {
+        components: {
+          schemas: {
+            Row: {
+              items: {
+                type: 'boolean',
+              },
+              prefixItems: [
+                {
+                  type: 'string',
+                },
+                {
+                  type: 'number',
+                },
+              ],
+              type: 'array',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+      },
+      'export type Row = [] | [string] | [string, number, ...boolean[]];\nexport type Root = Row;',
+    ],
   ])(
     'having %s',
     (_: string, openApiObjectFixture: OpenApi3Dot1Object, expected: string) => {
@@ -187,6 +285,65 @@ describe(transformOpenApiToTypeScript, () => {
       it('should reuse TodoV1 for the array items', () => {
         expect(result).toBe(
           'export type PaginatedTodosV1Response = { items: TodoV1[] };\nexport type TodoV1 = { id: string; title: string };\nexport type Root = PaginatedTodosV1Response | TodoV1;',
+        );
+      });
+
+      it('should return a TypeScript module that compiles', () => {
+        expect(getTypeScriptDiagnosticMessages(result as string)).toStrictEqual(
+          [],
+        );
+      });
+    });
+  });
+
+  describe('having a component schema referenced as a prefixItem', () => {
+    let openApiObjectFixture: OpenApi3Dot1Object;
+
+    beforeAll(() => {
+      openApiObjectFixture = {
+        components: {
+          schemas: {
+            TodoEntry: {
+              items: false,
+              prefixItems: [
+                {
+                  $ref: '#/components/schemas/TodoV1',
+                },
+                {
+                  type: 'string',
+                },
+              ],
+              type: 'array',
+            },
+            TodoV1: {
+              properties: {
+                id: {
+                  type: 'string',
+                },
+                title: {
+                  type: 'string',
+                },
+              },
+              required: ['id', 'title'],
+              type: 'object',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = transformOpenApiToTypeScript(openApiObjectFixture);
+      });
+
+      it('should reuse TodoV1 for the tuple prefix item', () => {
+        expect(result).toBe(
+          'export type TodoEntry = [] | [TodoV1] | [TodoV1, string];\nexport type TodoV1 = { id: string; title: string };\nexport type Root = TodoEntry | TodoV1;',
         );
       });
 

@@ -223,6 +223,272 @@ describe(isTypeMetadataAssignableTo, () => {
       true,
     ],
     [
+      'a closed prefixItems arrayType TypeMetadata to a matching closed prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'a closed prefixItems arrayType TypeMetadata to an open prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'an open prefixItems arrayType TypeMetadata to a closed prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'a mismatched closed prefixItems arrayType TypeMetadata to a closed prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.booleanType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'a matching tuple literalType TypeMetadata to a closed prefixItems arrayType TypeMetadata',
+      { kind: TypeMetadataKind.literalType, literal: ['foo', 1] },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'a short array literalType TypeMetadata to a closed prefixItems arrayType TypeMetadata',
+      { kind: TypeMetadataKind.literalType, literal: ['foo'] },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'a short array literalType TypeMetadata to a prefixItems arrayType TypeMetadata with minItems',
+      { kind: TypeMetadataKind.literalType, literal: ['foo'] },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'an empty array literalType TypeMetadata to a minItems arrayType TypeMetadata',
+      { kind: TypeMetadataKind.literalType, literal: [] },
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 1,
+      },
+      false,
+    ],
+    [
+      'a closed prefixItems arrayType TypeMetadata without minItems to a prefixItems arrayType TypeMetadata with minItems',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'a prefixItems arrayType TypeMetadata with minItems to a closed prefixItems arrayType TypeMetadata without minItems',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'a homogeneous string arrayType TypeMetadata to an open prefixItems arrayType TypeMetadata with a later number prefixItem',
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.arrayType,
+      },
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'a required closed prefixItems arrayType TypeMetadata to a shorter closed prefixItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [{ kind: TypeMetadataKind.stringType }],
+      },
+      false,
+    ],
+    [
+      'a finite maxItems string arrayType TypeMetadata to a finite maxItems anyType arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+      },
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+      },
+      true,
+    ],
+    [
+      'a finite maxItems string arrayType TypeMetadata to a finite maxItems boolean arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+      },
+      {
+        child: { kind: TypeMetadataKind.booleanType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+      },
+      false,
+    ],
+    [
+      'an open prefixItems arrayType TypeMetadata with finite maxItems to an open prefixItems arrayType TypeMetadata with a wider rest',
+      {
+        child: { kind: TypeMetadataKind.floatType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+        prefixItems: [{ kind: TypeMetadataKind.stringType }],
+      },
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+        prefixItems: [{ kind: TypeMetadataKind.stringType }],
+      },
+      true,
+    ],
+    [
+      'an open prefixItems arrayType TypeMetadata with finite maxItems to an open prefixItems arrayType TypeMetadata with a mismatched rest',
+      {
+        child: { kind: TypeMetadataKind.floatType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+        prefixItems: [{ kind: TypeMetadataKind.stringType }],
+      },
+      {
+        child: { kind: TypeMetadataKind.booleanType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+        prefixItems: [{ kind: TypeMetadataKind.stringType }],
+      },
+      false,
+    ],
+    [
       'a stringType TypeMetadata to an or TypeMetadata of stringType and booleanType',
       { kind: TypeMetadataKind.stringType },
       {

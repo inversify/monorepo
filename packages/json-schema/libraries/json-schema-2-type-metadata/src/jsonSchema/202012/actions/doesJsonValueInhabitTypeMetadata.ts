@@ -1,5 +1,6 @@
 import {
   type AndTypeMetadata,
+  type ArrayTypeMetadata,
   type StringIndexSignatureTypeMetadata,
   type TypeMetadata,
   TypeMetadataKind,
@@ -10,6 +11,11 @@ import {
 } from '@inversifyjs/json-schema-types';
 
 import { areJsonValuesEqual } from './areJsonValuesEqual.js';
+import {
+  getArrayTypeMetadataItem,
+  getArrayTypeMetadataMaxItems,
+  getArrayTypeMetadataMinItems,
+} from './getArrayTypeMetadataBounds.js';
 
 export function doesJsonValueInhabitTypeMetadata(
   value: JsonValue,
@@ -69,15 +75,10 @@ function doesJsonValueInhabitTypeMetadataWhileVisiting(
     case TypeMetadataKind.anyType:
       return true;
     case TypeMetadataKind.arrayType:
-      return (
-        Array.isArray(value) &&
-        value.every((item: JsonValue) =>
-          doesJsonValueInhabitTypeMetadataRecursive(
-            item,
-            typeMetadata.child,
-            visitingTypeMetadataValues,
-          ),
-        )
+      return doesJsonValueInhabitArrayTypeMetadata(
+        value,
+        typeMetadata,
+        visitingTypeMetadataValues,
       );
     case TypeMetadataKind.booleanType:
       return typeof value === 'boolean';
@@ -123,6 +124,32 @@ function doesJsonValueInhabitTypeMetadataWhileVisiting(
     case TypeMetadataKind.stringType:
       return typeof value === 'string';
   }
+}
+
+function doesJsonValueInhabitArrayTypeMetadata(
+  value: JsonValue,
+  typeMetadata: ArrayTypeMetadata,
+  visitingTypeMetadataValues: Map<TypeMetadata, Set<JsonValue>>,
+): boolean {
+  if (!Array.isArray(value)) {
+    return false;
+  }
+
+  if (value.length < getArrayTypeMetadataMinItems(typeMetadata)) {
+    return false;
+  }
+
+  if (value.length > getArrayTypeMetadataMaxItems(typeMetadata)) {
+    return false;
+  }
+
+  return value.every((item: JsonValue, index: number) =>
+    doesJsonValueInhabitTypeMetadataRecursive(
+      item,
+      getArrayTypeMetadataItem(typeMetadata, index),
+      visitingTypeMetadataValues,
+    ),
+  );
 }
 
 function doesJsonValueInhabitAndTypeMetadata(

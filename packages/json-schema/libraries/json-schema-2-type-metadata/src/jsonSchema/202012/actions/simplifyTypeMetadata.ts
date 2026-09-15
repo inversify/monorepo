@@ -11,6 +11,11 @@ import { type JsonValue } from '@inversifyjs/json-schema-types';
 
 import { areJsonValuesEqual } from './areJsonValuesEqual.js';
 import { doesJsonValueInhabitTypeMetadata } from './doesJsonValueInhabitTypeMetadata.js';
+import {
+  getArrayTypeMetadataItem,
+  getArrayTypeMetadataMaxItems,
+  getArrayTypeMetadataMinItems,
+} from './getArrayTypeMetadataBounds.js';
 
 interface TypeMetadataMutable {
   child?: TypeMetadata;
@@ -19,6 +24,9 @@ interface TypeMetadataMutable {
   isOptional?: boolean;
   kind?: TypeMetadataKind;
   literal?: JsonValue;
+  maxItems?: number;
+  minItems?: number;
+  prefixItems?: TypeMetadata[];
   property?: string;
 }
 
@@ -42,6 +50,9 @@ function copyTypeMetadataOnto(
   delete mutableTarget.id;
   delete mutableTarget.isOptional;
   delete mutableTarget.literal;
+  delete mutableTarget.maxItems;
+  delete mutableTarget.minItems;
+  delete mutableTarget.prefixItems;
   delete mutableTarget.property;
 
   Object.assign(mutableTarget, source);
@@ -505,6 +516,214 @@ function intersectPropertyTypeMetadata(
   return firstPropertyTypeMetadata;
 }
 
+function assignArrayTypeMetadataCardinality(
+  arrayTypeMetadata: ArrayTypeMetadata,
+  minItems: number,
+  maxItems: number,
+): void {
+  const mutableArrayTypeMetadata: TypeMetadataMutable = arrayTypeMetadata;
+
+  if (minItems > 0) {
+    mutableArrayTypeMetadata.minItems = minItems;
+  } else {
+    delete mutableArrayTypeMetadata.minItems;
+  }
+
+  const impliedMaxItems: number =
+    arrayTypeMetadata.child.kind === TypeMetadataKind.noneType
+      ? (arrayTypeMetadata.prefixItems?.length ?? 0)
+      : Number.POSITIVE_INFINITY;
+
+  if (Number.isFinite(maxItems) && maxItems < impliedMaxItems) {
+    mutableArrayTypeMetadata.maxItems = maxItems;
+  } else {
+    delete mutableArrayTypeMetadata.maxItems;
+  }
+}
+
+function intersectArrayTypeMetadata(
+  left: ArrayTypeMetadata,
+  right: ArrayTypeMetadata,
+  ancestorTypeMetadataSet: Set<TypeMetadata>,
+  simplifiedTypeMetadataSet: Set<TypeMetadata>,
+): TypeMetadata {
+  const minItems: number = Math.max(
+    getArrayTypeMetadataMinItems(left),
+    getArrayTypeMetadataMinItems(right),
+  );
+  let maxItems: number = Math.min(
+    getArrayTypeMetadataMaxItems(left),
+    getArrayTypeMetadataMaxItems(right),
+  );
+
+  if (minItems > maxItems) {
+    return {
+      kind: TypeMetadataKind.noneType,
+    };
+  }
+
+  const leftPrefixItemsLength: number = left.prefixItems?.length ?? 0;
+  const rightPrefixItemsLength: number = right.prefixItems?.length ?? 0;
+  const rawPrefixItemsLength: number = Math.max(
+    leftPrefixItemsLength,
+    rightPrefixItemsLength,
+  );
+  const prefixItemsLength: number = Number.isFinite(maxItems)
+    ? Math.min(rawPrefixItemsLength, maxItems)
+    : rawPrefixItemsLength;
+  const prefixItems: TypeMetadata[] = [];
+  let truncatedRest: boolean = false;
+
+  for (let i: number = 0; i < prefixItemsLength; i += 1) {
+    const prefixItemConstraint: AndTypeMetadata = {
+      children: [
+        getArrayTypeMetadataItem(left, i),
+        getArrayTypeMetadataItem(right, i),
+      ],
+      kind: TypeMetadataKind.and,
+    };
+    const prefixItem: TypeMetadata = simplifyTypeMetadataRecursive(
+      prefixItemConstraint,
+      ancestorTypeMetadataSet,
+      simplifiedTypeMetadataSet,
+    );
+
+    if (prefixItem.kind === TypeMetadataKind.noneType) {
+      if (i < minItems) {
+        return {
+          kind: TypeMetadataKind.noneType,
+        };
+      }
+
+      maxItems = i;
+      truncatedRest = true;
+      break;
+    }
+
+    prefixItems.push(prefixItem);
+  }
+
+  const child: TypeMetadata = truncatedRest
+    ? {
+        kind: TypeMetadataKind.noneType,
+      }
+    : simplifyTypeMetadataRecursive(
+        {
+          children: [left.child, right.child],
+          kind: TypeMetadataKind.and,
+        },
+        ancestorTypeMetadataSet,
+        simplifiedTypeMetadataSet,
+      );
+  const arrayTypeMetadata: ArrayTypeMetadata = {
+    child,
+    kind: TypeMetadataKind.arrayType,
+  };
+
+  if (prefixItems.length > 0) {
+    arrayTypeMetadata.prefixItems = prefixItems;
+  }
+
+  assignArrayTypeMetadataCardinality(arrayTypeMetadata, minItems, maxItems);
+
+  if (
+    getArrayTypeMetadataMinItems(arrayTypeMetadata) >
+    getArrayTypeMetadataMaxItems(arrayTypeMetadata)
+  ) {
+    return {
+      kind: TypeMetadataKind.noneType,
+    };
+  }
+
+  return arrayTypeMetadata;
+}
+
+function simplifyArrayTypeMetadata(
+  typeMetadata: ArrayTypeMetadata,
+  ancestorTypeMetadataSet: Set<TypeMetadata>,
+  simplifiedTypeMetadataSet: Set<TypeMetadata>,
+): TypeMetadata {
+  const mutableTypeMetadata: TypeMetadataMutable = typeMetadata;
+
+  if (typeMetadata.prefixItems !== undefined) {
+    typeMetadata.prefixItems = typeMetadata.prefixItems.map(
+      (prefixItem: TypeMetadata) =>
+        simplifyTypeMetadataRecursive(
+          prefixItem,
+          ancestorTypeMetadataSet,
+          simplifiedTypeMetadataSet,
+        ),
+    );
+  }
+
+  typeMetadata.child = simplifyTypeMetadataRecursive(
+    typeMetadata.child,
+    ancestorTypeMetadataSet,
+    simplifiedTypeMetadataSet,
+  );
+
+  const minItems: number = getArrayTypeMetadataMinItems(typeMetadata);
+
+  if (typeMetadata.prefixItems !== undefined) {
+    const prefixItems: TypeMetadata[] = [];
+
+    for (
+      let index: number = 0;
+      index < typeMetadata.prefixItems.length;
+      index += 1
+    ) {
+      const prefixItem: TypeMetadata = typeMetadata.prefixItems[
+        index
+      ] as TypeMetadata;
+
+      if (prefixItem.kind === TypeMetadataKind.noneType) {
+        if (index < minItems) {
+          return copyTypeMetadataOnto(typeMetadata, {
+            kind: TypeMetadataKind.noneType,
+          });
+        }
+
+        typeMetadata.child = {
+          kind: TypeMetadataKind.noneType,
+        };
+        break;
+      }
+
+      prefixItems.push(prefixItem);
+    }
+
+    typeMetadata.prefixItems = prefixItems;
+  }
+
+  let maxItems: number = getArrayTypeMetadataMaxItems(typeMetadata);
+
+  if (minItems > maxItems) {
+    return copyTypeMetadataOnto(typeMetadata, {
+      kind: TypeMetadataKind.noneType,
+    });
+  }
+
+  if (
+    typeMetadata.prefixItems !== undefined &&
+    Number.isFinite(maxItems) &&
+    typeMetadata.prefixItems.length > maxItems
+  ) {
+    typeMetadata.prefixItems = typeMetadata.prefixItems.slice(0, maxItems);
+    maxItems = getArrayTypeMetadataMaxItems(typeMetadata);
+  }
+
+  if (
+    typeMetadata.prefixItems !== undefined &&
+    typeMetadata.prefixItems.length === 0
+  ) {
+    delete mutableTypeMetadata.prefixItems;
+  }
+
+  assignArrayTypeMetadataCardinality(typeMetadata, minItems, maxItems);
+
+  return typeMetadata;
+}
+
 function intersectJsonSchemaInstanceTypes(
   left: TypeMetadata,
   right: TypeMetadata,
@@ -530,19 +749,12 @@ function intersectJsonSchemaInstanceTypes(
 
   switch (left.kind) {
     case TypeMetadataKind.arrayType: {
-      const itemConstraint: AndTypeMetadata = {
-        children: [left.child, (right as ArrayTypeMetadata).child],
-        kind: TypeMetadataKind.and,
-      };
-
-      return {
-        child: simplifyTypeMetadataRecursive(
-          itemConstraint,
-          ancestorTypeMetadataSet,
-          simplifiedTypeMetadataSet,
-        ),
-        kind: TypeMetadataKind.arrayType,
-      };
+      return intersectArrayTypeMetadata(
+        left,
+        right as ArrayTypeMetadata,
+        ancestorTypeMetadataSet,
+        simplifiedTypeMetadataSet,
+      );
     }
     case TypeMetadataKind.booleanType:
     case TypeMetadataKind.floatType:
@@ -661,6 +873,7 @@ function isTypeMetadataCyclic(typeMetadata: TypeMetadata): boolean {
       case TypeMetadataKind.or:
         return node.children.some(visit);
       case TypeMetadataKind.arrayType:
+        return (node.prefixItems?.some(visit) ?? false) || visit(node.child);
       case TypeMetadataKind.propertyType:
       case TypeMetadataKind.stringIndexSignatureType:
         return visit(node.child);
@@ -912,6 +1125,12 @@ function simplifyTypeMetadataRecursive(
       );
       break;
     case TypeMetadataKind.arrayType:
+      simplifiedTypeMetadata = simplifyArrayTypeMetadata(
+        typeMetadata,
+        ancestorTypeMetadataSet,
+        simplifiedTypeMetadataSet,
+      );
+      break;
     case TypeMetadataKind.propertyType:
     case TypeMetadataKind.stringIndexSignatureType:
       typeMetadata.child = simplifyTypeMetadataRecursive(
