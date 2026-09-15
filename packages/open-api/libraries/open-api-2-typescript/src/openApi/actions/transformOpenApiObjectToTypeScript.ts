@@ -12,6 +12,7 @@ import { Uri } from '@inversifyjs/uri';
 
 import { buildRootUnionTypeMetadata } from '../calculations/buildRootUnionTypeMetadata.js';
 import { collectNamedComponentSchemas } from '../calculations/collectNamedComponentSchemas.js';
+import { collectOperationParameterSchemas } from '../calculations/collectOperationParameterSchemas.js';
 import { collectPropertyTypeMetadataChildren } from '../calculations/collectPropertyTypeMetadataChildren.js';
 import { getOpenApiComponentSchemas } from '../calculations/getOpenApiComponentSchemas.js';
 import { type BuildOpenApiUriToSchemaMapResult } from '../models/BuildOpenApiUriToSchemaMapResult.js';
@@ -33,10 +34,6 @@ export function transformOpenApiObjectToTypeScript(
   const document: JsonValue = JSON.parse(
     JSON.stringify(openApiObject),
   ) as JsonValue;
-  const namedSchemas: JsonSchema[] = collectNamedComponentSchemas(
-    getOpenApiComponentSchemas(document),
-  );
-
   const uriToSchemaMapResult: BuildOpenApiUriToSchemaMapResult =
     buildOpenApiUriToSchemaMap(
       document,
@@ -49,6 +46,13 @@ export function transformOpenApiObjectToTypeScript(
   const documentBaseUri: string = uriToSchemaMapResult.documentBaseUri;
   const uriToSchemaMap: Map<string, JsonValue> =
     uriToSchemaMapResult.uriToSchemaMap;
+  const namedSchemas: JsonSchema[] = [
+    ...collectNamedComponentSchemas(getOpenApiComponentSchemas(document)),
+    ...collectOperationParameterSchemas(document, {
+      documentBaseUri,
+      resolveId: (id: string): JsonValue | undefined => uriToSchemaMap.get(id),
+    }),
+  ];
 
   const dynamicScopeEntries: DynamicScopeEntry[] = [
     {
