@@ -974,6 +974,59 @@ describe(transformOpenApiToTypeScript, () => {
       'export type ListTodosHeaders = { "X-Request-Id": string };\nexport type ListTodosCookies = { session?: string };\nexport type Root = ListTodosHeaders | ListTodosCookies;',
     ],
     [
+      'ignored Accept, Content-Type, and Authorization header parameters',
+      {
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'listTodos',
+              parameters: [
+                {
+                  in: 'header',
+                  name: 'authorization',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'header',
+                  name: 'Accept',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'header',
+                  name: 'Content-Type',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'header',
+                  name: 'X-Request-Id',
+                  required: true,
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'query',
+                  name: 'Authorization',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type ListTodosQuery = { Authorization?: string };\nexport type ListTodosHeaders = { "X-Request-Id": string };\nexport type Root = ListTodosQuery | ListTodosHeaders;',
+    ],
+    [
       'a component schema and a query parameter that $ref it',
       {
         components: {

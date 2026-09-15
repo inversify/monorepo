@@ -9,6 +9,7 @@ import {
   getParameterLocationTypeNameSuffix,
   PARAMETER_LOCATION_ORDER,
 } from './getParameterLocationTypeNameSuffix.js';
+import { isIgnoredHeaderParameter } from './isIgnoredHeaderParameter.js';
 import { resolveParameter } from './resolveParameter.js';
 import { resolvePathItem } from './resolvePathItem.js';
 
@@ -82,6 +83,10 @@ function addParameters(
     }
 
     if (getParameterLocationTypeNameSuffix(location) === undefined) {
+      continue;
+    }
+
+    if (isIgnoredHeaderParameter(location, name)) {
       continue;
     }
 

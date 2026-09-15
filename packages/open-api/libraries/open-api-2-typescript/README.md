@@ -13,8 +13,10 @@ component key is used. Operation path, query, querystring, header, and cookie
 parameter types are named from the PascalCase `operationId` (or HTTP method plus
 path) and a location suffix (`PathParams`, `Query`, `Querystring`, `Headers`,
 `Cookies`). A location with no parameters on that operation is omitted.
-Operations under both `paths` and `webhooks` are included. The generated `Root`
-type is the union of those schemas.
+Header parameters named `Accept`, `Content-Type`, or `Authorization` are ignored
+regardless of case, as required by OpenAPI 3.1 and 3.2. Operations under both
+`paths` and `webhooks` are included. The generated `Root` type is the union of
+those schemas.
 
 A single `querystring` parameter is unwrapped: the generated type is that
 parameter's schema, not an object keyed by the parameter name. Multiple

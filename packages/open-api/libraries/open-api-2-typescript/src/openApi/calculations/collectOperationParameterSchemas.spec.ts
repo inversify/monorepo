@@ -221,6 +221,167 @@ describe(collectOperationParameterSchemas, () => {
     });
   });
 
+  describe.each([
+    'Accept',
+    'Content-Type',
+    'Authorization',
+    'accept',
+    'AUTHORIZATION',
+    'content-type',
+  ])('having a header parameter named %s', (headerNameFixture: string) => {
+    let documentFixture: JsonValue;
+
+    beforeAll(() => {
+      documentFixture = {
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'listTodos',
+              parameters: [
+                {
+                  in: 'header',
+                  name: headerNameFixture,
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = collectOperationParameterSchemasFromDocument(documentFixture);
+      });
+
+      it('should omit the header parameter', () => {
+        expect(result).toStrictEqual([]);
+      });
+    });
+  });
+
+  describe('having ignored header parameters and a custom header', () => {
+    let documentFixture: JsonValue;
+
+    beforeAll(() => {
+      documentFixture = {
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'listTodos',
+              parameters: [
+                {
+                  in: 'header',
+                  name: 'authorization',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'header',
+                  name: 'Accept',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'header',
+                  name: 'Content-Type',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'header',
+                  name: 'X-Request-Id',
+                  required: true,
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = collectOperationParameterSchemasFromDocument(documentFixture);
+      });
+
+      it('should keep the custom header', () => {
+        expect(result).toStrictEqual([
+          {
+            properties: {
+              'X-Request-Id': {
+                type: 'string',
+              },
+            },
+            required: ['X-Request-Id'],
+            title: 'ListTodosHeaders',
+            type: 'object',
+          },
+        ]);
+      });
+    });
+  });
+
+  describe('having a query parameter named Authorization', () => {
+    let documentFixture: JsonValue;
+
+    beforeAll(() => {
+      documentFixture = {
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'listTodos',
+              parameters: [
+                {
+                  in: 'query',
+                  name: 'Authorization',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = collectOperationParameterSchemasFromDocument(documentFixture);
+      });
+
+      it('should keep the query parameter', () => {
+        expect(result).toStrictEqual([
+          {
+            properties: {
+              Authorization: {
+                type: 'string',
+              },
+            },
+            title: 'ListTodosQuery',
+            type: 'object',
+          },
+        ]);
+      });
+    });
+  });
+
   describe('having a referenced parameter and cookie parameter', () => {
     let documentFixture: JsonValue;
 
