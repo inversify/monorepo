@@ -429,6 +429,66 @@ describe(isTypeMetadataAssignableTo, () => {
       false,
     ],
     [
+      'a finite maxItems string arrayType TypeMetadata to a finite maxItems anyType arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+      },
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+      },
+      true,
+    ],
+    [
+      'a finite maxItems string arrayType TypeMetadata to a finite maxItems boolean arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+      },
+      {
+        child: { kind: TypeMetadataKind.booleanType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+      },
+      false,
+    ],
+    [
+      'an open prefixItems arrayType TypeMetadata with finite maxItems to an open prefixItems arrayType TypeMetadata with a wider rest',
+      {
+        child: { kind: TypeMetadataKind.floatType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+        prefixItems: [{ kind: TypeMetadataKind.stringType }],
+      },
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+        prefixItems: [{ kind: TypeMetadataKind.stringType }],
+      },
+      true,
+    ],
+    [
+      'an open prefixItems arrayType TypeMetadata with finite maxItems to an open prefixItems arrayType TypeMetadata with a mismatched rest',
+      {
+        child: { kind: TypeMetadataKind.floatType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+        prefixItems: [{ kind: TypeMetadataKind.stringType }],
+      },
+      {
+        child: { kind: TypeMetadataKind.booleanType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 5,
+        prefixItems: [{ kind: TypeMetadataKind.stringType }],
+      },
+      false,
+    ],
+    [
       'a stringType TypeMetadata to an or TypeMetadata of stringType and booleanType',
       { kind: TypeMetadataKind.stringType },
       {

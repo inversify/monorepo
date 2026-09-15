@@ -183,11 +183,10 @@ function isArrayTypeMetadataAssignableTo(
   );
   const sourceMaxItems: number =
     getArrayTypeMetadataMaxItems(sourceTypeMetadata);
-  const lastIndexToCheck: number = Number.isFinite(sourceMaxItems)
-    ? sourceMaxItems - 1
-    : prefixItemsLength - 1;
+  const lastPrefixIndexToCheck: number =
+    Math.min(sourceMaxItems, prefixItemsLength) - 1;
 
-  for (let i: number = 0; i <= lastIndexToCheck; i += 1) {
+  for (let i: number = 0; i <= lastPrefixIndexToCheck; i += 1) {
     if (
       !isAssignable(
         getArrayTypeMetadataItem(sourceTypeMetadata, i),
