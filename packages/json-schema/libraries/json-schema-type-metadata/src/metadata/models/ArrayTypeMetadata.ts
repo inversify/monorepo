@@ -3,5 +3,7 @@ import { type TypeMetadata } from './TypeMetadata.js';
 import { type TypeMetadataKind } from './TypeMetadataKind.js';
 
 export interface ArrayTypeMetadata extends OneChildTypeMetadata<TypeMetadataKind.arrayType> {
+  maxItems?: number;
+  minItems?: number;
   prefixItems?: TypeMetadata[];
 }

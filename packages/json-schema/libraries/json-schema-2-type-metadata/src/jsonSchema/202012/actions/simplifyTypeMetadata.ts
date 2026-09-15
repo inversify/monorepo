@@ -11,6 +11,11 @@ import { type JsonValue } from '@inversifyjs/json-schema-types';
 
 import { areJsonValuesEqual } from './areJsonValuesEqual.js';
 import { doesJsonValueInhabitTypeMetadata } from './doesJsonValueInhabitTypeMetadata.js';
+import {
+  getArrayTypeMetadataItem,
+  getArrayTypeMetadataMaxItems,
+  getArrayTypeMetadataMinItems,
+} from './getArrayTypeMetadataBounds.js';
 
 interface TypeMetadataMutable {
   child?: TypeMetadata;
@@ -19,6 +24,8 @@ interface TypeMetadataMutable {
   isOptional?: boolean;
   kind?: TypeMetadataKind;
   literal?: JsonValue;
+  maxItems?: number;
+  minItems?: number;
   prefixItems?: TypeMetadata[];
   property?: string;
 }
@@ -43,6 +50,8 @@ function copyTypeMetadataOnto(
   delete mutableTarget.id;
   delete mutableTarget.isOptional;
   delete mutableTarget.literal;
+  delete mutableTarget.maxItems;
+  delete mutableTarget.minItems;
   delete mutableTarget.prefixItems;
   delete mutableTarget.property;
 
@@ -507,11 +516,29 @@ function intersectPropertyTypeMetadata(
   return firstPropertyTypeMetadata;
 }
 
-function getArrayItemTypeMetadata(
-  typeMetadata: ArrayTypeMetadata,
-  index: number,
-): TypeMetadata {
-  return typeMetadata.prefixItems?.[index] ?? typeMetadata.child;
+function assignArrayTypeMetadataCardinality(
+  arrayTypeMetadata: ArrayTypeMetadata,
+  minItems: number,
+  maxItems: number,
+): void {
+  const mutableArrayTypeMetadata: TypeMetadataMutable = arrayTypeMetadata;
+
+  if (minItems > 0) {
+    mutableArrayTypeMetadata.minItems = minItems;
+  } else {
+    delete mutableArrayTypeMetadata.minItems;
+  }
+
+  const impliedMaxItems: number =
+    arrayTypeMetadata.child.kind === TypeMetadataKind.noneType
+      ? (arrayTypeMetadata.prefixItems?.length ?? 0)
+      : Number.POSITIVE_INFINITY;
+
+  if (Number.isFinite(maxItems) && maxItems < impliedMaxItems) {
+    mutableArrayTypeMetadata.maxItems = maxItems;
+  } else {
+    delete mutableArrayTypeMetadata.maxItems;
+  }
 }
 
 function intersectArrayTypeMetadata(
@@ -520,19 +547,38 @@ function intersectArrayTypeMetadata(
   ancestorTypeMetadataSet: Set<TypeMetadata>,
   simplifiedTypeMetadataSet: Set<TypeMetadata>,
 ): TypeMetadata {
+  const minItems: number = Math.max(
+    getArrayTypeMetadataMinItems(left),
+    getArrayTypeMetadataMinItems(right),
+  );
+  let maxItems: number = Math.min(
+    getArrayTypeMetadataMaxItems(left),
+    getArrayTypeMetadataMaxItems(right),
+  );
+
+  if (minItems > maxItems) {
+    return {
+      kind: TypeMetadataKind.noneType,
+    };
+  }
+
   const leftPrefixItemsLength: number = left.prefixItems?.length ?? 0;
   const rightPrefixItemsLength: number = right.prefixItems?.length ?? 0;
-  const prefixItemsLength: number = Math.max(
+  const rawPrefixItemsLength: number = Math.max(
     leftPrefixItemsLength,
     rightPrefixItemsLength,
   );
+  const prefixItemsLength: number = Number.isFinite(maxItems)
+    ? Math.min(rawPrefixItemsLength, maxItems)
+    : rawPrefixItemsLength;
   const prefixItems: TypeMetadata[] = [];
+  let truncatedRest: boolean = false;
 
   for (let i: number = 0; i < prefixItemsLength; i += 1) {
     const prefixItemConstraint: AndTypeMetadata = {
       children: [
-        getArrayItemTypeMetadata(left, i),
-        getArrayItemTypeMetadata(right, i),
+        getArrayTypeMetadataItem(left, i),
+        getArrayTypeMetadataItem(right, i),
       ],
       kind: TypeMetadataKind.and,
     };
@@ -543,23 +589,32 @@ function intersectArrayTypeMetadata(
     );
 
     if (prefixItem.kind === TypeMetadataKind.noneType) {
-      return {
-        kind: TypeMetadataKind.noneType,
-      };
+      if (i < minItems) {
+        return {
+          kind: TypeMetadataKind.noneType,
+        };
+      }
+
+      maxItems = i;
+      truncatedRest = true;
+      break;
     }
 
     prefixItems.push(prefixItem);
   }
 
-  const itemConstraint: AndTypeMetadata = {
-    children: [left.child, right.child],
-    kind: TypeMetadataKind.and,
-  };
-  const child: TypeMetadata = simplifyTypeMetadataRecursive(
-    itemConstraint,
-    ancestorTypeMetadataSet,
-    simplifiedTypeMetadataSet,
-  );
+  const child: TypeMetadata = truncatedRest
+    ? {
+        kind: TypeMetadataKind.noneType,
+      }
+    : simplifyTypeMetadataRecursive(
+        {
+          children: [left.child, right.child],
+          kind: TypeMetadataKind.and,
+        },
+        ancestorTypeMetadataSet,
+        simplifiedTypeMetadataSet,
+      );
   const arrayTypeMetadata: ArrayTypeMetadata = {
     child,
     kind: TypeMetadataKind.arrayType,
@@ -567,6 +622,17 @@ function intersectArrayTypeMetadata(
 
   if (prefixItems.length > 0) {
     arrayTypeMetadata.prefixItems = prefixItems;
+  }
+
+  assignArrayTypeMetadataCardinality(arrayTypeMetadata, minItems, maxItems);
+
+  if (
+    getArrayTypeMetadataMinItems(arrayTypeMetadata) >
+    getArrayTypeMetadataMaxItems(arrayTypeMetadata)
+  ) {
+    return {
+      kind: TypeMetadataKind.noneType,
+    };
   }
 
   return arrayTypeMetadata;
@@ -577,6 +643,8 @@ function simplifyArrayTypeMetadata(
   ancestorTypeMetadataSet: Set<TypeMetadata>,
   simplifiedTypeMetadataSet: Set<TypeMetadata>,
 ): TypeMetadata {
+  const mutableTypeMetadata: TypeMetadataMutable = typeMetadata;
+
   if (typeMetadata.prefixItems !== undefined) {
     typeMetadata.prefixItems = typeMetadata.prefixItems.map(
       (prefixItem: TypeMetadata) =>
@@ -586,17 +654,6 @@ function simplifyArrayTypeMetadata(
           simplifiedTypeMetadataSet,
         ),
     );
-
-    if (
-      typeMetadata.prefixItems.some(
-        (prefixItem: TypeMetadata) =>
-          prefixItem.kind === TypeMetadataKind.noneType,
-      )
-    ) {
-      return copyTypeMetadataOnto(typeMetadata, {
-        kind: TypeMetadataKind.noneType,
-      });
-    }
   }
 
   typeMetadata.child = simplifyTypeMetadataRecursive(
@@ -604,6 +661,65 @@ function simplifyArrayTypeMetadata(
     ancestorTypeMetadataSet,
     simplifiedTypeMetadataSet,
   );
+
+  const minItems: number = getArrayTypeMetadataMinItems(typeMetadata);
+
+  if (typeMetadata.prefixItems !== undefined) {
+    const prefixItems: TypeMetadata[] = [];
+
+    for (
+      let index: number = 0;
+      index < typeMetadata.prefixItems.length;
+      index += 1
+    ) {
+      const prefixItem: TypeMetadata = typeMetadata.prefixItems[
+        index
+      ] as TypeMetadata;
+
+      if (prefixItem.kind === TypeMetadataKind.noneType) {
+        if (index < minItems) {
+          return copyTypeMetadataOnto(typeMetadata, {
+            kind: TypeMetadataKind.noneType,
+          });
+        }
+
+        typeMetadata.child = {
+          kind: TypeMetadataKind.noneType,
+        };
+        break;
+      }
+
+      prefixItems.push(prefixItem);
+    }
+
+    typeMetadata.prefixItems = prefixItems;
+  }
+
+  let maxItems: number = getArrayTypeMetadataMaxItems(typeMetadata);
+
+  if (minItems > maxItems) {
+    return copyTypeMetadataOnto(typeMetadata, {
+      kind: TypeMetadataKind.noneType,
+    });
+  }
+
+  if (
+    typeMetadata.prefixItems !== undefined &&
+    Number.isFinite(maxItems) &&
+    typeMetadata.prefixItems.length > maxItems
+  ) {
+    typeMetadata.prefixItems = typeMetadata.prefixItems.slice(0, maxItems);
+    maxItems = getArrayTypeMetadataMaxItems(typeMetadata);
+  }
+
+  if (
+    typeMetadata.prefixItems !== undefined &&
+    typeMetadata.prefixItems.length === 0
+  ) {
+    delete mutableTypeMetadata.prefixItems;
+  }
+
+  assignArrayTypeMetadataCardinality(typeMetadata, minItems, maxItems);
 
   return typeMetadata;
 }

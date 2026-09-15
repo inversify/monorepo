@@ -93,7 +93,7 @@ describe(transformTypeMetadataToTypeScript, () => {
           { kind: TypeMetadataKind.floatType },
         ],
       },
-      'export type Root = [string, number];',
+      'export type Root = [] | [string] | [string, number];',
     ],
     [
       'an open prefixItems arrayType TypeMetadata',
@@ -105,7 +105,7 @@ describe(transformTypeMetadataToTypeScript, () => {
           { kind: TypeMetadataKind.floatType },
         ],
       },
-      'export type Root = [string, number, ...unknown[]];',
+      'export type Root = [] | [string] | [string, number, ...unknown[]];',
     ],
     [
       'an or TypeMetadata',

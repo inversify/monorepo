@@ -5,4 +5,4 @@
 "@inversifyjs/open-api-2-typescript": minor
 ---
 
-- Added `prefixItems` support to `ArrayTypeMetadata` so JSON Schema tuple arrays become TypeScript tuple types.
+- Added `prefixItems`, `minItems`, and `maxItems` support to `ArrayTypeMetadata` so JSON Schema tuple arrays become TypeScript unions of possible tuple lengths.

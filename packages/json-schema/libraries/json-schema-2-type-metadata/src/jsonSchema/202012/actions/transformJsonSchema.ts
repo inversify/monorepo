@@ -269,7 +269,12 @@ function handleJsonSchemaArrayApplicators(
   context: TransformJsonSchemaInternalContext,
   typeConstraints: TypeMetadata[],
 ): void {
-  if (schema.items === undefined && schema.prefixItems === undefined) {
+  if (
+    schema.items === undefined &&
+    schema.maxItems === undefined &&
+    schema.minItems === undefined &&
+    schema.prefixItems === undefined
+  ) {
     return;
   }
 
@@ -282,6 +287,14 @@ function handleJsonSchemaArrayApplicators(
         : transformJsonSchemaNode(schema.items, context),
     kind: TypeMetadataKind.arrayType,
   };
+
+  if (schema.maxItems !== undefined) {
+    arrayTypeMetadata.maxItems = schema.maxItems;
+  }
+
+  if (schema.minItems !== undefined) {
+    arrayTypeMetadata.minItems = schema.minItems;
+  }
 
   if (schema.prefixItems !== undefined) {
     arrayTypeMetadata.prefixItems = schema.prefixItems.map(

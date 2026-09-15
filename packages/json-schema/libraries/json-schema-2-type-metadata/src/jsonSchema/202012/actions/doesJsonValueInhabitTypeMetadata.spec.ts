@@ -140,6 +140,53 @@ describe(doesJsonValueInhabitTypeMetadata, () => {
           { kind: TypeMetadataKind.floatType },
         ],
       },
+      true,
+    ],
+    [
+      'an empty array and a closed prefixItems arrayType TypeMetadata',
+      [],
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      true,
+    ],
+    [
+      'a short array and a prefixItems arrayType TypeMetadata with minItems',
+      ['foo'],
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
+      false,
+    ],
+    [
+      'an empty array and a minItems arrayType TypeMetadata',
+      [],
+      {
+        child: { kind: TypeMetadataKind.anyType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 1,
+      },
+      false,
+    ],
+    [
+      'a long array and a maxItems arrayType TypeMetadata',
+      ['foo', 'bar', 'baz'],
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 2,
+      },
       false,
     ],
     [

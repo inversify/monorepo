@@ -1093,7 +1093,15 @@ describe(transformJsonSchema, () => {
         type: 'array',
       },
       {
-        kind: TypeMetadataKind.noneType,
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.anyType,
+          },
+        ],
       },
     ],
     [
@@ -1160,7 +1168,289 @@ describe(transformJsonSchema, () => {
         ],
       },
       {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+        ],
+      },
+    ],
+    [
+      'an schema with minItems',
+      {
+        minItems: 2,
+      },
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            minItems: 2,
+          },
+          {
+            kind: TypeMetadataKind.booleanType,
+          },
+          {
+            kind: TypeMetadataKind.floatType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: null,
+          },
+          {
+            kind: TypeMetadataKind.objectType,
+          },
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+        ],
+        kind: TypeMetadataKind.or,
+      },
+    ],
+    [
+      'an schema with type array and minItems',
+      {
+        minItems: 2,
+        type: 'array',
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.anyType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+      },
+    ],
+    [
+      'an schema with type array and maxItems',
+      {
+        maxItems: 2,
+        type: 'array',
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.anyType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 2,
+      },
+    ],
+    [
+      'an schema with type object and minItems',
+      {
+        minItems: 2,
+        type: 'object',
+      },
+      {
+        kind: TypeMetadataKind.objectType,
+      },
+    ],
+    [
+      'an schema with type array, prefixItems, items false and minItems',
+      {
+        items: false,
+        minItems: 2,
+        prefixItems: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ],
+        type: 'array',
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            kind: TypeMetadataKind.floatType,
+          },
+        ],
+      },
+    ],
+    [
+      'an schema with type array, prefixItems, items false and maxItems',
+      {
+        items: false,
+        maxItems: 1,
+        prefixItems: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ],
+        type: 'array',
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+        ],
+      },
+    ],
+    [
+      'an schema with type array, prefixItems and minItems greater than the prefix length',
+      {
+        items: {
+          type: 'boolean',
+        },
+        minItems: 3,
+        prefixItems: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ],
+        type: 'array',
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.booleanType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 3,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            kind: TypeMetadataKind.floatType,
+          },
+        ],
+      },
+    ],
+    [
+      'an schema with type array, prefixItems, items false and minItems greater than the prefix length',
+      {
+        items: false,
+        minItems: 3,
+        prefixItems: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ],
+        type: 'array',
+      },
+      {
         kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an schema with allOf prefixItems and minItems',
+      {
+        allOf: [
+          {
+            prefixItems: [
+              {
+                type: 'string',
+              },
+              {
+                type: 'number',
+              },
+            ],
+            type: 'array',
+          },
+          {
+            minItems: 2,
+          },
+        ],
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.anyType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            kind: TypeMetadataKind.floatType,
+          },
+        ],
+      },
+    ],
+    [
+      'an schema with allOf prefixItems without type and minItems',
+      {
+        allOf: [
+          {
+            prefixItems: [
+              {
+                type: 'string',
+              },
+              {
+                type: 'number',
+              },
+            ],
+          },
+          {
+            minItems: 2,
+          },
+        ],
+      },
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            minItems: 2,
+            prefixItems: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+            ],
+          },
+          {
+            kind: TypeMetadataKind.booleanType,
+          },
+          {
+            kind: TypeMetadataKind.floatType,
+          },
+          {
+            kind: TypeMetadataKind.literalType,
+            literal: null,
+          },
+          {
+            kind: TypeMetadataKind.objectType,
+          },
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+        ],
+        kind: TypeMetadataKind.or,
       },
     ],
     [

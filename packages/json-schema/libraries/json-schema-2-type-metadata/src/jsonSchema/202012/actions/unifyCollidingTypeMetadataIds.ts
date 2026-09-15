@@ -120,11 +120,12 @@ function buildChildSignature(
         )
         .join(',');
 
-      if (prefixItemsSignature.length === 0) {
-        return requireBlockId(typeMetadata.child, nodeToBlockId).toString();
-      }
+      const maxItemsSignature: string =
+        typeMetadata.maxItems === undefined
+          ? '*'
+          : typeMetadata.maxItems.toString();
 
-      return `${prefixItemsSignature}|${requireBlockId(typeMetadata.child, nodeToBlockId).toString()}`;
+      return `${prefixItemsSignature}|${requireBlockId(typeMetadata.child, nodeToBlockId).toString()}|${(typeMetadata.minItems ?? 0).toString()}|${maxItemsSignature}`;
     }
     case TypeMetadataKind.propertyType:
     case TypeMetadataKind.stringIndexSignatureType:

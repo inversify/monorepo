@@ -169,6 +169,19 @@ describe(printTypeMetadata, () => {
           { kind: TypeMetadataKind.floatType },
         ],
       },
+      '[] | [string] | [string, number]',
+    ],
+    [
+      'a closed prefixItems arrayType TypeMetadata with minItems',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          { kind: TypeMetadataKind.stringType },
+          { kind: TypeMetadataKind.floatType },
+        ],
+      },
       '[string, number]',
     ],
     [
@@ -181,7 +194,7 @@ describe(printTypeMetadata, () => {
           { kind: TypeMetadataKind.floatType },
         ],
       },
-      '[string, number, ...unknown[]]',
+      '[] | [string] | [string, number, ...unknown[]]',
     ],
     [
       'a prefixItems arrayType TypeMetadata with a rest type',
@@ -193,7 +206,7 @@ describe(printTypeMetadata, () => {
           { kind: TypeMetadataKind.floatType },
         ],
       },
-      '[string, number, ...boolean[]]',
+      '[] | [string] | [string, number, ...boolean[]]',
     ],
     [
       'a prefixItems arrayType TypeMetadata with a union rest type',
@@ -208,7 +221,7 @@ describe(printTypeMetadata, () => {
         kind: TypeMetadataKind.arrayType,
         prefixItems: [{ kind: TypeMetadataKind.booleanType }],
       },
-      '[boolean, ...(string | number)[]]',
+      '[] | [boolean, ...(string | number)[]]',
     ],
     [
       'a nested closed prefixItems arrayType TypeMetadata',
@@ -227,7 +240,33 @@ describe(printTypeMetadata, () => {
           { kind: TypeMetadataKind.booleanType },
         ],
       },
-      '[[string, number], boolean]',
+      '[] | [([] | [string] | [string, number])] | [([] | [string] | [string, number]), boolean]',
+    ],
+    [
+      'a minItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+      },
+      '[string, string, ...string[]]',
+    ],
+    [
+      'a maxItems arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.stringType },
+        kind: TypeMetadataKind.arrayType,
+        maxItems: 2,
+      },
+      '[] | [string] | [string, string]',
+    ],
+    [
+      'a noneType items arrayType TypeMetadata',
+      {
+        child: { kind: TypeMetadataKind.noneType },
+        kind: TypeMetadataKind.arrayType,
+      },
+      '[]',
     ],
     [
       'an or TypeMetadata',
@@ -563,7 +602,7 @@ describe(printTypeMetadata, () => {
       });
 
       it('should print the named prefix item without expanding it', () => {
-        expect(result).toBe('[Foo, boolean]');
+        expect(result).toBe('[] | [Foo] | [Foo, boolean]');
       });
     });
   });

@@ -11,6 +11,11 @@ import {
 } from '@inversifyjs/json-schema-types';
 
 import { areJsonValuesEqual } from './areJsonValuesEqual.js';
+import {
+  getArrayTypeMetadataItem,
+  getArrayTypeMetadataMaxItems,
+  getArrayTypeMetadataMinItems,
+} from './getArrayTypeMetadataBounds.js';
 
 export function doesJsonValueInhabitTypeMetadata(
   value: JsonValue,
@@ -130,16 +135,18 @@ function doesJsonValueInhabitArrayTypeMetadata(
     return false;
   }
 
-  const prefixItems: TypeMetadata[] = typeMetadata.prefixItems ?? [];
+  if (value.length < getArrayTypeMetadataMinItems(typeMetadata)) {
+    return false;
+  }
 
-  if (value.length < prefixItems.length) {
+  if (value.length > getArrayTypeMetadataMaxItems(typeMetadata)) {
     return false;
   }
 
   return value.every((item: JsonValue, index: number) =>
     doesJsonValueInhabitTypeMetadataRecursive(
       item,
-      prefixItems[index] ?? typeMetadata.child,
+      getArrayTypeMetadataItem(typeMetadata, index),
       visitingTypeMetadataValues,
     ),
   );

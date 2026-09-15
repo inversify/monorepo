@@ -113,6 +113,31 @@ describe(transformOpenApiToTypeScript, () => {
         info: { title: 'API', version: '1.0.0' },
         openapi: '3.2.0',
       },
+      'export type Pair = [] | [string] | [string, number];\nexport type Root = Pair;',
+    ],
+    [
+      'a required closed tuple component schema',
+      {
+        components: {
+          schemas: {
+            Pair: {
+              items: false,
+              minItems: 2,
+              prefixItems: [
+                {
+                  type: 'string',
+                },
+                {
+                  type: 'number',
+                },
+              ],
+              type: 'array',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.2.0',
+      },
       'export type Pair = [string, number];\nexport type Root = Pair;',
     ],
     [
@@ -136,7 +161,7 @@ describe(transformOpenApiToTypeScript, () => {
         info: { title: 'API', version: '1.0.0' },
         openapi: '3.2.0',
       },
-      'export type Coordinates = [number, number, ...unknown[]];\nexport type Root = Coordinates;',
+      'export type Coordinates = [] | [number] | [number, number, ...unknown[]];\nexport type Root = Coordinates;',
     ],
     [
       'a tuple component schema with rest items',
@@ -162,7 +187,7 @@ describe(transformOpenApiToTypeScript, () => {
         info: { title: 'API', version: '1.0.0' },
         openapi: '3.2.0',
       },
-      'export type Row = [string, number, ...boolean[]];\nexport type Root = Row;',
+      'export type Row = [] | [string] | [string, number, ...boolean[]];\nexport type Root = Row;',
     ],
   ])(
     'having %s',
@@ -349,7 +374,7 @@ describe(transformOpenApiToTypeScript, () => {
 
       it('should reuse TodoV1 for the tuple prefix item', () => {
         expect(result).toBe(
-          'export type TodoEntry = [TodoV1, string];\nexport type TodoV1 = { id: string; title: string };\nexport type Root = TodoEntry | TodoV1;',
+          'export type TodoEntry = [] | [TodoV1] | [TodoV1, string];\nexport type TodoV1 = { id: string; title: string };\nexport type Root = TodoEntry | TodoV1;',
         );
       });
 
