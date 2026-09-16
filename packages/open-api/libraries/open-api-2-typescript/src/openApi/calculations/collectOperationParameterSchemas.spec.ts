@@ -623,8 +623,12 @@ describe(collectOperationParameterSchemas, () => {
 
   describe('having a querystring parameter whose schema is a $ref', () => {
     let documentFixture: JsonValue;
+    let querystringSchemaFixture: JsonSchemaObject;
 
     beforeAll(() => {
+      querystringSchemaFixture = {
+        $ref: '#/components/schemas/SearchQuery',
+      };
       documentFixture = {
         components: {
           schemas: {
@@ -649,9 +653,7 @@ describe(collectOperationParameterSchemas, () => {
                 {
                   in: 'querystring',
                   name: 'q',
-                  schema: {
-                    $ref: '#/components/schemas/SearchQuery',
-                  },
+                  schema: querystringSchemaFixture,
                 },
               ],
             },
@@ -667,13 +669,77 @@ describe(collectOperationParameterSchemas, () => {
         result = collectOperationParameterSchemasFromDocument(documentFixture);
       });
 
-      it('should title the querystring schema with a $ref wrapper', () => {
+      it('should title the querystring schema with an allOf wrapper around the $ref', () => {
         expect(result).toStrictEqual([
           {
-            $ref: '#/components/schemas/SearchQuery',
+            allOf: [querystringSchemaFixture],
             title: 'SearchItemsQuerystring',
           },
         ]);
+      });
+
+      it('should reuse the original schema object in allOf', () => {
+        expect((result as JsonSchemaObject[])[0]?.allOf?.[0]).toBe(
+          querystringSchemaFixture,
+        );
+      });
+    });
+  });
+
+  describe('having a querystring parameter whose schema is a $ref with a sibling keyword', () => {
+    let documentFixture: JsonValue;
+    let querystringSchemaFixture: JsonSchemaObject;
+
+    beforeAll(() => {
+      querystringSchemaFixture = {
+        $ref: '#/components/schemas/SortDirection',
+        enum: ['asc', 'desc'],
+      };
+      documentFixture = {
+        components: {
+          schemas: {
+            SortDirection: {
+              type: 'string',
+            },
+          },
+        },
+        paths: {
+          '/search': {
+            get: {
+              operationId: 'searchItems',
+              parameters: [
+                {
+                  in: 'querystring',
+                  name: 'q',
+                  schema: querystringSchemaFixture,
+                },
+              ],
+            },
+          },
+        },
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = collectOperationParameterSchemasFromDocument(documentFixture);
+      });
+
+      it('should keep the $ref sibling keywords on the original schema', () => {
+        expect(result).toStrictEqual([
+          {
+            allOf: [querystringSchemaFixture],
+            title: 'SearchItemsQuerystring',
+          },
+        ]);
+      });
+
+      it('should reuse the original schema object in allOf', () => {
+        expect((result as JsonSchemaObject[])[0]?.allOf?.[0]).toBe(
+          querystringSchemaFixture,
+        );
       });
     });
   });

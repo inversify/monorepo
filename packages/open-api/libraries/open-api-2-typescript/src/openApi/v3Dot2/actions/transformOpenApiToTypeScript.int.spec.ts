@@ -944,6 +944,38 @@ describe(transformOpenApiToTypeScript, () => {
       'export type SearchQuery = { filter?: string; sort?: string };\nexport type SearchItemsQuerystring = { filter?: string; sort?: string };\nexport type Root = SearchQuery | SearchItemsQuerystring;',
     ],
     [
+      'a querystring parameter whose schema is a $ref with a sibling enum keyword',
+      {
+        components: {
+          schemas: {
+            SortDirection: {
+              type: 'string',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.2.0',
+        paths: {
+          '/search': {
+            get: {
+              operationId: 'searchItems',
+              parameters: [
+                {
+                  in: 'querystring',
+                  name: 'q',
+                  schema: {
+                    $ref: '#/components/schemas/SortDirection',
+                    enum: ['asc', 'desc'],
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type SortDirection = string;\nexport type SearchItemsQuerystring = "asc" | "desc";\nexport type Root = SortDirection | SearchItemsQuerystring;',
+    ],
+    [
       'a querystring parameter whose schema has an $id',
       {
         info: { title: 'API', version: '1.0.0' },

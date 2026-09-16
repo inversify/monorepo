@@ -331,28 +331,18 @@ function isRequiredParameter(parameter: JsonValueObject): boolean {
  * (`{ ...schema, title }`) would copy `$id` onto a second object and leave two
  * resources claiming the same URI.
  *
- * When the schema already has a URI, wrap it with `$ref` so the applicator
- * resolves the original resource:
- * - an existing `$ref` is reused as `{ title, $ref }`
- * - an `$id` is referenced as `{ title, $ref: schema.$id }`
+ * When the schema has an `$id` and is not itself a `$ref`, wrap it as
+ * `{ title, $ref: schema.$id }` so the original resource stays unique.
  *
- * Inline schemas and booleans have no URI. `{ title, allOf: [schema] }` applies
- * the original value by identity so nested `$id`s stay unique.
+ * `$ref` schemas (including sibling keywords) and inline schemas have no
+ * separate URI to wrap. `{ title, allOf: [schema] }` applies the original
+ * value by identity so sibling applicators and nested `$id`s stay unique.
  */
 function schemaWithTitle(schema: JsonSchema, title: string): JsonSchema {
   if (isJsonValueObject(schema)) {
-    const ref: JsonValue | undefined = schema['$ref'];
-
-    if (typeof ref === 'string') {
-      return {
-        $ref: ref,
-        title,
-      };
-    }
-
     const id: JsonValue | undefined = schema['$id'];
 
-    if (typeof id === 'string') {
+    if (typeof id === 'string' && typeof schema['$ref'] !== 'string') {
       return {
         $ref: id,
         title,
