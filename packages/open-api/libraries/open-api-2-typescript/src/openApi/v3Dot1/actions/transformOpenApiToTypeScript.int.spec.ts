@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import ts from 'typescript';
 
+import { OPEN_API_3_DOT_1_DOCUMENT_URI } from '../../models/openApiDocumentUri.js';
 import { transformOpenApiToTypeScript } from './transformOpenApiToTypeScript.js';
 
 function getTypeScriptDiagnosticMessages(source: string): string[] {
@@ -841,4 +842,398 @@ describe(transformOpenApiToTypeScript, () => {
       });
     });
   });
+
+  describe.each<[string, OpenApi3Dot1Object, string]>([
+    [
+      'an operation without parameters',
+      {
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'listTodos',
+            },
+          },
+        },
+      },
+      'export type Root = never;',
+    ],
+    [
+      'an operation with query parameters and an operationId',
+      {
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/v1/todos': {
+            get: {
+              operationId: 'listTodos',
+              parameters: [
+                {
+                  in: 'query',
+                  name: 'page',
+                  schema: {
+                    type: 'integer',
+                  },
+                },
+                {
+                  in: 'query',
+                  name: 'pageSize',
+                  required: true,
+                  schema: {
+                    type: 'integer',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type ListTodosQuery = { page?: number; pageSize: number };\nexport type Root = ListTodosQuery;',
+    ],
+    [
+      'an operation without an operationId',
+      {
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/v1/todos/{id}': {
+            get: {
+              parameters: [
+                {
+                  in: 'path',
+                  name: 'id',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type GetV1TodosIdPathParams = { id: string };\nexport type Root = GetV1TodosIdPathParams;',
+    ],
+    [
+      'a kebab-case operationId with an array query parameter',
+      {
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'list-todos',
+              parameters: [
+                {
+                  in: 'query',
+                  name: 'tags',
+                  schema: {
+                    items: {
+                      type: 'string',
+                    },
+                    type: 'array',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type ListTodosQuery = { tags?: string[] };\nexport type Root = ListTodosQuery;',
+    ],
+    [
+      'header and cookie parameters',
+      {
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'listTodos',
+              parameters: [
+                {
+                  in: 'header',
+                  name: 'X-Request-Id',
+                  required: true,
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'cookie',
+                  name: 'session',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type ListTodosHeaders = { "X-Request-Id": string };\nexport type ListTodosCookies = { session?: string };\nexport type Root = ListTodosHeaders | ListTodosCookies;',
+    ],
+    [
+      'ignored Accept, Content-Type, and Authorization header parameters',
+      {
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'listTodos',
+              parameters: [
+                {
+                  in: 'header',
+                  name: 'authorization',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'header',
+                  name: 'Accept',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'header',
+                  name: 'Content-Type',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'header',
+                  name: 'X-Request-Id',
+                  required: true,
+                  schema: {
+                    type: 'string',
+                  },
+                },
+                {
+                  in: 'query',
+                  name: 'Authorization',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type ListTodosQuery = { Authorization?: string };\nexport type ListTodosHeaders = { "X-Request-Id": string };\nexport type Root = ListTodosQuery | ListTodosHeaders;',
+    ],
+    [
+      'a component schema and a query parameter that $ref it',
+      {
+        components: {
+          schemas: {
+            PageSize: {
+              type: 'integer',
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'listTodos',
+              parameters: [
+                {
+                  in: 'query',
+                  name: 'pageSize',
+                  schema: {
+                    $ref: '#/components/schemas/PageSize',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type PageSize = number;\nexport type ListTodosQuery = { pageSize?: PageSize };\nexport type Root = PageSize | ListTodosQuery;',
+    ],
+    [
+      'a referenced parameter object',
+      {
+        components: {
+          parameters: {
+            Page: {
+              in: 'query',
+              name: 'page',
+              schema: {
+                type: 'integer',
+              },
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'listTodos',
+              parameters: [
+                {
+                  $ref: '#/components/parameters/Page',
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type ListTodosQuery = { page?: number };\nexport type Root = ListTodosQuery;',
+    ],
+    [
+      'a parameter $ref using the document URI',
+      {
+        components: {
+          parameters: {
+            Page: {
+              in: 'query',
+              name: 'page',
+              schema: {
+                type: 'integer',
+              },
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/todos': {
+            get: {
+              operationId: 'listTodos',
+              parameters: [
+                {
+                  $ref: `${OPEN_API_3_DOT_1_DOCUMENT_URI}#/components/parameters/Page`,
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type ListTodosQuery = { page?: number };\nexport type Root = ListTodosQuery;',
+    ],
+    [
+      'a referenced path item',
+      {
+        components: {
+          pathItems: {
+            TodoItem: {
+              get: {
+                operationId: 'getTodo',
+                parameters: [
+                  {
+                    in: 'path',
+                    name: 'id',
+                    schema: {
+                      type: 'string',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/todos/{id}': {
+            $ref: '#/components/pathItems/TodoItem',
+          },
+        },
+      },
+      'export type GetTodoPathParams = { id: string };\nexport type Root = GetTodoPathParams;',
+    ],
+    [
+      'a webhook operation without an operationId',
+      {
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        webhooks: {
+          'new-todo': {
+            post: {
+              parameters: [
+                {
+                  in: 'header',
+                  name: 'X-Webhook-Secret',
+                  required: true,
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+      'export type PostNewTodoHeaders = { "X-Webhook-Secret": string };\nexport type Root = PostNewTodoHeaders;',
+    ],
+    [
+      'path-item parameters overridden by operation parameters',
+      {
+        info: { title: 'API', version: '1.0.0' },
+        openapi: '3.1.0',
+        paths: {
+          '/todos/{id}': {
+            get: {
+              operationId: 'getTodo',
+              parameters: [
+                {
+                  in: 'query',
+                  name: 'pretty',
+                  schema: {
+                    type: 'boolean',
+                  },
+                },
+              ],
+            },
+            parameters: [
+              {
+                in: 'path',
+                name: 'id',
+                schema: {
+                  type: 'string',
+                },
+              },
+              {
+                in: 'query',
+                name: 'pretty',
+                schema: {
+                  type: 'string',
+                },
+              },
+            ],
+          },
+        },
+      },
+      'export type GetTodoPathParams = { id: string };\nexport type GetTodoQuery = { pretty?: boolean };\nexport type Root = GetTodoPathParams | GetTodoQuery;',
+    ],
+  ])(
+    'having %s',
+    (_: string, openApiObjectFixture: OpenApi3Dot1Object, expected: string) => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          result = transformOpenApiToTypeScript(openApiObjectFixture);
+        });
+
+        it('should return the expected TypeScript module', () => {
+          expect(result).toBe(expected);
+        });
+
+        it('should return a TypeScript module that compiles', () => {
+          expect(
+            getTypeScriptDiagnosticMessages(result as string),
+          ).toStrictEqual([]);
+        });
+      });
+    },
+  );
 });
