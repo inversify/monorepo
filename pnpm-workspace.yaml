@@ -32,8 +32,8 @@ allowBuilds:
   '@scarf/scarf': false
   lmdb: false
   msgpackr-extract: false
-  keytar: true
-  puppeteer: true
+  keytar: false
+  puppeteer: false
   '@playwright/browser-chromium': false
   onnxruntime-node: false
   protobufjs: false

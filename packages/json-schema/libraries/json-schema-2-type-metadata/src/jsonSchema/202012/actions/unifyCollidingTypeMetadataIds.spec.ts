@@ -42,6 +42,22 @@ function findPropertyTypeMetadata(
       }
       break;
     case TypeMetadataKind.arrayType:
+      if (typeMetadata.prefixItems !== undefined) {
+        for (const prefixItem of typeMetadata.prefixItems) {
+          const propertyTypeMetadata: PropertyTypeMetadata | undefined =
+            findPropertyTypeMetadata(prefixItem, property, seenTypeMetadataSet);
+
+          if (propertyTypeMetadata !== undefined) {
+            return propertyTypeMetadata;
+          }
+        }
+      }
+
+      return findPropertyTypeMetadata(
+        typeMetadata.child,
+        property,
+        seenTypeMetadataSet,
+      );
     case TypeMetadataKind.propertyType:
     case TypeMetadataKind.stringIndexSignatureType:
       return findPropertyTypeMetadata(
@@ -718,6 +734,147 @@ describe(unifyCollidingTypeMetadataIds, () => {
 
         expect(todoPropertyTypeMetadata?.child).toBe(itemTypeMetadata);
         expect(arrayTypeMetadata?.child).toBe(itemTypeMetadata);
+      });
+    });
+  });
+
+  describe('having an array TypeMetadata whose prefixItem TypeMetadata is a clone with the same id', () => {
+    let prefixItemTypeMetadata: AndTypeMetadata;
+    let clonedPrefixItemTypeMetadata: AndTypeMetadata;
+    let typeMetadataFixture: AndTypeMetadata;
+
+    beforeAll(() => {
+      prefixItemTypeMetadata = {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'id',
+          },
+        ],
+        id: 'TodoV1',
+        kind: TypeMetadataKind.and,
+      };
+      clonedPrefixItemTypeMetadata = {
+        children: prefixItemTypeMetadata.children,
+        id: 'TodoV1',
+        kind: TypeMetadataKind.and,
+      };
+      typeMetadataFixture = {
+        children: [
+          {
+            child: prefixItemTypeMetadata,
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'todo',
+          },
+          {
+            child: {
+              child: {
+                kind: TypeMetadataKind.noneType,
+              },
+              kind: TypeMetadataKind.arrayType,
+              prefixItems: [
+                clonedPrefixItemTypeMetadata,
+                {
+                  kind: TypeMetadataKind.stringType,
+                },
+              ],
+            },
+            isOptional: false,
+            kind: TypeMetadataKind.propertyType,
+            property: 'pair',
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = unifyCollidingTypeMetadataIds(typeMetadataFixture);
+      });
+
+      it('should retarget the prefix item to the titled node', () => {
+        const pairPropertyTypeMetadata: PropertyTypeMetadata | undefined =
+          findPropertyTypeMetadata(result as TypeMetadata, 'pair');
+        const todoPropertyTypeMetadata: PropertyTypeMetadata | undefined =
+          findPropertyTypeMetadata(result as TypeMetadata, 'todo');
+        const arrayTypeMetadata: ArrayTypeMetadata | undefined =
+          pairPropertyTypeMetadata?.child.kind === TypeMetadataKind.arrayType
+            ? pairPropertyTypeMetadata.child
+            : undefined;
+
+        expect(todoPropertyTypeMetadata?.child).toBe(prefixItemTypeMetadata);
+        expect(arrayTypeMetadata?.prefixItems?.[0]).toBe(
+          prefixItemTypeMetadata,
+        );
+      });
+    });
+  });
+
+  describe('having two titled array TypeMetadata nodes with the same id and different prefixItems', () => {
+    let typeMetadataFixture: OrTypeMetadata;
+
+    beforeAll(() => {
+      typeMetadataFixture = {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.noneType,
+            },
+            id: 'Pair',
+            kind: TypeMetadataKind.arrayType,
+            prefixItems: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+            ],
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.noneType,
+            },
+            id: 'Pair',
+            kind: TypeMetadataKind.arrayType,
+            prefixItems: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.booleanType,
+              },
+            ],
+          },
+        ],
+        kind: TypeMetadataKind.or,
+      };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        try {
+          unifyCollidingTypeMetadataIds(typeMetadataFixture);
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        expect(result).toBeInstanceOf(Error);
+        expect((result as Error).message).toBe(
+          'Duplicated TypeMetadata id "Pair"',
+        );
       });
     });
   });

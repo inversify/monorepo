@@ -1296,6 +1296,340 @@ describe(simplifyTypeMetadata, () => {
       },
     ],
     [
+      'an and TypeMetadata with two arrayType children with matching prefixItems',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            prefixItems: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+            ],
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            prefixItems: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+            ],
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.anyType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            kind: TypeMetadataKind.floatType,
+          },
+        ],
+      },
+    ],
+    [
+      'an and TypeMetadata with prefixItems and a homogeneous arrayType child',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            prefixItems: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+            ],
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.stringType,
+            },
+            kind: TypeMetadataKind.arrayType,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+        ],
+      },
+    ],
+    [
+      'an and TypeMetadata with prefixItems and a closed rest arrayType child',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            prefixItems: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+            ],
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.noneType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            prefixItems: [
+              {
+                kind: TypeMetadataKind.anyType,
+              },
+              {
+                kind: TypeMetadataKind.anyType,
+              },
+            ],
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            kind: TypeMetadataKind.floatType,
+          },
+        ],
+      },
+    ],
+    [
+      'an arrayType TypeMetadata with a noneType prefixItem',
+      {
+        child: {
+          kind: TypeMetadataKind.anyType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            kind: TypeMetadataKind.noneType,
+          },
+        ],
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+        ],
+      },
+    ],
+    [
+      'an arrayType TypeMetadata with a required noneType prefixItem',
+      {
+        child: {
+          kind: TypeMetadataKind.anyType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            kind: TypeMetadataKind.noneType,
+          },
+        ],
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an arrayType TypeMetadata with a noneType first prefixItem',
+      {
+        child: {
+          kind: TypeMetadataKind.anyType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.noneType,
+          },
+        ],
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        kind: TypeMetadataKind.arrayType,
+      },
+    ],
+    [
+      'an and TypeMetadata with a noneType first prefixItem',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            prefixItems: [
+              {
+                kind: TypeMetadataKind.noneType,
+              },
+            ],
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.noneType,
+        },
+        kind: TypeMetadataKind.arrayType,
+      },
+    ],
+    [
+      'an and TypeMetadata with minItems arrayType children',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            minItems: 1,
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            minItems: 3,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.anyType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 3,
+      },
+    ],
+    [
+      'an and TypeMetadata with conflicting minItems and maxItems arrayType children',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            minItems: 3,
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            maxItems: 2,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        kind: TypeMetadataKind.noneType,
+      },
+    ],
+    [
+      'an and TypeMetadata with prefixItems and a minItems arrayType child',
+      {
+        children: [
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            prefixItems: [
+              {
+                kind: TypeMetadataKind.stringType,
+              },
+              {
+                kind: TypeMetadataKind.floatType,
+              },
+            ],
+          },
+          {
+            child: {
+              kind: TypeMetadataKind.anyType,
+            },
+            kind: TypeMetadataKind.arrayType,
+            minItems: 2,
+          },
+        ],
+        kind: TypeMetadataKind.and,
+      },
+      {
+        child: {
+          kind: TypeMetadataKind.anyType,
+        },
+        kind: TypeMetadataKind.arrayType,
+        minItems: 2,
+        prefixItems: [
+          {
+            kind: TypeMetadataKind.stringType,
+          },
+          {
+            kind: TypeMetadataKind.floatType,
+          },
+        ],
+      },
+    ],
+    [
       'an and TypeMetadata with an arrayType child and an items-like or child',
       {
         children: [

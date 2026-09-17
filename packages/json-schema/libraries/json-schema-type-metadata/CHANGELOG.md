@@ -1,5 +1,11 @@
 # @inversifyjs/json-schema-type-metadata
 
+## 0.3.0
+
+### Minor Changes
+
+- Added `prefixItems`, `minItems`, and `maxItems` support to `ArrayTypeMetadata` so JSON Schema tuple arrays become TypeScript unions of possible tuple lengths.
+
 ## 0.2.0
 
 ### Minor Changes

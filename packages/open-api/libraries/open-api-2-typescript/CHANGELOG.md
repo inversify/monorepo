@@ -1,5 +1,19 @@
 # @inversifyjs/open-api-2-typescript
 
+## 0.3.0
+
+### Minor Changes
+
+- Added generated TypeScript aliases for operation path, query, querystring, header, and cookie parameters in the `Root` union.
+- Added `prefixItems`, `minItems`, and `maxItems` support to `ArrayTypeMetadata` so JSON Schema tuple arrays become TypeScript unions of possible tuple lengths.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/json-schema-type-metadata@0.3.0
+  - @inversifyjs/json-schema-2-type-metadata@0.4.0
+  - @inversifyjs/json-schema-2-typescript@0.3.0
+
 ## 0.2.2
 
 ### Patch Changes

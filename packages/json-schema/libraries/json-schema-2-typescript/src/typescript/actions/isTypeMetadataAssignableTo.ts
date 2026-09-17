@@ -1,8 +1,15 @@
 import {
+  type ArrayTypeMetadata,
   type TypeMetadata,
   TypeMetadataKind,
 } from '@inversifyjs/json-schema-type-metadata';
 import { type JsonValue } from '@inversifyjs/json-schema-types';
+
+import {
+  getArrayTypeMetadataItem,
+  getArrayTypeMetadataMaxItems,
+  getArrayTypeMetadataMinItems,
+} from './getArrayTypeMetadataBounds.js';
 
 export function isTypeMetadataAssignableTo(
   sourceTypeMetadata: TypeMetadata,
@@ -91,9 +98,9 @@ function isAssignable(
     }
 
     if (targetTypeMetadata.kind === TypeMetadataKind.arrayType) {
-      return isAssignable(
-        sourceTypeMetadata.child,
-        targetTypeMetadata.child,
+      return isArrayTypeMetadataAssignableTo(
+        sourceTypeMetadata,
+        targetTypeMetadata,
         visitedTypeMetadata,
       );
     }
@@ -149,6 +156,79 @@ function isAssignable(
   }
 
   return sourceTypeMetadata.kind === targetTypeMetadata.kind;
+}
+
+function isArrayTypeMetadataAssignableTo(
+  sourceTypeMetadata: ArrayTypeMetadata,
+  targetTypeMetadata: ArrayTypeMetadata,
+  visitedTypeMetadata: WeakMap<TypeMetadata, Set<TypeMetadata>>,
+): boolean {
+  if (
+    getArrayTypeMetadataMinItems(sourceTypeMetadata) <
+    getArrayTypeMetadataMinItems(targetTypeMetadata)
+  ) {
+    return false;
+  }
+
+  if (
+    getArrayTypeMetadataMaxItems(sourceTypeMetadata) >
+    getArrayTypeMetadataMaxItems(targetTypeMetadata)
+  ) {
+    return false;
+  }
+
+  const prefixItemsLength: number = Math.max(
+    sourceTypeMetadata.prefixItems?.length ?? 0,
+    targetTypeMetadata.prefixItems?.length ?? 0,
+  );
+  const sourceMaxItems: number =
+    getArrayTypeMetadataMaxItems(sourceTypeMetadata);
+  const lastPrefixIndexToCheck: number =
+    Math.min(sourceMaxItems, prefixItemsLength) - 1;
+
+  for (let i: number = 0; i <= lastPrefixIndexToCheck; i += 1) {
+    if (
+      !isAssignable(
+        getArrayTypeMetadataItem(sourceTypeMetadata, i),
+        getArrayTypeMetadataItem(targetTypeMetadata, i),
+        visitedTypeMetadata,
+      )
+    ) {
+      return false;
+    }
+  }
+
+  if (sourceMaxItems > prefixItemsLength) {
+    return isAssignable(
+      sourceTypeMetadata.child,
+      targetTypeMetadata.child,
+      visitedTypeMetadata,
+    );
+  }
+
+  return true;
+}
+
+function isArrayLiteralAssignableTo(
+  literal: JsonValue[],
+  targetTypeMetadata: ArrayTypeMetadata,
+  visitedTypeMetadata: WeakMap<TypeMetadata, Set<TypeMetadata>>,
+): boolean {
+  if (literal.length < getArrayTypeMetadataMinItems(targetTypeMetadata)) {
+    return false;
+  }
+
+  if (literal.length > getArrayTypeMetadataMaxItems(targetTypeMetadata)) {
+    return false;
+  }
+
+  return literal.every((item: JsonValue, index: number) =>
+    isLiteralAssignableTo(
+      item,
+      getArrayTypeMetadataItem(targetTypeMetadata, index),
+      visitedTypeMetadata,
+    ),
+  );
 }
 
 function isJsonValueEqual(left: JsonValue, right: JsonValue): boolean {
@@ -224,12 +304,10 @@ function isLiteralAssignableTo(
     }
 
     if (targetTypeMetadata.kind === TypeMetadataKind.arrayType) {
-      return literal.every((item: JsonValue) =>
-        isLiteralAssignableTo(
-          item,
-          targetTypeMetadata.child,
-          visitedTypeMetadata,
-        ),
+      return isArrayLiteralAssignableTo(
+        literal,
+        targetTypeMetadata,
+        visitedTypeMetadata,
       );
     }
 
