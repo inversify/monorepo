@@ -1,8 +1,12 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { generateCreateTodoUseCaseHandlerSource } from '../generation/calculations/generateCreateTodoUseCaseHandlerSource.js';
 import { generateCreateTodoV1RequestBodySchemaSource } from '../generation/calculations/generateCreateTodoV1RequestBodySchemaSource.js';
 import { generateCreateTodoV1RequestBodySource } from '../generation/calculations/generateCreateTodoV1RequestBodySource.js';
+import { generateDeleteTodoUseCaseHandlerSource } from '../generation/calculations/generateDeleteTodoUseCaseHandlerSource.js';
+import { generateGetTodoUseCaseHandlerSource } from '../generation/calculations/generateGetTodoUseCaseHandlerSource.js';
+import { generateListTodosUseCaseHandlerSource } from '../generation/calculations/generateListTodosUseCaseHandlerSource.js';
 import { generatePaginatedTodosV1ResponseSchemaSource } from '../generation/calculations/generatePaginatedTodosV1ResponseSchemaSource.js';
 import { generatePaginatedTodosV1ResponseSource } from '../generation/calculations/generatePaginatedTodosV1ResponseSource.js';
 import { generatePrismaTodoPersistenceAdapterSource } from '../generation/calculations/generatePrismaTodoPersistenceAdapterSource.js';
@@ -16,6 +20,7 @@ import { generateTodoPrismaContainerModuleSource } from '../generation/calculati
 import { generateTodoSchemaV1Source } from '../generation/calculations/generateTodoSchemaV1Source.js';
 import { generateTodoV1FromTodoBuilderSource } from '../generation/calculations/generateTodoV1FromTodoBuilderSource.js';
 import { generateTodoV1Source } from '../generation/calculations/generateTodoV1Source.js';
+import { generateUpdateTodoUseCaseHandlerSource } from '../generation/calculations/generateUpdateTodoUseCaseHandlerSource.js';
 import { generateUpdateTodoV1RequestBodySchemaSource } from '../generation/calculations/generateUpdateTodoV1RequestBodySchemaSource.js';
 import { generateUpdateTodoV1RequestBodySource } from '../generation/calculations/generateUpdateTodoV1RequestBodySource.js';
 import { type TodoControllerSourceModel } from '../generation/models/TodoControllerSourceModel.js';
@@ -31,6 +36,26 @@ const TODO_SHARED_SOURCE_FILES: ReadonlyArray<readonly [string, () => string]> =
     [
       'src/todo/application/models/todoPersistencePortIdentifier.ts',
       generateTodoPersistencePortIdentifierSource,
+    ],
+    [
+      'src/todo/application/handlers/CreateTodoUseCaseHandler.ts',
+      generateCreateTodoUseCaseHandlerSource,
+    ],
+    [
+      'src/todo/application/handlers/DeleteTodoUseCaseHandler.ts',
+      generateDeleteTodoUseCaseHandlerSource,
+    ],
+    [
+      'src/todo/application/handlers/GetTodoUseCaseHandler.ts',
+      generateGetTodoUseCaseHandlerSource,
+    ],
+    [
+      'src/todo/application/handlers/ListTodosUseCaseHandler.ts',
+      generateListTodosUseCaseHandlerSource,
+    ],
+    [
+      'src/todo/application/handlers/UpdateTodoUseCaseHandler.ts',
+      generateUpdateTodoUseCaseHandlerSource,
     ],
     [
       'src/todo/adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts',

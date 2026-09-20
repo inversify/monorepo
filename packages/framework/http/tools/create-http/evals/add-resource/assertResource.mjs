@@ -337,6 +337,7 @@ export default async function assertResource(_output, context) {
     'domain',
     'application/ports',
     'application/models',
+    'application/handlers',
     'api/controllers',
     'api/models',
     'adapter/prisma',

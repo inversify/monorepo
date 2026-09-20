@@ -343,6 +343,12 @@ describe(createHttpApp, () => {
         ).resolves.toContain('export interface Builder<TInput, TOutput>');
         await expect(
           fs.readFile(
+            path.join(projectPath, 'src/common/domain/modules/Handler.ts'),
+            'utf8',
+          ),
+        ).resolves.toContain('export interface Handler<TInput, TOutput>');
+        await expect(
+          fs.readFile(
             path.join(
               projectPath,
               'src/todo/application/ports/TodoPersistencePort.ts',
@@ -350,6 +356,15 @@ describe(createHttpApp, () => {
             'utf8',
           ),
         ).resolves.toContain('export interface TodoPersistencePort');
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/application/handlers/GetTodoUseCaseHandler.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain('export class GetTodoUseCaseHandler');
         await expect(
           fs.readFile(
             path.join(
@@ -480,6 +495,17 @@ describe(createHttpApp, () => {
           ),
         ).resolves.toContain(
           'options.bind(TodoController).toSelf().inSingletonScope();',
+        );
+        await expect(
+          fs.readFile(
+            path.join(
+              projectPath,
+              'src/todo/adapter/inversify/containerModules/TodoContainerModule.ts',
+            ),
+            'utf8',
+          ),
+        ).resolves.toContain(
+          'options.bind(GetTodoUseCaseHandler).toSelf().inSingletonScope();',
         );
         await expect(
           fs.readFile(

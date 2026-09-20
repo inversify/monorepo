@@ -227,11 +227,13 @@ function buildCreateTodoMethod(
     returnType: 'Promise<TodoV1>',
     scope: Scope.Public,
     statements: [
-      `const createTodoData: CreateTodoData = {
+      `const createTodoUseCaseInput: CreateTodoUseCaseInput = {
   description: body.description,
   title: body.title,
 };`,
-      `const todo: Todo = await this.#todoPersistencePort.create(createTodoData);`,
+      `const todo: Todo = await this.#createTodoUseCaseHandler.handle(
+  createTodoUseCaseInput,
+);`,
       'return this.#todoV1FromTodoBuilder.build(todo);',
     ],
   };
@@ -303,7 +305,9 @@ function buildDeleteTodoMethod(
     scope: Scope.Public,
     statements: [
       `const deletedTodo: Todo | undefined =
-  await this.#todoPersistencePort.delete(params.id);`,
+  await this.#deleteTodoUseCaseHandler.handle({
+    id: params.id,
+  });`,
       `if (deletedTodo === undefined) {
   throw new NotFoundHttpResponse(
     { message: 'Todo not found' },
@@ -377,9 +381,9 @@ function buildGetTodoMethod(
     returnType: 'Promise<TodoV1>',
     scope: Scope.Public,
     statements: [
-      `const todo: Todo | undefined = await this.#todoPersistencePort.findById(
-  params.id,
-);`,
+      `const todo: Todo | undefined = await this.#getTodoUseCaseHandler.handle({
+  id: params.id,
+});`,
       `if (todo === undefined) {
   throw new NotFoundHttpResponse(
     { message: 'Todo not found' },
@@ -465,10 +469,11 @@ function buildListTodosMethod(
     statements: [
       'const page: number = query.page ?? 1;',
       'const pageSize: number = query.pageSize ?? 10;',
-      `const result: FindTodosResult = await this.#todoPersistencePort.findMany({
-  page,
-  pageSize,
-});`,
+      `const result: ListTodosUseCaseResult =
+  await this.#listTodosUseCaseHandler.handle({
+    page,
+    pageSize,
+  });`,
       `return {
   items: result.items.map((todo: Todo): TodoV1 =>
     this.#todoV1FromTodoBuilder.build(todo),
@@ -559,20 +564,20 @@ function buildUpdateTodoMethod(
     returnType: 'Promise<TodoV1>',
     scope: Scope.Public,
     statements: [
-      'const updateTodoData: UpdateTodoData = {};',
+      `const updateTodoUseCaseInput: UpdateTodoUseCaseInput = {
+  id: params.id,
+};`,
       `if (('title' satisfies keyof UpdateTodoV1RequestBody) in body) {
-  updateTodoData.title = body.title;
+  updateTodoUseCaseInput.title = body.title;
 }`,
       `if (('description' satisfies keyof UpdateTodoV1RequestBody) in body) {
-  updateTodoData.description = body.description;
+  updateTodoUseCaseInput.description = body.description;
 }`,
       `if (('completed' satisfies keyof UpdateTodoV1RequestBody) in body) {
-  updateTodoData.completed = body.completed;
+  updateTodoUseCaseInput.completed = body.completed;
 }`,
-      `const updatedTodo: Todo | undefined = await this.#todoPersistencePort.update(
-  params.id,
-  updateTodoData,
-);`,
+      `const updatedTodo: Todo | undefined =
+  await this.#updateTodoUseCaseHandler.handle(updateTodoUseCaseInput);`,
       `if (updatedTodo === undefined) {
   throw new NotFoundHttpResponse(
     { message: 'Todo not found' },
@@ -647,18 +652,36 @@ export async function generateTodoControllerSource(
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier:
-      '../../application/models/todoPersistencePortIdentifier.js',
-    namedImports: [{ name: 'todoPersistencePortIdentifier' }],
+    moduleSpecifier: '../../application/handlers/CreateTodoUseCaseHandler.js',
+    namedImports: [
+      { name: 'CreateTodoUseCaseHandler' },
+      { isTypeOnly: true, name: 'CreateTodoUseCaseInput' },
+    ],
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '../../application/ports/TodoPersistencePort.js',
+    moduleSpecifier: '../../application/handlers/DeleteTodoUseCaseHandler.js',
+    namedImports: [{ name: 'DeleteTodoUseCaseHandler' }],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '../../application/handlers/GetTodoUseCaseHandler.js',
+    namedImports: [{ name: 'GetTodoUseCaseHandler' }],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '../../application/handlers/ListTodosUseCaseHandler.js',
     namedImports: [
-      { isTypeOnly: true, name: 'CreateTodoData' },
-      { isTypeOnly: true, name: 'FindTodosResult' },
-      { isTypeOnly: true, name: 'TodoPersistencePort' },
-      { isTypeOnly: true, name: 'UpdateTodoData' },
+      { name: 'ListTodosUseCaseHandler' },
+      { isTypeOnly: true, name: 'ListTodosUseCaseResult' },
+    ],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '../../application/handlers/UpdateTodoUseCaseHandler.js',
+    namedImports: [
+      { name: 'UpdateTodoUseCaseHandler' },
+      { isTypeOnly: true, name: 'UpdateTodoUseCaseInput' },
     ],
   });
 
@@ -701,12 +724,42 @@ export async function generateTodoControllerSource(
           {
             decorators: [
               {
-                arguments: ['todoPersistencePortIdentifier'],
+                arguments: ['CreateTodoUseCaseHandler'],
                 name: 'inject',
               },
             ],
-            name: 'todoPersistencePort',
-            type: 'TodoPersistencePort',
+            name: 'createTodoUseCaseHandler',
+            type: 'CreateTodoUseCaseHandler',
+          },
+          {
+            decorators: [
+              {
+                arguments: ['DeleteTodoUseCaseHandler'],
+                name: 'inject',
+              },
+            ],
+            name: 'deleteTodoUseCaseHandler',
+            type: 'DeleteTodoUseCaseHandler',
+          },
+          {
+            decorators: [
+              {
+                arguments: ['GetTodoUseCaseHandler'],
+                name: 'inject',
+              },
+            ],
+            name: 'getTodoUseCaseHandler',
+            type: 'GetTodoUseCaseHandler',
+          },
+          {
+            decorators: [
+              {
+                arguments: ['ListTodosUseCaseHandler'],
+                name: 'inject',
+              },
+            ],
+            name: 'listTodosUseCaseHandler',
+            type: 'ListTodosUseCaseHandler',
           },
           {
             decorators: [
@@ -718,10 +771,24 @@ export async function generateTodoControllerSource(
             name: 'todoV1FromTodoBuilder',
             type: 'TodoV1FromTodoBuilder',
           },
+          {
+            decorators: [
+              {
+                arguments: ['UpdateTodoUseCaseHandler'],
+                name: 'inject',
+              },
+            ],
+            name: 'updateTodoUseCaseHandler',
+            type: 'UpdateTodoUseCaseHandler',
+          },
         ],
         statements: [
-          'this.#todoPersistencePort = todoPersistencePort;',
+          'this.#createTodoUseCaseHandler = createTodoUseCaseHandler;',
+          'this.#deleteTodoUseCaseHandler = deleteTodoUseCaseHandler;',
+          'this.#getTodoUseCaseHandler = getTodoUseCaseHandler;',
+          'this.#listTodosUseCaseHandler = listTodosUseCaseHandler;',
           'this.#todoV1FromTodoBuilder = todoV1FromTodoBuilder;',
+          'this.#updateTodoUseCaseHandler = updateTodoUseCaseHandler;',
         ],
       },
     ],
@@ -738,13 +805,33 @@ export async function generateTodoControllerSource(
     properties: [
       {
         isReadonly: true,
-        name: '#todoPersistencePort',
-        type: 'TodoPersistencePort',
+        name: '#createTodoUseCaseHandler',
+        type: 'CreateTodoUseCaseHandler',
+      },
+      {
+        isReadonly: true,
+        name: '#deleteTodoUseCaseHandler',
+        type: 'DeleteTodoUseCaseHandler',
+      },
+      {
+        isReadonly: true,
+        name: '#getTodoUseCaseHandler',
+        type: 'GetTodoUseCaseHandler',
+      },
+      {
+        isReadonly: true,
+        name: '#listTodosUseCaseHandler',
+        type: 'ListTodosUseCaseHandler',
       },
       {
         isReadonly: true,
         name: '#todoV1FromTodoBuilder',
         type: 'TodoV1FromTodoBuilder',
+      },
+      {
+        isReadonly: true,
+        name: '#updateTodoUseCaseHandler',
+        type: 'UpdateTodoUseCaseHandler',
       },
     ],
   });

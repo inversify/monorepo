@@ -26,11 +26,12 @@ Ask a focused question only when a missing choice would materially change the pu
 2. Add a domain interface under \`src/<resource>/domain/models\`. Domain models must be interfaces, not classes. Keep them independent of Prisma and HTTP concerns.
 3. Define the persistence contract under \`application/ports\` and its service identifier under \`application/models\`.
 4. Implement the Prisma adapter and a builder that maps Prisma records to the domain model. Keep database names such as \`created_at\` behind this boundary.
-5. Add request and response API models with the OpenAPI 3.2 schema decorators used by the Todo resource. Do not expose generated Prisma types from the API.
-6. Add a domain-to-API builder and controller. Use validated request decorators, explicit OpenAPI operation metadata, and the existing not-found response convention.
-7. Add separate Inversify container modules for API bindings and Prisma persistence bindings.
-8. Import and load both modules in \`src/app/scripts/initializeContainer.ts\`.
-9. Add focused tests when the generated project already has a test setup. Do not introduce a new test framework solely for this resource unless requested.
+5. Add one use case handler per operation under \`application/handlers\`. Implement \`Handler<TInput, TOutput>\` from \`src/common/domain/modules/Handler.ts\`. Colocate the handler input type in the same file. Async work is \`Handler<TInput, Promise<TOutput>>\`. Return domain data; use \`T | undefined\` for missing resources. Do not accept HTTP request models as handler input.
+6. Add request and response API models with the OpenAPI 3.2 schema decorators used by the Todo resource. Do not expose generated Prisma types from the API.
+7. Add a domain-to-API builder and controller. Controllers map HTTP to handler input, call \`handle\`, map \`undefined\` to the existing not-found response, and map domain values to versioned API models. Use validated request decorators and explicit OpenAPI operation metadata.
+8. Add separate Inversify container modules for API bindings and Prisma persistence bindings. Bind use case handlers next to the controller.
+9. Import and load both modules in \`src/app/scripts/initializeContainer.ts\`.
+10. Add focused tests when the generated project already has a test setup. Do not introduce a new test framework solely for this resource unless requested.
 
 ## Preserve project conventions
 
@@ -38,7 +39,10 @@ Ask a focused question only when a missing choice would materially change the pu
 - Domain models must be interfaces, not classes.
 - Prisma columns are snake_case (\`created_at\`, \`order_number\`, \`price_cents\`). Todo only uses single-word columns (\`title\`, \`completed\`); do not copy that as camelCase in Prisma (\`priceCents\`). Map snake_case columns to camelCase in the domain and API layers.
 - Put owned child records in the same resource folder as the aggregate root.
-- Match the Todo resource's pagination and soft-delete behavior when those features are requested.
+- Match the Todo resource's pagination and soft-delete behavior when those features are requested. Use case handlers pass filters such as \`deletedAt: null\` in persistence queries; the Prisma adapter maps them and does not hardcode soft-delete filters.
+- Persistence ports expose \`findOne(query)\` rather than \`findById(id)\`. Use the same query type for delete and update.
+- Type Prisma create, update, and where objects with generated Prisma types (\`Prisma.<Model>CreateInput\`, \`Prisma.<Model>UpdateInput\`, \`Prisma.<Model>WhereInput\`). Do not use anonymous object types for those values.
+- Do not inject persistence ports into controllers. Controllers depend on use case handlers.
 - Use API builders to map domain values to versioned response models.
 - Keep HTTP decorators and request models out of domain and application layers.
 - Keep Prisma clients and generated Prisma types inside the Prisma adapter layer.
@@ -78,12 +82,13 @@ Ask a focused question only when a missing choice would materially change the pu
 2. Add a domain interface under \`src/<resource>/domain/models\`. Domain models must be interfaces, not classes. Keep them independent of Prisma and HTTP concerns.
 3. Define the persistence contract under \`application/ports\` and its service identifier under \`application/models\`.
 4. Implement the Prisma adapter and a builder that maps Prisma records to the domain model. Keep database names such as \`created_at\` behind this boundary.
-5. Add request and response JSON schemas under \`src/<resource>/api/models\` (for example \`ProductSchemaV1.ts\` exporting \`productSchemaV1\`). Type each schema as \`OpenApi3Dot2SchemaObject\` from \`@inversifyjs/open-api-types/v3Dot2\` so \`type\` literals are not widened to \`string\`. Register each named schema on \`SwaggerUiProvider\` in \`src/app/scripts/provideOpenApi.ts\` as \`components.schemas.<Name>\`.
-6. Before importing a new generated type, add \`export type <Name> = any;\` to \`src/generated/api/index.ts\`. Import those types from \`../../../generated/api/index.js\` in controllers and API builders. Document operations with \`$ref: '#/components/schemas/<Name>'\`. Map domain \`Date\` values to ISO strings in API builders because generated date-time fields are strings.
-7. Add a controller that uses validated request decorators, explicit OpenAPI operation metadata, and the existing not-found response convention.
-8. Add separate Inversify container modules for API bindings and Prisma persistence bindings.
-9. Import and load both modules in \`src/app/scripts/initializeContainer.ts\`.
-10. Add focused tests when the generated project already has a test setup. Do not introduce a new test framework solely for this resource unless requested.
+5. Add one use case handler per operation under \`application/handlers\`. Implement \`Handler<TInput, TOutput>\` from \`src/common/domain/modules/Handler.ts\`. Colocate the handler input type in the same file. Async work is \`Handler<TInput, Promise<TOutput>>\`. Return domain data; use \`T | undefined\` for missing resources. Do not accept HTTP request models as handler input.
+6. Add request and response JSON schemas under \`src/<resource>/api/models\` (for example \`ProductSchemaV1.ts\` exporting \`productSchemaV1\`). Type each schema as \`OpenApi3Dot2SchemaObject\` from \`@inversifyjs/open-api-types/v3Dot2\` so \`type\` literals are not widened to \`string\`. Register each named schema on \`SwaggerUiProvider\` in \`src/app/scripts/provideOpenApi.ts\` as \`components.schemas.<Name>\`.
+7. Before importing a new generated type, add \`export type <Name> = any;\` to \`src/generated/api/index.ts\`. Import those types from \`../../../generated/api/index.js\` in controllers and API builders. Document operations with \`$ref: '#/components/schemas/<Name>'\`. Map domain \`Date\` values to ISO strings in API builders because generated date-time fields are strings.
+8. Add a controller that maps HTTP to handler input, calls \`handle\`, maps \`undefined\` to the existing not-found response, and maps domain values to generated API types. Use validated request decorators and explicit OpenAPI operation metadata.
+9. Add separate Inversify container modules for API bindings and Prisma persistence bindings. Bind use case handlers next to the controller.
+10. Import and load both modules in \`src/app/scripts/initializeContainer.ts\`.
+11. Add focused tests when the generated project already has a test setup. Do not introduce a new test framework solely for this resource unless requested.
 
 ## Preserve project conventions
 
@@ -91,7 +96,10 @@ Ask a focused question only when a missing choice would materially change the pu
 - Domain models must be interfaces, not classes.
 - Prisma columns are snake_case (\`created_at\`, \`order_number\`, \`price_cents\`). Todo only uses single-word columns (\`title\`, \`completed\`); do not copy that as camelCase in Prisma (\`priceCents\`). Map snake_case columns to camelCase in the domain and API layers.
 - Put owned child records in the same resource folder as the aggregate root.
-- Match the Todo resource's pagination and soft-delete behavior when those features are requested.
+- Match the Todo resource's pagination and soft-delete behavior when those features are requested. Use case handlers pass filters such as \`deletedAt: null\` in persistence queries; the Prisma adapter maps them and does not hardcode soft-delete filters.
+- Persistence ports expose \`findOne(query)\` rather than \`findById(id)\`. Use the same query type for delete and update.
+- Type Prisma create, update, and where objects with generated Prisma types (\`Prisma.<Model>CreateInput\`, \`Prisma.<Model>UpdateInput\`, \`Prisma.<Model>WhereInput\`). Do not use anonymous object types for those values.
+- Do not inject persistence ports into controllers. Controllers depend on use case handlers.
 - Use API builders to map domain values to generated response types.
 - Keep HTTP decorators and request types out of domain and application layers.
 - Keep Prisma clients and generated Prisma types inside the Prisma adapter layer.

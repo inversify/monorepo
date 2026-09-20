@@ -8,6 +8,7 @@ import {
 } from '../../../../generated/prisma/client.js';
 import {
   type CreateTodoData,
+  type FindTodoQuery,
   type FindTodosQuery,
   type FindTodosResult,
   type TodoPersistencePort,
@@ -31,29 +32,41 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
   }
 
   public async create(data: CreateTodoData): Promise<Todo> {
+    const createData: Prisma.TodoCreateInput = {
+      description: data.description,
+      title: data.title,
+    };
+
     const prismaTodo: PrismaTodo = await this.#prismaClient.todo.create({
-      data: {
-        description: data.description,
-        title: data.title,
-      },
+      data: createData,
     });
 
     return this.#todoFromPrismaTodoBuilder.build(prismaTodo);
   }
 
-  public async delete(id: string): Promise<Todo | undefined> {
-    try {
-      const prismaTodo: PrismaTodo = await this.#prismaClient.todo.update({
-        data: {
-          deleted_at: new Date(),
-        },
-        where: {
-          deleted_at: null,
-          id,
-        },
-      });
+  public async delete(query: FindTodoQuery): Promise<Todo | undefined> {
+    const prismaTodo: PrismaTodo | undefined =
+      await this.#findPrismaTodo(query);
 
-      return this.#todoFromPrismaTodoBuilder.build(prismaTodo);
+    if (prismaTodo === undefined) {
+      return undefined;
+    }
+
+    const deleteData: Prisma.TodoUpdateInput = {
+      deleted_at: new Date(),
+    };
+
+    try {
+      const deletedPrismaTodo: PrismaTodo = await this.#prismaClient.todo.update(
+        {
+          data: deleteData,
+          where: {
+            id: prismaTodo.id,
+          },
+        },
+      );
+
+      return this.#todoFromPrismaTodoBuilder.build(deletedPrismaTodo);
     } catch (error: unknown) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -66,16 +79,11 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
     }
   }
 
-  public async findById(id: string): Promise<Todo | undefined> {
-    const prismaTodo: PrismaTodo | null =
-      await this.#prismaClient.todo.findFirst({
-        where: {
-          deleted_at: null,
-          id,
-        },
-      });
+  public async findOne(query: FindTodoQuery): Promise<Todo | undefined> {
+    const prismaTodo: PrismaTodo | undefined =
+      await this.#findPrismaTodo(query);
 
-    if (prismaTodo === null) {
+    if (prismaTodo === undefined) {
       return undefined;
     }
 
@@ -83,9 +91,7 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
   }
 
   public async findMany(query: FindTodosQuery): Promise<FindTodosResult> {
-    const where = {
-      deleted_at: null,
-    };
+    const where: Prisma.TodoWhereInput = this.#toTodoWhereInput(query);
 
     const [prismaTodos, totalItems]: [PrismaTodo[], number] = await Promise.all(
       [
@@ -112,37 +118,47 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
   }
 
   public async update(
-    id: string,
+    query: FindTodoQuery,
     data: UpdateTodoData,
   ): Promise<Todo | undefined> {
-    const updateData: {
-      completed?: boolean;
-      description?: string;
-      title?: string;
-    } = {};
+    const prismaTodo: PrismaTodo | undefined =
+      await this.#findPrismaTodo(query);
 
-    if (('title' satisfies keyof UpdateTodoData) in data) {
+    if (prismaTodo === undefined) {
+      return undefined;
+    }
+
+    const updateData: Prisma.TodoUpdateInput = {};
+
+    if (('title' satisfies keyof UpdateTodoData) in data && data.title !== undefined) {
       updateData.title = data.title;
     }
 
-    if (('description' satisfies keyof UpdateTodoData) in data) {
+    if (
+      ('description' satisfies keyof UpdateTodoData) in data &&
+      data.description !== undefined
+    ) {
       updateData.description = data.description;
     }
 
-    if (('completed' satisfies keyof UpdateTodoData) in data) {
+    if (
+      ('completed' satisfies keyof UpdateTodoData) in data &&
+      data.completed !== undefined
+    ) {
       updateData.completed = data.completed;
     }
 
     try {
-      const prismaTodo: PrismaTodo = await this.#prismaClient.todo.update({
-        data: updateData,
-        where: {
-          deleted_at: null,
-          id,
+      const updatedPrismaTodo: PrismaTodo = await this.#prismaClient.todo.update(
+        {
+          data: updateData,
+          where: {
+            id: prismaTodo.id,
+          },
         },
-      });
+      );
 
-      return this.#todoFromPrismaTodoBuilder.build(prismaTodo);
+      return this.#todoFromPrismaTodoBuilder.build(updatedPrismaTodo);
     } catch (error: unknown) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -153,6 +169,38 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
 
       throw error;
     }
+  }
+
+  async #findPrismaTodo(query: FindTodoQuery): Promise<PrismaTodo | undefined> {
+    const where: Prisma.TodoWhereInput = this.#toTodoWhereInput(query);
+
+    const prismaTodo: PrismaTodo | null =
+      await this.#prismaClient.todo.findFirst({
+        where,
+      });
+
+    if (prismaTodo === null) {
+      return undefined;
+    }
+
+    return prismaTodo;
+  }
+
+  #toTodoWhereInput(query: FindTodoQuery): Prisma.TodoWhereInput {
+    const where: Prisma.TodoWhereInput = {};
+
+    if (
+      ('deletedAt' satisfies keyof FindTodoQuery) in query &&
+      query.deletedAt !== undefined
+    ) {
+      where.deleted_at = query.deletedAt;
+    }
+
+    if (('id' satisfies keyof FindTodoQuery) in query && query.id !== undefined) {
+      where.id = query.id;
+    }
+
+    return where;
   }
 }
 `;
