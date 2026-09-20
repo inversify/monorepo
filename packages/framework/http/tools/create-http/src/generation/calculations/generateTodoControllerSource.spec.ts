@@ -77,7 +77,18 @@ describe(generateTodoControllerSource, () => {
         );
         expect(result).toContain('NotFoundHttpResponse');
         expect(result).not.toContain('@Body()');
-        expect(result).toContain('todoPersistencePortIdentifier');
+        expect(result).toContain('@inject(CreateTodoUseCaseHandler)');
+        expect(result).toContain('@inject(GetTodoUseCaseHandler)');
+        expect(result).toContain('this.#getTodoUseCaseHandler.handle({');
+        expect(result).toContain('this.#deleteTodoUseCaseHandler.handle({');
+        expect(result).toContain('this.#listTodosUseCaseHandler.handle({');
+        expect(result).toContain(
+          'this.#updateTodoUseCaseHandler.handle(updateTodoUseCaseInput)',
+        );
+        expect(result).not.toContain('todoPersistencePortIdentifier');
+        expect(result).not.toContain('TodoPersistencePort');
+        expect(result).not.toContain('findById');
+        expect(result).not.toContain('deletedAt: null');
         expect(result).toContain('@inject(TodoV1FromTodoBuilder)');
         expect(result).toContain(
           'return this.#todoV1FromTodoBuilder.build(todo);',

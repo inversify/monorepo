@@ -16,20 +16,26 @@ describe(generateTodoPersistencePortSource, () => {
         "import { type Todo } from '../../domain/models/Todo.js';",
       );
       expect(result).toContain('export interface CreateTodoData');
-      expect(result).toContain('export interface FindTodosQuery');
+      expect(result).toContain('export interface FindTodoQuery');
+      expect(result).toContain(
+        'export interface FindTodosQuery extends FindTodoQuery',
+      );
       expect(result).toContain('export interface FindTodosResult');
       expect(result).toContain('export interface UpdateTodoData');
       expect(result).toContain('export interface TodoPersistencePort');
       expect(result).toContain('create(data: CreateTodoData): Promise<Todo>');
-      expect(result).toContain('delete(id: string): Promise<Todo | undefined>');
       expect(result).toContain(
-        'findById(id: string): Promise<Todo | undefined>',
+        'delete(query: FindTodoQuery): Promise<Todo | undefined>',
       );
+      expect(result).toContain(
+        'findOne(query: FindTodoQuery): Promise<Todo | undefined>',
+      );
+      expect(result).not.toContain('findById');
       expect(result).toContain(
         'findMany(query: FindTodosQuery): Promise<FindTodosResult>',
       );
       expect(result).toContain(
-        'update(id: string, data: UpdateTodoData): Promise<Todo | undefined>',
+        'update(query: FindTodoQuery, data: UpdateTodoData): Promise<Todo | undefined>',
       );
     });
   });

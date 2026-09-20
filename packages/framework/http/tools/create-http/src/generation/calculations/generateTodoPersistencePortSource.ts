@@ -6,7 +6,12 @@ export interface CreateTodoData {
   description: string;
 }
 
-export interface FindTodosQuery {
+export interface FindTodoQuery {
+  deletedAt?: Date | null;
+  id?: string;
+}
+
+export interface FindTodosQuery extends FindTodoQuery {
   page: number;
   pageSize: number;
 }
@@ -24,10 +29,10 @@ export interface UpdateTodoData {
 
 export interface TodoPersistencePort {
   create(data: CreateTodoData): Promise<Todo>;
-  delete(id: string): Promise<Todo | undefined>;
-  findById(id: string): Promise<Todo | undefined>;
+  delete(query: FindTodoQuery): Promise<Todo | undefined>;
+  findOne(query: FindTodoQuery): Promise<Todo | undefined>;
   findMany(query: FindTodosQuery): Promise<FindTodosResult>;
-  update(id: string, data: UpdateTodoData): Promise<Todo | undefined>;
+  update(query: FindTodoQuery, data: UpdateTodoData): Promise<Todo | undefined>;
 }
 `;
 }
