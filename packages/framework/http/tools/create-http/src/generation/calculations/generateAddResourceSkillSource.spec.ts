@@ -19,6 +19,14 @@ describe(generateAddResourceSkillSource, () => {
       expect(result).toContain(
         'Domain models must be interfaces, not classes.',
       );
+      expect(result).toContain('findOne(query)');
+      expect(result).toContain('Prisma.<Model>WhereInput');
+      expect(result).toContain('does not hardcode soft-delete filters');
+      expect(result).toContain('application/handlers');
+      expect(result).toContain('Handler<TInput, TOutput>');
+      expect(result).toContain(
+        'Do not inject persistence ports into controllers.',
+      );
       expect(result).not.toContain('This app is schema first.');
     });
   });
@@ -39,6 +47,14 @@ describe(generateAddResourceSkillSource, () => {
       expect(result).toContain('generate:api');
       expect(result).toContain(
         'Domain models must be interfaces, not classes.',
+      );
+      expect(result).toContain('findOne(query)');
+      expect(result).toContain('Prisma.<Model>WhereInput');
+      expect(result).toContain('does not hardcode soft-delete filters');
+      expect(result).toContain('application/handlers');
+      expect(result).toContain('Handler<TInput, TOutput>');
+      expect(result).toContain(
+        'Do not inject persistence ports into controllers.',
       );
       expect(result).not.toContain(
         'Add request and response API models with the OpenAPI 3.2 schema decorators',

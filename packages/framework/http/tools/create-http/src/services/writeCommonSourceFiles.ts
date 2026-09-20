@@ -2,14 +2,27 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { generateBuilderSource } from '../generation/calculations/generateBuilderSource.js';
+import { generateHandlerSource } from '../generation/calculations/generateHandlerSource.js';
 
-const BUILDER_RELATIVE_PATH: string = 'src/common/domain/modules/Builder.ts';
+const COMMON_SOURCE_FILES: ReadonlyArray<readonly [string, () => string]> = [
+  ['src/common/domain/modules/Builder.ts', generateBuilderSource],
+  ['src/common/domain/modules/Handler.ts', generateHandlerSource],
+];
 
 export async function writeCommonSourceFiles(
   projectPath: string,
 ): Promise<void> {
-  const builderPath: string = path.join(projectPath, BUILDER_RELATIVE_PATH);
+  await Promise.all(
+    COMMON_SOURCE_FILES.map(
+      async ([relativePath, generateSource]: readonly [
+        string,
+        () => string,
+      ]): Promise<void> => {
+        const absolutePath: string = path.join(projectPath, relativePath);
 
-  await fs.mkdir(path.dirname(builderPath), { recursive: true });
-  await fs.writeFile(builderPath, generateBuilderSource(), 'utf8');
+        await fs.mkdir(path.dirname(absolutePath), { recursive: true });
+        await fs.writeFile(absolutePath, generateSource(), 'utf8');
+      },
+    ),
+  );
 }

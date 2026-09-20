@@ -51,7 +51,7 @@ Recipe (CLI args / prompts)
           │     └─ package.json dependenciesMeta from createYarnRcSourceModel(adapter, dbAdapter, apiStyle)
           ├─ writeLoggerSourceFiles() → logger factory identifier + container module
           ├─ writeStatusSourceFiles(apiStyle) → status domain, v1 API, builder, controller, container module
-          ├─ writeCommonSourceFiles() → shared Builder interface
+          ├─ writeCommonSourceFiles() → shared Builder and Handler interfaces
           ├─ writeTodoSourceFiles(createTodoControllerSourceModel(adapter, apiStyle), apiStyle)
           │     └─ ts-morph TodoController; uwebsockets adds @CaptureRequestValues
           ├─ writeInitializeContainerSourceFile(createInitializeContainerSourceModel(dbAdapter))
@@ -169,9 +169,15 @@ Generated (not copied from templates):
 | `src/status/api/controllers/StatusController.ts` | `generateStatusControllerSource()` — `GET /v1/status` → `{ status: 'ok' }` |
 | `src/status/adapter/inversify/containerModules/StatusContainerModule.ts` | Binds controller and `StatusV1FromStatusBuilder` |
 | `src/common/domain/modules/Builder.ts` | Shared `Builder<TInput, TOutput>` mapping contract |
+| `src/common/domain/modules/Handler.ts` | Shared `Handler<TInput, TOutput>` use-case contract |
 | `src/todo/domain/models/Todo.ts` | Domain interface (camelCase timestamps) |
 | `src/todo/application/ports/TodoPersistencePort.ts` | Persistence port |
 | `src/todo/application/models/todoPersistencePortIdentifier.ts` | Port service identifier |
+| `src/todo/application/handlers/CreateTodoUseCaseHandler.ts` | Create-todo use case |
+| `src/todo/application/handlers/DeleteTodoUseCaseHandler.ts` | Soft-delete-todo use case |
+| `src/todo/application/handlers/GetTodoUseCaseHandler.ts` | Get-todo use case |
+| `src/todo/application/handlers/ListTodosUseCaseHandler.ts` | List-todos use case |
+| `src/todo/application/handlers/UpdateTodoUseCaseHandler.ts` | Update-todo use case |
 | `src/todo/api/models/TodoV1.ts` | code-first: `GET/POST/PATCH /v1/todos` response class and OpenAPI schema |
 | `src/todo/api/models/CreateTodoV1RequestBody.ts` | code-first: `POST /v1/todos` body class and OpenAPI schema |
 | `src/todo/api/models/PaginatedTodosV1Response.ts` | code-first: `GET /v1/todos` response class and OpenAPI schema |
@@ -182,9 +188,9 @@ Generated (not copied from templates):
 | `src/todo/api/models/UpdateTodoV1RequestBodySchema.ts` | schema-first: update-todo JSON Schema |
 | `src/todo/api/builders/TodoV1FromTodoBuilder.ts` | Maps domain `Todo` to `TodoV1` |
 | `src/todo/api/controllers/TodoController.ts` | `generateTodoControllerSource(createTodoControllerSourceModel(adapter))` — `GET /v1/todos`, `GET /v1/todos/:id`, `POST /v1/todos`, `PATCH /v1/todos/:id`, `DELETE /v1/todos/:id`; uwebsockets adds `@CaptureRequestValues` on POST and PATCH so `@ValidatedBody` can still read method/url/headers/(params) after the body is consumed, and `@SetHeader('Content-Type', 'application/json')` on JSON replies |
-| `src/todo/adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts` | Prisma port adapter (soft delete via `deleted_at`) |
+| `src/todo/adapter/prisma/adapters/PrismaTodoPersistenceAdapter.ts` | Prisma port adapter; types create/update/where with generated Prisma types; maps query `deletedAt` and writes `deleted_at` on delete |
 | `src/todo/adapter/prisma/builders/TodoFromPrismaTodoBuilder.ts` | Maps Prisma `Todo` to domain `Todo` |
-| `src/todo/adapter/inversify/containerModules/TodoContainerModule.ts` | Binds controller and `TodoV1FromTodoBuilder` |
+| `src/todo/adapter/inversify/containerModules/TodoContainerModule.ts` | Binds use case handlers, controller, and `TodoV1FromTodoBuilder` |
 | `src/todo/adapter/inversify/containerModules/TodoPrismaContainerModule.ts` | Binds port → Prisma adapter and `TodoFromPrismaTodoBuilder` |
 
 **Why `.template` for eslint/prettier configs?**  
@@ -286,10 +292,16 @@ src/status/
 
 ```
 src/common/domain/modules/Builder.ts
+src/common/domain/modules/Handler.ts
 src/todo/
   domain/models/Todo.ts
   application/ports/TodoPersistencePort.ts
   application/models/todoPersistencePortIdentifier.ts
+  application/handlers/CreateTodoUseCaseHandler.ts
+  application/handlers/DeleteTodoUseCaseHandler.ts
+  application/handlers/GetTodoUseCaseHandler.ts
+  application/handlers/ListTodosUseCaseHandler.ts
+  application/handlers/UpdateTodoUseCaseHandler.ts
   api/controllers/TodoController.ts
   api/builders/TodoV1FromTodoBuilder.ts
   api/models/TodoV1.ts                              # code-first
@@ -308,7 +320,7 @@ src/todo/
 
 Domain models (`Status`, `Todo`, and any resource added later) must be interfaces, not classes.
 
-`TodoPersistencePort` keeps HTTP and application code independent of Prisma so future DB adapters can bind a different implementation.
+`TodoPersistencePort` keeps HTTP and application code independent of Prisma so future DB adapters can bind a different implementation. Lookups use `findOne(query)` (not `findById`). Use case handlers own flow such as `deletedAt: null` and return domain data (`Todo | undefined` when missing). Controllers map HTTP to handler input, map `undefined` to `NotFoundHttpResponse`, and map domain values to versioned API models. The Prisma adapter maps handler queries to generated `Prisma.TodoWhereInput` / `Prisma.TodoCreateInput` / `Prisma.TodoUpdateInput` values instead of anonymous object types.
 
 ## Post-scaffold pipeline
 
