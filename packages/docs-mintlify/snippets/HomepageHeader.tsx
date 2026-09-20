@@ -32,7 +32,7 @@ export const HomepageHeader = () => {
         <div className="homepage-hero-buttons">
           <a
             className="homepage-hero-cta"
-            href="/docs/introduction/getting-started"
+            href="/next/introduction/getting-started"
           >
             Quick Start
           </a>
