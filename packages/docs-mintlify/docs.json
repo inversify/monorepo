@@ -16,70 +16,67 @@
         "versions": [
           {
             "version": "Next",
+            "default": true,
             "groups": [
-              {
-                "group": "Home",
-                "pages": ["index"]
-              },
               {
                 "group": "Introduction",
                 "pages": [
-                  "next/introduction/getting-started",
-                  "next/introduction/dependency-inversion"
+                  "docs/introduction/getting-started",
+                  "docs/introduction/dependency-inversion"
                 ]
               },
               {
                 "group": "Fundamentals",
                 "pages": [
-                  "next/fundamentals/binding",
-                  "next/fundamentals/di-hierarchy",
+                  "docs/fundamentals/binding",
+                  "docs/fundamentals/di-hierarchy",
                   {
                     "group": "Lifecycle",
                     "pages": [
-                      "next/fundamentals/lifecycle/activation",
-                      "next/fundamentals/lifecycle/deactivation"
+                      "docs/fundamentals/lifecycle/activation",
+                      "docs/fundamentals/lifecycle/deactivation"
                     ]
                   },
-                  "next/fundamentals/inheritance",
-                  "next/fundamentals/plugins",
-                  "next/fundamentals/snapshot"
+                  "docs/fundamentals/inheritance",
+                  "docs/fundamentals/plugins",
+                  "docs/fundamentals/snapshot"
                 ]
               },
               {
                 "group": "API",
                 "pages": [
-                  "next/api/binding-syntax",
-                  "next/api/container",
-                  "next/api/container-module",
-                  "next/api/decorator",
-                  "next/api/decorate",
-                  "next/api/lazy-service-identifier",
-                  "next/api/service-identifier"
+                  "docs/api/binding-syntax",
+                  "docs/api/container",
+                  "docs/api/container-module",
+                  "docs/api/decorator",
+                  "docs/api/decorate",
+                  "docs/api/lazy-service-identifier",
+                  "docs/api/service-identifier"
                 ]
               },
               {
                 "group": "FAQ",
-                "pages": ["next/faq/requirements", "next/faq/using-bundlers"]
+                "pages": ["docs/faq/requirements", "docs/faq/using-bundlers"]
               },
               {
                 "group": "Guides",
                 "pages": [
-                  "next/guides/migrating-from-v6",
-                  "next/guides/migrating-from-v7"
+                  "docs/guides/migrating-from-v6",
+                  "docs/guides/migrating-from-v7"
                 ]
               },
               {
                 "group": "Ecosystem",
                 "pages": [
-                  "next/ecosystem/binding-decorators",
-                  "next/ecosystem/framework",
-                  "next/ecosystem/strongly-typed",
-                  "next/ecosystem/suites"
+                  "docs/ecosystem/binding-decorators",
+                  "docs/ecosystem/framework",
+                  "docs/ecosystem/strongly-typed",
+                  "docs/ecosystem/suites"
                 ]
               },
               {
                 "group": "Internals",
-                "pages": ["next/internals/planning"]
+                "pages": ["docs/internals/planning"]
               }
             ]
           },
