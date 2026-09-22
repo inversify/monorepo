@@ -16,14 +16,67 @@
         "versions": [
           {
             "version": "Next",
+            "default": true,
             "groups": [
               {
-                "group": "Home",
-                "pages": ["index"]
+                "group": "Introduction",
+                "pages": [
+                  "docs/introduction/getting-started",
+                  "docs/introduction/dependency-inversion"
+                ]
               },
               {
-                "group": "Introduction",
-                "pages": ["docs/introduction/getting-started"]
+                "group": "Fundamentals",
+                "pages": [
+                  "docs/fundamentals/binding",
+                  "docs/fundamentals/di-hierarchy",
+                  {
+                    "group": "Lifecycle",
+                    "pages": [
+                      "docs/fundamentals/lifecycle/activation",
+                      "docs/fundamentals/lifecycle/deactivation"
+                    ]
+                  },
+                  "docs/fundamentals/inheritance",
+                  "docs/fundamentals/plugins",
+                  "docs/fundamentals/snapshot"
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "docs/api/binding-syntax",
+                  "docs/api/container",
+                  "docs/api/container-module",
+                  "docs/api/decorator",
+                  "docs/api/decorate",
+                  "docs/api/lazy-service-identifier",
+                  "docs/api/service-identifier"
+                ]
+              },
+              {
+                "group": "FAQ",
+                "pages": ["docs/faq/requirements", "docs/faq/using-bundlers"]
+              },
+              {
+                "group": "Guides",
+                "pages": [
+                  "docs/guides/migrating-from-v6",
+                  "docs/guides/migrating-from-v7"
+                ]
+              },
+              {
+                "group": "Ecosystem",
+                "pages": [
+                  "docs/ecosystem/binding-decorators",
+                  "docs/ecosystem/framework",
+                  "docs/ecosystem/strongly-typed",
+                  "docs/ecosystem/suites"
+                ]
+              },
+              {
+                "group": "Internals",
+                "pages": ["docs/internals/planning"]
               }
             ]
           },
