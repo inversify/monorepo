@@ -18,7 +18,7 @@
     "fastify": "^5.12.5",
     "hono": "^4.13.8",
     "inversify": "8.2.3",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.71.0"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.70.0"
   },
   "devDependencies": {
     "@fastify/multipart": "10.1.1",

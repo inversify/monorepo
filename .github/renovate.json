@@ -128,7 +128,7 @@
     {
       "description": "Quarantine packages with current known issues",
       "enabled": false,
-      "matchPackageNames": ["/^@babel/"]
+      "matchPackageNames": ["/^@babel/", "uNetworking/uWebSockets.js"]
     },
     {
       "description": "Ignore inversify version-aliased dependencies (e.g. inversify6, inversify7)",
