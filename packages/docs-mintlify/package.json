@@ -10,10 +10,10 @@
   },
   "devDependencies": {
     "@inversifyjs/code-examples": "workspace:*",
-    "@mintlify/cli": "4.0.1489",
+    "@mintlify/cli": "4.0.1511",
     "@types/react": "19.3.0",
-    "eslint": "10.10.0",
-    "prettier": "3.9.6",
+    "eslint": "10.11.0",
+    "prettier": "3.9.8",
     "typescript": "6.0.3"
   },
   "homepage": "https://inversify.io",
