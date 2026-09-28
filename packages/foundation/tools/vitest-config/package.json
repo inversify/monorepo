@@ -8,7 +8,7 @@
     "vitest": "5.0.1"
   },
   "devDependencies": {
-    "prettier": "3.9.8"
+    "prettier": "3.9.9"
   },
   "exports": "./lib/index.js",
   "homepage": "https://github.com/inversify/monorepo#readme",
