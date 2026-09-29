@@ -1,5 +1,11 @@
 # @inversifyjs/create-http
 
+## 0.8.0
+
+### Minor Changes
+
+Scaffold todo use-case handlers behind a shared `Handler` contract so controllers stay HTTP-only.
+
 ## 0.7.0
 
 ### Minor Changes
