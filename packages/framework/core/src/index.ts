@@ -17,6 +17,7 @@ export { getClassMiddlewareList } from './middleware/calculations/getClassMiddle
 export { ApplyMiddleware } from './middleware/decorators/ApplyMiddleware.js';
 export { MiddlewarePhase } from './middleware/models/MiddlewarePhase.js';
 export { isPipe } from './pipe/typeguard/isPipe.js';
+export { InversifyServerAdapter } from './server/adapter/InversifyServerAdapter.js';
 
 export type { CatchErrorOptions } from './error-filter/models/CatchErrorOptions.js';
 export type { ErrorFilter } from './error-filter/models/ErrorFilter.js';
