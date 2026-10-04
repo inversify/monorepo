@@ -38,6 +38,9 @@ coverage:
       '@inversifyjs/framework-core':
         flags:
           - '@inversifyjs/framework-core'
+      '@inversifyjs/grpc-core':
+        flags:
+          - '@inversifyjs/grpc-core'
       '@inversifyjs/http-better-auth':
         flags:
           - '@inversifyjs/http-better-auth'
@@ -135,6 +138,9 @@ flags:
   '@inversifyjs/framework-core':
     paths:
       - packages/framework/core
+  '@inversifyjs/grpc-core':
+    paths:
+      - packages/framework/grpc/libraries/core
   '@inversifyjs/http-better-auth':
     paths:
       - packages/framework/http/libraries/better-auth

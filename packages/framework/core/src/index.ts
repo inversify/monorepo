@@ -16,6 +16,7 @@ export { getClassMethodMiddlewareList } from './middleware/calculations/getClass
 export { getClassMiddlewareList } from './middleware/calculations/getClassMiddlewareList.js';
 export { ApplyMiddleware } from './middleware/decorators/ApplyMiddleware.js';
 export { MiddlewarePhase } from './middleware/models/MiddlewarePhase.js';
+export { applyPipeList } from './pipe/actions/applyPipeList.js';
 export { isPipe } from './pipe/typeguard/isPipe.js';
 export { InversifyServerAdapter } from './server/adapter/InversifyServerAdapter.js';
 

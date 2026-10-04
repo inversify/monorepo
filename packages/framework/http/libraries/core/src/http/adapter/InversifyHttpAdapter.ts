@@ -1,13 +1,11 @@
 import { Readable } from 'node:stream';
 
 import {
+  applyPipeList,
   type ErrorFilter,
   type Guard,
   InversifyServerAdapter,
-  isPipe,
   type Middleware,
-  type Pipe,
-  type PipeMetadata,
 } from '@inversifyjs/framework-core';
 import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
 import {
@@ -363,7 +361,8 @@ export abstract class InversifyHttpAdapter<
               controllerMethodParameterMetadata.parameterType,
             );
 
-            await this.#applyPipeList(
+            await applyPipeList(
+              this._container,
               params,
               [
                 ...this._globalPipeList,
@@ -630,23 +629,6 @@ export abstract class InversifyHttpAdapter<
     );
 
     return preHandlerMiddlewareList;
-  }
-
-  async #applyPipeList(
-    params: unknown[],
-    pipeList: (ServiceIdentifier<Pipe> | Pipe)[],
-    pipeMetadata: PipeMetadata,
-  ): Promise<void> {
-    for (const pipeOrServiceIdentifier of pipeList) {
-      const pipe: Pipe = isPipe(pipeOrServiceIdentifier)
-        ? pipeOrServiceIdentifier
-        : await this._container.getAsync(pipeOrServiceIdentifier);
-
-      params[pipeMetadata.parameterIndex] = await pipe.execute(
-        params[pipeMetadata.parameterIndex],
-        pipeMetadata,
-      );
-    }
   }
 
   async #getErrorFilterForError(

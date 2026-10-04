@@ -8,6 +8,7 @@ packages:
   - packages/foundation/libraries/*
   - packages/foundation/tools/*
   - packages/framework/*
+  - packages/framework/grpc/libraries/*
   - packages/framework/http/libraries/*
   - packages/framework/http/tools/*
   - packages/framework/validation/libraries/*
