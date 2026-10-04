@@ -1,16 +1,11 @@
 import { Readable } from 'node:stream';
 
 import {
-  type ApplyMiddlewareOptions,
-  buildMiddlewareOptionsFromApplyMiddlewareOptions,
+  applyPipeList,
   type ErrorFilter,
   type Guard,
-  type Interceptor,
-  isPipe,
+  InversifyServerAdapter,
   type Middleware,
-  type MiddlewareOptions,
-  type Pipe,
-  type PipeMetadata,
 } from '@inversifyjs/framework-core';
 import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
 import {
@@ -62,12 +57,17 @@ export abstract class InversifyHttpAdapter<
   TOptions extends HttpAdapterOptions = HttpAdapterOptions,
   TApp = unknown,
   TParams extends Record<string | number, unknown> = Record<string, string>,
+> extends InversifyServerAdapter<
+  TApp,
+  TRequest,
+  TResponse,
+  TNextFunction,
+  TResult
 > {
   protected readonly httpAdapterOptions: RequiredOptions<TOptions>;
   protected readonly _app: TApp;
   protected readonly _logger: Logger;
   readonly #awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>;
-  readonly #container: Container;
   readonly #customNativeParameterDecoratorHandlerOptions: CustomNativeParameterDecoratorHandlerOptions<
     TRequest,
     TResponse
@@ -76,26 +76,6 @@ export abstract class InversifyHttpAdapter<
     TRequest,
     TResponse
   >;
-  readonly #errorTypeToGlobalErrorFilterMap: Map<
-    Newable<Error> | null,
-    ErrorFilter | Newable<ErrorFilter>
-  >;
-  readonly #errorDiscriminatorToGlobalErrorFilterMap: Map<
-    string | symbol,
-    ErrorFilter | Newable<ErrorFilter>
-  >;
-  readonly #globalGuardList: ServiceIdentifier<Guard<TRequest>>[];
-  readonly #globalInterceptorList: ServiceIdentifier<
-    Interceptor<TRequest, TResponse>
-  >[];
-  readonly #globalPipeList: (ServiceIdentifier<Pipe> | Pipe)[];
-  readonly #postHandlerMiddlewareList: ServiceIdentifier<
-    Middleware<TRequest, TResponse, TNextFunction, TResult>
-  >[];
-  readonly #preHandlerMiddlewareList: ServiceIdentifier<
-    Middleware<TRequest, TResponse, TNextFunction, TResult>
-  >[];
-  #isBuilt: boolean;
   public abstract readonly id: string | symbol;
 
   constructor(
@@ -106,12 +86,13 @@ export abstract class InversifyHttpAdapter<
       Iterable<RequestMethodParameterType> | undefined,
     customApp?: TApp,
   ) {
+    super(container);
+
     this.#awaitableRequestMethodParamTypes = new Set([
       ...(awaitableRequestMethodParamTypes ?? []),
       RequestMethodParameterType.Custom,
       RequestMethodParameterType.CustomNative,
     ]);
-    this.#container = container;
     this.#customParameterDecoratorHandlerOptions =
       this.#buildCustomParameterDecoratorHandlerOptions();
     this.#customNativeParameterDecoratorHandlerOptions =
@@ -120,113 +101,11 @@ export abstract class InversifyHttpAdapter<
       defaultHttpAdapterOptions,
       httpAdapterOptions,
     );
-    this.#globalGuardList = [];
-    this.#globalInterceptorList = [];
-    this.#globalPipeList = [];
-    this.#errorTypeToGlobalErrorFilterMap = new Map();
-    this.#errorDiscriminatorToGlobalErrorFilterMap = new Map();
     this._logger = this.#buildLogger(this.httpAdapterOptions);
-    this.#isBuilt = false;
-    this.#postHandlerMiddlewareList = [];
-    this.#preHandlerMiddlewareList = [];
 
     this.#setErrorHttpResponseErrorFilter();
 
     this._app = this._buildApp(customApp);
-  }
-
-  public applyGlobalMiddleware(
-    ...middlewareList: (
-      ServiceIdentifier<Middleware> | ApplyMiddlewareOptions
-    )[]
-  ): void {
-    if (this.#isBuilt) {
-      throw new InversifyHttpAdapterError(
-        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
-        'Cannot apply global middleware after the server has been built',
-      );
-    }
-
-    const middlewareOptions: MiddlewareOptions =
-      buildMiddlewareOptionsFromApplyMiddlewareOptions(middlewareList);
-
-    this.#postHandlerMiddlewareList.push(
-      ...middlewareOptions.postHandlerMiddlewareList,
-    );
-    this.#preHandlerMiddlewareList.push(
-      ...middlewareOptions.preHandlerMiddlewareList,
-    );
-  }
-
-  public applyGlobalGuards(
-    ...guardList: ServiceIdentifier<Guard<TRequest>>[]
-  ): void {
-    if (this.#isBuilt) {
-      throw new InversifyHttpAdapterError(
-        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
-        'Cannot apply global guards after the server has been built',
-      );
-    }
-
-    this.#globalGuardList.push(...guardList);
-  }
-
-  public async build(): Promise<TApp> {
-    if (this.#isBuilt) {
-      throw new InversifyHttpAdapterError(
-        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
-        'The server has already been built',
-      );
-    }
-
-    this.#bindAdapterRelatedServices();
-
-    /*
-     * Note: Some adapters might require global middleware to be registered
-     * before controllers are registered. Mind the order of these operations
-     */
-
-    await this._applyGlobalPreHandlerMiddlewareList(
-      this.#buildGlobalMiddlewareHandlerList(this.#preHandlerMiddlewareList),
-    );
-
-    await this.#registerControllers();
-
-    this.#isBuilt = true;
-
-    return this._app;
-  }
-
-  public useGlobalFilters(...errorFilterList: Newable<ErrorFilter>[]): void {
-    for (const errorFilter of errorFilterList) {
-      this.#setGlobalErrorFilter(errorFilter);
-    }
-  }
-
-  public useGlobalInterceptors(
-    ...interceptorList: ServiceIdentifier<Interceptor<TRequest, TResponse>>[]
-  ): void {
-    if (this.#isBuilt) {
-      throw new InversifyHttpAdapterError(
-        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
-        'Cannot apply global interceptors after the server has been built',
-      );
-    }
-
-    for (const interceptor of interceptorList) {
-      this.#globalInterceptorList.push(interceptor);
-    }
-  }
-
-  public useGlobalPipe(...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]): void {
-    if (this.#isBuilt) {
-      throw new InversifyHttpAdapterError(
-        InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
-        'Cannot apply global pipes after the server has been built',
-      );
-    }
-
-    this.#globalPipeList.push(...pipeList);
   }
 
   protected _getRouteValueMetadataHandler(
@@ -234,6 +113,45 @@ export abstract class InversifyHttpAdapter<
   ):
     MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult> | undefined {
     return undefined;
+  }
+
+  protected override _applyGlobalPreHandlerMiddleware(): void | Promise<void> {
+    return this._applyGlobalPreHandlerMiddlewareList(
+      this.#buildGlobalMiddlewareHandlerList(this._preHandlerMiddlewareList),
+    );
+  }
+
+  protected override _bindServices(): void {
+    this.#bindAdapterRelatedServices();
+  }
+
+  protected override _getServer(): TApp {
+    return this._app;
+  }
+
+  protected override _registerGlobalErrorFilter(
+    errorFilter: Newable<ErrorFilter>,
+  ): void {
+    setErrorFilterToErrorFilterMap(
+      this._logger,
+      this._errorDiscriminatorToGlobalErrorFilterMap,
+      this._errorTypeToGlobalErrorFilterMap,
+      errorFilter,
+    );
+  }
+
+  // Returning the controller-registration promise keeps the same await point as
+  // the previous `build()` implementation.
+  // eslint-disable-next-line @typescript-eslint/promise-function-async
+  protected override _registerHandlers(): Promise<void> {
+    return this.#registerControllers();
+  }
+
+  protected override _throwInvalidOperationAfterBuild(message: string): never {
+    throw new InversifyHttpAdapterError(
+      InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
+      message,
+    );
   }
 
   async #appendHandlerParam(
@@ -269,14 +187,14 @@ export abstract class InversifyHttpAdapter<
   }
 
   #bindAdapterRelatedServices(): void {
-    if (this.#container.isBound(httpApplicationServiceIdentifier)) {
+    if (this._container.isBound(httpApplicationServiceIdentifier)) {
       throw new InversifyHttpAdapterError(
         InversifyHttpAdapterErrorKind.invalidOperationAfterBuild,
         'An HTTP server is already registered in the container',
       );
     }
 
-    this.#container
+    this._container
       .bind<TApp>(httpApplicationServiceIdentifier)
       .toConstantValue(this._app);
   }
@@ -297,7 +215,7 @@ export abstract class InversifyHttpAdapter<
     if (controllerMethodParameterMetadataList.length === 0) {
       return async (): Promise<ControllerResponse> => {
         const controller: Controller =
-          await this.#container.getAsync<Controller>(
+          await this._container.getAsync<Controller>(
             serviceIdentifier as ServiceIdentifier<Controller>,
           );
 
@@ -308,7 +226,7 @@ export abstract class InversifyHttpAdapter<
     const provideSyncBuilder: boolean = areAllParamsSync(
       this.#awaitableRequestMethodParamTypes,
       controllerMethodParameterMetadataList,
-      this.#globalPipeList,
+      this._globalPipeList,
     );
 
     const paramBuilders: (
@@ -392,7 +310,7 @@ export abstract class InversifyHttpAdapter<
 
     if (provideSyncBuilder) {
       return buildSyncCallRouteHandler(
-        this.#container,
+        this._container,
         serviceIdentifier,
         controllerMethodKey,
         paramBuilders,
@@ -443,10 +361,11 @@ export abstract class InversifyHttpAdapter<
               controllerMethodParameterMetadata.parameterType,
             );
 
-            await this.#applyPipeList(
+            await applyPipeList(
+              this._container,
               params,
               [
-                ...this.#globalPipeList,
+                ...this._globalPipeList,
                 ...controllerMethodParameterMetadata.pipeList,
               ],
               {
@@ -459,7 +378,7 @@ export abstract class InversifyHttpAdapter<
         ),
       );
 
-      const controller: Controller = await this.#container.getAsync<Controller>(
+      const controller: Controller = await this._container.getAsync<Controller>(
         serviceIdentifier as ServiceIdentifier<Controller>,
       );
 
@@ -570,9 +489,9 @@ export abstract class InversifyHttpAdapter<
     return buildInterceptedHandler(
       [
         ...routerExplorerControllerMethodMetadata.interceptorList,
-        ...this.#globalInterceptorList,
+        ...this._globalInterceptorList,
       ],
-      this.#container,
+      this._container,
       buildCallRouteHandler,
       handleError,
       reply,
@@ -614,7 +533,7 @@ export abstract class InversifyHttpAdapter<
           guardList: [
             ...this.#getGuardHandlerFromMetadata(
               handleError,
-              this.#globalGuardList,
+              this._globalGuardList,
               routerExplorerControllerMethodMetadata,
             ),
             ...this.#getGuardHandlerFromMetadata(
@@ -668,7 +587,7 @@ export abstract class InversifyHttpAdapter<
       ),
       ...this.#getMiddlewareHandlerFromMetadata(
         handleError,
-        this.#postHandlerMiddlewareList,
+        this._postHandlerMiddlewareList,
       ),
     ];
   }
@@ -712,23 +631,6 @@ export abstract class InversifyHttpAdapter<
     return preHandlerMiddlewareList;
   }
 
-  async #applyPipeList(
-    params: unknown[],
-    pipeList: (ServiceIdentifier<Pipe> | Pipe)[],
-    pipeMetadata: PipeMetadata,
-  ): Promise<void> {
-    for (const pipeOrServiceIdentifier of pipeList) {
-      const pipe: Pipe = isPipe(pipeOrServiceIdentifier)
-        ? pipeOrServiceIdentifier
-        : await this.#container.getAsync(pipeOrServiceIdentifier);
-
-      params[pipeMetadata.parameterIndex] = await pipe.execute(
-        params[pipeMetadata.parameterIndex],
-        pipeMetadata,
-      );
-    }
-  }
-
   async #getErrorFilterForError(
     error: unknown,
     errorDiscriminatorToFilterMapList: Map<
@@ -741,7 +643,7 @@ export abstract class InversifyHttpAdapter<
     >[],
   ): Promise<ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined> {
     return getErrorFilterForError(
-      this.#container,
+      this._container,
       error,
       errorDiscriminatorToFilterMapList,
       errorToFilterMapList,
@@ -766,8 +668,8 @@ export abstract class InversifyHttpAdapter<
         ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined =
         await this.#getErrorFilterForError(
           error,
-          [this.#errorDiscriminatorToGlobalErrorFilterMap],
-          [this.#errorTypeToGlobalErrorFilterMap],
+          [this._errorDiscriminatorToGlobalErrorFilterMap],
+          [this._errorTypeToGlobalErrorFilterMap],
         );
 
       if (errorFilter === undefined) {
@@ -828,7 +730,7 @@ export abstract class InversifyHttpAdapter<
               TResponse,
               TNextFunction,
               TResult
-            > = await this.#container.getAsync(middlewareServiceIdentifier);
+            > = await this._container.getAsync(middlewareServiceIdentifier);
 
             return await middleware.execute(request, response, next);
           } catch (error: unknown) {
@@ -865,11 +767,11 @@ export abstract class InversifyHttpAdapter<
           error,
           [
             routerExplorerControllerMethodMetadata.errorDiscriminatorToErrorFilterMap,
-            this.#errorDiscriminatorToGlobalErrorFilterMap,
+            this._errorDiscriminatorToGlobalErrorFilterMap,
           ],
           [
             routerExplorerControllerMethodMetadata.errorTypeToErrorFilterMap,
-            this.#errorTypeToGlobalErrorFilterMap,
+            this._errorTypeToGlobalErrorFilterMap,
           ],
         );
 
@@ -992,7 +894,7 @@ export abstract class InversifyHttpAdapter<
               TResponse,
               TNextFunction,
               TResult
-            > = await this.#container.getAsync(middlewareServiceIdentifier);
+            > = await this._container.getAsync(middlewareServiceIdentifier);
 
             return await middleware.execute(request, response, next);
           } catch (error: unknown) {
@@ -1029,7 +931,7 @@ export abstract class InversifyHttpAdapter<
           next: TNextFunction,
         ): Promise<TResult | undefined> => {
           try {
-            const guard: Guard<TRequest> = await this.#container.getAsync(
+            const guard: Guard<TRequest> = await this._container.getAsync(
               guardServiceIdentifier,
             );
 
@@ -1092,7 +994,7 @@ export abstract class InversifyHttpAdapter<
       TResponse,
       TResult
     >[] = buildRouterExplorerControllerMetadataList(
-      this.#container,
+      this._container,
       this._logger,
     );
 
@@ -1113,17 +1015,8 @@ export abstract class InversifyHttpAdapter<
     }
   }
 
-  #setGlobalErrorFilter(errorFilter: Newable<ErrorFilter>): void {
-    setErrorFilterToErrorFilterMap(
-      this._logger,
-      this.#errorDiscriminatorToGlobalErrorFilterMap,
-      this.#errorTypeToGlobalErrorFilterMap,
-      errorFilter,
-    );
-  }
-
   #setErrorHttpResponseErrorFilter(): void {
-    this.#errorTypeToGlobalErrorFilterMap.set(
+    this._errorTypeToGlobalErrorFilterMap.set(
       ErrorHttpResponse,
       buildHttpResponseErrorFilter(this.#reply.bind(this)),
     );

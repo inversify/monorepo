@@ -141,6 +141,7 @@ export default {
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/framework/*": defaultWorkspaceProjectConfig,
+    "packages/framework/grpc/libraries/*": defaultWorkspaceProjectConfig,
     "packages/framework/http/libraries/*": defaultWorkspaceProjectConfig,
     "packages/framework/http/tools/e2e-tests": {
       entry: [
