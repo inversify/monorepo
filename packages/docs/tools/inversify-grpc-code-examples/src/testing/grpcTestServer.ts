@@ -277,9 +277,13 @@ export async function withServer(
     const port: number = await bindServer(server, '127.0.0.1:0');
 
     await run(`127.0.0.1:${port.toString()}`, container);
-  } finally {
-    await shutdownServer(server);
+  } catch (error: unknown) {
+    server.forceShutdown();
+
+    throw error;
   }
+
+  await shutdownServer(server);
 }
 
 function connect(address: string, serviceName: string): Client {
