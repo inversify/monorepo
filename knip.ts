@@ -149,8 +149,12 @@ export default {
         "src/**/step-definitions/*.ts",
         "src/app/hooks/*.ts",
         "src/app/setup/*.ts",
+        "src/hero/generated/hero.ts",
       ],
-      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      ignoreDependencies: [
+        ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        "ts-proto",
+      ],
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
     "packages/framework/http/libraries/*": defaultWorkspaceProjectConfig,

@@ -1,18 +1,18 @@
 import { When } from '@cucumber/cucumber';
 
 import { defaultAlias } from '../../common/models/defaultAlias.js';
-import { InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
+import { type InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
 import { getServerOrFail } from '../../server/calculations/getServerOrFail.js';
-import { Server } from '../../server/models/Server.js';
+import { type Server } from '../../server/models/Server.js';
 import { buildHeroClient } from '../actions/buildHeroClient.js';
 import { chat } from '../actions/chat.js';
 import { getHero } from '../actions/getHero.js';
 import { listHeroes } from '../actions/listHeroes.js';
 import { uploadHeroes } from '../actions/uploadHeroes.js';
-import { ChatMessage } from '../models/ChatMessage.js';
-import { HeroClient } from '../models/HeroClient.js';
-import { HeroResponse } from '../models/HeroResponse.js';
-import { UploadResponse } from '../models/UploadResponse.js';
+import { type ChatMessage } from '../generated/hero.js';
+import { type HeroClient } from '../models/HeroClient.js';
+import { type HeroResponse } from '../models/HeroResponse.js';
+import { type UploadResponse } from '../models/UploadResponse.js';
 
 function openHeroClient(this: InversifyGrpcWorld): HeroClient {
   const server: Server = getServerOrFail.bind(this)(defaultAlias);

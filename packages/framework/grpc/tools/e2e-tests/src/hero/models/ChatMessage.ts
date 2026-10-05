@@ -1,8 +1,6 @@
 import { type ChatMessage } from '../generated/hero.js';
 
-export type { ChatMessage };
-
-export function isChatMessage(value: unknown): value is ChatMessage {
+function isChatMessage(value: unknown): value is ChatMessage {
   if (typeof value !== 'object' || value === null) {
     return false;
   }

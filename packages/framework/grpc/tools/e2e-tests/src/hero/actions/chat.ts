@@ -1,6 +1,7 @@
 import { type ClientDuplexStream } from '@grpc/grpc-js';
 
-import { type ChatMessage, isChatMessageList } from '../models/ChatMessage.js';
+import { type ChatMessage } from '../generated/hero.js';
+import { isChatMessageList } from '../models/ChatMessage.js';
 import { type HeroClient } from '../models/HeroClient.js';
 import { readStreamMessages } from './readStreamMessages.js';
 
