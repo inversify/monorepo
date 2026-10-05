@@ -1,0 +1,58 @@
+name: Deploy Inversify Mintlify docs
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy inversify mintlify docs site.
+    environment: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup
+
+      - name: Build docs-mintlify
+        run: pnpm run build --filter @inversifyjs/inversify-mintlify-docs-site
+
+      - name: Validate Mintlify docs
+        run: pnpm run --filter @inversifyjs/inversify-mintlify-docs-site validate
+
+      - name: Trigger Mintlify deployment
+        env:
+          MINTLIFY_API_KEY: ${{ secrets.MINTLIFY_API_KEY }}
+          MINTLIFY_PROJECT_ID: ${{ secrets.MINTLIFY_PROJECT_ID }}
+        run: |
+          if [ -z "${MINTLIFY_API_KEY}" ] || [ -z "${MINTLIFY_PROJECT_ID}" ]; then
+            echo "::error::MINTLIFY_API_KEY and MINTLIFY_PROJECT_ID secrets are required"
+            exit 1
+          fi
+
+          response_file="$(mktemp)"
+          http_status="$(curl --silent --show-error --output "${response_file}" --write-out "%{http_code}" \
+            --request POST \
+            --header "Authorization: Bearer ${MINTLIFY_API_KEY}" \
+            --header "Accept: application/json" \
+            "https://api.mintlify.com/v1/project/update/${MINTLIFY_PROJECT_ID}")"
+
+          echo "Mintlify API responded with HTTP ${http_status}"
+          cat "${response_file}"
+          echo
+
+          if [ "${http_status}" != "202" ]; then
+            echo "::error::Failed to trigger Mintlify deployment"
+            exit 1
+          fi
+
+          status_id="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("statusId",""))' "${response_file}")"
+          if [ -z "${status_id}" ]; then
+            echo "::error::Mintlify deployment response did not include statusId"
+            exit 1
+          fi
+
+          echo "Triggered Mintlify deployment. statusId=${status_id}"
