@@ -41,6 +41,9 @@ coverage:
       '@inversifyjs/grpc-core':
         flags:
           - '@inversifyjs/grpc-core'
+      '@inversifyjs/grpc-js':
+        flags:
+          - '@inversifyjs/grpc-js'
       '@inversifyjs/http-better-auth':
         flags:
           - '@inversifyjs/http-better-auth'
@@ -141,6 +144,9 @@ flags:
   '@inversifyjs/grpc-core':
     paths:
       - packages/framework/grpc/libraries/core
+  '@inversifyjs/grpc-js':
+    paths:
+      - packages/framework/grpc/libraries/grpc-js
   '@inversifyjs/http-better-auth':
     paths:
       - packages/framework/http/libraries/better-auth
