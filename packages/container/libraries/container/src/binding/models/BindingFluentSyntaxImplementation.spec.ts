@@ -483,7 +483,7 @@ describe(BindToFluentSyntaxImplementation, () => {
             metadata: {
               arguments: [
                 {
-                  kind: expect.any(Number) as unknown as number,
+                  kind: ResolvedValueElementMetadataKind.singleInjection,
                   name: undefined,
                   optional: false,
                   tags: new Map(),

@@ -32,6 +32,7 @@ export function buildManagedMetadataFromMaybeManagedMetadata(
 
   if (kind === ClassElementMetadataKind.multipleInjection) {
     return {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-assignment
       ...metadata,
       chained: options?.chained ?? false,
       kind,
@@ -39,6 +40,7 @@ export function buildManagedMetadataFromMaybeManagedMetadata(
     };
   } else {
     return {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-assignment
       ...metadata,
       kind,
       value: serviceIdentifier,

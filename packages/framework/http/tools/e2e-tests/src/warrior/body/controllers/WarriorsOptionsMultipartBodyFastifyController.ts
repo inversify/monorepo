@@ -19,6 +19,7 @@ export class WarriorsOptionsMultipartBodyFastifyController {
       name: formData['name'] as string,
       range: 1,
       speed: 10,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-assignment
       type: formData['type'] as WarriorCreationResponseType,
     };
   }
