@@ -6,7 +6,7 @@ import {
   Patch,
 } from '@inversifyjs/http-core';
 
-import { NextUwebSocketsMiddleware } from '../../middlewares/NextUwebSocketsMiddleware';
+import { NextUwebSocketsMiddleware } from '../../middlewares/NextUwebSocketsMiddleware.js';
 
 @Controller('/warriors')
 export class WarriorsPatchNextUwebSocketsController {

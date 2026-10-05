@@ -1,16 +1,16 @@
 import { Given } from '@cucumber/cucumber';
 import { Container, Newable } from 'inversify';
 
-import { defaultAlias } from '../../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail';
-import { HttpMethod } from '../../../http/models/HttpMethod';
-import { WarriorsDeleteStreamController } from '../controllers/WarriorsDeleteStreamController';
-import { WarriorsGetStreamController } from '../controllers/WarriorsGetStreamController';
-import { WarriorsOptionsStreamController } from '../controllers/WarriorsOptionsStreamController';
-import { WarriorsPatchStreamController } from '../controllers/WarriorsPatchStreamController';
-import { WarriorsPostStreamController } from '../controllers/WarriorsPostStreamController';
-import { WarriorsPutStreamController } from '../controllers/WarriorsPutStreamController';
+import { defaultAlias } from '../../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
+import { HttpMethod } from '../../../http/models/HttpMethod.js';
+import { WarriorsDeleteStreamController } from '../controllers/WarriorsDeleteStreamController.js';
+import { WarriorsGetStreamController } from '../controllers/WarriorsGetStreamController.js';
+import { WarriorsOptionsStreamController } from '../controllers/WarriorsOptionsStreamController.js';
+import { WarriorsPatchStreamController } from '../controllers/WarriorsPatchStreamController.js';
+import { WarriorsPostStreamController } from '../controllers/WarriorsPostStreamController.js';
+import { WarriorsPutStreamController } from '../controllers/WarriorsPutStreamController.js';
 
 function getMethodWarriorStreamController(method: HttpMethod): Newable {
   switch (method) {

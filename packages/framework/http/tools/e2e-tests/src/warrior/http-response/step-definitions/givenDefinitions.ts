@@ -1,16 +1,16 @@
 import { Given } from '@cucumber/cucumber';
 import { Container, Newable } from 'inversify';
 
-import { defaultAlias } from '../../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail';
-import { HttpMethod } from '../../../http/models/HttpMethod';
-import { WarriorsDeleteHttpResponseController } from '../controllers/WarriorsDeleteHttpResponseController';
-import { WarriorsGetHttpResponseController } from '../controllers/WarriorsGetHttpResponseController';
-import { WarriorsOptionsHttpResponseController } from '../controllers/WarriorsOptionsHttpResponseController';
-import { WarriorsPatchHttpResponseController } from '../controllers/WarriorsPatchHttpResponseController';
-import { WarriorsPostHttpResponseController } from '../controllers/WarriorsPostHttpResponseController';
-import { WarriorsPutHttpResponseController } from '../controllers/WarriorsPutHttpResponseController';
+import { defaultAlias } from '../../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
+import { HttpMethod } from '../../../http/models/HttpMethod.js';
+import { WarriorsDeleteHttpResponseController } from '../controllers/WarriorsDeleteHttpResponseController.js';
+import { WarriorsGetHttpResponseController } from '../controllers/WarriorsGetHttpResponseController.js';
+import { WarriorsOptionsHttpResponseController } from '../controllers/WarriorsOptionsHttpResponseController.js';
+import { WarriorsPatchHttpResponseController } from '../controllers/WarriorsPatchHttpResponseController.js';
+import { WarriorsPostHttpResponseController } from '../controllers/WarriorsPostHttpResponseController.js';
+import { WarriorsPutHttpResponseController } from '../controllers/WarriorsPutHttpResponseController.js';
 
 function getMethodWarriorStatusCodeController(method: HttpMethod): Newable {
   switch (method) {

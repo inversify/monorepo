@@ -1,4 +1,4 @@
-import { WarriorCreationResponseType } from './WarriorCreationResponseType';
+import { WarriorCreationResponseType } from './WarriorCreationResponseType.js';
 
 export interface WarriorRequest {
   name: string;

@@ -1,6 +1,6 @@
 import { defineParameterType } from '@cucumber/cucumber';
 
-import { HttpMethod } from '../models/HttpMethod';
+import { HttpMethod } from '../models/HttpMethod.js';
 
 defineParameterType({
   name: 'httpMethod',

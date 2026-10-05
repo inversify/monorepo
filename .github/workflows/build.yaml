@@ -201,9 +201,6 @@ jobs:
 
       - uses: ./.github/actions/setup
 
-      - name: Run e2e tests (CJS)
-        run: pnpm run test:e2e:cjs --filter='@inversifyjs/http-e2e-tests'
-
       - name: Run e2e tests (ESM)
         run: pnpm run test:e2e:esm --filter='@inversifyjs/http-e2e-tests'
 

@@ -1,24 +1,24 @@
 import { Given } from '@cucumber/cucumber';
 import { Container, Newable } from 'inversify';
 
-import { defaultAlias } from '../../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail';
-import { HttpMethod } from '../../../http/models/HttpMethod';
-import { WarriorsDeleteSuccessfulGuardController } from '../controllers/WarriorsDeleteSuccessfulGuardController';
-import { WarriorsDeleteUnsuccessfulGuardController } from '../controllers/WarriorsDeleteUnsuccessfulGuardController';
-import { WarriorsGetSuccessfulGuardController } from '../controllers/WarriorsGetSuccessfulGuardController';
-import { WarriorsGetUnsuccessfulGuardController } from '../controllers/WarriorsGetUnsuccessfulGuardController';
-import { WarriorsOptionsSuccessfulGuardController } from '../controllers/WarriorsOptionsSuccessfulGuardController';
-import { WarriorsOptionsUnsuccessfulGuardController } from '../controllers/WarriorsOptionsUnsuccessfulGuardController';
-import { WarriorsPatchSuccessfulGuardController } from '../controllers/WarriorsPatchSuccessfulGuardController';
-import { WarriorsPatchUnsuccessfulGuardController } from '../controllers/WarriorsPatchUnsuccessfulGuardController';
-import { WarriorsPostSuccessfulGuardController } from '../controllers/WarriorsPostSuccessfulGuardController';
-import { WarriorsPostUnsuccessfulGuardController } from '../controllers/WarriorsPostUnsuccessfulGuardController';
-import { WarriorsPutSuccessfulGuardController } from '../controllers/WarriorsPutSuccessfulGuardController';
-import { WarriorsPutUnsuccessfulGuardController } from '../controllers/WarriorsPutUnsuccessfulGuardController';
-import { SuccessfulGuard } from '../guards/SuccessfulGuard';
-import { UnsuccessfulGuard } from '../guards/UnsuccessfulGuard';
+import { defaultAlias } from '../../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
+import { HttpMethod } from '../../../http/models/HttpMethod.js';
+import { WarriorsDeleteSuccessfulGuardController } from '../controllers/WarriorsDeleteSuccessfulGuardController.js';
+import { WarriorsDeleteUnsuccessfulGuardController } from '../controllers/WarriorsDeleteUnsuccessfulGuardController.js';
+import { WarriorsGetSuccessfulGuardController } from '../controllers/WarriorsGetSuccessfulGuardController.js';
+import { WarriorsGetUnsuccessfulGuardController } from '../controllers/WarriorsGetUnsuccessfulGuardController.js';
+import { WarriorsOptionsSuccessfulGuardController } from '../controllers/WarriorsOptionsSuccessfulGuardController.js';
+import { WarriorsOptionsUnsuccessfulGuardController } from '../controllers/WarriorsOptionsUnsuccessfulGuardController.js';
+import { WarriorsPatchSuccessfulGuardController } from '../controllers/WarriorsPatchSuccessfulGuardController.js';
+import { WarriorsPatchUnsuccessfulGuardController } from '../controllers/WarriorsPatchUnsuccessfulGuardController.js';
+import { WarriorsPostSuccessfulGuardController } from '../controllers/WarriorsPostSuccessfulGuardController.js';
+import { WarriorsPostUnsuccessfulGuardController } from '../controllers/WarriorsPostUnsuccessfulGuardController.js';
+import { WarriorsPutSuccessfulGuardController } from '../controllers/WarriorsPutSuccessfulGuardController.js';
+import { WarriorsPutUnsuccessfulGuardController } from '../controllers/WarriorsPutUnsuccessfulGuardController.js';
+import { SuccessfulGuard } from '../guards/SuccessfulGuard.js';
+import { UnsuccessfulGuard } from '../guards/UnsuccessfulGuard.js';
 
 function getMethodWarriorSuccessfulGuardController(
   method: HttpMethod,

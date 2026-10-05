@@ -1,7 +1,7 @@
 import { ApplyMiddleware, Controller, Options } from '@inversifyjs/http-core';
 
-import { Roles } from '../../decorators/expressRoles';
-import { RouteValueMetadataExpressMiddleware } from '../../middlewares/express/RouteValueMetadataExpressMiddleware';
+import { Roles } from '../../decorators/expressRoles.js';
+import { RouteValueMetadataExpressMiddleware } from '../../middlewares/express/RouteValueMetadataExpressMiddleware.js';
 
 @Controller('/warriors')
 export class WarriorsOptionsRouteValueMetadataExpressController {

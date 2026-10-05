@@ -1,7 +1,7 @@
 import { Body, Controller, Options } from '@inversifyjs/http-core';
 
-import { WarriorCreationResponse } from '../models/WarriorCreationResponse';
-import { WarriorRequest } from '../models/WarriorRequest';
+import { WarriorCreationResponse } from '../models/WarriorCreationResponse.js';
+import { WarriorRequest } from '../models/WarriorRequest.js';
 
 @Controller('/warriors')
 export class WarriorsOptionsJsonBodyController {

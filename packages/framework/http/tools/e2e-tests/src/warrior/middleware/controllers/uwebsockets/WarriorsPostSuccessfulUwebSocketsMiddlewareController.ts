@@ -1,6 +1,6 @@
 import { ApplyMiddleware, Controller, Post } from '@inversifyjs/http-core';
 
-import { SuccessfulUwebSocketsMiddleware } from '../../middlewares/uwebsockets/SuccessfulUwebSocketsMiddleware';
+import { SuccessfulUwebSocketsMiddleware } from '../../middlewares/uwebsockets/SuccessfulUwebSocketsMiddleware.js';
 
 @Controller('/warriors')
 export class WarriorsPostSuccessfulUwebSocketsMiddlewareController {

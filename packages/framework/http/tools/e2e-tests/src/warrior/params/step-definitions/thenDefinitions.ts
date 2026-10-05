@@ -2,12 +2,12 @@ import assert from 'node:assert';
 
 import { Then } from '@cucumber/cucumber';
 
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { RequestParameter } from '../../../http/models/RequestParameter';
-import { ResponseParameter } from '../../../http/models/ResponseParameter';
-import { getServerRequestOrFail } from '../../../server/calculations/getServerRequestOrFail';
-import { getServerResponseOrFail } from '../../../server/calculations/getServerResponseOrFail';
-import { WarriorWithId } from '../models/WarriorWithId';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { RequestParameter } from '../../../http/models/RequestParameter.js';
+import { ResponseParameter } from '../../../http/models/ResponseParameter.js';
+import { getServerRequestOrFail } from '../../../server/calculations/getServerRequestOrFail.js';
+import { getServerResponseOrFail } from '../../../server/calculations/getServerResponseOrFail.js';
+import { WarriorWithId } from '../models/WarriorWithId.js';
 
 async function thenResponseContainsTheCorrectUrlParameters(
   this: InversifyHttpWorld,

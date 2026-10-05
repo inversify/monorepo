@@ -7,7 +7,7 @@ import {
 } from '@inversifyjs/http-core';
 import { Next as NextFn } from 'hono';
 
-import { NextHonoMiddleware } from '../../middlewares/NextHonoMiddleware';
+import { NextHonoMiddleware } from '../../middlewares/NextHonoMiddleware.js';
 
 @Controller('/warriors')
 export class WarriorsPutNextHonoController {

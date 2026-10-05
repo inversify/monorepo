@@ -1,7 +1,7 @@
 import { ApplyMiddleware, Controller, Patch } from '@inversifyjs/http-core';
 
-import { SuccessfulExpressV4Middleware } from '../../middlewares/express4/SuccessfulExpressV4Middleware';
-import { UnsuccessfulExpressV4Middleware } from '../../middlewares/express4/UnsuccessfulExpressV4Middleware';
+import { SuccessfulExpressV4Middleware } from '../../middlewares/express4/SuccessfulExpressV4Middleware.js';
+import { UnsuccessfulExpressV4Middleware } from '../../middlewares/express4/UnsuccessfulExpressV4Middleware.js';
 
 @Controller('/warriors')
 export class WarriorsPatchUnsuccessfulExpressV4MiddlewareController {

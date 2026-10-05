@@ -161,12 +161,7 @@ export default {
         "src/**/step-definitions/*.ts",
         "src/app/hooks/*.ts",
       ],
-      ignoreDependencies: [
-        ...defaultWorkspaceProjectConfig.ignoreDependencies,
-        "ts-loader",
-        "ts-node",
-        "tslib",
-      ],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
     "packages/framework/http/tools/http-benchmarks": {

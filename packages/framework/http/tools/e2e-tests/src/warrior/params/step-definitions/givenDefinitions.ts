@@ -1,23 +1,23 @@
 import { Given } from '@cucumber/cucumber';
 import { Container, Newable } from 'inversify';
 
-import { defaultAlias } from '../../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail';
-import { HttpMethod } from '../../../http/models/HttpMethod';
-import { setServerRequest } from '../../../server/actions/setServerRequest';
-import { getServerOrFail } from '../../../server/calculations/getServerOrFail';
-import { Server } from '../../../server/models/Server';
-import { WarriorsDeleteParamsController } from '../controllers/WarriorsDeleteParamsController';
-import { WarriorsDeleteParamsNamedController } from '../controllers/WarriorsDeleteParamsNamedController';
-import { WarriorsGetParamsController } from '../controllers/WarriorsGetParamsController';
-import { WarriorsGetParamsNamedController } from '../controllers/WarriorsGetParamsNamedController';
-import { WarriorsPatchParamsController } from '../controllers/WarriorsPatchParamsController';
-import { WarriorsPatchParamsNamedController } from '../controllers/WarriorsPatchParamsNamedController';
-import { WarriorsPostParamsController } from '../controllers/WarriorsPostParamsController';
-import { WarriorsPostParamsNamedController } from '../controllers/WarriorsPostParamsNamedController';
-import { WarriorsPutParamsController } from '../controllers/WarriorsPutParamsController';
-import { WarriorsPutParamsNamedController } from '../controllers/WarriorsPutParamsNamedController';
+import { defaultAlias } from '../../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
+import { HttpMethod } from '../../../http/models/HttpMethod.js';
+import { setServerRequest } from '../../../server/actions/setServerRequest.js';
+import { getServerOrFail } from '../../../server/calculations/getServerOrFail.js';
+import { Server } from '../../../server/models/Server.js';
+import { WarriorsDeleteParamsController } from '../controllers/WarriorsDeleteParamsController.js';
+import { WarriorsDeleteParamsNamedController } from '../controllers/WarriorsDeleteParamsNamedController.js';
+import { WarriorsGetParamsController } from '../controllers/WarriorsGetParamsController.js';
+import { WarriorsGetParamsNamedController } from '../controllers/WarriorsGetParamsNamedController.js';
+import { WarriorsPatchParamsController } from '../controllers/WarriorsPatchParamsController.js';
+import { WarriorsPatchParamsNamedController } from '../controllers/WarriorsPatchParamsNamedController.js';
+import { WarriorsPostParamsController } from '../controllers/WarriorsPostParamsController.js';
+import { WarriorsPostParamsNamedController } from '../controllers/WarriorsPostParamsNamedController.js';
+import { WarriorsPutParamsController } from '../controllers/WarriorsPutParamsController.js';
+import { WarriorsPutParamsNamedController } from '../controllers/WarriorsPutParamsNamedController.js';
 
 function getMethodWarriorParamsController(method: HttpMethod): Newable {
   switch (method) {

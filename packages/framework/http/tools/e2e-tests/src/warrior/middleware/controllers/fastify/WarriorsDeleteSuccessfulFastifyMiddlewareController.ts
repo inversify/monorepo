@@ -1,6 +1,6 @@
 import { ApplyMiddleware, Controller, Delete } from '@inversifyjs/http-core';
 
-import { SuccessfulFastifyMiddleware } from '../../middlewares/fastify/SuccessfulFastifyMiddleware';
+import { SuccessfulFastifyMiddleware } from '../../middlewares/fastify/SuccessfulFastifyMiddleware.js';
 
 @Controller('/warriors')
 export class WarriorsDeleteSuccessfulFastifyMiddlewareController {

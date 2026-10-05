@@ -3,9 +3,9 @@ import { Interceptor, Middleware } from '@inversifyjs/http-core';
 import { ServiceIdentifier } from 'inversify';
 import { Container } from 'inversify';
 
-import { RequestParameter } from '../../http/models/RequestParameter';
-import { ResponseParameter } from '../../http/models/ResponseParameter';
-import { Server } from '../../server/models/Server';
+import { RequestParameter } from '../../http/models/RequestParameter.js';
+import { ResponseParameter } from '../../http/models/ResponseParameter.js';
+import { Server } from '../../server/models/Server.js';
 
 interface EntitiesMap {
   readonly containers: Map<string, Container>;

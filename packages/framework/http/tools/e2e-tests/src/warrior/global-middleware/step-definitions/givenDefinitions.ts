@@ -2,23 +2,23 @@ import { Given } from '@cucumber/cucumber';
 import { Middleware } from '@inversifyjs/http-core';
 import { Container, Newable, ServiceIdentifier } from 'inversify';
 
-import { defaultAlias } from '../../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail';
-import { setServerRequest } from '../../../server/actions/setServerRequest';
-import { getServerOrFail } from '../../../server/calculations/getServerOrFail';
-import { Server } from '../../../server/models/Server';
-import { ServerKind } from '../../../server/models/ServerKind';
-import { WarriorsGetTestCorsController } from '../controllers/WarriorsGetTestCorsController';
-import { CorsExpressMiddleware } from '../middlewares/express/CorsExpressMiddleware';
-import { GlobalExpressMiddleware } from '../middlewares/express/GlobalExpressMiddleware';
-import { CorsExpressV4Middleware } from '../middlewares/express4/CorsExpressV4Middleware';
-import { GlobalExpressV4Middleware } from '../middlewares/express4/GlobalExpressV4Middleware';
-import { CorsFastifyMiddleware } from '../middlewares/fastify/CorsFastifyMiddleware';
-import { GlobalFastifyMiddleware } from '../middlewares/fastify/GlobalFastifyMiddleware';
-import { CorsHonoMiddleware } from '../middlewares/hono/CorsHonoMiddleware';
-import { GlobalHonoMiddleware } from '../middlewares/hono/GlobalHonoMiddleware';
-import { GlobalUwebSocketsMiddleware } from '../middlewares/uwebsockets/GlobalUwebSocketsMiddleware';
+import { defaultAlias } from '../../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
+import { setServerRequest } from '../../../server/actions/setServerRequest.js';
+import { getServerOrFail } from '../../../server/calculations/getServerOrFail.js';
+import { Server } from '../../../server/models/Server.js';
+import { ServerKind } from '../../../server/models/ServerKind.js';
+import { WarriorsGetTestCorsController } from '../controllers/WarriorsGetTestCorsController.js';
+import { CorsExpressMiddleware } from '../middlewares/express/CorsExpressMiddleware.js';
+import { GlobalExpressMiddleware } from '../middlewares/express/GlobalExpressMiddleware.js';
+import { CorsExpressV4Middleware } from '../middlewares/express4/CorsExpressV4Middleware.js';
+import { GlobalExpressV4Middleware } from '../middlewares/express4/GlobalExpressV4Middleware.js';
+import { CorsFastifyMiddleware } from '../middlewares/fastify/CorsFastifyMiddleware.js';
+import { GlobalFastifyMiddleware } from '../middlewares/fastify/GlobalFastifyMiddleware.js';
+import { CorsHonoMiddleware } from '../middlewares/hono/CorsHonoMiddleware.js';
+import { GlobalHonoMiddleware } from '../middlewares/hono/GlobalHonoMiddleware.js';
+import { GlobalUwebSocketsMiddleware } from '../middlewares/uwebsockets/GlobalUwebSocketsMiddleware.js';
 
 function getGlobalMiddlewareForServerKind(
   serverKind: ServerKind,

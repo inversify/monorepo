@@ -7,7 +7,7 @@ import {
 } from '@inversifyjs/http-core';
 import { NextFunction } from 'express';
 
-import { NextExpressMiddleware } from '../../middlewares/NextExpressMiddleware';
+import { NextExpressMiddleware } from '../../middlewares/NextExpressMiddleware.js';
 
 @Controller('/warriors')
 export class WarriorsOptionsNextExpressController {

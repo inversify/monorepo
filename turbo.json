@@ -232,6 +232,10 @@
       "cache": false,
       "dependsOn": ["build"]
     },
+    "@inversifyjs/http-e2e-tests#test:e2e": {
+      "cache": false,
+      "dependsOn": ["build"]
+    },
     "test:e2e:cjs": {
       "cache": false,
       "dependsOn": ["build"]

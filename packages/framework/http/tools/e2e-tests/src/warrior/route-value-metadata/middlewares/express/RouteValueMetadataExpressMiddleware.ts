@@ -2,7 +2,7 @@ import { ExpressMiddleware } from '@inversifyjs/http-express';
 import { NextFunction, Request, Response } from 'express';
 import { injectable } from 'inversify';
 
-import { getRoles } from '../../decorators/expressRoles';
+import { getRoles } from '../../decorators/expressRoles.js';
 
 @injectable()
 export class RouteValueMetadataExpressMiddleware implements ExpressMiddleware {

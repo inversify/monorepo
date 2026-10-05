@@ -6,7 +6,7 @@ import {
   Next,
 } from '@inversifyjs/http-core';
 
-import { NextFastifyMiddleware } from '../../middlewares/NextFastifyMiddleware';
+import { NextFastifyMiddleware } from '../../middlewares/NextFastifyMiddleware.js';
 
 @Controller('/warriors')
 export class WarriorsGetNextFastifyController {

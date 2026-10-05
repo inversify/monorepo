@@ -1,6 +1,6 @@
 import { ApplyMiddleware, Controller, Delete } from '@inversifyjs/http-core';
 
-import { SuccessfulExpressV4Middleware } from '../../middlewares/express4/SuccessfulExpressV4Middleware';
+import { SuccessfulExpressV4Middleware } from '../../middlewares/express4/SuccessfulExpressV4Middleware.js';
 
 @Controller('/warriors')
 export class WarriorsDeleteSuccessfulExpressV4MiddlewareController {

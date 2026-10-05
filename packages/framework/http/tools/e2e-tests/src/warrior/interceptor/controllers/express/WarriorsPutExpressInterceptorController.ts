@@ -1,6 +1,6 @@
 import { Controller, Put, UseInterceptor } from '@inversifyjs/http-core';
 
-import { WarriorRouteExpressInterceptor } from '../../interceptors/express/WarriorRouteExpressInterceptor';
+import { WarriorRouteExpressInterceptor } from '../../interceptors/express/WarriorRouteExpressInterceptor.js';
 
 @Controller('/warriors')
 @UseInterceptor(WarriorRouteExpressInterceptor)

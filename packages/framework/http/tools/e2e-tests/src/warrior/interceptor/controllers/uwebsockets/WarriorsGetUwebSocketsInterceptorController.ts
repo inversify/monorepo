@@ -1,6 +1,6 @@
 import { Controller, Get, UseInterceptor } from '@inversifyjs/http-core';
 
-import { WarriorRouteUwebSocketsInterceptor } from '../../interceptors/uwebsockets/WarriorRouteUwebSocketsInterceptor';
+import { WarriorRouteUwebSocketsInterceptor } from '../../interceptors/uwebsockets/WarriorRouteUwebSocketsInterceptor.js';
 
 @Controller('/warriors')
 @UseInterceptor(WarriorRouteUwebSocketsInterceptor)
