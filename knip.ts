@@ -99,6 +99,14 @@ export default {
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
+    "packages/docs/tools/inversify-grpc-code-examples": {
+      entry: [
+        "src/examples/**/*.ts",
+        "src/scripts/generateExamples/index.ts",
+      ],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/docs/tools/inversify-http-code-examples": {
       entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,

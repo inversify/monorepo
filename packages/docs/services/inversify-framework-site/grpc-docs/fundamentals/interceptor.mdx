@@ -1,0 +1,36 @@
+---
+sidebar_position: 6
+title: Interceptor
+---
+import interceptorSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/interceptor.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Interceptor
+
+Interceptors wrap the RPC method. Code before `await next()` runs after guards and before the method. Code after `await next()` runs after the method returns and before post-handler middleware.
+
+```ts
+interface Interceptor<TRequest = any, TResponse = any> {
+  intercept(
+    request: TRequest,
+    response: TResponse,
+    next: () => Promise<InterceptorTransformObject>,
+  ): Promise<void>;
+}
+
+interface InterceptorTransformObject {
+  push: (transform: (value: unknown) => unknown) => void;
+}
+```
+
+`request` is the `@grpc/grpc-js` call. `response` is the callback for unary and client-streaming RPCs, and the call for streaming responses.
+
+`transform.push()` changes the value the method returns before the adapter sends it. That applies to unary and client-streaming methods that return a message and do not use `@Callback()`. Streamed messages and callback replies stay as the method wrote them. Skip `next()` to skip the method. Throw a [`GrpcError`](../error) to finish the call with that status.
+
+Add `@injectable()` and bind the interceptor.
+
+<CodeBlock language="ts">{interceptorSource}</CodeBlock>
+
+`GetHero('hero-1')` returns `{ name: 'hero-1!' }`.
+
+`@UseInterceptor()` on the class wraps every RPC. On a method, it wraps that RPC. Class interceptors are outside method interceptors. Global interceptors, registered with [`useGlobalInterceptors()`](../../api/inversify-grpc-js-adapter#global-handlers) before `build()`, sit inside both.

@@ -1,0 +1,26 @@
+---
+sidebar_position: 5
+title: Guard
+---
+import guardSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/guard.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Guard
+
+Guards decide whether an RPC continues. They run after pre-handler middleware and before interceptors and the RPC method.
+
+```ts
+interface Guard<TRequest = any> {
+  activate(request: TRequest): Promise<boolean> | boolean;
+}
+```
+
+`activate` receives the `@grpc/grpc-js` call. Return `true` to continue. Return `false` to finish the call with `PERMISSION_DENIED`. Throw a [`GrpcError`](../error) to finish the call with that status.
+
+Add `@injectable()` and bind the guard. `@UseGuard()` on the class applies to every RPC. `@UseGuard()` on a method applies to that RPC.
+
+<CodeBlock language="ts">{guardSource}</CodeBlock>
+
+`HeroIdGuard` allows every id except `forbidden`. `AuthenticationGuard` requires `authorization` metadata and throws `UnauthenticatedGrpcError` when it is missing.
+
+Global guards use [`applyGlobalGuards()`](../../api/inversify-grpc-js-adapter#global-handlers) before `build()`. They run before class and method guards. Type `activate`'s argument as `object` and narrow it when you register the guard globally. The adapter's global guard list is typed with the transport call, which is a smaller type than `ServerUnaryCall`.

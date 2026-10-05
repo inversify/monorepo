@@ -1,0 +1,54 @@
+---
+sidebar_position: 1
+title: Service
+---
+import dependencyInjectionSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/dependencyInjection.ts.txt';
+import inheritanceSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/inheritance.ts.txt';
+import serviceOptionsSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/serviceOptions.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Service
+
+A service is a class decorated with `@Service()`. The decorator records the gRPC service definition and applies `@injectable()`, so you do not add `@injectable()` yourself.
+
+```ts
+function Service(
+  definition: GrpcServiceDefinition,
+  options?: ServiceOptions,
+): ClassDecorator
+```
+
+`definition` is the object you would pass to `server.addService()`. Each key is an RPC name. `@RPC()` on the class, including inherited methods, must cover every key, and every `@RPC()` name must be one of those keys.
+
+`options` accepts:
+
+- `scope`: `'Singleton'`, `'Transient'`, or `'Request'`. `container.bind(Service).toSelf()` and `container.bind(id).to(Service)` use this scope. When you omit it, the container default applies.
+- `serviceIdentifier`: the identifier the adapter resolves. The default is the class.
+
+Bind that identifier before `build()`. Unbound `@Service()` classes are skipped. When the process has no `@Service()` classes at all, `build()` throws.
+
+## Dependency injection
+
+Constructor injection works the same way as in any Inversify service. Bind the dependencies and the service.
+
+<CodeBlock language="ts">{dependencyInjectionSource}</CodeBlock>
+
+## Scope and service identifier
+
+<CodeBlock language="ts">{serviceOptionsSource}</CodeBlock>
+
+Bind the custom identifier to the class:
+
+```ts
+container.bind(heroServiceIdentifier).to(SingletonHeroService);
+```
+
+`scope: 'Singleton'` makes that binding a singleton, so every RPC shares one instance.
+
+## Inheritance
+
+`@RPC()` methods are inherited. A subclass method with the same RPC name replaces the parent method. Put `@Service()` on the class you bind.
+
+<CodeBlock language="ts">{inheritanceSource}</CodeBlock>
+
+`InheritedHeroService` serves `GetHero` with the parent method. `OverridingHeroService` serves it with the subclass method. Bind only one of them in a container. Both classes use the same service definition, and `@grpc/grpc-js` accepts that definition once per server.

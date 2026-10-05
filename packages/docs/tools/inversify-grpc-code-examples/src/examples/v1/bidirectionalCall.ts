@@ -1,0 +1,24 @@
+import { type ServerDuplexStream } from '@grpc/grpc-js';
+import { Call, RPC, Service } from '@inversifyjs/grpc-core';
+
+import {
+  type ChatMessage,
+  heroChatServiceDefinition,
+} from './loadHeroServiceDefinition.js';
+
+@Service(heroChatServiceDefinition)
+export class CallHeroChatService {
+  @RPC('Chat')
+  public chat(
+    @Call() call: ServerDuplexStream<ChatMessage, ChatMessage>,
+  ): void {
+    call.on('data', (message: ChatMessage): void => {
+      call.write({
+        text: message.text,
+      });
+    });
+    call.on('end', (): void => {
+      call.end();
+    });
+  }
+}

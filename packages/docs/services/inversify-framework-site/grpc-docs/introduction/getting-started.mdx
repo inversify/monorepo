@@ -1,0 +1,87 @@
+---
+sidebar_position: 1
+title: Getting started
+---
+import heroProtoSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/hero.proto.txt';
+import loadHeroServiceDefinitionSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/loadHeroServiceDefinition.ts.txt';
+import gettingStartedSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/gettingStarted.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting started
+
+`@inversifyjs/grpc-js` builds a [`@grpc/grpc-js`](https://github.com/grpc/grpc-node/tree/master/packages/grpc-js) server from classes registered in an Inversify container. Decorators, gRPC status errors, guards, middleware, interceptors, pipes, and error filters come from `@inversifyjs/grpc-core`.
+
+## Install dependencies
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```bash
+npm install inversify reflect-metadata @grpc/grpc-js @grpc/proto-loader @inversifyjs/grpc-core @inversifyjs/grpc-js
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm install inversify reflect-metadata @grpc/grpc-js @grpc/proto-loader @inversifyjs/grpc-core @inversifyjs/grpc-js
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn add inversify reflect-metadata @grpc/grpc-js @grpc/proto-loader @inversifyjs/grpc-core @inversifyjs/grpc-js
+```
+
+  </TabItem>
+</Tabs>
+
+:::warning
+
+Enable [experimentalDecorators](https://www.typescriptlang.org/tsconfig/#experimentalDecorators) and [emitDecoratorMetadata](https://www.typescriptlang.org/tsconfig/#emitDecoratorMetadata) in `tsconfig.json`.
+
+Import `reflect-metadata` once, before any decorated class is loaded.
+
+:::
+
+`@grpc/proto-loader` is one way to turn a `.proto` file into the service definition `@Service()` expects. Generated clients from `ts-proto`, `protobuf-ts`, or another codegen tool work too, as long as each method has `path`, `requestStream`, `responseStream`, and the serialize and deserialize functions `@grpc/grpc-js` uses.
+
+## Describe the service
+
+<CodeBlock language="protobuf">{heroProtoSource}</CodeBlock>
+
+Keep `hero.proto` next to the loader below. Later pages use the upload, list, and chat services from this file.
+
+## Load the service definition
+
+<CodeBlock language="typescript">{loadHeroServiceDefinitionSource}</CodeBlock>
+
+`@RPC()` names match the keys of the loaded service definition. With `@grpc/proto-loader`, those keys are the RPC names from the `.proto` file, such as `GetHero`.
+
+## Start the server
+
+<CodeBlock language="typescript">{gettingStartedSource}</CodeBlock>
+
+Call `main()` to listen on `0.0.0.0:50051`, or call `startGrpcServer()` with another address. `build()` returns the `@grpc/grpc-js` `Server`. Binding and credentials stay in your code, so this example can use an ephemeral port in tests and `ServerCredentials.createSsl` in production.
+
+`logger: false` turns off the startup log. Leave `logger` unset to print each service and RPC when the server is built. Pass a [`Logger`](/logger/introduction/getting-started) to use your own.
+
+Bind every service class you want to expose before `build()`. `@Service()` makes the class injectable. The adapter registers a service only when its service identifier is bound. Import the module that declares the class so the decorator runs.
+
+## Request lifecycle
+
+For each RPC, the adapter runs:
+
+1. [Pre-handler middleware](../../fundamentals/middleware), global first, then class, then method.
+2. [Guards](../../fundamentals/guard), in that same order.
+3. [Interceptors](../../fundamentals/interceptor). Class interceptors wrap method interceptors, which wrap global interceptors.
+4. [Pipes](../../fundamentals/pipe) on decorated parameters. Global pipes run before parameter pipes.
+5. The [RPC method](../../fundamentals/rpc).
+6. Post-handler middleware: class, then method, then global.
+
+A guard that returns `false` ends the call with `PERMISSION_DENIED`. A thrown [`GrpcError`](../../fundamentals/error) becomes the gRPC status. Anything else becomes status `UNKNOWN` with the details `Unknown`, and the original error is logged when logging is enabled.
+
+Continue with [Services](../../fundamentals/service).

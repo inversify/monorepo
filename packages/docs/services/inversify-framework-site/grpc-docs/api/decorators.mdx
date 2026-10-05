@@ -1,0 +1,121 @@
+---
+sidebar_position: 2
+title: Decorators
+---
+
+# Decorators
+
+Import service and parameter decorators from `@inversifyjs/grpc-core`. The same package re-exports the shared framework decorators.
+
+Many of them take a `ServiceIdentifier`. That can be a class, a string, or a symbol, as long as the container can resolve it.
+
+## Service
+
+```ts
+function Service(
+  definition: GrpcServiceDefinition,
+  options?: {
+    scope?: 'Singleton' | 'Transient' | 'Request';
+    serviceIdentifier?: ServiceIdentifier;
+  },
+): ClassDecorator
+```
+
+Declares a gRPC service and applies `@injectable()`. See [Service](../../fundamentals/service).
+
+## RPC
+
+```ts
+function RPC(name: string): MethodDecorator
+```
+
+Binds a method to one key of the service definition. See [RPC](../../fundamentals/rpc).
+
+## Call
+
+```ts
+function Call(
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Injects the `@grpc/grpc-js` call. See [Parameters](../../fundamentals/parameters).
+
+## Callback
+
+```ts
+function Callback(
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+Injects the unary or client-streaming callback. `build()` throws when a response-streaming method uses it.
+
+## createCustomParameterDecorator
+
+```ts
+function createCustomParameterDecorator<TCall, TResponse, TResult>(
+  handler: (call: TCall, response: TResponse) => Promise<TResult> | TResult,
+  ...parameterPipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): ParameterDecorator
+```
+
+`handler` receives the call and the response. The response is the callback when the RPC has one, and the call otherwise. Pipes then transform the handler's return value. See [Pipe](../../fundamentals/pipe).
+
+## ApplyMiddleware
+
+```ts
+function ApplyMiddleware(
+  ...middlewareList: (ServiceIdentifier<Middleware> | ApplyMiddlewareOptions)[]
+): ClassDecorator & MethodDecorator
+```
+
+`ApplyMiddlewareOptions` is `{ phase: MiddlewarePhase; middleware: ServiceIdentifier<Middleware> | ServiceIdentifier<Middleware>[] }`. `MiddlewarePhase.PreHandler` and `MiddlewarePhase.PostHandler` select the phase. A bare service identifier uses the pre-handler phase. See [Middleware](../../fundamentals/middleware).
+
+## UseGuard
+
+```ts
+function UseGuard(
+  ...guardList: ServiceIdentifier<Guard>[]
+): ClassDecorator & MethodDecorator
+```
+
+See [Guard](../../fundamentals/guard).
+
+## UseInterceptor
+
+```ts
+function UseInterceptor(
+  ...interceptorList: ServiceIdentifier<Interceptor>[]
+): ClassDecorator & MethodDecorator
+```
+
+See [Interceptor](../../fundamentals/interceptor).
+
+## UseErrorFilter
+
+```ts
+function UseErrorFilter(
+  ...errorFilterList: Newable<ErrorFilter>[]
+): ClassDecorator & MethodDecorator
+```
+
+See [Error filter](../../fundamentals/error-filter).
+
+## CatchError
+
+```ts
+function CatchError(
+  errorOrOptions?: Newable<Error> | { error?: Newable<Error>; scope?: BindingScope },
+): ClassDecorator
+```
+
+Marks an error filter and applies `@injectable()`. Pass an error class to handle that class and, when no more specific filter exists, its subclasses. Omit the argument to handle every error. `scope` is `'Singleton'`, `'Transient'`, or `'Request'`.
+
+## Discriminated
+
+```ts
+function Discriminated(discriminator: string | symbol): ClassDecorator
+```
+
+Adds a discriminator to an error class so error-filter lookup can match it before the class match. See [Error filter](../../fundamentals/error-filter).

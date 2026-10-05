@@ -1,0 +1,43 @@
+---
+sidebar_position: 9
+title: Error filter
+---
+import errorFilterSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/errorFilter.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Error filter
+
+Error filters translate an exception into a gRPC status. `@CatchError()` marks the filter and applies `@injectable()`. `@UseErrorFilter()` attaches it to a service or to one RPC. Bind the filter class.
+
+```ts
+interface ErrorFilter<
+  TError = unknown,
+  TRequest = any,
+  TResponse = any,
+  TResult = any,
+> {
+  catch(
+    error: TError,
+    request: TRequest,
+    response: TResponse,
+  ): Promise<TResult> | TResult;
+}
+```
+
+`request` is the `@grpc/grpc-js` call. `response` is the callback when the RPC has one, and the call otherwise.
+
+The adapter already handles `GrpcError` and its subclasses. A filter for one of your own errors can throw a [`GrpcError`](../error). That second error is sent as the status, including for streaming RPCs.
+
+<CodeBlock language="ts">{errorFilterSource}</CodeBlock>
+
+`FilteredHeroService` uses `@UseErrorFilter()`. `UnfilteredHeroService` throws the same error for a global filter:
+
+```ts
+adapter.useGlobalFilters(HeroNotFoundErrorFilter);
+```
+
+Register global filters before the server handles calls. Method filters are chosen before class filters, which are chosen before global filters. The lookup walks the error's class chain, so a filter for `GrpcError` also sees subclasses when no filter is registered for the subclass. `@CatchError()` with no error class is the fallback for every other error.
+
+`@Discriminated('hero-not-found')` on an error class indexes that error by a string or symbol. A filter registered for the error class is also registered for each discriminator. At each step of the class chain, a discriminator match is used before the class match.
+
+A filter can write the status itself by calling the unary callback or emitting an error on a stream. Throwing a `GrpcError` keeps that logic in one place for every RPC kind.

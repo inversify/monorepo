@@ -1,0 +1,56 @@
+---
+sidebar_position: 2
+title: RPC
+---
+import bidirectionalSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/bidirectional.ts.txt';
+import clientStreamingSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/clientStreaming.ts.txt';
+import serverStreamingSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/serverStreaming.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# RPC
+
+`@RPC()` marks a method as the handler for one RPC name from the service definition.
+
+```ts
+function RPC(name: string): MethodDecorator
+```
+
+`name` is the definition key, such as `GetHero` or `UploadHeroes`. An empty name throws when the decorator runs. A name missing from the definition, or a definition method with no `@RPC()`, throws when the server is built.
+
+The definition's `requestStream` and `responseStream` flags choose how the method receives the call.
+
+| Kind | Request | Response | Method shape |
+| --- | --- | --- | --- |
+| Unary | single message | single message | Return the response, or use [`@Callback()`](../parameters) |
+| Client streaming | stream | single message | Return the response when the input stream ends, or use `@Callback()` |
+| Server streaming | single message | stream | Write messages on the call, then `end()` |
+| Bidirectional | stream | stream | Read and write the same call |
+
+Unary and client-streaming methods that return a message let the adapter send it. Return `undefined` when you have already finished the call yourself. Server-streaming and bidirectional methods always own the call: the adapter does not send their return value.
+
+These examples use the service definitions loaded in [Getting started](../../introduction/getting-started).
+
+## Client streaming
+
+<CodeBlock language="ts">{clientStreamingSource}</CodeBlock>
+
+## Server streaming
+
+<CodeBlock language="ts">{serverStreamingSource}</CodeBlock>
+
+## Bidirectional streaming
+
+<CodeBlock language="ts">{bidirectionalSource}</CodeBlock>
+
+A unary handler can return the response directly:
+
+```ts
+@RPC('GetHero')
+public getHero(call: { request: HeroRequest }): HeroResponse {
+  return {
+    name: call.request.id,
+  };
+}
+```
+
+The full unary server is in [Getting started](../../introduction/getting-started#start-the-server). To take the `@grpc/grpc-js` call and callback explicitly, see [Parameters](../parameters).

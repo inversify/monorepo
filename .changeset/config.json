@@ -33,7 +33,8 @@
       "@inversifyjs/http-open-api",
       "@inversifyjs/http-uwebsockets",
       "@inversifyjs/http-validation"
-    ]
+    ],
+    ["@inversifyjs/grpc-core", "@inversifyjs/grpc-js"]
   ],
   "ignore": [
     "@inversifyjs/config-code-examples",
