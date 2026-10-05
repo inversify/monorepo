@@ -1,6 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { InternalServerErrorHttpResponse } from '@inversifyjs/http-core';
+import {
+  HttpStatusCode,
+  InternalServerErrorHttpResponse,
+} from '@inversifyjs/http-core';
 import { type BetterAuthOptions } from 'better-auth';
 
 import { type BetterAuth } from '../models/BetterAuth.js';
@@ -31,7 +34,7 @@ describe(getBetterAuthFromRequest, () => {
           {
             message:
               'BetterAuth auth not found when accessing user session. Did you forget to apply the BetterAuth middleware?',
-            statusCode: 500,
+            statusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
           };
 
         expect(result).toBeInstanceOf(InternalServerErrorHttpResponse);

@@ -71,7 +71,7 @@
       "versioningTemplate": "semver"
     }
   ],
-  "constraints": { "pnpm": "12.6.0" },
+  "constraints": { "pnpm": "12.8.2" },
   "dependencyDashboard": false,
   "extends": [
     ":disableRateLimiting",

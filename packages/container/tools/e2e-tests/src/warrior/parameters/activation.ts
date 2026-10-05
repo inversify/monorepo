@@ -11,6 +11,7 @@ defineParameterType({
   name: 'activation',
   regexp: new RegExp(`(${Object.values(ActivationKind).join('|')})`),
   transformer: function (activationKind: string): BindingActivation {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-assignment
     switch (activationKind as ActivationKind) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       case ActivationKind.weaponUpgrade:

@@ -16,7 +16,7 @@
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
     "@inversifyjs/open-api-types": "workspace:*",
     "@types/express": "^5.0.6",
-    "@types/node": "24.13.6",
+    "@types/node": "24.19.1",
     "eslint": "10.11.0",
     "prettier": "3.9.9",
     "rimraf": "6.1.3",

@@ -8,6 +8,7 @@ import {
   updateOwnReflectMetadata,
 } from '@inversifyjs/reflect-metadata-utils';
 
+import { RequestMethodParameterType } from '../../http/models/RequestMethodParameterType.js';
 import { controllerMethodParameterMetadataReflectKey } from '../../reflectMetadata/data/controllerMethodParameterMetadataReflectKey.js';
 import { type ControllerMethodParameterMetadata } from '../model/ControllerMethodParameterMetadata.js';
 import { setControllerMethodParameterMetadata } from './setControllerMethodParameterMetadata.js';
@@ -23,7 +24,7 @@ describe(setControllerMethodParameterMetadata, () => {
 
       beforeAll(() => {
         controllerMethodParameterMetadataFixture = {
-          parameterType: 'query',
+          parameterType: RequestMethodParameterType.Query,
           pipeList: [],
         } as ControllerMethodParameterMetadata;
         controllerConstructorFixture = class TestController {};
@@ -77,7 +78,7 @@ describe(setControllerMethodParameterMetadata, () => {
 
       beforeAll(() => {
         controllerMethodParameterMetadataFixture = {
-          parameterType: 'body',
+          parameterType: RequestMethodParameterType.Body,
           pipeList: [],
         } as ControllerMethodParameterMetadata;
         controllerConstructorFixture = class TestController {};
@@ -131,7 +132,7 @@ describe(setControllerMethodParameterMetadata, () => {
 
       beforeAll(() => {
         controllerMethodParameterMetadataFixture = {
-          parameterType: 'params',
+          parameterType: RequestMethodParameterType.Params,
           pipeList: [Symbol()],
         } as ControllerMethodParameterMetadata;
         controllerConstructorFixture = class TestController {};

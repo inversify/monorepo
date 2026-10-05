@@ -17,6 +17,7 @@ defineParameterType({
   name: 'warriorRelatedType',
   regexp: new RegExp(`(${Object.values(WarriorRelatedType).join('|')})`),
   transformer: function (warriorRelatedType: string): Newable {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-assignment
     switch (warriorRelatedType as WarriorRelatedType) {
       case WarriorRelatedType.archer:
         return Archer;

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatusCode,
   Post,
   StatusCode,
 } from '@inversifyjs/http-core';
@@ -20,9 +21,6 @@ const PRIORITY_HIGHEST: number = 1000;
 const PRIORITY_DEFAULT: number = 0;
 const PRIORITY_LOWEST: number = -1000;
 
-const HTTP_STATUS_CREATED: number = 201;
-const HTTP_STATUS_NOT_FOUND: number = 404;
-
 // High priority controller - registered first
 @Controller({
   path: '/api/messages',
@@ -35,7 +33,7 @@ export class MessagesController {
   }
 
   @Post()
-  @StatusCode(HTTP_STATUS_CREATED)
+  @StatusCode(HttpStatusCode.CREATED)
   public async createMessage(
     @Body() body: CreateMessageRequest,
   ): Promise<Message> {
@@ -61,7 +59,7 @@ export class HealthController {
 })
 export class FallbackController {
   @Get('/{*any}')
-  @StatusCode(HTTP_STATUS_NOT_FOUND)
+  @StatusCode(HttpStatusCode.NOT_FOUND)
   public async notFound(): Promise<{ error: string; message: string }> {
     return {
       error: 'Not Found',
