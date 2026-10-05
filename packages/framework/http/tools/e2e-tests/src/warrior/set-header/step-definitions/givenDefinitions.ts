@@ -1,22 +1,22 @@
 import { Given } from '@cucumber/cucumber';
 import { Container, Newable } from 'inversify';
 
-import { defaultAlias } from '../../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail';
-import { HttpMethod } from '../../../http/models/HttpMethod';
-import { WarriorsDeleteSetHeaderController } from '../controllers/WarriorsDeleteSetHeaderController';
-import { WarriorsDeleteSetHeaderWithStatusCodeController } from '../controllers/WarriorsDeleteSetHeaderWithStatusCodeController';
-import { WarriorsGetSetHeaderController } from '../controllers/WarriorsGetSetHeaderController';
-import { WarriorsGetSetHeaderWithStatusCodeController } from '../controllers/WarriorsGetSetHeaderWithStatusCodeController';
-import { WarriorsOptionsSetHeaderController } from '../controllers/WarriorsOptionsSetHeaderController';
-import { WarriorsOptionsSetHeaderWithStatusCodeController } from '../controllers/WarriorsOptionsSetHeaderWithStatusCodeController';
-import { WarriorsPatchSetHeaderController } from '../controllers/WarriorsPatchSetHeaderController';
-import { WarriorsPatchSetHeaderWithStatusCodeController } from '../controllers/WarriorsPatchSetHeaderWithStatusCodeController';
-import { WarriorsPostSetHeaderController } from '../controllers/WarriorsPostSetHeaderController';
-import { WarriorsPostSetHeaderWithStatusCodeController } from '../controllers/WarriorsPostSetHeaderWithStatusCodeController';
-import { WarriorsPutSetHeaderController } from '../controllers/WarriorsPutSetHeaderController';
-import { WarriorsPutSetHeaderWithStatusCodeController } from '../controllers/WarriorsPutSetHeaderWithStatusCodeController';
+import { defaultAlias } from '../../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
+import { HttpMethod } from '../../../http/models/HttpMethod.js';
+import { WarriorsDeleteSetHeaderController } from '../controllers/WarriorsDeleteSetHeaderController.js';
+import { WarriorsDeleteSetHeaderWithStatusCodeController } from '../controllers/WarriorsDeleteSetHeaderWithStatusCodeController.js';
+import { WarriorsGetSetHeaderController } from '../controllers/WarriorsGetSetHeaderController.js';
+import { WarriorsGetSetHeaderWithStatusCodeController } from '../controllers/WarriorsGetSetHeaderWithStatusCodeController.js';
+import { WarriorsOptionsSetHeaderController } from '../controllers/WarriorsOptionsSetHeaderController.js';
+import { WarriorsOptionsSetHeaderWithStatusCodeController } from '../controllers/WarriorsOptionsSetHeaderWithStatusCodeController.js';
+import { WarriorsPatchSetHeaderController } from '../controllers/WarriorsPatchSetHeaderController.js';
+import { WarriorsPatchSetHeaderWithStatusCodeController } from '../controllers/WarriorsPatchSetHeaderWithStatusCodeController.js';
+import { WarriorsPostSetHeaderController } from '../controllers/WarriorsPostSetHeaderController.js';
+import { WarriorsPostSetHeaderWithStatusCodeController } from '../controllers/WarriorsPostSetHeaderWithStatusCodeController.js';
+import { WarriorsPutSetHeaderController } from '../controllers/WarriorsPutSetHeaderController.js';
+import { WarriorsPutSetHeaderWithStatusCodeController } from '../controllers/WarriorsPutSetHeaderWithStatusCodeController.js';
 
 function getMethodWarriorSetHeaderController(method: HttpMethod): Newable {
   switch (method) {

@@ -8,8 +8,8 @@ import {
   UseErrorFilter,
 } from '@inversifyjs/http-core';
 
-import { NotImplementedOperationErrorFilter } from '../error-filters/NotImplementedOperationErrorFilter';
-import { NotImplementedOperationError } from '../errors/NotImplementedOperationError';
+import { NotImplementedOperationErrorFilter } from '../error-filters/NotImplementedOperationErrorFilter.js';
+import { NotImplementedOperationError } from '../errors/NotImplementedOperationError.js';
 
 @Controller('/warriors')
 @UseErrorFilter(NotImplementedOperationErrorFilter)

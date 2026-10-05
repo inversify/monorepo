@@ -1,6 +1,6 @@
 import { Controller, Delete } from '@inversifyjs/http-core';
 
-import { Warrior } from '../../common/models/Warrior';
+import { Warrior } from '../../common/models/Warrior.js';
 
 @Controller('/warriors')
 export class WarriorsDeleteController {

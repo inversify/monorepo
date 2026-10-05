@@ -2,7 +2,7 @@ import { Middleware } from '@inversifyjs/http-core';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { injectable } from 'inversify';
 
-import { getRoles } from '../../decorators/fastifyRoles';
+import { getRoles } from '../../decorators/fastifyRoles.js';
 
 @injectable()
 export class RouteValueMetadataFastifyMiddleware implements Middleware<

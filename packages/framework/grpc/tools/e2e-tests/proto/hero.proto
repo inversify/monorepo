@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package hero.v1;
+
+service HeroService {
+  rpc GetHero (HeroRequest) returns (HeroResponse);
+  rpc UploadHeroes (stream UploadRequest) returns (UploadResponse);
+  rpc ListHeroes (HeroRequest) returns (stream HeroResponse);
+  rpc Chat (stream ChatMessage) returns (stream ChatMessage);
+}
+
+message HeroRequest {
+  string id = 1;
+}
+
+message HeroResponse {
+  string name = 1;
+}
+
+message UploadRequest {
+  string name = 1;
+}
+
+message UploadResponse {
+  repeated string names = 1;
+}
+
+message ChatMessage {
+  string text = 1;
+}

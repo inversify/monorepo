@@ -1,6 +1,6 @@
 import { Controller, Patch, UseInterceptor } from '@inversifyjs/http-core';
 
-import { WarriorRouteFastifyInterceptor } from '../../interceptors/fastify/WarriorRouteFastifyInterceptor';
+import { WarriorRouteFastifyInterceptor } from '../../interceptors/fastify/WarriorRouteFastifyInterceptor.js';
 
 @Controller('/warriors')
 @UseInterceptor(WarriorRouteFastifyInterceptor)

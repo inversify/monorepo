@@ -1,19 +1,19 @@
 import { Given } from '@cucumber/cucumber';
 import { Container, Newable } from 'inversify';
 
-import { defaultAlias } from '../../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail';
-import { HttpMethod } from '../../../http/models/HttpMethod';
-import { setServerRequest } from '../../../server/actions/setServerRequest';
-import { getServerOrFail } from '../../../server/calculations/getServerOrFail';
-import { Server } from '../../../server/models/Server';
-import { WarriorsDeleteController } from '../controllers/WarriorsDeleteController';
-import { WarriorsGetController } from '../controllers/WarriorsGetController';
-import { WarriorsOptionsController } from '../controllers/WarriorsOptionsController';
-import { WarriorsPatchController } from '../controllers/WarriorsPatchController';
-import { WarriorsPostController } from '../controllers/WarriorsPostController';
-import { WarriorsPutController } from '../controllers/WarriorsPutController';
+import { defaultAlias } from '../../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
+import { HttpMethod } from '../../../http/models/HttpMethod.js';
+import { setServerRequest } from '../../../server/actions/setServerRequest.js';
+import { getServerOrFail } from '../../../server/calculations/getServerOrFail.js';
+import { Server } from '../../../server/models/Server.js';
+import { WarriorsDeleteController } from '../controllers/WarriorsDeleteController.js';
+import { WarriorsGetController } from '../controllers/WarriorsGetController.js';
+import { WarriorsOptionsController } from '../controllers/WarriorsOptionsController.js';
+import { WarriorsPatchController } from '../controllers/WarriorsPatchController.js';
+import { WarriorsPostController } from '../controllers/WarriorsPostController.js';
+import { WarriorsPutController } from '../controllers/WarriorsPutController.js';
 
 function getMethodWarriorController(method: HttpMethod): Newable {
   switch (method) {

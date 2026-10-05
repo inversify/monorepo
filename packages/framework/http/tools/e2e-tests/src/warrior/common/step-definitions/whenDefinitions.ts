@@ -1,9 +1,9 @@
 import { When } from '@cucumber/cucumber';
 
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { RequestParameter } from '../../../http/models/RequestParameter';
-import { setServerResponse } from '../../../server/actions/setServerResponse';
-import { getServerRequestOrFail } from '../../../server/calculations/getServerRequestOrFail';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { RequestParameter } from '../../../http/models/RequestParameter.js';
+import { setServerResponse } from '../../../server/actions/setServerResponse.js';
+import { getServerRequestOrFail } from '../../../server/calculations/getServerRequestOrFail.js';
 
 async function whenRequestIsSend(
   this: InversifyHttpWorld,

@@ -1,9 +1,9 @@
 import { Given } from '@cucumber/cucumber';
 import { Container } from 'inversify';
 
-import { defaultAlias } from '../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld';
-import { setContainer } from '../actions/setContainer';
+import { defaultAlias } from '../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
+import { setContainer } from '../actions/setContainer.js';
 
 function givenContainer(
   this: InversifyHttpWorld,

@@ -1,25 +1,25 @@
 import { Given } from '@cucumber/cucumber';
 import { Container, Newable } from 'inversify';
 
-import { defaultAlias } from '../../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail';
-import { HttpMethod } from '../../../http/models/HttpMethod';
-import { setServerRequest } from '../../../server/actions/setServerRequest';
-import { getServerOrFail } from '../../../server/calculations/getServerOrFail';
-import { Server } from '../../../server/models/Server';
-import { WarriorsDeleteHeadersController } from '../controllers/WarriorsDeleteHeadersController';
-import { WarriorsDeleteHeadersNamedController } from '../controllers/WarriorsDeleteHeadersNamedController';
-import { WarriorsGetHeadersController } from '../controllers/WarriorsGetHeadersController';
-import { WarriorsGetHeadersNamedController } from '../controllers/WarriorsGetHeadersNamedController';
-import { WarriorsOptionsHeadersController } from '../controllers/WarriorsOptionsHeadersController';
-import { WarriorsOptionsHeadersNamedController } from '../controllers/WarriorsOptionsHeadersNamedController';
-import { WarriorsPatchHeadersController } from '../controllers/WarriorsPatchHeadersController';
-import { WarriorsPatchHeadersNamedController } from '../controllers/WarriorsPatchHeadersNamedController';
-import { WarriorsPostHeadersController } from '../controllers/WarriorsPostHeadersController';
-import { WarriorsPostHeadersNamedController } from '../controllers/WarriorsPostHeadersNamedController';
-import { WarriorsPutHeadersController } from '../controllers/WarriorsPutHeadersController';
-import { WarriorsPutHeadersNamedController } from '../controllers/WarriorsPutHeadersNamedController';
+import { defaultAlias } from '../../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
+import { HttpMethod } from '../../../http/models/HttpMethod.js';
+import { setServerRequest } from '../../../server/actions/setServerRequest.js';
+import { getServerOrFail } from '../../../server/calculations/getServerOrFail.js';
+import { Server } from '../../../server/models/Server.js';
+import { WarriorsDeleteHeadersController } from '../controllers/WarriorsDeleteHeadersController.js';
+import { WarriorsDeleteHeadersNamedController } from '../controllers/WarriorsDeleteHeadersNamedController.js';
+import { WarriorsGetHeadersController } from '../controllers/WarriorsGetHeadersController.js';
+import { WarriorsGetHeadersNamedController } from '../controllers/WarriorsGetHeadersNamedController.js';
+import { WarriorsOptionsHeadersController } from '../controllers/WarriorsOptionsHeadersController.js';
+import { WarriorsOptionsHeadersNamedController } from '../controllers/WarriorsOptionsHeadersNamedController.js';
+import { WarriorsPatchHeadersController } from '../controllers/WarriorsPatchHeadersController.js';
+import { WarriorsPatchHeadersNamedController } from '../controllers/WarriorsPatchHeadersNamedController.js';
+import { WarriorsPostHeadersController } from '../controllers/WarriorsPostHeadersController.js';
+import { WarriorsPostHeadersNamedController } from '../controllers/WarriorsPostHeadersNamedController.js';
+import { WarriorsPutHeadersController } from '../controllers/WarriorsPutHeadersController.js';
+import { WarriorsPutHeadersNamedController } from '../controllers/WarriorsPutHeadersNamedController.js';
 
 function getMethodWarriorHeadersController(method: HttpMethod): Newable {
   switch (method) {

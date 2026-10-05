@@ -1,8 +1,8 @@
 import { type Multipart } from '@fastify/multipart';
 import { Body, Controller, Delete } from '@inversifyjs/http-core';
 
-import { WarriorCreationResponse } from '../models/WarriorCreationResponse';
-import { WarriorCreationResponseType } from '../models/WarriorCreationResponseType';
+import { WarriorCreationResponse } from '../models/WarriorCreationResponse.js';
+import { WarriorCreationResponseType } from '../models/WarriorCreationResponseType.js';
 
 @Controller('/warriors')
 export class WarriorsDeleteMultipartBodyFastifyController {

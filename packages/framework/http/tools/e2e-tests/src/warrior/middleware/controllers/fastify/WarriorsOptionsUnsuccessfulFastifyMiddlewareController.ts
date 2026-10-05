@@ -1,7 +1,7 @@
 import { ApplyMiddleware, Controller, Options } from '@inversifyjs/http-core';
 
-import { SuccessfulFastifyMiddleware } from '../../middlewares/fastify/SuccessfulFastifyMiddleware';
-import { UnsuccessfulFastifyMiddleware } from '../../middlewares/fastify/UnsuccessfulFastifyMiddleware';
+import { SuccessfulFastifyMiddleware } from '../../middlewares/fastify/SuccessfulFastifyMiddleware.js';
+import { UnsuccessfulFastifyMiddleware } from '../../middlewares/fastify/UnsuccessfulFastifyMiddleware.js';
 
 @Controller('/warriors')
 export class WarriorsOptionsUnsuccessfulFastifyMiddlewareController {

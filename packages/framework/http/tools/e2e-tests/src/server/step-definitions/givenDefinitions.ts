@@ -16,12 +16,12 @@ import { Hono } from 'hono';
 import { Container, ServiceIdentifier } from 'inversify';
 import { us_socket_local_port } from 'uWebSockets.js';
 
-import { defaultAlias } from '../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../container/calculations/getContainerOrFail';
-import { setServer } from '../actions/setServer';
-import { Server } from '../models/Server';
-import { ServerKind } from '../models/ServerKind';
+import { defaultAlias } from '../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../container/calculations/getContainerOrFail.js';
+import { setServer } from '../actions/setServer.js';
+import { Server } from '../models/Server.js';
+import { ServerKind } from '../models/ServerKind.js';
 
 async function buildExpressServer(
   container: Container,

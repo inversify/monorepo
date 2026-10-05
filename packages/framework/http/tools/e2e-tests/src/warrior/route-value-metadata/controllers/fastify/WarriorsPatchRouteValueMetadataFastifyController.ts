@@ -1,7 +1,7 @@
 import { ApplyMiddleware, Controller, Patch } from '@inversifyjs/http-core';
 
-import { Roles } from '../../decorators/fastifyRoles';
-import { RouteValueMetadataFastifyMiddleware } from '../../middlewares/fastify/RouteValueMetadataFastifyMiddleware';
+import { Roles } from '../../decorators/fastifyRoles.js';
+import { RouteValueMetadataFastifyMiddleware } from '../../middlewares/fastify/RouteValueMetadataFastifyMiddleware.js';
 
 @Controller('/warriors')
 export class WarriorsPatchRouteValueMetadataFastifyController {

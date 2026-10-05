@@ -2,7 +2,7 @@ import { UwebSocketsMiddleware } from '@inversifyjs/http-uwebsockets';
 import { injectable } from 'inversify';
 import { HttpRequest, HttpResponse } from 'uWebSockets.js';
 
-import { getRoles } from '../../decorators/uwebsocketsRoles';
+import { getRoles } from '../../decorators/uwebsocketsRoles.js';
 
 @injectable()
 export class RouteValueMetadataUwebSocketsMiddleware implements UwebSocketsMiddleware {

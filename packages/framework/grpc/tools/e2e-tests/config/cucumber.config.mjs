@@ -1,4 +1,6 @@
-import { getBaseConfiguration } from './cucumber.config.base.mjs';
+import os from 'node:os';
+
+const cpuCores = os.cpus().length;
 
 /**
  * @param {boolean} parallel
@@ -7,13 +9,17 @@ import { getBaseConfiguration } from './cucumber.config.base.mjs';
 function getConfiguration(parallel) {
   /** @type {!import("@cucumber/cucumber/lib/configuration").IConfiguration} */
   const config = {
-    ...getBaseConfiguration(parallel),
-    require: [
-      'lib/cjs/*/parameters/*.js',
-      'lib/cjs/**/step-definitions/*.js',
-      'lib/cjs/app/hooks/*.js',
+    import: [
+      'lib/app/setup/reflectMetadata.js',
+      'lib/**/step-definitions/*.js',
+      'lib/app/hooks/*.js',
     ],
+    paths: ['features/**/*.feature'],
   };
+
+  if (parallel === true) {
+    config.parallel = cpuCores;
+  }
 
   return config;
 }

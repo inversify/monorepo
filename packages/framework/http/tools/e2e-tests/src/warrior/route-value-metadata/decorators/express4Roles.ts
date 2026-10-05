@@ -1,7 +1,7 @@
 import { createRouteValueMetadataUtils } from '@inversifyjs/http-express-v4';
 import { type Request } from 'express4';
 
-import { rolesMetadataKey } from '../models/rolesMetadataKey';
+import { rolesMetadataKey } from '../models/rolesMetadataKey.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const [Roles, getRoles]: [

@@ -1,16 +1,16 @@
 import { Given } from '@cucumber/cucumber';
 import { Container, Newable } from 'inversify';
 
-import { defaultAlias } from '../../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail';
-import { HttpMethod } from '../../../http/models/HttpMethod';
-import { WarriorsDeleteStatusCodeController } from '../controllers/WarriorsDeleteStatusCodeController';
-import { WarriorsGetStatusCodeController } from '../controllers/WarriorsGetStatusCodeController';
-import { WarriorsOptionsStatusCodeController } from '../controllers/WarriorsOptionsStatusCodeController';
-import { WarriorsPatchStatusCodeController } from '../controllers/WarriorsPatchStatusCodeController';
-import { WarriorsPostStatusCodeController } from '../controllers/WarriorsPostStatusCodeController';
-import { WarriorsPutStatusCodeController } from '../controllers/WarriorsPutStatusCodeController';
+import { defaultAlias } from '../../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
+import { HttpMethod } from '../../../http/models/HttpMethod.js';
+import { WarriorsDeleteStatusCodeController } from '../controllers/WarriorsDeleteStatusCodeController.js';
+import { WarriorsGetStatusCodeController } from '../controllers/WarriorsGetStatusCodeController.js';
+import { WarriorsOptionsStatusCodeController } from '../controllers/WarriorsOptionsStatusCodeController.js';
+import { WarriorsPatchStatusCodeController } from '../controllers/WarriorsPatchStatusCodeController.js';
+import { WarriorsPostStatusCodeController } from '../controllers/WarriorsPostStatusCodeController.js';
+import { WarriorsPutStatusCodeController } from '../controllers/WarriorsPutStatusCodeController.js';
 
 function getMethodWarriorStatusCodeController(method: HttpMethod): Newable {
   switch (method) {

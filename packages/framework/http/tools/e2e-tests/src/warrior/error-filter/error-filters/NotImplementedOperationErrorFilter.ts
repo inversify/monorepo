@@ -4,7 +4,7 @@ import {
   NotImplementedHttpResponse,
 } from '@inversifyjs/http-core';
 
-import { NotImplementedOperationError } from '../errors/NotImplementedOperationError';
+import { NotImplementedOperationError } from '../errors/NotImplementedOperationError.js';
 
 @CatchError(NotImplementedOperationError)
 export class NotImplementedOperationErrorFilter implements ErrorFilter<NotImplementedOperationError> {

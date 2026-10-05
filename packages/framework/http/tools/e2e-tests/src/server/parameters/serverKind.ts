@@ -1,6 +1,6 @@
 import { defineParameterType } from '@cucumber/cucumber';
 
-import { ServerKind } from '../models/ServerKind';
+import { ServerKind } from '../models/ServerKind.js';
 
 defineParameterType({
   name: 'serverKind',

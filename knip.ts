@@ -142,6 +142,21 @@ export default {
     },
     "packages/framework/*": defaultWorkspaceProjectConfig,
     "packages/framework/grpc/libraries/*": defaultWorkspaceProjectConfig,
+    "packages/framework/grpc/tools/e2e-tests": {
+      entry: [
+        "config/*.mjs",
+        "src/*/parameters/*.ts",
+        "src/**/step-definitions/*.ts",
+        "src/app/hooks/*.ts",
+        "src/app/setup/*.ts",
+        "src/hero/generated/hero.ts",
+      ],
+      ignoreDependencies: [
+        ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        "ts-proto",
+      ],
+      project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
+    },
     "packages/framework/http/libraries/*": defaultWorkspaceProjectConfig,
     "packages/framework/http/tools/e2e-tests": {
       entry: [
@@ -150,12 +165,7 @@ export default {
         "src/**/step-definitions/*.ts",
         "src/app/hooks/*.ts",
       ],
-      ignoreDependencies: [
-        ...defaultWorkspaceProjectConfig.ignoreDependencies,
-        "ts-loader",
-        "ts-node",
-        "tslib",
-      ],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
     "packages/framework/http/tools/http-benchmarks": {

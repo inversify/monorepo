@@ -1,4 +1,4 @@
-import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld';
+import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
 
 export async function setServerResponse(
   this: InversifyHttpWorld,

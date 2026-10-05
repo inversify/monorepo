@@ -1,13 +1,13 @@
 import { Given } from '@cucumber/cucumber';
 import { Container, Newable } from 'inversify';
 
-import { defaultAlias } from '../../../common/models/defaultAlias';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld';
-import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail';
-import { HttpMethod } from '../../../http/models/HttpMethod';
-import { WarriorsThrowErrorController } from '../controllers/WarriorsThrowErrorController';
-import { WarriorsThrowErrorOptionsController } from '../controllers/WarriorsThrowErrorOptionsController';
-import { NotImplementedOperationErrorFilter } from '../error-filters/NotImplementedOperationErrorFilter';
+import { defaultAlias } from '../../../common/models/defaultAlias.js';
+import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
+import { HttpMethod } from '../../../http/models/HttpMethod.js';
+import { WarriorsThrowErrorController } from '../controllers/WarriorsThrowErrorController.js';
+import { WarriorsThrowErrorOptionsController } from '../controllers/WarriorsThrowErrorOptionsController.js';
+import { NotImplementedOperationErrorFilter } from '../error-filters/NotImplementedOperationErrorFilter.js';
 
 function getMethodWarriorControllerWithErrorFilter(
   method: HttpMethod,
