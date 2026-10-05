@@ -142,6 +142,17 @@ export default {
     },
     "packages/framework/*": defaultWorkspaceProjectConfig,
     "packages/framework/grpc/libraries/*": defaultWorkspaceProjectConfig,
+    "packages/framework/grpc/tools/e2e-tests": {
+      entry: [
+        "config/*.mjs",
+        "src/*/parameters/*.ts",
+        "src/**/step-definitions/*.ts",
+        "src/app/hooks/*.ts",
+        "src/app/setup/*.ts",
+      ],
+      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
+    },
     "packages/framework/http/libraries/*": defaultWorkspaceProjectConfig,
     "packages/framework/http/tools/e2e-tests": {
       entry: [

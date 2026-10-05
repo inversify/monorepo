@@ -9,6 +9,7 @@ packages:
   - packages/foundation/tools/*
   - packages/framework/*
   - packages/framework/grpc/libraries/*
+  - packages/framework/grpc/tools/*
   - packages/framework/http/libraries/*
   - packages/framework/http/tools/*
   - packages/framework/validation/libraries/*
