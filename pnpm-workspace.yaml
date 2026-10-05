@@ -28,6 +28,7 @@ allowBuilds:
   core-js: true
   core-js-pure: true
   esbuild: true
+  grpc-tools: true
   oxc-resolver: true
   prisma: true
   sharp: true

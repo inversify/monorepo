@@ -1,16 +1,8 @@
-import { ServiceError } from '@grpc/grpc-js';
+import { type ServiceError } from '@grpc/grpc-js';
 
-import { HeroClient } from '../models/HeroClient.js';
-import { HeroRequest } from '../models/HeroRequest.js';
-import { HeroResponse } from '../models/HeroResponse.js';
-
-function isHeroResponse(value: unknown): value is HeroResponse {
-  if (typeof value !== 'object' || value === null) {
-    return false;
-  }
-
-  return 'name' in value && typeof value.name === 'string';
-}
+import { type HeroRequest } from '../generated/hero.js';
+import { type HeroClient } from '../models/HeroClient.js';
+import { type HeroResponse, isHeroResponse } from '../models/HeroResponse.js';
 
 export async function getHero(
   client: HeroClient,
@@ -25,7 +17,7 @@ export async function getHero(
         id,
       };
 
-      client.GetHero(
+      client.getHero(
         request,
         (error: ServiceError | null, heroResponse?: HeroResponse): void => {
           if (error !== null) {

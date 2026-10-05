@@ -1,12 +1,27 @@
-import { ServiceError } from '@grpc/grpc-js';
+import {
+  type ClientDuplexStream,
+  type ClientReadableStream,
+  type ClientWritableStream,
+  type ServiceError,
+} from '@grpc/grpc-js';
 
-import { HeroRequest } from './HeroRequest.js';
-import { HeroResponse } from './HeroResponse.js';
+import {
+  type ChatMessage,
+  type HeroRequest,
+  type HeroResponse,
+  type UploadRequest,
+  type UploadResponse,
+} from '../generated/hero.js';
 
 export interface HeroClient {
-  GetHero(
+  chat(): ClientDuplexStream<ChatMessage, ChatMessage>;
+  close(): void;
+  getHero(
     request: HeroRequest,
     callback: (error: ServiceError | null, response?: HeroResponse) => void,
   ): void;
-  close(): void;
+  listHeroes(request: HeroRequest): ClientReadableStream<HeroResponse>;
+  uploadHeroes(
+    callback: (error: ServiceError | null, response?: UploadResponse) => void,
+  ): ClientWritableStream<UploadRequest>;
 }
