@@ -142,7 +142,7 @@ export async function captureServiceError(
   throw new Error('Expected the RPC to fail');
 }
 
-export function isServiceError(error: unknown): error is ServiceError {
+function isServiceError(error: unknown): error is ServiceError {
   return (
     typeof error === 'object' &&
     error !== null &&
@@ -178,7 +178,7 @@ export async function readHeroes(
   return readStream<HeroResponse>(client.ListHeroes({ id }));
 }
 
-export function readServiceError(error: unknown): ServiceError {
+function readServiceError(error: unknown): ServiceError {
   if (isServiceError(error)) {
     return error;
   }
