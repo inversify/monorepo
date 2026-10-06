@@ -12,7 +12,12 @@ const PROTO_GLOB_PATTERN: string = `${SRC_FOLDER}/examples/**/*.proto`;
 const TEST_EXAMPLES_GLOB_PATTERN: string = `${SRC_FOLDER}/examples/**/*.spec.{mts,ts}`;
 
 async function getExamplePaths(): Promise<string[]> {
-  return glob(EXAMPLES_GLOB_PATTERN, { ignore: TEST_EXAMPLES_GLOB_PATTERN });
+  return glob(EXAMPLES_GLOB_PATTERN, {
+    ignore: [
+      TEST_EXAMPLES_GLOB_PATTERN,
+      `${SRC_FOLDER}/examples/**/generated/**`,
+    ],
+  });
 }
 
 async function getProtoPaths(): Promise<string[]> {

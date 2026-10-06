@@ -15,7 +15,7 @@ import CodeBlock from '@theme/CodeBlock';
 function RPC(name: string): MethodDecorator
 ```
 
-`name` is the definition key, such as `GetHero` or `UploadHeroes`. An empty name throws when the decorator runs. A name missing from the definition, or a definition method with no `@RPC()`, throws when the server is built.
+`name` is the definition key. With the `ts-proto` output from [Getting started](../../introduction/getting-started), `rpc GetHero` is `getHero`. An empty name throws when the decorator runs. A name missing from the definition, or a definition method with no `@RPC()`, throws when the server is built.
 
 The definition's `requestStream` and `responseStream` flags choose how the method receives the call.
 
@@ -28,7 +28,7 @@ The definition's `requestStream` and `responseStream` flags choose how the metho
 
 Unary and client-streaming methods that return a message let the adapter send it. Return `undefined` when you have already finished the call yourself. Server-streaming and bidirectional methods always own the call: the adapter does not send their return value.
 
-These examples use the service definitions loaded in [Getting started](../../introduction/getting-started).
+These streaming handlers load `hero.proto` with `@grpc/proto-loader`, so `@RPC()` uses the `.proto` name, such as `ListHeroes`.
 
 ## Client streaming
 
@@ -45,7 +45,7 @@ These examples use the service definitions loaded in [Getting started](../../int
 A unary handler can return the response directly:
 
 ```ts
-@RPC('GetHero')
+@RPC('getHero')
 public getHero(call: { request: HeroRequest }): HeroResponse {
   return {
     name: call.request.id,
