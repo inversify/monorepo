@@ -69,6 +69,15 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'grpc',
+        path: 'grpc-docs',
+        routeBasePath: 'grpc',
+        sidebarPath: './sidebarsGrpc.ts',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         id: 'logger',
         path: 'logger-docs',
         routeBasePath: 'logger',
@@ -168,6 +177,10 @@ const config: Config = {
               to: '/docs/introduction/getting-started',
             },
             {
+              label: 'gRPC Docs',
+              to: '/grpc/introduction/getting-started',
+            },
+            {
               label: 'Logger Docs',
               to: '/logger/introduction/getting-started',
             },
@@ -208,6 +221,10 @@ const config: Config = {
             {
               label: 'GraphQL Docs',
               to: '/graphql/introduction/getting-started',
+            },
+            {
+              label: 'gRPC Docs',
+              to: '/grpc/introduction/getting-started',
             },
             {
               label: 'Logger Docs',

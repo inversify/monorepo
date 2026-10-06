@@ -1,0 +1,52 @@
+---
+sidebar_position: 8
+title: Error
+---
+import grpcErrorSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/grpcError.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Error
+
+Throw a `GrpcError` from a service, guard, middleware, interceptor, or pipe to finish the call with a gRPC status. The adapter sends the error's code, details, and optional metadata. This works for unary and streaming RPCs.
+
+```ts
+class GrpcError extends Error {
+  constructor(
+    code: Exclude<GrpcStatusCode, GrpcStatusCode.OK>,
+    details: string,
+    errorOptions?: ErrorOptions,
+    metadata?: GrpcMetadata,
+  )
+}
+```
+
+`metadata` is a record of string or `Buffer` values. `@grpc/grpc-js` accepts lowercase keys.
+
+<CodeBlock language="ts">{grpcErrorSource}</CodeBlock>
+
+A thrown `Error` that is not a `GrpcError`, and that no [error filter](../error-filter) handles, becomes status `UNKNOWN` with details `Unknown`. The original error is logged when logging is enabled.
+
+## Status classes
+
+Each subclass sets one `GrpcStatusCode` and a default details string. Pass your own details, `ErrorOptions`, and metadata to the constructor when you need them.
+
+| Class | Status | Default details |
+| --- | --- | --- |
+| `CancelledGrpcError` | `CANCELLED` | `Cancelled` |
+| `UnknownGrpcError` | `UNKNOWN` | `Unknown` |
+| `InvalidArgumentGrpcError` | `INVALID_ARGUMENT` | `Invalid Argument` |
+| `DeadlineExceededGrpcError` | `DEADLINE_EXCEEDED` | `Deadline Exceeded` |
+| `NotFoundGrpcError` | `NOT_FOUND` | `Not Found` |
+| `AlreadyExistsGrpcError` | `ALREADY_EXISTS` | `Already Exists` |
+| `PermissionDeniedGrpcError` | `PERMISSION_DENIED` | `Permission Denied` |
+| `ResourceExhaustedGrpcError` | `RESOURCE_EXHAUSTED` | `Resource Exhausted` |
+| `FailedPreconditionGrpcError` | `FAILED_PRECONDITION` | `Failed Precondition` |
+| `AbortedGrpcError` | `ABORTED` | `Aborted` |
+| `OutOfRangeGrpcError` | `OUT_OF_RANGE` | `Out Of Range` |
+| `UnimplementedGrpcError` | `UNIMPLEMENTED` | `Unimplemented` |
+| `InternalGrpcError` | `INTERNAL` | `Internal` |
+| `UnavailableGrpcError` | `UNAVAILABLE` | `Unavailable` |
+| `DataLossGrpcError` | `DATA_LOSS` | `Data Loss` |
+| `UnauthenticatedGrpcError` | `UNAUTHENTICATED` | `Unauthenticated` |
+
+Import them from `@inversifyjs/grpc-core`.

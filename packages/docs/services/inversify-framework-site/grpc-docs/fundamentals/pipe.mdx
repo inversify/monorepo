@@ -1,0 +1,34 @@
+---
+sidebar_position: 7
+title: Pipe
+---
+import pipeSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/pipe.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Pipe
+
+Pipes transform a parameter after it is extracted and before the RPC method runs.
+
+```ts
+interface Pipe<TInput = unknown, TOutput = unknown> {
+  execute(input: TInput, metadata: PipeMetadata): Promise<TOutput> | TOutput;
+}
+```
+
+`metadata` tells you the class, method, and parameter index. Throw a [`GrpcError`](../error) to finish the call. The RPC method does not run.
+
+Pipes run only for parameters created with `@Call()`, `@Callback()`, or [`createCustomParameterDecorator()`](../../api/decorators#createcustomparameterdecorator). A method that takes the raw `(call, callback)` arguments has no pipe step.
+
+Global pipes from [`useGlobalPipe()`](../../api/inversify-grpc-js-adapter#global-handlers) run before the pipes passed to that parameter decorator. A global pipe sees every decorated parameter, so it has to accept each of those values. A string pipe registered globally will receive the call when the method also uses `@Call()`.
+
+<CodeBlock language="ts">{pipeSource}</CodeBlock>
+
+Bind `PrefixPipe`. `GetHero` with id `abc` returns `{ name: 'hero:abc' }`.
+
+Register `UppercasePipe` globally before `build()` and bind it too:
+
+```ts
+adapter.useGlobalPipe(UppercasePipe);
+```
+
+The same request then returns `{ name: 'hero:ABC' }`, because the global pipe runs first.

@@ -1,0 +1,92 @@
+---
+sidebar_position: 1
+title: InversifyGrpcJsAdapter
+---
+import adapterOptionsSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/adapterOptions.ts.txt';
+import globalHeroServiceSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/globalHeroService.ts.txt';
+import globalRegistrationSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/globalRegistration.ts.txt';
+import serverInjectionSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/serverInjection.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# InversifyGrpcJsAdapter
+
+`InversifyGrpcJsAdapter` connects an Inversify container to a `@grpc/grpc-js` `Server`. Import it from `@inversifyjs/grpc-js`.
+
+```ts
+constructor(
+  container: Container,
+  options?: InversifyGrpcJsAdapterOptions,
+  customServer?: Server,
+)
+```
+
+- `container` holds the services, guards, middleware, interceptors, pipes, and error filters.
+- `options` configures logging and, when the adapter creates the server, the `Server` options.
+- `customServer` is a `Server` you constructed. The adapter registers services on that instance and returns it from `build()`.
+
+```ts
+interface InversifyGrpcJsAdapterOptions {
+  logger?: boolean | Logger;
+  serverOptions?: ServerOptions;
+}
+```
+
+Omit `logger` to use a [`ConsoleLogger`](/logger/introduction/getting-started), which prints each service and its RPC kind during `build()`. Set `logger` to `false` to turn that logging off, including logs for unhandled errors. Set it to a `Logger` to use your own.
+
+`serverOptions` is passed to `new Server(serverOptions)` when you omit `customServer`. A server you pass in keeps the options from its own constructor.
+
+<CodeBlock language="ts">{adapterOptionsSource}</CodeBlock>
+
+## build
+
+```ts
+build(): Promise<Server>
+```
+
+Binds the server in the container, registers every bound `@Service()` class, and returns the `Server`. Call it once. A second call throws. Bind services and register global handlers before this call.
+
+`build()` does not bind a port. Call `server.bindAsync()` with the credentials you want. See [Getting started](../../introduction/getting-started#start-the-server).
+
+## The server in the container
+
+After `build()`, the server is available as `grpcServerServiceIdentifier` from `@inversifyjs/grpc-core`. Inject it into services that are constructed while handling an RPC.
+
+<CodeBlock language="ts">{serverInjectionSource}</CodeBlock>
+
+Binding your own value to `grpcServerServiceIdentifier` before `build()` throws. The adapter owns that binding.
+
+## Global handlers
+
+These methods register handlers for every RPC. Call them before `build()`. Routes you add on the `Server` yourself are outside this chain.
+
+```ts
+applyGlobalMiddleware(
+  ...middlewareList: (ServiceIdentifier<Middleware> | ApplyMiddlewareOptions)[]
+): void
+
+applyGlobalGuards(
+  ...guardList: ServiceIdentifier<Guard>[]
+): void
+
+useGlobalInterceptors(
+  ...interceptorList: ServiceIdentifier<Interceptor>[]
+): void
+
+useGlobalPipe(
+  ...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]
+): void
+
+useGlobalFilters(
+  ...errorFilterList: Newable<ErrorFilter>[]
+): void
+```
+
+A service identifier with no phase runs as pre-handler middleware. Pass `{ middleware, phase: MiddlewarePhase.PostHandler }` for post-handler middleware. See [Middleware](../../fundamentals/middleware), [Guard](../../fundamentals/guard), [Interceptor](../../fundamentals/interceptor), [Pipe](../../fundamentals/pipe), and [Error filter](../../fundamentals/error-filter) for the order and the call types.
+
+<CodeBlock language="ts">{globalRegistrationSource}</CodeBlock>
+
+The service below has a single decorated parameter, so the global `UppercasePipe` only sees the hero id. With an `authorization` metadata value, `GetHero('abc')` returns `{ name: 'hero:ABC!' }`. `forbidden` ends with `PERMISSION_DENIED`. `missing` ends with `NOT_FOUND`. A call without authorization ends with `UNAUTHENTICATED`.
+
+<CodeBlock language="ts">{globalHeroServiceSource}</CodeBlock>
+
+Bind `AuthorizationMiddleware`, `HeroIdGuard`, `SuffixInterceptor`, `UppercasePipe`, `PrefixPipe`, `HeroNotFoundErrorFilter`, and `GlobalHeroService` before `build()`.

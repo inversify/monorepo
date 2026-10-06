@@ -1,0 +1,35 @@
+---
+sidebar_position: 4
+title: Middleware
+---
+import middlewareSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/middleware.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Middleware
+
+Middleware runs before or after the RPC method. The call is the `@grpc/grpc-js` server call. For unary and client-streaming RPCs the response argument is the callback. For streaming responses it is the call again. `next` continues the chain.
+
+```ts
+interface Middleware<
+  TRequest = any,
+  TResponse = any,
+  TNextFunction = any,
+  TResult = any,
+> {
+  execute(
+    request: TRequest,
+    response: TResponse,
+    next: TNextFunction,
+  ): Promise<TResult> | TResult;
+}
+```
+
+Call `next()` to continue. Throw a [`GrpcError`](../error) to finish the call with that status. Pre-handler middleware runs before guards. Post-handler middleware runs after the RPC method returns, which is after a returned unary or client-streaming message has been sent.
+
+Add `@injectable()` to the class and bind it. `@ApplyMiddleware()` selects the phase. A service identifier with no options runs in the pre-handler phase.
+
+<CodeBlock language="ts">{middlewareSource}</CodeBlock>
+
+`AuthorizationMiddleware` runs before `GetHero`. `AuditMiddleware` runs after it and records the hero id. A call without `authorization` metadata ends with `UNAUTHENTICATED`, and the audit middleware does not run.
+
+`@ApplyMiddleware()` on the class covers every RPC. The same decorator on a method covers that RPC. Global middleware uses [`applyGlobalMiddleware()`](../../api/inversify-grpc-js-adapter#global-handlers) before `build()`. Global pre-handler middleware runs before class and method middleware. Global post-handler middleware runs after them.

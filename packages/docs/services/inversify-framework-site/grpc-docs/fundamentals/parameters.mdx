@@ -1,0 +1,37 @@
+---
+sidebar_position: 3
+title: Parameters
+---
+import bidirectionalCallSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/bidirectionalCall.ts.txt';
+import callAndCallbackSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/callAndCallback.ts.txt';
+import clientStreamingCallbackSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/clientStreamingCallback.ts.txt';
+import serverStreamingCallSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/serverStreamingCall.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+# Parameters
+
+With no parameter decorators, the adapter calls the method the way `@grpc/grpc-js` calls a raw handler: `(call, callback)` for unary and client-streaming RPCs, and `(call)` for server-streaming and bidirectional RPCs.
+
+Add a parameter decorator when you want the container to build the argument list. `@Call()` injects the call. `@Callback()` injects the `sendUnaryData` callback. A [custom parameter decorator](../pipe) injects a value you compute from the call. After the first parameter decorator, every argument you need has its own decorator. An undecorated parameter is `undefined`.
+
+`@Callback()` belongs on unary and client-streaming methods. Server-streaming and bidirectional RPCs have no callback, and `build()` throws if one of those methods uses `@Callback()`.
+
+When a method uses `@Callback()`, that callback sends the response. The adapter leaves the return value alone.
+
+## Unary callback
+
+<CodeBlock language="ts">{callAndCallbackSource}</CodeBlock>
+
+## Client-streaming callback
+
+<CodeBlock language="ts">{clientStreamingCallbackSource}</CodeBlock>
+
+## Server streaming
+
+<CodeBlock language="ts">{serverStreamingCallSource}</CodeBlock>
+
+## Bidirectional streaming
+
+<CodeBlock language="ts">{bidirectionalCallSource}</CodeBlock>
+
+`@Call()` and `@Callback()` accept the same pipe list as a custom parameter. See [Pipe](../pipe) for global pipes, parameter pipes, and `createCustomParameterDecorator()`.
