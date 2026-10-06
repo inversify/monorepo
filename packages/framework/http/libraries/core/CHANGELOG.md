@@ -1,5 +1,14 @@
 # @inversifyjs/http-core
 
+## 5.6.2
+
+### Patch Changes
+
+Added `applyPipeList`, which runs a pipe list on one handler parameter. `InversifyHttpAdapter` now uses it instead of its own copy.
+Added `InversifyServerAdapter`, the shared server registry and build lifecycle. `InversifyHttpAdapter` now extends it, and each HTTP adapter still installs global middleware on its own stack.
+- Updated dependencies
+  - @inversifyjs/framework-core@2.2.0
+
 ## 5.6.1
 
 No changes in this release.

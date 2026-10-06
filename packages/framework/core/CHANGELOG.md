@@ -1,5 +1,12 @@
 # @inversifyjs/framework-core
 
+## 2.2.0
+
+### Minor Changes
+
+Added `applyPipeList`, which runs a pipe list on one handler parameter. `InversifyHttpAdapter` now uses it instead of its own copy.
+Added `InversifyServerAdapter`, the shared server registry and build lifecycle. `InversifyHttpAdapter` now extends it, and each HTTP adapter still installs global middleware on its own stack.
+
 ## 2.1.0
 
 ### Minor Changes
