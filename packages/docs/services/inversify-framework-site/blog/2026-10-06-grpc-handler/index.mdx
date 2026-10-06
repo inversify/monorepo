@@ -1,0 +1,103 @@
+---
+slug: grpc-your-handler-is-a-class
+title: "gRPC — Your Handler Is a Class"
+authors: [notaphplover]
+tags: [features]
+---
+import dependencyInjectionSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/dependencyInjection.ts.txt';
+import gettingStartedServiceSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/gettingStartedService.ts.txt';
+import grpcErrorSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/grpcError.ts.txt';
+import heroProtoSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/hero.proto.txt';
+import serverStreamingSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/serverStreaming.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+You wrote the contract in a `.proto` file. Then the implementation turned into a function handed to `server.addService()`, closing over whatever it needed because a function has nowhere to put a constructor.
+
+That function can be a class now. The container builds it. The adapter puts it on the wire.
+
+{/* truncate */}
+
+![Two services exchanging messages across a stream](./grpc-banner.jpg)
+
+## Familiar, on purpose
+
+[`@inversifyjs/grpc-js`](/grpc/introduction/getting-started) builds a [`@grpc/grpc-js`](https://github.com/grpc/grpc-node/tree/master/packages/grpc-js) server from classes registered in an Inversify container. Decorators, status errors, guards, middleware, interceptors, pipes, and error filters live in `@inversifyjs/grpc-core`.
+
+If you have shipped an HTTP API with this framework, you already know the rhythm. Declare the class. Mark the method. Return the value. Let the pipeline run.
+
+## Return the message
+
+<CodeBlock language="ts">{gettingStartedServiceSource}</CodeBlock>
+
+`@Service()` stores the generated service definition and applies `@injectable()`. `@RPC('getHero')` is the key [`ts-proto`](https://github.com/stephenh/ts-proto) emits for `rpc GetHero` when you generate with `outputServices=grpc-js`.
+
+A unary method returns the response message, and the adapter sends it. Bind `HeroService` before `build()`. The adapter registers every bound `@Service()` class and skips the ones you left unbound.
+
+`build()` hands back the `@grpc/grpc-js` `Server`. Opening the port stays in your code, so a test can bind an ephemeral port and production can pass `ServerCredentials.createSsl`. Already constructed a `Server`? Pass it to the adapter. Your services are registered on that instance, and `build()` returns it.
+
+## One proto, four conversations
+
+<CodeBlock language="protobuf">{heroProtoSource}</CodeBlock>
+
+`requestStream` and `responseStream` on the service definition choose how the method sees the call.
+
+| Kind | Request | Response | Your method |
+| --- | --- | --- | --- |
+| Unary | one message | one message | Returns the response |
+| Client streaming | a stream | one message | Returns the response when the input ends |
+| Server streaming | one message | a stream | Writes each message, then calls `end()` |
+| Bidirectional | a stream | a stream | Reads and writes the same call |
+
+Unary and client-streaming methods can return the message and let the adapter send it. Return `undefined` when you have already finished the call yourself, for example through `@Callback()`. Server-streaming and bidirectional methods own the call. You write the messages, and the adapter leaves the return value alone.
+
+A server stream is a few writes and an `end()`:
+
+<CodeBlock language="ts">{serverStreamingSource}</CodeBlock>
+
+That sample loads `hero.proto` with `@grpc/proto-loader`, so `@RPC()` uses the name from the file, `ListHeroes`. Generate the same service with `ts-proto` and `outputServices=grpc-js`, and the key follows the generated definition, the way `GetHero` became `getHero` above. The string you pass to `@RPC()` has to be a key of the definition you passed to `@Service()`.
+
+## The constructor was the point
+
+<CodeBlock language="ts">{dependencyInjectionSource}</CodeBlock>
+
+Bind the repository. Bind the service. `GetHero` uses the repository the container passed into the constructor, the same way any other class in the process gets its collaborators.
+
+`@Service()` accepts a scope of `'Singleton'`, `'Transient'`, or `'Request'`. Leave it off and the container default applies. `@RPC()` methods are inherited. A subclass method with the same RPC name replaces the parent, and `@Service()` goes on the class you bind.
+
+## The call runs a pipeline
+
+Each RPC goes through the same sequence:
+
+1. Pre-handler middleware. Global, then class, then method.
+2. Guards, in that same order.
+3. Interceptors. Class interceptors wrap method interceptors, which wrap global interceptors.
+4. Pipes on decorated parameters. Global pipes run first.
+5. The method.
+6. Post-handler middleware. Class, then method, then global.
+
+A guard that returns `false` finishes the call with `PERMISSION_DENIED`. Throw a `GrpcError` from a guard, middleware, an interceptor, a pipe, or the method, and the client receives that status, on unary calls and on streams. An error that is not a `GrpcError`, and that no error filter handles, becomes status `UNKNOWN` with the details `Unknown`. With logging enabled, the original error is written to the log.
+
+<CodeBlock language="ts">{grpcErrorSource}</CodeBlock>
+
+Every non-OK gRPC status has a class: `NotFoundGrpcError`, `UnauthenticatedGrpcError`, `UnavailableGrpcError`, and the rest. Pass your own details, and optional metadata, when the default string is too vague.
+
+An [error filter](/grpc/fundamentals/error-filter) translates one of your own exceptions into one of those statuses. Throw a `GrpcError` from `catch`, and that is what the client sees. Method filters are chosen before class filters, which are chosen before global filters.
+
+Interceptors can reshape a returned unary or client-streaming message before it is sent. A custom parameter decorator can hand the method a value computed from the call, and [pipes](/grpc/fundamentals/pipe) can transform that value before the method runs. `@Call()` and `@Callback()` are the built-in way to take the raw call or the unary callback when you want them. Register global handlers on the adapter before `build()`.
+
+## Switch it on
+
+```bash
+npm install inversify reflect-metadata @grpc/grpc-js @bufbuild/protobuf @inversifyjs/grpc-core @inversifyjs/grpc-js
+npm install -D grpc-tools ts-proto
+```
+
+Enable `experimentalDecorators` and `emitDecoratorMetadata`. Import `reflect-metadata` once, before any decorated class loads.
+
+Leave `logger` unset and `build()` prints each service and the kind of each RPC. `logger: false` keeps that quiet. Pass a [`Logger`](/logger/introduction/getting-started) to use yours.
+
+The [getting started guide](/grpc/introduction/getting-started) walks through code generation and the server bootstrap. From there: [services](/grpc/fundamentals/service), [RPCs](/grpc/fundamentals/rpc), [guards](/grpc/fundamentals/guard), and [errors](/grpc/fundamentals/error).
+
+---
+
+A service definition that deserves a better server? Open an issue on [GitHub](https://github.com/inversify/monorepo) or bring it to [Discord](https://discord.gg/jXcMagAPnm).
