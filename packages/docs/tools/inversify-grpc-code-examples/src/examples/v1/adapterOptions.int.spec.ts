@@ -12,7 +12,7 @@ import {
   usingClient,
 } from '../../testing/grpcTestServer.js';
 import { createAdapter, createCustomServerAdapter } from './adapterOptions.js';
-import { HeroService } from './gettingStarted.js';
+import { HeroService } from './adapterOptions.js';
 import { type HeroResponse } from './loadHeroServiceDefinition.js';
 
 describe('adapterOptions', () => {

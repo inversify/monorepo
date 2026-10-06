@@ -1,4 +1,4 @@
-import { Server, ServerCredentials } from '@grpc/grpc-js';
+import { type Server, ServerCredentials } from '@grpc/grpc-js';
 import { RPC, Service } from '@inversifyjs/grpc-core';
 import { InversifyGrpcJsAdapter } from '@inversifyjs/grpc-js';
 import { Container } from 'inversify';
@@ -6,12 +6,12 @@ import { Container } from 'inversify';
 import {
   type HeroRequest,
   type HeroResponse,
-  heroServiceDefinition,
-} from './loadHeroServiceDefinition.js';
+  HeroServiceService,
+} from './generated/hero.js';
 
-@Service(heroServiceDefinition)
+@Service(HeroServiceService)
 export class HeroService {
-  @RPC('GetHero')
+  @RPC('getHero')
   public getHero(call: { request: HeroRequest }): HeroResponse {
     return {
       name: call.request.id,

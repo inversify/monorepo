@@ -104,7 +104,11 @@ export default {
         "src/examples/**/*.ts",
         "src/scripts/generateExamples/index.ts",
       ],
-      ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
+      ignoreDependencies: [
+        ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        "grpc-tools",
+        "ts-proto",
+      ],
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-http-code-examples": {

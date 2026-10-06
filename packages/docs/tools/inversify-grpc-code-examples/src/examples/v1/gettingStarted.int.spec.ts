@@ -9,8 +9,8 @@ import {
   shutdownServer,
   usingClient,
 } from '../../testing/grpcTestServer.js';
+import { type HeroResponse } from './generated/hero.js';
 import { type StartedGrpcServer, startGrpcServer } from './gettingStarted.js';
-import { type HeroResponse } from './loadHeroServiceDefinition.js';
 
 describe('gettingStarted', () => {
   let started: StartedGrpcServer;

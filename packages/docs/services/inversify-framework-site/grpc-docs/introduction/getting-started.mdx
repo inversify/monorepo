@@ -2,9 +2,8 @@
 sidebar_position: 1
 title: Getting started
 ---
-import heroProtoSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/hero.proto.txt';
-import loadHeroServiceDefinitionSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/loadHeroServiceDefinition.ts.txt';
 import gettingStartedSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/gettingStarted.ts.txt';
+import heroProtoSource from '@inversifyjs/grpc-code-examples/generated/examples/v1/hero.proto.txt';
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -19,21 +18,24 @@ import TabItem from '@theme/TabItem';
   <TabItem value="npm" label="npm">
 
 ```bash
-npm install inversify reflect-metadata @grpc/grpc-js @grpc/proto-loader @inversifyjs/grpc-core @inversifyjs/grpc-js
+npm install inversify reflect-metadata @grpc/grpc-js @bufbuild/protobuf @inversifyjs/grpc-core @inversifyjs/grpc-js
+npm install -D grpc-tools ts-proto
 ```
 
   </TabItem>
   <TabItem value="pnpm" label="pnpm">
 
 ```bash
-pnpm install inversify reflect-metadata @grpc/grpc-js @grpc/proto-loader @inversifyjs/grpc-core @inversifyjs/grpc-js
+pnpm add inversify reflect-metadata @grpc/grpc-js @bufbuild/protobuf @inversifyjs/grpc-core @inversifyjs/grpc-js
+pnpm add -D grpc-tools ts-proto
 ```
 
   </TabItem>
   <TabItem value="yarn" label="yarn">
 
 ```bash
-yarn add inversify reflect-metadata @grpc/grpc-js @grpc/proto-loader @inversifyjs/grpc-core @inversifyjs/grpc-js
+yarn add inversify reflect-metadata @grpc/grpc-js @bufbuild/protobuf @inversifyjs/grpc-core @inversifyjs/grpc-js
+yarn add -D grpc-tools ts-proto
 ```
 
   </TabItem>
@@ -47,25 +49,35 @@ Import `reflect-metadata` once, before any decorated class is loaded.
 
 :::
 
-`@grpc/proto-loader` is one way to turn a `.proto` file into the service definition `@Service()` expects. Generated clients from `ts-proto`, `protobuf-ts`, or another codegen tool work too, as long as each method has `path`, `requestStream`, `responseStream`, and the serialize and deserialize functions `@grpc/grpc-js` uses.
-
 ## Describe the service
 
 <CodeBlock language="protobuf">{heroProtoSource}</CodeBlock>
 
-Keep `hero.proto` next to the loader below. Later pages use the upload, list, and chat services from this file.
+Later pages use the upload, list, and chat services from this file.
 
-## Load the service definition
+## Generate TypeScript
 
-<CodeBlock language="typescript">{loadHeroServiceDefinitionSource}</CodeBlock>
+`ts-proto` writes a module from `hero.proto`. Import the message types and `HeroServiceService` from that module. `HeroServiceService` is the definition `@Service()` expects.
 
-`@RPC()` names match the keys of the loaded service definition. With `@grpc/proto-loader`, those keys are the RPC names from the `.proto` file, such as `GetHero`.
+```bash
+mkdir -p ./src/hero/generated
+grpc_tools_node_protoc \
+  --plugin=protoc-gen-ts_proto=./node_modules/.bin/protoc-gen-ts_proto \
+  --ts_proto_out=./src/hero/generated \
+  --ts_proto_opt=esModuleInterop=true,importSuffix=.js,outputServices=grpc-js,env=node,useOptionals=none,outputJsonMethods=false,outputClientImpl=false \
+  --proto_path=./proto \
+  ./proto/hero.proto
+```
 
-## Start the server
+`outputServices=grpc-js` adds the service definition. `@RPC()` uses its keys, so `rpc GetHero` is `getHero`.
+
+## Implement the service
 
 <CodeBlock language="typescript">{gettingStartedSource}</CodeBlock>
 
-Call `main()` to listen on `0.0.0.0:50051`, or call `startGrpcServer()` with another address. `build()` returns the `@grpc/grpc-js` `Server`. Binding and credentials stay in your code, so this example can use an ephemeral port in tests and `ServerCredentials.createSsl` in production.
+## Start the server
+
+`HeroService` handles `getHero`. Call `main()` to listen on `0.0.0.0:50051`, or call `startGrpcServer()` with another address. `build()` returns the `@grpc/grpc-js` `Server`. Binding and credentials stay in your code, so this example can use an ephemeral port in tests and `ServerCredentials.createSsl` in production.
 
 `logger: false` turns off the startup log. Leave `logger` unset to print each service and RPC when the server is built. Pass a [`Logger`](/logger/introduction/getting-started) to use your own.
 
