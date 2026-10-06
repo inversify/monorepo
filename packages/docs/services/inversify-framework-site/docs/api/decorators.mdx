@@ -19,6 +19,7 @@ import decoratorApiBodyMultipartUwebsocketsSource from '@inversifyjs/http-code-e
 import decoratorApiBodyMultipartExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiBodyMultipartExpress.ts.txt';
 import decoratorApiCookiesSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiCookies.ts.txt';
 import decoratorApiDeleteSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiDelete.ts.txt';
+import errorFilterApiDiscriminatedHierarchyErrorsSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiDiscriminatedHierarchyErrors.ts.txt';
 import decoratorApiGetSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiGet.ts.txt';
 import decoratorApiHeadersSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiHeaders.ts.txt';
 import decoratorApiHeadSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiHead.ts.txt';
@@ -143,6 +144,29 @@ Notes
 - Scope: Place on the controller class to affect all routes, or on a method to affect only that route.
 - Order: Error filters are processed in the order they are provided.
 - Exception handling: Error filters can catch, transform, or handle exceptions thrown during request processing.
+
+### Discriminated
+
+Stores a discriminator on an error class so error-filter lookup can match that error when constructor identity differs.
+
+```ts
+function Discriminated(discriminator: string | symbol): ClassDecorator
+```
+
+Parameters
+
+- `discriminator`: A string or symbol stored on the error class.
+
+Notes
+
+- Error filter lookup matches an error by its constructor. A package loaded twice can create two constructors for the same error class, and `instanceof` then fails between those copies.
+- Place the decorator on the error class. A filter registered for that class with `@CatchError()` is also registered for each of its discriminators. Lookup reads those discriminators before it matches the class, then walks to each parent.
+- A subclass can declare its own discriminator when it needs its own filter. A subclass with no filter of its own is handled by the parent filter.
+- See [Error Filter](../../fundamentals/error-filter#matching-errors-by-discriminator).
+
+#### Example: an error hierarchy
+
+<CodeBlock language="ts">{errorFilterApiDiscriminatedHierarchyErrorsSource}</CodeBlock>
 
 ### UseGuard
 

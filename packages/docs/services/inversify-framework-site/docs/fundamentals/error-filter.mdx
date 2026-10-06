@@ -3,6 +3,9 @@ sidebar_position: 2
 title: Error Filter
 ---
 import errorFilterApiControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiController.ts.txt';
+import errorFilterApiDiscriminatedHierarchyControllerSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiDiscriminatedHierarchyController.ts.txt';
+import errorFilterApiDiscriminatedHierarchyErrorFiltersSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiDiscriminatedHierarchyErrorFilters.ts.txt';
+import errorFilterApiDiscriminatedHierarchyErrorsSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiDiscriminatedHierarchyErrors.ts.txt';
 import errorFilterApiInvalidOperationErrorSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiInvalidOperationError.ts.txt';
 import errorFilterApiInvalidOperationErrorFilterSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiInvalidOperationErrorFilter.ts.txt';
 import errorFilterApiGlobalExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/errorFilterApiGlobalExpress.ts.txt';
@@ -24,7 +27,7 @@ Error filters allow you to catch and process errors that occur during request ha
 
 ## How Error Filters Work
 
-Error filters are classes that implement the `ErrorFilter` interface and are decorated with `@CatchError()`. When an error occurs during request processing, Inversify HTTP looks for error filters that can handle that specific error type and delegates the error handling to them.
+Error filters are classes that implement the `ErrorFilter` interface and are decorated with `@CatchError()`. When an error occurs during request processing, Inversify HTTP looks for an error filter that can handle that error and delegates the error handling to it. A filter can match the error's class or a [discriminator](#matching-errors-by-discriminator) declared on that class.
 
 The error filter can then:
 - Transform the error into an appropriate HTTP response
@@ -57,6 +60,30 @@ Create an error filter that catches the custom error and returns an appropriate 
 Apply the error filter to a controller using the `@UseErrorFilter()` decorator:
 
 <CodeBlock language="ts">{errorFilterApiControllerSource}</CodeBlock>
+
+## Matching errors by discriminator
+
+Error filter lookup matches an error by its constructor. A package that is loaded twice can create two constructors for the same error class, and an instance of one copy fails `instanceof` against the other. [`@Discriminated()`](../../api/decorators#discriminated) stores a string or symbol on the error class so lookup can still find the filter. Import it from `@inversifyjs/http-core`.
+
+```ts
+function Discriminated(discriminator: string | symbol): ClassDecorator
+```
+
+A filter registered with `@CatchError(ErrorClass)` is also registered for every discriminator on that class. Lookup starts at the thrown error's class and walks toward its parents. At each class, a discriminator match is used before a match on the class itself. Each class keeps the discriminators applied to it.
+
+### Error hierarchies
+
+Give a subclass its own discriminator when that subclass needs its own filter. Lookup reads the thrown class's discriminators before it matches that class, then repeats the check on each parent.
+
+`OutOfStockError` extends `WarehouseError`. `OutOfStockErrorFilter` handles `OutOfStockError`. `WarehouseErrorFilter` handles `WarehouseError`. `ClosedWarehouseError` extends `WarehouseError` and has no filter of its own, so `WarehouseErrorFilter` handles it too.
+
+<CodeBlock language="ts">{errorFilterApiDiscriminatedHierarchyErrorsSource}</CodeBlock>
+
+<CodeBlock language="ts">{errorFilterApiDiscriminatedHierarchyErrorFiltersSource}</CodeBlock>
+
+<CodeBlock language="ts">{errorFilterApiDiscriminatedHierarchyControllerSource}</CodeBlock>
+
+`GET /warehouse/out-of-stock` responds with `409 Conflict`. `GET /warehouse/closed` and `GET /warehouse/maintenance` respond with `400 Bad Request`.
 
 ## Returning responses from error filters
 

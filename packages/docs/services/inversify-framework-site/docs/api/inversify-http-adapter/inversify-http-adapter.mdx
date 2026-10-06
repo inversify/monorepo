@@ -93,7 +93,7 @@ useGlobalFilters(
 ): void
 ```
 
-Registers global error filters. When a handler, guard, pipe, middleware, or interceptor throws, the adapter looks up the most specific filter whose handled `Error` type matches the thrown error (by walking the prototype chain), or a catch-all filter bound to `null` if provided.
+Registers global error filters. When a handler, guard, pipe, middleware, or interceptor throws, the adapter walks the error's class chain. At each class, a [discriminator](../../fundamentals/error-filter#matching-errors-by-discriminator) match is used before a match on the class. A filter registered with `@CatchError()` and no error class is the fallback.
 
 - `errorFilterList`: Error filter classes to register globally.
 
