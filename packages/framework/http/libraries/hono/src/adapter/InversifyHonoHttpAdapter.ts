@@ -438,18 +438,28 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     const urlSearchParams: URLSearchParams = new URLSearchParams(
       stringifiedBody,
     );
-    const parsedBody: Record<string, string | string[]> = Object.create(
-      null,
-    ) as Record<string, string | string[]>;
+    const parsedBody: Record<string, string | string[]> = {};
 
     urlSearchParams.forEach((value: string, key: string) => {
-      if (parsedBody[key] === undefined) {
-        parsedBody[key] = value;
+      const existingValue: string | string[] | undefined = Object.hasOwn(
+        parsedBody,
+        key,
+      )
+        ? parsedBody[key]
+        : undefined;
+
+      if (existingValue === undefined) {
+        Object.defineProperty(parsedBody, key, {
+          configurable: true,
+          enumerable: true,
+          value,
+          writable: true,
+        });
       } else {
-        if (Array.isArray(parsedBody[key])) {
-          parsedBody[key].push(value);
+        if (Array.isArray(existingValue)) {
+          existingValue.push(value);
         } else {
-          parsedBody[key] = [parsedBody[key], value];
+          parsedBody[key] = [existingValue, value];
         }
       }
     });
