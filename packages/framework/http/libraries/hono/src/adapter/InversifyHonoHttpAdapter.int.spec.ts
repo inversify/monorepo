@@ -3,7 +3,13 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { type AddressInfo } from 'node:net';
 
 import { serve, type ServerType } from '@hono/node-server';
-import { ApplyMiddleware, Controller, Get, Post } from '@inversifyjs/http-core';
+import {
+  ApplyMiddleware,
+  Body,
+  Controller,
+  Get,
+  Post,
+} from '@inversifyjs/http-core';
 import { type Context, type Hono, type HonoRequest, type Next } from 'hono';
 import { Container, injectable } from 'inversify';
 
@@ -140,6 +146,57 @@ describe(InversifyHonoHttpAdapter, () => {
         expect(response.headers.get('x-test-middleware')).toBe(
           'test-middleware',
         );
+      });
+    });
+  });
+
+  describe('having a hono http server with an endpoint returning the request body', () => {
+    let server: Server;
+
+    beforeAll(async () => {
+      @Controller('/test')
+      class TestController {
+        @Post()
+        public async post(
+          @Body() body: Record<string, unknown>,
+        ): Promise<Record<string, unknown>> {
+          return body;
+        }
+      }
+
+      const container: Container = new Container();
+
+      container.bind(TestController).toSelf().inSingletonScope();
+
+      server = await buildHonoServer(container);
+    });
+
+    afterAll(async () => {
+      await server.shutdown();
+    });
+
+    describe('when sending a POST request with an urlencoded body with keys from Object.prototype', () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/test`,
+          {
+            body: 'name=Ann&toString=x&constructor=y',
+            headers: {
+              'content-type': 'application/x-www-form-urlencoded',
+            },
+            method: 'POST',
+          },
+        );
+      });
+
+      it('should return the body values', async () => {
+        await expect(response.json()).resolves.toStrictEqual({
+          constructor: 'y',
+          name: 'Ann',
+          toString: 'x',
+        });
       });
     });
   });

@@ -509,7 +509,9 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     const queryEntries: URLSearchParamsIterator<[string, string]> =
       new URLSearchParams(request.getQuery()).entries();
 
-    const result: Record<string, string | string[]> = {};
+    const result: Record<string, string | string[]> = Object.create(
+      null,
+    ) as Record<string, string | string[]>;
 
     for (const [key, value] of queryEntries) {
       if (result[key] !== undefined) {
@@ -532,7 +534,9 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     const urlSearchParams: URLSearchParams = new URLSearchParams(
       stringifiedBody,
     );
-    const parsedBody: Record<string, string | string[]> = {};
+    const parsedBody: Record<string, string | string[]> = Object.create(
+      null,
+    ) as Record<string, string | string[]>;
 
     urlSearchParams.forEach((value: string, key: string) => {
       if (parsedBody[key] === undefined) {
