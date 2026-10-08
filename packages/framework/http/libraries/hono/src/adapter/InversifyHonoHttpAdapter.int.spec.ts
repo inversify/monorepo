@@ -199,5 +199,29 @@ describe(InversifyHonoHttpAdapter, () => {
         });
       });
     });
+
+    describe('when sending a POST request with an urlencoded body with a repeated key from Object.prototype and a __proto__ key', () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await fetch(
+          `http://${server.host}:${server.port.toString()}/test`,
+          {
+            body: 'toString=x&toString=y&__proto__=z',
+            headers: {
+              'content-type': 'application/x-www-form-urlencoded',
+            },
+            method: 'POST',
+          },
+        );
+      });
+
+      it('should return the body values', async () => {
+        await expect(response.json()).resolves.toStrictEqual({
+          ['__proto__']: 'z',
+          toString: ['x', 'y'],
+        });
+      });
+    });
   });
 });
