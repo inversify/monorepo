@@ -5,7 +5,7 @@ import {
   buildNormalizedPath,
   type CustomParameterDecoratorHandlerOptions,
   handleMiddlewareList,
-  type HttpStatusCode,
+  HttpStatusCode,
   InversifyHttpAdapter,
   type MiddlewareHandler,
   RequestMethodParameterType,
@@ -13,6 +13,7 @@ import {
   type RouterParams,
   routeValueMetadataSymbol,
 } from '@inversifyjs/http-core';
+import { type HttpInstrumentationContext } from '@inversifyjs/http-instrumentation-core';
 import { type Container } from 'inversify';
 import status from 'statuses';
 import {
@@ -28,6 +29,12 @@ import { pipeStreamOverResponse } from '../actions/pipeStreamOverResponse.js';
 import { getClassMethodRequestTransformerList } from '../calculations/getClassMethodRequestTransformerList.js';
 import { getClassRequestTransformerList } from '../calculations/getClassRequestTransformerList.js';
 import { abortedSymbol } from '../data/abortedSymbol.js';
+import {
+  finishUwsHttpRequestObservation,
+  recordUwsHttpHeader,
+  recordUwsHttpStatus,
+  startUwsHttpRequestObservation,
+} from '../instrumentation/actions/uwsHttpRequestObservation.js';
 import { type CustomHttpResponse } from '../models/CustomHttpResponse.js';
 import { type RequestTransformer } from '../models/RequestTransformer.js';
 import { type UwebSocketsHttpAdapterOptions } from '../models/UwebSocketsHttpAdapterOptions.js';
@@ -131,40 +138,34 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
       if (requestTransformerList.length === 0) {
         this.#getAppRouteHandler(routeParams.requestMethodType)(
           routePath,
-          async (res: HttpResponse, req: HttpRequest) => {
-            res.onAborted(() => {
-              (res as CustomHttpResponse)[abortedSymbol] = true;
-            });
-
-            await handleMiddlewares(req, res);
-          },
+          async (res: HttpResponse, req: HttpRequest): Promise<void> =>
+            this.#runRequest(res, req, async (): Promise<void> => {
+              await handleMiddlewares(req, res);
+            }),
         );
       } else {
         this.#getAppRouteHandler(routeParams.requestMethodType)(
           routePath,
-          async (res: HttpResponse, req: HttpRequest) => {
-            res.onAborted(() => {
-              (res as CustomHttpResponse)[abortedSymbol] = true;
-            });
+          async (res: HttpResponse, req: HttpRequest): Promise<void> =>
+            this.#runRequest(res, req, async (): Promise<void> => {
+              let request: HttpRequest = req;
 
-            let request: HttpRequest = req;
+              try {
+                for (const requestTransformer of requestTransformerList) {
+                  request = await requestTransformer(
+                    request,
+                    res,
+                    this.#requestTransformerOptions,
+                  );
+                }
+              } catch (error: unknown) {
+                await routeParams.handleError(request, res, error);
 
-            try {
-              for (const requestTransformer of requestTransformerList) {
-                request = await requestTransformer(
-                  request,
-                  res,
-                  this.#requestTransformerOptions,
-                );
+                return;
               }
-            } catch (error: unknown) {
-              await routeParams.handleError(request, res, error);
 
-              return;
-            }
-
-            await handleMiddlewares(request, res);
-          },
+              await handleMiddlewares(request, res);
+            }),
         );
       }
     }
@@ -179,20 +180,18 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
 
       this._app.any(
         '/*',
-        async (res: HttpResponse, req: HttpRequest): Promise<void> => {
-          res.onAborted((): void => {
-            (res as CustomHttpResponse)[abortedSymbol] = true;
-          });
+        async (res: HttpResponse, req: HttpRequest): Promise<void> =>
+          this.#runRequest(res, req, async (): Promise<void> => {
+            await handleMiddlewares(req, res);
 
-          await handleMiddlewares(req, res);
-
-          if ((res as CustomHttpResponse)[abortedSymbol] !== true) {
-            res.cork((): void => {
-              res.writeStatus('404 Not Found');
-              res.end();
-            });
-          }
-        },
+            if ((res as CustomHttpResponse)[abortedSymbol] !== true) {
+              recordUwsHttpStatus(res, HttpStatusCode.NOT_FOUND);
+              res.cork((): void => {
+                res.writeStatus('404 Not Found');
+                res.end();
+              });
+            }
+          }),
       );
     }
   }
@@ -258,6 +257,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     response: HttpResponse,
     statusCode: HttpStatusCode,
   ): void {
+    recordUwsHttpStatus(response, statusCode);
     response.cork((): void => {
       response.writeStatus(`${statusCode.toString()} ${status(statusCode)}`);
     });
@@ -269,6 +269,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     key: string,
     value: string,
   ): void {
+    recordUwsHttpHeader(response, key, value);
     response.cork((): void => {
       response.writeHeader(key, value);
     });
@@ -384,6 +385,50 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     return parameterName === undefined ? cookies : cookies[parameterName];
   }
 
+  async #runRequest(
+    response: HttpResponse,
+    request: HttpRequest,
+    operation: () => Promise<void>,
+  ): Promise<void> {
+    const instrumentation: HttpInstrumentationContext | undefined =
+      this._httpInstrumentation;
+
+    if (instrumentation === undefined) {
+      response.onAborted((): void => {
+        (response as CustomHttpResponse)[abortedSymbol] = true;
+      });
+      await operation();
+
+      return;
+    }
+
+    const observation: ReturnType<typeof startUwsHttpRequestObservation> =
+      startUwsHttpRequestObservation(request, response, instrumentation);
+
+    response.onAborted((): void => {
+      (response as CustomHttpResponse)[abortedSymbol] = true;
+      finishUwsHttpRequestObservation(
+        request,
+        response,
+        observation,
+        instrumentation,
+        true,
+      );
+    });
+
+    try {
+      await operation();
+    } finally {
+      finishUwsHttpRequestObservation(
+        request,
+        response,
+        observation,
+        instrumentation,
+        (response as CustomHttpResponse)[abortedSymbol] === true,
+      );
+    }
+  }
+
   #getAppRouteHandler(
     requestMethodType: RequestMethodType,
   ): (
@@ -423,6 +468,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
         let totalLength: number = 0;
 
         response.onAborted(() => {
+          (response as CustomHttpResponse)[abortedSymbol] = true;
           reject(new Error('Request aborted'));
         });
 
