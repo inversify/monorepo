@@ -126,13 +126,17 @@ export function buildInstrumentedGuardHandler<
       return outcome.result;
     }
 
-    if (outcome.allowed) {
-      await next();
+    try {
+      if (outcome.allowed) {
+        await next();
 
-      return undefined;
+        return undefined;
+      }
+
+      return await replyForbidden(request, response);
+    } catch (error: unknown) {
+      return handleError(request, response, error);
     }
-
-    return replyForbidden(request, response);
   };
 
   markHttpInstrumentedHandler(handler);

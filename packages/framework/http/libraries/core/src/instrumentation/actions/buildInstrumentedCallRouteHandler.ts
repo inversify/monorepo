@@ -139,84 +139,81 @@ export function buildInstrumentedAsyncCallRouteHandler<
     const params: unknown[] = new Array(
       controllerMethodParameterMetadataList.length,
     );
+    const builders: ParamBuilder<TRequest, TResponse, TNextFunction>[] =
+      paramBuilders as ParamBuilder<TRequest, TResponse, TNextFunction>[];
 
-    await Promise.all(
-      (paramBuilders as ParamBuilder<TRequest, TResponse, TNextFunction>[]).map(
-        async (
-          paramBuilder: ParamBuilder<TRequest, TResponse, TNextFunction>,
-          index: number,
-        ): Promise<void> => {
-          const controllerMethodParameterMetadata: InstrumentedParameterMetadata =
-            controllerMethodParameterMetadataList[
-              index
-            ] as InstrumentedParameterMetadata;
-          const param: unknown = paramBuilder(request, response, next);
+    for (let index: number = 0; index < builders.length; index += 1) {
+      const paramBuilder: ParamBuilder<TRequest, TResponse, TNextFunction> =
+        builders[index] as ParamBuilder<TRequest, TResponse, TNextFunction>;
+      const controllerMethodParameterMetadata: InstrumentedParameterMetadata =
+        controllerMethodParameterMetadataList[
+          index
+        ] as InstrumentedParameterMetadata;
+      const param: unknown = paramBuilder(request, response, next);
 
-          params[index] = awaitableRequestMethodParamTypes.has(
-            controllerMethodParameterMetadata.parameterType,
-          )
-            ? await param
-            : param;
+      params[index] = awaitableRequestMethodParamTypes.has(
+        controllerMethodParameterMetadata.parameterType,
+      )
+        ? await param
+        : param;
 
-          const pipeList: (ServiceIdentifier<Pipe> | Pipe)[] = [
-            ...globalPipeList,
-            ...controllerMethodParameterMetadata.pipeList,
-          ];
+      const pipeList: (ServiceIdentifier<Pipe> | Pipe)[] = [
+        ...globalPipeList,
+        ...controllerMethodParameterMetadata.pipeList,
+      ];
 
-          for (const pipeOrServiceIdentifier of pipeList) {
-            const pipe: Pipe = isPipe(pipeOrServiceIdentifier)
-              ? pipeOrServiceIdentifier
-              : await container.getAsync(pipeOrServiceIdentifier);
+      for (const pipeOrServiceIdentifier of pipeList) {
+        const pipe: Pipe = isPipe(pipeOrServiceIdentifier)
+          ? pipeOrServiceIdentifier
+          : await container.getAsync(pipeOrServiceIdentifier);
 
-            await runInstrumentedHttpStage(
-              instrumentation,
-              request as object,
-              (scope: HttpInstrumentationScope, stage: HttpStageClock) => ({
-                executionId: scope.executionId,
-                method: methodName,
-                parameterIndex: index,
-                ...(scope.parentExecutionId === undefined
-                  ? {}
-                  : { parentExecutionId: scope.parentExecutionId }),
-                pipe: describePipe(pipeOrServiceIdentifier),
-                requestId: scope.requestId,
-                timestamp: stage.startedAt,
-                type: 'http.pipe.started',
-              }),
-              async (): Promise<void> => {
-                params[index] = await pipe.execute(params[index], {
-                  methodName: controllerMethodKey,
-                  parameterIndex: index,
-                  targetClass,
-                });
-              },
-              (
-                scope: HttpInstrumentationScope,
-                stage: HttpStageClock,
-                outcome: HttpStageOutcome<void>,
-              ) => ({
-                duration: readHttpStageDuration(stage),
-                ...('error' in outcome ? { error: outcome.error } : {}),
-                executionId: scope.executionId,
-                method: methodName,
-                parameterIndex: index,
-                ...(scope.parentExecutionId === undefined
-                  ? {}
-                  : { parentExecutionId: scope.parentExecutionId }),
-                pipe: describePipe(pipeOrServiceIdentifier),
-                requestId: scope.requestId,
-                startedAt: stage.startedAt,
-                timestamp: Date.now(),
-                type: 'http.pipe.executed',
-              }),
-              async (error: unknown): Promise<void> => {
-                throw error;
-              },
-            );
-          }
-        },
-      ),
-    );
+        await runInstrumentedHttpStage(
+          instrumentation,
+          request as object,
+          (scope: HttpInstrumentationScope, stage: HttpStageClock) => ({
+            executionId: scope.executionId,
+            method: methodName,
+            parameterIndex: index,
+            ...(scope.parentExecutionId === undefined
+              ? {}
+              : { parentExecutionId: scope.parentExecutionId }),
+            pipe: describePipe(pipeOrServiceIdentifier),
+            requestId: scope.requestId,
+            timestamp: stage.startedAt,
+            type: 'http.pipe.started',
+          }),
+          async (): Promise<void> => {
+            params[index] = await pipe.execute(params[index], {
+              methodName: controllerMethodKey,
+              parameterIndex: index,
+              targetClass,
+            });
+          },
+          (
+            scope: HttpInstrumentationScope,
+            stage: HttpStageClock,
+            outcome: HttpStageOutcome<void>,
+          ) => ({
+            duration: readHttpStageDuration(stage),
+            ...('error' in outcome ? { error: outcome.error } : {}),
+            executionId: scope.executionId,
+            method: methodName,
+            parameterIndex: index,
+            ...(scope.parentExecutionId === undefined
+              ? {}
+              : { parentExecutionId: scope.parentExecutionId }),
+            pipe: describePipe(pipeOrServiceIdentifier),
+            requestId: scope.requestId,
+            startedAt: stage.startedAt,
+            timestamp: Date.now(),
+            type: 'http.pipe.executed',
+          }),
+          async (error: unknown): Promise<void> => {
+            throw error;
+          },
+        );
+      }
+    }
 
     const controller: Controller = await container.getAsync<Controller>(
       serviceIdentifier as ServiceIdentifier<Controller>,

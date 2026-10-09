@@ -431,6 +431,90 @@ describe(InversifyExpressHttpAdapter, () => {
       });
     });
 
+    describe('having a mounted Express sub-app', () => {
+      describe('when a request is served', () => {
+        it('should mount the sub-app and record the request', async () => {
+          const app: Application = express();
+          const subApp: Application = express();
+          const container: Container = new Container();
+          const sink: RecordingSink = new RecordingSink();
+          let mountedParent: Application | undefined;
+
+          app.set('trust proxy', true);
+          app.set('view engine', 'pug');
+
+          const adapter: InversifyExpressHttpAdapter =
+            new InversifyExpressHttpAdapter(
+              container,
+              {
+                instrumentation: [sink],
+                logger: false,
+                useCookies: false,
+                useJson: false,
+                useText: false,
+                useUrlEncoded: false,
+              },
+              app,
+            );
+
+          subApp.get('/ping', (_request: Request, response: Response): void => {
+            response.status(200).send('ok');
+          });
+          subApp.on('mount', (parent: Application): void => {
+            mountedParent = parent;
+          });
+
+          app.use('/mounted', subApp);
+
+          await adapter.build();
+
+          const server: Server = await listen(app);
+          const port: number = readPort(server);
+
+          try {
+            const response: globalThis.Response = await fetch(
+              `http://127.0.0.1:${port.toString()}/mounted/ping`,
+            );
+
+            expect(response.status).toBe(200);
+            await expect(response.text()).resolves.toBe('ok');
+          } finally {
+            await new Promise<void>(
+              (resolve: () => void, reject: (error: Error) => void) => {
+                server.close((error: Error | undefined) => {
+                  if (error === undefined) {
+                    resolve();
+                  } else {
+                    reject(error);
+                  }
+                });
+              },
+            );
+          }
+
+          expect(subApp.mountpath).toBe('/mounted');
+          expect(mountedParent).toBe(app);
+          expect(subApp.get('trust proxy')).toBe(true);
+          expect(subApp.get('view engine')).toBe('pug');
+          expect(
+            sink.events.map((event: HttpInstrumentationEvent) => event.type),
+          ).toStrictEqual(
+            expect.arrayContaining([
+              'http.request.started',
+              'http.response.sent',
+            ]),
+          );
+          expect(
+            sink.events.some(
+              (event: HttpInstrumentationEvent): boolean =>
+                event.type === 'http.nativeMiddleware.executed' &&
+                event.name === 'app',
+            ),
+          ).toBe(false);
+        });
+      });
+    });
+
     describe('having a sink that throws', () => {
       describe('when a request is served', () => {
         it('should still respond and deliver events to the other sink', async () => {

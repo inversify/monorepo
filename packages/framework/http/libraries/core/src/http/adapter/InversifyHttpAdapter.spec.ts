@@ -406,6 +406,22 @@ class AllowGuard implements Guard<TestRequest> {
   }
 }
 
+class DenyGuard implements Guard<TestRequest> {
+  public activate(): boolean {
+    return false;
+  }
+}
+
+class ThrowingStatusHttpAdapter extends TestHttpAdapter {
+  public static readonly errorFixture: StageError = new StageError(
+    'forbidden reply',
+  );
+
+  protected override _setStatus(): void {
+    throw ThrowingStatusHttpAdapter.errorFixture;
+  }
+}
+
 class FailingGuard implements Guard<TestRequest> {
   public static readonly errorFixture: StageError = new StageError('guard');
 
@@ -445,6 +461,14 @@ class TrimPipe implements Pipe {
   }
 }
 
+class YieldPipe implements Pipe {
+  public async execute(input: unknown): Promise<unknown> {
+    await Promise.resolve();
+
+    return input;
+  }
+}
+
 function requireEvent<TType extends HttpInstrumentationEvent['type']>(
   events: readonly HttpInstrumentationEvent[],
   type: TType,
@@ -477,6 +501,37 @@ class ItemsController {
   @Get()
   public get(@Query({ name: 'q' }, new TrimPipe()) query: string): string {
     return query;
+  }
+}
+
+@Controller('/pair')
+class PairController {
+  @Get()
+  public get(
+    @Query({ name: 'left' }) left: string,
+    @Query({ name: 'right' }) right: string,
+  ): string {
+    return `${left}:${right}`;
+  }
+}
+
+@Controller('/allowed-guard')
+@UseErrorFilter(StageErrorFilter)
+class AllowedGuardController {
+  @UseGuard(AllowGuard)
+  @Get()
+  public get(): string {
+    return 'unused';
+  }
+}
+
+@Controller('/denied-guard')
+@UseErrorFilter(StageErrorFilter)
+class DeniedGuardController {
+  @UseGuard(DenyGuard)
+  @Get()
+  public get(): string {
+    return 'unused';
   }
 }
 
@@ -1065,6 +1120,77 @@ describe(InversifyHttpAdapter, () => {
       });
     });
 
+    describe('having a global pipe and two parameters', () => {
+      describe('when the route handler is called', () => {
+        it('should record the parameter pipes as siblings', async () => {
+          const container: Container = new Container();
+          const sink: RecordingSink = new RecordingSink();
+
+          container.bind(PairController).toSelf().inSingletonScope();
+
+          const adapter: TestHttpAdapter = new TestHttpAdapter(container, {
+            instrumentation: [sink],
+          });
+
+          adapter.useGlobalPipe(new YieldPipe());
+
+          await adapter.build();
+
+          const [routeParams]: [
+            RouteParams<TestRequest, TestResponse, () => void, void>,
+          ] = adapter.routerParamsList[0]?.routeParamsList as [
+            RouteParams<TestRequest, TestResponse, () => void, void>,
+          ];
+
+          await routeParams.handler(
+            {
+              query: {
+                left: 'a',
+                right: 'b',
+              },
+            },
+            {},
+            vitest.fn(),
+          );
+
+          const pipeEvents: Extract<
+            HttpInstrumentationEvent,
+            { type: 'http.pipe.executed' }
+          >[] = sink.events.filter(
+            (
+              event: HttpInstrumentationEvent,
+            ): event is Extract<
+              HttpInstrumentationEvent,
+              { type: 'http.pipe.executed' }
+            > => event.type === 'http.pipe.executed',
+          );
+          const firstPipe: Extract<
+            HttpInstrumentationEvent,
+            { type: 'http.pipe.executed' }
+          > = pipeEvents[0] as Extract<
+            HttpInstrumentationEvent,
+            { type: 'http.pipe.executed' }
+          >;
+          const secondPipe: Extract<
+            HttpInstrumentationEvent,
+            { type: 'http.pipe.executed' }
+          > = pipeEvents[1] as Extract<
+            HttpInstrumentationEvent,
+            { type: 'http.pipe.executed' }
+          >;
+
+          expect(pipeEvents).toHaveLength(2);
+          expect(firstPipe.parameterIndex).toBe(0);
+          expect(secondPipe.parameterIndex).toBe(1);
+          expect(firstPipe.parentExecutionId).toBe(
+            secondPipe.parentExecutionId,
+          );
+          expect(secondPipe.parentExecutionId).not.toBe(firstPipe.executionId);
+          expect(adapter.replies).toStrictEqual(['a:b']);
+        });
+      });
+    });
+
     describe('having a guard that throws', () => {
       let sink: RecordingSink;
       const requestFixture: TestRequest = {};
@@ -1119,6 +1245,145 @@ describe(InversifyHttpAdapter, () => {
           requestFixture,
           responseFixture,
         );
+      });
+    });
+
+    describe('having an allowed guard and a failing next call', () => {
+      let sink: RecordingSink;
+      const requestFixture: TestRequest = {};
+      const responseFixture: TestResponse = {};
+      const downstreamError: StageError = new StageError('downstream');
+
+      beforeAll(async () => {
+        const container: Container = new Container();
+
+        container.bind(StageErrorFilter).toSelf().inSingletonScope();
+        container.bind(AllowGuard).toSelf().inSingletonScope();
+        container.bind(AllowedGuardController).toSelf().inSingletonScope();
+        sink = new RecordingSink();
+
+        const adapter: TestHttpAdapter = new TestHttpAdapter(container, {
+          instrumentation: [sink],
+        });
+
+        await adapter.build();
+
+        const [routeParams]: [
+          RouteParams<TestRequest, TestResponse, () => void, void>,
+        ] = adapter.routerParamsList[0]?.routeParamsList as [
+          RouteParams<TestRequest, TestResponse, () => void, void>,
+        ];
+        const [guard]: MiddlewareHandler<
+          TestRequest,
+          TestResponse,
+          () => void,
+          unknown
+        >[] = routeParams.guardList;
+
+        const callGuard: (
+          request: TestRequest,
+          response: TestResponse,
+          next: () => Promise<void>,
+        ) => Promise<unknown> = guard as (
+          request: TestRequest,
+          response: TestResponse,
+          next: () => Promise<void>,
+        ) => Promise<unknown>;
+
+        await callGuard(
+          requestFixture,
+          responseFixture,
+          async (): Promise<void> => Promise.reject(downstreamError),
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should handle the downstream error with the filter', () => {
+        expect(StageErrorFilter.catchMock).toHaveBeenCalledExactlyOnceWith(
+          downstreamError,
+          requestFixture,
+          responseFixture,
+        );
+      });
+
+      it('should keep the guard result separate from the downstream error', () => {
+        const guardExecuted: Extract<
+          HttpInstrumentationEvent,
+          { type: 'http.guard.executed' }
+        > = requireEvent(sink.events, 'http.guard.executed');
+        const errorEvent: Extract<
+          HttpInstrumentationEvent,
+          { type: 'http.error' }
+        > = requireEvent(sink.events, 'http.error');
+
+        expect(guardExecuted.allowed).toBe(true);
+        expect(guardExecuted.error).toBeUndefined();
+        expect(errorEvent.error).toBe(downstreamError);
+      });
+    });
+
+    describe('having a denied guard and a failing forbidden reply', () => {
+      let sink: RecordingSink;
+      const requestFixture: TestRequest = {};
+      const responseFixture: TestResponse = {};
+
+      beforeAll(async () => {
+        const container: Container = new Container();
+
+        container.bind(StageErrorFilter).toSelf().inSingletonScope();
+        container.bind(DenyGuard).toSelf().inSingletonScope();
+        container.bind(DeniedGuardController).toSelf().inSingletonScope();
+        sink = new RecordingSink();
+
+        const adapter: ThrowingStatusHttpAdapter =
+          new ThrowingStatusHttpAdapter(container, {
+            instrumentation: [sink],
+          });
+
+        await adapter.build();
+
+        const [routeParams]: [
+          RouteParams<TestRequest, TestResponse, () => void, void>,
+        ] = adapter.routerParamsList[0]?.routeParamsList as [
+          RouteParams<TestRequest, TestResponse, () => void, void>,
+        ];
+        const [guard]: MiddlewareHandler<
+          TestRequest,
+          TestResponse,
+          () => void,
+          unknown
+        >[] = routeParams.guardList;
+
+        await guard?.(requestFixture, responseFixture, vitest.fn());
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should handle the reply error with the filter', () => {
+        expect(StageErrorFilter.catchMock).toHaveBeenCalledExactlyOnceWith(
+          ThrowingStatusHttpAdapter.errorFixture,
+          requestFixture,
+          responseFixture,
+        );
+      });
+
+      it('should record the denied guard and the reply error', () => {
+        const guardExecuted: Extract<
+          HttpInstrumentationEvent,
+          { type: 'http.guard.executed' }
+        > = requireEvent(sink.events, 'http.guard.executed');
+        const errorEvent: Extract<
+          HttpInstrumentationEvent,
+          { type: 'http.error' }
+        > = requireEvent(sink.events, 'http.error');
+
+        expect(guardExecuted.allowed).toBe(false);
+        expect(errorEvent.error).toBe(ThrowingStatusHttpAdapter.errorFixture);
       });
     });
 

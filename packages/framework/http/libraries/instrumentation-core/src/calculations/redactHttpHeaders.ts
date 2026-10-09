@@ -3,7 +3,10 @@ const REDACTED_HEADER_VALUE: string = '[redacted]';
 const REDACTED_HTTP_HEADER_NAMES: ReadonlySet<string> = new Set([
   'authorization',
   'cookie',
+  'proxy-authorization',
   'set-cookie',
+  'x-api-key',
+  'x-auth-token',
 ]);
 
 export function redactHttpHeaders(

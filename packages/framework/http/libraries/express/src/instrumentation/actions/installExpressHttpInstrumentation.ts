@@ -49,6 +49,11 @@ type ExpressLayerHandler = (
   next?: NextFunction,
 ) => unknown;
 
+interface ExpressApplicationLike {
+  handle: unknown;
+  set: unknown;
+}
+
 interface ExpressRouterLike {
   stack: unknown[];
   use: (...args: unknown[]) => unknown;
@@ -249,6 +254,12 @@ function instrumentRegistrationArgument(
       handler,
       instrumentation,
     );
+  }
+
+  if (isExpressApplication(argument)) {
+    patchExpressRegistrations(argument, instrumentation);
+
+    return argument;
   }
 
   if (typeof argument !== 'function') {
@@ -453,6 +464,20 @@ function readExpressRequestUrl(request: Request): string {
   }
 
   return request.url;
+}
+
+function isExpressApplication(value: unknown): value is ExpressApplicationLike {
+  if (typeof value !== 'function') {
+    return false;
+  }
+
+  const application: Partial<ExpressApplicationLike> =
+    value as Partial<ExpressApplicationLike>;
+
+  return (
+    typeof application.handle === 'function' &&
+    typeof application.set === 'function'
+  );
 }
 
 function isExpressRouter(value: unknown): value is ExpressRouterLike {
