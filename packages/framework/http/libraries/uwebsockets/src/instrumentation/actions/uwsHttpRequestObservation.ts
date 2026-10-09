@@ -23,10 +23,12 @@ const DEFAULT_STATUS_CODE: number = 200;
 interface UwsHttpResponseObservation {
   completed: boolean;
   readonly executionId: string;
+  finishStream: ((aborted: boolean) => void) | undefined;
   readonly headers: Record<string, string | string[]>;
   readonly requestId: string;
   readonly stage: HttpStageClock;
   statusCode: number;
+  streamPending: boolean;
 }
 
 interface UwsHttpResponseObservationCarrier {
@@ -52,10 +54,12 @@ export function startUwsHttpRequestObservation(
   const observation: UwsHttpResponseObservation = {
     completed: false,
     executionId: scope.executionId,
+    finishStream: undefined,
     headers: {},
     requestId: scope.requestId,
     stage,
     statusCode: DEFAULT_STATUS_CODE,
+    streamPending: false,
   };
 
   emitHttpInstrumentationEvent(
@@ -84,7 +88,7 @@ export function finishUwsHttpRequestObservation(
   instrumentation: HttpInstrumentationContext,
   aborted: boolean,
 ): void {
-  if (observation.completed) {
+  if (observation.completed || observation.streamPending) {
     return;
   }
 
@@ -107,6 +111,46 @@ export function finishUwsHttpRequestObservation(
     instrumentation.reportSinkError,
   );
   closeHttpInstrumentationScope(request, observation.executionId);
+}
+
+export function bindUwsHttpResponseStream(
+  response: HttpResponse,
+  finishStream: (aborted: boolean) => void,
+): void {
+  const observation: UwsHttpResponseObservation | undefined =
+    readUwsHttpResponseObservation(response);
+
+  if (observation === undefined) {
+    return;
+  }
+
+  observation.finishStream = finishStream;
+}
+
+export function markUwsHttpResponseStreamPending(response: HttpResponse): void {
+  const observation: UwsHttpResponseObservation | undefined =
+    readUwsHttpResponseObservation(response);
+
+  if (observation === undefined || observation.completed) {
+    return;
+  }
+
+  observation.streamPending = true;
+}
+
+export function completeUwsHttpResponseStream(
+  response: HttpResponse,
+  aborted: boolean,
+): void {
+  const observation: UwsHttpResponseObservation | undefined =
+    readUwsHttpResponseObservation(response);
+
+  if (observation === undefined || observation.completed) {
+    return;
+  }
+
+  observation.streamPending = false;
+  observation.finishStream?.(aborted);
 }
 
 export function recordUwsHttpStatus(

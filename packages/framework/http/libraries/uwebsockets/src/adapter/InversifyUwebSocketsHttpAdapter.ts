@@ -30,7 +30,9 @@ import { getClassMethodRequestTransformerList } from '../calculations/getClassMe
 import { getClassRequestTransformerList } from '../calculations/getClassRequestTransformerList.js';
 import { abortedSymbol } from '../data/abortedSymbol.js';
 import {
+  bindUwsHttpResponseStream,
   finishUwsHttpRequestObservation,
+  markUwsHttpResponseStreamPending,
   recordUwsHttpHeader,
   recordUwsHttpStatus,
   startUwsHttpRequestObservation,
@@ -236,6 +238,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     response: HttpResponse,
     stream: Readable,
   ): void {
+    markUwsHttpResponseStreamPending(response);
     pipeStreamOverResponse(
       response,
       stream,
@@ -404,6 +407,16 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
 
     const observation: ReturnType<typeof startUwsHttpRequestObservation> =
       startUwsHttpRequestObservation(request, response, instrumentation);
+
+    bindUwsHttpResponseStream(response, (aborted: boolean): void => {
+      finishUwsHttpRequestObservation(
+        request,
+        response,
+        observation,
+        instrumentation,
+        aborted,
+      );
+    });
 
     response.onAborted((): void => {
       (response as CustomHttpResponse)[abortedSymbol] = true;

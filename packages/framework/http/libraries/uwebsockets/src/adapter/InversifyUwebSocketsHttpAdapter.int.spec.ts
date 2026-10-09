@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
+import { Readable } from 'node:stream';
+
 import {
   Body,
   Controller,
@@ -62,6 +64,27 @@ interface Server {
   host: string;
   port: number;
   shutdown: () => void;
+}
+
+async function waitForRequestStart(sink: RecordingSink): Promise<void> {
+  const attemptCount: number = 50;
+
+  for (let attempt: number = 0; attempt < attemptCount; attempt += 1) {
+    const started: boolean = sink.events.some(
+      (event: HttpInstrumentationEvent): boolean =>
+        event.type === 'http.request.started',
+    );
+
+    if (started) {
+      return;
+    }
+
+    await new Promise<void>((resolve: () => void): void => {
+      setTimeout(resolve, 10);
+    });
+  }
+
+  throw new Error('Request did not start');
 }
 
 async function buildUwebSocketsServer(
@@ -429,6 +452,66 @@ describe(InversifyUwebSocketsHttpAdapter, () => {
           expect(
             recorded.map((event: HttpInstrumentationEvent) => event.type),
           ).toContain('http.response.sent');
+        });
+      });
+    });
+
+    describe('having a streamed response', () => {
+      describe('when the stream ends after the handler returns', () => {
+        it('should record the response when the stream ends', async () => {
+          const stream: Readable = new Readable({
+            read(): void {
+              return undefined;
+            },
+          });
+
+          @Controller('/stream')
+          class StreamController {
+            @Get()
+            public get(): Readable {
+              return stream;
+            }
+          }
+
+          const container: Container = new Container();
+          const sink: RecordingSink = new RecordingSink();
+
+          container.bind(StreamController).toSelf().inSingletonScope();
+
+          const server: Server = await buildUwebSocketsServer(container, {
+            instrumentation: [sink],
+            logger: false,
+          });
+
+          try {
+            const responsePromise: Promise<Response> = fetch(
+              `http://${server.host}:${server.port.toString()}/stream`,
+            );
+
+            await waitForRequestStart(sink);
+
+            expect(
+              sink.events.some(
+                (event: HttpInstrumentationEvent): boolean =>
+                  event.type === 'http.response.sent',
+              ),
+            ).toBe(false);
+
+            stream.push('hello');
+            stream.push(null);
+
+            const response: Response = await responsePromise;
+            const sent: Extract<
+              HttpInstrumentationEvent,
+              { type: 'http.response.sent' }
+            > = requireEvent(sink.events, 'http.response.sent');
+
+            expect(response.status).toBe(200);
+            await expect(response.text()).resolves.toBe('hello');
+            expect(sent.aborted).toBe(false);
+          } finally {
+            server.shutdown();
+          }
         });
       });
     });

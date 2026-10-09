@@ -5,6 +5,10 @@ import { type HttpResponse } from 'uWebSockets.js';
 
 import { toArrayBuffer } from '../calculations/toArrayBuffer.js';
 import { abortedSymbol } from '../data/abortedSymbol.js';
+import {
+  completeUwsHttpResponseStream,
+  recordUwsHttpStatus,
+} from '../instrumentation/actions/uwsHttpRequestObservation.js';
 import { type CustomHttpResponse } from '../models/CustomHttpResponse.js';
 
 /**
@@ -26,14 +30,26 @@ import { type CustomHttpResponse } from '../models/CustomHttpResponse.js';
  * pipeStreamOverResponse(response, fileStream, undefined);
  * ```
  */
+const HTTP_INTERNAL_SERVER_ERROR_STATUS_CODE: number = 500;
+
 export function pipeStreamOverResponse(
   response: HttpResponse,
   readableStream: Readable,
   logger: Logger | undefined,
 ): void {
   let isStreamClosed: boolean = false;
+  let isStreamFinished: boolean = false;
   let storedBuffer: ArrayBuffer | undefined;
   let storedOffset: number | undefined;
+
+  const finishStream: (aborted: boolean) => void = (aborted: boolean): void => {
+    if (isStreamFinished) {
+      return;
+    }
+
+    isStreamFinished = true;
+    completeUwsHttpResponseStream(response, aborted);
+  };
 
   /**
    * Clean up function called when the stream is aborted or finished
@@ -49,7 +65,9 @@ export function pipeStreamOverResponse(
 
   // Handle response abortion (client disconnected)
   response.onAborted((): void => {
+    (response as CustomHttpResponse)[abortedSymbol] = true;
     cleanup();
+    finishStream(true);
   });
 
   // Handle stream data chunks
@@ -113,11 +131,14 @@ export function pipeStreamOverResponse(
     cleanup();
 
     if ((response as CustomHttpResponse)[abortedSymbol] !== true) {
+      recordUwsHttpStatus(response, HTTP_INTERNAL_SERVER_ERROR_STATUS_CODE);
       response.cork((): void => {
         response.writeStatus('500 Internal Server Error');
         response.end('Stream error occurred');
       });
     }
+
+    finishStream(false);
   });
 
   readableStream.on('end', (): void => {
@@ -128,5 +149,7 @@ export function pipeStreamOverResponse(
         response.end();
       });
     }
+
+    finishStream(false);
   });
 }
