@@ -5,7 +5,8 @@
   },
   "description": "InversifyJs http hono package",
   "dependencies": {
-    "@inversifyjs/http-core": "workspace:*"
+    "@inversifyjs/http-core": "workspace:*",
+    "@inversifyjs/http-instrumentation-core": "workspace:*"
   },
   "devDependencies": {
     "@hono/node-server": "2.1.3",

@@ -50,6 +50,9 @@ coverage:
       '@inversifyjs/http-core':
         flags:
           - '@inversifyjs/http-core'
+      '@inversifyjs/http-instrumentation-core':
+        flags:
+          - '@inversifyjs/http-instrumentation-core'
       '@inversifyjs/http-open-api':
         flags:
           - '@inversifyjs/http-open-api'
@@ -153,6 +156,9 @@ flags:
   '@inversifyjs/http-core':
     paths:
       - packages/framework/http/libraries/core
+  '@inversifyjs/http-instrumentation-core':
+    paths:
+      - packages/framework/http/libraries/instrumentation-core
   '@inversifyjs/http-open-api':
     paths:
       - packages/framework/http/libraries/open-api

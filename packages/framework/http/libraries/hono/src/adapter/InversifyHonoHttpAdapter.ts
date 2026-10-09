@@ -25,6 +25,8 @@ import { getCookie } from 'hono/cookie';
 import { type StatusCode } from 'hono/utils/http-status';
 import { type Container } from 'inversify';
 
+import { installHonoHttpInstrumentation } from '../instrumentation/actions/installHonoHttpInstrumentation.js';
+
 const ADAPTER_ID: unique symbol = Symbol.for(
   '@inversifyjs/http-hono/InversifyHonoHttpAdapter',
 );
@@ -47,6 +49,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     super(
       container,
       {
+        instrumentation: [],
         logger: true,
       },
       httpAdapterOptions,
@@ -56,7 +59,13 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected _buildApp(customApp: Hono | undefined): Hono {
-    return customApp ?? new Hono();
+    const app: Hono = customApp ?? new Hono();
+
+    if (this._httpInstrumentation !== undefined) {
+      installHonoHttpInstrumentation(app, this._httpInstrumentation);
+    }
+
+    return app;
   }
 
   protected _buildRouter(

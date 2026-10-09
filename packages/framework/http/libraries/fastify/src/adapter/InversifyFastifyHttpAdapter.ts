@@ -28,6 +28,7 @@ import {
 import { type HttpHeader } from 'fastify/types/utils';
 import { type Container } from 'inversify';
 
+import { installFastifyHttpInstrumentation } from '../instrumentation/actions/installFastifyHttpInstrumentation.js';
 import { type FastifyHttpAdapterOptions } from '../models/FastifyHttpAdapterOptions.js';
 
 const ADAPTER_ID: unique symbol = Symbol.for(
@@ -65,6 +66,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     super(
       container,
       {
+        instrumentation: [],
         logger: true,
         useCookies: false,
         useFormUrlEncoded: false,
@@ -77,7 +79,17 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected _buildApp(customApp: FastifyInstance | undefined): FastifyInstance {
-    return customApp ?? this._buildDefaultFastifyApp();
+    const app: FastifyInstance = customApp ?? fastify();
+
+    if (this._httpInstrumentation !== undefined) {
+      installFastifyHttpInstrumentation(app, this._httpInstrumentation);
+    }
+
+    if (customApp !== undefined) {
+      return app;
+    }
+
+    return this._buildDefaultFastifyApp(app);
   }
 
   protected _buildDefaultFastifyApp(

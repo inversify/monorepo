@@ -129,6 +129,11 @@ export type {
   RouterParams,
 };
 
+export type {
+  EventSink,
+  HttpInstrumentationEvent,
+} from '@inversifyjs/http-instrumentation-core';
+
 export {
   AcceptedHttpResponse,
   All,

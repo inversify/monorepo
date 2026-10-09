@@ -4,9 +4,16 @@ import {
   applyPipeList,
   type ErrorFilter,
   type Guard,
+  type Interceptor,
   InversifyServerAdapter,
   type Middleware,
+  MiddlewarePhase,
 } from '@inversifyjs/framework-core';
+import {
+  buildHttpInstrumentationContext,
+  type HttpInstrumentationContext,
+  markHttpInstrumentedHandler,
+} from '@inversifyjs/http-instrumentation-core';
 import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
 import {
   type Container,
@@ -21,6 +28,16 @@ import { ErrorHttpResponse } from '../../httpResponse/models/ErrorHttpResponse.j
 import { ForbiddenHttpResponse } from '../../httpResponse/models/ForbiddenHttpResponse.js';
 import { type HttpResponse } from '../../httpResponse/models/HttpResponse.js';
 import { InternalServerErrorHttpResponse } from '../../httpResponse/models/InternalServerErrorHttpResponse.js';
+import {
+  buildInstrumentedAsyncCallRouteHandler,
+  buildInstrumentedParameterlessCallRouteHandler,
+  buildInstrumentedSyncCallRouteHandler,
+  readControllerName,
+} from '../../instrumentation/actions/buildInstrumentedCallRouteHandler.js';
+import { buildInstrumentedGuardHandler } from '../../instrumentation/actions/buildInstrumentedGuardHandler.js';
+import { buildInstrumentedHandleError } from '../../instrumentation/actions/buildInstrumentedHandleError.js';
+import { buildInstrumentedInterceptedHandler } from '../../instrumentation/actions/buildInstrumentedInterceptedHandler.js';
+import { buildInstrumentedMiddlewareHandler } from '../../instrumentation/actions/buildInstrumentedMiddlewareHandler.js';
 import { buildRouterExplorerControllerMetadataList } from '../../routerExplorer/calculations/buildRouterExplorerControllerMetadataList.js';
 import { type ControllerMethodParameterMetadata } from '../../routerExplorer/model/ControllerMethodParameterMetadata.js';
 import { type RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata.js';
@@ -66,6 +83,8 @@ export abstract class InversifyHttpAdapter<
 > {
   protected readonly httpAdapterOptions: RequiredOptions<TOptions>;
   protected readonly _app: TApp;
+  protected readonly _httpInstrumentation:
+    HttpInstrumentationContext | undefined;
   protected readonly _logger: Logger;
   readonly #awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>;
   readonly #customNativeParameterDecoratorHandlerOptions: CustomNativeParameterDecoratorHandlerOptions<
@@ -102,6 +121,12 @@ export abstract class InversifyHttpAdapter<
       httpAdapterOptions,
     );
     this._logger = this.#buildLogger(this.httpAdapterOptions);
+    this._httpInstrumentation = buildHttpInstrumentationContext(
+      this.httpAdapterOptions.instrumentation,
+      (error: unknown): void => {
+        this.#reportSinkError(error);
+      },
+    );
 
     this.#setErrorHttpResponseErrorFilter();
 
@@ -212,7 +237,24 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     next: TNextFunction,
   ) => Promise<ControllerResponse> {
+    const instrumentation: HttpInstrumentationContext | undefined =
+      this._httpInstrumentation;
+
     if (controllerMethodParameterMetadataList.length === 0) {
+      if (instrumentation !== undefined) {
+        return buildInstrumentedParameterlessCallRouteHandler(
+          instrumentation,
+          this._container,
+          serviceIdentifier,
+          readControllerName(targetClass),
+          controllerMethodKey,
+        ) as (
+          request: TRequest,
+          response: TResponse,
+          next: TNextFunction,
+        ) => Promise<ControllerResponse>;
+      }
+
       return async (): Promise<ControllerResponse> => {
         const controller: Controller =
           await this._container.getAsync<Controller>(
@@ -309,10 +351,35 @@ export abstract class InversifyHttpAdapter<
     );
 
     if (provideSyncBuilder) {
+      if (instrumentation !== undefined) {
+        return buildInstrumentedSyncCallRouteHandler(
+          instrumentation,
+          this._container,
+          serviceIdentifier,
+          readControllerName(targetClass),
+          controllerMethodKey,
+          paramBuilders,
+        );
+      }
+
       return buildSyncCallRouteHandler(
         this._container,
         serviceIdentifier,
         controllerMethodKey,
+        paramBuilders,
+      );
+    }
+
+    if (instrumentation !== undefined) {
+      return buildInstrumentedAsyncCallRouteHandler(
+        instrumentation,
+        this._container,
+        this.#awaitableRequestMethodParamTypes,
+        this._globalPipeList,
+        targetClass,
+        controllerMethodKey,
+        controllerMethodParameterMetadataList,
+        serviceIdentifier,
         paramBuilders,
       );
     }
@@ -486,16 +553,37 @@ export abstract class InversifyHttpAdapter<
         );
     }
 
-    return buildInterceptedHandler(
-      [
-        ...routerExplorerControllerMethodMetadata.interceptorList,
-        ...this._globalInterceptorList,
-      ],
-      this._container,
-      buildCallRouteHandler,
-      handleError,
-      reply,
-    );
+    const interceptorList: ServiceIdentifier<
+      Interceptor<TRequest, TResponse>
+    >[] = [
+      ...routerExplorerControllerMethodMetadata.interceptorList,
+      ...this._globalInterceptorList,
+    ];
+    const instrumentation: HttpInstrumentationContext | undefined =
+      this._httpInstrumentation;
+    const handler: RequestHandler<TRequest, TResponse, TNextFunction, TResult> =
+      instrumentation !== undefined && interceptorList.length > 0
+        ? buildInstrumentedInterceptedHandler(
+            instrumentation,
+            interceptorList,
+            this._container,
+            buildCallRouteHandler,
+            handleError,
+            reply,
+          )
+        : buildInterceptedHandler(
+            interceptorList,
+            this._container,
+            buildCallRouteHandler,
+            handleError,
+            reply,
+          );
+
+    if (instrumentation !== undefined) {
+      markHttpInstrumentedHandler(handler);
+    }
+
+    return handler;
   }
 
   #buildLogger(httpAdapterOptions: RequiredOptions<TOptions>): Logger {
@@ -584,10 +672,12 @@ export abstract class InversifyHttpAdapter<
       ...this.#getMiddlewareHandlerFromMetadata(
         handleError,
         routerExplorerControllerMethodMetadata.postHandlerMiddlewareList,
+        MiddlewarePhase.PostHandler,
       ),
       ...this.#getMiddlewareHandlerFromMetadata(
         handleError,
         this._postHandlerMiddlewareList,
+        MiddlewarePhase.PostHandler,
       ),
     ];
   }
@@ -625,6 +715,7 @@ export abstract class InversifyHttpAdapter<
       ...this.#getMiddlewareHandlerFromMetadata(
         handleError,
         routerExplorerControllerMethodMetadata.preHandlerMiddlewareList,
+        MiddlewarePhase.PreHandler,
       ),
     );
 
@@ -655,6 +746,37 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     error: unknown,
   ) => Promise<TResult> {
+    const instrumentation: HttpInstrumentationContext | undefined =
+      this._httpInstrumentation;
+
+    if (instrumentation !== undefined) {
+      return buildInstrumentedHandleError(
+        instrumentation,
+        async (error: unknown) =>
+          this.#getErrorFilterForError(
+            error,
+            [this._errorDiscriminatorToGlobalErrorFilterMap],
+            [this._errorTypeToGlobalErrorFilterMap],
+          ),
+        async (request: TRequest, response: TResponse, error: unknown) => {
+          this.#printError(error);
+
+          const httpResponse: HttpResponse =
+            new InternalServerErrorHttpResponse(undefined, undefined, {
+              cause: error,
+            });
+
+          return this.#reply(
+            request,
+            response,
+            httpResponse,
+            undefined,
+            undefined,
+          );
+        },
+      );
+    }
+
     const handleError: (
       request: TRequest,
       response: TResponse,
@@ -712,6 +834,25 @@ export abstract class InversifyHttpAdapter<
       response: TResponse,
       error: unknown,
     ) => Promise<TResult> = this.#buildGlobalHandleError();
+    const instrumentation: HttpInstrumentationContext | undefined =
+      this._httpInstrumentation;
+
+    if (instrumentation !== undefined) {
+      return middlewareServiceIdentifierList.map(
+        (
+          middlewareServiceIdentifier: ServiceIdentifier<
+            Middleware<TRequest, TResponse, TNextFunction, TResult>
+          >,
+        ) =>
+          buildInstrumentedMiddlewareHandler(
+            instrumentation,
+            this._container,
+            handleError,
+            middlewareServiceIdentifier,
+            MiddlewarePhase.PreHandler,
+          ),
+      );
+    }
 
     return middlewareServiceIdentifierList.map(
       (
@@ -752,6 +893,43 @@ export abstract class InversifyHttpAdapter<
     response: TResponse,
     error: unknown,
   ) => Promise<TResult> {
+    const instrumentation: HttpInstrumentationContext | undefined =
+      this._httpInstrumentation;
+
+    if (instrumentation !== undefined) {
+      return buildInstrumentedHandleError(
+        instrumentation,
+        async (error: unknown) =>
+          this.#getErrorFilterForError(
+            error,
+            [
+              routerExplorerControllerMethodMetadata.errorDiscriminatorToErrorFilterMap,
+              this._errorDiscriminatorToGlobalErrorFilterMap,
+            ],
+            [
+              routerExplorerControllerMethodMetadata.errorTypeToErrorFilterMap,
+              this._errorTypeToGlobalErrorFilterMap,
+            ],
+          ),
+        async (request: TRequest, response: TResponse, error: unknown) => {
+          this.#printError(error);
+
+          const httpResponse: HttpResponse =
+            new InternalServerErrorHttpResponse(undefined, undefined, {
+              cause: error,
+            });
+
+          return this.#reply(
+            request,
+            response,
+            httpResponse,
+            undefined,
+            routerExplorerControllerMethodMetadata.headerMetadataList,
+          );
+        },
+      );
+    }
+
     const handleError: (
       request: TRequest,
       response: TResponse,
@@ -876,7 +1054,28 @@ export abstract class InversifyHttpAdapter<
     middlewareServiceIdentifierList: ServiceIdentifier<
       Middleware<TRequest, TResponse, TNextFunction, TResult>
     >[],
+    phase: MiddlewarePhase,
   ): MiddlewareHandler<TRequest, TResponse, TNextFunction, TResult>[] {
+    const instrumentation: HttpInstrumentationContext | undefined =
+      this._httpInstrumentation;
+
+    if (instrumentation !== undefined) {
+      return middlewareServiceIdentifierList.map(
+        (
+          middlewareServiceIdentifier: ServiceIdentifier<
+            Middleware<TRequest, TResponse, TNextFunction, TResult>
+          >,
+        ) =>
+          buildInstrumentedMiddlewareHandler(
+            instrumentation,
+            this._container,
+            handleError,
+            middlewareServiceIdentifier,
+            phase,
+          ),
+      );
+    }
+
     return middlewareServiceIdentifierList.map(
       (
         middlewareServiceIdentifier: ServiceIdentifier<
@@ -923,6 +1122,29 @@ export abstract class InversifyHttpAdapter<
     TNextFunction,
     TResult | undefined
   >[] {
+    const instrumentation: HttpInstrumentationContext | undefined =
+      this._httpInstrumentation;
+
+    if (instrumentation !== undefined) {
+      return guardServiceIdentifierList.map(
+        (guardServiceIdentifier: ServiceIdentifier<Guard<TRequest>>) =>
+          buildInstrumentedGuardHandler(
+            instrumentation,
+            this._container,
+            handleError,
+            guardServiceIdentifier,
+            async (request: TRequest, response: TResponse) =>
+              this.#reply(
+                request,
+                response,
+                new ForbiddenHttpResponse(),
+                undefined,
+                routerExplorerControllerMethodMetadata.headerMetadataList,
+              ),
+          ),
+      );
+    }
+
     return guardServiceIdentifierList.map(
       (guardServiceIdentifier: ServiceIdentifier<Guard<TRequest>>) => {
         return async (
@@ -976,6 +1198,20 @@ export abstract class InversifyHttpAdapter<
         );
       }
     }
+  }
+
+  #reportSinkError(error: unknown): void {
+    if (this.httpAdapterOptions.logger === false) {
+      return;
+    }
+
+    if (error instanceof Error) {
+      this._logger.error(error.stack ?? error.message);
+
+      return;
+    }
+
+    this._logger.error('HTTP instrumentation sink failed');
   }
 
   #printError(error: unknown): void {
