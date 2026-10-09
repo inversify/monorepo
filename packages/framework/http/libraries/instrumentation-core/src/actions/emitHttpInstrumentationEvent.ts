@@ -1,3 +1,5 @@
+import { isPromise } from '@inversifyjs/common';
+
 import { type EventSink } from '../models/EventSink.js';
 import { type HttpInstrumentationEvent } from '../models/HttpInstrumentationEvent.js';
 
@@ -14,7 +16,7 @@ export function emitHttpInstrumentationEvent(
       // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
       const result: unknown = sink.emit(publishedEvent);
 
-      if (isThenable(result)) {
+      if (isPromise(result)) {
         void result.then(undefined, (error: unknown): void => {
           reportSinkError(error);
         });
@@ -23,13 +25,4 @@ export function emitHttpInstrumentationEvent(
       reportSinkError(error);
     }
   }
-}
-
-function isThenable(value: unknown): value is PromiseLike<unknown> {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    'then' in value &&
-    typeof value.then === 'function'
-  );
 }

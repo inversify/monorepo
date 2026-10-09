@@ -1,5 +1,8 @@
+import {
+  type ServiceIdentifier,
+  stringifyServiceIdentifier,
+} from '@inversifyjs/common';
 import { isPipe, type Pipe } from '@inversifyjs/framework-core';
-import { type ServiceIdentifier } from 'inversify';
 
 export function describeMethodKey(methodKey: string | symbol): string {
   if (typeof methodKey === 'string') {
@@ -13,23 +16,18 @@ export function describePipe(
   pipeOrServiceIdentifier: ServiceIdentifier<Pipe> | Pipe,
 ): string {
   if (isPipe(pipeOrServiceIdentifier)) {
-    return describeServiceIdentifier(pipeOrServiceIdentifier.constructor);
+    return describeServiceIdentifier(
+      pipeOrServiceIdentifier.constructor as ServiceIdentifier,
+    );
   }
 
   return describeServiceIdentifier(pipeOrServiceIdentifier);
 }
 
-export function describeServiceIdentifier(serviceIdentifier: unknown): string {
-  switch (typeof serviceIdentifier) {
-    case 'function':
-      return serviceIdentifier.name === ''
-        ? 'anonymous'
-        : serviceIdentifier.name;
-    case 'string':
-      return serviceIdentifier;
-    case 'symbol':
-      return serviceIdentifier.description ?? serviceIdentifier.toString();
-    default:
-      return 'anonymous';
-  }
+export function describeServiceIdentifier(
+  serviceIdentifier: ServiceIdentifier,
+): string {
+  const description: string = stringifyServiceIdentifier(serviceIdentifier);
+
+  return description === '' ? '(anonymous)' : description;
 }

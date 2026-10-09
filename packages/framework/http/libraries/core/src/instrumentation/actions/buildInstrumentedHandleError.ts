@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { type ServiceIdentifier } from '@inversifyjs/common';
 import { type ErrorFilter } from '@inversifyjs/framework-core';
 import {
   closeHttpInstrumentationScope,
@@ -91,7 +92,7 @@ export function buildInstrumentedHandleError<TRequest, TResponse, TResult>(
       }
 
       const filterName: string = describeServiceIdentifier(
-        errorFilter.constructor,
+        errorFilter.constructor as ServiceIdentifier,
       );
 
       try {

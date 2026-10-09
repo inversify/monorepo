@@ -13,9 +13,9 @@ describe(describeServiceIdentifier, () => {
 
   describe('having a symbol service identifier', () => {
     describe('when called', () => {
-      it('should return the symbol description', () => {
+      it('should return the symbol text', () => {
         expect(describeServiceIdentifier(Symbol.for('payments'))).toBe(
-          'payments',
+          'Symbol(payments)',
         );
       });
     });
@@ -34,15 +34,7 @@ describe(describeServiceIdentifier, () => {
   describe('having an anonymous function service identifier', () => {
     describe('when called', () => {
       it('should return anonymous', () => {
-        expect(describeServiceIdentifier(() => undefined)).toBe('anonymous');
-      });
-    });
-  });
-
-  describe('having an object service identifier', () => {
-    describe('when called', () => {
-      it('should return anonymous', () => {
-        expect(describeServiceIdentifier({})).toBe('anonymous');
+        expect(describeServiceIdentifier(class {})).toBe('(anonymous)');
       });
     });
   });

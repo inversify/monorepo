@@ -5,6 +5,7 @@
   },
   "description": "InversifyJS HTTP instrumentation events and sink",
   "dependencies": {
+    "@inversifyjs/common": "workspace:*",
     "@inversifyjs/framework-core": "workspace:*"
   },
   "devDependencies": {
