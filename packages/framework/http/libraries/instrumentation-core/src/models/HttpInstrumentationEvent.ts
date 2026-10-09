@@ -1,6 +1,6 @@
 import { type MiddlewarePhase } from '@inversifyjs/framework-core';
 
-export interface HttpControllerExecutedEvent {
+interface HttpControllerExecutedEvent {
   readonly controller: string;
   readonly duration: number;
   readonly error?: unknown;
@@ -13,7 +13,7 @@ export interface HttpControllerExecutedEvent {
   readonly type: 'http.controller.executed';
 }
 
-export interface HttpControllerStartedEvent {
+interface HttpControllerStartedEvent {
   readonly controller: string;
   readonly executionId: string;
   readonly method: string;
@@ -23,7 +23,7 @@ export interface HttpControllerStartedEvent {
   readonly type: 'http.controller.started';
 }
 
-export interface HttpErrorEvent {
+interface HttpErrorEvent {
   readonly duration: number;
   readonly error: unknown;
   readonly executionId: string;
@@ -35,7 +35,7 @@ export interface HttpErrorEvent {
   readonly type: 'http.error';
 }
 
-export interface HttpGuardExecutedEvent {
+interface HttpGuardExecutedEvent {
   readonly allowed?: boolean;
   readonly duration: number;
   readonly error?: unknown;
@@ -48,7 +48,7 @@ export interface HttpGuardExecutedEvent {
   readonly type: 'http.guard.executed';
 }
 
-export interface HttpGuardStartedEvent {
+interface HttpGuardStartedEvent {
   readonly executionId: string;
   readonly guard: string;
   readonly parentExecutionId?: string;
@@ -57,7 +57,7 @@ export interface HttpGuardStartedEvent {
   readonly type: 'http.guard.started';
 }
 
-export interface HttpInterceptorExecutedEvent {
+interface HttpInterceptorExecutedEvent {
   readonly duration: number;
   readonly error?: unknown;
   readonly executionId: string;
@@ -69,7 +69,7 @@ export interface HttpInterceptorExecutedEvent {
   readonly type: 'http.interceptor.executed';
 }
 
-export interface HttpInterceptorStartedEvent {
+interface HttpInterceptorStartedEvent {
   readonly executionId: string;
   readonly interceptor: string;
   readonly parentExecutionId?: string;
@@ -78,7 +78,7 @@ export interface HttpInterceptorStartedEvent {
   readonly type: 'http.interceptor.started';
 }
 
-export interface HttpMiddlewareExecutedEvent {
+interface HttpMiddlewareExecutedEvent {
   readonly duration: number;
   readonly error?: unknown;
   readonly executionId: string;
@@ -91,7 +91,7 @@ export interface HttpMiddlewareExecutedEvent {
   readonly type: 'http.middleware.executed';
 }
 
-export interface HttpMiddlewareStartedEvent {
+interface HttpMiddlewareStartedEvent {
   readonly executionId: string;
   readonly middleware: string;
   readonly parentExecutionId?: string;
@@ -101,7 +101,7 @@ export interface HttpMiddlewareStartedEvent {
   readonly type: 'http.middleware.started';
 }
 
-export interface HttpNativeMiddlewareExecutedEvent {
+interface HttpNativeMiddlewareExecutedEvent {
   readonly duration: number;
   readonly error?: unknown;
   readonly executionId: string;
@@ -113,7 +113,7 @@ export interface HttpNativeMiddlewareExecutedEvent {
   readonly type: 'http.nativeMiddleware.executed';
 }
 
-export interface HttpNativeMiddlewareStartedEvent {
+interface HttpNativeMiddlewareStartedEvent {
   readonly executionId: string;
   readonly name: string;
   readonly parentExecutionId?: string;
@@ -122,7 +122,7 @@ export interface HttpNativeMiddlewareStartedEvent {
   readonly type: 'http.nativeMiddleware.started';
 }
 
-export interface HttpPipeExecutedEvent {
+interface HttpPipeExecutedEvent {
   readonly duration: number;
   readonly error?: unknown;
   readonly executionId: string;
@@ -136,7 +136,7 @@ export interface HttpPipeExecutedEvent {
   readonly type: 'http.pipe.executed';
 }
 
-export interface HttpPipeStartedEvent {
+interface HttpPipeStartedEvent {
   readonly executionId: string;
   readonly method: string;
   readonly parameterIndex: number;
@@ -147,7 +147,7 @@ export interface HttpPipeStartedEvent {
   readonly type: 'http.pipe.started';
 }
 
-export interface HttpRequestStartedEvent {
+interface HttpRequestStartedEvent {
   readonly executionId: string;
   readonly headers: Readonly<Record<string, string | readonly string[]>>;
   readonly method: string;
@@ -157,7 +157,7 @@ export interface HttpRequestStartedEvent {
   readonly url: string;
 }
 
-export interface HttpResponseSentEvent {
+interface HttpResponseSentEvent {
   readonly aborted: boolean;
   readonly duration: number;
   readonly executionId: string;
