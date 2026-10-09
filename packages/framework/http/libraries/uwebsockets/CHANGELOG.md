@@ -1,5 +1,13 @@
 # @inversifyjs/http-uwebsockets
 
+## 5.6.3
+
+### Patch Changes
+
+- Fixed query and urlencoded body keys that also exist on `Object.prototype`, such as `toString` or `constructor`, being parsed into arrays
+- Updated dependencies
+  - @inversifyjs/http-core@5.6.3
+
 ## 5.6.2
 
 ### Patch Changes
