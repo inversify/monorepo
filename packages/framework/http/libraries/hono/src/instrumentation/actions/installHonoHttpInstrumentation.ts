@@ -14,6 +14,8 @@ import {
 } from '@inversifyjs/http-instrumentation-core';
 import { type Context, type Hono, type HonoRequest, type Next } from 'hono';
 
+const HTTP_INTERNAL_SERVER_ERROR_STATUS_CODE: number = 500;
+
 export function installHonoHttpInstrumentation(
   app: Hono,
   instrumentation: HttpInstrumentationContext,
@@ -44,28 +46,39 @@ export function installHonoHttpInstrumentation(
       instrumentation.reportSinkError,
     );
 
-    try {
-      await next();
-    } finally {
-      const response: Response = context.res;
-
+    const emitResponseSent: (statusCode: number, headers: Headers) => void = (
+      statusCode: number,
+      headers: Headers,
+    ): void => {
       emitHttpInstrumentationEvent(
         instrumentation.sinks,
         {
           aborted: request.raw.signal.aborted,
           duration: readHttpStageDuration(stage),
           executionId: scope.executionId,
-          headers: redactHttpHeaders(readWebHeaders(response.headers)),
+          headers: redactHttpHeaders(readWebHeaders(headers)),
           requestId: scope.requestId,
           startedAt: stage.startedAt,
-          statusCode: response.status,
+          statusCode,
           timestamp: Date.now(),
           type: 'http.response.sent',
         },
         instrumentation.reportSinkError,
       );
       closeHttpInstrumentationScope(request, scope.executionId);
+    };
+
+    try {
+      await next();
+    } catch (error: unknown) {
+      emitResponseSent(HTTP_INTERNAL_SERVER_ERROR_STATUS_CODE, new Headers());
+
+      throw error;
     }
+
+    const response: Response = context.res;
+
+    emitResponseSent(response.status, response.headers);
   });
 }
 

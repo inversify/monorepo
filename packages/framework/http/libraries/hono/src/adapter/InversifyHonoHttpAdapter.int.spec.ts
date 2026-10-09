@@ -539,5 +539,39 @@ describe(InversifyHonoHttpAdapter, () => {
         });
       });
     });
+
+    describe('having middleware that rejects after instrumentation', () => {
+      describe('when a request is served', () => {
+        it('should record status 500 and rethrow', async () => {
+          const app: Hono = new Hono();
+          const sink: RecordingSink = new RecordingSink();
+          const failure: string = 'boom';
+
+          new InversifyHonoHttpAdapter(
+            new Container(),
+            {
+              instrumentation: [sink],
+              logger: false,
+            },
+            app,
+          );
+
+          app.use(async (): Promise<void> => {
+            // Hono handles a thrown Error inside next(). A non-Error rejects it.
+            // eslint-disable-next-line @typescript-eslint/only-throw-error
+            throw failure;
+          });
+
+          await expect(app.request('/boom')).rejects.toBe(failure);
+
+          const sent: Extract<
+            HttpInstrumentationEvent,
+            { type: 'http.response.sent' }
+          > = requireEvent(sink.events, 'http.response.sent');
+
+          expect(sent.statusCode).toBe(500);
+        });
+      });
+    });
   });
 });
