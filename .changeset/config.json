@@ -30,6 +30,7 @@
       "@inversifyjs/http-express-v4",
       "@inversifyjs/http-fastify",
       "@inversifyjs/http-hono",
+      "@inversifyjs/http-instrumentation-core",
       "@inversifyjs/http-open-api",
       "@inversifyjs/http-uwebsockets",
       "@inversifyjs/http-validation"

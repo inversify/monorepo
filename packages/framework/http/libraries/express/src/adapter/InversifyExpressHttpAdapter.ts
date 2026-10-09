@@ -8,6 +8,7 @@ import {
   type RouterParams,
   routeValueMetadataSymbol,
 } from '@inversifyjs/http-core';
+import { markHttpInstrumentedHandler } from '@inversifyjs/http-instrumentation-core';
 import cookieParser from 'cookie-parser';
 import express, {
   type Application,
@@ -18,6 +19,7 @@ import express, {
 } from 'express';
 import { type Container } from 'inversify';
 
+import { installExpressHttpInstrumentation } from '../instrumentation/actions/installExpressHttpInstrumentation.js';
 import { type ExpressHttpAdapterOptions } from '../models/ExpressHttpAdapterOptions.js';
 
 const ADAPTER_ID: unique symbol = Symbol.for(
@@ -48,6 +50,7 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     super(
       container,
       {
+        instrumentation: [],
         logger: true,
         useCookies: false,
         useJson: true,
@@ -61,7 +64,17 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
   }
 
   protected _buildApp(customApp: Application | undefined): Application {
-    return customApp ?? this._buildDefaultExpressApp();
+    const app: Application = customApp ?? express();
+
+    if (this._httpInstrumentation !== undefined) {
+      installExpressHttpInstrumentation(app, this._httpInstrumentation);
+    }
+
+    if (customApp !== undefined) {
+      return app;
+    }
+
+    return this._buildDefaultExpressApp(app);
   }
 
   protected _buildDefaultExpressApp(customApp?: Application): Application {
@@ -182,7 +195,7 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
       return undefined;
     }
 
-    return (
+    const handler: MiddlewareHandler<Request, Response, NextFunction, void> = (
       request: Request,
       _response: Response,
       next: NextFunction,
@@ -196,6 +209,12 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
 
       next();
     };
+
+    if (this._httpInstrumentation !== undefined) {
+      markHttpInstrumentedHandler(handler);
+    }
+
+    return handler;
   }
 
   protected _getBody(

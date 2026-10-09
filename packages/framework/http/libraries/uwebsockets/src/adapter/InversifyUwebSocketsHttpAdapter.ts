@@ -66,6 +66,7 @@ export class InversifyUwebSocketsHttpAdapter extends InversifyHttpAdapter<
     super(
       container,
       {
+        instrumentation: [],
         logger: true,
       },
       httpAdapterOptions,

@@ -3,13 +3,9 @@
   "bugs": {
     "url": "https://github.com/inversify/monorepo/issues"
   },
-  "description": "InversifyJs http core package",
+  "description": "InversifyJS HTTP instrumentation events and sink",
   "dependencies": {
-    "@inversifyjs/framework-core": "workspace:*",
-    "@inversifyjs/http-instrumentation-core": "workspace:*",
-    "@inversifyjs/prototype-utils": "0.2.1",
-    "@inversifyjs/reflect-metadata-utils": "1.5.0",
-    "@inversifyjs/logger": "workspace:*"
+    "@inversifyjs/framework-core": "workspace:*"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
@@ -33,6 +29,7 @@
     "dependency injection",
     "dependency inversion",
     "di",
+    "instrumentation",
     "inversion of control container",
     "ioc",
     "javascript",
@@ -43,10 +40,7 @@
   "exports": {
     ".": "./lib/index.js"
   },
-  "name": "@inversifyjs/http-core",
-  "peerDependencies": {
-    "inversify": "^8.2.3"
-  },
+  "name": "@inversifyjs/http-instrumentation-core",
   "publishConfig": {
     "access": "public"
   },

@@ -47,6 +47,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     super(
       container,
       {
+        instrumentation: [],
         logger: true,
       },
       httpAdapterOptions,

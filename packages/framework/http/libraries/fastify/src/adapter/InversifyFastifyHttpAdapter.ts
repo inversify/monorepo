@@ -65,6 +65,7 @@ export class InversifyFastifyHttpAdapter extends InversifyHttpAdapter<
     super(
       container,
       {
+        instrumentation: [],
         logger: true,
         useCookies: false,
         useFormUrlEncoded: false,

@@ -42,6 +42,7 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
     super(
       container,
       {
+        instrumentation: [],
         logger: true,
         useCookies: false,
         useJson: true,
