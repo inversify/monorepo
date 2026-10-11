@@ -12,8 +12,6 @@ import { ServerKind } from '../../../server/models/ServerKind.js';
 import { WarriorsGetTestCorsController } from '../controllers/WarriorsGetTestCorsController.js';
 import { CorsExpressMiddleware } from '../middlewares/express/CorsExpressMiddleware.js';
 import { GlobalExpressMiddleware } from '../middlewares/express/GlobalExpressMiddleware.js';
-import { CorsExpressV4Middleware } from '../middlewares/express4/CorsExpressV4Middleware.js';
-import { GlobalExpressV4Middleware } from '../middlewares/express4/GlobalExpressV4Middleware.js';
 import { CorsFastifyMiddleware } from '../middlewares/fastify/CorsFastifyMiddleware.js';
 import { GlobalFastifyMiddleware } from '../middlewares/fastify/GlobalFastifyMiddleware.js';
 import { CorsHonoMiddleware } from '../middlewares/hono/CorsHonoMiddleware.js';
@@ -26,8 +24,6 @@ function getGlobalMiddlewareForServerKind(
   switch (serverKind) {
     case ServerKind.express:
       return GlobalExpressMiddleware;
-    case ServerKind.express4:
-      return GlobalExpressV4Middleware;
     case ServerKind.fastify:
       return GlobalFastifyMiddleware;
     case ServerKind.hono:
@@ -43,8 +39,6 @@ function getCorsMiddlewareForServerKind(
   switch (serverKind) {
     case ServerKind.express:
       return CorsExpressMiddleware;
-    case ServerKind.express4:
-      return CorsExpressV4Middleware;
     case ServerKind.fastify:
       return CorsFastifyMiddleware;
     case ServerKind.hono:

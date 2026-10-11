@@ -24,12 +24,6 @@ The setHeader decorator allows set response headers
           | "express"     | "PATCH"   |
           | "express"     | "POST"    |
           | "express"     | "PUT"     |
-          | "express4"    | "DELETE"  |
-          | "express4"    | "GET"     |
-          | "express4"    | "OPTIONS" |
-          | "express4"    | "PATCH"   |
-          | "express4"    | "POST"    |
-          | "express4"    | "PUT"     |
           | "fastify"     | "DELETE"  |
           | "fastify"     | "GET"     |
           | "fastify"     | "OPTIONS" |
@@ -67,12 +61,6 @@ The setHeader decorator allows set response headers
           | "express"     | "PATCH"   |
           | "express"     | "POST"    |
           | "express"     | "PUT"     |
-          | "express4"    | "DELETE"  |
-          | "express4"    | "GET"     |
-          | "express4"    | "OPTIONS" |
-          | "express4"    | "PATCH"   |
-          | "express4"    | "POST"    |
-          | "express4"    | "PUT"     |
           | "fastify"     | "DELETE"  |
           | "fastify"     | "GET"     |
           | "fastify"     | "OPTIONS" |

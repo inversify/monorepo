@@ -1,5 +1,5 @@
-### Requirement: Express adapters install global pre-handler middlewares via app.use
-`InversifyExpressHttpAdapter` and `InversifyExpressV4HttpAdapter` SHALL implement `_applyGlobalPreHandlerMiddlewareList` by invoking `this._app.use(handler)` for each handler in registration order. Because `build()` invokes the hook before route registration, the `app.use` calls land before any `app.get/post/...` registrations; Express's middleware ordering ensures they run for every request, including 404s and arbitrary verbs.
+### Requirement: Express adapter installs global pre-handler middlewares via app.use
+`InversifyExpressHttpAdapter` SHALL implement `_applyGlobalPreHandlerMiddlewareList` by invoking `this._app.use(handler)` for each handler in registration order. Because `build()` invokes the hook before route registration, the `app.use` calls land before any `app.get/post/...` registrations; Express's middleware ordering ensures they run for every request, including 404s and arbitrary verbs.
 
 #### Scenario: Pre-handler globals are installed before any route registration
 - **WHEN** `applyGlobalMiddleware(MyMiddleware)` is registered and `build()` runs

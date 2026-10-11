@@ -21,7 +21,6 @@ regardless of route matching.
       Examples:
         | server_kind   |
         | "express"     |
-        | "express4"    |
         | "fastify"     |
         | "hono"        |
         | "uwebsockets" |
@@ -40,6 +39,5 @@ regardless of route matching.
       Examples:
         | server_kind |
         | "express"   |
-        | "express4"  |
         | "fastify"   |
         | "hono"      |

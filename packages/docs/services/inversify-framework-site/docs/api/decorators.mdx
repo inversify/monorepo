@@ -23,7 +23,6 @@ import errorFilterApiDiscriminatedHierarchyErrorsSource from '@inversifyjs/http-
 import decoratorApiGetSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiGet.ts.txt';
 import decoratorApiHeadersSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiHeaders.ts.txt';
 import decoratorApiHeadSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiHead.ts.txt';
-import decoratorApiNextExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextExpress4.ts.txt';
 import decoratorApiNextExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextExpress.ts.txt';
 import decoratorApiNextFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextFastify.ts.txt';
 import decoratorApiNextHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiNextHono.ts.txt';
@@ -32,12 +31,10 @@ import decoratorApiOptionsSource from '@inversifyjs/http-code-examples/generated
 import decoratorApiPatchSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPatch.ts.txt';
 import decoratorApiPostSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPost.ts.txt';
 import decoratorApiPutSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiPut.ts.txt';
-import decoratorApiRequestExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestExpress4.ts.txt';
 import decoratorApiRequestExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestExpress.ts.txt';
 import decoratorApiRequestFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestFastify.ts.txt';
 import decoratorApiRequestHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestHono.ts.txt';
 import decoratorApiRequestUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiRequestUwebsockets.ts.txt';
-import decoratorApiResponseExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress4.ts.txt';
 import decoratorApiResponseExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseExpress.ts.txt';
 import decoratorApiResponseFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseFastify.ts.txt';
 import decoratorApiResponseHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/decoratorApiResponseHono.ts.txt';
@@ -110,9 +107,6 @@ Next(): ParameterDecorator
 #### Example: calling next per adapter
 
 <Tabs>
-  <TabItem value="express4" label="Express 4">
-    <CodeBlock language="ts">{decoratorApiNextExpress4Source}</CodeBlock>
-  </TabItem>
   <TabItem value="express5" label="Express 5">
     <CodeBlock language="ts">{decoratorApiNextExpressSource}</CodeBlock>
   </TabItem>
@@ -349,9 +343,6 @@ Request(...pipeList: (ServiceIdentifier<Pipe> | Pipe)[]): ParameterDecorator
 #### Example: accessing the native request per adapter
 
 <Tabs>
-  <TabItem value="express4" label="Express 4">
-    <CodeBlock language="ts">{decoratorApiRequestExpress4Source}</CodeBlock>
-  </TabItem>
   <TabItem value="express5" label="Express 5">
     <CodeBlock language="ts">{decoratorApiRequestExpressSource}</CodeBlock>
   </TabItem>
@@ -403,9 +394,6 @@ Notes
 #### Example: sending a response per adapter
 
 <Tabs>
-  <TabItem value="express4" label="Express 4">
-    <CodeBlock language="ts">{decoratorApiResponseExpress4Source}</CodeBlock>
-  </TabItem>
   <TabItem value="express5" label="Express 5">
     <CodeBlock language="ts">{decoratorApiResponseExpressSource}</CodeBlock>
   </TabItem>
@@ -482,9 +470,6 @@ Notes
 #### Example: Controller with priority
 
 <Tabs>
-  <TabItem value="express4" label="Express 4">
-    <CodeBlock language="ts">{controllerApiPrioritySource}</CodeBlock>
-  </TabItem>
   <TabItem value="express5" label="Express 5">
     <CodeBlock language="ts">{controllerApiPriorityExpress5Source}</CodeBlock>
   </TabItem>

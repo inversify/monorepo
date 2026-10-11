@@ -13,12 +13,6 @@ import { WarriorsOptionsRouteValueMetadataExpressController } from '../controlle
 import { WarriorsPatchRouteValueMetadataExpressController } from '../controllers/express/WarriorsPatchRouteValueMetadataExpressController.js';
 import { WarriorsPostRouteValueMetadataExpressController } from '../controllers/express/WarriorsPostRouteValueMetadataExpressController.js';
 import { WarriorsPutRouteValueMetadataExpressController } from '../controllers/express/WarriorsPutRouteValueMetadataExpressController.js';
-import { WarriorsDeleteRouteValueMetadataExpressV4Controller } from '../controllers/express4/WarriorsDeleteRouteValueMetadataExpressV4Controller.js';
-import { WarriorsGetRouteValueMetadataExpressV4Controller } from '../controllers/express4/WarriorsGetRouteValueMetadataExpressV4Controller.js';
-import { WarriorsOptionsRouteValueMetadataExpressV4Controller } from '../controllers/express4/WarriorsOptionsRouteValueMetadataExpressV4Controller.js';
-import { WarriorsPatchRouteValueMetadataExpressV4Controller } from '../controllers/express4/WarriorsPatchRouteValueMetadataExpressV4Controller.js';
-import { WarriorsPostRouteValueMetadataExpressV4Controller } from '../controllers/express4/WarriorsPostRouteValueMetadataExpressV4Controller.js';
-import { WarriorsPutRouteValueMetadataExpressV4Controller } from '../controllers/express4/WarriorsPutRouteValueMetadataExpressV4Controller.js';
 import { WarriorsDeleteRouteValueMetadataFastifyController } from '../controllers/fastify/WarriorsDeleteRouteValueMetadataFastifyController.js';
 import { WarriorsGetRouteValueMetadataFastifyController } from '../controllers/fastify/WarriorsGetRouteValueMetadataFastifyController.js';
 import { WarriorsOptionsRouteValueMetadataFastifyController } from '../controllers/fastify/WarriorsOptionsRouteValueMetadataFastifyController.js';
@@ -38,7 +32,6 @@ import { WarriorsPatchRouteValueMetadataUwebSocketsController } from '../control
 import { WarriorsPostRouteValueMetadataUwebSocketsController } from '../controllers/uwebsockets/WarriorsPostRouteValueMetadataUwebSocketsController.js';
 import { WarriorsPutRouteValueMetadataUwebSocketsController } from '../controllers/uwebsockets/WarriorsPutRouteValueMetadataUwebSocketsController.js';
 import { RouteValueMetadataExpressMiddleware } from '../middlewares/express/RouteValueMetadataExpressMiddleware.js';
-import { RouteValueMetadataExpressV4Middleware } from '../middlewares/express4/RouteValueMetadataExpressV4Middleware.js';
 import { RouteValueMetadataFastifyMiddleware } from '../middlewares/fastify/RouteValueMetadataFastifyMiddleware.js';
 import { RouteValueMetadataHonoMiddleware } from '../middlewares/hono/RouteValueMetadataHonoMiddleware.js';
 import { RouteValueMetadataUwebSocketsMiddleware } from '../middlewares/uwebsockets/RouteValueMetadataUwebSocketsMiddleware.js';
@@ -59,25 +52,6 @@ function getMethodWarriorRouteValueMetadataExpressController(
       return WarriorsPostRouteValueMetadataExpressController;
     case HttpMethod.put:
       return WarriorsPutRouteValueMetadataExpressController;
-  }
-}
-
-function getMethodWarriorRouteValueMetadataExpressV4Controller(
-  method: HttpMethod,
-): Newable {
-  switch (method) {
-    case HttpMethod.delete:
-      return WarriorsDeleteRouteValueMetadataExpressV4Controller;
-    case HttpMethod.get:
-      return WarriorsGetRouteValueMetadataExpressV4Controller;
-    case HttpMethod.options:
-      return WarriorsOptionsRouteValueMetadataExpressV4Controller;
-    case HttpMethod.patch:
-      return WarriorsPatchRouteValueMetadataExpressV4Controller;
-    case HttpMethod.post:
-      return WarriorsPostRouteValueMetadataExpressV4Controller;
-    case HttpMethod.put:
-      return WarriorsPutRouteValueMetadataExpressV4Controller;
   }
 }
 
@@ -157,11 +131,6 @@ function givenWarriorRouteValueMetadataControllerForContainer(
       getMethodWarriorController =
         getMethodWarriorRouteValueMetadataExpressController;
       middleware = RouteValueMetadataExpressMiddleware;
-      break;
-    case ServerKind.express4:
-      getMethodWarriorController =
-        getMethodWarriorRouteValueMetadataExpressV4Controller;
-      middleware = RouteValueMetadataExpressV4Middleware;
       break;
     case ServerKind.fastify:
       getMethodWarriorController =

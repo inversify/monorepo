@@ -2,7 +2,6 @@
 sidebar_position: 3
 title: Utils
 ---
-import createRouteValueMetadataUtilsExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/createRouteValueMetadataUtilsExpress4.ts.txt';
 import createRouteValueMetadataUtilsExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/createRouteValueMetadataUtilsExpress.ts.txt';
 import createRouteValueMetadataUtilsFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/createRouteValueMetadataUtilsFastify.ts.txt';
 import createRouteValueMetadataUtilsHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/createRouteValueMetadataUtilsHono.ts.txt';
@@ -50,9 +49,6 @@ The `decorator` stores metadata on the controller class using `reflect-metadata`
 The following example demonstrates creating a `Roles` decorator and `getRoles` getter, then using them in a middleware to read route-level role metadata and set a response header.
 
 <Tabs>
-  <TabItem value="express4" label="Express 4">
-    <CodeBlock language="ts">{createRouteValueMetadataUtilsExpress4Source}</CodeBlock>
-  </TabItem>
   <TabItem value="express5" label="Express 5">
     <CodeBlock language="ts">{createRouteValueMetadataUtilsExpressSource}</CodeBlock>
   </TabItem>

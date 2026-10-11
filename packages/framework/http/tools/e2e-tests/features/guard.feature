@@ -21,12 +21,6 @@ The guard allows to continue or stop the request processing
           | "express"     | "PATCH"    |
           | "express"     | "POST"     |
           | "express"     | "PUT"      |
-          | "express4"    | "DELETE"   |
-          | "express4"    | "GET"      |
-          | "express4"    | "OPTIONS"  |
-          | "express4"    | "PATCH"    |
-          | "express4"    | "POST"     |
-          | "express4"    | "PUT"      |
           | "fastify"     | "DELETE"   |
           | "fastify"     | "GET"      |
           | "fastify"     | "OPTIONS"  |
@@ -62,12 +56,6 @@ The guard allows to continue or stop the request processing
           | "express"     | "PATCH"    |
           | "express"     | "POST"     |
           | "express"     | "PUT"      |
-          | "express4"    | "DELETE"   |
-          | "express4"    | "GET"      |
-          | "express4"    | "OPTIONS"  |
-          | "express4"    | "PATCH"    |
-          | "express4"    | "POST"     |
-          | "express4"    | "PUT"      |
           | "fastify"     | "DELETE"   |
           | "fastify"     | "GET"      |
           | "fastify"     | "OPTIONS"  |

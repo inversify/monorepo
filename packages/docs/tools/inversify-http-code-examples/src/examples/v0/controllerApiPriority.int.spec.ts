@@ -2,7 +2,6 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { Container } from 'inversify';
 
-import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server.js';
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
 import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer.js';
@@ -16,7 +15,6 @@ import {
 } from './controllerApiPriority.js';
 
 describe.each<[(container: Container) => Promise<Server>]>([
-  [buildExpress4Server],
   [buildFastifyServer],
   [buildHonoServer],
   [buildUwebSocketsJsServer],

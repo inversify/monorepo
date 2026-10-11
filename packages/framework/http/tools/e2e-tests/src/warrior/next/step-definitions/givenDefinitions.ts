@@ -13,12 +13,6 @@ import { WarriorsOptionsNextExpressController } from '../controllers/express/War
 import { WarriorsPatchNextExpressController } from '../controllers/express/WarriorsPatchNextExpressController.js';
 import { WarriorsPostNextExpressController } from '../controllers/express/WarriorsPostNextExpressController.js';
 import { WarriorsPutNextExpressController } from '../controllers/express/WarriorsPutNextExpressController.js';
-import { WarriorsDeleteNextExpress4Controller } from '../controllers/express4/WarriorsDeleteNextExpress4Controller.js';
-import { WarriorsGetNextExpress4Controller } from '../controllers/express4/WarriorsGetNextExpress4Controller.js';
-import { WarriorsOptionsNextExpress4Controller } from '../controllers/express4/WarriorsOptionsNextExpress4Controller.js';
-import { WarriorsPatchNextExpress4Controller } from '../controllers/express4/WarriorsPatchNextExpress4Controller.js';
-import { WarriorsPostNextExpress4Controller } from '../controllers/express4/WarriorsPostNextExpress4Controller.js';
-import { WarriorsPutNextExpress4Controller } from '../controllers/express4/WarriorsPutNextExpress4Controller.js';
 import { WarriorsDeleteNextFastifyController } from '../controllers/fastify/WarriorsDeleteNextFastifyController.js';
 import { WarriorsGetNextFastifyController } from '../controllers/fastify/WarriorsGetNextFastifyController.js';
 import { WarriorsOptionsNextFastifyController } from '../controllers/fastify/WarriorsOptionsFastifyExpressController.js';
@@ -37,7 +31,6 @@ import { WarriorsOptionsNextUwebSocketsController } from '../controllers/uwebsoc
 import { WarriorsPatchNextUwebSocketsController } from '../controllers/uwebsockets/WarriorsPatchNextUwebSocketsController.js';
 import { WarriorsPostNextUwebSocketsController } from '../controllers/uwebsockets/WarriorsPostNextUwebSocketsController.js';
 import { WarriorsPutNextUwebSocketsController } from '../controllers/uwebsockets/WarriorsPutNextUwebSocketsController.js';
-import { NextExpress4Middleware } from '../middlewares/NextExpress4Middleware.js';
 import { NextExpressMiddleware } from '../middlewares/NextExpressMiddleware.js';
 import { NextFastifyMiddleware } from '../middlewares/NextFastifyMiddleware.js';
 import { NextHonoMiddleware } from '../middlewares/NextHonoMiddleware.js';
@@ -62,23 +55,6 @@ function getWarriorNextController(
           return WarriorsPostNextExpressController;
         case HttpMethod.put:
           return WarriorsPutNextExpressController;
-      }
-
-    // eslint-disable-next-line no-fallthrough
-    case ServerKind.express4:
-      switch (method) {
-        case HttpMethod.delete:
-          return WarriorsDeleteNextExpress4Controller;
-        case HttpMethod.get:
-          return WarriorsGetNextExpress4Controller;
-        case HttpMethod.options:
-          return WarriorsOptionsNextExpress4Controller;
-        case HttpMethod.patch:
-          return WarriorsPatchNextExpress4Controller;
-        case HttpMethod.post:
-          return WarriorsPostNextExpress4Controller;
-        case HttpMethod.put:
-          return WarriorsPutNextExpress4Controller;
       }
 
     // eslint-disable-next-line no-fallthrough
@@ -144,8 +120,6 @@ function getWarriorNextMiddleware(serverKind: ServerKind): Newable<Middleware> {
   switch (serverKind) {
     case ServerKind.express:
       return NextExpressMiddleware;
-    case ServerKind.express4:
-      return NextExpress4Middleware;
     case ServerKind.fastify:
       return NextFastifyMiddleware;
     case ServerKind.hono:

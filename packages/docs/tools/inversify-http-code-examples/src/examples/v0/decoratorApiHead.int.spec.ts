@@ -3,14 +3,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Container } from 'inversify';
 
 import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
-import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server.js';
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
 import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer.js';
 import { type Server } from '../../server/models/Server.js';
 import { ContentController } from './decoratorApiHead.js';
 
 describe.each<[(container: Container) => Promise<Server>]>([
-  [buildExpress4Server],
   [buildExpressServer],
   [buildFastifyServer],
   [buildUwebSocketsJsServer],

@@ -10,7 +10,7 @@ import ecosystemSseWithStatusCodeSource from '@inversifyjs/http-code-examples/ge
 import ecosystemSseRealTimeChatSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemSseRealTimeChat.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
 
-The `@inversifyjs/http-sse` package provides a type-safe, adapter-agnostic way to stream server-sent events (SSE) from your Inversify HTTP controllers. Send real-time updates to clients over standard HTTP connections using a simple, decorator-driven API that works across Express 4/5, Fastify, Hono, and uWebSockets.js.
+The `@inversifyjs/http-sse` package provides a type-safe, adapter-agnostic way to stream server-sent events (SSE) from your Inversify HTTP controllers. Send real-time updates to clients over standard HTTP connections using a simple, decorator-driven API that works across Express, Fastify, Hono, and uWebSockets.js.
 
 ## What is Server-Sent Events?
 
@@ -24,7 +24,7 @@ Server-Sent Events (SSE) is a web standard for pushing real-time updates from se
 
 ## Key features
 
-- **Adapter agnostic**: Works with Express 4/5, Fastify, Hono, and uWebSockets.js
+- **Adapter agnostic**: Works with Express, Fastify, Hono, and uWebSockets.js
 - **Type-safe**: Full TypeScript support with typed message events
 - **Backpressure handling**: Built-in stream management prevents overwhelming clients
 - **Flexible API**: Use async generators or `SseStream` for manual control
