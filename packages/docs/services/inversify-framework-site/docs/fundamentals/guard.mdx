@@ -3,12 +3,10 @@ sidebar_position: 3
 title: Guard
 ---
 import guardApiExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpressAllow.ts.txt';
-import guardApiExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpress4Allow.ts.txt';
 import guardApiFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiFastifyAllow.ts.txt';
 import guardApiHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiHonoAllow.ts.txt';
 import guardApiUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiUwebsocketsAllow.ts.txt';
 import guardApiExpressDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpressDeny.ts.txt';
-import guardApiExpress4DenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiExpress4Deny.ts.txt';
 import guardApiFastifyDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiFastifyDeny.ts.txt';
 import guardApiHonoDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiHonoDeny.ts.txt';
 import guardApiUwebsocketsDenySource from '@inversifyjs/http-code-examples/generated/examples/v0/guardApiUwebsocketsDeny.ts.txt';
@@ -37,9 +35,6 @@ Determines whether a request can continue. If `activate` returns `true`, the req
 Each adapter has its own request type. Below is a minimal “allow” guard for each adapter.
 
 <Tabs>
-  <TabItem value="express4" label="Express 4">
-    <CodeBlock language="ts">{guardApiExpress4Source}</CodeBlock>
-  </TabItem>
   <TabItem value="express5" label="Express 5">
     <CodeBlock language="ts">{guardApiExpressSource}</CodeBlock>
   </TabItem>
@@ -59,9 +54,6 @@ Each adapter has its own request type. Below is a minimal “allow” guard for 
 Below are minimal “deny” guards that throw a `ForbiddenHttpResponse` directly.
 
 <Tabs>
-  <TabItem value="express4-deny" label="Express 4">
-    <CodeBlock language="ts">{guardApiExpress4DenySource}</CodeBlock>
-  </TabItem>
   <TabItem value="express5-deny" label="Express 5">
     <CodeBlock language="ts">{guardApiExpressDenySource}</CodeBlock>
   </TabItem>

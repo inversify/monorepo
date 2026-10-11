@@ -22,12 +22,6 @@ Error filters allows to catch and process errors thrown during the request lifec
         | "express"     | "PATCH"   |
         | "express"     | "POST"    |
         | "express"     | "PUT"     |
-        | "express4"    | "DELETE"  |
-        | "express4"    | "GET"     |
-        | "express4"    | "OPTIONS" |
-        | "express4"    | "PATCH"   |
-        | "express4"    | "POST"    |
-        | "express4"    | "PUT"     |
         | "fastify"     | "DELETE"  |
         | "fastify"     | "GET"     |
         | "fastify"     | "OPTIONS" |

@@ -19,18 +19,6 @@ import { WarriorsPostSuccessfulExpressMiddlewareController } from '../controller
 import { WarriorsPostUnsuccessfulExpressMiddlewareController } from '../controllers/express/WarriorsPostUnsuccessfulExpressMiddlewareController.js';
 import { WarriorsPutSuccessfulExpressMiddlewareController } from '../controllers/express/WarriorsPutSuccessfulExpressMiddlewareController.js';
 import { WarriorsPutUnsuccessfulExpressMiddlewareController } from '../controllers/express/WarriorsPutUnsuccessfulExpressMiddlewareController.js';
-import { WarriorsDeleteSuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsDeleteSuccessfulExpressV4MiddlewareController.js';
-import { WarriorsDeleteUnsuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsDeleteUnsuccessfulExpressV4MiddlewareController.js';
-import { WarriorsGetSuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsGetSuccessfulExpressV4MiddlewareController.js';
-import { WarriorsGetUnsuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsGetUnsuccessfulExpressV4MiddlewareController.js';
-import { WarriorsOptionsSuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsOptionsSuccessfulExpressV4MiddlewareController.js';
-import { WarriorsOptionsUnsuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsOptionsUnsuccessfulExpressV4MiddlewareController.js';
-import { WarriorsPatchSuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsPatchSuccessfulExpressV4MiddlewareController.js';
-import { WarriorsPatchUnsuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsPatchUnsuccessfulExpressV4MiddlewareController.js';
-import { WarriorsPostSuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsPostSuccessfulExpressV4MiddlewareController.js';
-import { WarriorsPostUnsuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsPostUnsuccessfulExpressV4MiddlewareController.js';
-import { WarriorsPutSuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsPutSuccessfulExpressV4MiddlewareController.js';
-import { WarriorsPutUnsuccessfulExpressV4MiddlewareController } from '../controllers/express4/WarriorsPutUnsuccessfulExpressV4MiddlewareController.js';
 import { WarriorsDeleteSuccessfulFastifyMiddlewareController } from '../controllers/fastify/WarriorsDeleteSuccessfulFastifyMiddlewareController.js';
 import { WarriorsDeleteUnsuccessfulFastifyMiddlewareController } from '../controllers/fastify/WarriorsDeleteUnsuccessfulFastifyMiddlewareController.js';
 import { WarriorsGetSuccessfulFastifyMiddlewareController } from '../controllers/fastify/WarriorsGetSuccessfulFastifyMiddlewareController.js';
@@ -69,8 +57,6 @@ import { WarriorsPutSuccessfulUwebSocketsMiddlewareController } from '../control
 import { WarriorsPutUnsuccessfulUwebSocketsMiddlewareController } from '../controllers/uwebsockets/WarriorsPutUnsuccessfulUwebSocketsMiddlewareController.js';
 import { SuccessfulExpressMiddleware } from '../middlewares/express/SuccessfulExpressMiddleware.js';
 import { UnsuccessfulExpressMiddleware } from '../middlewares/express/UnsuccessfulExpressMiddleware.js';
-import { SuccessfulExpressV4Middleware } from '../middlewares/express4/SuccessfulExpressV4Middleware.js';
-import { UnsuccessfulExpressV4Middleware } from '../middlewares/express4/UnsuccessfulExpressV4Middleware.js';
 import { SuccessfulFastifyMiddleware } from '../middlewares/fastify/SuccessfulFastifyMiddleware.js';
 import { UnsuccessfulFastifyMiddleware } from '../middlewares/fastify/UnsuccessfulFastifyMiddleware.js';
 import { SuccessfulHonoMiddleware } from '../middlewares/hono/SuccessfulHonoMiddleware.js';
@@ -94,25 +80,6 @@ function getMethodWarriorSuccessfulExpressMiddlewareController(
       return WarriorsPostSuccessfulExpressMiddlewareController;
     case HttpMethod.put:
       return WarriorsPutSuccessfulExpressMiddlewareController;
-  }
-}
-
-function getMethodWarriorSuccessfulExpressV4MiddlewareController(
-  method: HttpMethod,
-): Newable {
-  switch (method) {
-    case HttpMethod.delete:
-      return WarriorsDeleteSuccessfulExpressV4MiddlewareController;
-    case HttpMethod.get:
-      return WarriorsGetSuccessfulExpressV4MiddlewareController;
-    case HttpMethod.options:
-      return WarriorsOptionsSuccessfulExpressV4MiddlewareController;
-    case HttpMethod.patch:
-      return WarriorsPatchSuccessfulExpressV4MiddlewareController;
-    case HttpMethod.post:
-      return WarriorsPostSuccessfulExpressV4MiddlewareController;
-    case HttpMethod.put:
-      return WarriorsPutSuccessfulExpressV4MiddlewareController;
   }
 }
 
@@ -192,25 +159,6 @@ function getMethodWarriorUnsuccessfulExpressMiddlewareController(
   }
 }
 
-function getMethodWarriorUnsuccessfulExpressV4MiddlewareController(
-  method: HttpMethod,
-): Newable {
-  switch (method) {
-    case HttpMethod.delete:
-      return WarriorsDeleteUnsuccessfulExpressV4MiddlewareController;
-    case HttpMethod.get:
-      return WarriorsGetUnsuccessfulExpressV4MiddlewareController;
-    case HttpMethod.options:
-      return WarriorsOptionsUnsuccessfulExpressV4MiddlewareController;
-    case HttpMethod.patch:
-      return WarriorsPatchUnsuccessfulExpressV4MiddlewareController;
-    case HttpMethod.post:
-      return WarriorsPostUnsuccessfulExpressV4MiddlewareController;
-    case HttpMethod.put:
-      return WarriorsPutUnsuccessfulExpressV4MiddlewareController;
-  }
-}
-
 function getMethodWarriorUnsuccessfulFastifyMiddlewareController(
   method: HttpMethod,
 ): Newable {
@@ -286,10 +234,6 @@ function givenWarriorSuccessfulMiddlewareControllerForContainer(
       getMethodWarriorSuccessfulController =
         getMethodWarriorSuccessfulExpressMiddlewareController;
       break;
-    case ServerKind.express4:
-      getMethodWarriorSuccessfulController =
-        getMethodWarriorSuccessfulExpressV4MiddlewareController;
-      break;
     case ServerKind.fastify:
       getMethodWarriorSuccessfulController =
         getMethodWarriorSuccessfulFastifyMiddlewareController;
@@ -309,9 +253,6 @@ function givenWarriorSuccessfulMiddlewareControllerForContainer(
   switch (serverKind) {
     case ServerKind.express:
       middleware = SuccessfulExpressMiddleware;
-      break;
-    case ServerKind.express4:
-      middleware = SuccessfulExpressV4Middleware;
       break;
     case ServerKind.fastify:
       middleware = SuccessfulFastifyMiddleware;
@@ -346,10 +287,6 @@ function givenWarriorUnsuccessfulMiddlewareControllerForContainer(
       getMethodWarriorUnsuccessfulController =
         getMethodWarriorUnsuccessfulExpressMiddlewareController;
       break;
-    case ServerKind.express4:
-      getMethodWarriorUnsuccessfulController =
-        getMethodWarriorUnsuccessfulExpressV4MiddlewareController;
-      break;
     case ServerKind.fastify:
       getMethodWarriorUnsuccessfulController =
         getMethodWarriorUnsuccessfulFastifyMiddlewareController;
@@ -372,9 +309,6 @@ function givenWarriorUnsuccessfulMiddlewareControllerForContainer(
     case ServerKind.express:
       successfulMiddleware = SuccessfulExpressMiddleware;
       break;
-    case ServerKind.express4:
-      successfulMiddleware = SuccessfulExpressV4Middleware;
-      break;
     case ServerKind.fastify:
       successfulMiddleware = SuccessfulFastifyMiddleware;
       break;
@@ -391,9 +325,6 @@ function givenWarriorUnsuccessfulMiddlewareControllerForContainer(
   switch (serverKind) {
     case ServerKind.express:
       unsuccessfulMiddleware = UnsuccessfulExpressMiddleware;
-      break;
-    case ServerKind.express4:
-      unsuccessfulMiddleware = UnsuccessfulExpressV4Middleware;
       break;
     case ServerKind.fastify:
       unsuccessfulMiddleware = UnsuccessfulFastifyMiddleware;

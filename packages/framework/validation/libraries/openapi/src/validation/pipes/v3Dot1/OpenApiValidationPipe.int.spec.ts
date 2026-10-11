@@ -16,7 +16,6 @@ import {
   Post,
 } from '@inversifyjs/http-core';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
-import { InversifyExpressHttpAdapter as InversifyExpress4HttpAdapter } from '@inversifyjs/http-express-v4';
 import { InversifyFastifyHttpAdapter } from '@inversifyjs/http-fastify';
 import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
 import {
@@ -27,7 +26,6 @@ import {
 import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { InversifyValidationError } from '@inversifyjs/validation-common';
 import express from 'express';
-import express4 from 'express4';
 import { type FastifyInstance } from 'fastify';
 import { type Hono } from 'hono';
 import { Container, type Newable } from 'inversify';
@@ -48,9 +46,9 @@ function jsonOptionalBody() {
   const limit: number = 1e6; // 1MB
 
   return function (
-    req: express.Request | express4.Request,
-    res: express.Response | express4.Response,
-    next: express.NextFunction | express4.NextFunction,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
   ): void {
     const contentType: string = req.headers['content-type'] ?? '';
 
@@ -121,70 +119,6 @@ async function buildExpressServer(
   adapter.useGlobalPipe(...pipeList);
 
   const application: express.Application = await adapter.build();
-
-  const httpServer: http.Server = http.createServer(
-    application as RequestListener,
-  );
-
-  return new Promise<Server>(
-    (resolve: (value: Server | PromiseLike<Server>) => void) => {
-      httpServer.listen(0, '127.0.0.1', () => {
-        const address: AddressInfo | string | null = httpServer.address();
-
-        if (address === null || typeof address === 'string') {
-          throw new Error('Failed to get server address');
-        }
-
-        const server: Server = {
-          host: address.address,
-          port: address.port,
-          shutdown: async (): Promise<void> => {
-            await new Promise<void>(
-              (
-                resolve: (value: void | PromiseLike<void>) => void,
-                reject: (reason?: unknown) => void,
-              ) => {
-                httpServer.close((error: Error | undefined) => {
-                  if (error !== undefined) {
-                    reject(error);
-                  } else {
-                    resolve();
-                  }
-                });
-              },
-            );
-          },
-        };
-
-        resolve(server);
-      });
-    },
-  );
-}
-
-async function buildExpress4Server(
-  container: Container,
-  errorFilterList: Newable<ErrorFilter>[],
-  pipeList: (Newable<Pipe> | Pipe)[],
-): Promise<Server> {
-  const expressApp: express4.Application = express4();
-
-  expressApp.use(jsonOptionalBody());
-
-  const adapter: InversifyExpress4HttpAdapter =
-    new InversifyExpress4HttpAdapter(
-      container,
-      {
-        logger: true,
-        useCookies: true,
-      },
-      expressApp,
-    );
-
-  adapter.useGlobalFilters(...errorFilterList);
-  adapter.useGlobalPipe(...pipeList);
-
-  const application: express4.Application = await adapter.build();
 
   const httpServer: http.Server = http.createServer(
     application as RequestListener,
@@ -359,7 +293,6 @@ describe(OpenApiValidationPipe, () => {
     ]
   >([
     ['an Express', buildExpressServer],
-    ['an Express 4', buildExpress4Server],
     ['a Fastify', buildFastifyServer],
     ['a Hono', buildHonoServer],
   ])(

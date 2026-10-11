@@ -3,7 +3,6 @@ sidebar_position: 1
 title: Introduction
 ---
 import ecosystemBetterAuthIntroductionExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionExpress.ts.txt';
-import ecosystemBetterAuthIntroductionExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionExpress4.ts.txt';
 import ecosystemBetterAuthIntroductionFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionFastify.ts.txt';
 import ecosystemBetterAuthIntroductionHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/ecosystemBetterAuthIntroductionHono.ts.txt';
 import CodeBlock from '@theme/CodeBlock';
@@ -12,12 +11,12 @@ import TabItem from '@theme/TabItem';
 
 # Introduction
 
-[Better Auth](https://www.better-auth.com/) is a comprehensive authentication library for TypeScript that provides secure, type-safe authentication with excellent developer experience. The InversifyJS HTTP framework provides seamless integration with Better Auth, allowing you to easily add authentication to your applications across Express, Express 4, Fastify, and Hono.
+[Better Auth](https://www.better-auth.com/) is a comprehensive authentication library for TypeScript that provides secure, type-safe authentication with excellent developer experience. The InversifyJS HTTP framework provides seamless integration with Better Auth, allowing you to easily add authentication to your applications across Express, Fastify, and Hono.
 
 ## Features
 
 - **Type-safe authentication**: Full TypeScript support with type inference
-- **Multiple adapters**: Support for Express, Express 4, Fastify, and Hono
+- **Multiple adapters**: Support for Express, Fastify, and Hono
 - **Session management**: Built-in session handling with middleware integration
 - **Flexible configuration**: Easy setup with various authentication providers
 - **Parameter decorators**: Convenient access to user sessions in your controllers
@@ -51,9 +50,6 @@ Then, choose the appropriate container module for your framework:
 <Tabs>
   <TabItem value="express" label="Express">
     <CodeBlock language="typescript">{ecosystemBetterAuthIntroductionExpressSource}</CodeBlock>
-  </TabItem>
-  <TabItem value="express4" label="Express 4">
-    <CodeBlock language="typescript">{ecosystemBetterAuthIntroductionExpress4Source}</CodeBlock>
   </TabItem>
   <TabItem value="fastify" label="Fastify">
     <CodeBlock language="typescript">{ecosystemBetterAuthIntroductionFastifySource}</CodeBlock>

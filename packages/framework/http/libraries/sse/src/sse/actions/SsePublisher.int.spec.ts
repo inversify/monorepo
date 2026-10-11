@@ -4,7 +4,6 @@ import { Controller, Get, HttpStatusCode } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
 import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
-import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server.js';
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
 import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer.js';
@@ -16,11 +15,10 @@ import { SsePublisher } from './SsePublisher.js';
 
 describe(SsePublisher, () => {
   describe.each<[(container: Container) => Promise<Server>]>([
-    [buildExpress4Server],
     [buildExpressServer],
     [buildFastifyServer],
     [buildHonoServer],
-    // [buildUwebSocketsJsServer], Depends on https://github.com/uNetworking/uWebSockets/pull/1897
+    [buildUwebSocketsJsServer],
   ])(
     'Having a server with an SSE endpoint that initially sends no events via AsyncIterable',
     (buildServer: (container: Container) => Promise<Server>) => {
@@ -127,7 +125,6 @@ describe(SsePublisher, () => {
   );
 
   describe.each<[(container: Container) => Promise<Server>]>([
-    [buildExpress4Server],
     [buildExpressServer],
     [buildFastifyServer],
     [buildHonoServer],
@@ -239,7 +236,6 @@ describe(SsePublisher, () => {
   );
 
   describe.each<[(container: Container) => Promise<Server>]>([
-    [buildExpress4Server],
     [buildExpressServer],
     [buildFastifyServer],
     [buildHonoServer],
@@ -357,7 +353,6 @@ describe(SsePublisher, () => {
   );
 
   describe.each<[(container: Container) => Promise<Server>]>([
-    [buildExpress4Server],
     [buildExpressServer],
     [buildFastifyServer],
     [buildHonoServer],

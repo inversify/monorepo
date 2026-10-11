@@ -4,7 +4,6 @@ import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { Container, type Newable } from 'inversify';
 
 import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
-import { buildExpress4Server } from '../../server/adapter/express4/actions/buildExpress4Server.js';
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
 import { type Server } from '../../server/models/Server.js';
@@ -14,7 +13,6 @@ import { buildSwaggerUiController } from './buildSwaggerUiController.js';
 describe(buildSwaggerUiController, () => {
   describe.each<[string, (container: Container) => Promise<Server>]>([
     ['an express', buildExpressServer],
-    ['an express4', buildExpress4Server],
     ['a fastify', buildFastifyServer],
     ['a hono', buildHonoServer],
   ])(

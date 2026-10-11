@@ -7,32 +7,26 @@ import { getContainerOrFail } from '../../../container/calculations/getContainer
 import { HttpMethod } from '../../../http/models/HttpMethod.js';
 import { ServerKind } from '../../../server/models/ServerKind.js';
 import { WarriorsDeleteResponseExpressController } from '../controllers/WarriorsDeleteResponseExpressController.js';
-import { WarriorsDeleteResponseExpressV4Controller } from '../controllers/WarriorsDeleteResponseExpressV4Controller.js';
 import { WarriorsDeleteResponseFastifyController } from '../controllers/WarriorsDeleteResponseFastifyController.js';
 import { WarriorsDeleteResponseHonoController } from '../controllers/WarriorsDeleteResponseHonoController.js';
 import { WarriorsDeleteResponseUwebSocketsController } from '../controllers/WarriorsDeleteResponseUwebSocketsController.js';
 import { WarriorsGetResponseExpressController } from '../controllers/WarriorsGetResponseExpressController.js';
-import { WarriorsGetResponseExpressV4Controller } from '../controllers/WarriorsGetResponseExpressV4Controller.js';
 import { WarriorsGetResponseFastifyController } from '../controllers/WarriorsGetResponseFastifyController.js';
 import { WarriorsGetResponseHonoController } from '../controllers/WarriorsGetResponseHonoController.js';
 import { WarriorsGetResponseUwebSocketsController } from '../controllers/WarriorsGetResponseUwebSocketsController.js';
 import { WarriorsOptionsResponseExpressController } from '../controllers/WarriorsOptionsResponseExpressController.js';
-import { WarriorsOptionsResponseExpressV4Controller } from '../controllers/WarriorsOptionsResponseExpressV4Controller.js';
 import { WarriorsOptionsResponseFastifyController } from '../controllers/WarriorsOptionsResponseFastifyController.js';
 import { WarriorsOptionsResponseHonoController } from '../controllers/WarriorsOptionsResponseHonoController.js';
 import { WarriorsOptionsResponseUwebSocketsController } from '../controllers/WarriorsOptionsResponseUwebSocketsController.js';
 import { WarriorsPatchResponseExpressController } from '../controllers/WarriorsPatchResponseExpressController.js';
-import { WarriorsPatchResponseExpressV4Controller } from '../controllers/WarriorsPatchResponseExpressV4Controller.js';
 import { WarriorsPatchResponseFastifyController } from '../controllers/WarriorsPatchResponseFastifyController.js';
 import { WarriorsPatchResponseHonoController } from '../controllers/WarriorsPatchResponseHonoController.js';
 import { WarriorsPatchResponseUwebSocketsController } from '../controllers/WarriorsPatchResponseUwebSocketsController.js';
 import { WarriorsPostResponseExpressController } from '../controllers/WarriorsPostResponseExpressController.js';
-import { WarriorsPostResponseExpressV4Controller } from '../controllers/WarriorsPostResponseExpressV4Controller.js';
 import { WarriorsPostResponseFastifyController } from '../controllers/WarriorsPostResponseFastifyController.js';
 import { WarriorsPostResponseHonoController } from '../controllers/WarriorsPostResponseHonoController.js';
 import { WarriorsPostResponseUwebSocketsController } from '../controllers/WarriorsPostResponseUwebSocketsController.js';
 import { WarriorsPutResponseExpressController } from '../controllers/WarriorsPutResponseExpressController.js';
-import { WarriorsPutResponseExpressV4Controller } from '../controllers/WarriorsPutResponseExpressV4Controller.js';
 import { WarriorsPutResponseFastifyController } from '../controllers/WarriorsPutResponseFastifyController.js';
 import { WarriorsPutResponseHonoController } from '../controllers/WarriorsPutResponseHonoController.js';
 import { WarriorsPutResponseUwebSocketsController } from '../controllers/WarriorsPutResponseUwebSocketsController.js';
@@ -53,25 +47,6 @@ function getMethodWarriorResponseExpressController(
       return WarriorsPostResponseExpressController;
     case HttpMethod.put:
       return WarriorsPutResponseExpressController;
-  }
-}
-
-function getMethodWarriorResponseExpressV4Controller(
-  method: HttpMethod,
-): Newable {
-  switch (method) {
-    case HttpMethod.delete:
-      return WarriorsDeleteResponseExpressV4Controller;
-    case HttpMethod.get:
-      return WarriorsGetResponseExpressV4Controller;
-    case HttpMethod.options:
-      return WarriorsOptionsResponseExpressV4Controller;
-    case HttpMethod.patch:
-      return WarriorsPatchResponseExpressV4Controller;
-    case HttpMethod.post:
-      return WarriorsPostResponseExpressV4Controller;
-    case HttpMethod.put:
-      return WarriorsPutResponseExpressV4Controller;
   }
 }
 
@@ -147,10 +122,6 @@ function givenWarriorResponseControllerForContainer(
     case ServerKind.express:
       getMethodWarriorResponseController =
         getMethodWarriorResponseExpressController;
-      break;
-    case ServerKind.express4:
-      getMethodWarriorResponseController =
-        getMethodWarriorResponseExpressV4Controller;
       break;
     case ServerKind.fastify:
       getMethodWarriorResponseController =

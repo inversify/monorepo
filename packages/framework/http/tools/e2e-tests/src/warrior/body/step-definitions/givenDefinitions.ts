@@ -12,7 +12,6 @@ import { ServerKind } from '../../../server/models/ServerKind.js';
 import { WarriorsDeleteJsonBodyController } from '../controllers/WarriorsDeleteJsonBodyController.js';
 import { WarriorsDeleteJsonBodyNamedController } from '../controllers/WarriorsDeleteJsonBodyNamedController.js';
 import { WarriorsDeleteMultipartBodyExpressController } from '../controllers/WarriorsDeleteMultipartBodyExpressController.js';
-import { WarriorsDeleteMultipartBodyExpressV4Controller } from '../controllers/WarriorsDeleteMultipartBodyExpressV4Controller.js';
 import { WarriorsDeleteMultipartBodyFastifyController } from '../controllers/WarriorsDeleteMultipartBodyFastifyController.js';
 import { WarriorsDeleteMultipartBodyHonoController } from '../controllers/WarriorsDeleteMultipartBodyHonoController.js';
 import { WarriorsDeleteMultipartBodyUwebSocketsController } from '../controllers/WarriorsDeleteMultipartBodyUwebSocketsController.js';
@@ -21,7 +20,6 @@ import { WarriorsDeleteUrlEncodedBodyController } from '../controllers/WarriorsD
 import { WarriorsOptionsJsonBodyController } from '../controllers/WarriorsOptionsJsonBodyController.js';
 import { WarriorsOptionsJsonBodyNamedController } from '../controllers/WarriorsOptionsJsonBodyNamedController.js';
 import { WarriorsOptionsMultipartBodyExpressController } from '../controllers/WarriorsOptionsMultipartBodyExpressController.js';
-import { WarriorsOptionsMultipartBodyExpressV4Controller } from '../controllers/WarriorsOptionsMultipartBodyExpressV4Controller.js';
 import { WarriorsOptionsMultipartBodyFastifyController } from '../controllers/WarriorsOptionsMultipartBodyFastifyController.js';
 import { WarriorsOptionsMultipartBodyHonoController } from '../controllers/WarriorsOptionsMultipartBodyHonoController.js';
 import { WarriorsOptionsMultipartBodyUwebSocketsController } from '../controllers/WarriorsOptionsMultipartBodyUwebSocketsController.js';
@@ -30,7 +28,6 @@ import { WarriorsOptionsUrlEncodedBodyController } from '../controllers/Warriors
 import { WarriorsPatchJsonBodyController } from '../controllers/WarriorsPatchJsonBodyController.js';
 import { WarriorsPatchJsonBodyNamedController } from '../controllers/WarriorsPatchJsonBodyNamedController.js';
 import { WarriorsPatchMultipartBodyExpressController } from '../controllers/WarriorsPatchMultipartBodyExpressController.js';
-import { WarriorsPatchMultipartBodyExpressV4Controller } from '../controllers/WarriorsPatchMultipartBodyExpressV4Controller.js';
 import { WarriorsPatchMultipartBodyFastifyController } from '../controllers/WarriorsPatchMultipartBodyFastifyController.js';
 import { WarriorsPatchMultipartBodyHonoController } from '../controllers/WarriorsPatchMultipartBodyHonoController.js';
 import { WarriorsPatchMultipartBodyUwebSocketsController } from '../controllers/WarriorsPatchMultipartBodyUwebSocketsController.js';
@@ -39,7 +36,6 @@ import { WarriorsPatchUrlEncodedBodyController } from '../controllers/WarriorsPa
 import { WarriorsPostJsonBodyController } from '../controllers/WarriorsPostJsonBodyController.js';
 import { WarriorsPostJsonBodyNamedController } from '../controllers/WarriorsPostJsonBodyNamedController.js';
 import { WarriorsPostMultipartBodyExpressController } from '../controllers/WarriorsPostMultipartBodyExpressController.js';
-import { WarriorsPostMultipartBodyExpressV4Controller } from '../controllers/WarriorsPostMultipartBodyExpressV4Controller.js';
 import { WarriorsPostMultipartBodyFastifyController } from '../controllers/WarriorsPostMultipartBodyFastifyController.js';
 import { WarriorsPostMultipartBodyHonoController } from '../controllers/WarriorsPostMultipartBodyHonoController.js';
 import { WarriorsPostMultipartBodyUwebSocketsController } from '../controllers/WarriorsPostMultipartBodyUwebSocketsController.js';
@@ -48,7 +44,6 @@ import { WarriorsPostUrlEncodedBodyController } from '../controllers/WarriorsPos
 import { WarriorsPutJsonBodyController } from '../controllers/WarriorsPutJsonBodyController.js';
 import { WarriorsPutJsonBodyNamedController } from '../controllers/WarriorsPutJsonBodyNamedController.js';
 import { WarriorsPutMultipartBodyExpressController } from '../controllers/WarriorsPutMultipartBodyExpressController.js';
-import { WarriorsPutMultipartBodyExpressV4Controller } from '../controllers/WarriorsPutMultipartBodyExpressV4Controller.js';
 import { WarriorsPutMultipartBodyFastifyController } from '../controllers/WarriorsPutMultipartBodyFastifyController.js';
 import { WarriorsPutMultipartBodyHonoController } from '../controllers/WarriorsPutMultipartBodyHonoController.js';
 import { WarriorsPutMultipartBodyUwebSocketsController } from '../controllers/WarriorsPutMultipartBodyUwebSocketsController.js';
@@ -147,23 +142,6 @@ function getMethodWarriorMultipartBodyController(
       }
       // The inner switch always returns or throws, so this is unreachable
       // but satisfies the linter
-      break;
-    }
-    case ServerKind.express4: {
-      switch (method) {
-        case HttpMethod.delete:
-          return WarriorsDeleteMultipartBodyExpressV4Controller;
-        case HttpMethod.get:
-          throw new Error('Get not supported for body controller');
-        case HttpMethod.options:
-          return WarriorsOptionsMultipartBodyExpressV4Controller;
-        case HttpMethod.patch:
-          return WarriorsPatchMultipartBodyExpressV4Controller;
-        case HttpMethod.post:
-          return WarriorsPostMultipartBodyExpressV4Controller;
-        case HttpMethod.put:
-          return WarriorsPutMultipartBodyExpressV4Controller;
-      }
       break;
     }
     case ServerKind.fastify: {

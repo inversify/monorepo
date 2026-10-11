@@ -17,16 +17,6 @@ import { WarriorsPostExpressGlobalInterceptorController } from '../controllers/e
 import { WarriorsPostExpressInterceptorController } from '../controllers/express/WarriorsPostExpressInterceptorController.js';
 import { WarriorsPutExpressGlobalInterceptorController } from '../controllers/express/WarriorsPutExpressGlobalInterceptorController.js';
 import { WarriorsPutExpressInterceptorController } from '../controllers/express/WarriorsPutExpressInterceptorController.js';
-import { WarriorsDeleteExpress4GlobalInterceptorController } from '../controllers/express4/WarriorsDeleteExpress4GlobalInterceptorController.js';
-import { WarriorsDeleteExpress4InterceptorController } from '../controllers/express4/WarriorsDeleteExpress4InterceptorController.js';
-import { WarriorsGetExpress4GlobalInterceptorController } from '../controllers/express4/WarriorsGetExpress4GlobalInterceptorController.js';
-import { WarriorsGetExpress4InterceptorController } from '../controllers/express4/WarriorsGetExpress4InterceptorController.js';
-import { WarriorsPatchExpress4GlobalInterceptorController } from '../controllers/express4/WarriorsPatchExpress4GlobalInterceptorController.js';
-import { WarriorsPatchExpress4InterceptorController } from '../controllers/express4/WarriorsPatchExpress4InterceptorController.js';
-import { WarriorsPostExpress4GlobalInterceptorController } from '../controllers/express4/WarriorsPostExpress4GlobalInterceptorController.js';
-import { WarriorsPostExpress4InterceptorController } from '../controllers/express4/WarriorsPostExpress4InterceptorController.js';
-import { WarriorsPutExpress4GlobalInterceptorController } from '../controllers/express4/WarriorsPutExpress4GlobalInterceptorController.js';
-import { WarriorsPutExpress4InterceptorController } from '../controllers/express4/WarriorsPutExpress4InterceptorController.js';
 import { WarriorsDeleteFastifyGlobalInterceptorController } from '../controllers/fastify/WarriorsDeleteFastifyGlobalInterceptorController.js';
 import { WarriorsDeleteFastifyInterceptorController } from '../controllers/fastify/WarriorsDeleteFastifyInterceptorController.js';
 import { WarriorsGetFastifyGlobalInterceptorController } from '../controllers/fastify/WarriorsGetFastifyGlobalInterceptorController.js';
@@ -58,7 +48,6 @@ import { WarriorsPostUwebSocketsInterceptorController } from '../controllers/uwe
 import { WarriorsPutUwebSocketsGlobalInterceptorController } from '../controllers/uwebsockets/WarriorsPutUwebSocketsGlobalInterceptorController.js';
 import { WarriorsPutUwebSocketsInterceptorController } from '../controllers/uwebsockets/WarriorsPutUwebSocketsInterceptorController.js';
 import { WarriorRouteExpressInterceptor } from '../interceptors/express/WarriorRouteExpressInterceptor.js';
-import { WarriorRouteExpressV4Interceptor } from '../interceptors/express4/WarriorRouteExpressV4Interceptor.js';
 import { WarriorRouteFastifyInterceptor } from '../interceptors/fastify/WarriorRouteFastifyInterceptor.js';
 import { WarriorRouteHonoInterceptor } from '../interceptors/hono/WarriorRouteHonoInterceptor.js';
 import { WarriorRouteUwebSocketsInterceptor } from '../interceptors/uwebsockets/WarriorRouteUwebSocketsInterceptor.js';
@@ -77,25 +66,6 @@ function getMethodWarriorExpressInterceptorController(
       return WarriorsPostExpressInterceptorController;
     case HttpMethod.put:
       return WarriorsPutExpressInterceptorController;
-    case HttpMethod.options:
-      throw new Error('OPTIONS method not supported for interceptor tests');
-  }
-}
-
-function getMethodWarriorExpress4InterceptorController(
-  method: HttpMethod,
-): Newable {
-  switch (method) {
-    case HttpMethod.delete:
-      return WarriorsDeleteExpress4InterceptorController;
-    case HttpMethod.get:
-      return WarriorsGetExpress4InterceptorController;
-    case HttpMethod.patch:
-      return WarriorsPatchExpress4InterceptorController;
-    case HttpMethod.post:
-      return WarriorsPostExpress4InterceptorController;
-    case HttpMethod.put:
-      return WarriorsPutExpress4InterceptorController;
     case HttpMethod.options:
       throw new Error('OPTIONS method not supported for interceptor tests');
   }
@@ -175,10 +145,6 @@ function givenWarriorInterceptorControllerForContainer(
     case ServerKind.express:
       getMethodWarriorController = getMethodWarriorExpressInterceptorController;
       break;
-    case ServerKind.express4:
-      getMethodWarriorController =
-        getMethodWarriorExpress4InterceptorController;
-      break;
     case ServerKind.fastify:
       getMethodWarriorController = getMethodWarriorFastifyInterceptorController;
       break;
@@ -197,9 +163,6 @@ function givenWarriorInterceptorControllerForContainer(
   switch (serverKind) {
     case ServerKind.express:
       interceptor = WarriorRouteExpressInterceptor;
-      break;
-    case ServerKind.express4:
-      interceptor = WarriorRouteExpressV4Interceptor;
       break;
     case ServerKind.fastify:
       interceptor = WarriorRouteFastifyInterceptor;
@@ -230,25 +193,6 @@ function getMethodWarriorExpressGlobalInterceptorController(
       return WarriorsPostExpressGlobalInterceptorController;
     case HttpMethod.put:
       return WarriorsPutExpressGlobalInterceptorController;
-    case HttpMethod.options:
-      throw new Error('OPTIONS method not supported for interceptor tests');
-  }
-}
-
-function getMethodWarriorExpress4GlobalInterceptorController(
-  method: HttpMethod,
-): Newable {
-  switch (method) {
-    case HttpMethod.delete:
-      return WarriorsDeleteExpress4GlobalInterceptorController;
-    case HttpMethod.get:
-      return WarriorsGetExpress4GlobalInterceptorController;
-    case HttpMethod.patch:
-      return WarriorsPatchExpress4GlobalInterceptorController;
-    case HttpMethod.post:
-      return WarriorsPostExpress4GlobalInterceptorController;
-    case HttpMethod.put:
-      return WarriorsPutExpress4GlobalInterceptorController;
     case HttpMethod.options:
       throw new Error('OPTIONS method not supported for interceptor tests');
   }
@@ -329,10 +273,6 @@ function givenWarriorGlobalInterceptorControllerForContainer(
       getMethodWarriorController =
         getMethodWarriorExpressGlobalInterceptorController;
       break;
-    case ServerKind.express4:
-      getMethodWarriorController =
-        getMethodWarriorExpress4GlobalInterceptorController;
-      break;
     case ServerKind.fastify:
       getMethodWarriorController =
         getMethodWarriorFastifyGlobalInterceptorController;
@@ -353,9 +293,6 @@ function givenWarriorGlobalInterceptorControllerForContainer(
   switch (serverKind) {
     case ServerKind.express:
       interceptor = WarriorRouteExpressInterceptor;
-      break;
-    case ServerKind.express4:
-      interceptor = WarriorRouteExpressV4Interceptor;
       break;
     case ServerKind.fastify:
       interceptor = WarriorRouteFastifyInterceptor;

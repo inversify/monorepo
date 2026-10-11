@@ -3,7 +3,6 @@ sidebar_position: 4
 title: Interceptor
 ---
 import interceptorApiExpressSource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiExpressSendMetrics.ts.txt';
-import interceptorApiExpress4Source from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiExpress4SendMetrics.ts.txt';
 import interceptorApiFastifySource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiFastifySendMetrics.ts.txt';
 import interceptorApiHonoSource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiHonoSendMetrics.ts.txt';
 import interceptorApiUwebsocketsSource from '@inversifyjs/http-code-examples/generated/examples/v0/interceptorApiUwebsocketsSendMetrics.ts.txt';
@@ -43,9 +42,6 @@ interface InterceptorTransformObject {
 Each adapter exposes its own native request/response types. Below is a simple “metrics” interceptor that increments a counter for the request path, running both before and after the handler.
 
 <Tabs>
-  <TabItem value="express4" label="Express 4">
-    <CodeBlock language="ts">{interceptorApiExpress4Source}</CodeBlock>
-  </TabItem>
   <TabItem value="express5" label="Express 5">
     <CodeBlock language="ts">{interceptorApiExpressSource}</CodeBlock>
   </TabItem>

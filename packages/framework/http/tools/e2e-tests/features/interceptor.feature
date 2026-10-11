@@ -23,11 +23,6 @@ Interceptors allow intercepting the request lifecycle before and after the handl
         | "express"     | "PATCH"   |
         | "express"     | "POST"    |
         | "express"     | "PUT"     |
-        | "express4"    | "DELETE"  |
-        | "express4"    | "GET"     |
-        | "express4"    | "PATCH"   |
-        | "express4"    | "POST"    |
-        | "express4"    | "PUT"     |
         | "fastify"     | "DELETE"  |
         | "fastify"     | "GET"     |
         | "fastify"     | "PATCH"   |
@@ -59,11 +54,6 @@ Interceptors allow intercepting the request lifecycle before and after the handl
         | "express"     | "PATCH"   |
         | "express"     | "POST"    |
         | "express"     | "PUT"     |
-        | "express4"    | "DELETE"  |
-        | "express4"    | "GET"     |
-        | "express4"    | "PATCH"   |
-        | "express4"    | "POST"    |
-        | "express4"    | "PUT"     |
         | "fastify"     | "DELETE"  |
         | "fastify"     | "GET"     |
         | "fastify"     | "PATCH"   |

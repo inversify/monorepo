@@ -6,14 +6,13 @@ import Link from '@docusaurus/Link';
 
 # InversifyHttpAdapter
 
-The base class all HTTP adapters extend (Express 4/5, Fastify, Hono, etc.). It wires controllers, guards, pipes, middleware, and interceptors into a working HTTP server. You generally consume its public methods from an adapter instance; if you are building a new adapter, implement the protected abstract methods described below.
+The base class all HTTP adapters extend (Express, Fastify, Hono, etc.). It wires controllers, guards, pipes, middleware, and interceptors into a working HTTP server. You generally consume its public methods from an adapter instance; if you are building a new adapter, implement the protected abstract methods described below.
 
 ## Adapter-Specific Documentation
 
 For concrete adapter implementations with constructor signatures, options, and usage examples:
 
-- <Link to="./inversify-express4-http-adapter">Express 4 Adapter</Link>
-- <Link to="./inversify-express-http-adapter">Express 5 Adapter</Link>
+- <Link to="./inversify-express-http-adapter">Express Adapter</Link>
 - <Link to="./inversify-fastify-http-adapter">Fastify Adapter</Link>
 - <Link to="./inversify-hono-http-adapter">Hono Adapter</Link>
 - <Link to="./inversify-uwebsockets-http-adapter">uWebSockets Adapter</Link>

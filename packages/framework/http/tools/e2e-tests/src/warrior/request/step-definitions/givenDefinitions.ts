@@ -7,32 +7,26 @@ import { getContainerOrFail } from '../../../container/calculations/getContainer
 import { HttpMethod } from '../../../http/models/HttpMethod.js';
 import { ServerKind } from '../../../server/models/ServerKind.js';
 import { WarriorsDeleteRequestExpressController } from '../controllers/WarriorsDeleteRequestExpressController.js';
-import { WarriorsDeleteRequestExpressV4Controller } from '../controllers/WarriorsDeleteRequestExpressV4Controller.js';
 import { WarriorsDeleteRequestFastifyController } from '../controllers/WarriorsDeleteRequestFastifyController.js';
 import { WarriorsDeleteRequestHonoController } from '../controllers/WarriorsDeleteRequestHonoController.js';
 import { WarriorsDeleteRequestUwebSocketsController } from '../controllers/WarriorsDeleteRequestUwebSocketsController.js';
 import { WarriorsGetRequestExpressController } from '../controllers/WarriorsGetRequestExpressController.js';
-import { WarriorsGetRequestExpressV4Controller } from '../controllers/WarriorsGetRequestExpressV4Controller.js';
 import { WarriorsGetRequestFastifyController } from '../controllers/WarriorsGetRequestFastifyController.js';
 import { WarriorsGetRequestHonoController } from '../controllers/WarriorsGetRequestHonoController.js';
 import { WarriorsGetRequestUwebSocketsController } from '../controllers/WarriorsGetRequestUwebSocketsController.js';
 import { WarriorsOptionsRequestExpressController } from '../controllers/WarriorsOptionsRequestExpressController.js';
-import { WarriorsOptionsRequestExpressV4Controller } from '../controllers/WarriorsOptionsRequestExpressV4Controller.js';
 import { WarriorsOptionsRequestFastifyController } from '../controllers/WarriorsOptionsRequestFastifyController.js';
 import { WarriorsOptionsRequestHonoController } from '../controllers/WarriorsOptionsRequestHonoController.js';
 import { WarriorsOptionsRequestUwebSocketsController } from '../controllers/WarriorsOptionsRequestUwebSocketsController.js';
 import { WarriorsPatchRequestExpressController } from '../controllers/WarriorsPatchRequestExpressController.js';
-import { WarriorsPatchRequestExpressV4Controller } from '../controllers/WarriorsPatchRequestExpressV4Controller.js';
 import { WarriorsPatchRequestFastifyController } from '../controllers/WarriorsPatchRequestFastifyController.js';
 import { WarriorsPatchRequestHonoController } from '../controllers/WarriorsPatchRequestHonoController.js';
 import { WarriorsPatchRequestUwebSocketsController } from '../controllers/WarriorsPatchRequestUwebSocketsController.js';
 import { WarriorsPostRequestExpressController } from '../controllers/WarriorsPostRequestExpressController.js';
-import { WarriorsPostRequestExpressV4Controller } from '../controllers/WarriorsPostRequestExpressV4Controller.js';
 import { WarriorsPostRequestFastifyController } from '../controllers/WarriorsPostRequestFastifyController.js';
 import { WarriorsPostRequestHonoController } from '../controllers/WarriorsPostRequestHonoController.js';
 import { WarriorsPostRequestUwebSocketsController } from '../controllers/WarriorsPostRequestUwebSocketsController.js';
 import { WarriorsPutRequestExpressController } from '../controllers/WarriorsPutRequestExpressController.js';
-import { WarriorsPutRequestExpressV4Controller } from '../controllers/WarriorsPutRequestExpressV4Controller.js';
 import { WarriorsPutRequestFastifyController } from '../controllers/WarriorsPutRequestFastifyController.js';
 import { WarriorsPutRequestHonoController } from '../controllers/WarriorsPutRequestHonoController.js';
 import { WarriorsPutRequestUwebSocketsController } from '../controllers/WarriorsPutRequestUwebSocketsController.js';
@@ -51,25 +45,6 @@ function getMethodWarriorRequestExpressController(method: HttpMethod): Newable {
       return WarriorsPostRequestExpressController;
     case HttpMethod.put:
       return WarriorsPutRequestExpressController;
-  }
-}
-
-function getMethodWarriorRequestExpressV4Controller(
-  method: HttpMethod,
-): Newable {
-  switch (method) {
-    case HttpMethod.delete:
-      return WarriorsDeleteRequestExpressV4Controller;
-    case HttpMethod.get:
-      return WarriorsGetRequestExpressV4Controller;
-    case HttpMethod.options:
-      return WarriorsOptionsRequestExpressV4Controller;
-    case HttpMethod.patch:
-      return WarriorsPatchRequestExpressV4Controller;
-    case HttpMethod.post:
-      return WarriorsPostRequestExpressV4Controller;
-    case HttpMethod.put:
-      return WarriorsPutRequestExpressV4Controller;
   }
 }
 
@@ -143,10 +118,6 @@ function givenWarriorRequestControllerForContainer(
     case ServerKind.express:
       getMethodWarriorRequestController =
         getMethodWarriorRequestExpressController;
-      break;
-    case ServerKind.express4:
-      getMethodWarriorRequestController =
-        getMethodWarriorRequestExpressV4Controller;
       break;
     case ServerKind.fastify:
       getMethodWarriorRequestController =
