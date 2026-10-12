@@ -1,5 +1,16 @@
 # @inversifyjs/http-better-auth
 
+## 6.0.0
+
+### Major Changes
+
+- Removed `BetterAuthExpress4ContainerModule` (Express 4 support)
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.7.0
+
 ## 5.6.3
 
 ### Patch Changes
