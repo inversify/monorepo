@@ -21,12 +21,12 @@
     "url": "https://github.com/inversify/monorepo/issues"
   },
   "dependencies": {
-    "tinybench": "6.2.0"
+    "tinybench": "6.2.1"
   },
   "devDependencies": {
     "@types/node": "24.19.1",
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "eslint": "10.11.0",
+    "eslint": "10.12.0",
     "prettier": "3.9.9",
     "rimraf": "6.1.3",
     "typescript": "6.0.3"
