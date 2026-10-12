@@ -1,0 +1,47 @@
+---
+sidebar_position: 2
+title: Telemetry
+---
+
+# Telemetry
+
+Each HTTP request is one trace. The server span is the root, unless the request carries W3C trace context. Pipeline spans are its children, following `parentExecutionId`. A stage span starts at the started event's `timestamp` and ends at the executed event's `timestamp`. The error span starts at `startedAt` and ends at `timestamp`.
+
+## Spans
+
+**`HTTP {method}`** is the server span. It starts with `http.request.started` and ends with `http.response.sent`. Span kind is server. Express 5, Fastify, Hono, and uWebSockets emit it.
+
+Attributes follow the OpenTelemetry HTTP semantic conventions:
+
+- `http.request.method`
+- `url.path` and `url.query`
+- `http.response.status_code`
+- redacted request headers and redacted response headers
+- `error.type` set to `abort` when the response was aborted
+
+Request and response headers are copied to `http.request.header.*` and `http.response.header.*`. `authorization`, `cookie`, `proxy-authorization`, `set-cookie`, `x-api-key`, and `x-auth-token` are replaced with `[redacted]`. The sink also extracts W3C trace context from the request headers, so the server span continues an incoming trace.
+
+The span status is error when the status code is 500 or above, or the response was aborted.
+
+**`{middleware name}`** is an Express 5 native middleware span. A middleware that calls `next()` stays open until the response finishes, so the controller is its child. Fastify hooks, Hono `app.use` functions, and uWebSockets handlers do not emit this span.
+
+**`{MiddlewareClass}`** is an Inversify middleware span. `inversify.http.middleware.phase` is `preHandler` or `postHandler`. The span covers `execute()`.
+
+**`{GuardClass}`** is a guard span. `inversify.http.guard.allowed` is the decision. The span closes before `next()`, so the controller is not inside it. A denial is a successful span. A thrown `activate()` is an error span.
+
+**`{InterceptorClass}`** is an interceptor span. `intercept()` includes the downstream call, so the controller and pipes are children when the interceptor awaits `next()`.
+
+**`{PipeClass}`** is a pipe span. Attributes are `inversify.http.pipe.method` and `inversify.http.pipe.parameter_index`. Pipes on different parameters are siblings. An empty pipe name is `(anonymous)`.
+
+**`{Controller}.{method}`** is the controller span. Attributes are `inversify.http.controller` and `inversify.http.controller.method`. Its parent is the span that is still open: an interceptor, an Express native middleware, or the server span.
+
+**`{ErrorFilter}`** is the error-handling span. `http.error` is a single event, and the span is opened and closed from it. The name is the filter class, or `http.error` when no filter matched. The exception is recorded on this span and on the stage span whose executed event carries `error`.
+
+A child span's status is error only when its executed event carries `error`.
+
+## Metrics
+
+- `http.server.request.duration`, a histogram in seconds, with method, status code, and `error.type` when the response was aborted
+- `http.server.active_requests`, an up-down counter, incremented when the request starts and decremented when the response is sent
+
+uWebSockets records `http.response.sent` when a response stream ends, fails, or the client aborts. Hono records status 500 when the middleware chain rejects.

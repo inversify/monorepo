@@ -56,6 +56,9 @@ coverage:
       '@inversifyjs/http-open-api':
         flags:
           - '@inversifyjs/http-open-api'
+      '@inversifyjs/http-opentelemetry':
+        flags:
+          - '@inversifyjs/http-opentelemetry'
       '@inversifyjs/http-sse':
         flags:
           - '@inversifyjs/http-sse'
@@ -162,6 +165,9 @@ flags:
   '@inversifyjs/http-open-api':
     paths:
       - packages/framework/http/libraries/open-api
+  '@inversifyjs/http-opentelemetry':
+    paths:
+      - packages/framework/http/libraries/opentelemetry
   '@inversifyjs/http-sse':
     paths:
       - packages/framework/http/libraries/sse

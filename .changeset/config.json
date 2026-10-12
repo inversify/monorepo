@@ -30,6 +30,7 @@
       "@inversifyjs/http-hono",
       "@inversifyjs/http-instrumentation-core",
       "@inversifyjs/http-open-api",
+      "@inversifyjs/http-opentelemetry",
       "@inversifyjs/http-uwebsockets",
       "@inversifyjs/http-validation"
     ],
@@ -41,6 +42,7 @@
     "@inversifyjs/http-benchmarks",
     "@inversifyjs/http-code-examples",
     "@inversifyjs/http-open-api-code-examples",
+    "@inversifyjs/http-opentelemetry-code-examples",
     "@inversifyjs/grpc-e2e-tests",
     "@inversifyjs/http-e2e-tests",
     "@inversifyjs/http-openapi-example",

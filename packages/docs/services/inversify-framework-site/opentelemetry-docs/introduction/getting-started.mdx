@@ -1,0 +1,49 @@
+---
+sidebar_position: 1
+title: Getting started
+---
+
+import registerOpenTelemetrySinkSource from '@inversifyjs/http-opentelemetry-code-examples/generated/examples/v1/registerOpenTelemetrySink.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting started
+
+`@inversifyjs/http-opentelemetry` turns HTTP instrumentation events into OpenTelemetry spans and metrics. Register an OpenTelemetry SDK, then pass `createHttpOpenTelemetrySink()` to an HTTP adapter. The sink reads the global tracer and meter when it is created, so register the SDK first.
+
+## Install dependencies
+
+The example below uses Hono. Install the sink, the HTTP packages, and `@opentelemetry/api`:
+
+<Tabs>
+  <TabItem value="npm" label="npm">
+
+```bash
+npm install @inversifyjs/http-opentelemetry @opentelemetry/api inversify @inversifyjs/http-core @inversifyjs/http-hono hono
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm install @inversifyjs/http-opentelemetry @opentelemetry/api inversify @inversifyjs/http-core @inversifyjs/http-hono hono
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```bash
+yarn add @inversifyjs/http-opentelemetry @opentelemetry/api inversify @inversifyjs/http-core @inversifyjs/http-hono hono
+```
+
+  </TabItem>
+</Tabs>
+
+The application also needs an OpenTelemetry SDK that registers a global tracer and meter. `createHttpOpenTelemetrySink()` can take `{ meter, meterName, tracer, tracerName }` when the application does not use the globals. Express, Fastify, and uWebSockets use the same `instrumentation` option on their adapters.
+
+## Register the sink
+
+<CodeBlock language="typescript">{registerOpenTelemetrySinkSource}</CodeBlock>
+
+See [Telemetry](./telemetry.mdx) for the spans and metrics this sink records.

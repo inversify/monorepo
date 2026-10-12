@@ -15,6 +15,7 @@
     "@inversifyjs/graphql-code-examples": "workspace:*",
     "@inversifyjs/grpc-code-examples": "workspace:*",
     "@inversifyjs/http-open-api-code-examples": "workspace:*",
+    "@inversifyjs/http-opentelemetry-code-examples": "workspace:*",
     "@inversifyjs/logger-code-examples": "workspace:*",
     "@inversifyjs/validation-code-examples": "workspace:*",
     "@mdx-js/react": "3.1.1",
@@ -67,7 +68,7 @@
     "start": "docusaurus start",
     "build": "pnpm run typecheck && docusaurus build",
     "format": "prettier --write ./src ./*.ts",
-    "lint": "eslint ./src ./docusaurus.config.ts ./sidebars.ts ./sidebarsDb.ts ./sidebarsGrpc.ts",
+    "lint": "eslint ./src ./docusaurus.config.ts ./sidebars.ts ./sidebarsDb.ts ./sidebarsGrpc.ts ./sidebarsOpenTelemetry.ts",
     "serve": "docusaurus serve",
     "typecheck": "tsc"
   }

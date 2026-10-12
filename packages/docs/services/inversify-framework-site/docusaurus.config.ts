@@ -96,6 +96,15 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'opentelemetry',
+        path: 'opentelemetry-docs',
+        routeBasePath: 'opentelemetry',
+        sidebarPath: './sidebarsOpenTelemetry.ts',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         id: 'validation',
         path: 'validation-docs',
         routeBasePath: 'validation',
@@ -189,6 +198,10 @@ const config: Config = {
               to: '/openapi/introduction/getting-started',
             },
             {
+              label: 'OpenTelemetry Docs',
+              to: '/opentelemetry/introduction/getting-started',
+            },
+            {
               label: 'Validation Docs',
               to: '/validation/introduction/getting-started',
             },
@@ -235,6 +248,10 @@ const config: Config = {
               to: '/openapi/introduction/getting-started',
             },
             {
+              label: 'OpenTelemetry Docs',
+              to: '/opentelemetry/introduction/getting-started',
+            },
+            {
               label: 'Validation Docs',
               to: '/validation/introduction/getting-started',
             },
@@ -244,36 +261,46 @@ const config: Config = {
         },
         { label: 'Blog', position: 'left', to: '/blog' },
         {
-          className: 'navbar-version-dropdown-main',
+          docsPluginId: 'default',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-config',
           docsPluginId: 'config',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-db',
           docsPluginId: 'db',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-logger',
+          docsPluginId: 'graphql',
+          position: 'right',
+          type: 'docsVersionDropdown',
+        },
+        {
+          docsPluginId: 'grpc',
+          position: 'right',
+          type: 'docsVersionDropdown',
+        },
+        {
           docsPluginId: 'logger',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-openapi',
           docsPluginId: 'openapi',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-validation',
+          docsPluginId: 'opentelemetry',
+          position: 'right',
+          type: 'docsVersionDropdown',
+        },
+        {
           docsPluginId: 'validation',
           position: 'right',
           type: 'docsVersionDropdown',
