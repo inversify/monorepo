@@ -261,42 +261,46 @@ const config: Config = {
         },
         { label: 'Blog', position: 'left', to: '/blog' },
         {
-          className: 'navbar-version-dropdown-main',
+          docsPluginId: 'default',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-config',
           docsPluginId: 'config',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-db',
           docsPluginId: 'db',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-logger',
+          docsPluginId: 'graphql',
+          position: 'right',
+          type: 'docsVersionDropdown',
+        },
+        {
+          docsPluginId: 'grpc',
+          position: 'right',
+          type: 'docsVersionDropdown',
+        },
+        {
           docsPluginId: 'logger',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-openapi',
           docsPluginId: 'openapi',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-opentelemetry',
           docsPluginId: 'opentelemetry',
           position: 'right',
           type: 'docsVersionDropdown',
         },
         {
-          className: 'navbar-version-dropdown-validation',
           docsPluginId: 'validation',
           position: 'right',
           type: 'docsVersionDropdown',
