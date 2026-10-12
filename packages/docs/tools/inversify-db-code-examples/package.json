@@ -13,7 +13,7 @@
     "@prisma/client": "7.10.0",
     "@types/node": "24.19.1",
     "@vitest/coverage-v8": "5.0.3",
-    "eslint": "10.11.0",
+    "eslint": "10.12.0",
     "glob": "13.0.6",
     "inversify": "8.2.3",
     "prettier": "3.9.9",
