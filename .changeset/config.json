@@ -42,6 +42,7 @@
     "@inversifyjs/http-benchmarks",
     "@inversifyjs/http-code-examples",
     "@inversifyjs/http-open-api-code-examples",
+    "@inversifyjs/http-opentelemetry-code-examples",
     "@inversifyjs/grpc-e2e-tests",
     "@inversifyjs/http-e2e-tests",
     "@inversifyjs/http-openapi-example",

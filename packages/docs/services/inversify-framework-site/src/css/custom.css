@@ -77,11 +77,15 @@
 .navbar__item.navbar__link.navbar-version-dropdown-logger:not(#\#):not(#\#),
 .navbar__item.navbar__link.navbar-version-dropdown-main:not(#\#):not(#\#),
 .navbar__item.navbar__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
+.navbar__item.navbar__link.navbar-version-dropdown-opentelemetry:not(#\#):not(
+    #\#
+  ),
 .navbar__item.navbar__link.navbar-version-dropdown-validation:not(#\#):not(#\#),
 .menu__link.navbar-version-dropdown-config:not(#\#):not(#\#),
 .menu__link.navbar-version-dropdown-logger:not(#\#):not(#\#),
 .menu__link.navbar-version-dropdown-main:not(#\#):not(#\#),
 .menu__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
+.menu__link.navbar-version-dropdown-opentelemetry:not(#\#):not(#\#),
 .menu__link.navbar-version-dropdown-validation:not(#\#):not(#\#) {
   display: none;
 }
@@ -127,6 +131,21 @@
   .menu__link.navbar-version-dropdown-openapi:not(#\#):not(#\#),
 [data-path*='/openapi']
   .menu__link.navbar-version-dropdown-openapi:not(#\#):not(#\#) {
+  display: inline-block;
+}
+
+[data-path*='/opentelemetry/']
+  .navbar__item.navbar__link.navbar-version-dropdown-opentelemetry:not(#\#):not(
+    #\#
+  ),
+[data-path*='/opentelemetry']
+  .navbar__item.navbar__link.navbar-version-dropdown-opentelemetry:not(#\#):not(
+    #\#
+  ),
+[data-path*='/opentelemetry/']
+  .menu__link.navbar-version-dropdown-opentelemetry:not(#\#):not(#\#),
+[data-path*='/opentelemetry']
+  .menu__link.navbar-version-dropdown-opentelemetry:not(#\#):not(#\#) {
   display: inline-block;
 }
 

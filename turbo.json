@@ -46,6 +46,11 @@
       "inputs": ["src/**/*.{cts,mts,ts}"],
       "outputs": ["generated/**", "lib/**"]
     },
+    "@inversifyjs/http-opentelemetry-code-examples#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**/*.{cts,mts,ts}"],
+      "outputs": ["generated/**", "lib/**"]
+    },
     "@inversifyjs/config-code-examples#build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{cts,mts,ts}"],

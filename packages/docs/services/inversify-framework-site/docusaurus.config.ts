@@ -96,6 +96,15 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'opentelemetry',
+        path: 'opentelemetry-docs',
+        routeBasePath: 'opentelemetry',
+        sidebarPath: './sidebarsOpenTelemetry.ts',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         id: 'validation',
         path: 'validation-docs',
         routeBasePath: 'validation',
@@ -189,6 +198,10 @@ const config: Config = {
               to: '/openapi/introduction/getting-started',
             },
             {
+              label: 'OpenTelemetry Docs',
+              to: '/opentelemetry/introduction/getting-started',
+            },
+            {
               label: 'Validation Docs',
               to: '/validation/introduction/getting-started',
             },
@@ -235,6 +248,10 @@ const config: Config = {
               to: '/openapi/introduction/getting-started',
             },
             {
+              label: 'OpenTelemetry Docs',
+              to: '/opentelemetry/introduction/getting-started',
+            },
+            {
               label: 'Validation Docs',
               to: '/validation/introduction/getting-started',
             },
@@ -269,6 +286,12 @@ const config: Config = {
         {
           className: 'navbar-version-dropdown-openapi',
           docsPluginId: 'openapi',
+          position: 'right',
+          type: 'docsVersionDropdown',
+        },
+        {
+          className: 'navbar-version-dropdown-opentelemetry',
+          docsPluginId: 'opentelemetry',
           position: 'right',
           type: 'docsVersionDropdown',
         },
