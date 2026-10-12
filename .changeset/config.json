@@ -30,6 +30,7 @@
       "@inversifyjs/http-hono",
       "@inversifyjs/http-instrumentation-core",
       "@inversifyjs/http-open-api",
+      "@inversifyjs/http-opentelemetry",
       "@inversifyjs/http-uwebsockets",
       "@inversifyjs/http-validation"
     ],
