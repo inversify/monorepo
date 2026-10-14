@@ -1,0 +1,55 @@
+---
+slug: opentelemetry-see-inside-the-request
+title: "OpenTelemetry — See Inside the Request"
+authors: [notaphplover]
+tags: [features]
+---
+import registerOpenTelemetrySinkSource from '@inversifyjs/http-opentelemetry-code-examples/generated/examples/v1/registerOpenTelemetrySink.ts.txt';
+import CodeBlock from '@theme/CodeBlock';
+
+You wrote a guard, two interceptors, a pipe, and a controller method. A request comes in slow, and from the outside it's one black box: `HTTP GET /items`, 800ms, done. Which part was slow? You don't know, so you start adding `console.time()` calls and hoping you remember to remove them.
+
+{/* truncate */}
+
+## One sink, every stage
+
+[`@inversifyjs/http-opentelemetry`](https://www.npmjs.com/package/@inversifyjs/http-opentelemetry) turns the instrumentation events your HTTP adapter already emits into [OpenTelemetry](https://opentelemetry.io/) spans and metrics. No manual `tracer.startSpan()` calls scattered across your middleware, guards, interceptors, and pipes. Register an OpenTelemetry SDK, pass `createHttpOpenTelemetrySink()` to the adapter, and every stage of the pipeline shows up on its own.
+
+<CodeBlock language="typescript">{registerOpenTelemetrySinkSource}</CodeBlock>
+
+The sink reads the global tracer and meter when it's created, so the SDK has to be registered first. Already have your own tracer and meter instead of the globals? Pass `{ meter, meterName, tracer, tracerName }` to `createHttpOpenTelemetrySink()`. Express 5, Fastify, Hono, and uWebSockets all take the same `instrumentation` option on their adapters, so the sink moves between them without changes.
+
+## A trace that matches your pipeline, not just your route
+
+Each request becomes one trace, with a span per stage:
+
+- `HTTP {method}` — the server span, with method, path, status code, and redacted headers following the OpenTelemetry HTTP semantic conventions.
+- `{middleware name}` and `{MiddlewareClass}` — native and Inversify middleware.
+- `{GuardClass}` — whether the guard allowed the request through.
+- `{InterceptorClass}` — wraps whatever runs downstream, including the controller.
+- `{PipeClass}` — one span per decorated parameter.
+- `{Controller}.{method}` — the handler itself.
+- `{ErrorFilter}` — where a thrown exception got turned into a response.
+
+Nest a slow database call inside a controller method, and it shows up as a child of `{Controller}.{method}`, next to the guard and interceptor spans that ran around it — the same request, laid out as the pipeline that actually processed it. The full attribute list, parent/child rules, and span statuses are in the [Telemetry](/opentelemetry/introduction/telemetry) reference.
+
+## Two metrics, no dashboards to build first
+
+Alongside the trace, the sink records:
+
+- `http.server.request.duration` — a histogram, in seconds, tagged with method, status code, and `error.type` for aborted responses.
+- `http.server.active_requests` — an up-down counter, incremented when a request starts and decremented once the response is sent.
+
+Both follow the OpenTelemetry semantic conventions, so they plug straight into whatever dashboard already understands them.
+
+## Switch it on
+
+```bash
+npm install @inversifyjs/http-opentelemetry @opentelemetry/api
+```
+
+The [getting started guide](/opentelemetry/introduction/getting-started) walks through wiring an OpenTelemetry SDK and the sink into Express, Fastify, Hono, or uWebSockets.
+
+---
+
+Found a span that doesn't quite tell the right story? Open an issue on [GitHub](https://github.com/inversify/monorepo) or bring it to [Discord](https://discord.gg/jXcMagAPnm).
