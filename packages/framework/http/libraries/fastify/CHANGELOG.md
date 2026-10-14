@@ -1,5 +1,13 @@
 # @inversifyjs/http-fastify
 
+## 5.8.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.8.0
+  - @inversifyjs/http-instrumentation-core@5.8.0
+
 ## 5.7.0
 
 ### Minor Changes

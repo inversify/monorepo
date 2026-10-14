@@ -1,5 +1,9 @@
 # @inversifyjs/validation-common
 
+## 3.6.7
+
+No changes in this release.
+
 ## 3.6.6
 
 No changes in this release.
