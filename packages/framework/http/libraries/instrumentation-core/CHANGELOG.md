@@ -1,5 +1,11 @@
 # @inversifyjs/http-instrumentation-core
 
+## 5.9.0
+
+### Minor Changes
+
+- Exposed extra instrumentation types.
+
 ## 5.8.0
 
 No changes in this release.

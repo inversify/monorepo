@@ -1,5 +1,13 @@
 # @inversifyjs/http-hono
 
+## 5.9.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-instrumentation-core@5.9.0
+  - @inversifyjs/http-core@5.9.0
+
 ## 5.8.0
 
 ### Patch Changes

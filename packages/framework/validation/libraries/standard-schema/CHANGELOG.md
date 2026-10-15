@@ -1,5 +1,12 @@
 # @inversifyjs/standard-schema-validation
 
+## 3.6.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/validation-common@3.6.8
+
 ## 3.6.7
 
 ### Patch Changes
