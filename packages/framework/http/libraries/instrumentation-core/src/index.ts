@@ -20,7 +20,25 @@ export {
 } from './calculations/startHttpStage.js';
 export { type EventSink } from './models/EventSink.js';
 export { type HttpInstrumentationContext } from './models/HttpInstrumentationContext.js';
-export { type HttpInstrumentationEvent } from './models/HttpInstrumentationEvent.js';
+export {
+  type BaseEvent,
+  type HttpControllerExecutedEvent,
+  type HttpControllerStartedEvent,
+  type HttpErrorEvent,
+  type HttpGuardExecutedEvent,
+  type HttpGuardStartedEvent,
+  type HttpInstrumentationEvent,
+  type HttpInterceptorExecutedEvent,
+  type HttpInterceptorStartedEvent,
+  type HttpMiddlewareExecutedEvent,
+  type HttpMiddlewareStartedEvent,
+  type HttpNativeMiddlewareExecutedEvent,
+  type HttpNativeMiddlewareStartedEvent,
+  type HttpPipeExecutedEvent,
+  type HttpPipeStartedEvent,
+  type HttpRequestStartedEvent,
+  type HttpResponseSentEvent,
+} from './models/HttpInstrumentationEvent.js';
 export { type HttpInstrumentationScope } from './models/HttpInstrumentationScope.js';
 export { httpInstrumentedHandlerSymbol } from './models/httpInstrumentedHandlerSymbol.js';
 export { type HttpStageClock } from './models/HttpStageClock.js';
