@@ -1,5 +1,13 @@
 # @inversifyjs/http-opentelemetry
 
+## 5.9.0
+
+### Patch Changes
+
+- Added missing compiled files.
+- Updated dependencies
+  - @inversifyjs/http-instrumentation-core@5.9.0
+
 ## 5.8.0
 
 ### Minor Changes
