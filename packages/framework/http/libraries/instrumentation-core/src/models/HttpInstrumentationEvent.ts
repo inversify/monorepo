@@ -1,172 +1,107 @@
 import { type MiddlewarePhase } from '@inversifyjs/framework-core';
 
-interface HttpControllerExecutedEvent {
+export interface BaseEvent<TType extends string> {
+  readonly executionId: string;
+  readonly parentExecutionId?: string;
+  readonly requestId: string;
+  readonly timestamp: number;
+  readonly type: TType;
+}
+
+export interface HttpControllerExecutedEvent extends BaseEvent<'http.controller.executed'> {
   readonly controller: string;
   readonly duration: number;
   readonly error?: unknown;
-  readonly executionId: string;
   readonly method: string;
-  readonly parentExecutionId?: string;
-  readonly requestId: string;
   readonly startedAt: number;
-  readonly timestamp: number;
-  readonly type: 'http.controller.executed';
 }
 
-interface HttpControllerStartedEvent {
+export interface HttpControllerStartedEvent extends BaseEvent<'http.controller.started'> {
   readonly controller: string;
-  readonly executionId: string;
   readonly method: string;
-  readonly parentExecutionId?: string;
-  readonly requestId: string;
-  readonly timestamp: number;
-  readonly type: 'http.controller.started';
 }
 
-interface HttpErrorEvent {
+export interface HttpErrorEvent extends BaseEvent<'http.error'> {
   readonly duration: number;
   readonly error: unknown;
-  readonly executionId: string;
   readonly filter?: string;
-  readonly parentExecutionId?: string;
-  readonly requestId: string;
   readonly startedAt: number;
-  readonly timestamp: number;
-  readonly type: 'http.error';
 }
 
-interface HttpGuardExecutedEvent {
+export interface HttpGuardExecutedEvent extends BaseEvent<'http.guard.executed'> {
   readonly allowed?: boolean;
   readonly duration: number;
   readonly error?: unknown;
-  readonly executionId: string;
   readonly guard: string;
-  readonly parentExecutionId?: string;
-  readonly requestId: string;
   readonly startedAt: number;
-  readonly timestamp: number;
-  readonly type: 'http.guard.executed';
 }
 
-interface HttpGuardStartedEvent {
-  readonly executionId: string;
+export interface HttpGuardStartedEvent extends BaseEvent<'http.guard.started'> {
   readonly guard: string;
-  readonly parentExecutionId?: string;
-  readonly requestId: string;
-  readonly timestamp: number;
-  readonly type: 'http.guard.started';
 }
 
-interface HttpInterceptorExecutedEvent {
+export interface HttpInterceptorExecutedEvent extends BaseEvent<'http.interceptor.executed'> {
   readonly duration: number;
   readonly error?: unknown;
-  readonly executionId: string;
   readonly interceptor: string;
-  readonly parentExecutionId?: string;
-  readonly requestId: string;
   readonly startedAt: number;
-  readonly timestamp: number;
-  readonly type: 'http.interceptor.executed';
 }
 
-interface HttpInterceptorStartedEvent {
-  readonly executionId: string;
+export interface HttpInterceptorStartedEvent extends BaseEvent<'http.interceptor.started'> {
   readonly interceptor: string;
-  readonly parentExecutionId?: string;
-  readonly requestId: string;
-  readonly timestamp: number;
-  readonly type: 'http.interceptor.started';
 }
 
-interface HttpMiddlewareExecutedEvent {
+export interface HttpMiddlewareExecutedEvent extends BaseEvent<'http.middleware.executed'> {
   readonly duration: number;
   readonly error?: unknown;
-  readonly executionId: string;
   readonly middleware: string;
-  readonly parentExecutionId?: string;
   readonly phase: MiddlewarePhase;
-  readonly requestId: string;
   readonly startedAt: number;
-  readonly timestamp: number;
-  readonly type: 'http.middleware.executed';
 }
 
-interface HttpMiddlewareStartedEvent {
-  readonly executionId: string;
+export interface HttpMiddlewareStartedEvent extends BaseEvent<'http.middleware.started'> {
   readonly middleware: string;
-  readonly parentExecutionId?: string;
   readonly phase: MiddlewarePhase;
-  readonly requestId: string;
-  readonly timestamp: number;
-  readonly type: 'http.middleware.started';
 }
 
-interface HttpNativeMiddlewareExecutedEvent {
+export interface HttpNativeMiddlewareExecutedEvent extends BaseEvent<'http.nativeMiddleware.executed'> {
   readonly duration: number;
   readonly error?: unknown;
-  readonly executionId: string;
   readonly name: string;
-  readonly parentExecutionId?: string;
-  readonly requestId: string;
   readonly startedAt: number;
-  readonly timestamp: number;
-  readonly type: 'http.nativeMiddleware.executed';
 }
 
-interface HttpNativeMiddlewareStartedEvent {
-  readonly executionId: string;
+export interface HttpNativeMiddlewareStartedEvent extends BaseEvent<'http.nativeMiddleware.started'> {
   readonly name: string;
-  readonly parentExecutionId?: string;
-  readonly requestId: string;
-  readonly timestamp: number;
-  readonly type: 'http.nativeMiddleware.started';
 }
 
-interface HttpPipeExecutedEvent {
+export interface HttpPipeExecutedEvent extends BaseEvent<'http.pipe.executed'> {
   readonly duration: number;
   readonly error?: unknown;
-  readonly executionId: string;
   readonly method: string;
   readonly parameterIndex: number;
-  readonly parentExecutionId?: string;
   readonly pipe: string;
-  readonly requestId: string;
   readonly startedAt: number;
-  readonly timestamp: number;
-  readonly type: 'http.pipe.executed';
 }
 
-interface HttpPipeStartedEvent {
-  readonly executionId: string;
+export interface HttpPipeStartedEvent extends BaseEvent<'http.pipe.started'> {
   readonly method: string;
   readonly parameterIndex: number;
-  readonly parentExecutionId?: string;
   readonly pipe: string;
-  readonly requestId: string;
-  readonly timestamp: number;
-  readonly type: 'http.pipe.started';
 }
 
-interface HttpRequestStartedEvent {
-  readonly executionId: string;
+export interface HttpRequestStartedEvent extends BaseEvent<'http.request.started'> {
   readonly headers: Readonly<Record<string, string | readonly string[]>>;
   readonly method: string;
-  readonly requestId: string;
-  readonly timestamp: number;
-  readonly type: 'http.request.started';
   readonly url: string;
 }
 
-interface HttpResponseSentEvent {
+export interface HttpResponseSentEvent extends BaseEvent<'http.response.sent'> {
   readonly aborted: boolean;
   readonly duration: number;
-  readonly executionId: string;
   readonly headers: Readonly<Record<string, string | readonly string[]>>;
-  readonly requestId: string;
   readonly startedAt: number;
   readonly statusCode: number;
-  readonly timestamp: number;
-  readonly type: 'http.response.sent';
 }
 
 export type HttpInstrumentationEvent =
