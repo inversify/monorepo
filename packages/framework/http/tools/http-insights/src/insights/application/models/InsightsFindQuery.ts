@@ -1,4 +1,4 @@
-export type InsightsFindQuerySort = 'startedAtAsc' | 'startedAtDesc';
+type InsightsFindQuerySort = 'startedAtAsc' | 'startedAtDesc';
 
 export interface InsightsFindQuery {
   readonly limit: number | undefined;
