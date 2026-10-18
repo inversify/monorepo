@@ -61,24 +61,39 @@ export class PrismaInsightsPersistenceAdapter implements InsightsPersistenceOutp
 
   #buildExecutionOrderBy(
     query: InsightsFindQuery,
-  ): Prisma.ExecutionOrderByWithRelationInput {
+  ): Prisma.ExecutionOrderByWithRelationInput[] {
     switch (query.sort) {
       case 'startedAtAsc':
-        return {
-          request: {
-            started_at: 'asc',
+        return [
+          {
+            request: {
+              started_at: 'asc',
+            },
           },
-        };
+          {
+            id: 'asc',
+          },
+        ];
       case 'startedAtDesc':
-        return {
-          request: {
-            started_at: 'desc',
+        return [
+          {
+            request: {
+              started_at: 'desc',
+            },
           },
-        };
+          {
+            id: 'desc',
+          },
+        ];
       case undefined:
-        return {
-          created_at: 'desc',
-        };
+        return [
+          {
+            created_at: 'desc',
+          },
+          {
+            id: 'desc',
+          },
+        ];
     }
   }
 

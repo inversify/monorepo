@@ -61,7 +61,7 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "build": "prisma generate && pnpm run db:generate:migrate && tsc",
+    "build": "pnpm run db:generate && pnpm run db:generate:migrate && tsc",
     "build:clean": "rimraf lib src/generated",
     "db:generate": "prisma generate",
     "db:generate:migrate": "tsx src/scripts/generatePrismaMigrate.ts",

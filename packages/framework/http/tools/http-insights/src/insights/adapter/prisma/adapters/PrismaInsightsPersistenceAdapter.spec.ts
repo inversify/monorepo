@@ -99,7 +99,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         it('should call prismaClient.execution.findMany()', () => {
           expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
             include: executionInclude,
-            orderBy: { created_at: 'desc' },
+            orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: baseWhereFixture,
           });
         });
@@ -158,7 +158,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         it('should call prismaClient.execution.findMany()', () => {
           expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
             include: executionInclude,
-            orderBy: { created_at: 'desc' },
+            orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             skip: 20,
             take: 10,
             where: baseWhereFixture,
@@ -200,7 +200,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         it('should call prismaClient.execution.findMany()', () => {
           expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
             include: executionInclude,
-            orderBy: { created_at: 'desc' },
+            orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             skip: 0,
             take: 0,
             where: baseWhereFixture,
@@ -247,7 +247,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         it('should call prismaClient.execution.findMany()', () => {
           expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
             include: executionInclude,
-            orderBy: { created_at: 'desc' },
+            orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: expectedWhere,
           });
         });
@@ -295,7 +295,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         it('should call prismaClient.execution.findMany()', () => {
           expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
             include: executionInclude,
-            orderBy: { created_at: 'desc' },
+            orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: expectedWhere,
           });
         });
@@ -341,7 +341,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         it('should call prismaClient.execution.findMany()', () => {
           expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
             include: executionInclude,
-            orderBy: { created_at: 'desc' },
+            orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: expectedWhere,
           });
         });
@@ -387,7 +387,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         it('should call prismaClient.execution.findMany()', () => {
           expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
             include: executionInclude,
-            orderBy: { created_at: 'desc' },
+            orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: baseWhereFixture,
           });
         });
@@ -428,7 +428,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         it('should call prismaClient.execution.findMany()', () => {
           expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
             include: executionInclude,
-            orderBy: { created_at: 'desc' },
+            orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: expectedWhere,
           });
         });
@@ -474,7 +474,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         it('should call prismaClient.execution.findMany()', () => {
           expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
             include: executionInclude,
-            orderBy: { request: { started_at: 'asc' } },
+            orderBy: [{ request: { started_at: 'asc' } }, { id: 'asc' }],
             where: baseWhereFixture,
           });
         });
@@ -514,7 +514,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         it('should call prismaClient.execution.findMany()', () => {
           expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
             include: executionInclude,
-            orderBy: { request: { started_at: 'desc' } },
+            orderBy: [{ request: { started_at: 'desc' } }, { id: 'desc' }],
             where: baseWhereFixture,
           });
         });
