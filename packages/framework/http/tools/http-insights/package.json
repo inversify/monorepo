@@ -6,6 +6,7 @@
   "description": "InversifyJs HTTP insights",
   "dependencies": {
     "@inversifyjs/http-core": "workspace:*",
+    "@inversifyjs/http-instrumentation-core": "workspace:*",
     "@inversifyjs/http-validation": "workspace:*",
     "@inversifyjs/prisma": "1.0.0",
     "@inversifyjs/standard-schema-validation": "workspace:*",

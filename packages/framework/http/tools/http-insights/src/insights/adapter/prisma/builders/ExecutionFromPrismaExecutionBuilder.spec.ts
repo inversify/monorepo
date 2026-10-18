@@ -18,6 +18,7 @@ import { PipeFixtures } from '../../../domain/fixtures/PipeFixtures.js';
 import { RequestFixtures } from '../../../domain/fixtures/RequestFixtures.js';
 import { ResponseFixtures } from '../../../domain/fixtures/ResponseFixtures.js';
 import { type Execution } from '../../../domain/models/Execution.js';
+import { type OngoingExecution } from '../../../domain/models/OngoingExecution.js';
 import { PrismaExecutionWithRelationsFixtures } from '../fixtures/PrismaExecutionWithRelationsFixtures.js';
 import { type ControllerFromPrismaControllerBuilder } from './ControllerFromPrismaControllerBuilder.js';
 import {
@@ -249,23 +250,61 @@ describe(ExecutionFromPrismaExecutionBuilder, () => {
         let result: unknown;
 
         beforeAll(() => {
-          try {
-            executionFromPrismaExecutionBuilder.build(prismaExecutionFixture);
-          } catch (error: unknown) {
-            result = error;
-          }
+          guardFromPrismaGuardBuilderMock.build.mockReturnValueOnce(
+            GuardFixtures.any,
+          );
+          httpErrorFromPrismaHttpErrorBuilderMock.build.mockReturnValueOnce(
+            HttpErrorFixtures.any,
+          );
+          interceptorFromPrismaInterceptorBuilderMock.build.mockReturnValueOnce(
+            InterceptorFixtures.any,
+          );
+          middlewareFromPrismaMiddlewareBuilderMock.build.mockReturnValueOnce(
+            MiddlewareFixtures.any,
+          );
+          nativeMiddlewareFromPrismaNativeMiddlewareBuilderMock.build.mockReturnValueOnce(
+            NativeMiddlewareFixtures.any,
+          );
+          pipeFromPrismaPipeBuilderMock.build.mockReturnValueOnce(
+            PipeFixtures.any,
+          );
+          requestFromPrismaRequestBuilderMock.build.mockReturnValueOnce(
+            RequestFixtures.any,
+          );
+          responseFromPrismaResponseBuilderMock.build.mockReturnValueOnce(
+            ResponseFixtures.any,
+          );
+
+          result = executionFromPrismaExecutionBuilder.build(
+            prismaExecutionFixture,
+          );
         });
 
         afterAll(() => {
           vitest.clearAllMocks();
         });
 
-        it('should throw an Error', () => {
-          expect(result).toStrictEqual(
-            new Error(
-              `Execution "${prismaExecutionFixture.id}" is missing its "controller" relation.`,
-            ),
-          );
+        it('should not call controllerFromPrismaControllerBuilder.build()', () => {
+          expect(
+            controllerFromPrismaControllerBuilderMock.build,
+          ).not.toHaveBeenCalled();
+        });
+
+        it('should return an Execution without a controller', () => {
+          const expected: Execution = {
+            controller: undefined,
+            guards: [GuardFixtures.any],
+            httpErrors: [HttpErrorFixtures.any],
+            id: prismaExecutionFixture.id,
+            interceptors: [InterceptorFixtures.any],
+            middlewares: [MiddlewareFixtures.any],
+            nativeMiddlewares: [NativeMiddlewareFixtures.any],
+            pipes: [PipeFixtures.any],
+            request: RequestFixtures.any,
+            response: ResponseFixtures.any,
+          };
+
+          expect(result).toStrictEqual(expected);
         });
       });
     });
@@ -330,6 +369,186 @@ describe(ExecutionFromPrismaExecutionBuilder, () => {
           expect(result).toStrictEqual(
             new Error(
               `Execution "${prismaExecutionFixture.id}" is missing its "response" relation.`,
+            ),
+          );
+        });
+      });
+    });
+  });
+
+  describe('.buildOngoing', () => {
+    describe('having a prisma execution with a controller and a null response', () => {
+      let prismaExecutionFixture: PrismaExecutionWithRelations;
+
+      beforeAll(() => {
+        prismaExecutionFixture =
+          PrismaExecutionWithRelationsFixtures.withNullResponse;
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          controllerFromPrismaControllerBuilderMock.build.mockReturnValueOnce(
+            ControllerFixtures.any,
+          );
+          guardFromPrismaGuardBuilderMock.build.mockReturnValueOnce(
+            GuardFixtures.any,
+          );
+          httpErrorFromPrismaHttpErrorBuilderMock.build.mockReturnValueOnce(
+            HttpErrorFixtures.any,
+          );
+          interceptorFromPrismaInterceptorBuilderMock.build.mockReturnValueOnce(
+            InterceptorFixtures.any,
+          );
+          middlewareFromPrismaMiddlewareBuilderMock.build.mockReturnValueOnce(
+            MiddlewareFixtures.any,
+          );
+          nativeMiddlewareFromPrismaNativeMiddlewareBuilderMock.build.mockReturnValueOnce(
+            NativeMiddlewareFixtures.any,
+          );
+          pipeFromPrismaPipeBuilderMock.build.mockReturnValueOnce(
+            PipeFixtures.any,
+          );
+          requestFromPrismaRequestBuilderMock.build.mockReturnValueOnce(
+            RequestFixtures.any,
+          );
+
+          result = executionFromPrismaExecutionBuilder.buildOngoing(
+            prismaExecutionFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call controllerFromPrismaControllerBuilder.build()', () => {
+          expect(
+            controllerFromPrismaControllerBuilderMock.build,
+          ).toHaveBeenCalledExactlyOnceWith(prismaExecutionFixture.controller);
+        });
+
+        it('should not call responseFromPrismaResponseBuilder.build()', () => {
+          expect(
+            responseFromPrismaResponseBuilderMock.build,
+          ).not.toHaveBeenCalled();
+        });
+
+        it('should return an OngoingExecution', () => {
+          const expected: OngoingExecution = {
+            controller: ControllerFixtures.any,
+            guards: [GuardFixtures.any],
+            httpErrors: [HttpErrorFixtures.any],
+            id: prismaExecutionFixture.id,
+            interceptors: [InterceptorFixtures.any],
+            middlewares: [MiddlewareFixtures.any],
+            nativeMiddlewares: [NativeMiddlewareFixtures.any],
+            pipes: [PipeFixtures.any],
+            request: RequestFixtures.any,
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having a prisma execution with a null controller', () => {
+      let prismaExecutionFixture: PrismaExecutionWithRelations;
+
+      beforeAll(() => {
+        prismaExecutionFixture =
+          PrismaExecutionWithRelationsFixtures.withNullController;
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          guardFromPrismaGuardBuilderMock.build.mockReturnValueOnce(
+            GuardFixtures.any,
+          );
+          httpErrorFromPrismaHttpErrorBuilderMock.build.mockReturnValueOnce(
+            HttpErrorFixtures.any,
+          );
+          interceptorFromPrismaInterceptorBuilderMock.build.mockReturnValueOnce(
+            InterceptorFixtures.any,
+          );
+          middlewareFromPrismaMiddlewareBuilderMock.build.mockReturnValueOnce(
+            MiddlewareFixtures.any,
+          );
+          nativeMiddlewareFromPrismaNativeMiddlewareBuilderMock.build.mockReturnValueOnce(
+            NativeMiddlewareFixtures.any,
+          );
+          pipeFromPrismaPipeBuilderMock.build.mockReturnValueOnce(
+            PipeFixtures.any,
+          );
+          requestFromPrismaRequestBuilderMock.build.mockReturnValueOnce(
+            RequestFixtures.any,
+          );
+
+          result = executionFromPrismaExecutionBuilder.buildOngoing(
+            prismaExecutionFixture,
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should not call controllerFromPrismaControllerBuilder.build()', () => {
+          expect(
+            controllerFromPrismaControllerBuilderMock.build,
+          ).not.toHaveBeenCalled();
+        });
+
+        it('should return an OngoingExecution', () => {
+          const expected: OngoingExecution = {
+            controller: undefined,
+            guards: [GuardFixtures.any],
+            httpErrors: [HttpErrorFixtures.any],
+            id: prismaExecutionFixture.id,
+            interceptors: [InterceptorFixtures.any],
+            middlewares: [MiddlewareFixtures.any],
+            nativeMiddlewares: [NativeMiddlewareFixtures.any],
+            pipes: [PipeFixtures.any],
+            request: RequestFixtures.any,
+          };
+
+          expect(result).toStrictEqual(expected);
+        });
+      });
+    });
+
+    describe('having a prisma execution with a null request', () => {
+      let prismaExecutionFixture: PrismaExecutionWithRelations;
+
+      beforeAll(() => {
+        prismaExecutionFixture =
+          PrismaExecutionWithRelationsFixtures.withNullRequest;
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          try {
+            executionFromPrismaExecutionBuilder.buildOngoing(
+              prismaExecutionFixture,
+            );
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should throw an Error', () => {
+          expect(result).toStrictEqual(
+            new Error(
+              `Execution "${prismaExecutionFixture.id}" is missing its "request" relation.`,
             ),
           );
         });

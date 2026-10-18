@@ -12,9 +12,7 @@ export function emitHttpInstrumentationEvent(
 
   for (const sink of sinks) {
     try {
-      // EventSink.emit is typed as void, and an async implementation still type-checks.
-      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
-      const result: unknown = sink.emit(publishedEvent);
+      const result: void | Promise<void> = sink.emit(publishedEvent);
 
       if (isPromise(result)) {
         void result.then(undefined, (error: unknown): void => {

@@ -3,6 +3,7 @@ import { inject, injectable } from 'inversify';
 import { type Builder } from '../../../../foundation/modules/Builder.js';
 import { type Prisma } from '../../../../generated/prisma/client.js';
 import { type Execution } from '../../../domain/models/Execution.js';
+import { type OngoingExecution } from '../../../domain/models/OngoingExecution.js';
 import { ControllerFromPrismaControllerBuilder } from './ControllerFromPrismaControllerBuilder.js';
 import { GuardFromPrismaGuardBuilder } from './GuardFromPrismaGuardBuilder.js';
 import { HttpErrorFromPrismaHttpErrorBuilder } from './HttpErrorFromPrismaHttpErrorBuilder.js';
@@ -83,9 +84,25 @@ export class ExecutionFromPrismaExecutionBuilder implements Builder<
 
   public build(input: PrismaExecutionWithRelations): Execution {
     return {
-      controller: this.#controllerFromPrismaControllerBuilder.build(
-        this.#requireRelation(input.id, 'controller', input.controller),
+      ...this.#buildBaseExecution(input),
+      controller: this.#buildController(input.controller),
+      response: this.#responseFromPrismaResponseBuilder.build(
+        this.#requireRelation(input.id, 'response', input.response),
       ),
+    };
+  }
+
+  public buildOngoing(input: PrismaExecutionWithRelations): OngoingExecution {
+    return {
+      ...this.#buildBaseExecution(input),
+      controller: this.#buildController(input.controller),
+    };
+  }
+
+  #buildBaseExecution(
+    input: PrismaExecutionWithRelations,
+  ): Omit<OngoingExecution, 'controller'> {
+    return {
       guards: input.guards.map(
         (guard: Prisma.GuardGetPayload<Record<string, never>>) =>
           this.#guardFromPrismaGuardBuilder.build(guard),
@@ -120,17 +137,22 @@ export class ExecutionFromPrismaExecutionBuilder implements Builder<
       request: this.#requestFromPrismaRequestBuilder.build(
         this.#requireRelation(input.id, 'request', input.request),
       ),
-      response: this.#responseFromPrismaResponseBuilder.build(
-        this.#requireRelation(input.id, 'response', input.response),
-      ),
     };
   }
 
-  // Execution rows are written progressively as instrumentation events
-  // arrive, so the relation can be `null` while an execution is in flight.
-  // The adapter's query only selects executions where every relation below
-  // is already present, so reaching `null` here signals a persistence
-  // adapter query bug rather than an expected runtime state.
+  #buildController(
+    controller: PrismaExecutionWithRelations['controller'],
+  ): ReturnType<ControllerFromPrismaControllerBuilder['build']> | undefined {
+    if (controller === null) {
+      return undefined;
+    }
+
+    return this.#controllerFromPrismaControllerBuilder.build(controller);
+  }
+
+  // Completed executions are queried only after request and response are
+  // present. A null relation there is a persistence query bug. Controller is
+  // optional.
   #requireRelation<T>(
     executionId: string,
     relation: string,
