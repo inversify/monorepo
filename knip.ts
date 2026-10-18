@@ -100,13 +100,9 @@ export default {
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-grpc-code-examples": {
-      entry: [
-        "src/examples/**/*.ts",
-        "src/scripts/generateExamples/index.ts",
-      ],
+      entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: [
         ...defaultWorkspaceProjectConfig.ignoreDependencies,
-        "grpc-tools",
         "ts-proto",
       ],
       project: defaultWorkspaceProjectConfig.project,
@@ -175,6 +171,18 @@ export default {
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
     "packages/framework/http/libraries/*": defaultWorkspaceProjectConfig,
+    "packages/framework/http/tools/*": defaultWorkspaceProjectConfig,
+    "packages/framework/http/tools/create-http": {
+      entry: [
+        "bin/create-inversify-http.js",
+        "evals/add-resource/*.mjs",
+        "evals/add-resource/providers/*.mjs",
+        "src/cli/runCreateHttp.entrypoint.ts",
+        "src/index.ts",
+      ],
+      ignoreDependencies: ["@openai/codex-sdk", "@opencode-ai/sdk"],
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/framework/http/tools/e2e-tests": {
       entry: [
         "config/*.mjs",
@@ -200,16 +208,13 @@ export default {
       ],
       project: defaultWorkspaceProjectConfig.project,
     },
-    "packages/framework/http/tools/create-http": {
-      entry: [
-        "bin/create-inversify-http.js",
-        "evals/add-resource/*.mjs",
-        "evals/add-resource/providers/*.mjs",
-        "src/cli/runCreateHttp.entrypoint.ts",
-        "src/index.ts",
+    "packages/framework/http/tools/http-insights": {
+      ...defaultWorkspaceProjectConfig,
+      ignoreDependencies: [
+        ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        // Required by `prisma generate`; not imported from application source.
+        "@prisma/client",
       ],
-      ignoreDependencies: ["@openai/codex-sdk", "@opencode-ai/sdk"],
-      project: defaultWorkspaceProjectConfig.project,
     },
     "packages/framework/validation/libraries/*": defaultWorkspaceProjectConfig,
     "packages/json-schema/libraries/*": defaultWorkspaceProjectConfig,

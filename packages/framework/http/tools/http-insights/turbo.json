@@ -1,0 +1,87 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "tsconfig.json",
+        "tsconfig.esm.json"
+      ],
+      "outputs": ["$TURBO_EXTENDS$", "src/generated/**"]
+    },
+    "lint": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts"
+      ]
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs"
+      ]
+    },
+    "test:coverage": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs"
+      ]
+    },
+    "test:integration": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs"
+      ]
+    },
+    "test:mutation": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs",
+        "vitest.config.stryker.mjs"
+      ]
+    },
+    "test:uncommitted": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs"
+      ]
+    },
+    "test:unit": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs"
+      ]
+    }
+  }
+}
