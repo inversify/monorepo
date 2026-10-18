@@ -1,0 +1,87 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "tsconfig.json",
+        "tsconfig.esm.json"
+      ],
+      "outputs": ["$TURBO_EXTENDS$", "src/generated/**"]
+    },
+    "lint": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts"
+      ]
+    },
+    "test": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs"
+      ]
+    },
+    "test:coverage": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs"
+      ]
+    },
+    "test:integration": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs"
+      ]
+    },
+    "test:mutation": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs",
+        "vitest.config.stryker.mjs"
+      ]
+    },
+    "test:uncommitted": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs"
+      ]
+    },
+    "test:unit": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "!src/generated/**",
+        "prisma/**",
+        "prisma.config.ts",
+        "vitest.config.mjs"
+      ]
+    }
+  }
+}
