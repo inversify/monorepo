@@ -23,7 +23,7 @@
       ]
     },
     "test": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "dependsOn": ["build"],
       "inputs": [
         "$TURBO_EXTENDS$",
         "!src/generated/**",
@@ -33,7 +33,7 @@
       ]
     },
     "test:coverage": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "dependsOn": ["build"],
       "inputs": [
         "$TURBO_EXTENDS$",
         "!src/generated/**",
@@ -43,7 +43,7 @@
       ]
     },
     "test:integration": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "dependsOn": ["build"],
       "inputs": [
         "$TURBO_EXTENDS$",
         "!src/generated/**",
@@ -53,7 +53,7 @@
       ]
     },
     "test:mutation": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "dependsOn": ["build"],
       "inputs": [
         "$TURBO_EXTENDS$",
         "!src/generated/**",
@@ -64,7 +64,7 @@
       ]
     },
     "test:uncommitted": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "dependsOn": ["build"],
       "inputs": [
         "$TURBO_EXTENDS$",
         "!src/generated/**",
@@ -74,7 +74,7 @@
       ]
     },
     "test:unit": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "dependsOn": ["build"],
       "inputs": [
         "$TURBO_EXTENDS$",
         "!src/generated/**",
