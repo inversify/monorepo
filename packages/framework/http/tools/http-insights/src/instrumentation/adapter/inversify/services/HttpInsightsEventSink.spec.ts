@@ -15,7 +15,12 @@ import { type HttpInstrumentationEvent } from '@inversifyjs/http-instrumentation
 
 import { type ExecutionManagementInputPort } from '../../../../insights/application/ports/ExecutionManagementInputPort.js';
 import { type Execution } from '../../../../insights/domain/models/Execution.js';
-import { HttpInsightsEventSink } from './HttpInsightsEventSink.js';
+import {
+  EXECUTION_RETENTION_MS,
+  HttpInsightsEventSink,
+  MAX_COMMITTED_EXECUTIONS,
+  RETENTION_SWEEP_INTERVAL_MS,
+} from './HttpInsightsEventSink.js';
 
 vitest.mock(import('node:crypto'), () => ({
   randomUUID: vitest.fn(
@@ -54,6 +59,83 @@ function readGeneratedId(
 
 const startedAtFixture: number = Date.parse('2026-01-01T00:00:01.000Z');
 const timestampFixture: number = Date.parse('2026-01-01T00:00:02.000Z');
+
+function advancePastExecutionRetention(): void {
+  vitest.advanceTimersByTime(
+    EXECUTION_RETENTION_MS + RETENTION_SWEEP_INTERVAL_MS,
+  );
+}
+
+function buildLateHttpErrorEvent(requestId: string): HttpInstrumentationEvent {
+  return {
+    duration: 1,
+    error: { message: 'late' },
+    executionId: `${requestId}-error`,
+    filter: 'LateFilter',
+    requestId,
+    startedAt: startedAtFixture,
+    timestamp: timestampFixture,
+    type: 'http.error',
+  };
+}
+
+function buildRequestStartedEvent(
+  requestId: string,
+  executionId: string,
+): HttpInstrumentationEvent {
+  return {
+    executionId,
+    headers: {},
+    method: 'GET',
+    requestId,
+    timestamp: timestampFixture,
+    type: 'http.request.started',
+    url: '/foo',
+  };
+}
+
+function buildResponseSentEvent(
+  requestId: string,
+  executionId: string,
+): HttpInstrumentationEvent {
+  return {
+    aborted: false,
+    duration: 1,
+    executionId,
+    headers: {},
+    requestId,
+    startedAt: startedAtFixture,
+    statusCode: 204,
+    timestamp: timestampFixture,
+    type: 'http.response.sent',
+  };
+}
+
+async function emitCommittedExecution(
+  httpInsightsEventSink: HttpInsightsEventSink,
+  requestId: string,
+  executionId: string,
+): Promise<void> {
+  await httpInsightsEventSink.emit(
+    buildRequestStartedEvent(requestId, executionId),
+  );
+  await httpInsightsEventSink.emit(
+    buildResponseSentEvent(requestId, executionId),
+  );
+}
+
+async function emitCommittedExecutions(
+  httpInsightsEventSink: HttpInsightsEventSink,
+  count: number,
+): Promise<void> {
+  for (let index: number = 0; index < count; index += 1) {
+    await emitCommittedExecution(
+      httpInsightsEventSink,
+      `request-${index.toString()}`,
+      `execution-${index.toString()}`,
+    );
+  }
+}
 
 describe(HttpInsightsEventSink, () => {
   let executionManagementInputPortMock: Mocked<ExecutionManagementInputPort>;
@@ -917,6 +999,590 @@ describe(HttpInsightsEventSink, () => {
           expect(
             executionManagementInputPortMock.update,
           ).not.toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('having an http.response.sent event without a request, and a later http.error', () => {
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          executionManagementInputPortMock,
+        );
+      });
+
+      describe('when called', () => {
+        let lateErrorResult: unknown;
+        let responseResult: unknown;
+
+        beforeAll(async () => {
+          try {
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent('request-id', 'execution-id'),
+            );
+          } catch (error: unknown) {
+            responseResult = error;
+          }
+
+          try {
+            await httpInsightsEventSink.emit(
+              buildLateHttpErrorEvent('request-id'),
+            );
+            lateErrorResult = undefined;
+          } catch (error: unknown) {
+            lateErrorResult = error;
+          }
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should throw an Error', () => {
+          expect(responseResult).toStrictEqual(
+            new Error(
+              'Cannot persist execution "execution-id" without an http.request.started event.',
+            ),
+          );
+        });
+
+        it('should ignore the later http.error', () => {
+          expect(lateErrorResult).toBeUndefined();
+        });
+
+        it('should not call executionManagementInputPort.create()', () => {
+          expect(
+            executionManagementInputPortMock.create,
+          ).not.toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('having a request that is still open when retained executions expire', () => {
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        vitest.useFakeTimers();
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          executionManagementInputPortMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllTimers();
+        vitest.useRealTimers();
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+
+          await emitCommittedExecution(
+            httpInsightsEventSink,
+            'other-request-id',
+            'other-execution-id',
+          );
+          await httpInsightsEventSink.emit(
+            buildRequestStartedEvent('request-id', 'execution-id'),
+          );
+          advancePastExecutionRetention();
+
+          try {
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent('request-id', 'execution-id'),
+            );
+            result = undefined;
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should not throw an Error', () => {
+          expect(result).toBeUndefined();
+        });
+
+        it('should call executionManagementInputPort.create() with the open execution', () => {
+          expect(executionManagementInputPortMock.create).toHaveBeenCalledTimes(
+            2,
+          );
+          expect(
+            executionManagementInputPortMock.create,
+          ).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              id: 'execution-id',
+              request: expect.objectContaining({
+                id: 'request-id',
+              }),
+            }),
+          );
+        });
+      });
+    });
+
+    describe('having an http.error before the committed execution expires', () => {
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        vitest.useFakeTimers();
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          executionManagementInputPortMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllTimers();
+        vitest.useRealTimers();
+      });
+
+      describe('when called', () => {
+        beforeAll(async () => {
+          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+          executionManagementInputPortMock.update.mockResolvedValue(undefined);
+
+          await emitCommittedExecution(
+            httpInsightsEventSink,
+            'request-id',
+            'execution-id',
+          );
+          vitest.advanceTimersByTime(EXECUTION_RETENTION_MS / 2);
+          await httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent('request-id'),
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should update the written execution', () => {
+          expect(
+            executionManagementInputPortMock.update,
+          ).toHaveBeenCalledExactlyOnceWith(
+            expect.objectContaining({
+              filter: expect.objectContaining({
+                id: 'execution-id',
+              }),
+            }),
+          );
+        });
+      });
+    });
+
+    describe('having an http.error after the committed execution expires', () => {
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        vitest.useFakeTimers();
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          executionManagementInputPortMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllTimers();
+        vitest.useRealTimers();
+      });
+
+      describe('when called', () => {
+        beforeAll(async () => {
+          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+          executionManagementInputPortMock.update.mockResolvedValue(undefined);
+
+          await emitCommittedExecution(
+            httpInsightsEventSink,
+            'request-id',
+            'execution-id',
+          );
+          advancePastExecutionRetention();
+          await httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent('request-id'),
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should not update the execution', () => {
+          expect(
+            executionManagementInputPortMock.update,
+          ).not.toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('having an http.error while the committed update is in flight at expiry', () => {
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        vitest.useFakeTimers();
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          executionManagementInputPortMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllTimers();
+        vitest.useRealTimers();
+      });
+
+      describe('when called', () => {
+        beforeAll(async () => {
+          let resolveUpdate: (() => void) | undefined;
+
+          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+          executionManagementInputPortMock.update.mockResolvedValue(undefined);
+          executionManagementInputPortMock.update.mockReturnValueOnce(
+            new Promise<void>((resolve: () => void): void => {
+              resolveUpdate = resolve;
+            }),
+          );
+
+          await emitCommittedExecution(
+            httpInsightsEventSink,
+            'request-id',
+            'execution-id',
+          );
+
+          const inFlightWrite: Promise<void> = httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent('request-id'),
+          );
+
+          advancePastExecutionRetention();
+
+          if (resolveUpdate === undefined) {
+            throw new Error('Expected update() to be called.');
+          }
+
+          resolveUpdate();
+          await inFlightWrite;
+          await httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent('request-id'),
+          );
+          vitest.advanceTimersByTime(RETENTION_SWEEP_INTERVAL_MS * 2);
+          await httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent('request-id'),
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should update the execution until the sweep after the in-flight write', () => {
+          expect(executionManagementInputPortMock.update).toHaveBeenCalledTimes(
+            2,
+          );
+          expect(
+            executionManagementInputPortMock.update,
+          ).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+              filter: expect.objectContaining({
+                id: 'execution-id',
+              }),
+            }),
+          );
+          expect(
+            executionManagementInputPortMock.update,
+          ).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              filter: expect.objectContaining({
+                id: 'execution-id',
+              }),
+            }),
+          );
+        });
+      });
+    });
+
+    describe('having a create that fails and the pending execution is still retained', () => {
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        vitest.useFakeTimers();
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          executionManagementInputPortMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllTimers();
+        vitest.useRealTimers();
+      });
+
+      describe('when called, and the write is retried before the pending execution expires', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          executionManagementInputPortMock.create.mockRejectedValueOnce(
+            new Error('db'),
+          );
+          executionManagementInputPortMock.create.mockResolvedValueOnce(
+            undefined,
+          );
+
+          await httpInsightsEventSink.emit(
+            buildRequestStartedEvent('request-id', 'execution-id'),
+          );
+
+          try {
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent('request-id', 'execution-id'),
+            );
+          } catch (error: unknown) {
+            result = error;
+          }
+
+          vitest.advanceTimersByTime(EXECUTION_RETENTION_MS / 2);
+          await httpInsightsEventSink.emit(
+            buildResponseSentEvent('request-id', 'execution-id'),
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should throw the write Error', () => {
+          expect(result).toStrictEqual(new Error('db'));
+        });
+
+        it('should call executionManagementInputPort.create() again', () => {
+          expect(executionManagementInputPortMock.create).toHaveBeenCalledTimes(
+            2,
+          );
+        });
+      });
+    });
+
+    describe('having a create that fails and the pending execution expires', () => {
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        vitest.useFakeTimers();
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          executionManagementInputPortMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllTimers();
+        vitest.useRealTimers();
+      });
+
+      describe('when called', () => {
+        let lateErrorResult: unknown;
+        let writeResult: unknown;
+
+        beforeAll(async () => {
+          executionManagementInputPortMock.create.mockRejectedValue(
+            new Error('db'),
+          );
+
+          await httpInsightsEventSink.emit(
+            buildRequestStartedEvent('request-id', 'execution-id'),
+          );
+
+          try {
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent('request-id', 'execution-id'),
+            );
+          } catch (error: unknown) {
+            writeResult = error;
+          }
+
+          advancePastExecutionRetention();
+
+          try {
+            await httpInsightsEventSink.emit(
+              buildLateHttpErrorEvent('request-id'),
+            );
+            lateErrorResult = undefined;
+          } catch (error: unknown) {
+            lateErrorResult = error;
+          }
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should throw the write Error', () => {
+          expect(writeResult).toStrictEqual(new Error('db'));
+        });
+
+        it('should ignore a later http.error', () => {
+          expect(lateErrorResult).toBeUndefined();
+        });
+
+        it('should not call executionManagementInputPort.create() again', () => {
+          expect(executionManagementInputPortMock.create).toHaveBeenCalledTimes(
+            1,
+          );
+        });
+      });
+    });
+
+    describe('having more committed executions than the retention cap', () => {
+      beforeAll(() => {
+        vitest.useFakeTimers();
+      });
+
+      afterAll(() => {
+        vitest.clearAllTimers();
+        vitest.useRealTimers();
+      });
+
+      describe('when called', () => {
+        let httpInsightsEventSink: HttpInsightsEventSink;
+
+        beforeAll(async () => {
+          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+          executionManagementInputPortMock.update.mockResolvedValue(undefined);
+
+          httpInsightsEventSink = new HttpInsightsEventSink(
+            executionManagementInputPortMock,
+          );
+
+          await emitCommittedExecutions(
+            httpInsightsEventSink,
+            MAX_COMMITTED_EXECUTIONS + 1,
+          );
+          await httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent('request-0'),
+          );
+          await httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent('request-1'),
+          );
+          await httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent(
+              `request-${MAX_COMMITTED_EXECUTIONS.toString()}`,
+            ),
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should drop the oldest committed execution', () => {
+          expect(executionManagementInputPortMock.update).toHaveBeenCalledTimes(
+            2,
+          );
+          expect(
+            executionManagementInputPortMock.update,
+          ).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+              filter: expect.objectContaining({
+                id: 'execution-1',
+              }),
+            }),
+          );
+          expect(
+            executionManagementInputPortMock.update,
+          ).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              filter: expect.objectContaining({
+                id: `execution-${MAX_COMMITTED_EXECUTIONS.toString()}`,
+              }),
+            }),
+          );
+        });
+      });
+
+      describe('when called, and the oldest committed execution is being updated', () => {
+        let httpInsightsEventSink: HttpInsightsEventSink;
+
+        beforeAll(async () => {
+          let resolveUpdate: (() => void) | undefined;
+
+          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+          executionManagementInputPortMock.update.mockReset();
+          executionManagementInputPortMock.update.mockResolvedValue(undefined);
+          executionManagementInputPortMock.update.mockReturnValueOnce(
+            new Promise<void>((resolve: () => void): void => {
+              resolveUpdate = resolve;
+            }),
+          );
+
+          httpInsightsEventSink = new HttpInsightsEventSink(
+            executionManagementInputPortMock,
+          );
+
+          await emitCommittedExecutions(
+            httpInsightsEventSink,
+            MAX_COMMITTED_EXECUTIONS,
+          );
+
+          const inFlightWrite: Promise<void> = httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent('request-0'),
+          );
+
+          await emitCommittedExecution(
+            httpInsightsEventSink,
+            `request-${MAX_COMMITTED_EXECUTIONS.toString()}`,
+            `execution-${MAX_COMMITTED_EXECUTIONS.toString()}`,
+          );
+          await httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent('request-1'),
+          );
+
+          if (resolveUpdate === undefined) {
+            throw new Error('Expected update() to be called.');
+          }
+
+          resolveUpdate();
+          await inFlightWrite;
+          await httpInsightsEventSink.emit(
+            buildLateHttpErrorEvent('request-0'),
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should keep the in-flight execution and drop the next one', () => {
+          expect(executionManagementInputPortMock.update).toHaveBeenCalledTimes(
+            2,
+          );
+          expect(
+            executionManagementInputPortMock.update,
+          ).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+              filter: expect.objectContaining({
+                id: 'execution-0',
+              }),
+            }),
+          );
+          expect(
+            executionManagementInputPortMock.update,
+          ).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              filter: expect.objectContaining({
+                id: 'execution-0',
+              }),
+            }),
+          );
         });
       });
     });

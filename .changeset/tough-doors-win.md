@@ -3,4 +3,3 @@
 ---
 
 - Added `HttpInsightsProvider`.
-- Added `HttpInsightsEventSink`.

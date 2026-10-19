@@ -27,8 +27,13 @@ import { type NativeMiddleware } from '../../../../insights/domain/models/Native
 import { type Pipe } from '../../../../insights/domain/models/Pipe.js';
 import { type Response } from '../../../../insights/domain/models/Response.js';
 
+export const EXECUTION_RETENTION_MS: number = 60_000;
+export const MAX_COMMITTED_EXECUTIONS: number = 10_000;
+export const RETENTION_SWEEP_INTERVAL_MS: number = 5_000;
+
 interface PendingExecution {
   readonly events: HttpInstrumentationEvent[];
+  expiresAt: number | undefined;
   openStages: number;
   response: HttpResponseSentEvent | undefined;
 }
@@ -36,6 +41,7 @@ interface PendingExecution {
 interface CommittedExecution {
   readonly errors: HttpErrorEvent[];
   readonly executionId: string;
+  readonly expiresAt: number;
 }
 
 interface InFlightWrite {
@@ -48,12 +54,14 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
   readonly #executionManagementInputPort: ExecutionManagementInputPort;
   readonly #inFlightByRequestId: Map<string, InFlightWrite> = new Map();
   readonly #pendingByRequestId: Map<string, PendingExecution> = new Map();
+  #sweepTimer: ReturnType<typeof setInterval> | undefined;
 
   constructor(
     @inject(ExecutionManagementInputPort)
     executionManagementInputPort: ExecutionManagementInputPort,
   ) {
     this.#executionManagementInputPort = executionManagementInputPort;
+    this.#sweepTimer = undefined;
   }
 
   public async emit(event: HttpInstrumentationEvent): Promise<void> {
@@ -341,6 +349,105 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     }
   }
 
+  #armRetentionSweep(): void {
+    if (this.#sweepTimer !== undefined) {
+      return;
+    }
+
+    const sweepTimer: ReturnType<typeof setInterval> = setInterval((): void => {
+      this.#sweepExpiredExecutions();
+    }, RETENTION_SWEEP_INTERVAL_MS);
+
+    sweepTimer.unref();
+    this.#sweepTimer = sweepTimer;
+  }
+
+  #disarmRetentionSweep(): void {
+    if (this.#sweepTimer === undefined) {
+      return;
+    }
+
+    clearInterval(this.#sweepTimer);
+    this.#sweepTimer = undefined;
+  }
+
+  #evictCommittedOverflow(): void {
+    let overflow: number =
+      this.#committedByRequestId.size - MAX_COMMITTED_EXECUTIONS;
+
+    if (overflow <= 0) {
+      return;
+    }
+
+    for (const requestId of this.#committedByRequestId.keys()) {
+      if (overflow <= 0) {
+        return;
+      }
+
+      if (this.#inFlightByRequestId.has(requestId)) {
+        continue;
+      }
+
+      this.#committedByRequestId.delete(requestId);
+      overflow -= 1;
+    }
+  }
+
+  #rememberCommitted(requestId: string, committed: CommittedExecution): void {
+    this.#committedByRequestId.set(requestId, committed);
+    this.#evictCommittedOverflow();
+    this.#armRetentionSweep();
+  }
+
+  #retainFailedPending(pending: PendingExecution): void {
+    pending.expiresAt = Date.now() + EXECUTION_RETENTION_MS;
+    this.#armRetentionSweep();
+  }
+
+  #stopRetentionSweepIfIdle(): void {
+    if (this.#committedByRequestId.size > 0) {
+      return;
+    }
+
+    for (const pending of this.#pendingByRequestId.values()) {
+      if (pending.expiresAt !== undefined) {
+        return;
+      }
+    }
+
+    this.#disarmRetentionSweep();
+  }
+
+  #sweepExpiredExecutions(): void {
+    const now: number = Date.now();
+
+    for (const [requestId, committed] of this.#committedByRequestId) {
+      if (
+        committed.expiresAt > now ||
+        this.#inFlightByRequestId.has(requestId)
+      ) {
+        continue;
+      }
+
+      this.#committedByRequestId.delete(requestId);
+    }
+
+    for (const [requestId, pending] of this.#pendingByRequestId) {
+      if (
+        pending.expiresAt === undefined ||
+        pending.expiresAt > now ||
+        this.#inFlightByRequestId.has(requestId)
+      ) {
+        continue;
+      }
+
+      this.#pendingByRequestId.delete(requestId);
+    }
+
+    this.#evictCommittedOverflow();
+    this.#stopRetentionSweepIfIdle();
+  }
+
   async #persistIfComplete(
     requestId: string,
     pending: PendingExecution,
@@ -354,10 +461,16 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     }
 
     const response: HttpResponseSentEvent = pending.response;
-    const execution: Execution = this.#buildExecution(
-      pending.events.slice(),
-      response,
-    );
+    let execution: Execution;
+
+    try {
+      execution = this.#buildExecution(pending.events.slice(), response);
+    } catch (error: unknown) {
+      this.#pendingByRequestId.delete(requestId);
+
+      throw error;
+    }
+
     const inFlight: InFlightWrite = {
       stackedErrors: [],
     };
@@ -370,15 +483,17 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       const committed: CommittedExecution = {
         errors: inFlight.stackedErrors,
         executionId: execution.id,
+        expiresAt: Date.now() + EXECUTION_RETENTION_MS,
       };
 
       this.#pendingByRequestId.delete(requestId);
-      this.#committedByRequestId.set(requestId, committed);
+      this.#rememberCommitted(requestId, committed);
       await this.#drainErrors(committed.errors, committed.executionId);
     } catch (error: unknown) {
       if (!this.#committedByRequestId.has(requestId)) {
         pending.events.push(...inFlight.stackedErrors);
         inFlight.stackedErrors.length = 0;
+        this.#retainFailedPending(pending);
       }
 
       throw error;
@@ -429,6 +544,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
 
     const created: PendingExecution = {
       events: [],
+      expiresAt: undefined,
       openStages: 0,
       response: undefined,
     };
