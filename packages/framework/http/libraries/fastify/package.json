@@ -7,7 +7,7 @@
   "dependencies": {
     "@fastify/cookie": "11.1.3",
     "@fastify/formbody": "9.0.1",
-    "@fastify/multipart": "10.1.3",
+    "@fastify/multipart": "10.1.4",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-instrumentation-core": "workspace:*"
   },
@@ -16,14 +16,14 @@
     "@stryker-mutator/core": "10.0.0",
     "@stryker-mutator/typescript-checker": "10.0.0",
     "@stryker-mutator/vitest-runner": "10.0.0",
-    "@types/node": "24.19.1",
-    "@vitest/coverage-v8": "5.0.3",
+    "@types/node": "24.19.2",
+    "@vitest/coverage-v8": "5.0.5",
     "eslint": "10.12.0",
-    "fastify": "5.12.5",
-    "prettier": "3.9.9",
+    "fastify": "5.12.7",
+    "prettier": "3.9.10",
     "rimraf": "6.1.3",
     "typescript": "6.0.3",
-    "vitest": "5.0.3"
+    "vitest": "5.0.5"
   },
   "devEngines": {
     "node": "^24.10.0",
@@ -46,7 +46,7 @@
   },
   "name": "@inversifyjs/http-fastify",
   "peerDependencies": {
-    "fastify": "^5.12.5",
+    "fastify": "^5.12.7",
     "inversify": "^8.2.3"
   },
   "publishConfig": {

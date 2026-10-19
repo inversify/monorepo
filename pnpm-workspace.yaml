@@ -43,9 +43,9 @@ allowBuilds:
 
 minimumReleaseAge: 1440
 overrides:
-  postcss: 8.5.29
-  react: 19.3.0
-  react-dom: 19.3.0
+  postcss: 8.5.30
+  react: 19.3.1
+  react-dom: 19.3.1
 
 packageExtensions:
   "@docusaurus/theme-search-algolia@*":

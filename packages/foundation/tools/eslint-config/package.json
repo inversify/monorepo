@@ -8,12 +8,12 @@
     "@eslint/config-helpers": "~0.7.0",
     "@vitest/eslint-plugin": "^1.6.27",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-prettier": "^5.5.7",
     "eslint-plugin-simple-import-sort": "^14.0.0",
-    "typescript-eslint": "^8.71.1"
+    "typescript-eslint": "^8.71.2"
   },
   "devDependencies": {
-    "prettier": "3.9.9"
+    "prettier": "3.9.10"
   },
   "peerDependencies": {
     "@eslint/js": "^10.0.1",
