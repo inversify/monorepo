@@ -71,6 +71,10 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       return;
     }
 
+    if (this.#committedByRequestId.has(event.requestId)) {
+      return;
+    }
+
     const pending: PendingExecution = this.#readPending(event.requestId);
 
     if (event.type === 'http.response.sent') {
@@ -544,12 +548,13 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
 
     const created: PendingExecution = {
       events: [],
-      expiresAt: undefined,
+      expiresAt: Date.now() + EXECUTION_RETENTION_MS,
       openStages: 0,
       response: undefined,
     };
 
     this.#pendingByRequestId.set(requestId, created);
+    this.#armRetentionSweep();
 
     return created;
   }

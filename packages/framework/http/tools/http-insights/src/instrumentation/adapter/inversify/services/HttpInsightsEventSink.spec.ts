@@ -1059,7 +1059,111 @@ describe(HttpInsightsEventSink, () => {
       });
     });
 
-    describe('having a request that is still open when retained executions expire', () => {
+    describe('having a request that is still open inside the pending maximum age', () => {
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        vitest.useFakeTimers();
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          executionManagementInputPortMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllTimers();
+        vitest.useRealTimers();
+      });
+
+      describe('when called', () => {
+        beforeAll(async () => {
+          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+
+          await httpInsightsEventSink.emit(
+            buildRequestStartedEvent('request-id', 'execution-id'),
+          );
+          vitest.advanceTimersByTime(EXECUTION_RETENTION_MS / 2);
+          await httpInsightsEventSink.emit(
+            buildResponseSentEvent('request-id', 'execution-id'),
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call executionManagementInputPort.create()', () => {
+          expect(
+            executionManagementInputPortMock.create,
+          ).toHaveBeenCalledExactlyOnceWith(
+            expect.objectContaining({
+              id: 'execution-id',
+              request: expect.objectContaining({
+                id: 'request-id',
+              }),
+            }),
+          );
+        });
+      });
+    });
+
+    describe('having a request that is still open when the pending entry expires', () => {
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        vitest.useFakeTimers();
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          executionManagementInputPortMock,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllTimers();
+        vitest.useRealTimers();
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(async () => {
+          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+
+          await httpInsightsEventSink.emit(
+            buildRequestStartedEvent('request-id', 'execution-id'),
+          );
+          advancePastExecutionRetention();
+
+          try {
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent('request-id', 'execution-id'),
+            );
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should throw an Error', () => {
+          expect(result).toStrictEqual(
+            new Error(
+              'Cannot persist execution "execution-id" without an http.request.started event.',
+            ),
+          );
+        });
+
+        it('should not call executionManagementInputPort.create()', () => {
+          expect(
+            executionManagementInputPortMock.create,
+          ).not.toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('having a non-error event after the execution is committed', () => {
       let httpInsightsEventSink: HttpInsightsEventSink;
 
       beforeAll(() => {
@@ -1083,13 +1187,9 @@ describe(HttpInsightsEventSink, () => {
 
           await emitCommittedExecution(
             httpInsightsEventSink,
-            'other-request-id',
-            'other-execution-id',
+            'request-id',
+            'execution-id',
           );
-          await httpInsightsEventSink.emit(
-            buildRequestStartedEvent('request-id', 'execution-id'),
-          );
-          advancePastExecutionRetention();
 
           try {
             await httpInsightsEventSink.emit(
@@ -1109,19 +1209,9 @@ describe(HttpInsightsEventSink, () => {
           expect(result).toBeUndefined();
         });
 
-        it('should call executionManagementInputPort.create() with the open execution', () => {
+        it('should not call executionManagementInputPort.create() again', () => {
           expect(executionManagementInputPortMock.create).toHaveBeenCalledTimes(
-            2,
-          );
-          expect(
-            executionManagementInputPortMock.create,
-          ).toHaveBeenLastCalledWith(
-            expect.objectContaining({
-              id: 'execution-id',
-              request: expect.objectContaining({
-                id: 'request-id',
-              }),
-            }),
+            1,
           );
         });
       });
