@@ -1,7 +1,7 @@
 import { ContainerModule, type ContainerModuleLoadOptions } from 'inversify';
 
-import { InsightsManagementInputPort } from '../../../application/ports/InsightsManagementInputPort.js';
-import { insightsPersistenceOutputPortService } from '../../../application/ports/InsightsPersistenceOutputPort.js';
+import { ExecutionManagementInputPort } from '../../../application/ports/ExecutionManagementInputPort.js';
+import { executionPersistenceOutputPortService } from '../../../application/ports/ExecutionPersistenceOutputPort.js';
 import { PrismaInsightsPersistenceAdapter } from '../../prisma/adapters/PrismaInsightsPersistenceAdapter.js';
 import { ControllerFromPrismaControllerBuilder } from '../../prisma/builders/ControllerFromPrismaControllerBuilder.js';
 import { ExecutionFromPrismaExecutionBuilder } from '../../prisma/builders/ExecutionFromPrismaExecutionBuilder.js';
@@ -13,20 +13,20 @@ import { NativeMiddlewareFromPrismaNativeMiddlewareBuilder } from '../../prisma/
 import { PipeFromPrismaPipeBuilder } from '../../prisma/builders/PipeFromPrismaPipeBuilder.js';
 import { RequestFromPrismaRequestBuilder } from '../../prisma/builders/RequestFromPrismaRequestBuilder.js';
 import { ResponseFromPrismaResponseBuilder } from '../../prisma/builders/ResponseFromPrismaResponseBuilder.js';
-import { InsightsFindQueryFromGetInsightsV1QueryBuilder } from '../../zod/builders/InsightsFindQueryFromGetInsightsV1QueryBuilder.js';
-import { InsightsController } from '../controllers/InsightsController.js';
+import { ExecutionsFindQueryFromGetInsightsV1QueryBuilder } from '../../zod/builders/ExecutionsFindQueryFromGetInsightsV1QueryBuilder.js';
+import { ExecutionController } from '../controllers/ExecutionController.js';
 
 export class InsightsContainerModule extends ContainerModule {
   constructor() {
     super((options: ContainerModuleLoadOptions) => {
-      options.bind(InsightsController).toSelf().inSingletonScope();
+      options.bind(ExecutionController).toSelf().inSingletonScope();
       options
-        .bind(InsightsFindQueryFromGetInsightsV1QueryBuilder)
+        .bind(ExecutionsFindQueryFromGetInsightsV1QueryBuilder)
         .toSelf()
         .inSingletonScope();
-      options.bind(InsightsManagementInputPort).toSelf().inSingletonScope();
+      options.bind(ExecutionManagementInputPort).toSelf().inSingletonScope();
       options
-        .bind(insightsPersistenceOutputPortService)
+        .bind(executionPersistenceOutputPortService)
         .to(PrismaInsightsPersistenceAdapter)
         .inSingletonScope();
       options
