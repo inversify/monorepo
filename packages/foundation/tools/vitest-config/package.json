@@ -5,10 +5,10 @@
   },
   "description": "Common vitest config for inversify monorepo packages",
   "dependencies": {
-    "vitest": "5.0.3"
+    "vitest": "5.0.5"
   },
   "devDependencies": {
-    "prettier": "3.9.9"
+    "prettier": "3.9.10"
   },
   "exports": "./lib/index.js",
   "homepage": "https://github.com/inversify/monorepo#readme",

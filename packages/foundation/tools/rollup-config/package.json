@@ -9,10 +9,10 @@
     "@rollup/plugin-terser": "1.0.0",
     "@rollup/plugin-typescript": "12.3.0",
     "rollup-plugin-dts": "6.5.1",
-    "rollup": "4.64.3"
+    "rollup": "4.64.7"
   },
   "devDependencies": {
-    "prettier": "3.9.9",
+    "prettier": "3.9.10",
     "typescript": "6.0.3"
   },
   "exports": "./lib/index.js",
