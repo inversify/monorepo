@@ -102,8 +102,8 @@ describe(createHttpOpenTelemetrySink, () => {
   describe('.emit', () => {
     describe('having a request started event and a response sent event', () => {
       describe('when called, and tracer.startSpan() returns a span', () => {
-        beforeAll(() => {
-          sink.emit({
+        beforeAll(async () => {
+          await sink.emit({
             executionId: 'request-execution',
             headers: {
               authorization: '[redacted]',
@@ -115,7 +115,7 @@ describe(createHttpOpenTelemetrySink, () => {
             type: 'http.request.started',
             url: '/items?q=hero',
           });
-          sink.emit({
+          await sink.emit({
             aborted: false,
             duration: 10,
             executionId: 'request-execution',
@@ -190,8 +190,8 @@ describe(createHttpOpenTelemetrySink, () => {
 
     describe('having an aborted response sent event', () => {
       describe('when called, and tracer.startSpan() returns a span', () => {
-        beforeAll(() => {
-          sink.emit({
+        beforeAll(async () => {
+          await sink.emit({
             executionId: 'request-execution',
             headers: {},
             method: 'GET',
@@ -200,7 +200,7 @@ describe(createHttpOpenTelemetrySink, () => {
             type: 'http.request.started',
             url: '/items',
           });
-          sink.emit({
+          await sink.emit({
             aborted: true,
             duration: 10,
             executionId: 'request-execution',
@@ -235,8 +235,8 @@ describe(createHttpOpenTelemetrySink, () => {
 
     describe('having a controller started event parented to the request span', () => {
       describe('when called, and tracer.startSpan() returns a span', () => {
-        beforeAll(() => {
-          sink.emit({
+        beforeAll(async () => {
+          await sink.emit({
             executionId: 'request-execution',
             headers: {},
             method: 'GET',
@@ -245,7 +245,7 @@ describe(createHttpOpenTelemetrySink, () => {
             type: 'http.request.started',
             url: '/items',
           });
-          sink.emit({
+          await sink.emit({
             controller: 'ItemsController',
             executionId: 'controller-execution',
             method: 'get',
@@ -284,15 +284,15 @@ describe(createHttpOpenTelemetrySink, () => {
 
     describe('having a denied guard executed event', () => {
       describe('when called, and tracer.startSpan() returns a span', () => {
-        beforeAll(() => {
-          sink.emit({
+        beforeAll(async () => {
+          await sink.emit({
             executionId: 'guard-execution',
             guard: 'DenyGuard',
             requestId: 'request-1',
             timestamp: 1_000,
             type: 'http.guard.started',
           });
-          sink.emit({
+          await sink.emit({
             allowed: false,
             duration: 5,
             executionId: 'guard-execution',
@@ -326,16 +326,16 @@ describe(createHttpOpenTelemetrySink, () => {
       describe('when called, and tracer.startSpan() returns a span', () => {
         let guardErrorFixture: Error;
 
-        beforeAll(() => {
+        beforeAll(async () => {
           guardErrorFixture = new Error('guard failed');
-          sink.emit({
+          await sink.emit({
             executionId: 'guard-execution',
             guard: 'FailingGuard',
             requestId: 'request-1',
             timestamp: 1_000,
             type: 'http.guard.started',
           });
-          sink.emit({
+          await sink.emit({
             duration: 5,
             error: guardErrorFixture,
             executionId: 'guard-execution',
@@ -368,8 +368,8 @@ describe(createHttpOpenTelemetrySink, () => {
 
     describe('having a pipe started event', () => {
       describe('when called, and tracer.startSpan() returns a span', () => {
-        beforeAll(() => {
-          sink.emit({
+        beforeAll(async () => {
+          await sink.emit({
             executionId: 'pipe-execution',
             method: 'get',
             parameterIndex: 1,
@@ -404,9 +404,9 @@ describe(createHttpOpenTelemetrySink, () => {
       describe('when called, and tracer.startSpan() returns a span', () => {
         let failureFixture: Error;
 
-        beforeAll(() => {
+        beforeAll(async () => {
           failureFixture = new Error('request failed');
-          sink.emit({
+          await sink.emit({
             duration: 4,
             error: failureFixture,
             executionId: 'error-execution',

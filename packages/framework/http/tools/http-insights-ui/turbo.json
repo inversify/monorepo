@@ -1,0 +1,62 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "env": ["HTTP_INSIGHTS_UI_BASE"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "index.html",
+        "src/**/*.css",
+        "src/**/*.svg",
+        "tsconfig.build.json",
+        "tsconfig.json",
+        "vite.config.ts"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "format": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "index.html",
+        "src/**/*.css",
+        "src/**/*.tsx"
+      ]
+    },
+    "lint": {
+      "inputs": ["$TURBO_EXTENDS$", "src/**/*.tsx", "vite.config.ts"]
+    },
+    "test": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "src/**/*.tsx",
+        "vitest.config.mjs"
+      ]
+    },
+    "test:coverage": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "src/**/*.tsx",
+        "vitest.config.mjs"
+      ],
+      "outputs": ["$TURBO_EXTENDS$", "coverage/**"]
+    },
+    "test:integration": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "src/**/*.tsx",
+        "vitest.config.mjs"
+      ]
+    },
+    "test:unit": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "src/**/*.tsx",
+        "vitest.config.mjs"
+      ]
+    }
+  }
+}
