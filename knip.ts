@@ -216,6 +216,14 @@ export default {
         "@prisma/client",
       ],
     },
+    "packages/framework/http/tools/http-insights-ui": {
+      entry: [
+        "src/index.ts",
+        "**/?(*.)+(spec|spec-d).[jt]s?(x)",
+        "index.html",
+      ],
+      project: defaultWorkspaceProjectConfig.project,
+    },
     "packages/framework/validation/libraries/*": defaultWorkspaceProjectConfig,
     "packages/json-schema/libraries/*": defaultWorkspaceProjectConfig,
     "packages/logger": defaultWorkspaceProjectConfig,

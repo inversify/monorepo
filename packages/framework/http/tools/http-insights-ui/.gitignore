@@ -1,0 +1,17 @@
+# Typescript compiled files
+/lib/**
+
+# Vite bundle
+/dist/**
+
+/tsconfig.tsbuildinfo
+/tsconfig.build.tsbuildinfo
+
+# node modules
+/node_modules/
+
+# Tests
+/coverage/
+
+# Turborepo files
+.turbo/

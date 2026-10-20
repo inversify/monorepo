@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Executions — HTTP Insights</title>
+    <meta name="theme-color" content="#070b12" />
+    <link rel="icon" href="./src/app/assets/logo.svg" />
+    <script>
+      (function () {
+        var theme = 'dark';
+
+        try {
+          var stored = localStorage.getItem('http-insights-ui-theme');
+          if (stored === 'light' || stored === 'dark') {
+            theme = stored;
+          } else if (
+            window.matchMedia('(prefers-color-scheme: light)').matches
+          ) {
+            theme = 'light';
+          }
+        } catch (error) {
+          theme = 'dark';
+        }
+
+        document.documentElement.setAttribute('data-theme', theme);
+
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          meta.setAttribute(
+            'content',
+            theme === 'light' ? '#eef3f8' : '#070b12',
+          );
+        }
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Outfit:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./src/app/main.tsx"></script>
+  </body>
+</html>
