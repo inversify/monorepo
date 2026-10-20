@@ -3,6 +3,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
+      "env": ["HTTP_INSIGHTS_UI_BASE"],
       "inputs": [
         "$TURBO_EXTENDS$",
         "index.html",

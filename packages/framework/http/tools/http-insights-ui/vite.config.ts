@@ -1,27 +1,32 @@
 import react from '@vitejs/plugin-react';
-import { type ConfigEnv, defineConfig, type UserConfig } from 'vite';
+import { defineConfig, type UserConfig } from 'vite';
 
-export default defineConfig((environment: ConfigEnv): UserConfig => {
-  const apiOrigin: string | undefined = process.env['HTTP_INSIGHTS_API_ORIGIN'];
-  const config: UserConfig = {
-    base: environment.command === 'serve' ? '/' : './',
-    build: {
-      emptyOutDir: true,
-      outDir: 'dist',
-    },
-    plugins: [react()],
-  };
+import { httpInsightsUiPath } from './src/index.js';
 
-  if (apiOrigin !== undefined && apiOrigin.length > 0) {
-    config.server = {
-      proxy: {
-        '/.inversify': {
-          changeOrigin: true,
-          target: apiOrigin,
-        },
+const apiOrigin: string | undefined = process.env['HTTP_INSIGHTS_API_ORIGIN'];
+const configuredBase: string | undefined = process.env['HTTP_INSIGHTS_UI_BASE'];
+
+const config: UserConfig = {
+  base:
+    configuredBase !== undefined && configuredBase.length > 0
+      ? configuredBase
+      : `${httpInsightsUiPath}/`,
+  build: {
+    emptyOutDir: true,
+    outDir: 'dist',
+  },
+  plugins: [react()],
+};
+
+if (apiOrigin !== undefined && apiOrigin.length > 0) {
+  config.server = {
+    proxy: {
+      '/.inversify': {
+        changeOrigin: true,
+        target: apiOrigin,
       },
-    };
-  }
+    },
+  };
+}
 
-  return config;
-});
+export default defineConfig(config);

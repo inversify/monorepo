@@ -15,11 +15,13 @@ import { RequestFromPrismaRequestBuilder } from '../../prisma/builders/RequestFr
 import { ResponseFromPrismaResponseBuilder } from '../../prisma/builders/ResponseFromPrismaResponseBuilder.js';
 import { ExecutionsFindQueryFromGetInsightsV1QueryBuilder } from '../../zod/builders/ExecutionsFindQueryFromGetInsightsV1QueryBuilder.js';
 import { ExecutionController } from '../controllers/ExecutionController.js';
+import { InsightsUiController } from '../controllers/InsightsUiController.js';
 
 export class InsightsContainerModule extends ContainerModule {
   constructor() {
     super((options: ContainerModuleLoadOptions) => {
       options.bind(ExecutionController).toSelf().inSingletonScope();
+      options.bind(InsightsUiController).toSelf().inSingletonScope();
       options
         .bind(ExecutionsFindQueryFromGetInsightsV1QueryBuilder)
         .toSelf()

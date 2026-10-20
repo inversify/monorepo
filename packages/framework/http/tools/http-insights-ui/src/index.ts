@@ -8,3 +8,5 @@ export const httpInsightsUiBundleDirectory: string = join(
   '..',
   'dist',
 );
+
+export const httpInsightsUiPath: string = '/.inversify/http-insights-ui';

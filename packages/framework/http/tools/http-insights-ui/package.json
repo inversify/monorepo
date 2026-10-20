@@ -46,7 +46,7 @@
     "build:bundle": "vite build",
     "build:clean": "rimraf dist lib tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
     "build:node": "tsc -p tsconfig.build.json",
-    "dev": "vite",
+    "dev": "HTTP_INSIGHTS_UI_BASE=/ vite",
     "format": "prettier --write ./src ./index.html ./vite.config.ts",
     "lint": "eslint ./src ./vite.config.ts",
     "prebuild": "pnpm run build:clean",
