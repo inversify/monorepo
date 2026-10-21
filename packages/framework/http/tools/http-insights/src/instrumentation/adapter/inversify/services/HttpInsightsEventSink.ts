@@ -16,9 +16,9 @@ import {
 import { inject, injectable } from 'inversify';
 
 import { type ExecuteUpdateCommand } from '../../../../insights/application/models/ExecuteUpdateCommand.js';
-import { ExecutionManagementInputPort } from '../../../../insights/application/ports/ExecutionManagementInputPort.js';
+import { CallManagementInputPort } from '../../../../insights/application/ports/CallManagementInputPort.js';
+import { type Call } from '../../../../insights/domain/models/Call.js';
 import { type Controller } from '../../../../insights/domain/models/Controller.js';
-import { type Execution } from '../../../../insights/domain/models/Execution.js';
 import { type Guard } from '../../../../insights/domain/models/Guard.js';
 import { type HttpError } from '../../../../insights/domain/models/HttpError.js';
 import { type Interceptor } from '../../../../insights/domain/models/Interceptor.js';
@@ -27,20 +27,20 @@ import { type NativeMiddleware } from '../../../../insights/domain/models/Native
 import { type Pipe } from '../../../../insights/domain/models/Pipe.js';
 import { type Response } from '../../../../insights/domain/models/Response.js';
 
-export const EXECUTION_RETENTION_MS: number = 60_000;
-export const MAX_COMMITTED_EXECUTIONS: number = 10_000;
+export const CALL_RETENTION_MS: number = 60_000;
+export const MAX_COMMITTED_CALLS: number = 10_000;
 export const RETENTION_SWEEP_INTERVAL_MS: number = 5_000;
 
-interface PendingExecution {
+interface PendingCall {
   readonly events: HttpInstrumentationEvent[];
   expiresAt: number | undefined;
   openStages: number;
   response: HttpResponseSentEvent | undefined;
 }
 
-interface CommittedExecution {
+interface CommittedCall {
   readonly errors: HttpErrorEvent[];
-  readonly executionId: string;
+  readonly callId: string;
   readonly expiresAt: number;
 }
 
@@ -50,17 +50,17 @@ interface InFlightWrite {
 
 @injectable()
 export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent> {
-  readonly #committedByRequestId: Map<string, CommittedExecution> = new Map();
-  readonly #executionManagementInputPort: ExecutionManagementInputPort;
+  readonly #committedByRequestId: Map<string, CommittedCall> = new Map();
+  readonly #callManagementInputPort: CallManagementInputPort;
   readonly #inFlightByRequestId: Map<string, InFlightWrite> = new Map();
-  readonly #pendingByRequestId: Map<string, PendingExecution> = new Map();
+  readonly #pendingByRequestId: Map<string, PendingCall> = new Map();
   #sweepTimer: ReturnType<typeof setInterval> | undefined;
 
   constructor(
-    @inject(ExecutionManagementInputPort)
-    executionManagementInputPort: ExecutionManagementInputPort,
+    @inject(CallManagementInputPort)
+    callManagementInputPort: CallManagementInputPort,
   ) {
-    this.#executionManagementInputPort = executionManagementInputPort;
+    this.#callManagementInputPort = callManagementInputPort;
     this.#sweepTimer = undefined;
   }
 
@@ -75,7 +75,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       return;
     }
 
-    const pending: PendingExecution = this.#readPending(event.requestId);
+    const pending: PendingCall = this.#readPending(event.requestId);
 
     if (event.type === 'http.response.sent') {
       pending.response = event;
@@ -106,10 +106,10 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     };
   }
 
-  #buildExecution(
+  #buildCall(
     events: readonly HttpInstrumentationEvent[],
     responseEvent: HttpResponseSentEvent,
-  ): Execution {
+  ): Call {
     const requestStarted: HttpRequestStartedEvent | undefined = events.find(
       (event: HttpInstrumentationEvent): event is HttpRequestStartedEvent =>
         event.type === 'http.request.started',
@@ -117,7 +117,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
 
     if (requestStarted === undefined) {
       throw new Error(
-        `Cannot persist execution "${responseEvent.executionId}" without an http.request.started event.`,
+        `Cannot persist call "${responseEvent.executionId}" without an http.request.started event.`,
       );
     }
 
@@ -281,16 +281,13 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     }
   }
 
-  async #drainErrors(
-    errors: HttpErrorEvent[],
-    executionId: string,
-  ): Promise<void> {
+  async #drainErrors(errors: HttpErrorEvent[], callId: string): Promise<void> {
     while (errors.length > 0) {
       const batch: HttpErrorEvent[] = errors.splice(0, errors.length);
 
       try {
         await this.#updateHttpErrors(
-          executionId,
+          callId,
           batch.map((errorEvent: HttpErrorEvent): HttpError =>
             this.#buildHttpError(errorEvent),
           ),
@@ -314,7 +311,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       return;
     }
 
-    const pending: PendingExecution | undefined = this.#pendingByRequestId.get(
+    const pending: PendingCall | undefined = this.#pendingByRequestId.get(
       event.requestId,
     );
 
@@ -325,8 +322,9 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       return;
     }
 
-    const committed: CommittedExecution | undefined =
-      this.#committedByRequestId.get(event.requestId);
+    const committed: CommittedCall | undefined = this.#committedByRequestId.get(
+      event.requestId,
+    );
 
     if (committed === undefined) {
       return;
@@ -338,7 +336,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
 
   async #followCommittedWrite(
     requestId: string,
-    committed: CommittedExecution,
+    committed: CommittedCall,
   ): Promise<void> {
     const inFlight: InFlightWrite = {
       stackedErrors: committed.errors,
@@ -347,7 +345,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     this.#inFlightByRequestId.set(requestId, inFlight);
 
     try {
-      await this.#drainErrors(committed.errors, committed.executionId);
+      await this.#drainErrors(committed.errors, committed.callId);
     } finally {
       this.#inFlightByRequestId.delete(requestId);
     }
@@ -359,7 +357,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     }
 
     const sweepTimer: ReturnType<typeof setInterval> = setInterval((): void => {
-      this.#sweepExpiredExecutions();
+      this.#sweepExpiredCalls();
     }, RETENTION_SWEEP_INTERVAL_MS);
 
     sweepTimer.unref();
@@ -377,7 +375,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
 
   #evictCommittedOverflow(): void {
     let overflow: number =
-      this.#committedByRequestId.size - MAX_COMMITTED_EXECUTIONS;
+      this.#committedByRequestId.size - MAX_COMMITTED_CALLS;
 
     if (overflow <= 0) {
       return;
@@ -397,14 +395,14 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     }
   }
 
-  #rememberCommitted(requestId: string, committed: CommittedExecution): void {
+  #rememberCommitted(requestId: string, committed: CommittedCall): void {
     this.#committedByRequestId.set(requestId, committed);
     this.#evictCommittedOverflow();
     this.#armRetentionSweep();
   }
 
-  #retainFailedPending(pending: PendingExecution): void {
-    pending.expiresAt = Date.now() + EXECUTION_RETENTION_MS;
+  #retainFailedPending(pending: PendingCall): void {
+    pending.expiresAt = Date.now() + CALL_RETENTION_MS;
     this.#armRetentionSweep();
   }
 
@@ -422,7 +420,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     this.#disarmRetentionSweep();
   }
 
-  #sweepExpiredExecutions(): void {
+  #sweepExpiredCalls(): void {
     const now: number = Date.now();
 
     for (const [requestId, committed] of this.#committedByRequestId) {
@@ -454,7 +452,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
 
   async #persistIfComplete(
     requestId: string,
-    pending: PendingExecution,
+    pending: PendingCall,
   ): Promise<void> {
     if (
       this.#inFlightByRequestId.has(requestId) ||
@@ -465,10 +463,10 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     }
 
     const response: HttpResponseSentEvent = pending.response;
-    let execution: Execution;
+    let call: Call;
 
     try {
-      execution = this.#buildExecution(pending.events.slice(), response);
+      call = this.#buildCall(pending.events.slice(), response);
     } catch (error: unknown) {
       this.#pendingByRequestId.delete(requestId);
 
@@ -482,17 +480,17 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     this.#inFlightByRequestId.set(requestId, inFlight);
 
     try {
-      await this.#executionManagementInputPort.create(execution);
+      await this.#callManagementInputPort.create(call);
 
-      const committed: CommittedExecution = {
+      const committed: CommittedCall = {
+        callId: call.id,
         errors: inFlight.stackedErrors,
-        executionId: execution.id,
-        expiresAt: Date.now() + EXECUTION_RETENTION_MS,
+        expiresAt: Date.now() + CALL_RETENTION_MS,
       };
 
       this.#pendingByRequestId.delete(requestId);
       this.#rememberCommitted(requestId, committed);
-      await this.#drainErrors(committed.errors, committed.executionId);
+      await this.#drainErrors(committed.errors, committed.callId);
     } catch (error: unknown) {
       if (!this.#committedByRequestId.has(requestId)) {
         pending.events.push(...inFlight.stackedErrors);
@@ -507,12 +505,12 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
   }
 
   async #updateHttpErrors(
-    executionId: string,
+    callId: string,
     httpErrors: readonly HttpError[],
   ): Promise<void> {
     const command: ExecuteUpdateCommand = {
       filter: {
-        id: executionId,
+        id: callId,
         request: {
           method: undefined,
           urlLike: undefined,
@@ -527,7 +525,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       },
     };
 
-    await this.#executionManagementInputPort.update(command);
+    await this.#callManagementInputPort.update(command);
   }
 
   #readOptionalError(event: { readonly error?: unknown }): unknown {
@@ -538,17 +536,17 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     return null;
   }
 
-  #readPending(requestId: string): PendingExecution {
-    const pending: PendingExecution | undefined =
+  #readPending(requestId: string): PendingCall {
+    const pending: PendingCall | undefined =
       this.#pendingByRequestId.get(requestId);
 
     if (pending !== undefined) {
       return pending;
     }
 
-    const created: PendingExecution = {
+    const created: PendingCall = {
       events: [],
-      expiresAt: Date.now() + EXECUTION_RETENTION_MS,
+      expiresAt: Date.now() + CALL_RETENTION_MS,
       openStages: 0,
       response: undefined,
     };

@@ -1,5 +1,8 @@
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
+import { HttpInsightsProvider } from '@inversifyjs/http-insights';
 import { SwaggerUiProvider } from '@inversifyjs/http-open-api';
+import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';
+import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot1';
 import type express from 'express';
 import { Container } from 'inversify';
 
@@ -18,14 +21,11 @@ export async function bootstrap(): Promise<void> {
     new UserLmdbContainerModule(),
   );
 
-  const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
-    container,
-    {
-      logger: true,
-      useCookies: false,
-      useJson: true,
-    },
-  );
+  container.bind(InversifyValidationErrorFilter).toSelf().inSingletonScope();
+
+  const insightsProvider: HttpInsightsProvider = new HttpInsightsProvider();
+
+  await insightsProvider.provide(container);
 
   const swaggerProvider: SwaggerUiProvider = new SwaggerUiProvider({
     api: {
@@ -44,6 +44,20 @@ export async function bootstrap(): Promise<void> {
   });
 
   swaggerProvider.provide(container);
+
+  const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(
+    container,
+    {
+      instrumentation: [insightsProvider.getEventSink()],
+      logger: true,
+      useCookies: false,
+      useJson: true,
+    },
+  );
+  adapter.useGlobalPipe(
+    new OpenApiValidationPipe(swaggerProvider.openApiObject),
+  );
+  adapter.useGlobalFilters(InversifyValidationErrorFilter);
 
   const expressApplication: express.Application = await adapter.build();
 

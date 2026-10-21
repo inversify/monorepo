@@ -13,12 +13,12 @@ import { randomUUID } from 'node:crypto';
 import { MiddlewarePhase } from '@inversifyjs/http-core';
 import { type HttpInstrumentationEvent } from '@inversifyjs/http-instrumentation-core';
 
-import { type ExecutionManagementInputPort } from '../../../../insights/application/ports/ExecutionManagementInputPort.js';
-import { type Execution } from '../../../../insights/domain/models/Execution.js';
+import { type CallManagementInputPort } from '../../../../insights/application/ports/CallManagementInputPort.js';
+import { type Call } from '../../../../insights/domain/models/Call.js';
 import {
-  EXECUTION_RETENTION_MS,
+  CALL_RETENTION_MS,
   HttpInsightsEventSink,
-  MAX_COMMITTED_EXECUTIONS,
+  MAX_COMMITTED_CALLS,
   RETENTION_SWEEP_INTERVAL_MS,
 } from './HttpInsightsEventSink.js';
 
@@ -60,10 +60,8 @@ function readGeneratedId(
 const startedAtFixture: number = Date.parse('2026-01-01T00:00:01.000Z');
 const timestampFixture: number = Date.parse('2026-01-01T00:00:02.000Z');
 
-function advancePastExecutionRetention(): void {
-  vitest.advanceTimersByTime(
-    EXECUTION_RETENTION_MS + RETENTION_SWEEP_INTERVAL_MS,
-  );
+function advancePastCallRetention(): void {
+  vitest.advanceTimersByTime(CALL_RETENTION_MS + RETENTION_SWEEP_INTERVAL_MS);
 }
 
 function buildLateHttpErrorEvent(requestId: string): HttpInstrumentationEvent {
@@ -111,7 +109,7 @@ function buildResponseSentEvent(
   };
 }
 
-async function emitCommittedExecution(
+async function emitCommittedCall(
   httpInsightsEventSink: HttpInsightsEventSink,
   requestId: string,
   executionId: string,
@@ -124,29 +122,29 @@ async function emitCommittedExecution(
   );
 }
 
-async function emitCommittedExecutions(
+async function emitCommittedCalls(
   httpInsightsEventSink: HttpInsightsEventSink,
   count: number,
 ): Promise<void> {
   for (let index: number = 0; index < count; index += 1) {
-    await emitCommittedExecution(
+    await emitCommittedCall(
       httpInsightsEventSink,
       `request-${index.toString()}`,
-      `execution-${index.toString()}`,
+      `call-${index.toString()}`,
     );
   }
 }
 
 describe(HttpInsightsEventSink, () => {
-  let executionManagementInputPortMock: Mocked<ExecutionManagementInputPort>;
+  let callManagementInputPortMock: Mocked<CallManagementInputPort>;
 
   beforeAll(() => {
-    executionManagementInputPortMock = {
+    callManagementInputPortMock = {
       create: vitest.fn(),
       update: vitest.fn(),
     } as Partial<
-      Mocked<ExecutionManagementInputPort>
-    > as Mocked<ExecutionManagementInputPort>;
+      Mocked<CallManagementInputPort>
+    > as Mocked<CallManagementInputPort>;
   });
 
   describe('.emit', () => {
@@ -171,14 +169,14 @@ describe(HttpInsightsEventSink, () => {
           );
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
       describe('when called', () => {
         beforeAll(async () => {
           const otherRequestStarted: HttpInstrumentationEvent = {
-            executionId: 'other-execution-id',
+            executionId: 'other-call-id',
             headers: {},
             method: 'POST',
             requestId: 'other-request-id',
@@ -187,7 +185,7 @@ describe(HttpInsightsEventSink, () => {
             url: '/other',
           };
           const requestStarted: HttpInstrumentationEvent = {
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {
               host: 'foo.com',
             },
@@ -198,9 +196,9 @@ describe(HttpInsightsEventSink, () => {
             url: '/foo',
           };
           const nativeMiddlewareStarted: HttpInstrumentationEvent = {
-            executionId: 'native-execution-id',
+            executionId: 'native-call-id',
             name: 'jsonParser',
-            parentExecutionId: 'execution-id',
+            parentExecutionId: 'call-id',
             requestId: 'request-id',
             timestamp: startedAtFixture,
             type: 'http.nativeMiddleware.started',
@@ -208,9 +206,9 @@ describe(HttpInsightsEventSink, () => {
           const guardDenied: HttpInstrumentationEvent = {
             allowed: false,
             duration: 1000,
-            executionId: 'guard-execution-id',
+            executionId: 'guard-call-id',
             guard: 'FooGuard',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             requestId: 'request-id',
             startedAt: startedAtFixture,
             timestamp: timestampFixture,
@@ -219,9 +217,9 @@ describe(HttpInsightsEventSink, () => {
           const guardFailed: HttpInstrumentationEvent = {
             duration: 1000,
             error: { message: 'denied' },
-            executionId: 'guard-error-execution-id',
+            executionId: 'guard-error-call-id',
             guard: 'BarGuard',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             requestId: 'request-id',
             startedAt: startedAtFixture,
             timestamp: timestampFixture,
@@ -229,9 +227,9 @@ describe(HttpInsightsEventSink, () => {
           };
           const interceptorExecuted: HttpInstrumentationEvent = {
             duration: 1000,
-            executionId: 'interceptor-execution-id',
+            executionId: 'interceptor-call-id',
             interceptor: 'FooInterceptor',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             requestId: 'request-id',
             startedAt: startedAtFixture,
             timestamp: timestampFixture,
@@ -239,9 +237,9 @@ describe(HttpInsightsEventSink, () => {
           };
           const middlewareExecuted: HttpInstrumentationEvent = {
             duration: 1000,
-            executionId: 'middleware-execution-id',
+            executionId: 'middleware-call-id',
             middleware: 'FooMiddleware',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             phase: MiddlewarePhase.PreHandler,
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -250,10 +248,10 @@ describe(HttpInsightsEventSink, () => {
           };
           const pipeExecuted: HttpInstrumentationEvent = {
             duration: 1000,
-            executionId: 'pipe-execution-id',
+            executionId: 'pipe-call-id',
             method: 'getFoo',
             parameterIndex: 0,
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             pipe: 'StandardSchemaValidationPipe',
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -263,9 +261,9 @@ describe(HttpInsightsEventSink, () => {
           const httpError: HttpInstrumentationEvent = {
             duration: 1000,
             error: { message: 'boom' },
-            executionId: 'error-execution-id',
+            executionId: 'error-call-id',
             filter: 'InversifyValidationErrorFilter',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             requestId: 'request-id',
             startedAt: startedAtFixture,
             timestamp: timestampFixture,
@@ -274,8 +272,8 @@ describe(HttpInsightsEventSink, () => {
           const httpErrorWithoutFilter: HttpInstrumentationEvent = {
             duration: 1000,
             error: { message: 'unfiltered' },
-            executionId: 'unfiltered-error-execution-id',
-            parentExecutionId: 'native-execution-id',
+            executionId: 'unfiltered-error-call-id',
+            parentExecutionId: 'native-call-id',
             requestId: 'request-id',
             startedAt: startedAtFixture,
             timestamp: timestampFixture,
@@ -285,9 +283,9 @@ describe(HttpInsightsEventSink, () => {
             controller: 'FooController',
             duration: 1000,
             error: { message: 'boom' },
-            executionId: 'controller-execution-id',
+            executionId: 'controller-call-id',
             method: 'getFoo',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             requestId: 'request-id',
             startedAt: startedAtFixture,
             timestamp: timestampFixture,
@@ -296,7 +294,7 @@ describe(HttpInsightsEventSink, () => {
           const responseSent: HttpInstrumentationEvent = {
             aborted: false,
             duration: 1000,
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {
               'content-type': 'application/json',
             },
@@ -308,51 +306,51 @@ describe(HttpInsightsEventSink, () => {
           };
           const nativeMiddlewareExecuted: HttpInstrumentationEvent = {
             duration: 1000,
-            executionId: 'native-execution-id',
+            executionId: 'native-call-id',
             name: 'jsonParser',
-            parentExecutionId: 'execution-id',
+            parentExecutionId: 'call-id',
             requestId: 'request-id',
             startedAt: startedAtFixture,
             timestamp: timestampFixture,
             type: 'http.nativeMiddleware.executed',
           };
 
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
 
           await httpInsightsEventSink.emit(otherRequestStarted);
           await httpInsightsEventSink.emit(requestStarted);
           await httpInsightsEventSink.emit(nativeMiddlewareStarted);
           await httpInsightsEventSink.emit({
-            executionId: 'guard-execution-id',
+            executionId: 'guard-call-id',
             guard: 'FooGuard',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             requestId: 'request-id',
             timestamp: startedAtFixture,
             type: 'http.guard.started',
           });
           await httpInsightsEventSink.emit(guardDenied);
           await httpInsightsEventSink.emit({
-            executionId: 'guard-error-execution-id',
+            executionId: 'guard-error-call-id',
             guard: 'BarGuard',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             requestId: 'request-id',
             timestamp: startedAtFixture,
             type: 'http.guard.started',
           });
           await httpInsightsEventSink.emit(guardFailed);
           await httpInsightsEventSink.emit({
-            executionId: 'interceptor-execution-id',
+            executionId: 'interceptor-call-id',
             interceptor: 'FooInterceptor',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             requestId: 'request-id',
             timestamp: startedAtFixture,
             type: 'http.interceptor.started',
           });
           await httpInsightsEventSink.emit(interceptorExecuted);
           await httpInsightsEventSink.emit({
-            executionId: 'middleware-execution-id',
+            executionId: 'middleware-call-id',
             middleware: 'FooMiddleware',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             phase: MiddlewarePhase.PreHandler,
             requestId: 'request-id',
             timestamp: startedAtFixture,
@@ -360,10 +358,10 @@ describe(HttpInsightsEventSink, () => {
           });
           await httpInsightsEventSink.emit(middlewareExecuted);
           await httpInsightsEventSink.emit({
-            executionId: 'pipe-execution-id',
+            executionId: 'pipe-call-id',
             method: 'getFoo',
             parameterIndex: 0,
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             pipe: 'StandardSchemaValidationPipe',
             requestId: 'request-id',
             timestamp: startedAtFixture,
@@ -374,9 +372,9 @@ describe(HttpInsightsEventSink, () => {
           await httpInsightsEventSink.emit(httpErrorWithoutFilter);
           await httpInsightsEventSink.emit({
             controller: 'FooController',
-            executionId: 'controller-execution-id',
+            executionId: 'controller-call-id',
             method: 'getFoo',
-            parentExecutionId: 'native-execution-id',
+            parentExecutionId: 'native-call-id',
             requestId: 'request-id',
             timestamp: startedAtFixture,
             type: 'http.controller.started',
@@ -385,7 +383,7 @@ describe(HttpInsightsEventSink, () => {
           await httpInsightsEventSink.emit(responseSent);
 
           recordedBeforeNativeMiddlewareFinished =
-            executionManagementInputPortMock.create.mock.calls.length > 0;
+            callManagementInputPortMock.create.mock.calls.length > 0;
 
           await httpInsightsEventSink.emit(nativeMiddlewareExecuted);
         });
@@ -398,8 +396,8 @@ describe(HttpInsightsEventSink, () => {
           expect(recordedBeforeNativeMiddlewareFinished).toBe(false);
         });
 
-        it('should call executionManagementInputPort.create()', () => {
-          const expected: Execution = {
+        it('should call callManagementInputPort.create()', () => {
+          const expected: Call = {
             controller: {
               controller: 'FooController',
               endedAt: new Date(timestampFixture),
@@ -442,7 +440,7 @@ describe(HttpInsightsEventSink, () => {
                 startedAt: new Date(startedAtFixture),
               },
             ],
-            id: 'execution-id',
+            id: 'call-id',
             interceptors: [
               {
                 endedAt: new Date(timestampFixture),
@@ -503,13 +501,13 @@ describe(HttpInsightsEventSink, () => {
           };
 
           expect(
-            executionManagementInputPortMock.create,
+            callManagementInputPortMock.create,
           ).toHaveBeenCalledExactlyOnceWith(expected);
         });
       });
     });
 
-    describe('having an http.error before the execution is written', () => {
+    describe('having an http.error before the call is written', () => {
       let httpInsightsEventSink: HttpInsightsEventSink;
 
       beforeAll(() => {
@@ -521,16 +519,16 @@ describe(HttpInsightsEventSink, () => {
           );
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
       describe('when called', () => {
         beforeAll(async () => {
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
 
           await httpInsightsEventSink.emit({
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {},
             method: 'GET',
             requestId: 'request-id',
@@ -541,7 +539,7 @@ describe(HttpInsightsEventSink, () => {
           await httpInsightsEventSink.emit({
             duration: 1,
             error: { message: 'boom' },
-            executionId: 'error-execution-id',
+            executionId: 'error-call-id',
             filter: 'LateFilter',
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -551,7 +549,7 @@ describe(HttpInsightsEventSink, () => {
           await httpInsightsEventSink.emit({
             aborted: false,
             duration: 1,
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {},
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -565,9 +563,9 @@ describe(HttpInsightsEventSink, () => {
           vitest.clearAllMocks();
         });
 
-        it('should include the error in the created execution', () => {
+        it('should include the error in the created call', () => {
           expect(
-            executionManagementInputPortMock.create,
+            callManagementInputPortMock.create,
           ).toHaveBeenCalledExactlyOnceWith(
             expect.objectContaining({
               httpErrors: [
@@ -580,15 +578,13 @@ describe(HttpInsightsEventSink, () => {
           );
         });
 
-        it('should not update the execution', () => {
-          expect(
-            executionManagementInputPortMock.update,
-          ).not.toHaveBeenCalled();
+        it('should not update the call', () => {
+          expect(callManagementInputPortMock.update).not.toHaveBeenCalled();
         });
       });
     });
 
-    describe('having an http.error while the execution is being written', () => {
+    describe('having an http.error while the call is being written', () => {
       let httpInsightsEventSink: HttpInsightsEventSink;
 
       beforeAll(() => {
@@ -600,7 +596,7 @@ describe(HttpInsightsEventSink, () => {
           );
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -608,15 +604,15 @@ describe(HttpInsightsEventSink, () => {
         beforeAll(async () => {
           let resolveCreate: (() => void) | undefined;
 
-          executionManagementInputPortMock.create.mockReturnValueOnce(
+          callManagementInputPortMock.create.mockReturnValueOnce(
             new Promise<void>((resolve: () => void): void => {
               resolveCreate = resolve;
             }),
           );
-          executionManagementInputPortMock.update.mockResolvedValue(undefined);
+          callManagementInputPortMock.update.mockResolvedValue(undefined);
 
           await httpInsightsEventSink.emit({
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {},
             method: 'GET',
             requestId: 'request-id',
@@ -628,7 +624,7 @@ describe(HttpInsightsEventSink, () => {
           const write: Promise<void> = httpInsightsEventSink.emit({
             aborted: false,
             duration: 1,
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {},
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -640,7 +636,7 @@ describe(HttpInsightsEventSink, () => {
           await httpInsightsEventSink.emit({
             duration: 1,
             error: { message: 'late' },
-            executionId: 'error-execution-id',
+            executionId: 'error-call-id',
             filter: 'LateFilter',
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -660,9 +656,9 @@ describe(HttpInsightsEventSink, () => {
           vitest.clearAllMocks();
         });
 
-        it('should create the execution without the late error', () => {
+        it('should create the call without the late error', () => {
           expect(
-            executionManagementInputPortMock.create,
+            callManagementInputPortMock.create,
           ).toHaveBeenCalledExactlyOnceWith(
             expect.objectContaining({
               httpErrors: [],
@@ -670,12 +666,12 @@ describe(HttpInsightsEventSink, () => {
           );
         });
 
-        it('should update the execution with the late error', () => {
+        it('should update the call with the late error', () => {
           expect(
-            executionManagementInputPortMock.update,
+            callManagementInputPortMock.update,
           ).toHaveBeenCalledExactlyOnceWith({
             filter: {
-              id: 'execution-id',
+              id: 'call-id',
               request: {
                 method: undefined,
                 urlLike: undefined,
@@ -698,7 +694,7 @@ describe(HttpInsightsEventSink, () => {
       });
     });
 
-    describe('having an http.error after the execution is written', () => {
+    describe('having an http.error after the call is written', () => {
       let httpInsightsEventSink: HttpInsightsEventSink;
 
       beforeAll(() => {
@@ -710,17 +706,17 @@ describe(HttpInsightsEventSink, () => {
           );
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
       describe('when called', () => {
         beforeAll(async () => {
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
-          executionManagementInputPortMock.update.mockResolvedValue(undefined);
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.update.mockResolvedValue(undefined);
 
           await httpInsightsEventSink.emit({
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {},
             method: 'GET',
             requestId: 'request-id',
@@ -731,7 +727,7 @@ describe(HttpInsightsEventSink, () => {
           await httpInsightsEventSink.emit({
             aborted: false,
             duration: 1,
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {},
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -742,7 +738,7 @@ describe(HttpInsightsEventSink, () => {
           await httpInsightsEventSink.emit({
             duration: 1,
             error: { message: 'late' },
-            executionId: 'error-execution-id',
+            executionId: 'error-call-id',
             filter: 'LateFilter',
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -755,13 +751,13 @@ describe(HttpInsightsEventSink, () => {
           vitest.clearAllMocks();
         });
 
-        it('should update the written execution', () => {
+        it('should update the written call', () => {
           expect(
-            executionManagementInputPortMock.update,
+            callManagementInputPortMock.update,
           ).toHaveBeenCalledExactlyOnceWith(
             expect.objectContaining({
               filter: expect.objectContaining({
-                id: 'execution-id',
+                id: 'call-id',
               }),
               set: {
                 httpErrors: [
@@ -782,7 +778,7 @@ describe(HttpInsightsEventSink, () => {
 
       beforeAll(() => {
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -794,7 +790,7 @@ describe(HttpInsightsEventSink, () => {
             await httpInsightsEventSink.emit({
               aborted: true,
               duration: 1,
-              executionId: 'execution-id',
+              executionId: 'call-id',
               headers: {},
               requestId: 'request-id',
               startedAt: startedAtFixture,
@@ -814,15 +810,13 @@ describe(HttpInsightsEventSink, () => {
         it('should throw an Error', () => {
           expect(result).toStrictEqual(
             new Error(
-              'Cannot persist execution "execution-id" without an http.request.started event.',
+              'Cannot persist call "call-id" without an http.request.started event.',
             ),
           );
         });
 
-        it('should not call executionManagementInputPort.create()', () => {
-          expect(
-            executionManagementInputPortMock.create,
-          ).not.toHaveBeenCalled();
+        it('should not call callManagementInputPort.create()', () => {
+          expect(callManagementInputPortMock.create).not.toHaveBeenCalled();
         });
       });
     });
@@ -839,7 +833,7 @@ describe(HttpInsightsEventSink, () => {
           );
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -848,7 +842,7 @@ describe(HttpInsightsEventSink, () => {
 
         beforeAll(async () => {
           const requestStarted: HttpInstrumentationEvent = {
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {},
             method: 'GET',
             requestId: 'request-id',
@@ -859,7 +853,7 @@ describe(HttpInsightsEventSink, () => {
           const responseSent: HttpInstrumentationEvent = {
             aborted: false,
             duration: 1,
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {},
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -868,12 +862,10 @@ describe(HttpInsightsEventSink, () => {
             type: 'http.response.sent',
           };
 
-          executionManagementInputPortMock.create.mockRejectedValueOnce(
+          callManagementInputPortMock.create.mockRejectedValueOnce(
             new Error('db'),
           );
-          executionManagementInputPortMock.create.mockResolvedValueOnce(
-            undefined,
-          );
+          callManagementInputPortMock.create.mockResolvedValueOnce(undefined);
 
           await httpInsightsEventSink.emit(requestStarted);
 
@@ -894,16 +886,12 @@ describe(HttpInsightsEventSink, () => {
           expect(result).toStrictEqual(new Error('db'));
         });
 
-        it('should call executionManagementInputPort.create() again', () => {
-          expect(executionManagementInputPortMock.create).toHaveBeenCalledTimes(
-            2,
-          );
+        it('should call callManagementInputPort.create() again', () => {
+          expect(callManagementInputPortMock.create).toHaveBeenCalledTimes(2);
         });
 
-        it('should not update the execution', () => {
-          expect(
-            executionManagementInputPortMock.update,
-          ).not.toHaveBeenCalled();
+        it('should not update the call', () => {
+          expect(callManagementInputPortMock.update).not.toHaveBeenCalled();
         });
       });
     });
@@ -920,7 +908,7 @@ describe(HttpInsightsEventSink, () => {
           );
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -930,7 +918,7 @@ describe(HttpInsightsEventSink, () => {
         beforeAll(async () => {
           let rejectCreate: ((error: unknown) => void) | undefined;
 
-          executionManagementInputPortMock.create.mockReturnValueOnce(
+          callManagementInputPortMock.create.mockReturnValueOnce(
             new Promise<void>(
               (
                 _resolve: () => void,
@@ -942,7 +930,7 @@ describe(HttpInsightsEventSink, () => {
           );
 
           await httpInsightsEventSink.emit({
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {},
             method: 'GET',
             requestId: 'request-id',
@@ -954,7 +942,7 @@ describe(HttpInsightsEventSink, () => {
           const write: Promise<void> = httpInsightsEventSink.emit({
             aborted: false,
             duration: 1,
-            executionId: 'execution-id',
+            executionId: 'call-id',
             headers: {},
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -966,7 +954,7 @@ describe(HttpInsightsEventSink, () => {
           await httpInsightsEventSink.emit({
             duration: 1,
             error: { message: 'late' },
-            executionId: 'error-execution-id',
+            executionId: 'error-call-id',
             filter: 'LateFilter',
             requestId: 'request-id',
             startedAt: startedAtFixture,
@@ -995,10 +983,8 @@ describe(HttpInsightsEventSink, () => {
           expect(result).toStrictEqual(new Error('db'));
         });
 
-        it('should not update the execution', () => {
-          expect(
-            executionManagementInputPortMock.update,
-          ).not.toHaveBeenCalled();
+        it('should not update the call', () => {
+          expect(callManagementInputPortMock.update).not.toHaveBeenCalled();
         });
       });
     });
@@ -1008,7 +994,7 @@ describe(HttpInsightsEventSink, () => {
 
       beforeAll(() => {
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -1019,7 +1005,7 @@ describe(HttpInsightsEventSink, () => {
         beforeAll(async () => {
           try {
             await httpInsightsEventSink.emit(
-              buildResponseSentEvent('request-id', 'execution-id'),
+              buildResponseSentEvent('request-id', 'call-id'),
             );
           } catch (error: unknown) {
             responseResult = error;
@@ -1042,7 +1028,7 @@ describe(HttpInsightsEventSink, () => {
         it('should throw an Error', () => {
           expect(responseResult).toStrictEqual(
             new Error(
-              'Cannot persist execution "execution-id" without an http.request.started event.',
+              'Cannot persist call "call-id" without an http.request.started event.',
             ),
           );
         });
@@ -1051,10 +1037,8 @@ describe(HttpInsightsEventSink, () => {
           expect(lateErrorResult).toBeUndefined();
         });
 
-        it('should not call executionManagementInputPort.create()', () => {
-          expect(
-            executionManagementInputPortMock.create,
-          ).not.toHaveBeenCalled();
+        it('should not call callManagementInputPort.create()', () => {
+          expect(callManagementInputPortMock.create).not.toHaveBeenCalled();
         });
       });
     });
@@ -1066,7 +1050,7 @@ describe(HttpInsightsEventSink, () => {
         vitest.useFakeTimers();
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -1077,14 +1061,14 @@ describe(HttpInsightsEventSink, () => {
 
       describe('when called', () => {
         beforeAll(async () => {
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
 
           await httpInsightsEventSink.emit(
-            buildRequestStartedEvent('request-id', 'execution-id'),
+            buildRequestStartedEvent('request-id', 'call-id'),
           );
-          vitest.advanceTimersByTime(EXECUTION_RETENTION_MS / 2);
+          vitest.advanceTimersByTime(CALL_RETENTION_MS / 2);
           await httpInsightsEventSink.emit(
-            buildResponseSentEvent('request-id', 'execution-id'),
+            buildResponseSentEvent('request-id', 'call-id'),
           );
         });
 
@@ -1092,12 +1076,12 @@ describe(HttpInsightsEventSink, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call executionManagementInputPort.create()', () => {
+        it('should call callManagementInputPort.create()', () => {
           expect(
-            executionManagementInputPortMock.create,
+            callManagementInputPortMock.create,
           ).toHaveBeenCalledExactlyOnceWith(
             expect.objectContaining({
-              id: 'execution-id',
+              id: 'call-id',
               request: expect.objectContaining({
                 id: 'request-id',
               }),
@@ -1114,7 +1098,7 @@ describe(HttpInsightsEventSink, () => {
         vitest.useFakeTimers();
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -1127,16 +1111,16 @@ describe(HttpInsightsEventSink, () => {
         let result: unknown;
 
         beforeAll(async () => {
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
 
           await httpInsightsEventSink.emit(
-            buildRequestStartedEvent('request-id', 'execution-id'),
+            buildRequestStartedEvent('request-id', 'call-id'),
           );
-          advancePastExecutionRetention();
+          advancePastCallRetention();
 
           try {
             await httpInsightsEventSink.emit(
-              buildResponseSentEvent('request-id', 'execution-id'),
+              buildResponseSentEvent('request-id', 'call-id'),
             );
           } catch (error: unknown) {
             result = error;
@@ -1150,27 +1134,25 @@ describe(HttpInsightsEventSink, () => {
         it('should throw an Error', () => {
           expect(result).toStrictEqual(
             new Error(
-              'Cannot persist execution "execution-id" without an http.request.started event.',
+              'Cannot persist call "call-id" without an http.request.started event.',
             ),
           );
         });
 
-        it('should not call executionManagementInputPort.create()', () => {
-          expect(
-            executionManagementInputPortMock.create,
-          ).not.toHaveBeenCalled();
+        it('should not call callManagementInputPort.create()', () => {
+          expect(callManagementInputPortMock.create).not.toHaveBeenCalled();
         });
       });
     });
 
-    describe('having a non-error event after the execution is committed', () => {
+    describe('having a non-error event after the call is committed', () => {
       let httpInsightsEventSink: HttpInsightsEventSink;
 
       beforeAll(() => {
         vitest.useFakeTimers();
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -1183,17 +1165,17 @@ describe(HttpInsightsEventSink, () => {
         let result: unknown;
 
         beforeAll(async () => {
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
 
-          await emitCommittedExecution(
+          await emitCommittedCall(
             httpInsightsEventSink,
             'request-id',
-            'execution-id',
+            'call-id',
           );
 
           try {
             await httpInsightsEventSink.emit(
-              buildResponseSentEvent('request-id', 'execution-id'),
+              buildResponseSentEvent('request-id', 'call-id'),
             );
             result = undefined;
           } catch (error: unknown) {
@@ -1209,22 +1191,20 @@ describe(HttpInsightsEventSink, () => {
           expect(result).toBeUndefined();
         });
 
-        it('should not call executionManagementInputPort.create() again', () => {
-          expect(executionManagementInputPortMock.create).toHaveBeenCalledTimes(
-            1,
-          );
+        it('should not call callManagementInputPort.create() again', () => {
+          expect(callManagementInputPortMock.create).toHaveBeenCalledTimes(1);
         });
       });
     });
 
-    describe('having an http.error before the committed execution expires', () => {
+    describe('having an http.error before the committed call expires', () => {
       let httpInsightsEventSink: HttpInsightsEventSink;
 
       beforeAll(() => {
         vitest.useFakeTimers();
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -1235,15 +1215,15 @@ describe(HttpInsightsEventSink, () => {
 
       describe('when called', () => {
         beforeAll(async () => {
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
-          executionManagementInputPortMock.update.mockResolvedValue(undefined);
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.update.mockResolvedValue(undefined);
 
-          await emitCommittedExecution(
+          await emitCommittedCall(
             httpInsightsEventSink,
             'request-id',
-            'execution-id',
+            'call-id',
           );
-          vitest.advanceTimersByTime(EXECUTION_RETENTION_MS / 2);
+          vitest.advanceTimersByTime(CALL_RETENTION_MS / 2);
           await httpInsightsEventSink.emit(
             buildLateHttpErrorEvent('request-id'),
           );
@@ -1253,13 +1233,13 @@ describe(HttpInsightsEventSink, () => {
           vitest.clearAllMocks();
         });
 
-        it('should update the written execution', () => {
+        it('should update the written call', () => {
           expect(
-            executionManagementInputPortMock.update,
+            callManagementInputPortMock.update,
           ).toHaveBeenCalledExactlyOnceWith(
             expect.objectContaining({
               filter: expect.objectContaining({
-                id: 'execution-id',
+                id: 'call-id',
               }),
             }),
           );
@@ -1267,14 +1247,14 @@ describe(HttpInsightsEventSink, () => {
       });
     });
 
-    describe('having an http.error after the committed execution expires', () => {
+    describe('having an http.error after the committed call expires', () => {
       let httpInsightsEventSink: HttpInsightsEventSink;
 
       beforeAll(() => {
         vitest.useFakeTimers();
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -1285,15 +1265,15 @@ describe(HttpInsightsEventSink, () => {
 
       describe('when called', () => {
         beforeAll(async () => {
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
-          executionManagementInputPortMock.update.mockResolvedValue(undefined);
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.update.mockResolvedValue(undefined);
 
-          await emitCommittedExecution(
+          await emitCommittedCall(
             httpInsightsEventSink,
             'request-id',
-            'execution-id',
+            'call-id',
           );
-          advancePastExecutionRetention();
+          advancePastCallRetention();
           await httpInsightsEventSink.emit(
             buildLateHttpErrorEvent('request-id'),
           );
@@ -1303,10 +1283,8 @@ describe(HttpInsightsEventSink, () => {
           vitest.clearAllMocks();
         });
 
-        it('should not update the execution', () => {
-          expect(
-            executionManagementInputPortMock.update,
-          ).not.toHaveBeenCalled();
+        it('should not update the call', () => {
+          expect(callManagementInputPortMock.update).not.toHaveBeenCalled();
         });
       });
     });
@@ -1318,7 +1296,7 @@ describe(HttpInsightsEventSink, () => {
         vitest.useFakeTimers();
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -1331,25 +1309,25 @@ describe(HttpInsightsEventSink, () => {
         beforeAll(async () => {
           let resolveUpdate: (() => void) | undefined;
 
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
-          executionManagementInputPortMock.update.mockResolvedValue(undefined);
-          executionManagementInputPortMock.update.mockReturnValueOnce(
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.update.mockResolvedValue(undefined);
+          callManagementInputPortMock.update.mockReturnValueOnce(
             new Promise<void>((resolve: () => void): void => {
               resolveUpdate = resolve;
             }),
           );
 
-          await emitCommittedExecution(
+          await emitCommittedCall(
             httpInsightsEventSink,
             'request-id',
-            'execution-id',
+            'call-id',
           );
 
           const inFlightWrite: Promise<void> = httpInsightsEventSink.emit(
             buildLateHttpErrorEvent('request-id'),
           );
 
-          advancePastExecutionRetention();
+          advancePastCallRetention();
 
           if (resolveUpdate === undefined) {
             throw new Error('Expected update() to be called.');
@@ -1370,27 +1348,21 @@ describe(HttpInsightsEventSink, () => {
           vitest.clearAllMocks();
         });
 
-        it('should update the execution until the sweep after the in-flight write', () => {
-          expect(executionManagementInputPortMock.update).toHaveBeenCalledTimes(
-            2,
-          );
-          expect(
-            executionManagementInputPortMock.update,
-          ).toHaveBeenNthCalledWith(
+        it('should update the call until the sweep after the in-flight write', () => {
+          expect(callManagementInputPortMock.update).toHaveBeenCalledTimes(2);
+          expect(callManagementInputPortMock.update).toHaveBeenNthCalledWith(
             1,
             expect.objectContaining({
               filter: expect.objectContaining({
-                id: 'execution-id',
+                id: 'call-id',
               }),
             }),
           );
-          expect(
-            executionManagementInputPortMock.update,
-          ).toHaveBeenNthCalledWith(
+          expect(callManagementInputPortMock.update).toHaveBeenNthCalledWith(
             2,
             expect.objectContaining({
               filter: expect.objectContaining({
-                id: 'execution-id',
+                id: 'call-id',
               }),
             }),
           );
@@ -1398,14 +1370,14 @@ describe(HttpInsightsEventSink, () => {
       });
     });
 
-    describe('having a create that fails and the pending execution is still retained', () => {
+    describe('having a create that fails and the pending call is still retained', () => {
       let httpInsightsEventSink: HttpInsightsEventSink;
 
       beforeAll(() => {
         vitest.useFakeTimers();
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -1414,32 +1386,30 @@ describe(HttpInsightsEventSink, () => {
         vitest.useRealTimers();
       });
 
-      describe('when called, and the write is retried before the pending execution expires', () => {
+      describe('when called, and the write is retried before the pending call expires', () => {
         let result: unknown;
 
         beforeAll(async () => {
-          executionManagementInputPortMock.create.mockRejectedValueOnce(
+          callManagementInputPortMock.create.mockRejectedValueOnce(
             new Error('db'),
           );
-          executionManagementInputPortMock.create.mockResolvedValueOnce(
-            undefined,
-          );
+          callManagementInputPortMock.create.mockResolvedValueOnce(undefined);
 
           await httpInsightsEventSink.emit(
-            buildRequestStartedEvent('request-id', 'execution-id'),
+            buildRequestStartedEvent('request-id', 'call-id'),
           );
 
           try {
             await httpInsightsEventSink.emit(
-              buildResponseSentEvent('request-id', 'execution-id'),
+              buildResponseSentEvent('request-id', 'call-id'),
             );
           } catch (error: unknown) {
             result = error;
           }
 
-          vitest.advanceTimersByTime(EXECUTION_RETENTION_MS / 2);
+          vitest.advanceTimersByTime(CALL_RETENTION_MS / 2);
           await httpInsightsEventSink.emit(
-            buildResponseSentEvent('request-id', 'execution-id'),
+            buildResponseSentEvent('request-id', 'call-id'),
           );
         });
 
@@ -1451,22 +1421,20 @@ describe(HttpInsightsEventSink, () => {
           expect(result).toStrictEqual(new Error('db'));
         });
 
-        it('should call executionManagementInputPort.create() again', () => {
-          expect(executionManagementInputPortMock.create).toHaveBeenCalledTimes(
-            2,
-          );
+        it('should call callManagementInputPort.create() again', () => {
+          expect(callManagementInputPortMock.create).toHaveBeenCalledTimes(2);
         });
       });
     });
 
-    describe('having a create that fails and the pending execution expires', () => {
+    describe('having a create that fails and the pending call expires', () => {
       let httpInsightsEventSink: HttpInsightsEventSink;
 
       beforeAll(() => {
         vitest.useFakeTimers();
 
         httpInsightsEventSink = new HttpInsightsEventSink(
-          executionManagementInputPortMock,
+          callManagementInputPortMock,
         );
       });
 
@@ -1480,23 +1448,21 @@ describe(HttpInsightsEventSink, () => {
         let writeResult: unknown;
 
         beforeAll(async () => {
-          executionManagementInputPortMock.create.mockRejectedValue(
-            new Error('db'),
-          );
+          callManagementInputPortMock.create.mockRejectedValue(new Error('db'));
 
           await httpInsightsEventSink.emit(
-            buildRequestStartedEvent('request-id', 'execution-id'),
+            buildRequestStartedEvent('request-id', 'call-id'),
           );
 
           try {
             await httpInsightsEventSink.emit(
-              buildResponseSentEvent('request-id', 'execution-id'),
+              buildResponseSentEvent('request-id', 'call-id'),
             );
           } catch (error: unknown) {
             writeResult = error;
           }
 
-          advancePastExecutionRetention();
+          advancePastCallRetention();
 
           try {
             await httpInsightsEventSink.emit(
@@ -1520,15 +1486,13 @@ describe(HttpInsightsEventSink, () => {
           expect(lateErrorResult).toBeUndefined();
         });
 
-        it('should not call executionManagementInputPort.create() again', () => {
-          expect(executionManagementInputPortMock.create).toHaveBeenCalledTimes(
-            1,
-          );
+        it('should not call callManagementInputPort.create() again', () => {
+          expect(callManagementInputPortMock.create).toHaveBeenCalledTimes(1);
         });
       });
     });
 
-    describe('having more committed executions than the retention cap', () => {
+    describe('having more committed calls than the retention cap', () => {
       beforeAll(() => {
         vitest.useFakeTimers();
       });
@@ -1542,16 +1506,16 @@ describe(HttpInsightsEventSink, () => {
         let httpInsightsEventSink: HttpInsightsEventSink;
 
         beforeAll(async () => {
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
-          executionManagementInputPortMock.update.mockResolvedValue(undefined);
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.update.mockResolvedValue(undefined);
 
           httpInsightsEventSink = new HttpInsightsEventSink(
-            executionManagementInputPortMock,
+            callManagementInputPortMock,
           );
 
-          await emitCommittedExecutions(
+          await emitCommittedCalls(
             httpInsightsEventSink,
-            MAX_COMMITTED_EXECUTIONS + 1,
+            MAX_COMMITTED_CALLS + 1,
           );
           await httpInsightsEventSink.emit(
             buildLateHttpErrorEvent('request-0'),
@@ -1561,7 +1525,7 @@ describe(HttpInsightsEventSink, () => {
           );
           await httpInsightsEventSink.emit(
             buildLateHttpErrorEvent(
-              `request-${MAX_COMMITTED_EXECUTIONS.toString()}`,
+              `request-${MAX_COMMITTED_CALLS.toString()}`,
             ),
           );
         });
@@ -1570,65 +1534,56 @@ describe(HttpInsightsEventSink, () => {
           vitest.clearAllMocks();
         });
 
-        it('should drop the oldest committed execution', () => {
-          expect(executionManagementInputPortMock.update).toHaveBeenCalledTimes(
-            2,
-          );
-          expect(
-            executionManagementInputPortMock.update,
-          ).toHaveBeenNthCalledWith(
+        it('should drop the oldest committed call', () => {
+          expect(callManagementInputPortMock.update).toHaveBeenCalledTimes(2);
+          expect(callManagementInputPortMock.update).toHaveBeenNthCalledWith(
             1,
             expect.objectContaining({
               filter: expect.objectContaining({
-                id: 'execution-1',
+                id: 'call-1',
               }),
             }),
           );
-          expect(
-            executionManagementInputPortMock.update,
-          ).toHaveBeenNthCalledWith(
+          expect(callManagementInputPortMock.update).toHaveBeenNthCalledWith(
             2,
             expect.objectContaining({
               filter: expect.objectContaining({
-                id: `execution-${MAX_COMMITTED_EXECUTIONS.toString()}`,
+                id: `call-${MAX_COMMITTED_CALLS.toString()}`,
               }),
             }),
           );
         });
       });
 
-      describe('when called, and the oldest committed execution is being updated', () => {
+      describe('when called, and the oldest committed call is being updated', () => {
         let httpInsightsEventSink: HttpInsightsEventSink;
 
         beforeAll(async () => {
           let resolveUpdate: (() => void) | undefined;
 
-          executionManagementInputPortMock.create.mockResolvedValue(undefined);
-          executionManagementInputPortMock.update.mockReset();
-          executionManagementInputPortMock.update.mockResolvedValue(undefined);
-          executionManagementInputPortMock.update.mockReturnValueOnce(
+          callManagementInputPortMock.create.mockResolvedValue(undefined);
+          callManagementInputPortMock.update.mockReset();
+          callManagementInputPortMock.update.mockResolvedValue(undefined);
+          callManagementInputPortMock.update.mockReturnValueOnce(
             new Promise<void>((resolve: () => void): void => {
               resolveUpdate = resolve;
             }),
           );
 
           httpInsightsEventSink = new HttpInsightsEventSink(
-            executionManagementInputPortMock,
+            callManagementInputPortMock,
           );
 
-          await emitCommittedExecutions(
-            httpInsightsEventSink,
-            MAX_COMMITTED_EXECUTIONS,
-          );
+          await emitCommittedCalls(httpInsightsEventSink, MAX_COMMITTED_CALLS);
 
           const inFlightWrite: Promise<void> = httpInsightsEventSink.emit(
             buildLateHttpErrorEvent('request-0'),
           );
 
-          await emitCommittedExecution(
+          await emitCommittedCall(
             httpInsightsEventSink,
-            `request-${MAX_COMMITTED_EXECUTIONS.toString()}`,
-            `execution-${MAX_COMMITTED_EXECUTIONS.toString()}`,
+            `request-${MAX_COMMITTED_CALLS.toString()}`,
+            `call-${MAX_COMMITTED_CALLS.toString()}`,
           );
           await httpInsightsEventSink.emit(
             buildLateHttpErrorEvent('request-1'),
@@ -1649,27 +1604,21 @@ describe(HttpInsightsEventSink, () => {
           vitest.clearAllMocks();
         });
 
-        it('should keep the in-flight execution and drop the next one', () => {
-          expect(executionManagementInputPortMock.update).toHaveBeenCalledTimes(
-            2,
-          );
-          expect(
-            executionManagementInputPortMock.update,
-          ).toHaveBeenNthCalledWith(
+        it('should keep the in-flight call and drop the next one', () => {
+          expect(callManagementInputPortMock.update).toHaveBeenCalledTimes(2);
+          expect(callManagementInputPortMock.update).toHaveBeenNthCalledWith(
             1,
             expect.objectContaining({
               filter: expect.objectContaining({
-                id: 'execution-0',
+                id: 'call-0',
               }),
             }),
           );
-          expect(
-            executionManagementInputPortMock.update,
-          ).toHaveBeenNthCalledWith(
+          expect(callManagementInputPortMock.update).toHaveBeenNthCalledWith(
             2,
             expect.objectContaining({
               filter: expect.objectContaining({
-                id: 'execution-0',
+                id: 'call-0',
               }),
             }),
           );

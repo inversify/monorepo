@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatusCode, Post } from '@inversifyjs/http-core';
+import { Controller, HttpStatusCode, Post } from '@inversifyjs/http-core';
 import {
   OasDescription,
   OasOperationId,
@@ -12,6 +12,7 @@ import {
   OpenApi3Dot1RequestBodyObject,
   OpenApi3Dot1ResponseObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
+import { ValidatedBody } from '@inversifyjs/open-api-validation';
 import { inject } from 'inversify';
 
 import { UserService } from '../../domain/services/UserService.js';
@@ -57,7 +58,7 @@ export class UserController {
   @OasTag('Users')
   @Post()
   public async register(
-    @Body() userCreateQuery: UserCreateQuery,
+    @ValidatedBody() userCreateQuery: UserCreateQuery,
   ): Promise<UserType> {
     const [user]: [UserType] = await this.#userService.create(userCreateQuery);
 

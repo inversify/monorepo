@@ -1,7 +1,7 @@
-import { type ExecutionsFilterQuery } from './ExecutionsFilterQuery.js';
-import { type ExecutionsSetQuery } from './ExecutionsSetQuery.js';
+import { type CallsFilterQuery } from './CallsFilterQuery.js';
+import { type CallsSetQuery } from './CallsSetQuery.js';
 
 export interface ExecuteUpdateCommand {
-  readonly filter: ExecutionsFilterQuery;
-  readonly set: ExecutionsSetQuery;
+  readonly filter: CallsFilterQuery;
+  readonly set: CallsSetQuery;
 }

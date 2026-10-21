@@ -25,6 +25,11 @@ export class InsightsUiController {
     );
   }
 
+  @Get('/calls/:callId')
+  public getCall(): HttpResponse {
+    return this.getIndex();
+  }
+
   @Get(`/${HTTP_INSIGHTS_UI_ASSET_DIRECTORY}/:resource`)
   public getAsset(
     @Params({

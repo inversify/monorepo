@@ -1,10 +1,10 @@
 import { ContainerModule, type ContainerModuleLoadOptions } from 'inversify';
 
-import { ExecutionManagementInputPort } from '../../../application/ports/ExecutionManagementInputPort.js';
-import { executionPersistenceOutputPortService } from '../../../application/ports/ExecutionPersistenceOutputPort.js';
+import { CallManagementInputPort } from '../../../application/ports/CallManagementInputPort.js';
+import { callPersistenceOutputPortService } from '../../../application/ports/CallPersistenceOutputPort.js';
 import { PrismaInsightsPersistenceAdapter } from '../../prisma/adapters/PrismaInsightsPersistenceAdapter.js';
+import { CallFromPrismaCallBuilder } from '../../prisma/builders/CallFromPrismaCallBuilder.js';
 import { ControllerFromPrismaControllerBuilder } from '../../prisma/builders/ControllerFromPrismaControllerBuilder.js';
-import { ExecutionFromPrismaExecutionBuilder } from '../../prisma/builders/ExecutionFromPrismaExecutionBuilder.js';
 import { GuardFromPrismaGuardBuilder } from '../../prisma/builders/GuardFromPrismaGuardBuilder.js';
 import { HttpErrorFromPrismaHttpErrorBuilder } from '../../prisma/builders/HttpErrorFromPrismaHttpErrorBuilder.js';
 import { InterceptorFromPrismaInterceptorBuilder } from '../../prisma/builders/InterceptorFromPrismaInterceptorBuilder.js';
@@ -13,32 +13,31 @@ import { NativeMiddlewareFromPrismaNativeMiddlewareBuilder } from '../../prisma/
 import { PipeFromPrismaPipeBuilder } from '../../prisma/builders/PipeFromPrismaPipeBuilder.js';
 import { RequestFromPrismaRequestBuilder } from '../../prisma/builders/RequestFromPrismaRequestBuilder.js';
 import { ResponseFromPrismaResponseBuilder } from '../../prisma/builders/ResponseFromPrismaResponseBuilder.js';
-import { ExecutionsFindQueryFromGetInsightsV1QueryBuilder } from '../../zod/builders/ExecutionsFindQueryFromGetInsightsV1QueryBuilder.js';
-import { ExecutionController } from '../controllers/ExecutionController.js';
+import { CallsFindQueryFromGetInsightsV1QueryBuilder } from '../../zod/builders/CallsFindQueryFromGetInsightsV1QueryBuilder.js';
+import { CallsFindQueryFromCallIdBuilder } from '../builders/CallsFindQueryFromCallIdBuilder.js';
+import { CallsController } from '../controllers/CallsController.js';
 import { InsightsUiController } from '../controllers/InsightsUiController.js';
 
 export class InsightsContainerModule extends ContainerModule {
   constructor() {
     super((options: ContainerModuleLoadOptions) => {
-      options.bind(ExecutionController).toSelf().inSingletonScope();
+      options.bind(CallsController).toSelf().inSingletonScope();
       options.bind(InsightsUiController).toSelf().inSingletonScope();
       options
-        .bind(ExecutionsFindQueryFromGetInsightsV1QueryBuilder)
+        .bind(CallsFindQueryFromGetInsightsV1QueryBuilder)
         .toSelf()
         .inSingletonScope();
-      options.bind(ExecutionManagementInputPort).toSelf().inSingletonScope();
+      options.bind(CallsFindQueryFromCallIdBuilder).toSelf().inSingletonScope();
+      options.bind(CallManagementInputPort).toSelf().inSingletonScope();
       options
-        .bind(executionPersistenceOutputPortService)
+        .bind(callPersistenceOutputPortService)
         .to(PrismaInsightsPersistenceAdapter)
         .inSingletonScope();
       options
         .bind(ControllerFromPrismaControllerBuilder)
         .toSelf()
         .inSingletonScope();
-      options
-        .bind(ExecutionFromPrismaExecutionBuilder)
-        .toSelf()
-        .inSingletonScope();
+      options.bind(CallFromPrismaCallBuilder).toSelf().inSingletonScope();
       options.bind(GuardFromPrismaGuardBuilder).toSelf().inSingletonScope();
       options
         .bind(HttpErrorFromPrismaHttpErrorBuilder)

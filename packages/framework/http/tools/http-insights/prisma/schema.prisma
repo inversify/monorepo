@@ -11,7 +11,7 @@ datasource db {
   provider = "sqlite"
 }
 
-model Execution {
+model Call {
   id                String             @id
   controller        Controller?
   guards            Guard[]
@@ -27,131 +27,131 @@ model Execution {
 }
 
 model Controller {
-  id           String    @id
-  controller   String
-  method       String
-  error        Json?
-  started_at   DateTime
-  ended_at     DateTime
-  execution_id String    @unique
-  execution    Execution @relation(fields: [execution_id], references: [id], onDelete: Cascade)
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  id         String   @id
+  controller String
+  method     String
+  error      Json?
+  started_at DateTime
+  ended_at   DateTime
+  call_id    String   @unique
+  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Guard {
-  id           String    @id
-  guard        String
-  allowed      Boolean?
-  error        Json?
-  started_at   DateTime
-  ended_at     DateTime
-  execution_id String
-  execution    Execution @relation(fields: [execution_id], references: [id], onDelete: Cascade)
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  id         String   @id
+  guard      String
+  allowed    Boolean?
+  error      Json?
+  started_at DateTime
+  ended_at   DateTime
+  call_id    String
+  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  @@index([execution_id])
+  @@index([call_id])
 }
 
 model HttpError {
-  id           String    @id
-  error        Json
-  filter       String?
-  started_at   DateTime
-  ended_at     DateTime
-  execution_id String
-  execution    Execution @relation(fields: [execution_id], references: [id], onDelete: Cascade)
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  id         String   @id
+  error      Json
+  filter     String?
+  started_at DateTime
+  ended_at   DateTime
+  call_id    String
+  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  @@index([execution_id])
+  @@index([call_id])
 }
 
 model Interceptor {
-  id           String    @id
-  interceptor  String
-  error        Json?
-  started_at   DateTime
-  ended_at     DateTime
-  execution_id String
-  execution    Execution @relation(fields: [execution_id], references: [id], onDelete: Cascade)
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  id          String   @id
+  interceptor String
+  error       Json?
+  started_at  DateTime
+  ended_at    DateTime
+  call_id     String
+  call        Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 
-  @@index([execution_id])
+  @@index([call_id])
 }
 
 model Middleware {
-  id           String    @id
-  middleware   String
-  error        Json?
-  phase        String
-  started_at   DateTime
-  ended_at     DateTime
-  execution_id String
-  execution    Execution @relation(fields: [execution_id], references: [id], onDelete: Cascade)
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  id         String   @id
+  middleware String
+  error      Json?
+  phase      String
+  started_at DateTime
+  ended_at   DateTime
+  call_id    String
+  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  @@index([execution_id])
+  @@index([call_id])
 }
 
 model NativeMiddleware {
-  id           String    @id
-  name         String
-  error        Json?
-  started_at   DateTime
-  ended_at     DateTime
-  execution_id String
-  execution    Execution @relation(fields: [execution_id], references: [id], onDelete: Cascade)
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  id         String   @id
+  name       String
+  error      Json?
+  started_at DateTime
+  ended_at   DateTime
+  call_id    String
+  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  @@index([execution_id])
+  @@index([call_id])
 }
 
 model Pipe {
-  id              String    @id
+  id              String   @id
   pipe            String
   method          String
   parameter_index Int
   error           Json?
   started_at      DateTime
   ended_at        DateTime
-  execution_id    String
-  execution       Execution @relation(fields: [execution_id], references: [id], onDelete: Cascade)
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
+  call_id         String
+  call            Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 
-  @@index([execution_id])
+  @@index([call_id])
 }
 
 model Request {
-  id           String    @id
-  headers      Json
-  method       String
-  started_at   DateTime
-  url          String
-  execution_id String    @unique
-  execution    Execution @relation(fields: [execution_id], references: [id], onDelete: Cascade)
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  id         String   @id
+  headers    Json
+  method     String
+  started_at DateTime
+  url        String
+  call_id    String   @unique
+  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@index([method])
   @@index([url])
 }
 
 model Response {
-  id           String    @id
-  aborted      Boolean
-  headers      Json
-  sent_at      DateTime
-  status_code  Int
-  execution_id String    @unique
-  execution    Execution @relation(fields: [execution_id], references: [id], onDelete: Cascade)
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  id          String   @id
+  aborted     Boolean
+  headers     Json
+  sent_at     DateTime
+  status_code Int
+  call_id     String   @unique
+  call        Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 
   @@index([status_code])
 }
