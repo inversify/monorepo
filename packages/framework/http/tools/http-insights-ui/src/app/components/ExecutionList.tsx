@@ -18,6 +18,7 @@ export function ExecutionList(props: ExecutionListProps): ReactElement {
             <tr>
               <th scope="col">Method</th>
               <th scope="col">URL</th>
+              <th scope="col">Status</th>
               <th scope="col">Duration</th>
             </tr>
           </thead>

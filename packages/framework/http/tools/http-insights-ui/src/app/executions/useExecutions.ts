@@ -7,6 +7,7 @@ import { useCallback } from 'react';
 
 import {
   type ExecutionsPage,
+  type ExecutionsSearch,
   type ExecutionSummary,
   fetchExecutionsPage,
   nextExecutionsPage,
@@ -26,7 +27,7 @@ export interface ExecutionsState {
   readonly total: number;
 }
 
-export function useExecutions(requestUrlLike: string): ExecutionsState {
+export function useExecutions(search: ExecutionsSearch): ExecutionsState {
   const {
     data,
     fetchNextPage,
@@ -52,11 +53,18 @@ export function useExecutions(requestUrlLike: string): ExecutionsState {
       fetchExecutionsPage(
         {
           page: pageParam,
-          requestUrlLike,
+          requestMethod: search.requestMethod,
+          requestUrlLike: search.requestUrlLike,
+          responseStatusCode: search.responseStatusCode,
         },
         signal,
       ),
-    queryKey: [EXECUTIONS_QUERY_KEY, requestUrlLike],
+    queryKey: [
+      EXECUTIONS_QUERY_KEY,
+      search.requestMethod ?? '',
+      search.requestUrlLike,
+      search.responseStatusCode ?? '',
+    ],
   });
 
   const loadMore: () => void = useCallback((): void => {

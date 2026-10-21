@@ -1,14 +1,16 @@
 import { type ReactElement } from 'react';
 
-const KNOWN_METHODS: ReadonlySet<string> = new Set([
-  'DELETE',
+export const HTTP_METHODS: readonly string[] = [
   'GET',
-  'HEAD',
-  'OPTIONS',
-  'PATCH',
   'POST',
   'PUT',
-]);
+  'PATCH',
+  'DELETE',
+  'HEAD',
+  'OPTIONS',
+];
+
+const KNOWN_METHODS: ReadonlySet<string> = new Set(HTTP_METHODS);
 
 export interface MethodBadgeProps {
   readonly method: string;

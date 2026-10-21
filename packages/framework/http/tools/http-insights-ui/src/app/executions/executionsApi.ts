@@ -8,6 +8,7 @@ export interface ExecutionSummary {
   readonly durationMs: number;
   readonly id: string;
   readonly method: string;
+  readonly statusCode: number;
   readonly url: string;
 }
 
@@ -17,9 +18,17 @@ export interface ExecutionsPage {
   readonly total: number;
 }
 
-export interface ExecutionsQuery {
-  readonly page: number;
+export interface ExecutionFilters {
+  readonly requestMethod: string | undefined;
+  readonly responseStatusCode: number | undefined;
+}
+
+export interface ExecutionsSearch extends ExecutionFilters {
   readonly requestUrlLike: string;
+}
+
+export interface ExecutionsQuery extends ExecutionsSearch {
+  readonly page: number;
 }
 
 class ExecutionsResponseError extends Error {
@@ -35,8 +44,16 @@ export function buildExecutionsUrl(query: ExecutionsQuery): string {
   params.set('page', String(query.page));
   params.set('pageSize', String(EXECUTIONS_PAGE_SIZE));
 
+  if (query.requestMethod !== undefined && query.requestMethod.length > 0) {
+    params.set('requestMethod', query.requestMethod);
+  }
+
   if (query.requestUrlLike.length > 0) {
     params.set('requestUrlLike', query.requestUrlLike);
+  }
+
+  if (query.responseStatusCode !== undefined) {
+    params.set('responseStatusCode', String(query.responseStatusCode));
   }
 
   params.set('sort', EXECUTIONS_SORT);
@@ -120,12 +137,15 @@ function readExecutionSummary(value: unknown): ExecutionSummary {
   const startedAt: unknown = request['startedAt'];
   const url: unknown = request['url'];
   const sentAt: unknown = response['sentAt'];
+  const statusCode: unknown = response['statusCode'];
 
   if (
     typeof method !== 'string' ||
     typeof startedAt !== 'string' ||
     typeof url !== 'string' ||
-    typeof sentAt !== 'string'
+    typeof sentAt !== 'string' ||
+    typeof statusCode !== 'number' ||
+    !Number.isInteger(statusCode)
   ) {
     throw new ExecutionsResponseError(
       'Execution item has an unexpected shape.',
@@ -136,6 +156,7 @@ function readExecutionSummary(value: unknown): ExecutionSummary {
     durationMs: durationMs(startedAt, sentAt),
     id,
     method,
+    statusCode,
     url,
   };
 }

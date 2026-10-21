@@ -6,12 +6,15 @@ import {
   useState,
 } from 'react';
 
-import { Brand } from '../components/Brand.js';
+import { AppShell } from '../components/AppShell.js';
 import { ExecutionList } from '../components/ExecutionList.js';
+import { FilterChips } from '../components/FilterChips.js';
+import { FiltersButton } from '../components/FiltersButton.js';
 import { InfiniteScrollSentinel } from '../components/InfiniteScrollSentinel.js';
 import { SearchField } from '../components/SearchField.js';
 import { StatusMessage } from '../components/StatusMessage.js';
-import { ThemeSwitch } from '../components/ThemeSwitch.js';
+import { type ExecutionFilters } from './executionsApi.js';
+import { useExecutionFilters } from './useExecutionFilters.js';
 import { useExecutions } from './useExecutions.js';
 import { useRequestUrlLike } from './useRequestUrlLike.js';
 
@@ -23,9 +26,14 @@ export function ExecutionsPage(): ReactElement {
   );
   const draft: string = draftState[0];
   const setDraft: Dispatch<SetStateAction<string>> = draftState[1];
-  const executions: ReturnType<typeof useExecutions> = useExecutions(
-    requestUrlLikeQuery.requestUrlLike,
-  );
+  const executionFiltersQuery: ReturnType<typeof useExecutionFilters> =
+    useExecutionFilters();
+  const executionFilters: ExecutionFilters = executionFiltersQuery.filters;
+  const executions: ReturnType<typeof useExecutions> = useExecutions({
+    requestMethod: executionFilters.requestMethod,
+    requestUrlLike: requestUrlLikeQuery.requestUrlLike,
+    responseStatusCode: executionFilters.responseStatusCode,
+  });
 
   useEffect(() => {
     setDraft(requestUrlLikeQuery.requestUrlLike);
@@ -40,7 +48,8 @@ export function ExecutionsPage(): ReactElement {
         event.altKey ||
         event.ctrlKey ||
         event.metaKey ||
-        document.activeElement instanceof HTMLInputElement
+        document.activeElement instanceof HTMLInputElement ||
+        document.querySelector('[role="dialog"]') !== null
       ) {
         return;
       }
@@ -61,72 +70,89 @@ export function ExecutionsPage(): ReactElement {
     : executionCountLabel(executions.total);
 
   return (
-    <>
-      <header className="topbar">
-        <div className="topbar-inner">
-          <Brand />
-          <ThemeSwitch />
-        </div>
-      </header>
-      <main className="page">
-        <h1>Executions</h1>
-        <p className="lede">Recorded HTTP traffic.</p>
-        <SearchField
-          onSearch={requestUrlLikeQuery.setRequestUrlLike}
-          onValueChange={setDraft}
-          value={draft}
+    <AppShell>
+      <h1>Executions</h1>
+      <p className="lede">Recorded HTTP traffic.</p>
+      <SearchField
+        onSearch={requestUrlLikeQuery.setRequestUrlLike}
+        onValueChange={setDraft}
+        trailing={
+          <FiltersButton
+            filters={executionFilters}
+            onFiltersChange={executionFiltersQuery.setFilters}
+          />
+        }
+        value={draft}
+      />
+      <FilterChips
+        filters={executionFilters}
+        onFiltersChange={executionFiltersQuery.setFilters}
+      />
+      <p aria-live="polite" className="meta">
+        {countLabel}
+      </p>
+      {executions.isInitialError ? (
+        <StatusMessage
+          actionLabel="Retry"
+          message="Couldn't load executions."
+          onAction={executions.retry}
         />
-        <p aria-live="polite" className="meta">
-          {countLabel}
-        </p>
-        {executions.isInitialError ? (
-          <StatusMessage
-            actionLabel="Retry"
-            message="Couldn't load executions."
-            onAction={executions.retry}
-          />
-        ) : null}
-        {!executions.isInitialLoading &&
-        !executions.isInitialError &&
-        executions.items.length === 0 ? (
-          <StatusMessage
-            actionLabel={undefined}
-            message={
-              requestUrlLikeQuery.requestUrlLike.length > 0
-                ? 'No executions match this URL.'
-                : 'No executions recorded.'
-            }
-            onAction={undefined}
-          />
-        ) : null}
-        {executions.items.length > 0 ? (
-          <ExecutionList
-            footer={
-              <>
-                {executions.hasNextPage ? (
-                  <InfiniteScrollSentinel
-                    disabled={executions.isLoadingMore}
-                    onVisible={executions.loadMore}
-                  />
-                ) : null}
-                {executions.isLoadingMore ? (
-                  <p className="status">Loading more</p>
-                ) : null}
-                {executions.isNextPageError ? (
-                  <StatusMessage
-                    actionLabel="Retry"
-                    message="Couldn't load more executions."
-                    onAction={executions.retry}
-                  />
-                ) : null}
-              </>
-            }
-            items={executions.items}
-          />
-        ) : null}
-      </main>
-    </>
+      ) : null}
+      {!executions.isInitialLoading &&
+      !executions.isInitialError &&
+      executions.items.length === 0 ? (
+        <StatusMessage
+          actionLabel={undefined}
+          message={emptyExecutionsMessage(
+            executionFilters,
+            requestUrlLikeQuery.requestUrlLike,
+          )}
+          onAction={undefined}
+        />
+      ) : null}
+      {executions.items.length > 0 ? (
+        <ExecutionList
+          footer={
+            <>
+              {executions.hasNextPage ? (
+                <InfiniteScrollSentinel
+                  disabled={executions.isLoadingMore}
+                  onVisible={executions.loadMore}
+                />
+              ) : null}
+              {executions.isLoadingMore ? (
+                <p className="status">Loading more</p>
+              ) : null}
+              {executions.isNextPageError ? (
+                <StatusMessage
+                  actionLabel="Retry"
+                  message="Couldn't load more executions."
+                  onAction={executions.retry}
+                />
+              ) : null}
+            </>
+          }
+          items={executions.items}
+        />
+      ) : null}
+    </AppShell>
   );
+}
+
+function emptyExecutionsMessage(
+  filters: ExecutionFilters,
+  requestUrlLike: string,
+): string {
+  if (
+    filters.requestMethod === undefined &&
+    filters.responseStatusCode === undefined
+  ) {
+    return requestUrlLike.length > 0
+      ? 'No executions match this URL.'
+      : 'No executions recorded.';
+  }
+
+  return 'No executions match these filters.';
 }
 
 function executionCountLabel(total: number): string {

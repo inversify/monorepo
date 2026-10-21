@@ -5,8 +5,11 @@ import {
   type SetStateAction,
   useState,
 } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router';
 
+import { ExecutionPage } from './execution/ExecutionPage.js';
 import { ExecutionsPage } from './executions/ExecutionsPage.js';
+import { routerBasename } from './routerBasename.js';
 import { ThemeProvider } from './theme/ThemeProvider.js';
 
 const QUERY_RETRY_COUNT: number = 1;
@@ -29,7 +32,15 @@ export function App(): ReactElement {
   return (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <ExecutionsPage />
+        <BrowserRouter basename={routerBasename(import.meta.env.BASE_URL)}>
+          <Routes>
+            <Route element={<ExecutionsPage />} path="/" />
+            <Route
+              element={<ExecutionPage />}
+              path="/executions/:executionId"
+            />
+          </Routes>
+        </BrowserRouter>
       </QueryClientProvider>
     </ThemeProvider>
   );

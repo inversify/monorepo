@@ -15,7 +15,9 @@ describe(buildExecutionsUrl, () => {
       beforeAll(() => {
         result = buildExecutionsUrl({
           page: 2,
+          requestMethod: undefined,
           requestUrlLike: '/users',
+          responseStatusCode: undefined,
         });
       });
 
@@ -38,13 +40,38 @@ describe(buildExecutionsUrl, () => {
       beforeAll(() => {
         result = buildExecutionsUrl({
           page: 1,
+          requestMethod: undefined,
           requestUrlLike: '',
+          responseStatusCode: undefined,
         });
       });
 
       it('should omit requestUrlLike', () => {
         const url: URL = new URL(result, 'http://insights.local');
 
+        expect(url.searchParams.has('requestUrlLike')).toBe(false);
+      });
+    });
+  });
+
+  describe('having method and status filters', () => {
+    describe('when called', () => {
+      let result: string;
+
+      beforeAll(() => {
+        result = buildExecutionsUrl({
+          page: 1,
+          requestMethod: 'POST',
+          requestUrlLike: '',
+          responseStatusCode: 400,
+        });
+      });
+
+      it('should set requestMethod and responseStatusCode', () => {
+        const url: URL = new URL(result, 'http://insights.local');
+
+        expect(url.searchParams.get('requestMethod')).toBe('POST');
+        expect(url.searchParams.get('responseStatusCode')).toBe('400');
         expect(url.searchParams.has('requestUrlLike')).toBe(false);
       });
     });
@@ -70,6 +97,7 @@ describe(readExecutionsPage, () => {
                 },
                 response: {
                   sentAt: '2026-10-19T20:00:00.018Z',
+                  statusCode: 200,
                 },
               },
             ],
@@ -86,6 +114,7 @@ describe(readExecutionsPage, () => {
               durationMs: 18,
               id: 'execution-1',
               method: 'GET',
+              statusCode: 200,
               url: '/users',
             },
           ],
@@ -105,6 +134,34 @@ describe(readExecutionsPage, () => {
       });
     });
   });
+
+  describe('having an execution without a status code', () => {
+    describe('when called', () => {
+      it('should throw', () => {
+        expect(() => {
+          readExecutionsPage(
+            {
+              items: [
+                {
+                  id: 'execution-1',
+                  request: {
+                    method: 'GET',
+                    startedAt: '2026-10-19T20:00:00.000Z',
+                    url: '/users',
+                  },
+                  response: {
+                    sentAt: '2026-10-19T20:00:00.018Z',
+                  },
+                },
+              ],
+              total: 1,
+            },
+            1,
+          );
+        }).toThrow('Execution item has an unexpected shape.');
+      });
+    });
+  });
 });
 
 describe(nextExecutionsPage, () => {
@@ -120,6 +177,7 @@ describe(nextExecutionsPage, () => {
               durationMs: 1,
               id: String(index),
               method: 'GET',
+              statusCode: 200,
               url: '/users',
             }),
           ),
@@ -145,6 +203,7 @@ describe(nextExecutionsPage, () => {
               durationMs: 1,
               id: 'execution-1',
               method: 'GET',
+              statusCode: 200,
               url: '/users',
             },
           ],

@@ -1,9 +1,15 @@
 import { Search, X } from 'lucide-react';
-import { type ChangeEvent, type ReactElement, type SubmitEvent } from 'react';
+import {
+  type ChangeEvent,
+  type ReactElement,
+  type ReactNode,
+  type SubmitEvent,
+} from 'react';
 
 export interface SearchFieldProps {
   readonly onSearch: (requestUrlLike: string) => void;
   readonly onValueChange: (value: string) => void;
+  readonly trailing: ReactNode;
   readonly value: string;
 }
 
@@ -56,6 +62,7 @@ export function SearchField(props: SearchFieldProps): ReactElement {
       <button aria-label="Search" className="submit" type="submit">
         <Search aria-hidden="true" size={16} strokeWidth={1.75} />
       </button>
+      {props.trailing}
     </form>
   );
 }
