@@ -3,7 +3,7 @@ import { type ReactElement } from 'react';
 import {
   formatHttpStatusCode,
   readHttpStatusCode,
-} from '../executions/httpStatusCodes.js';
+} from '../calls/httpStatusCodes.js';
 
 export interface StatusPillProps {
   readonly statusCode: number;

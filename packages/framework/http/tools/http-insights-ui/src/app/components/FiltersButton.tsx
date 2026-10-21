@@ -1,11 +1,11 @@
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 
-import { type ExecutionFilters } from '../executions/executionsApi.js';
+import { type CallFilters } from '../calls/callsApi.js';
 import { FiltersDialog } from './FiltersDialog.js';
 
 export interface FiltersButtonProps {
-  readonly filters: ExecutionFilters;
-  readonly onFiltersChange: (filters: ExecutionFilters) => void;
+  readonly filters: CallFilters;
+  readonly onFiltersChange: (filters: CallFilters) => void;
 }
 
 export function FiltersButton(props: FiltersButtonProps): ReactElement {
@@ -31,7 +31,7 @@ export function FiltersButton(props: FiltersButtonProps): ReactElement {
   return (
     <>
       <button
-        aria-controls="execution-filters-dialog"
+        aria-controls="call-filters-dialog"
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         aria-label="Filters"

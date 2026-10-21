@@ -12,13 +12,13 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
-import { type ExecutionFilters } from '../executions/executionsApi.js';
+import { type CallFilters } from '../calls/callsApi.js';
 import { HTTP_METHODS, MethodBadge } from './MethodBadge.js';
 import { StatusCodeField } from './StatusCodeField.js';
 
 export interface FiltersDialogProps {
-  readonly filters: ExecutionFilters;
-  readonly onApply: (filters: ExecutionFilters) => void;
+  readonly filters: CallFilters;
+  readonly onApply: (filters: CallFilters) => void;
   readonly onClose: () => void;
 }
 
@@ -26,18 +26,15 @@ export function FiltersDialog(props: FiltersDialogProps): ReactElement {
   const titleId: string = useId();
   const dialogRef: React.RefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement>(null);
-  const draftState: [
-    ExecutionFilters,
-    Dispatch<SetStateAction<ExecutionFilters>>,
-  ] = useState<ExecutionFilters>(props.filters);
-  const draft: ExecutionFilters = draftState[0];
-  const setDraftState: Dispatch<SetStateAction<ExecutionFilters>> =
-    draftState[1];
-  const draftRef: React.RefObject<ExecutionFilters> = useRef(props.filters);
-  const setDraft: (update: SetStateAction<ExecutionFilters>) => void = (
-    update: SetStateAction<ExecutionFilters>,
+  const draftState: [CallFilters, Dispatch<SetStateAction<CallFilters>>] =
+    useState<CallFilters>(props.filters);
+  const draft: CallFilters = draftState[0];
+  const setDraftState: Dispatch<SetStateAction<CallFilters>> = draftState[1];
+  const draftRef: React.RefObject<CallFilters> = useRef(props.filters);
+  const setDraft: (update: SetStateAction<CallFilters>) => void = (
+    update: SetStateAction<CallFilters>,
   ): void => {
-    const nextDraft: ExecutionFilters =
+    const nextDraft: CallFilters =
       typeof update === 'function' ? update(draftRef.current) : update;
 
     draftRef.current = nextDraft;
@@ -78,7 +75,7 @@ export function FiltersDialog(props: FiltersDialogProps): ReactElement {
         aria-labelledby={titleId}
         aria-modal="true"
         className="modal"
-        id="execution-filters-dialog"
+        id="call-filters-dialog"
         onKeyDown={onKeyDown}
         ref={dialogRef}
         role="dialog"
@@ -107,7 +104,7 @@ export function FiltersDialog(props: FiltersDialogProps): ReactElement {
                   className="method-option"
                   key={method}
                   onClick={(): void => {
-                    setDraft((current: ExecutionFilters): ExecutionFilters => ({
+                    setDraft((current: CallFilters): CallFilters => ({
                       requestMethod: isSelected ? undefined : method,
                       responseStatusCode: current.responseStatusCode,
                     }));
@@ -122,7 +119,7 @@ export function FiltersDialog(props: FiltersDialogProps): ReactElement {
         </fieldset>
         <StatusCodeField
           onChange={(statusCode: number | undefined): void => {
-            setDraft((current: ExecutionFilters): ExecutionFilters => ({
+            setDraft((current: CallFilters): CallFilters => ({
               requestMethod: current.requestMethod,
               responseStatusCode: statusCode,
             }));

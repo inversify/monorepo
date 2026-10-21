@@ -25,8 +25,8 @@ export class InsightsUiController {
     );
   }
 
-  @Get('/executions/:executionId')
-  public getExecution(): HttpResponse {
+  @Get('/calls/:callId')
+  public getCall(): HttpResponse {
     return this.getIndex();
   }
 

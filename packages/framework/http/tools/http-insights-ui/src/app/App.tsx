@@ -7,8 +7,8 @@ import {
 } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
-import { ExecutionPage } from './execution/ExecutionPage.js';
-import { ExecutionsPage } from './executions/ExecutionsPage.js';
+import { CallPage } from './call/CallPage.js';
+import { CallsPage } from './calls/CallsPage.js';
 import { routerBasename } from './routerBasename.js';
 import { ThemeProvider } from './theme/ThemeProvider.js';
 
@@ -34,11 +34,8 @@ export function App(): ReactElement {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter basename={routerBasename(import.meta.env.BASE_URL)}>
           <Routes>
-            <Route element={<ExecutionsPage />} path="/" />
-            <Route
-              element={<ExecutionPage />}
-              path="/executions/:executionId"
-            />
+            <Route element={<CallsPage />} path="/" />
+            <Route element={<CallPage />} path="/calls/:callId" />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

@@ -13,10 +13,10 @@ vitest.mock(
 );
 
 describe(InsightsUiController, () => {
-  describe('.getExecution', () => {
+  describe('.getCall', () => {
     describe('when called', () => {
       beforeAll(() => {
-        new InsightsUiController().getExecution();
+        new InsightsUiController().getCall();
       });
 
       it('should serve the UI index', () => {

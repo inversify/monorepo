@@ -14,7 +14,7 @@ import {
   formatHttpStatusCode,
   type HttpStatusCode,
   readHttpStatusCode,
-} from '../executions/httpStatusCodes.js';
+} from '../calls/httpStatusCodes.js';
 
 export interface StatusCodeFieldProps {
   readonly onChange: (statusCode: number | undefined) => void;

@@ -525,32 +525,32 @@ body:has(.modal-backdrop) {
     var(--shadow);
 }
 
-.executions {
+.calls {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
-.executions th,
-.executions td {
+.calls th,
+.calls td {
   padding: 0 16px;
   text-align: left;
   vertical-align: middle;
 }
 
-.executions th:first-child,
-.executions td:first-child {
+.calls th:first-child,
+.calls td:first-child {
   width: 7.5rem;
   padding-left: 14px;
 }
 
-.executions th:nth-child(3),
-.executions td:nth-child(3) {
+.calls th:nth-child(3),
+.calls td:nth-child(3) {
   width: 15.5rem;
   overflow: hidden;
 }
 
-.executions td:nth-child(3) .status-pill {
+.calls td:nth-child(3) .status-pill {
   display: inline-block;
   max-width: 100%;
   overflow: hidden;
@@ -559,14 +559,14 @@ body:has(.modal-backdrop) {
   vertical-align: middle;
 }
 
-.executions th:last-child,
-.executions td:last-child {
+.calls th:last-child,
+.calls td:last-child {
   width: 8.75rem;
   padding-right: 18px;
   text-align: right;
 }
 
-.executions th {
+.calls th {
   height: 42px;
   border-bottom: 1px solid var(--line);
   color: var(--faint);
@@ -576,29 +576,29 @@ body:has(.modal-backdrop) {
   text-transform: uppercase;
 }
 
-.executions td {
+.calls td {
   height: 56px;
   border-top: 1px solid var(--line);
 }
 
-.executions tbody tr:first-child td {
+.calls tbody tr:first-child td {
   border-top: 0;
 }
 
-.executions tbody tr:hover td {
+.calls tbody tr:hover td {
   background: var(--hover);
 }
 
-.execution-row {
+.call-row {
   cursor: pointer;
 }
 
-.execution-link {
+.call-link {
   color: inherit;
   text-decoration: none;
 }
 
-.execution-link:focus-visible,
+.call-link:focus-visible,
 .back-link:focus-visible,
 .section-menu button:focus-visible {
   outline: 2px solid var(--accent);
@@ -732,14 +732,14 @@ body:has(.modal-backdrop) {
   color: var(--text);
 }
 
-.execution-summary {
+.call-summary {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-top: 18px;
 }
 
-.execution-summary h1 {
+.call-summary h1 {
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -751,8 +751,8 @@ body:has(.modal-backdrop) {
   white-space: nowrap;
 }
 
-.execution-summary .status-pill,
-.execution-summary .duration {
+.call-summary .status-pill,
+.call-summary .duration {
   flex: none;
 }
 
@@ -792,7 +792,7 @@ body:has(.modal-backdrop) {
   background: #e24b4b;
 }
 
-.execution-layout {
+.call-layout {
   display: grid;
   grid-template-columns: 196px minmax(0, 1fr);
   gap: 16px;
@@ -1073,8 +1073,8 @@ body:has(.modal-backdrop) {
     font-size: 28px;
   }
 
-  .executions th:first-child,
-  .executions td:first-child {
+  .calls th:first-child,
+  .calls td:first-child {
     width: 6.4rem;
     padding-left: 10px;
     padding-right: 8px;
@@ -1085,34 +1085,34 @@ body:has(.modal-backdrop) {
     font-size: 10px;
   }
 
-  .executions .status-reason {
+  .calls .status-reason {
     display: none;
   }
 
-  .executions th:nth-child(3),
-  .executions td:nth-child(3) {
+  .calls th:nth-child(3),
+  .calls td:nth-child(3) {
     width: 4.75rem;
     padding-right: 8px;
     padding-left: 8px;
   }
 
-  .executions th:last-child,
-  .executions td:last-child {
+  .calls th:last-child,
+  .calls td:last-child {
     width: 6.5rem;
     padding-right: 12px;
   }
 
-  .execution-summary {
+  .call-summary {
     flex-wrap: wrap;
   }
 
-  .execution-summary h1 {
+  .call-summary h1 {
     flex-basis: 100%;
     order: 1;
     font-size: 16px;
   }
 
-  .execution-layout {
+  .call-layout {
     grid-template-columns: 1fr;
   }
 

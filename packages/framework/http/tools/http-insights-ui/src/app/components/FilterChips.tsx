@@ -1,11 +1,11 @@
 import { X } from 'lucide-react';
 import { type ReactElement } from 'react';
 
-import { type ExecutionFilters } from '../executions/executionsApi.js';
+import { type CallFilters } from '../calls/callsApi.js';
 
 export interface FilterChipsProps {
-  readonly filters: ExecutionFilters;
-  readonly onFiltersChange: (filters: ExecutionFilters) => void;
+  readonly filters: CallFilters;
+  readonly onFiltersChange: (filters: CallFilters) => void;
 }
 
 export function FilterChips(props: FilterChipsProps): ReactElement | null {
@@ -43,8 +43,8 @@ interface FilterChip {
 }
 
 function readFilterChips(
-  filters: ExecutionFilters,
-  onFiltersChange: (filters: ExecutionFilters) => void,
+  filters: CallFilters,
+  onFiltersChange: (filters: CallFilters) => void,
 ): readonly FilterChip[] {
   const chips: FilterChip[] = [];
 

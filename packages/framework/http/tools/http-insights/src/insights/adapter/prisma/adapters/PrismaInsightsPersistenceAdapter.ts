@@ -1,117 +1,113 @@
 import { inject, injectable } from 'inversify';
 
 import { Prisma, PrismaClient } from '../../../../generated/prisma/client.js';
+import {
+  type BaseCallsFilterQuery,
+  type CallsFilterQuery,
+} from '../../../application/models/CallsFilterQuery.js';
+import {
+  CallsFindQuery,
+  type CompletedCallsFindQuery,
+  type OngoingCallsFindQuery,
+} from '../../../application/models/CallsFindQuery.js';
+import { CallsFindQueryResult } from '../../../application/models/CallsFindQueryResult.js';
 import { type ExecuteUpdateCommand } from '../../../application/models/ExecuteUpdateCommand.js';
-import {
-  type BaseExecutionsFilterQuery,
-  type ExecutionsFilterQuery,
-} from '../../../application/models/ExecutionsFilterQuery.js';
-import {
-  type CompletedExecutionsFindQuery,
-  ExecutionsFindQuery,
-  type OngoingExecutionsFindQuery,
-} from '../../../application/models/ExecutionsFindQuery.js';
-import { ExecutionsFindQueryResult } from '../../../application/models/ExecutionsFindQueryResult.js';
-import { OngoingExecutionsFindQueryResult } from '../../../application/models/OngoingExecutionsFindQueryResult.js';
-import { type ExecutionPersistenceOutputPort } from '../../../application/ports/ExecutionPersistenceOutputPort.js';
+import { OngoingCallsFindQueryResult } from '../../../application/models/OngoingCallsFindQueryResult.js';
+import { type CallPersistenceOutputPort } from '../../../application/ports/CallPersistenceOutputPort.js';
+import { type Call } from '../../../domain/models/Call.js';
 import { type Controller } from '../../../domain/models/Controller.js';
-import { type Execution } from '../../../domain/models/Execution.js';
 import { type Guard } from '../../../domain/models/Guard.js';
 import { type HttpError } from '../../../domain/models/HttpError.js';
 import { type Interceptor } from '../../../domain/models/Interceptor.js';
 import { type Middleware } from '../../../domain/models/Middleware.js';
 import { type NativeMiddleware } from '../../../domain/models/NativeMiddleware.js';
-import { type OngoingExecution } from '../../../domain/models/OngoingExecution.js';
+import { type OngoingCall } from '../../../domain/models/OngoingCall.js';
 import { type Pipe } from '../../../domain/models/Pipe.js';
 import { type Response } from '../../../domain/models/Response.js';
 import {
-  ExecutionFromPrismaExecutionBuilder,
-  executionInclude,
-  type PrismaExecutionWithRelations,
-} from '../builders/ExecutionFromPrismaExecutionBuilder.js';
+  CallFromPrismaCallBuilder,
+  callInclude,
+  type PrismaCallWithRelations,
+} from '../builders/CallFromPrismaCallBuilder.js';
 
 @injectable()
-export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOutputPort {
-  readonly #executionFromPrismaExecutionBuilder: ExecutionFromPrismaExecutionBuilder;
+export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPort {
+  readonly #callFromPrismaCallBuilder: CallFromPrismaCallBuilder;
   readonly #prismaClient: PrismaClient;
 
   constructor(
-    @inject(ExecutionFromPrismaExecutionBuilder)
-    executionFromPrismaExecutionBuilder: ExecutionFromPrismaExecutionBuilder,
+    @inject(CallFromPrismaCallBuilder)
+    callFromPrismaCallBuilder: CallFromPrismaCallBuilder,
     @inject(PrismaClient)
     prismaClient: PrismaClient,
   ) {
-    this.#executionFromPrismaExecutionBuilder =
-      executionFromPrismaExecutionBuilder;
+    this.#callFromPrismaCallBuilder = callFromPrismaCallBuilder;
     this.#prismaClient = prismaClient;
   }
 
-  public async create(execution: Execution): Promise<void> {
+  public async create(call: Call): Promise<void> {
     await this.#prismaClient.$transaction(
       async (transaction: Prisma.TransactionClient): Promise<void> => {
-        await transaction.execution.create({
+        await transaction.call.create({
           data: {
-            id: execution.id,
+            id: call.id,
             request: {
               create: {
-                headers: execution.request.headers,
-                id: execution.request.id,
-                method: execution.request.method,
-                started_at: execution.request.startedAt,
-                url: execution.request.url,
+                headers: call.request.headers,
+                id: call.request.id,
+                method: call.request.method,
+                started_at: call.request.startedAt,
+                url: call.request.url,
               },
             },
           },
         });
 
-        await this.#writeExecutionElements(transaction, execution);
+        await this.#writeCallElements(transaction, call);
       },
     );
   }
 
   public async find(
-    query: OngoingExecutionsFindQuery,
-  ): Promise<OngoingExecutionsFindQueryResult>;
+    query: OngoingCallsFindQuery,
+  ): Promise<OngoingCallsFindQueryResult>;
   public async find(
-    query: CompletedExecutionsFindQuery,
-  ): Promise<ExecutionsFindQueryResult>;
+    query: CompletedCallsFindQuery,
+  ): Promise<CallsFindQueryResult>;
   public async find(
-    query: ExecutionsFindQuery,
-  ): Promise<ExecutionsFindQueryResult | OngoingExecutionsFindQueryResult> {
-    const where: Prisma.ExecutionWhereInput = this.#buildExecutionWhereInput(
+    query: CallsFindQuery,
+  ): Promise<CallsFindQueryResult | OngoingCallsFindQueryResult> {
+    const where: Prisma.CallWhereInput = this.#buildCallWhereInput(
       query.filter,
     );
 
-    const [prismaExecutions, total]: [PrismaExecutionWithRelations[], number] =
+    const [prismaCalls, total]: [PrismaCallWithRelations[], number] =
       await Promise.all([
-        this.#prismaClient.execution.findMany({
-          include: executionInclude,
-          orderBy: this.#buildExecutionOrderBy(query.filter),
+        this.#prismaClient.call.findMany({
+          include: callInclude,
+          orderBy: this.#buildCallOrderBy(query.filter),
           where,
           ...(query.offset === undefined ? {} : { skip: query.offset }),
           ...(query.limit === undefined ? {} : { take: query.limit }),
         }),
-        this.#prismaClient.execution.count({
+        this.#prismaClient.call.count({
           where,
         }),
       ]);
 
     if (query.filter.response === null) {
       return {
-        items: prismaExecutions.map(
-          (prismaExecution: PrismaExecutionWithRelations): OngoingExecution =>
-            this.#executionFromPrismaExecutionBuilder.buildOngoing(
-              prismaExecution,
-            ),
+        items: prismaCalls.map(
+          (prismaCall: PrismaCallWithRelations): OngoingCall =>
+            this.#callFromPrismaCallBuilder.buildOngoing(prismaCall),
         ),
         total,
       };
     }
 
     return {
-      items: prismaExecutions.map(
-        (prismaExecution: PrismaExecutionWithRelations): Execution =>
-          this.#executionFromPrismaExecutionBuilder.build(prismaExecution),
+      items: prismaCalls.map((prismaCall: PrismaCallWithRelations): Call =>
+        this.#callFromPrismaCallBuilder.build(prismaCall),
       ),
       total,
     };
@@ -120,7 +116,7 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
   public async update(command: ExecuteUpdateCommand): Promise<void> {
     await this.#prismaClient.$transaction(
       async (transaction: Prisma.TransactionClient): Promise<void> => {
-        const executionId: string = await this.#readSingleExecutionId(
+        const callId: string = await this.#readSingleCallId(
           transaction,
           command.filter,
         );
@@ -132,7 +128,7 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
         await transaction.httpError.createMany({
           data: command.set.httpErrors.map(
             (httpError: HttpError): Prisma.HttpErrorCreateManyInput =>
-              this.#buildHttpErrorCreateManyInput(executionId, httpError),
+              this.#buildHttpErrorCreateManyInput(callId, httpError),
           ),
         });
       },
@@ -140,14 +136,14 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
   }
 
   #buildControllerCreateManyInput(
-    executionId: string,
+    callId: string,
     controller: Controller,
   ): Prisma.ControllerCreateManyInput {
     return this.#withOptionalError(
       {
+        call_id: callId,
         controller: controller.controller,
         ended_at: controller.endedAt,
-        execution_id: executionId,
         id: controller.id,
         method: controller.method,
         started_at: controller.startedAt,
@@ -156,9 +152,7 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
     );
   }
 
-  #buildExecutionIdWhereInput(
-    id: string | undefined,
-  ): Prisma.ExecutionWhereInput {
+  #buildCallIdWhereInput(id: string | undefined): Prisma.CallWhereInput {
     if (id === undefined) {
       return {};
     }
@@ -168,9 +162,9 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
     };
   }
 
-  #buildExecutionOrderBy(
-    query: BaseExecutionsFilterQuery,
-  ): Prisma.ExecutionOrderByWithRelationInput[] {
+  #buildCallOrderBy(
+    query: BaseCallsFilterQuery,
+  ): Prisma.CallOrderByWithRelationInput[] {
     switch (query.sort) {
       case 'startedAtAsc':
         return [
@@ -206,9 +200,7 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
     }
   }
 
-  #buildExecutionWhereInput(
-    query: ExecutionsFilterQuery,
-  ): Prisma.ExecutionWhereInput {
+  #buildCallWhereInput(query: CallsFilterQuery): Prisma.CallWhereInput {
     let whereRequest: Prisma.XOR<
       Prisma.RequestNullableScalarRelationFilter,
       Prisma.RequestWhereInput
@@ -233,12 +225,13 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
       }
     }
 
-    const whereExecutionId: Prisma.ExecutionWhereInput =
-      this.#buildExecutionIdWhereInput(query.id);
+    const whereCallId: Prisma.CallWhereInput = this.#buildCallIdWhereInput(
+      query.id,
+    );
 
     if (query.response === null) {
       return {
-        ...whereExecutionId,
+        ...whereCallId,
         request: whereRequest,
         response: {
           is: null,
@@ -261,8 +254,8 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
       };
     }
 
-    const where: Prisma.ExecutionWhereInput = {
-      ...whereExecutionId,
+    const where: Prisma.CallWhereInput = {
+      ...whereCallId,
       request: whereRequest,
       response: whereResponse,
     };
@@ -271,14 +264,14 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
   }
 
   #buildGuardCreateManyInput(
-    executionId: string,
+    callId: string,
     guard: Guard,
   ): Prisma.GuardCreateManyInput {
     return this.#withOptionalError(
       {
         allowed: guard.allowed,
+        call_id: callId,
         ended_at: guard.endedAt,
-        execution_id: executionId,
         guard: guard.guard,
         id: guard.id,
         started_at: guard.startedAt,
@@ -288,13 +281,13 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
   }
 
   #buildHttpErrorCreateManyInput(
-    executionId: string,
+    callId: string,
     httpError: HttpError,
   ): Prisma.HttpErrorCreateManyInput {
     return {
+      call_id: callId,
       ended_at: httpError.endedAt,
       error: this.#toRequiredInputJsonValue(httpError.error),
-      execution_id: executionId,
       filter: httpError.filter,
       id: httpError.id,
       started_at: httpError.startedAt,
@@ -302,13 +295,13 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
   }
 
   #buildInterceptorCreateManyInput(
-    executionId: string,
+    callId: string,
     interceptor: Interceptor,
   ): Prisma.InterceptorCreateManyInput {
     return this.#withOptionalError(
       {
+        call_id: callId,
         ended_at: interceptor.endedAt,
-        execution_id: executionId,
         id: interceptor.id,
         interceptor: interceptor.interceptor,
         started_at: interceptor.startedAt,
@@ -318,13 +311,13 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
   }
 
   #buildMiddlewareCreateManyInput(
-    executionId: string,
+    callId: string,
     middleware: Middleware,
   ): Prisma.MiddlewareCreateManyInput {
     return this.#withOptionalError(
       {
+        call_id: callId,
         ended_at: middleware.endedAt,
-        execution_id: executionId,
         id: middleware.id,
         middleware: middleware.middleware,
         phase: middleware.phase,
@@ -335,13 +328,13 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
   }
 
   #buildNativeMiddlewareCreateManyInput(
-    executionId: string,
+    callId: string,
     nativeMiddleware: NativeMiddleware,
   ): Prisma.NativeMiddlewareCreateManyInput {
     return this.#withOptionalError(
       {
+        call_id: callId,
         ended_at: nativeMiddleware.endedAt,
-        execution_id: executionId,
         id: nativeMiddleware.id,
         name: nativeMiddleware.name,
         started_at: nativeMiddleware.startedAt,
@@ -351,13 +344,13 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
   }
 
   #buildPipeCreateManyInput(
-    executionId: string,
+    callId: string,
     pipe: Pipe,
   ): Prisma.PipeCreateManyInput {
     return this.#withOptionalError(
       {
+        call_id: callId,
         ended_at: pipe.endedAt,
-        execution_id: executionId,
         id: pipe.id,
         method: pipe.method,
         parameter_index: pipe.parameterIndex,
@@ -369,12 +362,12 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
   }
 
   #buildResponseCreateManyInput(
-    executionId: string,
+    callId: string,
     response: Response,
   ): Prisma.ResponseCreateManyInput {
     return {
       aborted: response.aborted,
-      execution_id: executionId,
+      call_id: callId,
       headers: response.headers,
       id: response.id,
       sent_at: response.sentAt,
@@ -446,29 +439,25 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
     return json;
   }
 
-  async #readSingleExecutionId(
+  async #readSingleCallId(
     transaction: Prisma.TransactionClient,
-    filter: ExecutionsFilterQuery,
+    filter: CallsFilterQuery,
   ): Promise<string> {
-    const matches: { id: string }[] = await transaction.execution.findMany({
+    const matches: { id: string }[] = await transaction.call.findMany({
       select: {
         id: true,
       },
-      where: this.#buildExecutionWhereInput(filter),
+      where: this.#buildCallWhereInput(filter),
     });
 
     if (matches.length !== 1) {
-      throw new Error(
-        `Execution update matched ${String(matches.length)} executions.`,
-      );
+      throw new Error(`Call update matched ${String(matches.length)} calls.`);
     }
 
     const match: { id: string } | undefined = matches[0];
 
     if (match === undefined) {
-      throw new Error(
-        `Execution update matched ${String(matches.length)} executions.`,
-      );
+      throw new Error(`Call update matched ${String(matches.length)} calls.`);
     }
 
     return match.id;
@@ -579,81 +568,78 @@ export class PrismaInsightsPersistenceAdapter implements ExecutionPersistenceOut
     };
   }
 
-  async #writeExecutionElements(
+  async #writeCallElements(
     transaction: Prisma.TransactionClient,
-    execution: Execution,
+    call: Call,
   ): Promise<void> {
-    const executionId: string = execution.id;
-    const controller: Controller | undefined = execution.controller;
+    const callId: string = call.id;
+    const controller: Controller | undefined = call.controller;
 
     if (controller !== undefined) {
       await transaction.controller.createMany({
-        data: [this.#buildControllerCreateManyInput(executionId, controller)],
+        data: [this.#buildControllerCreateManyInput(callId, controller)],
       });
     }
 
-    if (execution.guards.length > 0) {
+    if (call.guards.length > 0) {
       await transaction.guard.createMany({
-        data: execution.guards.map(
-          (guard: Guard): Prisma.GuardCreateManyInput =>
-            this.#buildGuardCreateManyInput(executionId, guard),
+        data: call.guards.map((guard: Guard): Prisma.GuardCreateManyInput =>
+          this.#buildGuardCreateManyInput(callId, guard),
         ),
       });
     }
 
-    if (execution.httpErrors.length > 0) {
+    if (call.httpErrors.length > 0) {
       await transaction.httpError.createMany({
-        data: execution.httpErrors.map(
+        data: call.httpErrors.map(
           (httpError: HttpError): Prisma.HttpErrorCreateManyInput =>
-            this.#buildHttpErrorCreateManyInput(executionId, httpError),
+            this.#buildHttpErrorCreateManyInput(callId, httpError),
         ),
       });
     }
 
-    if (execution.interceptors.length > 0) {
+    if (call.interceptors.length > 0) {
       await transaction.interceptor.createMany({
-        data: execution.interceptors.map(
+        data: call.interceptors.map(
           (interceptor: Interceptor): Prisma.InterceptorCreateManyInput =>
-            this.#buildInterceptorCreateManyInput(executionId, interceptor),
+            this.#buildInterceptorCreateManyInput(callId, interceptor),
         ),
       });
     }
 
-    if (execution.middlewares.length > 0) {
+    if (call.middlewares.length > 0) {
       await transaction.middleware.createMany({
-        data: execution.middlewares.map(
+        data: call.middlewares.map(
           (middleware: Middleware): Prisma.MiddlewareCreateManyInput =>
-            this.#buildMiddlewareCreateManyInput(executionId, middleware),
+            this.#buildMiddlewareCreateManyInput(callId, middleware),
         ),
       });
     }
 
-    if (execution.nativeMiddlewares.length > 0) {
+    if (call.nativeMiddlewares.length > 0) {
       await transaction.nativeMiddleware.createMany({
-        data: execution.nativeMiddlewares.map(
+        data: call.nativeMiddlewares.map(
           (
             nativeMiddleware: NativeMiddleware,
           ): Prisma.NativeMiddlewareCreateManyInput =>
             this.#buildNativeMiddlewareCreateManyInput(
-              executionId,
+              callId,
               nativeMiddleware,
             ),
         ),
       });
     }
 
-    if (execution.pipes.length > 0) {
+    if (call.pipes.length > 0) {
       await transaction.pipe.createMany({
-        data: execution.pipes.map((pipe: Pipe): Prisma.PipeCreateManyInput =>
-          this.#buildPipeCreateManyInput(executionId, pipe),
+        data: call.pipes.map((pipe: Pipe): Prisma.PipeCreateManyInput =>
+          this.#buildPipeCreateManyInput(callId, pipe),
         ),
       });
     }
 
     await transaction.response.createMany({
-      data: [
-        this.#buildResponseCreateManyInput(executionId, execution.response),
-      ],
+      data: [this.#buildResponseCreateManyInput(callId, call.response)],
     });
   }
 }

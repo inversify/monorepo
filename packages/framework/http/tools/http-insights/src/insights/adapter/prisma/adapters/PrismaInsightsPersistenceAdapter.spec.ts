@@ -9,24 +9,24 @@ import {
 } from 'vitest';
 
 import { type PrismaClient } from '../../../../generated/prisma/client.js';
-import { type ExecuteUpdateCommand } from '../../../application/models/ExecuteUpdateCommand.js';
 import {
-  type CompletedExecutionsFindQuery,
-  type OngoingExecutionsFindQuery,
-} from '../../../application/models/ExecutionsFindQuery.js';
+  type CompletedCallsFindQuery,
+  type OngoingCallsFindQuery,
+} from '../../../application/models/CallsFindQuery.js';
+import { type ExecuteUpdateCommand } from '../../../application/models/ExecuteUpdateCommand.js';
+import { CallFixtures } from '../../../domain/fixtures/CallFixtures.js';
 import { ControllerFixtures } from '../../../domain/fixtures/ControllerFixtures.js';
-import { ExecutionFixtures } from '../../../domain/fixtures/ExecutionFixtures.js';
 import { GuardFixtures } from '../../../domain/fixtures/GuardFixtures.js';
 import { HttpErrorFixtures } from '../../../domain/fixtures/HttpErrorFixtures.js';
 import { RequestFixtures } from '../../../domain/fixtures/RequestFixtures.js';
 import { ResponseFixtures } from '../../../domain/fixtures/ResponseFixtures.js';
-import { type Execution } from '../../../domain/models/Execution.js';
+import { type Call } from '../../../domain/models/Call.js';
 import {
-  type ExecutionFromPrismaExecutionBuilder,
-  executionInclude,
-  type PrismaExecutionWithRelations,
-} from '../builders/ExecutionFromPrismaExecutionBuilder.js';
-import { PrismaExecutionWithRelationsFixtures } from '../fixtures/PrismaExecutionWithRelationsFixtures.js';
+  type CallFromPrismaCallBuilder,
+  callInclude,
+  type PrismaCallWithRelations,
+} from '../builders/CallFromPrismaCallBuilder.js';
+import { PrismaCallWithRelationsFixtures } from '../fixtures/PrismaCallWithRelationsFixtures.js';
 import { PrismaInsightsPersistenceAdapter } from './PrismaInsightsPersistenceAdapter.js';
 
 const baseWhereFixture: unknown = {
@@ -40,12 +40,12 @@ const ongoingWhereFixture: unknown = {
 };
 
 describe(PrismaInsightsPersistenceAdapter, () => {
-  let executionFromPrismaExecutionBuilderMock: Mocked<ExecutionFromPrismaExecutionBuilder>;
+  let callFromPrismaCallBuilderMock: Mocked<CallFromPrismaCallBuilder>;
   let prismaClientMock: Mocked<PrismaClient>;
-  let executionCreateMock: ReturnType<typeof vitest.fn>;
-  let executionFindManyMock: ReturnType<typeof vitest.fn>;
-  let transactionExecutionFindManyMock: ReturnType<typeof vitest.fn>;
-  let executionCountMock: ReturnType<typeof vitest.fn>;
+  let callCreateMock: ReturnType<typeof vitest.fn>;
+  let callFindManyMock: ReturnType<typeof vitest.fn>;
+  let transactionCallFindManyMock: ReturnType<typeof vitest.fn>;
+  let callCountMock: ReturnType<typeof vitest.fn>;
   let controllerCreateManyMock: ReturnType<typeof vitest.fn>;
   let guardCreateManyMock: ReturnType<typeof vitest.fn>;
   let httpErrorCreateManyMock: ReturnType<typeof vitest.fn>;
@@ -59,16 +59,16 @@ describe(PrismaInsightsPersistenceAdapter, () => {
   let prismaInsightsPersistenceAdapter: PrismaInsightsPersistenceAdapter;
 
   beforeAll(() => {
-    executionFromPrismaExecutionBuilderMock = {
+    callFromPrismaCallBuilderMock = {
       build: vitest.fn(),
       buildOngoing: vitest.fn(),
     } as Partial<
-      Mocked<ExecutionFromPrismaExecutionBuilder>
-    > as Mocked<ExecutionFromPrismaExecutionBuilder>;
-    executionCreateMock = vitest.fn();
-    executionFindManyMock = vitest.fn();
-    transactionExecutionFindManyMock = vitest.fn();
-    executionCountMock = vitest.fn();
+      Mocked<CallFromPrismaCallBuilder>
+    > as Mocked<CallFromPrismaCallBuilder>;
+    callCreateMock = vitest.fn();
+    callFindManyMock = vitest.fn();
+    transactionCallFindManyMock = vitest.fn();
+    callCountMock = vitest.fn();
     controllerCreateManyMock = vitest.fn();
     guardCreateManyMock = vitest.fn();
     httpErrorCreateManyMock = vitest.fn();
@@ -79,7 +79,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     responseCreateManyMock = vitest.fn();
     const transactionClient: {
       controller: { createMany: ReturnType<typeof vitest.fn> };
-      execution: {
+      call: {
         create: ReturnType<typeof vitest.fn>;
         findMany: ReturnType<typeof vitest.fn>;
       };
@@ -91,12 +91,12 @@ describe(PrismaInsightsPersistenceAdapter, () => {
       pipe: { createMany: ReturnType<typeof vitest.fn> };
       response: { createMany: ReturnType<typeof vitest.fn> };
     } = {
+      call: {
+        create: callCreateMock,
+        findMany: transactionCallFindManyMock,
+      },
       controller: {
         createMany: controllerCreateManyMock,
-      },
-      execution: {
-        create: executionCreateMock,
-        findMany: transactionExecutionFindManyMock,
       },
       guard: {
         createMany: guardCreateManyMock,
@@ -129,24 +129,24 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     );
     prismaClientMock = {
       $transaction: prismaTransactionMock,
-      execution: {
-        count: executionCountMock,
-        create: executionCreateMock,
-        findMany: executionFindManyMock,
+      call: {
+        count: callCountMock,
+        create: callCreateMock,
+        findMany: callFindManyMock,
       },
     } as unknown as Mocked<PrismaClient>;
 
     prismaInsightsPersistenceAdapter = new PrismaInsightsPersistenceAdapter(
-      executionFromPrismaExecutionBuilderMock,
+      callFromPrismaCallBuilderMock,
       prismaClientMock,
     );
   });
 
   describe('.create', () => {
-    describe('having an execution whose errors are Error values', () => {
+    describe('having a call whose errors are Error values', () => {
       let causeFixture: Error;
       let errorFixture: Error;
-      let executionFixture: Execution;
+      let callFixture: Call;
       let serializedErrorFixture: {
         cause: {
           message: string;
@@ -173,7 +173,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           name: 'Error',
           stack: 'Error: boom',
         };
-        executionFixture = {
+        callFixture = {
           controller: {
             ...ControllerFixtures.any,
             error: errorFixture,
@@ -185,7 +185,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
               error: errorFixture,
             },
           ],
-          id: 'execution-id',
+          id: 'call-id',
           interceptors: [],
           middlewares: [],
           nativeMiddlewares: [],
@@ -197,7 +197,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
 
       describe('when called', () => {
         let result: unknown;
-        let wroteTheExecutionBeforeTheController: boolean;
+        let wroteTheCallBeforeTheController: boolean;
 
         beforeAll(async () => {
           const resolvers: Array<() => void> = [];
@@ -214,19 +214,19 @@ describe(PrismaInsightsPersistenceAdapter, () => {
             );
           };
 
-          deferWrite(executionCreateMock);
+          deferWrite(callCreateMock);
           deferWrite(controllerCreateManyMock);
           deferWrite(guardCreateManyMock);
           deferWrite(httpErrorCreateManyMock);
           deferWrite(responseCreateManyMock);
 
           const pendingRecord: Promise<void> =
-            prismaInsightsPersistenceAdapter.create(executionFixture);
+            prismaInsightsPersistenceAdapter.create(callFixture);
 
           await Promise.resolve();
 
-          wroteTheExecutionBeforeTheController =
-            executionCreateMock.mock.calls.length === 1 &&
+          wroteTheCallBeforeTheController =
+            callCreateMock.mock.calls.length === 1 &&
             controllerCreateManyMock.mock.calls.length === 0;
 
           for (let attempt: number = 0; attempt < 8; attempt += 1) {
@@ -253,54 +253,53 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           expect(prismaTransactionMock).toHaveBeenCalledTimes(1);
         });
 
-        it('should call prismaClient.execution.create()', () => {
-          expect(executionCreateMock).toHaveBeenCalledExactlyOnceWith({
+        it('should call prismaClient.call.create()', () => {
+          expect(callCreateMock).toHaveBeenCalledExactlyOnceWith({
             data: {
-              id: executionFixture.id,
+              id: callFixture.id,
               request: {
                 create: {
-                  headers: executionFixture.request.headers,
-                  id: executionFixture.request.id,
-                  method: executionFixture.request.method,
-                  started_at: executionFixture.request.startedAt,
-                  url: executionFixture.request.url,
+                  headers: callFixture.request.headers,
+                  id: callFixture.request.id,
+                  method: callFixture.request.method,
+                  started_at: callFixture.request.startedAt,
+                  url: callFixture.request.url,
                 },
               },
             },
           });
         });
 
-        it('should write the execution before its controller', () => {
-          expect(wroteTheExecutionBeforeTheController).toBe(true);
+        it('should write the call before its controller', () => {
+          expect(wroteTheCallBeforeTheController).toBe(true);
         });
 
         it('should call prismaClient.controller.createMany()', () => {
           expect(controllerCreateManyMock).toHaveBeenCalledExactlyOnceWith({
             data: [
               {
-                controller: executionFixture.controller?.controller,
-                ended_at: executionFixture.controller?.endedAt,
+                call_id: callFixture.id,
+                controller: callFixture.controller?.controller,
+                ended_at: callFixture.controller?.endedAt,
                 error: serializedErrorFixture,
-                execution_id: executionFixture.id,
-                id: executionFixture.controller?.id,
-                method: executionFixture.controller?.method,
-                started_at: executionFixture.controller?.startedAt,
+                id: callFixture.controller?.id,
+                method: callFixture.controller?.method,
+                started_at: callFixture.controller?.startedAt,
               },
             ],
           });
         });
 
         it('should call prismaClient.guard.createMany()', () => {
-          const guardFixture: (typeof executionFixture.guards)[number] =
-            executionFixture
-              .guards[0] as (typeof executionFixture.guards)[number];
+          const guardFixture: (typeof callFixture.guards)[number] = callFixture
+            .guards[0] as (typeof callFixture.guards)[number];
 
           expect(guardCreateManyMock).toHaveBeenCalledExactlyOnceWith({
             data: [
               {
                 allowed: guardFixture.allowed,
+                call_id: callFixture.id,
                 ended_at: guardFixture.endedAt,
-                execution_id: executionFixture.id,
                 guard: guardFixture.guard,
                 id: guardFixture.id,
                 started_at: guardFixture.startedAt,
@@ -310,16 +309,16 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         });
 
         it('should call prismaClient.httpError.createMany()', () => {
-          const httpErrorFixture: (typeof executionFixture.httpErrors)[number] =
-            executionFixture
-              .httpErrors[0] as (typeof executionFixture.httpErrors)[number];
+          const httpErrorFixture: (typeof callFixture.httpErrors)[number] =
+            callFixture
+              .httpErrors[0] as (typeof callFixture.httpErrors)[number];
 
           expect(httpErrorCreateManyMock).toHaveBeenCalledExactlyOnceWith({
             data: [
               {
+                call_id: callFixture.id,
                 ended_at: httpErrorFixture.endedAt,
                 error: serializedErrorFixture,
-                execution_id: executionFixture.id,
                 filter: httpErrorFixture.filter,
                 id: httpErrorFixture.id,
                 started_at: httpErrorFixture.startedAt,
@@ -332,12 +331,12 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           expect(responseCreateManyMock).toHaveBeenCalledExactlyOnceWith({
             data: [
               {
-                aborted: executionFixture.response.aborted,
-                execution_id: executionFixture.id,
-                headers: executionFixture.response.headers,
-                id: executionFixture.response.id,
-                sent_at: executionFixture.response.sentAt,
-                status_code: executionFixture.response.statusCode,
+                aborted: callFixture.response.aborted,
+                call_id: callFixture.id,
+                headers: callFixture.response.headers,
+                id: callFixture.response.id,
+                sent_at: callFixture.response.sentAt,
+                status_code: callFixture.response.statusCode,
               },
             ],
           });
@@ -355,13 +354,13 @@ describe(PrismaInsightsPersistenceAdapter, () => {
   });
 
   describe('.update', () => {
-    describe('having one matching execution', () => {
+    describe('having one matching call', () => {
       let commandFixture: ExecuteUpdateCommand;
 
       beforeAll(async () => {
         commandFixture = {
           filter: {
-            id: 'execution-id',
+            id: 'call-id',
             request: {
               method: undefined,
               urlLike: undefined,
@@ -375,9 +374,9 @@ describe(PrismaInsightsPersistenceAdapter, () => {
             httpErrors: [HttpErrorFixtures.any],
           },
         };
-        transactionExecutionFindManyMock.mockResolvedValueOnce([
+        transactionCallFindManyMock.mockResolvedValueOnce([
           {
-            id: 'execution-id',
+            id: 'call-id',
           },
         ]);
 
@@ -388,13 +387,13 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         vitest.clearAllMocks();
       });
 
-      it('should append the http errors for that execution', () => {
+      it('should append the http errors for that call', () => {
         expect(httpErrorCreateManyMock).toHaveBeenCalledExactlyOnceWith({
           data: [
             {
+              call_id: 'call-id',
               ended_at: HttpErrorFixtures.any.endedAt,
               error: HttpErrorFixtures.any.error,
-              execution_id: 'execution-id',
               filter: HttpErrorFixtures.any.filter,
               id: HttpErrorFixtures.any.id,
               started_at: HttpErrorFixtures.any.startedAt,
@@ -404,7 +403,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
       });
     });
 
-    describe('having two matching executions', () => {
+    describe('having two matching calls', () => {
       let commandFixture: ExecuteUpdateCommand;
       let result: unknown;
 
@@ -425,12 +424,12 @@ describe(PrismaInsightsPersistenceAdapter, () => {
             httpErrors: [HttpErrorFixtures.any],
           },
         };
-        transactionExecutionFindManyMock.mockResolvedValueOnce([
+        transactionCallFindManyMock.mockResolvedValueOnce([
           {
-            id: 'execution-id',
+            id: 'call-id',
           },
           {
-            id: 'other-execution-id',
+            id: 'other-call-id',
           },
         ]);
 
@@ -446,9 +445,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
       });
 
       it('should throw an Error', () => {
-        expect(result).toStrictEqual(
-          new Error('Execution update matched 2 executions.'),
-        );
+        expect(result).toStrictEqual(new Error('Call update matched 2 calls.'));
       });
 
       it('should not append http errors', () => {
@@ -459,7 +456,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
 
   describe('.find', () => {
     describe('having a query with no filters nor pagination', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -480,19 +477,19 @@ describe(PrismaInsightsPersistenceAdapter, () => {
       });
 
       describe('when called', () => {
-        let prismaExecutionFixture: PrismaExecutionWithRelations;
+        let prismaCallFixture: PrismaCallWithRelations;
         let totalFixture: number;
 
         let result: unknown;
 
         beforeAll(async () => {
-          prismaExecutionFixture = PrismaExecutionWithRelationsFixtures.any;
+          prismaCallFixture = PrismaCallWithRelationsFixtures.any;
           totalFixture = 7;
 
-          executionFindManyMock.mockResolvedValueOnce([prismaExecutionFixture]);
-          executionCountMock.mockResolvedValueOnce(totalFixture);
-          executionFromPrismaExecutionBuilderMock.build.mockReturnValueOnce(
-            ExecutionFixtures.any,
+          callFindManyMock.mockResolvedValueOnce([prismaCallFixture]);
+          callCountMock.mockResolvedValueOnce(totalFixture);
+          callFromPrismaCallBuilderMock.build.mockReturnValueOnce(
+            CallFixtures.any,
           );
 
           result = await prismaInsightsPersistenceAdapter.find(queryFixture);
@@ -502,35 +499,35 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: baseWhereFixture,
           });
         });
 
-        it('should call prismaClient.execution.count()', () => {
-          expect(executionCountMock).toHaveBeenCalledExactlyOnceWith({
+        it('should call prismaClient.call.count()', () => {
+          expect(callCountMock).toHaveBeenCalledExactlyOnceWith({
             where: baseWhereFixture,
           });
         });
 
-        it('should call executionFromPrismaExecutionBuilder.build()', () => {
+        it('should call callFromPrismaCallBuilder.build()', () => {
           expect(
-            executionFromPrismaExecutionBuilderMock.build,
-          ).toHaveBeenCalledExactlyOnceWith(prismaExecutionFixture);
+            callFromPrismaCallBuilderMock.build,
+          ).toHaveBeenCalledExactlyOnceWith(prismaCallFixture);
         });
 
-        it('should not call executionFromPrismaExecutionBuilder.buildOngoing()', () => {
+        it('should not call callFromPrismaCallBuilder.buildOngoing()', () => {
           expect(
-            executionFromPrismaExecutionBuilderMock.buildOngoing,
+            callFromPrismaCallBuilderMock.buildOngoing,
           ).not.toHaveBeenCalled();
         });
 
-        it('should return an ExecutionsFindQueryResult', () => {
+        it('should return an CallsFindQueryResult', () => {
           expect(result).toStrictEqual({
-            items: [ExecutionFixtures.any],
+            items: [CallFixtures.any],
             total: totalFixture,
           });
         });
@@ -538,7 +535,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     });
 
     describe('having a query with offset and limit', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -560,8 +557,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
 
       describe('when called', () => {
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -570,9 +567,9 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             skip: 20,
             take: 10,
@@ -583,7 +580,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     });
 
     describe('having a query with offset 0 and limit 0', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -605,8 +602,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
 
       describe('when called', () => {
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -615,9 +612,9 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             skip: 0,
             take: 0,
@@ -628,7 +625,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     });
 
     describe('having a query with request method', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -655,8 +652,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         };
 
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -665,16 +662,16 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: expectedWhere,
           });
         });
 
-        it('should call prismaClient.execution.count()', () => {
-          expect(executionCountMock).toHaveBeenCalledExactlyOnceWith({
+        it('should call prismaClient.call.count()', () => {
+          expect(callCountMock).toHaveBeenCalledExactlyOnceWith({
             where: expectedWhere,
           });
         });
@@ -682,7 +679,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     });
 
     describe('having a query with request method and urlLike', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -706,8 +703,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         };
 
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -716,16 +713,16 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: expectedWhere,
           });
         });
 
-        it('should call prismaClient.execution.count()', () => {
-          expect(executionCountMock).toHaveBeenCalledExactlyOnceWith({
+        it('should call prismaClient.call.count()', () => {
+          expect(callCountMock).toHaveBeenCalledExactlyOnceWith({
             where: expectedWhere,
           });
         });
@@ -733,7 +730,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     });
 
     describe('having a query with response statusCode', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -755,8 +752,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         };
 
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -765,16 +762,16 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: expectedWhere,
           });
         });
 
-        it('should call prismaClient.execution.count()', () => {
-          expect(executionCountMock).toHaveBeenCalledExactlyOnceWith({
+        it('should call prismaClient.call.count()', () => {
+          expect(callCountMock).toHaveBeenCalledExactlyOnceWith({
             where: expectedWhere,
           });
         });
@@ -782,7 +779,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     });
 
     describe('having a query with response with no statusCode', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -804,8 +801,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
 
       describe('when called', () => {
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -814,9 +811,9 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: baseWhereFixture,
           });
@@ -825,7 +822,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     });
 
     describe('having a query with request and response filters', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -847,8 +844,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         };
 
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -857,16 +854,16 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: expectedWhere,
           });
         });
 
-        it('should call prismaClient.execution.count()', () => {
-          expect(executionCountMock).toHaveBeenCalledExactlyOnceWith({
+        it('should call prismaClient.call.count()', () => {
+          expect(callCountMock).toHaveBeenCalledExactlyOnceWith({
             where: expectedWhere,
           });
         });
@@ -874,7 +871,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     });
 
     describe('having a query sorted by startedAt ascending', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -896,8 +893,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
 
       describe('when called', () => {
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -906,9 +903,9 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ request: { started_at: 'asc' } }, { id: 'asc' }],
             where: baseWhereFixture,
           });
@@ -917,7 +914,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     });
 
     describe('having a query sorted by startedAt descending', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -939,8 +936,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
 
       describe('when called', () => {
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -949,9 +946,9 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ request: { started_at: 'desc' } }, { id: 'desc' }],
             where: baseWhereFixture,
           });
@@ -959,8 +956,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
       });
     });
 
-    describe('having an ongoing executions find query with no filters', () => {
-      let queryFixture: OngoingExecutionsFindQuery;
+    describe('having an ongoing calls find query with no filters', () => {
+      let queryFixture: OngoingCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -979,31 +976,28 @@ describe(PrismaInsightsPersistenceAdapter, () => {
       });
 
       describe('when called', () => {
-        let prismaExecutionFixture: PrismaExecutionWithRelations;
+        let prismaCallFixture: PrismaCallWithRelations;
         let totalFixture: number;
 
         let result: unknown;
 
         beforeAll(async () => {
-          prismaExecutionFixture =
-            PrismaExecutionWithRelationsFixtures.withNullResponse;
+          prismaCallFixture = PrismaCallWithRelationsFixtures.withNullResponse;
           totalFixture = 2;
 
-          executionFindManyMock.mockResolvedValueOnce([prismaExecutionFixture]);
-          executionCountMock.mockResolvedValueOnce(totalFixture);
-          executionFromPrismaExecutionBuilderMock.buildOngoing.mockReturnValueOnce(
-            {
-              controller: undefined,
-              guards: [],
-              httpErrors: [],
-              id: prismaExecutionFixture.id,
-              interceptors: [],
-              middlewares: [],
-              nativeMiddlewares: [],
-              pipes: [],
-              request: RequestFixtures.any,
-            },
-          );
+          callFindManyMock.mockResolvedValueOnce([prismaCallFixture]);
+          callCountMock.mockResolvedValueOnce(totalFixture);
+          callFromPrismaCallBuilderMock.buildOngoing.mockReturnValueOnce({
+            controller: undefined,
+            guards: [],
+            httpErrors: [],
+            id: prismaCallFixture.id,
+            interceptors: [],
+            middlewares: [],
+            nativeMiddlewares: [],
+            pipes: [],
+            request: RequestFixtures.any,
+          });
 
           result = await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -1012,40 +1006,38 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: ongoingWhereFixture,
           });
         });
 
-        it('should call prismaClient.execution.count()', () => {
-          expect(executionCountMock).toHaveBeenCalledExactlyOnceWith({
+        it('should call prismaClient.call.count()', () => {
+          expect(callCountMock).toHaveBeenCalledExactlyOnceWith({
             where: ongoingWhereFixture,
           });
         });
 
-        it('should call executionFromPrismaExecutionBuilder.buildOngoing()', () => {
+        it('should call callFromPrismaCallBuilder.buildOngoing()', () => {
           expect(
-            executionFromPrismaExecutionBuilderMock.buildOngoing,
-          ).toHaveBeenCalledExactlyOnceWith(prismaExecutionFixture);
+            callFromPrismaCallBuilderMock.buildOngoing,
+          ).toHaveBeenCalledExactlyOnceWith(prismaCallFixture);
         });
 
-        it('should not call executionFromPrismaExecutionBuilder.build()', () => {
-          expect(
-            executionFromPrismaExecutionBuilderMock.build,
-          ).not.toHaveBeenCalled();
+        it('should not call callFromPrismaCallBuilder.build()', () => {
+          expect(callFromPrismaCallBuilderMock.build).not.toHaveBeenCalled();
         });
 
-        it('should return an OngoingExecutionsFindQueryResult', () => {
+        it('should return an OngoingCallsFindQueryResult', () => {
           expect(result).toStrictEqual({
             items: [
               {
                 controller: undefined,
                 guards: [],
                 httpErrors: [],
-                id: prismaExecutionFixture.id,
+                id: prismaCallFixture.id,
                 interceptors: [],
                 middlewares: [],
                 nativeMiddlewares: [],
@@ -1059,8 +1051,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
       });
     });
 
-    describe('having an ongoing executions find query with request filters sorted by startedAt ascending', () => {
-      let queryFixture: OngoingExecutionsFindQuery;
+    describe('having an ongoing calls find query with request filters sorted by startedAt ascending', () => {
+      let queryFixture: OngoingCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
@@ -1088,8 +1080,8 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         };
 
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -1098,29 +1090,29 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ request: { started_at: 'asc' } }, { id: 'asc' }],
             where: expectedWhere,
           });
         });
 
-        it('should call prismaClient.execution.count()', () => {
-          expect(executionCountMock).toHaveBeenCalledExactlyOnceWith({
+        it('should call prismaClient.call.count()', () => {
+          expect(callCountMock).toHaveBeenCalledExactlyOnceWith({
             where: expectedWhere,
           });
         });
       });
     });
 
-    describe('having a query filtered by an execution id', () => {
-      let queryFixture: CompletedExecutionsFindQuery;
+    describe('having a query filtered by a call id', () => {
+      let queryFixture: CompletedCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
           filter: {
-            id: 'execution-id',
+            id: 'call-id',
             request: {
               method: undefined,
               urlLike: undefined,
@@ -1137,14 +1129,14 @@ describe(PrismaInsightsPersistenceAdapter, () => {
 
       describe('when called', () => {
         const expectedWhere: unknown = {
-          id: 'execution-id',
+          id: 'call-id',
           request: { isNot: null },
           response: { isNot: null },
         };
 
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -1153,29 +1145,29 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: expectedWhere,
           });
         });
 
-        it('should call prismaClient.execution.count()', () => {
-          expect(executionCountMock).toHaveBeenCalledExactlyOnceWith({
+        it('should call prismaClient.call.count()', () => {
+          expect(callCountMock).toHaveBeenCalledExactlyOnceWith({
             where: expectedWhere,
           });
         });
       });
     });
 
-    describe('having an ongoing executions find query filtered by an execution id', () => {
-      let queryFixture: OngoingExecutionsFindQuery;
+    describe('having an ongoing calls find query filtered by a call id', () => {
+      let queryFixture: OngoingCallsFindQuery;
 
       beforeAll(() => {
         queryFixture = {
           filter: {
-            id: 'execution-id',
+            id: 'call-id',
             request: {
               method: undefined,
               urlLike: undefined,
@@ -1190,14 +1182,14 @@ describe(PrismaInsightsPersistenceAdapter, () => {
 
       describe('when called', () => {
         const expectedWhere: unknown = {
-          id: 'execution-id',
+          id: 'call-id',
           request: { isNot: null },
           response: { is: null },
         };
 
         beforeAll(async () => {
-          executionFindManyMock.mockResolvedValueOnce([]);
-          executionCountMock.mockResolvedValueOnce(0);
+          callFindManyMock.mockResolvedValueOnce([]);
+          callCountMock.mockResolvedValueOnce(0);
 
           await prismaInsightsPersistenceAdapter.find(queryFixture);
         });
@@ -1206,16 +1198,16 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           vitest.clearAllMocks();
         });
 
-        it('should call prismaClient.execution.findMany()', () => {
-          expect(executionFindManyMock).toHaveBeenCalledExactlyOnceWith({
-            include: executionInclude,
+        it('should call prismaClient.call.findMany()', () => {
+          expect(callFindManyMock).toHaveBeenCalledExactlyOnceWith({
+            include: callInclude,
             orderBy: [{ created_at: 'desc' }, { id: 'desc' }],
             where: expectedWhere,
           });
         });
 
-        it('should call prismaClient.execution.count()', () => {
-          expect(executionCountMock).toHaveBeenCalledExactlyOnceWith({
+        it('should call prismaClient.call.count()', () => {
+          expect(callCountMock).toHaveBeenCalledExactlyOnceWith({
             where: expectedWhere,
           });
         });
