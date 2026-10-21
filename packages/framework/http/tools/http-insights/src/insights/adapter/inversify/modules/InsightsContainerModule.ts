@@ -14,6 +14,7 @@ import { PipeFromPrismaPipeBuilder } from '../../prisma/builders/PipeFromPrismaP
 import { RequestFromPrismaRequestBuilder } from '../../prisma/builders/RequestFromPrismaRequestBuilder.js';
 import { ResponseFromPrismaResponseBuilder } from '../../prisma/builders/ResponseFromPrismaResponseBuilder.js';
 import { ExecutionsFindQueryFromGetInsightsV1QueryBuilder } from '../../zod/builders/ExecutionsFindQueryFromGetInsightsV1QueryBuilder.js';
+import { ExecutionsFindQueryFromInsightsIdBuilder } from '../builders/ExecutionsFindQueryFromInsightsIdBuilder.js';
 import { ExecutionController } from '../controllers/ExecutionController.js';
 import { InsightsUiController } from '../controllers/InsightsUiController.js';
 
@@ -24,6 +25,10 @@ export class InsightsContainerModule extends ContainerModule {
       options.bind(InsightsUiController).toSelf().inSingletonScope();
       options
         .bind(ExecutionsFindQueryFromGetInsightsV1QueryBuilder)
+        .toSelf()
+        .inSingletonScope();
+      options
+        .bind(ExecutionsFindQueryFromInsightsIdBuilder)
         .toSelf()
         .inSingletonScope();
       options.bind(ExecutionManagementInputPort).toSelf().inSingletonScope();

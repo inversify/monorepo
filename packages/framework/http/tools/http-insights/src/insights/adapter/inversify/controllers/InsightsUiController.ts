@@ -25,6 +25,11 @@ export class InsightsUiController {
     );
   }
 
+  @Get('/executions/:executionId')
+  public getExecution(): HttpResponse {
+    return this.getIndex();
+  }
+
   @Get(`/${HTTP_INSIGHTS_UI_ASSET_DIRECTORY}/:resource`)
   public getAsset(
     @Params({
