@@ -7,10 +7,15 @@
   "dependencies": {
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
+    "@inversifyjs/http-insights": "workspace:*",
     "@inversifyjs/http-open-api": "workspace:*",
-    "express": "^5.3.0",
-    "inversify": "^8.2.3",
-    "lmdb": "^3.5.7"
+    "@inversifyjs/http-validation": "workspace:*",
+    "@inversifyjs/open-api-validation": "workspace:*",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "express": "5.3.0",
+    "inversify": "8.2.3",
+    "lmdb": "3.5.7"
   },
   "devDependencies": {
     "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",

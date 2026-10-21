@@ -13,3 +13,6 @@
 # Turborepo files
 .turbo/
 
+# Inversify files
+/.inversify
+
