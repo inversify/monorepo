@@ -1,5 +1,6 @@
 import { type ExecutionFilters } from './executionsApi.js';
 
+const HTTP_STATUS_CODE_PATTERN: RegExp = /^[1-5]\d{2}$/u;
 const REQUEST_METHOD_PARAM: string = 'requestMethod';
 const RESPONSE_STATUS_CODE_PARAM: string = 'responseStatusCode';
 
@@ -42,15 +43,9 @@ export function buildSearchWithExecutionFilters(
 }
 
 function readResponseStatusCode(value: string | null): number | undefined {
-  if (value === null || !/^\d+$/u.test(value)) {
+  if (value === null || !HTTP_STATUS_CODE_PATTERN.test(value)) {
     return undefined;
   }
 
-  const statusCode: number = Number(value);
-
-  if (!Number.isInteger(statusCode)) {
-    return undefined;
-  }
-
-  return statusCode;
+  return Number(value);
 }

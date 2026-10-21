@@ -2,14 +2,14 @@ import { injectable } from 'inversify';
 
 import { Builder } from '../../../../foundation/modules/Builder.js';
 import { type CompletedExecutionsFindQuery } from '../../../application/models/ExecutionsFindQuery.js';
-import { GetInsightsV1Query } from '../schemas/GetInsightsV1Query.js';
+import { GetCallsV1Query } from '../schemas/GetCallsV1Query.js';
 
 @injectable()
 export class ExecutionsFindQueryFromGetInsightsV1QueryBuilder implements Builder<
-  GetInsightsV1Query,
+  GetCallsV1Query,
   CompletedExecutionsFindQuery
 > {
-  public build(query: GetInsightsV1Query): CompletedExecutionsFindQuery {
+  public build(query: GetCallsV1Query): CompletedExecutionsFindQuery {
     const offset: number = (query.page - 1) * query.pageSize;
 
     const findQuery: CompletedExecutionsFindQuery = {

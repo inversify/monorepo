@@ -16,9 +16,9 @@ import { ExecutionManagementInputPort } from '../../../application/ports/Executi
 import { type Execution } from '../../../domain/models/Execution.js';
 import { ExecutionsFindQueryFromGetInsightsV1QueryBuilder } from '../../zod/builders/ExecutionsFindQueryFromGetInsightsV1QueryBuilder.js';
 import {
-  type GetInsightsV1Query,
-  getInsightsV1Query,
-} from '../../zod/schemas/GetInsightsV1Query.js';
+  type GetCallsV1Query,
+  getCallsV1Query,
+} from '../../zod/schemas/GetCallsV1Query.js';
 import { ExecutionsFindQueryFromInsightsIdBuilder } from '../builders/ExecutionsFindQueryFromInsightsIdBuilder.js';
 
 @Controller('.inversify/v1/executions')
@@ -46,8 +46,8 @@ export class ExecutionController {
   @Get()
   public async getExecutions(
     @Query(standardSchemaValidationPipe)
-    @ValidateStandardSchemaV1(getInsightsV1Query)
-    query: GetInsightsV1Query,
+    @ValidateStandardSchemaV1(getCallsV1Query)
+    query: GetCallsV1Query,
   ): Promise<ExecutionsFindQueryResult> {
     return this.#executionManagementInputPort.find(
       this.#executionsFindQueryFromGetInsightsV1QueryBuilder.build(query),

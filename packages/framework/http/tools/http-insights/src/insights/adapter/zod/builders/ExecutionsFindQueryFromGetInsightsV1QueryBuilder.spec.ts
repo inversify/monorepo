@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { type CompletedExecutionsFindQuery } from '../../../application/models/ExecutionsFindQuery.js';
-import { type GetInsightsV1Query } from '../schemas/GetInsightsV1Query.js';
+import { type GetCallsV1Query } from '../schemas/GetCallsV1Query.js';
 import { ExecutionsFindQueryFromGetInsightsV1QueryBuilder } from './ExecutionsFindQueryFromGetInsightsV1QueryBuilder.js';
 
 describe(ExecutionsFindQueryFromGetInsightsV1QueryBuilder, () => {
@@ -14,7 +14,7 @@ describe(ExecutionsFindQueryFromGetInsightsV1QueryBuilder, () => {
 
   describe('.build', () => {
     describe('having a query with no sort', () => {
-      let queryFixture: GetInsightsV1Query;
+      let queryFixture: GetCallsV1Query;
 
       beforeAll(() => {
         queryFixture = {
@@ -56,7 +56,7 @@ describe(ExecutionsFindQueryFromGetInsightsV1QueryBuilder, () => {
     });
 
     describe('having a query sorted by startedAt ascending', () => {
-      let queryFixture: GetInsightsV1Query;
+      let queryFixture: GetCallsV1Query;
 
       beforeAll(() => {
         queryFixture = {
@@ -99,7 +99,7 @@ describe(ExecutionsFindQueryFromGetInsightsV1QueryBuilder, () => {
     });
 
     describe('having a query sorted by startedAt descending', () => {
-      let queryFixture: GetInsightsV1Query;
+      let queryFixture: GetCallsV1Query;
 
       beforeAll(() => {
         queryFixture = {

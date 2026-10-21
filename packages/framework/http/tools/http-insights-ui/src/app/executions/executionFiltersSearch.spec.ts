@@ -56,6 +56,78 @@ describe(readExecutionFilters, () => {
       });
     });
   });
+
+  describe('having a status below 100', () => {
+    describe('when called', () => {
+      let result: ExecutionFilters;
+
+      beforeAll(() => {
+        result = readExecutionFilters('?responseStatusCode=0');
+      });
+
+      it('should ignore the status', () => {
+        expect(result.responseStatusCode).toBeUndefined();
+      });
+    });
+  });
+
+  describe('having a status above 599', () => {
+    describe('when called', () => {
+      let result: ExecutionFilters;
+
+      beforeAll(() => {
+        result = readExecutionFilters('?responseStatusCode=600');
+      });
+
+      it('should ignore the status', () => {
+        expect(result.responseStatusCode).toBeUndefined();
+      });
+    });
+  });
+
+  describe('having a status that does not fit in three digits', () => {
+    describe('when called', () => {
+      let result: ExecutionFilters;
+
+      beforeAll(() => {
+        result = readExecutionFilters(
+          '?responseStatusCode=99999999999999999999',
+        );
+      });
+
+      it('should ignore the status', () => {
+        expect(result.responseStatusCode).toBeUndefined();
+      });
+    });
+  });
+
+  describe('having the lowest valid status', () => {
+    describe('when called', () => {
+      let result: ExecutionFilters;
+
+      beforeAll(() => {
+        result = readExecutionFilters('?responseStatusCode=100');
+      });
+
+      it('should return that status', () => {
+        expect(result.responseStatusCode).toBe(100);
+      });
+    });
+  });
+
+  describe('having the highest valid status', () => {
+    describe('when called', () => {
+      let result: ExecutionFilters;
+
+      beforeAll(() => {
+        result = readExecutionFilters('?responseStatusCode=599');
+      });
+
+      it('should return that status', () => {
+        expect(result.responseStatusCode).toBe(599);
+      });
+    });
+  });
 });
 
 describe(buildSearchWithExecutionFilters, () => {
