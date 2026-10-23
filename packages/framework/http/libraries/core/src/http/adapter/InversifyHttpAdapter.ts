@@ -32,7 +32,6 @@ import {
   buildInstrumentedAsyncCallRouteHandler,
   buildInstrumentedParameterlessCallRouteHandler,
   buildInstrumentedSyncCallRouteHandler,
-  readControllerName,
 } from '../../instrumentation/actions/buildInstrumentedCallRouteHandler.js';
 import { buildInstrumentedGuardHandler } from '../../instrumentation/actions/buildInstrumentedGuardHandler.js';
 import { buildInstrumentedHandleError } from '../../instrumentation/actions/buildInstrumentedHandleError.js';
@@ -122,10 +121,8 @@ export abstract class InversifyHttpAdapter<
     );
     this._logger = this.#buildLogger(this.httpAdapterOptions);
     this._httpInstrumentation = buildHttpInstrumentationContext(
+      this.#reportSinkError.bind(this),
       this.httpAdapterOptions.instrumentation,
-      (error: unknown): void => {
-        this.#reportSinkError(error);
-      },
     );
 
     this.#setErrorHttpResponseErrorFilter();
@@ -225,13 +222,16 @@ export abstract class InversifyHttpAdapter<
   }
 
   #buildCallRouteHandler(
-    targetClass: NewableFunction,
-    controllerMethodKey: string | symbol,
-    controllerMethodParameterMetadataList: (
-      | ControllerMethodParameterMetadata<TRequest, TResponse, TResult>
-      | undefined
-    )[],
-    serviceIdentifier: ServiceIdentifier,
+    routerExplorerControllerMetadata: RouterExplorerControllerMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >,
+    routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >,
   ): (
     request: TRequest,
     response: TResponse,
@@ -240,14 +240,15 @@ export abstract class InversifyHttpAdapter<
     const instrumentation: HttpInstrumentationContext | undefined =
       this._httpInstrumentation;
 
-    if (controllerMethodParameterMetadataList.length === 0) {
+    if (
+      routerExplorerControllerMethodMetadata.parameterMetadataList.length === 0
+    ) {
       if (instrumentation !== undefined) {
         return buildInstrumentedParameterlessCallRouteHandler(
           instrumentation,
           this._container,
-          serviceIdentifier,
-          readControllerName(targetClass),
-          controllerMethodKey,
+          routerExplorerControllerMetadata,
+          routerExplorerControllerMethodMetadata.methodKey,
         ) as (
           request: TRequest,
           response: TResponse,
@@ -258,16 +259,20 @@ export abstract class InversifyHttpAdapter<
       return async (): Promise<ControllerResponse> => {
         const controller: Controller =
           await this._container.getAsync<Controller>(
-            serviceIdentifier as ServiceIdentifier<Controller>,
+            routerExplorerControllerMetadata.serviceIdentifier as ServiceIdentifier<Controller>,
           );
 
-        return (controller[controllerMethodKey] as ControllerFunction)();
+        return (
+          controller[
+            routerExplorerControllerMethodMetadata.methodKey
+          ] as ControllerFunction
+        )();
       };
     }
 
     const provideSyncBuilder: boolean = areAllParamsSync(
       this.#awaitableRequestMethodParamTypes,
-      controllerMethodParameterMetadataList,
+      routerExplorerControllerMethodMetadata.parameterMetadataList,
       this._globalPipeList,
     );
 
@@ -278,7 +283,7 @@ export abstract class InversifyHttpAdapter<
           next: TNextFunction,
         ) => unknown)
       | undefined
-    )[] = controllerMethodParameterMetadataList.map(
+    )[] = routerExplorerControllerMethodMetadata.parameterMetadataList.map(
       (
         controllerMethodParameterMetadata:
           | ControllerMethodParameterMetadata<TRequest, TResponse, TResult>
@@ -355,17 +360,16 @@ export abstract class InversifyHttpAdapter<
         return buildInstrumentedSyncCallRouteHandler(
           instrumentation,
           this._container,
-          serviceIdentifier,
-          readControllerName(targetClass),
-          controllerMethodKey,
+          routerExplorerControllerMetadata,
+          routerExplorerControllerMethodMetadata.methodKey,
           paramBuilders,
         );
       }
 
       return buildSyncCallRouteHandler(
         this._container,
-        serviceIdentifier,
-        controllerMethodKey,
+        routerExplorerControllerMetadata.serviceIdentifier,
+        routerExplorerControllerMethodMetadata.methodKey,
         paramBuilders,
       );
     }
@@ -376,10 +380,8 @@ export abstract class InversifyHttpAdapter<
         this._container,
         this.#awaitableRequestMethodParamTypes,
         this._globalPipeList,
-        targetClass,
-        controllerMethodKey,
-        controllerMethodParameterMetadataList,
-        serviceIdentifier,
+        routerExplorerControllerMetadata,
+        routerExplorerControllerMethodMetadata,
         paramBuilders,
       );
     }
@@ -390,7 +392,7 @@ export abstract class InversifyHttpAdapter<
       next: TNextFunction,
     ): Promise<ControllerResponse> => {
       const params: unknown[] = new Array(
-        controllerMethodParameterMetadataList.length,
+        routerExplorerControllerMethodMetadata.parameterMetadataList.length,
       );
 
       await Promise.all(
@@ -413,7 +415,7 @@ export abstract class InversifyHttpAdapter<
               TRequest,
               TResponse,
               unknown
-            > = controllerMethodParameterMetadataList[
+            > = routerExplorerControllerMethodMetadata.parameterMetadataList[
               index
             ] as ControllerMethodParameterMetadata<
               TRequest,
@@ -436,9 +438,9 @@ export abstract class InversifyHttpAdapter<
                 ...controllerMethodParameterMetadata.pipeList,
               ],
               {
-                methodName: controllerMethodKey,
+                methodName: routerExplorerControllerMethodMetadata.methodKey,
                 parameterIndex: index,
-                targetClass,
+                targetClass: routerExplorerControllerMetadata.target,
               },
             );
           },
@@ -446,10 +448,14 @@ export abstract class InversifyHttpAdapter<
       );
 
       const controller: Controller = await this._container.getAsync<Controller>(
-        serviceIdentifier as ServiceIdentifier<Controller>,
+        routerExplorerControllerMetadata.serviceIdentifier as ServiceIdentifier<Controller>,
       );
 
-      return (controller[controllerMethodKey] as ControllerFunction)(...params);
+      return (
+        controller[
+          routerExplorerControllerMethodMetadata.methodKey
+        ] as ControllerFunction
+      )(...params);
     };
   }
 
@@ -495,8 +501,11 @@ export abstract class InversifyHttpAdapter<
       response: TResponse,
       error: unknown,
     ) => Promise<TResult>,
-    serviceIdentifier: ServiceIdentifier,
-    targetClass: NewableFunction,
+    routerExplorerControllerMetadata: RouterExplorerControllerMetadata<
+      TRequest,
+      TResponse,
+      TResult
+    >,
     routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
       TRequest,
       TResponse,
@@ -508,10 +517,8 @@ export abstract class InversifyHttpAdapter<
       response: TResponse,
       next: TNextFunction,
     ) => Promise<ControllerResponse> = this.#buildCallRouteHandler(
-      targetClass,
-      routerExplorerControllerMethodMetadata.methodKey,
-      routerExplorerControllerMethodMetadata.parameterMetadataList,
-      serviceIdentifier,
+      routerExplorerControllerMetadata,
+      routerExplorerControllerMethodMetadata,
     );
 
     let reply: (
@@ -633,8 +640,7 @@ export abstract class InversifyHttpAdapter<
           handleError,
           handler: this.#buildHandler(
             handleError,
-            routerExplorerControllerMetadata.serviceIdentifier,
-            routerExplorerControllerMetadata.target,
+            routerExplorerControllerMetadata,
             routerExplorerControllerMethodMetadata,
           ),
           methodKey: routerExplorerControllerMethodMetadata.methodKey,

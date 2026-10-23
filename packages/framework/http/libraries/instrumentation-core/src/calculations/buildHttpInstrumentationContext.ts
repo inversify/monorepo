@@ -3,8 +3,8 @@ import { type HttpInstrumentationContext } from '../models/HttpInstrumentationCo
 import { type HttpInstrumentationEvent } from '../models/HttpInstrumentationEvent.js';
 
 export function buildHttpInstrumentationContext(
-  sinks: readonly EventSink<HttpInstrumentationEvent>[] | undefined,
   reportSinkError: (error: unknown) => void,
+  sinks: readonly EventSink<HttpInstrumentationEvent>[] | undefined,
 ): HttpInstrumentationContext | undefined {
   if (sinks === undefined || sinks.length === 0) {
     return undefined;

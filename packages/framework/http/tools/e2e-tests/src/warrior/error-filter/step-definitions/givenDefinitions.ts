@@ -7,6 +7,8 @@ import { getContainerOrFail } from '../../../container/calculations/getContainer
 import { HttpMethod } from '../../../http/models/HttpMethod.js';
 import { WarriorsThrowErrorController } from '../controllers/WarriorsThrowErrorController.js';
 import { WarriorsThrowErrorOptionsController } from '../controllers/WarriorsThrowErrorOptionsController.js';
+import { WarriorsThrowErrorOverrideController } from '../controllers/WarriorsThrowErrorOverrideController.js';
+import { BadRequestOperationErrorFilter } from '../error-filters/BadRequestOperationErrorFilter.js';
 import { NotImplementedOperationErrorFilter } from '../error-filters/NotImplementedOperationErrorFilter.js';
 
 function getMethodWarriorControllerWithErrorFilter(
@@ -42,9 +44,37 @@ function givenWarriorControllerWithErrorFilterForContainer(
   container.bind(controller).toSelf().inSingletonScope();
 }
 
+function givenWarriorControllerWithClassAndMethodErrorFilterForContainer(
+  this: InversifyHttpWorld,
+  containerAlias?: string,
+): void {
+  const parsedContainerAlias: string = containerAlias ?? defaultAlias;
+  const container: Container =
+    getContainerOrFail.bind(this)(parsedContainerAlias);
+
+  container.bind(BadRequestOperationErrorFilter).toSelf().inSingletonScope();
+  container
+    .bind(NotImplementedOperationErrorFilter)
+    .toSelf()
+    .inSingletonScope();
+  container
+    .bind(WarriorsThrowErrorOverrideController)
+    .toSelf()
+    .inSingletonScope();
+}
+
 Given<InversifyHttpWorld>(
   'a warrior controller with ErrorFilter for "{httpMethod}" method',
   function (this: InversifyHttpWorld, httpMethod: HttpMethod): void {
     givenWarriorControllerWithErrorFilterForContainer.bind(this)(httpMethod);
+  },
+);
+
+Given<InversifyHttpWorld>(
+  'a warrior controller with class and method ErrorFilter for the same error',
+  function (this: InversifyHttpWorld): void {
+    givenWarriorControllerWithClassAndMethodErrorFilterForContainer.bind(
+      this,
+    )();
   },
 );

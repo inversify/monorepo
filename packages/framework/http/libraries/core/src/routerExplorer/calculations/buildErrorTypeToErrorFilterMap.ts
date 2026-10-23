@@ -17,7 +17,21 @@ export function buildErrorTypeToErrorFilterMap(
     Newable<ErrorFilter>
   >,
 ): Map<Newable<Error> | null, Newable<ErrorFilter>> {
-  const errorTypeToErrorFilterMap: Map<
+  const classErrorTypeToErrorFilterMap: Map<
+    Newable<Error> | null,
+    Newable<ErrorFilter>
+  > = new Map();
+
+  for (const errorFilter of getClassErrorFilterMetadata(target)) {
+    setErrorFilterToErrorFilterMap(
+      logger,
+      errorDiscriminatorToErrorFilterMap,
+      classErrorTypeToErrorFilterMap,
+      errorFilter,
+    );
+  }
+
+  const methodErrorTypeToErrorFilterMap: Map<
     Newable<Error> | null,
     Newable<ErrorFilter>
   > = new Map();
@@ -29,19 +43,18 @@ export function buildErrorTypeToErrorFilterMap(
     setErrorFilterToErrorFilterMap(
       logger,
       errorDiscriminatorToErrorFilterMap,
-      errorTypeToErrorFilterMap,
+      methodErrorTypeToErrorFilterMap,
       errorFilter,
     );
   }
 
-  for (const errorFilter of getClassErrorFilterMetadata(target)) {
-    setErrorFilterToErrorFilterMap(
-      logger,
-      errorDiscriminatorToErrorFilterMap,
-      errorTypeToErrorFilterMap,
-      errorFilter,
-    );
-  }
-
-  return errorTypeToErrorFilterMap;
+  /*
+   * Class and method filters are registered in separate maps so only
+   * conflicts within the same level are warned about. Method filters override
+   * class filters, both in the discriminator map (registered last) and here.
+   */
+  return new Map([
+    ...classErrorTypeToErrorFilterMap,
+    ...methodErrorTypeToErrorFilterMap,
+  ]);
 }

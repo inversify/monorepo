@@ -26,7 +26,7 @@ Error filters allow you to catch and process errors that occur during request ha
 
 ## How Error Filters Work
 
-Error filters are classes that implement the `ErrorFilter` interface and are decorated with `@CatchError()`. When an error occurs during request processing, Inversify HTTP looks for an error filter that can handle that error and delegates the error handling to it. A filter can match the error's class or a [discriminator](#matching-errors-by-discriminator) declared on that class.
+Error filters are classes that implement the `ErrorFilter` interface and are decorated with `@CatchError()`. When an error occurs during request processing, Inversify HTTP looks for an error filter that can handle that error and delegates the error handling to it. A filter can match the error's class or a [discriminator](#matching-errors-by-discriminator) declared on that class. When several filters could handle the same error, see [error filter precedence](#error-filter-precedence).
 
 The error filter can then:
 - Transform the error into an appropriate HTTP response
@@ -127,3 +127,25 @@ This pattern ensures that:
 Use the [UseErrorFilter](../../api/decorators#useerrorfilter) decorator at the controller level (applies to all routes) or at the method level (applies to one route).
 
 Global error filters can be registered using the [InversifyHttpAdapter](../../api/inversify-http-adapter#useglobalfilters).
+
+### Error filter precedence
+
+When an error is thrown, Inversify HTTP picks the error filter by applying these rules in order:
+
+1. **Error class first.** Lookup starts at the thrown error's class and walks toward its parents. It ends with the catch-all filter (`@CatchError()` without an error class). The first error class that has a filter wins. At each class, a [discriminator](#matching-errors-by-discriminator) match is used before a match on the class itself.
+2. **Route filters before global filters.** For the same error class, a filter attached with `@UseErrorFilter()` wins over a global filter registered with `useGlobalFilters()`.
+3. **Method filters before controller filters.** For the same error class, a method-level filter wins over a controller-level filter.
+
+:::warning[a global filter can win over a route filter]
+Rule 1 is applied before rules 2 and 3. A global filter for `TypeError` handles a thrown `TypeError` even when the route has a filter for `Error`, because the lookup finds a filter for `TypeError` before it reaches `Error`. The route filter handles only the errors that no filter matches earlier in the lookup. To make a route filter take over, attach it for the same error class as the global filter, or for a more specific one.
+:::
+
+:::info[overriding error filters for the same error type]
+Only one error filter handles a given error type at each level. When more than one error filter catches the same error type at the same level, the last error filter applied overrides the previous ones:
+
+- Within a single `@UseErrorFilter()` call, error filters are applied in the order they are listed.
+- Global error filters are applied in the order they are registered with `useGlobalFilters()`.
+- Controller-level filters are applied before method-level filters, so a method-level filter overrides a controller-level filter for the same error type. This is expected and is not reported.
+
+A warning is logged when an error filter overrides a different error filter attached at the same level.
+:::

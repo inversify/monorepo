@@ -36,7 +36,21 @@ The adapter already handles `GrpcError` and its subclasses. A filter for one of 
 adapter.useGlobalFilters(HeroNotFoundErrorFilter);
 ```
 
-Register global filters before the server handles calls. Method filters are chosen before class filters, which are chosen before global filters. The lookup walks the error's class chain, so a filter for `GrpcError` also sees subclasses when no filter is registered for the subclass. `@CatchError()` with no error class is the fallback for every other error.
+Register global filters before the server handles calls.
+
+:::warning[a global filter can win over a method or class filter]
+Lookup walks the error's class chain, from the thrown error's class toward its parents, and the first error class that has a filter wins. For the same error class, a method filter is chosen before a class filter, which is chosen before a global filter. Because the error class is checked first, a global filter for `TypeError` handles a thrown `TypeError` even when the method has a filter for `Error`. A filter for `GrpcError` also sees subclasses when no filter is registered for the subclass. `@CatchError()` with no error class is the fallback for every other error.
+:::
+
+:::info[overriding error filters for the same error type]
+When more than one filter catches the same error type at the same level, the last filter applied overrides the previous ones:
+
+- Within a single `@UseErrorFilter()` call, filters are applied in the order they are listed.
+- Global filters are applied in the order they are registered with `useGlobalFilters()`.
+- Class filters are applied before method filters, so a method filter overrides a class filter for the same error type. This is expected and is not reported.
+
+A warning is logged when a filter overrides a different filter attached at the same level.
+:::
 
 `@Discriminated('hero-not-found')` on an error class indexes that error by a string or symbol. A filter registered for the error class is also registered for each discriminator. At each step of the class chain, a discriminator match is used before the class match.
 

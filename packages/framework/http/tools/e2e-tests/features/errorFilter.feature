@@ -40,3 +40,17 @@ Error filters allows to catch and process errors thrown during the request lifec
         | "uwebsockets" | "PATCH"   |
         | "uwebsockets" | "POST"    |
         | "uwebsockets" | "PUT"     |
+
+    Scenario: method error filter overrides class error filter for the same error
+      Given a warrior controller with class and method ErrorFilter for the same error
+      And a <server_kind> server from container
+      And a "GET" warriors HTTP request
+      When the request is send
+      Then the response status code is NOT IMPLEMENTED
+
+      Examples:
+        | server_kind   |
+        | "express"     |
+        | "fastify"     |
+        | "hono"        |
+        | "uwebsockets" |
