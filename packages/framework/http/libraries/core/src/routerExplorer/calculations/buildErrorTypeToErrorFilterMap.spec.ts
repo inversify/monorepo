@@ -90,40 +90,119 @@ describe(buildErrorTypeToErrorFilterMap, () => {
       );
     });
 
-    it('should call setErrorFilterToErrorFilterMap()', () => {
+    it('should register class error filters before method error filters', () => {
       expect(setErrorFilterToErrorFilterMap).toHaveBeenCalledTimes(4);
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         1,
         loggerFixture,
         errorDiscriminatorToErrorFilterMapFixture,
         expect.any(Map),
-        methodErrorFilter1Fixture,
+        classErrorFilter1Fixture,
       );
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         2,
         loggerFixture,
         errorDiscriminatorToErrorFilterMapFixture,
         expect.any(Map),
-        methodErrorFilter2Fixture,
+        classErrorFilter2Fixture,
       );
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         3,
         loggerFixture,
         errorDiscriminatorToErrorFilterMapFixture,
         expect.any(Map),
-        classErrorFilter1Fixture,
+        methodErrorFilter1Fixture,
       );
       expect(setErrorFilterToErrorFilterMap).toHaveBeenNthCalledWith(
         4,
         loggerFixture,
         errorDiscriminatorToErrorFilterMapFixture,
         expect.any(Map),
-        classErrorFilter2Fixture,
+        methodErrorFilter2Fixture,
       );
+    });
+
+    it('should register class and method error filters in separate error type maps', () => {
+      const [classCall, , methodCall]: unknown[][] = vitest.mocked(
+        setErrorFilterToErrorFilterMap,
+      ).mock.calls;
+
+      expect(classCall?.[2]).not.toBe(methodCall?.[2]);
     });
 
     it('should return a Map<Newable<Error> | null, Newable<ErrorFilter>>', () => {
       expect(result).toBeInstanceOf(Map);
+    });
+  });
+
+  describe('when called, and class and method error filters are registered for the same error type', () => {
+    let classErrorFilterFixture: Newable<ErrorFilter>;
+    let methodErrorFilterFixture: Newable<ErrorFilter>;
+    let result: Map<Newable<Error> | null, Newable<ErrorFilter>>;
+
+    beforeAll(() => {
+      errorDiscriminatorToErrorFilterMapFixture = new Map();
+      classErrorFilterFixture =
+        class ClassErrorFilter {} as Newable<ErrorFilter>;
+      methodErrorFilterFixture =
+        class MethodErrorFilter {} as Newable<ErrorFilter>;
+
+      vitest
+        .mocked(getClassMethodErrorFilterMetadata)
+        .mockReturnValueOnce(new Set([methodErrorFilterFixture]));
+
+      vitest
+        .mocked(getClassErrorFilterMetadata)
+        .mockReturnValueOnce(new Set([classErrorFilterFixture]));
+
+      vitest
+        .mocked(setErrorFilterToErrorFilterMap)
+        .mockImplementationOnce(
+          (
+            _logger: Logger,
+            _errorDiscriminatorToErrorFilterMap: unknown,
+            errorTypeToErrorFilterMap: Map<
+              Newable<Error> | null,
+              ErrorFilter | Newable<ErrorFilter>
+            >,
+            errorFilter: Newable<ErrorFilter>,
+          ): void => {
+            errorTypeToErrorFilterMap.set(Error, errorFilter);
+            errorTypeToErrorFilterMap.set(TypeError, errorFilter);
+          },
+        )
+        .mockImplementationOnce(
+          (
+            _logger: Logger,
+            _errorDiscriminatorToErrorFilterMap: unknown,
+            errorTypeToErrorFilterMap: Map<
+              Newable<Error> | null,
+              ErrorFilter | Newable<ErrorFilter>
+            >,
+            errorFilter: Newable<ErrorFilter>,
+          ): void => {
+            errorTypeToErrorFilterMap.set(Error, errorFilter);
+          },
+        );
+
+      result = buildErrorTypeToErrorFilterMap(
+        loggerFixture,
+        targetFixture,
+        methodKeyFixture,
+        errorDiscriminatorToErrorFilterMapFixture,
+      );
+    });
+
+    afterAll(() => {
+      vitest.clearAllMocks();
+    });
+
+    it('should return the method error filter for the shared error type', () => {
+      expect(result.get(Error)).toBe(methodErrorFilterFixture);
+    });
+
+    it('should keep the class error filter for the other error types', () => {
+      expect(result.get(TypeError)).toBe(classErrorFilterFixture);
     });
   });
 

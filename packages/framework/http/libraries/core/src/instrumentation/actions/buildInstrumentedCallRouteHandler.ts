@@ -13,6 +13,8 @@ import { type Controller } from '../../http/models/Controller.js';
 import { type ControllerFunction } from '../../http/models/ControllerFunction.js';
 import { type ControllerResponse } from '../../http/models/ControllerResponse.js';
 import { type RequestMethodParameterType } from '../../http/models/RequestMethodParameterType.js';
+import { type RouterExplorerControllerMetadata } from '../../routerExplorer/model/RouterExplorerControllerMetadata.js';
+import { type RouterExplorerControllerMethodMetadata } from '../../routerExplorer/model/RouterExplorerControllerMethodMetadata.js';
 import {
   describeMethodKey,
   describePipe,
@@ -32,23 +34,22 @@ type ParamBuilder<TRequest, TResponse, TNextFunction> = (
 export function buildInstrumentedParameterlessCallRouteHandler(
   instrumentation: HttpInstrumentationContext,
   container: Container,
-  serviceIdentifier: ServiceIdentifier,
-  controllerName: string,
+  routerExplorerControllerMetadata: RouterExplorerControllerMetadata,
   controllerMethodKey: string | symbol,
 ): (request: object) => Promise<ControllerResponse> {
   const methodName: string = describeMethodKey(controllerMethodKey);
 
   return async (request: object): Promise<ControllerResponse> => {
     const controller: Controller = await container.getAsync<Controller>(
-      serviceIdentifier as ServiceIdentifier<Controller>,
+      routerExplorerControllerMetadata.serviceIdentifier as ServiceIdentifier<Controller>,
     );
 
     return runInstrumentedController(
       instrumentation,
       request,
-      controllerName,
+      describeControllerName(routerExplorerControllerMetadata.target),
       methodName,
-      async (): Promise<ControllerResponse> =>
+      (): ControllerResponse | Promise<ControllerResponse> =>
         (controller[controllerMethodKey] as ControllerFunction)(),
     );
   };
@@ -61,8 +62,7 @@ export function buildInstrumentedSyncCallRouteHandler<
 >(
   instrumentation: HttpInstrumentationContext,
   container: Container,
-  serviceIdentifier: ServiceIdentifier,
-  controllerName: string,
+  routerExplorerControllerMetadata: RouterExplorerControllerMetadata,
   controllerMethodKey: string | symbol,
   paramBuilders: (
     ParamBuilder<TRequest, TResponse, TNextFunction> | undefined
@@ -80,11 +80,11 @@ export function buildInstrumentedSyncCallRouteHandler<
     next: TNextFunction,
   ): Promise<ControllerResponse> => {
     const controller: Controller = await container.getAsync<Controller>(
-      serviceIdentifier as ServiceIdentifier<Controller>,
+      routerExplorerControllerMetadata.serviceIdentifier as ServiceIdentifier<Controller>,
     );
     const params: unknown[] = new Array(paramBuilders.length);
 
-    for (let index: number = 0; index < paramBuilders.length; index++) {
+    for (let index: number = 0; index < paramBuilders.length; ++index) {
       const paramBuilder:
         ParamBuilder<TRequest, TResponse, TNextFunction> | undefined =
         paramBuilders[index];
@@ -97,9 +97,9 @@ export function buildInstrumentedSyncCallRouteHandler<
     return runInstrumentedController(
       instrumentation,
       request as object,
-      controllerName,
+      describeControllerName(routerExplorerControllerMetadata.target),
       methodName,
-      async (): Promise<ControllerResponse> =>
+      (): ControllerResponse | Promise<ControllerResponse> =>
         (controller[controllerMethodKey] as ControllerFunction)(...params),
     );
   };
@@ -114,12 +114,18 @@ export function buildInstrumentedAsyncCallRouteHandler<
   container: Container,
   awaitableRequestMethodParamTypes: ReadonlySet<RequestMethodParameterType>,
   globalPipeList: (ServiceIdentifier<Pipe> | Pipe)[],
-  targetClass: NewableFunction,
-  controllerMethodKey: string | symbol,
-  controllerMethodParameterMetadataList: (
-    InstrumentedParameterMetadata | undefined
-  )[],
-  serviceIdentifier: ServiceIdentifier,
+  routerExplorerControllerMetadata: RouterExplorerControllerMetadata<
+    TRequest,
+    TResponse,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any
+  >,
+  routerExplorerControllerMethodMetadata: RouterExplorerControllerMethodMetadata<
+    TRequest,
+    TResponse,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any
+  >,
   paramBuilders: (
     ParamBuilder<TRequest, TResponse, TNextFunction> | undefined
   )[],
@@ -128,8 +134,12 @@ export function buildInstrumentedAsyncCallRouteHandler<
   response: TResponse,
   next: TNextFunction,
 ) => Promise<ControllerResponse> {
-  const controllerName: string = describeControllerName(targetClass);
-  const methodName: string = describeMethodKey(controllerMethodKey);
+  const controllerName: string = describeControllerName(
+    routerExplorerControllerMetadata.target,
+  );
+  const methodName: string = describeMethodKey(
+    routerExplorerControllerMethodMetadata.methodKey,
+  );
 
   return async (
     request: TRequest,
@@ -137,7 +147,7 @@ export function buildInstrumentedAsyncCallRouteHandler<
     next: TNextFunction,
   ): Promise<ControllerResponse> => {
     const params: unknown[] = new Array(
-      controllerMethodParameterMetadataList.length,
+      routerExplorerControllerMethodMetadata.parameterMetadataList.length,
     );
     const builders: ParamBuilder<TRequest, TResponse, TNextFunction>[] =
       paramBuilders as ParamBuilder<TRequest, TResponse, TNextFunction>[];
@@ -146,7 +156,7 @@ export function buildInstrumentedAsyncCallRouteHandler<
       const paramBuilder: ParamBuilder<TRequest, TResponse, TNextFunction> =
         builders[index] as ParamBuilder<TRequest, TResponse, TNextFunction>;
       const controllerMethodParameterMetadata: InstrumentedParameterMetadata =
-        controllerMethodParameterMetadataList[
+        routerExplorerControllerMethodMetadata.parameterMetadataList[
           index
         ] as InstrumentedParameterMetadata;
       const param: unknown = paramBuilder(request, response, next);
@@ -184,9 +194,9 @@ export function buildInstrumentedAsyncCallRouteHandler<
           }),
           async (): Promise<void> => {
             params[index] = await pipe.execute(params[index], {
-              methodName: controllerMethodKey,
+              methodName: routerExplorerControllerMethodMetadata.methodKey,
               parameterIndex: index,
-              targetClass,
+              targetClass: routerExplorerControllerMetadata.target,
             });
           },
           (
@@ -216,7 +226,7 @@ export function buildInstrumentedAsyncCallRouteHandler<
     }
 
     const controller: Controller = await container.getAsync<Controller>(
-      serviceIdentifier as ServiceIdentifier<Controller>,
+      routerExplorerControllerMetadata.serviceIdentifier as ServiceIdentifier<Controller>,
     );
 
     return runInstrumentedController(
@@ -224,8 +234,12 @@ export function buildInstrumentedAsyncCallRouteHandler<
       request as object,
       controllerName,
       methodName,
-      async (): Promise<ControllerResponse> =>
-        (controller[controllerMethodKey] as ControllerFunction)(...params),
+      (): ControllerResponse | Promise<ControllerResponse> =>
+        (
+          controller[
+            routerExplorerControllerMethodMetadata.methodKey
+          ] as ControllerFunction
+        )(...params),
     );
   };
 }
@@ -239,7 +253,7 @@ async function runInstrumentedController(
   request: object,
   controllerName: string,
   methodName: string,
-  operation: () => Promise<ControllerResponse>,
+  operation: () => ControllerResponse | Promise<ControllerResponse>,
 ): Promise<ControllerResponse> {
   return runInstrumentedHttpStage(
     instrumentation,
@@ -278,8 +292,4 @@ async function runInstrumentedController(
       throw error;
     },
   );
-}
-
-export function readControllerName(targetClass: NewableFunction): string {
-  return describeControllerName(targetClass);
 }

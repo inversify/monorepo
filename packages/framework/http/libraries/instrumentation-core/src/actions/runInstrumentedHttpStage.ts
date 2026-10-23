@@ -26,7 +26,7 @@ export async function runInstrumentedHttpStage<TResult>(
     scope: HttpInstrumentationScope,
     stage: HttpStageClock,
   ) => HttpInstrumentationEvent,
-  operation: () => Promise<TResult>,
+  operation: () => TResult | Promise<TResult>,
   createExecutedEvent: (
     scope: HttpInstrumentationScope,
     stage: HttpStageClock,

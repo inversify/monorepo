@@ -28,27 +28,33 @@ export abstract class InversifyServerAdapter<
   protected readonly _errorDiscriminatorToGlobalErrorFilterMap: Map<
     string | symbol,
     ErrorFilter | Newable<ErrorFilter>
-  > = new Map();
+  >;
   protected readonly _errorTypeToGlobalErrorFilterMap: Map<
     Newable<Error> | null,
     ErrorFilter | Newable<ErrorFilter>
-  > = new Map();
-  protected readonly _globalGuardList: ServiceIdentifier<Guard<TRequest>>[] =
-    [];
+  >;
+  protected readonly _globalGuardList: ServiceIdentifier<Guard<TRequest>>[];
   protected readonly _globalInterceptorList: ServiceIdentifier<
     Interceptor<TRequest, TResponse>
-  >[] = [];
-  protected readonly _globalPipeList: (ServiceIdentifier<Pipe> | Pipe)[] = [];
+  >[];
+  protected readonly _globalPipeList: (ServiceIdentifier<Pipe> | Pipe)[];
   protected readonly _postHandlerMiddlewareList: ServiceIdentifier<
     Middleware<TRequest, TResponse, TNextFunction, TResult>
-  >[] = [];
+  >[];
   protected readonly _preHandlerMiddlewareList: ServiceIdentifier<
     Middleware<TRequest, TResponse, TNextFunction, TResult>
-  >[] = [];
+  >[];
   #isBuilt: boolean = false;
 
   constructor(container: Container) {
     this._container = container;
+    this._errorDiscriminatorToGlobalErrorFilterMap = new Map();
+    this._errorTypeToGlobalErrorFilterMap = new Map();
+    this._globalGuardList = [];
+    this._globalInterceptorList = [];
+    this._globalPipeList = [];
+    this._postHandlerMiddlewareList = [];
+    this._preHandlerMiddlewareList = [];
   }
 
   protected get _isBuilt(): boolean {

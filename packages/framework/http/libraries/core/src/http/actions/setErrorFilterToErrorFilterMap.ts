@@ -25,15 +25,19 @@ export function setErrorFilterToErrorFilterMap(
     const existingErrorFilter: ErrorFilter | Newable<ErrorFilter> | undefined =
       errorTypeToErrorFilterMap.get(errorType);
 
-    if (existingErrorFilter === undefined) {
-      errorTypeToErrorFilterMap.set(errorType, errorFilter);
-    } else {
+    if (
+      existingErrorFilter !== undefined &&
+      existingErrorFilter !== errorFilter
+    ) {
       const errorTypeName: string =
         errorType === null ? 'null (catch-all)' : errorType.name;
+
       logger.warn(
-        `Error filter '${errorFilter.name}' was not registered for error type '${errorTypeName}' because an error filter is already registered for this error type.`,
+        `Error filter '${errorFilter.name}' overrides the error filter already registered for error type '${errorTypeName}'.`,
       );
     }
+
+    errorTypeToErrorFilterMap.set(errorType, errorFilter);
 
     if (errorType !== null) {
       const discriminators: (string | symbol)[] | undefined =
@@ -41,9 +45,7 @@ export function setErrorFilterToErrorFilterMap(
 
       if (discriminators !== undefined) {
         for (const discriminator of discriminators) {
-          if (!errorDiscriminatorToErrorFilterMap.has(discriminator)) {
-            errorDiscriminatorToErrorFilterMap.set(discriminator, errorFilter);
-          }
+          errorDiscriminatorToErrorFilterMap.set(discriminator, errorFilter);
         }
       }
     }

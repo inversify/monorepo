@@ -26,7 +26,7 @@ Error filters allow you to catch and process errors that occur during request ha
 
 ## How Error Filters Work
 
-Error filters are classes that implement the `ErrorFilter` interface and are decorated with `@CatchError()`. When an error occurs during request processing, Inversify HTTP looks for an error filter that can handle that error and delegates the error handling to it. A filter can match the error's class or a [discriminator](#matching-errors-by-discriminator) declared on that class.
+Error filters are classes that implement the `ErrorFilter` interface and are decorated with `@CatchError()`. When an error occurs during request processing, Inversify HTTP looks for an error filter that can handle that error and delegates the error handling to it. A filter can match the error's class or a [discriminator](#matching-errors-by-discriminator) declared on that class. Inversify HTTP also registers a [default error filter](#default-error-filter) for the `ErrorHttpResponse` errors it provides. When several filters could handle the same error, see [error filter precedence](#error-filter-precedence).
 
 The error filter can then:
 - Transform the error into an appropriate HTTP response
@@ -84,6 +84,22 @@ Give a subclass its own discriminator when that subclass needs its own filter. L
 
 `GET /warehouse/out-of-stock` responds with `409 Conflict`. `GET /warehouse/closed` and `GET /warehouse/maintenance` respond with `400 Bad Request`.
 
+## Default error filter
+
+Inversify HTTP registers a global error filter for `ErrorHttpResponse`, the base class of every error response the framework provides (`BadRequestHttpResponse`, `NotFoundHttpResponse`, `InternalServerErrorHttpResponse`, and so on). When a handler, guard, pipe, middleware, or interceptor throws one of these errors, the default filter sends it as the response, using the error's status code, body, and headers. That is why throwing `new NotFoundHttpResponse(...)` works without registering any error filter.
+
+The default filter follows the same [precedence rules](#error-filter-precedence) as any other global filter, because it is registered for the `ErrorHttpResponse` class.
+
+:::warning[the default error filter runs before catch-all and Error filters]
+The lookup walks the thrown error's class chain, and the default filter is registered for `ErrorHttpResponse`. A thrown `NotFoundHttpResponse` is handled by the default filter before the lookup reaches `Error` or the catch-all (`@CatchError()` without an error class). A catch-all or `Error` filter, whether global or attached to a route, does not receive `ErrorHttpResponse` errors.
+
+To handle these errors yourself, use one of these options:
+- Register a filter for a more specific class, such as `@CatchError(NotFoundHttpResponse)`. It runs instead of the default filter for that response class.
+- Register a filter for `ErrorHttpResponse` itself. Attached to a route with `@UseErrorFilter()`, it replaces the default filter for that route. Registered with `useGlobalFilters()`, it replaces the default filter for every route. The filter is then responsible for writing the response, as described in [returning responses from error filters](#returning-responses-from-error-filters).
+:::
+
+Errors that are not `ErrorHttpResponse` instances are not affected by the default filter. If no filter handles them, the adapter responds with `500 Internal Server Error`.
+
 ## Returning responses from error filters
 
 Error filters can directly manipulate the HTTP response using the adapter-specific request and response objects. This approach is particularly useful for global error filters that need to handle all types of errors without causing infinite loops.
@@ -116,10 +132,13 @@ In these examples:
 - The filter is registered globally using `adapter.useGlobalFilters(GlobalErrorFilter)`
 
 This pattern ensures that:
-- `HttpResponse` errors (like `NotFoundHttpResponse`, `InternalServerErrorHttpResponse`) are handled without infinite loops
 - Generic JavaScript errors are caught, logged, and transformed into proper HTTP responses
 - Error details are properly serialized for logging (Error objects have non-enumerable properties that require special handling)
 - Error handling and logging are centralized and consistent across your application
+
+:::info[error responses reach the default error filter first]
+`ErrorHttpResponse` subclasses are handled by the [default error filter](#default-error-filter) before the lookup reaches a catch-all filter like `GlobalErrorFilter`.To customize `ErrorHttpResponse` errors, register a filter for `ErrorHttpResponse`.
+:::
 
 
 ## Attaching error filters
@@ -127,3 +146,25 @@ This pattern ensures that:
 Use the [UseErrorFilter](../../api/decorators#useerrorfilter) decorator at the controller level (applies to all routes) or at the method level (applies to one route).
 
 Global error filters can be registered using the [InversifyHttpAdapter](../../api/inversify-http-adapter#useglobalfilters).
+
+### Error filter precedence
+
+When an error is thrown, Inversify HTTP picks the error filter by applying these rules in order:
+
+1. **Error class first.** Lookup starts at the thrown error's class and walks toward its parents. It ends with the catch-all filter (`@CatchError()` without an error class). The first error class that has a filter wins. At each class, a [discriminator](#matching-errors-by-discriminator) match is used before a match on the class itself.
+2. **Route filters before global filters.** For the same error class, a filter attached with `@UseErrorFilter()` wins over a global filter registered with `useGlobalFilters()`.
+3. **Method filters before controller filters.** For the same error class, a method-level filter wins over a controller-level filter.
+
+:::warning[a global filter can win over a route filter]
+Rule 1 is applied before rules 2 and 3. A global filter for `TypeError` handles a thrown `TypeError` even when the route has a filter for `Error`, because the lookup finds a filter for `TypeError` before it reaches `Error`. The route filter handles only the errors that no filter matches earlier in the lookup. To make a route filter take over, attach it for the same error class as the global filter, or for a more specific one. The [default error filter](#default-error-filter) for `ErrorHttpResponse` errors is an example of this.
+:::
+
+:::info[overriding error filters for the same error type]
+Only one error filter handles a given error type at each level. When more than one error filter catches the same error type at the same level, the last error filter applied overrides the previous ones:
+
+- Within a single `@UseErrorFilter()` call, error filters are applied in the order they are listed.
+- Global error filters are applied in the order they are registered with `useGlobalFilters()`.
+- Controller-level filters are applied before method-level filters, so a method-level filter overrides a controller-level filter for the same error type. This is expected and is not reported.
+
+A warning is logged when an error filter overrides a different error filter attached at the same level.
+:::
