@@ -97,7 +97,8 @@ Registers global error filters. When a handler, guard, pipe, middleware, or inte
 - `errorFilterList`: Error filter classes to register globally.
 
 Behavior:
-- If no filter handles the error, an `InternalServerError` response is produced unless the error itself is an `ErrorHttpResponse`, which is sent as-is.
+- `ErrorHttpResponse` errors are handled by the [default error filter](../../fundamentals/error-filter#default-error-filter), which sends the error as-is. Register a filter for `ErrorHttpResponse` to replace it.
+- If no filter handles any other error, an `InternalServerError` response is produced.
 
 ### applyGlobalGuards
 
