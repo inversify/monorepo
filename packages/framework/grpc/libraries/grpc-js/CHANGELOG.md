@@ -1,5 +1,12 @@
 # @inversifyjs/grpc-js
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/grpc-core@1.0.1
+
 ## 1.0.0
 
 ### Major Changes

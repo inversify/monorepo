@@ -1,5 +1,14 @@
 # @inversifyjs/http-core
 
+## 5.9.1
+
+### Patch Changes
+
+- Fixed error filter setup to allow error filter override.
+- Updated dependencies
+  - @inversifyjs/framework-core@2.2.1
+  - @inversifyjs/http-instrumentation-core@5.9.1
+
 ## 5.9.0
 
 ### Patch Changes

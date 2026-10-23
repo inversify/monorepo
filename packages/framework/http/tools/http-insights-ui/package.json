@@ -57,7 +57,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@inversifyjs/foundation-eslint-config": "workspace:*",

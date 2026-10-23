@@ -1,5 +1,12 @@
 # @inversifyjs/http-better-auth
 
+## 6.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.9.1
+
 ## 6.0.2
 
 ### Patch Changes
