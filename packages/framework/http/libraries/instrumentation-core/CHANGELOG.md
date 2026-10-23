@@ -1,5 +1,14 @@
 # @inversifyjs/http-instrumentation-core
 
+## 5.9.1
+
+### Patch Changes
+
+- Parity version
+- Allowed `EventSink.emit` to return a promise.
+- Updated dependencies
+  - @inversifyjs/framework-core@2.2.1
+
 ## 5.9.0
 
 ### Minor Changes

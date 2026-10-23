@@ -1,5 +1,13 @@
 # @inversifyjs/grpc-core
 
+## 1.0.1
+
+### Patch Changes
+
+- Fixed error filter setup to allow error filter override.
+- Updated dependencies
+  - @inversifyjs/framework-core@2.2.1
+
 ## 1.0.0
 
 ### Major Changes

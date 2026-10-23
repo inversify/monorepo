@@ -1,5 +1,11 @@
 # @inversifyjs/framework-core
 
+## 2.2.1
+
+### Patch Changes
+
+- Parity version
+
 ## 2.2.0
 
 ### Minor Changes
