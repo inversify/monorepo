@@ -24,7 +24,7 @@
     "@types/statuses": "2.0.6",
     "@vitest/coverage-v8": "5.0.5",
     "better-sqlite3": "^13.0.3",
-    "eslint": "10.12.0",
+    "eslint": "10.13.0",
     "fastify": "5.12.7",
     "hono": "4.13.13",
     "prettier": "3.9.10",
@@ -54,7 +54,7 @@
   },
   "name": "@inversifyjs/http-better-auth",
   "peerDependencies": {
-    "better-auth": "^1.7.10",
+    "better-auth": "^1.7.12",
     "inversify": "^8.2.3"
   },
   "publishConfig": {
