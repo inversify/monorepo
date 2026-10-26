@@ -70,6 +70,60 @@ describe(CallPage, () => {
     });
   });
 
+  describe('having a guard error with traces', () => {
+    describe('when rendered', () => {
+      it('should show the traces instead of the error json', async () => {
+        renderGuardError();
+
+        fireEvent.click(await screen.findByRole('tab', { name: 'Guards' }));
+
+        expect(screen.getByText('TypeError: boom')).toBeTruthy();
+        expect(screen.getByText('handle')).toBeTruthy();
+        expect(screen.getByText('handler.ts:12:5')).toBeTruthy();
+        expect(screen.getByText('const value = read();')).toBeTruthy();
+        expect(
+          screen
+            .getByText('throw new Error(value);')
+            .getAttribute('aria-current'),
+        ).toBe('true');
+        expect(screen.getByText('return value;')).toBeTruthy();
+        expect(screen.queryByText(/"message"/)).toBeNull();
+      });
+
+      it('should copy the full path with line and column', async () => {
+        const writeText: ReturnType<typeof vitest.fn> = vitest.fn(
+          async (): Promise<void> => undefined,
+        );
+
+        Object.defineProperty(navigator, 'clipboard', {
+          configurable: true,
+          value: {
+            writeText,
+          },
+        });
+        renderGuardError();
+
+        fireEvent.click(await screen.findByRole('tab', { name: 'Guards' }));
+
+        const place: HTMLElement = screen.getByText('handler.ts:12:5');
+        const button: HTMLElement = screen.getByRole('button', {
+          name: 'Copy /app/src/handler.ts:12:5',
+        });
+
+        expect(place.nextElementSibling).toBe(button);
+
+        fireEvent.click(button);
+
+        expect(writeText).toHaveBeenCalledWith('/app/src/handler.ts:12:5');
+        expect(
+          await screen.findByRole('button', {
+            name: 'Copied /app/src/handler.ts:12:5',
+          }),
+        ).toBeTruthy();
+      });
+    });
+  });
+
   describe('having a missing call', () => {
     describe('when rendered', () => {
       it('should show a not found message', async () => {
@@ -87,6 +141,42 @@ describe(CallPage, () => {
     });
   });
 });
+
+function renderGuardError(): void {
+  const payload: {
+    guards: Array<Record<string, unknown>>;
+  } = callPayload() as {
+    guards: Array<Record<string, unknown>>;
+  };
+  const guards: Array<Record<string, unknown>> = payload.guards;
+  const guard: Record<string, unknown> | undefined = guards[0];
+
+  if (guard === undefined) {
+    throw new Error('Expected a guard.');
+  }
+
+  guard['allowed'] = false;
+  guard['error'] = {
+    message: 'boom',
+    name: 'TypeError',
+  };
+  guard['errorTraces'] = [
+    {
+      location: {
+        column: 5,
+        file: '/app/src/handler.ts',
+        filename: 'handler.ts',
+        functionName: 'handle',
+        line: 12,
+      },
+      nextStatements: ['return value;'],
+      previousStatements: ['const value = read();'],
+      traceStatement: 'throw new Error(value);',
+    },
+  ];
+  mockCall(payload);
+  renderPage();
+}
 
 function mockCall(payload: unknown): void {
   vitest.spyOn(globalThis, 'fetch').mockResolvedValue(

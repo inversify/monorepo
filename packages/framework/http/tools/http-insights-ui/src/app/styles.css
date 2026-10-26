@@ -303,6 +303,7 @@ h1 {
 .modal-close:focus-visible,
 .filter-chip button:focus-visible,
 .method-option:focus-visible,
+.error-trace-copy:focus-visible,
 .status-filter input:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -1056,6 +1057,112 @@ body:has(.modal-backdrop) {
   font-family: var(--mono);
   font-size: 12px;
   white-space: pre-wrap;
+}
+
+.error-report {
+  margin-top: 10px;
+}
+
+.error-message {
+  margin: 0;
+  color: #e24b4b;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.error-traces {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.error-trace {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
+}
+
+.error-trace-location {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.error-trace-index {
+  color: var(--faint);
+}
+
+.error-trace-function {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.error-trace-location-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.error-trace-place {
+  color: var(--muted);
+}
+
+.error-trace-copy {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--faint);
+  cursor: pointer;
+}
+
+.error-trace-copy:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.error-trace-copy.is-copied {
+  color: var(--accent);
+}
+
+.error-trace-code {
+  margin: 0;
+  padding: 8px 0;
+  overflow: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.error-trace-statement {
+  display: block;
+  padding: 1px 12px;
+  color: var(--muted);
+  white-space: pre;
+}
+
+.error-trace-statement.is-current {
+  background: color-mix(in srgb, #e24b4b 18%, transparent);
+  box-shadow: inset 2px 0 0 #e24b4b;
+  color: var(--text);
 }
 
 @media (max-width: 640px) {

@@ -1,8 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { type NativeMiddleware as PrismaNativeMiddleware } from '../../../../generated/prisma/client.js';
+import { ErrorTraceFixtures } from '../../../domain/fixtures/ErrorTraceFixtures.js';
 import { type NativeMiddleware } from '../../../domain/models/NativeMiddleware.js';
 import { PrismaNativeMiddlewareFixtures } from '../fixtures/PrismaNativeMiddlewareFixtures.js';
+import { ErrorTracesFromPrismaJsonBuilder } from './ErrorTracesFromPrismaJsonBuilder.js';
 import { NativeMiddlewareFromPrismaNativeMiddlewareBuilder } from './NativeMiddlewareFromPrismaNativeMiddlewareBuilder.js';
 
 describe(NativeMiddlewareFromPrismaNativeMiddlewareBuilder, () => {
@@ -10,7 +12,9 @@ describe(NativeMiddlewareFromPrismaNativeMiddlewareBuilder, () => {
 
   beforeAll(() => {
     nativeMiddlewareFromPrismaNativeMiddlewareBuilder =
-      new NativeMiddlewareFromPrismaNativeMiddlewareBuilder();
+      new NativeMiddlewareFromPrismaNativeMiddlewareBuilder(
+        new ErrorTracesFromPrismaJsonBuilder(),
+      );
   });
 
   describe('.build', () => {
@@ -31,6 +35,7 @@ describe(NativeMiddlewareFromPrismaNativeMiddlewareBuilder, () => {
         const expected: NativeMiddleware = {
           endedAt: prismaNativeMiddlewareFixture.ended_at,
           error: prismaNativeMiddlewareFixture.error,
+          errorTraces: [ErrorTraceFixtures.any],
           id: prismaNativeMiddlewareFixture.id,
           name: prismaNativeMiddlewareFixture.name,
           startedAt: prismaNativeMiddlewareFixture.started_at,

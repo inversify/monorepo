@@ -1,4 +1,5 @@
 import { type Pipe } from '../../../../generated/prisma/client.js';
+import { errorTracesJson } from './errorTracesJson.js';
 
 export class PrismaPipeFixtures {
   public static get any(): Pipe {
@@ -7,6 +8,7 @@ export class PrismaPipeFixtures {
       created_at: new Date('2026-01-01T00:00:00.000Z'),
       ended_at: new Date('2026-01-01T00:00:02.000Z'),
       error: null,
+      error_traces: errorTracesJson,
       id: 'pipe-id',
       method: 'getFoo',
       parameter_index: 0,

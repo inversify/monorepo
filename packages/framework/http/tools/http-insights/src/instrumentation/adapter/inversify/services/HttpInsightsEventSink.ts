@@ -17,6 +17,7 @@ import { inject, injectable } from 'inversify';
 
 import { type ExecuteUpdateCommand } from '../../../../insights/application/models/ExecuteUpdateCommand.js';
 import { CallManagementInputPort } from '../../../../insights/application/ports/CallManagementInputPort.js';
+import { ErrorTracesService } from '../../../../insights/application/services/ErrorTracesService.js';
 import { type Call } from '../../../../insights/domain/models/Call.js';
 import { type Controller } from '../../../../insights/domain/models/Controller.js';
 import { type Guard } from '../../../../insights/domain/models/Guard.js';
@@ -52,6 +53,7 @@ interface InFlightWrite {
 export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent> {
   readonly #committedByRequestId: Map<string, CommittedCall> = new Map();
   readonly #callManagementInputPort: CallManagementInputPort;
+  readonly #errorTracesService: ErrorTracesService;
   readonly #inFlightByRequestId: Map<string, InFlightWrite> = new Map();
   readonly #pendingByRequestId: Map<string, PendingCall> = new Map();
   #sweepTimer: ReturnType<typeof setInterval> | undefined;
@@ -59,8 +61,11 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
   constructor(
     @inject(CallManagementInputPort)
     callManagementInputPort: CallManagementInputPort,
+    @inject(ErrorTracesService)
+    errorTracesService: ErrorTracesService,
   ) {
     this.#callManagementInputPort = callManagementInputPort;
+    this.#errorTracesService = errorTracesService;
     this.#sweepTimer = undefined;
   }
 
@@ -100,6 +105,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       controller: event.controller,
       endedAt: new Date(event.timestamp),
       error: this.#readOptionalError(event),
+      errorTraces: null,
       id: randomUUID(),
       method: event.method,
       startedAt: new Date(event.startedAt),
@@ -182,6 +188,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       allowed: event.allowed ?? null,
       endedAt: new Date(event.timestamp),
       error: this.#readOptionalError(event),
+      errorTraces: null,
       guard: event.guard,
       id: randomUUID(),
       startedAt: new Date(event.startedAt),
@@ -192,6 +199,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     return {
       endedAt: new Date(event.timestamp),
       error: event.error,
+      errorTraces: null,
       filter: event.filter ?? null,
       id: randomUUID(),
       startedAt: new Date(event.startedAt),
@@ -202,6 +210,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     return {
       endedAt: new Date(event.timestamp),
       error: this.#readOptionalError(event),
+      errorTraces: null,
       id: randomUUID(),
       interceptor: event.interceptor,
       startedAt: new Date(event.startedAt),
@@ -212,6 +221,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     return {
       endedAt: new Date(event.timestamp),
       error: this.#readOptionalError(event),
+      errorTraces: null,
       id: randomUUID(),
       middleware: event.middleware,
       phase: event.phase,
@@ -225,6 +235,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     return {
       endedAt: new Date(event.timestamp),
       error: this.#readOptionalError(event),
+      errorTraces: null,
       id: randomUUID(),
       name: event.name,
       startedAt: new Date(event.startedAt),
@@ -235,6 +246,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     return {
       endedAt: new Date(event.timestamp),
       error: this.#readOptionalError(event),
+      errorTraces: null,
       id: randomUUID(),
       method: event.method,
       parameterIndex: event.parameterIndex,
@@ -480,7 +492,9 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     this.#inFlightByRequestId.set(requestId, inFlight);
 
     try {
-      await this.#callManagementInputPort.create(call);
+      await this.#callManagementInputPort.create(
+        await this.#errorTracesService.capture(call),
+      );
 
       const committed: CommittedCall = {
         callId: call.id,
@@ -525,7 +539,9 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       },
     };
 
-    await this.#callManagementInputPort.update(command);
+    await this.#callManagementInputPort.update(
+      await this.#errorTracesService.captureUpdate(command),
+    );
   }
 
   #readOptionalError(event: { readonly error?: unknown }): unknown {

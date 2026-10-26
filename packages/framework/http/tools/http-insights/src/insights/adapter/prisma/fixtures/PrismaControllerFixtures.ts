@@ -1,4 +1,5 @@
 import { type Controller } from '../../../../generated/prisma/client.js';
+import { errorTracesJson } from './errorTracesJson.js';
 
 export class PrismaControllerFixtures {
   public static get any(): Controller {
@@ -8,6 +9,7 @@ export class PrismaControllerFixtures {
       created_at: new Date('2026-01-01T00:00:00.000Z'),
       ended_at: new Date('2026-01-01T00:00:03.000Z'),
       error: { message: 'boom' },
+      error_traces: errorTracesJson,
       id: 'controller-id',
       method: 'getFoo',
       started_at: new Date('2026-01-01T00:00:02.000Z'),

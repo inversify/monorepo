@@ -27,86 +27,92 @@ model Call {
 }
 
 model Controller {
-  id         String   @id
-  controller String
-  method     String
-  error      Json?
-  started_at DateTime
-  ended_at   DateTime
-  call_id    String   @unique
-  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id           String   @id
+  controller   String
+  method       String
+  error        Json?
+  error_traces Json?
+  started_at   DateTime
+  ended_at     DateTime
+  call_id      String   @unique
+  call         Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 }
 
 model Guard {
-  id         String   @id
-  guard      String
-  allowed    Boolean?
-  error      Json?
-  started_at DateTime
-  ended_at   DateTime
-  call_id    String
-  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id           String   @id
+  guard        String
+  allowed      Boolean?
+  error        Json?
+  error_traces Json?
+  started_at   DateTime
+  ended_at     DateTime
+  call_id      String
+  call         Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
   @@index([call_id])
 }
 
 model HttpError {
-  id         String   @id
-  error      Json
-  filter     String?
-  started_at DateTime
-  ended_at   DateTime
-  call_id    String
-  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id           String   @id
+  error        Json
+  error_traces Json?
+  filter       String?
+  started_at   DateTime
+  ended_at     DateTime
+  call_id      String
+  call         Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
   @@index([call_id])
 }
 
 model Interceptor {
-  id          String   @id
-  interceptor String
-  error       Json?
-  started_at  DateTime
-  ended_at    DateTime
-  call_id     String
-  call        Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id           String   @id
+  interceptor  String
+  error        Json?
+  error_traces Json?
+  started_at   DateTime
+  ended_at     DateTime
+  call_id      String
+  call         Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
   @@index([call_id])
 }
 
 model Middleware {
-  id         String   @id
-  middleware String
-  error      Json?
-  phase      String
-  started_at DateTime
-  ended_at   DateTime
-  call_id    String
-  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id           String   @id
+  middleware   String
+  error        Json?
+  error_traces Json?
+  phase        String
+  started_at   DateTime
+  ended_at     DateTime
+  call_id      String
+  call         Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
   @@index([call_id])
 }
 
 model NativeMiddleware {
-  id         String   @id
-  name       String
-  error      Json?
-  started_at DateTime
-  ended_at   DateTime
-  call_id    String
-  call       Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id           String   @id
+  name         String
+  error        Json?
+  error_traces Json?
+  started_at   DateTime
+  ended_at     DateTime
+  call_id      String
+  call         Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
   @@index([call_id])
 }
@@ -117,6 +123,7 @@ model Pipe {
   method          String
   parameter_index Int
   error           Json?
+  error_traces    Json?
   started_at      DateTime
   ended_at        DateTime
   call_id         String
