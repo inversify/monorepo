@@ -7,10 +7,27 @@ export interface HeaderEntry {
   readonly value: string;
 }
 
+export interface ErrorTraceLocation {
+  readonly column: number;
+  readonly file: string;
+  readonly filename: string;
+  readonly functionName: string | null;
+  readonly line: number;
+}
+
+export interface ErrorTrace {
+  readonly location: ErrorTraceLocation;
+  readonly nextStatements: readonly string[];
+  readonly previousStatements: readonly string[];
+  readonly traceStatement: string;
+}
+
 export interface TimedStage {
   readonly durationMs: number;
   readonly endedAt: string;
   readonly error: string | undefined;
+  readonly errorMessage: string | undefined;
+  readonly errorTraces: readonly ErrorTrace[] | null;
   readonly id: string;
   readonly startedAt: string;
 }
@@ -269,6 +286,8 @@ function readTiming(record: Record<string, unknown>): TimedStage {
     durationMs: durationMs(startedAt, endedAt),
     endedAt,
     error: readError(record['error']),
+    errorMessage: readErrorMessage(record['error']),
+    errorTraces: readErrorTraces(record['errorTraces']),
     id: readString(record['id']),
     startedAt,
   };
@@ -308,6 +327,93 @@ function readHeaderValue(value: unknown): string {
   }
 
   return parts.join(', ');
+}
+
+function readErrorMessage(value: unknown): string | undefined {
+  if (!isRecord(value)) {
+    return undefined;
+  }
+
+  const message: unknown = value['message'];
+
+  if (typeof message !== 'string' || message.length === 0) {
+    return undefined;
+  }
+
+  const name: unknown = value['name'];
+
+  if (typeof name === 'string' && name.length > 0) {
+    return `${name}: ${message}`;
+  }
+
+  return message;
+}
+
+function readErrorTrace(value: unknown): ErrorTrace {
+  const record: Record<string, unknown> = readRecord(value, 'error trace');
+  const location: ErrorTraceLocation = readErrorTraceLocation(
+    record['location'],
+  );
+
+  return {
+    location,
+    nextStatements: readStatements(record['nextStatements']),
+    previousStatements: readStatements(record['previousStatements']),
+    traceStatement: readNonEmptyString(record['traceStatement']),
+  };
+}
+
+function readErrorTraceLocation(value: unknown): ErrorTraceLocation {
+  const record: Record<string, unknown> = readRecord(
+    value,
+    'error trace location',
+  );
+  const column: number = readInteger(record['column']);
+  const line: number = readInteger(record['line']);
+
+  if (column < 1 || line < 1) {
+    throw new CallResponseError('Call response has an unexpected shape.');
+  }
+
+  return {
+    column,
+    file: readNonEmptyString(record['file']),
+    filename: readNonEmptyString(record['filename']),
+    functionName: readNullableString(record['functionName']),
+    line,
+  };
+}
+
+function readErrorTraces(value: unknown): readonly ErrorTrace[] | null {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  if (!Array.isArray(value)) {
+    throw new CallResponseError('Call response has an unexpected shape.');
+  }
+
+  if (value.length === 0) {
+    return null;
+  }
+
+  return value.map((item: unknown): ErrorTrace => readErrorTrace(item));
+}
+
+function readNonEmptyString(value: unknown): string {
+  const text: string = readString(value);
+
+  if (text.length === 0) {
+    throw new CallResponseError('Call response has an unexpected shape.');
+  }
+
+  return text;
+}
+
+function readStatements(value: unknown): readonly string[] {
+  return readArray(value, 'statements').map((item: unknown): string =>
+    readString(item),
+  );
 }
 
 function readError(value: unknown): string | undefined {

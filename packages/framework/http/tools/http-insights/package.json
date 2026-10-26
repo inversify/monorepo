@@ -5,6 +5,7 @@
   },
   "description": "InversifyJs HTTP insights",
   "dependencies": {
+    "@babel/parser": "8.0.8",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-insights-ui": "workspace:*",
     "@inversifyjs/http-instrumentation-core": "workspace:*",
@@ -16,6 +17,7 @@
     "better-sqlite3": "13.0.3",
     "mime-types": "3.0.2",
     "prisma": "7.10.1",
+    "stack-trace": "1.0.0",
     "zod": "4.6.7"
   },
   "devDependencies": {
@@ -26,6 +28,7 @@
     "@types/better-sqlite3": "9.6.0",
     "@types/mime-types": "3.0.1",
     "@types/node": "24.19.2",
+    "@types/stack-trace": "0.0.33",
     "@vitest/coverage-v8": "5.0.5",
     "eslint": "10.13.0",
     "prettier": "3.9.10",

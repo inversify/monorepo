@@ -5,6 +5,7 @@ import { DurationText } from '../components/DurationText.js';
 import {
   type CallDetail,
   type ControllerDetail,
+  type ErrorTrace,
   type GuardDetail,
   type HeaderEntry,
   type HttpErrorDetail,
@@ -15,6 +16,7 @@ import {
 } from './callApi.js';
 import { sectionTabId } from './CallMenu.js';
 import { type CallSectionId } from './callSections.js';
+import { ErrorTraces } from './ErrorTraces.js';
 import { readTimeline } from './timeline.js';
 import { TimelineChart } from './TimelineChart.js';
 
@@ -114,6 +116,8 @@ function ResponseSection(props: { readonly call: CallDetail }): ReactElement {
                   durationMs={httpError.durationMs}
                   endedAt={httpError.endedAt}
                   error={httpError.error}
+                  errorMessage={httpError.errorMessage}
+                  errorTraces={httpError.errorTraces}
                   key={httpError.id}
                   meta={
                     httpError.filter === null
@@ -148,6 +152,8 @@ function MiddlewareSection(props: { readonly call: CallDetail }): ReactElement {
                 durationMs={middleware.durationMs}
                 endedAt={middleware.endedAt}
                 error={middleware.error}
+                errorMessage={middleware.errorMessage}
+                errorTraces={middleware.errorTraces}
                 key={middleware.id}
                 meta={[formatPhase(middleware.phase)]}
                 startedAt={middleware.startedAt}
@@ -165,6 +171,8 @@ function MiddlewareSection(props: { readonly call: CallDetail }): ReactElement {
                 durationMs={middleware.durationMs}
                 endedAt={middleware.endedAt}
                 error={middleware.error}
+                errorMessage={middleware.errorMessage}
+                errorTraces={middleware.errorTraces}
                 key={middleware.id}
                 meta={['Native']}
                 startedAt={middleware.startedAt}
@@ -190,6 +198,8 @@ function GuardSection(props: {
             durationMs={guard.durationMs}
             endedAt={guard.endedAt}
             error={guard.error}
+            errorMessage={guard.errorMessage}
+            errorTraces={guard.errorTraces}
             key={guard.id}
             meta={[formatGuardOutcome(guard.allowed)]}
             outcome={guardOutcome(guard.allowed)}
@@ -214,6 +224,8 @@ function ControllerSection(props: { readonly call: CallDetail }): ReactElement {
             durationMs={controller.durationMs}
             endedAt={controller.endedAt}
             error={controller.error}
+            errorMessage={controller.errorMessage}
+            errorTraces={controller.errorTraces}
             meta={[controller.method]}
             startedAt={controller.startedAt}
             title={controller.name}
@@ -229,6 +241,8 @@ function ControllerSection(props: { readonly call: CallDetail }): ReactElement {
                 durationMs={pipe.durationMs}
                 endedAt={pipe.endedAt}
                 error={pipe.error}
+                errorMessage={pipe.errorMessage}
+                errorTraces={pipe.errorTraces}
                 key={pipe.id}
                 meta={[pipe.method, `Parameter ${String(pipe.parameterIndex)}`]}
                 startedAt={pipe.startedAt}
@@ -255,6 +269,8 @@ function InterceptorSection(props: {
               durationMs={interceptor.durationMs}
               endedAt={interceptor.endedAt}
               error={interceptor.error}
+              errorMessage={interceptor.errorMessage}
+              errorTraces={interceptor.errorTraces}
               key={interceptor.id}
               meta={[]}
               startedAt={interceptor.startedAt}
@@ -305,6 +321,8 @@ interface StageCardProps {
   readonly durationMs: number;
   readonly endedAt: string;
   readonly error: string | undefined;
+  readonly errorMessage: string | undefined;
+  readonly errorTraces: readonly ErrorTrace[] | null;
   readonly meta: readonly string[];
   readonly outcome?: string;
   readonly startedAt: string;
@@ -337,11 +355,36 @@ function StageCard(props: StageCardProps): ReactElement {
         <span className="sr-only"> to </span>
         {formatTimestamp(props.endedAt)}
       </p>
-      {props.error === undefined ? null : (
-        <pre className="error-block">{props.error}</pre>
-      )}
+      <StageError
+        error={props.error}
+        errorMessage={props.errorMessage}
+        errorTraces={props.errorTraces}
+      />
     </article>
   );
+}
+
+function StageError(props: {
+  readonly error: string | undefined;
+  readonly errorMessage: string | undefined;
+  readonly errorTraces: readonly ErrorTrace[] | null;
+}): ReactElement | null {
+  if (props.errorTraces !== null && props.errorTraces.length > 0) {
+    return (
+      <div className="error-report">
+        {props.errorMessage === undefined ? null : (
+          <p className="error-message">{props.errorMessage}</p>
+        )}
+        <ErrorTraces traces={props.errorTraces} />
+      </div>
+    );
+  }
+
+  if (props.error === undefined) {
+    return null;
+  }
+
+  return <pre className="error-block">{props.error}</pre>;
 }
 
 function formatTimestamp(value: string): string {

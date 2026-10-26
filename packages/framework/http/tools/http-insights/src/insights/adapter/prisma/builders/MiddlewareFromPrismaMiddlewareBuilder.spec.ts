@@ -3,8 +3,10 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { MiddlewarePhase } from '@inversifyjs/http-core';
 
 import { type Middleware as PrismaMiddleware } from '../../../../generated/prisma/client.js';
+import { ErrorTraceFixtures } from '../../../domain/fixtures/ErrorTraceFixtures.js';
 import { type Middleware } from '../../../domain/models/Middleware.js';
 import { PrismaMiddlewareFixtures } from '../fixtures/PrismaMiddlewareFixtures.js';
+import { ErrorTracesFromPrismaJsonBuilder } from './ErrorTracesFromPrismaJsonBuilder.js';
 import { MiddlewareFromPrismaMiddlewareBuilder } from './MiddlewareFromPrismaMiddlewareBuilder.js';
 
 describe(MiddlewareFromPrismaMiddlewareBuilder, () => {
@@ -12,7 +14,9 @@ describe(MiddlewareFromPrismaMiddlewareBuilder, () => {
 
   beforeAll(() => {
     middlewareFromPrismaMiddlewareBuilder =
-      new MiddlewareFromPrismaMiddlewareBuilder();
+      new MiddlewareFromPrismaMiddlewareBuilder(
+        new ErrorTracesFromPrismaJsonBuilder(),
+      );
   });
 
   describe('.build', () => {
@@ -36,6 +40,7 @@ describe(MiddlewareFromPrismaMiddlewareBuilder, () => {
           const expected: Middleware = {
             endedAt: prismaMiddlewareFixture.ended_at,
             error: prismaMiddlewareFixture.error,
+            errorTraces: [ErrorTraceFixtures.any],
             id: prismaMiddlewareFixture.id,
             middleware: prismaMiddlewareFixture.middleware,
             phase: MiddlewarePhase.PreHandler,

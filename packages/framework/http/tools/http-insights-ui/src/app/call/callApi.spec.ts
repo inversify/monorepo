@@ -112,6 +112,87 @@ describe(readCall, () => {
           },
         ]);
         expect(result.response.statusCode).toBe(201);
+        expect(result.controller?.errorMessage).toBe('boom');
+        expect(result.controller?.errorTraces).toBeNull();
+      });
+    });
+  });
+
+  describe('having error traces', () => {
+    describe('when called', () => {
+      let result: CallDetail;
+
+      beforeAll(() => {
+        result = readCall({
+          controller: null,
+          guards: [
+            {
+              allowed: false,
+              endedAt: '2026-10-19T20:00:00.006Z',
+              error: {
+                message: 'boom',
+                name: 'TypeError',
+              },
+              errorTraces: [
+                {
+                  location: {
+                    column: 5,
+                    file: '/app/src/handler.ts',
+                    filename: 'handler.ts',
+                    functionName: 'handle',
+                    line: 12,
+                  },
+                  nextStatements: ['return value;'],
+                  previousStatements: ['const value = read();'],
+                  traceStatement: 'throw new Error(value);',
+                },
+              ],
+              guard: 'AuthGuard',
+              id: 'guard-1',
+              startedAt: '2026-10-19T20:00:00.004Z',
+            },
+          ],
+          httpErrors: [],
+          id: 'call-1',
+          interceptors: [],
+          middlewares: [],
+          nativeMiddlewares: [],
+          pipes: [],
+          request: {
+            headers: {},
+            id: 'request-1',
+            method: 'POST',
+            startedAt: '2026-10-19T20:00:00.000Z',
+            url: '/users',
+          },
+          response: {
+            aborted: false,
+            headers: {},
+            id: 'response-1',
+            sentAt: '2026-10-19T20:00:00.018Z',
+            statusCode: 500,
+          },
+        });
+      });
+
+      it('should keep the message and the traces', () => {
+        expect(result.guards[0]).toMatchObject({
+          errorMessage: 'TypeError: boom',
+          errorTraces: [
+            {
+              location: {
+                column: 5,
+                file: '/app/src/handler.ts',
+                filename: 'handler.ts',
+                functionName: 'handle',
+                line: 12,
+              },
+              nextStatements: ['return value;'],
+              previousStatements: ['const value = read();'],
+              traceStatement: 'throw new Error(value);',
+            },
+          ],
+        });
       });
     });
   });

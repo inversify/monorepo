@@ -2,9 +2,15 @@ import { ContainerModule, type ContainerModuleLoadOptions } from 'inversify';
 
 import { CallManagementInputPort } from '../../../application/ports/CallManagementInputPort.js';
 import { callPersistenceOutputPortService } from '../../../application/ports/CallPersistenceOutputPort.js';
+import { errorTracesReaderService } from '../../../application/ports/ErrorTracesReader.js';
+import { sourceTextReaderService } from '../../../application/ports/SourceTextReader.js';
+import { ErrorTracesService } from '../../../application/services/ErrorTracesService.js';
+import { StackTraceErrorTracesReader } from '../../../application/services/StackTraceErrorTracesReader.js';
+import { NodeSourceTextReader } from '../../node/services/NodeSourceTextReader.js';
 import { PrismaInsightsPersistenceAdapter } from '../../prisma/adapters/PrismaInsightsPersistenceAdapter.js';
 import { CallFromPrismaCallBuilder } from '../../prisma/builders/CallFromPrismaCallBuilder.js';
 import { ControllerFromPrismaControllerBuilder } from '../../prisma/builders/ControllerFromPrismaControllerBuilder.js';
+import { ErrorTracesFromPrismaJsonBuilder } from '../../prisma/builders/ErrorTracesFromPrismaJsonBuilder.js';
 import { GuardFromPrismaGuardBuilder } from '../../prisma/builders/GuardFromPrismaGuardBuilder.js';
 import { HttpErrorFromPrismaHttpErrorBuilder } from '../../prisma/builders/HttpErrorFromPrismaHttpErrorBuilder.js';
 import { InterceptorFromPrismaInterceptorBuilder } from '../../prisma/builders/InterceptorFromPrismaInterceptorBuilder.js';
@@ -29,6 +35,19 @@ export class InsightsContainerModule extends ContainerModule {
         .inSingletonScope();
       options.bind(CallsFindQueryFromCallIdBuilder).toSelf().inSingletonScope();
       options.bind(CallManagementInputPort).toSelf().inSingletonScope();
+      options.bind(ErrorTracesService).toSelf().inSingletonScope();
+      options
+        .bind(sourceTextReaderService)
+        .to(NodeSourceTextReader)
+        .inSingletonScope();
+      options
+        .bind(errorTracesReaderService)
+        .to(StackTraceErrorTracesReader)
+        .inSingletonScope();
+      options
+        .bind(ErrorTracesFromPrismaJsonBuilder)
+        .toSelf()
+        .inSingletonScope();
       options
         .bind(callPersistenceOutputPortService)
         .to(PrismaInsightsPersistenceAdapter)

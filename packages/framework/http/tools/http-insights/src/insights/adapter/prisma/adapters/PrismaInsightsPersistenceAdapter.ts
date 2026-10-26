@@ -16,6 +16,7 @@ import { OngoingCallsFindQueryResult } from '../../../application/models/Ongoing
 import { type CallPersistenceOutputPort } from '../../../application/ports/CallPersistenceOutputPort.js';
 import { type Call } from '../../../domain/models/Call.js';
 import { type Controller } from '../../../domain/models/Controller.js';
+import { type ErrorTrace } from '../../../domain/models/ErrorTrace.js';
 import { type Guard } from '../../../domain/models/Guard.js';
 import { type HttpError } from '../../../domain/models/HttpError.js';
 import { type Interceptor } from '../../../domain/models/Interceptor.js';
@@ -149,6 +150,7 @@ export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPo
         started_at: controller.startedAt,
       },
       controller.error,
+      controller.errorTraces,
     );
   }
 
@@ -277,6 +279,7 @@ export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPo
         started_at: guard.startedAt,
       },
       guard.error,
+      guard.errorTraces,
     );
   }
 
@@ -284,10 +287,14 @@ export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPo
     callId: string,
     httpError: HttpError,
   ): Prisma.HttpErrorCreateManyInput {
+    const errorTraces: Prisma.InputJsonValue | undefined =
+      this.#readErrorTracesJson(httpError.errorTraces);
+
     return {
       call_id: callId,
       ended_at: httpError.endedAt,
       error: this.#toRequiredInputJsonValue(httpError.error),
+      ...(errorTraces === undefined ? {} : { error_traces: errorTraces }),
       filter: httpError.filter,
       id: httpError.id,
       started_at: httpError.startedAt,
@@ -307,6 +314,7 @@ export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPo
         started_at: interceptor.startedAt,
       },
       interceptor.error,
+      interceptor.errorTraces,
     );
   }
 
@@ -324,6 +332,7 @@ export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPo
         started_at: middleware.startedAt,
       },
       middleware.error,
+      middleware.errorTraces,
     );
   }
 
@@ -340,6 +349,7 @@ export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPo
         started_at: nativeMiddleware.startedAt,
       },
       nativeMiddleware.error,
+      nativeMiddleware.errorTraces,
     );
   }
 
@@ -358,6 +368,7 @@ export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPo
         started_at: pipe.startedAt,
       },
       pipe.error,
+      pipe.errorTraces,
     );
   }
 
@@ -554,17 +565,34 @@ export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPo
     return jsonError;
   }
 
-  #withOptionalError<T extends object>(input: T, error: unknown): T {
+  #readErrorTracesJson(
+    errorTraces: readonly ErrorTrace[] | null,
+  ): Prisma.InputJsonValue | undefined {
+    if (errorTraces === null || errorTraces.length === 0) {
+      return undefined;
+    }
+
+    return errorTraces as unknown as Prisma.InputJsonValue;
+  }
+
+  #withOptionalError<T extends object>(
+    input: T,
+    error: unknown,
+    errorTraces: readonly ErrorTrace[] | null,
+  ): T {
     const jsonError: Prisma.InputJsonValue | undefined =
       this.#toInputJsonValue(error);
+    const jsonTraces: Prisma.InputJsonValue | undefined =
+      this.#readErrorTracesJson(errorTraces);
 
-    if (jsonError === undefined) {
+    if (jsonError === undefined && jsonTraces === undefined) {
       return input;
     }
 
     return {
       ...input,
-      error: jsonError,
+      ...(jsonError === undefined ? {} : { error: jsonError }),
+      ...(jsonTraces === undefined ? {} : { error_traces: jsonTraces }),
     };
   }
 

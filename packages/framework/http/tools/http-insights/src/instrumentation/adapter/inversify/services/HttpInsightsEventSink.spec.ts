@@ -13,7 +13,9 @@ import { randomUUID } from 'node:crypto';
 import { MiddlewarePhase } from '@inversifyjs/http-core';
 import { type HttpInstrumentationEvent } from '@inversifyjs/http-instrumentation-core';
 
+import { type ExecuteUpdateCommand } from '../../../../insights/application/models/ExecuteUpdateCommand.js';
 import { type CallManagementInputPort } from '../../../../insights/application/ports/CallManagementInputPort.js';
+import { type ErrorTracesService } from '../../../../insights/application/services/ErrorTracesService.js';
 import { type Call } from '../../../../insights/domain/models/Call.js';
 import {
   CALL_RETENTION_MS,
@@ -137,6 +139,7 @@ async function emitCommittedCalls(
 
 describe(HttpInsightsEventSink, () => {
   let callManagementInputPortMock: Mocked<CallManagementInputPort>;
+  let errorTracesServiceMock: Mocked<ErrorTracesService>;
 
   beforeAll(() => {
     callManagementInputPortMock = {
@@ -145,6 +148,13 @@ describe(HttpInsightsEventSink, () => {
     } as Partial<
       Mocked<CallManagementInputPort>
     > as Mocked<CallManagementInputPort>;
+    errorTracesServiceMock = {
+      capture: vitest.fn(async (call: Call): Promise<Call> => call),
+      captureUpdate: vitest.fn(
+        async (command: ExecuteUpdateCommand): Promise<ExecuteUpdateCommand> =>
+          command,
+      ),
+    } as Partial<Mocked<ErrorTracesService>> as Mocked<ErrorTracesService>;
   });
 
   describe('.emit', () => {
@@ -170,6 +180,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -402,6 +413,7 @@ describe(HttpInsightsEventSink, () => {
               controller: 'FooController',
               endedAt: new Date(timestampFixture),
               error: { message: 'boom' },
+              errorTraces: null,
               id: readGeneratedId(7),
               method: 'getFoo',
               startedAt: new Date(startedAtFixture),
@@ -411,6 +423,7 @@ describe(HttpInsightsEventSink, () => {
                 allowed: false,
                 endedAt: new Date(timestampFixture),
                 error: null,
+                errorTraces: null,
                 guard: 'FooGuard',
                 id: readGeneratedId(0),
                 startedAt: new Date(startedAtFixture),
@@ -419,6 +432,7 @@ describe(HttpInsightsEventSink, () => {
                 allowed: null,
                 endedAt: new Date(timestampFixture),
                 error: { message: 'denied' },
+                errorTraces: null,
                 guard: 'BarGuard',
                 id: readGeneratedId(1),
                 startedAt: new Date(startedAtFixture),
@@ -428,6 +442,7 @@ describe(HttpInsightsEventSink, () => {
               {
                 endedAt: new Date(timestampFixture),
                 error: { message: 'boom' },
+                errorTraces: null,
                 filter: 'InversifyValidationErrorFilter',
                 id: readGeneratedId(5),
                 startedAt: new Date(startedAtFixture),
@@ -435,6 +450,7 @@ describe(HttpInsightsEventSink, () => {
               {
                 endedAt: new Date(timestampFixture),
                 error: { message: 'unfiltered' },
+                errorTraces: null,
                 filter: null,
                 id: readGeneratedId(6),
                 startedAt: new Date(startedAtFixture),
@@ -445,6 +461,7 @@ describe(HttpInsightsEventSink, () => {
               {
                 endedAt: new Date(timestampFixture),
                 error: null,
+                errorTraces: null,
                 id: readGeneratedId(2),
                 interceptor: 'FooInterceptor',
                 startedAt: new Date(startedAtFixture),
@@ -454,6 +471,7 @@ describe(HttpInsightsEventSink, () => {
               {
                 endedAt: new Date(timestampFixture),
                 error: null,
+                errorTraces: null,
                 id: readGeneratedId(3),
                 middleware: 'FooMiddleware',
                 phase: MiddlewarePhase.PreHandler,
@@ -464,6 +482,7 @@ describe(HttpInsightsEventSink, () => {
               {
                 endedAt: new Date(timestampFixture),
                 error: null,
+                errorTraces: null,
                 id: readGeneratedId(8),
                 name: 'jsonParser',
                 startedAt: new Date(startedAtFixture),
@@ -473,6 +492,7 @@ describe(HttpInsightsEventSink, () => {
               {
                 endedAt: new Date(timestampFixture),
                 error: null,
+                errorTraces: null,
                 id: readGeneratedId(4),
                 method: 'getFoo',
                 parameterIndex: 0,
@@ -504,6 +524,14 @@ describe(HttpInsightsEventSink, () => {
             callManagementInputPortMock.create,
           ).toHaveBeenCalledExactlyOnceWith(expected);
         });
+
+        it('should capture traces before persisting the call', () => {
+          expect(
+            errorTracesServiceMock.capture,
+          ).toHaveBeenCalledExactlyOnceWith(
+            callManagementInputPortMock.create.mock.calls[0]?.[0],
+          );
+        });
       });
     });
 
@@ -520,6 +548,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -597,6 +626,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -707,6 +737,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -779,6 +810,7 @@ describe(HttpInsightsEventSink, () => {
       beforeAll(() => {
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -834,6 +866,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -909,6 +942,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -995,6 +1029,7 @@ describe(HttpInsightsEventSink, () => {
       beforeAll(() => {
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -1051,6 +1086,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -1099,6 +1135,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -1153,6 +1190,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -1205,6 +1243,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -1255,6 +1294,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -1297,6 +1337,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -1348,6 +1389,12 @@ describe(HttpInsightsEventSink, () => {
           vitest.clearAllMocks();
         });
 
+        it('should capture traces for each persisted update', () => {
+          expect(errorTracesServiceMock.captureUpdate.mock.calls).toStrictEqual(
+            callManagementInputPortMock.update.mock.calls,
+          );
+        });
+
         it('should update the call until the sweep after the in-flight write', () => {
           expect(callManagementInputPortMock.update).toHaveBeenCalledTimes(2);
           expect(callManagementInputPortMock.update).toHaveBeenNthCalledWith(
@@ -1378,6 +1425,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -1435,6 +1483,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          errorTracesServiceMock,
         );
       });
 
@@ -1511,6 +1560,7 @@ describe(HttpInsightsEventSink, () => {
 
           httpInsightsEventSink = new HttpInsightsEventSink(
             callManagementInputPortMock,
+            errorTracesServiceMock,
           );
 
           await emitCommittedCalls(
@@ -1572,6 +1622,7 @@ describe(HttpInsightsEventSink, () => {
 
           httpInsightsEventSink = new HttpInsightsEventSink(
             callManagementInputPortMock,
+            errorTracesServiceMock,
           );
 
           await emitCommittedCalls(httpInsightsEventSink, MAX_COMMITTED_CALLS);

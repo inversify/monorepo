@@ -16,6 +16,7 @@ import {
 import { type ExecuteUpdateCommand } from '../../../application/models/ExecuteUpdateCommand.js';
 import { CallFixtures } from '../../../domain/fixtures/CallFixtures.js';
 import { ControllerFixtures } from '../../../domain/fixtures/ControllerFixtures.js';
+import { ErrorTraceFixtures } from '../../../domain/fixtures/ErrorTraceFixtures.js';
 import { GuardFixtures } from '../../../domain/fixtures/GuardFixtures.js';
 import { HttpErrorFixtures } from '../../../domain/fixtures/HttpErrorFixtures.js';
 import { RequestFixtures } from '../../../domain/fixtures/RequestFixtures.js';
@@ -55,7 +56,6 @@ describe(PrismaInsightsPersistenceAdapter, () => {
   let pipeCreateManyMock: ReturnType<typeof vitest.fn>;
   let responseCreateManyMock: ReturnType<typeof vitest.fn>;
   let prismaTransactionMock: ReturnType<typeof vitest.fn>;
-
   let prismaInsightsPersistenceAdapter: PrismaInsightsPersistenceAdapter;
 
   beforeAll(() => {
@@ -177,12 +177,19 @@ describe(PrismaInsightsPersistenceAdapter, () => {
           controller: {
             ...ControllerFixtures.any,
             error: errorFixture,
+            errorTraces: null,
           },
-          guards: [GuardFixtures.any],
+          guards: [
+            {
+              ...GuardFixtures.any,
+              errorTraces: null,
+            },
+          ],
           httpErrors: [
             {
               ...HttpErrorFixtures.any,
               error: errorFixture,
+              errorTraces: null,
             },
           ],
           id: 'call-id',
@@ -351,6 +358,52 @@ describe(PrismaInsightsPersistenceAdapter, () => {
         });
       });
     });
+
+    describe('having an error with statement traces', () => {
+      let callFixture: Call;
+
+      beforeAll(() => {
+        callFixture = CallFixtures.any;
+      });
+
+      describe('when called', () => {
+        beforeAll(async () => {
+          await prismaInsightsPersistenceAdapter.create(callFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should store the traces beside the controller error', () => {
+          const controller: NonNullable<Call['controller']> =
+            callFixture.controller as NonNullable<Call['controller']>;
+
+          expect(controllerCreateManyMock).toHaveBeenCalledExactlyOnceWith({
+            data: [
+              expect.objectContaining({
+                error_traces: [ErrorTraceFixtures.any],
+                id: controller.id,
+              }),
+            ],
+          });
+        });
+
+        it('should store the traces beside the http error', () => {
+          const httpError: Call['httpErrors'][number] = callFixture
+            .httpErrors[0] as Call['httpErrors'][number];
+
+          expect(httpErrorCreateManyMock).toHaveBeenCalledExactlyOnceWith({
+            data: [
+              expect.objectContaining({
+                error_traces: [ErrorTraceFixtures.any],
+                id: httpError.id,
+              }),
+            ],
+          });
+        });
+      });
+    });
   });
 
   describe('.update', () => {
@@ -394,6 +447,7 @@ describe(PrismaInsightsPersistenceAdapter, () => {
               call_id: 'call-id',
               ended_at: HttpErrorFixtures.any.endedAt,
               error: HttpErrorFixtures.any.error,
+              error_traces: HttpErrorFixtures.any.errorTraces,
               filter: HttpErrorFixtures.any.filter,
               id: HttpErrorFixtures.any.id,
               started_at: HttpErrorFixtures.any.startedAt,

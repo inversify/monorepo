@@ -1,8 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { type HttpError as PrismaHttpError } from '../../../../generated/prisma/client.js';
+import { ErrorTraceFixtures } from '../../../domain/fixtures/ErrorTraceFixtures.js';
 import { type HttpError } from '../../../domain/models/HttpError.js';
 import { PrismaHttpErrorFixtures } from '../fixtures/PrismaHttpErrorFixtures.js';
+import { ErrorTracesFromPrismaJsonBuilder } from './ErrorTracesFromPrismaJsonBuilder.js';
 import { HttpErrorFromPrismaHttpErrorBuilder } from './HttpErrorFromPrismaHttpErrorBuilder.js';
 
 describe(HttpErrorFromPrismaHttpErrorBuilder, () => {
@@ -10,7 +12,9 @@ describe(HttpErrorFromPrismaHttpErrorBuilder, () => {
 
   beforeAll(() => {
     httpErrorFromPrismaHttpErrorBuilder =
-      new HttpErrorFromPrismaHttpErrorBuilder();
+      new HttpErrorFromPrismaHttpErrorBuilder(
+        new ErrorTracesFromPrismaJsonBuilder(),
+      );
   });
 
   describe('.build', () => {
@@ -31,6 +35,7 @@ describe(HttpErrorFromPrismaHttpErrorBuilder, () => {
         const expected: HttpError = {
           endedAt: prismaHttpErrorFixture.ended_at,
           error: prismaHttpErrorFixture.error,
+          errorTraces: [ErrorTraceFixtures.any],
           filter: prismaHttpErrorFixture.filter,
           id: prismaHttpErrorFixture.id,
           startedAt: prismaHttpErrorFixture.started_at,
