@@ -62,6 +62,7 @@ export function buildStatementIndex(
   try {
     const lists: IndexedStatement[][] = [];
     const spans: CodeSpan[] = [];
+    const spanKeys: Set<string> = new Set<string>();
 
     walk(
       parse(source, {
@@ -80,6 +81,7 @@ export function buildStatementIndex(
       }),
       lists,
       spans,
+      spanKeys,
     );
 
     return {
@@ -172,6 +174,10 @@ function compareBoundaryOrder(left: SyntaxNode, right: SyntaxNode): number {
 
 function compareNearestSpan(left: CodeSpan, right: CodeSpan): number {
   return right.end - left.end || right.start - left.start;
+}
+
+function compareOuterSpan(left: CodeSpan, right: CodeSpan): number {
+  return left.start - right.start || right.end - left.end;
 }
 
 function compareSourceOrder(left: CodeSpan, right: CodeSpan): number {
@@ -302,19 +308,6 @@ function isBoundary(node: SyntaxNode): boolean {
   return isBodyPart(node) || node.type === 'CatchClause';
 }
 
-function isContainedSpan(
-  span: CodeSpan,
-  candidates: readonly CodeSpan[],
-): boolean {
-  return candidates.some(
-    (other: CodeSpan): boolean =>
-      span !== other &&
-      span.start >= other.start &&
-      span.end <= other.end &&
-      (span.start > other.start || span.end < other.end),
-  );
-}
-
 function isMeaningfulCode(text: string): boolean {
   return text.length > 0 && !/^[{}()[\];,\s]+$/u.test(text);
 }
@@ -352,32 +345,42 @@ function isSyntaxNode(value: unknown): value is SyntaxNode {
   );
 }
 
-function pushBoundarySpans(spans: CodeSpan[], node: SyntaxNode): void {
+function pushBoundarySpans(
+  spans: CodeSpan[],
+  spanKeys: Set<string>,
+  node: SyntaxNode,
+): void {
   const boundaries: readonly SyntaxNode[] = readBoundaries(node);
   let previous: SyntaxNode | null = null;
 
   for (const boundary of boundaries) {
     if (previous === null) {
-      pushSpan(spans, node.start, boundary.start);
+      pushSpan(spans, spanKeys, node.start, boundary.start);
     } else {
-      pushSpan(spans, previous.end, boundary.start);
+      pushSpan(spans, spanKeys, previous.end, boundary.start);
     }
 
     previous = boundary;
   }
 }
 
-function pushSpan(spans: CodeSpan[], start: number, end: number): void {
+function pushSpan(
+  spans: CodeSpan[],
+  spanKeys: Set<string>,
+  start: number,
+  end: number,
+): void {
   if (end <= start) {
     return;
   }
 
-  for (const span of spans) {
-    if (span.start === start && span.end === end) {
-      return;
-    }
+  const key: string = `${String(start)}:${String(end)}`;
+
+  if (spanKeys.has(key)) {
+    return;
   }
 
+  spanKeys.add(key);
   spans.push({
     end,
     start,
@@ -449,9 +452,18 @@ function readPreviousCode(
     (span: CodeSpan): boolean =>
       span.start < statementStart && span.end <= statementStart,
   );
-  const visible: CodeSpan[] = candidates.filter(
-    (span: CodeSpan): boolean => !isContainedSpan(span, candidates),
-  );
+  const visible: CodeSpan[] = [];
+  let maxEnd: number | null = null;
+
+  for (const span of candidates.sort(compareOuterSpan)) {
+    if (maxEnd !== null && span.end <= maxEnd) {
+      continue;
+    }
+
+    visible.push(span);
+    maxEnd = span.end;
+  }
+
   const nearest: CodeSpan[] = [];
 
   for (const span of visible.sort(compareNearestSpan)) {
@@ -592,6 +604,7 @@ function walk(
   value: unknown,
   lists: IndexedStatement[][],
   spans: CodeSpan[],
+  spanKeys: Set<string>,
 ): void {
   if (!isSyntaxNode(value)) {
     return;
@@ -611,27 +624,27 @@ function walk(
     );
 
     for (const statement of statements) {
-      pushSpan(spans, statement.start, statement.end);
+      pushSpan(spans, spanKeys, statement.start, statement.end);
     }
 
     const firstStatement: SyntaxNode | undefined = statements[0];
 
     if (firstStatement !== undefined) {
-      pushSpan(spans, value.start, firstStatement.start);
+      pushSpan(spans, spanKeys, value.start, firstStatement.start);
     }
   } else {
-    pushBoundarySpans(spans, value);
+    pushBoundarySpans(spans, spanKeys, value);
   }
 
   for (const child of Object.values(value)) {
     if (Array.isArray(child)) {
       for (const item of child) {
-        walk(item, lists, spans);
+        walk(item, lists, spans, spanKeys);
       }
 
       continue;
     }
 
-    walk(child, lists, spans);
+    walk(child, lists, spans, spanKeys);
   }
 }
