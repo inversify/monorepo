@@ -1,27 +1,13 @@
-import { extname } from 'node:path';
-
-import { parse } from '@babel/parser';
+import {
+  type CodeSpan,
+  type IndexedStatement,
+  type StatementIndex,
+} from './buildStatementIndex.js';
 
 const CONTEXT_STATEMENT_COUNT: number = 2;
 const ELLIPSIS: string = '…';
-const LINE_FEED: number = 10;
 const MAX_STATEMENT_TEXT_LENGTH: number = 500;
 const STATEMENT_TEXT_CENTER_DIVISOR: number = 2;
-
-type ParserPlugins = NonNullable<
-  NonNullable<Parameters<typeof parse>[1]>['plugins']
->;
-
-interface CodeSpan {
-  readonly end: number;
-  readonly start: number;
-}
-
-interface IndexedStatement {
-  readonly end: number;
-  readonly index: number;
-  readonly start: number;
-}
 
 interface NearestStatement {
   readonly index: number;
@@ -35,64 +21,10 @@ interface StatementMatch {
   readonly list: readonly IndexedStatement[];
 }
 
-interface SyntaxNode {
-  readonly [key: string]: unknown;
-  readonly end: number;
-  readonly start: number;
-  readonly type: string;
-}
-
 export interface StatementContext {
   readonly nextStatements: readonly string[];
   readonly previousStatements: readonly string[];
   readonly traceStatement: string;
-}
-
-export interface StatementIndex {
-  readonly lineStarts: readonly number[];
-  readonly lists: readonly (readonly IndexedStatement[])[];
-  readonly source: string;
-  readonly spans: readonly CodeSpan[];
-}
-
-export function buildStatementIndex(
-  source: string,
-  filePath: string,
-): StatementIndex | null {
-  try {
-    const lists: IndexedStatement[][] = [];
-    const spans: CodeSpan[] = [];
-    const spanKeys: Set<string> = new Set<string>();
-
-    walk(
-      parse(source, {
-        allowAwaitOutsideFunction: true,
-        allowImportExportEverywhere: true,
-        allowNewTargetOutsideFunction: true,
-        allowReturnOutsideFunction: true,
-        allowSuperOutsideMethod: true,
-        allowUndeclaredExports: true,
-        allowYieldOutsideFunction: true,
-        attachComment: false,
-        errorRecovery: false,
-        plugins: readParserPlugins(filePath),
-        sourceType: 'unambiguous',
-        strictMode: false,
-      }),
-      lists,
-      spans,
-      spanKeys,
-    );
-
-    return {
-      lineStarts: readLineStarts(source),
-      lists,
-      source,
-      spans,
-    };
-  } catch (_error: unknown) {
-    return null;
-  }
 }
 
 export function readStatementContext(
@@ -152,24 +84,6 @@ export function readStatementContext(
     ),
     traceStatement,
   };
-}
-
-function collectBoundaries(boundaries: SyntaxNode[], value: unknown): void {
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      collectBoundaries(boundaries, item);
-    }
-
-    return;
-  }
-
-  if (isSyntaxNode(value) && isBoundary(value)) {
-    boundaries.push(value);
-  }
-}
-
-function compareBoundaryOrder(left: SyntaxNode, right: SyntaxNode): number {
-  return left.start - right.start || left.end - right.end;
 }
 
 function compareNearestSpan(left: CodeSpan, right: CodeSpan): number {
@@ -292,24 +206,8 @@ function findUpcomingStatement(
   };
 }
 
-function isBodyPart(node: SyntaxNode): boolean {
-  if (readStatementList(node) !== null) {
-    return true;
-  }
-
-  return (
-    node.type.endsWith('Declaration') ||
-    node.type.endsWith('Statement') ||
-    node.type === 'ClassBody'
-  );
-}
-
-function isBoundary(node: SyntaxNode): boolean {
-  return isBodyPart(node) || node.type === 'CatchClause';
-}
-
-function isMeaningfulCode(text: string): boolean {
-  return text.length > 0 && !/^[{}()[\];,\s]+$/u.test(text);
+function isIndentCharacter(character: string): boolean {
+  return character === ' ' || character === '\t';
 }
 
 function isInsideContaining(
@@ -327,86 +225,78 @@ function isInsideContaining(
   );
 }
 
+function isLineBreak(character: string): boolean {
+  return character === '\n' || character === '\r';
+}
+
+function isMeaningfulCode(text: string): boolean {
+  return text.length > 0 && !/^[{}()[\];,\s]+$/u.test(text);
+}
+
 function isOnlyWhitespace(value: string): boolean {
   return value.trim().length === 0;
 }
 
-function isSyntaxNode(value: unknown): value is SyntaxNode {
-  if (typeof value !== 'object' || value === null) {
-    return false;
-  }
+function readExtraLineBreakCount(source: string, indentStart: number): number {
+  let cursor: number = indentStart;
+  let lineBreakCount: number = 0;
 
-  const record: Record<string, unknown> = value as Record<string, unknown>;
+  while (cursor > 0) {
+    const character: string = source.charAt(cursor - 1);
 
-  return (
-    typeof record['end'] === 'number' &&
-    typeof record['start'] === 'number' &&
-    typeof record['type'] === 'string'
-  );
-}
+    if (character === '\n') {
+      lineBreakCount += 1;
+      cursor -= 1;
 
-function pushBoundarySpans(
-  spans: CodeSpan[],
-  spanKeys: Set<string>,
-  node: SyntaxNode,
-): void {
-  const boundaries: readonly SyntaxNode[] = readBoundaries(node);
-  let previous: SyntaxNode | null = null;
+      if (source.charAt(cursor - 1) === '\r') {
+        cursor -= 1;
+      }
 
-  for (const boundary of boundaries) {
-    if (previous === null) {
-      pushSpan(spans, spanKeys, node.start, boundary.start);
-    } else {
-      pushSpan(spans, spanKeys, previous.end, boundary.start);
+      continue;
     }
 
-    previous = boundary;
-  }
-}
-
-function pushSpan(
-  spans: CodeSpan[],
-  spanKeys: Set<string>,
-  start: number,
-  end: number,
-): void {
-  if (end <= start) {
-    return;
-  }
-
-  const key: string = `${String(start)}:${String(end)}`;
-
-  if (spanKeys.has(key)) {
-    return;
-  }
-
-  spanKeys.add(key);
-  spans.push({
-    end,
-    start,
-  });
-}
-
-function readBoundaries(node: SyntaxNode): readonly SyntaxNode[] {
-  const boundaries: SyntaxNode[] = [];
-
-  for (const child of Object.values(node)) {
-    collectBoundaries(boundaries, child);
-  }
-
-  return boundaries.sort(compareBoundaryOrder);
-}
-
-function readLineStarts(source: string): readonly number[] {
-  const lineStarts: number[] = [0];
-
-  for (let index: number = 0; index < source.length; index += 1) {
-    if (source.charCodeAt(index) === LINE_FEED) {
-      lineStarts.push(index + 1);
+    if (character === '\r') {
+      lineBreakCount += 1;
+      cursor -= 1;
+      continue;
     }
+
+    break;
   }
 
-  return lineStarts;
+  // Each snippet is already rendered on its own line.
+  if (lineBreakCount <= 1) {
+    return 0;
+  }
+
+  return lineBreakCount - 1;
+}
+
+function readLeadingWhitespace(source: string, start: number): string {
+  let indentStart: number = start;
+
+  while (indentStart > 0) {
+    const character: string = source.charAt(indentStart - 1);
+
+    if (isLineBreak(character)) {
+      break;
+    }
+
+    if (!isIndentCharacter(character)) {
+      return '';
+    }
+
+    indentStart -= 1;
+  }
+
+  const blankLineCount: number = readExtraLineBreakCount(source, indentStart);
+  const indent: string = source.slice(indentStart, start);
+
+  if (blankLineCount === 0) {
+    return indent;
+  }
+
+  return `${'\n'.repeat(blankLineCount)}${indent}`;
 }
 
 function readMatchedStatement(
@@ -441,6 +331,39 @@ function readNeighborStatements(
   }
 
   return statements;
+}
+
+function readOffset(
+  lineStarts: readonly number[],
+  sourceLength: number,
+  line: number,
+  column: number,
+): number | null {
+  if (
+    !Number.isInteger(line) ||
+    !Number.isInteger(column) ||
+    line < 1 ||
+    column < 1
+  ) {
+    return null;
+  }
+
+  const lineStart: number | undefined = lineStarts[line - 1];
+
+  if (lineStart === undefined) {
+    return null;
+  }
+
+  const nextLineStart: number | undefined = lineStarts[line];
+  const lineEnd: number =
+    nextLineStart === undefined ? sourceLength : nextLineStart;
+  const offset: number = lineStart + (column - 1);
+
+  if (offset < lineStart || offset >= lineEnd) {
+    return null;
+  }
+
+  return offset;
 }
 
 function readPreviousCode(
@@ -492,86 +415,6 @@ function readPreviousCode(
     );
 }
 
-function readOffset(
-  lineStarts: readonly number[],
-  sourceLength: number,
-  line: number,
-  column: number,
-): number | null {
-  if (
-    !Number.isInteger(line) ||
-    !Number.isInteger(column) ||
-    line < 1 ||
-    column < 1
-  ) {
-    return null;
-  }
-
-  const lineStart: number | undefined = lineStarts[line - 1];
-
-  if (lineStart === undefined) {
-    return null;
-  }
-
-  const nextLineStart: number | undefined = lineStarts[line];
-  const lineEnd: number =
-    nextLineStart === undefined ? sourceLength : nextLineStart;
-  const offset: number = lineStart + (column - 1);
-
-  if (offset < lineStart || offset >= lineEnd) {
-    return null;
-  }
-
-  return offset;
-}
-
-function readParserPlugins(filePath: string): ParserPlugins {
-  switch (extname(filePath)) {
-    case '.cts':
-    case '.mts':
-    case '.ts':
-      return [['typescript', {}], 'decorators-legacy'];
-    case '.jsx':
-      return ['jsx'];
-    case '.tsx':
-      return [['typescript', {}], 'decorators-legacy', 'jsx'];
-    default:
-      return [];
-  }
-}
-
-function readStatementList(node: SyntaxNode): readonly SyntaxNode[] | null {
-  switch (node.type) {
-    case 'BlockStatement':
-    case 'Program':
-    case 'StaticBlock':
-    case 'TSModuleBlock':
-      return readStatementNodes(node['body']);
-    case 'SwitchCase':
-      return readStatementNodes(node['consequent']);
-    default:
-      return null;
-  }
-}
-
-function readStatementNodes(value: unknown): readonly SyntaxNode[] | null {
-  if (!Array.isArray(value)) {
-    return null;
-  }
-
-  const statements: SyntaxNode[] = [];
-
-  for (const item of value) {
-    if (!isSyntaxNode(item) || item.end <= item.start) {
-      continue;
-    }
-
-    statements.push(item);
-  }
-
-  return statements;
-}
-
 function readStatementText(
   source: string,
   start: number,
@@ -579,7 +422,9 @@ function readStatementText(
   focus: number,
 ): string {
   if (end - start <= MAX_STATEMENT_TEXT_LENGTH) {
-    return source.slice(start, end).trim();
+    return `${readLeadingWhitespace(source, start)}${trimSameLinePadding(
+      source.slice(start, end).trimEnd(),
+    )}`;
   }
 
   const half: number = Math.floor(
@@ -594,57 +439,23 @@ function readStatementText(
 
   windowStart = Math.max(start, windowEnd - MAX_STATEMENT_TEXT_LENGTH);
 
-  const prefix: string = windowStart > start ? ELLIPSIS : '';
+  const prefix: string =
+    windowStart > start ? ELLIPSIS : readLeadingWhitespace(source, start);
   const suffix: string = windowEnd < end ? ELLIPSIS : '';
 
   return `${prefix}${source.slice(windowStart, windowEnd).trim()}${suffix}`;
 }
 
-function walk(
-  value: unknown,
-  lists: IndexedStatement[][],
-  spans: CodeSpan[],
-  spanKeys: Set<string>,
-): void {
-  if (!isSyntaxNode(value)) {
-    return;
+function trimSameLinePadding(text: string): string {
+  let index: number = 0;
+
+  while (index < text.length && isIndentCharacter(text.charAt(index))) {
+    index += 1;
   }
 
-  const statements: readonly SyntaxNode[] | null = readStatementList(value);
-
-  if (statements !== null) {
-    lists.push(
-      statements.map(
-        (statement: SyntaxNode, index: number): IndexedStatement => ({
-          end: statement.end,
-          index,
-          start: statement.start,
-        }),
-      ),
-    );
-
-    for (const statement of statements) {
-      pushSpan(spans, spanKeys, statement.start, statement.end);
-    }
-
-    const firstStatement: SyntaxNode | undefined = statements[0];
-
-    if (firstStatement !== undefined) {
-      pushSpan(spans, spanKeys, value.start, firstStatement.start);
-    }
-  } else {
-    pushBoundarySpans(spans, spanKeys, value);
+  if (index === 0 || isLineBreak(text.charAt(index))) {
+    return text;
   }
 
-  for (const child of Object.values(value)) {
-    if (Array.isArray(child)) {
-      for (const item of child) {
-        walk(item, lists, spans, spanKeys);
-      }
-
-      continue;
-    }
-
-    walk(child, lists, spans, spanKeys);
-  }
+  return text.slice(index);
 }

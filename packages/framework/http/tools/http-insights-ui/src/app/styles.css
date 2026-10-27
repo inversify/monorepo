@@ -864,7 +864,7 @@ body:has(.modal-backdrop) {
 .waterfall-plot canvas {
   display: block;
   width: 100%;
-  cursor: crosshair;
+  cursor: pointer;
 }
 
 .timeline-tooltip {
@@ -998,6 +998,16 @@ body:has(.modal-backdrop) {
 .stage:first-child {
   padding-top: 0;
   border-top: 0;
+}
+
+.stage.is-selected {
+  margin-right: -12px;
+  margin-left: -12px;
+  padding: 12px;
+  border-top-color: transparent;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: inset 2px 0 0 var(--accent);
 }
 
 .stage-title {

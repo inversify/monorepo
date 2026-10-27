@@ -3,9 +3,11 @@ import { ContainerModule, type ContainerModuleLoadOptions } from 'inversify';
 import { CallManagementInputPort } from '../../../application/ports/CallManagementInputPort.js';
 import { callPersistenceOutputPortService } from '../../../application/ports/CallPersistenceOutputPort.js';
 import { errorTracesReaderService } from '../../../application/ports/ErrorTracesReader.js';
+import { sourceMapReaderService } from '../../../application/ports/SourceMapReader.js';
 import { sourceTextReaderService } from '../../../application/ports/SourceTextReader.js';
 import { ErrorTracesService } from '../../../application/services/ErrorTracesService.js';
 import { StackTraceErrorTracesReader } from '../../../application/services/StackTraceErrorTracesReader.js';
+import { NodeSourceMapReader } from '../../node/services/NodeSourceMapReader.js';
 import { NodeSourceTextReader } from '../../node/services/NodeSourceTextReader.js';
 import { PrismaInsightsPersistenceAdapter } from '../../prisma/adapters/PrismaInsightsPersistenceAdapter.js';
 import { CallFromPrismaCallBuilder } from '../../prisma/builders/CallFromPrismaCallBuilder.js';
@@ -36,6 +38,10 @@ export class InsightsContainerModule extends ContainerModule {
       options.bind(CallsFindQueryFromCallIdBuilder).toSelf().inSingletonScope();
       options.bind(CallManagementInputPort).toSelf().inSingletonScope();
       options.bind(ErrorTracesService).toSelf().inSingletonScope();
+      options
+        .bind(sourceMapReaderService)
+        .to(NodeSourceMapReader)
+        .inSingletonScope();
       options
         .bind(sourceTextReaderService)
         .to(NodeSourceTextReader)

@@ -2,26 +2,12 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
   buildStatementIndex,
+  type StatementIndex,
+} from './buildStatementIndex.js';
+import {
   readStatementContext,
   type StatementContext,
-  type StatementIndex,
-} from './statementIndex.js';
-
-describe(buildStatementIndex, () => {
-  describe('having source that is not valid JavaScript', () => {
-    describe('when called', () => {
-      let result: unknown;
-
-      beforeAll(() => {
-        result = buildStatementIndex('const =', 'handler.js');
-      });
-
-      it('should return null', () => {
-        expect(result).toBeNull();
-      });
-    });
-  });
-});
+} from './readStatementContext.js';
 
 describe(readStatementContext, () => {
   describe('having several statements on one line', () => {
@@ -77,9 +63,9 @@ describe(readStatementContext, () => {
 
       it('should use the statements inside the inner function', () => {
         expect(result).toStrictEqual({
-          nextStatements: ['const fourth = 4;'],
-          previousStatements: ['const first = 1;', 'const second = 2;'],
-          traceStatement: "throw new Error('boom');",
+          nextStatements: ['    const fourth = 4;'],
+          previousStatements: ['    const first = 1;', '    const second = 2;'],
+          traceStatement: "    throw new Error('boom');",
         });
       });
     });
@@ -93,9 +79,9 @@ describe(readStatementContext, () => {
 
       it('should use the statements inside the inner function', () => {
         expect(result).toStrictEqual({
-          nextStatements: ['const fourth = 4;'],
-          previousStatements: ['const first = 1;', 'const second = 2;'],
-          traceStatement: "throw new Error('boom');",
+          nextStatements: ['    const fourth = 4;'],
+          previousStatements: ['    const first = 1;', '    const second = 2;'],
+          traceStatement: "    throw new Error('boom');",
         });
       });
     });
@@ -109,9 +95,9 @@ describe(readStatementContext, () => {
 
       it('should keep the throw and the statements beside it', () => {
         expect(result).toStrictEqual({
-          nextStatements: ['const fourth = 4;'],
-          previousStatements: ['const first = 1;', 'const second = 2;'],
-          traceStatement: "throw new Error('boom');",
+          nextStatements: ['    const fourth = 4;'],
+          previousStatements: ['    const first = 1;', '    const second = 2;'],
+          traceStatement: "    throw new Error('boom');",
         });
       });
     });
@@ -124,12 +110,12 @@ describe(readStatementContext, () => {
       });
 
       it('should keep the function and the code before it', () => {
-        expect(result?.nextStatements).toStrictEqual(['const after = 2;']);
+        expect(result?.nextStatements).toStrictEqual(['  const after = 2;']);
         expect(result?.previousStatements).toStrictEqual([
           'function outer()',
-          'const before = 1;',
+          '  const before = 1;',
         ]);
-        expect(result?.traceStatement.startsWith('function inner()')).toBe(
+        expect(result?.traceStatement.startsWith('  function inner()')).toBe(
           true,
         );
       });
@@ -218,12 +204,12 @@ describe(readStatementContext, () => {
 
       it('should return the TypeScript statements around the throw', () => {
         expect(result).toStrictEqual({
-          nextStatements: ['const fourth: number = 4;'],
+          nextStatements: ['  const fourth: number = 4;'],
           previousStatements: [
-            'const first: number = 1;',
-            'const second: number = 2;',
+            '  const first: number = 1;',
+            '  const second: number = 2;',
           ],
-          traceStatement: 'throw new Error(value);',
+          traceStatement: '  throw new Error(value);',
         });
       });
     });
@@ -301,7 +287,7 @@ describe(readStatementContext, () => {
         expect(result).toStrictEqual({
           nextStatements: ['const third = 3;'],
           previousStatements: ['const first = 1;'],
-          traceStatement: "throw new Error('boom');",
+          traceStatement: "\nthrow new Error('boom');",
         });
       });
     });
@@ -336,9 +322,9 @@ describe(readStatementContext, () => {
 
       it('should use the statements inside the method', () => {
         expect(result).toStrictEqual({
-          nextStatements: ['const fourth = 4;', 'const fifth = 5;'],
-          previousStatements: ['const first = 1;', 'const second = 2;'],
-          traceStatement: "throw new Error('boom');",
+          nextStatements: ['    const fourth = 4;', '    const fifth = 5;'],
+          previousStatements: ['    const first = 1;', '    const second = 2;'],
+          traceStatement: "    throw new Error('boom');",
         });
       });
     });
@@ -375,8 +361,11 @@ describe(readStatementContext, () => {
       it('should include the code before the throw', () => {
         expect(result).toStrictEqual({
           nextStatements: [],
-          previousStatements: ['switch (error.kind) {', 'case Kind.failed:'],
-          traceStatement: 'throw new Error(error.message);',
+          previousStatements: [
+            '  switch (error.kind) {',
+            '    case Kind.failed:',
+          ],
+          traceStatement: '      throw new Error(error.message);',
         });
       });
     });
@@ -408,8 +397,8 @@ describe(readStatementContext, () => {
       it('should include the else before the throw', () => {
         expect(result).toStrictEqual({
           nextStatements: [],
-          previousStatements: ['doA();', 'else'],
-          traceStatement: 'throw new Error("boom");',
+          previousStatements: ['    doA();', 'else'],
+          traceStatement: '    throw new Error("boom");',
         });
       });
     });
@@ -442,7 +431,7 @@ describe(readStatementContext, () => {
         expect(result).toStrictEqual({
           nextStatements: [],
           previousStatements: ['else', 'if (other)'],
-          traceStatement: 'throw new Error("boom");',
+          traceStatement: '    throw new Error("boom");',
         });
       });
     });
@@ -474,8 +463,104 @@ describe(readStatementContext, () => {
       it('should include the finally before the throw', () => {
         expect(result).toStrictEqual({
           nextStatements: [],
-          previousStatements: ['read();', 'finally'],
-          traceStatement: 'throw new Error("boom");',
+          previousStatements: ['    read();', 'finally'],
+          traceStatement: '    throw new Error("boom");',
+        });
+      });
+    });
+  });
+
+  describe('having two statements on one indented line', () => {
+    let sourceFixture: string;
+
+    beforeAll(() => {
+      sourceFixture = [
+        'function run() {',
+        "  const first = 1; throw new Error('boom');",
+        '}',
+        '',
+      ].join('\n');
+    });
+
+    describe('when called at the throw', () => {
+      let result: StatementContext | null;
+
+      beforeAll(() => {
+        result = readContext(sourceFixture, 'handler.js', 'throw');
+      });
+
+      it('should keep the indent on the first statement of the line only', () => {
+        expect(result).toStrictEqual({
+          nextStatements: [],
+          previousStatements: ['function run()', '  const first = 1;'],
+          traceStatement: "throw new Error('boom');",
+        });
+      });
+    });
+  });
+
+  describe('having a multi-line throw after a blank line', () => {
+    let sourceFixture: string;
+
+    beforeAll(() => {
+      sourceFixture = [
+        'function catchError(error) {',
+        '  switch (error.kind) {',
+        '    case Kind.failed:',
+        '',
+        '      throw new Error(',
+        '        error.message,',
+        '      );',
+        '  }',
+        '}',
+        '',
+      ].join('\n');
+    });
+
+    describe('when called at the throw', () => {
+      let result: StatementContext | null;
+
+      beforeAll(() => {
+        result = readContext(sourceFixture, 'handler.js', 'throw new Error(');
+      });
+
+      it('should keep the blank line and the indentation', () => {
+        expect(result).toStrictEqual({
+          nextStatements: [],
+          previousStatements: [
+            '  switch (error.kind) {',
+            '    case Kind.failed:',
+          ],
+          traceStatement: [
+            '',
+            '      throw new Error(',
+            '        error.message,',
+            '      );',
+          ].join('\n'),
+        });
+      });
+    });
+  });
+
+  describe('having a blank line written with carriage returns', () => {
+    let sourceFixture: string;
+
+    beforeAll(() => {
+      sourceFixture = "const first = 1;\r\n\r\nthrow new Error('boom');\r\n";
+    });
+
+    describe('when called at the throw', () => {
+      let result: StatementContext | null;
+
+      beforeAll(() => {
+        result = readContext(sourceFixture, 'handler.js', 'throw');
+      });
+
+      it('should keep one blank line', () => {
+        expect(result).toStrictEqual({
+          nextStatements: [],
+          previousStatements: ['const first = 1;'],
+          traceStatement: "\nthrow new Error('boom');",
         });
       });
     });

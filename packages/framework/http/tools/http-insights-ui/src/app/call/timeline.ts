@@ -1,4 +1,5 @@
 import { type CallDetail, type TimedStage } from './callApi.js';
+import { readStageKey } from './readStageKey.js';
 
 export type TimelineKind =
   | 'controller'
@@ -43,7 +44,7 @@ export function readTimeline(call: CallDetail): Timeline {
     lanes: [
       {
         durationMs: requestDuration,
-        id: `request-${call.id}`,
+        id: readStageKey('request', call.id),
         kind: 'request',
         label: `${call.request.method.toUpperCase()} ${call.request.url}`,
         offsetMs: Math.max(Date.parse(call.request.startedAt) - origin, 0),
@@ -148,7 +149,7 @@ function readStageLane(
 ): TimelineLane {
   return {
     durationMs: Math.max(stage.durationMs, 0),
-    id: `${kind}-${stage.id}`,
+    id: readStageKey(kind, stage.id),
     kind,
     label,
     offsetMs: Math.max(Date.parse(stage.startedAt) - origin, 0),
