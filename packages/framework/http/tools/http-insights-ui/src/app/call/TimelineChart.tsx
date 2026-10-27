@@ -148,7 +148,7 @@ export function TimelineChart(props: TimelineChartProps): ReactElement {
 
   return (
     <div className="waterfall">
-      <ul className="sr-only">
+      <ul aria-label="Timeline lanes" className="timeline-lanes">
         {props.timeline.lanes.map((lane: TimelineLane): ReactElement => (
           <li key={lane.id}>
             <button
