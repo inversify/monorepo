@@ -1,5 +1,16 @@
 # @inversifyjs/http-insights
 
+## 0.4.0
+
+### Minor Changes
+
+- Error location sourcemaps are now followed.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-insights-ui@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes
