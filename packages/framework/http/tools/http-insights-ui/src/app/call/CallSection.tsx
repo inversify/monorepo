@@ -1,4 +1,9 @@
-import { type ReactElement } from 'react';
+import {
+  type ReactElement,
+  type RefObject,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 
 import { durationMs } from '../calls/durationMs.js';
 import { DurationText } from '../components/DurationText.js';
@@ -17,12 +22,15 @@ import {
 import { sectionTabId } from './CallMenu.js';
 import { type CallSectionId } from './callSections.js';
 import { ErrorTraces } from './ErrorTraces.js';
-import { readTimeline } from './timeline.js';
+import { readStageKey } from './readStageKey.js';
+import { readTimeline, type TimelineLane } from './timeline.js';
 import { TimelineChart } from './TimelineChart.js';
 
 export interface CallSectionProps {
   readonly call: CallDetail;
+  readonly onSelectTimeline: (lane: TimelineLane) => void;
   readonly section: CallSectionId;
+  readonly stageId: string | null;
 }
 
 export function CallSection(props: CallSectionProps): ReactElement {
@@ -32,35 +40,50 @@ export function CallSection(props: CallSectionProps): ReactElement {
       className="panel detail-panel"
       role="tabpanel"
     >
-      {renderSection(props.section, props.call)}
+      {renderSection(props)}
     </div>
   );
 }
 
-function renderSection(section: CallSectionId, call: CallDetail): ReactElement {
-  switch (section) {
+function renderSection(props: CallSectionProps): ReactElement {
+  switch (props.section) {
     case 'controller':
-      return <ControllerSection call={call} />;
+      return <ControllerSection call={props.call} stageId={props.stageId} />;
     case 'guards':
-      return <GuardSection guards={call.guards} />;
+      return (
+        <GuardSection guards={props.call.guards} stageId={props.stageId} />
+      );
     case 'interceptors':
-      return <InterceptorSection interceptors={call.interceptors} />;
+      return (
+        <InterceptorSection
+          interceptors={props.call.interceptors}
+          stageId={props.stageId}
+        />
+      );
     case 'middlewares':
-      return <MiddlewareSection call={call} />;
+      return <MiddlewareSection call={props.call} stageId={props.stageId} />;
     case 'request':
-      return <RequestSection call={call} />;
+      return <RequestSection call={props.call} />;
     case 'response':
-      return <ResponseSection call={call} />;
+      return <ResponseSection call={props.call} stageId={props.stageId} />;
     case 'timeline':
-      return <TimelineSection call={call} />;
+      return (
+        <TimelineSection call={props.call} onSelect={props.onSelectTimeline} />
+      );
   }
 }
 
-function TimelineSection(props: { readonly call: CallDetail }): ReactElement {
+function TimelineSection(props: {
+  readonly call: CallDetail;
+  readonly onSelect: (lane: TimelineLane) => void;
+}): ReactElement {
   return (
     <>
       <h2>Timeline</h2>
-      <TimelineChart timeline={readTimeline(props.call)} />
+      <TimelineChart
+        onSelect={props.onSelect}
+        timeline={readTimeline(props.call)}
+      />
     </>
   );
 }
@@ -83,7 +106,10 @@ function RequestSection(props: { readonly call: CallDetail }): ReactElement {
   );
 }
 
-function ResponseSection(props: { readonly call: CallDetail }): ReactElement {
+function ResponseSection(props: {
+  readonly call: CallDetail;
+  readonly stageId: string | null;
+}): ReactElement {
   return (
     <>
       <h2>Response</h2>
@@ -124,6 +150,10 @@ function ResponseSection(props: { readonly call: CallDetail }): ReactElement {
                       ? ['No filter']
                       : [httpError.filter]
                   }
+                  selected={
+                    props.stageId === readStageKey('error', httpError.id)
+                  }
+                  stageId={readStageKey('error', httpError.id)}
                   startedAt={httpError.startedAt}
                   title={httpError.filter ?? 'Unhandled error'}
                 />
@@ -136,7 +166,10 @@ function ResponseSection(props: { readonly call: CallDetail }): ReactElement {
   );
 }
 
-function MiddlewareSection(props: { readonly call: CallDetail }): ReactElement {
+function MiddlewareSection(props: {
+  readonly call: CallDetail;
+  readonly stageId: string | null;
+}): ReactElement {
   const showGroups: boolean =
     props.call.middlewares.length > 0 &&
     props.call.nativeMiddlewares.length > 0;
@@ -156,6 +189,10 @@ function MiddlewareSection(props: { readonly call: CallDetail }): ReactElement {
                 errorTraces={middleware.errorTraces}
                 key={middleware.id}
                 meta={[formatPhase(middleware.phase)]}
+                selected={
+                  props.stageId === readStageKey('middleware', middleware.id)
+                }
+                stageId={readStageKey('middleware', middleware.id)}
                 startedAt={middleware.startedAt}
                 title={middleware.name}
               />
@@ -175,6 +212,10 @@ function MiddlewareSection(props: { readonly call: CallDetail }): ReactElement {
                 errorTraces={middleware.errorTraces}
                 key={middleware.id}
                 meta={['Native']}
+                selected={
+                  props.stageId === readStageKey('native', middleware.id)
+                }
+                stageId={readStageKey('native', middleware.id)}
                 startedAt={middleware.startedAt}
                 title={middleware.name}
               />
@@ -188,6 +229,7 @@ function MiddlewareSection(props: { readonly call: CallDetail }): ReactElement {
 
 function GuardSection(props: {
   readonly guards: readonly GuardDetail[];
+  readonly stageId: string | null;
 }): ReactElement {
   return (
     <>
@@ -203,6 +245,8 @@ function GuardSection(props: {
             key={guard.id}
             meta={[formatGuardOutcome(guard.allowed)]}
             outcome={guardOutcome(guard.allowed)}
+            selected={props.stageId === readStageKey('guard', guard.id)}
+            stageId={readStageKey('guard', guard.id)}
             startedAt={guard.startedAt}
             title={guard.name}
           />
@@ -212,7 +256,10 @@ function GuardSection(props: {
   );
 }
 
-function ControllerSection(props: { readonly call: CallDetail }): ReactElement {
+function ControllerSection(props: {
+  readonly call: CallDetail;
+  readonly stageId: string | null;
+}): ReactElement {
   const controller: ControllerDetail | undefined = props.call.controller;
 
   return (
@@ -227,6 +274,10 @@ function ControllerSection(props: { readonly call: CallDetail }): ReactElement {
             errorMessage={controller.errorMessage}
             errorTraces={controller.errorTraces}
             meta={[controller.method]}
+            selected={
+              props.stageId === readStageKey('controller', controller.id)
+            }
+            stageId={readStageKey('controller', controller.id)}
             startedAt={controller.startedAt}
             title={controller.name}
           />
@@ -245,6 +296,8 @@ function ControllerSection(props: { readonly call: CallDetail }): ReactElement {
                 errorTraces={pipe.errorTraces}
                 key={pipe.id}
                 meta={[pipe.method, `Parameter ${String(pipe.parameterIndex)}`]}
+                selected={props.stageId === readStageKey('pipe', pipe.id)}
+                stageId={readStageKey('pipe', pipe.id)}
                 startedAt={pipe.startedAt}
                 title={pipe.name}
               />
@@ -258,6 +311,7 @@ function ControllerSection(props: { readonly call: CallDetail }): ReactElement {
 
 function InterceptorSection(props: {
   readonly interceptors: readonly InterceptorDetail[];
+  readonly stageId: string | null;
 }): ReactElement {
   return (
     <>
@@ -273,6 +327,10 @@ function InterceptorSection(props: {
               errorTraces={interceptor.errorTraces}
               key={interceptor.id}
               meta={[]}
+              selected={
+                props.stageId === readStageKey('interceptor', interceptor.id)
+              }
+              stageId={readStageKey('interceptor', interceptor.id)}
               startedAt={interceptor.startedAt}
               title={interceptor.name}
             />
@@ -325,13 +383,37 @@ interface StageCardProps {
   readonly errorTraces: readonly ErrorTrace[] | null;
   readonly meta: readonly string[];
   readonly outcome?: string;
+  readonly selected: boolean;
+  readonly stageId: string;
   readonly startedAt: string;
   readonly title: string;
 }
 
 function StageCard(props: StageCardProps): ReactElement {
+  const cardRef: RefObject<HTMLElement | null> = useRef<HTMLElement | null>(
+    null,
+  );
+
+  useLayoutEffect((): void => {
+    if (
+      !props.selected ||
+      cardRef.current === null ||
+      typeof cardRef.current.scrollIntoView !== 'function'
+    ) {
+      return;
+    }
+
+    cardRef.current.scrollIntoView({
+      block: 'nearest',
+    });
+  }, [props.selected, props.stageId]);
+
   return (
-    <article className="stage">
+    <article
+      aria-current={props.selected ? 'true' : undefined}
+      className={props.selected ? 'stage is-selected' : 'stage'}
+      ref={cardRef}
+    >
       <div className="stage-title">
         <p className="stage-name">{props.title}</p>
         <DurationText durationMs={props.durationMs} />

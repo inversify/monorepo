@@ -1,12 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
-import {
-  type Dispatch,
-  type ReactElement,
-  type SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
-import { Link, useParams } from 'react-router';
+import { type ReactElement, useEffect } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router';
 
 import { durationMs } from '../calls/durationMs.js';
 import { AppShell } from '../components/AppShell.js';
@@ -14,24 +8,43 @@ import { DurationText } from '../components/DurationText.js';
 import { MethodBadge } from '../components/MethodBadge.js';
 import { StatusMessage } from '../components/StatusMessage.js';
 import { StatusPill } from '../components/StatusPill.js';
+import { buildCallSearch } from './buildCallSearch.js';
 import { type CallDetail } from './callApi.js';
 import { CallMenu } from './CallMenu.js';
 import { CallSection } from './CallSection.js';
 import { type CallSectionId, isCallSectionEnabled } from './callSections.js';
+import { readCallSection } from './readCallSection.js';
+import { readCallStage } from './readCallStage.js';
+import {
+  readTimelineTarget,
+  type TimelineTarget,
+} from './readTimelineTarget.js';
+import { type TimelineLane } from './timeline.js';
 import { useCall } from './useCall.js';
 
 export function CallPage(): ReactElement {
   const callId: string | undefined = useParams()['callId'];
   const callState: ReturnType<typeof useCall> = useCall(callId);
-  const sectionState: [CallSectionId, Dispatch<SetStateAction<CallSectionId>>] =
-    useState<CallSectionId>('timeline');
-  const section: CallSectionId = sectionState[0];
-  const setSection: Dispatch<SetStateAction<CallSectionId>> = sectionState[1];
+  const searchState: ReturnType<typeof useSearchParams> = useSearchParams();
+  const searchParams: URLSearchParams = searchState[0];
+  const setSearchParams: ReturnType<typeof useSearchParams>[1] = searchState[1];
+  const section: CallSectionId = readCallSection(searchParams);
+  const stageId: string | null = readCallStage(searchParams);
   const call: CallDetail | undefined = callState.call;
 
-  useEffect(() => {
-    setSection('timeline');
-  }, [callId]);
+  const selectSection: (nextSection: CallSectionId) => void = (
+    nextSection: CallSectionId,
+  ): void => {
+    setSearchParams(buildCallSearch(nextSection, null));
+  };
+
+  const selectTimelineLane: (lane: TimelineLane) => void = (
+    lane: TimelineLane,
+  ): void => {
+    const target: TimelineTarget = readTimelineTarget(lane);
+
+    setSearchParams(buildCallSearch(target.section, target.stageId));
+  };
 
   useEffect(() => {
     const title: string =
@@ -93,8 +106,13 @@ export function CallPage(): ReactElement {
             />
           </div>
           <div className="call-layout">
-            <CallMenu call={call} onSelect={setSection} section={selected} />
-            <CallSection call={call} section={selected} />
+            <CallMenu call={call} onSelect={selectSection} section={selected} />
+            <CallSection
+              call={call}
+              onSelectTimeline={selectTimelineLane}
+              section={selected}
+              stageId={selected === section ? stageId : null}
+            />
           </div>
         </>
       )}

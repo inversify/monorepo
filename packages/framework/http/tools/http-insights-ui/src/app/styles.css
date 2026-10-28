@@ -856,6 +856,51 @@ body:has(.modal-backdrop) {
   border-radius: 999px;
 }
 
+.timeline-lanes {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  list-style: none;
+}
+
+.timeline-lanes:focus-within {
+  position: static;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: auto;
+  height: auto;
+  margin: 0 0 12px;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+.timeline-lanes button {
+  padding: 6px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--surface-solid);
+  color: var(--text);
+  cursor: pointer;
+  font: 500 12px/1 var(--font);
+}
+
+.timeline-lanes button:hover {
+  background: var(--hover);
+}
+
+.timeline-lanes button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .waterfall-plot {
   position: relative;
   min-width: 0;
@@ -864,7 +909,7 @@ body:has(.modal-backdrop) {
 .waterfall-plot canvas {
   display: block;
   width: 100%;
-  cursor: crosshair;
+  cursor: pointer;
 }
 
 .timeline-tooltip {
@@ -998,6 +1043,16 @@ body:has(.modal-backdrop) {
 .stage:first-child {
   padding-top: 0;
   border-top: 0;
+}
+
+.stage.is-selected {
+  margin-right: -12px;
+  margin-left: -12px;
+  padding: 12px;
+  border-top-color: transparent;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: inset 2px 0 0 var(--accent);
 }
 
 .stage-title {

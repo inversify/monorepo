@@ -37,6 +37,7 @@ const TICK_STEM: number = 6;
 const durationFormat: Intl.NumberFormat = new Intl.NumberFormat('en-US');
 
 export interface TimelineChartProps {
+  readonly onSelect: (lane: TimelineLane) => void;
   readonly timeline: Timeline;
 }
 
@@ -86,10 +87,29 @@ export function TimelineChart(props: TimelineChartProps): ReactElement {
     };
   }, [props.timeline]);
 
+  const readEventBar: (
+    event: ReactMouseEvent<HTMLCanvasElement>,
+  ) => TimelineBar | undefined = (
+    event: ReactMouseEvent<HTMLCanvasElement>,
+  ): TimelineBar | undefined => {
+    const canvas: HTMLCanvasElement | null = canvasRef.current;
+
+    if (canvas === null) {
+      return undefined;
+    }
+
+    const bounds: DOMRect = canvas.getBoundingClientRect();
+    const x: number = event.clientX - bounds.left;
+    const y: number = event.clientY - bounds.top;
+
+    return readBarAt(barsRef.current, x, y);
+  };
+
   const onMouseMove: (event: ReactMouseEvent<HTMLCanvasElement>) => void = (
     event: ReactMouseEvent<HTMLCanvasElement>,
   ): void => {
     const canvas: HTMLCanvasElement | null = canvasRef.current;
+    const bar: TimelineBar | undefined = readEventBar(event);
 
     if (canvas === null) {
       return;
@@ -98,13 +118,6 @@ export function TimelineChart(props: TimelineChartProps): ReactElement {
     const bounds: DOMRect = canvas.getBoundingClientRect();
     const x: number = event.clientX - bounds.left;
     const y: number = event.clientY - bounds.top;
-    const bar: TimelineBar | undefined = barsRef.current.find(
-      (candidate: TimelineBar): boolean =>
-        x >= candidate.x &&
-        x <= candidate.labelRight &&
-        y >= candidate.y &&
-        y <= candidate.y + candidate.height,
-    );
 
     setHover(
       bar === undefined
@@ -121,16 +134,38 @@ export function TimelineChart(props: TimelineChartProps): ReactElement {
     );
   };
 
+  const onClick: (event: ReactMouseEvent<HTMLCanvasElement>) => void = (
+    event: ReactMouseEvent<HTMLCanvasElement>,
+  ): void => {
+    const bar: TimelineBar | undefined = readEventBar(event);
+
+    if (bar === undefined) {
+      return;
+    }
+
+    props.onSelect(bar.lane);
+  };
+
   return (
     <div className="waterfall">
-      <ul className="sr-only">
+      <ul aria-label="Timeline lanes" className="timeline-lanes">
         {props.timeline.lanes.map((lane: TimelineLane): ReactElement => (
-          <li key={lane.id}>{lane.label}</li>
+          <li key={lane.id}>
+            <button
+              onClick={(): void => {
+                props.onSelect(lane);
+              }}
+              type="button"
+            >
+              {lane.label}
+            </button>
+          </li>
         ))}
       </ul>
       <div className="waterfall-plot" ref={plotRef}>
         <canvas
           aria-label="Timing waterfall"
+          onClick={onClick}
           onMouseLeave={(): void => {
             setHover(undefined);
           }}
@@ -184,6 +219,20 @@ interface TimelineBar {
 interface TimelineHover {
   readonly lane: TimelineLane;
   readonly placement: TimelineTooltipPlacement;
+}
+
+function readBarAt(
+  bars: readonly TimelineBar[],
+  x: number,
+  y: number,
+): TimelineBar | undefined {
+  return bars.find(
+    (candidate: TimelineBar): boolean =>
+      x >= candidate.x &&
+      x <= candidate.labelRight &&
+      y >= candidate.y &&
+      y <= candidate.y + candidate.height,
+  );
 }
 
 function readCanvasContext(

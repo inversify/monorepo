@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vitest } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { type ReactElement } from 'react';
-import { MemoryRouter, Route, Routes } from 'react-router';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 
 import { ThemeProvider } from '../theme/ThemeProvider.js';
 import { CallPage } from './CallPage.js';
@@ -124,6 +124,63 @@ describe(CallPage, () => {
     });
   });
 
+  describe('having a guard on the timeline', () => {
+    describe('when the guard bar is pressed', () => {
+      it('should open that guard and keep the choice in the url', async () => {
+        mockCall(callPayload());
+        renderPage();
+
+        fireEvent.click(
+          await screen.findByRole('button', { name: 'AuthGuard' }),
+        );
+
+        expect(
+          screen.getByRole('tab', { name: 'Guards', selected: true }),
+        ).toBeTruthy();
+        expect(
+          screen.getByRole('article', { current: true }).textContent,
+        ).toContain('AuthGuard');
+        expect(screen.getByText('Allowed')).toBeTruthy();
+        expect(
+          screen.getByText('Search ?section=guards&stage=guard-guard-1'),
+        ).toBeTruthy();
+      });
+    });
+  });
+
+  describe('having a selected guard', () => {
+    describe('when Request is pressed', () => {
+      it('should open the request and clear the stage', async () => {
+        mockCall(callPayload());
+        renderPage('/calls/call-1?section=guards&stage=guard-guard-1');
+
+        fireEvent.click(await screen.findByRole('tab', { name: 'Request' }));
+
+        expect(
+          screen.getByRole('tab', { name: 'Request', selected: true }),
+        ).toBeTruthy();
+        expect(screen.getByRole('rowheader', { name: 'accept' })).toBeTruthy();
+        expect(screen.getByText('Search ?section=request')).toBeTruthy();
+      });
+    });
+  });
+
+  describe('having a url for a selected guard', () => {
+    describe('when rendered', () => {
+      it('should open that guard', async () => {
+        mockCall(callPayload());
+        renderPage('/calls/call-1?section=guards&stage=guard-guard-1');
+
+        expect(
+          await screen.findByRole('tab', { name: 'Guards', selected: true }),
+        ).toBeTruthy();
+        expect(
+          screen.getByRole('article', { current: true }).textContent,
+        ).toContain('AuthGuard');
+      });
+    });
+  });
+
   describe('having a missing call', () => {
     describe('when rendered', () => {
       it('should show a not found message', async () => {
@@ -189,7 +246,7 @@ function mockCall(payload: unknown): void {
   );
 }
 
-function renderPage(): void {
+function renderPage(entry: string = '/calls/call-1'): void {
   const queryClient: QueryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -200,7 +257,8 @@ function renderPage(): void {
   const page: ReactElement = (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={['/calls/call-1']}>
+        <MemoryRouter initialEntries={[entry]}>
+          <SearchText />
           <Routes>
             <Route element={<CallPage />} path="/calls/:callId" />
           </Routes>
@@ -210,6 +268,12 @@ function renderPage(): void {
   );
 
   render(page);
+}
+
+function SearchText(): ReactElement {
+  const location: ReturnType<typeof useLocation> = useLocation();
+
+  return <p>{`Search ${location.search}`}</p>;
 }
 
 function callPayload(): unknown {

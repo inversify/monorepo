@@ -1,4 +1,4 @@
-import { basename, isAbsolute, resolve } from 'node:path';
+import { basename, extname, isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { inject, injectable } from 'inversify';
@@ -6,17 +6,26 @@ import { parse as parseStackTrace, type StackFrame } from 'stack-trace';
 
 import {
   buildStatementIndex,
+  type StatementIndex,
+} from '../../adapter/babel/calculations/buildStatementIndex.js';
+import {
   readStatementContext,
   type StatementContext,
-  type StatementIndex,
-} from '../../adapter/babel/calculations/statementIndex.js';
+} from '../../adapter/babel/calculations/readStatementContext.js';
 import { type ErrorTrace } from '../../domain/models/ErrorTrace.js';
 import { type ErrorTracesReader } from '../ports/ErrorTracesReader.js';
+import {
+  type MappedSource,
+  type SourceMapReader,
+  sourceMapReaderService,
+} from '../ports/SourceMapReader.js';
 import {
   type SourceText,
   type SourceTextReader,
   sourceTextReaderService,
 } from '../ports/SourceTextReader.js';
+
+const MAX_SOURCE_MAP_HOPS: number = 8;
 
 interface CachedIndex {
   readonly statementIndex: StatementIndex | null;
@@ -31,12 +40,16 @@ interface IndexedSource {
 @injectable()
 export class StackTraceErrorTracesReader implements ErrorTracesReader {
   readonly #indexes: Map<string, CachedIndex> = new Map();
+  readonly #sourceMapReader: SourceMapReader;
   readonly #sourceTextReader: SourceTextReader;
 
   constructor(
     @inject(sourceTextReaderService)
     sourceTextReader: SourceTextReader,
+    @inject(sourceMapReaderService)
+    sourceMapReader: SourceMapReader,
   ) {
+    this.#sourceMapReader = sourceMapReader;
     this.#sourceTextReader = sourceTextReader;
   }
 
@@ -121,37 +134,6 @@ export class StackTraceErrorTracesReader implements ErrorTracesReader {
       return null;
     }
 
-    const indexedSource: IndexedSource | null = await this.#readIndex(filePath);
-
-    if (indexedSource === null) {
-      return null;
-    }
-
-    const context: StatementContext | null = readStatementContext(
-      indexedSource.statementIndex,
-      line,
-      column,
-    );
-
-    if (context === null) {
-      return null;
-    }
-
-    return {
-      location: {
-        column,
-        file: indexedSource.sourceText.path,
-        filename: basename(indexedSource.sourceText.path),
-        functionName: readFunctionName(frame),
-        line,
-      },
-      nextStatements: context.nextStatements,
-      previousStatements: context.previousStatements,
-      traceStatement: context.traceStatement,
-    };
-  }
-
-  async #readIndex(filePath: string): Promise<IndexedSource | null> {
     const sourceText: SourceText | null =
       await this.#sourceTextReader.read(filePath);
 
@@ -159,6 +141,37 @@ export class StackTraceErrorTracesReader implements ErrorTracesReader {
       return null;
     }
 
+    const supported: MappedSource | null = await this.#readSupportedSource(
+      sourceText,
+      line,
+      column,
+    );
+
+    if (supported !== null) {
+      const trace: ErrorTrace | null = this.#readTrace(
+        frame,
+        supported.sourceText,
+        supported.line,
+        supported.column,
+      );
+
+      if (trace !== null) {
+        return trace;
+      }
+
+      if (
+        supported.sourceText === sourceText &&
+        supported.line === line &&
+        supported.column === column
+      ) {
+        return null;
+      }
+    }
+
+    return this.#readTrace(frame, sourceText, line, column);
+  }
+
+  #readIndexedSource(sourceText: SourceText): IndexedSource | null {
     const cached: CachedIndex | undefined = this.#indexes.get(sourceText.path);
 
     if (cached !== undefined && cached.version === sourceText.version) {
@@ -190,6 +203,103 @@ export class StackTraceErrorTracesReader implements ErrorTracesReader {
       sourceText,
       statementIndex,
     };
+  }
+
+  async #readSupportedSource(
+    sourceText: SourceText,
+    line: number,
+    column: number,
+  ): Promise<MappedSource | null> {
+    let candidate: MappedSource | null = isSupportedSource(sourceText.path)
+      ? {
+          column,
+          line,
+          sourceText,
+        }
+      : null;
+    const seen: Set<string> = new Set();
+    let current: MappedSource = {
+      column,
+      line,
+      sourceText,
+    };
+
+    for (let hop: number = 0; hop < MAX_SOURCE_MAP_HOPS; hop += 1) {
+      const key: string = readLocationKey(current);
+
+      if (seen.has(key)) {
+        break;
+      }
+
+      seen.add(key);
+
+      const next: MappedSource | null = await this.#sourceMapReader.read(
+        current.sourceText,
+        current.line,
+        current.column,
+      );
+
+      if (next === null) {
+        break;
+      }
+
+      current = next;
+
+      if (isSupportedSource(current.sourceText.path)) {
+        candidate = current;
+      }
+    }
+
+    return candidate;
+  }
+
+  #readTrace(
+    frame: StackFrame,
+    sourceText: SourceText,
+    line: number,
+    column: number,
+  ): ErrorTrace | null {
+    const indexedSource: IndexedSource | null =
+      this.#readIndexedSource(sourceText);
+
+    if (indexedSource === null) {
+      return null;
+    }
+
+    const context: StatementContext | null = readStatementContext(
+      indexedSource.statementIndex,
+      line,
+      column,
+    );
+
+    if (context === null) {
+      return null;
+    }
+
+    return {
+      location: {
+        column,
+        file: sourceText.path,
+        filename: basename(sourceText.path),
+        functionName: readFunctionName(frame),
+        line,
+      },
+      nextStatements: context.nextStatements,
+      previousStatements: context.previousStatements,
+      traceStatement: context.traceStatement,
+    };
+  }
+}
+
+function isSupportedSource(filePath: string): boolean {
+  switch (extname(filePath)) {
+    case '.cts':
+    case '.mts':
+    case '.ts':
+    case '.tsx':
+      return true;
+    default:
+      return false;
   }
 }
 
@@ -245,6 +355,10 @@ function readFrames(error: unknown): readonly StackFrame[] | null {
   carrier.stack = stack;
 
   return parseStackTrace(carrier);
+}
+
+function readLocationKey(location: MappedSource): string {
+  return `${location.sourceText.path}\0${String(location.line)}\0${String(location.column)}`;
 }
 
 function readFunctionName(frame: StackFrame): string | null {
