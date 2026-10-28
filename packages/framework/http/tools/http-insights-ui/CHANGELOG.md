@@ -1,5 +1,12 @@
 # @inversifyjs/http-insights-ui
 
+## 0.4.0
+
+### Minor Changes
+
+- Updated timeline with links to the affected sections.
+- Updated source code render with missing white spaces.
+
 ## 0.3.0
 
 ### Minor Changes
