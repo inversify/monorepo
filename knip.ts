@@ -41,6 +41,10 @@ export default {
     "packages/container/examples/*": defaultWorkspaceProjectConfig,
     "packages/container/libraries/*": defaultWorkspaceProjectConfig,
     "packages/container/tools/*": defaultWorkspaceProjectConfig,
+    "packages/container/tools/container-benchmarks": {
+      ...defaultWorkspaceProjectConfig,
+      entry: ["src/bin/run.ts"],
+    },
     "packages/container/tools/e2e-tests": {
       entry: [
         "config/*.mjs",
