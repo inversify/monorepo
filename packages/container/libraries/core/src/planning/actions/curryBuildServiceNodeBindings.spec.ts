@@ -61,7 +61,8 @@ describe(curryBuildServiceNodeBindings, () => {
       TActivated = any,
     > implements Partial<Mocked<InstanceBindingNodeImplementation>> {
       public readonly constructorParams: (
-        PlanServiceNode | ConstructorNoParamNode
+        | PlanServiceNode
+        | ConstructorNoParamNode
       )[];
       public readonly propertyParams: Map<string | symbol, PlanServiceNode>;
       public resolve: Mock<(params: ResolutionParams) => Resolved<TActivated>>;
@@ -73,6 +74,7 @@ describe(curryBuildServiceNodeBindings, () => {
       ) {
         this.constructorParams = [];
         this.propertyParams = new Map();
+        // oxlint-disable-next-line vitest/prefer-spy-on
         this.resolve = vitest.fn();
       }
     } as Newable<Partial<Mocked<InstanceBindingNodeImplementation>>> as Newable<
@@ -91,6 +93,7 @@ describe(curryBuildServiceNodeBindings, () => {
         _params: BasePlanParams,
       ) {
         this.params = [];
+        // oxlint-disable-next-line vitest/prefer-spy-on
         this.resolve = vitest.fn();
       }
     } as Newable<

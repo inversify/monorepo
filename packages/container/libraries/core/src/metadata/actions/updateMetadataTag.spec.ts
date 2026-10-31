@@ -11,7 +11,8 @@ import { updateMetadataTag } from './updateMetadataTag.js';
 describe(updateMetadataTag, () => {
   describe('having metadata with missing tag', () => {
     let metadataFixture:
-      ManagedClassElementMetadata | MaybeManagedClassElementMetadata;
+      | ManagedClassElementMetadata
+      | MaybeManagedClassElementMetadata;
     let keyFixture: MetadataTag;
     let valueFixture: unknown;
 
@@ -36,7 +37,8 @@ describe(updateMetadataTag, () => {
 
       it('should return metadata', () => {
         const expected:
-          ManagedClassElementMetadata | MaybeManagedClassElementMetadata = {
+          | ManagedClassElementMetadata
+          | MaybeManagedClassElementMetadata = {
           ...metadataFixture,
           tags: new Map([[keyFixture, valueFixture]]),
         };
@@ -48,7 +50,8 @@ describe(updateMetadataTag, () => {
 
   describe('having metadata with existing tag', () => {
     let metadataFixture:
-      ManagedClassElementMetadata | MaybeManagedClassElementMetadata;
+      | ManagedClassElementMetadata
+      | MaybeManagedClassElementMetadata;
     let keyFixture: MetadataTag;
     let valueFixture: unknown;
 

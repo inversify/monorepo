@@ -41,7 +41,8 @@ export function buildConstructorArgumentsResolver<TActivated>(
     for (let index: number = 0; index < constructorArgumentsCount; index++) {
       values[index] = (
         node.constructorParams[index] as
-          PlanServiceNode | ConstructorNoParamNode
+          | PlanServiceNode
+          | ConstructorNoParamNode
       ).resolve(params);
     }
 

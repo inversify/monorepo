@@ -11,7 +11,8 @@ import { updateMetadataName } from './updateMetadataName.js';
 describe(updateMetadataName, () => {
   describe('having metadata with no name', () => {
     let metadataFixture:
-      ManagedClassElementMetadata | MaybeManagedClassElementMetadata;
+      | ManagedClassElementMetadata
+      | MaybeManagedClassElementMetadata;
     let nameFixture: MetadataName;
 
     beforeAll(() => {
@@ -34,7 +35,8 @@ describe(updateMetadataName, () => {
 
       it('should return metadata', () => {
         const expected:
-          ManagedClassElementMetadata | MaybeManagedClassElementMetadata = {
+          | ManagedClassElementMetadata
+          | MaybeManagedClassElementMetadata = {
           ...metadataFixture,
           name: nameFixture,
         };
@@ -46,7 +48,8 @@ describe(updateMetadataName, () => {
 
   describe('having metadata with name', () => {
     let metadataFixture:
-      ManagedClassElementMetadata | MaybeManagedClassElementMetadata;
+      | ManagedClassElementMetadata
+      | MaybeManagedClassElementMetadata;
     let nameFixture: MetadataName;
 
     beforeAll(() => {
