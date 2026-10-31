@@ -5,11 +5,7 @@ const defaultWorkspaceProjectConfig: WorkspaceProjectConfig & {
   ignoreDependencies: string[];
   project: string[];
 } = {
-  entry: [
-    "{index,cli,main}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
-    "src/{index,cli,main}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
-    "**/?(*.)+(spec|spec-d).[jt]s?(x)",
-  ],
+  entry: ["**/?(*.)+(spec|spec-d).[jt]s?(x)"],
   ignoreDependencies: [],
   project: [
     "**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}!",
@@ -45,14 +41,6 @@ export default {
     "packages/container/examples/*": defaultWorkspaceProjectConfig,
     "packages/container/libraries/*": defaultWorkspaceProjectConfig,
     "packages/container/tools/*": defaultWorkspaceProjectConfig,
-    "packages/container/tools/container-benchmarks": {
-      ...defaultWorkspaceProjectConfig,
-      entry: [
-        ...defaultWorkspaceProjectConfig.entry,
-        "bin/run-cjs.cjs",
-        "bin/run-esm.mjs",
-      ],
-    },
     "packages/container/tools/e2e-tests": {
       entry: [
         "config/*.mjs",
@@ -148,8 +136,13 @@ export default {
     },
     "packages/foundation/libraries/*": defaultWorkspaceProjectConfig,
     "packages/foundation/tools/*": defaultWorkspaceProjectConfig,
+    "packages/foundation/tools/oxfmt-config": {
+      ...defaultWorkspaceProjectConfig,
+      entry: ["index.d.ts"],
+    },
     "packages/foundation/tools/oxlint-config": {
       ...defaultWorkspaceProjectConfig,
+      entry: ["index.d.ts"],
       ignoreDependencies: [
         ...defaultWorkspaceProjectConfig.ignoreDependencies,
         "@inversifyjs/eslint-plugin-require-extensions",
@@ -181,11 +174,9 @@ export default {
     "packages/framework/http/tools/*": defaultWorkspaceProjectConfig,
     "packages/framework/http/tools/create-http": {
       entry: [
-        "bin/create-inversify-http.js",
         "evals/add-resource/*.mjs",
         "evals/add-resource/providers/*.mjs",
         "src/cli/runCreateHttp.entrypoint.ts",
-        "src/index.ts",
       ],
       ignoreDependencies: ["@openai/codex-sdk", "@opencode-ai/sdk"],
       project: defaultWorkspaceProjectConfig.project,
@@ -224,11 +215,7 @@ export default {
       ],
     },
     "packages/framework/http/tools/http-insights-ui": {
-      entry: [
-        "src/index.ts",
-        "**/?(*.)+(spec|spec-d).[jt]s?(x)",
-        "index.html",
-      ],
+      entry: ["src/index.ts", "**/?(*.)+(spec|spec-d).[jt]s?(x)", "index.html"],
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/framework/validation/libraries/*": defaultWorkspaceProjectConfig,

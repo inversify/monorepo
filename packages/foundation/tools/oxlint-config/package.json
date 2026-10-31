@@ -17,10 +17,7 @@
     "oxlint-tsgolint": "^7.0.2005"
   },
   "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
-    }
+    ".": "./index.js"
   },
   "homepage": "https://github.com/inversify/monorepo#readme",
   "license": "MIT",
