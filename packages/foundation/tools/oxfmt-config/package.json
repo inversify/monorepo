@@ -1,0 +1,28 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "Common oxfmt config for inversify monorepo packages",
+  "devDependencies": {
+    "oxfmt": "0.75.0"
+  },
+  "peerDependencies": {
+    "oxfmt": "^0.75.0"
+  },
+  "exports": {
+    ".": "./index.js"
+  },
+  "homepage": "https://github.com/inversify/monorepo#readme",
+  "license": "MIT",
+  "name": "@inversifyjs/foundation-oxfmt-config",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}
