@@ -148,6 +148,13 @@ export default {
     },
     "packages/foundation/libraries/*": defaultWorkspaceProjectConfig,
     "packages/foundation/tools/*": defaultWorkspaceProjectConfig,
+    "packages/foundation/tools/oxlint-config": {
+      ...defaultWorkspaceProjectConfig,
+      ignoreDependencies: [
+        ...defaultWorkspaceProjectConfig.ignoreDependencies,
+        "@inversifyjs/eslint-plugin-require-extensions",
+      ],
+    },
     "packages/foundation/tools/prettier-config": {
       entry: ["{cjs,esm}/index.{js,d.ts}"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
