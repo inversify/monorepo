@@ -54,8 +54,8 @@ export class PlanSingleBindingServiceNodeImplementation implements PlanServiceNo
         value.addOnResolverChangedHandler(
           (newResolver: (params: ResolutionParams) => unknown) => {
             const serviceNode:
-              PlanSingleBindingServiceNodeImplementation | undefined =
-              serviceNodeWeakReference.deref();
+              | PlanSingleBindingServiceNodeImplementation
+              | undefined = serviceNodeWeakReference.deref();
             if (serviceNode !== undefined) {
               serviceNode.resolve = newResolver;
             }

@@ -57,7 +57,8 @@ export class InstanceBindingNodeImplementation<
 {
   public readonly [isDynamicallyResolvableBindingNodeSymbol]: true;
   public readonly constructorParams: (
-    PlanServiceNode | ConstructorNoParamNode
+    | PlanServiceNode
+    | ConstructorNoParamNode
   )[];
   public readonly propertyParams: Map<string | symbol, PlanServiceNode>;
   public resolve: (params: ResolutionParams) => Resolved<TActivated>;

@@ -551,8 +551,11 @@ describe(PlanResultCacheService, () => {
             it('should keep an invalidated PlanResult for the service', () => {
               expect(servicePlanResult).toBeDefined();
               expect(
-                (servicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  servicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeUndefined();
             });
           });
@@ -696,8 +699,11 @@ describe(PlanResultCacheService, () => {
             it('should keep an invalidated PlanResult for the service', () => {
               expect(servicePlanResult).toBeDefined();
               expect(
-                (servicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  servicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeUndefined();
             });
           });
@@ -905,16 +911,22 @@ describe(PlanResultCacheService, () => {
             it('should keep an invalidated PlanResult for the service', () => {
               expect(servicePlanResult).toBeDefined();
               expect(
-                (servicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  servicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeUndefined();
             });
 
             it('should not invalidate the child PlanServiceNode', () => {
               expect(childServicePlanResult).toBeDefined();
               expect(
-                (childServicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  childServicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeDefined();
             });
           });
@@ -1124,16 +1136,22 @@ describe(PlanResultCacheService, () => {
             it('should keep an invalidated PlanResult for the service', () => {
               expect(servicePlanResult).toBeDefined();
               expect(
-                (servicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  servicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeUndefined();
             });
 
             it('should not invalidate the child PlanServiceNode', () => {
               expect(childServicePlanResult).toBeDefined();
               expect(
-                (childServicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  childServicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeDefined();
             });
           });
@@ -1361,16 +1379,22 @@ describe(PlanResultCacheService, () => {
             it('should keep an invalidated PlanResult for the service', () => {
               expect(servicePlanResult).toBeDefined();
               expect(
-                (servicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  servicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeUndefined();
             });
 
             it('should not invalidate the child PlanServiceNode', () => {
               expect(childServicePlanResult).toBeDefined();
               expect(
-                (childServicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  childServicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeDefined();
             });
           });
@@ -1586,8 +1610,11 @@ describe(PlanResultCacheService, () => {
             it('should keep an invalidated PlanResult for the service', () => {
               expect(servicePlanResult).toBeDefined();
               expect(
-                (servicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  servicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeUndefined();
             });
 
@@ -1817,8 +1844,11 @@ describe(PlanResultCacheService, () => {
             it('should keep an invalidated PlanResult for the service', () => {
               expect(servicePlanResult).toBeDefined();
               expect(
-                (servicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  servicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeUndefined();
             });
 
@@ -2052,8 +2082,11 @@ describe(PlanResultCacheService, () => {
             it('should keep an invalidated PlanResult for the service', () => {
               expect(servicePlanResult).toBeDefined();
               expect(
-                (servicePlanResult?.tree.root as LazyPlanServiceNodeMock)
-                  .internalServiceNode,
+                (
+                  servicePlanResult?.tree.root as
+                    | LazyPlanServiceNodeMock
+                    | undefined
+                )?.internalServiceNode,
               ).toBeUndefined();
             });
 

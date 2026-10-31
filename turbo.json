@@ -216,7 +216,11 @@
       ]
     },
     "format": {
-      "inputs": ["src/**/*.{cts,mts,ts}", "prettier.config.{cjs,mjs,js,json}"],
+      "inputs": [
+        "src/**/*.{cts,mts,ts}",
+        "oxfmt.config.{mts,ts}",
+        "prettier.config.{cjs,mjs,js,json}"
+      ],
       "outputs": ["src/**/*.{cts,mts,ts}"]
     },
     "@inversifyjs/foundation-vitest-config#format": {
@@ -229,7 +233,11 @@
     },
     "lint": {
       "dependsOn": ["^build"],
-      "inputs": ["src/**/*.{cts,mts,ts}", "eslint.config.{cjs,mjs,js,json}"]
+      "inputs": [
+        "src/**/*.{cts,mts,ts}",
+        "eslint.config.{cjs,mjs,js,json}",
+        "oxlint.config.{mts,ts}"
+      ]
     },
     "test": {
       "dependsOn": ["^build"],

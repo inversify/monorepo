@@ -2,4 +2,5 @@ import { type GetMultipleServicePlanOptions } from './GetMultipleServicePlanOpti
 import { type GetSingleServicePlanOptions } from './GetSingleServicePlanOptions.js';
 
 export type GetPlanOptions =
-  GetSingleServicePlanOptions | GetMultipleServicePlanOptions;
+  | GetSingleServicePlanOptions
+  | GetMultipleServicePlanOptions;

@@ -8,6 +8,8 @@ This directory contains shared foundation tooling packages that provide common c
 
 ### Configuration Packages
 - **eslint-config**: Shared ESLint configuration
+- **oxfmt-config**: Shared oxfmt configuration (future Prettier replacement)
+- **oxlint-config**: Shared oxlint configuration (future ESLint replacement)
 - **prettier-config**: Shared Prettier configuration  
 - **typescript-config**: Shared TypeScript configurations
 - **rollup-config**: Shared Rollup build configuration

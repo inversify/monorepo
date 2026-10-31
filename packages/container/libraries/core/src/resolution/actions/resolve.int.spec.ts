@@ -276,7 +276,8 @@ describe(resolve, () => {
             serviceIdentifier: ServiceIdentifier<TActivated>,
           ) =>
             activationService.get(serviceIdentifier) as
-              Iterable<BindingActivation<TActivated>> | undefined,
+              | Iterable<BindingActivation<TActivated>>
+              | undefined,
           getBindings: bindingService.get.bind(bindingService),
           getBindingsChained: bindingService.getChained.bind(bindingService),
           getClassMetadata: getClassMetadataFunction,
@@ -408,7 +409,8 @@ describe(resolve, () => {
         serviceIdentifier: ServiceIdentifier,
       ): BindingActivation<TActivated>[] | undefined =>
         activationService.get(serviceIdentifier) as
-          BindingActivation<TActivated>[] | undefined,
+          | BindingActivation<TActivated>[]
+          | undefined,
       getAll: <TActivated>(
         serviceIdentifier: ServiceIdentifier<TActivated>,
         options?: GetOptions,
@@ -536,7 +538,8 @@ describe(resolve, () => {
                 serviceIdentifier: ServiceIdentifier<TActivated>,
               ) =>
                 activationService.get(serviceIdentifier) as
-                  Iterable<BindingActivation<TActivated>> | undefined,
+                  | Iterable<BindingActivation<TActivated>>
+                  | undefined,
               getBindings: bindingService.get.bind(bindingService),
               getBindingsChained:
                 bindingService.getChained.bind(bindingService),
