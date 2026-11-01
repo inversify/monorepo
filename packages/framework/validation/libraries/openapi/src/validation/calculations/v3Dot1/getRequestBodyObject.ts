@@ -42,8 +42,9 @@ export function getRequestBodyObject(
   route: string,
 ): ResolvedRequestBodyObject {
   const requestBodyObject:
-    OpenApi3Dot1RequestBodyObject | OpenApi3Dot1ReferenceObject | undefined =
-    operationObject.requestBody;
+    | OpenApi3Dot1RequestBodyObject
+    | OpenApi3Dot1ReferenceObject
+    | undefined = operationObject.requestBody;
 
   if (requestBodyObject === undefined) {
     throw new InversifyValidationError(

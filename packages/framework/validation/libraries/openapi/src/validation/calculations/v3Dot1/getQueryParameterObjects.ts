@@ -42,7 +42,8 @@ export function getQueryParameterObjects(
     for (let i: number = 0; i < pathItemObject.parameters.length; i++) {
       const raw: OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject =
         pathItemObject.parameters[i] as
-          OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject;
+          | OpenApi3Dot1ParameterObject
+          | OpenApi3Dot1ReferenceObject;
 
       const resolved: ResolvedParameterObject = resolveParameterObject(
         openApiResolver,
@@ -69,7 +70,8 @@ export function getQueryParameterObjects(
     for (let i: number = 0; i < operationObject.parameters.length; i++) {
       const raw: OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject =
         operationObject.parameters[i] as
-          OpenApi3Dot1ParameterObject | OpenApi3Dot1ReferenceObject;
+          | OpenApi3Dot1ParameterObject
+          | OpenApi3Dot1ReferenceObject;
 
       const resolved: ResolvedParameterObject = resolveParameterObject(
         openApiResolver,
