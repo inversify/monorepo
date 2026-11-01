@@ -15,10 +15,10 @@ export function updateControllerOpenApiMetadataOperationArrayProperty<
   propertyKey: TKey,
 ) => (metadata: TMetadata) => TMetadata {
   return (
-      value: ArrayValue<TOperationObject[TKey]>,
-      methodKey: string | symbol,
-      propertyKey: TKey,
-    ) =>
+    value: ArrayValue<TOperationObject[TKey]>,
+    methodKey: string | symbol,
+    propertyKey: TKey,
+  ) =>
     (metadata: TMetadata): TMetadata => {
       const operationObject: TOperationObject = buildOrGetOperationObject(
         metadata,

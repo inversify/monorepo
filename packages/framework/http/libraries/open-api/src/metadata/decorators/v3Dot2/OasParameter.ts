@@ -25,7 +25,8 @@ export function OasParameter(
       typeof target === 'function' ? target : target.constructor;
 
     const parameterResult:
-      OpenApi3Dot2ParameterObject | OpenApi3Dot2ReferenceObject =
+      | OpenApi3Dot2ParameterObject
+      | OpenApi3Dot2ReferenceObject =
       typeof parameter === 'function'
         ? parameter(toSchemaInControllerOpenApiMetadataContext(typeTarget))
         : parameter;
