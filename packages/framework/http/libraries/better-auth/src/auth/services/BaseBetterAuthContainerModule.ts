@@ -41,7 +41,8 @@ export abstract class BaseBetterAuthContainerModule<
     params: MapToResolvedValueInjectOptions<Parameters<TFactory>>,
     containerModuleOptions: ContainerModuleLoadOptions,
     transform:
-      ((controllerClass: Newable<unknown>) => Newable<unknown>) | undefined,
+      | ((controllerClass: Newable<unknown>) => Newable<unknown>)
+      | undefined,
   ): void {
     containerModuleOptions
       .bind(betterAuthServiceIdentifier)
