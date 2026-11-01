@@ -1,4 +1,4 @@
-import { describe, expect, it, Mock, vitest } from 'vitest';
+import { describe, expect, it, type Mock, vitest } from 'vitest';
 
 import {
   bindingScopeValues,

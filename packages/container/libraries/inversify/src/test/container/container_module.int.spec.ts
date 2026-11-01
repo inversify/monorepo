@@ -33,7 +33,13 @@ describe(ContainerModule, () => {
 
         expect(() => {
           container.get<string>('A');
-        }).to.throw();
+        }).toThrow(`No bindings found for service: "A".
+
+Trying to resolve bindings for "A (Root service)".
+
+Binding constraints:
+- service identifier: A
+- name: -`);
 
         options.bind<string>('A').toConstantValue('2');
 
@@ -47,8 +53,8 @@ describe(ContainerModule, () => {
 
     await container.loadAsync(warriors);
 
-    expect(container.get<string>('A')).to.eql('2');
-    expect(container.get<string>('B')).to.eql('3');
+    expect(container.get<string>('A')).toBe('2');
+    expect(container.get<string>('B')).toBe('3');
   });
 
   it('Should be able to check for existence of bindings within a container module', async () => {
@@ -96,16 +102,16 @@ describe(ContainerModule, () => {
 
     const values1: unknown[] = container.getAll(TYPES.someType);
 
-    expect(values1[0]).to.eq(1);
+    expect(values1[0]).toBe(1);
 
-    expect(values1[1]).to.eq(2);
+    expect(values1[1]).toBe(2);
 
     await container.loadAsync(module2);
 
     const values2: unknown[] = container.getAll(TYPES.someType);
 
-    expect(values2[0]).to.eq(3);
-    expect(values2[1]).to.eq(undefined);
+    expect(values2[0]).toBe(3);
+    expect(values2[1]).toBeUndefined();
   });
 
   it('Should be able use await async functions in container modules', async () => {
@@ -163,8 +169,8 @@ describe(ContainerModule, () => {
 
     await container.loadAsync(module);
 
-    expect(container.get<string>('A')).to.eql('B');
-    expect(container.get('B')).to.eql('C');
+    expect(container.get<string>('A')).toBe('B');
+    expect(container.get('B')).toBe('C');
   });
 
   it('Should be able to add a deactivation hook through a container module', async () => {
@@ -279,8 +285,8 @@ describe(ContainerModule, () => {
 
     await container.unloadAsync(module);
 
-    expect(moduleBindingDeactivated).to.equal('Module');
-    expect(containerDeactivated).to.equal('Module');
+    expect(moduleBindingDeactivated).toBe('Module');
+    expect(containerDeactivated).toBe('Module');
   });
 
   it('Should remove container handlers from module when unload', async () => {

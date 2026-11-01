@@ -208,7 +208,8 @@ describe(BindingManager, () => {
       it('should call binding.isSatisfiedBy()', () => {
         const expectedBindingConstraints: BindingConstraints = {
           getAncestor: expect.any(Function) as () =>
-            BindingConstraints | undefined,
+            | BindingConstraints
+            | undefined,
           name: nameFixture,
           serviceIdentifier: serviceIdentifierFixture,
           tags: new Map([[tagFixture.key, tagFixture.value]]),
@@ -276,7 +277,8 @@ describe(BindingManager, () => {
       it('should call binding.isSatisfiedBy()', () => {
         const expectedBindingConstraints: BindingConstraints = {
           getAncestor: expect.any(Function) as () =>
-            BindingConstraints | undefined,
+            | BindingConstraints
+            | undefined,
           name: nameFixture,
           serviceIdentifier: serviceIdentifierFixture,
           tags: new Map([[tagFixture.key, tagFixture.value]]),
@@ -393,7 +395,8 @@ describe(BindingManager, () => {
       it('should call binding.isSatisfiedBy()', () => {
         const expectedBindingConstraints: BindingConstraints = {
           getAncestor: expect.any(Function) as () =>
-            BindingConstraints | undefined,
+            | BindingConstraints
+            | undefined,
           name: nameFixture,
           serviceIdentifier: serviceIdentifierFixture,
           tags: new Map([[tagFixture.key, tagFixture.value]]),
@@ -461,7 +464,8 @@ describe(BindingManager, () => {
       it('should call binding.isSatisfiedBy()', () => {
         const expectedBindingConstraints: BindingConstraints = {
           getAncestor: expect.any(Function) as () =>
-            BindingConstraints | undefined,
+            | BindingConstraints
+            | undefined,
           name: nameFixture,
           serviceIdentifier: serviceIdentifierFixture,
           tags: new Map([[tagFixture.key, tagFixture.value]]),

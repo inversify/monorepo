@@ -96,17 +96,17 @@ describe(optional, () => {
 
     let ninja: Ninja = container.get('Ninja');
 
-    expect(ninja.name).to.eql('Ninja');
-    expect(ninja.katana.name).to.eql('Katana');
-    expect(ninja.shuriken.name).to.eql('DefaultShuriken');
+    expect(ninja.name).toBe('Ninja');
+    expect(ninja.katana.name).toBe('Katana');
+    expect(ninja.shuriken.name).toBe('DefaultShuriken');
 
     container.bind<Shuriken>('Shuriken').to(Shuriken);
 
     ninja = container.get<Ninja>('Ninja');
 
-    expect(ninja.name).to.eql('Ninja');
-    expect(ninja.katana.name).to.eql('Katana');
-    expect(ninja.shuriken.name).to.eql('Shuriken');
+    expect(ninja.name).toBe('Ninja');
+    expect(ninja.katana.name).toBe('Katana');
+    expect(ninja.shuriken.name).toBe('Shuriken');
   });
 
   it('Should allow to set a default value for class property dependencies flagged as optional', () => {

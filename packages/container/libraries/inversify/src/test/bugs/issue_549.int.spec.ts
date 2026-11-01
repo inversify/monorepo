@@ -10,8 +10,8 @@ import {
   Container,
   inject,
   injectable,
-  ResolutionContext,
-  ServiceIdentifier,
+  type ResolutionContext,
+  type ServiceIdentifier,
 } from '../../index.js';
 
 describe('Issue 549', () => {

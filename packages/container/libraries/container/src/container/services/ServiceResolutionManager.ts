@@ -54,7 +54,8 @@ export class ServiceResolutionManager {
       serviceIdentifier: ServiceIdentifier<TActivated>,
     ): Iterable<BindingActivation<TActivated>> | undefined =>
       this.#serviceReferenceManager.activationService.get(serviceIdentifier) as
-        Iterable<BindingActivation<TActivated>> | undefined;
+        | Iterable<BindingActivation<TActivated>>
+        | undefined;
 
     this.#resolutionContext = this.#buildResolutionContext();
     this.#autobind = autobind;
@@ -177,6 +178,8 @@ export class ServiceResolutionManager {
 
     if (isMultiple) {
       return {
+        // `GetAllOptions` extends `GetOptions`, so the union hides `chained`.
+        // eslint-disable-next-line typescript/no-unnecessary-type-assertion
         chained: (options as GetAllOptions | undefined)?.chained ?? false,
         isMultiple,
         name,
@@ -229,6 +232,8 @@ export class ServiceResolutionManager {
   ): PlanParamsConstraint {
     if (isMultiple) {
       return {
+        // `GetAllOptions` extends `GetOptions`, so the union hides `chained`.
+        // eslint-disable-next-line typescript/no-unnecessary-type-assertion
         chained: (options as GetAllOptions | undefined)?.chained ?? false,
         isMultiple,
         serviceIdentifier,

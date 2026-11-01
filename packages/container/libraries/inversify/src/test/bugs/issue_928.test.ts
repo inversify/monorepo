@@ -4,7 +4,7 @@ import {
   Container,
   inject,
   injectable,
-  Newable,
+  type Newable,
   optional,
 } from '../../index.js';
 

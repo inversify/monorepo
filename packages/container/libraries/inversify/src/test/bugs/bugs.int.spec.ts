@@ -1,18 +1,27 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  BindingConstraints,
+  type BindingConstraints,
   Container,
   decorate,
   inject,
   injectable,
   injectFromBase,
-  MetadataName,
+  type MetadataName,
   named,
-  ServiceIdentifier,
+  type ServiceIdentifier,
   tagged,
   unmanaged,
 } from '../../index.js';
+
+function whenIsAndIsNamed(
+  serviceIdentifier: ServiceIdentifier,
+  name: MetadataName,
+): (bindingConstraints: BindingConstraints) => boolean {
+  return (bindingConstraints: BindingConstraints): boolean =>
+    bindingConstraints.serviceIdentifier === serviceIdentifier &&
+    bindingConstraints.name === name;
+}
 
 describe('Bugs', () => {
   it('Should not throw when args length of base and derived class match (property setter)', () => {
@@ -145,7 +154,13 @@ describe('Bugs', () => {
       container.get<Weapon>(TYPES.Weapon);
     };
 
-    expect(throwF).to.throw('');
+    expect(throwF).toThrow(`No bindings found for service: "Symbol(Weapon)".
+
+Trying to resolve bindings for "Symbol(Weapon) (Root service)".
+
+Binding constraints:
+- service identifier: Symbol(Weapon)
+- name: -`);
   });
 
   it('Should be able to combine tagged injection and constant value bindings', () => {
@@ -340,15 +355,6 @@ Trying to resolve bindings for "Weapon (Root service)"`;
     class DefaultWeapon {}
 
     const container: Container = new Container();
-
-    function whenIsAndIsNamed(
-      serviceIdentifier: ServiceIdentifier,
-      name: MetadataName,
-    ): (bindingConstraints: BindingConstraints) => boolean {
-      return (bindingConstraints: BindingConstraints): boolean =>
-        bindingConstraints.serviceIdentifier === serviceIdentifier &&
-        bindingConstraints.name === name;
-    }
 
     container
       .bind<Weapon>('Weapon')
