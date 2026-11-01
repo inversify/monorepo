@@ -49,8 +49,8 @@ function readGeneratedId(
   index: number,
 ): `${string}-${string}-${string}-${string}-${string}` {
   const generatedId:
-    `${string}-${string}-${string}-${string}-${string}` | undefined =
-    generatedIds[index];
+    | `${string}-${string}-${string}-${string}-${string}`
+    | undefined = generatedIds[index];
 
   if (generatedId === undefined) {
     throw new Error('Unexpected randomUUID() call.');

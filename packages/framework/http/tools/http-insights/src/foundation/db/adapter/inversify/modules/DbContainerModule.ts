@@ -2,8 +2,8 @@ import { PrismaContainerModule } from '@inversifyjs/prisma';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import { ContainerModule, type ContainerModuleLoadOptions } from 'inversify';
 
-import { PrismaClient } from '../../../../../generated/prisma/client.js';
 import { resetDb } from '../../../../../generated/prisma-migrate/index.js';
+import { PrismaClient } from '../../../../../generated/prisma/client.js';
 import { DATABASE_URL } from '../../../models/databaseUrl.js';
 
 export class DbContainerModule extends ContainerModule {
