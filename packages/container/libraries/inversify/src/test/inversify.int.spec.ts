@@ -1,21 +1,30 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import {
-  BindingConstraints,
+  type BindingConstraints,
   Container,
   ContainerModule,
-  ContainerModuleLoadOptions,
+  type ContainerModuleLoadOptions,
   decorate,
-  Factory,
+  type Factory,
   inject,
   injectable,
   LazyServiceIdentifier,
   multiInject,
   named,
-  Newable,
-  ResolutionContext,
+  type Newable,
+  type ResolutionContext,
   tagged,
 } from '../index.js';
+
+function isNinjaWithMasterTag(
+  serviceIdentifier: BindingConstraints['serviceIdentifier'],
+  isMaster: boolean,
+): (bindingConstraints: BindingConstraints) => boolean {
+  return (bindingConstraints: BindingConstraints): boolean =>
+    bindingConstraints.serviceIdentifier === serviceIdentifier &&
+    bindingConstraints.tags.get('master') === isMaster;
+}
 
 describe('InversifyJS', () => {
   it('Should be able to resolve and inject dependencies', () => {
@@ -2084,24 +2093,6 @@ Binding constraints:
       }
     }
 
-    function isNinjaStudentConstraint(
-      bindingConstraints: BindingConstraints,
-    ): boolean {
-      return (
-        bindingConstraints.serviceIdentifier === TYPES.Ninja &&
-        bindingConstraints.tags.get('master') === false
-      );
-    }
-
-    function isNinjaMasterConstraint(
-      bindingConstraints: BindingConstraints,
-    ): boolean {
-      return (
-        bindingConstraints.serviceIdentifier === TYPES.Ninja &&
-        bindingConstraints.tags.get('master') === true
-      );
-    }
-
     // whenAnyAncestorIs
     const container: Container = new Container();
     container
@@ -2116,11 +2107,11 @@ Binding constraints:
     container
       .bind<Material>(TYPES.Material)
       .to(Iron)
-      .whenAnyAncestor(isNinjaMasterConstraint);
+      .whenAnyAncestor(isNinjaWithMasterTag(TYPES.Ninja, true));
     container
       .bind<Material>(TYPES.Material)
       .to(Wood)
-      .whenAnyAncestor(isNinjaStudentConstraint);
+      .whenAnyAncestor(isNinjaWithMasterTag(TYPES.Ninja, false));
 
     const master: Ninja = container.get<Ninja>(TYPES.Ninja, {
       tag: {
@@ -2152,11 +2143,11 @@ Binding constraints:
     container2
       .bind<Material>(TYPES.Material)
       .to(Iron)
-      .whenNoAncestor(isNinjaStudentConstraint);
+      .whenNoAncestor(isNinjaWithMasterTag(TYPES.Ninja, false));
     container2
       .bind<Material>(TYPES.Material)
       .to(Wood)
-      .whenNoAncestor(isNinjaMasterConstraint);
+      .whenNoAncestor(isNinjaWithMasterTag(TYPES.Ninja, true));
 
     const master2: Ninja = container2.get<Ninja>(TYPES.Ninja, {
       tag: {
@@ -2487,24 +2478,6 @@ Binding constraints:
     }
 
     // custom constraints
-    function isNinjaStudentConstraint(
-      bindingConstraints: BindingConstraints,
-    ): boolean {
-      return (
-        bindingConstraints.serviceIdentifier === TYPES.Ninja &&
-        bindingConstraints.tags.get('master') === false
-      );
-    }
-
-    function isNinjaMasterConstraint(
-      bindingConstraints: BindingConstraints,
-    ): boolean {
-      return (
-        bindingConstraints.serviceIdentifier === TYPES.Ninja &&
-        bindingConstraints.tags.get('master') === true
-      );
-    }
-
     // whenAnyAncestorMatches
     const container: Container = new Container();
     container
@@ -2519,11 +2492,11 @@ Binding constraints:
     container
       .bind<Material>(TYPES.Material)
       .to(Iron)
-      .whenAnyAncestor(isNinjaMasterConstraint);
+      .whenAnyAncestor(isNinjaWithMasterTag(TYPES.Ninja, true));
     container
       .bind<Material>(TYPES.Material)
       .to(Wood)
-      .whenAnyAncestor(isNinjaStudentConstraint);
+      .whenAnyAncestor(isNinjaWithMasterTag(TYPES.Ninja, false));
 
     const master: Ninja = container.get<Ninja>(TYPES.Ninja, {
       tag: {
@@ -2555,11 +2528,11 @@ Binding constraints:
     container2
       .bind<Material>(TYPES.Material)
       .to(Iron)
-      .whenNoAncestor(isNinjaStudentConstraint);
+      .whenNoAncestor(isNinjaWithMasterTag(TYPES.Ninja, false));
     container2
       .bind<Material>(TYPES.Material)
       .to(Wood)
-      .whenNoAncestor(isNinjaMasterConstraint);
+      .whenNoAncestor(isNinjaWithMasterTag(TYPES.Ninja, true));
 
     const master2: Ninja = container2.get<Ninja>(TYPES.Ninja, {
       tag: {

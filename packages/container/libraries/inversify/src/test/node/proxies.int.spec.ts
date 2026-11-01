@@ -4,7 +4,7 @@ import {
   Container,
   inject,
   injectable,
-  ResolutionContext,
+  type ResolutionContext,
 } from '../../index.js';
 
 describe('InversifyJS', () => {

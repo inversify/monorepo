@@ -9,9 +9,11 @@
     "@inversifyjs/plugin-example": "workspace:*"
   },
   "devDependencies": {
-    "@inversifyjs/eslint-plugin-require-extensions": "workspace:*",
-    "eslint": "10.13.0",
-    "prettier": "3.9.10",
+    "@inversifyjs/foundation-oxfmt-config": "workspace:*",
+    "@inversifyjs/foundation-oxlint-config": "workspace:*",
+    "oxfmt": "0.75.0",
+    "oxlint": "1.90.0",
+    "oxlint-tsgolint": "7.0.2005",
     "rimraf": "6.1.3",
     "typescript": "6.0.3"
   },
@@ -44,8 +46,8 @@
   "scripts": {
     "build": "tsc",
     "build:clean": "rimraf lib",
-    "format": "prettier --write ./src",
-    "lint": "eslint ./src",
+    "format": "oxfmt --write ./src",
+    "lint": "oxlint ./src",
     "prebuild": "pnpm run build:clean"
   }
 }

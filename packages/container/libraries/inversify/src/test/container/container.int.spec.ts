@@ -9,7 +9,7 @@ import {
   injectable,
   type Newable,
   postConstruct,
-  ResolutionContext,
+  type ResolutionContext,
   type ServiceIdentifier,
 } from '../../index.js';
 
@@ -700,7 +700,7 @@ Binding constraints:
 
     expect(() => {
       container.restore();
-    }).to.throw('No snapshot available to restore');
+    }).toThrow('No snapshot available to restore');
   });
 
   it('Should maintain the activation state of a singleton when doing a snapshot of a container', () => {
@@ -749,8 +749,8 @@ Binding constraints:
     container.get(sid);
     await container.unbindAsync(sid);
 
-    expect(activated).to.equal(false);
-    expect(deactivated).to.equal(false);
+    expect(activated).toBe(false);
+    expect(deactivated).toBe(false);
   });
 
   it('Should be able to check is there are bindings available for a given identifier', () => {
@@ -791,9 +791,9 @@ Binding constraints:
 
     containerParent.bind(Ninja).to(Ninja);
 
-    expect(containerParent.isBound(Ninja)).to.eql(true);
-    expect(containerChild.isBound(Ninja)).to.eql(true);
-    expect(containerChild.isCurrentBound(Ninja)).to.eql(false);
+    expect(containerParent.isBound(Ninja)).toBe(true);
+    expect(containerChild.isBound(Ninja)).toBe(true);
+    expect(containerChild.isCurrentBound(Ninja)).toBe(false);
   });
 
   it('Should be able to get services from parent container', () => {
@@ -1126,9 +1126,9 @@ Binding constraints:
 
     container.bind<number>(zero).toConstantValue(0).whenNamed(invalidDivisor);
 
-    expect(
-      secondChildContainer.isBound(zero, { name: invalidDivisor }),
-    ).to.equal(true);
+    expect(secondChildContainer.isBound(zero, { name: invalidDivisor })).toBe(
+      true,
+    );
     expect(secondChildContainer.isBound(zero, { name: validDivisor })).toBe(
       false,
     );
@@ -1138,7 +1138,7 @@ Binding constraints:
     expect(secondChildContainer.isBound(zero, { name: invalidDivisor })).toBe(
       true,
     );
-    expect(secondChildContainer.isBound(zero, { name: validDivisor })).to.equal(
+    expect(secondChildContainer.isBound(zero, { name: validDivisor })).toBe(
       true,
     );
   });
@@ -1350,17 +1350,17 @@ Binding constraints:
       name: 'fr',
     });
 
-    expect(fr.length).to.equal(2);
-    expect(fr[0]?.hello).to.equal('bonjour');
-    expect(fr[1]?.goodbye).to.equal('au revoir');
+    expect(fr).toHaveLength(2);
+    expect(fr[0]?.hello).toBe('bonjour');
+    expect(fr[1]?.goodbye).toBe('au revoir');
 
     const es: Intl[] = await container.getAllAsync<Intl>('Intl', {
       name: 'es',
     });
 
-    expect(es.length).to.equal(2);
-    expect(es[0]?.hello).to.equal('hola');
-    expect(es[1]?.goodbye).to.equal('adios');
+    expect(es).toHaveLength(2);
+    expect(es[0]?.hello).toBe('hola');
+    expect(es[1]?.goodbye).toBe('adios');
   });
 
   it('Should be able to resolve named (async)', async () => {

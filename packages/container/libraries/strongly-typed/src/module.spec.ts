@@ -132,11 +132,9 @@ describe('interfaces', () => {
           // Then use module to rebind it to Bar
           const module = new TypedContainerModule<BindingMap>(
             async (options) => {
-              if (options.isBound('foo')) {
-                const rebindResult = await options.rebindAsync('foo');
-                // @ts-expect-error :: Expect error when setting wrong type
-                rebindResult.to(Bar);
-              }
+              const rebindResult = await options.rebindAsync('foo');
+              // @ts-expect-error :: Expect error when setting wrong type
+              rebindResult.to(Bar);
             },
           );
 
@@ -159,11 +157,9 @@ describe('interfaces', () => {
 
           // Then use module to rebind it synchronously
           const module = new TypedContainerModule<BindingMap>((options) => {
-            if (options.isBound('bar')) {
-              const barInstance = new Bar();
-              barInstance.bar = 'reboundSync';
-              options.rebind('bar').toConstantValue(barInstance);
-            }
+            const barInstance = new Bar();
+            barInstance.bar = 'reboundSync';
+            options.rebind('bar').toConstantValue(barInstance);
             // @ts-expect-error :: unknown service identifier
             options.rebind('unknown');
           });
@@ -183,9 +179,7 @@ describe('interfaces', () => {
           // Then use module to unbind it and bind to Bar
           const module = new TypedContainerModule<BindingMap>(
             async (options) => {
-              if (options.isBound('foo')) {
-                await options.unbindAsync('foo');
-              }
+              await options.unbindAsync('foo');
               // @ts-expect-error :: unknown service identifier
               await options.unbindAsync('unknown');
 
@@ -205,9 +199,7 @@ describe('interfaces', () => {
 
           // Then use module to unbind it synchronously and bind to Bar
           const module = new TypedContainerModule<BindingMap>((options) => {
-            if (options.isBound('foo')) {
-              options.unbind('foo');
-            }
+            options.unbind('foo');
             // @ts-expect-error :: unknown service identifier
             options.unbind('unknown');
 

@@ -37,6 +37,10 @@ import { type PlanParamsOperationsManager } from './PlanParamsOperationsManager.
 import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 import { ServiceResolutionManager } from './ServiceResolutionManager.js';
 
+function resolveOptionalFlag(optional: boolean | undefined): boolean {
+  return optional ?? false;
+}
+
 describe(ServiceResolutionManager, () => {
   let autobindFixture: boolean;
   let defaultScopeFixture: BindingScope;
@@ -125,7 +129,7 @@ describe(ServiceResolutionManager, () => {
           const expectedGetPlanOptions: GetPlanOptions = {
             isMultiple: false,
             name: getOptionsFixture.name,
-            optional: getOptionsFixture.optional ?? false,
+            optional: resolveOptionalFlag(getOptionsFixture.optional),
             serviceIdentifier: serviceIdentifierFixture,
             tag: getOptionsFixture.tag,
           };
@@ -223,7 +227,7 @@ describe(ServiceResolutionManager, () => {
           const expectedGetPlanOptions: GetPlanOptions = {
             isMultiple: false,
             name: getOptionsFixture.name,
-            optional: getOptionsFixture.optional ?? false,
+            optional: resolveOptionalFlag(getOptionsFixture.optional),
             serviceIdentifier: serviceIdentifierFixture,
             tag: getOptionsFixture.tag,
           };
@@ -329,7 +333,7 @@ describe(ServiceResolutionManager, () => {
           const expectedGetPlanOptions: GetPlanOptions = {
             isMultiple: false,
             name: getOptionsFixture.name,
-            optional: getOptionsFixture.optional ?? false,
+            optional: resolveOptionalFlag(getOptionsFixture.optional),
             serviceIdentifier: serviceIdentifierFixture,
             tag: getOptionsFixture.tag,
           };
@@ -361,7 +365,7 @@ describe(ServiceResolutionManager, () => {
           const expectedGetPlanOptions: GetPlanOptions = {
             isMultiple: false,
             name: getOptionsFixture.name,
-            optional: getOptionsFixture.optional ?? false,
+            optional: resolveOptionalFlag(getOptionsFixture.optional),
             serviceIdentifier: serviceIdentifierFixture,
             tag: getOptionsFixture.tag,
           };
@@ -454,7 +458,7 @@ describe(ServiceResolutionManager, () => {
           const expectedGetPlanOptions: GetPlanOptions = {
             isMultiple: false,
             name: getOptionsFixture.name,
-            optional: getOptionsFixture.optional ?? false,
+            optional: resolveOptionalFlag(getOptionsFixture.optional),
             serviceIdentifier: serviceIdentifierFixture,
             tag: getOptionsFixture.tag,
           };
@@ -567,7 +571,7 @@ describe(ServiceResolutionManager, () => {
           const expectedGetPlanOptions: GetPlanOptions = {
             isMultiple: false,
             name: getOptionsFixture.name,
-            optional: getOptionsFixture.optional ?? false,
+            optional: resolveOptionalFlag(getOptionsFixture.optional),
             serviceIdentifier: serviceIdentifierFixture,
             tag: getOptionsFixture.tag,
           };
@@ -678,7 +682,7 @@ describe(ServiceResolutionManager, () => {
         const expectedGetPlanOptions: GetPlanOptions = {
           isMultiple: false,
           name: getOptionsFixture.name,
-          optional: getOptionsFixture.optional ?? false,
+          optional: resolveOptionalFlag(getOptionsFixture.optional),
           serviceIdentifier: serviceIdentifierFixture,
           tag: getOptionsFixture.tag,
         };
@@ -919,7 +923,7 @@ describe(ServiceResolutionManager, () => {
             chained: true,
             isMultiple: true,
             name: getAllOptionsFixture.name,
-            optional: getAllOptionsFixture.optional ?? false,
+            optional: resolveOptionalFlag(getAllOptionsFixture.optional),
             serviceIdentifier: serviceIdentifierFixture,
             tag: getAllOptionsFixture.tag,
           };
@@ -1016,7 +1020,7 @@ describe(ServiceResolutionManager, () => {
           chained: false,
           isMultiple: true,
           name: getOptionsFixture.name,
-          optional: getOptionsFixture.optional ?? false,
+          optional: resolveOptionalFlag(getOptionsFixture.optional),
           serviceIdentifier: serviceIdentifierFixture,
           tag: getOptionsFixture.tag,
         };
@@ -1117,7 +1121,7 @@ describe(ServiceResolutionManager, () => {
           chained: false,
           isMultiple: true,
           name: getOptionsFixture.name,
-          optional: getOptionsFixture.optional ?? false,
+          optional: resolveOptionalFlag(getOptionsFixture.optional),
           serviceIdentifier: serviceIdentifierFixture,
           tag: getOptionsFixture.tag,
         };
@@ -1224,7 +1228,7 @@ describe(ServiceResolutionManager, () => {
           chained: false,
           isMultiple: true,
           name: getOptionsFixture.name,
-          optional: getOptionsFixture.optional ?? false,
+          optional: resolveOptionalFlag(getOptionsFixture.optional),
           serviceIdentifier: serviceIdentifierFixture,
           tag: getOptionsFixture.tag,
         };
@@ -1322,7 +1326,7 @@ describe(ServiceResolutionManager, () => {
         const expectedGetPlanOptions: GetPlanOptions = {
           isMultiple: false,
           name: getOptionsFixture.name,
-          optional: getOptionsFixture.optional ?? false,
+          optional: resolveOptionalFlag(getOptionsFixture.optional),
           serviceIdentifier: serviceIdentifierFixture,
           tag: getOptionsFixture.tag,
         };

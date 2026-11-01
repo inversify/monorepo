@@ -75,10 +75,10 @@ describe('inRequestScope', () => {
     const samurai4: Warrior = container1.get(TYPE.Warrior);
 
     // One requests should use one instance because scope is request scope
-    expect(samurai3.primaryWeapon.use()).to.eql(samurai3.secondaryWeapon.use());
+    expect(samurai3.primaryWeapon.use()).toBe(samurai3.secondaryWeapon.use());
 
     // One requests should use one instance because scope is request scope
-    expect(samurai4.primaryWeapon.use()).to.eql(samurai4.secondaryWeapon.use());
+    expect(samurai4.primaryWeapon.use()).toBe(samurai4.secondaryWeapon.use());
 
     // Two request should use one instances of Katana
     // for each instance of Samurai because scope is request scope
