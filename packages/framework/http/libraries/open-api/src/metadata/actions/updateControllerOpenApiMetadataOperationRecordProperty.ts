@@ -20,13 +20,13 @@ export function updateControllerOpenApiMetadataOperationRecordProperty<
   propertyKey: TKey,
 ) => (metadata: TMetadata) => TMetadata {
   return (
-      key: string,
-      value: StringRecordValue<TOperationObject[TKey]>,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-      target: Function,
-      methodKey: string | symbol,
-      propertyKey: TKey,
-    ) =>
+    key: string,
+    value: StringRecordValue<TOperationObject[TKey]>,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    target: Function,
+    methodKey: string | symbol,
+    propertyKey: TKey,
+  ) =>
     (metadata: TMetadata): TMetadata => {
       const operationObject: TOperationObject = buildOrGetOperationObject(
         metadata,

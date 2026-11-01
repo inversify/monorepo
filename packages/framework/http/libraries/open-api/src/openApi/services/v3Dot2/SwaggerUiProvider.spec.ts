@@ -30,6 +30,7 @@ import {
   type OpenApi3Dot2Object,
   type OpenApi3Dot2OperationObject,
   type OpenApi3Dot2PathItemObject,
+  type OpenApi3Dot2SchemaObject,
 } from '@inversifyjs/open-api-types/v3Dot2';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import {
@@ -47,6 +48,12 @@ import { type BaseSwaggerUiController } from '../../controllers/BaseSwagggerUiCo
 import { type SwaggerUiProviderUiOptions } from '../../models/SwaggerUiProviderUiOptions.js';
 import { type SwaggerUiProviderOptions } from '../../models/v3Dot2/SwaggerUiProviderOptions.js';
 import { SwaggerUiProvider } from './SwaggerUiProvider.js';
+
+function readComponentSchemas(
+  openApiObject: OpenApi3Dot2Object,
+): Record<string, OpenApi3Dot2SchemaObject> {
+  return openApiObject.components?.schemas ?? {};
+}
 
 describe(SwaggerUiProvider, () => {
   let optionsFixture: SwaggerUiProviderOptions;
@@ -1019,12 +1026,12 @@ describe(SwaggerUiProvider, () => {
         expect(mergeOpenApiTypeSchema).toHaveBeenCalledTimes(2);
         expect(mergeOpenApiTypeSchema).toHaveBeenNthCalledWith(
           1,
-          optionsFixture.api.openApiObject.components?.schemas ?? {},
+          readComponentSchemas(optionsFixture.api.openApiObject),
           typeFixture1,
         );
         expect(mergeOpenApiTypeSchema).toHaveBeenNthCalledWith(
           2,
-          optionsFixture.api.openApiObject.components?.schemas ?? {},
+          readComponentSchemas(optionsFixture.api.openApiObject),
           typeFixture2,
         );
       });

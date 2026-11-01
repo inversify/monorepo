@@ -117,7 +117,8 @@ const readCapturedValuesAfterAwait: () => ParameterDecorator =
         return {
           allParams: {
             storeId: options.getParams(request, 'storeId') as
-              string | undefined,
+              | string
+              | undefined,
             userId: options.getParams(request, 'userId') as string | undefined,
           },
           header: options.getHeaders(request, 'x-request-id'),

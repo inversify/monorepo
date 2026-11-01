@@ -65,13 +65,15 @@ describe(updateControllerOpenApiMetadataOperationArrayProperty, () => {
   });
 
   describe('when called, and buildOrGetOperationObject() returns a metadata object with defined property value', () => {
+    let existingValueFixture: unknown;
     let operationObjectFixture: Record<string | symbol, unknown[]>;
 
     let result: unknown;
 
     beforeAll(() => {
+      existingValueFixture = Symbol();
       operationObjectFixture = {
-        [keyFixture]: [Symbol()],
+        [keyFixture]: [existingValueFixture],
       };
 
       buildOrGetOperationObjectMock.mockReturnValueOnce(operationObjectFixture);
@@ -91,7 +93,7 @@ describe(updateControllerOpenApiMetadataOperationArrayProperty, () => {
 
     it('should add property value to existing array', () => {
       expect(operationObjectFixture[keyFixture]).toStrictEqual([
-        ...(operationObjectFixture[keyFixture]?.slice(0, -1) ?? []),
+        existingValueFixture,
         valueFixture,
       ]);
     });

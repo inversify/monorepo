@@ -16,10 +16,10 @@
 AGENTS.md
 CHANGELOG.md
 .lintstagedrc.json
-eslint.config.mjs
+oxfmt.config.ts
+oxlint.config.ts
 vitest.config.mjs
 vitest.config.stryker.mjs
-prettier.config.mjs
 stryker.config.mjs
 tsconfig.esm.json
 tsconfig.esm.tsbuildinfo
