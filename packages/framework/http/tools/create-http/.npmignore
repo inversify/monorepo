@@ -24,8 +24,8 @@ lib/**/fixtures/**
 AGENTS.md
 CHANGELOG.md
 .lintstagedrc.json
-eslint.config.mjs
-prettier.config.mjs
+oxfmt.config.ts
+oxlint.config.ts
 tsconfig.esm.json
 tsconfig.esm.tsbuildinfo
 tsconfig.json

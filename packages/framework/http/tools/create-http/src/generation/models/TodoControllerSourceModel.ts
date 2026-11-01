@@ -19,7 +19,11 @@ export interface SetHeaderSourceModel {
 }
 
 export type TodoControllerMethodName =
-  'createTodo' | 'deleteTodo' | 'getTodo' | 'listTodos' | 'updateTodo';
+  | 'createTodo'
+  | 'deleteTodo'
+  | 'getTodo'
+  | 'listTodos'
+  | 'updateTodo';
 
 /**
  * Declarative model for the generated TodoController source file.
