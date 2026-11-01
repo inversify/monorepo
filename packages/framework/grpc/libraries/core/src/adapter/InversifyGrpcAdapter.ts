@@ -255,7 +255,8 @@ export abstract class InversifyGrpcAdapter<
       error: unknown,
     ): Promise<TResult | undefined> => {
       let errorFilter:
-        ErrorFilter<unknown, TCall, TCall | TCallback, TResult> | undefined;
+        | ErrorFilter<unknown, TCall, TCall | TCallback, TResult>
+        | undefined;
 
       try {
         errorFilter = await getErrorFilterForError(
@@ -498,8 +499,8 @@ export abstract class InversifyGrpcAdapter<
         index: number,
       ): Promise<InterceptorTransformObject> => {
         const interceptorIdentifier:
-          ServiceIdentifier<Interceptor<TCall, TCall | TCallback>> | undefined =
-          interceptorList[index];
+          | ServiceIdentifier<Interceptor<TCall, TCall | TCallback>>
+          | undefined = interceptorList[index];
 
         if (interceptorIdentifier === undefined) {
           methodOutcome.value = await callRpc(call, callback, response);

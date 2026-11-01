@@ -27,7 +27,8 @@ export interface GrpcExplorerRpcMetadata<
   methodKey: string | symbol;
   name: string;
   parameterMetadataList: (
-    RpcParameterMetadata<TRequest, TResponse> | undefined
+    | RpcParameterMetadata<TRequest, TResponse>
+    | undefined
   )[];
   postHandlerMiddlewareList: ServiceIdentifier<Middleware>[];
   preHandlerMiddlewareList: ServiceIdentifier<Middleware>[];
