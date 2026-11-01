@@ -8,7 +8,8 @@ import { isApplyMiddlewareOptions } from '../typeguard/isApplyMiddlewareOptions.
 
 export function buildMiddlewareOptionsFromApplyMiddlewareOptions(
   applyMiddlewareOptionsList: (
-    ServiceIdentifier<Middleware> | ApplyMiddlewareOptions
+    | ServiceIdentifier<Middleware>
+    | ApplyMiddlewareOptions
   )[],
 ): MiddlewareOptions {
   const middlewareOptions: MiddlewareOptions = {

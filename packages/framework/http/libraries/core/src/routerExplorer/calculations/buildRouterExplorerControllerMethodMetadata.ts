@@ -38,7 +38,8 @@ export function buildRouterExplorerControllerMethodMetadata<
   controllerMethodMetadata: ControllerMethodMetadata,
 ): RouterExplorerControllerMethodMetadata<TRequest, TResponse, TResult> {
   const controllerMethodParameterMetadataList: (
-    ControllerMethodParameterMetadata | undefined
+    | ControllerMethodParameterMetadata
+    | undefined
   )[] = getControllerMethodParameterMetadataList(
     controllerMetadata.target,
     controllerMethodMetadata.methodKey,

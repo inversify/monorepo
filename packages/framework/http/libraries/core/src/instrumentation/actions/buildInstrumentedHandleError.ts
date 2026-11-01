@@ -70,8 +70,8 @@ export function buildInstrumentedHandleError<TRequest, TResponse, TResult>(
 
     try {
       const errorFilter:
-        ErrorFilter<unknown, TRequest, TResponse, TResult> | undefined =
-        await resolveErrorFilter(error);
+        | ErrorFilter<unknown, TRequest, TResponse, TResult>
+        | undefined = await resolveErrorFilter(error);
 
       if (errorFilter === undefined) {
         try {

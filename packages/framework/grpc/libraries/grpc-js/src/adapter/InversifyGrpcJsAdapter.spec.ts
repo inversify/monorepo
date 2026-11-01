@@ -95,8 +95,8 @@ class FakeGrpcServer {
     }
 
     const handler:
-      GrpcMethodHandler<GrpcJsCall, sendUnaryData<unknown>, void> | undefined =
-      addedService.implementation[name];
+      | GrpcMethodHandler<GrpcJsCall, sendUnaryData<unknown>, void>
+      | undefined = addedService.implementation[name];
 
     if (handler === undefined) {
       throw new Error(`Expected RPC "${name}" to be registered`);
