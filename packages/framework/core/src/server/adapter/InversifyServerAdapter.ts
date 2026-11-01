@@ -73,7 +73,8 @@ export abstract class InversifyServerAdapter<
 
   public applyGlobalMiddleware(
     ...middlewareList: (
-      ServiceIdentifier<Middleware> | ApplyMiddlewareOptions
+      | ServiceIdentifier<Middleware>
+      | ApplyMiddlewareOptions
     )[]
   ): void {
     this.#assertNotBuilt(

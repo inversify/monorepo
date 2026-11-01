@@ -181,7 +181,8 @@ describe(InversifyServerAdapter, () => {
       let phasedPreHandlerMiddleware: ServiceIdentifier<Middleware>;
       let postHandlerMiddleware: ServiceIdentifier<Middleware>;
       let middlewareList: (
-        ServiceIdentifier<Middleware> | ApplyMiddlewareOptions
+        | ServiceIdentifier<Middleware>
+        | ApplyMiddlewareOptions
       )[];
 
       beforeAll(() => {
