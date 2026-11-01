@@ -62,7 +62,8 @@ describe(buildRouterExplorerControllerMethodMetadata, () => {
 
   describe('when called', () => {
     let controllerMethodParameterMetadataListFixture: (
-      ControllerMethodParameterMetadata | undefined
+      | ControllerMethodParameterMetadata
+      | undefined
     )[];
     let controllerMethodStatusCodeMetadataFixture: undefined;
     let classGuardListFixture: Newable<Guard>[];

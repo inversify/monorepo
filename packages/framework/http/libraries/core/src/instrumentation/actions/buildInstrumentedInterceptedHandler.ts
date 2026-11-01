@@ -61,8 +61,8 @@ export function buildInstrumentedInterceptedHandler<
       index: number,
     ): (() => Promise<InterceptorTransformObject>) => {
       const interceptorIdentifier:
-        ServiceIdentifier<Interceptor<TRequest, TResponse>> | undefined =
-        interceptorList[index];
+        | ServiceIdentifier<Interceptor<TRequest, TResponse>>
+        | undefined = interceptorList[index];
 
       if (interceptorIdentifier === undefined) {
         return async (): Promise<InterceptorTransformObject> => {

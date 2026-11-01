@@ -65,7 +65,8 @@ export function buildInstrumentedSyncCallRouteHandler<
   routerExplorerControllerMetadata: RouterExplorerControllerMetadata,
   controllerMethodKey: string | symbol,
   paramBuilders: (
-    ParamBuilder<TRequest, TResponse, TNextFunction> | undefined
+    | ParamBuilder<TRequest, TResponse, TNextFunction>
+    | undefined
   )[],
 ): (
   request: TRequest,
@@ -86,8 +87,8 @@ export function buildInstrumentedSyncCallRouteHandler<
 
     for (let index: number = 0; index < paramBuilders.length; ++index) {
       const paramBuilder:
-        ParamBuilder<TRequest, TResponse, TNextFunction> | undefined =
-        paramBuilders[index];
+        | ParamBuilder<TRequest, TResponse, TNextFunction>
+        | undefined = paramBuilders[index];
 
       if (paramBuilder !== undefined) {
         params[index] = paramBuilder(request, response, next);
@@ -127,7 +128,8 @@ export function buildInstrumentedAsyncCallRouteHandler<
     any
   >,
   paramBuilders: (
-    ParamBuilder<TRequest, TResponse, TNextFunction> | undefined
+    | ParamBuilder<TRequest, TResponse, TNextFunction>
+    | undefined
   )[],
 ): (
   request: TRequest,

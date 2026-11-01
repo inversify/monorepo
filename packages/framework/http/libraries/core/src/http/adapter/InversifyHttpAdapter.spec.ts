@@ -179,6 +179,28 @@ class TestHttpAdapter extends InversifyHttpAdapter<
   ): void {}
 }
 
+function readFirstRouteParams(
+  adapter: TestHttpAdapter,
+): RouteParams<TestRequest, TestResponse, () => void, void> {
+  const routerParams:
+    | RouterParams<TestRequest, TestResponse, () => void, void>
+    | undefined = adapter.routerParamsList[0];
+
+  if (routerParams === undefined) {
+    throw new Error('Expected router params');
+  }
+
+  const routeParams:
+    | RouteParams<TestRequest, TestResponse, () => void, void>
+    | undefined = routerParams.routeParamsList[0];
+
+  if (routeParams === undefined) {
+    throw new Error('Expected route params');
+  }
+
+  return routeParams;
+}
+
 class TestError extends Error {}
 
 @CatchError(TestError)
@@ -650,9 +672,7 @@ describe(InversifyHttpAdapter, () => {
 
         await adapter.build();
 
-        [routeParams] = adapter.routerParamsList[0]?.routeParamsList as [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ];
+        routeParams = readFirstRouteParams(adapter);
 
         requestFixture = { id: 'request' };
         responseFixture = { id: 'response' };
@@ -760,9 +780,7 @@ describe(InversifyHttpAdapter, () => {
 
         await adapter.build();
 
-        [routeParams] = adapter.routerParamsList[0]?.routeParamsList as [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ];
+        routeParams = readFirstRouteParams(adapter);
 
         requestFixture = { id: 'request' };
         responseFixture = { id: 'response' };
@@ -852,9 +870,7 @@ describe(InversifyHttpAdapter, () => {
 
         await adapter.build();
 
-        [routeParams] = adapter.routerParamsList[0]?.routeParamsList as [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ];
+        routeParams = readFirstRouteParams(adapter);
 
         requestFixture = { id: 'request' };
         responseFixture = { id: 'response' };
@@ -937,9 +953,7 @@ describe(InversifyHttpAdapter, () => {
 
         await adapter.build();
 
-        [routeParams] = adapter.routerParamsList[0]?.routeParamsList as [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ];
+        routeParams = readFirstRouteParams(adapter);
 
         requestFixture = { id: 'request' };
         responseFixture = { id: 'response' };
@@ -1004,9 +1018,7 @@ describe(InversifyHttpAdapter, () => {
 
         await adapter.build();
 
-        [routeParams] = adapter.routerParamsList[0]?.routeParamsList as [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ];
+        routeParams = readFirstRouteParams(adapter);
       });
 
       describe('when the route handler is called', () => {
@@ -1136,11 +1148,12 @@ describe(InversifyHttpAdapter, () => {
 
           await adapter.build();
 
-          const [routeParams]: [
-            RouteParams<TestRequest, TestResponse, () => void, void>,
-          ] = adapter.routerParamsList[0]?.routeParamsList as [
-            RouteParams<TestRequest, TestResponse, () => void, void>,
-          ];
+          const routeParams: RouteParams<
+            TestRequest,
+            TestResponse,
+            () => void,
+            void
+          > = readFirstRouteParams(adapter);
 
           await routeParams.handler(
             {
@@ -1210,11 +1223,12 @@ describe(InversifyHttpAdapter, () => {
 
         await adapter.build();
 
-        const [routeParams]: [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ] = adapter.routerParamsList[0]?.routeParamsList as [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ];
+        const routeParams: RouteParams<
+          TestRequest,
+          TestResponse,
+          () => void,
+          void
+        > = readFirstRouteParams(adapter);
         const [guard]: MiddlewareHandler<
           TestRequest,
           TestResponse,
@@ -1268,11 +1282,12 @@ describe(InversifyHttpAdapter, () => {
 
         await adapter.build();
 
-        const [routeParams]: [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ] = adapter.routerParamsList[0]?.routeParamsList as [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ];
+        const routeParams: RouteParams<
+          TestRequest,
+          TestResponse,
+          () => void,
+          void
+        > = readFirstRouteParams(adapter);
         const [guard]: MiddlewareHandler<
           TestRequest,
           TestResponse,
@@ -1345,11 +1360,12 @@ describe(InversifyHttpAdapter, () => {
 
         await adapter.build();
 
-        const [routeParams]: [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ] = adapter.routerParamsList[0]?.routeParamsList as [
-          RouteParams<TestRequest, TestResponse, () => void, void>,
-        ];
+        const routeParams: RouteParams<
+          TestRequest,
+          TestResponse,
+          () => void,
+          void
+        > = readFirstRouteParams(adapter);
         const [guard]: MiddlewareHandler<
           TestRequest,
           TestResponse,
@@ -1405,11 +1421,12 @@ describe(InversifyHttpAdapter, () => {
 
           await adapter.build();
 
-          const [routeParams]: [
-            RouteParams<TestRequest, TestResponse, () => void, void>,
-          ] = adapter.routerParamsList[0]?.routeParamsList as [
-            RouteParams<TestRequest, TestResponse, () => void, void>,
-          ];
+          const routeParams: RouteParams<
+            TestRequest,
+            TestResponse,
+            () => void,
+            void
+          > = readFirstRouteParams(adapter);
           const [guard]: MiddlewareHandler<
             TestRequest,
             TestResponse,
@@ -1456,11 +1473,12 @@ describe(InversifyHttpAdapter, () => {
 
           await adapter.build();
 
-          const [routeParams]: [
-            RouteParams<TestRequest, TestResponse, () => void, void>,
-          ] = adapter.routerParamsList[0]?.routeParamsList as [
-            RouteParams<TestRequest, TestResponse, () => void, void>,
-          ];
+          const routeParams: RouteParams<
+            TestRequest,
+            TestResponse,
+            () => void,
+            void
+          > = readFirstRouteParams(adapter);
 
           await routeParams.handler({ query: { q: 'hero' } }, {}, vitest.fn());
 

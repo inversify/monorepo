@@ -54,11 +54,12 @@ export async function getErrorFilterForError<TRequest, TResponse, TResult>(
   for (const errorType of getErrorTypeChain(error)) {
     if (errorType !== null) {
       const discriminatedErrorFilterOrType:
-        ErrorFilter | Newable<ErrorFilter> | undefined =
-        getErrorFilterFromDiscriminatorMaps(
-          errorType,
-          errorDiscriminatorToFilterMapList,
-        );
+        | ErrorFilter
+        | Newable<ErrorFilter>
+        | undefined = getErrorFilterFromDiscriminatorMaps(
+        errorType,
+        errorDiscriminatorToFilterMapList,
+      );
 
       if (discriminatedErrorFilterOrType !== undefined) {
         return getResolvedErrorFilter(
