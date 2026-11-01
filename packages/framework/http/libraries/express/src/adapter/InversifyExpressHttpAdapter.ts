@@ -203,7 +203,8 @@ export class InversifyExpressHttpAdapter extends InversifyHttpAdapter<
       (
         request as Request & {
           [routeValueMetadataSymbol]?:
-            Map<string | symbol, unknown> | undefined;
+            | Map<string | symbol, unknown>
+            | undefined;
         }
       )[routeValueMetadataSymbol] = routeValueMetadataMap;
 

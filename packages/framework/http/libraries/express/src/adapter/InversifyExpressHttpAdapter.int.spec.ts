@@ -167,6 +167,27 @@ function readPort(server: Server): number {
   return address.port;
 }
 
+async function closeServer(server: Server): Promise<void> {
+  return new Promise<void>(
+    (resolve: () => void, reject: (error: Error) => void) => {
+      server.close((error: Error | undefined) => {
+        if (error === undefined) {
+          resolve();
+        } else {
+          reject(error);
+        }
+      });
+    },
+  );
+}
+
+function isExecutedNativeMiddleware(
+  event: HttpInstrumentationEvent,
+  name: string,
+): boolean {
+  return event.type === 'http.nativeMiddleware.executed' && event.name === name;
+}
+
 describe(InversifyExpressHttpAdapter, () => {
   describe('.build', () => {
     describe('having no instrumentation', () => {
@@ -222,17 +243,7 @@ describe(InversifyExpressHttpAdapter, () => {
       });
 
       afterAll(async () => {
-        await new Promise<void>(
-          (resolve: () => void, reject: (error: Error) => void) => {
-            server.close((error: Error | undefined) => {
-              if (error === undefined) {
-                resolve();
-              } else {
-                reject(error);
-              }
-            });
-          },
-        );
+        await closeServer(server);
       });
 
       describe('when a request is served', () => {
@@ -395,17 +406,7 @@ describe(InversifyExpressHttpAdapter, () => {
 
             await response.arrayBuffer();
           } finally {
-            await new Promise<void>(
-              (resolve: () => void, reject: (error: Error) => void) => {
-                server.close((error: Error | undefined) => {
-                  if (error === undefined) {
-                    resolve();
-                  } else {
-                    reject(error);
-                  }
-                });
-              },
-            );
+            await closeServer(server);
           }
 
           const middlewareExecuted: Extract<
@@ -479,17 +480,7 @@ describe(InversifyExpressHttpAdapter, () => {
             expect(response.status).toBe(200);
             await expect(response.text()).resolves.toBe('ok');
           } finally {
-            await new Promise<void>(
-              (resolve: () => void, reject: (error: Error) => void) => {
-                server.close((error: Error | undefined) => {
-                  if (error === undefined) {
-                    resolve();
-                  } else {
-                    reject(error);
-                  }
-                });
-              },
-            );
+            await closeServer(server);
           }
 
           expect(subApp.mountpath).toBe('/mounted');
@@ -505,10 +496,8 @@ describe(InversifyExpressHttpAdapter, () => {
             ]),
           );
           expect(
-            sink.events.some(
-              (event: HttpInstrumentationEvent): boolean =>
-                event.type === 'http.nativeMiddleware.executed' &&
-                event.name === 'app',
+            sink.events.some((event: HttpInstrumentationEvent): boolean =>
+              isExecutedNativeMiddleware(event, 'app'),
             ),
           ).toBe(false);
         });
@@ -563,17 +552,7 @@ describe(InversifyExpressHttpAdapter, () => {
 
             await response.arrayBuffer();
           } finally {
-            await new Promise<void>(
-              (resolve: () => void, reject: (error: Error) => void) => {
-                server.close((error: Error | undefined) => {
-                  if (error === undefined) {
-                    resolve();
-                  } else {
-                    reject(error);
-                  }
-                });
-              },
-            );
+            await closeServer(server);
           }
 
           expect(
