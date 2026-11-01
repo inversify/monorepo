@@ -7,7 +7,6 @@ import {
 
 import { type FilteredByValueType } from './FilteredByValueType.js';
 
-// eslint-disable-next-line vitest/prefer-describe-function-title
 describe('FilteredByValueType', () => {
   describe('having an object with optional properties of mixed types', () => {
     interface TestObject {

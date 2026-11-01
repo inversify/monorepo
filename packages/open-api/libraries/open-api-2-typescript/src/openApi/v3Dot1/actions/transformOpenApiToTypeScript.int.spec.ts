@@ -489,13 +489,12 @@ describe(transformOpenApiToTypeScript, () => {
       });
 
       it('should not mutate the input document', () => {
-        expect(
-          (
-            openApiObjectFixture.components?.schemas?.['Address'] as {
-              title?: string;
-            }
-          ).title,
-        ).toBeUndefined();
+        const addressSchema: { title?: string } | undefined =
+          openApiObjectFixture.components?.schemas?.['Address'] as
+            | { title?: string }
+            | undefined;
+
+        expect(addressSchema?.title).toBeUndefined();
       });
     });
   });

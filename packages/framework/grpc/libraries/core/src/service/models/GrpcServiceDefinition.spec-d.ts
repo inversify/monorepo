@@ -27,7 +27,6 @@ interface ProtoLoaderServiceDefinition {
   [index: string]: ProtoLoaderMethodDefinition;
 }
 
-// eslint-disable-next-line vitest/prefer-describe-function-title
 describe('GrpcServiceDefinition', () => {
   describe('having a generated definition with typed serializers', () => {
     describe('when used as GrpcServiceDefinition', () => {

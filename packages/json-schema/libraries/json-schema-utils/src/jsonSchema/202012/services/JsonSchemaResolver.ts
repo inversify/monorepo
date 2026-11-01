@@ -109,8 +109,8 @@ export class JsonSchemaResolver {
     }
 
     const currentScope:
-      SingleImmutableLinkedList<DynamicScopeEntry> | undefined =
-      enterResult.value;
+      | SingleImmutableLinkedList<DynamicScopeEntry>
+      | undefined = enterResult.value;
 
     const tree: SchemaResolutionSuccessTree = {
       $dynamicRef: undefined,
@@ -312,7 +312,8 @@ export class JsonSchemaResolver {
 
   #buildResolutionFailure(
     dynamicScopeEntries:
-      SingleImmutableLinkedList<DynamicScopeEntry> | undefined,
+      | SingleImmutableLinkedList<DynamicScopeEntry>
+      | undefined,
     reason: string,
   ): ResolutionFailure {
     const resolutionContextStack: ResolutionContext[] = (
@@ -336,7 +337,8 @@ export class JsonSchemaResolver {
 
   #calculateCanonicalId(
     dynamicScopeEntries:
-      SingleImmutableLinkedList<DynamicScopeEntry> | undefined,
+      | SingleImmutableLinkedList<DynamicScopeEntry>
+      | undefined,
     ref: string,
     baseRef: string | undefined,
   ): Either<ResolutionFailure, Uri> {

@@ -213,7 +213,8 @@ describe(traverseOpenApi3Dot2HeaderObjectJsonSchemas, () => {
           jsonPointer: '',
           schema: (
             headerObjectFixture.content?.['application/json'] as
-              OpenApi3Dot2MediaTypeObject | undefined
+              | OpenApi3Dot2MediaTypeObject
+              | undefined
           )?.schema,
         },
         callbackMock,
@@ -256,7 +257,8 @@ describe(traverseOpenApi3Dot2HeaderObjectJsonSchemas, () => {
           jsonPointer: '',
           schema: (
             headerObjectFixture.content?.['application/json'] as
-              OpenApi3Dot2MediaTypeObject | undefined
+              | OpenApi3Dot2MediaTypeObject
+              | undefined
           )?.schema,
         },
         callbackMock,
@@ -376,7 +378,8 @@ describe(traverseOpenApi3Dot2ParameterObjectJsonSchemas, () => {
           jsonPointer: '',
           schema: (
             parameterObjectFixture.content?.['application/json'] as
-              OpenApi3Dot2MediaTypeObject | undefined
+              | OpenApi3Dot2MediaTypeObject
+              | undefined
           )?.schema,
         },
         callbackMock,
@@ -420,7 +423,8 @@ describe(traverseOpenApi3Dot2ParameterObjectJsonSchemas, () => {
           jsonPointer: '',
           schema: (
             parameterObjectFixture.content?.['application/json'] as
-              OpenApi3Dot2MediaTypeObject | undefined
+              | OpenApi3Dot2MediaTypeObject
+              | undefined
           )?.schema,
         },
         callbackMock,
@@ -535,7 +539,8 @@ describe(traverseOpenApi3Dot2RequestBodyObjectJsonSchemas, () => {
           jsonPointer: '',
           schema: (
             requestBodyObjectFixture.content['application/json'] as
-              OpenApi3Dot2MediaTypeObject | undefined
+              | OpenApi3Dot2MediaTypeObject
+              | undefined
           )?.schema,
         },
         callbackMock,
@@ -596,7 +601,8 @@ describe(traverseOpenApi3Dot2ResponseObjectJsonSchemas, () => {
           jsonPointer: '',
           schema: (
             responseObjectFixture.content?.['application/json'] as
-              OpenApi3Dot2MediaTypeObject | undefined
+              | OpenApi3Dot2MediaTypeObject
+              | undefined
           )?.schema,
         },
         callbackMock,
@@ -643,7 +649,8 @@ describe(traverseOpenApi3Dot2ResponseObjectJsonSchemas, () => {
           jsonPointer: '',
           schema: (
             responseObjectFixture.content?.['application/json'] as
-              OpenApi3Dot2MediaTypeObject | undefined
+              | OpenApi3Dot2MediaTypeObject
+              | undefined
           )?.schema,
         },
         callbackMock,
