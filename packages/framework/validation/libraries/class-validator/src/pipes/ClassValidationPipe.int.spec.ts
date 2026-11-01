@@ -1,9 +1,13 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import http, { RequestListener } from 'node:http';
-import { AddressInfo } from 'node:net';
+import http, { type RequestListener } from 'node:http';
+import { type AddressInfo } from 'node:net';
 
-import { CatchError, ErrorFilter, Pipe } from '@inversifyjs/framework-core';
+import {
+  CatchError,
+  type ErrorFilter,
+  type Pipe,
+} from '@inversifyjs/framework-core';
 import {
   BadRequestHttpResponse,
   Body,
@@ -14,7 +18,7 @@ import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { InversifyValidationError } from '@inversifyjs/validation-common';
 import { IsString } from 'class-validator';
 import type express from 'express';
-import { Container, Newable } from 'inversify';
+import { Container, type Newable } from 'inversify';
 
 import { ClassValidationPipe } from './ClassValidationPipe.js';
 
