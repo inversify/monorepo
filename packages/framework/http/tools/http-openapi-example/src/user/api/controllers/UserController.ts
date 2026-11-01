@@ -6,17 +6,17 @@ import {
   OasResponse,
   OasSummary,
   OasTag,
-  ToSchemaFunction,
+  type ToSchemaFunction,
 } from '@inversifyjs/http-open-api';
 import {
-  OpenApi3Dot1RequestBodyObject,
-  OpenApi3Dot1ResponseObject,
+  type OpenApi3Dot1RequestBodyObject,
+  type OpenApi3Dot1ResponseObject,
 } from '@inversifyjs/open-api-types/v3Dot1';
 import { ValidatedBody } from '@inversifyjs/open-api-validation';
 import { inject } from 'inversify';
 
 import { UserService } from '../../domain/services/UserService.js';
-import { User, UserType } from '../models/User.js';
+import { User, type UserType } from '../models/User.js';
 import { UserCreateQuery } from '../models/UserCreateQuery.js';
 
 @Controller('/users')

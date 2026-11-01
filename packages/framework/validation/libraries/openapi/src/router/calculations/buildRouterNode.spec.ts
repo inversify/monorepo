@@ -9,6 +9,43 @@ import {
 } from '../models/RouterNodeParamMatch.js';
 import { buildRouterNode } from './buildRouterNode.js';
 
+function lookupLiteral(
+  node: RouterNode | undefined,
+  segment: string,
+): RouterNode | undefined {
+  if (node === undefined) {
+    return undefined;
+  }
+
+  return trieLookup(node.nextLiterals, segment, 0, segment.length);
+}
+
+function readParamMatch(node: RouterNode | undefined): RouterNodeParamMatch {
+  const match: RouterNode['match'] = node?.match;
+
+  if (match === undefined || match.kind !== RouterNodeMatchKind.param) {
+    throw new Error('Expected a param match');
+  }
+
+  return match;
+}
+
+function readFirstConstraint(
+  route: RouterNodeParamMatchRoute | undefined,
+): RegExp {
+  if (route === undefined) {
+    throw new Error('Expected a route');
+  }
+
+  const constraint: [number, RegExp] | undefined = route.constraints[0];
+
+  if (constraint === undefined) {
+    throw new Error('Expected a constraint');
+  }
+
+  return constraint[1];
+}
+
 describe(buildRouterNode, () => {
   describe('having an empty paths array', () => {
     describe('when called', () => {
@@ -42,10 +79,10 @@ describe(buildRouterNode, () => {
           0,
           0,
         );
-        const usersNode: RouterNode | undefined =
-          leadingEmpty !== undefined
-            ? trieLookup(leadingEmpty.nextLiterals, 'users', 0, 5)
-            : undefined;
+        const usersNode: RouterNode | undefined = lookupLiteral(
+          leadingEmpty,
+          'users',
+        );
 
         expect(usersNode).toBeDefined();
         expect(usersNode?.match).toStrictEqual({
@@ -73,10 +110,10 @@ describe(buildRouterNode, () => {
           0,
           0,
         );
-        const usersNode: RouterNode | undefined =
-          leadingEmpty !== undefined
-            ? trieLookup(leadingEmpty.nextLiterals, 'users', 0, 5)
-            : undefined;
+        const usersNode: RouterNode | undefined = lookupLiteral(
+          leadingEmpty,
+          'users',
+        );
         const paramNode: RouterNode | undefined = usersNode?.nextParam;
 
         expect(paramNode).toBeDefined();
@@ -108,14 +145,14 @@ describe(buildRouterNode, () => {
           0,
         );
 
-        const usersNode: RouterNode | undefined =
-          leadingEmpty !== undefined
-            ? trieLookup(leadingEmpty.nextLiterals, 'users', 0, 5)
-            : undefined;
-        const postsNode: RouterNode | undefined =
-          leadingEmpty !== undefined
-            ? trieLookup(leadingEmpty.nextLiterals, 'posts', 0, 5)
-            : undefined;
+        const usersNode: RouterNode | undefined = lookupLiteral(
+          leadingEmpty,
+          'users',
+        );
+        const postsNode: RouterNode | undefined = lookupLiteral(
+          leadingEmpty,
+          'posts',
+        );
 
         expect(usersNode?.match).toStrictEqual({
           kind: RouterNodeMatchKind.literal,
@@ -144,15 +181,12 @@ describe(buildRouterNode, () => {
           0,
           0,
         );
-        const usersNode: RouterNode | undefined =
-          leadingEmpty !== undefined
-            ? trieLookup(leadingEmpty.nextLiterals, 'users', 0, 5)
-            : undefined;
+        const usersNode: RouterNode | undefined = lookupLiteral(
+          leadingEmpty,
+          'users',
+        );
 
-        const meNode: RouterNode | undefined =
-          usersNode !== undefined
-            ? trieLookup(usersNode.nextLiterals, 'me', 0, 2)
-            : undefined;
+        const meNode: RouterNode | undefined = lookupLiteral(usersNode, 'me');
 
         expect(meNode?.match).toStrictEqual({
           kind: RouterNodeMatchKind.literal,
@@ -186,14 +220,14 @@ describe(buildRouterNode, () => {
           0,
           0,
         );
-        const usersNode: RouterNode | undefined =
-          leadingEmpty !== undefined
-            ? trieLookup(leadingEmpty.nextLiterals, 'users', 0, 5)
-            : undefined;
-        const adminNode: RouterNode | undefined =
-          usersNode !== undefined
-            ? trieLookup(usersNode.nextLiterals, 'admin', 0, 5)
-            : undefined;
+        const usersNode: RouterNode | undefined = lookupLiteral(
+          leadingEmpty,
+          'users',
+        );
+        const adminNode: RouterNode | undefined = lookupLiteral(
+          usersNode,
+          'admin',
+        );
 
         // `/users/admin` is not itself a registered route, but it should
         // match `/users/{userId}` — so the admin node needs a param match.
@@ -204,10 +238,10 @@ describe(buildRouterNode, () => {
 
         expect(adminMatch.routes[0]?.route).toBe('/users/{userId}');
 
-        const settingsNode: RouterNode | undefined =
-          adminNode !== undefined
-            ? trieLookup(adminNode.nextLiterals, 'settings', 0, 8)
-            : undefined;
+        const settingsNode: RouterNode | undefined = lookupLiteral(
+          adminNode,
+          'settings',
+        );
 
         expect(settingsNode?.match).toStrictEqual({
           kind: RouterNodeMatchKind.literal,
@@ -232,22 +266,21 @@ describe(buildRouterNode, () => {
           0,
           0,
         );
-        const usersNode: RouterNode | undefined =
-          leadingEmpty !== undefined
-            ? trieLookup(leadingEmpty.nextLiterals, 'users', 0, 5)
-            : undefined;
+        const usersNode: RouterNode | undefined = lookupLiteral(
+          leadingEmpty,
+          'users',
+        );
         const userIdNode: RouterNode | undefined = usersNode?.nextParam;
-        const postsNode: RouterNode | undefined =
-          userIdNode !== undefined
-            ? trieLookup(userIdNode.nextLiterals, 'posts', 0, 5)
-            : undefined;
+        const postsNode: RouterNode | undefined = lookupLiteral(
+          userIdNode,
+          'posts',
+        );
         const postIdNode: RouterNode | undefined = postsNode?.nextParam;
 
         expect(postIdNode?.match?.kind).toBe(RouterNodeMatchKind.param);
 
-        const [route]: RouterNodeParamMatchRoute[] = (
-          postIdNode?.match as RouterNodeParamMatch
-        ).routes;
+        const [route]: RouterNodeParamMatchRoute[] =
+          readParamMatch(postIdNode).routes;
 
         expect(route?.route).toBe('/users/{userId}/posts/{postId}');
         expect(route?.constraints).toHaveLength(2);
@@ -270,10 +303,10 @@ describe(buildRouterNode, () => {
           0,
           0,
         );
-        const filesNode: RouterNode | undefined =
-          leadingEmpty !== undefined
-            ? trieLookup(leadingEmpty.nextLiterals, 'files', 0, 5)
-            : undefined;
+        const filesNode: RouterNode | undefined = lookupLiteral(
+          leadingEmpty,
+          'files',
+        );
         const paramNode: RouterNode | undefined = filesNode?.nextParam;
 
         expect(paramNode?.match?.kind).toBe(RouterNodeMatchKind.param);
@@ -313,10 +346,7 @@ describe(buildRouterNode, () => {
 
         expect(route?.constraints).toHaveLength(1);
 
-        const constraintEntry: [number, RegExp] = (
-          route?.constraints as [number, RegExp][]
-        )[0] as [number, RegExp];
-        const constraint: RegExp = constraintEntry[1];
+        const constraint: RegExp = readFirstConstraint(route);
 
         expect(constraint.test('abc+')).toBe(true);
         expect(constraint.test('abc')).toBe(false);
@@ -339,10 +369,10 @@ describe(buildRouterNode, () => {
           0,
           0,
         );
-        const filesNode: RouterNode | undefined =
-          leadingEmpty !== undefined
-            ? trieLookup(leadingEmpty.nextLiterals, 'files', 0, 5)
-            : undefined;
+        const filesNode: RouterNode | undefined = lookupLiteral(
+          leadingEmpty,
+          'files',
+        );
         const paramNode: RouterNode | undefined = filesNode?.nextParam;
 
         expect(paramNode?.match?.kind).toBe(RouterNodeMatchKind.param);
@@ -375,10 +405,10 @@ describe(buildRouterNode, () => {
           0,
           0,
         );
-        const usersNode: RouterNode | undefined =
-          leadingEmpty !== undefined
-            ? trieLookup(leadingEmpty.nextLiterals, 'users', 0, 5)
-            : undefined;
+        const usersNode: RouterNode | undefined = lookupLiteral(
+          leadingEmpty,
+          'users',
+        );
 
         expect(usersNode?.match).toStrictEqual({
           kind: RouterNodeMatchKind.literal,

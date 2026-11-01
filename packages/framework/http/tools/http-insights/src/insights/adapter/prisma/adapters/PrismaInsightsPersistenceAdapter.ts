@@ -6,13 +6,13 @@ import {
   type CallsFilterQuery,
 } from '../../../application/models/CallsFilterQuery.js';
 import {
-  CallsFindQuery,
+  type CallsFindQuery,
   type CompletedCallsFindQuery,
   type OngoingCallsFindQuery,
 } from '../../../application/models/CallsFindQuery.js';
-import { CallsFindQueryResult } from '../../../application/models/CallsFindQueryResult.js';
+import { type CallsFindQueryResult } from '../../../application/models/CallsFindQueryResult.js';
 import { type ExecuteUpdateCommand } from '../../../application/models/ExecuteUpdateCommand.js';
-import { OngoingCallsFindQueryResult } from '../../../application/models/OngoingCallsFindQueryResult.js';
+import { type OngoingCallsFindQueryResult } from '../../../application/models/OngoingCallsFindQueryResult.js';
 import { type CallPersistenceOutputPort } from '../../../application/ports/CallPersistenceOutputPort.js';
 import { type Call } from '../../../domain/models/Call.js';
 import { type Controller } from '../../../domain/models/Controller.js';

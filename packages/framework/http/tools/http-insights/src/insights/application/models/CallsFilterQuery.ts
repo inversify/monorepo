@@ -20,4 +20,5 @@ export interface OngoingCallsFilterQuery extends BaseCallsFilterQuery {
 }
 
 export type CallsFilterQuery =
-  CompletedCallsFilterQuery | OngoingCallsFilterQuery;
+  | CompletedCallsFilterQuery
+  | OngoingCallsFilterQuery;

@@ -1,6 +1,6 @@
 import { OasSchema, OasSchemaProperty } from '@inversifyjs/http-open-api';
 
-import { Interface } from '../../../common/utils/Interface.js';
+import { type Interface } from '../../../common/utils/Interface.js';
 
 @OasSchema(undefined, {
   customAttributes: {

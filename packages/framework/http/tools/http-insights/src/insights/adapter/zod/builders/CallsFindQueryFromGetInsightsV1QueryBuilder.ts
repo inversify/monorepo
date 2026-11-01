@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
 
-import { Builder } from '../../../../foundation/modules/Builder.js';
+import { type Builder } from '../../../../foundation/modules/Builder.js';
 import { type CompletedCallsFindQuery } from '../../../application/models/CallsFindQuery.js';
-import { GetCallsV1Query } from '../schemas/GetCallsV1Query.js';
+import { type GetCallsV1Query } from '../schemas/GetCallsV1Query.js';
 
 @injectable()
 export class CallsFindQueryFromGetInsightsV1QueryBuilder implements Builder<

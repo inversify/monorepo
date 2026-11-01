@@ -4,9 +4,9 @@ import { inject, injectable } from 'inversify';
 import { type RootDatabase } from 'lmdb';
 
 import { lmdbDbServiceIdentifier } from '../../../../foundation/db/domain/models/lmdbDbServiceIdentifier.js';
-import { UserPersistenceService } from '../../../domain/services/UserPersistenceService.js';
-import { UserCreateQueryDb } from '../models/UserCreateQueryDb.js';
-import { UserDb } from '../models/UserDb.js';
+import { type UserPersistenceService } from '../../../domain/services/UserPersistenceService.js';
+import { type UserCreateQueryDb } from '../models/UserCreateQueryDb.js';
+import { type UserDb } from '../models/UserDb.js';
 
 @injectable()
 export class LmdbUserRepository implements UserPersistenceService {

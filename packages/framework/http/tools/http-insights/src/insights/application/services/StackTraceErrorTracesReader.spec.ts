@@ -307,7 +307,7 @@ describe(StackTraceErrorTracesReader, () => {
         });
 
         it('should parse the outer stack before the cause stack', () => {
-          const statements: readonly string[] = (result ?? []).map(
+          const statements: readonly string[] = requireTraces(result).map(
             (trace: ErrorTrace): string => trace.traceStatement,
           );
           const outerIndex: number = statements.findIndex(
@@ -654,6 +654,16 @@ describe(StackTraceErrorTracesReader, () => {
 interface CapturedCause {
   readonly causeStack: string;
   readonly stack: string;
+}
+
+function requireTraces(
+  traces: readonly ErrorTrace[] | null,
+): readonly ErrorTrace[] {
+  if (traces === null) {
+    throw new Error('Expected error traces');
+  }
+
+  return traces;
 }
 
 function readCapturedCause(stdout: string): CapturedCause {
