@@ -1,6 +1,6 @@
 // Shift-line-spaces-2
 import { buildProviderModule, provide } from '@inversifyjs/binding-decorators';
-import { Container, inject, injectable, Newable } from 'inversify';
+import { Container, inject, injectable, type Newable } from 'inversify';
 
 let containerFromExexution: Container;
 let ninjaType: Newable;
