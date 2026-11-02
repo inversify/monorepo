@@ -3,4 +3,4 @@
 AGENTS.md
 CHANGELOG.md
 .lintstagedrc.json
-prettier.config.mjs
+oxfmt.config.mts
