@@ -7,7 +7,7 @@ import {
 import { Body, Controller, Post } from '@inversifyjs/http-core';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';
-import Ajv, { AnySchema } from 'ajv';
+import Ajv, { type AnySchema } from 'ajv';
 import { Container } from 'inversify';
 
 const container: Container = new Container();
