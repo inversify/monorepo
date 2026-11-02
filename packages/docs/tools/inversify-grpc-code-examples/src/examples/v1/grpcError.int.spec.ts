@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type ServiceError, status } from '@grpc/grpc-js';
 import { RPC, Service } from '@inversifyjs/grpc-core';
-import { Container } from 'inversify';
+import { type Container } from 'inversify';
 
 import {
   captureServiceError,

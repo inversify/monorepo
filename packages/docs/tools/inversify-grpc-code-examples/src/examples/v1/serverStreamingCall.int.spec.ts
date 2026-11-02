@@ -8,7 +8,7 @@ import {
   RPC,
   Service,
 } from '@inversifyjs/grpc-core';
-import { Container } from 'inversify';
+import { type Container } from 'inversify';
 
 import {
   connectHeroListClient,
