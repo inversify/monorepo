@@ -41,7 +41,7 @@
     "prettier": "3.9.10",
     "prisma": "7.10.1",
     "tsx": "4.23.15",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "typescript-eslint": "8.72.0"
   }
 }
