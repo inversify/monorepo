@@ -10,7 +10,7 @@
     "@inversifyjs/logger": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "1.5.0",
     "mime-types": "^3.0.2",
-    "swagger-ui-dist": "^5.34.0"
+    "swagger-ui-dist": "^5.34.1"
   },
   "devDependencies": {
     "@hono/node-server": "2.1.5",
