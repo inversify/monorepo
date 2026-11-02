@@ -16,7 +16,7 @@
     "@types/node": "24.19.2",
     "@vitest/coverage-v8": "5.0.5",
     "eslint": "10.13.0",
-    "glob": "13.0.6",
+    "glob": "14.0.3",
     "grpc-tools": "1.13.1",
     "inversify": "8.2.3",
     "prettier": "3.9.10",
