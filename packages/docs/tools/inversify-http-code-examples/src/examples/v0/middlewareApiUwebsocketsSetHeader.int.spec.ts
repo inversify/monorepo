@@ -4,7 +4,7 @@ import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
 import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer.js';
-import { Server } from '../../server/models/Server.js';
+import { type Server } from '../../server/models/Server.js';
 import { UwebsocketsCustomHeaderMiddleware } from './middlewareApiUwebsocketsSetHeader.js';
 
 describe('Middleware API (uWebSockets.js)', () => {

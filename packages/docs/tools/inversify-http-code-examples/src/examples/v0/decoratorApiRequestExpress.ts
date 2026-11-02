@@ -4,7 +4,7 @@ import {
   Get,
   Request,
 } from '@inversifyjs/http-core';
-import express from 'express';
+import type express from 'express';
 
 // Begin-example
 @Controller('/headers')

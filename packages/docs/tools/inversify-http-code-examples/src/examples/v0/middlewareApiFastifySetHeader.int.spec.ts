@@ -4,7 +4,7 @@ import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
-import { Server } from '../../server/models/Server.js';
+import { type Server } from '../../server/models/Server.js';
 import { FastifyCustomHeaderMiddleware } from './middlewareApiFastifySetHeader.js';
 
 describe('Middleware API (Fastify)', () => {

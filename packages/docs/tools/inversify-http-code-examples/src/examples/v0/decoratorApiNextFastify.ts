@@ -1,5 +1,5 @@
 import { Controller, Get, Next, UseInterceptor } from '@inversifyjs/http-core';
-import { FastifyInterceptor } from '@inversifyjs/http-fastify';
+import { type FastifyInterceptor } from '@inversifyjs/http-fastify';
 import { type FastifyReply, type FastifyRequest } from 'fastify';
 
 export class FastifyNextInterceptor implements FastifyInterceptor {

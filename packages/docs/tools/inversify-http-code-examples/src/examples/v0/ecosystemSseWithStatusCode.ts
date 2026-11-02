@@ -1,8 +1,8 @@
 import { Controller, Get, HttpStatusCode } from '@inversifyjs/http-core';
 import {
-  MessageEvent,
+  type MessageEvent,
   SsePublisher,
-  SsePublisherOptions,
+  type SsePublisherOptions,
 } from '@inversifyjs/http-sse';
 
 // Begin-example

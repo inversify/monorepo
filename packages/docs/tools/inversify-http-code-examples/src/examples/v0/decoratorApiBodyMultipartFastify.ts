@@ -1,4 +1,4 @@
-import { Multipart } from '@fastify/multipart';
+import { type Multipart } from '@fastify/multipart';
 import { Body, Controller, Post } from '@inversifyjs/http-core';
 
 export interface UploadResult {

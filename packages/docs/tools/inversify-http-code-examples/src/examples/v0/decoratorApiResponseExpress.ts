@@ -1,5 +1,5 @@
 import { Controller, Get, Response } from '@inversifyjs/http-core';
-import express from 'express';
+import type express from 'express';
 
 // Begin-example
 @Controller('/message')

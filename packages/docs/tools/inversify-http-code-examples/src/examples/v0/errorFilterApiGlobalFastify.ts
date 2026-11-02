@@ -6,9 +6,9 @@ import {
   isHttpResponse,
   NotFoundHttpResponse,
 } from '@inversifyjs/http-core';
-import { FastifyErrorFilter } from '@inversifyjs/http-fastify';
-import { ConsoleLogger, Logger } from '@inversifyjs/logger';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { type FastifyErrorFilter } from '@inversifyjs/http-fastify';
+import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
+import { type FastifyReply, type FastifyRequest } from 'fastify';
 
 // Begin-example
 @CatchError()

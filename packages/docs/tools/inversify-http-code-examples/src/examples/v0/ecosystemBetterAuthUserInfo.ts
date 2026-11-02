@@ -3,10 +3,10 @@
 import {
   betterAuthMiddlewareServiceIdentifier,
   HonoUserSession,
-  UserSession,
+  type UserSession,
 } from '@inversifyjs/http-better-auth';
 import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
-import { BetterAuthOptions } from 'better-auth';
+import { type BetterAuthOptions } from 'better-auth';
 
 export async function run(): Promise<void> {
   // Begin-example

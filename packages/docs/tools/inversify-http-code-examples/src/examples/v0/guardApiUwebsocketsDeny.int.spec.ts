@@ -4,7 +4,7 @@ import { Controller, Get, UseGuard } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
 import { buildUwebSocketsJsServer } from '../../server/adapter/uWebSocketsJs/actions/buildUwebSocketsJsServer.js';
-import { Server } from '../../server/models/Server.js';
+import { type Server } from '../../server/models/Server.js';
 import { UwebsocketsDenyGuard } from './guardApiUwebsocketsDeny.js';
 
 describe('Guard API deny (uWebSockets.js)', () => {

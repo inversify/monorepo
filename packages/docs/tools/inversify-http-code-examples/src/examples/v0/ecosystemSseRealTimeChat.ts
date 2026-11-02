@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@inversifyjs/http-core';
 import {
   SsePublisher,
-  SsePublisherOptions,
+  type SsePublisherOptions,
   SseStream,
 } from '@inversifyjs/http-sse';
 import { injectable } from 'inversify';

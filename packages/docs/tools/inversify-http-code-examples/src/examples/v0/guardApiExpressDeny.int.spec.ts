@@ -4,7 +4,7 @@ import { Controller, Get, UseGuard } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
 import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
-import { Server } from '../../server/models/Server.js';
+import { type Server } from '../../server/models/Server.js';
 import { ExpressDenyGuard } from './guardApiExpressDeny.js';
 
 describe('Guard API deny (Express 5)', () => {

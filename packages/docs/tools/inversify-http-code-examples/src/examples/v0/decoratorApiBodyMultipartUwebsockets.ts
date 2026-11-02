@@ -1,7 +1,7 @@
 import { TextDecoder } from 'node:util';
 
 import { Body, Controller, Post } from '@inversifyjs/http-core';
-import { MultipartField } from 'uWebSockets.js';
+import { type MultipartField } from 'uWebSockets.js';
 
 export interface UploadResult {
   fileName: string;

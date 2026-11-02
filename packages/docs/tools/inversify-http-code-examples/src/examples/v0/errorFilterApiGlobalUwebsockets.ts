@@ -6,9 +6,9 @@ import {
   isHttpResponse,
   NotFoundHttpResponse,
 } from '@inversifyjs/http-core';
-import { UwebSocketsErrorFilter } from '@inversifyjs/http-uwebsockets';
-import { ConsoleLogger, Logger } from '@inversifyjs/logger';
-import { HttpRequest, HttpResponse } from 'uWebSockets.js';
+import { type UwebSocketsErrorFilter } from '@inversifyjs/http-uwebsockets';
+import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
+import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 // Begin-example
 @CatchError()

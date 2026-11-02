@@ -6,9 +6,9 @@ import {
   isHttpResponse,
   NotFoundHttpResponse,
 } from '@inversifyjs/http-core';
-import { ExpressErrorFilter } from '@inversifyjs/http-express';
-import { ConsoleLogger, Logger } from '@inversifyjs/logger';
-import express from 'express';
+import { type ExpressErrorFilter } from '@inversifyjs/http-express';
+import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
+import type express from 'express';
 
 // Begin-example
 @CatchError()

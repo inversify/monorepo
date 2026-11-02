@@ -4,7 +4,7 @@ import { Controller, Get, UseGuard } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
-import { Server } from '../../server/models/Server.js';
+import { type Server } from '../../server/models/Server.js';
 import { HonoAllowGuard } from './guardApiHonoAllow.js';
 
 describe('Guard API (Hono)', () => {

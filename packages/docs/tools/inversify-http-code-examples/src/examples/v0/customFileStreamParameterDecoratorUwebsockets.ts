@@ -2,18 +2,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
-import { Readable } from 'node:stream';
+import { type Readable } from 'node:stream';
 
 import {
   BadRequestHttpResponse,
   Controller,
   createCustomNativeParameterDecorator,
-  CustomNativeParameterDecoratorHandlerOptions,
+  type CustomNativeParameterDecoratorHandlerOptions,
   Get,
   HttpStatusCode,
   Params,
-  Pipe,
-  PipeMetadata,
+  type Pipe,
+  type PipeMetadata,
 } from '@inversifyjs/http-core';
 import { pipeKnownSizeStreamOverResponse } from '@inversifyjs/http-uwebsockets';
 import { injectable } from 'inversify';

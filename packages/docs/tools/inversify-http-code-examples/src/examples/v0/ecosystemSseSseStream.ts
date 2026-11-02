@@ -2,7 +2,7 @@
 import { Controller, Get } from '@inversifyjs/http-core';
 import {
   SsePublisher,
-  SsePublisherOptions,
+  type SsePublisherOptions,
   SseStream,
 } from '@inversifyjs/http-sse';
 

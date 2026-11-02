@@ -6,7 +6,7 @@ import { Container } from 'inversify';
 import { buildExpressServer } from '../../server/adapter/express/actions/buildExpressServer.js';
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
-import { Server } from '../../server/models/Server.js';
+import { type Server } from '../../server/models/Server.js';
 import { ParseNumberPipe } from './pipeApiParseNumber.js';
 
 interface SumResult {

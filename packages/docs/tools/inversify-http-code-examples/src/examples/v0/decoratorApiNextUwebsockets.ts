@@ -1,12 +1,12 @@
 import {
   Controller,
   Get,
-  InterceptorTransformObject,
+  type InterceptorTransformObject,
   Next,
   UseInterceptor,
 } from '@inversifyjs/http-core';
-import { UwebSocketsInterceptor } from '@inversifyjs/http-uwebsockets';
-import { HttpRequest, HttpResponse } from 'uWebSockets.js';
+import { type UwebSocketsInterceptor } from '@inversifyjs/http-uwebsockets';
+import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 export class UwebsocketsNextInterceptor implements UwebSocketsInterceptor {
   public async intercept(
