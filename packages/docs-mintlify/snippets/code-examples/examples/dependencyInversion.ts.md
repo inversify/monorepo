@@ -1,5 +1,5 @@
 ```ts
-import { Container, inject, injectable, interfaces } from 'inversify';
+import { Container, inject, injectable, type interfaces } from 'inversify';
 
 interface Weapon {
   damage: number;

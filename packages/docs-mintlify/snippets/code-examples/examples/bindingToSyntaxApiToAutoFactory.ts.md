@@ -12,11 +12,11 @@ class Ninja implements Ninja {
     this.#shuriken = shuriken;
   }
 
-  public fight() {
+  public fight(): string {
     return this.#katana.hit();
   }
 
-  public sneak() {
+  public sneak(): string {
     return this.#shuriken.throw();
   }
 }
