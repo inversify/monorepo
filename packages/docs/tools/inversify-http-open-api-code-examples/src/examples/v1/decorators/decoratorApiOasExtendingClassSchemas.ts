@@ -1,7 +1,7 @@
 import {
   OasSchema,
   OasSchemaProperty,
-  ToSchemaFunction,
+  type ToSchemaFunction,
 } from '@inversifyjs/http-open-api';
 
 // Begin-example

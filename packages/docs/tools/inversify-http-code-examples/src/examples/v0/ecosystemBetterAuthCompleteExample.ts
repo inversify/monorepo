@@ -5,11 +5,11 @@ import {
   BetterAuthHonoContainerModule,
   betterAuthMiddlewareServiceIdentifier,
   HonoUserSession,
-  UserSession,
+  type UserSession,
 } from '@inversifyjs/http-better-auth';
 import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
 import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
-import { betterAuth, BetterAuthOptions } from 'better-auth';
+import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import BetterSqlite3 from 'better-sqlite3';
 import { Container } from 'inversify';
 

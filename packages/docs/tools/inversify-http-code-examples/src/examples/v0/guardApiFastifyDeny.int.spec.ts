@@ -4,7 +4,7 @@ import { Controller, Get, UseGuard } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
 import { buildFastifyServer } from '../../server/adapter/fastify/actions/buildFastifyServer.js';
-import { Server } from '../../server/models/Server.js';
+import { type Server } from '../../server/models/Server.js';
 import { FastifyDenyGuard } from './guardApiFastifyDeny.js';
 
 describe('Guard API deny (Fastify)', () => {

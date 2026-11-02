@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { BindingIdentifier, Container, injectable } from 'inversify8';
+import { type BindingIdentifier, Container, injectable } from 'inversify8';
 
 @injectable()
 class MyServiceImpl {}

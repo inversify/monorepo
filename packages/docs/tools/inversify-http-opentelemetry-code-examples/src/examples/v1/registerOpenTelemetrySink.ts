@@ -4,7 +4,7 @@ import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
 import { createHttpOpenTelemetrySink } from '@inversifyjs/http-opentelemetry';
 // Exclude-from-example
 import { type Hono } from 'hono';
-import { Container } from 'inversify';
+import { type Container } from 'inversify';
 
 @Controller('/items')
 export class ItemsController {

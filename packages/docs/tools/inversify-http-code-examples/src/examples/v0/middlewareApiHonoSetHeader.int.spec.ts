@@ -4,7 +4,7 @@ import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
 import { Container } from 'inversify';
 
 import { buildHonoServer } from '../../server/adapter/hono/actions/buildHonoServer.js';
-import { Server } from '../../server/models/Server.js';
+import { type Server } from '../../server/models/Server.js';
 import { HonoCustomHeaderMiddleware } from './middlewareApiHonoSetHeader.js';
 
 describe('Middleware API (Hono)', () => {

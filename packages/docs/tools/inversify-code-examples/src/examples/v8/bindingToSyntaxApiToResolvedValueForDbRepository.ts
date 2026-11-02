@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { Container, inject, injectable, Newable } from 'inversify8';
+import { Container, inject, injectable, type Newable } from 'inversify8';
 
 class AwesomeDbDriverCollectionImplementation<
   T,

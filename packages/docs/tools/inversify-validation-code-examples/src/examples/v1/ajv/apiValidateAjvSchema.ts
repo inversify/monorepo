@@ -2,7 +2,7 @@
 // Begin-example
 import { ValidateAjvSchema } from '@inversifyjs/ajv-validation';
 import { Body, Controller, Post } from '@inversifyjs/http-core';
-import { AnySchema } from 'ajv';
+import { type AnySchema } from 'ajv';
 
 interface User {
   name: string;

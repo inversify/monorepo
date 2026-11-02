@@ -1,5 +1,10 @@
 ```ts
-import { Container, inject, injectable, ServiceIdentifier } from 'inversify';
+import {
+  Container,
+  inject,
+  injectable,
+  type ServiceIdentifier,
+} from 'inversify';
 
 interface Weapon {
   damage: number;

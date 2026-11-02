@@ -1,5 +1,10 @@
 // Is-inversify-import-example
-import { Container, inject, injectable, ServiceIdentifier } from 'inversify7';
+import {
+  Container,
+  inject,
+  injectable,
+  type ServiceIdentifier,
+} from 'inversify7';
 
 interface Weapon {
   damage: number;

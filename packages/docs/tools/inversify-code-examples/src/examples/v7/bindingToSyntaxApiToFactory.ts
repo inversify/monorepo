@@ -1,10 +1,10 @@
 // Is-inversify-import-example
 import {
   Container,
-  Factory,
+  type Factory,
   inject,
   injectable,
-  ResolutionContext,
+  type ResolutionContext,
 } from 'inversify7';
 
 export interface Engine {

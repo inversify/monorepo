@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-deprecated */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 // Is-inversify-import-example
-import { Container, injectable, ResolutionContext } from 'inversify7';
+import { Container, injectable, type ResolutionContext } from 'inversify7';
 
 interface Sword {
   material: string;

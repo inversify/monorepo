@@ -1,7 +1,7 @@
 import {
   CatchError,
   Controller,
-  ErrorFilter,
+  type ErrorFilter,
   Get,
   InternalServerErrorHttpResponse,
   UseErrorFilter,

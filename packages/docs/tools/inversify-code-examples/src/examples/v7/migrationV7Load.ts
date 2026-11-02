@@ -4,7 +4,7 @@
 import {
   Container,
   ContainerModule,
-  ContainerModuleLoadOptions,
+  type ContainerModuleLoadOptions,
   inject,
   injectable,
   named,

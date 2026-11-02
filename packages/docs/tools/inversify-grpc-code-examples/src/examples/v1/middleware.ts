@@ -1,4 +1,4 @@
-import { Metadata, type MetadataValue } from '@grpc/grpc-js';
+import { type Metadata, type MetadataValue } from '@grpc/grpc-js';
 import {
   ApplyMiddleware,
   type Middleware,

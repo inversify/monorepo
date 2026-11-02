@@ -1,11 +1,11 @@
 import {
   Controller,
   Get,
-  InterceptorTransformObject,
+  type InterceptorTransformObject,
   Next,
   UseInterceptor,
 } from '@inversifyjs/http-core';
-import { HonoInterceptor } from '@inversifyjs/http-hono';
+import { type HonoInterceptor } from '@inversifyjs/http-hono';
 import { type Context, type HonoRequest, type Next as HonoNext } from 'hono';
 
 export class HonoNextInterceptor implements HonoInterceptor {

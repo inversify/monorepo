@@ -1,5 +1,5 @@
 import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
-import { HonoMiddleware } from '@inversifyjs/http-hono';
+import { type HonoMiddleware } from '@inversifyjs/http-hono';
 import { type Context, type HonoRequest, type Next } from 'hono';
 
 export class MyMiddleware implements HonoMiddleware {

@@ -4,7 +4,7 @@ import {
   Controller,
   createCustomParameterDecorator,
   Get,
-  Middleware,
+  type Middleware,
 } from '@inversifyjs/http-core';
 import { injectable } from 'inversify';
 

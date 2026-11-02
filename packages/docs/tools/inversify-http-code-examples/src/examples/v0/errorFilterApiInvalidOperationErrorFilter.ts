@@ -1,6 +1,6 @@
 import {
   CatchError,
-  ErrorFilter,
+  type ErrorFilter,
   UnprocessableEntityHttpResponse,
 } from '@inversifyjs/http-core';
 

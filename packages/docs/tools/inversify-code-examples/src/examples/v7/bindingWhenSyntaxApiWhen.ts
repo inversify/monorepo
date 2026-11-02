@@ -1,6 +1,6 @@
 // Is-inversify-import-example
 import {
-  BindingConstraints,
+  type BindingConstraints,
   Container,
   inject,
   injectable,

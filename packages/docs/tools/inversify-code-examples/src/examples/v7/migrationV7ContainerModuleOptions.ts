@@ -2,7 +2,7 @@
 import {
   Container,
   ContainerModule,
-  ContainerModuleLoadOptions,
+  type ContainerModuleLoadOptions,
   injectable,
 } from 'inversify7';
 

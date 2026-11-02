@@ -1,4 +1,4 @@
-import { ConsoleLogger, Logger } from '@inversifyjs/logger';
+import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
 import { inject, injectable } from 'inversify';
 
 // Exclude-from-example
@@ -19,7 +19,7 @@ export class MyAwesomeService {
     this.#myAwesomeDependency = myAwesomeDependency;
   }
 
-  public doSomethingAwesome() {
+  public doSomethingAwesome(): void {
     this.#logger.info('Doing something awesome!');
     this.#myAwesomeDependency.doSomething();
   }

@@ -1,4 +1,4 @@
-import { MockInstance, vitest } from 'vitest';
+import { type MockInstance, vitest } from 'vitest';
 
 // Is-inversify-import-example
 import { Container, preDestroy } from 'inversify6';

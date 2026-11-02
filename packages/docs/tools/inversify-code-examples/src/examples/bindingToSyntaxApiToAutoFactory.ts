@@ -8,7 +8,7 @@ interface Weapon {
 export class Katana implements Weapon {
   public readonly damage: number = 10;
 
-  public hit(): unknown {
+  public hit(): string {
     return 'hit!';
   }
 }
@@ -16,7 +16,7 @@ export class Katana implements Weapon {
 export class Shuriken implements Weapon {
   public readonly damage: number = 5;
 
-  public throw(): unknown {
+  public throw(): string {
     return 'throw!';
   }
 }
@@ -35,11 +35,11 @@ class Ninja implements Ninja {
     this.#shuriken = shuriken;
   }
 
-  public fight() {
+  public fight(): string {
     return this.#katana.hit();
   }
 
-  public sneak() {
+  public sneak(): string {
     return this.#shuriken.throw();
   }
 }

@@ -6,9 +6,9 @@ import {
   isHttpResponse,
   NotFoundHttpResponse,
 } from '@inversifyjs/http-core';
-import { HonoErrorFilter } from '@inversifyjs/http-hono';
-import { ConsoleLogger, Logger } from '@inversifyjs/logger';
-import { Context, HonoRequest } from 'hono';
+import { type HonoErrorFilter } from '@inversifyjs/http-hono';
+import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
+import { type Context, type HonoRequest } from 'hono';
 import { type ContentfulStatusCode } from 'hono/utils/http-status';
 
 // Begin-example

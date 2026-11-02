@@ -1,5 +1,5 @@
 import { provide } from '@inversifyjs/binding-decorators';
-import { BindInWhenOnFluentSyntax, injectable } from 'inversify';
+import { type BindInWhenOnFluentSyntax, injectable } from 'inversify';
 
 // Begin-example
 @injectable()
