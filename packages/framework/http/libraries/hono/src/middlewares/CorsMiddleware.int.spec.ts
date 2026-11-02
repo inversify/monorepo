@@ -2,7 +2,11 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { ApplyMiddleware, Controller, Get } from '@inversifyjs/http-core';
 import { type Context, type Hono } from 'hono';
-import { type ClientRequest, type ClientRequestOptions } from 'hono/client';
+import {
+  type ClientRequest,
+  type ClientRequestOptions,
+  type ClientResponse,
+} from 'hono/client';
 import { testClient } from 'hono/testing';
 import { type BlankEnv } from 'hono/types';
 import { type ContentfulStatusCode } from 'hono/utils/http-status';
@@ -11,6 +15,8 @@ import { Container } from 'inversify';
 import { InversifyHonoHttpAdapter } from '../adapter/InversifyHonoHttpAdapter.js';
 import { Context as HonoContext } from '../index.js';
 import { CorsMiddleware } from './CorsMiddleware.js';
+
+type TestClientResponse = ClientResponse<unknown>;
 
 interface TestClient {
   messages: ClientRequest<
@@ -101,7 +107,7 @@ describe(CorsMiddleware, () => {
       });
 
       describe('when called', () => {
-        let response: Response;
+        let response: TestClientResponse;
 
         beforeAll(async () => {
           response = await testClientObject.messages.$get(
@@ -138,7 +144,7 @@ describe(CorsMiddleware, () => {
       });
 
       describe('when called', () => {
-        let response: Response;
+        let response: TestClientResponse;
 
         beforeAll(async () => {
           response = await testClientObject.messages.$get(
