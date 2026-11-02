@@ -29,7 +29,7 @@
     "@docusaurus/types": "3.10.2",
     "@eslint/js": "10.0.1",
     "@types/react": "19.3.0",
-    "eslint": "10.13.0",
+    "eslint": "10.14.0",
     "eslint-plugin-prettier": "5.5.7",
     "eslint-plugin-simple-import-sort": "14.0.0",
     "prettier": "3.9.10",

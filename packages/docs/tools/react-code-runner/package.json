@@ -20,7 +20,7 @@
     "@types/babel__standalone": "7.1.9",
     "@types/react": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",
-    "eslint": "10.13.0",
+    "eslint": "10.14.0",
     "eslint-plugin-prettier": "5.5.7",
     "eslint-plugin-simple-import-sort": "14.0.0",
     "glob": "14.0.3",
