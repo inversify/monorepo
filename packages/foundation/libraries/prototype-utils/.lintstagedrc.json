@@ -1,9 +1,9 @@
 {
   "*.js": [
-    "prettier --write"
+    "oxfmt --write"
   ],
   "*.ts": [
-    "prettier --write",
-    "eslint"
+    "oxfmt --write",
+    "oxlint"
   ]
 }
