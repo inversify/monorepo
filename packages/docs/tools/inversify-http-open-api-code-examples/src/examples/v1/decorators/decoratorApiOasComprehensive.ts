@@ -21,7 +21,7 @@ import {
   OasServer,
   OasSummary,
   OasTag,
-  ToSchemaFunction,
+  type ToSchemaFunction,
 } from '@inversifyjs/http-open-api';
 
 @OasSchema({

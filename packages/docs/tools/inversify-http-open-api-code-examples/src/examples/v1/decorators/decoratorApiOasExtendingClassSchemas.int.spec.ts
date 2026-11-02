@@ -10,13 +10,13 @@ import {
 import {
   OasRequestBody,
   OasResponse,
-  ToSchemaFunction,
+  type ToSchemaFunction,
 } from '@inversifyjs/http-open-api';
-import { OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
+import { type OpenApi3Dot1Object } from '@inversifyjs/open-api-types/v3Dot1';
 import { Container } from 'inversify';
 
 import { buildExpressServer } from '../../../server/adapter/express/actions/buildExpressServer.js';
-import { Server } from '../../../server/models/Server.js';
+import { type Server } from '../../../server/models/Server.js';
 import {
   BaseSchema,
   ExtendedSchema,
