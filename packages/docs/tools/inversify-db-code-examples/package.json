@@ -14,7 +14,7 @@
     "@types/node": "24.19.2",
     "@vitest/coverage-v8": "5.0.5",
     "eslint": "10.13.0",
-    "glob": "13.0.6",
+    "glob": "14.0.3",
     "inversify": "8.2.3",
     "prettier": "3.9.10",
     "prisma": "7.10.1",
