@@ -5,7 +5,7 @@
   },
   "description": "InversifyJS HTTP insights user interface",
   "devEngines": {
-    "node": "^24.10.0",
+    "node": "^26.0.0",
     "pnpm": "^12.0.0"
   },
   "exports": {
@@ -65,7 +65,7 @@
     "@inversifyjs/foundation-typescript-config": "workspace:*",
     "@tanstack/react-query": "5.104.5",
     "@testing-library/react": "16.3.3",
-    "@types/node": "24.19.2",
+    "@types/node": "26.6.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",
