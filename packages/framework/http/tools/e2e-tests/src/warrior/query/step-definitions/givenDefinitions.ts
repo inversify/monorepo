@@ -69,7 +69,10 @@ function givenWarriorRequestWithQueryForServer(
   };
 
   const stringifiedQueryParameters: string = new URLSearchParams(
-    queryParameters,
+    Object.entries(queryParameters).flatMap(
+      ([key, values]: [string, string[]]): [string, string][] =>
+        values.map((value: string): [string, string] => [key, value]),
+    ),
   ).toString();
 
   const url: string = `http://${server.host}:${server.port.toString()}/warriors?${stringifiedQueryParameters}`;

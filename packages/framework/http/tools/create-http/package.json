@@ -19,7 +19,7 @@
     "@inversifyjs/foundation-oxlint-config": "workspace:*",
     "@openai/codex-sdk": "0.166.0",
     "@opencode-ai/sdk": "1.19.5",
-    "@types/node": "24.19.2",
+    "@types/node": "26.6.6",
     "@vitest/coverage-v8": "5.0.5",
     "oxfmt": "0.75.0",
     "oxlint": "1.90.0",

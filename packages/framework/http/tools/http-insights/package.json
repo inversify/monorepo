@@ -28,7 +28,7 @@
     "@stryker-mutator/vitest-runner": "10.1.1",
     "@types/better-sqlite3": "9.6.0",
     "@types/mime-types": "3.0.1",
-    "@types/node": "24.19.2",
+    "@types/node": "26.6.6",
     "@types/stack-trace": "0.0.33",
     "@vitest/coverage-v8": "5.0.5",
     "oxfmt": "0.75.0",
