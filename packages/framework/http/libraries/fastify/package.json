@@ -5,7 +5,7 @@
   },
   "description": "InversifyJs http fastify package",
   "dependencies": {
-    "@fastify/cookie": "11.1.3",
+    "@fastify/cookie": "11.1.5",
     "@fastify/formbody": "9.0.1",
     "@fastify/multipart": "10.1.6",
     "@inversifyjs/http-core": "workspace:*",
@@ -14,9 +14,9 @@
   "devDependencies": {
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@inversifyjs/foundation-oxlint-config": "workspace:*",
-    "@stryker-mutator/core": "10.0.0",
-    "@stryker-mutator/typescript-checker": "10.0.0",
-    "@stryker-mutator/vitest-runner": "10.0.0",
+    "@stryker-mutator/core": "10.1.1",
+    "@stryker-mutator/typescript-checker": "10.1.1",
+    "@stryker-mutator/vitest-runner": "10.1.1",
     "@types/node": "24.19.2",
     "@vitest/coverage-v8": "5.0.5",
     "fastify": "5.12.7",
