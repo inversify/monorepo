@@ -1,5 +1,5 @@
 {
-  "*.{mjs,js}": [
-    "prettier --write"
+  "*.{mjs,js,ts}": [
+    "oxfmt --write"
   ]
 }
