@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { Container, injectable, ResolutionContext } from 'inversify7';
+import { Container, injectable, type ResolutionContext } from 'inversify7';
 
 const container: Container = new Container();
 

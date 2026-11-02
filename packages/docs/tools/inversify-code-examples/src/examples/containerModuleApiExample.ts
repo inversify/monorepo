@@ -4,7 +4,7 @@ import {
   ContainerModule,
   inject,
   injectable,
-  interfaces,
+  type interfaces,
   named,
 } from 'inversify6';
 

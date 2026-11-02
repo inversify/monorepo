@@ -1,5 +1,5 @@
 // Is-inversify-import-example
-import { BindingIdentifier, Container } from 'inversify7';
+import { type BindingIdentifier, Container } from 'inversify7';
 import { injectable } from 'inversify7';
 
 @injectable()

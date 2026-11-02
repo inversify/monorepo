@@ -3,8 +3,8 @@ import {
   Container,
   inject,
   injectable,
-  MetadataName,
-  ResolutionContext,
+  type MetadataName,
+  type ResolutionContext,
 } from 'inversify7';
 
 interface Weapon {
