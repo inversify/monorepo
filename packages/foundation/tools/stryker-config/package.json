@@ -5,8 +5,9 @@
   },
   "description": "Stryker config for monorepo packages",
   "devDependencies": {
+    "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@stryker-mutator/api": "10.1.1",
-    "prettier": "3.9.10"
+    "oxfmt": "0.75.0"
   },
   "exports": "./lib/index.js",
   "homepage": "https://github.com/inversify/monorepo#readme",
@@ -18,7 +19,7 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "format": "prettier --write ./lib"
+    "format": "oxfmt --write ./lib"
   },
   "type": "module"
 }
