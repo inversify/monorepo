@@ -10,9 +10,9 @@
   "devDependencies": {
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@inversifyjs/foundation-oxlint-config": "workspace:*",
-    "@stryker-mutator/core": "10.0.0",
-    "@stryker-mutator/typescript-checker": "10.0.0",
-    "@stryker-mutator/vitest-runner": "10.0.0",
+    "@stryker-mutator/core": "10.1.1",
+    "@stryker-mutator/typescript-checker": "10.1.1",
+    "@stryker-mutator/vitest-runner": "10.1.1",
     "@types/node": "24.19.2",
     "@vitest/coverage-v8": "5.0.5",
     "oxfmt": "0.75.0",
@@ -45,7 +45,7 @@
   },
   "name": "@inversifyjs/grpc-js",
   "peerDependencies": {
-    "@grpc/grpc-js": "^1.14.6",
+    "@grpc/grpc-js": "^1.14.7",
     "inversify": "^8.2.3"
   },
   "publishConfig": {
