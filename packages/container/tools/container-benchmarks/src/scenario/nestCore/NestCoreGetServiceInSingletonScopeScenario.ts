@@ -1,5 +1,9 @@
-import { Scenario } from '@inversifyjs/benchmark-utils';
-import { INestApplicationContext, Injectable, Module } from '@nestjs/common';
+import { type Scenario } from '@inversifyjs/benchmark-utils';
+import {
+  type INestApplicationContext,
+  Injectable,
+  Module,
+} from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { Platform } from '../models/Platform.js';
