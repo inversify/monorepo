@@ -1,4 +1,4 @@
-import { InversifyWorld } from '../../common/models/InversifyWorld';
+import { type InversifyWorld } from '../../common/models/InversifyWorld';
 
 export function getContainerGetRequestOrFail(
   this: InversifyWorld,

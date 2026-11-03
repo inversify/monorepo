@@ -1,6 +1,6 @@
-import Link, { Props } from '@docusaurus/Link';
+import Link, { type Props } from '@docusaurus/Link';
 import clsx from 'clsx';
-import { MouseEventHandler } from 'react';
+import { type MouseEventHandler } from 'react';
 
 enum ButtonPropSize {
   large = 'lg',

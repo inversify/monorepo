@@ -1,4 +1,4 @@
-import { DocusaurusContext } from '@docusaurus/types';
+import { type DocusaurusContext } from '@docusaurus/types';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import React from 'react';

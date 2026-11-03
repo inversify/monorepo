@@ -1,7 +1,10 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import { ServiceIdentifier } from '@inversifyjs/common';
-import { GetPlanOptions, PlanResult } from '@inversifyjs/core';
-import { Cloneable, CloneableFunction } from '@inversifyjs/react-code-runner';
+import { type ServiceIdentifier } from '@inversifyjs/common';
+import { type GetPlanOptions, type PlanResult } from '@inversifyjs/core';
+import {
+  type Cloneable,
+  type CloneableFunction,
+} from '@inversifyjs/react-code-runner';
 import { InversifyCodeEditor } from '@inversifyjs/react-code-runner/InversifyCodeEditor';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
@@ -22,7 +25,7 @@ export default function DocusaurusInversifyCodeEditor({
   style,
 }: {
   style?: React.CSSProperties;
-}) {
+}): React.JSX.Element {
   const [graphEntries, setGraphEntries]: [
     GraphEntry[],
     React.Dispatch<React.SetStateAction<GraphEntry[]>>,

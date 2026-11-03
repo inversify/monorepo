@@ -1,5 +1,5 @@
 import { defineParameterType } from '@cucumber/cucumber';
-import { BindingScope, bindingScopeValues } from '@inversifyjs/core';
+import { type BindingScope, bindingScopeValues } from '@inversifyjs/core';
 
 defineParameterType({
   name: 'bindingScope',

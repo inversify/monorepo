@@ -1,5 +1,5 @@
-import { InversifyWorld } from '../../common/models/InversifyWorld';
-import { BindingParameter } from '../models/BindingParameter';
+import { type InversifyWorld } from '../../common/models/InversifyWorld';
+import { type BindingParameter } from '../models/BindingParameter';
 
 export function setBinding(
   this: InversifyWorld,

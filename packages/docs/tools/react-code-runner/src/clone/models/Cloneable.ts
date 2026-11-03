@@ -1,4 +1,4 @@
-import { CloneableFunction } from './CloneableFunction';
+import { type CloneableFunction } from './CloneableFunction';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export type Cloneable<T> = T extends Function

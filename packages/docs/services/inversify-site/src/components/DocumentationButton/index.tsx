@@ -1,5 +1,5 @@
 import Link from '@docusaurus/Link';
-import React, { HTMLAttributeAnchorTarget } from 'react';
+import React, { type HTMLAttributeAnchorTarget } from 'react';
 
 import styles from './styles.module.css';
 

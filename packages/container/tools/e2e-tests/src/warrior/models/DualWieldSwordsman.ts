@@ -1,5 +1,6 @@
 import { injectable } from '@inversifyjs/core';
 
+// oxlint-disable-next-line typescript/consistent-type-imports -- required by emitDecoratorMetadata
 import { Sword } from './Sword';
 
 @injectable()

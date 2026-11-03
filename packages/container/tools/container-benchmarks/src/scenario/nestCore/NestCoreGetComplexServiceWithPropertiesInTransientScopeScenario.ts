@@ -1,6 +1,6 @@
-import { Scenario } from '@inversifyjs/benchmark-utils';
+import { type Scenario } from '@inversifyjs/benchmark-utils';
 import {
-  INestApplicationContext,
+  type INestApplicationContext,
   Inject,
   Injectable,
   Module,

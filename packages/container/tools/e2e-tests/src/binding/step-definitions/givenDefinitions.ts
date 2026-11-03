@@ -1,25 +1,25 @@
 import { Given } from '@cucumber/cucumber';
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 import {
-  BindInFluentSyntax,
-  BindingIdentifier,
-  BindInWhenOnFluentSyntax,
-  BindOnFluentSyntax,
-  BindWhenFluentSyntax,
-  BindWhenOnFluentSyntax,
-  Container,
-  ResolvedValueInjectOptions,
+  type BindInFluentSyntax,
+  type BindingIdentifier,
+  type BindInWhenOnFluentSyntax,
+  type BindOnFluentSyntax,
+  type BindWhenFluentSyntax,
+  type BindWhenOnFluentSyntax,
+  type Container,
+  type ResolvedValueInjectOptions,
 } from '@inversifyjs/container';
 import {
-  BindingActivation,
-  BindingScope,
+  type BindingActivation,
+  type BindingScope,
   bindingScopeValues,
-  MetadataName,
-  MetadataTag,
+  type MetadataName,
+  type MetadataTag,
 } from '@inversifyjs/core';
 
 import { defaultAlias } from '../../common/models/defaultAlias';
-import { InversifyWorld } from '../../common/models/InversifyWorld';
+import { type InversifyWorld } from '../../common/models/InversifyWorld';
 import { DualWieldSwordsman } from '../../warrior/models/DualWieldSwordsman';
 import { setBinding } from '../actions/setBinding';
 import { BindingParameterKind } from '../models/BindingParameterKind';

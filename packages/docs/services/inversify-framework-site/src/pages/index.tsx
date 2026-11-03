@@ -1,4 +1,4 @@
-import { DocusaurusContext } from '@docusaurus/types';
+import { type DocusaurusContext } from '@docusaurus/types';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import controllerApiBasicsSource from '@inversifyjs/http-code-examples/generated/examples/v0/controllerApiBasics.ts.txt';
 import homeAuthMiddlewareSource from '@inversifyjs/http-code-examples/generated/examples/v0/homeAuthMiddleware.ts.txt';
@@ -9,7 +9,7 @@ import React from 'react';
 
 import DocumentationButton from '../components/DocumentationButton';
 import FeatureCard from '../components/FeatureCard';
-import { CodeSnippet } from '../components/FloatingCodeSnippet';
+import { type CodeSnippet } from '../components/FloatingCodeSnippet';
 import floatingCodeSnippetStyles from '../components/FloatingCodeSnippet/styles.module.css';
 import HomeFloatingCodeSnippets from '../components/HomeFloatingCodeSnippets';
 import HomepageSponsors from '../components/HomepageSponsors';

@@ -1,5 +1,5 @@
 import Link from '@docusaurus/Link';
-import { DocusaurusContext } from '@docusaurus/types';
+import { type DocusaurusContext } from '@docusaurus/types';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Heading from '@theme/Heading';
 import Layout from '@theme/Layout';

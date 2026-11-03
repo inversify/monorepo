@@ -8,8 +8,8 @@ lib/**
 AGENTS.md
 CHANGELOG.md
 .lintstagedrc.json
-eslint.config.mjs
-prettier.config.mjs
+oxfmt.config.ts
+oxlint.config.ts
 rollup.config.mjs
 tsconfig.esm.json
 tsconfig.esm.tsbuildinfo

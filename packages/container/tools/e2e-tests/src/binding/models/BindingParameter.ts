@@ -1,6 +1,6 @@
-import { ConstantValueBindingParameter } from './ConstantValueBindingParameter';
-import { DynamicValueBindingParameter } from './DynamicValueBindingParameter';
-import { InstanceBindingParameter } from './InstanceBindingParameter';
+import { type ConstantValueBindingParameter } from './ConstantValueBindingParameter';
+import { type DynamicValueBindingParameter } from './DynamicValueBindingParameter';
+import { type InstanceBindingParameter } from './InstanceBindingParameter';
 
 export type BindingParameter =
   | ConstantValueBindingParameter

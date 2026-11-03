@@ -1,16 +1,19 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
+import { type ServiceIdentifier } from '@inversifyjs/common';
 import {
-  GetPlanOptions,
-  InstanceBindingNode,
+  type GetPlanOptions,
+  type InstanceBindingNode,
   isConstructorNoParamNode,
-  LeafBindingNode,
-  PlanBindingNode,
-  PlanResult,
-  PlanServiceNode,
-  PlanServiceRedirectionBindingNode,
-  ResolvedValueBindingNode,
+  type LeafBindingNode,
+  type PlanBindingNode,
+  type PlanResult,
+  type PlanServiceNode,
+  type PlanServiceRedirectionBindingNode,
+  type ResolvedValueBindingNode,
 } from '@inversifyjs/core';
-import { Cloneable, CloneableFunction } from '@inversifyjs/react-code-runner';
+import {
+  type Cloneable,
+  type CloneableFunction,
+} from '@inversifyjs/react-code-runner';
 
 /**
  * Escapes a string to be safely used in Mermaid diagrams.

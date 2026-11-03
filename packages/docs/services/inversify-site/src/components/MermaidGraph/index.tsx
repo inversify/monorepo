@@ -1,4 +1,4 @@
-import mermaid, { RenderResult } from 'mermaid';
+import mermaid, { type RenderResult } from 'mermaid';
 import { useEffect, useRef } from 'react';
 
 import styles from './styles.module.css';

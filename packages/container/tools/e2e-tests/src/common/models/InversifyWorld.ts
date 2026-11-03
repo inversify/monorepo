@@ -1,8 +1,8 @@
-import { IWorld } from '@cucumber/cucumber';
-import { Container } from '@inversifyjs/container';
+import { type IWorld } from '@cucumber/cucumber';
+import { type Container } from '@inversifyjs/container';
 
-import { BindingIdentifierParameter } from '../../binding/models/BindingIdentifierParameter';
-import { BindingParameter } from '../../binding/models/BindingParameter';
+import { type BindingIdentifierParameter } from '../../binding/models/BindingIdentifierParameter';
+import { type BindingParameter } from '../../binding/models/BindingParameter';
 
 interface EntitiesMap {
   bindingIdentifiers: Map<string, BindingIdentifierParameter>;

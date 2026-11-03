@@ -1,5 +1,5 @@
 import { defineParameterType } from '@cucumber/cucumber';
-import { Newable } from '@inversifyjs/common';
+import { type Newable } from '@inversifyjs/common';
 
 import { Archer } from '../models/Archer';
 import { Bow } from '../models/Bow';

@@ -27,18 +27,16 @@
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.10.2",
     "@docusaurus/types": "3.10.2",
-    "@eslint/config-helpers": "0.7.0",
-    "@eslint/js": "10.0.1",
+    "@inversifyjs/foundation-oxfmt-config": "workspace:*",
+    "@inversifyjs/foundation-oxlint-config": "workspace:*",
     "@rspack/core": "1.7.12",
     "@types/babel__standalone": "7.1.9",
     "@types/react": "19.3.0",
-    "eslint": "10.14.0",
-    "eslint-plugin-prettier": "5.5.7",
-    "eslint-plugin-simple-import-sort": "14.0.0",
     "monaco-editor-webpack-plugin": "7.1.1",
-    "prettier": "3.9.10",
-    "typescript": "6.0.3",
-    "typescript-eslint": "8.72.1"
+    "oxfmt": "0.75.0",
+    "oxlint": "1.90.0",
+    "oxlint-tsgolint": "7.0.2005",
+    "typescript": "7.0.2"
   },
   "homepage": "https://inversify.io",
   "keywords": [
@@ -70,8 +68,8 @@
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "pnpm run typecheck && docusaurus build",
-    "format": "prettier --write ./src ./*.ts",
-    "lint": "eslint ./src ./docusaurus.config.ts ./sidebars.ts",
+    "format": "oxfmt --write ./src ./*.ts",
+    "lint": "oxlint ./src ./docusaurus.config.ts ./sidebars.ts",
     "serve": "docusaurus serve",
     "typecheck": "tsc"
   }

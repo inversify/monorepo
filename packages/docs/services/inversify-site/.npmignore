@@ -13,11 +13,11 @@ lib/esm/**/*.d.ts.map
 AGENTS.md
 CHANGELOG.md
 .lintstagedrc.json
-eslint.config.mjs
+oxfmt.config.mts
+oxlint.config.mts
 vitest.config.mjs
 vitest.config.stryker.mjs
 vitest.workspace.mjs
-prettier.config.mjs
 rollup.config.mjs
 stryker.config.mjs
 tsconfig.cjs.json
