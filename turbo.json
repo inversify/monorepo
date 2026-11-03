@@ -231,6 +231,18 @@
       "inputs": ["lib/**/*.{cjs,mjs,js}", "oxfmt.config.{mts,ts}"],
       "outputs": ["lib/**/*.{cjs,mjs,js}"]
     },
+    "@inversifyjs/inversify-binding-decorators-docs-site#format": {
+      "inputs": ["*.ts", "src/**/*.{css,ts,tsx}", "oxfmt.config.{mts,ts}"],
+      "outputs": ["*.ts", "src/**/*.{css,ts,tsx}"]
+    },
+    "@inversifyjs/inversify-docs-site#format": {
+      "inputs": ["*.ts", "src/**/*.{css,ts,tsx}", "oxfmt.config.{mts,ts}"],
+      "outputs": ["*.ts", "src/**/*.{css,ts,tsx}"]
+    },
+    "@inversifyjs/framework-docs-site#format": {
+      "inputs": ["*.ts", "src/**/*.{css,ts,tsx}", "oxfmt.config.{mts,ts}"],
+      "outputs": ["*.ts", "src/**/*.{css,ts,tsx}"]
+    },
     "lint": {
       "dependsOn": ["^build"],
       "inputs": [
