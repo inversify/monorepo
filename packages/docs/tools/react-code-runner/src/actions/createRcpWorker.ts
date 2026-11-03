@@ -1,6 +1,6 @@
-import { GetPlanOptions, PlanResult } from '@inversifyjs/core';
+import { type GetPlanOptions, type PlanResult } from '@inversifyjs/core';
 
-import { Cloneable } from '../clone/models/Cloneable';
+import { type Cloneable } from '../clone/models/Cloneable';
 
 const WORKER_SCRIPT: string = `
 self.addEventListener('message', async (ev) => {

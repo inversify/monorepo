@@ -1,14 +1,17 @@
 import {
-  GetPlanOptions,
+  type GetPlanOptions,
   LazyPlanServiceNode,
-  PlanResult,
-  PlanServiceNode,
+  type PlanResult,
+  type PlanServiceNode,
 } from '@inversifyjs/core';
-import { Plugin, PluginApi } from '@inversifyjs/plugin';
+import { Plugin, type PluginApi } from '@inversifyjs/plugin';
 import * as inversify from 'inversify';
 
-import { clone, CustomCloneableHandlerTuple } from './clone/calculations/clone';
-import { Cloneable } from './clone/models/Cloneable';
+import {
+  clone,
+  type CustomCloneableHandlerTuple,
+} from './clone/calculations/clone';
+import { type Cloneable } from './clone/models/Cloneable';
 
 const customHandlerTuples: CustomCloneableHandlerTuple[] = [
   [
@@ -22,7 +25,7 @@ const customHandlerTuples: CustomCloneableHandlerTuple[] = [
         bindings: input.bindings,
         isContextFree: input.isContextFree,
         // We really don't care about resolve here, the node is used to generate a graph
-        // eslint-disable-next-line @typescript-eslint/unbound-method
+        // oxlint-disable-next-line typescript/unbound-method
         resolve: input.resolve,
         serviceIdentifier: input.serviceIdentifier,
       }),

@@ -1,5 +1,5 @@
-import { Cloneable } from '../models/Cloneable';
-import { CloneableFunction } from '../models/CloneableFunction';
+import { type Cloneable } from '../models/Cloneable';
+import { type CloneableFunction } from '../models/CloneableFunction';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CustomCloneableHandlerTuple<T = any> = [

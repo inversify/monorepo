@@ -1,16 +1,16 @@
-import { GetPlanOptions, PlanResult } from '@inversifyjs/core';
+import { type GetPlanOptions, type PlanResult } from '@inversifyjs/core';
 import { transformSync } from '@swc/wasm-web';
 import type * as monaco from 'monaco-editor';
-import React, { MouseEventHandler, useEffect, useRef } from 'react';
+import React, { type MouseEventHandler, useEffect, useRef } from 'react';
 
 import createRpcWorker, {
-  CreateRpcWorkerResult,
+  type CreateRpcWorkerResult,
 } from '../../actions/createRcpWorker';
 import getInversifyMainFileMonacoModel from '../../actions/getInversifyMainFileMonacoModel';
 import getMonaco from '../../actions/getMonaco';
 import transformSourceCode from '../../actions/transformSourceCode';
 import { mapImports } from '../../calculations/mapImports';
-import { Cloneable } from '../../clone/models/Cloneable';
+import { type Cloneable } from '../../clone/models/Cloneable';
 import { useSwc } from '../../hooks/useSwc';
 import styles from './styles.module.css';
 

@@ -1,7 +1,7 @@
 import initSwc from '@swc/wasm-web';
 import { useEffect, useState } from 'react';
 
-export function useSwc() {
+export function useSwc(): boolean {
   const [initialized, setInitialized]: [
     boolean,
     React.Dispatch<React.SetStateAction<boolean>>,
