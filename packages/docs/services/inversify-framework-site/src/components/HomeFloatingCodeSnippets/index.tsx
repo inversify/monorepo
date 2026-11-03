@@ -3,7 +3,7 @@ import React from 'react';
 import useHomeFloatingCodeSnippets, {
   DEFAULT_Z_INDEX_LOW,
 } from '../../hooks/useHomeFloatingCodeSnippets';
-import FloatingCodeSnippet, { CodeSnippet } from '../FloatingCodeSnippet';
+import FloatingCodeSnippet, { type CodeSnippet } from '../FloatingCodeSnippet';
 import styles from './styles.module.css';
 
 interface HomeFloatingCodeSnippetsProps {
