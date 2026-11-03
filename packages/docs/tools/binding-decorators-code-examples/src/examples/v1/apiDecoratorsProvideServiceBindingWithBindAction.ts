@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { provide } from '@inversifyjs/binding-decorators';
 import { type BindInWhenOnFluentSyntax, injectable } from 'inversify';
 
