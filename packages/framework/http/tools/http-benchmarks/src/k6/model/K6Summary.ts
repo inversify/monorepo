@@ -1,4 +1,4 @@
-import { K6Metrics } from './K6Metrics';
+import { type K6Metrics } from './K6Metrics';
 
 export interface K6Summary {
   name: string;

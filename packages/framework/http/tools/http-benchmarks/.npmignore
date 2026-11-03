@@ -14,11 +14,11 @@ lib/esm/**/*.d.ts.map
 AGENTS.md
 CHANGELOG.md
 .lintstagedrc.json
-eslint.config.mjs
 jest.config.mjs
 jest.config.stryker.mjs
 jest.js.config.mjs
-prettier.config.mjs
+oxfmt.config.mts
+oxlint.config.mts
 rollup.config.mjs
 stryker.config.mjs
 tsconfig.cjs.json

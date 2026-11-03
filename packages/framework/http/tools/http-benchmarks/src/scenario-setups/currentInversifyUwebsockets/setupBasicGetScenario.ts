@@ -1,6 +1,6 @@
 import { InversifyUwebSocketsHttpAdapter } from '@inversifyjs/http-uwebsockets';
 import { bindingScopeValues, Container } from 'inversify';
-import { TemplatedApp } from 'uWebSockets.js';
+import { type TemplatedApp } from 'uWebSockets.js';
 
 import { DEFAULT_PORT } from '../../constant/defaultPort';
 import { AppController } from '../../scenario/currentInversify/AppController';

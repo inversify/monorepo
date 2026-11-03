@@ -1,9 +1,10 @@
-import { Scenario } from '@inversifyjs/benchmark-utils';
-import { ChildProcess, exec, spawn } from 'child_process';
+import { type ChildProcess, exec, spawn } from 'child_process';
 import { promisify } from 'util';
 
-import { K6Summary } from '../../k6/model/K6Summary';
-import { Platform } from '../models/Platform';
+import { type Scenario } from '@inversifyjs/benchmark-utils';
+
+import { type K6Summary } from '../../k6/model/K6Summary';
+import { type Platform } from '../models/Platform';
 
 const execPromise: (
   command: string,

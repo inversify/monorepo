@@ -1,7 +1,7 @@
-import { Scenario } from '@inversifyjs/benchmark-utils';
+import { type Scenario } from '@inversifyjs/benchmark-utils';
 
-import { K6Summary } from '../../k6/model/K6Summary';
-import { Platform } from '../../scenario/models/Platform';
+import { type K6Summary } from '../../k6/model/K6Summary';
+import { type Platform } from '../../scenario/models/Platform';
 
 export async function executeHttpBenchmark(
   scenarioList: Scenario<Platform, K6Summary>[],

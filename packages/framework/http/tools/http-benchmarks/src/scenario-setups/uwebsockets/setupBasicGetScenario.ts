@@ -1,4 +1,4 @@
-import { App, HttpResponse, TemplatedApp } from 'uWebSockets.js';
+import { App, type HttpResponse, type TemplatedApp } from 'uWebSockets.js';
 
 import { DEFAULT_PORT } from '../../constant/defaultPort';
 

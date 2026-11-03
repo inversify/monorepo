@@ -1,4 +1,8 @@
-import express, { Application, Request, Response } from 'express';
+import express, {
+  type Application,
+  type Request,
+  type Response,
+} from 'express';
 
 import { DEFAULT_PORT } from '../../constant/defaultPort';
 

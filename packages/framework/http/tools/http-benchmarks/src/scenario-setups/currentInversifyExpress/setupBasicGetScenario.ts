@@ -1,5 +1,5 @@
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
-import { Application } from 'express';
+import { type Application } from 'express';
 import { bindingScopeValues, Container } from 'inversify';
 
 import { DEFAULT_PORT } from '../../constant/defaultPort';

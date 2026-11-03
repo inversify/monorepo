@@ -1,5 +1,5 @@
 import { InversifyFastifyHttpAdapter } from '@inversifyjs/http-fastify';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import { bindingScopeValues, Container } from 'inversify';
 
 import { DEFAULT_PORT } from '../../constant/defaultPort';
