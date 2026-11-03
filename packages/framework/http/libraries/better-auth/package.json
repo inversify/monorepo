@@ -25,7 +25,7 @@
     "@types/statuses": "2.0.6",
     "@vitest/coverage-v8": "5.0.5",
     "better-sqlite3": "^13.0.3",
-    "fastify": "5.12.7",
+    "fastify": "5.12.8",
     "hono": "4.13.16",
     "oxfmt": "0.75.0",
     "oxlint": "1.90.0",
