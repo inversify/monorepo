@@ -1,5 +1,5 @@
 import { defineParameterType } from '@cucumber/cucumber';
-import { BindingActivation } from '@inversifyjs/core';
+import { type BindingActivation } from '@inversifyjs/core';
 
 import { upgradeWeapon } from '../actions/upgradeWeapon';
 

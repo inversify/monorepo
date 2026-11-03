@@ -2,7 +2,7 @@ import { Given } from '@cucumber/cucumber';
 import { Container } from '@inversifyjs/container';
 
 import { defaultAlias } from '../../common/models/defaultAlias';
-import { InversifyWorld } from '../../common/models/InversifyWorld';
+import { type InversifyWorld } from '../../common/models/InversifyWorld';
 import { setContainer } from '../actions/setContainer';
 import { getContainerOrFail } from '../calculations/getContainerOrFail';
 

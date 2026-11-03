@@ -1,6 +1,6 @@
 import { injectable } from '@inversifyjs/core';
 
-import { Weapon } from './Weapon';
+import { type Weapon } from './Weapon';
 
 @injectable()
 export class Sword implements Weapon {

@@ -2,13 +2,13 @@
 import assert from 'node:assert/strict';
 
 import { Then } from '@cucumber/cucumber';
-import { Container } from '@inversifyjs/container';
+import { type Container } from '@inversifyjs/container';
 
 import { defaultAlias } from '../../common/models/defaultAlias';
-import { InversifyWorld } from '../../common/models/InversifyWorld';
+import { type InversifyWorld } from '../../common/models/InversifyWorld';
 import { Archer } from '../../warrior/models/Archer';
 import { Bow } from '../../warrior/models/Bow';
-import { DualWieldSwordsman } from '../../warrior/models/DualWieldSwordsman';
+import { type DualWieldSwordsman } from '../../warrior/models/DualWieldSwordsman';
 import { Sword } from '../../warrior/models/Sword';
 import { getContainerGetRequestOrFail } from '../calculations/getContainerGetRequestOrFail';
 import { getContainerOrFail } from '../calculations/getContainerOrFail';

@@ -1,10 +1,10 @@
 import { When } from '@cucumber/cucumber';
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
-import { BindingIdentifier } from '@inversifyjs/container';
-import { BindingActivation } from '@inversifyjs/core';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
+import { type BindingIdentifier } from '@inversifyjs/container';
+import { type BindingActivation } from '@inversifyjs/core';
 
 import { defaultAlias } from '../../common/models/defaultAlias';
-import { InversifyWorld } from '../../common/models/InversifyWorld';
+import { type InversifyWorld } from '../../common/models/InversifyWorld';
 import { getContainerOrFail } from '../../container/calculations/getContainerOrFail';
 import { setBindingIdentifier } from '../actions/setBindingIdentifier';
 import { getBindingIdentifierOrFail } from '../calculations/getBindingIdentifierOrFail';

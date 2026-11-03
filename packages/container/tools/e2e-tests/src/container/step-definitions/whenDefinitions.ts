@@ -1,9 +1,9 @@
 import { When } from '@cucumber/cucumber';
-import { Newable, ServiceIdentifier } from '@inversifyjs/common';
-import { GetAllOptions, GetOptions } from '@inversifyjs/core';
+import { type Newable, type ServiceIdentifier } from '@inversifyjs/common';
+import { type GetAllOptions, type GetOptions } from '@inversifyjs/core';
 
 import { defaultAlias } from '../../common/models/defaultAlias';
-import { InversifyWorld } from '../../common/models/InversifyWorld';
+import { type InversifyWorld } from '../../common/models/InversifyWorld';
 import { setContainerGetRequest } from '../actions/setContainerGetRequest';
 import { getContainerOrFail } from '../calculations/getContainerOrFail';
 

@@ -1,5 +1,5 @@
-import { InversifyWorld } from '../../common/models/InversifyWorld';
-import { Writable } from '../../common/models/Writable';
+import { type InversifyWorld } from '../../common/models/InversifyWorld';
+import { type Writable } from '../../common/models/Writable';
 
 export function initializeWorld(this: Writable<Partial<InversifyWorld>>): void {
   this.containerRequests = {
