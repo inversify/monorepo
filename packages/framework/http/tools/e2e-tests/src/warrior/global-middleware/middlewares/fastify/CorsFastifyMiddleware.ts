@@ -1,5 +1,5 @@
-import { HttpStatusCode, Middleware } from '@inversifyjs/http-core';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { HttpStatusCode, type Middleware } from '@inversifyjs/http-core';
+import { type FastifyReply, type FastifyRequest } from 'fastify';
 import { injectable } from 'inversify';
 
 @injectable()

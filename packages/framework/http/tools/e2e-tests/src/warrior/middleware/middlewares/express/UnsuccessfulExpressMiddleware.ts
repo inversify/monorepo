@@ -1,6 +1,6 @@
 import { HttpStatusCode } from '@inversifyjs/http-core';
-import { ExpressMiddleware } from '@inversifyjs/http-express';
-import { NextFunction, Request, Response } from 'express';
+import { type ExpressMiddleware } from '@inversifyjs/http-express';
+import { type NextFunction, type Request, type Response } from 'express';
 import { injectable } from 'inversify';
 
 @injectable()

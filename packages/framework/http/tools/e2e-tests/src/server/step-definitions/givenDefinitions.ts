@@ -1,24 +1,24 @@
-import http, { RequestListener } from 'node:http';
-import { AddressInfo } from 'node:net';
+import http, { type RequestListener } from 'node:http';
+import { type AddressInfo } from 'node:net';
 
 import { Given } from '@cucumber/cucumber';
-import { serve, ServerType } from '@hono/node-server';
-import { Interceptor, Middleware } from '@inversifyjs/http-core';
+import { serve, type ServerType } from '@hono/node-server';
+import { type Interceptor, type Middleware } from '@inversifyjs/http-core';
 import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';
 import { InversifyFastifyHttpAdapter } from '@inversifyjs/http-fastify';
 import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
 import { InversifyUwebSocketsHttpAdapter } from '@inversifyjs/http-uwebsockets';
-import express from 'express';
-import { FastifyInstance } from 'fastify';
-import { Hono } from 'hono';
-import { Container, ServiceIdentifier } from 'inversify';
+import type express from 'express';
+import { type FastifyInstance } from 'fastify';
+import { type Hono } from 'hono';
+import { type Container, type ServiceIdentifier } from 'inversify';
 import { us_socket_local_port } from 'uWebSockets.js';
 
 import { defaultAlias } from '../../common/models/defaultAlias.js';
-import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
+import { type InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
 import { getContainerOrFail } from '../../container/calculations/getContainerOrFail.js';
 import { setServer } from '../actions/setServer.js';
-import { Server } from '../models/Server.js';
+import { type Server } from '../models/Server.js';
 import { ServerKind } from '../models/ServerKind.js';
 
 async function buildExpressServer(
@@ -182,7 +182,7 @@ async function buildFastifyServer(
               if (err === undefined) {
                 resolve();
               } else {
-                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+                // oxlint-disable-next-line typescript/prefer-promise-reject-errors
                 reject(err);
               }
             },

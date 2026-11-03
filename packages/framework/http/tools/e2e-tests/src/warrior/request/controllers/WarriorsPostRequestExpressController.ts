@@ -1,5 +1,5 @@
 import { Controller, Post, Request } from '@inversifyjs/http-core';
-import { Request as ExpressRequest } from 'express';
+import { type Request as ExpressRequest } from 'express';
 @Controller('/warriors')
 export class WarriorsPostRequestExpressController {
   @Post()

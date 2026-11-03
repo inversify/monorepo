@@ -5,7 +5,7 @@ import {
   Next,
   Patch,
 } from '@inversifyjs/http-core';
-import { Next as NextFn } from 'hono';
+import { type Next as NextFn } from 'hono';
 
 import { NextHonoMiddleware } from '../../middlewares/NextHonoMiddleware.js';
 

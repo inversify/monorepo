@@ -1,5 +1,5 @@
 import { Controller, Post, Response } from '@inversifyjs/http-core';
-import { FastifyReply } from 'fastify';
+import { type FastifyReply } from 'fastify';
 
 @Controller('/warriors')
 export class WarriorsPostResponseFastifyController {

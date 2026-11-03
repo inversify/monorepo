@@ -1,9 +1,9 @@
 import {
   HttpStatusCode,
-  InterceptorTransformObject,
+  type InterceptorTransformObject,
 } from '@inversifyjs/http-core';
-import { UwebSocketsInterceptor } from '@inversifyjs/http-uwebsockets';
-import { HttpRequest, HttpResponse } from 'uWebSockets.js';
+import { type UwebSocketsInterceptor } from '@inversifyjs/http-uwebsockets';
+import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 export class WarriorRouteUwebSocketsInterceptor implements UwebSocketsInterceptor {
   public async intercept(

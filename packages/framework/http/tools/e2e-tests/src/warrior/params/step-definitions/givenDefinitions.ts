@@ -1,13 +1,13 @@
 import { Given } from '@cucumber/cucumber';
-import { Container, Newable } from 'inversify';
+import { type Container, type Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias.js';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { type InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
 import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
 import { HttpMethod } from '../../../http/models/HttpMethod.js';
 import { setServerRequest } from '../../../server/actions/setServerRequest.js';
 import { getServerOrFail } from '../../../server/calculations/getServerOrFail.js';
-import { Server } from '../../../server/models/Server.js';
+import { type Server } from '../../../server/models/Server.js';
 import { WarriorsDeleteParamsController } from '../controllers/WarriorsDeleteParamsController.js';
 import { WarriorsDeleteParamsNamedController } from '../controllers/WarriorsDeleteParamsNamedController.js';
 import { WarriorsGetParamsController } from '../controllers/WarriorsGetParamsController.js';

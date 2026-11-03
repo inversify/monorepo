@@ -1,5 +1,5 @@
-import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
-import { Writable } from '../../common/models/Writable.js';
+import { type InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
+import { type Writable } from '../../common/models/Writable.js';
 
 export function initializeWorld(
   this: Writable<Partial<InversifyHttpWorld>>,

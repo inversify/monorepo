@@ -1,4 +1,4 @@
-import { Warrior } from '../../common/models/Warrior.js';
+import { type Warrior } from '../../common/models/Warrior.js';
 
 export interface WarriorWithQuery extends Warrior {
   filter: string;

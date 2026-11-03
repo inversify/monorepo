@@ -1,5 +1,5 @@
 import { Controller, Put, Request } from '@inversifyjs/http-core';
-import { HttpRequest } from 'uWebSockets.js';
+import { type HttpRequest } from 'uWebSockets.js';
 
 @Controller('/warriors')
 export class WarriorsPutRequestUwebSocketsController {

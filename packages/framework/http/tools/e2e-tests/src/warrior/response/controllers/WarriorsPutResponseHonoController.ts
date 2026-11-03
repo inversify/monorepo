@@ -1,5 +1,6 @@
 import { Controller, Put } from '@inversifyjs/http-core';
 import { Context } from '@inversifyjs/http-hono';
+// oxlint-disable-next-line typescript/consistent-type-imports -- required by emitDecoratorMetadata
 import { Context as HonoContext } from 'hono';
 
 @Controller('/warriors')

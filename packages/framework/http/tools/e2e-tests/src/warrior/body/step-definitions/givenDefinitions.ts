@@ -1,13 +1,13 @@
 import { Given } from '@cucumber/cucumber';
-import { Container, Newable } from 'inversify';
+import { type Container, type Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias.js';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { type InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
 import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
 import { HttpMethod } from '../../../http/models/HttpMethod.js';
 import { setServerRequest } from '../../../server/actions/setServerRequest.js';
 import { getServerOrFail } from '../../../server/calculations/getServerOrFail.js';
-import { Server } from '../../../server/models/Server.js';
+import { type Server } from '../../../server/models/Server.js';
 import { ServerKind } from '../../../server/models/ServerKind.js';
 import { WarriorsDeleteJsonBodyController } from '../controllers/WarriorsDeleteJsonBodyController.js';
 import { WarriorsDeleteJsonBodyNamedController } from '../controllers/WarriorsDeleteJsonBodyNamedController.js';
@@ -50,7 +50,7 @@ import { WarriorsPutMultipartBodyUwebSocketsController } from '../controllers/Wa
 import { WarriorsPutStringBodyController } from '../controllers/WarriorsPutStringBodyController.js';
 import { WarriorsPutUrlEncodedBodyController } from '../controllers/WarriorsPutUrlEncodedBodyController.js';
 import { WarriorCreationResponseType } from '../models/WarriorCreationResponseType.js';
-import { WarriorRequest } from '../models/WarriorRequest.js';
+import { type WarriorRequest } from '../models/WarriorRequest.js';
 
 function getMethodWarriorJsonBodyController(method: HttpMethod): Newable {
   switch (method) {

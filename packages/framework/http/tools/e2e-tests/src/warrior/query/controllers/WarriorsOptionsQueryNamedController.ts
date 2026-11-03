@@ -1,6 +1,6 @@
 import { Controller, Options, Query } from '@inversifyjs/http-core';
 
-import { WarriorWithQuery } from '../models/WarriorWithQuery.js';
+import { type WarriorWithQuery } from '../models/WarriorWithQuery.js';
 
 @Controller('/warriors')
 export class WarriorsOptionsQueryNamedController {

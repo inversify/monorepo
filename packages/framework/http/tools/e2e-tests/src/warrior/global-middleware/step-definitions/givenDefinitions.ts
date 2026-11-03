@@ -1,13 +1,17 @@
 import { Given } from '@cucumber/cucumber';
-import { Middleware } from '@inversifyjs/http-core';
-import { Container, Newable, ServiceIdentifier } from 'inversify';
+import { type Middleware } from '@inversifyjs/http-core';
+import {
+  type Container,
+  type Newable,
+  type ServiceIdentifier,
+} from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias.js';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { type InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
 import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
 import { setServerRequest } from '../../../server/actions/setServerRequest.js';
 import { getServerOrFail } from '../../../server/calculations/getServerOrFail.js';
-import { Server } from '../../../server/models/Server.js';
+import { type Server } from '../../../server/models/Server.js';
 import { ServerKind } from '../../../server/models/ServerKind.js';
 import { WarriorsGetTestCorsController } from '../controllers/WarriorsGetTestCorsController.js';
 import { CorsExpressMiddleware } from '../middlewares/express/CorsExpressMiddleware.js';

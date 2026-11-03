@@ -1,5 +1,5 @@
-import { FastifyMiddleware } from '@inversifyjs/http-fastify';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { type FastifyMiddleware } from '@inversifyjs/http-fastify';
+import { type FastifyReply, type FastifyRequest } from 'fastify';
 import { injectable } from 'inversify';
 
 @injectable()

@@ -1,5 +1,5 @@
-import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
-import { Server } from '../models/Server.js';
+import { type InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
+import { type Server } from '../models/Server.js';
 
 export function getServerOrFail(
   this: InversifyHttpWorld,

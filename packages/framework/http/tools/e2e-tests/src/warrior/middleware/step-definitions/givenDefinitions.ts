@@ -1,9 +1,9 @@
 import { Given } from '@cucumber/cucumber';
-import { Middleware } from '@inversifyjs/http-core';
-import { Container, Newable } from 'inversify';
+import { type Middleware } from '@inversifyjs/http-core';
+import { type Container, type Newable } from 'inversify';
 
 import { defaultAlias } from '../../../common/models/defaultAlias.js';
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { type InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
 import { getContainerOrFail } from '../../../container/calculations/getContainerOrFail.js';
 import { HttpMethod } from '../../../http/models/HttpMethod.js';
 import { ServerKind } from '../../../server/models/ServerKind.js';

@@ -1,7 +1,7 @@
 import {
   BadRequestHttpResponse,
   CatchError,
-  ErrorFilter,
+  type ErrorFilter,
 } from '@inversifyjs/http-core';
 
 import { NotImplementedOperationError } from '../errors/NotImplementedOperationError.js';

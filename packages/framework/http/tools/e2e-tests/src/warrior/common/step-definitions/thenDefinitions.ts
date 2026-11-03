@@ -3,8 +3,8 @@ import assert from 'node:assert';
 import { Then } from '@cucumber/cucumber';
 import { HttpStatusCode } from '@inversifyjs/http-core';
 
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
-import { ResponseParameter } from '../../../http/models/ResponseParameter.js';
+import { type InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { type ResponseParameter } from '../../../http/models/ResponseParameter.js';
 import { getServerResponseOrFail } from '../../../server/calculations/getServerResponseOrFail.js';
 
 async function thenResponseStatusCodeIsOkIsh(

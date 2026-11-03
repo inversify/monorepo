@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@inversifyjs/http-core';
 
-import { WarriorCreationResponse } from '../models/WarriorCreationResponse.js';
-import { WarriorCreationResponseType } from '../models/WarriorCreationResponseType.js';
+import { type WarriorCreationResponse } from '../models/WarriorCreationResponse.js';
+import { type WarriorCreationResponseType } from '../models/WarriorCreationResponseType.js';
 
 @Controller('/warriors')
 export class WarriorsPostMultipartBodyHonoController {

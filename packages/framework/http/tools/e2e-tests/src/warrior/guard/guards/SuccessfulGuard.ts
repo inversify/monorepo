@@ -1,4 +1,4 @@
-import { Guard } from '@inversifyjs/http-core';
+import { type Guard } from '@inversifyjs/http-core';
 import { injectable } from 'inversify';
 
 @injectable()

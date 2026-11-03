@@ -5,7 +5,7 @@ import {
   MiddlewarePhase,
   Next,
 } from '@inversifyjs/http-core';
-import { NextFunction } from 'express';
+import { type NextFunction } from 'express';
 
 import { NextExpressMiddleware } from '../../middlewares/NextExpressMiddleware.js';
 
