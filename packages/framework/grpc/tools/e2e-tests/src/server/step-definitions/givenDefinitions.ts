@@ -1,13 +1,13 @@
 import { Given } from '@cucumber/cucumber';
-import { Server as GrpcJsServer, ServerCredentials } from '@grpc/grpc-js';
+import { type Server as GrpcJsServer, ServerCredentials } from '@grpc/grpc-js';
 import { InversifyGrpcJsAdapter } from '@inversifyjs/grpc-js';
-import { Container } from 'inversify';
+import { type Container } from 'inversify';
 
 import { defaultAlias } from '../../common/models/defaultAlias.js';
-import { InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
+import { type InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
 import { getContainerOrFail } from '../../container/calculations/getContainerOrFail.js';
 import { setServer } from '../actions/setServer.js';
-import { Server } from '../models/Server.js';
+import { type Server } from '../models/Server.js';
 
 async function bindServer(server: GrpcJsServer): Promise<number> {
   return new Promise<number>(

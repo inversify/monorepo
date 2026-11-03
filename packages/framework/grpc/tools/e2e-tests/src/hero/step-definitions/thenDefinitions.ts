@@ -3,8 +3,8 @@ import assert from 'node:assert';
 import { Then } from '@cucumber/cucumber';
 
 import { defaultAlias } from '../../common/models/defaultAlias.js';
-import { InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
-import { ChatMessage } from '../generated/hero.js';
+import { type InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
+import { type ChatMessage } from '../generated/hero.js';
 import { isChatMessageList } from '../models/ChatMessage.js';
 import {
   type HeroResponse,
