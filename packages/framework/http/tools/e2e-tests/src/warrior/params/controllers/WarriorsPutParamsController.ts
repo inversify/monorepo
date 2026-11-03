@@ -1,6 +1,6 @@
 import { Controller, Params, Put } from '@inversifyjs/http-core';
 
-import { WarriorWithId } from '../models/WarriorWithId.js';
+import { type WarriorWithId } from '../models/WarriorWithId.js';
 
 @Controller('/warriors')
 export class WarriorsPutParamsController {

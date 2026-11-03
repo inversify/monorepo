@@ -1,5 +1,5 @@
 import { Controller, Delete, Response } from '@inversifyjs/http-core';
-import { Response as ExpressResponse } from 'express';
+import { type Response as ExpressResponse } from 'express';
 
 @Controller('/warriors')
 export class WarriorsDeleteResponseExpressController {

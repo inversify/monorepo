@@ -1,6 +1,6 @@
 import {
   Controller,
-  HttpResponse,
+  type HttpResponse,
   NoContentHttpResponse,
   Post,
 } from '@inversifyjs/http-core';

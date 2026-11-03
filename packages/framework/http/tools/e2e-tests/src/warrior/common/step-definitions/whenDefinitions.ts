@@ -1,7 +1,7 @@
 import { When } from '@cucumber/cucumber';
 
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
-import { RequestParameter } from '../../../http/models/RequestParameter.js';
+import { type InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { type RequestParameter } from '../../../http/models/RequestParameter.js';
 import { setServerResponse } from '../../../server/actions/setServerResponse.js';
 import { getServerRequestOrFail } from '../../../server/calculations/getServerRequestOrFail.js';
 

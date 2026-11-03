@@ -1,6 +1,10 @@
-import { UwebSocketsMiddleware } from '@inversifyjs/http-uwebsockets';
+import { type UwebSocketsMiddleware } from '@inversifyjs/http-uwebsockets';
 import { injectable } from 'inversify';
-import { HttpRequest, HttpResponse, RecognizedString } from 'uWebSockets.js';
+import {
+  type HttpRequest,
+  type HttpResponse,
+  type RecognizedString,
+} from 'uWebSockets.js';
 
 @injectable()
 export class GlobalUwebSocketsMiddleware implements UwebSocketsMiddleware {

@@ -1,5 +1,5 @@
 import { Controller, Options, Response } from '@inversifyjs/http-core';
-import { HttpResponse } from 'uWebSockets.js';
+import { type HttpResponse } from 'uWebSockets.js';
 
 @Controller('/warriors')
 export class WarriorsOptionsResponseUwebSocketsController {

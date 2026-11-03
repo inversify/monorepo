@@ -1,7 +1,7 @@
 import { HttpStatusCode } from '@inversifyjs/http-core';
-import { UwebSocketsMiddleware } from '@inversifyjs/http-uwebsockets';
+import { type UwebSocketsMiddleware } from '@inversifyjs/http-uwebsockets';
 import { injectable } from 'inversify';
-import { HttpRequest, HttpResponse } from 'uWebSockets.js';
+import { type HttpRequest, type HttpResponse } from 'uWebSockets.js';
 
 @injectable()
 export class UnsuccessfulUwebSocketsMiddleware implements UwebSocketsMiddleware {

@@ -1,5 +1,5 @@
-import { ExpressMiddleware } from '@inversifyjs/http-express';
-import { Request, Response } from 'express';
+import { type ExpressMiddleware } from '@inversifyjs/http-express';
+import { type Request, type Response } from 'express';
 import { injectable } from 'inversify';
 
 @injectable()

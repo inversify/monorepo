@@ -1,5 +1,5 @@
-import { HonoMiddleware } from '@inversifyjs/http-hono';
-import { Context, HonoRequest } from 'hono';
+import { type HonoMiddleware } from '@inversifyjs/http-hono';
+import { type Context, type HonoRequest } from 'hono';
 import { injectable } from 'inversify';
 
 @injectable()

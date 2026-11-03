@@ -1,5 +1,5 @@
-import { InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
-import { ResponseParameter } from '../../http/models/ResponseParameter.js';
+import { type InversifyHttpWorld } from '../../common/models/InversifyHttpWorld.js';
+import { type ResponseParameter } from '../../http/models/ResponseParameter.js';
 
 export function getServerResponseOrFail(
   this: InversifyHttpWorld,

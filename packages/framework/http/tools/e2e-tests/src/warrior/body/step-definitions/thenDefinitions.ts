@@ -2,13 +2,13 @@ import assert from 'node:assert';
 
 import { Then } from '@cucumber/cucumber';
 
-import { InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
-import { RequestParameter } from '../../../http/models/RequestParameter.js';
-import { ResponseParameter } from '../../../http/models/ResponseParameter.js';
+import { type InversifyHttpWorld } from '../../../common/models/InversifyHttpWorld.js';
+import { type RequestParameter } from '../../../http/models/RequestParameter.js';
+import { type ResponseParameter } from '../../../http/models/ResponseParameter.js';
 import { getServerRequestOrFail } from '../../../server/calculations/getServerRequestOrFail.js';
 import { getServerResponseOrFail } from '../../../server/calculations/getServerResponseOrFail.js';
-import { WarriorCreationResponse } from '../models/WarriorCreationResponse.js';
-import { WarriorRequest } from '../models/WarriorRequest.js';
+import { type WarriorCreationResponse } from '../models/WarriorCreationResponse.js';
+import { type WarriorRequest } from '../models/WarriorRequest.js';
 
 async function thenResponseContainsTheCorrectBodyData(
   this: InversifyHttpWorld,
@@ -21,7 +21,8 @@ async function thenResponseContainsTheCorrectBodyData(
     getServerRequestOrFail.bind(this)(parsedRequestAlias);
 
   const requestBody: WarriorRequest | undefined = request.body as
-    WarriorRequest | undefined;
+    | WarriorRequest
+    | undefined;
 
   assert(requestBody !== undefined);
 
@@ -80,7 +81,8 @@ async function thenResponseContainsTheCorrectMultipartBodyData(
     getServerRequestOrFail.bind(this)(parsedRequestAlias);
 
   const requestBody: WarriorRequest | undefined = request.body as
-    WarriorRequest | undefined;
+    | WarriorRequest
+    | undefined;
 
   assert(requestBody !== undefined);
 

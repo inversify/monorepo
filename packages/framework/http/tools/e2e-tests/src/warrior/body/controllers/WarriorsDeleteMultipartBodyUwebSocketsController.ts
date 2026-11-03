@@ -3,8 +3,8 @@ import { TextDecoder } from 'node:util';
 import { Body, Controller, Delete } from '@inversifyjs/http-core';
 import { type MultipartField } from 'uWebSockets.js';
 
-import { WarriorCreationResponse } from '../models/WarriorCreationResponse.js';
-import { WarriorCreationResponseType } from '../models/WarriorCreationResponseType.js';
+import { type WarriorCreationResponse } from '../models/WarriorCreationResponse.js';
+import { type WarriorCreationResponseType } from '../models/WarriorCreationResponseType.js';
 
 @Controller('/warriors')
 export class WarriorsDeleteMultipartBodyUwebSocketsController {
