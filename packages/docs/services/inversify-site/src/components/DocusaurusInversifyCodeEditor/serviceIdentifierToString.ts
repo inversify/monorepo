@@ -1,5 +1,5 @@
-import { ServiceIdentifier } from '@inversifyjs/common';
-import { CloneableFunction } from '@inversifyjs/react-code-runner';
+import { type ServiceIdentifier } from '@inversifyjs/common';
+import { type CloneableFunction } from '@inversifyjs/react-code-runner';
 
 export function serviceIdentifierToString(
   serviceIdentifier: ServiceIdentifier | CloneableFunction,

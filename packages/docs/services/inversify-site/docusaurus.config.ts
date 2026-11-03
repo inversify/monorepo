@@ -1,6 +1,6 @@
 import type * as Preset from '@docusaurus/preset-classic';
 import type { Config, LoadContext, Plugin } from '@docusaurus/types';
-import { rspack, WebpackPluginInstance } from '@rspack/core';
+import { rspack, type WebpackPluginInstance } from '@rspack/core';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import { themes as prismThemes } from 'prism-react-renderer';
 
