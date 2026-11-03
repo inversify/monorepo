@@ -5,6 +5,7 @@ import {
   type ArrayTypeMetadata,
   type OrTypeMetadata,
   type PropertyTypeMetadata,
+  type StringIndexSignatureTypeMetadata,
   type TypeMetadata,
   TypeMetadataKind,
 } from '@inversifyjs/json-schema-type-metadata';
@@ -70,6 +71,22 @@ function findPropertyTypeMetadata(
   }
 
   return undefined;
+}
+
+function asArrayTypeMetadata(
+  typeMetadata: TypeMetadata | undefined,
+): ArrayTypeMetadata | undefined {
+  return typeMetadata?.kind === TypeMetadataKind.arrayType
+    ? typeMetadata
+    : undefined;
+}
+
+function asStringIndexSignatureTypeMetadata(
+  typeMetadata: TypeMetadata | undefined,
+): StringIndexSignatureTypeMetadata | undefined {
+  return typeMetadata?.kind === TypeMetadataKind.stringIndexSignatureType
+    ? typeMetadata
+    : undefined;
 }
 
 describe(unifyCollidingTypeMetadataIds, () => {
@@ -728,9 +745,7 @@ describe(unifyCollidingTypeMetadataIds, () => {
         const todoPropertyTypeMetadata: PropertyTypeMetadata | undefined =
           findPropertyTypeMetadata(result as TypeMetadata, 'todo');
         const arrayTypeMetadata: ArrayTypeMetadata | undefined =
-          itemsPropertyTypeMetadata?.child.kind === TypeMetadataKind.arrayType
-            ? itemsPropertyTypeMetadata.child
-            : undefined;
+          asArrayTypeMetadata(itemsPropertyTypeMetadata?.child);
 
         expect(todoPropertyTypeMetadata?.child).toBe(itemTypeMetadata);
         expect(arrayTypeMetadata?.child).toBe(itemTypeMetadata);
@@ -806,9 +821,7 @@ describe(unifyCollidingTypeMetadataIds, () => {
         const todoPropertyTypeMetadata: PropertyTypeMetadata | undefined =
           findPropertyTypeMetadata(result as TypeMetadata, 'todo');
         const arrayTypeMetadata: ArrayTypeMetadata | undefined =
-          pairPropertyTypeMetadata?.child.kind === TypeMetadataKind.arrayType
-            ? pairPropertyTypeMetadata.child
-            : undefined;
+          asArrayTypeMetadata(pairPropertyTypeMetadata?.child);
 
         expect(todoPropertyTypeMetadata?.child).toBe(prefixItemTypeMetadata);
         expect(arrayTypeMetadata?.prefixItems?.[0]).toBe(
@@ -993,10 +1006,7 @@ describe(unifyCollidingTypeMetadataIds, () => {
 
         expect(resultTypeMetadata.children[0]).toBe(firstFooTypeMetadata);
         expect(
-          indexSignatureTypeMetadata?.kind ===
-            TypeMetadataKind.stringIndexSignatureType
-            ? indexSignatureTypeMetadata.child
-            : undefined,
+          asStringIndexSignatureTypeMetadata(indexSignatureTypeMetadata)?.child,
         ).toBe(firstFooTypeMetadata);
       });
     });

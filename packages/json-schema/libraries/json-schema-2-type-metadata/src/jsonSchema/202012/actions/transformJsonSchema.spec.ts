@@ -38,6 +38,25 @@ function generateTransformJsonSchemaContext(
   };
 }
 
+function findAndChildPropertyTypeMetadata(
+  andTypeMetadata: AndTypeMetadata,
+  property: string,
+): PropertyTypeMetadata {
+  return andTypeMetadata.children.find(
+    (child: TypeMetadata): boolean =>
+      child.kind === TypeMetadataKind.propertyType &&
+      child.property === property,
+  ) as PropertyTypeMetadata;
+}
+
+function asArrayTypeMetadata(
+  typeMetadata: TypeMetadata,
+): ArrayTypeMetadata | undefined {
+  return typeMetadata.kind === TypeMetadataKind.arrayType
+    ? typeMetadata
+    : undefined;
+}
+
 describe(transformJsonSchema, () => {
   describe.each<[JsonSchemaBoolean, TypeMetadata]>([
     [false, { kind: TypeMetadataKind.noneType }],
@@ -2375,17 +2394,9 @@ describe(transformJsonSchema, () => {
       it('should reuse one TypeMetadata node for both properties', () => {
         const resultTypeMetadata: AndTypeMetadata = result as AndTypeMetadata;
         const firstPropertyTypeMetadata: PropertyTypeMetadata =
-          resultTypeMetadata.children.find(
-            (child: TypeMetadata) =>
-              child.kind === TypeMetadataKind.propertyType &&
-              child.property === 'a',
-          ) as PropertyTypeMetadata;
+          findAndChildPropertyTypeMetadata(resultTypeMetadata, 'a');
         const secondPropertyTypeMetadata: PropertyTypeMetadata =
-          resultTypeMetadata.children.find(
-            (child: TypeMetadata) =>
-              child.kind === TypeMetadataKind.propertyType &&
-              child.property === 'b',
-          ) as PropertyTypeMetadata;
+          findAndChildPropertyTypeMetadata(resultTypeMetadata, 'b');
 
         expect(firstPropertyTypeMetadata.child).toBe(
           secondPropertyTypeMetadata.child,
@@ -2428,17 +2439,9 @@ describe(transformJsonSchema, () => {
       it('should keep both named TypeMetadata nodes', () => {
         const resultTypeMetadata: AndTypeMetadata = result as AndTypeMetadata;
         const personPropertyTypeMetadata: PropertyTypeMetadata =
-          resultTypeMetadata.children.find(
-            (child: TypeMetadata) =>
-              child.kind === TypeMetadataKind.propertyType &&
-              child.property === 'person',
-          ) as PropertyTypeMetadata;
+          findAndChildPropertyTypeMetadata(resultTypeMetadata, 'person');
         const userPropertyTypeMetadata: PropertyTypeMetadata =
-          resultTypeMetadata.children.find(
-            (child: TypeMetadata) =>
-              child.kind === TypeMetadataKind.propertyType &&
-              child.property === 'user',
-          ) as PropertyTypeMetadata;
+          findAndChildPropertyTypeMetadata(resultTypeMetadata, 'user');
 
         expect(personPropertyTypeMetadata.child).not.toBe(
           userPropertyTypeMetadata.child,
@@ -2499,25 +2502,15 @@ describe(transformJsonSchema, () => {
       it('should reuse one TypeMetadata node for the property and the array items', () => {
         const resultTypeMetadata: AndTypeMetadata = result as AndTypeMetadata;
         const itemsPropertyTypeMetadata: PropertyTypeMetadata =
-          resultTypeMetadata.children.find(
-            (child: TypeMetadata) =>
-              child.kind === TypeMetadataKind.propertyType &&
-              child.property === 'items',
-          ) as PropertyTypeMetadata;
+          findAndChildPropertyTypeMetadata(resultTypeMetadata, 'items');
         const todoPropertyTypeMetadata: PropertyTypeMetadata =
-          resultTypeMetadata.children.find(
-            (child: TypeMetadata) =>
-              child.kind === TypeMetadataKind.propertyType &&
-              child.property === 'todo',
-          ) as PropertyTypeMetadata;
+          findAndChildPropertyTypeMetadata(resultTypeMetadata, 'todo');
 
         expect(itemsPropertyTypeMetadata.child.kind).toBe(
           TypeMetadataKind.arrayType,
         );
         expect(
-          itemsPropertyTypeMetadata.child.kind === TypeMetadataKind.arrayType
-            ? itemsPropertyTypeMetadata.child.child
-            : undefined,
+          asArrayTypeMetadata(itemsPropertyTypeMetadata.child)?.child,
         ).toBe(todoPropertyTypeMetadata.child);
         expect(todoPropertyTypeMetadata.child.id).toBe('TodoV1');
       });
@@ -2580,21 +2573,11 @@ describe(transformJsonSchema, () => {
       it('should reuse one TypeMetadata node for the property and the tuple prefix item', () => {
         const resultTypeMetadata: AndTypeMetadata = result as AndTypeMetadata;
         const pairPropertyTypeMetadata: PropertyTypeMetadata =
-          resultTypeMetadata.children.find(
-            (child: TypeMetadata) =>
-              child.kind === TypeMetadataKind.propertyType &&
-              child.property === 'pair',
-          ) as PropertyTypeMetadata;
+          findAndChildPropertyTypeMetadata(resultTypeMetadata, 'pair');
         const todoPropertyTypeMetadata: PropertyTypeMetadata =
-          resultTypeMetadata.children.find(
-            (child: TypeMetadata) =>
-              child.kind === TypeMetadataKind.propertyType &&
-              child.property === 'todo',
-          ) as PropertyTypeMetadata;
+          findAndChildPropertyTypeMetadata(resultTypeMetadata, 'todo');
         const pairTypeMetadata: ArrayTypeMetadata | undefined =
-          pairPropertyTypeMetadata.child.kind === TypeMetadataKind.arrayType
-            ? pairPropertyTypeMetadata.child
-            : undefined;
+          asArrayTypeMetadata(pairPropertyTypeMetadata.child);
 
         expect(pairTypeMetadata?.prefixItems?.[0]).toBe(
           todoPropertyTypeMetadata.child,
