@@ -12,7 +12,8 @@
     "rollup": "4.66.0"
   },
   "devDependencies": {
-    "prettier": "3.9.10",
+    "@inversifyjs/foundation-oxfmt-config": "workspace:*",
+    "oxfmt": "0.75.0",
     "typescript": "6.0.3"
   },
   "exports": "./lib/index.js",
@@ -30,7 +31,7 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "format": "prettier --write ./lib"
+    "format": "oxfmt --write ./lib"
   },
   "type": "module",
   "version": "0.1.2"

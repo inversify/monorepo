@@ -13,6 +13,8 @@
     "typescript-eslint": "^8.72.1"
   },
   "devDependencies": {
+    "@inversifyjs/foundation-oxfmt-config": "workspace:*",
+    "oxfmt": "0.75.0",
     "prettier": "3.9.10"
   },
   "peerDependencies": {

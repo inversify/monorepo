@@ -5,9 +5,9 @@ import process from 'node:process';
 import { defineConfig } from '@eslint/config-helpers';
 import eslint from '@eslint/js';
 import vitest from '@vitest/eslint-plugin';
-import tseslint from 'typescript-eslint';
 import eslintPrettierConfig from 'eslint-plugin-prettier/recommended';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import tseslint from 'typescript-eslint';
 
 /**
  * @returns {import('@eslint/config-helpers').ConfigWithExtends}

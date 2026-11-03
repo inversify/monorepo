@@ -8,7 +8,8 @@
     "vitest": "5.0.5"
   },
   "devDependencies": {
-    "prettier": "3.9.10"
+    "@inversifyjs/foundation-oxfmt-config": "workspace:*",
+    "oxfmt": "0.75.0"
   },
   "exports": "./lib/index.js",
   "homepage": "https://github.com/inversify/monorepo#readme",
@@ -22,7 +23,7 @@
     "url": "git+https://github.com/inversify/monorepo.git"
   },
   "scripts": {
-    "format": "prettier --write ./lib/**/*.js"
+    "format": "oxfmt --write ./lib/**/*.js"
   },
   "type": "module",
   "version": "0.2.3"

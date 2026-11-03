@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { argv } from 'node:process';
+
 import { promisifiedExec } from '../src/promisifiedExec.js';
 
 const TURBOREPO_ROOT_PACKAGE_NAME = '//';

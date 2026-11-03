@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs/promises';
-import { argv } from 'node:process';
-import path from 'node:path';
 import { writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { argv } from 'node:process';
 
 /**
  * @param {string} path
