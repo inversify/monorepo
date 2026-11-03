@@ -15,12 +15,11 @@ index.html
 src/**
 vite.config.ts
 vitest.config.mjs
-eslint.config.mjs
-prettier.config.mjs
+oxfmt.config.ts
+oxlint.config.ts
 tsconfig.json
 tsconfig.build.json
 tsconfig.tsbuildinfo
 tsconfig.build.tsbuildinfo
 .lintstagedrc.json
 .gitignore
-.prettierignore

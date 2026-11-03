@@ -1,7 +1,7 @@
 import fastify, {
-  FastifyInstance,
-  FastifyReply,
-  FastifyRequest,
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
 } from 'fastify';
 
 import { DEFAULT_PORT } from '../../constant/defaultPort';

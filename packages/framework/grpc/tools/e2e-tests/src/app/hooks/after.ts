@@ -1,6 +1,6 @@
 import { After } from '@cucumber/cucumber';
 
-import { InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
+import { type InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
 
 After<InversifyGrpcWorld>(async function (): Promise<void> {
   for (const client of this.clients.values()) {

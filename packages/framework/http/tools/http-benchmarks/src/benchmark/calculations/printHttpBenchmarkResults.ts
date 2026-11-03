@@ -1,4 +1,4 @@
-import { K6Summary } from '../../k6/model/K6Summary';
+import { type K6Summary } from '../../k6/model/K6Summary';
 
 const FIXED_DECIMALS: number = 3;
 

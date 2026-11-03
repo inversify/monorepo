@@ -1,4 +1,4 @@
-import { NestApplication, NestFactory } from '@nestjs/core';
+import { type NestApplication, NestFactory } from '@nestjs/core';
 
 import { DEFAULT_PORT } from '../../constant/defaultPort';
 import { BasicGetAppModule } from '../../scenario/nestJs/BasicGetAppModule';

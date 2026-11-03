@@ -79,9 +79,13 @@ function collectTypeMetadata(
 }
 
 function findPropertyTypeMetadata(
-  typeMetadata: TypeMetadata,
+  typeMetadata: TypeMetadata | undefined,
   property: string,
 ): PropertyTypeMetadata | undefined {
+  if (typeMetadata === undefined) {
+    return undefined;
+  }
+
   return collectTypeMetadata(typeMetadata).find(
     (node: TypeMetadata): node is PropertyTypeMetadata =>
       node.kind === TypeMetadataKind.propertyType && node.property === property,
@@ -651,9 +655,7 @@ describe(transformJsonSchema, () => {
         const secondFooTypeMetadata: TypeMetadata | undefined =
           findPropertyTypeMetadata(result as TypeMetadata, 'b')?.child;
         const addressTypeMetadata: TypeMetadata | undefined =
-          firstFooTypeMetadata === undefined
-            ? undefined
-            : findPropertyTypeMetadata(firstFooTypeMetadata, 'address')?.child;
+          findPropertyTypeMetadata(firstFooTypeMetadata, 'address')?.child;
 
         expect(firstFooTypeMetadata).toBe(secondFooTypeMetadata);
         expect(firstFooTypeMetadata?.id).toBe('Foo');

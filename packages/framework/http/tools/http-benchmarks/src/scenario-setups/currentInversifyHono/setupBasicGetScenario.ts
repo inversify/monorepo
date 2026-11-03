@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server';
 import { InversifyHonoHttpAdapter } from '@inversifyjs/http-hono';
-import { Hono } from 'hono';
+import { type Hono } from 'hono';
 import { bindingScopeValues, Container } from 'inversify';
 
 import { DEFAULT_PORT } from '../../constant/defaultPort';

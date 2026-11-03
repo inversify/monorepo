@@ -1,7 +1,7 @@
-import { IWorld } from '@cucumber/cucumber';
-import { Container } from 'inversify';
+import { type IWorld } from '@cucumber/cucumber';
+import { type Container } from 'inversify';
 
-import { Server } from '../../server/models/Server.js';
+import { type Server } from '../../server/models/Server.js';
 
 interface EntitiesMap {
   readonly containers: Map<string, Container>;

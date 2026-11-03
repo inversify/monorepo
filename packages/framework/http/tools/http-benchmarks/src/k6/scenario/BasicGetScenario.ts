@@ -1,6 +1,6 @@
 import { check } from 'k6';
-import http, { RefinedResponse, ResponseType } from 'k6/http';
-import { Options } from 'k6/options';
+import http, { type RefinedResponse, type ResponseType } from 'k6/http';
+import { type Options } from 'k6/options';
 
 const DEFAULT_PORT: number = 3000;
 const ACCEPTED_HTTP_STATUS_CODE: number = 200;
@@ -20,7 +20,7 @@ export const options: Options = {
 
 const BASEURL: string = `http://localhost:${String(DEFAULT_PORT)}/`;
 
-export default function () {
+export default function (): void {
   const response: RefinedResponse<ResponseType> = http.get(BASEURL);
 
   check(response, {

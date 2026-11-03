@@ -1,6 +1,6 @@
-import { Container } from 'inversify';
+import { type Container } from 'inversify';
 
-import { InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
+import { type InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
 
 export function getContainerOrFail(
   this: InversifyGrpcWorld,

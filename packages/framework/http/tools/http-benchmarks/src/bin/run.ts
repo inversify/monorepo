@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import { Scenario } from '@inversifyjs/benchmark-utils';
+import { type Scenario } from '@inversifyjs/benchmark-utils';
 
 import { executeHttpBenchmark } from '../benchmark/calculations/executeHttpBenchmark';
 import { printHttpBenchmarkResults } from '../benchmark/calculations/printHttpBenchmarkResults';
-import { K6Summary } from '../k6/model/K6Summary';
+import { type K6Summary } from '../k6/model/K6Summary';
 import { CurrentInversifyExpressBasicGetScenario } from '../scenario/currentInversifyExpress/CurrentInversifyExpressBasicGetScenario';
 import { CurrentInversifyFastifyBasicGetScenario } from '../scenario/currentInversifyFastify/CurrentInversifyFastifyBasicGetScenario';
 import { CurrentInversifyHonoBasicGetScenario } from '../scenario/currentInversifyHono/CurrentInversifyHonoBasicGetScenario';
@@ -12,7 +12,7 @@ import { CurrentInversifyUwebsocketsBasicGetScenario } from '../scenario/current
 import { ExpressBasicGetScenario } from '../scenario/express/ExpressBasicGetScenario';
 import { FastifyBasicGetScenario } from '../scenario/fastify/FastifyBasicGetScenario';
 import { HonoBasicGetScenario } from '../scenario/hono/HonoBasicGetScenario';
-import { Platform } from '../scenario/models/Platform';
+import { type Platform } from '../scenario/models/Platform';
 import { NestJsExpressBasicGetScenario } from '../scenario/nestJsExpress/NestJsExpressBasicGetScenario';
 import { NestJsFastifyBasicGetScenario } from '../scenario/nestJsFastify/NestJsFastifyBasicGetScenario';
 import { UwebsocketsBasicGetScenario } from '../scenario/uwebsockets/UwebsocketsBasicGetScenario';

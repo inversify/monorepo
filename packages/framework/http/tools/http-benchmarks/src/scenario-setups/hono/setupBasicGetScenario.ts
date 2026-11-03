@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server';
-import { Context, Hono } from 'hono';
+import { type Context, Hono } from 'hono';
 
 import { DEFAULT_PORT } from '../../constant/defaultPort';
 

@@ -1,5 +1,5 @@
-import { InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
-import { Server } from '../models/Server.js';
+import { type InversifyGrpcWorld } from '../../common/models/InversifyGrpcWorld.js';
+import { type Server } from '../models/Server.js';
 
 export function setServer(
   this: InversifyGrpcWorld,
