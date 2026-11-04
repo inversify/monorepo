@@ -7,15 +7,18 @@ import { type Container } from 'inversify';
 import { DbContainerModule } from '../../../../foundation/db/adapter/inversify/modules/DbContainerModule.js';
 import { InstrumentationContainerModule } from '../../../../instrumentation/adapter/inversify/modules/InstrumentationContainerModule.js';
 import { HttpInsightsEventSink } from '../../../../instrumentation/adapter/inversify/services/HttpInsightsEventSink.js';
+import { type HttpInsightsProviderOptions } from '../models/HttpInsightsProviderOptions.js';
 import { InsightsContainerModule } from '../modules/InsightsContainerModule.js';
 
 export class HttpInsightsProvider {
   #provided: boolean;
   #eventSink: EventSink<HttpInstrumentationEvent> | undefined;
+  readonly #options: HttpInsightsProviderOptions | undefined;
 
-  constructor() {
+  constructor(options?: HttpInsightsProviderOptions) {
     this.#provided = false;
     this.#eventSink = undefined;
+    this.#options = options;
   }
 
   public async provide(container: Container): Promise<void> {
@@ -26,7 +29,7 @@ export class HttpInsightsProvider {
     await container.loadAsync(
       new DbContainerModule(),
       new InsightsContainerModule(),
-      new InstrumentationContainerModule(),
+      new InstrumentationContainerModule(this.#options),
     );
 
     this.#eventSink = container.get(HttpInsightsEventSink);

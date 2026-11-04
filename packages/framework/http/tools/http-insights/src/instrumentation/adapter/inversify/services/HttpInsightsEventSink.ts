@@ -13,11 +13,11 @@ import {
   type HttpRequestStartedEvent,
   type HttpResponseSentEvent,
 } from '@inversifyjs/http-instrumentation-core';
-import { inject, injectable } from 'inversify';
 
+import { type HttpInsightsProviderOptions } from '../../../../insights/adapter/inversify/models/HttpInsightsProviderOptions.js';
 import { type ExecuteUpdateCommand } from '../../../../insights/application/models/ExecuteUpdateCommand.js';
-import { CallManagementInputPort } from '../../../../insights/application/ports/CallManagementInputPort.js';
-import { ErrorTracesService } from '../../../../insights/application/services/ErrorTracesService.js';
+import { type CallManagementInputPort } from '../../../../insights/application/ports/CallManagementInputPort.js';
+import { type ErrorTracesService } from '../../../../insights/application/services/ErrorTracesService.js';
 import { type Call } from '../../../../insights/domain/models/Call.js';
 import { type Controller } from '../../../../insights/domain/models/Controller.js';
 import { type Guard } from '../../../../insights/domain/models/Guard.js';
@@ -27,6 +27,7 @@ import { type Middleware } from '../../../../insights/domain/models/Middleware.j
 import { type NativeMiddleware } from '../../../../insights/domain/models/NativeMiddleware.js';
 import { type Pipe } from '../../../../insights/domain/models/Pipe.js';
 import { type Response } from '../../../../insights/domain/models/Response.js';
+import { buildHttpInsightsUrlPattern } from '../calculations/buildHttpInsightsUrlPattern.js';
 
 export const CALL_RETENTION_MS: number = 60_000;
 export const MAX_COMMITTED_CALLS: number = 10_000;
@@ -49,27 +50,44 @@ interface InFlightWrite {
   stackedErrors: HttpErrorEvent[];
 }
 
-@injectable()
 export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent> {
   readonly #committedByRequestId: Map<string, CommittedCall> = new Map();
   readonly #callManagementInputPort: CallManagementInputPort;
   readonly #errorTracesService: ErrorTracesService;
+  readonly #excludedByRequestId: Map<string, number> = new Map();
   readonly #inFlightByRequestId: Map<string, InFlightWrite> = new Map();
   readonly #pendingByRequestId: Map<string, PendingCall> = new Map();
   #sweepTimer: ReturnType<typeof setInterval> | undefined;
+  readonly #urlPattern: RegExp;
 
   constructor(
-    @inject(CallManagementInputPort)
     callManagementInputPort: CallManagementInputPort,
-    @inject(ErrorTracesService)
     errorTracesService: ErrorTracesService,
+    options?: HttpInsightsProviderOptions,
   ) {
     this.#callManagementInputPort = callManagementInputPort;
     this.#errorTracesService = errorTracesService;
     this.#sweepTimer = undefined;
+    this.#urlPattern = buildHttpInsightsUrlPattern(options);
   }
 
   public async emit(event: HttpInstrumentationEvent): Promise<void> {
+    if (this.#isExcluded(event.requestId)) {
+      this.#rememberExcluded(event.requestId);
+
+      return;
+    }
+
+    if (
+      event.type === 'http.request.started' &&
+      !this.#urlPattern.test(event.url)
+    ) {
+      this.#pendingByRequestId.delete(event.requestId);
+      this.#rememberExcluded(event.requestId);
+
+      return;
+    }
+
     if (event.type === 'http.error') {
       await this.#emitHttpError(event);
 
@@ -419,7 +437,10 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
   }
 
   #stopRetentionSweepIfIdle(): void {
-    if (this.#committedByRequestId.size > 0) {
+    if (
+      this.#committedByRequestId.size > 0 ||
+      this.#excludedByRequestId.size > 0
+    ) {
       return;
     }
 
@@ -456,6 +477,12 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       }
 
       this.#pendingByRequestId.delete(requestId);
+    }
+
+    for (const [requestId, expiresAt] of this.#excludedByRequestId) {
+      if (expiresAt <= now) {
+        this.#excludedByRequestId.delete(requestId);
+      }
     }
 
     this.#evictCommittedOverflow();
@@ -542,6 +569,29 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     await this.#callManagementInputPort.update(
       await this.#errorTracesService.captureUpdate(command),
     );
+  }
+
+  #isExcluded(requestId: string): boolean {
+    const expiresAt: number | undefined =
+      this.#excludedByRequestId.get(requestId);
+
+    if (expiresAt === undefined) {
+      return false;
+    }
+
+    if (expiresAt <= Date.now()) {
+      this.#excludedByRequestId.delete(requestId);
+      this.#stopRetentionSweepIfIdle();
+
+      return false;
+    }
+
+    return true;
+  }
+
+  #rememberExcluded(requestId: string): void {
+    this.#excludedByRequestId.set(requestId, Date.now() + CALL_RETENTION_MS);
+    this.#armRetentionSweep();
   }
 
   #readOptionalError(event: { readonly error?: unknown }): unknown {
