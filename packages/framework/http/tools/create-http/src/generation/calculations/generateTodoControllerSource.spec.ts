@@ -44,8 +44,9 @@ describe(generateTodoControllerSource, () => {
         expect(result).toContain("@OasParameter({\n    description: 'Todo id'");
         expect(result).toContain("name: 'page'");
         expect(result).toContain("name: 'pageSize'");
+        expect(result).toContain('const defaultPageSize: number = 10;');
         expect(result).toContain('default: 1');
-        expect(result).toContain('default: 10');
+        expect(result).toContain('default: defaultPageSize');
         expect(result).toContain('maximum: 20');
         expect(result).toContain('@StatusCode(HttpStatusCode.CREATED)');
         expect(result).toContain('@StatusCode(HttpStatusCode.NO_CONTENT)');
@@ -64,7 +65,7 @@ describe(generateTodoControllerSource, () => {
         expect(result).toContain('@ValidatedQuery() query: ListTodosQuery');
         expect(result).toContain('const page: number = query.page ?? 1');
         expect(result).toContain(
-          'const pageSize: number = query.pageSize ?? 10',
+          'const pageSize: number = query.pageSize ?? defaultPageSize',
         );
         expect(result).toContain(
           "if (('title' satisfies keyof UpdateTodoV1RequestBody) in body)",

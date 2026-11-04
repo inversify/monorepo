@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import prettier from 'prettier';
+import { formatScaffoldSource } from '../generation/calculations/formatScaffoldSource.js';
 
 async function collectTypeScriptFilePaths(
   directoryPath: string,
@@ -25,12 +25,7 @@ export async function formatGeneratedProjectSources(
   await Promise.all(
     typeScriptFilePaths.map(async (filePath: string): Promise<void> => {
       const source: string = await fs.readFile(filePath, 'utf8');
-      const resolvedOptions: prettier.Options | null =
-        await prettier.resolveConfig(filePath);
-      const formatted: string = await prettier.format(source, {
-        ...resolvedOptions,
-        filepath: filePath,
-      });
+      const formatted: string = await formatScaffoldSource(filePath, source);
 
       if (formatted !== source) {
         await fs.writeFile(filePath, formatted, 'utf8');

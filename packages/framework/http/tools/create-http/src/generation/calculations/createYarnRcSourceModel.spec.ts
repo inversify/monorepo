@@ -28,6 +28,9 @@ describe(createYarnRcSourceModel, () => {
             '@scarf/scarf': {
               built: true,
             },
+            'better-sqlite3': {
+              built: true,
+            },
             prisma: {
               built: true,
             },
@@ -56,6 +59,9 @@ describe(createYarnRcSourceModel, () => {
               built: true,
             },
             '@scarf/scarf': {
+              built: true,
+            },
+            'better-sqlite3': {
               built: true,
             },
             prisma: {

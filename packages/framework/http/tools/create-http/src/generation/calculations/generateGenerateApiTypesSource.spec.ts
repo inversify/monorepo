@@ -22,6 +22,8 @@ describe(generateGenerateApiTypesSource, () => {
       expect(result).toContain('provideOpenApi(container)');
       expect(result).toContain('transformOpenApiToTypeScript(');
       expect(result).toContain("path.join(\n  process.cwd(),\n  'src',");
+      expect(result).toContain("execFile(\n    'oxfmt',");
+      expect(result).not.toContain('prettier');
       expect(result).not.toContain('initializeContainer');
     });
   });

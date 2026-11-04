@@ -84,7 +84,7 @@ Ask a focused question only when a missing choice would materially change the pu
 4. Implement the Prisma adapter and a builder that maps Prisma records to the domain model. Keep database names such as \`created_at\` behind this boundary.
 5. Add one use case handler per operation under \`application/handlers\`. Implement \`Handler<TInput, TOutput>\` from \`src/common/domain/modules/Handler.ts\`. Colocate the handler input type in the same file. Async work is \`Handler<TInput, Promise<TOutput>>\`. Return domain data; use \`T | undefined\` for missing resources. Do not accept HTTP request models as handler input.
 6. Add request and response JSON schemas under \`src/<resource>/api/models\` (for example \`ProductSchemaV1.ts\` exporting \`productSchemaV1\`). Type each schema as \`OpenApi3Dot2SchemaObject\` from \`@inversifyjs/open-api-types/v3Dot2\` so \`type\` literals are not widened to \`string\`. Register each named schema on \`SwaggerUiProvider\` in \`src/app/scripts/provideOpenApi.ts\` as \`components.schemas.<Name>\`.
-7. Before importing a new generated type, add \`export type <Name> = any;\` to \`src/generated/api/index.ts\`. Import those types from \`../../../generated/api/index.js\` in controllers and API builders. Document operations with \`$ref: '#/components/schemas/<Name>'\`. Map domain \`Date\` values to ISO strings in API builders because generated date-time fields are strings.
+7. Import API types from \`../../../generated/api/index.js\` in controllers and API builders. Until \`generate:api\` replaces \`src/generated/api/index.ts\`, add an explicit object type alias for each new schema. Do not alias it to \`any\`; type-aware oxlint rejects that at use sites. Document operations with \`$ref: '#/components/schemas/<Name>'\`. Map domain \`Date\` values to ISO strings in API builders because generated date-time fields are strings.
 8. Add a controller that maps HTTP to handler input, calls \`handle\`, maps \`undefined\` to the existing not-found response, and maps domain values to generated API types. Use validated request decorators and explicit OpenAPI operation metadata.
 9. Add separate Inversify container modules for API bindings and Prisma persistence bindings. Bind use case handlers next to the controller.
 10. Import and load both modules in \`src/app/scripts/initializeContainer.ts\`.
@@ -105,8 +105,8 @@ Ask a focused question only when a missing choice would materially change the pu
 - Keep Prisma clients and generated Prisma types inside the Prisma adapter layer.
 - For uWebSockets.js, mirror the existing controller's request-capture and JSON-header behavior for equivalent endpoint types.
 - Use the Todo resource as a structural reference, but do not copy fields, routes, or operations that the new resource does not need.
-- Never leave a controller importing a generated type that is not yet stubbed as \`any\` or produced by \`generate:api\`.
-- After adding schemas, run \`generate:api\` (or the project build) so stubs are replaced with real types.
+- Never leave a controller importing a generated type that is missing from \`src/generated/api/index.ts\`.
+- After adding schemas, run \`generate:api\` (or the project build) so the explicit aliases are replaced with generated types.
 
 ## Validate
 

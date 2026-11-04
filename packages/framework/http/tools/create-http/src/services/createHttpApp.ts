@@ -169,17 +169,18 @@ export async function createHttpApp(
     '.gitignore',
   );
   await copyTemplateFile('tsconfig.json', projectPath, baseTemplateRoot);
+  await copyTemplateFile('tsconfig.esm.json', projectPath, baseTemplateRoot);
   await copyTemplateFile(
-    'eslint.config.mjs.template',
+    'oxlint.config.ts.template',
     projectPath,
     baseTemplateRoot,
-    'eslint.config.mjs',
+    'oxlint.config.ts',
   );
   await copyTemplateFile(
-    'prettier.config.mjs.template',
+    'oxfmt.config.ts.template',
     projectPath,
     baseTemplateRoot,
-    'prettier.config.mjs',
+    'oxfmt.config.ts',
   );
   await copyTemplateFile(
     '.env.example',

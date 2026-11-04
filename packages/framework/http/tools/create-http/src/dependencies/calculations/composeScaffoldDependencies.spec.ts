@@ -19,6 +19,7 @@ describe(composeScaffoldDependencies, () => {
         '@inversifyjs/http-express': '5.4.8',
         '@inversifyjs/http-fastify': '5.4.8',
         '@inversifyjs/http-hono': '5.4.8',
+        '@inversifyjs/http-insights': '0.4.0',
         '@inversifyjs/http-open-api': '5.4.8',
         '@inversifyjs/http-uwebsockets': '5.4.8',
         '@inversifyjs/http-validation': '5.4.8',
@@ -40,19 +41,19 @@ describe(composeScaffoldDependencies, () => {
         zod: '4.4.3',
       },
       devDependencies: {
-        '@eslint/js': '10.0.1',
+        '@inversifyjs/foundation-oxfmt-config': '0.2.0',
+        '@inversifyjs/foundation-oxlint-config': '0.2.0',
+        '@inversifyjs/foundation-typescript-config': '0.2.0',
         '@inversifyjs/open-api-2-typescript': '0.2.0',
         '@types/express': '5.0.6',
         '@types/node': '24.13.3',
         dotenv: '17.4.2',
-        eslint: '10.8.0',
-        'eslint-config-prettier': '10.1.8',
-        'eslint-plugin-prettier': '5.5.6',
-        prettier: '3.9.6',
+        oxfmt: '0.75.0',
+        oxlint: '1.90.0',
+        'oxlint-tsgolint': '7.0.2005',
         prisma: '7.9.1',
         tsx: '4.23.13',
-        typescript: '6.0.3',
-        'typescript-eslint': '8.65.0',
+        typescript: '7.0.2',
       },
     };
   });
@@ -76,9 +77,11 @@ describe(composeScaffoldDependencies, () => {
           '@inversifyjs/config-dotenv': '1.0.0',
           '@inversifyjs/http-core': '5.4.8',
           '@inversifyjs/http-express': '5.4.8',
+          '@inversifyjs/http-insights': '0.4.0',
           '@inversifyjs/http-open-api': '5.4.8',
           '@inversifyjs/http-validation': '5.4.8',
           '@inversifyjs/logger': '2.0.0',
+          '@inversifyjs/open-api-types': '2.0.0',
           '@inversifyjs/open-api-validation': '3.5.2',
           '@inversifyjs/prisma': '1.0.0',
           '@prisma/adapter-pg': '7.9.1',
@@ -92,14 +95,19 @@ describe(composeScaffoldDependencies, () => {
           zod: '4.4.3',
         });
         expect(result.devDependencies).toMatchObject({
+          '@inversifyjs/foundation-oxfmt-config': '0.2.0',
+          '@inversifyjs/foundation-oxlint-config': '0.2.0',
+          '@inversifyjs/foundation-typescript-config': '0.2.0',
           '@types/express': '5.0.6',
           dotenv: '17.4.2',
+          oxfmt: '0.75.0',
+          oxlint: '1.90.0',
+          'oxlint-tsgolint': '7.0.2005',
           prisma: '7.9.1',
-          typescript: '6.0.3',
+          typescript: '7.0.2',
         });
-        expect(result.dependencies).not.toHaveProperty(
-          '@inversifyjs/open-api-types',
-        );
+        expect(result.devDependencies).not.toHaveProperty('eslint');
+        expect(result.devDependencies).not.toHaveProperty('prettier');
         expect(result.devDependencies).not.toHaveProperty(
           '@inversifyjs/open-api-2-typescript',
         );
@@ -133,9 +141,11 @@ describe(composeScaffoldDependencies, () => {
           '@inversifyjs/config-dotenv': '1.0.0',
           '@inversifyjs/http-core': '5.4.8',
           '@inversifyjs/http-hono': '5.4.8',
+          '@inversifyjs/http-insights': '0.4.0',
           '@inversifyjs/http-open-api': '5.4.8',
           '@inversifyjs/http-validation': '5.4.8',
           '@inversifyjs/logger': '2.0.0',
+          '@inversifyjs/open-api-types': '2.0.0',
           '@inversifyjs/open-api-validation': '3.5.2',
           '@inversifyjs/prisma': '1.0.0',
           '@prisma/adapter-pg': '7.9.1',
@@ -149,9 +159,6 @@ describe(composeScaffoldDependencies, () => {
           zod: '4.4.3',
         });
         expect(result.devDependencies).not.toHaveProperty('@types/express');
-        expect(result.dependencies).not.toHaveProperty(
-          '@inversifyjs/open-api-types',
-        );
         expect(result.devDependencies).not.toHaveProperty(
           '@inversifyjs/open-api-2-typescript',
         );

@@ -80,28 +80,45 @@ describe(createHttpApp, () => {
           'utf8',
         );
 
-        expect(tsconfigContents).toContain('"outDir": "./dist"');
-        expect(tsconfigContents).toContain('"emitDecoratorMetadata": true');
-        expect(tsconfigContents).toContain('"experimentalDecorators": true');
-        expect(tsconfigContents).toContain('"types": ["node"]');
+        expect(tsconfigContents).toContain('"./tsconfig.esm.json"');
 
-        const eslintConfigContents: string = await fs.readFile(
-          path.join(projectPath, 'eslint.config.mjs'),
+        const tsconfigEsmContents: string = await fs.readFile(
+          path.join(projectPath, 'tsconfig.esm.json'),
           'utf8',
         );
 
-        expect(eslintConfigContents).toContain('typescript-eslint');
-        expect(eslintConfigContents).toContain(
-          "import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'",
+        expect(tsconfigEsmContents).toContain(
+          '"@inversifyjs/foundation-typescript-config/tsconfig.base.esm.json"',
         );
-        expect(eslintConfigContents).toContain(
-          'eslintPluginPrettierRecommended',
+        expect(tsconfigEsmContents).toContain('"outDir": "./dist"');
+        expect(tsconfigEsmContents).toContain('"emitDecoratorMetadata": true');
+        expect(tsconfigEsmContents).toContain('"types": ["node"]');
+
+        const oxlintConfigContents: string = await fs.readFile(
+          path.join(projectPath, 'oxlint.config.ts'),
+          'utf8',
         );
-        expect(eslintConfigContents).toContain("ignores: ['src/generated/**']");
+
+        expect(oxlintConfigContents).toContain(
+          '@inversifyjs/foundation-oxlint-config',
+        );
+        expect(oxlintConfigContents).toContain(
+          "ignorePatterns: ['src/generated/**']",
+        );
 
         await expect(
-          fs.readFile(path.join(projectPath, 'prettier.config.mjs'), 'utf8'),
-        ).resolves.toContain('trailingComma');
+          fs.readFile(path.join(projectPath, 'oxfmt.config.ts'), 'utf8'),
+        ).resolves.toContain('@inversifyjs/foundation-oxfmt-config');
+        await expect(
+          fs.access(path.join(projectPath, 'eslint.config.mjs')),
+        ).rejects.toMatchObject({
+          code: 'ENOENT',
+        });
+        await expect(
+          fs.access(path.join(projectPath, 'prettier.config.mjs')),
+        ).rejects.toMatchObject({
+          code: 'ENOENT',
+        });
 
         const indexSource: string = await fs.readFile(
           path.join(projectPath, 'src/index.ts'),
@@ -174,7 +191,16 @@ describe(createHttpApp, () => {
           'await container.loadAsync(configModule);',
         );
         expect(initializeContainerSource).toContain('DATABASE_URL');
+        expect(initializeContainerSource).toContain('DEV_PROFILER_ENABLED');
+        expect(initializeContainerSource).toContain(
+          'z.stringbool().default(false)',
+        );
         expect(initializeContainerSource).toContain('LOG_LEVELS');
+        expect(bootstrapSource).toContain(
+          "import { type HttpInsightsProvider } from '@inversifyjs/http-insights';",
+        );
+        expect(bootstrapSource).toContain('if (DEV_PROFILER_ENABLED)');
+        expect(bootstrapSource).toContain('insightsProvider.getEventSink()');
         expect(bootstrapSource).toContain("from '@inversifyjs/logger'");
         expect(initializeContainerSource).toContain('LoggerContainerModule');
         expect(bootstrapSource).toContain('loggerFactoryIdentifier');
@@ -214,10 +240,10 @@ describe(createHttpApp, () => {
           'const container: Container = await initializeContainer();',
         );
         expect(bootstrapSource).toContain(
-          'const { PORT } = configService.get();',
+          'const { DEV_PROFILER_ENABLED, PORT } = configService.get();',
         );
         expect(bootstrapSource).toContain(
-          "import { SwaggerUiProvider } from '@inversifyjs/http-open-api/v3Dot2';",
+          "import { type SwaggerUiProvider } from '@inversifyjs/http-open-api/v3Dot2';",
         );
         expect(bootstrapSource).toContain(
           "import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';",
@@ -539,6 +565,7 @@ describe(createHttpApp, () => {
           'options.bind(TodoFromPrismaTodoBuilder).toSelf().inSingletonScope();',
         );
 
+        expect(gitIgnoreContents).toContain('.inversify/');
         expect(gitIgnoreContents).toContain('node_modules/');
         expect(gitIgnoreContents).toContain('src/generated/prisma/');
         expect(gitIgnoreContents).not.toMatch(/^generated\/$/m);
@@ -558,6 +585,7 @@ describe(createHttpApp, () => {
 
         expect(envContents).toContain('NODE_ENV=development');
         expect(envContents).toContain('PORT=3000');
+        expect(envContents).toContain('DEV_PROFILER_ENABLED=true');
         expect(envContents).toContain('LOG_LEVELS=error,warn,info');
         expect(envContents).toContain('DATABASE_URL=');
 
@@ -568,6 +596,7 @@ describe(createHttpApp, () => {
 
         expect(envExampleContents).toContain('NODE_ENV=development');
         expect(envExampleContents).toContain('PORT=3000');
+        expect(envExampleContents).toContain('DEV_PROFILER_ENABLED=true');
         expect(envExampleContents).toContain('LOG_LEVELS=error,warn,info');
         expect(envExampleContents).toContain('DATABASE_URL=');
 
@@ -588,6 +617,7 @@ describe(createHttpApp, () => {
         );
 
         expect(pnpmWorkspaceContents).toContain('allowBuilds:');
+        expect(pnpmWorkspaceContents).toContain('better-sqlite3: true');
         expect(pnpmWorkspaceContents).toContain('prisma: true');
         expect(pnpmWorkspaceContents).not.toContain('esbuild: true');
         expect(pnpmWorkspaceContents).toContain("'@prisma/engines': true");
@@ -626,9 +656,11 @@ describe(createHttpApp, () => {
             '@inversifyjs/config-dotenv': expect.any(String) as string,
             '@inversifyjs/http-core': expect.any(String) as string,
             '@inversifyjs/http-express': expect.any(String) as string,
+            '@inversifyjs/http-insights': expect.any(String) as string,
             '@inversifyjs/http-open-api': expect.any(String) as string,
             '@inversifyjs/http-validation': expect.any(String) as string,
             '@inversifyjs/logger': expect.any(String) as string,
+            '@inversifyjs/open-api-types': expect.any(String) as string,
             '@inversifyjs/open-api-validation': expect.any(String) as string,
             '@inversifyjs/prisma': expect.any(String) as string,
             '@prisma/adapter-pg': expect.any(String) as string,
@@ -647,15 +679,11 @@ describe(createHttpApp, () => {
             build: 'prisma generate && tsc',
             'db:generate': 'prisma generate',
             'db:migrate': 'prisma migrate deploy',
-            format: 'prettier --write ./src',
-            lint: 'eslint ./src',
+            format: 'oxfmt --write ./src',
+            lint: 'oxlint ./src',
             serve: 'node ./dist/index.js',
           },
         });
-        expect(
-          (packageJson as { dependencies: Record<string, string> })
-            .dependencies,
-        ).not.toHaveProperty('@inversifyjs/open-api-types');
         expect(
           (packageJson as { dependencies: Record<string, string> })
             .dependencies,
@@ -668,12 +696,16 @@ describe(createHttpApp, () => {
           (packageJson as { devDependencies: Record<string, string> })
             .devDependencies,
         ).toMatchObject({
+          '@inversifyjs/foundation-oxfmt-config': expect.any(String) as string,
+          '@inversifyjs/foundation-oxlint-config': expect.any(String) as string,
+          '@inversifyjs/foundation-typescript-config': expect.any(
+            String,
+          ) as string,
           '@types/express': expect.any(String) as string,
           dotenv: expect.any(String) as string,
-          eslint: expect.any(String) as string,
-          'eslint-config-prettier': expect.any(String) as string,
-          'eslint-plugin-prettier': expect.any(String) as string,
-          prettier: expect.any(String) as string,
+          oxfmt: expect.any(String) as string,
+          oxlint: expect.any(String) as string,
+          'oxlint-tsgolint': expect.any(String) as string,
           prisma: expect.any(String) as string,
           typescript: expect.any(String) as string,
         });
@@ -724,6 +756,9 @@ describe(createHttpApp, () => {
               built: true,
             },
             '@scarf/scarf': {
+              built: true,
+            },
+            'better-sqlite3': {
               built: true,
             },
             prisma: {
@@ -851,11 +886,15 @@ describe(createHttpApp, () => {
         expect(generateApiTypesSource).toContain(
           'transformOpenApiToTypeScript',
         );
+        expect(generateApiTypesSource).toContain("'oxfmt'");
+        expect(generateApiTypesSource).not.toContain('prettier');
         expect(generateApiTypesSource).toContain('new Container()');
         expect(generateApiTypesSource).toContain('provideOpenApi(container)');
         expect(generateApiTypesSource).not.toContain('initializeContainer');
-        expect(generatedApiTypesSource).toContain('export type TodoV1 = any;');
-        expect(generatedApiTypesSource).toContain('export type Root = any;');
+        expect(generatedApiTypesSource).toContain('export type TodoV1 = {');
+        expect(generatedApiTypesSource).toContain('export type Root =');
+        expect(generatedApiTypesSource).toContain('UpdateTodoV1RequestBody');
+        expect(generatedApiTypesSource).not.toContain('any');
         expect(provideOpenApiSource).toContain('TodoV1: todoSchemaV1');
         expect(provideOpenApiSource).toContain(
           "from '../../todo/api/models/TodoSchemaV1.js'",
@@ -875,7 +914,7 @@ describe(createHttpApp, () => {
         expect(skillContents).toContain(
           'Domain models must be interfaces, not classes.',
         );
-        expect(skillContents).toContain('export type <Name> = any;');
+        expect(skillContents).toContain('Do not alias it to `any`');
         expect(skillContents).toContain('src/generated/api/index.ts');
         expect(skillContents).not.toContain(
           'Add request and response API models with the OpenAPI 3.2 schema decorators',

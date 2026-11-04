@@ -130,21 +130,15 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
 
     const updateData: Prisma.TodoUpdateInput = {};
 
-    if (('title' satisfies keyof UpdateTodoData) in data && data.title !== undefined) {
+    if (('title' satisfies keyof UpdateTodoData) in data) {
       updateData.title = data.title;
     }
 
-    if (
-      ('description' satisfies keyof UpdateTodoData) in data &&
-      data.description !== undefined
-    ) {
+    if (('description' satisfies keyof UpdateTodoData) in data) {
       updateData.description = data.description;
     }
 
-    if (
-      ('completed' satisfies keyof UpdateTodoData) in data &&
-      data.completed !== undefined
-    ) {
+    if (('completed' satisfies keyof UpdateTodoData) in data) {
       updateData.completed = data.completed;
     }
 
@@ -189,14 +183,11 @@ export class PrismaTodoPersistenceAdapter implements TodoPersistencePort {
   #toTodoWhereInput(query: FindTodoQuery): Prisma.TodoWhereInput {
     const where: Prisma.TodoWhereInput = {};
 
-    if (
-      ('deletedAt' satisfies keyof FindTodoQuery) in query &&
-      query.deletedAt !== undefined
-    ) {
+    if (('deletedAt' satisfies keyof FindTodoQuery) in query) {
       where.deleted_at = query.deletedAt;
     }
 
-    if (('id' satisfies keyof FindTodoQuery) in query && query.id !== undefined) {
+    if (('id' satisfies keyof FindTodoQuery) in query) {
       where.id = query.id;
     }
 

@@ -21,6 +21,7 @@ describe(createPnpmWorkspaceSourceModel, () => {
           allowBuilds: {
             '@prisma/engines': true,
             '@scarf/scarf': true,
+            'better-sqlite3': true,
             prisma: true,
           },
         });
@@ -66,6 +67,7 @@ describe(createPnpmWorkspaceSourceModel, () => {
           allowBuilds: {
             '@prisma/engines': true,
             '@scarf/scarf': true,
+            'better-sqlite3': true,
             prisma: true,
           },
           blockExoticSubdeps: false,

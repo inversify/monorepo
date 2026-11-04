@@ -47,7 +47,15 @@ describe(generateInitializeContainerSource, () => {
         );
         expect(result).toContain("import { z } from 'zod';");
         expect(result).toContain('appConfigSchema');
+        expect(result).toContain('const defaultPort: number = 3000;');
+        expect(result).toContain('const maxPort: number = 65535;');
+        expect(result).toContain(
+          'PORT: z.coerce.number().min(1).max(maxPort).default(defaultPort)',
+        );
         expect(result).toContain('DATABASE_URL: z.string().min(1)');
+        expect(result).toContain(
+          'DEV_PROFILER_ENABLED: z.stringbool().default(false)',
+        );
         expect(result).toContain('LOG_LEVELS:');
         expect(result).toContain("default('error,warn,info')");
         expect(result).toContain('LogLevel.ERROR');

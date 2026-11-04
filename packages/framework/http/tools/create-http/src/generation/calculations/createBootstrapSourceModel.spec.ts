@@ -55,7 +55,7 @@ describe(createBootstrapSourceModel, () => {
               }),
               expect.objectContaining({
                 moduleSpecifier: 'inversify',
-                namedImports: [{ name: 'Container' }],
+                namedImports: [{ isTypeOnly: true, name: 'Container' }],
               }),
             ]),
           );

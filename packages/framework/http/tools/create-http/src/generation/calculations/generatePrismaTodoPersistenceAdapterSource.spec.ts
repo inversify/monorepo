@@ -42,14 +42,15 @@ describe(generatePrismaTodoPersistenceAdapterSource, () => {
       expect(result).toContain('public async findMany(query: FindTodosQuery)');
       expect(result).toContain('public async update(');
       expect(result).toContain(
-        "('title' satisfies keyof UpdateTodoData) in data && data.title !== undefined",
+        "('title' satisfies keyof UpdateTodoData) in data",
       );
       expect(result).toContain(
-        "('description' satisfies keyof UpdateTodoData) in data &&\n      data.description !== undefined",
+        "('description' satisfies keyof UpdateTodoData) in data",
       );
       expect(result).toContain(
-        "('completed' satisfies keyof UpdateTodoData) in data &&\n      data.completed !== undefined",
+        "('completed' satisfies keyof UpdateTodoData) in data",
       );
+      expect(result).not.toContain('!== undefined');
       expect(result).toContain(
         'this.#todoFromPrismaTodoBuilder.build(prismaTodo)',
       );

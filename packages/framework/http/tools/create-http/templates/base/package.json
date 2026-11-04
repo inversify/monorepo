@@ -9,6 +9,7 @@
     "@inversifyjs/http-express": "5.9.1",
     "@inversifyjs/http-fastify": "5.9.1",
     "@inversifyjs/http-hono": "5.9.1",
+    "@inversifyjs/http-insights": "0.4.0",
     "@inversifyjs/http-open-api": "5.9.1",
     "@inversifyjs/http-uwebsockets": "5.9.1",
     "@inversifyjs/http-validation": "5.9.1",
@@ -30,18 +31,18 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "@eslint/js": "10.0.1",
+    "@inversifyjs/foundation-oxfmt-config": "0.2.0",
+    "@inversifyjs/foundation-oxlint-config": "0.2.0",
+    "@inversifyjs/foundation-typescript-config": "0.2.0",
     "@inversifyjs/open-api-2-typescript": "0.3.0",
     "@types/express": "5.0.6",
     "@types/node": "26.6.6",
     "dotenv": "18.0.9",
-    "eslint": "10.14.0",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-prettier": "5.5.7",
-    "prettier": "3.9.10",
+    "oxfmt": "0.75.0",
+    "oxlint": "1.90.0",
+    "oxlint-tsgolint": "7.0.2005",
     "prisma": "7.10.1",
     "tsx": "4.23.15",
-    "typescript": "6.0.3",
-    "typescript-eslint": "8.72.1"
+    "typescript": "7.0.2"
   }
 }

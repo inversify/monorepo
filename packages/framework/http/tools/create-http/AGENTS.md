@@ -38,7 +38,7 @@ Recipe (CLI args / prompts)
           ├─ composeScaffoldDependencies(catalog, httpAdapter, dbAdapter, apiStyle)
           │     └─ writes package.json (only selected deps)
           │
-          ├─ copy static templates (tsconfig, eslint, prettier, gitignore, prisma, docker-compose, …)
+          ├─ copy static templates (tsconfig, oxlint, oxfmt, gitignore, prisma, docker-compose, …)
           ├─ writeAddResourceSkillFiles(apiStyle)
           │     └─ generateAddResourceSkillSource(apiStyle) → .agents and .claude
           │
@@ -60,7 +60,7 @@ Recipe (CLI args / prompts)
           ├─ writeBootstrapSourceFile(createBootstrapSourceModel(adapter))
           │     └─ ts-morph from BootstrapSourceModel
           │
-          └─ formatGeneratedProjectSources() → prettier over `src/**/*.ts`
+          └─ formatGeneratedProjectSources() → oxfmt over `src/**/*.ts`
                           │
                           ▼
               Post steps (CLI): git init → install → build → initial commit
@@ -107,7 +107,7 @@ Scaffolded apps must **not** receive every possible dependency. Versions live in
 - `BASE_DEPENDENCY_NAMES` / `BASE_DEV_DEPENDENCY_NAMES` — always installed
 - `BASE_BUILT_DEPENDENCY_NAMES` / `HTTP_ADAPTER_DEPENDENCY_SPECS` / `DB_ADAPTER_DEPENDENCY_SPECS` / `API_STYLE_DEPENDENCY_SPECS` — per-adapter or per-API-style package **names** only; optional `builtDependencies` lists packages that need install-time scripts (Yarn `package.json` `dependenciesMeta.built`; also pnpm `allowBuilds`). Schema-first allow-lists `esbuild` because `tsx` needs it.
 
-`composeScaffoldDependencies(catalog, httpAdapter, dbAdapter, apiStyle)` picks catalog versions for base + selected HTTP adapter, DB adapter, and API style only. Schema-first adds `@inversifyjs/open-api-types`, `@inversifyjs/open-api-2-typescript`, and `tsx`.
+`composeScaffoldDependencies(catalog, httpAdapter, dbAdapter, apiStyle)` picks catalog versions for base + selected HTTP adapter, DB adapter, and API style only. Schema-first adds `@inversifyjs/open-api-2-typescript` and `tsx`.
 
 ### Adding a new optional feature (e.g. validator) or DB adapter
 
@@ -128,10 +128,11 @@ Copied (sometimes renamed) into the target app:
 | Template | Generated path | Notes |
 |---|---|---|
 | `.gitignore.template` | `.gitignore` | **Must** use `.template` suffix in repo |
-| `tsconfig.json` | `tsconfig.json` | Strict options; `src` → `dist` |
-| `eslint.config.mjs.template` | `eslint.config.mjs` | **Must** use `.template` suffix in repo |
-| `prettier.config.mjs.template` | `prettier.config.mjs` | Same rename pattern |
-| `.env.example` | `.env.example` / `.env` | Includes `DATABASE_URL` for Postgres and `LOG_LEVELS` |
+| `tsconfig.json` | `tsconfig.json` | Extends `tsconfig.esm.json` |
+| `tsconfig.esm.json` | `tsconfig.esm.json` | Extends `@inversifyjs/foundation-typescript-config`; `src` → `dist`; `emitDecoratorMetadata` |
+| `oxlint.config.ts.template` | `oxlint.config.ts` | **Must** use `.template` suffix in repo. Extends `@inversifyjs/foundation-oxlint-config` and ignores `src/generated/**` |
+| `oxfmt.config.ts.template` | `oxfmt.config.ts` | Same rename pattern. Re-exports `@inversifyjs/foundation-oxfmt-config` |
+| `.env.example` | `.env.example` / `.env` | Includes `DATABASE_URL` for Postgres, `LOG_LEVELS`, and optional `DEV_PROFILER_ENABLED` (default `false`) |
 | `docker-compose.yml` | `docker-compose.yml` | PostgreSQL service |
 | `prisma.config.ts.template` | `prisma.config.ts` | Prisma 7 config (`prisma/config`) |
 | `prisma/` | `prisma/` | Schema, Todo model, initial migration |
@@ -143,7 +144,7 @@ Copied (sometimes renamed) into the target app:
 Two API recipes:
 
 - **Code first** (default, `--apiStyle code-first`): OpenAPI models are decorated TypeScript classes. Controllers and builders use those classes as types and `toSchema(Class)`. No `openapi-2-typescript`, no `src/generated/api`.
-- **Schema first** (`--apiStyle schema-first`): models are JSON Schema objects (`TodoSchemaV1.ts` exporting `todoSchemaV1: OpenApi3Dot2SchemaObject`). `provideOpenApi` seeds them as `components.schemas`. Controllers `$ref` `#/components/schemas/<Name>` and import TypeScript types from `src/generated/api`. The chicken-and-egg cycle is solved by scaffolding `export type <Name> = any` stubs, then `generate:api` (`new Container()` + `provideOpenApi` + `transformOpenApiToTypeScript`) overwrites them without loading runtime app config. Builders serialize domain `Date` values to ISO strings.
+- **Schema first** (`--apiStyle schema-first`): models are JSON Schema objects (`TodoSchemaV1.ts` exporting `todoSchemaV1: OpenApi3Dot2SchemaObject`). `provideOpenApi` seeds them as `components.schemas`. Controllers `$ref` `#/components/schemas/<Name>` and import TypeScript types from `src/generated/api`. The chicken-and-egg cycle is solved by scaffolding explicit object type aliases for the stock schemas, then `generate:api` (`new Container()` + `provideOpenApi` + `transformOpenApiToTypeScript`, formatted with `oxfmt`) overwrites them without loading runtime app config. Aliases are not `any`, because type-aware oxlint ignores `src/generated/**` and would still flag `any` at controller use sites. Builders serialize domain `Date` values to ISO strings.
 
 Prisma uses the `prisma-client` generator (`output = "../src/generated/prisma"`, ESM + `.ts` sources with `.js` import extensions) so `tsc` emits the client into `dist/generated/prisma`. Gitignore only `src/generated/prisma/` so schema-first API stubs can be committed. Scripts: code-first `build` is `prisma generate && tsc`; schema-first `build` is `prisma generate && tsx src/app/scripts/generateApiTypes.ts && tsc` plus `generate:api`. Import `PrismaClient` from `generated/prisma/client.js`.
 
@@ -157,7 +158,7 @@ Generated (not copied from templates):
 | `src/app/scripts/initializeContainer.ts` | `generateInitializeContainerSource(createInitializeContainerSourceModel(dbAdapter))` — exported `initializeContainer` |
 | `src/app/scripts/provideOpenApi.ts` | `generateProvideOpenApiSource(createProvideOpenApiSourceModel(apiStyle))` — builds `SwaggerUiProvider` and calls `provide(container)`; schema-first seeds `components.schemas` |
 | `src/app/scripts/generateApiTypes.ts` | schema-first only — `new Container()` + `provideOpenApi` + `transformOpenApiToTypeScript`, writes `src/generated/api/index.ts` |
-| `src/generated/api/index.ts` | schema-first only — initial `export type <Name> = any` stubs, overwritten by `generate:api` |
+| `src/generated/api/index.ts` | schema-first only — initial explicit type aliases for the stock schemas, overwritten by `generate:api` |
 | `.agents/skills/add-resource/SKILL.md` and `.claude/skills/add-resource/SKILL.md` | `generateAddResourceSkillSource(apiStyle)` |
 | `src/app/scripts/bootstrap.ts` | `generateBootstrapSource(createBootstrapSourceModel(adapter))` |
 | `src/logger/models/loggerFactoryIdentifier.ts` | Factory service identifier |
@@ -193,8 +194,8 @@ Generated (not copied from templates):
 | `src/todo/adapter/inversify/containerModules/TodoContainerModule.ts` | Binds use case handlers, controller, and `TodoV1FromTodoBuilder` |
 | `src/todo/adapter/inversify/containerModules/TodoPrismaContainerModule.ts` | Binds port → Prisma adapter and `TodoFromPrismaTodoBuilder` |
 
-**Why `.template` for eslint/prettier configs?**  
-ESLint flat config loads the nearest `eslint.config.*`. If the template keeps a real `eslint.config.mjs` under `templates/`, lint-staged/ESLint will try to load it (and fail — `@eslint/js` is not installed there). Rename on copy.
+**Why `.template` for oxlint/oxfmt configs?**  
+Oxlint and oxfmt load the nearest `oxlint.config.*` / `oxfmt.config.*`. If the template keeps a real config under `templates/`, tooling can load it while linting or formatting that directory. Rename on copy. The generated configs extend the published foundation oxc configs, same as other monorepo packages.
 
 **Why `.template` for `.gitignore`?**  
 `npm pack` / `pnpm pack` omit files named `.gitignore` (they are treated as ignore files, not package contents). Ship `templates/base/.gitignore.template` and rename on copy so scaffolded apps still get a `.gitignore`.
@@ -203,7 +204,7 @@ ESLint flat config loads the nearest `eslint.config.*`. If the template keeps a 
 
 `package.json` `files` is the pack allowlist (`bin`, `lib`, `templates`). A top-level `.npmignore` is **not** applied when `files` is set, so test output must be excluded with `!lib/**/*.spec.*` / `!lib/**/fixtures/**` there. Keep the root `.npmignore` as a fallback if `files` is removed.
 
-This package's own `eslint.config.mjs` also `ignores: ['templates/**']`, and `.lintstagedrc.json` only lints `src/**/*.ts`.
+This package's own `oxlint.config.ts` also `ignorePatterns: ['templates/**']`, and `.lintstagedrc.json` only lints `src/**/*.ts`.
 
 ### Programmatic generation (ts-morph / source models)
 
@@ -254,18 +255,19 @@ Generated app scripts always include:
 
 1. Exported `async initializeContainer(): Promise<Container>` that loads config, `LoggerContainerModule` (ConsoleLogger factory whose `logTypes` come from `LOG_LEVELS`), `PrismaContainerModule` (for `prisma+postgresql`), `StatusContainerModule`, and todo modules
 2. Exported `provideOpenApi(container)` that registers `SwaggerUiProvider` (`/docs`) and returns the populated provider
-3. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter, calls `provideOpenApi`, installs `OpenApiValidationPipe` + `InversifyValidationErrorFilter`, and listens via the bound logger factory
+3. Exported `async function bootstrap(): Promise<void>` that builds the selected adapter, calls `provideOpenApi`, installs `OpenApiValidationPipe` + `InversifyValidationErrorFilter`, and listens via the bound logger factory. When `DEV_PROFILER_ENABLED` is true, it dynamically imports `@inversifyjs/http-insights`, calls `HttpInsightsProvider.provide(container)`, and passes `instrumentation: [insightsProvider.getEventSink()]` to the adapter (same wiring as `http-openapi-example`). The flag is optional and defaults to false.
 
 `@inversifyjs/logger` and `winston` are base dependencies (ConsoleLogger factory bound from `LOG_LEVELS`).
 `@inversifyjs/http-core` is a base dependency (for `@Controller` / `@Get` / `@Post` on scaffolded controllers).
+`@inversifyjs/http-insights` is a base dependency. Bootstrap loads it only when `DEV_PROFILER_ENABLED` is true. pnpm `allowBuilds` and Yarn `dependenciesMeta` allow `better-sqlite3`, the native addon that package imports.
 `@inversifyjs/http-open-api` is a base dependency (OpenAPI 3.2 decorators + `SwaggerUiProvider` via `/v3Dot2`).
-`@inversifyjs/open-api-types` is a schema-first dependency so JSON schema modules can be typed as `OpenApi3Dot2SchemaObject`.
+`@inversifyjs/open-api-types` is a base dependency. Code-first `toSchema()` callbacks and schema-first JSON schemas need `OpenApi3Dot2SchemaObject` installed directly, because published `@inversifyjs/http-open-api` lists that package as a devDependency.
 `@inversifyjs/open-api-validation`, `@inversifyjs/http-validation`, `ajv`, and `ajv-formats` are base dependencies (OpenAPI-driven request validation; pipe from `/v3Dot2`).
 `@inversifyjs/prisma` is a DB-adapter dependency (binds `PrismaClient` via `PrismaContainerModule`).
 
-Scaffolded `tsconfig.json` enables both `experimentalDecorators` and `emitDecoratorMetadata` (required by `@inversifyjs/http-open-api` schema inference).
+Scaffolded TypeScript 7 config extends `@inversifyjs/foundation-typescript-config/tsconfig.base.esm.json` (which enables `experimentalDecorators`) and sets `emitDecoratorMetadata` (required by `@inversifyjs/http-open-api` schema inference). Tooling matches other monorepo packages: `oxfmt`, `oxlint`, `oxlint-tsgolint`, and the foundation oxc configs. Generated `package.json` scripts are `oxfmt --write ./src` and `oxlint ./src`.
 
-`createHttpApp` formats all generated `src/**/*.ts` with Prettier (using the copied project `prettier.config.mjs`) before returning, so the initial commit lands prettier-clean sources without a separate format step.
+`createHttpApp` formats all generated `src/**/*.ts` with oxfmt (options aligned with `@inversifyjs/foundation-oxfmt-config`) before returning, so the initial commit lands oxfmt-clean sources without a separate format step. Formatting happens before install, so the CLI does not load the generated `oxfmt.config.ts`.
 
 Listen APIs differ by adapter (Express `app.listen`, Fastify `await app.listen`, Hono `serve`, uWebSockets callback `app.listen`). Keep those differences in `HTTP_ADAPTER_BOOTSTRAP_SPECS`, not in the printer.
 

@@ -41,7 +41,7 @@ describe(generateAddResourceSkillSource, () => {
     it('should describe JSON schemas, stubs, and generate:api', () => {
       expect(result).toContain('name: add-resource');
       expect(result).toContain('This app is schema first.');
-      expect(result).toContain('export type <Name> = any;');
+      expect(result).toContain('Do not alias it to `any`');
       expect(result).toContain('components.schemas.<Name>');
       expect(result).toContain('OpenApi3Dot2SchemaObject');
       expect(result).toContain('generate:api');

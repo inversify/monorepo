@@ -7,7 +7,7 @@ import path from 'node:path';
 import { formatGeneratedProjectSources } from './formatGeneratedProjectSources.js';
 
 describe(formatGeneratedProjectSources, () => {
-  describe('having unformatted TypeScript sources and a prettier config', () => {
+  describe('having unformatted TypeScript sources', () => {
     let temporaryRoot: string;
     let projectPath: string;
 
@@ -19,24 +19,11 @@ describe(formatGeneratedProjectSources, () => {
 
       await fs.mkdir(path.join(projectPath, 'src'), { recursive: true });
       await fs.writeFile(
-        path.join(projectPath, 'prettier.config.mjs'),
-        `export default {
-  printWidth: 80,
-  tabWidth: 2,
-  useTabs: false,
-  semi: true,
-  singleQuote: true,
-  bracketSpacing: true,
-  arrowParens: 'always',
-  endOfLine: 'lf',
-  trailingComma: 'all',
-};
-`,
-        'utf8',
-      );
-      await fs.writeFile(
         path.join(projectPath, 'src/example.ts'),
-        `export const value={foo:"bar",baz:true}
+        `import { readFile } from "node:fs/promises";
+import { z } from "zod";
+
+export const value={foo:"bar",baz:true}
 `,
         'utf8',
       );
@@ -49,14 +36,18 @@ describe(formatGeneratedProjectSources, () => {
     });
 
     describe('when called', () => {
-      it('should rewrite sources using the project prettier config', async () => {
+      it('should rewrite sources with oxfmt import sorting and quotes', async () => {
         const formattedSource: string = await fs.readFile(
           path.join(projectPath, 'src/example.ts'),
           'utf8',
         );
 
         expect(formattedSource).toBe(
-          `export const value = { foo: 'bar', baz: true };
+          `import { readFile } from 'node:fs/promises';
+
+import { z } from 'zod';
+
+export const value = { foo: 'bar', baz: true };
 `,
         );
       });

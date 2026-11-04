@@ -5,6 +5,7 @@ import { type PnpmWorkspaceSourceModel } from '../models/PnpmWorkspaceSourceMode
 const BASE_ALLOW_BUILDS: Readonly<Record<string, boolean>> = {
   '@prisma/engines': true,
   '@scarf/scarf': true,
+  'better-sqlite3': true,
   prisma: true,
 };
 

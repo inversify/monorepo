@@ -33,6 +33,9 @@ coverage/
 .env.*
 !.env.example
 
+# HTTP insights runtime database
+.inversify/
+
 # Editor / OS
 .DS_Store
 Thumbs.db
@@ -42,7 +45,3 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
-
-# ESLint / Prettier caches
-.eslintcache
-.prettiercache

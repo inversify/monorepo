@@ -3,8 +3,8 @@ import { DbAdapter } from '../models/DbAdapter.js';
 import { type PackageManager } from '../models/PackageManager.js';
 
 const BASE_SCRIPTS: Record<string, string> = {
-  format: 'prettier --write ./src',
-  lint: 'eslint ./src',
+  format: 'oxfmt --write ./src',
+  lint: 'oxlint ./src',
   serve: 'node ./dist/index.js',
 };
 
