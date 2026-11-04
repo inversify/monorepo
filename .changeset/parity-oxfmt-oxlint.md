@@ -1,0 +1,55 @@
+---
+"@inversifyjs/ajv-validation": patch
+"@inversifyjs/binding-decorators": patch
+"@inversifyjs/class-validation": patch
+"@inversifyjs/common": patch
+"@inversifyjs/config": patch
+"@inversifyjs/config-dotenv": patch
+"@inversifyjs/config-yaml": patch
+"@inversifyjs/container": patch
+"@inversifyjs/core": patch
+"@inversifyjs/create-http": patch
+"@inversifyjs/foundation-changelog-generator": patch
+"@inversifyjs/foundation-eslint-config": patch
+"@inversifyjs/foundation-rollup-config": patch
+"@inversifyjs/foundation-typescript-config": patch
+"@inversifyjs/foundation-vitest-config": patch
+"@inversifyjs/framework-core": patch
+"@inversifyjs/grpc-core": patch
+"@inversifyjs/grpc-js": patch
+"@inversifyjs/http-better-auth": patch
+"@inversifyjs/http-core": patch
+"@inversifyjs/http-express": patch
+"@inversifyjs/http-fastify": patch
+"@inversifyjs/http-hono": patch
+"@inversifyjs/http-insights": patch
+"@inversifyjs/http-insights-ui": patch
+"@inversifyjs/http-instrumentation-core": patch
+"@inversifyjs/http-open-api": patch
+"@inversifyjs/http-opentelemetry": patch
+"@inversifyjs/http-sse": patch
+"@inversifyjs/http-uwebsockets": patch
+"@inversifyjs/http-validation": patch
+"@inversifyjs/json-schema-2-type-metadata": patch
+"@inversifyjs/json-schema-2-typescript": patch
+"@inversifyjs/json-schema-pointer": patch
+"@inversifyjs/json-schema-type-metadata": patch
+"@inversifyjs/json-schema-types": patch
+"@inversifyjs/json-schema-utils": patch
+"@inversifyjs/logger": patch
+"@inversifyjs/open-api-2-typescript": patch
+"@inversifyjs/open-api-types": patch
+"@inversifyjs/open-api-utils": patch
+"@inversifyjs/open-api-validation": patch
+"@inversifyjs/plugin": patch
+"@inversifyjs/plugin-dispose": patch
+"@inversifyjs/prototype-utils": patch
+"@inversifyjs/reflect-metadata-utils": patch
+"@inversifyjs/standard-schema-validation": patch
+"@inversifyjs/strongly-typed": patch
+"@inversifyjs/uri": patch
+"@inversifyjs/validation-common": patch
+"inversify": patch
+---
+
+- Parity version.
