@@ -1,5 +1,11 @@
 # @inversifyjs/http-insights-ui
 
+## 0.4.1
+
+### Patch Changes
+
+- Parity version.
+
 ## 0.4.0
 
 ### Minor Changes

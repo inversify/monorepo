@@ -1,5 +1,11 @@
 # @inversifyjs/json-schema-pointer
 
+## 2.0.1
+
+### Patch Changes
+
+- Parity version.
+
 ## 2.0.0
 
 ### Major Changes

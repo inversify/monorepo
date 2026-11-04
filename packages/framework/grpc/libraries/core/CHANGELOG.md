@@ -1,5 +1,17 @@
 # @inversifyjs/grpc-core
 
+## 1.0.2
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/framework-core@2.2.2
+  - @inversifyjs/logger@2.0.1
+  - @inversifyjs/prototype-utils@0.2.2
+  - @inversifyjs/reflect-metadata-utils@1.5.1
+  - inversify@8.2.4
+
 ## 1.0.1
 
 ### Patch Changes

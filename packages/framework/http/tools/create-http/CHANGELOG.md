@@ -1,5 +1,11 @@
 # @inversifyjs/create-http
 
+## 0.8.1
+
+### Patch Changes
+
+- Parity version.
+
 ## 0.8.0
 
 ### Minor Changes

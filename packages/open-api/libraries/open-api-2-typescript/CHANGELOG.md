@@ -1,5 +1,21 @@
 # @inversifyjs/open-api-2-typescript
 
+## 0.3.1
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/json-schema-2-type-metadata@0.4.1
+  - @inversifyjs/json-schema-2-typescript@0.3.1
+  - @inversifyjs/json-schema-pointer@2.0.1
+  - @inversifyjs/json-schema-type-metadata@0.3.1
+  - @inversifyjs/json-schema-types@2.0.1
+  - @inversifyjs/json-schema-utils@0.5.1
+  - @inversifyjs/open-api-types@2.0.1
+  - @inversifyjs/open-api-utils@0.3.2
+  - @inversifyjs/uri@1.0.1
+
 ## 0.3.0
 
 ### Minor Changes

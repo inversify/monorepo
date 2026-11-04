@@ -1,5 +1,14 @@
 # @inversifyjs/http-instrumentation-core
 
+## 5.9.2
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/common@2.0.2
+  - @inversifyjs/framework-core@2.2.2
+
 ## 5.9.1
 
 ### Patch Changes

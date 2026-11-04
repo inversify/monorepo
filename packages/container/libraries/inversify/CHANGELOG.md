@@ -1,5 +1,15 @@
 # inversify
 
+## 8.2.4
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/common@2.0.2
+  - @inversifyjs/container@3.1.4
+  - @inversifyjs/core@15.0.2
+
 ## 8.2.3
 
 ### Patch Changes

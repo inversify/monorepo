@@ -1,5 +1,14 @@
 # @inversifyjs/grpc-js
 
+## 1.0.2
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/grpc-core@1.0.2
+  - inversify@8.2.4
+
 ## 1.0.1
 
 ### Patch Changes

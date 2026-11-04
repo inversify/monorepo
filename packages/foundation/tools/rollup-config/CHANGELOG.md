@@ -1,5 +1,11 @@
 # @inversifyjs/foundation-rollup-config
 
+## 0.1.3
+
+### Patch Changes
+
+- Parity version.
+
 ## 0.1.2
 
 ### Patch Changes

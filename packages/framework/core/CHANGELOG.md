@@ -1,5 +1,14 @@
 # @inversifyjs/framework-core
 
+## 2.2.2
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/reflect-metadata-utils@1.5.1
+  - inversify@8.2.4
+
 ## 2.2.1
 
 ### Patch Changes

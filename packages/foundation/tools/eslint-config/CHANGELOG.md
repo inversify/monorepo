@@ -1,5 +1,11 @@
 # @inversifyjs/foundation-eslint-config
 
+## 0.3.1
+
+### Patch Changes
+
+- Parity version.
+
 ## 0.3.0
 
 ### Minor Changes

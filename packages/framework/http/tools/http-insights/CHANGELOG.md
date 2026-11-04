@@ -1,5 +1,18 @@
 # @inversifyjs/http-insights
 
+## 0.4.1
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/http-core@5.9.2
+  - @inversifyjs/http-insights-ui@0.4.1
+  - @inversifyjs/http-instrumentation-core@5.9.2
+  - @inversifyjs/http-validation@5.9.2
+  - @inversifyjs/standard-schema-validation@3.6.10
+  - inversify@8.2.4
+
 ## 0.4.0
 
 ### Minor Changes

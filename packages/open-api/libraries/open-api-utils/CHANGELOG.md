@@ -1,5 +1,16 @@
 # @inversifyjs/open-api-utils
 
+## 0.3.2
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/json-schema-pointer@2.0.1
+  - @inversifyjs/json-schema-types@2.0.1
+  - @inversifyjs/json-schema-utils@0.5.1
+  - @inversifyjs/uri@1.0.1
+
 ## 0.3.1
 
 ### Patch Changes
