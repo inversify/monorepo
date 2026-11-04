@@ -1,5 +1,11 @@
 # @inversifyjs/http-insights
 
+## 0.5.0
+
+### Minor Changes
+
+- Added optional URL pattern options to `HttpInsightsProvider`. Calls that do not match the pattern are not stored. The default pattern keeps every call except `.inversify` endpoints.
+
 ## 0.4.1
 
 ### Patch Changes

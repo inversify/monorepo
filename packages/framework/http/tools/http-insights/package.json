@@ -87,5 +87,5 @@
     "test:unit": "pnpm run test --project Unit"
   },
   "type": "module",
-  "version": "0.4.1"
+  "version": "0.5.0"
 }

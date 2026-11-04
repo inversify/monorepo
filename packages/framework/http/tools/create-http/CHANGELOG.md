@@ -1,5 +1,12 @@
 # @inversifyjs/create-http
 
+## 0.9.0
+
+### Minor Changes
+
+- Updated generated app to be on top of ts7, oxcfmt and oxclint.
+- Updated generated app to expose a dev profiler on top of DEV_PROFILER_ENABLED env var.
+
 ## 0.8.1
 
 ### Patch Changes
