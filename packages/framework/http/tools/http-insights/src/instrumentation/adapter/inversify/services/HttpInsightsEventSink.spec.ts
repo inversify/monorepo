@@ -82,6 +82,7 @@ function buildLateHttpErrorEvent(requestId: string): HttpInstrumentationEvent {
 function buildRequestStartedEvent(
   requestId: string,
   executionId: string,
+  url: string = '/foo',
 ): HttpInstrumentationEvent {
   return {
     executionId,
@@ -90,7 +91,7 @@ function buildRequestStartedEvent(
     requestId,
     timestamp: timestampFixture,
     type: 'http.request.started',
-    url: '/foo',
+    url,
   };
 }
 
@@ -1673,6 +1674,308 @@ describe(HttpInsightsEventSink, () => {
               }),
             }),
           );
+        });
+      });
+    });
+
+    describe('having no url pattern', () => {
+      let callManagementInputPort: Mocked<CallManagementInputPort>;
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        callManagementInputPort = {
+          create: vitest.fn(),
+          update: vitest.fn(),
+        } as Partial<
+          Mocked<CallManagementInputPort>
+        > as Mocked<CallManagementInputPort>;
+        const errorTracesService: Mocked<ErrorTracesService> = {
+          capture: vitest.fn(async (call: Call): Promise<Call> => call),
+          captureUpdate: vitest.fn(
+            async (
+              command: ExecuteUpdateCommand,
+            ): Promise<ExecuteUpdateCommand> => command,
+          ),
+        } as Partial<Mocked<ErrorTracesService>> as Mocked<ErrorTracesService>;
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          callManagementInputPort,
+          errorTracesService,
+        );
+      });
+
+      describe('having a .inversify endpoint and another endpoint', () => {
+        describe('when called', () => {
+          beforeAll(async () => {
+            callManagementInputPort.create.mockResolvedValue(undefined);
+            callManagementInputPort.update.mockResolvedValue(undefined);
+
+            await httpInsightsEventSink.emit(
+              buildRequestStartedEvent(
+                'inversify-request-id',
+                'inversify-call-id',
+                '/.inversify/v1/calls?limit=1',
+              ),
+            );
+            await httpInsightsEventSink.emit({
+              executionId: 'guard-call-id',
+              guard: 'FooGuard',
+              parentExecutionId: 'inversify-call-id',
+              requestId: 'inversify-request-id',
+              timestamp: startedAtFixture,
+              type: 'http.guard.started',
+            });
+            await httpInsightsEventSink.emit({
+              allowed: true,
+              duration: 1,
+              executionId: 'guard-call-id',
+              guard: 'FooGuard',
+              parentExecutionId: 'inversify-call-id',
+              requestId: 'inversify-request-id',
+              startedAt: startedAtFixture,
+              timestamp: timestampFixture,
+              type: 'http.guard.executed',
+            });
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent(
+                'inversify-request-id',
+                'inversify-call-id',
+              ),
+            );
+            await httpInsightsEventSink.emit(
+              buildLateHttpErrorEvent('inversify-request-id'),
+            );
+            await httpInsightsEventSink.emit(
+              buildRequestStartedEvent(
+                'ui-request-id',
+                'ui-call-id',
+                '/.inversify/http-insights-ui/assets/index.js',
+              ),
+            );
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent('ui-request-id', 'ui-call-id'),
+            );
+            await httpInsightsEventSink.emit(
+              buildRequestStartedEvent(
+                'orders-request-id',
+                'orders-call-id',
+                '/orders',
+              ),
+            );
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent('orders-request-id', 'orders-call-id'),
+            );
+          });
+
+          afterAll(() => {
+            callManagementInputPort.create.mockClear();
+            callManagementInputPort.update.mockClear();
+          });
+
+          it('should persist the endpoint outside .inversify', () => {
+            expect(
+              callManagementInputPort.create,
+            ).toHaveBeenCalledExactlyOnceWith(
+              expect.objectContaining({
+                id: 'orders-call-id',
+                request: expect.objectContaining({
+                  url: '/orders',
+                }),
+              }),
+            );
+          });
+
+          it('should not update a .inversify endpoint', () => {
+            expect(callManagementInputPort.update).not.toHaveBeenCalled();
+          });
+        });
+      });
+    });
+
+    describe('having a url pattern', () => {
+      let callManagementInputPort: Mocked<CallManagementInputPort>;
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        callManagementInputPort = {
+          create: vitest.fn(),
+          update: vitest.fn(),
+        } as Partial<
+          Mocked<CallManagementInputPort>
+        > as Mocked<CallManagementInputPort>;
+        const errorTracesService: Mocked<ErrorTracesService> = {
+          capture: vitest.fn(async (call: Call): Promise<Call> => call),
+          captureUpdate: vitest.fn(
+            async (
+              command: ExecuteUpdateCommand,
+            ): Promise<ExecuteUpdateCommand> => command,
+          ),
+        } as Partial<Mocked<ErrorTracesService>> as Mocked<ErrorTracesService>;
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          callManagementInputPort,
+          errorTracesService,
+          {
+            url: {
+              pattern: /^\/\.inversify\/v1\/calls(?:[/?#]|$)/u,
+            },
+          },
+        );
+      });
+
+      describe('having a request outside the pattern and a .inversify request', () => {
+        describe('when called', () => {
+          beforeAll(async () => {
+            callManagementInputPort.create.mockResolvedValue(undefined);
+            callManagementInputPort.update.mockResolvedValue(undefined);
+
+            await emitCommittedCall(
+              httpInsightsEventSink,
+              'orders-request-id',
+              'orders-call-id',
+            );
+            await httpInsightsEventSink.emit(
+              buildRequestStartedEvent(
+                'inversify-request-id',
+                'inversify-call-id',
+                '/.inversify/v1/calls',
+              ),
+            );
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent(
+                'inversify-request-id',
+                'inversify-call-id',
+              ),
+            );
+            await httpInsightsEventSink.emit(
+              buildLateHttpErrorEvent('inversify-request-id'),
+            );
+          });
+
+          afterAll(() => {
+            callManagementInputPort.create.mockClear();
+            callManagementInputPort.update.mockClear();
+          });
+
+          it('should persist the endpoint that satisfies the pattern', () => {
+            expect(
+              callManagementInputPort.create,
+            ).toHaveBeenCalledExactlyOnceWith(
+              expect.objectContaining({
+                id: 'inversify-call-id',
+                request: expect.objectContaining({
+                  url: '/.inversify/v1/calls',
+                }),
+              }),
+            );
+          });
+
+          it('should update the persisted endpoint', () => {
+            expect(
+              callManagementInputPort.update,
+            ).toHaveBeenCalledExactlyOnceWith(
+              expect.objectContaining({
+                filter: expect.objectContaining({
+                  id: 'inversify-call-id',
+                }),
+              }),
+            );
+          });
+        });
+      });
+    });
+
+    describe('having a global url pattern', () => {
+      let callManagementInputPort: Mocked<CallManagementInputPort>;
+      let httpInsightsEventSink: HttpInsightsEventSink;
+      let providedPattern: RegExp;
+
+      beforeAll(() => {
+        providedPattern = /^\/orders/gu;
+        providedPattern.lastIndex = 4;
+        callManagementInputPort = {
+          create: vitest.fn(),
+          update: vitest.fn(),
+        } as Partial<
+          Mocked<CallManagementInputPort>
+        > as Mocked<CallManagementInputPort>;
+        const errorTracesService: Mocked<ErrorTracesService> = {
+          capture: vitest.fn(async (call: Call): Promise<Call> => call),
+          captureUpdate: vitest.fn(
+            async (
+              command: ExecuteUpdateCommand,
+            ): Promise<ExecuteUpdateCommand> => command,
+          ),
+        } as Partial<Mocked<ErrorTracesService>> as Mocked<ErrorTracesService>;
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          callManagementInputPort,
+          errorTracesService,
+          {
+            url: {
+              pattern: providedPattern,
+            },
+          },
+        );
+      });
+
+      describe('having two matching requests', () => {
+        describe('when called', () => {
+          beforeAll(async () => {
+            callManagementInputPort.create.mockResolvedValue(undefined);
+
+            await httpInsightsEventSink.emit(
+              buildRequestStartedEvent(
+                'orders-request-1',
+                'orders-call-1',
+                '/orders',
+              ),
+            );
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent('orders-request-1', 'orders-call-1'),
+            );
+            await httpInsightsEventSink.emit(
+              buildRequestStartedEvent(
+                'orders-request-2',
+                'orders-call-2',
+                '/orders',
+              ),
+            );
+            await httpInsightsEventSink.emit(
+              buildResponseSentEvent('orders-request-2', 'orders-call-2'),
+            );
+          });
+
+          afterAll(() => {
+            callManagementInputPort.create.mockClear();
+            callManagementInputPort.update.mockClear();
+          });
+
+          it('should persist both calls', () => {
+            expect(callManagementInputPort.create).toHaveBeenCalledTimes(2);
+            expect(callManagementInputPort.create).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                id: 'orders-call-1',
+                request: expect.objectContaining({
+                  url: '/orders',
+                }),
+              }),
+            );
+            expect(callManagementInputPort.create).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                id: 'orders-call-2',
+                request: expect.objectContaining({
+                  url: '/orders',
+                }),
+              }),
+            );
+          });
+
+          it('should leave the provided pattern lastIndex unchanged', () => {
+            expect(providedPattern.lastIndex).toBe(4);
+          });
         });
       });
     });
