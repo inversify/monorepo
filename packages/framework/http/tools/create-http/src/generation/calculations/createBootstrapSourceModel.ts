@@ -27,7 +27,7 @@ export function createBootstrapSourceModel(
       ...(bootstrapSpec.extraImports ?? []),
       {
         moduleSpecifier: 'inversify',
-        namedImports: [{ name: 'Container' }],
+        namedImports: [{ isTypeOnly: true, name: 'Container' }],
       },
     ],
     listenStatements: bootstrapSpec.listenStatements,

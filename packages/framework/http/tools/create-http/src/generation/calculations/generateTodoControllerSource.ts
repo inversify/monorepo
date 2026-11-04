@@ -1,4 +1,3 @@
-import prettier from 'prettier';
 import {
   type DecoratorStructure,
   type ImportDeclarationStructure,
@@ -8,6 +7,7 @@ import {
   QuoteKind,
   Scope,
   type SourceFile,
+  VariableDeclarationKind,
 } from 'ts-morph';
 
 import {
@@ -15,13 +15,13 @@ import {
   type SourceNamedImport,
 } from '../models/BootstrapSourceModel.js';
 import { OpenApiSchemaBindingKind } from '../models/OpenApiSchemaBindingKind.js';
-import { SCAFFOLD_PRETTIER_OPTIONS } from '../models/scaffoldPrettierOptions.js';
 import {
   type CaptureRequestValuesSourceModel,
   type SetHeaderSourceModel,
   type TodoControllerMethodName,
   type TodoControllerSourceModel,
 } from '../models/TodoControllerSourceModel.js';
+import { formatScaffoldSource } from './formatScaffoldSource.js';
 
 function toImportDeclarationStructure(
   sourceImport: SourceImport,
@@ -431,7 +431,7 @@ function buildListTodosMethod(
   name: 'pageSize',
   required: false,
   schema: {
-    default: 10,
+    default: defaultPageSize,
     maximum: 20,
     minimum: 1,
     type: 'integer',
@@ -468,7 +468,7 @@ function buildListTodosMethod(
     scope: Scope.Public,
     statements: [
       'const page: number = query.page ?? 1;',
-      'const pageSize: number = query.pageSize ?? 10;',
+      'const pageSize: number = query.pageSize ?? defaultPageSize;',
       `const result: ListTodosUseCaseResult =
   await this.#listTodosUseCaseHandler.handle({
     page,
@@ -701,6 +701,17 @@ export async function generateTodoControllerSource(
     );
   }
 
+  sourceFile.addVariableStatement({
+    declarationKind: VariableDeclarationKind.Const,
+    declarations: [
+      {
+        initializer: '10',
+        name: 'defaultPageSize',
+        type: 'number',
+      },
+    ],
+  });
+
   sourceFile.addInterface({
     name: 'ListTodosQuery',
     properties: [
@@ -836,5 +847,5 @@ export async function generateTodoControllerSource(
     ],
   });
 
-  return prettier.format(sourceFile.getFullText(), SCAFFOLD_PRETTIER_OPTIONS);
+  return formatScaffoldSource('TodoController.ts', sourceFile.getFullText());
 }

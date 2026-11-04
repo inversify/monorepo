@@ -42,6 +42,10 @@ allowBuilds:
   protobufjs: false
 
 minimumReleaseAge: 1440
+
+minimumReleaseAgeExclude:
+  - '@inversifyjs/*'
+
 overrides:
   postcss: 8.5.32
   react: 19.3.1

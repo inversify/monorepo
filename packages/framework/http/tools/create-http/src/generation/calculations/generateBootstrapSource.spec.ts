@@ -17,7 +17,7 @@ describe(generateBootstrapSource, () => {
           "import { InversifyExpressHttpAdapter } from '@inversifyjs/http-express';",
         );
         expect(result).toContain("import type express from 'express';");
-        expect(result).toContain("import { Container } from 'inversify';");
+        expect(result).toContain("import { type Container } from 'inversify';");
         expect(result).toContain("from './initializeContainer.js'");
         expect(result).toContain('initializeContainer');
         expect(result).toContain('AppConfig');
@@ -32,7 +32,7 @@ describe(generateBootstrapSource, () => {
           "import { loggerFactoryIdentifier } from '../../logger/models/loggerFactoryIdentifier.js';",
         );
         expect(result).toContain(
-          "import { SwaggerUiProvider } from '@inversifyjs/http-open-api/v3Dot2';",
+          "import { type SwaggerUiProvider } from '@inversifyjs/http-open-api/v3Dot2';",
         );
         expect(result).toContain(
           "import { InversifyValidationErrorFilter } from '@inversifyjs/http-validation';",
@@ -40,6 +40,13 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain(
           "import { OpenApiValidationPipe } from '@inversifyjs/open-api-validation/v3Dot2';",
         );
+        expect(result).toContain(
+          "import { type HttpInsightsProvider } from '@inversifyjs/http-insights';",
+        );
+        expect(result).toContain('if (DEV_PROFILER_ENABLED)');
+        expect(result).toContain("await import('@inversifyjs/http-insights')");
+        expect(result).toContain('insightsProvider.provide(container)');
+        expect(result).toContain('insightsProvider.getEventSink()');
         expect(result).not.toContain('appConfigSchema');
         expect(result).not.toContain('ConfigContainerModule');
         expect(result).not.toContain(
@@ -55,7 +62,9 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain(
           'container.bind(InversifyValidationErrorFilter).toSelf().inSingletonScope();',
         );
-        expect(result).toContain('const { PORT } = configService.get();');
+        expect(result).toContain(
+          'const { DEV_PROFILER_ENABLED, PORT } = configService.get();',
+        );
         expect(result).toContain(
           'const loggerFactory: (context: string) => Logger = container.get(',
         );
@@ -87,6 +96,9 @@ describe(generateBootstrapSource, () => {
         );
         expect(result).toContain('app.listen(PORT,');
 
+        const insightsProvideIndex: number = result.indexOf(
+          'insightsProvider.provide(container)',
+        );
         const adapterIndex: number = result.indexOf(
           'const adapter: InversifyExpressHttpAdapter = new InversifyExpressHttpAdapter(',
         );
@@ -100,7 +112,8 @@ describe(generateBootstrapSource, () => {
           'const app: express.Application = await adapter.build();',
         );
 
-        expect(adapterIndex).toBeGreaterThan(-1);
+        expect(insightsProvideIndex).toBeGreaterThan(-1);
+        expect(adapterIndex).toBeGreaterThan(insightsProvideIndex);
         expect(provideIndex).toBeGreaterThan(adapterIndex);
         expect(validationPipeIndex).toBeGreaterThan(provideIndex);
         expect(buildIndex).toBeGreaterThan(validationPipeIndex);
@@ -126,7 +139,9 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain(
           "await app.listen({ host: '0.0.0.0', port: PORT });",
         );
-        expect(result).toContain('const { PORT } = configService.get();');
+        expect(result).toContain(
+          'const { DEV_PROFILER_ENABLED, PORT } = configService.get();',
+        );
         expect(result).toContain(
           'logger.info(`Server listening on http://localhost:${String(PORT)}`);',
         );
@@ -151,7 +166,9 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain('const app: Hono = await adapter.build();');
         expect(result).toContain('fetch: app.fetch,');
         expect(result).toContain('port: PORT,');
-        expect(result).toContain('const { PORT } = configService.get();');
+        expect(result).toContain(
+          'const { DEV_PROFILER_ENABLED, PORT } = configService.get();',
+        );
         expect(result).toContain(
           'logger.info(`Server listening on http://localhost:${String(PORT)}`);',
         );
@@ -175,7 +192,9 @@ describe(generateBootstrapSource, () => {
         expect(result).toContain('const app = await adapter.build();');
         expect(result).toContain("app.listen('0.0.0.0', PORT,");
         expect(result).toContain('if (socket !== false)');
-        expect(result).toContain('const { PORT } = configService.get();');
+        expect(result).toContain(
+          'const { DEV_PROFILER_ENABLED, PORT } = configService.get();',
+        );
         expect(result).toContain(
           'logger.info(`Server listening on http://localhost:${String(PORT)}`);',
         );

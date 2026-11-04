@@ -1,4 +1,3 @@
-import prettier from 'prettier';
 import {
   Project,
   QuoteKind,
@@ -7,7 +6,7 @@ import {
 } from 'ts-morph';
 
 import { type InitializeContainerSourceModel } from '../models/InitializeContainerSourceModel.js';
-import { SCAFFOLD_PRETTIER_OPTIONS } from '../models/scaffoldPrettierOptions.js';
+import { formatScaffoldSource } from './formatScaffoldSource.js';
 import { toImportDeclarationStructure } from './toImportDeclarationStructure.js';
 
 export async function generateInitializeContainerSource(
@@ -58,8 +57,31 @@ export async function generateInitializeContainerSource(
     declarationKind: VariableDeclarationKind.Const,
     declarations: [
       {
+        initializer: '3000',
+        name: 'defaultPort',
+        type: 'number',
+      },
+    ],
+  });
+
+  sourceFile.addVariableStatement({
+    declarationKind: VariableDeclarationKind.Const,
+    declarations: [
+      {
+        initializer: '65535',
+        name: 'maxPort',
+        type: 'number',
+      },
+    ],
+  });
+
+  sourceFile.addVariableStatement({
+    declarationKind: VariableDeclarationKind.Const,
+    declarations: [
+      {
         initializer: `z.object({
   DATABASE_URL: z.string().min(1),
+  DEV_PROFILER_ENABLED: z.stringbool().default(false),
   LOG_LEVELS: z
     .string()
     .default('error,warn,info')
@@ -80,7 +102,7 @@ export async function generateInitializeContainerSource(
       ),
     ),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.coerce.number().min(1).max(65535).default(3000),
+  PORT: z.coerce.number().min(1).max(maxPort).default(defaultPort),
 })`,
         name: 'appConfigSchema',
       },
@@ -123,5 +145,8 @@ export async function generateInitializeContainerSource(
     statements: initializeContainerBodyStatements,
   });
 
-  return prettier.format(sourceFile.getFullText(), SCAFFOLD_PRETTIER_OPTIONS);
+  return formatScaffoldSource(
+    'initializeContainer.ts',
+    sourceFile.getFullText(),
+  );
 }

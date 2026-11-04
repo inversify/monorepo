@@ -1,9 +1,26 @@
-import prettier from 'prettier';
 import { Project, QuoteKind, type SourceFile } from 'ts-morph';
 
 import { type BootstrapSourceModel } from '../models/BootstrapSourceModel.js';
-import { SCAFFOLD_PRETTIER_OPTIONS } from '../models/scaffoldPrettierOptions.js';
+import { formatScaffoldSource } from './formatScaffoldSource.js';
 import { toImportDeclarationStructure } from './toImportDeclarationStructure.js';
+
+function buildAdapterOptionsObjectLiteral(
+  optionsObjectLiteral: string,
+): string {
+  const trimmedOptionsObjectLiteral: string = optionsObjectLiteral.trim();
+  const optionProperties: string =
+    trimmedOptionsObjectLiteral.startsWith('{') &&
+    trimmedOptionsObjectLiteral.endsWith('}')
+      ? trimmedOptionsObjectLiteral.slice(1, -1).trim()
+      : trimmedOptionsObjectLiteral;
+
+  return `{
+    ...(insightsProvider === undefined
+      ? {}
+      : { instrumentation: [insightsProvider.getEventSink()] }),
+    ${optionProperties}
+  }`;
+}
 
 export async function generateBootstrapSource(
   model: BootstrapSourceModel,
@@ -55,7 +72,7 @@ export async function generateBootstrapSource(
 
   sourceFile.addImportDeclaration({
     moduleSpecifier: '@inversifyjs/http-open-api/v3Dot2',
-    namedImports: [{ name: 'SwaggerUiProvider' }],
+    namedImports: [{ isTypeOnly: true, name: 'SwaggerUiProvider' }],
   });
 
   sourceFile.addImportDeclaration({
@@ -68,6 +85,11 @@ export async function generateBootstrapSource(
     namedImports: [{ name: 'OpenApiValidationPipe' }],
   });
 
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '@inversifyjs/http-insights',
+    namedImports: [{ isTypeOnly: true, name: 'HttpInsightsProvider' }],
+  });
+
   const applicationDeclaration: string =
     model.applicationType === undefined
       ? 'const app = await adapter.build();'
@@ -77,12 +99,18 @@ export async function generateBootstrapSource(
     'const container: Container = await initializeContainer();',
     'container.bind(InversifyValidationErrorFilter).toSelf().inSingletonScope();',
     'const configService: ConfigService<AppConfig> = container.get(configServiceIdentifier);',
-    'const { PORT } = configService.get();',
+    'const { DEV_PROFILER_ENABLED, PORT } = configService.get();',
     'const loggerFactory: (context: string) => Logger = container.get(loggerFactoryIdentifier);',
     "const logger: Logger = loggerFactory('Bootstrap');",
+    'let insightsProvider: HttpInsightsProvider | undefined = undefined;',
+    `if (DEV_PROFILER_ENABLED) {
+  const { HttpInsightsProvider } = await import('@inversifyjs/http-insights');
+  insightsProvider = new HttpInsightsProvider();
+  await insightsProvider.provide(container);
+}`,
     `const adapter: ${model.adapter.className} = new ${model.adapter.className}(
   container,
-  ${model.adapter.optionsObjectLiteral},
+  ${buildAdapterOptionsObjectLiteral(model.adapter.optionsObjectLiteral)},
 );`,
     'const swaggerProvider: SwaggerUiProvider = provideOpenApi(container);',
     'adapter.useGlobalPipe(new OpenApiValidationPipe(swaggerProvider.openApiObject));',
@@ -99,5 +127,5 @@ export async function generateBootstrapSource(
     statements: bootstrapBodyStatements,
   });
 
-  return prettier.format(sourceFile.getFullText(), SCAFFOLD_PRETTIER_OPTIONS);
+  return formatScaffoldSource('bootstrap.ts', sourceFile.getFullText());
 }

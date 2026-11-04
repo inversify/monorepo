@@ -19,10 +19,12 @@ describe(getBaseTemplateRoot, () => {
       expect(templateEntries).not.toContain('.gitignore');
       expect(templateEntries).toContain('.env.example');
       expect(templateEntries).toContain('docker-compose.yml');
-      expect(templateEntries).toContain('eslint.config.mjs.template');
+      expect(templateEntries).toContain('oxfmt.config.ts.template');
+      expect(templateEntries).toContain('oxlint.config.ts.template');
       expect(templateEntries).toContain('package.json');
       expect(templateEntries).toContain('package-managers.json');
-      expect(templateEntries).toContain('prettier.config.mjs.template');
+      expect(templateEntries).not.toContain('eslint.config.mjs.template');
+      expect(templateEntries).not.toContain('prettier.config.mjs.template');
       expect(templateEntries).toContain('prisma.config.ts.template');
       expect(templateEntries).toContain('prisma');
       expect(templateEntries).toContain('tsconfig.json');

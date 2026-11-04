@@ -13,9 +13,11 @@ export const BASE_DEPENDENCY_NAMES: readonly string[] = [
   '@inversifyjs/config',
   '@inversifyjs/config-dotenv',
   '@inversifyjs/http-core',
+  '@inversifyjs/http-insights',
   '@inversifyjs/http-open-api',
   '@inversifyjs/http-validation',
   '@inversifyjs/logger',
+  '@inversifyjs/open-api-types',
   '@inversifyjs/open-api-validation',
   'ajv',
   'ajv-formats',
@@ -27,20 +29,23 @@ export const BASE_DEPENDENCY_NAMES: readonly string[] = [
 /**
  * Always-allowed install-time scripts. Adapter/DB specs may add more.
  */
-export const BASE_BUILT_DEPENDENCY_NAMES: readonly string[] = [];
+export const BASE_BUILT_DEPENDENCY_NAMES: readonly string[] = [
+  // Native addon imported by @inversifyjs/http-insights when the dev profiler is enabled.
+  'better-sqlite3',
+];
 
 /**
  * Always-installed tooling/dev dependencies.
  */
 export const BASE_DEV_DEPENDENCY_NAMES: readonly string[] = [
-  '@eslint/js',
+  '@inversifyjs/foundation-oxfmt-config',
+  '@inversifyjs/foundation-oxlint-config',
+  '@inversifyjs/foundation-typescript-config',
   '@types/node',
-  'eslint',
-  'eslint-config-prettier',
-  'eslint-plugin-prettier',
-  'prettier',
+  'oxfmt',
+  'oxlint',
+  'oxlint-tsgolint',
   'typescript',
-  'typescript-eslint',
 ];
 
 /**
