@@ -1,5 +1,15 @@
 # @inversifyjs/http-fastify
 
+## 5.9.2
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/http-core@5.9.2
+  - @inversifyjs/http-instrumentation-core@5.9.2
+  - inversify@8.2.4
+
 ## 5.9.1
 
 ### Patch Changes

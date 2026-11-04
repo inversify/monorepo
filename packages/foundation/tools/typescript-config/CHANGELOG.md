@@ -1,5 +1,11 @@
 # @inversifyjs/foundation-typescript-config
 
+## 0.2.1
+
+### Patch Changes
+
+- Parity version.
+
 ## 0.2.0
 
 ### Minor Changes

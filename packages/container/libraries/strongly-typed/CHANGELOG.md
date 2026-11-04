@@ -1,5 +1,13 @@
 # @inversifyjs/strongly-typed
 
+## 3.0.1
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - inversify@8.2.4
+
 ## 3.0.0
 
 ### Major Changes

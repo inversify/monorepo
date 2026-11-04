@@ -1,5 +1,11 @@
 # @inversifyjs/validation-common
 
+## 3.6.10
+
+### Patch Changes
+
+- Parity version.
+
 ## 3.6.9
 
 No changes in this release.

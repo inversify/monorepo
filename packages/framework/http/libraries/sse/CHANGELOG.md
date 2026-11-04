@@ -1,5 +1,14 @@
 # @inversifyjs/http-sse
 
+## 2.0.27
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/framework-core@2.2.2
+  - @inversifyjs/http-core@5.9.2
+
 ## 2.0.26
 
 ### Patch Changes

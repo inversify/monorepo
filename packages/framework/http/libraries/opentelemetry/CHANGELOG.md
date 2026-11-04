@@ -1,5 +1,13 @@
 # @inversifyjs/http-opentelemetry
 
+## 5.9.2
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/http-instrumentation-core@5.9.2
+
 ## 5.9.1
 
 ### Patch Changes

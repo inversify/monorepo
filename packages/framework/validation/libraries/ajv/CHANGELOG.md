@@ -1,5 +1,15 @@
 # @inversifyjs/ajv-validation
 
+## 3.6.10
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/common@2.0.2
+  - @inversifyjs/reflect-metadata-utils@1.5.1
+  - @inversifyjs/validation-common@3.6.10
+
 ## 3.6.9
 
 ### Patch Changes

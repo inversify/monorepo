@@ -1,5 +1,11 @@
 # @inversifyjs/common
 
+## 2.0.2
+
+### Patch Changes
+
+- Parity version.
+
 ## 2.0.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @inversifyjs/config-dotenv
 
+## 1.0.1
+
+### Patch Changes
+
+- Parity version.
+- Updated dependencies
+  - @inversifyjs/config@1.0.1
+
 ## 1.0.0
 
 ### Major Changes

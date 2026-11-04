@@ -1,5 +1,11 @@
 # @inversifyjs/foundation-changelog-generator
 
+## 0.2.2
+
+### Patch Changes
+
+- Parity version.
+
 ## 0.2.1
 
 ### Patch Changes
