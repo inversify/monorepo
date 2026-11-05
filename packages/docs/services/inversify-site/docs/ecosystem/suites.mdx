@@ -31,27 +31,33 @@ container configuration may be more appropriate.
 - **Solitary and sociable testing** - Test classes in complete isolation or enable selective collaboration between business logic
 - **InversifyJS-aware** - Recognizes `@injectable`, `@inject`, `@multiInject`, `@tagged`, and `@named` decorators automatically
 - **Virtual DI container** - No actual InversifyJS container needed - analyzes classes and creates only required mocks
-- **Token auto-mocking** - Token-injected dependencies are always mocked, ensuring tests remain unit tests
-- **Framework integration** - Works with Jest, Vitest, and Sinon out of the box
+- **Token auto-mocking** - Token-injected dependencies are mocked by default; use `.mock(token).final(value)` to supply a value or implementation
+- **Framework integration** - Works with Jest or Vitest
 
 ## Installation
 
-For InversifyJS 6.x:
+For Suites 4 with InversifyJS 7.x or 8.x, use Node.js `^22.22.2 || ^24.15.0 || ^26.0.0`.
+
+For Jest, install matching `jest` and `@jest/globals` versions satisfying `^30.5.2`. If your project stays on Jest 29, use a Suites release compatible with that runner version.
 
 ```bash
-npm install -D @suites/unit @suites/di.inversify@^3.0.0 @suites/doubles.jest
+npm install -D @suites/unit @suites/di.inversify @suites/doubles.jest
 ```
 
 :::info
-Use `@suites/doubles.vitest` or `@suites/doubles.sinon` if you're using Vitest or Sinon instead of Jest.
+Use `@suites/doubles.vitest` instead of `@suites/doubles.jest` for Vitest. The Sinon adapter has no Suites 4 release.
 :::
 
-Add type references to `global.d.ts`:
+Add type references to a declaration file included by your test tsconfig:
 
 ```typescript
 /// <reference types="@suites/doubles.jest/unit" />
-/// <reference types="@suites/di.inversify" />
+/// <reference types="@suites/di.inversify/metadata" />
 ```
+
+For Vitest, use `@suites/doubles.vitest/unit` for the first reference. Keep one doubles reference and one DI metadata reference per test TypeScript project.
+
+Enable `experimentalDecorators` and `emitDecoratorMetadata`, load `reflect-metadata` before decorated classes, and configure your test runner to emit legacy decorator metadata. See the [Suites installation guide](https://suites.dev/docs/get-started/installation/) for runner setup and runtime requirements.
 
 ## Quick Examples
 
@@ -140,8 +146,7 @@ describe('Order Service Sociable Unit Spec', () => {
 
   beforeAll(async () => {
     const { unit, unitRef } = await TestBed.sociable(OrderService)
-      .collaborate()                    // All business logic collaborates
-      .exclude([PaymentGateway])        // Exclude external services
+      .expose(PriceCalculator)          // Run the real calculator
       .compile();
 
     orderService = unit;
@@ -162,9 +167,11 @@ describe('Order Service Sociable Unit Spec', () => {
 });
 ```
 
+`.expose(PriceCalculator)` selects that real collaborator; `PaymentGateway` remains mocked. Check exposed code for I/O. Suites does not automatically detect or prevent external calls.
+
 ### Token Dependencies
 
-Token-injected dependencies are always auto-mocked (read more about [Dependency Inversion](/docs/introduction/dependency-inversion/)):
+Token-injected dependencies are auto-mocked by default (read more about [Dependency Inversion](/docs/introduction/dependency-inversion/)):
 
 ```typescript
 @injectable()
@@ -198,14 +205,12 @@ Suites fully supports InversifyJS metadata patterns for tagged and named binding
 @injectable()
 class Ninja {
   constructor(
-    @inject('Weapon') @tagged('canThrow', false) private katana: Weapon,
     @inject('Weapon') @tagged('canThrow', true) private shuriken: Weapon
   ) {}
 }
 
 describe('Ninja', () => {
   let ninja: Ninja;
-  let katana: Mocked<Weapon>;
   let shuriken: Mocked<Weapon>;
 
   beforeAll(async () => {
@@ -214,13 +219,11 @@ describe('Ninja', () => {
     ninja = unit;
 
     // Access mocks by tag metadata
-    katana = unitRef.get<Weapon>('Weapon', { canThrow: false });
     shuriken = unitRef.get<Weapon>('Weapon', { canThrow: true });
   });
 
   it('should use correct weapons', () => {
-    // Both mocks are fully typed and independent
-    expect(katana).toBeDefined();
+    // Retrieve the mock using the injection site's tag metadata
     expect(shuriken).toBeDefined();
   });
 });
@@ -229,12 +232,17 @@ describe('Ninja', () => {
 You can also configure mocks with metadata before compilation:
 
 ```typescript
-await TestBed.solitary(Ninja)
-  .mock<Weapon>('Weapon', { canThrow: true })
-  .impl(stub => ({
-    attack: stub.mockReturnValue('shuriken attack!')
-  }))
-  .compile();
+beforeAll(async () => {
+  const { unit, unitRef } = await TestBed.solitary(Ninja)
+    .mock<Weapon>('Weapon', { canThrow: true })
+    .impl(stub => ({
+      attack: stub().mockReturnValue('shuriken attack!')
+    }))
+    .compile();
+
+  ninja = unit;
+  shuriken = unitRef.get<Weapon>('Weapon', { canThrow: true });
+});
 ```
 
 ## How it works
@@ -246,7 +254,7 @@ It:
 1. Detects `@injectable` and `@inject` decorators automatically
 2. Creates type-safe mocks for all dependencies
 3. Wires them together without framework overhead
-4. Ensures token dependencies are always mocked (keeps tests as unit tests, not integration tests)
+4. Uses mocks for unexposed dependencies unless you supply an implementation
 
 This means you get the testing ergonomics of a DI framework without the initialization cost or complexity.
 
