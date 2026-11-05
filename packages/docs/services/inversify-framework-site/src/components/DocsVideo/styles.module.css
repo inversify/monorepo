@@ -1,0 +1,18 @@
+.figure {
+  margin: 1.5rem 0 2rem;
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  background: #070b12;
+}
+
+.caption {
+  margin-top: 0.5rem;
+  color: var(--ifm-color-content-secondary);
+  font-size: 0.9rem;
+}

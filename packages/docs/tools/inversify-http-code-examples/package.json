@@ -15,6 +15,7 @@
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-fastify": "workspace:*",
     "@inversifyjs/http-hono": "workspace:*",
+    "@inversifyjs/http-insights": "workspace:*",
     "@inversifyjs/http-sse": "workspace:*",
     "@inversifyjs/http-uwebsockets": "workspace:*",
     "@inversifyjs/logger": "workspace:*",
