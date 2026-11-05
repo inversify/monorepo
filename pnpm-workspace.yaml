@@ -47,6 +47,9 @@ minimumReleaseAgeExclude:
   - '@inversifyjs/*'
 
 overrides:
+  # Share one container identity across Inversify 8 consumers and peers.
+  "inversify@^8.2.3": "workspace:*"
+  "inversify@8.2.3": "workspace:*"
   postcss: 8.5.32
   react: 19.3.1
   react-dom: 19.3.1
