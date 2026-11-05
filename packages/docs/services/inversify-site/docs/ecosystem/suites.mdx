@@ -36,7 +36,9 @@ container configuration may be more appropriate.
 
 ## Installation
 
-For Suites 4 with InversifyJS 7.x or 8.x:
+For Suites 4 with InversifyJS 7.x or 8.x, use Node.js `^22.22.2 || ^24.15.0 || ^26.0.0`.
+
+For Jest, install matching `jest` and `@jest/globals` versions satisfying `^30.5.2`. If your project stays on Jest 29, use a Suites release compatible with that runner version.
 
 ```bash
 npm install -D @suites/unit @suites/di.inversify @suites/doubles.jest
