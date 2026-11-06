@@ -1,5 +1,14 @@
 # @inversifyjs/http-hono
 
+## 5.9.3
+
+### Patch Changes
+
+- Fixed http adapter to not to log anything when logger options are set to `false`
+- Updated dependencies
+  - @inversifyjs/http-core@5.9.3
+  - @inversifyjs/http-instrumentation-core@5.9.3
+
 ## 5.9.2
 
 ### Patch Changes

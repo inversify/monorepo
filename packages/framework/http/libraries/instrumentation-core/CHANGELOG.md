@@ -1,5 +1,9 @@
 # @inversifyjs/http-instrumentation-core
 
+## 5.9.3
+
+No changes in this release.
+
 ## 5.9.2
 
 ### Patch Changes
