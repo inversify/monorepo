@@ -10,7 +10,7 @@ export function buildRouterExplorerControllerMethodMetadataList<
   TResponse,
   TResult,
 >(
-  logger: Logger,
+  logger: Logger | undefined,
   controllerMetadata: ControllerMetadata,
   controllerMethodMetadataList: ControllerMethodMetadata[],
 ): RouterExplorerControllerMethodMetadata<TRequest, TResponse, TResult>[] {

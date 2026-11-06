@@ -7,7 +7,7 @@ import { type Logger } from '@inversifyjs/logger';
 import { type Newable } from 'inversify';
 
 export function setErrorFilterToErrorFilterMap(
-  logger: Logger,
+  logger: Logger | undefined,
   errorDiscriminatorToErrorFilterMap: Map<
     string | symbol,
     ErrorFilter | Newable<ErrorFilter>
@@ -32,7 +32,7 @@ export function setErrorFilterToErrorFilterMap(
       const errorTypeName: string =
         errorType === null ? 'null (catch-all)' : errorType.name;
 
-      logger.warn(
+      logger?.warn(
         `Error filter '${errorFilter.name}' overrides the error filter already registered for error type '${errorTypeName}'.`,
       );
     }

@@ -9,7 +9,7 @@ import { type Newable } from 'inversify';
 import { setErrorFilterToErrorFilterMap } from '../../http/actions/setErrorFilterToErrorFilterMap.js';
 
 export function buildErrorTypeToErrorFilterMap(
-  logger: Logger,
+  logger: Logger | undefined,
   target: NewableFunction,
   methodKey: string | symbol,
   errorDiscriminatorToErrorFilterMap: Map<

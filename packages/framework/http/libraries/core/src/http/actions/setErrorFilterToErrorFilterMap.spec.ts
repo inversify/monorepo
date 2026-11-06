@@ -118,6 +118,49 @@ describe(setErrorFilterToErrorFilterMap, () => {
     });
   });
 
+  describe('having an undefined logger', () => {
+    describe('when called, and getCatchErrorMetadata() returns Set with existing Newable<Error>', () => {
+      let errorTypeToGlobalErrorFilterMapFixture: Map<
+        Newable<Error> | null,
+        Newable<ErrorFilter>
+      >;
+      let errorFilterFixture: Newable<ErrorFilter>;
+      let existingErrorFilterFixture: Newable<ErrorFilter>;
+      let errorTypesFixture: Set<Newable<Error> | null>;
+
+      beforeAll(() => {
+        errorDiscriminatorToErrorFilterMapFixture = new Map();
+        errorTypeToGlobalErrorFilterMapFixture = new Map();
+        existingErrorFilterFixture =
+          class ExistingErrorFilter {} as Newable<ErrorFilter>;
+        errorFilterFixture = class TestErrorFilter {} as Newable<ErrorFilter>;
+        errorTypesFixture = new Set([Error]);
+
+        errorTypeToGlobalErrorFilterMapFixture.set(
+          Error,
+          existingErrorFilterFixture,
+        );
+
+        vitest
+          .mocked(getCatchErrorMetadata)
+          .mockReturnValueOnce(errorTypesFixture);
+
+        setErrorFilterToErrorFilterMap(
+          undefined,
+          errorDiscriminatorToErrorFilterMapFixture,
+          errorTypeToGlobalErrorFilterMapFixture,
+          errorFilterFixture,
+        );
+      });
+
+      it('should override error filters', () => {
+        expect(errorTypeToGlobalErrorFilterMapFixture.get(Error)).toBe(
+          errorFilterFixture,
+        );
+      });
+    });
+  });
+
   describe('when called, and getCatchErrorMetadata() returns Set with Newable<Error> already registered with the same error filter', () => {
     let errorTypeToGlobalErrorFilterMapFixture: Map<
       Newable<Error> | null,

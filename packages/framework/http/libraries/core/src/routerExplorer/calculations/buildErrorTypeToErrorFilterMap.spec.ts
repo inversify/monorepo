@@ -159,7 +159,7 @@ describe(buildErrorTypeToErrorFilterMap, () => {
         .mocked(setErrorFilterToErrorFilterMap)
         .mockImplementationOnce(
           (
-            _logger: Logger,
+            _logger: Logger | undefined,
             _errorDiscriminatorToErrorFilterMap: unknown,
             errorTypeToErrorFilterMap: Map<
               Newable<Error> | null,
@@ -173,7 +173,7 @@ describe(buildErrorTypeToErrorFilterMap, () => {
         )
         .mockImplementationOnce(
           (
-            _logger: Logger,
+            _logger: Logger | undefined,
             _errorDiscriminatorToErrorFilterMap: unknown,
             errorTypeToErrorFilterMap: Map<
               Newable<Error> | null,

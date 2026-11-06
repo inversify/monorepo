@@ -14,7 +14,7 @@ export function buildRouterExplorerControllerMetadataList<
   TResult,
 >(
   container: Container,
-  logger: Logger,
+  logger: Logger | undefined,
 ): RouterExplorerControllerMetadata<TRequest, TResponse, TResult>[] {
   const controllerMetadataList: ControllerMetadata[] | undefined =
     getControllerMetadataList();
