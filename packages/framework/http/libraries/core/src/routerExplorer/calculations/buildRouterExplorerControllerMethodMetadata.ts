@@ -33,7 +33,7 @@ export function buildRouterExplorerControllerMethodMetadata<
   TResponse,
   TResult,
 >(
-  logger: Logger,
+  logger: Logger | undefined,
   controllerMetadata: ControllerMetadata,
   controllerMethodMetadata: ControllerMethodMetadata,
 ): RouterExplorerControllerMethodMetadata<TRequest, TResponse, TResult> {

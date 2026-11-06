@@ -249,7 +249,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
     ).env.outgoing;
 
     if (rawResponse === undefined) {
-      if (this.httpAdapterOptions.logger !== false) {
+      if (this._logger !== undefined) {
         this._logger.warn(
           'Unable to send body separator, raw response is not defined. Headers will be delivered with the first chunk of the body.',
         );
@@ -266,7 +266,7 @@ export class InversifyHonoHttpAdapter extends InversifyHttpAdapter<
 
       // rawResponse.flushHeaders();
 
-      if (this.httpAdapterOptions.logger !== false) {
+      if (this._logger !== undefined) {
         this._logger.warn(
           'Unable to send body separator, raw response is defined but hono is unable to prevent headers from being sent again.',
         );

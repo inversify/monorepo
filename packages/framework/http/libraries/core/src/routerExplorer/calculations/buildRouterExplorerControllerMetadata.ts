@@ -11,7 +11,7 @@ export function buildRouterExplorerControllerMetadata<
   TResponse,
   TResult,
 >(
-  logger: Logger,
+  logger: Logger | undefined,
   controllerMetadata: ControllerMetadata,
 ): RouterExplorerControllerMetadata<TRequest, TResponse, TResult> {
   const controllerMethodMetadataList: ControllerMethodMetadata[] =

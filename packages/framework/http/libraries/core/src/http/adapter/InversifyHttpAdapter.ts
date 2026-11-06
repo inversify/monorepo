@@ -85,7 +85,7 @@ export abstract class InversifyHttpAdapter<
   protected readonly _httpInstrumentation:
     | HttpInstrumentationContext
     | undefined;
-  protected readonly _logger: Logger;
+  protected readonly _logger: Logger | undefined;
   readonly #awaitableRequestMethodParamTypes: Set<RequestMethodParameterType>;
   readonly #customNativeParameterDecoratorHandlerOptions: CustomNativeParameterDecoratorHandlerOptions<
     TRequest,
@@ -596,9 +596,11 @@ export abstract class InversifyHttpAdapter<
     return handler;
   }
 
-  #buildLogger(httpAdapterOptions: RequiredOptions<TOptions>): Logger {
+  #buildLogger(
+    httpAdapterOptions: RequiredOptions<TOptions>,
+  ): Logger | undefined {
     if (typeof httpAdapterOptions.logger === 'boolean') {
-      return new ConsoleLogger();
+      return httpAdapterOptions.logger ? new ConsoleLogger() : undefined;
     }
 
     return httpAdapterOptions.logger;
@@ -1198,7 +1200,7 @@ export abstract class InversifyHttpAdapter<
       TResult
     >[],
   ): void {
-    if (this.httpAdapterOptions.logger !== false) {
+    if (this._logger !== undefined) {
       this._logger.info(`${controllerName} {${path}}:`);
 
       for (const controllerMethodMetadata of routerExplorerControllerMethodMetadataList) {
@@ -1210,7 +1212,7 @@ export abstract class InversifyHttpAdapter<
   }
 
   #reportSinkError(error: unknown): void {
-    if (this.httpAdapterOptions.logger === false) {
+    if (this._logger === undefined) {
       return;
     }
 
@@ -1224,6 +1226,10 @@ export abstract class InversifyHttpAdapter<
   }
 
   #printError(error: unknown): void {
+    if (this._logger === undefined) {
+      return;
+    }
+
     const errorMessage: string = DEFAULT_ERROR_MESSAGE;
 
     if (error instanceof Error) {
