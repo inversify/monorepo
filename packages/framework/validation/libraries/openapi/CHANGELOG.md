@@ -1,5 +1,14 @@
 # @inversifyjs/open-api-validation
 
+## 3.6.11
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.9.3
+  - @inversifyjs/http-open-api@5.9.3
+  - @inversifyjs/validation-common@3.6.11
+
 ## 3.6.10
 
 ### Patch Changes
