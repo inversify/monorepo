@@ -20,7 +20,7 @@
     "@types/express": "5.0.6",
     "@types/node": "26.6.6",
     "@vitest/coverage-v8": "5.0.5",
-    "inversify": "8.2.3",
+    "inversify": "8.2.4",
     "oxfmt": "0.75.0",
     "oxlint": "1.90.0",
     "oxlint-tsgolint": "7.0.2005",
