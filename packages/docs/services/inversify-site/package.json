@@ -29,7 +29,7 @@
     "@docusaurus/types": "3.10.2",
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@inversifyjs/foundation-oxlint-config": "workspace:*",
-    "@rspack/core": "1.7.12",
+    "@rspack/core": "2.3.1",
     "@types/babel__standalone": "7.1.9",
     "@types/react": "19.3.0",
     "monaco-editor-webpack-plugin": "7.1.1",
