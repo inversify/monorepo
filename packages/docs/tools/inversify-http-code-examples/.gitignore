@@ -20,3 +20,6 @@
 
 /generated
 
+# SQLite database created by the HTTP insights example
+/.inversify
+
