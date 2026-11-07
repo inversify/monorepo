@@ -1,5 +1,16 @@
 # @inversifyjs/core
 
+## 15.1.0
+
+### Minor Changes
+
+- Added `Container.inspectCurrentPlan`. It returns a snapshot of the plan the container would use for a `get` or `getAll` request, without resolving any service. The snapshot describes the request constraints, the selected bindings and their planned dependencies.
+- Added `PlanInspection`, `PlanServiceInspection` and `PlanBindingInspection` types.
+
+### Patch Changes
+
+- Fixed activation and deactivation handler order. Container activation handlers run from parent containers to child containers. Container deactivation handlers run from child containers to parent containers, before the binding handler and `@preDestroy`.
+
 ## 15.0.2
 
 ### Patch Changes
