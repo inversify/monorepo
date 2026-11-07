@@ -129,6 +129,48 @@ describe(ActivationsService, () => {
         bindingActivationFixture = Symbol() as unknown as BindingActivation;
 
         activationMapsMock.get
+          .mockReturnValueOnce(undefined)
+          .mockReturnValueOnce([bindingActivationFixture]);
+
+        result = activationsService.get(serviceIdFixture);
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call activationMaps.get()', () => {
+        expect(activationMapsMock.get).toHaveBeenCalledTimes(2);
+        expect(activationMapsMock.get).toHaveBeenNthCalledWith(
+          1,
+          'serviceId',
+          serviceIdFixture,
+        );
+        expect(activationMapsMock.get).toHaveBeenNthCalledWith(
+          2,
+          'serviceId',
+          serviceIdFixture,
+        );
+      });
+
+      it('should not call chain()', () => {
+        expect(chain).not.toHaveBeenCalled();
+      });
+
+      it('should return BindingActivation[]', () => {
+        expect(result).toStrictEqual([bindingActivationFixture]);
+      });
+    });
+
+    describe('when called, and activationMaps.get() returns undefined and parent activationMaps.get() returns Iterable', () => {
+      let bindingActivationFixture: BindingActivation;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        bindingActivationFixture = Symbol() as unknown as BindingActivation;
+
+        activationMapsMock.get
           .mockReturnValueOnce([bindingActivationFixture])
           .mockReturnValueOnce(undefined);
 
@@ -163,21 +205,24 @@ describe(ActivationsService, () => {
     });
 
     describe('when called, and activationMaps.get() returns Iterable and parent activationMaps.get() returns Iterable', () => {
+      let parentBindingActivationFixture: BindingActivation;
       let bindingActivationFixture: BindingActivation;
 
       let result: unknown;
 
       beforeAll(() => {
+        parentBindingActivationFixture =
+          Symbol() as unknown as BindingActivation;
         bindingActivationFixture = Symbol() as unknown as BindingActivation;
 
         activationMapsMock.get
-          .mockReturnValueOnce([bindingActivationFixture])
+          .mockReturnValueOnce([parentBindingActivationFixture])
           .mockReturnValueOnce([bindingActivationFixture]);
 
         vitest
           .mocked(chain)
           .mockReturnValueOnce([
-            bindingActivationFixture,
+            parentBindingActivationFixture,
             bindingActivationFixture,
           ]);
 
@@ -204,14 +249,14 @@ describe(ActivationsService, () => {
 
       it('should call chain()', () => {
         expect(chain).toHaveBeenCalledExactlyOnceWith(
-          [bindingActivationFixture],
+          [parentBindingActivationFixture],
           [bindingActivationFixture],
         );
       });
 
       it('should return BindingActivation[]', () => {
         expect(result).toStrictEqual([
-          bindingActivationFixture,
+          parentBindingActivationFixture,
           bindingActivationFixture,
         ]);
       });

@@ -25,71 +25,68 @@ export function resolveBindingDeactivations<TResolved>(
   params: DeactivationParams,
   binding: CachedSingletonScopedBinding<TResolved>,
 ): void | Promise<void> {
-  const preDestroyResult: void | Promise<void> = resolveBindingPreDestroy(
-    params,
-    binding,
-  );
-
-  if (preDestroyResult === undefined) {
-    return resolveBindingDeactivationsAfterPreDestroy(params, binding);
-  }
-
-  return preDestroyResult.then((): void | Promise<void> =>
-    resolveBindingDeactivationsAfterPreDestroy(params, binding),
-  );
-}
-
-function resolveBindingDeactivationsAfterPreDestroy<TResolved>(
-  params: DeactivationParams,
-  binding: CachedSingletonScopedBinding<TResolved>,
-): void | Promise<void> {
   const bindingCache: Right<Resolved<TResolved>> = binding.cache;
 
   if (isPromise(bindingCache.value)) {
     return bindingCache.value.then(
       (resolvedValue: TResolved): void | Promise<void> =>
-        resolveBindingDeactivationsAfterPreDestroyFromValue(
-          params,
-          binding,
-          resolvedValue,
-        ),
+        resolveBindingDeactivationsFromValue(params, binding, resolvedValue),
     );
   }
 
-  return resolveBindingDeactivationsAfterPreDestroyFromValue(
+  return resolveBindingDeactivationsFromValue(
     params,
     binding,
     bindingCache.value,
   );
 }
 
-function resolveBindingDeactivationsAfterPreDestroyFromValue<TResolved>(
+function resolveBindingDeactivationsFromValue<TResolved>(
   params: DeactivationParams,
   binding: CachedSingletonScopedBinding<TResolved>,
   resolvedValue: TResolved,
 ): void | Promise<void> {
-  let deactivationResult: void | Promise<void> = undefined;
-
-  if (binding.onDeactivation !== undefined) {
-    const bindingDeactivation: BindingDeactivation<TResolved> =
-      binding.onDeactivation;
-
-    deactivationResult = bindingDeactivation(resolvedValue);
-  }
-
-  if (deactivationResult === undefined) {
-    return resolveBindingServiceDeactivations(
+  const serviceDeactivationResult: void | Promise<void> =
+    resolveBindingServiceDeactivations(
       params,
       binding.serviceIdentifier,
       resolvedValue,
     );
-  } else {
-    return deactivationResult.then((): void | Promise<void> =>
-      resolveBindingServiceDeactivations(
+
+  if (isPromise(serviceDeactivationResult)) {
+    return serviceDeactivationResult.then((): void | Promise<void> =>
+      resolveBindingOnDeactivationThenPreDestroy(
         params,
-        binding.serviceIdentifier,
+        binding,
         resolvedValue,
       ),
     );
   }
+
+  return resolveBindingOnDeactivationThenPreDestroy(
+    params,
+    binding,
+    resolvedValue,
+  );
+}
+
+function resolveBindingOnDeactivationThenPreDestroy<TResolved>(
+  params: DeactivationParams,
+  binding: CachedSingletonScopedBinding<TResolved>,
+  resolvedValue: TResolved,
+): void | Promise<void> {
+  if (binding.onDeactivation !== undefined) {
+    const bindingDeactivation: BindingDeactivation<TResolved> =
+      binding.onDeactivation;
+    const deactivationResult: void | Promise<void> =
+      bindingDeactivation(resolvedValue);
+
+    if (isPromise(deactivationResult)) {
+      return deactivationResult.then((): void | Promise<void> =>
+        resolveBindingPreDestroy(params, binding),
+      );
+    }
+  }
+
+  return resolveBindingPreDestroy(params, binding);
 }
