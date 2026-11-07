@@ -11,6 +11,7 @@ import {
   type GetAllOptions,
   type GetOptions,
   type OptionalGetOptions,
+  type PlanInspection,
   PlanResultCacheService,
 } from '@inversifyjs/core';
 
@@ -18,6 +19,7 @@ import { type BindToFluentSyntax } from '../../binding/models/BindingFluentSynta
 import { type BindingIdentifier } from '../../binding/models/BindingIdentifier.js';
 import { type ContainerModule } from '../models/ContainerModule.js';
 import { type ContainerOptions } from '../models/ContainerOptions.js';
+import { type InspectCurrentPlanOptions } from '../models/InspectCurrentPlanOptions.js';
 import { type IsBoundOptions } from '../models/isBoundOptions.js';
 import { BindingManager } from './BindingManager.js';
 import { ContainerModuleManager } from './ContainerModuleManager.js';
@@ -145,6 +147,16 @@ export class Container {
     options?: GetOptions,
   ): Promise<T | undefined> {
     return this.#serviceResolutionManager.getAsync(serviceIdentifier, options);
+  }
+
+  public inspectCurrentPlan(
+    serviceIdentifier: ServiceIdentifier,
+    options?: InspectCurrentPlanOptions,
+  ): PlanInspection {
+    return this.#serviceResolutionManager.inspectCurrentPlan(
+      serviceIdentifier,
+      options,
+    );
   }
 
   public isBound(

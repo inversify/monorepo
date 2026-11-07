@@ -8,6 +8,6 @@ export function resolve(params: ResolutionParams): unknown {
 
     return serviceNode.resolve(params);
   } catch (error: unknown) {
-    handleResolveError(params, error);
+    handleResolveError(params.planResult, error);
   }
 }

@@ -28,6 +28,7 @@ import {
   DeactivationsService,
   type GetOptions,
   type GetOptionsTagConstraint,
+  type PlanInspection,
   PlanResultCacheService,
 } from '@inversifyjs/core';
 
@@ -45,6 +46,7 @@ import { type Plugin, type PluginContext } from '@inversifyjs/plugin';
 
 import { type BindToFluentSyntax } from '../../binding/models/BindingFluentSyntax.js';
 import { type ContainerModule } from '../models/ContainerModule.js';
+import { type InspectCurrentPlanOptions } from '../models/InspectCurrentPlanOptions.js';
 import { BindingManager } from './BindingManager.js';
 import { Container } from './Container.js';
 import { ContainerModuleManager } from './ContainerModuleManager.js';
@@ -270,6 +272,7 @@ describe(Container, () => {
       getAll: vitest.fn(),
       getAllAsync: vitest.fn(),
       getAsync: vitest.fn(),
+      inspectCurrentPlan: vitest.fn(),
     } as Partial<
       Mocked<ServiceResolutionManager>
     > as Mocked<ServiceResolutionManager>;
@@ -286,6 +289,10 @@ describe(Container, () => {
         );
       public getAsync: Mocked<ServiceResolutionManager>['getAsync'] =
         serviceResolutionManagerMock.getAsync.bind(
+          serviceResolutionManagerMock,
+        );
+      public inspectCurrentPlan: Mocked<ServiceResolutionManager>['inspectCurrentPlan'] =
+        serviceResolutionManagerMock.inspectCurrentPlan.bind(
           serviceResolutionManagerMock,
         );
     } as Newable<Partial<Mocked<ServiceResolutionManager>>> as Newable<
@@ -751,6 +758,56 @@ describe(Container, () => {
 
       it('should return expected value', () => {
         expect(result).toBe(resolvedValueFixture);
+      });
+    });
+  });
+
+  describe('.inspectCurrentPlan', () => {
+    let serviceIdentifierFixture: ServiceIdentifier;
+    let optionsFixture: InspectCurrentPlanOptions;
+
+    beforeAll(() => {
+      serviceIdentifierFixture = 'service-id';
+      optionsFixture = {
+        chained: true,
+        isMultiple: true,
+        name: 'name',
+      };
+    });
+
+    describe('when called', () => {
+      let planInspectionFixture: PlanInspection;
+
+      let result: unknown;
+
+      beforeAll(() => {
+        planInspectionFixture = Symbol() as unknown as PlanInspection;
+
+        serviceResolutionManagerMock.inspectCurrentPlan.mockReturnValueOnce(
+          planInspectionFixture,
+        );
+
+        result = new Container().inspectCurrentPlan(
+          serviceIdentifierFixture,
+          optionsFixture,
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should call serviceResolutionManager.inspectCurrentPlan()', () => {
+        expect(
+          serviceResolutionManagerMock.inspectCurrentPlan,
+        ).toHaveBeenCalledExactlyOnceWith(
+          serviceIdentifierFixture,
+          optionsFixture,
+        );
+      });
+
+      it('should return expected value', () => {
+        expect(result).toBe(planInspectionFixture);
       });
     });
   });
