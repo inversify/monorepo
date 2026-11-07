@@ -1407,6 +1407,146 @@ Binding constraints:
         });
       });
     });
+
+    describe('having a container constructed with autobind', () => {
+      let constructorMock: Mock<() => void>;
+
+      @injectable()
+      class Katana {
+        constructor() {
+          constructorMock();
+        }
+      }
+
+      let container: Container;
+
+      beforeAll(() => {
+        constructorMock = vitest.fn();
+
+        container = new Container({
+          autobind: true,
+          defaultScope: bindingScopeValues.Singleton,
+        });
+      });
+
+      describe('when called', () => {
+        let result: PlanInspection;
+
+        beforeAll(() => {
+          result = container.inspectCurrentPlan(Katana);
+        });
+
+        it('should inspect the autobound binding', () => {
+          expect(getInstanceBindingInspection(result.root)).toStrictEqual(
+            expect.objectContaining({
+              implementationType: Katana,
+              scope: bindingScopeValues.Singleton,
+              serviceIdentifier: Katana,
+              type: bindingTypeValues.Instance,
+            }),
+          );
+        });
+
+        it('should not construct the service', () => {
+          expect(constructorMock).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('when called, and container.get() is called', () => {
+        beforeAll(() => {
+          container.inspectCurrentPlan(Katana);
+          container.get(Katana);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should construct the service once', () => {
+          expect(constructorMock).toHaveBeenCalledTimes(1);
+        });
+      });
+    });
+
+    describe('having a container constructed without autobind', () => {
+      let constructorMock: Mock<() => void>;
+
+      @injectable()
+      class Katana {
+        constructor() {
+          constructorMock();
+        }
+      }
+
+      let container: Container;
+
+      beforeAll(() => {
+        constructorMock = vitest.fn();
+
+        container = new Container();
+      });
+
+      describe('when called, with autobind true', () => {
+        let result: PlanInspection;
+
+        beforeAll(() => {
+          result = container.inspectCurrentPlan(Katana, { autobind: true });
+        });
+
+        it('should inspect the autobound binding', () => {
+          expect(getInstanceBindingInspection(result.root)).toStrictEqual(
+            expect.objectContaining({
+              implementationType: Katana,
+              scope: bindingScopeValues.Transient,
+              serviceIdentifier: Katana,
+              type: bindingTypeValues.Instance,
+            }),
+          );
+        });
+
+        it('should not construct the service', () => {
+          expect(constructorMock).not.toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('having a class that depends on itself', () => {
+      @injectable()
+      class Katana {
+        constructor(
+          @inject(Katana)
+          public readonly katana: Katana,
+        ) {}
+      }
+
+      let container: Container;
+
+      beforeAll(() => {
+        container = new Container();
+
+        container.bind(Katana).toSelf();
+      });
+
+      describe('when called', () => {
+        let result: unknown;
+        let getError: unknown;
+
+        beforeAll(() => {
+          result = captureError(() => container.inspectCurrentPlan(Katana));
+          getError = captureError(() => container.get(Katana));
+        });
+
+        it('should throw the error container.get() throws', () => {
+          expect(result).toBeInstanceOf(InversifyCoreError);
+          expect(result).toStrictEqual(
+            expect.objectContaining({
+              message: expect.stringContaining('Circular dependency found'),
+            }),
+          );
+          expect(result).toStrictEqual(getError);
+        });
+      });
+    });
   });
 
   describe('.snapshot', () => {
