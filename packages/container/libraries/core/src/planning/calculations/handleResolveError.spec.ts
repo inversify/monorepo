@@ -6,7 +6,6 @@ import { bindingTypeValues } from '../../binding/models/BindingType.js';
 import { isStackOverflowError } from '../../error/calculations/isStackOverflowError.js';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
-import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { PlanMultipleBindingServiceNodeFixtures } from '../fixtures/PlanMultipleBindingServiceNodeFixtures.js';
 import { PlanSingleBindingServiceNodeFixtures } from '../fixtures/PlanSingleBindingServiceNodeFixtures.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
@@ -59,13 +58,8 @@ function buildServiceRedirectionBindingNode(
   };
 }
 
-function buildParams(root: PlanServiceNode): ResolutionParams {
-  const planResult: PlanResult = { tree: { root } };
-  return {
-    context: {} as unknown,
-    planResult,
-    requestScopeCache: new Map(),
-  } as unknown as ResolutionParams;
+function buildPlanResult(root: PlanServiceNode): PlanResult {
+  return { tree: { root } };
 }
 
 describe(handleResolveError, () => {
@@ -76,7 +70,7 @@ describe(handleResolveError, () => {
   });
 
   describe('having a plan tree with no circular dependency', () => {
-    let paramsFixture: ResolutionParams;
+    let planResultFixture: PlanResult;
 
     beforeAll(() => {
       const serviceNodeC: PlanServiceNode = {
@@ -93,7 +87,7 @@ describe(handleResolveError, () => {
         bindings: buildInstanceBindingNode([serviceNodeB]),
         serviceIdentifier: 'A',
       };
-      paramsFixture = buildParams(serviceNodeA);
+      planResultFixture = buildPlanResult(serviceNodeA);
     });
 
     describe('when called, and isStackOverflowError() returns false', () => {
@@ -102,7 +96,7 @@ describe(handleResolveError, () => {
       beforeAll(() => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(false);
         try {
-          handleResolveError(paramsFixture, errorFixture);
+          handleResolveError(planResultFixture, errorFixture);
         } catch (error: unknown) {
           result = error;
         }
@@ -123,7 +117,7 @@ describe(handleResolveError, () => {
       beforeAll(() => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
         try {
-          handleResolveError(paramsFixture, errorFixture);
+          handleResolveError(planResultFixture, errorFixture);
         } catch (error: unknown) {
           result = error;
         }
@@ -158,7 +152,7 @@ describe(handleResolveError, () => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(false);
         try {
           handleResolveError(
-            paramsFixture,
+            planResultFixture,
             planningMaxDepthExceededErrorFixture,
           );
         } catch (error: unknown) {
@@ -183,7 +177,7 @@ describe(handleResolveError, () => {
   });
 
   describe('having a plan tree with a simple A -> B -> A circular dependency', () => {
-    let paramsFixture: ResolutionParams;
+    let planResultFixture: PlanResult;
 
     beforeAll(() => {
       const serviceNodeA: PlanServiceNode = {
@@ -198,7 +192,7 @@ describe(handleResolveError, () => {
       };
       (serviceNodeA as { bindings: InstanceBindingNode }).bindings =
         buildInstanceBindingNode([serviceNodeB]);
-      paramsFixture = buildParams(serviceNodeA);
+      planResultFixture = buildPlanResult(serviceNodeA);
     });
 
     describe('when called, and isStackOverflowError() returns true', () => {
@@ -207,7 +201,7 @@ describe(handleResolveError, () => {
       beforeAll(() => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
         try {
-          handleResolveError(paramsFixture, errorFixture);
+          handleResolveError(planResultFixture, errorFixture);
         } catch (error: unknown) {
           result = error;
         }
@@ -230,7 +224,7 @@ describe(handleResolveError, () => {
   });
 
   describe('having a plan tree with A -> B -> C -> B (inner cycle)', () => {
-    let paramsFixture: ResolutionParams;
+    let planResultFixture: PlanResult;
 
     beforeAll(() => {
       const serviceNodeB: PlanServiceNode = {
@@ -249,7 +243,7 @@ describe(handleResolveError, () => {
         bindings: buildResolvedValueBindingNode([serviceNodeB]),
         serviceIdentifier: 'A',
       };
-      paramsFixture = buildParams(serviceNodeA);
+      planResultFixture = buildPlanResult(serviceNodeA);
     });
 
     describe('when called, and isStackOverflowError() returns true', () => {
@@ -258,7 +252,7 @@ describe(handleResolveError, () => {
       beforeAll(() => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
         try {
-          handleResolveError(paramsFixture, errorFixture);
+          handleResolveError(planResultFixture, errorFixture);
         } catch (error: unknown) {
           result = error;
         }
@@ -281,7 +275,7 @@ describe(handleResolveError, () => {
   });
 
   describe('having a plan tree with a service redirection chain A -> (redir to B,C) -> B -> C -> B', () => {
-    let paramsFixture: ResolutionParams;
+    let planResultFixture: PlanResult;
 
     beforeAll(() => {
       const serviceNodeB: PlanServiceNode = {
@@ -309,7 +303,7 @@ describe(handleResolveError, () => {
         bindings: [redirectionBindingToB, redirectionBindingToC],
         serviceIdentifier: 'A',
       };
-      paramsFixture = buildParams(serviceNodeA);
+      planResultFixture = buildPlanResult(serviceNodeA);
     });
 
     describe('when called, and isStackOverflowError() returns true', () => {
@@ -318,7 +312,7 @@ describe(handleResolveError, () => {
       beforeAll(() => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
         try {
-          handleResolveError(paramsFixture, errorFixture);
+          handleResolveError(planResultFixture, errorFixture);
         } catch (error: unknown) {
           result = error;
         }
@@ -341,7 +335,7 @@ describe(handleResolveError, () => {
   });
 
   describe('having a plan tree with a property param cycle A.(prop)->B.(prop)->A', () => {
-    let paramsFixture: ResolutionParams;
+    let planResultFixture: PlanResult;
 
     beforeAll(() => {
       const serviceNodeA: PlanServiceNode = {
@@ -355,7 +349,7 @@ describe(handleResolveError, () => {
       };
       (serviceNodeA as { bindings: InstanceBindingNode }).bindings =
         buildInstanceBindingNode([], { b: serviceNodeB });
-      paramsFixture = buildParams(serviceNodeA);
+      planResultFixture = buildPlanResult(serviceNodeA);
     });
 
     describe('when called, and isStackOverflowError() returns true', () => {
@@ -364,7 +358,7 @@ describe(handleResolveError, () => {
       beforeAll(() => {
         vitest.mocked(isStackOverflowError).mockReturnValueOnce(true);
         try {
-          handleResolveError(paramsFixture, errorFixture);
+          handleResolveError(planResultFixture, errorFixture);
         } catch (error: unknown) {
           result = error;
         }

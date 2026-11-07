@@ -29,6 +29,11 @@ import {
   type UnbindSync,
 } from './container/models/ContainerModule.js';
 import { type ContainerOptions } from './container/models/ContainerOptions.js';
+import {
+  type InspectCurrentMultiplePlanOptions,
+  type InspectCurrentPlanOptions,
+  type InspectCurrentSinglePlanOptions,
+} from './container/models/InspectCurrentPlanOptions.js';
 import { type IsBoundOptions } from './container/models/isBoundOptions.js';
 import { Container } from './container/services/Container.js';
 import { InversifyContainerError } from './error/models/InversifyContainerError.js';
@@ -46,6 +51,9 @@ export type {
   BoundServiceSyntax,
   ContainerModuleLoadOptions,
   ContainerOptions,
+  InspectCurrentMultiplePlanOptions,
+  InspectCurrentPlanOptions,
+  InspectCurrentSinglePlanOptions,
   IsBound,
   IsBoundOptions,
   MapToResolvedValueInjectOptions,

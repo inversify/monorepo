@@ -7,9 +7,9 @@ import { bindingTypeValues } from '../../binding/models/BindingType.js';
 import { isStackOverflowError } from '../../error/calculations/isStackOverflowError.js';
 import { InversifyCoreError } from '../../error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from '../../error/models/InversifyCoreErrorKind.js';
-import { type ResolutionParams } from '../../resolution/models/ResolutionParams.js';
 import { type InstanceBindingNode } from '../models/InstanceBindingNode.js';
 import { type PlanBindingNode } from '../models/PlanBindingNode.js';
+import { type PlanResult } from '../models/PlanResult.js';
 import { type PlanServiceNode } from '../models/PlanServiceNode.js';
 import { type ResolvedValueBindingNode } from '../models/ResolvedValueBindingNode.js';
 import { isConstructorNoParamNode } from './isConstructorNoParamNode.js';
@@ -18,7 +18,7 @@ import { isPlanServiceRedirectionBindingNode } from './isPlanServiceRedirectionB
 const INDEX_NOT_FOUND: number = -1;
 
 export function handleResolveError(
-  params: ResolutionParams,
+  planResult: PlanResult,
   error: unknown,
 ): never {
   if (
@@ -29,7 +29,9 @@ export function handleResolveError(
     )
   ) {
     const stringifiedCircularDependencies: string =
-      stringifyServiceIdentifierTrace(extractLikelyCircularDependency(params));
+      stringifyServiceIdentifierTrace(
+        extractLikelyCircularDependency(planResult),
+      );
 
     throw new InversifyCoreError(
       InversifyCoreErrorKind.planning,
@@ -42,9 +44,9 @@ export function handleResolveError(
 }
 
 function extractLikelyCircularDependency(
-  params: ResolutionParams,
+  planResult: PlanResult,
 ): ServiceIdentifier[] {
-  const root: PlanServiceNode = params.planResult.tree.root;
+  const root: PlanServiceNode = planResult.tree.root;
 
   const stack: PlanServiceNode[] = [];
 

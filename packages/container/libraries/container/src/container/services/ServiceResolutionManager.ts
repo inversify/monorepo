@@ -10,9 +10,11 @@ import {
   type GetOptions,
   type GetOptionsTagConstraint,
   type GetPlanOptions,
+  inspectPlan,
   type MetadataName,
   type OptionalGetOptions,
   plan,
+  type PlanInspection,
   type PlanParams,
   type PlanParamsConstraint,
   type PlanResult,
@@ -22,6 +24,7 @@ import {
 
 import { InversifyContainerError } from '../../error/models/InversifyContainerError.js';
 import { InversifyContainerErrorKind } from '../../error/models/InversifyContainerErrorKind.js';
+import { type InspectCurrentPlanOptions } from '../models/InspectCurrentPlanOptions.js';
 import { type PlanParamsOperationsManager } from './PlanParamsOperationsManager.js';
 import { type ServiceReferenceManager } from './ServiceReferenceManager.js';
 
@@ -155,6 +158,24 @@ export class ServiceResolutionManager {
     );
 
     return this.#getFromPlanResult(planResult);
+  }
+
+  public inspectCurrentPlan(
+    serviceIdentifier: ServiceIdentifier,
+    options?: InspectCurrentPlanOptions,
+  ): PlanInspection {
+    const isMultiple: boolean = options?.isMultiple ?? false;
+
+    const planResult: PlanResult = this.#buildPlanResult(
+      isMultiple,
+      serviceIdentifier,
+      options,
+    );
+
+    return inspectPlan(
+      this.#buildGetPlanOptions(isMultiple, serviceIdentifier, options),
+      planResult,
+    );
   }
 
   public onPlan(

@@ -34,6 +34,21 @@ import {
 import { decorate } from './decorator/actions/decorate.js';
 import { InversifyCoreError } from './error/models/InversifyCoreError.js';
 import { InversifyCoreErrorKind } from './error/models/InversifyCoreErrorKind.js';
+import { inspectPlan } from './inspection/actions/inspectPlan.js';
+import { type BaseBindingInspection } from './inspection/models/BaseBindingInspection.js';
+import { type BasePlanServiceInspection } from './inspection/models/BasePlanServiceInspection.js';
+import { type ConstantValueBindingInspection } from './inspection/models/ConstantValueBindingInspection.js';
+import { type DynamicValueBindingInspection } from './inspection/models/DynamicValueBindingInspection.js';
+import { type FactoryBindingInspection } from './inspection/models/FactoryBindingInspection.js';
+import { type InstanceBindingInspection } from './inspection/models/InstanceBindingInspection.js';
+import { type MultipleBindingPlanServiceInspection } from './inspection/models/MultipleBindingPlanServiceInspection.js';
+import { type PlanBindingInspection } from './inspection/models/PlanBindingInspection.js';
+import { type PlanInspection } from './inspection/models/PlanInspection.js';
+import { type PlanServiceInspection } from './inspection/models/PlanServiceInspection.js';
+import { type ResolvedValueBindingInspection } from './inspection/models/ResolvedValueBindingInspection.js';
+import { type ScopedBindingInspection } from './inspection/models/ScopedBindingInspection.js';
+import { type ServiceRedirectionBindingInspection } from './inspection/models/ServiceRedirectionBindingInspection.js';
+import { type SingleBindingPlanServiceInspection } from './inspection/models/SingleBindingPlanServiceInspection.js';
 import { getClassMetadata } from './metadata/calculations/getClassMetadata.js';
 import { inject } from './metadata/decorators/inject.js';
 import { injectable } from './metadata/decorators/injectable.js';
@@ -116,10 +131,12 @@ import { type Resolved } from './resolution/models/Resolved.js';
 
 export type {
   BaseBinding,
+  BaseBindingInspection,
   BaseBindingNode,
   BaseGetPlanOptions,
   BaseManagedClassElementMetadata,
   BasePlanParams,
+  BasePlanServiceInspection,
   AutobindOptions,
   Binding,
   BindingActivation,
@@ -134,12 +151,15 @@ export type {
   ClassMetadata,
   ClassMetadataLifecycle,
   ConstantValueBinding,
+  ConstantValueBindingInspection,
   ConstructorNoParamNode,
   DeactivationParams,
   DynamicValueBinding,
+  DynamicValueBindingInspection,
   DynamicValueBuilder,
   Factory,
   FactoryBinding,
+  FactoryBindingInspection,
   FactoryBindingNode,
   GetAllOptions,
   GetMultipleServicePlanOptions,
@@ -153,6 +173,7 @@ export type {
   InjectFromHierarchyOptions,
   InjectFromHierarchyOptionsLifecycle,
   InstanceBinding,
+  InstanceBindingInspection,
   InstanceBindingNode,
   LeafBindingNode,
   ManagedClassElementMetadata,
@@ -161,16 +182,20 @@ export type {
   InjectFromOptions,
   MultiInjectOptions,
   MultipleInjectionManagedClassElementMetadata,
+  MultipleBindingPlanServiceInspection,
   MultipleInjectionResolvedValueElementMetadata,
   NonCachedServiceNodeContext,
   OptionalGetAllOptions,
   OptionalGetOptions,
+  PlanBindingInspection,
   PlanBindingNode,
+  PlanInspection,
   PlanParams,
   PlanParamsConstraint,
   PlanParamsOperations,
   PlanParamsTagConstraint,
   PlanResult,
+  PlanServiceInspection,
   PlanServiceNode,
   PlanServiceNodeParent,
   PlanServiceRedirectionBindingNode,
@@ -180,11 +205,15 @@ export type {
   ResolvableBindingNode,
   Resolved,
   ResolvedValueBinding,
+  ResolvedValueBindingInspection,
   ResolvedValueBindingNode,
   ResolvedValueElementMetadata,
   ResolvedValueMetadata,
   ScopedBinding,
+  ScopedBindingInspection,
   ServiceRedirectionBinding,
+  ServiceRedirectionBindingInspection,
+  SingleBindingPlanServiceInspection,
   SingleInjectionManagedClassElementMetadata,
   SingleInjectionResolvedValueElementMetadata,
   UnmanagedClassElementMetadata,
@@ -205,6 +234,7 @@ export {
   injectable,
   injectFromBase,
   injectFromHierarchy,
+  inspectPlan,
   isConstructorNoParamNode,
   InversifyCoreError,
   InversifyCoreErrorKind,
