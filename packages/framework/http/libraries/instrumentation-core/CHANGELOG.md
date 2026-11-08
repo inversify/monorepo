@@ -1,5 +1,11 @@
 # @inversifyjs/http-instrumentation-core
 
+## 5.10.0
+
+### Minor Changes
+
+- Updated started events with HttpInstrumentationService.
+
 ## 5.9.3
 
 No changes in this release.
