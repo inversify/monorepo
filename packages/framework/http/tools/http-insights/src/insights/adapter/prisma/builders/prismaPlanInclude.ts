@@ -1,6 +1,6 @@
 import { type Prisma } from '../../../../generated/prisma/client.js';
 
-export const planInclude = {
+const planInclude = {
   bindings: {
     include: {
       dependencies: {

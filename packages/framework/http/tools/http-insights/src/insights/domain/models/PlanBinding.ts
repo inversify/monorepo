@@ -2,7 +2,7 @@ import { type PlanProperty } from './PlanProperty.js';
 import { type PlanService } from './PlanService.js';
 import { type PlanServiceIdentifier } from './PlanServiceIdentifier.js';
 
-export type PlanBindingType =
+type PlanBindingType =
   | 'ConstantValue'
   | 'DynamicValue'
   | 'Factory'
@@ -10,7 +10,7 @@ export type PlanBindingType =
   | 'ResolvedValue'
   | 'ServiceRedirection';
 
-export const planBindingTypeValues: {
+const planBindingTypeValues: {
   [TKey in PlanBindingType]: TKey;
 } = {
   ConstantValue: 'ConstantValue',
@@ -23,7 +23,7 @@ export const planBindingTypeValues: {
 
 export type PlanBindingScope = 'Request' | 'Singleton' | 'Transient';
 
-export const planBindingScopeValues: {
+const planBindingScopeValues: {
   [TKey in PlanBindingScope]: TKey;
 } = {
   Request: 'Request',
@@ -31,7 +31,7 @@ export const planBindingScopeValues: {
   Transient: 'Transient',
 };
 
-export interface BasePlanBinding<TType extends PlanBindingType> {
+interface BasePlanBinding<TType extends PlanBindingType> {
   readonly id: string;
   readonly bindingId: number;
   readonly moduleId: number | null;
@@ -39,28 +39,28 @@ export interface BasePlanBinding<TType extends PlanBindingType> {
   readonly type: TType;
 }
 
-export interface ScopedPlanBinding<
+interface ScopedPlanBinding<
   TType extends PlanBindingType,
   TScope extends PlanBindingScope = PlanBindingScope,
 > extends BasePlanBinding<TType> {
   readonly scope: TScope;
 }
 
-export type ConstantValuePlanBinding = ScopedPlanBinding<
+type ConstantValuePlanBinding = ScopedPlanBinding<
   typeof planBindingTypeValues.ConstantValue,
   typeof planBindingScopeValues.Singleton
 >;
 
-export type DynamicValuePlanBinding = ScopedPlanBinding<
+type DynamicValuePlanBinding = ScopedPlanBinding<
   typeof planBindingTypeValues.DynamicValue
 >;
 
-export type FactoryPlanBinding = ScopedPlanBinding<
+type FactoryPlanBinding = ScopedPlanBinding<
   typeof planBindingTypeValues.Factory,
   typeof planBindingScopeValues.Singleton
 >;
 
-export interface InstancePlanBinding extends ScopedPlanBinding<
+interface InstancePlanBinding extends ScopedPlanBinding<
   typeof planBindingTypeValues.Instance
 > {
   readonly constructorArguments: readonly (PlanService | null)[];
@@ -68,13 +68,13 @@ export interface InstancePlanBinding extends ScopedPlanBinding<
   readonly properties: readonly PlanProperty[];
 }
 
-export interface ResolvedValuePlanBinding extends ScopedPlanBinding<
+interface ResolvedValuePlanBinding extends ScopedPlanBinding<
   typeof planBindingTypeValues.ResolvedValue
 > {
   readonly arguments: readonly PlanService[];
 }
 
-export interface ServiceRedirectionPlanBinding extends BasePlanBinding<
+interface ServiceRedirectionPlanBinding extends BasePlanBinding<
   typeof planBindingTypeValues.ServiceRedirection
 > {
   readonly redirection: PlanService;

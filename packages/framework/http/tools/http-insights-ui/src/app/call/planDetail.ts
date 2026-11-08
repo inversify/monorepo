@@ -6,7 +6,7 @@ export type PlanBindingType =
   | 'ResolvedValue'
   | 'ServiceRedirection';
 
-export const planBindingTypeValues: {
+const planBindingTypeValues: {
   [TKey in PlanBindingType]: TKey;
 } = {
   ConstantValue: 'ConstantValue',
@@ -19,7 +19,7 @@ export const planBindingTypeValues: {
 
 export type PlanBindingScope = 'Request' | 'Singleton' | 'Transient';
 
-export const planBindingScopeValues: {
+const planBindingScopeValues: {
   [TKey in PlanBindingScope]: TKey;
 } = {
   Request: 'Request',
@@ -37,7 +37,7 @@ export interface PlanServiceIdentifier {
   readonly value: string;
 }
 
-export interface PlanJsonObject {
+interface PlanJsonObject {
   readonly [key: string]: PlanJsonValue;
 }
 
@@ -49,7 +49,7 @@ export type PlanJsonValue =
   | PlanJsonObject
   | readonly PlanJsonValue[];
 
-export interface PlanTag {
+interface PlanTag {
   readonly key: PlanMetadataKey;
   readonly value: PlanJsonValue;
 }
@@ -75,7 +75,7 @@ export interface PlanProperty {
   readonly service: PlanService;
 }
 
-export interface BasePlanBinding<TType extends PlanBindingType> {
+interface BasePlanBinding<TType extends PlanBindingType> {
   readonly id: string;
   readonly bindingId: number;
   readonly moduleId: number | null;
@@ -83,7 +83,7 @@ export interface BasePlanBinding<TType extends PlanBindingType> {
   readonly type: TType;
 }
 
-export interface ScopedPlanBinding<
+interface ScopedPlanBinding<
   TType extends PlanBindingType,
   TScope extends PlanBindingScope = PlanBindingScope,
 > extends BasePlanBinding<TType> {

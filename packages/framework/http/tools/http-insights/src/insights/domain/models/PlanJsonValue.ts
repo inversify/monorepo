@@ -1,4 +1,4 @@
-export interface PlanJsonObject {
+interface PlanJsonObject {
   readonly [key: string]: PlanJsonValue;
 }
 
