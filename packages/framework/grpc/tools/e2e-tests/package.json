@@ -10,7 +10,7 @@
     "@grpc/grpc-js": "1.14.7",
     "@inversifyjs/grpc-core": "workspace:*",
     "@inversifyjs/grpc-js": "workspace:*",
-    "inversify": "8.2.4",
+    "inversify": "8.3.0",
     "reflect-metadata": "0.2.2"
   },
   "devDependencies": {
