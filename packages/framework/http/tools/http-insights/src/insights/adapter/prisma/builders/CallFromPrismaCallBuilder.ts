@@ -11,18 +11,22 @@ import { InterceptorFromPrismaInterceptorBuilder } from './InterceptorFromPrisma
 import { MiddlewareFromPrismaMiddlewareBuilder } from './MiddlewareFromPrismaMiddlewareBuilder.js';
 import { NativeMiddlewareFromPrismaNativeMiddlewareBuilder } from './NativeMiddlewareFromPrismaNativeMiddlewareBuilder.js';
 import { PipeFromPrismaPipeBuilder } from './PipeFromPrismaPipeBuilder.js';
+import { stagePlanInclude } from './prismaPlanInclude.js';
 import { RequestFromPrismaRequestBuilder } from './RequestFromPrismaRequestBuilder.js';
 import { ResponseFromPrismaResponseBuilder } from './ResponseFromPrismaResponseBuilder.js';
 
 // eslint-disable-next-line @typescript-eslint/typedef
 export const callInclude = {
-  controller: true,
-  guards: { orderBy: { started_at: 'asc' } },
+  controller: { include: stagePlanInclude },
+  guards: { include: stagePlanInclude, orderBy: { started_at: 'asc' } },
   httpErrors: { orderBy: { started_at: 'asc' } },
-  interceptors: { orderBy: { started_at: 'asc' } },
-  middlewares: { orderBy: { started_at: 'asc' } },
+  interceptors: {
+    include: stagePlanInclude,
+    orderBy: { started_at: 'asc' },
+  },
+  middlewares: { include: stagePlanInclude, orderBy: { started_at: 'asc' } },
   nativeMiddlewares: { orderBy: { started_at: 'asc' } },
-  pipes: { orderBy: { started_at: 'asc' } },
+  pipes: { include: stagePlanInclude, orderBy: { started_at: 'asc' } },
   request: true,
   response: true,
 } satisfies Prisma.CallInclude;
@@ -104,35 +108,32 @@ export class CallFromPrismaCallBuilder implements Builder<
   ): Omit<OngoingCall, 'controller'> {
     return {
       guards: input.guards.map(
-        (guard: Prisma.GuardGetPayload<Record<string, never>>) =>
+        (guard: PrismaCallWithRelations['guards'][number]) =>
           this.#guardFromPrismaGuardBuilder.build(guard),
       ),
       httpErrors: input.httpErrors.map(
-        (httpError: Prisma.HttpErrorGetPayload<Record<string, never>>) =>
+        (httpError: PrismaCallWithRelations['httpErrors'][number]) =>
           this.#httpErrorFromPrismaHttpErrorBuilder.build(httpError),
       ),
       id: input.id,
       interceptors: input.interceptors.map(
-        (interceptor: Prisma.InterceptorGetPayload<Record<string, never>>) =>
+        (interceptor: PrismaCallWithRelations['interceptors'][number]) =>
           this.#interceptorFromPrismaInterceptorBuilder.build(interceptor),
       ),
       middlewares: input.middlewares.map(
-        (middleware: Prisma.MiddlewareGetPayload<Record<string, never>>) =>
+        (middleware: PrismaCallWithRelations['middlewares'][number]) =>
           this.#middlewareFromPrismaMiddlewareBuilder.build(middleware),
       ),
       nativeMiddlewares: input.nativeMiddlewares.map(
         (
-          nativeMiddleware: Prisma.NativeMiddlewareGetPayload<
-            Record<string, never>
-          >,
+          nativeMiddleware: PrismaCallWithRelations['nativeMiddlewares'][number],
         ) =>
           this.#nativeMiddlewareFromPrismaNativeMiddlewareBuilder.build(
             nativeMiddleware,
           ),
       ),
-      pipes: input.pipes.map(
-        (pipe: Prisma.PipeGetPayload<Record<string, never>>) =>
-          this.#pipeFromPrismaPipeBuilder.build(pipe),
+      pipes: input.pipes.map((pipe: PrismaCallWithRelations['pipes'][number]) =>
+        this.#pipeFromPrismaPipeBuilder.build(pipe),
       ),
       request: this.#requestFromPrismaRequestBuilder.build(
         this.#requireRelation(input.id, 'request', input.request),

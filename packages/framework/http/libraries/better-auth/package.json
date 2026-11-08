@@ -26,7 +26,7 @@
     "@vitest/coverage-v8": "5.0.5",
     "better-sqlite3": "^13.0.3",
     "fastify": "5.12.8",
-    "hono": "4.13.16",
+    "hono": "4.13.17",
     "oxfmt": "0.75.0",
     "oxlint": "1.90.0",
     "oxlint-tsgolint": "7.0.2005",
@@ -57,7 +57,7 @@
   "name": "@inversifyjs/http-better-auth",
   "peerDependencies": {
     "better-auth": "^1.7.14",
-    "inversify": "^8.2.3"
+    "inversify": "^8.3.0"
   },
   "publishConfig": {
     "access": "public"

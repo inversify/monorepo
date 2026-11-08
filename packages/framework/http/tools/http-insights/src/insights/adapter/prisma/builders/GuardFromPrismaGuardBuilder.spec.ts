@@ -1,11 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { type Guard as PrismaGuard } from '../../../../generated/prisma/client.js';
 import { ErrorTraceFixtures } from '../../../domain/fixtures/ErrorTraceFixtures.js';
 import { type Guard } from '../../../domain/models/Guard.js';
 import { PrismaGuardFixtures } from '../fixtures/PrismaGuardFixtures.js';
 import { ErrorTracesFromPrismaJsonBuilder } from './ErrorTracesFromPrismaJsonBuilder.js';
 import { GuardFromPrismaGuardBuilder } from './GuardFromPrismaGuardBuilder.js';
+import { PlanFromPrismaPlanBuilder } from './PlanFromPrismaPlanBuilder.js';
+import { type PrismaGuardWithPlan } from './prismaPlanInclude.js';
 
 describe(GuardFromPrismaGuardBuilder, () => {
   let guardFromPrismaGuardBuilder: GuardFromPrismaGuardBuilder;
@@ -13,12 +14,13 @@ describe(GuardFromPrismaGuardBuilder, () => {
   beforeAll(() => {
     guardFromPrismaGuardBuilder = new GuardFromPrismaGuardBuilder(
       new ErrorTracesFromPrismaJsonBuilder(),
+      new PlanFromPrismaPlanBuilder(),
     );
   });
 
   describe('.build', () => {
     describe('when called', () => {
-      let prismaGuardFixture: PrismaGuard;
+      let prismaGuardFixture: PrismaGuardWithPlan;
 
       let result: unknown;
 
@@ -36,6 +38,7 @@ describe(GuardFromPrismaGuardBuilder, () => {
           errorTraces: [ErrorTraceFixtures.any],
           guard: prismaGuardFixture.guard,
           id: prismaGuardFixture.id,
+          plan: null,
           startedAt: prismaGuardFixture.started_at,
         };
 

@@ -13,6 +13,7 @@ import {
   type HttpRequestStartedEvent,
   type HttpResponseSentEvent,
 } from '@inversifyjs/http-instrumentation-core';
+import { type Container, type ServiceIdentifier } from 'inversify';
 
 import { type HttpInsightsProviderOptions } from '../../../../insights/adapter/inversify/models/HttpInsightsProviderOptions.js';
 import { type ExecuteUpdateCommand } from '../../../../insights/application/models/ExecuteUpdateCommand.js';
@@ -26,7 +27,9 @@ import { type Interceptor } from '../../../../insights/domain/models/Interceptor
 import { type Middleware } from '../../../../insights/domain/models/Middleware.js';
 import { type NativeMiddleware } from '../../../../insights/domain/models/NativeMiddleware.js';
 import { type Pipe } from '../../../../insights/domain/models/Pipe.js';
+import { type Plan } from '../../../../insights/domain/models/Plan.js';
 import { type Response } from '../../../../insights/domain/models/Response.js';
+import { buildHttpInsightsPlan } from '../calculations/buildHttpInsightsPlan.js';
 import { buildHttpInsightsUrlPattern } from '../calculations/buildHttpInsightsUrlPattern.js';
 
 export const CALL_RETENTION_MS: number = 60_000;
@@ -37,6 +40,7 @@ interface PendingCall {
   readonly events: HttpInstrumentationEvent[];
   expiresAt: number | undefined;
   openStages: number;
+  readonly plans: Map<string, Plan | null>;
   response: HttpResponseSentEvent | undefined;
 }
 
@@ -52,6 +56,7 @@ interface InFlightWrite {
 
 export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent> {
   readonly #committedByRequestId: Map<string, CommittedCall> = new Map();
+  readonly #container: Container;
   readonly #callManagementInputPort: CallManagementInputPort;
   readonly #errorTracesService: ErrorTracesService;
   readonly #excludedByRequestId: Map<string, number> = new Map();
@@ -62,10 +67,12 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
 
   constructor(
     callManagementInputPort: CallManagementInputPort,
+    container: Container,
     errorTracesService: ErrorTracesService,
     options?: HttpInsightsProviderOptions,
   ) {
     this.#callManagementInputPort = callManagementInputPort;
+    this.#container = container;
     this.#errorTracesService = errorTracesService;
     this.#sweepTimer = undefined;
     this.#urlPattern = buildHttpInsightsUrlPattern(options);
@@ -100,25 +107,59 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
 
     const pending: PendingCall = this.#readPending(event.requestId);
 
-    if (event.type === 'http.response.sent') {
-      pending.response = event;
-    } else if (this.#isStageStarted(event)) {
-      pending.openStages += 1;
+    switch (event.type) {
+      case 'http.response.sent':
+        pending.response = event;
+        break;
+      case 'http.controller.started':
+      case 'http.guard.started':
+      case 'http.interceptor.started':
+      case 'http.middleware.started':
+        pending.openStages += 1;
+        pending.plans.set(
+          event.executionId,
+          this.#inspectPlan(event.service.id),
+        );
 
-      return;
-    } else if (this.#isStageExecuted(event)) {
-      pending.events.push(event);
-      pending.openStages -= 1;
-    } else if (event.type === 'http.request.started') {
-      pending.events.push(event);
-    } else {
-      return;
+        return;
+      case 'http.pipe.started':
+        pending.openStages += 1;
+
+        if (event.service !== undefined) {
+          pending.plans.set(
+            event.executionId,
+            this.#inspectPlan(event.service.id),
+          );
+        }
+
+        return;
+      case 'http.nativeMiddleware.started':
+        pending.openStages += 1;
+
+        return;
+      case 'http.controller.executed':
+      case 'http.guard.executed':
+      case 'http.interceptor.executed':
+      case 'http.middleware.executed':
+      case 'http.nativeMiddleware.executed':
+      case 'http.pipe.executed':
+        pending.events.push(event);
+        pending.openStages -= 1;
+        break;
+      case 'http.request.started':
+        pending.events.push(event);
+        break;
+      default:
+        return;
     }
 
     await this.#persistIfComplete(event.requestId, pending);
   }
 
-  #buildController(event: HttpControllerExecutedEvent): Controller {
+  #buildController(
+    event: HttpControllerExecutedEvent,
+    plans: ReadonlyMap<string, Plan | null>,
+  ): Controller {
     return {
       controller: event.controller,
       endedAt: new Date(event.timestamp),
@@ -126,12 +167,14 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       errorTraces: null,
       id: randomUUID(),
       method: event.method,
+      plan: this.#readPlan(plans, event.executionId),
       startedAt: new Date(event.startedAt),
     };
   }
 
   #buildCall(
     events: readonly HttpInstrumentationEvent[],
+    plans: ReadonlyMap<string, Plan | null>,
     responseEvent: HttpResponseSentEvent,
   ): Call {
     const requestStarted: HttpRequestStartedEvent | undefined = events.find(
@@ -156,25 +199,25 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     for (const event of events) {
       switch (event.type) {
         case 'http.controller.executed':
-          controller = this.#buildController(event);
+          controller = this.#buildController(event, plans);
           break;
         case 'http.error':
           httpErrors.push(this.#buildHttpError(event));
           break;
         case 'http.guard.executed':
-          guards.push(this.#buildGuard(event));
+          guards.push(this.#buildGuard(event, plans));
           break;
         case 'http.interceptor.executed':
-          interceptors.push(this.#buildInterceptor(event));
+          interceptors.push(this.#buildInterceptor(event, plans));
           break;
         case 'http.middleware.executed':
-          middlewares.push(this.#buildMiddleware(event));
+          middlewares.push(this.#buildMiddleware(event, plans));
           break;
         case 'http.nativeMiddleware.executed':
           nativeMiddlewares.push(this.#buildNativeMiddleware(event));
           break;
         case 'http.pipe.executed':
-          pipes.push(this.#buildPipe(event));
+          pipes.push(this.#buildPipe(event, plans));
           break;
         default:
           break;
@@ -201,7 +244,10 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     };
   }
 
-  #buildGuard(event: HttpGuardExecutedEvent): Guard {
+  #buildGuard(
+    event: HttpGuardExecutedEvent,
+    plans: ReadonlyMap<string, Plan | null>,
+  ): Guard {
     return {
       allowed: event.allowed ?? null,
       endedAt: new Date(event.timestamp),
@@ -209,6 +255,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       errorTraces: null,
       guard: event.guard,
       id: randomUUID(),
+      plan: this.#readPlan(plans, event.executionId),
       startedAt: new Date(event.startedAt),
     };
   }
@@ -224,18 +271,25 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     };
   }
 
-  #buildInterceptor(event: HttpInterceptorExecutedEvent): Interceptor {
+  #buildInterceptor(
+    event: HttpInterceptorExecutedEvent,
+    plans: ReadonlyMap<string, Plan | null>,
+  ): Interceptor {
     return {
       endedAt: new Date(event.timestamp),
       error: this.#readOptionalError(event),
       errorTraces: null,
       id: randomUUID(),
       interceptor: event.interceptor,
+      plan: this.#readPlan(plans, event.executionId),
       startedAt: new Date(event.startedAt),
     };
   }
 
-  #buildMiddleware(event: HttpMiddlewareExecutedEvent): Middleware {
+  #buildMiddleware(
+    event: HttpMiddlewareExecutedEvent,
+    plans: ReadonlyMap<string, Plan | null>,
+  ): Middleware {
     return {
       endedAt: new Date(event.timestamp),
       error: this.#readOptionalError(event),
@@ -243,6 +297,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       id: randomUUID(),
       middleware: event.middleware,
       phase: event.phase,
+      plan: this.#readPlan(plans, event.executionId),
       startedAt: new Date(event.startedAt),
     };
   }
@@ -260,7 +315,10 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     };
   }
 
-  #buildPipe(event: HttpPipeExecutedEvent): Pipe {
+  #buildPipe(
+    event: HttpPipeExecutedEvent,
+    plans: ReadonlyMap<string, Plan | null>,
+  ): Pipe {
     return {
       endedAt: new Date(event.timestamp),
       error: this.#readOptionalError(event),
@@ -269,6 +327,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       method: event.method,
       parameterIndex: event.parameterIndex,
       pipe: event.pipe,
+      plan: this.#readPlan(plans, event.executionId),
       startedAt: new Date(event.startedAt),
     };
   }
@@ -281,34 +340,6 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       sentAt: new Date(event.timestamp),
       statusCode: event.statusCode,
     };
-  }
-
-  #isStageExecuted(event: HttpInstrumentationEvent): boolean {
-    switch (event.type) {
-      case 'http.controller.executed':
-      case 'http.guard.executed':
-      case 'http.interceptor.executed':
-      case 'http.middleware.executed':
-      case 'http.nativeMiddleware.executed':
-      case 'http.pipe.executed':
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  #isStageStarted(event: HttpInstrumentationEvent): boolean {
-    switch (event.type) {
-      case 'http.controller.started':
-      case 'http.guard.started':
-      case 'http.interceptor.started':
-      case 'http.middleware.started':
-      case 'http.nativeMiddleware.started':
-      case 'http.pipe.started':
-        return true;
-      default:
-        return false;
-    }
   }
 
   async #drainErrors(errors: HttpErrorEvent[], callId: string): Promise<void> {
@@ -505,7 +536,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     let call: Call;
 
     try {
-      call = this.#buildCall(pending.events.slice(), response);
+      call = this.#buildCall(pending.events.slice(), pending.plans, response);
     } catch (error: unknown) {
       this.#pendingByRequestId.delete(requestId);
 
@@ -594,6 +625,27 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
     this.#armRetentionSweep();
   }
 
+  #inspectPlan(serviceIdentifier: ServiceIdentifier): Plan | null {
+    try {
+      return buildHttpInsightsPlan(
+        this.#container.inspectCurrentPlan(serviceIdentifier),
+        randomUUID,
+      );
+    } catch (error: unknown) {
+      // An unbound instance such as `new Pipe()` has no plan.
+      void error;
+
+      return null;
+    }
+  }
+
+  #readPlan(
+    plans: ReadonlyMap<string, Plan | null>,
+    executionId: string,
+  ): Plan | null {
+    return plans.get(executionId) ?? null;
+  }
+
   #readOptionalError(event: { readonly error?: unknown }): unknown {
     if ('error' in event) {
       return event.error;
@@ -614,6 +666,7 @@ export class HttpInsightsEventSink implements EventSink<HttpInstrumentationEvent
       events: [],
       expiresAt: Date.now() + CALL_RETENTION_MS,
       openStages: 0,
+      plans: new Map(),
       response: undefined,
     };
 

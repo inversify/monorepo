@@ -45,10 +45,12 @@ minimumReleaseAge: 1440
 
 minimumReleaseAgeExclude:
   - '@inversifyjs/*'
+  - inversify
 
 overrides:
-  # Keep floating Inversify 8 consumers and peers on the same published build.
-  "inversify@^8.2.3": "8.2.3"
+  # @prisma/adapter-better-sqlite3 depends on better-sqlite3 12, which builds an
+  # ABI-specific addon. 13 ships a Node-API prebuild and is what this repo uses.
+  better-sqlite3: 13.0.3
   postcss: 8.5.32
   react: 19.3.1
   react-dom: 19.3.1

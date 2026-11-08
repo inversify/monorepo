@@ -12,6 +12,7 @@ import { randomUUID } from 'node:crypto';
 
 import { MiddlewarePhase } from '@inversifyjs/http-core';
 import { type HttpInstrumentationEvent } from '@inversifyjs/http-instrumentation-core';
+import { Container } from 'inversify';
 
 import { type ExecuteUpdateCommand } from '../../../../insights/application/models/ExecuteUpdateCommand.js';
 import { type CallManagementInputPort } from '../../../../insights/application/ports/CallManagementInputPort.js';
@@ -61,6 +62,7 @@ function readGeneratedId(
 
 const startedAtFixture: number = Date.parse('2026-01-01T00:00:01.000Z');
 const timestampFixture: number = Date.parse('2026-01-01T00:00:02.000Z');
+const containerFixture: Container = new Container();
 
 function advancePastCallRetention(): void {
   vitest.advanceTimersByTime(CALL_RETENTION_MS + RETENTION_SWEEP_INTERVAL_MS);
@@ -181,6 +183,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -337,6 +340,9 @@ describe(HttpInsightsEventSink, () => {
             guard: 'FooGuard',
             parentExecutionId: 'native-call-id',
             requestId: 'request-id',
+            service: {
+              id: 'FooGuard',
+            },
             timestamp: startedAtFixture,
             type: 'http.guard.started',
           });
@@ -346,6 +352,9 @@ describe(HttpInsightsEventSink, () => {
             guard: 'BarGuard',
             parentExecutionId: 'native-call-id',
             requestId: 'request-id',
+            service: {
+              id: 'BarGuard',
+            },
             timestamp: startedAtFixture,
             type: 'http.guard.started',
           });
@@ -355,6 +364,9 @@ describe(HttpInsightsEventSink, () => {
             interceptor: 'FooInterceptor',
             parentExecutionId: 'native-call-id',
             requestId: 'request-id',
+            service: {
+              id: 'FooInterceptor',
+            },
             timestamp: startedAtFixture,
             type: 'http.interceptor.started',
           });
@@ -365,6 +377,9 @@ describe(HttpInsightsEventSink, () => {
             parentExecutionId: 'native-call-id',
             phase: MiddlewarePhase.PreHandler,
             requestId: 'request-id',
+            service: {
+              id: 'FooMiddleware',
+            },
             timestamp: startedAtFixture,
             type: 'http.middleware.started',
           });
@@ -376,6 +391,9 @@ describe(HttpInsightsEventSink, () => {
             parentExecutionId: 'native-call-id',
             pipe: 'StandardSchemaValidationPipe',
             requestId: 'request-id',
+            service: {
+              id: 'StandardSchemaValidationPipe',
+            },
             timestamp: startedAtFixture,
             type: 'http.pipe.started',
           });
@@ -388,6 +406,9 @@ describe(HttpInsightsEventSink, () => {
             method: 'getFoo',
             parentExecutionId: 'native-call-id',
             requestId: 'request-id',
+            service: {
+              id: 'FooController',
+            },
             timestamp: startedAtFixture,
             type: 'http.controller.started',
           });
@@ -417,6 +438,7 @@ describe(HttpInsightsEventSink, () => {
               errorTraces: null,
               id: readGeneratedId(7),
               method: 'getFoo',
+              plan: null,
               startedAt: new Date(startedAtFixture),
             },
             guards: [
@@ -427,6 +449,7 @@ describe(HttpInsightsEventSink, () => {
                 errorTraces: null,
                 guard: 'FooGuard',
                 id: readGeneratedId(0),
+                plan: null,
                 startedAt: new Date(startedAtFixture),
               },
               {
@@ -436,6 +459,7 @@ describe(HttpInsightsEventSink, () => {
                 errorTraces: null,
                 guard: 'BarGuard',
                 id: readGeneratedId(1),
+                plan: null,
                 startedAt: new Date(startedAtFixture),
               },
             ],
@@ -465,6 +489,7 @@ describe(HttpInsightsEventSink, () => {
                 errorTraces: null,
                 id: readGeneratedId(2),
                 interceptor: 'FooInterceptor',
+                plan: null,
                 startedAt: new Date(startedAtFixture),
               },
             ],
@@ -476,6 +501,7 @@ describe(HttpInsightsEventSink, () => {
                 id: readGeneratedId(3),
                 middleware: 'FooMiddleware',
                 phase: MiddlewarePhase.PreHandler,
+                plan: null,
                 startedAt: new Date(startedAtFixture),
               },
             ],
@@ -498,6 +524,7 @@ describe(HttpInsightsEventSink, () => {
                 method: 'getFoo',
                 parameterIndex: 0,
                 pipe: 'StandardSchemaValidationPipe',
+                plan: null,
                 startedAt: new Date(startedAtFixture),
               },
             ],
@@ -549,6 +576,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -627,6 +655,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -738,6 +767,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -811,6 +841,7 @@ describe(HttpInsightsEventSink, () => {
       beforeAll(() => {
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -867,6 +898,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -943,6 +975,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -1030,6 +1063,7 @@ describe(HttpInsightsEventSink, () => {
       beforeAll(() => {
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -1087,6 +1121,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -1136,6 +1171,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -1191,6 +1227,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -1244,6 +1281,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -1295,6 +1333,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -1338,6 +1377,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -1426,6 +1466,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -1484,6 +1525,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPortMock,
+          containerFixture,
           errorTracesServiceMock,
         );
       });
@@ -1561,6 +1603,7 @@ describe(HttpInsightsEventSink, () => {
 
           httpInsightsEventSink = new HttpInsightsEventSink(
             callManagementInputPortMock,
+            containerFixture,
             errorTracesServiceMock,
           );
 
@@ -1623,6 +1666,7 @@ describe(HttpInsightsEventSink, () => {
 
           httpInsightsEventSink = new HttpInsightsEventSink(
             callManagementInputPortMock,
+            containerFixture,
             errorTracesServiceMock,
           );
 
@@ -1700,6 +1744,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPort,
+          containerFixture,
           errorTracesService,
         );
       });
@@ -1722,6 +1767,9 @@ describe(HttpInsightsEventSink, () => {
               guard: 'FooGuard',
               parentExecutionId: 'inversify-call-id',
               requestId: 'inversify-request-id',
+              service: {
+                id: 'FooGuard',
+              },
               timestamp: startedAtFixture,
               type: 'http.guard.started',
             });
@@ -1814,6 +1862,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPort,
+          containerFixture,
           errorTracesService,
           {
             url: {
@@ -1910,6 +1959,7 @@ describe(HttpInsightsEventSink, () => {
 
         httpInsightsEventSink = new HttpInsightsEventSink(
           callManagementInputPort,
+          containerFixture,
           errorTracesService,
           {
             url: {
@@ -1976,6 +2026,142 @@ describe(HttpInsightsEventSink, () => {
           it('should leave the provided pattern lastIndex unchanged', () => {
             expect(providedPattern.lastIndex).toBe(4);
           });
+        });
+      });
+    });
+
+    describe('having a bound controller service', () => {
+      let bindingId: number;
+      let callManagementInputPort: Mocked<CallManagementInputPort>;
+      let httpInsightsEventSink: HttpInsightsEventSink;
+
+      beforeAll(() => {
+        const container: Container = new Container();
+
+        bindingId = container
+          .bind('FooController')
+          .toConstantValue({})
+          .getIdentifier().id;
+        callManagementInputPort = {
+          create: vitest.fn(),
+          update: vitest.fn(),
+        } as Partial<
+          Mocked<CallManagementInputPort>
+        > as Mocked<CallManagementInputPort>;
+
+        let generatedIdIndex: number = 0;
+
+        vitest
+          .mocked(randomUUID)
+          .mockImplementation(
+            (): `${string}-${string}-${string}-${string}-${string}` => {
+              const generatedId: `${string}-${string}-${string}-${string}-${string}` =
+                readGeneratedId(generatedIdIndex);
+
+              generatedIdIndex += 1;
+
+              return generatedId;
+            },
+          );
+
+        httpInsightsEventSink = new HttpInsightsEventSink(
+          callManagementInputPort,
+          container,
+          {
+            capture: async (call: Call): Promise<Call> => call,
+            captureUpdate: async (
+              command: ExecuteUpdateCommand,
+            ): Promise<ExecuteUpdateCommand> => command,
+          } as Partial<
+            Mocked<ErrorTracesService>
+          > as Mocked<ErrorTracesService>,
+        );
+      });
+
+      afterAll(() => {
+        vitest
+          .mocked(randomUUID)
+          .mockImplementation(
+            (): `${string}-${string}-${string}-${string}-${string}` =>
+              '11111111-1111-4111-8111-111111111111',
+          );
+      });
+
+      describe('when called', () => {
+        beforeAll(async () => {
+          callManagementInputPort.create.mockResolvedValue(undefined);
+
+          await httpInsightsEventSink.emit(
+            buildRequestStartedEvent('request-id', 'call-id'),
+          );
+          await httpInsightsEventSink.emit({
+            controller: 'FooController',
+            executionId: 'controller-call-id',
+            method: 'getFoo',
+            requestId: 'request-id',
+            service: {
+              id: 'FooController',
+            },
+            timestamp: startedAtFixture,
+            type: 'http.controller.started',
+          });
+          await httpInsightsEventSink.emit({
+            controller: 'FooController',
+            duration: 1,
+            executionId: 'controller-call-id',
+            method: 'getFoo',
+            requestId: 'request-id',
+            startedAt: startedAtFixture,
+            timestamp: timestampFixture,
+            type: 'http.controller.executed',
+          });
+          await httpInsightsEventSink.emit(
+            buildResponseSentEvent('request-id', 'response-call-id'),
+          );
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should persist the controller plan', () => {
+          expect(
+            callManagementInputPort.create,
+          ).toHaveBeenCalledExactlyOnceWith(
+            expect.objectContaining({
+              controller: expect.objectContaining({
+                id: readGeneratedId(3),
+                plan: {
+                  id: readGeneratedId(0),
+                  root: {
+                    bindings: [
+                      {
+                        bindingId,
+                        id: readGeneratedId(2),
+                        moduleId: null,
+                        scope: 'Singleton',
+                        serviceIdentifier: {
+                          kind: 'string',
+                          value: 'FooController',
+                        },
+                        type: 'ConstantValue',
+                      },
+                    ],
+                    chained: null,
+                    id: readGeneratedId(1),
+                    isMultiple: false,
+                    name: null,
+                    optional: false,
+                    serviceIdentifier: {
+                      kind: 'string',
+                      value: 'FooController',
+                    },
+                    tags: [],
+                  },
+                },
+              }),
+            }),
+          );
         });
       });
     });

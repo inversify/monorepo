@@ -60,6 +60,9 @@ export function buildInstrumentedMiddlewareHandler<
           : { parentExecutionId: scope.parentExecutionId }),
         phase,
         requestId: scope.requestId,
+        service: {
+          id: middlewareServiceIdentifier,
+        },
         timestamp: stage.startedAt,
         type: 'http.middleware.started',
       }),

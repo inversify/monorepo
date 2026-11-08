@@ -179,6 +179,21 @@ class TestHttpAdapter extends InversifyHttpAdapter<
   ): void {}
 }
 
+function readRouteParams(
+  adapter: TestHttpAdapter,
+  methodKey: string,
+): RouteParams<TestRequest, TestResponse, () => void, void> {
+  for (const routerParams of adapter.routerParamsList) {
+    for (const routeParams of routerParams.routeParamsList) {
+      if (routeParams.methodKey === methodKey) {
+        return routeParams;
+      }
+    }
+  }
+
+  throw new Error(`Expected route params for "${methodKey}"`);
+}
+
 function readFirstRouteParams(
   adapter: TestHttpAdapter,
 ): RouteParams<TestRequest, TestResponse, () => void, void> {
@@ -564,6 +579,38 @@ class FailingGuardController {
   @Get()
   public get(): string {
     return 'unused';
+  }
+}
+
+const tokenControllerServiceId: symbol = Symbol('token-controller');
+const tokenGuardServiceId: string = 'token-guard';
+const tokenInterceptorServiceId: string = 'token-interceptor';
+const tokenMiddlewareServiceId: symbol = Symbol('token-middleware');
+const tokenPipeServiceId: symbol = Symbol('token-pipe');
+
+@Controller({
+  path: '/tokens',
+  serviceIdentifier: tokenControllerServiceId,
+})
+@UseGuard(tokenGuardServiceId)
+@ApplyMiddleware(tokenMiddlewareServiceId)
+class TokenController {
+  @Get('/plain')
+  public plain(): string {
+    return 'plain';
+  }
+
+  @Get('/sync')
+  public sync(@Query({ name: 'q' }) value: string): string {
+    return value;
+  }
+
+  @UseInterceptor(tokenInterceptorServiceId)
+  @Get('/piped')
+  public piped(
+    @Query({ name: 'q' }, tokenPipeServiceId) value: string,
+  ): string {
+    return value;
   }
 }
 
@@ -1067,6 +1114,25 @@ describe(InversifyHttpAdapter, () => {
           expect(adapter.replies).toStrictEqual(['hero']);
         });
 
+        it('should emit the service id of each bound stage', () => {
+          expect(
+            requireEvent(firstSink.events, 'http.interceptor.started').service,
+          ).toStrictEqual({
+            id: PassInterceptor,
+          });
+          expect(
+            requireEvent(firstSink.events, 'http.controller.started').service,
+          ).toStrictEqual({
+            id: ItemsController,
+          });
+        });
+
+        it('should omit the service of an instance pipe', () => {
+          expect(
+            requireEvent(firstSink.events, 'http.pipe.started'),
+          ).not.toHaveProperty('service');
+        });
+
         it('should nest the controller inside the interceptor', () => {
           const interceptorStarted: Extract<
             HttpInstrumentationEvent,
@@ -1128,6 +1194,19 @@ describe(InversifyHttpAdapter, () => {
             'http.guard.started',
             'http.guard.executed',
           ]);
+        });
+
+        it('should emit the service id of each stage', () => {
+          expect(
+            requireEvent(firstSink.events, 'http.middleware.started').service,
+          ).toStrictEqual({
+            id: NoteMiddleware,
+          });
+          expect(
+            requireEvent(firstSink.events, 'http.guard.started').service,
+          ).toStrictEqual({
+            id: AllowGuard,
+          });
         });
       });
     });
@@ -1193,6 +1272,25 @@ describe(InversifyHttpAdapter, () => {
           >;
 
           expect(pipeEvents).toHaveLength(2);
+          expect(
+            sink.events
+              .filter(
+                (
+                  event: HttpInstrumentationEvent,
+                ): event is Extract<
+                  HttpInstrumentationEvent,
+                  { type: 'http.pipe.started' }
+                > => event.type === 'http.pipe.started',
+              )
+              .map(
+                (
+                  event: Extract<
+                    HttpInstrumentationEvent,
+                    { type: 'http.pipe.started' }
+                  >,
+                ) => Object.hasOwn(event, 'service'),
+              ),
+          ).toStrictEqual([false, false]);
           expect(firstPipe.parameterIndex).toBe(0);
           expect(secondPipe.parameterIndex).toBe(1);
           expect(firstPipe.parentExecutionId).toBe(
@@ -1251,6 +1349,14 @@ describe(InversifyHttpAdapter, () => {
           'http.guard.executed',
           'http.error',
         ]);
+      });
+
+      it('should emit the guard service id', () => {
+        expect(
+          requireEvent(sink.events, 'http.guard.started').service,
+        ).toStrictEqual({
+          id: FailingGuard,
+        });
       });
 
       it('should handle the error with the filter', () => {
@@ -1444,6 +1550,143 @@ describe(InversifyHttpAdapter, () => {
           expect(Object.getOwnPropertySymbols(requestFixture)).toStrictEqual(
             [],
           );
+        });
+      });
+    });
+
+    describe('having custom service identifiers', () => {
+      let adapter: TestHttpAdapter;
+      let sink: RecordingSink;
+
+      beforeAll(async () => {
+        const container: Container = new Container();
+
+        container.bind(tokenGuardServiceId).to(AllowGuard).inSingletonScope();
+        container
+          .bind(tokenInterceptorServiceId)
+          .to(PassInterceptor)
+          .inSingletonScope();
+        container
+          .bind(tokenMiddlewareServiceId)
+          .to(NoteMiddleware)
+          .inSingletonScope();
+        container.bind(tokenPipeServiceId).to(TrimPipe).inSingletonScope();
+        container
+          .bind(tokenControllerServiceId)
+          .to(TokenController)
+          .inSingletonScope();
+        sink = new RecordingSink();
+        adapter = new TestHttpAdapter(container, {
+          instrumentation: [sink],
+        });
+
+        await adapter.build();
+
+        const plainRoute: RouteParams<
+          TestRequest,
+          TestResponse,
+          () => void,
+          void
+        > = readRouteParams(adapter, 'plain');
+        const syncRoute: RouteParams<
+          TestRequest,
+          TestResponse,
+          () => void,
+          void
+        > = readRouteParams(adapter, 'sync');
+        const pipedRoute: RouteParams<
+          TestRequest,
+          TestResponse,
+          () => void,
+          void
+        > = readRouteParams(adapter, 'piped');
+        const [middleware]: MiddlewareHandler<
+          TestRequest,
+          TestResponse,
+          () => void,
+          void
+        >[] = plainRoute.preHandlerMiddlewareList;
+        const [guard]: MiddlewareHandler<
+          TestRequest,
+          TestResponse,
+          () => void,
+          unknown
+        >[] = plainRoute.guardList;
+
+        await plainRoute.handler({}, {}, vitest.fn());
+        await syncRoute.handler(
+          { query: { q: 'sync-value' } },
+          {},
+          vitest.fn(),
+        );
+        await pipedRoute.handler({ query: { q: ' hero ' } }, {}, vitest.fn());
+        await middleware?.({}, {}, vitest.fn());
+        await guard?.({}, {}, vitest.fn());
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should run each handler', () => {
+        expect(adapter.replies).toStrictEqual(['plain', 'sync-value', 'hero']);
+      });
+
+      it('should emit the controller service id for every handler', () => {
+        expect(
+          sink.events
+            .filter(
+              (
+                event: HttpInstrumentationEvent,
+              ): event is Extract<
+                HttpInstrumentationEvent,
+                { type: 'http.controller.started' }
+              > => event.type === 'http.controller.started',
+            )
+            .map(
+              (
+                event: Extract<
+                  HttpInstrumentationEvent,
+                  { type: 'http.controller.started' }
+                >,
+              ) => event.service,
+            ),
+        ).toStrictEqual([
+          { id: tokenControllerServiceId },
+          { id: tokenControllerServiceId },
+          { id: tokenControllerServiceId },
+        ]);
+      });
+
+      it('should emit the interceptor service id', () => {
+        expect(
+          requireEvent(sink.events, 'http.interceptor.started').service,
+        ).toStrictEqual({
+          id: tokenInterceptorServiceId,
+        });
+      });
+
+      it('should emit the pipe service id', () => {
+        expect(
+          requireEvent(sink.events, 'http.pipe.started').service,
+        ).toStrictEqual({
+          id: tokenPipeServiceId,
+        });
+      });
+
+      it('should emit the middleware service id', () => {
+        expect(
+          requireEvent(sink.events, 'http.middleware.started').service,
+        ).toStrictEqual({
+          id: tokenMiddlewareServiceId,
+        });
+      });
+
+      it('should emit the guard service id', () => {
+        expect(
+          requireEvent(sink.events, 'http.guard.started').service,
+        ).toStrictEqual({
+          id: tokenGuardServiceId,
         });
       });
     });

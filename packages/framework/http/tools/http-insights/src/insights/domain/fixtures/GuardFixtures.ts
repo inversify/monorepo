@@ -10,6 +10,7 @@ export class GuardFixtures {
       errorTraces: [ErrorTraceFixtures.any],
       guard: 'FooGuard',
       id: 'guard-id',
+      plan: null,
       startedAt: new Date('2026-01-01T00:00:01.000Z'),
     };
   }

@@ -1,3 +1,4 @@
+import { type ServiceIdentifier } from '@inversifyjs/common';
 import { type MiddlewarePhase } from '@inversifyjs/framework-core';
 
 export interface BaseEvent<TType extends string> {
@@ -6,6 +7,10 @@ export interface BaseEvent<TType extends string> {
   readonly requestId: string;
   readonly timestamp: number;
   readonly type: TType;
+}
+
+export interface HttpInstrumentationService {
+  readonly id: ServiceIdentifier;
 }
 
 export interface HttpControllerExecutedEvent extends BaseEvent<'http.controller.executed'> {
@@ -19,6 +24,7 @@ export interface HttpControllerExecutedEvent extends BaseEvent<'http.controller.
 export interface HttpControllerStartedEvent extends BaseEvent<'http.controller.started'> {
   readonly controller: string;
   readonly method: string;
+  readonly service: HttpInstrumentationService;
 }
 
 export interface HttpErrorEvent extends BaseEvent<'http.error'> {
@@ -38,6 +44,7 @@ export interface HttpGuardExecutedEvent extends BaseEvent<'http.guard.executed'>
 
 export interface HttpGuardStartedEvent extends BaseEvent<'http.guard.started'> {
   readonly guard: string;
+  readonly service: HttpInstrumentationService;
 }
 
 export interface HttpInterceptorExecutedEvent extends BaseEvent<'http.interceptor.executed'> {
@@ -49,6 +56,7 @@ export interface HttpInterceptorExecutedEvent extends BaseEvent<'http.intercepto
 
 export interface HttpInterceptorStartedEvent extends BaseEvent<'http.interceptor.started'> {
   readonly interceptor: string;
+  readonly service: HttpInstrumentationService;
 }
 
 export interface HttpMiddlewareExecutedEvent extends BaseEvent<'http.middleware.executed'> {
@@ -62,6 +70,7 @@ export interface HttpMiddlewareExecutedEvent extends BaseEvent<'http.middleware.
 export interface HttpMiddlewareStartedEvent extends BaseEvent<'http.middleware.started'> {
   readonly middleware: string;
   readonly phase: MiddlewarePhase;
+  readonly service: HttpInstrumentationService;
 }
 
 export interface HttpNativeMiddlewareExecutedEvent extends BaseEvent<'http.nativeMiddleware.executed'> {
@@ -88,6 +97,7 @@ export interface HttpPipeStartedEvent extends BaseEvent<'http.pipe.started'> {
   readonly method: string;
   readonly parameterIndex: number;
   readonly pipe: string;
+  readonly service?: HttpInstrumentationService;
 }
 
 export interface HttpRequestStartedEvent extends BaseEvent<'http.request.started'> {

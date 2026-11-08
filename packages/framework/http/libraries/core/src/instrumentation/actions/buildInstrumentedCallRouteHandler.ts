@@ -48,6 +48,7 @@ export function buildInstrumentedParameterlessCallRouteHandler(
       instrumentation,
       request,
       describeControllerName(routerExplorerControllerMetadata.target),
+      routerExplorerControllerMetadata.serviceIdentifier,
       methodName,
       (): ControllerResponse | Promise<ControllerResponse> =>
         (controller[controllerMethodKey] as ControllerFunction)(),
@@ -99,6 +100,7 @@ export function buildInstrumentedSyncCallRouteHandler<
       instrumentation,
       request as object,
       describeControllerName(routerExplorerControllerMetadata.target),
+      routerExplorerControllerMetadata.serviceIdentifier,
       methodName,
       (): ControllerResponse | Promise<ControllerResponse> =>
         (controller[controllerMethodKey] as ControllerFunction)(...params),
@@ -191,6 +193,13 @@ export function buildInstrumentedAsyncCallRouteHandler<
               : { parentExecutionId: scope.parentExecutionId }),
             pipe: describePipe(pipeOrServiceIdentifier),
             requestId: scope.requestId,
+            ...(isPipe(pipeOrServiceIdentifier)
+              ? {}
+              : {
+                  service: {
+                    id: pipeOrServiceIdentifier,
+                  },
+                }),
             timestamp: stage.startedAt,
             type: 'http.pipe.started',
           }),
@@ -235,6 +244,7 @@ export function buildInstrumentedAsyncCallRouteHandler<
       instrumentation,
       request as object,
       controllerName,
+      routerExplorerControllerMetadata.serviceIdentifier,
       methodName,
       (): ControllerResponse | Promise<ControllerResponse> =>
         (
@@ -254,6 +264,7 @@ async function runInstrumentedController(
   instrumentation: HttpInstrumentationContext,
   request: object,
   controllerName: string,
+  controllerServiceIdentifier: ServiceIdentifier,
   methodName: string,
   operation: () => ControllerResponse | Promise<ControllerResponse>,
 ): Promise<ControllerResponse> {
@@ -268,6 +279,9 @@ async function runInstrumentedController(
         ? {}
         : { parentExecutionId: scope.parentExecutionId }),
       requestId: scope.requestId,
+      service: {
+        id: controllerServiceIdentifier,
+      },
       timestamp: stage.startedAt,
       type: 'http.controller.started',
     }),

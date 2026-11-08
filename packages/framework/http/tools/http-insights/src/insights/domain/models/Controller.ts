@@ -1,4 +1,5 @@
 import { type ErrorTrace } from './ErrorTrace.js';
+import { type Plan } from './Plan.js';
 
 export interface Controller {
   readonly id: string;
@@ -7,5 +8,6 @@ export interface Controller {
   readonly error: unknown;
   readonly errorTraces: readonly ErrorTrace[] | null;
   readonly method: string;
+  readonly plan: Plan | null;
   readonly startedAt: Date;
 }

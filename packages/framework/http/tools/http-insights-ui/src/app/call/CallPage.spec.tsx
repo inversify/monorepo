@@ -181,6 +181,26 @@ describe(CallPage, () => {
     });
   });
 
+  describe('having a controller plan', () => {
+    describe('when rendered', () => {
+      it('should show the plan and collapse the cycle', async () => {
+        mockCall(planPayload());
+        renderPage('/calls/call-1?section=controller');
+
+        expect(
+          await screen.findByRole('heading', { name: 'Plan' }),
+        ).toBeTruthy();
+        expect(screen.getByText('Weapon')).toBeTruthy();
+        expect(screen.getByText('No service')).toBeTruthy();
+        expect(screen.getByText('sharp')).toBeTruthy();
+        expect(screen.getByText('Module 0')).toBeTruthy();
+        expect(screen.getByRole('link', { name: 'Ninja' })).toBeTruthy();
+        expect(screen.getByText('Shown above')).toBeTruthy();
+        expect(screen.getAllByText('Ninja').length).toBeGreaterThan(1);
+      });
+    });
+  });
+
   describe('having a missing call', () => {
     describe('when rendered', () => {
       it('should show a not found message', async () => {
@@ -274,6 +294,119 @@ function SearchText(): ReactElement {
   const location: ReturnType<typeof useLocation> = useLocation();
 
   return <p>{`Search ${location.search}`}</p>;
+}
+
+function planPayload(): unknown {
+  return {
+    controller: {
+      controller: 'UserController',
+      endedAt: '2026-10-19T20:00:00.016Z',
+      error: null,
+      id: 'controller-1',
+      method: 'create',
+      plan: {
+        id: 'plan-1',
+        root: {
+          bindings: [
+            {
+              bindingId: 4,
+              constructorArguments: [
+                {
+                  bindings: [
+                    {
+                      bindingId: 2,
+                      id: 'weapon-binding',
+                      moduleId: null,
+                      scope: 'Singleton',
+                      serviceIdentifier: {
+                        kind: 'string',
+                        value: 'Weapon',
+                      },
+                      type: 'ConstantValue',
+                    },
+                  ],
+                  chained: null,
+                  id: 'weapon-service',
+                  isMultiple: false,
+                  name: null,
+                  optional: false,
+                  serviceIdentifier: {
+                    kind: 'string',
+                    value: 'Weapon',
+                  },
+                  tags: [],
+                },
+                null,
+              ],
+              id: 'root-binding',
+              implementationType: {
+                kind: 'class',
+                value: 'Ninja',
+              },
+              moduleId: 0,
+              properties: [
+                {
+                  key: {
+                    kind: 'symbol',
+                    value: 'Symbol(self)',
+                  },
+                  service: {
+                    id: 'root-service',
+                  },
+                },
+              ],
+              scope: 'Transient',
+              serviceIdentifier: {
+                kind: 'class',
+                value: 'Ninja',
+              },
+              type: 'Instance',
+            },
+          ],
+          chained: null,
+          id: 'root-service',
+          isMultiple: false,
+          name: null,
+          optional: false,
+          serviceIdentifier: {
+            kind: 'class',
+            value: 'Ninja',
+          },
+          tags: [
+            {
+              key: {
+                kind: 'string',
+                value: 'kind',
+              },
+              value: 'sharp',
+            },
+          ],
+        },
+      },
+      startedAt: '2026-10-19T20:00:00.008Z',
+    },
+    guards: [],
+    httpErrors: [],
+    id: 'call-1',
+    interceptors: [],
+    middlewares: [],
+    nativeMiddlewares: [],
+    pipes: [],
+    request: {
+      headers: {},
+      id: 'request-1',
+      method: 'POST',
+      startedAt: '2026-10-19T20:00:00.000Z',
+      url: '/users',
+    },
+    response: {
+      aborted: false,
+      headers: {},
+      id: 'response-1',
+      sentAt: '2026-10-19T20:00:00.018Z',
+      statusCode: 201,
+    },
+  };
 }
 
 function callPayload(): unknown {

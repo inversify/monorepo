@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { describeServiceIdentifier } from './describeServiceIdentifier.js';
+import { type Pipe } from '@inversifyjs/framework-core';
+
+import {
+  describeServiceIdentifier,
+  readPipeServiceIdentifier,
+} from './describeServiceIdentifier.js';
 
 describe(describeServiceIdentifier, () => {
   describe('having a string service identifier', () => {
@@ -35,6 +40,54 @@ describe(describeServiceIdentifier, () => {
     describe('when called', () => {
       it('should return anonymous', () => {
         expect(describeServiceIdentifier(class {})).toBe('(anonymous)');
+      });
+    });
+  });
+});
+
+describe(readPipeServiceIdentifier, () => {
+  describe('having a pipe instance', () => {
+    describe('when called', () => {
+      it('should return the pipe constructor', () => {
+        class OrderPipe implements Pipe {
+          public execute(value: unknown): unknown {
+            return value;
+          }
+        }
+
+        expect(readPipeServiceIdentifier(new OrderPipe())).toBe(OrderPipe);
+      });
+    });
+  });
+
+  describe('having a class service identifier', () => {
+    describe('when called', () => {
+      it('should return the class', () => {
+        class OrderPipe implements Pipe {
+          public execute(value: unknown): unknown {
+            return value;
+          }
+        }
+
+        expect(readPipeServiceIdentifier(OrderPipe)).toBe(OrderPipe);
+      });
+    });
+  });
+
+  describe('having a string service identifier', () => {
+    describe('when called', () => {
+      it('should return the string', () => {
+        expect(readPipeServiceIdentifier('OrderPipe')).toBe('OrderPipe');
+      });
+    });
+  });
+
+  describe('having a symbol service identifier', () => {
+    describe('when called', () => {
+      it('should return the symbol', () => {
+        const pipeServiceId: symbol = Symbol('order-pipe');
+
+        expect(readPipeServiceIdentifier(pipeServiceId)).toBe(pipeServiceId);
       });
     });
   });

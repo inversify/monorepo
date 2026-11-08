@@ -2,12 +2,13 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { MiddlewarePhase } from '@inversifyjs/http-core';
 
-import { type Middleware as PrismaMiddleware } from '../../../../generated/prisma/client.js';
 import { ErrorTraceFixtures } from '../../../domain/fixtures/ErrorTraceFixtures.js';
 import { type Middleware } from '../../../domain/models/Middleware.js';
 import { PrismaMiddlewareFixtures } from '../fixtures/PrismaMiddlewareFixtures.js';
 import { ErrorTracesFromPrismaJsonBuilder } from './ErrorTracesFromPrismaJsonBuilder.js';
 import { MiddlewareFromPrismaMiddlewareBuilder } from './MiddlewareFromPrismaMiddlewareBuilder.js';
+import { PlanFromPrismaPlanBuilder } from './PlanFromPrismaPlanBuilder.js';
+import { type PrismaMiddlewareWithPlan } from './prismaPlanInclude.js';
 
 describe(MiddlewareFromPrismaMiddlewareBuilder, () => {
   let middlewareFromPrismaMiddlewareBuilder: MiddlewareFromPrismaMiddlewareBuilder;
@@ -16,12 +17,13 @@ describe(MiddlewareFromPrismaMiddlewareBuilder, () => {
     middlewareFromPrismaMiddlewareBuilder =
       new MiddlewareFromPrismaMiddlewareBuilder(
         new ErrorTracesFromPrismaJsonBuilder(),
+        new PlanFromPrismaPlanBuilder(),
       );
   });
 
   describe('.build', () => {
     describe('having a prisma middleware', () => {
-      let prismaMiddlewareFixture: PrismaMiddleware;
+      let prismaMiddlewareFixture: PrismaMiddlewareWithPlan;
 
       beforeAll(() => {
         prismaMiddlewareFixture = PrismaMiddlewareFixtures.any;
@@ -44,6 +46,7 @@ describe(MiddlewareFromPrismaMiddlewareBuilder, () => {
             id: prismaMiddlewareFixture.id,
             middleware: prismaMiddlewareFixture.middleware,
             phase: MiddlewarePhase.PreHandler,
+            plan: null,
             startedAt: prismaMiddlewareFixture.started_at,
           };
 
@@ -53,7 +56,7 @@ describe(MiddlewareFromPrismaMiddlewareBuilder, () => {
     });
 
     describe('having a prisma middleware with an unknown phase', () => {
-      let prismaMiddlewareFixture: PrismaMiddleware;
+      let prismaMiddlewareFixture: PrismaMiddlewareWithPlan;
 
       beforeAll(() => {
         prismaMiddlewareFixture = {

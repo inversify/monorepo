@@ -45,7 +45,7 @@ describe(InstrumentationContainerModule, () => {
         .bind(CallManagementInputPort)
         .toConstantValue(callManagementInputPort);
       container.bind(ErrorTracesService).toConstantValue(errorTracesService);
-      container.load(new InstrumentationContainerModule());
+      container.load(new InstrumentationContainerModule(container));
 
       httpInsightsEventSink = container.get(HttpInsightsEventSink);
     });
@@ -142,7 +142,7 @@ describe(InstrumentationContainerModule, () => {
         .toConstantValue(callManagementInputPort);
       container.bind(ErrorTracesService).toConstantValue(errorTracesService);
       container.load(
-        new InstrumentationContainerModule({
+        new InstrumentationContainerModule(container, {
           url: {
             pattern: /^\/only-this$/u,
           },

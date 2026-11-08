@@ -66,6 +66,9 @@ export function buildInstrumentedGuardHandler<
           ? {}
           : { parentExecutionId: scope.parentExecutionId }),
         requestId: scope.requestId,
+        service: {
+          id: guardServiceIdentifier,
+        },
         timestamp: stage.startedAt,
         type: 'http.guard.started',
       }),

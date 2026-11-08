@@ -10,6 +10,7 @@ export class ControllerFixtures {
       errorTraces: [ErrorTraceFixtures.any],
       id: 'controller-id',
       method: 'getFoo',
+      plan: null,
       startedAt: new Date('2026-01-01T00:00:02.000Z'),
     };
   }

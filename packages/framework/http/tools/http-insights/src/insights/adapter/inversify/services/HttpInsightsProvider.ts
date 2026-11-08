@@ -29,7 +29,7 @@ export class HttpInsightsProvider {
     await container.loadAsync(
       new DbContainerModule(),
       new InsightsContainerModule(),
-      new InstrumentationContainerModule(this.#options),
+      new InstrumentationContainerModule(container, this.#options),
     );
 
     this.#eventSink = container.get(HttpInsightsEventSink);

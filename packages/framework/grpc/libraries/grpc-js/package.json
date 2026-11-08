@@ -46,7 +46,7 @@
   "name": "@inversifyjs/grpc-js",
   "peerDependencies": {
     "@grpc/grpc-js": "^1.14.7",
-    "inversify": "^8.2.3"
+    "inversify": "^8.3.0"
   },
   "publishConfig": {
     "access": "public"
