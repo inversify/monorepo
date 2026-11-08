@@ -1,5 +1,11 @@
 # @inversifyjs/http-insights-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- Updated call lifecycle elements with service plans
+
 ## 0.4.1
 
 ### Patch Changes

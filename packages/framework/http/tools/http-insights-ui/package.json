@@ -57,7 +57,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "type": "module",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "devDependencies": {
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@inversifyjs/foundation-oxlint-config": "workspace:*",

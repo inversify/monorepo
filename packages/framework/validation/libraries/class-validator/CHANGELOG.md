@@ -1,5 +1,12 @@
 # @inversifyjs/class-validation
 
+## 3.6.12
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/validation-common@3.6.12
+
 ## 3.6.11
 
 ### Patch Changes
