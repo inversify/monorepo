@@ -1114,22 +1114,23 @@ describe(InversifyHttpAdapter, () => {
           expect(adapter.replies).toStrictEqual(['hero']);
         });
 
-        it('should emit the service id of each stage', () => {
+        it('should emit the service id of each bound stage', () => {
           expect(
             requireEvent(firstSink.events, 'http.interceptor.started').service,
           ).toStrictEqual({
             id: PassInterceptor,
           });
           expect(
-            requireEvent(firstSink.events, 'http.pipe.started').service,
-          ).toStrictEqual({
-            id: TrimPipe,
-          });
-          expect(
             requireEvent(firstSink.events, 'http.controller.started').service,
           ).toStrictEqual({
             id: ItemsController,
           });
+        });
+
+        it('should omit the service of an instance pipe', () => {
+          expect(
+            requireEvent(firstSink.events, 'http.pipe.started'),
+          ).not.toHaveProperty('service');
         });
 
         it('should nest the controller inside the interceptor', () => {
@@ -1287,9 +1288,9 @@ describe(InversifyHttpAdapter, () => {
                     HttpInstrumentationEvent,
                     { type: 'http.pipe.started' }
                   >,
-                ) => event.service,
+                ) => Object.hasOwn(event, 'service'),
               ),
-          ).toStrictEqual([{ id: YieldPipe }, { id: YieldPipe }]);
+          ).toStrictEqual([false, false]);
           expect(firstPipe.parameterIndex).toBe(0);
           expect(secondPipe.parameterIndex).toBe(1);
           expect(firstPipe.parentExecutionId).toBe(

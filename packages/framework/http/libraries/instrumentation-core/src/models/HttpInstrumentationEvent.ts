@@ -97,7 +97,7 @@ export interface HttpPipeStartedEvent extends BaseEvent<'http.pipe.started'> {
   readonly method: string;
   readonly parameterIndex: number;
   readonly pipe: string;
-  readonly service: HttpInstrumentationService;
+  readonly service?: HttpInstrumentationService;
 }
 
 export interface HttpRequestStartedEvent extends BaseEvent<'http.request.started'> {

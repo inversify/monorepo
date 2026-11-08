@@ -18,7 +18,6 @@ import { type RouterExplorerControllerMethodMetadata } from '../../routerExplore
 import {
   describeMethodKey,
   describePipe,
-  readPipeServiceIdentifier,
 } from '../calculations/describeServiceIdentifier.js';
 
 interface InstrumentedParameterMetadata {
@@ -194,9 +193,13 @@ export function buildInstrumentedAsyncCallRouteHandler<
               : { parentExecutionId: scope.parentExecutionId }),
             pipe: describePipe(pipeOrServiceIdentifier),
             requestId: scope.requestId,
-            service: {
-              id: readPipeServiceIdentifier(pipeOrServiceIdentifier),
-            },
+            ...(isPipe(pipeOrServiceIdentifier)
+              ? {}
+              : {
+                  service: {
+                    id: pipeOrServiceIdentifier,
+                  },
+                }),
             timestamp: stage.startedAt,
             type: 'http.pipe.started',
           }),
