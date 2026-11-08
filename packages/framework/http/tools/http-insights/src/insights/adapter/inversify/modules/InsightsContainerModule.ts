@@ -19,6 +19,7 @@ import { InterceptorFromPrismaInterceptorBuilder } from '../../prisma/builders/I
 import { MiddlewareFromPrismaMiddlewareBuilder } from '../../prisma/builders/MiddlewareFromPrismaMiddlewareBuilder.js';
 import { NativeMiddlewareFromPrismaNativeMiddlewareBuilder } from '../../prisma/builders/NativeMiddlewareFromPrismaNativeMiddlewareBuilder.js';
 import { PipeFromPrismaPipeBuilder } from '../../prisma/builders/PipeFromPrismaPipeBuilder.js';
+import { PlanFromPrismaPlanBuilder } from '../../prisma/builders/PlanFromPrismaPlanBuilder.js';
 import { RequestFromPrismaRequestBuilder } from '../../prisma/builders/RequestFromPrismaRequestBuilder.js';
 import { ResponseFromPrismaResponseBuilder } from '../../prisma/builders/ResponseFromPrismaResponseBuilder.js';
 import { CallsFindQueryFromGetInsightsV1QueryBuilder } from '../../zod/builders/CallsFindQueryFromGetInsightsV1QueryBuilder.js';
@@ -81,6 +82,7 @@ export class InsightsContainerModule extends ContainerModule {
         .toSelf()
         .inSingletonScope();
       options.bind(PipeFromPrismaPipeBuilder).toSelf().inSingletonScope();
+      options.bind(PlanFromPrismaPlanBuilder).toSelf().inSingletonScope();
       options.bind(RequestFromPrismaRequestBuilder).toSelf().inSingletonScope();
       options
         .bind(ResponseFromPrismaResponseBuilder)

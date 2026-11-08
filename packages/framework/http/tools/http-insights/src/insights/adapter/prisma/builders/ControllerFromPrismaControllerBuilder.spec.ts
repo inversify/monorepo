@@ -1,11 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { type Controller as PrismaController } from '../../../../generated/prisma/client.js';
 import { ErrorTraceFixtures } from '../../../domain/fixtures/ErrorTraceFixtures.js';
 import { type Controller } from '../../../domain/models/Controller.js';
 import { PrismaControllerFixtures } from '../fixtures/PrismaControllerFixtures.js';
 import { ControllerFromPrismaControllerBuilder } from './ControllerFromPrismaControllerBuilder.js';
 import { ErrorTracesFromPrismaJsonBuilder } from './ErrorTracesFromPrismaJsonBuilder.js';
+import { PlanFromPrismaPlanBuilder } from './PlanFromPrismaPlanBuilder.js';
+import { type PrismaControllerWithPlan } from './prismaPlanInclude.js';
 
 describe(ControllerFromPrismaControllerBuilder, () => {
   let controllerFromPrismaControllerBuilder: ControllerFromPrismaControllerBuilder;
@@ -14,12 +15,13 @@ describe(ControllerFromPrismaControllerBuilder, () => {
     controllerFromPrismaControllerBuilder =
       new ControllerFromPrismaControllerBuilder(
         new ErrorTracesFromPrismaJsonBuilder(),
+        new PlanFromPrismaPlanBuilder(),
       );
   });
 
   describe('.build', () => {
     describe('when called', () => {
-      let prismaControllerFixture: PrismaController;
+      let prismaControllerFixture: PrismaControllerWithPlan;
 
       let result: unknown;
 
@@ -39,6 +41,7 @@ describe(ControllerFromPrismaControllerBuilder, () => {
           errorTraces: [ErrorTraceFixtures.any],
           id: prismaControllerFixture.id,
           method: prismaControllerFixture.method,
+          plan: null,
           startedAt: prismaControllerFixture.started_at,
         };
 

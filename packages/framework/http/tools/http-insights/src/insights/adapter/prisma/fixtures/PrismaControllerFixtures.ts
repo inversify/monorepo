@@ -1,8 +1,8 @@
-import { type Controller } from '../../../../generated/prisma/client.js';
+import { type PrismaControllerWithPlan } from '../builders/prismaPlanInclude.js';
 import { errorTracesJson } from './errorTracesJson.js';
 
 export class PrismaControllerFixtures {
-  public static get any(): Controller {
+  public static get any(): PrismaControllerWithPlan {
     return {
       call_id: 'call-id',
       controller: 'FooController',
@@ -12,6 +12,7 @@ export class PrismaControllerFixtures {
       error_traces: errorTracesJson,
       id: 'controller-id',
       method: 'getFoo',
+      plan: null,
       started_at: new Date('2026-01-01T00:00:02.000Z'),
       updated_at: new Date('2026-01-01T00:00:00.000Z'),
     };

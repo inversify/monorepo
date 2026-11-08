@@ -1,8 +1,8 @@
-import { type Pipe } from '../../../../generated/prisma/client.js';
+import { type PrismaPipeWithPlan } from '../builders/prismaPlanInclude.js';
 import { errorTracesJson } from './errorTracesJson.js';
 
 export class PrismaPipeFixtures {
-  public static get any(): Pipe {
+  public static get any(): PrismaPipeWithPlan {
     return {
       call_id: 'call-id',
       created_at: new Date('2026-01-01T00:00:00.000Z'),
@@ -13,6 +13,7 @@ export class PrismaPipeFixtures {
       method: 'getFoo',
       parameter_index: 0,
       pipe: 'StandardSchemaValidationPipe',
+      plan: null,
       started_at: new Date('2026-01-01T00:00:01.000Z'),
       updated_at: new Date('2026-01-01T00:00:00.000Z'),
     };

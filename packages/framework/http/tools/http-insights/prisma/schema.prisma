@@ -36,6 +36,7 @@ model Controller {
   ended_at     DateTime
   call_id      String   @unique
   call         Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  plan         Plan?
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 }
@@ -50,6 +51,7 @@ model Guard {
   ended_at     DateTime
   call_id      String
   call         Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  plan         Plan?
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
@@ -80,6 +82,7 @@ model Interceptor {
   ended_at     DateTime
   call_id      String
   call         Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  plan         Plan?
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
@@ -96,6 +99,7 @@ model Middleware {
   ended_at     DateTime
   call_id      String
   call         Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  plan         Plan?
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
@@ -128,6 +132,7 @@ model Pipe {
   ended_at        DateTime
   call_id         String
   call            Call     @relation(fields: [call_id], references: [id], onDelete: Cascade)
+  plan            Plan?
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
@@ -161,4 +166,116 @@ model Response {
   updated_at  DateTime @updatedAt
 
   @@index([status_code])
+}
+
+model Plan {
+  id             String        @id
+  controller_id  String?       @unique
+  guard_id       String?       @unique
+  interceptor_id String?       @unique
+  middleware_id  String?       @unique
+  pipe_id        String?       @unique
+  controller     Controller?   @relation(fields: [controller_id], references: [id], onDelete: Cascade)
+  guard          Guard?        @relation(fields: [guard_id], references: [id], onDelete: Cascade)
+  interceptor    Interceptor?  @relation(fields: [interceptor_id], references: [id], onDelete: Cascade)
+  middleware     Middleware?   @relation(fields: [middleware_id], references: [id], onDelete: Cascade)
+  pipe           Pipe?         @relation(fields: [pipe_id], references: [id], onDelete: Cascade)
+  services       PlanService[]
+  bindings       PlanBinding[]
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+}
+
+model PlanService {
+  id                       String                  @id
+  plan_id                  String
+  is_root                  Boolean
+  is_multiple              Boolean
+  chained                  Boolean?
+  optional                 Boolean
+  name_kind                String?
+  name_value               String?
+  service_identifier_kind  String
+  service_identifier_value String
+  plan                     Plan                    @relation(fields: [plan_id], references: [id], onDelete: Cascade)
+  tags                     PlanServiceTag[]
+  serviceBindings          PlanServiceBinding[]
+  incomingDependencies     PlanBindingDependency[]
+  created_at               DateTime                @default(now())
+  updated_at               DateTime                @updatedAt
+
+  @@index([plan_id])
+}
+
+model PlanServiceTag {
+  id         String      @id
+  service_id String
+  position   Int
+  key_kind   String
+  key_value  String
+  value      Json
+  service    PlanService @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+
+  @@unique([service_id, position])
+}
+
+enum PlanBindingType {
+  ConstantValue
+  DynamicValue
+  Factory
+  Instance
+  ResolvedValue
+  ServiceRedirection
+}
+
+model PlanBinding {
+  id                              String                  @id
+  plan_id                         String
+  binding_identifier              Int
+  module_id                       Int?
+  type                            PlanBindingType
+  scope                           String?
+  service_identifier_kind         String
+  service_identifier_value        String
+  implementation_type_kind        String?
+  implementation_type_value       String?
+  target_service_identifier_kind  String?
+  target_service_identifier_value String?
+  plan                            Plan                    @relation(fields: [plan_id], references: [id], onDelete: Cascade)
+  serviceBindings                 PlanServiceBinding[]
+  dependencies                    PlanBindingDependency[]
+  created_at                      DateTime                @default(now())
+  updated_at                      DateTime                @updatedAt
+
+  @@index([plan_id])
+}
+
+model PlanServiceBinding {
+  service_id String
+  binding_id String
+  position   Int
+  service    PlanService @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  binding    PlanBinding @relation(fields: [binding_id], references: [id], onDelete: Cascade)
+
+  @@id([service_id, position])
+  @@index([binding_id])
+}
+
+model PlanBindingDependency {
+  id         String       @id
+  binding_id String
+  position   Int
+  kind       String
+  key_kind   String?
+  key_value  String?
+  service_id String?
+  binding    PlanBinding  @relation(fields: [binding_id], references: [id], onDelete: Cascade)
+  service    PlanService? @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+
+  @@unique([binding_id, kind, position])
+  @@index([service_id])
 }

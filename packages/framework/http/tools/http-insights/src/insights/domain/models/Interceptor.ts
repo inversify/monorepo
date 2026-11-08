@@ -1,4 +1,5 @@
 import { type ErrorTrace } from './ErrorTrace.js';
+import { type Plan } from './Plan.js';
 
 export interface Interceptor {
   readonly id: string;
@@ -6,5 +7,6 @@ export interface Interceptor {
   readonly error: unknown;
   readonly errorTraces: readonly ErrorTrace[] | null;
   readonly interceptor: string;
+  readonly plan: Plan | null;
   readonly startedAt: Date;
 }

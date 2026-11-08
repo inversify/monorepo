@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { inject, injectable } from 'inversify';
 
 import { Prisma, PrismaClient } from '../../../../generated/prisma/client.js';
@@ -24,12 +26,18 @@ import { type Middleware } from '../../../domain/models/Middleware.js';
 import { type NativeMiddleware } from '../../../domain/models/NativeMiddleware.js';
 import { type OngoingCall } from '../../../domain/models/OngoingCall.js';
 import { type Pipe } from '../../../domain/models/Pipe.js';
+import { type Plan } from '../../../domain/models/Plan.js';
 import { type Response } from '../../../domain/models/Response.js';
 import {
   CallFromPrismaCallBuilder,
   callInclude,
   type PrismaCallWithRelations,
 } from '../builders/CallFromPrismaCallBuilder.js';
+import {
+  type PlanOwner,
+  type PlanRows,
+  readPlanRows,
+} from '../calculations/readPlanRows.js';
 
 @injectable()
 export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPort {
@@ -669,5 +677,152 @@ export class PrismaInsightsPersistenceAdapter implements CallPersistenceOutputPo
     await transaction.response.createMany({
       data: [this.#buildResponseCreateManyInput(callId, call.response)],
     });
+
+    await this.#writePlans(transaction, call);
   }
+
+  async #writePlans(
+    transaction: Prisma.TransactionClient,
+    call: Call,
+  ): Promise<void> {
+    const rows: PlanRows[] = readOwnedPlans(call).map(
+      (owned: OwnedPlan): PlanRows =>
+        readPlanRows(owned.plan, owned.owner, randomUUID),
+    );
+
+    if (rows.length === 0) {
+      return;
+    }
+
+    await transaction.plan.createMany({
+      data: rows.map((row: PlanRows): Prisma.PlanCreateManyInput => row.plan),
+    });
+
+    const services: Prisma.PlanServiceCreateManyInput[] = rows.flatMap(
+      (row: PlanRows): readonly Prisma.PlanServiceCreateManyInput[] =>
+        row.services,
+    );
+
+    if (services.length > 0) {
+      await transaction.planService.createMany({
+        data: services,
+      });
+    }
+
+    const bindings: Prisma.PlanBindingCreateManyInput[] = rows.flatMap(
+      (row: PlanRows): readonly Prisma.PlanBindingCreateManyInput[] =>
+        row.bindings,
+    );
+
+    if (bindings.length > 0) {
+      await transaction.planBinding.createMany({
+        data: bindings,
+      });
+    }
+
+    const tags: Prisma.PlanServiceTagCreateManyInput[] = rows.flatMap(
+      (row: PlanRows): readonly Prisma.PlanServiceTagCreateManyInput[] =>
+        row.tags,
+    );
+
+    if (tags.length > 0) {
+      await transaction.planServiceTag.createMany({
+        data: tags,
+      });
+    }
+
+    const serviceBindings: Prisma.PlanServiceBindingCreateManyInput[] =
+      rows.flatMap(
+        (row: PlanRows): readonly Prisma.PlanServiceBindingCreateManyInput[] =>
+          row.serviceBindings,
+      );
+
+    if (serviceBindings.length > 0) {
+      await transaction.planServiceBinding.createMany({
+        data: serviceBindings,
+      });
+    }
+
+    const dependencies: Prisma.PlanBindingDependencyCreateManyInput[] =
+      rows.flatMap(
+        (
+          row: PlanRows,
+        ): readonly Prisma.PlanBindingDependencyCreateManyInput[] =>
+          row.dependencies,
+      );
+
+    if (dependencies.length > 0) {
+      await transaction.planBindingDependency.createMany({
+        data: dependencies,
+      });
+    }
+  }
+}
+
+interface OwnedPlan {
+  readonly owner: PlanOwner;
+  readonly plan: Plan;
+}
+
+function readOwnedPlans(call: Call): OwnedPlan[] {
+  const owned: OwnedPlan[] = [];
+  const controller: Controller | undefined = call.controller;
+
+  if (controller !== undefined && controller.plan !== null) {
+    owned.push({
+      owner: readPlanOwner('controller', controller.id),
+      plan: controller.plan,
+    });
+  }
+
+  for (const guard of call.guards) {
+    if (guard.plan !== null) {
+      owned.push({
+        owner: readPlanOwner('guard', guard.id),
+        plan: guard.plan,
+      });
+    }
+  }
+
+  for (const interceptor of call.interceptors) {
+    if (interceptor.plan !== null) {
+      owned.push({
+        owner: readPlanOwner('interceptor', interceptor.id),
+        plan: interceptor.plan,
+      });
+    }
+  }
+
+  for (const middleware of call.middlewares) {
+    if (middleware.plan !== null) {
+      owned.push({
+        owner: readPlanOwner('middleware', middleware.id),
+        plan: middleware.plan,
+      });
+    }
+  }
+
+  for (const pipe of call.pipes) {
+    if (pipe.plan !== null) {
+      owned.push({
+        owner: readPlanOwner('pipe', pipe.id),
+        plan: pipe.plan,
+      });
+    }
+  }
+
+  return owned;
+}
+
+function readPlanOwner(
+  kind: 'controller' | 'guard' | 'interceptor' | 'middleware' | 'pipe',
+  id: string,
+): PlanOwner {
+  return {
+    controllerId: kind === 'controller' ? id : null,
+    guardId: kind === 'guard' ? id : null,
+    interceptorId: kind === 'interceptor' ? id : null,
+    middlewareId: kind === 'middleware' ? id : null,
+    pipeId: kind === 'pipe' ? id : null,
+  };
 }

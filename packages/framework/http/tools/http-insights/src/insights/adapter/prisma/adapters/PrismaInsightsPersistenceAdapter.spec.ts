@@ -19,6 +19,7 @@ import { ControllerFixtures } from '../../../domain/fixtures/ControllerFixtures.
 import { ErrorTraceFixtures } from '../../../domain/fixtures/ErrorTraceFixtures.js';
 import { GuardFixtures } from '../../../domain/fixtures/GuardFixtures.js';
 import { HttpErrorFixtures } from '../../../domain/fixtures/HttpErrorFixtures.js';
+import { PlanFixtures } from '../../../domain/fixtures/PlanFixtures.js';
 import { RequestFixtures } from '../../../domain/fixtures/RequestFixtures.js';
 import { ResponseFixtures } from '../../../domain/fixtures/ResponseFixtures.js';
 import { type Call } from '../../../domain/models/Call.js';
@@ -54,6 +55,12 @@ describe(PrismaInsightsPersistenceAdapter, () => {
   let middlewareCreateManyMock: ReturnType<typeof vitest.fn>;
   let nativeMiddlewareCreateManyMock: ReturnType<typeof vitest.fn>;
   let pipeCreateManyMock: ReturnType<typeof vitest.fn>;
+  let planBindingCreateManyMock: ReturnType<typeof vitest.fn>;
+  let planBindingDependencyCreateManyMock: ReturnType<typeof vitest.fn>;
+  let planCreateManyMock: ReturnType<typeof vitest.fn>;
+  let planServiceBindingCreateManyMock: ReturnType<typeof vitest.fn>;
+  let planServiceCreateManyMock: ReturnType<typeof vitest.fn>;
+  let planServiceTagCreateManyMock: ReturnType<typeof vitest.fn>;
   let responseCreateManyMock: ReturnType<typeof vitest.fn>;
   let prismaTransactionMock: ReturnType<typeof vitest.fn>;
   let prismaInsightsPersistenceAdapter: PrismaInsightsPersistenceAdapter;
@@ -76,6 +83,12 @@ describe(PrismaInsightsPersistenceAdapter, () => {
     middlewareCreateManyMock = vitest.fn();
     nativeMiddlewareCreateManyMock = vitest.fn();
     pipeCreateManyMock = vitest.fn();
+    planBindingCreateManyMock = vitest.fn();
+    planBindingDependencyCreateManyMock = vitest.fn();
+    planCreateManyMock = vitest.fn();
+    planServiceBindingCreateManyMock = vitest.fn();
+    planServiceCreateManyMock = vitest.fn();
+    planServiceTagCreateManyMock = vitest.fn();
     responseCreateManyMock = vitest.fn();
     const transactionClient: {
       controller: { createMany: ReturnType<typeof vitest.fn> };
@@ -89,6 +102,12 @@ describe(PrismaInsightsPersistenceAdapter, () => {
       middleware: { createMany: ReturnType<typeof vitest.fn> };
       nativeMiddleware: { createMany: ReturnType<typeof vitest.fn> };
       pipe: { createMany: ReturnType<typeof vitest.fn> };
+      plan: { createMany: ReturnType<typeof vitest.fn> };
+      planBinding: { createMany: ReturnType<typeof vitest.fn> };
+      planBindingDependency: { createMany: ReturnType<typeof vitest.fn> };
+      planService: { createMany: ReturnType<typeof vitest.fn> };
+      planServiceBinding: { createMany: ReturnType<typeof vitest.fn> };
+      planServiceTag: { createMany: ReturnType<typeof vitest.fn> };
       response: { createMany: ReturnType<typeof vitest.fn> };
     } = {
       call: {
@@ -115,6 +134,24 @@ describe(PrismaInsightsPersistenceAdapter, () => {
       },
       pipe: {
         createMany: pipeCreateManyMock,
+      },
+      plan: {
+        createMany: planCreateManyMock,
+      },
+      planBinding: {
+        createMany: planBindingCreateManyMock,
+      },
+      planBindingDependency: {
+        createMany: planBindingDependencyCreateManyMock,
+      },
+      planService: {
+        createMany: planServiceCreateManyMock,
+      },
+      planServiceBinding: {
+        createMany: planServiceBindingCreateManyMock,
+      },
+      planServiceTag: {
+        createMany: planServiceTagCreateManyMock,
       },
       response: {
         createMany: responseCreateManyMock,
@@ -355,6 +392,119 @@ describe(PrismaInsightsPersistenceAdapter, () => {
 
         it('should return undefined', () => {
           expect(result).toBeUndefined();
+        });
+
+        it('should not call prismaClient.plan.createMany()', () => {
+          expect(planCreateManyMock).not.toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('having a controller plan', () => {
+      let callFixture: Call;
+
+      beforeAll(() => {
+        callFixture = {
+          ...CallFixtures.any,
+          controller: {
+            ...ControllerFixtures.any,
+            error: null,
+            errorTraces: null,
+            plan: PlanFixtures.constantValue,
+          },
+          guards: [],
+          httpErrors: [],
+          interceptors: [],
+          middlewares: [],
+          nativeMiddlewares: [],
+          pipes: [],
+        };
+      });
+
+      describe('when called', () => {
+        beforeAll(async () => {
+          await prismaInsightsPersistenceAdapter.create(callFixture);
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should call prismaClient.plan.createMany()', () => {
+          expect(planCreateManyMock).toHaveBeenCalledExactlyOnceWith({
+            data: [
+              {
+                controller_id: 'controller-id',
+                guard_id: null,
+                id: 'plan-id',
+                interceptor_id: null,
+                middleware_id: null,
+                pipe_id: null,
+              },
+            ],
+          });
+        });
+
+        it('should call prismaClient.planService.createMany()', () => {
+          expect(planServiceCreateManyMock).toHaveBeenCalledExactlyOnceWith({
+            data: [
+              {
+                chained: null,
+                id: 'service-id',
+                is_multiple: false,
+                is_root: true,
+                name_kind: null,
+                name_value: null,
+                optional: false,
+                plan_id: 'plan-id',
+                service_identifier_kind: 'string',
+                service_identifier_value: 'Weapon',
+              },
+            ],
+          });
+        });
+
+        it('should call prismaClient.planBinding.createMany()', () => {
+          expect(planBindingCreateManyMock).toHaveBeenCalledExactlyOnceWith({
+            data: [
+              {
+                binding_identifier: 1,
+                id: 'binding-id',
+                implementation_type_kind: null,
+                implementation_type_value: null,
+                module_id: null,
+                plan_id: 'plan-id',
+                scope: 'Singleton',
+                service_identifier_kind: 'string',
+                service_identifier_value: 'Weapon',
+                target_service_identifier_kind: null,
+                target_service_identifier_value: null,
+                type: 'ConstantValue',
+              },
+            ],
+          });
+        });
+
+        it('should call prismaClient.planServiceBinding.createMany()', () => {
+          expect(
+            planServiceBindingCreateManyMock,
+          ).toHaveBeenCalledExactlyOnceWith({
+            data: [
+              {
+                binding_id: 'binding-id',
+                position: 0,
+                service_id: 'service-id',
+              },
+            ],
+          });
+        });
+
+        it('should not call prismaClient.planServiceTag.createMany()', () => {
+          expect(planServiceTagCreateManyMock).not.toHaveBeenCalled();
+        });
+
+        it('should not call prismaClient.planBindingDependency.createMany()', () => {
+          expect(planBindingDependencyCreateManyMock).not.toHaveBeenCalled();
         });
       });
     });

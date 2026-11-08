@@ -11,6 +11,7 @@ export class PipeFixtures {
       method: 'getFoo',
       parameterIndex: 0,
       pipe: 'StandardSchemaValidationPipe',
+      plan: null,
       startedAt: new Date('2026-01-01T00:00:01.000Z'),
     };
   }

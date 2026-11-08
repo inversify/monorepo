@@ -1,11 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { type Pipe as PrismaPipe } from '../../../../generated/prisma/client.js';
 import { ErrorTraceFixtures } from '../../../domain/fixtures/ErrorTraceFixtures.js';
 import { type Pipe } from '../../../domain/models/Pipe.js';
 import { PrismaPipeFixtures } from '../fixtures/PrismaPipeFixtures.js';
 import { ErrorTracesFromPrismaJsonBuilder } from './ErrorTracesFromPrismaJsonBuilder.js';
 import { PipeFromPrismaPipeBuilder } from './PipeFromPrismaPipeBuilder.js';
+import { PlanFromPrismaPlanBuilder } from './PlanFromPrismaPlanBuilder.js';
+import { type PrismaPipeWithPlan } from './prismaPlanInclude.js';
 
 describe(PipeFromPrismaPipeBuilder, () => {
   let pipeFromPrismaPipeBuilder: PipeFromPrismaPipeBuilder;
@@ -13,12 +14,13 @@ describe(PipeFromPrismaPipeBuilder, () => {
   beforeAll(() => {
     pipeFromPrismaPipeBuilder = new PipeFromPrismaPipeBuilder(
       new ErrorTracesFromPrismaJsonBuilder(),
+      new PlanFromPrismaPlanBuilder(),
     );
   });
 
   describe('.build', () => {
     describe('when called', () => {
-      let prismaPipeFixture: PrismaPipe;
+      let prismaPipeFixture: PrismaPipeWithPlan;
 
       let result: unknown;
 
@@ -37,6 +39,7 @@ describe(PipeFromPrismaPipeBuilder, () => {
           method: prismaPipeFixture.method,
           parameterIndex: prismaPipeFixture.parameter_index,
           pipe: prismaPipeFixture.pipe,
+          plan: null,
           startedAt: prismaPipeFixture.started_at,
         };
 

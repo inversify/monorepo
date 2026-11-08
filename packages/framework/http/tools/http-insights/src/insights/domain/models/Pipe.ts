@@ -1,4 +1,5 @@
 import { type ErrorTrace } from './ErrorTrace.js';
+import { type Plan } from './Plan.js';
 
 export interface Pipe {
   readonly id: string;
@@ -8,5 +9,6 @@ export interface Pipe {
   readonly method: string;
   readonly parameterIndex: number;
   readonly pipe: string;
+  readonly plan: Plan | null;
   readonly startedAt: Date;
 }
