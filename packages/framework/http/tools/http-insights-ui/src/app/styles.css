@@ -1102,6 +1102,135 @@ body:has(.modal-backdrop) {
   font-size: 12px;
 }
 
+.plan {
+  margin-top: 12px;
+  padding-top: 2px;
+  border-top: 1px solid var(--line);
+}
+
+.plan h3 {
+  margin-top: 10px;
+}
+
+.plan-service {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plan-service-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.plan-identifier {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.plan-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+
+.plan-chips span,
+.plan-label,
+.plan-note {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.plan-label,
+.plan-line,
+.plan-hole,
+.plan-reference {
+  margin: 0;
+}
+
+.plan-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.plan-hole {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.plan-bindings,
+.plan-properties,
+.plan-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-binding,
+.plan-properties > li,
+.plan-tags > li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plan-tags > li {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.plan-arguments {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.plan-arguments > li {
+  padding-left: 4px;
+}
+
+.plan-arguments > li::marker {
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.plan-reference {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.plan-reference a {
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.plan-reference a:hover {
+  text-decoration: underline;
+}
+
 .error-block {
   margin: 10px 0 0;
   padding: 10px 12px;

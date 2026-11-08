@@ -22,6 +22,8 @@ import {
 import { sectionTabId } from './CallMenu.js';
 import { type CallSectionId } from './callSections.js';
 import { ErrorTraces } from './ErrorTraces.js';
+import { type Plan } from './planDetail.js';
+import { PlanView } from './PlanView.js';
 import { readStageKey } from './readStageKey.js';
 import { readTimeline, type TimelineLane } from './timeline.js';
 import { TimelineChart } from './TimelineChart.js';
@@ -189,6 +191,7 @@ function MiddlewareSection(props: {
                 errorTraces={middleware.errorTraces}
                 key={middleware.id}
                 meta={[formatPhase(middleware.phase)]}
+                plan={middleware.plan}
                 selected={
                   props.stageId === readStageKey('middleware', middleware.id)
                 }
@@ -245,6 +248,7 @@ function GuardSection(props: {
             key={guard.id}
             meta={[formatGuardOutcome(guard.allowed)]}
             outcome={guardOutcome(guard.allowed)}
+            plan={guard.plan}
             selected={props.stageId === readStageKey('guard', guard.id)}
             stageId={readStageKey('guard', guard.id)}
             startedAt={guard.startedAt}
@@ -274,6 +278,7 @@ function ControllerSection(props: {
             errorMessage={controller.errorMessage}
             errorTraces={controller.errorTraces}
             meta={[controller.method]}
+            plan={controller.plan}
             selected={
               props.stageId === readStageKey('controller', controller.id)
             }
@@ -296,6 +301,7 @@ function ControllerSection(props: {
                 errorTraces={pipe.errorTraces}
                 key={pipe.id}
                 meta={[pipe.method, `Parameter ${String(pipe.parameterIndex)}`]}
+                plan={pipe.plan}
                 selected={props.stageId === readStageKey('pipe', pipe.id)}
                 stageId={readStageKey('pipe', pipe.id)}
                 startedAt={pipe.startedAt}
@@ -327,6 +333,7 @@ function InterceptorSection(props: {
               errorTraces={interceptor.errorTraces}
               key={interceptor.id}
               meta={[]}
+              plan={interceptor.plan}
               selected={
                 props.stageId === readStageKey('interceptor', interceptor.id)
               }
@@ -383,6 +390,7 @@ interface StageCardProps {
   readonly errorTraces: readonly ErrorTrace[] | null;
   readonly meta: readonly string[];
   readonly outcome?: string;
+  readonly plan?: Plan | null;
   readonly selected: boolean;
   readonly stageId: string;
   readonly startedAt: string;
@@ -442,8 +450,19 @@ function StageCard(props: StageCardProps): ReactElement {
         errorMessage={props.errorMessage}
         errorTraces={props.errorTraces}
       />
+      <PlanBlock plan={props.plan} />
     </article>
   );
+}
+
+function PlanBlock(props: {
+  readonly plan: Plan | null | undefined;
+}): ReactElement | null {
+  if (props.plan === undefined || props.plan === null) {
+    return null;
+  }
+
+  return <PlanView plan={props.plan} />;
 }
 
 function StageError(props: {

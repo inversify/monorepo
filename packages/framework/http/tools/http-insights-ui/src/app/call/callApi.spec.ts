@@ -1,6 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { buildCallUrl, type CallDetail, readCall } from './callApi.js';
+import {
+  type InstancePlanBinding,
+  type Plan,
+  type PlanService,
+} from './planDetail.js';
 
 describe(buildCallUrl, () => {
   describe('having a call id', () => {
@@ -114,6 +119,8 @@ describe(readCall, () => {
         expect(result.response.statusCode).toBe(201);
         expect(result.controller?.errorMessage).toBe('boom');
         expect(result.controller?.errorTraces).toBeNull();
+        expect(result.controller?.plan).toBeNull();
+        expect(result.guards[0]?.plan).toBeNull();
       });
     });
   });
@@ -197,6 +204,63 @@ describe(readCall, () => {
     });
   });
 
+  describe('having a controller plan with a cycle', () => {
+    describe('when called', () => {
+      let binding: InstancePlanBinding;
+      let cycledService: PlanService;
+      let plan: Plan;
+      let propertyWeapon: PlanService;
+      let sharedWeapon: PlanService | null;
+
+      beforeAll(() => {
+        const result: CallDetail = readCall(planPayload());
+        const controllerPlan: Plan | null = result.controller?.plan ?? null;
+        const rootBinding: Plan['root']['bindings'][number] | undefined =
+          controllerPlan?.root.bindings[0];
+        const propertyService: PlanService | undefined =
+          rootBinding?.type === 'Instance'
+            ? rootBinding.properties[1]?.service
+            : undefined;
+        const propertyWeaponService: PlanService | undefined =
+          rootBinding?.type === 'Instance'
+            ? rootBinding.properties[0]?.service
+            : undefined;
+        const constructorService: PlanService | null | undefined =
+          rootBinding?.type === 'Instance'
+            ? rootBinding.constructorArguments[0]
+            : undefined;
+
+        if (
+          controllerPlan === null ||
+          rootBinding === undefined ||
+          rootBinding.type !== 'Instance' ||
+          propertyService === undefined ||
+          propertyWeaponService === undefined ||
+          constructorService === undefined
+        ) {
+          throw new Error('Expected an instance plan.');
+        }
+
+        binding = rootBinding;
+        cycledService = propertyService;
+        plan = controllerPlan;
+        propertyWeapon = propertyWeaponService;
+        sharedWeapon = constructorService;
+      });
+
+      it('should keep one service for the cycle', () => {
+        expect(plan.root.serviceIdentifier).toStrictEqual({
+          kind: 'class',
+          value: 'Ninja',
+        });
+        expect(binding.moduleId).toBe(0);
+        expect(binding.constructorArguments[1]).toBeNull();
+        expect(cycledService).toBe(plan.root);
+        expect(propertyWeapon).toBe(sharedWeapon);
+      });
+    });
+  });
+
   describe('having a payload without a request', () => {
     describe('when called', () => {
       it('should throw', () => {
@@ -209,3 +273,127 @@ describe(readCall, () => {
     });
   });
 });
+
+function planPayload(): unknown {
+  const weapon: unknown = {
+    bindings: [
+      {
+        bindingId: 2,
+        id: 'weapon-binding',
+        moduleId: null,
+        scope: 'Singleton',
+        serviceIdentifier: {
+          kind: 'string',
+          value: 'Weapon',
+        },
+        type: 'ConstantValue',
+      },
+    ],
+    chained: null,
+    id: 'weapon-service',
+    isMultiple: false,
+    name: null,
+    optional: false,
+    serviceIdentifier: {
+      kind: 'string',
+      value: 'Weapon',
+    },
+    tags: [],
+  };
+
+  return {
+    controller: {
+      controller: 'UserController',
+      endedAt: '2026-10-19T20:00:00.016Z',
+      error: null,
+      id: 'controller-1',
+      method: 'create',
+      plan: {
+        id: 'plan-1',
+        root: {
+          bindings: [
+            {
+              bindingId: 4,
+              constructorArguments: [weapon, null],
+              id: 'root-binding',
+              implementationType: {
+                kind: 'class',
+                value: 'Ninja',
+              },
+              moduleId: 0,
+              properties: [
+                {
+                  key: {
+                    kind: 'string',
+                    value: 'weapon',
+                  },
+                  service: {
+                    id: 'weapon-service',
+                  },
+                },
+                {
+                  key: {
+                    kind: 'symbol',
+                    value: 'Symbol(self)',
+                  },
+                  service: {
+                    id: 'root-service',
+                  },
+                },
+              ],
+              scope: 'Transient',
+              serviceIdentifier: {
+                kind: 'class',
+                value: 'Ninja',
+              },
+              type: 'Instance',
+            },
+          ],
+          chained: null,
+          id: 'root-service',
+          isMultiple: false,
+          name: {
+            kind: 'number',
+            value: '3',
+          },
+          optional: true,
+          serviceIdentifier: {
+            kind: 'class',
+            value: 'Ninja',
+          },
+          tags: [
+            {
+              key: {
+                kind: 'string',
+                value: 'kind',
+              },
+              value: 'sharp',
+            },
+          ],
+        },
+      },
+      startedAt: '2026-10-19T20:00:00.008Z',
+    },
+    guards: [],
+    httpErrors: [],
+    id: 'call-1',
+    interceptors: [],
+    middlewares: [],
+    nativeMiddlewares: [],
+    pipes: [],
+    request: {
+      headers: {},
+      id: 'request-1',
+      method: 'POST',
+      startedAt: '2026-10-19T20:00:00.000Z',
+      url: '/users',
+    },
+    response: {
+      aborted: false,
+      headers: {},
+      id: 'response-1',
+      sentAt: '2026-10-19T20:00:00.018Z',
+      statusCode: 201,
+    },
+  };
+}

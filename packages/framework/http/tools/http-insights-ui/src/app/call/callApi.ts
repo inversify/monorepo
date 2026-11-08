@@ -1,4 +1,14 @@
 import { durationMs } from '../calls/durationMs.js';
+import {
+  type Plan,
+  type PlanBinding,
+  type PlanBindingScope,
+  type PlanJsonValue,
+  type PlanMetadataKey,
+  type PlanProperty,
+  type PlanService,
+  type PlanServiceIdentifier,
+} from './planDetail.js';
 
 const CALLS_PATH: string = '/.inversify/v1/calls';
 
@@ -35,6 +45,7 @@ export interface TimedStage {
 export interface MiddlewareDetail extends TimedStage {
   readonly name: string;
   readonly phase: string;
+  readonly plan: Plan | null;
 }
 
 export interface NativeMiddlewareDetail extends TimedStage {
@@ -44,21 +55,25 @@ export interface NativeMiddlewareDetail extends TimedStage {
 export interface GuardDetail extends TimedStage {
   readonly allowed: boolean | null;
   readonly name: string;
+  readonly plan: Plan | null;
 }
 
 export interface ControllerDetail extends TimedStage {
   readonly method: string;
   readonly name: string;
+  readonly plan: Plan | null;
 }
 
 export interface InterceptorDetail extends TimedStage {
   readonly name: string;
+  readonly plan: Plan | null;
 }
 
 export interface PipeDetail extends TimedStage {
   readonly method: string;
   readonly name: string;
   readonly parameterIndex: number;
+  readonly plan: Plan | null;
 }
 
 export interface HttpErrorDetail extends TimedStage {
@@ -180,6 +195,7 @@ function readMiddlewares(value: unknown): readonly MiddlewareDetail[] {
         ...timing,
         name: readString(record['middleware']),
         phase: readString(record['phase']),
+        plan: readOptionalPlan(record['plan']),
       };
     })
     .sort(compareStartedAt);
@@ -214,6 +230,7 @@ function readGuards(value: unknown): readonly GuardDetail[] {
         ...timing,
         allowed: readNullableBoolean(record['allowed']),
         name: readString(record['guard']),
+        plan: readOptionalPlan(record['plan']),
       };
     })
     .sort(compareStartedAt);
@@ -228,6 +245,7 @@ function readInterceptors(value: unknown): readonly InterceptorDetail[] {
       return {
         ...timing,
         name: readString(record['interceptor']),
+        plan: readOptionalPlan(record['plan']),
       };
     })
     .sort(compareStartedAt);
@@ -244,6 +262,7 @@ function readPipes(value: unknown): readonly PipeDetail[] {
         method: readString(record['method']),
         name: readString(record['pipe']),
         parameterIndex: readInteger(record['parameterIndex']),
+        plan: readOptionalPlan(record['plan']),
       };
     })
     .sort(compareStartedAt);
@@ -275,7 +294,341 @@ function readOptionalController(value: unknown): ControllerDetail | undefined {
     ...timing,
     method: readString(record['method']),
     name: readString(record['controller']),
+    plan: readOptionalPlan(record['plan']),
   };
+}
+
+interface MutablePlanService extends PlanService {
+  bindings: PlanBinding[];
+}
+
+function readOptionalPlan(value: unknown): Plan | null {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  return readPlan(value);
+}
+
+function readPlan(value: unknown): Plan {
+  const record: Record<string, unknown> = readRecord(value, 'plan');
+  const services: Map<string, MutablePlanService> = new Map();
+
+  return {
+    id: readString(record['id']),
+    root: readPlanService(record['root'], services),
+  };
+}
+
+function readPlanService(
+  value: unknown,
+  services: Map<string, MutablePlanService>,
+): PlanService {
+  const record: Record<string, unknown> = readRecord(value, 'plan service');
+  const id: string = readString(record['id']);
+  const existing: MutablePlanService | undefined = services.get(id);
+
+  if (existing !== undefined) {
+    return existing;
+  }
+
+  if (record['bindings'] === undefined) {
+    throw new CallResponseError(
+      'Call response has an unexpected plan service.',
+    );
+  }
+
+  const service: MutablePlanService = {
+    bindings: [],
+    chained: readNullableBoolean(record['chained']),
+    id,
+    isMultiple: readBoolean(record['isMultiple']),
+    name: readOptionalPlanMetadataKey(record['name']),
+    optional: readBoolean(record['optional']),
+    serviceIdentifier: readPlanServiceIdentifier(record['serviceIdentifier']),
+    tags: readPlanTags(record['tags']),
+  };
+
+  services.set(id, service);
+  service.bindings = readPlanBindings(record['bindings'], services);
+
+  return service;
+}
+
+function readPlanBindings(
+  value: unknown,
+  services: Map<string, MutablePlanService>,
+): PlanBinding[] {
+  return readArray(value, 'plan bindings').map((item: unknown): PlanBinding =>
+    readPlanBinding(item, services),
+  );
+}
+
+function readPlanBinding(
+  value: unknown,
+  services: Map<string, MutablePlanService>,
+): PlanBinding {
+  const record: Record<string, unknown> = readRecord(value, 'plan binding');
+  const bindingId: number = readInteger(record['bindingId']);
+  const id: string = readString(record['id']);
+  const moduleId: number | null = readNullableInteger(record['moduleId']);
+  const serviceIdentifier: PlanServiceIdentifier = readPlanServiceIdentifier(
+    record['serviceIdentifier'],
+  );
+  const type: string = readString(record['type']);
+
+  switch (type) {
+    case 'ConstantValue':
+    case 'Factory':
+      return {
+        bindingId,
+        id,
+        moduleId,
+        scope: readSingletonScope(record['scope']),
+        serviceIdentifier,
+        type,
+      };
+    case 'DynamicValue':
+      return {
+        bindingId,
+        id,
+        moduleId,
+        scope: readPlanScope(record['scope']),
+        serviceIdentifier,
+        type: 'DynamicValue',
+      };
+    case 'Instance':
+      return {
+        bindingId,
+        constructorArguments: readConstructorArguments(
+          record['constructorArguments'],
+          services,
+        ),
+        id,
+        implementationType: readImplementationType(
+          record['implementationType'],
+        ),
+        moduleId,
+        properties: readPlanProperties(record['properties'], services),
+        scope: readPlanScope(record['scope']),
+        serviceIdentifier,
+        type: 'Instance',
+      };
+    case 'ResolvedValue':
+      return {
+        arguments: readResolvedArguments(record['arguments'], services),
+        bindingId,
+        id,
+        moduleId,
+        scope: readPlanScope(record['scope']),
+        serviceIdentifier,
+        type: 'ResolvedValue',
+      };
+    case 'ServiceRedirection':
+      return {
+        bindingId,
+        id,
+        moduleId,
+        redirection: readPlanService(record['redirection'], services),
+        serviceIdentifier,
+        targetServiceIdentifier: readPlanServiceIdentifier(
+          record['targetServiceIdentifier'],
+        ),
+        type: 'ServiceRedirection',
+      };
+    default:
+      throw new CallResponseError(
+        `Call response has an unexpected plan binding "${type}".`,
+      );
+  }
+}
+
+function readConstructorArguments(
+  value: unknown,
+  services: Map<string, MutablePlanService>,
+): (PlanService | null)[] {
+  return readArray(value, 'plan constructor arguments').map(
+    (item: unknown): PlanService | null => {
+      if (item === null) {
+        return null;
+      }
+
+      return readPlanService(item, services);
+    },
+  );
+}
+
+function readResolvedArguments(
+  value: unknown,
+  services: Map<string, MutablePlanService>,
+): PlanService[] {
+  return readArray(value, 'plan arguments').map((item: unknown): PlanService =>
+    readPlanService(item, services),
+  );
+}
+
+function readPlanProperties(
+  value: unknown,
+  services: Map<string, MutablePlanService>,
+): PlanProperty[] {
+  return readArray(value, 'plan properties').map(
+    (item: unknown): PlanProperty => {
+      const record: Record<string, unknown> = readRecord(item, 'plan property');
+      const key: PlanMetadataKey = readPlanMetadataKey(record['key']);
+
+      if (key.kind === 'number') {
+        throw new CallResponseError(
+          'Call response has an unexpected plan property.',
+        );
+      }
+
+      return {
+        key,
+        service: readPlanService(record['service'], services),
+      };
+    },
+  );
+}
+
+function readImplementationType(value: unknown): PlanServiceIdentifier {
+  const identifier: PlanServiceIdentifier = readPlanServiceIdentifier(value);
+
+  if (identifier.kind !== 'class') {
+    throw new CallResponseError(
+      'Call response has an unexpected plan implementation.',
+    );
+  }
+
+  return identifier;
+}
+
+function readPlanTags(value: unknown): PlanService['tags'] {
+  return readArray(value, 'plan tags').map((item: unknown) => {
+    const record: Record<string, unknown> = readRecord(item, 'plan tag');
+
+    return {
+      key: readPlanMetadataKey(record['key']),
+      value: readPlanJsonValue(record['value']),
+    };
+  });
+}
+
+function readOptionalPlanMetadataKey(value: unknown): PlanMetadataKey | null {
+  if (value === null) {
+    return null;
+  }
+
+  return readPlanMetadataKey(value);
+}
+
+function readPlanMetadataKey(value: unknown): PlanMetadataKey {
+  const record: Record<string, unknown> = readRecord(value, 'plan metadata');
+  const kind: string = readString(record['kind']);
+
+  switch (kind) {
+    case 'number':
+    case 'string':
+    case 'symbol':
+      return {
+        kind,
+        value: readString(record['value']),
+      };
+    default:
+      throw new CallResponseError(
+        'Call response has an unexpected plan metadata key.',
+      );
+  }
+}
+
+function readPlanServiceIdentifier(value: unknown): PlanServiceIdentifier {
+  const record: Record<string, unknown> = readRecord(
+    value,
+    'plan service identifier',
+  );
+  const kind: string = readString(record['kind']);
+
+  switch (kind) {
+    case 'class':
+    case 'string':
+    case 'symbol':
+      return {
+        kind,
+        value: readString(record['value']),
+      };
+    default:
+      throw new CallResponseError(
+        'Call response has an unexpected plan service identifier.',
+      );
+  }
+}
+
+function readPlanJsonValue(value: unknown): PlanJsonValue {
+  if (
+    value === null ||
+    typeof value === 'boolean' ||
+    typeof value === 'string'
+  ) {
+    return value;
+  }
+
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) {
+      throw new CallResponseError(
+        'Call response has an unexpected plan value.',
+      );
+    }
+
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item: unknown): PlanJsonValue => readPlanJsonValue(item));
+  }
+
+  if (!isRecord(value)) {
+    throw new CallResponseError('Call response has an unexpected plan value.');
+  }
+
+  const json: { [key: string]: PlanJsonValue } = {};
+
+  for (const [key, entry] of Object.entries(value)) {
+    json[key] = readPlanJsonValue(entry);
+  }
+
+  return json;
+}
+
+function readPlanScope(value: unknown): PlanBindingScope {
+  const scope: string = readString(value);
+
+  switch (scope) {
+    case 'Request':
+    case 'Singleton':
+    case 'Transient':
+      return scope;
+    default:
+      throw new CallResponseError(
+        'Call response has an unexpected plan scope.',
+      );
+  }
+}
+
+function readSingletonScope(value: unknown): 'Singleton' {
+  const scope: PlanBindingScope = readPlanScope(value);
+
+  if (scope !== 'Singleton') {
+    throw new CallResponseError('Call response has an unexpected plan scope.');
+  }
+
+  return scope;
+}
+
+function readNullableInteger(value: unknown): number | null {
+  if (value === null) {
+    return null;
+  }
+
+  return readInteger(value);
 }
 
 function readTiming(record: Record<string, unknown>): TimedStage {
