@@ -90,6 +90,9 @@ export function buildInstrumentedInterceptedHandler<
               ? {}
               : { parentExecutionId: scope.parentExecutionId }),
             requestId: scope.requestId,
+            service: {
+              id: interceptorIdentifier,
+            },
             timestamp: stage.startedAt,
             type: 'http.interceptor.started',
           }),

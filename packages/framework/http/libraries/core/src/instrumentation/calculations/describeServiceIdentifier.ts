@@ -15,13 +15,19 @@ export function describeMethodKey(methodKey: string | symbol): string {
 export function describePipe(
   pipeOrServiceIdentifier: ServiceIdentifier<Pipe> | Pipe,
 ): string {
+  return describeServiceIdentifier(
+    readPipeServiceIdentifier(pipeOrServiceIdentifier),
+  );
+}
+
+export function readPipeServiceIdentifier(
+  pipeOrServiceIdentifier: ServiceIdentifier<Pipe> | Pipe,
+): ServiceIdentifier<Pipe> {
   if (isPipe(pipeOrServiceIdentifier)) {
-    return describeServiceIdentifier(
-      pipeOrServiceIdentifier.constructor as ServiceIdentifier,
-    );
+    return pipeOrServiceIdentifier.constructor as ServiceIdentifier<Pipe>;
   }
 
-  return describeServiceIdentifier(pipeOrServiceIdentifier);
+  return pipeOrServiceIdentifier;
 }
 
 export function describeServiceIdentifier(

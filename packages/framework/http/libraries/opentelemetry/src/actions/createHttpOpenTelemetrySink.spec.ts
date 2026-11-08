@@ -251,6 +251,9 @@ describe(createHttpOpenTelemetrySink, () => {
             method: 'get',
             parentExecutionId: 'request-execution',
             requestId: 'request-1',
+            service: {
+              id: 'ItemsController',
+            },
             timestamp: 1_100,
             type: 'http.controller.started',
           });
@@ -289,6 +292,9 @@ describe(createHttpOpenTelemetrySink, () => {
             executionId: 'guard-execution',
             guard: 'DenyGuard',
             requestId: 'request-1',
+            service: {
+              id: 'DenyGuard',
+            },
             timestamp: 1_000,
             type: 'http.guard.started',
           });
@@ -332,6 +338,9 @@ describe(createHttpOpenTelemetrySink, () => {
             executionId: 'guard-execution',
             guard: 'FailingGuard',
             requestId: 'request-1',
+            service: {
+              id: 'FailingGuard',
+            },
             timestamp: 1_000,
             type: 'http.guard.started',
           });
@@ -375,6 +384,9 @@ describe(createHttpOpenTelemetrySink, () => {
             parameterIndex: 1,
             pipe: 'TrimPipe',
             requestId: 'request-1',
+            service: {
+              id: 'TrimPipe',
+            },
             timestamp: 1_000,
             type: 'http.pipe.started',
           });

@@ -28,6 +28,7 @@ export {
   type HttpGuardExecutedEvent,
   type HttpGuardStartedEvent,
   type HttpInstrumentationEvent,
+  type HttpInstrumentationService,
   type HttpInterceptorExecutedEvent,
   type HttpInterceptorStartedEvent,
   type HttpMiddlewareExecutedEvent,
