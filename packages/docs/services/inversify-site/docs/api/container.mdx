@@ -6,6 +6,7 @@ import containerApiGetAllSource from '@inversifyjs/code-examples/generated/examp
 import containerApiGetAllAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllAsync.ts.txt';
 import containerApiGetAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAsync.ts.txt';
 import containerApiGetSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGet.ts.txt';
+import containerApiInspectCurrentPlanSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiInspectCurrentPlan.ts.txt';
 import containerApiIsBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsBound.ts.txt';
 import containerApiIsCurrentBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsCurrentBound.ts.txt';
 import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnActivation.ts.txt';
@@ -118,6 +119,22 @@ getAllAsync<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetAllOptions)
 Get all available bindings for a given identifier:
 
 <CodeBlock language="ts">{containerApiGetAllAsyncSource}</CodeBlock>
+
+## inspectCurrentPlan
+
+```ts
+inspectCurrentPlan(serviceIdentifier: ServiceIdentifier, options?: InspectCurrentPlanOptions): PlanInspection;
+```
+
+Returns a snapshot of the plan the container would use to resolve the same request with `get` or `getAll`. The inspection is fully built when the method returns. Later binding changes, including rebind and snapshot restore, do not change an inspection that was already returned. Call `inspectCurrentPlan` again to see the plan for the container's state at that later time.
+
+Inspection does not resolve services. It does not construct instances, call dynamic value builders, factories, or resolved value factories, run activation handlers, run post-construct methods, or populate scope caches. Planning still runs as it would for resolution: a cached plan is reused, otherwise the plan is created and cached, `onPlan` handlers are notified, autobinding may register bindings, and `when` predicates are evaluated. When planning fails, `inspectCurrentPlan` throws the same error `get` would throw for a single request, or `getAll` for a multiple request (`isMultiple: true`).
+
+Dependencies that are acquired only while resolving, such as `context.get` inside a dynamic value or a factory, are not part of the plan and do not appear in the inspection.
+
+A plan can contain a cycle. Inspection terminates and closes that cycle by reusing the service inspection already being built. Consumers that walk the graph recursively, including `JSON.stringify`, need to handle those cycles.
+
+<CodeBlock language="ts">{containerApiInspectCurrentPlanSource}</CodeBlock>
 
 ## isBound
 
@@ -339,3 +356,25 @@ interface GetAllOptions extends GetOptions {
 ```
 
 - `chained` (boolean): Option to enable chained resolution across container hierarchies. Refer to the [docs](../fundamentals/di-hierarchy.mdx#chained-resolution-mode) for more information.
+
+## InspectCurrentPlanOptions
+
+Options that can be passed to `inspectCurrentPlan`. Omitting `options`, or omitting `isMultiple`, is a single request.
+
+```ts
+type InspectCurrentPlanOptions =
+  | InspectCurrentSinglePlanOptions
+  | InspectCurrentMultiplePlanOptions;
+
+interface InspectCurrentSinglePlanOptions extends GetOptions {
+  chained?: never;
+  isMultiple?: false;
+}
+
+interface InspectCurrentMultiplePlanOptions extends GetAllOptions {
+  isMultiple: true;
+}
+```
+
+- `isMultiple` (boolean): When `true`, the request is a multiple request and every `GetAllOptions` field is accepted, including `chained`. When omitted or `false`, the request is a single request and `chained` is rejected.
+- Every `GetOptions` field (`autobind`, `name`, `optional`, `tag`) is accepted for both kinds of request.

@@ -6,6 +6,7 @@ import containerApiGetAllSource from '@inversifyjs/code-examples/generated/examp
 import containerApiGetAllAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAllAsync.ts.txt';
 import containerApiGetAsyncSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGetAsync.ts.txt';
 import containerApiGetSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiGet.ts.txt';
+import containerApiInspectCurrentPlanSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiInspectCurrentPlan.ts.txt';
 import containerApiIsBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsBound.ts.txt';
 import containerApiIsCurrentBoundSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiIsCurrentBound.ts.txt';
 import containerApiOnActivationSource from '@inversifyjs/code-examples/generated/examples/v8/containerApiOnActivation.ts.txt';
@@ -118,6 +119,22 @@ getAllAsync<T>(serviceIdentifier: ServiceIdentifier<T>, options?: GetAllOptions)
 获取给定标识符的所有可用绑定：
 
 <CodeBlock language="ts">{containerApiGetAllAsyncSource}</CodeBlock>
+
+## inspectCurrentPlan
+
+```ts
+inspectCurrentPlan(serviceIdentifier: ServiceIdentifier, options?: InspectCurrentPlanOptions): PlanInspection;
+```
+
+返回容器在使用 `get` 或 `getAll` 解析相同请求时会使用的规划的快照。该方法返回时，检查结果已完全构建。之后发生的绑定更改（包括 rebind 和快照恢复）不会改变已经返回的检查结果。再次调用 `inspectCurrentPlan`，即可看到容器在该时点状态对应的规划。
+
+检查不会解析服务。它不会构造实例、调用动态值构建器、工厂或解析值工厂、运行激活处理程序、运行 post-construct 方法或填充作用域缓存。规划仍会像解析时一样运行：如果有缓存的规划则予以复用，否则创建并缓存该规划、通知 `onPlan` 处理程序、自动绑定可能注册绑定，以及评估 `when` 约束。当规划失败时，`inspectCurrentPlan` 会抛出与 `get`（针对单个请求）或 `getAll`（针对 `isMultiple: true` 的多个请求）所抛出的相同错误。
+
+仅在解析期间获取的依赖项（例如动态值或工厂内的 `context.get`）不属于规划的一部分，也不会出现在检查结果中。
+
+规划可能包含循环。检查通过复用正在构建的服务检查结果来终止并关闭该循环。递归遍历依赖图的消费者（包括 `JSON.stringify`）需要处理这些循环。
+
+<CodeBlock language="ts">{containerApiInspectCurrentPlanSource}</CodeBlock>
 
 ## isBound
 
@@ -339,3 +356,25 @@ interface GetAllOptions extends GetOptions {
 ```
 
 - `chained` (boolean)：启用跨容器层级结构的链式解析的选项。有关更多信息，请参阅 [文档](../fundamentals/di-hierarchy.mdx#链式解析模式)。
+
+## InspectCurrentPlanOptions
+
+可以传递给 `inspectCurrentPlan` 的选项。省略 `options`，或省略 `isMultiple`，则为单个请求。
+
+```ts
+type InspectCurrentPlanOptions =
+  | InspectCurrentSinglePlanOptions
+  | InspectCurrentMultiplePlanOptions;
+
+interface InspectCurrentSinglePlanOptions extends GetOptions {
+  chained?: never;
+  isMultiple?: false;
+}
+
+interface InspectCurrentMultiplePlanOptions extends GetAllOptions {
+  isMultiple: true;
+}
+```
+
+- `isMultiple` (boolean)：当为 `true` 时，该请求为多个请求，并接受所有 `GetAllOptions` 字段（包括 `chained`）。当省略或为 `false` 时，该请求为单个请求，并拒绝 `chained`。
+- 所有 `GetOptions` 字段（`autobind`、`name`、`optional`、`tag`）均被两种请求类型接受。

@@ -57,10 +57,8 @@ Paths below are relative to `packages/container/libraries/` unless stated otherw
 
 ## 4. Documentation and release
 
-> 4.1 and 4.2 are blocked until release: the v8 examples compile against the published `inversify8` alias (`npm:inversify@8.2.3`), which has no `inspectCurrentPlan`. Do them in a follow-up once that alias is bumped to the release that ships this change.
-
-- [ ] 4.1 Add a `containerApiInspectCurrentPlan.ts` example with its `containerApiInspectCurrentPlan.int.spec.ts` in `packages/docs/tools/inversify-code-examples/src/examples/v8/`. The example should show a class with a named dependency, inspect it, and read `root.binding.constructorArguments[0]`. Verify with `pnpm run --filter "@inversifyjs/code-examples" test`.
-- [ ] 4.2 Add an `## inspectCurrentPlan` section and an `## InspectCurrentPlanOptions` section to `packages/docs/services/inversify-site/docs/api/container.mdx`. Embed the example and note the following:
+- [x] 4.1 Add a `containerApiInspectCurrentPlan.ts` example with its `containerApiInspectCurrentPlan.int.spec.ts` in `packages/docs/tools/inversify-code-examples/src/examples/v8/`. The example should show a class with a named dependency, inspect it, and read `root.binding.constructorArguments[0]`. Verify with `pnpm run --filter "@inversifyjs/code-examples" test`.
+- [x] 4.2 Add an `## inspectCurrentPlan` section and an `## InspectCurrentPlanOptions` section to `packages/docs/services/inversify-site/docs/api/container.mdx`. Embed the example and note the following:
   - snapshot semantics;
   - no resolution side effects, but planning side effects (cache, `onPlan`, autobind, `when` predicates);
   - errors equal to `get`/`getAll`;
