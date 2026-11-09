@@ -11,13 +11,13 @@
     "@stryker-mutator/vitest-runner": "10.1.1",
     "@stryker-mutator/typescript-checker": "10.1.1",
     "@types/node": "26.6.6",
-    "@vitest/coverage-v8": "5.0.5",
-    "oxfmt": "0.75.0",
-    "oxlint": "1.90.0",
-    "oxlint-tsgolint": "7.0.2005",
-    "rimraf": "6.1.3",
+    "@vitest/coverage-v8": "5.1.0",
+    "oxfmt": "0.76.0",
+    "oxlint": "1.91.0",
+    "oxlint-tsgolint": "7.0.2006",
+    "rimraf": "6.1.4",
     "typescript": "7.0.2",
-    "vitest": "5.0.5"
+    "vitest": "5.1.0"
   },
   "devEngines": {
     "node": "^26.0.0",
