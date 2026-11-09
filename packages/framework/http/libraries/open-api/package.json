@@ -8,12 +8,12 @@
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/json-schema-pointer": "workspace:*",
     "@inversifyjs/logger": "workspace:*",
-    "@inversifyjs/reflect-metadata-utils": "1.5.0",
+    "@inversifyjs/reflect-metadata-utils": "1.5.1",
     "mime-types": "^3.0.2",
     "swagger-ui-dist": "^5.34.1"
   },
   "devDependencies": {
-    "@hono/node-server": "2.1.5",
+    "@hono/node-server": "2.1.6",
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@inversifyjs/foundation-oxlint-config": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
@@ -28,16 +28,16 @@
     "@types/mime-types": "3.0.1",
     "@types/node": "26.6.6",
     "@types/swagger-ui-dist": "3.30.6",
-    "@vitest/coverage-v8": "5.0.5",
+    "@vitest/coverage-v8": "5.1.0",
     "express": "5.3.0",
     "fastify": "5.12.8",
     "hono": "4.13.17",
-    "oxfmt": "0.75.0",
-    "oxlint": "1.90.0",
-    "oxlint-tsgolint": "7.0.2005",
-    "rimraf": "6.1.3",
+    "oxfmt": "0.76.0",
+    "oxlint": "1.91.0",
+    "oxlint-tsgolint": "7.0.2006",
+    "rimraf": "6.1.4",
     "typescript": "7.0.2",
-    "vitest": "5.0.5"
+    "vitest": "5.1.0"
   },
   "devEngines": {
     "node": "^26.0.0",

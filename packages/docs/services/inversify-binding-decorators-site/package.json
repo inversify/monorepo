@@ -21,9 +21,9 @@
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@inversifyjs/foundation-oxlint-config": "workspace:*",
     "@types/react": "19.3.0",
-    "oxfmt": "0.75.0",
-    "oxlint": "1.90.0",
-    "oxlint-tsgolint": "7.0.2005",
+    "oxfmt": "0.76.0",
+    "oxlint": "1.91.0",
+    "oxlint-tsgolint": "7.0.2006",
     "typescript": "7.0.2"
   },
   "homepage": "https://inversify.io",
