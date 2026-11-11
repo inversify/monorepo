@@ -53,6 +53,24 @@ Creates an Express 5 adapter instance.
 - **`httpAdapterOptions`** (optional): Configuration options for the adapter. See [Options](#options) below.
 - **`customApp`** (optional): A custom Express 5 application instance. If not provided, a default Express application is created.
 
+:::note
+When `customApp` is given, the adapter uses it as it is: `useCookies`, `useJson`, `useText` and `useUrlEncoded` are ignored. Add the middleware you need to your app before calling `build()`.
+:::
+
+`customApp` can also be an application that keeps the Express 5 API, for example [fulmine.js](https://github.com/nigrosimone/fulmine.js), an Express 5 drop-in replacement on uWebSockets.js:
+
+```ts
+import express from 'fulmine.js';
+
+const app = express();
+app.use(express.json());
+
+const adapter = new InversifyExpressHttpAdapter(container, {}, app);
+await adapter.build();
+
+app.listen(3000);
+```
+
 ### Default Options
 
 The adapter uses these defaults if not overridden:
