@@ -53,6 +53,10 @@ Creates an Express 5 adapter instance.
 - **`httpAdapterOptions`** (optional): Configuration options for the adapter. See [Options](#options) below.
 - **`customApp`** (optional): A custom Express 5 application instance. If not provided, a default Express application is created.
 
+:::note
+When `customApp` is given, the adapter uses it as it is: `useCookies`, `useJson`, `useText` and `useUrlEncoded` are ignored. Add the middleware you need to your app before calling `build()`.
+:::
+
 ### Default Options
 
 The adapter uses these defaults if not overridden:
