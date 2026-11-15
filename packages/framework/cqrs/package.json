@@ -1,0 +1,72 @@
+{
+  "author": "Roberto Pintos López",
+  "bugs": {
+    "url": "https://github.com/inversify/monorepo/issues"
+  },
+  "description": "InversifyJs framework CQRS package",
+  "dependencies": {
+    "@inversifyjs/reflect-metadata-utils": "1.5.1"
+  },
+  "devDependencies": {
+    "@inversifyjs/foundation-oxfmt-config": "workspace:*",
+    "@inversifyjs/foundation-oxlint-config": "workspace:*",
+    "@stryker-mutator/core": "10.1.1",
+    "@stryker-mutator/typescript-checker": "10.1.1",
+    "@stryker-mutator/vitest-runner": "10.1.1",
+    "@types/node": "26.6.6",
+    "@vitest/coverage-v8": "5.1.0",
+    "oxfmt": "0.76.0",
+    "oxlint": "1.91.0",
+    "oxlint-tsgolint": "7.0.2006",
+    "reflect-metadata": "0.2.2",
+    "rimraf": "6.1.4",
+    "typescript": "7.0.2",
+    "vitest": "5.1.0"
+  },
+  "devEngines": {
+    "node": "^26.0.0",
+    "pnpm": "^12.0.0"
+  },
+  "homepage": "https://inversify.io",
+  "keywords": [
+    "dependency injection",
+    "dependency inversion",
+    "cqrs",
+    "di",
+    "inversion of control container",
+    "ioc",
+    "javascript",
+    "node",
+    "typescript"
+  ],
+  "license": "MIT",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "name": "@inversifyjs/framework-cqrs",
+  "peerDependencies": {
+    "inversify": "^8.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inversify/monorepo.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:clean": "rimraf lib",
+    "format": "oxfmt --write ./src",
+    "lint": "oxlint ./src",
+    "prebuild": "pnpm run build:clean",
+    "test": "vitest run",
+    "test:integration": "pnpm run test --project Integration",
+    "test:coverage": "pnpm run test:unit --coverage",
+    "test:mutation": "stryker run",
+    "test:uncommitted": "pnpm run test --changed=HEAD",
+    "test:unit": "pnpm run test --project Unit"
+  },
+  "version": "0.0.0",
+  "type": "module"
+}
