@@ -1,3 +1,4 @@
+import { isPromise } from '@inversifyjs/common';
 import {
   type ErrorFilter,
   type Guard,
@@ -138,7 +139,7 @@ export abstract class InversifyGrpcAdapter<
         implementation,
       );
 
-      if (addServiceResult instanceof Promise) {
+      if (isPromise(addServiceResult)) {
         await addServiceResult;
       }
 

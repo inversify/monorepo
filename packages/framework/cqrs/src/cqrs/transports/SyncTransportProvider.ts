@@ -1,3 +1,4 @@
+import { isPromise } from '@inversifyjs/common';
 import { type Container, type ServiceIdentifier } from 'inversify';
 
 import { type CommandHandlerConfig } from '../models/CommandHandlerConfig.js';
@@ -82,7 +83,7 @@ export class SyncTransportProvider implements TransportProvider<undefined> {
   ): Promise<void> {
     const execution: Promise<void> | void = handler.handle(command);
 
-    if (execution instanceof Promise) {
+    if (isPromise(execution)) {
       await execution;
     }
   }

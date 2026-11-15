@@ -1,3 +1,4 @@
+import { isPromise } from '@inversifyjs/common';
 import {
   type Container,
   type Newable,
@@ -97,7 +98,7 @@ export abstract class InversifyServerAdapter<
 
     const bindServicesResult: void | Promise<void> = this._bindServices();
 
-    if (bindServicesResult instanceof Promise) {
+    if (isPromise(bindServicesResult)) {
       await bindServicesResult;
     }
 

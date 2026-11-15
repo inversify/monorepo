@@ -5,6 +5,7 @@
   },
   "description": "InversifyJs framework CQRS package",
   "dependencies": {
+    "@inversifyjs/common": "workspace:*",
     "@inversifyjs/reflect-metadata-utils": "1.5.1"
   },
   "devDependencies": {
