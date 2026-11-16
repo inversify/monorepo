@@ -9,7 +9,7 @@ import { commandMetadataReflectKey } from '../../reflectMetadata/data/commandMet
 import { Command } from '../decorators/Command.js';
 import { CommandHandler } from '../decorators/CommandHandler.js';
 import { type CqrsCommandHandler } from '../models/CqrsCommandHandler.js';
-import { syncTransportIdentifier } from '../transports/SyncTransportProvider.js';
+import { SyncTransportDeclaration } from '../transports/SyncTransportDeclaration.js';
 import { CqrsProvider } from './CqrsProvider.js';
 
 const events: string[] = [];
@@ -38,11 +38,7 @@ class DuplicateReserveStock {
 
 @CommandHandler({
   command: ReserveStock,
-  transports: [
-    {
-      identifier: syncTransportIdentifier,
-    },
-  ],
+  transports: [new SyncTransportDeclaration()],
 })
 class ReserveStockHandler implements CqrsCommandHandler<ReserveStock> {
   public async handle(command: ReserveStock): Promise<void> {
