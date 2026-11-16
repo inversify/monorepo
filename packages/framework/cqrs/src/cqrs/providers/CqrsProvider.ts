@@ -1,13 +1,21 @@
+import { isPromise } from '@inversifyjs/common';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
-import { type Container } from 'inversify';
+import { type Container, type ServiceIdentifier } from 'inversify';
 
 import { commandHandlerMetadataReflectKey } from '../../reflectMetadata/data/commandHandlerMetadataReflectKey.js';
 import { commandMetadataReflectKey } from '../../reflectMetadata/data/commandMetadataReflectKey.js';
+import { queryHandlerMetadataReflectKey } from '../../reflectMetadata/data/queryHandlerMetadataReflectKey.js';
+import { queryMetadataReflectKey } from '../../reflectMetadata/data/queryMetadataReflectKey.js';
 import { type CommandBus } from '../models/CommandBus.js';
 import { type CommandHandlerConfig } from '../models/CommandHandlerConfig.js';
 import { type CommandHandlerMetadata } from '../models/CommandHandlerMetadata.js';
 import { type CommandMetadata } from '../models/CommandMetadata.js';
+import { type CqrsQueryHandler } from '../models/CqrsQueryHandler.js';
+import { type QueryBus } from '../models/QueryBus.js';
+import { type QueryHandlerMetadata } from '../models/QueryHandlerMetadata.js';
+import { type QueryMetadata } from '../models/QueryMetadata.js';
 import { type TransportProvider } from '../models/TransportProvider.js';
+import { QueryHandlerRouter } from '../routers/QueryHandlerRouter.js';
 import {
   SyncTransportProvider,
   syncTransportIdentifier,
@@ -15,12 +23,23 @@ import {
 
 export class CqrsProvider {
   #commandBus: CommandBus | undefined;
+  readonly #commandIdentifierToCommandMap: Map<
+    string | symbol,
+    // oxlint-disable-next-line typescript/no-unsafe-function-type
+    Function
+  >;
+  #queryBus: QueryBus | undefined;
+  readonly #queryHandlerRouter: QueryHandlerRouter;
   // oxlint-disable-next-line typescript/no-explicit-any
   readonly #transportProviders: TransportProvider<any>[];
   #provided: boolean;
 
   // oxlint-disable-next-line typescript/no-explicit-any
   constructor(transportProviders: Iterable<TransportProvider<any>> = []) {
+    this.#commandBus = undefined;
+    this.#commandIdentifierToCommandMap = new Map();
+    this.#queryBus = undefined;
+    this.#queryHandlerRouter = new QueryHandlerRouter();
     this.#provided = false;
 
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -50,6 +69,16 @@ export class CqrsProvider {
     return this.#commandBus;
   }
 
+  public getQueryBus(): QueryBus {
+    if (this.#queryBus === undefined) {
+      throw new Error(
+        'Query bus not initialized. Ensure .provide() has been called first.',
+      );
+    }
+
+    return this.#queryBus;
+  }
+
   public async provide(container: Container): Promise<void> {
     if (this.#provided) {
       throw new Error('Cannot provide CQRS more than once');
@@ -66,7 +95,9 @@ export class CqrsProvider {
       // oxlint-disable-next-line typescript/no-explicit-any
       [TransportProvider<any>, unknown][]
     > = this.#buildCommandToTransportAndParamsMap(this.#transportProviders);
+    this.#registerQueryHandlers();
     this.#commandBus = this.#buildCommandBus(commandToTransportAndParamsMap);
+    this.#queryBus = this.#buildQueryBus(container);
 
     this.#provided = true;
   }
@@ -81,9 +112,9 @@ export class CqrsProvider {
   ): CommandBus {
     return {
       send: async (command) => {
-        const transportAndParams = commandToTransportAndParamsMap.get(
-          command.constructor,
-        );
+        const transportAndParams: // oxlint-disable-next-line typescript/no-explicit-any
+          [TransportProvider<any>, unknown][] | undefined =
+          this.#getTransportAndParams(command, commandToTransportAndParamsMap);
 
         if (transportAndParams === undefined) {
           throw new Error(
@@ -131,6 +162,31 @@ export class CqrsProvider {
     return commandToTransportAndParamsMap;
   }
 
+  #buildQueryBus(container: Container): QueryBus {
+    return {
+      send: async <TResult = unknown>(query: object): Promise<TResult> => {
+        const serviceIdentifier:
+          | ServiceIdentifier<CqrsQueryHandler>
+          | undefined = this.#queryHandlerRouter.route(query);
+
+        if (serviceIdentifier === undefined) {
+          throw new Error(
+            `No handler found for query ${query.constructor.name}`,
+          );
+        }
+
+        const handler: CqrsQueryHandler =
+          await container.getAsync(serviceIdentifier);
+        const execution: unknown = handler.handle(query);
+        const result: unknown = isPromise(execution)
+          ? await execution
+          : execution;
+
+        return result as TResult;
+      },
+    };
+  }
+
   #buildTransportProviderToCommandHandlerConfigMap(): Map<
     string | symbol,
     CommandHandlerConfig[]
@@ -162,9 +218,22 @@ export class CqrsProvider {
           commandMetadataReflectKey,
         );
 
+        const commandIdentifier: string | symbol | undefined =
+          commandMetadata?.identifier;
+
+        if (
+          commandIdentifier !== undefined &&
+          !this.#commandIdentifierToCommandMap.has(commandIdentifier)
+        ) {
+          this.#commandIdentifierToCommandMap.set(
+            commandIdentifier,
+            commandHandlerMetadata.command,
+          );
+        }
+
         commandHandlerConfigs.push({
           command: {
-            identifier: commandMetadata?.identifier,
+            identifier: commandIdentifier,
             type: commandHandlerMetadata.command,
           },
           handler: commandHandlerMetadata.target,
@@ -175,6 +244,71 @@ export class CqrsProvider {
     }
 
     return map;
+  }
+
+  #getTransportAndParams(
+    command: object,
+    commandToTransportAndParamsMap: Map<
+      // oxlint-disable-next-line typescript/no-unsafe-function-type
+      Function,
+      // oxlint-disable-next-line typescript/no-explicit-any
+      [TransportProvider<any>, unknown][]
+    >,
+    // oxlint-disable-next-line typescript/no-explicit-any
+  ): [TransportProvider<any>, unknown][] | undefined {
+    const transportAndParams: // oxlint-disable-next-line typescript/no-explicit-any
+      [TransportProvider<any>, unknown][] | undefined =
+      commandToTransportAndParamsMap.get(command.constructor);
+
+    if (transportAndParams !== undefined) {
+      return transportAndParams;
+    }
+
+    return this.#getTransportAndParamsByCommandIdentifier(
+      command,
+      commandToTransportAndParamsMap,
+    );
+  }
+
+  #getTransportAndParamsByCommandIdentifier(
+    command: object,
+    commandToTransportAndParamsMap: Map<
+      // oxlint-disable-next-line typescript/no-unsafe-function-type
+      Function,
+      // oxlint-disable-next-line typescript/no-explicit-any
+      [TransportProvider<any>, unknown][]
+    >,
+    // oxlint-disable-next-line typescript/no-explicit-any
+  ): [TransportProvider<any>, unknown][] | undefined {
+    const commandIdentifier: string | symbol | undefined =
+      getOwnReflectMetadata<CommandMetadata>(
+        command.constructor,
+        commandMetadataReflectKey,
+      )?.identifier;
+
+    if (commandIdentifier === undefined) {
+      return undefined;
+    }
+
+    // oxlint-disable-next-line typescript/no-unsafe-function-type
+    const mappedCommand: Function | undefined =
+      this.#commandIdentifierToCommandMap.get(commandIdentifier);
+
+    if (mappedCommand === undefined) {
+      return undefined;
+    }
+
+    const transportAndParams: // oxlint-disable-next-line typescript/no-explicit-any
+      [TransportProvider<any>, unknown][] | undefined =
+      commandToTransportAndParamsMap.get(mappedCommand);
+
+    if (transportAndParams === undefined) {
+      return undefined;
+    }
+
+    commandToTransportAndParamsMap.set(command.constructor, transportAndParams);
+
+    return transportAndParams;
   }
 
   async #configureTransportProviders(
@@ -198,5 +332,35 @@ export class CqrsProvider {
         },
       ),
     );
+  }
+
+  #registerQueryHandlers(): void {
+    const queryHandlerMetadataList: QueryHandlerMetadata[] | undefined =
+      getOwnReflectMetadata<QueryHandlerMetadata[]>(
+        Reflect,
+        queryHandlerMetadataReflectKey,
+      );
+
+    if (queryHandlerMetadataList === undefined) {
+      return;
+    }
+
+    for (const queryHandlerMetadata of queryHandlerMetadataList) {
+      const queryMetadata: QueryMetadata | undefined =
+        getOwnReflectMetadata<QueryMetadata>(
+          queryHandlerMetadata.query,
+          queryMetadataReflectKey,
+        );
+
+      const serviceIdentifier: ServiceIdentifier<CqrsQueryHandler> =
+        (queryHandlerMetadata.serviceIdentifier ??
+          queryHandlerMetadata.target) as ServiceIdentifier<CqrsQueryHandler>;
+
+      this.#queryHandlerRouter.register({
+        identifier: queryMetadata?.identifier,
+        serviceIdentifier,
+        type: queryHandlerMetadata.query,
+      });
+    }
   }
 }

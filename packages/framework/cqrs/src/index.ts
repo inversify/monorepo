@@ -1,15 +1,18 @@
 export { Command } from './cqrs/decorators/Command.js';
 export { CommandHandler } from './cqrs/decorators/CommandHandler.js';
+export { Query } from './cqrs/decorators/Query.js';
+export { QueryHandler } from './cqrs/decorators/QueryHandler.js';
 export { CqrsProvider } from './cqrs/providers/CqrsProvider.js';
 export { type CommandBus } from './cqrs/models/CommandBus.js';
 export { type CqrsCommandHandler } from './cqrs/models/CqrsCommandHandler.js';
 export { type CommandHandlerConfig } from './cqrs/models/CommandHandlerConfig.js';
 export { type CommandHandlerMetadata } from './cqrs/models/CommandHandlerMetadata.js';
 export { type CommandHandlerOptions } from './cqrs/models/CommandHandlerOptions.js';
-export {
-  SyncTransportProvider,
-  syncTransportIdentifier,
-} from './cqrs/transports/SyncTransportProvider.js';
+export { type QueryBus } from './cqrs/models/QueryBus.js';
+export { type CqrsQueryHandler } from './cqrs/models/CqrsQueryHandler.js';
+export { type QueryHandlerMetadata } from './cqrs/models/QueryHandlerMetadata.js';
+export { type QueryHandlerOptions } from './cqrs/models/QueryHandlerOptions.js';
+export { SyncTransportDeclaration } from './cqrs/transports/SyncTransportDeclaration.js';
 export { type TransportDeclaration } from './cqrs/models/TransportDeclaration.js';
 export { type TransportProvider } from './cqrs/models/TransportProvider.js';
 export { type TransportProviderConfig } from './cqrs/models/TransportProviderConfig.js';
