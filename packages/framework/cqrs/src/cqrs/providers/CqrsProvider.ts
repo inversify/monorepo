@@ -1,20 +1,29 @@
 import { isPromise } from '@inversifyjs/common';
+import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { type Container, type ServiceIdentifier } from 'inversify';
 
 import { commandHandlerMetadataReflectKey } from '../../reflectMetadata/data/commandHandlerMetadataReflectKey.js';
 import { commandMetadataReflectKey } from '../../reflectMetadata/data/commandMetadataReflectKey.js';
+import { eventHandlerMetadataReflectKey } from '../../reflectMetadata/data/eventHandlerMetadataReflectKey.js';
+import { eventMetadataReflectKey } from '../../reflectMetadata/data/eventMetadataReflectKey.js';
 import { queryHandlerMetadataReflectKey } from '../../reflectMetadata/data/queryHandlerMetadataReflectKey.js';
 import { queryMetadataReflectKey } from '../../reflectMetadata/data/queryMetadataReflectKey.js';
 import { type CommandBus } from '../models/CommandBus.js';
 import { type CommandHandlerConfig } from '../models/CommandHandlerConfig.js';
 import { type CommandHandlerMetadata } from '../models/CommandHandlerMetadata.js';
 import { type CommandMetadata } from '../models/CommandMetadata.js';
+import { type CqrsEventHandler } from '../models/CqrsEventHandler.js';
+import { type CqrsProviderOptions } from '../models/CqrsProviderOptions.js';
 import { type CqrsQueryHandler } from '../models/CqrsQueryHandler.js';
+import { type EventBus } from '../models/EventBus.js';
+import { type EventHandlerMetadata } from '../models/EventHandlerMetadata.js';
+import { type EventMetadata } from '../models/EventMetadata.js';
 import { type QueryBus } from '../models/QueryBus.js';
 import { type QueryHandlerMetadata } from '../models/QueryHandlerMetadata.js';
 import { type QueryMetadata } from '../models/QueryMetadata.js';
 import { type TransportProvider } from '../models/TransportProvider.js';
+import { EventHandlerRouter } from '../routers/EventHandlerRouter.js';
 import { QueryHandlerRouter } from '../routers/QueryHandlerRouter.js';
 import {
   SyncTransportProvider,
@@ -28,16 +37,25 @@ export class CqrsProvider {
     // oxlint-disable-next-line typescript/no-unsafe-function-type
     Function
   >;
+  #eventBus: EventBus | undefined;
+  readonly #eventHandlerRouter: EventHandlerRouter;
+  readonly #logger: Logger | undefined;
   #queryBus: QueryBus | undefined;
   readonly #queryHandlerRouter: QueryHandlerRouter;
   // oxlint-disable-next-line typescript/no-explicit-any
   readonly #transportProviders: TransportProvider<any>[];
   #provided: boolean;
 
-  // oxlint-disable-next-line typescript/no-explicit-any
-  constructor(transportProviders: Iterable<TransportProvider<any>> = []) {
+  constructor(
+    // oxlint-disable-next-line typescript/no-explicit-any
+    transportProviders: Iterable<TransportProvider<any>> = [],
+    options: CqrsProviderOptions = {},
+  ) {
     this.#commandBus = undefined;
     this.#commandIdentifierToCommandMap = new Map();
+    this.#eventBus = undefined;
+    this.#eventHandlerRouter = new EventHandlerRouter();
+    this.#logger = this.#buildLogger(options);
     this.#queryBus = undefined;
     this.#queryHandlerRouter = new QueryHandlerRouter();
     this.#provided = false;
@@ -69,6 +87,16 @@ export class CqrsProvider {
     return this.#commandBus;
   }
 
+  public getEventBus(): EventBus {
+    if (this.#eventBus === undefined) {
+      throw new Error(
+        'Event bus not initialized. Ensure .provide() has been called first.',
+      );
+    }
+
+    return this.#eventBus;
+  }
+
   public getQueryBus(): QueryBus {
     if (this.#queryBus === undefined) {
       throw new Error(
@@ -96,7 +124,9 @@ export class CqrsProvider {
       [TransportProvider<any>, unknown][]
     > = this.#buildCommandToTransportAndParamsMap(this.#transportProviders);
     this.#registerQueryHandlers();
+    this.#registerEventHandlers();
     this.#commandBus = this.#buildCommandBus(commandToTransportAndParamsMap);
+    this.#eventBus = this.#buildEventBus(container);
     this.#queryBus = this.#buildQueryBus(container);
 
     this.#provided = true;
@@ -160,6 +190,42 @@ export class CqrsProvider {
     }
 
     return commandToTransportAndParamsMap;
+  }
+
+  #buildEventBus(container: Container): EventBus {
+    return {
+      send: (event: object): void => {
+        const serviceIdentifierList:
+          | ServiceIdentifier<CqrsEventHandler>[]
+          | undefined = this.#eventHandlerRouter.route(event);
+
+        if (serviceIdentifierList === undefined) {
+          throw new Error(
+            `No handler found for event ${event.constructor.name}`,
+          );
+        }
+
+        for (const serviceIdentifier of serviceIdentifierList) {
+          // send() returns before handlers finish. A failure is logged so
+          // it cannot escape send() or cancel the other handlers.
+          this.#runEventHandler(container, serviceIdentifier, event).catch(
+            (error: unknown) => {
+              this.#reportEventHandlerFailure(event, error);
+            },
+          );
+        }
+      },
+    };
+  }
+
+  #buildLogger(options: CqrsProviderOptions): Logger | undefined {
+    const loggerOption: boolean | Logger = options.logger ?? true;
+
+    if (typeof loggerOption === 'boolean') {
+      return loggerOption ? new ConsoleLogger() : undefined;
+    }
+
+    return loggerOption;
   }
 
   #buildQueryBus(container: Container): QueryBus {
@@ -332,6 +398,94 @@ export class CqrsProvider {
         },
       ),
     );
+  }
+
+  #registerEventHandlers(): void {
+    const eventHandlerMetadataList: EventHandlerMetadata[] | undefined =
+      getOwnReflectMetadata<EventHandlerMetadata[]>(
+        Reflect,
+        eventHandlerMetadataReflectKey,
+      );
+
+    if (eventHandlerMetadataList === undefined) {
+      return;
+    }
+
+    for (const eventHandlerMetadata of eventHandlerMetadataList) {
+      const eventMetadata: EventMetadata | undefined =
+        getOwnReflectMetadata<EventMetadata>(
+          eventHandlerMetadata.event,
+          eventMetadataReflectKey,
+        );
+
+      const serviceIdentifier: ServiceIdentifier<CqrsEventHandler> =
+        (eventHandlerMetadata.serviceIdentifier ??
+          eventHandlerMetadata.target) as ServiceIdentifier<CqrsEventHandler>;
+
+      this.#eventHandlerRouter.register({
+        identifier: eventMetadata?.identifier,
+        serviceIdentifier,
+        type: eventHandlerMetadata.event,
+      });
+    }
+  }
+
+  #describeEventHandlerFailure(error: unknown): string {
+    if (error instanceof Error) {
+      return error.stack ?? error.message;
+    }
+
+    if (typeof error === 'string') {
+      return error;
+    }
+
+    if (
+      typeof error === 'number' ||
+      typeof error === 'boolean' ||
+      typeof error === 'bigint' ||
+      typeof error === 'symbol' ||
+      typeof error === 'function'
+    ) {
+      return error.toString();
+    }
+
+    if (error === undefined) {
+      return 'undefined';
+    }
+
+    if (error === null) {
+      return 'null';
+    }
+
+    try {
+      return JSON.stringify(error);
+    } catch (_serializationError: unknown) {
+      return Object.prototype.toString.call(error);
+    }
+  }
+
+  #reportEventHandlerFailure(event: object, error: unknown): void {
+    if (this.#logger === undefined) {
+      return;
+    }
+
+    this.#logger.error(
+      `Event handler failed for ${event.constructor.name}: ${this.#describeEventHandlerFailure(error)}`,
+    );
+  }
+
+  async #runEventHandler(
+    container: Container,
+    serviceIdentifier: ServiceIdentifier<CqrsEventHandler>,
+    event: object,
+  ): Promise<void> {
+    const handler: CqrsEventHandler =
+      await container.getAsync(serviceIdentifier);
+    const execution: Promise<void> | void = handler.handle(event);
+
+    if (isPromise(execution)) {
+      await execution;
+    }
   }
 
   #registerQueryHandlers(): void {
