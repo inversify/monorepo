@@ -22,7 +22,7 @@
     "oxlint": "1.93.0",
     "oxlint-tsgolint": "7.0.2007",
     "rimraf": "6.1.4",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "vitest": "5.1.0"
   },
   "homepage": "https://inversify.io",
