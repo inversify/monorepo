@@ -6,7 +6,7 @@
   "description": "InversifyJs http E2E tests package",
   "dependencies": {
     "@cucumber/cucumber": "13.3.0",
-    "@hono/node-server": "2.1.6",
+    "@hono/node-server": "2.1.8",
     "@inversifyjs/http-core": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
     "@inversifyjs/http-fastify": "workspace:*",
@@ -14,18 +14,18 @@
     "@inversifyjs/http-uwebsockets": "workspace:*",
     "express": "^5.3.0",
     "fastify": "^5.12.8",
-    "hono": "^4.13.16",
+    "hono": "^4.13.18",
     "inversify": "8.3.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.70.0"
   },
   "devDependencies": {
-    "@fastify/multipart": "10.1.7",
+    "@fastify/multipart": "10.1.8",
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@inversifyjs/foundation-oxlint-config": "workspace:*",
     "@types/express": "5.0.6",
-    "oxfmt": "0.76.0",
-    "oxlint": "1.91.0",
-    "oxlint-tsgolint": "7.0.2006",
+    "oxfmt": "0.78.0",
+    "oxlint": "1.93.0",
+    "oxlint-tsgolint": "7.0.2007",
     "rimraf": "6.1.4",
     "typescript": "7.0.2"
   },

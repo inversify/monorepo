@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
-    "oxfmt": "0.76.0"
+    "oxfmt": "0.78.0"
   },
   "exports": "./lib/index.js",
   "homepage": "https://github.com/inversify/monorepo#readme",
