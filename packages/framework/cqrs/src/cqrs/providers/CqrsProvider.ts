@@ -19,13 +19,14 @@ export class CqrsProvider {
     string | symbol,
     // oxlint-disable-next-line typescript/no-unsafe-function-type
     Function
-  > = new Map();
+  >;
   // oxlint-disable-next-line typescript/no-explicit-any
   readonly #transportProviders: TransportProvider<any>[];
   #provided: boolean;
 
   // oxlint-disable-next-line typescript/no-explicit-any
   constructor(transportProviders: Iterable<TransportProvider<any>> = []) {
+    this.#commandIdentifierToCommandMap = new Map();
     this.#provided = false;
 
     // oxlint-disable-next-line typescript/no-explicit-any
