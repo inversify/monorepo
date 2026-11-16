@@ -7,11 +7,7 @@ const defaultWorkspaceProjectConfig: WorkspaceProjectConfig & {
 } = {
   entry: ["**/?(*.)+(spec|spec-d).[jt]s?(x)"],
   ignoreDependencies: [],
-  project: [
-    "**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}!",
-    "!vitest.config.stryker.mjs",
-    "!**/__mocks__",
-  ],
+  project: ["**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}!", "!vitest.config.stryker.mjs", "!**/__mocks__"],
   rollup: {
     entry: "*rollup.config.mjs",
   },
@@ -84,19 +80,13 @@ export default {
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-graphql-code-examples": {
-      entry: [
-        "src/examples/**/*.{mts,ts}",
-        "src/scripts/generateExamples/index.ts",
-      ],
+      entry: ["src/examples/**/*.{mts,ts}", "src/scripts/generateExamples/index.ts"],
       ignoreDependencies: defaultWorkspaceProjectConfig.ignoreDependencies,
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-grpc-code-examples": {
       entry: ["src/examples/**/*.ts", "src/scripts/generateExamples/index.ts"],
-      ignoreDependencies: [
-        ...defaultWorkspaceProjectConfig.ignoreDependencies,
-        "ts-proto",
-      ],
+      ignoreDependencies: [...defaultWorkspaceProjectConfig.ignoreDependencies, "ts-proto"],
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/docs/tools/inversify-http-code-examples": {
@@ -168,10 +158,7 @@ export default {
         "src/app/setup/*.ts",
         "src/hero/generated/hero.ts",
       ],
-      ignoreDependencies: [
-        ...defaultWorkspaceProjectConfig.ignoreDependencies,
-        "ts-proto",
-      ],
+      ignoreDependencies: [...defaultWorkspaceProjectConfig.ignoreDependencies, "ts-proto"],
       project: [...defaultWorkspaceProjectConfig.project, "!config/*"],
     },
     "packages/framework/http/libraries/*": defaultWorkspaceProjectConfig,
@@ -182,7 +169,7 @@ export default {
         "evals/add-resource/providers/*.mjs",
         "src/cli/runCreateHttp.entrypoint.ts",
       ],
-      ignoreDependencies: ["@openai/codex-sdk", "@opencode-ai/sdk"],
+      ignoreDependencies: ["@opencode-ai/sdk"],
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/framework/http/tools/e2e-tests": {
@@ -202,12 +189,7 @@ export default {
         "src/k6/scenario/*.ts",
         "src/scenario-setups/*/*.ts",
       ],
-      ignoreDependencies: [
-        ...defaultWorkspaceProjectConfig.ignoreDependencies,
-        "k6",
-        "ts-loader",
-        "tslib",
-      ],
+      ignoreDependencies: [...defaultWorkspaceProjectConfig.ignoreDependencies, "k6"],
       project: defaultWorkspaceProjectConfig.project,
     },
     "packages/framework/http/tools/http-insights": {

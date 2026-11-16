@@ -38,6 +38,9 @@ coverage:
       '@inversifyjs/framework-core':
         flags:
           - '@inversifyjs/framework-core'
+      '@inversifyjs/framework-cqrs':
+        flags:
+          - '@inversifyjs/framework-cqrs'
       '@inversifyjs/grpc-core':
         flags:
           - '@inversifyjs/grpc-core'
@@ -150,6 +153,9 @@ flags:
   '@inversifyjs/framework-core':
     paths:
       - packages/framework/core
+  '@inversifyjs/framework-cqrs':
+    paths:
+      - packages/framework/cqrs
   '@inversifyjs/grpc-core':
     paths:
       - packages/framework/grpc/libraries/core
