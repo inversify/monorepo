@@ -25,6 +25,17 @@ class ReserveStock {
   }
 }
 
+@Command({
+  identifier: 'stock.reserve',
+})
+class DuplicateReserveStock {
+  public readonly sku: string;
+
+  constructor(sku: string) {
+    this.sku = sku;
+  }
+}
+
 @CommandHandler({
   command: ReserveStock,
   transports: [
@@ -47,6 +58,7 @@ describe(CqrsProvider, () => {
   afterAll(() => {
     Reflect.deleteMetadata(commandHandlerMetadataReflectKey, Reflect);
     Reflect.deleteMetadata(commandMetadataReflectKey, ReserveStock);
+    Reflect.deleteMetadata(commandMetadataReflectKey, DuplicateReserveStock);
   });
 
   describe('.getCommandBus', () => {
@@ -68,11 +80,27 @@ describe(CqrsProvider, () => {
 
         describe('when called', () => {
           beforeAll(async () => {
+            events.length = 0;
+
             await provider.getCommandBus().send(new ReserveStock('sku-1'));
           });
 
           it('should await the handler', () => {
             expect(events).toStrictEqual(['start:sku-1', 'end:sku-1']);
+          });
+        });
+
+        describe('when called, and the command class is different and has the same identifier', () => {
+          beforeAll(async () => {
+            events.length = 0;
+
+            await provider
+              .getCommandBus()
+              .send(new DuplicateReserveStock('sku-2'));
+          });
+
+          it('should await the handler', () => {
+            expect(events).toStrictEqual(['start:sku-2', 'end:sku-2']);
           });
         });
       });

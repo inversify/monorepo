@@ -1,7 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import 'reflect-metadata/lite';
+
 import { Container, type ServiceIdentifier } from 'inversify';
 
+import { Command } from '../decorators/Command.js';
 import { type CommandHandlerConfig } from '../models/CommandHandlerConfig.js';
 import { type CqrsCommandHandler } from '../models/CqrsCommandHandler.js';
 import {
@@ -313,6 +316,93 @@ describe(SyncTransportProvider, () => {
       });
     });
 
+    describe('having handlers registered for a command identifier', () => {
+      describe('when called, and the command type is not registered and has that identifier', () => {
+        let commandFixture: object;
+        let eventsFixture: string[];
+        let executedCommandFixture: object | undefined;
+        let transportProvider: SyncTransportProvider;
+
+        beforeAll(async () => {
+          eventsFixture = [];
+          executedCommandFixture = undefined;
+
+          @Command({
+            identifier: 'stock.reserve',
+          })
+          class PhantomReserveStock {
+            public readonly sku: string;
+
+            constructor(sku: string) {
+              this.sku = sku;
+            }
+          }
+
+          class FirstHandler implements CqrsCommandHandler {
+            public handle(command: object): void {
+              executedCommandFixture = command;
+              eventsFixture.push('first');
+            }
+          }
+
+          class SecondHandler implements CqrsCommandHandler {
+            public handle(): void {
+              eventsFixture.push('second');
+            }
+          }
+
+          commandFixture = new PhantomReserveStock('sku-phantom');
+
+          const container: Container = new Container();
+
+          container.bind(FirstHandler).toConstantValue(new FirstHandler());
+          container.bind(SecondHandler).toConstantValue(new SecondHandler());
+
+          transportProvider = new SyncTransportProvider();
+
+          await transportProvider.initialize(container, [
+            buildCommandHandlerConfig({
+              commandIdentifier: 'stock.reserve',
+              commandType: ReserveStock,
+              handler: FirstHandler,
+              serviceIdentifier: undefined,
+            }),
+            buildCommandHandlerConfig({
+              commandIdentifier: 'stock.reserve',
+              commandType: ReserveStock,
+              handler: SecondHandler,
+              serviceIdentifier: undefined,
+            }),
+          ]);
+          await transportProvider.send(commandFixture, undefined);
+          await transportProvider.send(commandFixture, undefined);
+        });
+
+        it('should await each registered handler with the command', () => {
+          expect(eventsFixture).toStrictEqual([
+            'first',
+            'second',
+            'first',
+            'second',
+          ]);
+          expect(executedCommandFixture).toBe(commandFixture);
+        });
+
+        it('should map the command type to the registered handler list', () => {
+          expect(Array.from(transportProvider.getConfigList())).toStrictEqual([
+            {
+              params: undefined,
+              type: ReserveStock,
+            },
+            {
+              params: undefined,
+              type: commandFixture.constructor,
+            },
+          ]);
+        });
+      });
+    });
+
     describe('having a handler that returns a promise', () => {
       let eventsFixture: string[];
 
@@ -511,6 +601,51 @@ describe(SyncTransportProvider, () => {
         expect((errorFixture as Error).message).toBe(
           'No handler found for command ReserveStock',
         );
+      });
+    });
+
+    describe('when called, and the command identifier is not mapped', () => {
+      let errorFixture: unknown;
+      let transportProvider: SyncTransportProvider;
+
+      beforeAll(async () => {
+        @Command({
+          identifier: 'stock.reserve',
+        })
+        class UnmappedReserveStock {}
+
+        transportProvider = new SyncTransportProvider();
+
+        await transportProvider.initialize(new Container(), [
+          buildCommandHandlerConfig({
+            commandIdentifier: 'stock.release',
+            commandType: ReleaseStock,
+            handler: ReserveStockHandler,
+            serviceIdentifier: undefined,
+          }),
+        ]);
+
+        try {
+          await transportProvider.send(new UnmappedReserveStock(), undefined);
+        } catch (error: unknown) {
+          errorFixture = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        expect(errorFixture).toBeInstanceOf(Error);
+        expect((errorFixture as Error).message).toBe(
+          'No handler found for command UnmappedReserveStock',
+        );
+      });
+
+      it('should keep the registered command list', () => {
+        expect(Array.from(transportProvider.getConfigList())).toStrictEqual([
+          {
+            params: undefined,
+            type: ReleaseStock,
+          },
+        ]);
       });
     });
 

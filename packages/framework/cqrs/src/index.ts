@@ -6,10 +6,6 @@ export { type CqrsCommandHandler } from './cqrs/models/CqrsCommandHandler.js';
 export { type CommandHandlerConfig } from './cqrs/models/CommandHandlerConfig.js';
 export { type CommandHandlerMetadata } from './cqrs/models/CommandHandlerMetadata.js';
 export { type CommandHandlerOptions } from './cqrs/models/CommandHandlerOptions.js';
-export {
-  SyncTransportProvider,
-  syncTransportIdentifier,
-} from './cqrs/transports/SyncTransportProvider.js';
 export { type TransportDeclaration } from './cqrs/models/TransportDeclaration.js';
 export { type TransportProvider } from './cqrs/models/TransportProvider.js';
 export { type TransportProviderConfig } from './cqrs/models/TransportProviderConfig.js';

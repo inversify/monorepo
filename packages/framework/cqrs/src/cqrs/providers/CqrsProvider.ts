@@ -15,6 +15,11 @@ import {
 
 export class CqrsProvider {
   #commandBus: CommandBus | undefined;
+  readonly #commandIdentifierToCommandMap: Map<
+    string | symbol,
+    // oxlint-disable-next-line typescript/no-unsafe-function-type
+    Function
+  > = new Map();
   // oxlint-disable-next-line typescript/no-explicit-any
   readonly #transportProviders: TransportProvider<any>[];
   #provided: boolean;
@@ -81,9 +86,9 @@ export class CqrsProvider {
   ): CommandBus {
     return {
       send: async (command) => {
-        const transportAndParams = commandToTransportAndParamsMap.get(
-          command.constructor,
-        );
+        const transportAndParams: // oxlint-disable-next-line typescript/no-explicit-any
+          [TransportProvider<any>, unknown][] | undefined =
+          this.#getTransportAndParams(command, commandToTransportAndParamsMap);
 
         if (transportAndParams === undefined) {
           throw new Error(
@@ -162,9 +167,22 @@ export class CqrsProvider {
           commandMetadataReflectKey,
         );
 
+        const commandIdentifier: string | symbol | undefined =
+          commandMetadata?.identifier;
+
+        if (
+          commandIdentifier !== undefined &&
+          !this.#commandIdentifierToCommandMap.has(commandIdentifier)
+        ) {
+          this.#commandIdentifierToCommandMap.set(
+            commandIdentifier,
+            commandHandlerMetadata.command,
+          );
+        }
+
         commandHandlerConfigs.push({
           command: {
-            identifier: commandMetadata?.identifier,
+            identifier: commandIdentifier,
             type: commandHandlerMetadata.command,
           },
           handler: commandHandlerMetadata.target,
@@ -175,6 +193,71 @@ export class CqrsProvider {
     }
 
     return map;
+  }
+
+  #getTransportAndParams(
+    command: object,
+    commandToTransportAndParamsMap: Map<
+      // oxlint-disable-next-line typescript/no-unsafe-function-type
+      Function,
+      // oxlint-disable-next-line typescript/no-explicit-any
+      [TransportProvider<any>, unknown][]
+    >,
+    // oxlint-disable-next-line typescript/no-explicit-any
+  ): [TransportProvider<any>, unknown][] | undefined {
+    const transportAndParams: // oxlint-disable-next-line typescript/no-explicit-any
+      [TransportProvider<any>, unknown][] | undefined =
+      commandToTransportAndParamsMap.get(command.constructor);
+
+    if (transportAndParams !== undefined) {
+      return transportAndParams;
+    }
+
+    return this.#getTransportAndParamsByCommandIdentifier(
+      command,
+      commandToTransportAndParamsMap,
+    );
+  }
+
+  #getTransportAndParamsByCommandIdentifier(
+    command: object,
+    commandToTransportAndParamsMap: Map<
+      // oxlint-disable-next-line typescript/no-unsafe-function-type
+      Function,
+      // oxlint-disable-next-line typescript/no-explicit-any
+      [TransportProvider<any>, unknown][]
+    >,
+    // oxlint-disable-next-line typescript/no-explicit-any
+  ): [TransportProvider<any>, unknown][] | undefined {
+    const commandIdentifier: string | symbol | undefined =
+      getOwnReflectMetadata<CommandMetadata>(
+        command.constructor,
+        commandMetadataReflectKey,
+      )?.identifier;
+
+    if (commandIdentifier === undefined) {
+      return undefined;
+    }
+
+    // oxlint-disable-next-line typescript/no-unsafe-function-type
+    const mappedCommand: Function | undefined =
+      this.#commandIdentifierToCommandMap.get(commandIdentifier);
+
+    if (mappedCommand === undefined) {
+      return undefined;
+    }
+
+    const transportAndParams: // oxlint-disable-next-line typescript/no-explicit-any
+      [TransportProvider<any>, unknown][] | undefined =
+      commandToTransportAndParamsMap.get(mappedCommand);
+
+    if (transportAndParams === undefined) {
+      return undefined;
+    }
+
+    commandToTransportAndParamsMap.set(command.constructor, transportAndParams);
+
+    return transportAndParams;
   }
 
   async #configureTransportProviders(
