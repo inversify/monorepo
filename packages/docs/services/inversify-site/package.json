@@ -33,9 +33,9 @@
     "@types/babel__standalone": "7.1.9",
     "@types/react": "19.3.0",
     "monaco-editor-webpack-plugin": "7.1.1",
-    "oxfmt": "0.76.0",
-    "oxlint": "1.91.0",
-    "oxlint-tsgolint": "7.0.2006",
+    "oxfmt": "0.78.0",
+    "oxlint": "1.93.0",
+    "oxlint-tsgolint": "7.0.2007",
     "typescript": "7.0.2"
   },
   "homepage": "https://inversify.io",

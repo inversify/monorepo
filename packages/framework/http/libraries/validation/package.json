@@ -17,9 +17,9 @@
     "@stryker-mutator/vitest-runner": "10.1.1",
     "@types/node": "26.6.6",
     "@vitest/coverage-v8": "5.1.0",
-    "oxfmt": "0.76.0",
-    "oxlint": "1.91.0",
-    "oxlint-tsgolint": "7.0.2006",
+    "oxfmt": "0.78.0",
+    "oxlint": "1.93.0",
+    "oxlint-tsgolint": "7.0.2007",
     "rimraf": "6.1.4",
     "typescript": "7.0.2",
     "vitest": "5.1.0"

@@ -9,7 +9,7 @@
     "statuses": "^2.0.2"
   },
   "devDependencies": {
-    "@hono/node-server": "2.1.6",
+    "@hono/node-server": "2.1.8",
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@inversifyjs/foundation-oxlint-config": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
@@ -24,12 +24,12 @@
     "@types/node": "26.6.6",
     "@types/statuses": "2.0.6",
     "@vitest/coverage-v8": "5.1.0",
-    "better-sqlite3": "^13.0.3",
+    "better-sqlite3": "^13.1.1",
     "fastify": "5.12.8",
     "hono": "4.13.18",
-    "oxfmt": "0.76.0",
-    "oxlint": "1.91.0",
-    "oxlint-tsgolint": "7.0.2006",
+    "oxfmt": "0.78.0",
+    "oxlint": "1.93.0",
+    "oxlint-tsgolint": "7.0.2007",
     "rimraf": "6.1.4",
     "typescript": "7.0.2",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.70.0",
@@ -56,7 +56,7 @@
   },
   "name": "@inversifyjs/http-better-auth",
   "peerDependencies": {
-    "better-auth": "^1.7.18",
+    "better-auth": "^1.7.22",
     "inversify": "^8.3.0"
   },
   "publishConfig": {

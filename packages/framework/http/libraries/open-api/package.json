@@ -13,7 +13,7 @@
     "swagger-ui-dist": "^5.34.1"
   },
   "devDependencies": {
-    "@hono/node-server": "2.1.6",
+    "@hono/node-server": "2.1.8",
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@inversifyjs/foundation-oxlint-config": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
@@ -32,9 +32,9 @@
     "express": "5.3.0",
     "fastify": "5.12.8",
     "hono": "4.13.18",
-    "oxfmt": "0.76.0",
-    "oxlint": "1.91.0",
-    "oxlint-tsgolint": "7.0.2006",
+    "oxfmt": "0.78.0",
+    "oxlint": "1.93.0",
+    "oxlint-tsgolint": "7.0.2007",
     "rimraf": "6.1.4",
     "typescript": "7.0.2",
     "vitest": "5.1.0"

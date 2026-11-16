@@ -50,7 +50,7 @@ minimumReleaseAgeExclude:
 overrides:
   # @prisma/adapter-better-sqlite3 depends on better-sqlite3 12, which builds an
   # ABI-specific addon. 13 ships a Node-API prebuild and is what this repo uses.
-  better-sqlite3: 13.0.3
+  better-sqlite3: 13.1.1
   postcss: 8.5.32
   react: 19.3.1
   react-dom: 19.3.1
