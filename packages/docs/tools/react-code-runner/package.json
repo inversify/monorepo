@@ -26,7 +26,7 @@
     "oxlint": "1.93.0",
     "oxlint-tsgolint": "7.0.2007",
     "rimraf": "6.1.4",
-    "rollup": "4.68.2",
+    "rollup": "4.68.3",
     "ts-loader": "9.6.2",
     "tslib": "2.9.1",
     "typescript": "6.0.3",
