@@ -22,7 +22,7 @@
     "oxlint": "1.93.0",
     "oxlint-tsgolint": "7.0.2007",
     "rimraf": "6.1.4",
-    "ts-proto": "2.19.0",
+    "ts-proto": "2.20.0",
     "typescript": "7.0.2"
   },
   "homepage": "https://inversify.io",
