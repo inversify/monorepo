@@ -5,20 +5,25 @@ import {
   expect,
   it,
   type Mocked,
+  type MockInstance,
   vitest,
 } from 'vitest';
 
 vitest.mock(import('@inversifyjs/reflect-metadata-utils'));
 
+import { ConsoleLogger, type Logger } from '@inversifyjs/logger';
 import { getOwnReflectMetadata } from '@inversifyjs/reflect-metadata-utils';
 import { Container, type ServiceIdentifier } from 'inversify';
 
 import { commandHandlerMetadataReflectKey } from '../../reflectMetadata/data/commandHandlerMetadataReflectKey.js';
 import { commandMetadataReflectKey } from '../../reflectMetadata/data/commandMetadataReflectKey.js';
+import { eventHandlerMetadataReflectKey } from '../../reflectMetadata/data/eventHandlerMetadataReflectKey.js';
+import { eventMetadataReflectKey } from '../../reflectMetadata/data/eventMetadataReflectKey.js';
 import { queryHandlerMetadataReflectKey } from '../../reflectMetadata/data/queryHandlerMetadataReflectKey.js';
 import { queryMetadataReflectKey } from '../../reflectMetadata/data/queryMetadataReflectKey.js';
 import { type CommandHandlerMetadata } from '../models/CommandHandlerMetadata.js';
 import { type CommandMetadata } from '../models/CommandMetadata.js';
+import { type EventHandlerMetadata } from '../models/EventHandlerMetadata.js';
 import { type QueryHandlerMetadata } from '../models/QueryHandlerMetadata.js';
 import { type TransportProvider } from '../models/TransportProvider.js';
 import { SyncTransportProvider } from '../transports/SyncTransportProvider.js';
@@ -58,6 +63,78 @@ class AsyncGetStockHandler {
 
 class GetStockAuditHandler {}
 
+class StockReserved {
+  public readonly sku: string;
+
+  constructor(sku: string) {
+    this.sku = sku;
+  }
+}
+
+class StockReservedHandler {
+  public handle(event: StockReserved): void {
+    handledSkus.push(`reserved:${event.sku}`);
+  }
+}
+
+class StockReservedAuditHandler {
+  public handle(event: StockReserved): void {
+    handledSkus.push(`audit:${event.sku}`);
+  }
+}
+
+class RejectingStockReservedHandler {
+  public async handle(): Promise<void> {
+    throw eventHandlerFailure.error;
+  }
+}
+
+class ThrowingStockReservedHandler {
+  public handle(): void {
+    throw eventHandlerFailure.error;
+  }
+}
+
+class ThrowingUnknownStockReservedHandler {
+  public handle(): void {
+    // oxlint-disable-next-line typescript/only-throw-error -- the failure value is intentionally not an Error
+    throw unknownEventHandlerFailure.cause;
+  }
+}
+
+class AsyncStockReservedHandler {
+  public async handle(event: StockReserved): Promise<void> {
+    handledSkus.push(`start:${event.sku}`);
+
+    await asyncStockReserved.gate;
+
+    handledSkus.push(`end:${event.sku}`);
+  }
+}
+
+const handledSkus: string[] = [];
+
+const eventHandlerFailure: { error: Error } = {
+  error: new Error('projection failed'),
+};
+
+const unknownEventHandlerFailure: { cause: unknown } = {
+  cause: 'audit log failed',
+};
+
+const asyncStockReserved: {
+  gate: Promise<void>;
+  release: () => void;
+} = {
+  gate: Promise.resolve(),
+  release: () => {},
+};
+
+async function waitForEventHandlers(): Promise<void> {
+  await Promise.resolve();
+  await Promise.resolve();
+}
+
 function buildTransportProviderMock(
   identifier: string | symbol,
 ): Mocked<TransportProvider<string>> {
@@ -71,6 +148,26 @@ function buildTransportProviderMock(
   transportProviderMock.getConfigList.mockReturnValue([]);
 
   return transportProviderMock;
+}
+
+function buildLoggerMock(): Mocked<Logger> {
+  return {
+    debug: vitest.fn(),
+    error: vitest.fn(),
+    http: vitest.fn(),
+    info: vitest.fn(),
+    log: vitest.fn(),
+    silly: vitest.fn(),
+    verbose: vitest.fn(),
+    warn: vitest.fn(),
+  };
+}
+
+function buildEventHandlerFailureMessage(
+  eventName: string,
+  error: Error,
+): string {
+  return `Event handler failed for ${eventName}: ${error.stack ?? error.message}`;
 }
 
 describe(CqrsProvider, () => {
@@ -136,6 +233,14 @@ describe(CqrsProvider, () => {
             2,
             Reflect,
             queryHandlerMetadataReflectKey,
+          );
+        });
+
+        it('should read event handler metadata', () => {
+          expect(getOwnReflectMetadata).toHaveBeenNthCalledWith(
+            3,
+            Reflect,
+            eventHandlerMetadataReflectKey,
           );
         });
 
@@ -1212,6 +1317,747 @@ describe(CqrsProvider, () => {
           expect(errorFixture).toBeInstanceOf(Error);
           expect((errorFixture as Error).message).toBe(
             'No handler found for query GetStock',
+          );
+        });
+      });
+    });
+  });
+
+  describe('.getEventBus', () => {
+    describe('when called, and provide() has not been called', () => {
+      let errorFixture: unknown;
+
+      beforeAll(() => {
+        try {
+          new CqrsProvider().getEventBus();
+        } catch (error: unknown) {
+          errorFixture = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        expect(errorFixture).toBeInstanceOf(Error);
+        expect((errorFixture as Error).message).toBe(
+          'Event bus not initialized. Ensure .provide() has been called first.',
+        );
+      });
+    });
+
+    describe('.send', () => {
+      describe('having an event handler', () => {
+        let eventFixture: StockReserved;
+        let handlerMetadataFixture: EventHandlerMetadata;
+        let handlerRanDuringSend: boolean;
+        let sendResult: unknown;
+
+        beforeAll(async () => {
+          eventFixture = new StockReserved('sku-1');
+          handledSkus.length = 0;
+          handlerMetadataFixture = {
+            event: StockReserved,
+            serviceIdentifier: undefined,
+            target: StockReservedHandler,
+          };
+
+          const container: Container = new Container();
+
+          container.bind(StockReservedHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([handlerMetadataFixture])
+            .mockReturnValueOnce({
+              identifier: 'stock.reserved',
+            });
+
+          const provider: CqrsProvider = new CqrsProvider();
+
+          await provider.provide(container);
+
+          sendResult = provider.getEventBus().send(eventFixture);
+          handlerRanDuringSend = handledSkus.length > 0;
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should read event handler metadata', () => {
+          expect(getOwnReflectMetadata).toHaveBeenNthCalledWith(
+            1,
+            Reflect,
+            commandHandlerMetadataReflectKey,
+          );
+          expect(getOwnReflectMetadata).toHaveBeenNthCalledWith(
+            2,
+            Reflect,
+            queryHandlerMetadataReflectKey,
+          );
+          expect(getOwnReflectMetadata).toHaveBeenNthCalledWith(
+            3,
+            Reflect,
+            eventHandlerMetadataReflectKey,
+          );
+          expect(getOwnReflectMetadata).toHaveBeenNthCalledWith(
+            4,
+            StockReserved,
+            eventMetadataReflectKey,
+          );
+        });
+
+        it('should return undefined', () => {
+          expect(sendResult).toBeUndefined();
+        });
+
+        it('should return before the handler runs', () => {
+          expect(handlerRanDuringSend).toBe(false);
+        });
+
+        it('should run the handler', () => {
+          expect(handledSkus).toStrictEqual(['reserved:sku-1']);
+        });
+      });
+
+      describe('having an event handler service identifier', () => {
+        let serviceIdentifierFixture: ServiceIdentifier;
+
+        beforeAll(async () => {
+          handledSkus.length = 0;
+          serviceIdentifierFixture = Symbol('stock-reserved-handler');
+
+          const container: Container = new Container();
+
+          container.bind(serviceIdentifierFixture).to(StockReservedHandler);
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: serviceIdentifierFixture,
+                target: StockReservedAuditHandler,
+              },
+            ])
+            .mockReturnValueOnce(undefined);
+
+          const provider: CqrsProvider = new CqrsProvider();
+
+          await provider.provide(container);
+
+          provider.getEventBus().send(new StockReserved('sku-1'));
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should run the bound handler', () => {
+          expect(handledSkus).toStrictEqual(['reserved:sku-1']);
+        });
+      });
+
+      describe('having event handler metadata without event metadata', () => {
+        beforeAll(async () => {
+          handledSkus.length = 0;
+
+          const container: Container = new Container();
+
+          container.bind(StockReservedHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: StockReservedHandler,
+              },
+            ])
+            .mockReturnValueOnce(undefined);
+
+          const provider: CqrsProvider = new CqrsProvider();
+
+          await provider.provide(container);
+
+          provider.getEventBus().send(new StockReserved('sku-1'));
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should run the handler', () => {
+          expect(handledSkus).toStrictEqual(['reserved:sku-1']);
+        });
+      });
+
+      describe('having two event handlers for the same event', () => {
+        beforeAll(async () => {
+          handledSkus.length = 0;
+
+          const container: Container = new Container();
+
+          container.bind(StockReservedHandler).toSelf();
+          container.bind(StockReservedAuditHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: StockReservedHandler,
+              },
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: StockReservedAuditHandler,
+              },
+            ])
+            .mockReturnValueOnce({
+              identifier: 'stock.reserved',
+            })
+            .mockReturnValueOnce({
+              identifier: 'stock.reserved',
+            });
+
+          const provider: CqrsProvider = new CqrsProvider();
+
+          await provider.provide(container);
+
+          provider.getEventBus().send(new StockReserved('sku-1'));
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should run every handler in registration order', () => {
+          expect(handledSkus).toStrictEqual(['reserved:sku-1', 'audit:sku-1']);
+        });
+      });
+
+      describe('having an event handler that returns a promise', () => {
+        let settledDuringSend: boolean;
+
+        beforeAll(async () => {
+          handledSkus.length = 0;
+          settledDuringSend = false;
+
+          asyncStockReserved.gate = new Promise<void>((resolve: () => void) => {
+            asyncStockReserved.release = resolve;
+          });
+
+          const container: Container = new Container();
+
+          container.bind(AsyncStockReservedHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: AsyncStockReservedHandler,
+              },
+            ])
+            .mockReturnValueOnce({
+              identifier: 'stock.reserved',
+            });
+
+          const provider: CqrsProvider = new CqrsProvider();
+
+          await provider.provide(container);
+
+          provider.getEventBus().send(new StockReserved('sku-1'));
+          settledDuringSend = handledSkus.includes('end:sku-1');
+        });
+
+        afterAll(() => {
+          asyncStockReserved.release();
+          asyncStockReserved.gate = Promise.resolve();
+          vitest.clearAllMocks();
+        });
+
+        it('should return before the handler settles', () => {
+          expect(settledDuringSend).toBe(false);
+          expect(handledSkus).not.toContain('end:sku-1');
+        });
+
+        describe('when the handler settles', () => {
+          beforeAll(async () => {
+            asyncStockReserved.release();
+
+            await waitForEventHandlers();
+          });
+
+          it('should finish the handler', () => {
+            expect(handledSkus).toStrictEqual(['start:sku-1', 'end:sku-1']);
+          });
+        });
+      });
+
+      describe('having no event handler for the event', () => {
+        let errorFixture: unknown;
+
+        beforeAll(async () => {
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined);
+
+          const provider: CqrsProvider = new CqrsProvider();
+
+          await provider.provide(new Container());
+
+          try {
+            provider.getEventBus().send(new StockReserved('sku-1'));
+          } catch (error: unknown) {
+            errorFixture = error;
+          }
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should throw an Error', () => {
+          expect(errorFixture).toBeInstanceOf(Error);
+          expect((errorFixture as Error).message).toBe(
+            'No handler found for event StockReserved',
+          );
+        });
+      });
+
+      describe('having an event handler that rejects', () => {
+        let loggerMock: Mocked<Logger>;
+        let sendErrorFixture: unknown;
+
+        beforeAll(async () => {
+          eventHandlerFailure.error = new Error('projection failed');
+          handledSkus.length = 0;
+          loggerMock = buildLoggerMock();
+
+          const container: Container = new Container();
+
+          container.bind(RejectingStockReservedHandler).toSelf();
+          container.bind(StockReservedAuditHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: RejectingStockReservedHandler,
+              },
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: StockReservedAuditHandler,
+              },
+            ])
+            .mockReturnValueOnce({
+              identifier: 'stock.reserved',
+            })
+            .mockReturnValueOnce({
+              identifier: 'stock.reserved',
+            });
+
+          const provider: CqrsProvider = new CqrsProvider([], {
+            logger: loggerMock,
+          });
+
+          await provider.provide(container);
+
+          try {
+            provider.getEventBus().send(new StockReserved('sku-1'));
+          } catch (error: unknown) {
+            sendErrorFixture = error;
+          }
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should return without throwing', () => {
+          expect(sendErrorFixture).toBeUndefined();
+        });
+
+        it('should log the handler error', () => {
+          expect(loggerMock.error).toHaveBeenCalledExactlyOnceWith(
+            buildEventHandlerFailureMessage(
+              'StockReserved',
+              eventHandlerFailure.error,
+            ),
+          );
+        });
+
+        it('should run the other handler', () => {
+          expect(handledSkus).toStrictEqual(['audit:sku-1']);
+        });
+      });
+
+      describe('having an event handler that throws', () => {
+        let loggerMock: Mocked<Logger>;
+
+        beforeAll(async () => {
+          eventHandlerFailure.error = new Error('audit log failed');
+          handledSkus.length = 0;
+          loggerMock = buildLoggerMock();
+
+          const container: Container = new Container();
+
+          container.bind(ThrowingStockReservedHandler).toSelf();
+          container.bind(StockReservedAuditHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: ThrowingStockReservedHandler,
+              },
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: StockReservedAuditHandler,
+              },
+            ])
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined);
+
+          const provider: CqrsProvider = new CqrsProvider([], {
+            logger: loggerMock,
+          });
+
+          await provider.provide(container);
+
+          provider.getEventBus().send(new StockReserved('sku-1'));
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should log the handler error', () => {
+          expect(loggerMock.error).toHaveBeenCalledExactlyOnceWith(
+            buildEventHandlerFailureMessage(
+              'StockReserved',
+              eventHandlerFailure.error,
+            ),
+          );
+        });
+
+        it('should run the other handler', () => {
+          expect(handledSkus).toStrictEqual(['audit:sku-1']);
+        });
+      });
+
+      describe('having an event handler that throws a non-Error', () => {
+        let loggerMock: Mocked<Logger>;
+
+        beforeAll(async () => {
+          unknownEventHandlerFailure.cause = 'audit log failed';
+          handledSkus.length = 0;
+          loggerMock = buildLoggerMock();
+
+          const container: Container = new Container();
+
+          container.bind(ThrowingUnknownStockReservedHandler).toSelf();
+          container.bind(StockReservedAuditHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: ThrowingUnknownStockReservedHandler,
+              },
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: StockReservedAuditHandler,
+              },
+            ])
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined);
+
+          const provider: CqrsProvider = new CqrsProvider([], {
+            logger: loggerMock,
+          });
+
+          await provider.provide(container);
+
+          provider.getEventBus().send(new StockReserved('sku-1'));
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should log the thrown value', () => {
+          expect(loggerMock.error).toHaveBeenCalledExactlyOnceWith(
+            'Event handler failed for StockReserved: audit log failed',
+          );
+        });
+
+        it('should run the other handler', () => {
+          expect(handledSkus).toStrictEqual(['audit:sku-1']);
+        });
+      });
+
+      describe('having an event handler that throws a non-Error object', () => {
+        let loggerMock: Mocked<Logger>;
+
+        beforeAll(async () => {
+          unknownEventHandlerFailure.cause = {
+            code: 'E_FAIL',
+          };
+          handledSkus.length = 0;
+          loggerMock = buildLoggerMock();
+
+          const container: Container = new Container();
+
+          container.bind(ThrowingUnknownStockReservedHandler).toSelf();
+          container.bind(StockReservedAuditHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: ThrowingUnknownStockReservedHandler,
+              },
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: StockReservedAuditHandler,
+              },
+            ])
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined);
+
+          const provider: CqrsProvider = new CqrsProvider([], {
+            logger: loggerMock,
+          });
+
+          await provider.provide(container);
+
+          provider.getEventBus().send(new StockReserved('sku-1'));
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          vitest.clearAllMocks();
+        });
+
+        it('should log the thrown value', () => {
+          expect(loggerMock.error).toHaveBeenCalledExactlyOnceWith(
+            'Event handler failed for StockReserved: {"code":"E_FAIL"}',
+          );
+        });
+
+        it('should run the other handler', () => {
+          expect(handledSkus).toStrictEqual(['audit:sku-1']);
+        });
+      });
+
+      describe('having logger set to false', () => {
+        let consoleLoggerErrorSpy: MockInstance;
+
+        beforeAll(async () => {
+          eventHandlerFailure.error = new Error('audit log failed');
+          handledSkus.length = 0;
+          consoleLoggerErrorSpy = vitest
+            .spyOn(ConsoleLogger.prototype, 'error')
+            .mockImplementation(() => undefined);
+
+          const container: Container = new Container();
+
+          container.bind(ThrowingStockReservedHandler).toSelf();
+          container.bind(StockReservedAuditHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: ThrowingStockReservedHandler,
+              },
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: StockReservedAuditHandler,
+              },
+            ])
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined);
+
+          const provider: CqrsProvider = new CqrsProvider([], {
+            logger: false,
+          });
+
+          await provider.provide(container);
+
+          provider.getEventBus().send(new StockReserved('sku-1'));
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          consoleLoggerErrorSpy.mockRestore();
+          vitest.clearAllMocks();
+        });
+
+        it('should not log the handler error', () => {
+          expect(consoleLoggerErrorSpy).not.toHaveBeenCalled();
+        });
+
+        it('should run the other handler', () => {
+          expect(handledSkus).toStrictEqual(['audit:sku-1']);
+        });
+      });
+
+      describe('having the default logger', () => {
+        let consoleLoggerErrorSpy: MockInstance;
+
+        beforeAll(async () => {
+          eventHandlerFailure.error = new Error('audit log failed');
+          consoleLoggerErrorSpy = vitest
+            .spyOn(ConsoleLogger.prototype, 'error')
+            .mockImplementation(() => undefined);
+
+          const container: Container = new Container();
+
+          container.bind(ThrowingStockReservedHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: ThrowingStockReservedHandler,
+              },
+            ])
+            .mockReturnValueOnce(undefined);
+
+          const provider: CqrsProvider = new CqrsProvider();
+
+          await provider.provide(container);
+
+          provider.getEventBus().send(new StockReserved('sku-1'));
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          consoleLoggerErrorSpy.mockRestore();
+          vitest.clearAllMocks();
+        });
+
+        it('should log the handler error with a ConsoleLogger', () => {
+          expect(consoleLoggerErrorSpy).toHaveBeenCalledExactlyOnceWith(
+            buildEventHandlerFailureMessage(
+              'StockReserved',
+              eventHandlerFailure.error,
+            ),
+          );
+        });
+      });
+
+      describe('having logger set to true', () => {
+        let consoleLoggerErrorSpy: MockInstance;
+
+        beforeAll(async () => {
+          eventHandlerFailure.error = new Error('audit log failed');
+          consoleLoggerErrorSpy = vitest
+            .spyOn(ConsoleLogger.prototype, 'error')
+            .mockImplementation(() => undefined);
+
+          const container: Container = new Container();
+
+          container.bind(ThrowingStockReservedHandler).toSelf();
+
+          vitest
+            .mocked(getOwnReflectMetadata)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce([
+              {
+                event: StockReserved,
+                serviceIdentifier: undefined,
+                target: ThrowingStockReservedHandler,
+              },
+            ])
+            .mockReturnValueOnce(undefined);
+
+          const provider: CqrsProvider = new CqrsProvider([], {
+            logger: true,
+          });
+
+          await provider.provide(container);
+
+          provider.getEventBus().send(new StockReserved('sku-1'));
+
+          await waitForEventHandlers();
+        });
+
+        afterAll(() => {
+          consoleLoggerErrorSpy.mockRestore();
+          vitest.clearAllMocks();
+        });
+
+        it('should log the handler error with a ConsoleLogger', () => {
+          expect(consoleLoggerErrorSpy).toHaveBeenCalledExactlyOnceWith(
+            buildEventHandlerFailureMessage(
+              'StockReserved',
+              eventHandlerFailure.error,
+            ),
           );
         });
       });
