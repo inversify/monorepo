@@ -98,6 +98,10 @@ function buildArrayItem(
 }
 
 function buildRheaArray(value: Amqp1Dot0Array): unknown {
+  if ((value.elementType as string) === 'array') {
+    throw new Error('Nested AMQP 1.0 arrays cannot be encoded');
+  }
+
   return rhea.types.wrap_array(
     value.items.map((item: Amqp1Dot0Value): unknown =>
       buildArrayItem(value.elementType, item),

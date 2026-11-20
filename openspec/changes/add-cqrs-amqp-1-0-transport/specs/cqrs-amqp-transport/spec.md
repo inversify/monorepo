@@ -256,7 +256,7 @@ For each received message, every resolved handler SHALL be asked to deserialize 
 
 #### Scenario: List, map, and array
 - **WHEN** a received value is an AMQP list, map, or array
-- **THEN** `deserialize` SHALL receive `kind: 'list'`, `kind: 'map'`, or `kind: 'array'`. An array SHALL carry one `elementType` and, when its elements are described, one `elementDescriptor`
+- **THEN** `deserialize` SHALL receive `kind: 'list'`, `kind: 'map'`, or `kind: 'array'`. An array that rhea unwraps while decoding a message arrives as `kind: 'list'`. `elementType` is required only for a value delivered as `kind: 'array'`, and that array carries one `elementType` and, when its elements are described, one `elementDescriptor`
 
 #### Scenario: Several body sections
 - **WHEN** a received body contains more than one data section or more than one sequence section

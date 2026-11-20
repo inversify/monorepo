@@ -143,4 +143,28 @@ describe(buildRheaValue, () => {
       });
     },
   );
+
+  describe('having a nested array', () => {
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        try {
+          buildRheaValue({
+            elementType: 'array',
+            items: [],
+            kind: 'array',
+          } as unknown as Amqp1Dot0Value);
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should throw an Error', () => {
+        expect(result).toStrictEqual(
+          new Error('Nested AMQP 1.0 arrays cannot be encoded'),
+        );
+      });
+    });
+  });
 });

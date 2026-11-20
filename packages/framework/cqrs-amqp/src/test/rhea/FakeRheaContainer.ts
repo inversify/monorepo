@@ -52,6 +52,21 @@ export interface FakeRheaSentMessage {
   readonly message: Message;
 }
 
+function buildRemoteState(
+  outcome: FakeRheaOutcome,
+  error?: AmqpError,
+): { error?: AmqpError } {
+  function OutcomeState(this: { error?: AmqpError }): void {
+    if (error !== undefined) {
+      this.error = error;
+    }
+  }
+
+  OutcomeState.composite_type = outcome;
+
+  return new (OutcomeState as unknown as new () => { error?: AmqpError })();
+}
+
 export class FakeRheaLink extends EventEmitter {
   public readonly add_credit: Mock<(credit: number) => void>;
   public readonly close: Mock<(error?: AmqpError) => void>;
@@ -60,8 +75,10 @@ export class FakeRheaLink extends EventEmitter {
   public readonly send: Mock<(message: Message) => FakeRheaOutgoingDelivery>;
   public readonly sendable: Mock<() => boolean>;
   public readonly sent: FakeRheaSentMessage[];
+  public readonly session: EventEmitter;
   public source: unknown;
   public target: unknown;
+  #open: boolean;
 
   constructor(
     public readonly connection: FakeRheaConnection,
@@ -71,13 +88,15 @@ export class FakeRheaLink extends EventEmitter {
   ) {
     super();
 
+    this.#open = false;
     this.add_credit = vitest.fn();
     this.close = vitest.fn((): void => {
-      this.is_open.mockReturnValue(false);
+      this.#open = false;
     });
     this.error = undefined;
-    this.is_open = vitest.fn((): boolean => true);
+    this.is_open = vitest.fn((): boolean => this.#open);
     this.sent = [];
+    this.session = new EventEmitter();
     this.source = undefined;
     this.target = undefined;
     this.sendable = vitest.fn((): boolean => true);
@@ -92,6 +111,8 @@ export class FakeRheaLink extends EventEmitter {
 
   public attach(behavior: FakeRheaLinkBehavior): void {
     if (behavior === 'attach') {
+      this.#open = true;
+
       if (this.kind === 'receiver') {
         this.source = { address: this.address };
       } else {
@@ -113,6 +134,7 @@ export class FakeRheaLink extends EventEmitter {
   }
 
   public closeRemotely(error?: AmqpError): void {
+    this.#open = false;
     this.error = error;
 
     if (error !== undefined) {
@@ -135,12 +157,15 @@ export class FakeRheaLink extends EventEmitter {
     outcome: FakeRheaOutcome,
     error?: AmqpError,
   ): void {
-    sentMessage.delivery.remote_state = error === undefined ? {} : { error };
+    sentMessage.delivery.remote_state = buildRemoteState(outcome, error);
 
-    this.emit(outcome, {
+    const context: Record<string, unknown> = {
       ...this.#buildContext(),
       delivery: sentMessage.delivery,
-    });
+    };
+
+    this.emit(outcome, context);
+    this.emit('settled', context);
   }
 
   #buildContext(): Record<string, unknown> {

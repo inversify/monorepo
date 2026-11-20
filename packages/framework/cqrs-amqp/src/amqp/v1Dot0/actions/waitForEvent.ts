@@ -2,6 +2,10 @@ import { type EventEmitter } from 'node:events';
 
 import { getAbortReason } from '../calculations/getAbortReason.js';
 
+function isAborted(signal: AbortSignal): boolean {
+  return signal.aborted;
+}
+
 interface ResolvingWaitForEventOptions<TContext> {
   readonly emitter: EventEmitter;
   readonly resolveOn: readonly string[];
@@ -49,11 +53,24 @@ export async function waitForEvent<TContext>(
         reject(getAbortReason(options.signal));
       };
 
+      const rejectWait = (error: unknown): void => {
+        cleanup();
+        reject(
+          error instanceof Error ? error : new Error('AMQP 1.0 wait failed'),
+        );
+      };
+
       for (const eventName of options.resolveOn) {
         listeners.push([
           eventName,
           (context: TContext): void => {
-            if (options.shouldResolve?.(context) === false) {
+            try {
+              if (options.shouldResolve?.(context) === false) {
+                return;
+              }
+            } catch (error: unknown) {
+              rejectWait(error);
+
               return;
             }
 
@@ -68,8 +85,11 @@ export async function waitForEvent<TContext>(
           listeners.push([
             eventName,
             (context: TContext): void => {
-              cleanup();
-              reject(options.buildError(eventName, context));
+              try {
+                rejectWait(options.buildError(eventName, context));
+              } catch (error: unknown) {
+                rejectWait(error);
+              }
             },
           ]);
         }
@@ -80,6 +100,10 @@ export async function waitForEvent<TContext>(
       }
 
       options.signal.addEventListener('abort', onAbort, { once: true });
+
+      if (isAborted(options.signal)) {
+        onAbort();
+      }
     },
   );
 }

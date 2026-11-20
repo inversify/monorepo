@@ -62,6 +62,11 @@ interface Closable {
   close(): Promise<void>;
 }
 
+interface Cleanup {
+  close(): Promise<void>;
+  track<T extends Closable>(value: T): T;
+}
+
 interface ConnectionsOptions {
   readonly listenersEnabled?: boolean;
   readonly reconnect?: boolean | Amqp1Dot0ReconnectOptions;
@@ -495,9 +500,34 @@ async function captureError(run: () => Promise<unknown>): Promise<unknown> {
   return undefined;
 }
 
+function createCleanup(): Cleanup {
+  const closables: Closable[] = [];
+
+  return {
+    close: async (): Promise<void> => {
+      await closeAll(closables);
+    },
+    track: <T extends Closable>(value: T): T => {
+      closables.push(value);
+
+      return value;
+    },
+  };
+}
+
 async function closeAll(closables: readonly Closable[]): Promise<void> {
+  const failures: unknown[] = [];
+
   for (const closable of closables) {
-    await closable.close();
+    try {
+      await closable.close();
+    } catch (error: unknown) {
+      failures.push(error);
+    }
+  }
+
+  if (failures.length > 0) {
+    throw new AggregateError(failures, 'Failed to close AMQP test fixtures');
   }
 }
 
@@ -515,8 +545,8 @@ async function waitUntil(predicate: () => boolean): Promise<void> {
   });
 }
 
-async function startPeer(): Promise<AmqpTestPeer> {
-  const peer: AmqpTestPeer = await AmqpTestPeer.start();
+async function startPeer(cleanup: Cleanup): Promise<AmqpTestPeer> {
+  const peer: AmqpTestPeer = cleanup.track(await AmqpTestPeer.start());
 
   peer.refuseLinks('orders.refused');
   peer.setIncomingOutcome('orders.peer-rejected', 'reject');
@@ -526,14 +556,17 @@ async function startPeer(): Promise<AmqpTestPeer> {
 }
 
 async function startProducer(
+  cleanup: Cleanup,
   peer: AmqpTestPeer,
   options: Partial<Amqp1Dot0TransportProviderOptions> = {},
 ): Promise<ProducerSetup> {
-  const transport: Amqp1Dot0TransportProvider = new Amqp1Dot0TransportProvider({
-    connections: buildConnections(peer.port),
-    logger: false,
-    ...options,
-  });
+  const transport: Amqp1Dot0TransportProvider = cleanup.track(
+    new Amqp1Dot0TransportProvider({
+      connections: buildConnections(peer.port),
+      logger: false,
+      ...options,
+    }),
+  );
   const cqrsProvider: CqrsProvider = new CqrsProvider([transport], {
     logger: false,
   });
@@ -543,12 +576,17 @@ async function startProducer(
   return { commandBus: cqrsProvider.getCommandBus(), transport };
 }
 
-async function startConsumer(peer: AmqpTestPeer): Promise<ConsumerSetup> {
+async function startConsumer(
+  cleanup: Cleanup,
+  peer: AmqpTestPeer,
+): Promise<ConsumerSetup> {
   const records: OrderRecords = buildOrderRecords();
-  const transport: Amqp1Dot0TransportProvider = new Amqp1Dot0TransportProvider({
-    connections: buildConnections(peer.port, { listenersEnabled: true }),
-    logger: false,
-  });
+  const transport: Amqp1Dot0TransportProvider = cleanup.track(
+    new Amqp1Dot0TransportProvider({
+      connections: buildConnections(peer.port, { listenersEnabled: true }),
+      logger: false,
+    }),
+  );
   const cqrsProvider: CqrsProvider = new CqrsProvider([transport], {
     logger: false,
   });
@@ -585,24 +623,25 @@ async function startConsumer(peer: AmqpTestPeer): Promise<ConsumerSetup> {
 
 describe(Amqp1Dot0TransportProvider, () => {
   describe('having a message queued before the consumer was provided', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let producer: ProducerSetup;
     let consumer: ConsumerSetup;
     let dispositions: AmqpTestPeerDisposition[];
 
     beforeAll(async () => {
-      peer = await startPeer();
-      producer = await startProducer(peer);
+      peer = await startPeer(cleanup);
+      producer = await startProducer(cleanup, peer);
 
       await producer.commandBus.send(new EarlyOrder('order-early'));
       await peer.waitForQueuedMessages('orders.early', 1);
 
-      consumer = await startConsumer(peer);
+      consumer = await startConsumer(cleanup, peer);
       dispositions = await peer.waitForDispositions('orders.early', 1);
     });
 
     afterAll(async () => {
-      await closeAll([producer.transport, consumer.transport, peer]);
+      await cleanup.close();
     });
 
     it('should handle the message once the CQRS provider finished providing', () => {
@@ -620,15 +659,16 @@ describe(Amqp1Dot0TransportProvider, () => {
   });
 
   describe('having two handlers for the same command on the same address', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let producer: ProducerSetup;
     let consumer: ConsumerSetup;
     let dispositions: AmqpTestPeerDisposition[];
 
     beforeAll(async () => {
-      peer = await startPeer();
-      producer = await startProducer(peer);
-      consumer = await startConsumer(peer);
+      peer = await startPeer(cleanup);
+      producer = await startProducer(cleanup, peer);
+      consumer = await startConsumer(cleanup, peer);
 
       await producer.commandBus.send(new CreateOrder('order-1'));
 
@@ -636,7 +676,7 @@ describe(Amqp1Dot0TransportProvider, () => {
     });
 
     afterAll(async () => {
-      await closeAll([producer.transport, consumer.transport, peer]);
+      await cleanup.close();
     });
 
     it('should send a single JSON message', () => {
@@ -660,15 +700,16 @@ describe(Amqp1Dot0TransportProvider, () => {
   });
 
   describe('having handlers for different commands sharing an address with an address serializer', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let producer: ProducerSetup;
     let consumer: ConsumerSetup;
     let dispositions: AmqpTestPeerDisposition[];
 
     beforeAll(async () => {
-      peer = await startPeer();
-      producer = await startProducer(peer);
-      consumer = await startConsumer(peer);
+      peer = await startPeer(cleanup);
+      producer = await startProducer(cleanup, peer);
+      consumer = await startConsumer(cleanup, peer);
 
       await producer.commandBus.send(new CancelOrder('order-2'));
 
@@ -676,7 +717,7 @@ describe(Amqp1Dot0TransportProvider, () => {
     });
 
     afterAll(async () => {
-      await closeAll([producer.transport, consumer.transport, peer]);
+      await cleanup.close();
     });
 
     it('should serialize the message with the address serializer', () => {
@@ -694,15 +735,16 @@ describe(Amqp1Dot0TransportProvider, () => {
   });
 
   describe('having a failing handler', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let producer: ProducerSetup;
     let consumer: ConsumerSetup;
     let dispositions: AmqpTestPeerDisposition[];
 
     beforeAll(async () => {
-      peer = await startPeer();
-      producer = await startProducer(peer);
-      consumer = await startConsumer(peer);
+      peer = await startPeer(cleanup);
+      producer = await startProducer(cleanup, peer);
+      consumer = await startConsumer(cleanup, peer);
 
       await producer.commandBus.send(new FailingOrder('order-3'));
 
@@ -710,7 +752,7 @@ describe(Amqp1Dot0TransportProvider, () => {
     });
 
     afterAll(async () => {
-      await closeAll([producer.transport, consumer.transport, peer]);
+      await cleanup.close();
     });
 
     it('should reject the message without the error details', () => {
@@ -723,15 +765,16 @@ describe(Amqp1Dot0TransportProvider, () => {
   });
 
   describe('having every handler declining the message', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let producer: ProducerSetup;
     let consumer: ConsumerSetup;
     let dispositions: AmqpTestPeerDisposition[];
 
     beforeAll(async () => {
-      peer = await startPeer();
-      producer = await startProducer(peer);
-      consumer = await startConsumer(peer);
+      peer = await startPeer(cleanup);
+      producer = await startProducer(cleanup, peer);
+      consumer = await startConsumer(cleanup, peer);
 
       await producer.commandBus.send(new UnclaimedOrder('order-4'));
 
@@ -739,7 +782,7 @@ describe(Amqp1Dot0TransportProvider, () => {
     });
 
     afterAll(async () => {
-      await closeAll([producer.transport, consumer.transport, peer]);
+      await cleanup.close();
     });
 
     it('should reject the message as not found', () => {
@@ -749,15 +792,16 @@ describe(Amqp1Dot0TransportProvider, () => {
   });
 
   describe('having a credit window of two messages and a slow handler', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let producer: ProducerSetup;
     let consumer: ConsumerSetup;
     let dispositions: AmqpTestPeerDisposition[];
 
     beforeAll(async () => {
-      peer = await startPeer();
-      producer = await startProducer(peer);
-      consumer = await startConsumer(peer);
+      peer = await startPeer(cleanup);
+      producer = await startProducer(cleanup, peer);
+      consumer = await startConsumer(cleanup, peer);
 
       await Promise.all(
         ['a', 'b', 'c', 'd', 'e', 'f'].map(
@@ -770,7 +814,7 @@ describe(Amqp1Dot0TransportProvider, () => {
     });
 
     afterAll(async () => {
-      await closeAll([producer.transport, consumer.transport, peer]);
+      await cleanup.close();
     });
 
     it('should handle at most two messages at once', () => {
@@ -787,13 +831,14 @@ describe(Amqp1Dot0TransportProvider, () => {
   });
 
   describe('having a peer rejecting the sent message', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let producer: ProducerSetup;
     let result: unknown;
 
     beforeAll(async () => {
-      peer = await startPeer();
-      producer = await startProducer(peer);
+      peer = await startPeer(cleanup);
+      producer = await startProducer(cleanup, peer);
 
       result = await captureError(async () =>
         producer.commandBus.send(new PeerRejectedOrder('order-5')),
@@ -801,7 +846,7 @@ describe(Amqp1Dot0TransportProvider, () => {
     });
 
     afterAll(async () => {
-      await closeAll([producer.transport, peer]);
+      await cleanup.close();
     });
 
     it('should reject the send with the peer outcome', () => {
@@ -814,23 +859,26 @@ describe(Amqp1Dot0TransportProvider, () => {
   });
 
   describe('having a peer refusing a listened address', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let transport: Amqp1Dot0TransportProvider;
     let result: unknown;
     let sendResult: unknown;
 
     beforeAll(async () => {
-      peer = await startPeer();
+      peer = await startPeer(cleanup);
 
-      transport = new Amqp1Dot0TransportProvider({
-        connections: buildConnections(peer.port).map(
-          (config: Amqp1Dot0ConnectionConfig): Amqp1Dot0ConnectionConfig => ({
-            ...config,
-            listenersEnabled: config.identifier === REFUSING_PEER,
-          }),
-        ),
-        logger: false,
-      });
+      transport = cleanup.track(
+        new Amqp1Dot0TransportProvider({
+          connections: buildConnections(peer.port).map(
+            (config: Amqp1Dot0ConnectionConfig): Amqp1Dot0ConnectionConfig => ({
+              ...config,
+              listenersEnabled: config.identifier === REFUSING_PEER,
+            }),
+          ),
+          logger: false,
+        }),
+      );
 
       result = await captureError(async () =>
         new CqrsProvider([transport], { logger: false }).provide(
@@ -847,7 +895,7 @@ describe(Amqp1Dot0TransportProvider, () => {
     });
 
     afterAll(async () => {
-      await closeAll([transport, peer]);
+      await cleanup.close();
     });
 
     it('should fail to provide', () => {
@@ -899,14 +947,15 @@ describe(Amqp1Dot0TransportProvider, () => {
   });
 
   describe('having a send awaiting settlement when the peer closes the connection with a fatal error', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let producer: ProducerSetup;
     let result: unknown;
     let nextResult: unknown;
 
     beforeAll(async () => {
-      peer = await startPeer();
-      producer = await startProducer(peer, {
+      peer = await startPeer(cleanup);
+      producer = await startProducer(cleanup, peer, {
         connections: buildConnections(peer.port, {
           reconnect: { initialDelay: 50, maxDelay: 50 },
         }),
@@ -930,13 +979,13 @@ describe(Amqp1Dot0TransportProvider, () => {
     });
 
     afterAll(async () => {
-      await closeAll([producer.transport, peer]);
+      await cleanup.close();
     });
 
     it('should reject the pending send', () => {
       expect(result).toStrictEqual(
         new Error(
-          'AMQP 1.0 connection "peer" is down and will not reconnect: Broker shutdown',
+          'AMQP 1.0 connection "peer" is down and will not reconnect: amqp:internal-error - Broker shutdown',
         ),
       );
     });
@@ -944,20 +993,21 @@ describe(Amqp1Dot0TransportProvider, () => {
     it('should reject later sends right away', () => {
       expect(nextResult).toStrictEqual(
         new Error(
-          'AMQP 1.0 connection "peer" is down and will not reconnect: Broker shutdown',
+          'AMQP 1.0 connection "peer" is down and will not reconnect: amqp:internal-error - Broker shutdown',
         ),
       );
     });
   });
 
   describe('having a peer forcing the connection to close', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let producer: ProducerSetup;
     let result: unknown;
 
     beforeAll(async () => {
-      peer = await startPeer();
-      producer = await startProducer(peer, {
+      peer = await startPeer(cleanup);
+      producer = await startProducer(cleanup, peer, {
         connections: buildConnections(peer.port, {
           reconnect: { initialDelay: 50, maxDelay: 50 },
         }),
@@ -976,7 +1026,7 @@ describe(Amqp1Dot0TransportProvider, () => {
     });
 
     afterAll(async () => {
-      await closeAll([producer.transport, peer]);
+      await cleanup.close();
     });
 
     it('should reconnect and send the message', () => {
@@ -986,21 +1036,26 @@ describe(Amqp1Dot0TransportProvider, () => {
   });
 
   describe('having a send timeout and a peer that never settles', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let producer: ProducerSetup;
     let result: unknown;
 
     beforeAll(async () => {
-      peer = await startPeer();
-      producer = await startProducer(peer, { sendTimeout: 100 });
+      peer = await startPeer(cleanup);
+      producer = await startProducer(cleanup, peer, { sendTimeout: 100 });
 
-      result = await captureError(async () =>
+      const sendResult: Promise<unknown> = captureError(async () =>
         producer.commandBus.send(new UnsettledOrder('order-9')),
       );
+
+      await peer.waitForReceivedMessages('orders.unsettled', 1);
+
+      result = await sendResult;
     });
 
     afterAll(async () => {
-      await closeAll([producer.transport, peer]);
+      await cleanup.close();
     });
 
     it('should reject the send once the timeout elapses', () => {
@@ -1013,53 +1068,104 @@ describe(Amqp1Dot0TransportProvider, () => {
   });
 
   describe('having a transport closed while waiting to reconnect', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
-    let openedConnectionsOnClose: number;
+    let openedConnectionsBeforeClose: number;
+    let openedConnectionsBeforeDrop: number;
 
     beforeAll(async () => {
-      peer = await startPeer();
+      peer = await startPeer(cleanup);
 
       const loggerMock: Mocked<Logger> = buildLoggerMock();
-      const transport: Amqp1Dot0TransportProvider =
+      const transport: Amqp1Dot0TransportProvider = cleanup.track(
         new Amqp1Dot0TransportProvider({
           connections: buildConnections(peer.port, {
             reconnect: { initialDelay: 300, maxDelay: 300 },
           }),
           logger: loggerMock,
-        });
+        }),
+      );
 
       await new CqrsProvider([transport], { logger: false }).provide(
         new Container(),
       );
 
+      openedConnectionsBeforeDrop = peer.openedConnectionCount;
+
       peer.dropConnections();
 
       await waitUntil((): boolean => loggerMock.warn.mock.calls.length === 2);
 
-      await transport.close();
+      openedConnectionsBeforeClose = peer.openedConnectionCount;
 
-      openedConnectionsOnClose = peer.openedConnectionCount;
+      await transport.close();
 
       await sleep(500);
     });
 
     afterAll(async () => {
-      await peer.close();
+      await cleanup.close();
     });
 
     it('should not reconnect', () => {
-      expect(peer.openedConnectionCount).toBe(openedConnectionsOnClose);
+      expect(openedConnectionsBeforeClose).toBe(openedConnectionsBeforeDrop);
+      expect(peer.openedConnectionCount).toBe(openedConnectionsBeforeDrop);
+    });
+  });
+
+  describe('having a peer that modifies one delivery and releases another', () => {
+    const cleanup: Cleanup = createCleanup();
+    let modified: unknown;
+    let peer: AmqpTestPeer;
+    let released: unknown;
+
+    beforeAll(async () => {
+      peer = await startPeer(cleanup);
+      peer.setIncomingOutcome('orders.create', 'modified');
+
+      const producer: ProducerSetup = await startProducer(cleanup, peer);
+
+      modified = await captureError(async () =>
+        producer.commandBus.send(new CreateOrder('order-modified')),
+      );
+
+      peer.setIncomingOutcome('orders.create', 'release');
+
+      released = await captureError(async () =>
+        producer.commandBus.send(new CreateOrder('order-released')),
+      );
+    });
+
+    afterAll(async () => {
+      await cleanup.close();
+    });
+
+    it('should report the modified disposition', () => {
+      expect(modified).toStrictEqual(
+        new Error(
+          'AMQP 1.0 peer modified the message sent to address "orders.create" on connection "peer"',
+        ),
+      );
+    });
+
+    it('should report the released disposition', () => {
+      expect(released).toStrictEqual(
+        new Error(
+          'AMQP 1.0 peer released the message sent to address "orders.create" on connection "peer"',
+        ),
+      );
     });
   });
 
   describe('having a closed producer', () => {
+    const cleanup: Cleanup = createCleanup();
     let peer: AmqpTestPeer;
     let result: unknown;
 
     beforeAll(async () => {
-      peer = await startPeer();
+      peer = await startPeer(cleanup);
 
-      const producer: ProducerSetup = await startProducer(peer);
+      const producer: ProducerSetup = await startProducer(cleanup, peer);
 
       await producer.transport.close();
 
@@ -1069,7 +1175,7 @@ describe(Amqp1Dot0TransportProvider, () => {
     });
 
     afterAll(async () => {
-      await peer.close();
+      await cleanup.close();
     });
 
     it('should reject sends', () => {

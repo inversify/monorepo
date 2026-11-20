@@ -68,7 +68,7 @@
     "lint": "oxlint ./src",
     "prebuild": "pnpm run build:clean",
     "test": "vitest run",
-    "test:integration": "pnpm run test --project Integration",
+    "test:integration": "pnpm --filter @inversifyjs/framework-cqrs build && pnpm run test --project Integration",
     "test:coverage": "pnpm run test:unit --coverage",
     "test:mutation": "stryker run",
     "test:uncommitted": "pnpm run test --changed=HEAD",

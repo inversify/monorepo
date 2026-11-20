@@ -273,6 +273,31 @@ describe(Amqp1Dot0TransportProvider, () => {
       });
     });
 
+    describe('having a send timeout above the timer limit', () => {
+      describe('when called', () => {
+        let result: unknown;
+
+        beforeAll(() => {
+          try {
+            new Amqp1Dot0TransportProvider({
+              connections: [buildConnectionConfig('primary')],
+              sendTimeout: 2_147_483_648,
+            });
+          } catch (error: unknown) {
+            result = error;
+          }
+        });
+
+        it('should throw an Error', () => {
+          expect(result).toStrictEqual(
+            new Error(
+              'AMQP 1.0 sendTimeout must be at most 2147483647 milliseconds',
+            ),
+          );
+        });
+      });
+    });
+
     describe('having options without logger and serializer', () => {
       let optionsFixture: Amqp1Dot0TransportProviderOptions;
 
@@ -581,6 +606,7 @@ describe(Amqp1Dot0TransportProvider, () => {
             providerSetup.rheaContainer.connect,
           ).toHaveBeenCalledExactlyOnceWith({
             host: 'primary',
+            hostname: 'primary',
             initial_reconnect_delay: 10,
             max_reconnect_delay: 20,
             port: 5672,
@@ -2057,6 +2083,7 @@ describe(Amqp1Dot0TransportProvider, () => {
           ).toHaveBeenCalledExactlyOnceWith({
             autosettle: true,
             target: { address: 'orders.create', durable: 1 },
+            treat_modified_as_released: false,
           });
         });
 
@@ -2474,6 +2501,81 @@ describe(Amqp1Dot0TransportProvider, () => {
         });
       });
 
+      describe('when called, and the sender session ends while waiting for credit', () => {
+        let providerSetup: ProviderSetup;
+        let result: unknown;
+
+        beforeAll(async () => {
+          serializerMock.serialize.mockReturnValue(messageFixture);
+
+          providerSetup = await initializeSender({
+            serializer: serializerMock,
+          });
+
+          let sender: FakeRheaLink | undefined;
+
+          providerSetup.rheaContainer.onLinkAttached = (
+            link: FakeRheaLink,
+          ): void => {
+            link.sendable.mockReturnValue(false);
+            sender = link;
+            providerSetup.rheaContainer.onLinkAttached = undefined;
+          };
+
+          const sendResult: Promise<unknown> = captureError(async () =>
+            providerSetup.provider.send(commandFixture, paramsFixture),
+          );
+
+          await waitUntil((): boolean => sender !== undefined);
+          await flushImmediates();
+
+          const attachedSender: FakeRheaLink = sender as FakeRheaLink;
+
+          attachedSender.session.emit('session_close', {
+            connection: attachedSender.connection,
+            sender: attachedSender,
+          });
+
+          result = await sendResult;
+
+          const nextSendPromise: Promise<void> = providerSetup.provider.send(
+            commandFixture,
+            paramsFixture,
+          );
+          const nextSender: FakeRheaLink = await waitForSentMessages(
+            providerSetup,
+            1,
+          );
+
+          nextSender.settle(
+            nextSender.sent[0] as FakeRheaLink['sent'][number],
+            'accepted',
+          );
+
+          await nextSendPromise;
+        });
+
+        afterAll(async () => {
+          serializerMock.serialize.mockReset();
+
+          await providerSetup.provider.close();
+
+          vitest.clearAllMocks();
+        });
+
+        it('should throw an Error', () => {
+          expect((result as Error).message).toBe(
+            'AMQP 1.0 sender for address "orders.create" on connection "primary" was closed before the message was settled',
+          );
+        });
+
+        it('should open a new sender for the next message', () => {
+          expect(
+            providerSetup.rheaContainer.getConnection('primary').open_sender,
+          ).toHaveBeenCalledTimes(2);
+        });
+      });
+
       describe('when called, and the sender has no credit yet', () => {
         let providerSetup: ProviderSetup;
         let sentBeforeCredit: number;
@@ -2507,6 +2609,7 @@ describe(Amqp1Dot0TransportProvider, () => {
 
           sentBeforeCredit = attachedSender.sent.length;
 
+          attachedSender.sendable.mockReturnValue(true);
           attachedSender.emit('sendable', { sender: attachedSender });
 
           await waitUntil((): boolean => attachedSender.sent.length === 1);
@@ -2766,6 +2869,7 @@ describe(Amqp1Dot0TransportProvider, () => {
       });
 
       describe('when called, and the sender never gets credit', () => {
+        let attachedSender: FakeRheaLink | undefined;
         let providerSetup: ProviderSetup;
         let result: unknown;
 
@@ -2778,6 +2882,7 @@ describe(Amqp1Dot0TransportProvider, () => {
           providerSetup.rheaContainer.onLinkAttached = (
             link: FakeRheaLink,
           ): void => {
+            attachedSender = link;
             link.sendable.mockReturnValue(false);
           };
 
@@ -2798,6 +2903,7 @@ describe(Amqp1Dot0TransportProvider, () => {
               'AMQP 1.0 send to address "orders.create" on connection "primary" timed out after 20ms',
             ),
           );
+          expect(attachedSender?.send).not.toHaveBeenCalled();
         });
       });
 

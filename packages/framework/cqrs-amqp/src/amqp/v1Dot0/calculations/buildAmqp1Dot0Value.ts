@@ -1,4 +1,3 @@
-import { type Amqp1Dot0Array } from '../models/Amqp1Dot0Array.js';
 import { type Amqp1Dot0DescribedValue } from '../models/Amqp1Dot0DescribedValue.js';
 import { type Amqp1Dot0List } from '../models/Amqp1Dot0List.js';
 import { type Amqp1Dot0Map } from '../models/Amqp1Dot0Map.js';
@@ -103,17 +102,23 @@ function buildCompositeList(value: object): Amqp1Dot0List {
   return buildList(raw);
 }
 
-function buildTypedArray(value: RheaTyped): Amqp1Dot0Array {
+function buildTypedArray(value: RheaTyped): Amqp1Dot0Value {
   const typeCode: unknown = value.array_constructor?.typecode;
 
   if (typeof typeCode !== 'number') {
     throw new Error('Unsupported AMQP 1.0 array');
   }
 
-  const items: Amqp1Dot0Value[] = (
-    Array.isArray(value.value) ? value.value : []
-  ).map(buildAmqp1Dot0Value);
   const elementType: Amqp1Dot0TypeName = readAmqpTypeName(typeCode);
+  const rawItems: unknown[] = Array.isArray(value.value) ? value.value : [];
+
+  // rhea writes a nested array with the outer constructor, so it cannot be
+  // encoded back. A list keeps the items sendable.
+  if (elementType === 'array') {
+    return buildList(rawItems);
+  }
+
+  const items: Amqp1Dot0Value[] = rawItems.map(buildAmqp1Dot0Value);
   const descriptor: unknown = value.array_constructor?.descriptor;
 
   if (descriptor === undefined) {

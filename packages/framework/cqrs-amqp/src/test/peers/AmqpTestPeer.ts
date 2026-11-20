@@ -9,6 +9,7 @@ import rhea, {
   type Message,
   type Receiver,
   type Sender,
+  type SenderOptions,
 } from 'rhea';
 
 export type AmqpTestPeerIncomingOutcome =
@@ -93,6 +94,9 @@ export class AmqpTestPeer {
       host: '127.0.0.1',
       port: 0,
       receiver_options: { autoaccept: false },
+      sender_options: {
+        treat_modified_as_released: false,
+      } as SenderOptions,
     });
 
     server.on('connection', (socket: Socket): void => {
@@ -107,13 +111,27 @@ export class AmqpTestPeer {
 
     peer.#listen(container);
 
-    await new Promise<void>((resolve: () => void): void => {
-      if (server.listening) {
-        resolve();
-      } else {
-        server.once('listening', resolve);
-      }
-    });
+    await new Promise<void>(
+      (resolve: () => void, reject: (error: Error) => void): void => {
+        if (server.listening) {
+          resolve();
+
+          return;
+        }
+
+        const onError = (error: Error): void => {
+          server.off('listening', onListening);
+          reject(error);
+        };
+        const onListening = (): void => {
+          server.off('error', onError);
+          resolve();
+        };
+
+        server.once('error', onError);
+        server.once('listening', onListening);
+      },
+    );
 
     return peer;
   }

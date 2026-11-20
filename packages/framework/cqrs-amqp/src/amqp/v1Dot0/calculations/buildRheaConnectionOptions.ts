@@ -80,7 +80,7 @@ export function buildRheaConnectionOptions(
     channel_max: options.channelMax,
     container_id: options.containerId,
     host: options.host,
-    hostname: options.virtualHost,
+    hostname: options.virtualHost ?? options.host,
     idle_time_out: options.idleTimeout,
     initial_reconnect_delay: reconnectOptions.initialDelay,
     max_frame_size: options.maxFrameSize,

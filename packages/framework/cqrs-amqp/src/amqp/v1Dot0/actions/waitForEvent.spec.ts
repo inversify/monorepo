@@ -238,5 +238,120 @@ describe(waitForEvent, () => {
         );
       });
     });
+
+    describe('when called, and the signal aborts while the listener is registered', () => {
+      let emitter: EventEmitter;
+      let reasonFixture: Error;
+      let result: unknown;
+
+      beforeAll(async () => {
+        const abortController: AbortController = new AbortController();
+
+        emitter = new EventEmitter();
+        reasonFixture = new Error('closed');
+
+        const originalOn: EventEmitter['on'] = emitter.on.bind(emitter);
+
+        emitter.on = ((
+          eventName: string,
+          listener: (...args: unknown[]) => void,
+        ): EventEmitter => {
+          const registered: EventEmitter = originalOn(eventName, listener);
+
+          abortController.abort(reasonFixture);
+
+          return registered;
+        }) as EventEmitter['on'];
+
+        try {
+          await waitForEvent<ContextFixture>({
+            buildError: vitest.fn<BuildError>(),
+            emitter,
+            rejectOn: ['failed'],
+            resolveOn: ['opened'],
+            signal: abortController.signal,
+          });
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should remove its listeners', () => {
+        expect(emitter.eventNames()).toStrictEqual([]);
+      });
+
+      it('should reject with the abort reason', () => {
+        expect(result).toBe(reasonFixture);
+      });
+    });
+
+    describe('when called, and shouldResolve throws', () => {
+      let emitter: EventEmitter;
+      let result: unknown;
+
+      beforeAll(async () => {
+        emitter = new EventEmitter();
+
+        const promise: Promise<ContextFixture> = waitForEvent<ContextFixture>({
+          emitter,
+          resolveOn: ['opened'],
+          shouldResolve: (): boolean => {
+            throw new Error('predicate failed');
+          },
+          signal: new AbortController().signal,
+        });
+
+        emitter.emit('opened', { ready: false });
+
+        try {
+          await promise;
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should remove its listeners', () => {
+        expect(emitter.eventNames()).toStrictEqual([]);
+      });
+
+      it('should reject with the predicate error', () => {
+        expect(result).toStrictEqual(new Error('predicate failed'));
+      });
+    });
+
+    describe('when called, and buildError throws', () => {
+      let emitter: EventEmitter;
+      let result: unknown;
+
+      beforeAll(async () => {
+        emitter = new EventEmitter();
+
+        const promise: Promise<ContextFixture> = waitForEvent<ContextFixture>({
+          buildError: (): Error => {
+            throw new Error('outcome failed');
+          },
+          emitter,
+          rejectOn: ['failed'],
+          resolveOn: ['opened'],
+          signal: new AbortController().signal,
+        });
+
+        emitter.emit('failed', { ready: false });
+
+        try {
+          await promise;
+        } catch (error: unknown) {
+          result = error;
+        }
+      });
+
+      it('should remove its listeners', () => {
+        expect(emitter.eventNames()).toStrictEqual([]);
+      });
+
+      it('should reject with the builder error', () => {
+        expect(result).toStrictEqual(new Error('outcome failed'));
+      });
+    });
   });
 });

@@ -40,6 +40,10 @@ import { Amqp1Dot0JsonSerializer } from '../serializers/Amqp1Dot0JsonSerializer.
 
 const CLOSE_TIMEOUT_MS: number = 5000;
 
+// Node stores a timer delay in a signed 32-bit integer. A larger value is
+// shortened, so it is rejected instead.
+const MAX_SEND_TIMEOUT_MS: number = 2_147_483_647;
+
 const DEFAULT_CREDIT_WINDOW: number = 100;
 
 const HANDLER_FAILURE_DESCRIPTION: string =
@@ -84,12 +88,15 @@ interface PendingDelivery {
 // version because these are internals.
 interface RheaConnection extends Connection {
   _is_fatal(condition: string): boolean;
+  abort_socket(socket: unknown): void;
   scheduled_reconnect: ReturnType<typeof setTimeout> | undefined;
   set_reconnect(reconnect: boolean | number): void;
+  socket: unknown;
 }
 
 interface SenderEntry {
   readonly address: string;
+  readonly closed: AbortSignal;
   readonly pendingDeliveries: Map<Delivery, PendingDelivery>;
   readonly sender: Sender;
 }
@@ -476,11 +483,18 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
   ): number | undefined {
     const sendTimeout: number | undefined = options.sendTimeout;
 
-    if (
-      sendTimeout !== undefined &&
-      !(Number.isInteger(sendTimeout) && sendTimeout > 0)
-    ) {
+    if (sendTimeout === undefined) {
+      return undefined;
+    }
+
+    if (!(Number.isInteger(sendTimeout) && sendTimeout > 0)) {
       throw new Error('AMQP 1.0 sendTimeout must be a positive integer');
+    }
+
+    if (sendTimeout > MAX_SEND_TIMEOUT_MS) {
+      throw new Error(
+        `AMQP 1.0 sendTimeout must be at most ${MAX_SEND_TIMEOUT_MS.toString()} milliseconds`,
+      );
     }
 
     return sendTimeout;
@@ -498,6 +512,8 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     connection.close();
 
     if (!wasOpen) {
+      this.#forceCloseSocket(connection);
+
       return;
     }
 
@@ -511,15 +527,34 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       this.#logger?.warn(
         `AMQP 1.0 connection did not close within ${CLOSE_TIMEOUT_MS.toString()}ms`,
       );
+      this.#forceCloseSocket(connection);
+    }
+  }
+
+  #forceCloseSocket(connection: RheaConnection): void {
+    if (connection.socket === undefined) {
+      return;
+    }
+
+    try {
+      connection.abort_socket(connection.socket);
+    } catch (error: unknown) {
+      this.#logger?.warn(
+        `Failed to destroy an AMQP 1.0 socket: ${describeError(error)}`,
+      );
     }
   }
 
   #describeContextError(context: EventContext | undefined): string {
+    if (context === undefined) {
+      return '';
+    }
+
     const error: AmqpError | Error | undefined =
-      context?.error ??
-      context?.sender?.error ??
-      context?.receiver?.error ??
-      context?.connection.error;
+      context.error ??
+      context.sender?.error ??
+      context.receiver?.error ??
+      context.connection.error;
 
     if (error === undefined) {
       return '';
@@ -529,16 +564,20 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
   }
 
   #describeAmqpError(error: AmqpError | Error): string {
-    if (error instanceof Error) {
-      return error.message;
-    }
-
-    return [error.condition, error.description]
+    const amqpError: { condition?: string; description?: string } =
+      error as unknown as { condition?: string; description?: string };
+    const protocol: string = [amqpError.condition, amqpError.description]
       .filter(
         (value: string | undefined): value is string =>
           value !== undefined && value !== '',
       )
       .join(' - ');
+
+    if (protocol !== '') {
+      return protocol;
+    }
+
+    return error instanceof Error ? error.message : '';
   }
 
   async #dispatch(
@@ -754,7 +793,13 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       );
     });
 
-    await this.#waitForLinkAttach(entry, receiver, 'receiver', address);
+    await this.#waitForLinkAttach(
+      entry,
+      receiver,
+      'receiver',
+      address,
+      entry.signal,
+    );
 
     let receiverClosureReported: boolean = false;
 
@@ -787,17 +832,84 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
         ...buildRheaTerminusOptions(entry.config.senderOptions?.target),
         address,
       },
-    });
+      // rhea otherwise emits released as well as modified.
+      treat_modified_as_released: false,
+    } as Parameters<Connection['open_sender']>[0]);
 
+    const senderClosed: AbortController = new AbortController();
     const senderEntry: SenderEntry = {
       address,
+      closed: senderClosed.signal,
       pendingDeliveries: new Map(),
       sender,
     };
 
+    let evicted: boolean = false;
+
+    const evictSender: (error: Error, abortWaits: boolean) => void = (
+      error: Error,
+      abortWaits: boolean,
+    ): void => {
+      if (evicted) {
+        return;
+      }
+
+      evicted = true;
+      sender.session.removeListener('session_close', onSessionEnded);
+      sender.session.removeListener('session_error', onSessionEnded);
+      sender.removeListener('sender_close', onSenderClosed);
+      sender.removeListener('sender_error', onSenderClosed);
+      entry.senders.delete(address);
+      entry.senderEntries.delete(senderEntry);
+      this.#rejectPendingDeliveries(senderEntry, error);
+
+      // sender_close already rejects attach and credit waits. Aborting here
+      // would replace that error. A session end does not emit sender_close.
+      if (abortWaits) {
+        senderClosed.abort(error);
+      }
+    };
+
+    const closedError: (context: EventContext) => Error = (
+      context: EventContext,
+    ): Error =>
+      new Error(
+        `AMQP 1.0 sender for address "${address}" on connection "${String(entry.config.identifier)}" was closed before the message was settled${this.#describeContextError(context)}`,
+      );
+
+    const onSenderClosed: (context: EventContext) => void = (
+      context: EventContext,
+    ): void => {
+      evictSender(closedError(context), false);
+    };
+
+    const onSessionEnded: (context: EventContext) => void = (
+      context: EventContext,
+    ): void => {
+      evictSender(closedError(context), true);
+    };
+
+    sender.session.on('session_close', onSessionEnded);
+    sender.session.on('session_error', onSessionEnded);
+
     try {
-      await this.#waitForLinkAttach(entry, sender, 'sender', address);
+      await this.#waitForLinkAttach(
+        entry,
+        sender,
+        'sender',
+        address,
+        AbortSignal.any([entry.signal, senderClosed.signal]),
+      );
     } catch (error: unknown) {
+      evictSender(
+        error instanceof Error
+          ? error
+          : new Error(
+              `Failed to open AMQP 1.0 sender for address "${address}" on connection "${String(entry.config.identifier)}"`,
+            ),
+        true,
+      );
+
       this.#settle((): void => {
         sender.close();
       });
@@ -805,8 +917,10 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       throw error;
     }
 
-    sender.on('accepted', (context: EventContext): void => {
-      this.#takePendingDelivery(senderEntry, context)?.resolve();
+    sender.on('settled', (context: EventContext): void => {
+      if (this.#isAccepted(context.delivery)) {
+        this.#takePendingDelivery(senderEntry, context)?.resolve();
+      }
     });
 
     for (const outcome of SETTLEMENT_FAILURE_OUTCOMES) {
@@ -817,26 +931,26 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       });
     }
 
-    const onSenderClosed: (context: EventContext) => void = (
-      context: EventContext,
-    ): void => {
-      entry.senders.delete(address);
-      entry.senderEntries.delete(senderEntry);
-
-      this.#rejectPendingDeliveries(
-        senderEntry,
-        new Error(
-          `AMQP 1.0 sender for address "${address}" on connection "${String(entry.config.identifier)}" was closed before the message was settled${this.#describeContextError(context)}`,
-        ),
-      );
-    };
-
     sender.on('sender_close', onSenderClosed);
     sender.on('sender_error', onSenderClosed);
 
     entry.senderEntries.add(senderEntry);
 
     return senderEntry;
+  }
+
+  #isAccepted(delivery: Delivery | undefined): boolean {
+    const remoteState: object | undefined = delivery?.remote_state;
+
+    if (remoteState === undefined) {
+      return false;
+    }
+
+    const outcome: { composite_type?: unknown } | undefined = (
+      remoteState as { constructor?: { composite_type?: unknown } }
+    ).constructor;
+
+    return outcome?.composite_type === 'accepted';
   }
 
   #buildOutcomeError(
@@ -951,8 +1065,18 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       this.#getSenderEntry(entry, connection, address),
       signal,
     );
+    const sendSignal: AbortSignal = AbortSignal.any([
+      signal,
+      senderEntry.closed,
+    ]);
 
-    if (!senderEntry.sender.sendable()) {
+    while (!senderEntry.sender.is_open() || !senderEntry.sender.sendable()) {
+      if (sendSignal.aborted) {
+        throw getAbortReason(sendSignal);
+      }
+
+      const waitingForAttach: boolean = !senderEntry.sender.is_open();
+
       await waitForEvent<EventContext>({
         buildError: (eventName: string): Error =>
           new Error(
@@ -960,13 +1084,15 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
           ),
         emitter: senderEntry.sender,
         rejectOn: ['sender_close', 'sender_error'],
-        resolveOn: ['sendable'],
-        signal,
+        resolveOn: waitingForAttach ? ['sender_open'] : ['sendable'],
+        shouldResolve: (): boolean =>
+          waitingForAttach ? !isNullTerminus(senderEntry.sender.target) : true,
+        signal: sendSignal,
       });
     }
 
-    if (signal.aborted) {
-      throw getAbortReason(signal);
+    if (sendSignal.aborted) {
+      throw getAbortReason(sendSignal);
     }
 
     const delivery: Delivery = senderEntry.sender.send(message);
@@ -978,7 +1104,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
             senderEntry.pendingDeliveries.set(delivery, { reject, resolve });
           },
         ),
-        signal,
+        sendSignal,
       );
     } finally {
       senderEntry.pendingDeliveries.delete(delivery);
@@ -1049,6 +1175,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     link: Receiver | Sender,
     kind: 'receiver' | 'sender',
     address: string,
+    signal: AbortSignal,
   ): Promise<void> {
     const buildError: (eventName: string, context: EventContext) => Error = (
       eventName: string,
@@ -1067,7 +1194,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       // after, so the link is only usable once the terminus is set.
       shouldResolve: (): boolean =>
         !isNullTerminus(kind === 'receiver' ? link.source : link.target),
-      signal: entry.signal,
+      signal,
     });
   }
 

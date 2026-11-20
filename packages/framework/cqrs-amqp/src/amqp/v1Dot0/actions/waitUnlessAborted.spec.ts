@@ -98,5 +98,39 @@ describe(waitUnlessAborted, () => {
         expect(result).toBe(reasonFixture);
       });
     });
+
+    describe('when called twice, and one signal is aborted before the promise resolves', () => {
+      let abortedResult: unknown;
+      let resolvedResult: unknown;
+
+      beforeAll(async () => {
+        const abortController: AbortController = new AbortController();
+        let resolvePromise: (value: string) => void = (): void => {};
+        const promise: Promise<string> = new Promise<string>(
+          (resolve: (value: string) => void): void => {
+            resolvePromise = resolve;
+          },
+        );
+
+        const aborted: Promise<unknown> = captureError(async () =>
+          waitUnlessAborted(promise, abortController.signal),
+        );
+        const resolved: Promise<string> = waitUnlessAborted(
+          promise,
+          new AbortController().signal,
+        );
+
+        abortController.abort(new Error('timed out'));
+        resolvePromise('sent');
+
+        abortedResult = await aborted;
+        resolvedResult = await resolved;
+      });
+
+      it('should reject only the aborted wait', () => {
+        expect(abortedResult).toStrictEqual(new Error('timed out'));
+        expect(resolvedResult).toBe('sent');
+      });
+    });
   });
 });

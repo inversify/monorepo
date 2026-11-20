@@ -1,4 +1,6 @@
-export function describeError(error: unknown): string {
+const UNREPRESENTABLE_ERROR: string = '[unrepresentable error]';
+
+function formatError(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }
@@ -29,5 +31,13 @@ export function describeError(error: unknown): string {
     return JSON.stringify(error);
   } catch (_serializationError: unknown) {
     return Object.prototype.toString.call(error);
+  }
+}
+
+export function describeError(error: unknown): string {
+  try {
+    return formatError(error);
+  } catch (_formattingError: unknown) {
+    return UNREPRESENTABLE_ERROR;
   }
 }

@@ -74,4 +74,30 @@ describe(describeError, () => {
       });
     });
   });
+
+  describe('having an Error whose message throws', () => {
+    let errorFixture: Error;
+
+    beforeAll(() => {
+      errorFixture = new Error('Inventory is unavailable');
+
+      Object.defineProperty(errorFixture, 'message', {
+        get: (): string => {
+          throw new Error('message failed');
+        },
+      });
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = describeError(errorFixture);
+      });
+
+      it('should return a fallback description', () => {
+        expect(result).toBe('[unrepresentable error]');
+      });
+    });
+  });
 });
