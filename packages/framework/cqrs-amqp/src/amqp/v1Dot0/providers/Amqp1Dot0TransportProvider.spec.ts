@@ -2098,6 +2098,134 @@ describe(Amqp1Dot0TransportProvider, () => {
         });
       });
 
+      describe('when called, and the peer settles without an outcome', () => {
+        let providerSetup: ProviderSetup;
+        let result: unknown;
+
+        beforeAll(async () => {
+          serializerMock.serialize.mockReturnValueOnce(messageFixture);
+
+          providerSetup = await initializeSender({
+            serializer: serializerMock,
+          });
+
+          const sendPromise: Promise<void> = providerSetup.provider.send(
+            commandFixture,
+            paramsFixture,
+          );
+          const sender: FakeRheaLink = await waitForSentMessages(
+            providerSetup,
+            1,
+          );
+
+          sender.emit('settled', {
+            delivery: (sender.sent[0] as FakeRheaLink['sent'][number]).delivery,
+            sender,
+          });
+
+          result = await sendPromise;
+        });
+
+        afterAll(async () => {
+          await providerSetup.provider.close();
+
+          vitest.clearAllMocks();
+        });
+
+        it('should resolve the send as accepted', () => {
+          expect(result).toBeUndefined();
+        });
+      });
+
+      describe('when called, and the link default outcome is rejected', () => {
+        let providerSetup: ProviderSetup;
+        let result: unknown;
+
+        beforeAll(async () => {
+          serializerMock.serialize.mockReturnValueOnce(messageFixture);
+
+          providerSetup = await initializeSender({
+            serializer: serializerMock,
+          });
+
+          const sendPromise: Promise<void> = providerSetup.provider.send(
+            commandFixture,
+            paramsFixture,
+          );
+          const sender: FakeRheaLink = await waitForSentMessages(
+            providerSetup,
+            1,
+          );
+
+          sender.source = { default_outcome: 'rejected' };
+
+          sender.emit('settled', {
+            delivery: (sender.sent[0] as FakeRheaLink['sent'][number]).delivery,
+            sender,
+          });
+
+          result = await sendPromise.catch((error: unknown): unknown => error);
+        });
+
+        afterAll(async () => {
+          await providerSetup.provider.close();
+
+          vitest.clearAllMocks();
+        });
+
+        it('should reject the send with the default outcome', () => {
+          expect(result).toStrictEqual(
+            new Error(
+              'AMQP 1.0 peer rejected the message sent to address "orders.create" on connection "primary"',
+            ),
+          );
+        });
+      });
+
+      describe('when called, and the peer receiver settles second', () => {
+        let providerSetup: ProviderSetup;
+        let result: unknown;
+        let update: ReturnType<typeof vitest.fn<(settled: boolean) => void>>;
+
+        beforeAll(async () => {
+          serializerMock.serialize.mockReturnValueOnce(messageFixture);
+
+          providerSetup = await initializeSender({
+            serializer: serializerMock,
+          });
+
+          const sendPromise: Promise<void> = providerSetup.provider.send(
+            commandFixture,
+            paramsFixture,
+          );
+          const sender: FakeRheaLink = await waitForSentMessages(
+            providerSetup,
+            1,
+          );
+          const sent: FakeRheaLink['sent'][number] = sender
+            .sent[0] as FakeRheaLink['sent'][number];
+
+          update = vitest.fn<(settled: boolean) => void>();
+          sent.delivery.update = update;
+          sender.rcv_settle_mode = 1;
+
+          sender.settle(sent, 'accepted');
+
+          result = await sendPromise;
+        });
+
+        afterAll(async () => {
+          await providerSetup.provider.close();
+
+          vitest.clearAllMocks();
+        });
+
+        it('should settle the delivery locally and then resolve', () => {
+          expect(update).toHaveBeenCalledExactlyOnceWith(true);
+          expect(result).toBeUndefined();
+        });
+      });
+
       describe('when called twice', () => {
         let providerSetup: ProviderSetup;
 
@@ -2849,6 +2977,60 @@ describe(Amqp1Dot0TransportProvider, () => {
 
         it('should send the message', () => {
           expect(result).toBeUndefined();
+        });
+      });
+
+      describe('when called while the connection is reconnecting', () => {
+        let connection: ReturnType<FakeRheaContainer['getConnection']>;
+        let openedWhileReconnecting: boolean;
+        let providerSetup: ProviderSetup;
+        let result: unknown;
+
+        beforeAll(async () => {
+          serializerMock.serialize.mockReturnValueOnce(messageFixture);
+
+          providerSetup = await initializeSender({
+            serializer: serializerMock,
+          });
+          connection = providerSetup.rheaContainer.getConnection('primary');
+          connection.is_open.mockReturnValue(false);
+          connection.emit('disconnected', { connection, reconnecting: true });
+
+          const sendPromise: Promise<void> = providerSetup.provider.send(
+            commandFixture,
+            paramsFixture,
+          );
+
+          await flushImmediates();
+          openedWhileReconnecting =
+            connection.open_sender.mock.calls.length > 0;
+
+          connection.is_open.mockReturnValue(true);
+          connection.emit('connection_open', { connection });
+
+          const sender: FakeRheaLink = await waitForSentMessages(
+            providerSetup,
+            1,
+          );
+
+          sender.settle(
+            sender.sent[0] as FakeRheaLink['sent'][number],
+            'accepted',
+          );
+
+          result = await sendPromise;
+        });
+
+        afterAll(async () => {
+          await providerSetup.provider.close();
+
+          vitest.clearAllMocks();
+        });
+
+        it('should send once the connection is open again', () => {
+          expect(openedWhileReconnecting).toBe(false);
+          expect(result).toBeUndefined();
+          expect(connection.open_sender).toHaveBeenCalledTimes(1);
         });
       });
     });

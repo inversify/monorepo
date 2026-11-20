@@ -45,6 +45,8 @@ export class FakeRheaIncomingDelivery {
 
 export interface FakeRheaOutgoingDelivery {
   remote_state: { error?: AmqpError } | undefined;
+  settled?: boolean;
+  update?: (settled: boolean, state?: unknown) => void;
 }
 
 export interface FakeRheaSentMessage {
@@ -72,6 +74,7 @@ export class FakeRheaLink extends EventEmitter {
   public readonly close: Mock<(error?: AmqpError) => void>;
   public error: AmqpError | undefined;
   public readonly is_open: Mock<() => boolean>;
+  public rcv_settle_mode: 0 | 1 | undefined;
   public readonly send: Mock<(message: Message) => FakeRheaOutgoingDelivery>;
   public readonly sendable: Mock<() => boolean>;
   public readonly sent: FakeRheaSentMessage[];
@@ -95,6 +98,7 @@ export class FakeRheaLink extends EventEmitter {
     });
     this.error = undefined;
     this.is_open = vitest.fn((): boolean => this.#open);
+    this.rcv_settle_mode = undefined;
     this.sent = [];
     this.session = new EventEmitter();
     this.source = undefined;
@@ -181,6 +185,7 @@ export class FakeRheaConnection extends EventEmitter {
   public readonly close: Mock<() => void>;
   public error: AmqpError | undefined;
   public readonly get_error: Mock<() => AmqpError | undefined>;
+  public readonly is_open: Mock<() => boolean>;
   public readonly open_receiver: Mock<
     (options: ReceiverOptions) => FakeRheaLink
   >;
@@ -201,18 +206,19 @@ export class FakeRheaConnection extends EventEmitter {
   ) {
     super();
 
+    this.#open = false;
     this._is_fatal = vitest.fn(
       (condition: string): boolean => condition !== 'amqp:connection:forced',
     );
     this.error = undefined;
     this.get_error = vitest.fn((): AmqpError | undefined => this.error);
+    this.is_open = vitest.fn((): boolean => this.#open);
     this.options = { ...options };
     this.receivers = [];
     this.reconnect = vitest.fn();
     this.scheduled_reconnect = undefined;
     this.senders = [];
     this.silentClose = false;
-    this.#open = false;
 
     this.close = vitest.fn((): void => {
       const wasOpen: boolean = this.#open;
@@ -291,10 +297,6 @@ export class FakeRheaConnection extends EventEmitter {
     }
 
     this.emit('disconnected', { connection: this, reconnecting });
-  }
-
-  public is_open(): boolean {
-    return this.#open;
   }
 
   #openLink(

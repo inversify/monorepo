@@ -1043,13 +1043,32 @@ describe(Amqp1Dot0TransportProvider, () => {
 
     beforeAll(async () => {
       peer = await startPeer(cleanup);
-      producer = await startProducer(cleanup, peer, { sendTimeout: 100 });
+      peer.setIncomingOutcome('orders.unsettled', 'accept');
+      producer = await startProducer(cleanup, peer, { sendTimeout: 1_000 });
+
+      await producer.commandBus.send(new UnsettledOrder('order-established'));
+
+      peer.setIncomingOutcome('orders.unsettled', 'hold');
 
       const sendResult: Promise<unknown> = captureError(async () =>
         producer.commandBus.send(new UnsettledOrder('order-9')),
       );
 
-      await peer.waitForReceivedMessages('orders.unsettled', 1);
+      void sendResult.catch((): undefined => undefined);
+
+      await vitest.waitFor(
+        (): void => {
+          const received: number =
+            peer.getReceivedMessages('orders.unsettled').length;
+
+          if (received < 2) {
+            throw new Error(
+              `Timed out waiting for the held delivery on orders.unsettled; received ${received.toString()} of 2`,
+            );
+          }
+        },
+        { timeout: 2_000 },
+      );
 
       result = await sendResult;
     });
@@ -1061,7 +1080,7 @@ describe(Amqp1Dot0TransportProvider, () => {
     it('should reject the send once the timeout elapses', () => {
       expect(result).toStrictEqual(
         new Error(
-          'AMQP 1.0 send to address "orders.unsettled" on connection "peer" timed out after 100ms',
+          'AMQP 1.0 send to address "orders.unsettled" on connection "peer" timed out after 1000ms',
         ),
       );
     });

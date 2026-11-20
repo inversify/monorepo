@@ -67,6 +67,7 @@ interface ConnectionEntry {
   readonly downController: AbortController;
   readonly listenersEnabled: boolean;
   readonly receivers: Receiver[];
+  reconnecting: boolean;
   readonly senderEntries: Set<SenderEntry>;
   readonly senders: Map<string, Promise<SenderEntry>>;
   // Aborted when the provider closes or the connection is down for good.
@@ -295,12 +296,21 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       }
 
       if (context.reconnecting !== true) {
+        entry.reconnecting = false;
         this.#setConnectionDown(entry, context);
-      } else if (this.#state !== 'closed') {
-        this.#logger?.warn(
-          `AMQP 1.0 connection "${String(entry.config.identifier)}" disconnected${this.#describeContextError(context)}, reconnecting`,
-        );
+      } else {
+        entry.reconnecting = true;
+
+        if (this.#state !== 'closed') {
+          this.#logger?.warn(
+            `AMQP 1.0 connection "${String(entry.config.identifier)}" disconnected${this.#describeContextError(context)}, reconnecting`,
+          );
+        }
       }
+    });
+
+    connection.on('connection_open', (): void => {
+      entry.reconnecting = false;
     });
 
     connection.on('connection_close', (context: EventContext): void => {
@@ -362,6 +372,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
         listenersEnabled:
           config.listenersEnabled ?? options.listenersEnabled ?? false,
         receivers: [],
+        reconnecting: false,
         senderEntries: new Set(),
         senders: new Map(),
         signal: AbortSignal.any([
@@ -793,13 +804,33 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       );
     });
 
-    await this.#waitForLinkAttach(
-      entry,
-      receiver,
-      'receiver',
-      address,
-      entry.signal,
-    );
+    const sessionEnded: AbortController = new AbortController();
+
+    const onSessionEnded: (context: EventContext) => void = (
+      context: EventContext,
+    ): void => {
+      sessionEnded.abort(
+        new Error(
+          `Failed to open AMQP 1.0 receiver for address "${address}" on connection "${String(entry.config.identifier)}" (session ended)${this.#describeContextError(context)}`,
+        ),
+      );
+    };
+
+    receiver.session.on('session_close', onSessionEnded);
+    receiver.session.on('session_error', onSessionEnded);
+
+    try {
+      await this.#waitForLinkAttach(
+        entry,
+        receiver,
+        'receiver',
+        address,
+        AbortSignal.any([entry.signal, sessionEnded.signal]),
+      );
+    } finally {
+      receiver.session.removeListener('session_close', onSessionEnded);
+      receiver.session.removeListener('session_error', onSessionEnded);
+    }
 
     let receiverClosureReported: boolean = false;
 
@@ -826,6 +857,14 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     connection: Connection,
     address: string,
   ): Promise<SenderEntry> {
+    if (entry.reconnecting && !connection.is_open()) {
+      await waitForEvent<EventContext>({
+        emitter: connection,
+        resolveOn: ['connection_open'],
+        signal: entry.signal,
+      });
+    }
+
     const sender: Sender = connection.open_sender({
       autosettle: true,
       target: {
@@ -844,17 +883,22 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       sender,
     };
 
-    let evicted: boolean = false;
+    const senderState: { evicted: boolean; evictionError: Error | undefined } =
+      {
+        evicted: false,
+        evictionError: undefined,
+      };
 
     const evictSender: (error: Error, abortWaits: boolean) => void = (
       error: Error,
       abortWaits: boolean,
     ): void => {
-      if (evicted) {
+      if (senderState.evicted) {
         return;
       }
 
-      evicted = true;
+      senderState.evicted = true;
+      senderState.evictionError = error;
       sender.session.removeListener('session_close', onSessionEnded);
       sender.session.removeListener('session_error', onSessionEnded);
       sender.removeListener('sender_close', onSenderClosed);
@@ -891,6 +935,8 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
 
     sender.session.on('session_close', onSessionEnded);
     sender.session.on('session_error', onSessionEnded);
+    sender.on('sender_close', onSenderClosed);
+    sender.on('sender_error', onSenderClosed);
 
     try {
       await this.#waitForLinkAttach(
@@ -917,40 +963,160 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       throw error;
     }
 
+    if (senderState.evicted) {
+      this.#settle((): void => {
+        sender.close();
+      });
+
+      throw (
+        senderState.evictionError ??
+        new Error(
+          `AMQP 1.0 sender for address "${address}" on connection "${String(entry.config.identifier)}" was closed before the message was settled`,
+        )
+      );
+    }
+
+    sender.on('accepted', (context: EventContext): void => {
+      this.#settleOutgoingIfReceiverSettlesSecond(sender, context);
+    });
+
     sender.on('settled', (context: EventContext): void => {
-      if (this.#isAccepted(context.delivery)) {
-        this.#takePendingDelivery(senderEntry, context)?.resolve();
-      }
+      this.#completeSettledSend(entry, senderEntry, address, context);
     });
 
     for (const outcome of SETTLEMENT_FAILURE_OUTCOMES) {
       sender.on(outcome, (context: EventContext): void => {
+        this.#settleOutgoingIfReceiverSettlesSecond(sender, context);
+
         this.#takePendingDelivery(senderEntry, context)?.reject(
           this.#buildOutcomeError(entry, address, outcome, context),
         );
       });
     }
 
-    sender.on('sender_close', onSenderClosed);
-    sender.on('sender_error', onSenderClosed);
-
     entry.senderEntries.add(senderEntry);
 
     return senderEntry;
   }
 
-  #isAccepted(delivery: Delivery | undefined): boolean {
-    const remoteState: object | undefined = delivery?.remote_state;
+  #completeSettledSend(
+    entry: ConnectionEntry,
+    senderEntry: SenderEntry,
+    address: string,
+    context: EventContext,
+  ): void {
+    const remoteState: unknown = context.delivery?.remote_state;
+    const outcome: string | undefined =
+      remoteState === undefined
+        ? this.#defaultTerminalOutcome(senderEntry.sender)
+        : this.#outcomeName(remoteState);
 
-    if (remoteState === undefined) {
-      return false;
+    if (outcome === 'accepted') {
+      this.#takePendingDelivery(senderEntry, context)?.resolve();
+
+      return;
     }
 
-    const outcome: { composite_type?: unknown } | undefined = (
-      remoteState as { constructor?: { composite_type?: unknown } }
-    ).constructor;
+    if (remoteState !== undefined) {
+      return;
+    }
 
-    return outcome?.composite_type === 'accepted';
+    this.#takePendingDelivery(senderEntry, context)?.reject(
+      outcome === undefined
+        ? new Error(
+            `AMQP 1.0 sender for address "${address}" on connection "${String(entry.config.identifier)}" was settled without a recognized outcome`,
+          )
+        : this.#buildOutcomeError(entry, address, outcome, context),
+    );
+  }
+
+  #defaultTerminalOutcome(sender: Sender): string | undefined {
+    const source: unknown = sender.source;
+
+    if (typeof source !== 'object' || source === null) {
+      return 'accepted';
+    }
+
+    const defaultOutcome: unknown = (source as { default_outcome?: unknown })
+      .default_outcome;
+
+    if (defaultOutcome === undefined) {
+      return 'accepted';
+    }
+
+    return this.#outcomeName(defaultOutcome);
+  }
+
+  #outcomeName(state: unknown): string | undefined {
+    if (typeof state === 'string') {
+      return this.#normalizeOutcomeName(state);
+    }
+
+    if (typeof state !== 'object' || state === null) {
+      return undefined;
+    }
+
+    const compositeType: unknown = (
+      state as { constructor?: { composite_type?: unknown } }
+    ).constructor?.composite_type;
+
+    if (typeof compositeType === 'string') {
+      return this.#normalizeOutcomeName(compositeType);
+    }
+
+    const descriptor: unknown = (state as { descriptor?: unknown }).descriptor;
+
+    if (typeof descriptor === 'string') {
+      return this.#normalizeOutcomeName(descriptor);
+    }
+
+    if (typeof descriptor === 'object' && descriptor !== null) {
+      const symbolic: unknown = (descriptor as { symbolic?: unknown }).symbolic;
+
+      if (typeof symbolic === 'string') {
+        return this.#normalizeOutcomeName(symbolic);
+      }
+    }
+
+    return undefined;
+  }
+
+  #normalizeOutcomeName(value: string): string {
+    switch (value) {
+      case 'accepted':
+      case 'amqp:accepted:list':
+        return 'accepted';
+      case 'modified':
+      case 'amqp:modified:list':
+        return 'modified';
+      case 'rejected':
+      case 'amqp:rejected:list':
+        return 'rejected';
+      case 'released':
+      case 'amqp:released:list':
+        return 'released';
+      default:
+        return value;
+    }
+  }
+
+  #settleOutgoingIfReceiverSettlesSecond(
+    sender: Sender,
+    context: EventContext,
+  ): void {
+    if (sender.rcv_settle_mode !== 1) {
+      return;
+    }
+
+    const delivery: Delivery | undefined = context.delivery;
+
+    if (delivery === undefined || delivery.settled) {
+      return;
+    }
+
+    this.#settle((): void => {
+      delivery.update(true);
+    });
   }
 
   #buildOutcomeError(

@@ -113,9 +113,22 @@ function buildTypedArray(value: RheaTyped): Amqp1Dot0Value {
   const rawItems: unknown[] = Array.isArray(value.value) ? value.value : [];
 
   // rhea writes a nested array with the outer constructor, so it cannot be
-  // encoded back. A list keeps the items sendable.
+  // encoded back. A list keeps the items sendable. That constructor's
+  // descriptor is shared by every element, so each list item keeps it.
   if (elementType === 'array') {
-    return buildList(rawItems);
+    const list: Amqp1Dot0List = buildList(rawItems);
+    const descriptor: unknown = value.array_constructor?.descriptor;
+
+    if (descriptor === undefined) {
+      return list;
+    }
+
+    return {
+      items: list.items.map((item: Amqp1Dot0Value): Amqp1Dot0DescribedValue =>
+        buildDescribedValue(descriptor, item),
+      ),
+      kind: 'list',
+    };
   }
 
   const items: Amqp1Dot0Value[] = rawItems.map(buildAmqp1Dot0Value);

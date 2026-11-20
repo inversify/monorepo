@@ -200,6 +200,50 @@ describe(buildAmqp1Dot0Value, () => {
     });
   });
 
+  describe('having an array of arrays with a descriptor', () => {
+    let valueFixture: TypedFixture;
+
+    beforeAll(() => {
+      const inner: TypedFixture = typed(['red'], 0xf0);
+
+      inner.array_constructor = { typecode: 0xa1 };
+      inner.type = { typecode: 0xf0 };
+      valueFixture = typed([inner], 0xf0);
+      valueFixture.array_constructor = {
+        descriptor: typed('example:color:array'),
+        typecode: 0xf0,
+      };
+      valueFixture.type = { typecode: 0xf0 };
+    });
+
+    describe('when called', () => {
+      let result: unknown;
+
+      beforeAll(() => {
+        result = buildAmqp1Dot0Value(valueFixture);
+      });
+
+      it('should wrap each list item with the constructor descriptor', () => {
+        const expected: Amqp1Dot0Value = {
+          items: [
+            {
+              descriptor: 'example:color:array',
+              kind: 'described',
+              value: {
+                elementType: 'string',
+                items: ['red'],
+                kind: 'array',
+              },
+            },
+          ],
+          kind: 'list',
+        };
+
+        expect(result).toStrictEqual(expected);
+      });
+    });
+  });
+
   describe('having a known composite', () => {
     class SelectorComposite {
       public static readonly descriptor: { readonly symbolic: string } = {
