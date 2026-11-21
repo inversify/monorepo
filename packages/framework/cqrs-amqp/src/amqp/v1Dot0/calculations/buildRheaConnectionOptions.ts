@@ -89,5 +89,6 @@ export function buildRheaConnectionOptions(
     reconnect: reconnect !== false,
     reconnect_limit: reconnectOptions.limit,
     sasl_mechanisms: buildSaslMechanisms(options.sasl),
+    session_buffer_size: options.sessionBufferSize,
   }) as ConnectionOptions;
 }

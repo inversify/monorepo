@@ -52,4 +52,29 @@ describe(buildRheaConnectionOptions, () => {
       });
     });
   });
+
+  describe('having a session buffer size', () => {
+    let optionsFixture: Amqp1Dot0ConnectionOptions;
+
+    beforeAll(() => {
+      optionsFixture = {
+        host: 'broker.example',
+        sessionBufferSize: 2,
+      };
+    });
+
+    describe('when called', () => {
+      let result: ReturnType<typeof buildRheaConnectionOptions>;
+
+      beforeAll(() => {
+        result = buildRheaConnectionOptions(optionsFixture);
+      });
+
+      it('should set the session buffer size', () => {
+        expect(
+          (result as { session_buffer_size?: number }).session_buffer_size,
+        ).toBe(2);
+      });
+    });
+  });
 });

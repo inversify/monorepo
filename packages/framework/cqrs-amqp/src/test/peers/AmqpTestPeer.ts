@@ -26,6 +26,11 @@ export interface AmqpTestPeerDisposition {
   readonly outcome: AmqpTestPeerOutgoingOutcome;
 }
 
+export interface AmqpTestPeerReceiverDisposition {
+  readonly address: string;
+  readonly settled: boolean;
+}
+
 type AmqpTestPeerOutgoingOutcome =
   | 'accepted'
   | 'modified'
@@ -53,12 +58,16 @@ export class AmqpTestPeer {
 
   readonly #connections: Set<Connection>;
   readonly #consumers: Map<string, Sender[]>;
+  readonly #incomingLinks: Map<string, Receiver[]>;
   readonly #incomingOutcomes: Map<string, AmqpTestPeerIncomingOutcome>;
   #openedConnectionCount: number;
   readonly #outgoingMessages: WeakMap<Delivery, Message>;
   readonly #queues: Map<string, Message[]>;
   readonly #receivedMessages: Map<string, Message[]>;
+  readonly #receiverDispositions: AmqpTestPeerReceiverDisposition[];
+  readonly #receiverSettlements: string[];
   readonly #refusedAddresses: Set<string>;
+  readonly #secondSettleAddresses: Set<string>;
   readonly #server: Server;
   readonly #sockets: Set<Socket>;
   readonly #waiters: Set<Waiter>;
@@ -67,12 +76,16 @@ export class AmqpTestPeer {
     this.dispositions = [];
     this.#connections = new Set();
     this.#consumers = new Map();
+    this.#incomingLinks = new Map();
     this.#incomingOutcomes = new Map();
     this.#openedConnectionCount = 0;
     this.#outgoingMessages = new WeakMap();
     this.#queues = new Map();
     this.#receivedMessages = new Map();
+    this.#receiverDispositions = [];
+    this.#receiverSettlements = [];
     this.#refusedAddresses = new Set();
+    this.#secondSettleAddresses = new Set();
     this.#server = server;
     this.#sockets = sockets;
     this.#waiters = new Set();
@@ -155,6 +168,12 @@ export class AmqpTestPeer {
     }
   }
 
+  public closeIncomingLinks(address: string): void {
+    for (const receiver of this.#incomingLinks.get(address) ?? []) {
+      receiver.close();
+    }
+  }
+
   /**
    * Destroys every socket without closing the AMQP connections, as a network
    * failure would.
@@ -180,6 +199,15 @@ export class AmqpTestPeer {
     return this.#receivedMessages.get(address) ?? [];
   }
 
+  public getReceiverDispositions(
+    address: string,
+  ): readonly AmqpTestPeerReceiverDisposition[] {
+    return this.#receiverDispositions.filter(
+      (disposition: AmqpTestPeerReceiverDisposition): boolean =>
+        disposition.address === address,
+    );
+  }
+
   public refuseLinks(address: string): void {
     this.#refusedAddresses.add(address);
   }
@@ -189,6 +217,10 @@ export class AmqpTestPeer {
     outcome: AmqpTestPeerIncomingOutcome,
   ): void {
     this.#incomingOutcomes.set(address, outcome);
+  }
+
+  public setReceiverSettlesSecond(address: string): void {
+    this.#secondSettleAddresses.add(address);
   }
 
   public async waitForDispositions(
@@ -221,6 +253,18 @@ export class AmqpTestPeer {
   ): Promise<void> {
     await this.#waitFor(
       (): boolean => this.getReceivedMessages(address).length >= count,
+    );
+  }
+
+  public async waitForReceiverSettlements(
+    address: string,
+    count: number,
+  ): Promise<void> {
+    await this.#waitFor(
+      (): boolean =>
+        this.#receiverSettlements.filter(
+          (settledAddress: string): boolean => settledAddress === address,
+        ).length >= count,
     );
   }
 
@@ -271,6 +315,15 @@ export class AmqpTestPeer {
 
     container.on('receiver_open', (context: EventContext): void => {
       this.#onProducerAttached(context.receiver as Receiver);
+    });
+
+    container.on('settled', (context: EventContext): void => {
+      if (context.receiver === undefined || context.sender !== undefined) {
+        return;
+      }
+
+      this.#receiverSettlements.push(context.receiver.target.address);
+      this.#notify();
     });
 
     container.on('message', (context: EventContext): void => {
@@ -386,6 +439,10 @@ export class AmqpTestPeer {
 
     switch (this.#incomingOutcomes.get(address) ?? 'accept') {
       case 'accept':
+        if (this.#secondSettleAddresses.has(address)) {
+          this.#recordReceiverDisposition(address, delivery);
+        }
+
         this.#getMessages(this.#queues, address).push(message);
         delivery.accept();
         this.#flush(address);
@@ -412,6 +469,14 @@ export class AmqpTestPeer {
   #onProducerAttached(receiver: Receiver): void {
     const address: string = receiver.target.address;
 
+    if (this.#secondSettleAddresses.has(address)) {
+      (
+        receiver as unknown as {
+          local: { attach: { rcv_settle_mode: number } };
+        }
+      ).local.attach.rcv_settle_mode = 1;
+    }
+
     if (this.#refusedAddresses.has(address)) {
       receiver.close({
         condition: 'amqp:not-found',
@@ -422,6 +487,30 @@ export class AmqpTestPeer {
     }
 
     receiver.set_target({ address });
+
+    let links: Receiver[] | undefined = this.#incomingLinks.get(address);
+
+    if (links === undefined) {
+      links = [];
+
+      this.#incomingLinks.set(address, links);
+    }
+
+    links.push(receiver);
+  }
+
+  #recordReceiverDisposition(address: string, delivery: Delivery): void {
+    const update: Delivery['update'] = delivery.update.bind(delivery);
+
+    delivery.update = (settled: boolean, state?: unknown): void => {
+      update(settled, state);
+
+      this.#receiverDispositions.push({
+        address,
+        settled: delivery.settled,
+      });
+      this.#notify();
+    };
   }
 
   #removeConsumer(sender: Sender): void {

@@ -104,7 +104,7 @@ Sending SHALL turn the command into an AMQP message with the serializer for the 
 - **THEN** the provider-level serializer SHALL produce the message
 
 ### Requirement: Sending waits for peer acceptance
-Sending SHALL transfer the serialized message unsettled to the route's address, and SHALL resolve only when the delivery's terminal outcome is accepted. With the default receiver settle mode, that outcome arrives on the peer's settled disposition. When the peer's receiver settle mode is second, the send SHALL resolve once that accepted outcome is settled locally, without waiting for a further peer settled disposition.
+Sending SHALL transfer the serialized message unsettled to the route's address, and SHALL resolve only when the delivery's terminal outcome is accepted. With the default receiver settle mode, that outcome arrives on the peer's settled disposition. When the peer's receiver settle mode is second, the send SHALL resolve once that accepted outcome is settled locally. The peer SHALL receive that one settled disposition and SHALL NOT send a further disposition.
 
 #### Scenario: Peer accepts
 - **WHEN** a command is sent and the peer settles the delivery as accepted
@@ -112,7 +112,7 @@ Sending SHALL transfer the serialized message unsettled to the route's address, 
 
 #### Scenario: Peer receiver settles second
 - **WHEN** a command is sent and the peer's receiver settle mode is second and it delivers an accepted outcome without settling
-- **THEN** the send SHALL resolve once the delivery is settled locally, without waiting for a further peer settled disposition
+- **THEN** the send SHALL resolve once the delivery is settled locally, the peer SHALL receive that one settled disposition, and the peer SHALL NOT send a further disposition
 
 #### Scenario: Peer does not accept
 - **WHEN** a command is sent and the peer settles the delivery as rejected, released, or modified

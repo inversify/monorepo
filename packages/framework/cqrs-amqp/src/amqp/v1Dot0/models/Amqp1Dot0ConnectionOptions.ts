@@ -27,6 +27,10 @@ export interface Amqp1Dot0ConnectionOptions {
    */
   readonly sasl?: Amqp1Dot0SaslOptions;
   /**
+   * Maximum unsettled deliveries buffered for the session. Defaults to 2048.
+   */
+  readonly sessionBufferSize?: number;
+  /**
    * Connects over TLS when set.
    */
   readonly tls?: Amqp1Dot0TlsOptions;

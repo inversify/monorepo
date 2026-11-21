@@ -30,6 +30,7 @@ import {
 import {
   AmqpTestPeer,
   type AmqpTestPeerDisposition,
+  type AmqpTestPeerReceiverDisposition,
 } from '../../../test/peers/AmqpTestPeer.js';
 import { Amqp1Dot0TransportDeclaration } from '../declarations/Amqp1Dot0TransportDeclaration.js';
 import { type Amqp1Dot0CommandHandler } from '../models/Amqp1Dot0CommandHandler.js';
@@ -70,6 +71,7 @@ interface Cleanup {
 interface ConnectionsOptions {
   readonly listenersEnabled?: boolean;
   readonly reconnect?: boolean | Amqp1Dot0ReconnectOptions;
+  readonly sessionBufferSize?: number;
 }
 
 interface ConsumerSetup {
@@ -459,6 +461,9 @@ function buildConnections(
     host: '127.0.0.1',
     port,
     reconnect: options.reconnect ?? false,
+    ...(options.sessionBufferSize === undefined
+      ? {}
+      : { sessionBufferSize: options.sessionBufferSize }),
   };
 
   return [
@@ -1199,6 +1204,101 @@ describe(Amqp1Dot0TransportProvider, () => {
 
     it('should reject sends', () => {
       expect(result).toStrictEqual(new Error('AMQP 1.0 transport is closed'));
+    });
+  });
+
+  describe('having a peer receiver that settles second', () => {
+    const cleanup: Cleanup = createCleanup();
+    let dispositions: readonly AmqpTestPeerReceiverDisposition[];
+    let peer: AmqpTestPeer;
+
+    beforeAll(async () => {
+      peer = await startPeer(cleanup);
+      peer.setReceiverSettlesSecond('orders.create');
+
+      const producer: ProducerSetup = await startProducer(cleanup, peer, {
+        connections: buildConnections(peer.port, { sessionBufferSize: 2 }),
+        sendTimeout: 2_000,
+      });
+
+      await Promise.all([
+        producer.commandBus.send(new CreateOrder('second-1')),
+        producer.commandBus.send(new CreateOrder('second-2')),
+        producer.commandBus.send(new CreateOrder('second-3')),
+      ]);
+      await peer.waitForReceiverSettlements('orders.create', 3);
+
+      dispositions = peer.getReceiverDispositions('orders.create');
+    });
+
+    afterAll(async () => {
+      await cleanup.close();
+    });
+
+    it('should resolve after each unsettled accepted disposition', () => {
+      expect(dispositions).toStrictEqual([
+        { address: 'orders.create', settled: false },
+        { address: 'orders.create', settled: false },
+        { address: 'orders.create', settled: false },
+      ]);
+      expect(peer.getQueuedMessages('orders.create')).toHaveLength(3);
+    });
+  });
+
+  describe('having a full session buffer when the sender is closed', () => {
+    const cleanup: Cleanup = createCleanup();
+    let held: unknown[];
+    let peer: AmqpTestPeer;
+
+    beforeAll(async () => {
+      peer = await startPeer(cleanup);
+      peer.setIncomingOutcome('orders.create', 'hold');
+
+      const producer: ProducerSetup = await startProducer(cleanup, peer, {
+        connections: buildConnections(peer.port, { sessionBufferSize: 2 }),
+        sendTimeout: 2_000,
+      });
+      const pending: Promise<unknown>[] = [
+        captureError(async () =>
+          producer.commandBus.send(new CreateOrder('held-1')),
+        ),
+        captureError(async () =>
+          producer.commandBus.send(new CreateOrder('held-2')),
+        ),
+      ];
+
+      void Promise.all(pending).catch((): undefined => undefined);
+
+      await peer.waitForReceivedMessages('orders.create', 2);
+      peer.closeIncomingLinks('orders.create');
+      held = await Promise.all(pending);
+
+      peer.setIncomingOutcome('orders.create', 'accept');
+
+      await Promise.all([
+        producer.commandBus.send(new CreateOrder('next-1')),
+        producer.commandBus.send(new CreateOrder('next-2')),
+        producer.commandBus.send(new CreateOrder('next-3')),
+      ]);
+    });
+
+    afterAll(async () => {
+      await cleanup.close();
+    });
+
+    it('should reject the unsettled sends', () => {
+      expect(held).toStrictEqual([
+        new Error(
+          'AMQP 1.0 sender for address "orders.create" on connection "peer" was closed before the message was settled',
+        ),
+        new Error(
+          'AMQP 1.0 sender for address "orders.create" on connection "peer" was closed before the message was settled',
+        ),
+      ]);
+    });
+
+    it('should send more than one session buffer on the replacement sender', () => {
+      expect(peer.getReceivedMessages('orders.create')).toHaveLength(5);
     });
   });
 });

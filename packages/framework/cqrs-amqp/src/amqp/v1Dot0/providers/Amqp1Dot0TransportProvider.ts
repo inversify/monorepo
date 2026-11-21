@@ -96,10 +96,26 @@ interface PendingDelivery {
 // version because these are internals.
 interface RheaConnection extends Connection {
   _is_fatal(condition: string): boolean;
+  _register(): void;
   abort_socket(socket: unknown): void;
   scheduled_reconnect: ReturnType<typeof setTimeout> | undefined;
   set_reconnect(reconnect: boolean | number): void;
   socket: unknown;
+}
+
+interface RheaOutgoingDelivery {
+  id?: number;
+  link?: {
+    connection: Connection;
+    credit: number;
+    session: {
+      outgoing?: {
+        next_pending_delivery?: number;
+      };
+    };
+  };
+  remote_settled: boolean;
+  settled: boolean;
 }
 
 interface SenderEntry {
@@ -830,6 +846,25 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     receiver.session.on('session_close', onSessionEnded);
     receiver.session.on('session_error', onSessionEnded);
 
+    // waitForEvent removes its close listener when the link opens. A detach
+    // in that same read has to be remembered by a listener that outlives it.
+    let closedDuringAttach: Error | undefined;
+
+    const rememberClosedReceiver =
+      (eventName: string) =>
+      (context: EventContext): void => {
+        closedDuringAttach ??= new Error(
+          `Failed to open AMQP 1.0 receiver for address "${address}" on connection "${String(entry.config.identifier)}" (${eventName})${this.#describeContextError(context)}`,
+        );
+      };
+    const onReceiverClose: (context: EventContext) => void =
+      rememberClosedReceiver('receiver_close');
+    const onReceiverError: (context: EventContext) => void =
+      rememberClosedReceiver('receiver_error');
+
+    receiver.on('receiver_close', onReceiverClose);
+    receiver.on('receiver_error', onReceiverError);
+
     try {
       await this.#waitForLinkAttach(
         entry,
@@ -841,10 +876,21 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     } finally {
       receiver.session.removeListener('session_close', onSessionEnded);
       receiver.session.removeListener('session_error', onSessionEnded);
+      receiver.removeListener('receiver_close', onReceiverClose);
+      receiver.removeListener('receiver_error', onReceiverError);
     }
 
     if (attachSignal.aborted) {
       throw getAbortReason(attachSignal);
+    }
+
+    if (closedDuringAttach !== undefined || !receiver.is_open()) {
+      throw (
+        closedDuringAttach ??
+        new Error(
+          `Failed to open AMQP 1.0 receiver for address "${address}" on connection "${String(entry.config.identifier)}" (receiver_close)`,
+        )
+      );
     }
 
     let receiverClosureReported: boolean = false;
@@ -1065,11 +1111,27 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     const defaultOutcome: unknown = (source as { default_outcome?: unknown })
       .default_outcome;
 
-    if (defaultOutcome === undefined) {
+    if (this.#isAbsentDefaultOutcome(defaultOutcome)) {
       return 'accepted';
     }
 
     return this.#outcomeName(defaultOutcome);
+  }
+
+  #isAbsentDefaultOutcome(defaultOutcome: unknown): boolean {
+    if (defaultOutcome === undefined || defaultOutcome === null) {
+      return true;
+    }
+
+    if (typeof defaultOutcome !== 'object' || !('value' in defaultOutcome)) {
+      return false;
+    }
+
+    if (defaultOutcome.value !== null) {
+      return false;
+    }
+
+    return this.#outcomeName(defaultOutcome) === undefined;
   }
 
   #outcomeName(state: unknown): string | undefined {
@@ -1243,15 +1305,59 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
   }
 
   #rejectPendingDeliveries(senderEntry: SenderEntry, error: Error): void {
-    const pendingDeliveries: PendingDelivery[] = Array.from(
-      senderEntry.pendingDeliveries.values(),
+    const pendingDeliveries: [Delivery, PendingDelivery][] = Array.from(
+      senderEntry.pendingDeliveries.entries(),
     );
 
     senderEntry.pendingDeliveries.clear();
 
-    for (const pendingDelivery of pendingDeliveries) {
+    const connections: Set<RheaConnection> = new Set();
+
+    for (const [delivery, pendingDelivery] of pendingDeliveries) {
+      let connection: RheaConnection | undefined;
+
+      this.#settle((): void => {
+        connection = this.#retireClosedSenderDelivery(delivery);
+      });
+
+      if (connection !== undefined) {
+        connections.add(connection);
+      }
+
       pendingDelivery.reject(error);
     }
+
+    for (const connection of connections) {
+      this.#settle((): void => {
+        connection._register();
+      });
+    }
+  }
+
+  // Rhea drops an outgoing delivery only when it is settled on both sides and
+  // sitting at the head of the session buffer. Marking just this link's
+  // deliveries does that without discarding any other link's.
+  #retireClosedSenderDelivery(delivery: Delivery): RheaConnection | undefined {
+    const outgoing: RheaOutgoingDelivery =
+      delivery as unknown as RheaOutgoingDelivery;
+    const link: RheaOutgoingDelivery['link'] = outgoing.link;
+    const nextPending: number | undefined =
+      link?.session.outgoing?.next_pending_delivery;
+    const transferred: boolean =
+      outgoing.id !== undefined &&
+      nextPending !== undefined &&
+      outgoing.id < nextPending;
+
+    // Not transferred yet: leave it unsendable so the session does not write
+    // it out as a presettled transfer before the buffer drops it.
+    if (link !== undefined && !transferred) {
+      link.credit = 0;
+    }
+
+    outgoing.settled = true;
+    outgoing.remote_settled = true;
+
+    return link?.connection as RheaConnection | undefined;
   }
 
   async #runHandler(
