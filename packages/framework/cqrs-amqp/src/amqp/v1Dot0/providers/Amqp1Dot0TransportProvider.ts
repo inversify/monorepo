@@ -55,6 +55,13 @@ const SETTLEMENT_FAILURE_OUTCOMES: readonly string[] = [
   'released',
 ];
 
+// AMQP outcome descriptor codes. `received` is not terminal.
+const AMQP_OUTCOME_ACCEPTED: number = 0x24;
+const AMQP_OUTCOME_MODIFIED: number = 0x27;
+const AMQP_OUTCOME_RECEIVED: number = 0x23;
+const AMQP_OUTCOME_REJECTED: number = 0x25;
+const AMQP_OUTCOME_RELEASED: number = 0x26;
+
 type HandlerServiceIdentifier = ServiceIdentifier<
   Partial<Amqp1Dot0CommandHandler>
 >;
@@ -805,6 +812,10 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     });
 
     const sessionEnded: AbortController = new AbortController();
+    const attachSignal: AbortSignal = AbortSignal.any([
+      entry.signal,
+      sessionEnded.signal,
+    ]);
 
     const onSessionEnded: (context: EventContext) => void = (
       context: EventContext,
@@ -825,11 +836,15 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
         receiver,
         'receiver',
         address,
-        AbortSignal.any([entry.signal, sessionEnded.signal]),
+        attachSignal,
       );
     } finally {
       receiver.session.removeListener('session_close', onSessionEnded);
       receiver.session.removeListener('session_error', onSessionEnded);
+    }
+
+    if (attachSignal.aborted) {
+      throw getAbortReason(attachSignal);
     }
 
     let receiverClosureReported: boolean = false;
@@ -889,10 +904,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
         evictionError: undefined,
       };
 
-    const evictSender: (error: Error, abortWaits: boolean) => void = (
-      error: Error,
-      abortWaits: boolean,
-    ): void => {
+    const evictSender: (error: Error) => void = (error: Error): void => {
       if (senderState.evicted) {
         return;
       }
@@ -907,11 +919,9 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       entry.senderEntries.delete(senderEntry);
       this.#rejectPendingDeliveries(senderEntry, error);
 
-      // sender_close already rejects attach and credit waits. Aborting here
-      // would replace that error. A session end does not emit sender_close.
-      if (abortWaits) {
-        senderClosed.abort(error);
-      }
+      // Wake attach and credit waits that have already missed the close event.
+      // The cache entry is gone, so the next send opens a new link.
+      senderClosed.abort(error);
     };
 
     const closedError: (context: EventContext) => Error = (
@@ -924,13 +934,13 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     const onSenderClosed: (context: EventContext) => void = (
       context: EventContext,
     ): void => {
-      evictSender(closedError(context), false);
+      evictSender(closedError(context));
     };
 
     const onSessionEnded: (context: EventContext) => void = (
       context: EventContext,
     ): void => {
-      evictSender(closedError(context), true);
+      evictSender(closedError(context));
     };
 
     sender.session.on('session_close', onSessionEnded);
@@ -953,7 +963,6 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
           : new Error(
               `Failed to open AMQP 1.0 sender for address "${address}" on connection "${String(entry.config.identifier)}"`,
             ),
-        true,
       );
 
       this.#settle((): void => {
@@ -977,7 +986,9 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     }
 
     sender.on('accepted', (context: EventContext): void => {
-      this.#settleOutgoingIfReceiverSettlesSecond(sender, context);
+      if (this.#settleOutgoingIfReceiverSettlesSecond(sender, context)) {
+        this.#takePendingDelivery(senderEntry, context)?.resolve();
+      }
     });
 
     sender.on('settled', (context: EventContext): void => {
@@ -1005,28 +1016,42 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     address: string,
     context: EventContext,
   ): void {
-    const remoteState: unknown = context.delivery?.remote_state;
-    const outcome: string | undefined =
-      remoteState === undefined
-        ? this.#defaultTerminalOutcome(senderEntry.sender)
-        : this.#outcomeName(remoteState);
+    const remoteOutcome: string | undefined = this.#outcomeName(
+      context.delivery?.remote_state,
+    );
+    const outcome: string | undefined = this.#isTerminalOutcome(remoteOutcome)
+      ? remoteOutcome
+      : this.#defaultTerminalOutcome(senderEntry.sender);
+    const pendingDelivery: PendingDelivery | undefined =
+      this.#takePendingDelivery(senderEntry, context);
+
+    if (pendingDelivery === undefined) {
+      return;
+    }
 
     if (outcome === 'accepted') {
-      this.#takePendingDelivery(senderEntry, context)?.resolve();
+      pendingDelivery.resolve();
 
       return;
     }
 
-    if (remoteState !== undefined) {
-      return;
-    }
-
-    this.#takePendingDelivery(senderEntry, context)?.reject(
-      outcome === undefined
-        ? new Error(
+    pendingDelivery.reject(
+      outcome !== undefined && this.#isTerminalOutcome(outcome)
+        ? this.#buildOutcomeError(entry, address, outcome, context)
+        : new Error(
             `AMQP 1.0 sender for address "${address}" on connection "${String(entry.config.identifier)}" was settled without a recognized outcome`,
-          )
-        : this.#buildOutcomeError(entry, address, outcome, context),
+          ),
+    );
+  }
+
+  #isTerminalOutcome(
+    outcome: string | undefined,
+  ): outcome is 'accepted' | 'modified' | 'rejected' | 'released' {
+    return (
+      outcome === 'accepted' ||
+      outcome === 'modified' ||
+      outcome === 'rejected' ||
+      outcome === 'released'
     );
   }
 
@@ -1052,6 +1077,10 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       return this.#normalizeOutcomeName(state);
     }
 
+    if (typeof state === 'number') {
+      return this.#outcomeNameFromCode(state);
+    }
+
     if (typeof state !== 'object' || state === null) {
       return undefined;
     }
@@ -1064,18 +1093,50 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       return this.#normalizeOutcomeName(compositeType);
     }
 
-    const descriptor: unknown = (state as { descriptor?: unknown }).descriptor;
+    return this.#outcomeNameFromDescriptor(
+      (state as { descriptor?: unknown }).descriptor,
+    );
+  }
 
-    if (typeof descriptor === 'string') {
-      return this.#normalizeOutcomeName(descriptor);
+  #outcomeNameFromCode(code: number): string | undefined {
+    switch (code) {
+      case AMQP_OUTCOME_ACCEPTED:
+        return 'accepted';
+      case AMQP_OUTCOME_MODIFIED:
+        return 'modified';
+      case AMQP_OUTCOME_RECEIVED:
+        return 'received';
+      case AMQP_OUTCOME_REJECTED:
+        return 'rejected';
+      case AMQP_OUTCOME_RELEASED:
+        return 'released';
+      default:
+        return undefined;
+    }
+  }
+
+  #outcomeNameFromDescriptor(descriptor: unknown): string | undefined {
+    if (typeof descriptor === 'string' || typeof descriptor === 'number') {
+      return this.#outcomeName(descriptor);
     }
 
-    if (typeof descriptor === 'object' && descriptor !== null) {
-      const symbolic: unknown = (descriptor as { symbolic?: unknown }).symbolic;
+    if (typeof descriptor !== 'object' || descriptor === null) {
+      return undefined;
+    }
 
-      if (typeof symbolic === 'string') {
-        return this.#normalizeOutcomeName(symbolic);
-      }
+    const record: { numeric?: unknown; symbolic?: unknown; value?: unknown } =
+      descriptor;
+
+    if (typeof record.symbolic === 'string') {
+      return this.#normalizeOutcomeName(record.symbolic);
+    }
+
+    if (typeof record.numeric === 'number') {
+      return this.#outcomeNameFromCode(record.numeric);
+    }
+
+    if (typeof record.value === 'string' || typeof record.value === 'number') {
+      return this.#outcomeName(record.value);
     }
 
     return undefined;
@@ -1089,6 +1150,9 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       case 'modified':
       case 'amqp:modified:list':
         return 'modified';
+      case 'received':
+      case 'amqp:received:list':
+        return 'received';
       case 'rejected':
       case 'amqp:rejected:list':
         return 'rejected';
@@ -1103,20 +1167,29 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
   #settleOutgoingIfReceiverSettlesSecond(
     sender: Sender,
     context: EventContext,
-  ): void {
+  ): boolean {
     if (sender.rcv_settle_mode !== 1) {
-      return;
+      return false;
     }
 
     const delivery: Delivery | undefined = context.delivery;
 
     if (delivery === undefined || delivery.settled) {
-      return;
+      return false;
     }
+
+    let settledLocally: boolean = false;
 
     this.#settle((): void => {
       delivery.update(true);
+      // rhea frees an outgoing delivery only after both sides have settled.
+      // The disposition is already queued, so marking the peer settled lets
+      // the next turn reclaim the slot while the peer remains unsettled.
+      (delivery as { remote_settled: boolean }).remote_settled = true;
+      settledLocally = true;
     });
+
+    return settledLocally;
   }
 
   #buildOutcomeError(

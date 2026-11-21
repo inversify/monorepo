@@ -14,7 +14,12 @@ export type FakeRheaConnectionBehavior = 'fail' | 'open';
 
 export type FakeRheaLinkBehavior = 'attach' | 'pending' | 'refuse';
 
-export type FakeRheaOutcome = 'accepted' | 'modified' | 'rejected' | 'released';
+export type FakeRheaOutcome =
+  | 'accepted'
+  | 'modified'
+  | 'received'
+  | 'rejected'
+  | 'released';
 
 type LinkKind = 'receiver' | 'sender';
 
@@ -44,6 +49,7 @@ export class FakeRheaIncomingDelivery {
 }
 
 export interface FakeRheaOutgoingDelivery {
+  remote_settled?: boolean;
   remote_state: { error?: AmqpError } | undefined;
   settled?: boolean;
   update?: (settled: boolean, state?: unknown) => void;
@@ -54,7 +60,7 @@ export interface FakeRheaSentMessage {
   readonly message: Message;
 }
 
-function buildRemoteState(
+export function buildRemoteState(
   outcome: FakeRheaOutcome,
   error?: AmqpError,
 ): { error?: AmqpError } {
@@ -156,20 +162,29 @@ export class FakeRheaLink extends EventEmitter {
     return delivery;
   }
 
-  public settle(
+  public emitOutcome(
     sentMessage: FakeRheaSentMessage,
     outcome: FakeRheaOutcome,
     error?: AmqpError,
   ): void {
     sentMessage.delivery.remote_state = buildRemoteState(outcome, error);
 
-    const context: Record<string, unknown> = {
+    this.emit(outcome, {
       ...this.#buildContext(),
       delivery: sentMessage.delivery,
-    };
+    });
+  }
 
-    this.emit(outcome, context);
-    this.emit('settled', context);
+  public settle(
+    sentMessage: FakeRheaSentMessage,
+    outcome: FakeRheaOutcome,
+    error?: AmqpError,
+  ): void {
+    this.emitOutcome(sentMessage, outcome, error);
+    this.emit('settled', {
+      ...this.#buildContext(),
+      delivery: sentMessage.delivery,
+    });
   }
 
   #buildContext(): Record<string, unknown> {

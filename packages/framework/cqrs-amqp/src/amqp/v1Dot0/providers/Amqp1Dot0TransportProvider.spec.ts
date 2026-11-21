@@ -25,6 +25,7 @@ import { Container, type ServiceIdentifier } from 'inversify';
 import rhea, { type Message, type Container as RheaContainer } from 'rhea';
 
 import {
+  buildRemoteState,
   type FakeRheaConnection,
   FakeRheaContainer,
   type FakeRheaIncomingDelivery,
@@ -1156,6 +1157,54 @@ describe(Amqp1Dot0TransportProvider, () => {
         });
       });
     });
+
+    describe('having a receiver session that ends as the link attaches', () => {
+      let providerSetup: ProviderSetup;
+      let result: unknown;
+      let sendResult: unknown;
+
+      beforeAll(async () => {
+        providerSetup = buildProvider({
+          connections: [
+            buildConnectionConfig('primary', { listenersEnabled: true }),
+          ],
+        });
+
+        providerSetup.rheaContainer.onLinkAttached = (
+          link: FakeRheaLink,
+        ): void => {
+          link.session.emit('session_close', {
+            connection: link.connection,
+            receiver: link,
+          });
+        };
+
+        result = await captureError(async () =>
+          providerSetup.provider.initialize(new Container(), [
+            createOrderOnPrimary(),
+          ]),
+        );
+        sendResult = await captureError(async () =>
+          providerSetup.provider.send(new CreateOrder('order-1'), {
+            address: 'orders.create',
+            connectionIdentifier: 'primary',
+          }),
+        );
+      });
+
+      afterAll(() => {
+        vitest.clearAllMocks();
+      });
+
+      it('should fail initialization and close the transport', () => {
+        expect((result as Error).message).toBe(
+          'Failed to open AMQP 1.0 receiver for address "orders.create" on connection "primary" (session ended)',
+        );
+        expect(sendResult).toStrictEqual(
+          new Error('AMQP 1.0 transport is closed'),
+        );
+      });
+    });
   });
 
   describe('.initialize (message dispatch)', () => {
@@ -2182,7 +2231,143 @@ describe(Amqp1Dot0TransportProvider, () => {
         });
       });
 
+      describe('when called, and the default outcome is an encoded accepted', () => {
+        let providerSetup: ProviderSetup;
+        let result: unknown;
+
+        beforeAll(async () => {
+          serializerMock.serialize.mockReturnValueOnce(messageFixture);
+
+          providerSetup = await initializeSender({
+            serializer: serializerMock,
+          });
+
+          const sendPromise: Promise<void> = providerSetup.provider.send(
+            commandFixture,
+            paramsFixture,
+          );
+          const sender: FakeRheaLink = await waitForSentMessages(
+            providerSetup,
+            1,
+          );
+
+          sender.source = { default_outcome: { descriptor: { value: 0x24 } } };
+
+          sender.emit('settled', {
+            delivery: (sender.sent[0] as FakeRheaLink['sent'][number]).delivery,
+            sender,
+          });
+
+          result = await sendPromise;
+        });
+
+        afterAll(async () => {
+          await providerSetup.provider.close();
+
+          vitest.clearAllMocks();
+        });
+
+        it('should resolve the send as accepted', () => {
+          expect(result).toBeUndefined();
+        });
+      });
+
+      describe('when called, and the default outcome is an encoded rejection', () => {
+        let providerSetup: ProviderSetup;
+        let result: unknown;
+
+        beforeAll(async () => {
+          serializerMock.serialize.mockReturnValueOnce(messageFixture);
+
+          providerSetup = await initializeSender({
+            serializer: serializerMock,
+          });
+
+          const sendPromise: Promise<void> = providerSetup.provider.send(
+            commandFixture,
+            paramsFixture,
+          );
+          const sender: FakeRheaLink = await waitForSentMessages(
+            providerSetup,
+            1,
+          );
+
+          sender.source = {
+            default_outcome: { descriptor: { value: 'amqp:rejected:list' } },
+          };
+
+          sender.emit('settled', {
+            delivery: (sender.sent[0] as FakeRheaLink['sent'][number]).delivery,
+            sender,
+          });
+
+          result = await sendPromise.catch((error: unknown): unknown => error);
+        });
+
+        afterAll(async () => {
+          await providerSetup.provider.close();
+
+          vitest.clearAllMocks();
+        });
+
+        it('should reject the send with the default outcome', () => {
+          expect(result).toStrictEqual(
+            new Error(
+              'AMQP 1.0 peer rejected the message sent to address "orders.create" on connection "primary"',
+            ),
+          );
+        });
+      });
+
+      describe('when called, and the peer reports a non-terminal outcome', () => {
+        let providerSetup: ProviderSetup;
+        let result: unknown;
+
+        beforeAll(async () => {
+          serializerMock.serialize.mockReturnValueOnce(messageFixture);
+
+          providerSetup = await initializeSender({
+            serializer: serializerMock,
+          });
+
+          const sendPromise: Promise<void> = providerSetup.provider.send(
+            commandFixture,
+            paramsFixture,
+          );
+          const sender: FakeRheaLink = await waitForSentMessages(
+            providerSetup,
+            1,
+          );
+          const sent: FakeRheaLink['sent'][number] = sender
+            .sent[0] as FakeRheaLink['sent'][number];
+
+          sender.source = {
+            default_outcome: { descriptor: { numeric: 0x25 } },
+          };
+          sent.delivery.remote_state = buildRemoteState('received');
+
+          sender.emit('settled', { delivery: sent.delivery, sender });
+
+          result = await sendPromise.catch((error: unknown): unknown => error);
+        });
+
+        afterAll(async () => {
+          await providerSetup.provider.close();
+
+          vitest.clearAllMocks();
+        });
+
+        it('should reject the send with the default outcome', () => {
+          expect(result).toStrictEqual(
+            new Error(
+              'AMQP 1.0 peer rejected the message sent to address "orders.create" on connection "primary"',
+            ),
+          );
+        });
+      });
+
       describe('when called, and the peer receiver settles second', () => {
+        let delivery: FakeRheaLink['sent'][number]['delivery'];
         let providerSetup: ProviderSetup;
         let result: unknown;
         let update: ReturnType<typeof vitest.fn<(settled: boolean) => void>>;
@@ -2205,11 +2390,12 @@ describe(Amqp1Dot0TransportProvider, () => {
           const sent: FakeRheaLink['sent'][number] = sender
             .sent[0] as FakeRheaLink['sent'][number];
 
+          delivery = sent.delivery;
           update = vitest.fn<(settled: boolean) => void>();
           sent.delivery.update = update;
           sender.rcv_settle_mode = 1;
 
-          sender.settle(sent, 'accepted');
+          sender.emitOutcome(sent, 'accepted');
 
           result = await sendPromise;
         });
@@ -2222,6 +2408,7 @@ describe(Amqp1Dot0TransportProvider, () => {
 
         it('should settle the delivery locally and then resolve', () => {
           expect(update).toHaveBeenCalledExactlyOnceWith(true);
+          expect(delivery.remote_settled).toBe(true);
           expect(result).toBeUndefined();
         });
       });
@@ -2570,7 +2757,7 @@ describe(Amqp1Dot0TransportProvider, () => {
 
         it('should throw an Error', () => {
           expect((result as Error).message).toBe(
-            'Failed to open AMQP 1.0 sender for address "orders.create" on connection "primary" (sender_error): amqp:not-found - Address "orders.create" is refused',
+            'AMQP 1.0 sender for address "orders.create" on connection "primary" was closed before the message was settled: amqp:not-found - Address "orders.create" is refused',
           );
         });
 
@@ -2579,7 +2766,7 @@ describe(Amqp1Dot0TransportProvider, () => {
             providerSetup.rheaContainer.getConnection('primary').open_sender,
           ).toHaveBeenCalledTimes(2);
           expect((nextResult as Error).message).toBe(
-            'Failed to open AMQP 1.0 sender for address "orders.create" on connection "primary" (sender_error): amqp:not-found - Address "orders.create" is refused',
+            'AMQP 1.0 sender for address "orders.create" on connection "primary" was closed before the message was settled: amqp:not-found - Address "orders.create" is refused',
           );
         });
       });
@@ -2624,7 +2811,7 @@ describe(Amqp1Dot0TransportProvider, () => {
 
         it('should throw an Error', () => {
           expect((result as Error).message).toBe(
-            'AMQP 1.0 sender for address "orders.create" was closed (sender_close) before the message could be sent',
+            'AMQP 1.0 sender for address "orders.create" on connection "primary" was closed before the message was settled',
           );
         });
       });

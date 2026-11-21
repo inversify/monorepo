@@ -226,7 +226,7 @@ The lookup order is the connection's serializer for the address, then the provid
 
 ## Sending
 
-`commandBus.send()` resolves once the peer settles the delivery as accepted. It rejects when the peer rejects, releases, or modifies it, when the link or connection is lost before the outcome arrives, when the connection is down for good, and after `close()`. Senders are opened on the first send to an address and reused afterwards.
+`commandBus.send()` resolves once the peer settles the delivery as accepted. When the peer's receiver settle mode is second, it resolves once that accepted outcome is settled locally. It rejects when the peer rejects, releases, or modifies it, when the link or connection is lost before the outcome arrives, when the connection is down for good, and after `close()`. Senders are opened on the first send to an address and reused afterwards. A reconnecting disconnect rejects deliveries that were still unsettled and keeps the sender, so the next send waits for that link to reattach.
 
 While a connection reconnects, sends wait for the sender to attach again and for fresh credit. Set `sendTimeout` to bound how long a send waits for its sender, for credit, and for the peer outcome. The timeout is a positive integer of at most 2147483647 milliseconds, which is the longest delay Node can schedule:
 
