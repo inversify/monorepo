@@ -1,8 +1,12 @@
 import { isPromise } from '@inversifyjs/common';
 import { type Container, type ServiceIdentifier } from 'inversify';
 
+import {
+  type CqrsHandler,
+  isCqrsHandler,
+} from '../calculations/isCqrsHandler.js';
+import { readServiceIdentifier } from '../calculations/readServiceIdentifier.js';
 import { type CommandHandlerConfig } from '../models/CommandHandlerConfig.js';
-import { type CqrsCommandHandler } from '../models/CqrsCommandHandler.js';
 import { type TransportProvider } from '../models/TransportProvider.js';
 import { type TransportProviderConfig } from '../models/TransportProviderConfig.js';
 import { CommandHandlerRouter } from '../routers/CommandHandlerRouter.js';
@@ -61,9 +65,8 @@ export class SyncTransportProvider implements TransportProvider<undefined> {
       throw new Error('Sync transport is not initialized');
     }
 
-    const serviceIdentifierList:
-      | ServiceIdentifier<CqrsCommandHandler>[]
-      | undefined = this.#commandHandlerRouter.route(command);
+    const serviceIdentifierList: ServiceIdentifier[] | undefined =
+      this.#commandHandlerRouter.route(command);
 
     if (serviceIdentifierList === undefined) {
       throw new Error(
@@ -72,18 +75,21 @@ export class SyncTransportProvider implements TransportProvider<undefined> {
     }
 
     for (const serviceIdentifier of serviceIdentifierList) {
-      const handler: CqrsCommandHandler =
+      const resolved: unknown =
         await this.#container.getAsync(serviceIdentifier);
 
-      await this.#awaitHandler(handler, command);
+      if (!isCqrsHandler(resolved)) {
+        throw new Error(
+          `Handler for command ${command.constructor.name} does not implement handle`,
+        );
+      }
+
+      await this.#awaitHandler(resolved, command);
     }
   }
 
-  async #awaitHandler(
-    handler: CqrsCommandHandler,
-    command: object,
-  ): Promise<void> {
-    const execution: Promise<void> | void = handler.handle(command);
+  async #awaitHandler(handler: CqrsHandler, command: object): Promise<void> {
+    const execution: unknown = handler.handle(command);
 
     if (isPromise(execution)) {
       await execution;
@@ -91,9 +97,9 @@ export class SyncTransportProvider implements TransportProvider<undefined> {
   }
 
   #registerHandler(config: CommandHandlerConfig): void {
-    const serviceIdentifier: ServiceIdentifier<CqrsCommandHandler> =
-      (config.serviceIdentifier ??
-        config.handler) as ServiceIdentifier<CqrsCommandHandler>;
+    const serviceIdentifier: ServiceIdentifier = readServiceIdentifier(
+      config.serviceIdentifier ?? config.handler,
+    );
 
     this.#commandHandlerRouter.register({
       identifier: config.command.identifier,

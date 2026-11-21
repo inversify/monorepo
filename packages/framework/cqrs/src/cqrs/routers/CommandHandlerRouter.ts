@@ -3,25 +3,21 @@ import { type ServiceIdentifier } from 'inversify';
 
 import { commandMetadataReflectKey } from '../../reflectMetadata/data/commandMetadataReflectKey.js';
 import { type CommandMetadata } from '../models/CommandMetadata.js';
-import { type CqrsCommandHandler } from '../models/CqrsCommandHandler.js';
 import { HandlerRouter } from './HandlerRouter.js';
 
 export class CommandHandlerRouter extends HandlerRouter<
   object,
-  ServiceIdentifier<CqrsCommandHandler>[]
+  ServiceIdentifier[]
 > {
   protected override _appendHandler(
-    result: ServiceIdentifier<CqrsCommandHandler>[] | undefined,
+    result: ServiceIdentifier[] | undefined,
     serviceIdentifier: ServiceIdentifier,
     // oxlint-disable-next-line typescript/no-unsafe-function-type
     _inputType: Function,
-  ): ServiceIdentifier<CqrsCommandHandler>[] {
-    const serviceIdentifierList: ServiceIdentifier<CqrsCommandHandler>[] =
-      result ?? [];
+  ): ServiceIdentifier[] {
+    const serviceIdentifierList: ServiceIdentifier[] = result ?? [];
 
-    serviceIdentifierList.push(
-      serviceIdentifier as ServiceIdentifier<CqrsCommandHandler>,
-    );
+    serviceIdentifierList.push(serviceIdentifier);
 
     return serviceIdentifierList;
   }

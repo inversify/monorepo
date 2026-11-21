@@ -41,6 +41,9 @@ coverage:
       '@inversifyjs/framework-cqrs':
         flags:
           - '@inversifyjs/framework-cqrs'
+      '@inversifyjs/framework-cqrs-amqp':
+        flags:
+          - '@inversifyjs/framework-cqrs-amqp'
       '@inversifyjs/grpc-core':
         flags:
           - '@inversifyjs/grpc-core'
@@ -156,6 +159,9 @@ flags:
   '@inversifyjs/framework-cqrs':
     paths:
       - packages/framework/cqrs
+  '@inversifyjs/framework-cqrs-amqp':
+    paths:
+      - packages/framework/cqrs-amqp
   '@inversifyjs/grpc-core':
     paths:
       - packages/framework/grpc/libraries/core

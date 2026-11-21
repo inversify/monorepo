@@ -9,13 +9,13 @@ import { eventHandlerMetadataReflectKey } from '../../reflectMetadata/data/event
 import { eventMetadataReflectKey } from '../../reflectMetadata/data/eventMetadataReflectKey.js';
 import { queryHandlerMetadataReflectKey } from '../../reflectMetadata/data/queryHandlerMetadataReflectKey.js';
 import { queryMetadataReflectKey } from '../../reflectMetadata/data/queryMetadataReflectKey.js';
+import { isCqrsHandler } from '../calculations/isCqrsHandler.js';
+import { readServiceIdentifier } from '../calculations/readServiceIdentifier.js';
 import { type CommandBus } from '../models/CommandBus.js';
 import { type CommandHandlerConfig } from '../models/CommandHandlerConfig.js';
 import { type CommandHandlerMetadata } from '../models/CommandHandlerMetadata.js';
 import { type CommandMetadata } from '../models/CommandMetadata.js';
-import { type CqrsEventHandler } from '../models/CqrsEventHandler.js';
 import { type CqrsProviderOptions } from '../models/CqrsProviderOptions.js';
-import { type CqrsQueryHandler } from '../models/CqrsQueryHandler.js';
 import { type EventBus } from '../models/EventBus.js';
 import { type EventHandlerMetadata } from '../models/EventHandlerMetadata.js';
 import { type EventMetadata } from '../models/EventMetadata.js';
@@ -195,9 +195,8 @@ export class CqrsProvider {
   #buildEventBus(container: Container): EventBus {
     return {
       send: (event: object): void => {
-        const serviceIdentifierList:
-          | ServiceIdentifier<CqrsEventHandler>[]
-          | undefined = this.#eventHandlerRouter.route(event);
+        const serviceIdentifierList: ServiceIdentifier[] | undefined =
+          this.#eventHandlerRouter.route(event);
 
         if (serviceIdentifierList === undefined) {
           throw new Error(
@@ -231,9 +230,8 @@ export class CqrsProvider {
   #buildQueryBus(container: Container): QueryBus {
     return {
       send: async <TResult = unknown>(query: object): Promise<TResult> => {
-        const serviceIdentifier:
-          | ServiceIdentifier<CqrsQueryHandler>
-          | undefined = this.#queryHandlerRouter.route(query);
+        const serviceIdentifier: ServiceIdentifier | undefined =
+          this.#queryHandlerRouter.route(query);
 
         if (serviceIdentifier === undefined) {
           throw new Error(
@@ -241,13 +239,21 @@ export class CqrsProvider {
           );
         }
 
-        const handler: CqrsQueryHandler =
-          await container.getAsync(serviceIdentifier);
-        const execution: unknown = handler.handle(query);
+        const resolved: unknown = await container.getAsync(serviceIdentifier);
+
+        if (!isCqrsHandler(resolved)) {
+          throw new Error(
+            `Handler for query ${query.constructor.name} does not implement handle`,
+          );
+        }
+
+        const execution: unknown = resolved.handle(query);
         const result: unknown = isPromise(execution)
           ? await execution
           : execution;
 
+        // The handler is registered against the query type, not against the
+        // result type the caller asks for.
         return result as TResult;
       },
     };
@@ -418,9 +424,9 @@ export class CqrsProvider {
           eventMetadataReflectKey,
         );
 
-      const serviceIdentifier: ServiceIdentifier<CqrsEventHandler> =
-        (eventHandlerMetadata.serviceIdentifier ??
-          eventHandlerMetadata.target) as ServiceIdentifier<CqrsEventHandler>;
+      const serviceIdentifier: ServiceIdentifier = readServiceIdentifier(
+        eventHandlerMetadata.serviceIdentifier ?? eventHandlerMetadata.target,
+      );
 
       this.#eventHandlerRouter.register({
         identifier: eventMetadata?.identifier,
@@ -476,12 +482,18 @@ export class CqrsProvider {
 
   async #runEventHandler(
     container: Container,
-    serviceIdentifier: ServiceIdentifier<CqrsEventHandler>,
+    serviceIdentifier: ServiceIdentifier,
     event: object,
   ): Promise<void> {
-    const handler: CqrsEventHandler =
-      await container.getAsync(serviceIdentifier);
-    const execution: Promise<void> | void = handler.handle(event);
+    const resolved: unknown = await container.getAsync(serviceIdentifier);
+
+    if (!isCqrsHandler(resolved)) {
+      throw new Error(
+        `Handler for event ${event.constructor.name} does not implement handle`,
+      );
+    }
+
+    const execution: unknown = resolved.handle(event);
 
     if (isPromise(execution)) {
       await execution;
@@ -506,9 +518,9 @@ export class CqrsProvider {
           queryMetadataReflectKey,
         );
 
-      const serviceIdentifier: ServiceIdentifier<CqrsQueryHandler> =
-        (queryHandlerMetadata.serviceIdentifier ??
-          queryHandlerMetadata.target) as ServiceIdentifier<CqrsQueryHandler>;
+      const serviceIdentifier: ServiceIdentifier = readServiceIdentifier(
+        queryHandlerMetadata.serviceIdentifier ?? queryHandlerMetadata.target,
+      );
 
       this.#queryHandlerRouter.register({
         identifier: queryMetadata?.identifier,
