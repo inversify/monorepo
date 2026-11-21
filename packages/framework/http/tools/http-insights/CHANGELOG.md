@@ -1,5 +1,15 @@
 # @inversifyjs/http-insights
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/http-core@5.10.1
+  - @inversifyjs/http-instrumentation-core@5.10.1
+  - @inversifyjs/http-validation@5.10.1
+  - @inversifyjs/standard-schema-validation@3.6.13
+
 ## 0.6.0
 
 ### Minor Changes
