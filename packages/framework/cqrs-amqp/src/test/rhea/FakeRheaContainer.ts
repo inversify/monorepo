@@ -24,7 +24,25 @@ export type FakeRheaOutcome =
 type LinkKind = 'receiver' | 'sender';
 
 function getHost(options: ConnectionOptions): string {
-  return (options as { host?: string }).host ?? '';
+  if ('host' in options && typeof options.host === 'string') {
+    return options.host;
+  }
+
+  return '';
+}
+
+function readTerminusAddress(
+  terminus: { readonly address?: string } | string | undefined,
+): string {
+  if (typeof terminus === 'string') {
+    return terminus;
+  }
+
+  if (terminus !== undefined && typeof terminus.address === 'string') {
+    return terminus.address;
+  }
+
+  throw new Error('AMQP test double expected a terminus address');
 }
 
 export class FakeRheaIncomingDelivery {
@@ -64,15 +82,18 @@ export function buildRemoteState(
   outcome: FakeRheaOutcome,
   error?: AmqpError,
 ): { error?: AmqpError } {
-  function OutcomeState(this: { error?: AmqpError }): void {
-    if (error !== undefined) {
-      this.error = error;
+  class OutcomeState {
+    public static readonly composite_type: FakeRheaOutcome = outcome;
+    public error?: AmqpError;
+
+    constructor() {
+      if (error !== undefined) {
+        this.error = error;
+      }
     }
   }
 
-  OutcomeState.composite_type = outcome;
-
-  return new (OutcomeState as unknown as new () => { error?: AmqpError })();
+  return new OutcomeState();
 }
 
 export class FakeRheaLink extends EventEmitter {
@@ -253,7 +274,7 @@ export class FakeRheaConnection extends EventEmitter {
     });
 
     this.open_receiver = vitest.fn((options: ReceiverOptions): FakeRheaLink => {
-      const address: string = (options.source as { address: string }).address;
+      const address: string = readTerminusAddress(options.source);
 
       return this.#openLink(
         container,
@@ -265,7 +286,7 @@ export class FakeRheaConnection extends EventEmitter {
     });
 
     this.open_sender = vitest.fn((options: SenderOptions): FakeRheaLink => {
-      const address: string = (options.target as { address: string }).address;
+      const address: string = readTerminusAddress(options.target);
 
       return this.#openLink(
         container,

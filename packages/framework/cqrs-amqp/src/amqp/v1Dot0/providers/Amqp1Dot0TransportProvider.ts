@@ -1,3 +1,5 @@
+import '../types/rheaInternals.js';
+
 import { isPromise, stringifyServiceIdentifier } from '@inversifyjs/common';
 import {
   type CommandHandlerConfig,
@@ -15,13 +17,17 @@ import rhea, {
   type Container as RheaContainer,
   type Receiver,
   type Sender,
+  type SenderOptions,
 } from 'rhea';
 
 import { waitForEvent } from '../actions/waitForEvent.js';
 import { waitUnlessAborted } from '../actions/waitUnlessAborted.js';
 import { buildAmqp1Dot0Message } from '../calculations/buildAmqp1Dot0Message.js';
 import { buildRheaConnectionOptions } from '../calculations/buildRheaConnectionOptions.js';
-import { buildRheaMessage } from '../calculations/buildRheaMessage.js';
+import {
+  buildRheaMessage,
+  type RheaSendableMessage,
+} from '../calculations/buildRheaMessage.js';
 import { buildRheaSource } from '../calculations/buildRheaSource.js';
 import { buildRheaTerminusOptions } from '../calculations/buildRheaTerminusOptions.js';
 import { describeError } from '../calculations/describeError.js';
@@ -62,15 +68,11 @@ const AMQP_OUTCOME_RECEIVED: number = 0x23;
 const AMQP_OUTCOME_REJECTED: number = 0x25;
 const AMQP_OUTCOME_RELEASED: number = 0x26;
 
-type HandlerServiceIdentifier = ServiceIdentifier<
-  Partial<Amqp1Dot0CommandHandler>
->;
-
 type ProviderState = 'closed' | 'idle' | 'initialized' | 'initializing';
 
 interface ConnectionEntry {
   readonly config: Amqp1Dot0ConnectionConfig;
-  connection: RheaConnection | undefined;
+  connection: Connection | undefined;
   readonly downController: AbortController;
   readonly listenersEnabled: boolean;
   readonly receivers: Receiver[];
@@ -90,17 +92,6 @@ interface OutboundRoute {
 interface PendingDelivery {
   reject(error: Error): void;
   resolve(): void;
-}
-
-// Connection members missing from rhea's typings. rhea is pinned to an exact
-// version because these are internals.
-interface RheaConnection extends Connection {
-  _is_fatal(condition: string): boolean;
-  _register(): void;
-  abort_socket(socket: unknown): void;
-  scheduled_reconnect: ReturnType<typeof setTimeout> | undefined;
-  set_reconnect(reconnect: boolean | number): void;
-  socket: unknown;
 }
 
 interface RheaOutgoingDelivery {
@@ -123,6 +114,70 @@ interface SenderEntry {
   readonly closed: AbortSignal;
   readonly pendingDeliveries: Map<Delivery, PendingDelivery>;
   readonly sender: Sender;
+}
+
+function isAmqp1Dot0CommandHandler(
+  value: unknown,
+): value is Amqp1Dot0CommandHandler {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'deserialize' in value &&
+    typeof value.deserialize === 'function' &&
+    'handle' in value &&
+    typeof value.handle === 'function'
+  );
+}
+
+function isAmqpError(error: unknown): error is AmqpError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    ('condition' in error || 'description' in error)
+  );
+}
+
+function readCompositeType(state: object): unknown {
+  const constructor: unknown = state.constructor;
+
+  if (typeof constructor !== 'function' || !('composite_type' in constructor)) {
+    return undefined;
+  }
+
+  return constructor.composite_type;
+}
+
+function isServiceIdentifier(value: unknown): value is ServiceIdentifier {
+  return (
+    typeof value === 'function' ||
+    typeof value === 'string' ||
+    typeof value === 'symbol'
+  );
+}
+
+function readDefaultOutcome(source: object): unknown {
+  if (!('default_outcome' in source)) {
+    return undefined;
+  }
+
+  return source.default_outcome;
+}
+
+function readOutcomeDescriptor(state: object): unknown {
+  if (!('descriptor' in state)) {
+    return undefined;
+  }
+
+  return state.descriptor;
+}
+
+// Delivery.settled and Delivery.remote_settled are typed readonly. Rhea writes
+// both while a transfer is in flight, and the session buffer only releases a
+// delivery after both are true.
+function readOutgoingDelivery(delivery: Delivery): RheaOutgoingDelivery {
+  // The published Delivery type marks settled and remote_settled readonly.
+  // Rhea writes both, and this view is the one the session buffer consults.
+  return delivery;
 }
 
 export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0TransportParams> {
@@ -197,7 +252,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     try {
       const inboundRoutes: Map<
         ConnectionEntry,
-        Map<string, HandlerServiceIdentifier[]>
+        Map<string, ServiceIdentifier[]>
       > = this.#buildRoutes(configList);
 
       const referencedEntries: ConnectionEntry[] = Array.from(
@@ -220,12 +275,12 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
         Array.from(inboundRoutes).flatMap(
           ([entry, addressRoutes]: [
             ConnectionEntry,
-            Map<string, HandlerServiceIdentifier[]>,
+            Map<string, ServiceIdentifier[]>,
           ]): Promise<void>[] =>
             Array.from(addressRoutes).map(
               async ([address, serviceIdentifiers]: [
                 string,
-                HandlerServiceIdentifier[],
+                ServiceIdentifier[],
               ]): Promise<void> =>
                 this.#openReceiver(entry, address, serviceIdentifiers),
             ),
@@ -259,7 +314,9 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     const serializer: Amqp1Dot0Serializer =
       entry.config.serializers?.get(params.address) ?? this.#serializer;
 
-    const message: Message = buildRheaMessage(serializer.serialize(command));
+    const message: RheaSendableMessage = buildRheaMessage(
+      serializer.serialize(command),
+    );
 
     if (this.#sendTimeout === undefined) {
       await this.#sendMessage(
@@ -307,7 +364,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
 
   #attachConnectionListeners(
     entry: ConnectionEntry,
-    connection: RheaConnection,
+    connection: Connection,
   ): void {
     connection.on('disconnected', (context: EventContext): void => {
       const connectionLostError: Error = new Error(
@@ -443,10 +500,10 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
 
   #buildRoutes(
     configList: Iterable<CommandHandlerConfig>,
-  ): Map<ConnectionEntry, Map<string, HandlerServiceIdentifier[]>> {
+  ): Map<ConnectionEntry, Map<string, ServiceIdentifier[]>> {
     const inboundRoutes: Map<
       ConnectionEntry,
-      Map<string, HandlerServiceIdentifier[]>
+      Map<string, ServiceIdentifier[]>
     > = new Map();
     const outboundRouteKeys: Set<string> = new Set();
     // oxlint-disable-next-line typescript/no-unsafe-function-type
@@ -499,12 +556,20 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       }
 
       if (entry.listenersEnabled) {
+        const serviceIdentifier: unknown =
+          config.serviceIdentifier ?? config.handler;
+
+        if (!isServiceIdentifier(serviceIdentifier)) {
+          throw new Error(
+            `Handler "${config.handler.name}" for command "${config.command.type.name}" is not a service identifier`,
+          );
+        }
+
         this.#pushInboundRoute(
           inboundRoutes,
           entry,
           declaration.address,
-          (config.serviceIdentifier ??
-            config.handler) as HandlerServiceIdentifier,
+          serviceIdentifier,
         );
       }
     }
@@ -534,7 +599,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     return sendTimeout;
   }
 
-  async #closeConnection(connection: RheaConnection): Promise<void> {
+  async #closeConnection(connection: Connection): Promise<void> {
     // A connection waiting to reconnect ignores close(), and its scheduled
     // reconnection would open it again.
     connection.set_reconnect(false);
@@ -565,7 +630,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     }
   }
 
-  #forceCloseSocket(connection: RheaConnection): void {
+  #forceCloseSocket(connection: Connection): void {
     if (connection.socket === undefined) {
       return;
     }
@@ -598,9 +663,15 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
   }
 
   #describeAmqpError(error: AmqpError | Error): string {
-    const amqpError: { condition?: string; description?: string } =
-      error as unknown as { condition?: string; description?: string };
-    const protocol: string = [amqpError.condition, amqpError.description]
+    const condition: string | undefined =
+      'condition' in error && typeof error.condition === 'string'
+        ? error.condition
+        : undefined;
+    const description: string | undefined =
+      'description' in error && typeof error.description === 'string'
+        ? error.description
+        : undefined;
+    const protocol: string = [condition, description]
       .filter(
         (value: string | undefined): value is string =>
           value !== undefined && value !== '',
@@ -617,7 +688,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
   async #dispatch(
     entry: ConnectionEntry,
     address: string,
-    serviceIdentifiers: readonly HandlerServiceIdentifier[],
+    serviceIdentifiers: readonly ServiceIdentifier[],
     context: EventContext,
   ): Promise<void> {
     await this.#dispatchReady;
@@ -750,10 +821,10 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
   }
 
   async #openConnection(entry: ConnectionEntry): Promise<void> {
-    const connection: RheaConnection = this.#rheaContainer.connect({
+    const connection: Connection = this.#rheaContainer.connect({
       ...buildRheaConnectionOptions(entry.config.connectionOptions),
       reconnect: false,
-    }) as RheaConnection;
+    });
 
     entry.connection = connection;
 
@@ -779,7 +850,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
   async #openReceiver(
     entry: ConnectionEntry,
     address: string,
-    serviceIdentifiers: readonly HandlerServiceIdentifier[],
+    serviceIdentifiers: readonly ServiceIdentifier[],
   ): Promise<void> {
     const connection: Connection | undefined = entry.connection;
 
@@ -926,15 +997,15 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       });
     }
 
-    const sender: Sender = connection.open_sender({
+    const senderOptions: SenderOptions = {
       autosettle: true,
       target: {
         ...buildRheaTerminusOptions(entry.config.senderOptions?.target),
         address,
       },
-      // rhea otherwise emits released as well as modified.
       treat_modified_as_released: false,
-    } as Parameters<Connection['open_sender']>[0]);
+    };
+    const sender: Sender = connection.open_sender(senderOptions);
 
     const senderClosed: AbortController = new AbortController();
     const senderEntry: SenderEntry = {
@@ -1108,8 +1179,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       return 'accepted';
     }
 
-    const defaultOutcome: unknown = (source as { default_outcome?: unknown })
-      .default_outcome;
+    const defaultOutcome: unknown = readDefaultOutcome(source);
 
     if (this.#isAbsentDefaultOutcome(defaultOutcome)) {
       return 'accepted';
@@ -1147,17 +1217,13 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       return undefined;
     }
 
-    const compositeType: unknown = (
-      state as { constructor?: { composite_type?: unknown } }
-    ).constructor?.composite_type;
+    const compositeType: unknown = readCompositeType(state);
 
     if (typeof compositeType === 'string') {
       return this.#normalizeOutcomeName(compositeType);
     }
 
-    return this.#outcomeNameFromDescriptor(
-      (state as { descriptor?: unknown }).descriptor,
-    );
+    return this.#outcomeNameFromDescriptor(readOutcomeDescriptor(state));
   }
 
   #outcomeNameFromCode(code: number): string | undefined {
@@ -1247,7 +1313,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       // rhea frees an outgoing delivery only after both sides have settled.
       // The disposition is already queued, so marking the peer settled lets
       // the next turn reclaim the slot while the peer remains unsettled.
-      (delivery as { remote_settled: boolean }).remote_settled = true;
+      readOutgoingDelivery(delivery).remote_settled = true;
       settledLocally = true;
     });
 
@@ -1260,14 +1326,12 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     outcome: string,
     context: EventContext,
   ): Error {
-    const remoteError: AmqpError | undefined = (
-      context.delivery?.remote_state as { error?: AmqpError } | undefined
-    )?.error;
+    const remoteError: unknown = context.delivery?.remote_state?.['error'];
 
     const details: string =
-      remoteError === undefined
-        ? ''
-        : `: ${this.#describeAmqpError(remoteError)}`;
+      remoteError instanceof Error || isAmqpError(remoteError)
+        ? `: ${this.#describeAmqpError(remoteError)}`
+        : '';
 
     return new Error(
       `AMQP 1.0 peer ${outcome} the message sent to address "${address}" on connection "${String(entry.config.identifier)}"${details}`,
@@ -1275,15 +1339,12 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
   }
 
   #pushInboundRoute(
-    inboundRoutes: Map<
-      ConnectionEntry,
-      Map<string, HandlerServiceIdentifier[]>
-    >,
+    inboundRoutes: Map<ConnectionEntry, Map<string, ServiceIdentifier[]>>,
     entry: ConnectionEntry,
     address: string,
-    serviceIdentifier: HandlerServiceIdentifier,
+    serviceIdentifier: ServiceIdentifier,
   ): void {
-    let addressRoutes: Map<string, HandlerServiceIdentifier[]> | undefined =
+    let addressRoutes: Map<string, ServiceIdentifier[]> | undefined =
       inboundRoutes.get(entry);
 
     if (addressRoutes === undefined) {
@@ -1292,7 +1353,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
       inboundRoutes.set(entry, addressRoutes);
     }
 
-    let serviceIdentifiers: HandlerServiceIdentifier[] | undefined =
+    let serviceIdentifiers: ServiceIdentifier[] | undefined =
       addressRoutes.get(address);
 
     if (serviceIdentifiers === undefined) {
@@ -1311,10 +1372,10 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
 
     senderEntry.pendingDeliveries.clear();
 
-    const connections: Set<RheaConnection> = new Set();
+    const connections: Set<Connection> = new Set();
 
     for (const [delivery, pendingDelivery] of pendingDeliveries) {
-      let connection: RheaConnection | undefined;
+      let connection: Connection | undefined;
 
       this.#settle((): void => {
         connection = this.#retireClosedSenderDelivery(delivery);
@@ -1337,9 +1398,8 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
   // Rhea drops an outgoing delivery only when it is settled on both sides and
   // sitting at the head of the session buffer. Marking just this link's
   // deliveries does that without discarding any other link's.
-  #retireClosedSenderDelivery(delivery: Delivery): RheaConnection | undefined {
-    const outgoing: RheaOutgoingDelivery =
-      delivery as unknown as RheaOutgoingDelivery;
+  #retireClosedSenderDelivery(delivery: Delivery): Connection | undefined {
+    const outgoing: RheaOutgoingDelivery = readOutgoingDelivery(delivery);
     const link: RheaOutgoingDelivery['link'] = outgoing.link;
     const nextPending: number | undefined =
       link?.session.outgoing?.next_pending_delivery;
@@ -1357,25 +1417,23 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     outgoing.settled = true;
     outgoing.remote_settled = true;
 
-    return link?.connection as RheaConnection | undefined;
+    return link?.connection;
   }
 
   async #runHandler(
     container: Container,
-    serviceIdentifier: HandlerServiceIdentifier,
+    serviceIdentifier: ServiceIdentifier,
     message: Amqp1Dot0Message,
   ): Promise<boolean> {
-    const handler: Partial<Amqp1Dot0CommandHandler> =
-      await container.getAsync(serviceIdentifier);
+    const resolved: unknown = await container.getAsync(serviceIdentifier);
 
-    if (
-      typeof handler.deserialize !== 'function' ||
-      typeof handler.handle !== 'function'
-    ) {
+    if (!isAmqp1Dot0CommandHandler(resolved)) {
       throw new Error(
         `Handler "${stringifyServiceIdentifier(serviceIdentifier)}" must implement Amqp1Dot0CommandHandler (deserialize and handle) to receive AMQP 1.0 messages`,
       );
     }
+
+    const handler: Amqp1Dot0CommandHandler = resolved;
 
     const deserialization: Promise<object | undefined> | object | undefined =
       handler.deserialize(message);
@@ -1403,7 +1461,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     entry: ConnectionEntry,
     connection: Connection,
     address: string,
-    message: Message,
+    message: RheaSendableMessage,
     signal: AbortSignal,
   ): Promise<void> {
     const senderEntry: SenderEntry = await waitUnlessAborted(
@@ -1582,7 +1640,7 @@ export class Amqp1Dot0TransportProvider implements TransportProvider<Amqp1Dot0Tr
     }
   }
 
-  #willReconnectAfterClose(connection: RheaConnection): boolean {
+  #willReconnectAfterClose(connection: Connection): boolean {
     const error: { condition: string } | undefined = connection.get_error();
 
     return (

@@ -9,7 +9,6 @@ import rhea, {
   type Message,
   type Receiver,
   type Sender,
-  type SenderOptions,
 } from 'rhea';
 
 export type AmqpTestPeerIncomingOutcome =
@@ -40,6 +39,31 @@ type AmqpTestPeerOutgoingOutcome =
 interface Waiter {
   readonly predicate: () => boolean;
   readonly resolve: () => void;
+}
+
+function readDispositionError(state: unknown): AmqpError | undefined {
+  if (typeof state !== 'object' || state === null || !('error' in state)) {
+    return undefined;
+  }
+
+  const error: unknown = state.error;
+
+  if (typeof error !== 'object' || error === null) {
+    return undefined;
+  }
+
+  const condition: unknown = 'condition' in error ? error.condition : undefined;
+  const description: unknown =
+    'description' in error ? error.description : undefined;
+
+  if (typeof condition !== 'string' && typeof description !== 'string') {
+    return undefined;
+  }
+
+  return {
+    ...(typeof condition === 'string' ? { condition } : {}),
+    ...(typeof description === 'string' ? { description } : {}),
+  };
 }
 
 const OUTGOING_OUTCOMES: readonly AmqpTestPeerOutgoingOutcome[] = [
@@ -96,7 +120,13 @@ export class AmqpTestPeer {
   }
 
   public get port(): number {
-    return (this.#server.address() as AddressInfo).port;
+    const address: AddressInfo | string | null = this.#server.address();
+
+    if (address === null || typeof address === 'string') {
+      throw new Error('AMQP test peer is not listening on a TCP port');
+    }
+
+    return address.port;
   }
 
   public static async start(): Promise<AmqpTestPeer> {
@@ -109,7 +139,7 @@ export class AmqpTestPeer {
       receiver_options: { autoaccept: false },
       sender_options: {
         treat_modified_as_released: false,
-      } as SenderOptions,
+      },
     });
 
     server.on('connection', (socket: Socket): void => {
@@ -273,7 +303,11 @@ export class AmqpTestPeer {
 
     for (const consumer of this.#consumers.get(address) ?? []) {
       while (queue.length > 0 && consumer.sendable()) {
-        const message: Message = queue.shift() as Message;
+        const message: Message | undefined = queue.shift();
+
+        if (message === undefined) {
+          break;
+        }
 
         this.#outgoingMessages.set(consumer.send(message), message);
       }
@@ -310,11 +344,19 @@ export class AmqpTestPeer {
     });
 
     container.on('sender_open', (context: EventContext): void => {
-      this.#onConsumerAttached(context.sender as Sender);
+      const sender: Sender | undefined = context.sender;
+
+      if (sender !== undefined) {
+        this.#onConsumerAttached(sender);
+      }
     });
 
     container.on('receiver_open', (context: EventContext): void => {
-      this.#onProducerAttached(context.receiver as Receiver);
+      const receiver: Receiver | undefined = context.receiver;
+
+      if (receiver !== undefined) {
+        this.#onProducerAttached(receiver);
+      }
     });
 
     container.on('settled', (context: EventContext): void => {
@@ -339,7 +381,11 @@ export class AmqpTestPeer {
     });
 
     container.on('sender_close', (context: EventContext): void => {
-      this.#removeConsumer(context.sender as Sender);
+      const sender: Sender | undefined = context.sender;
+
+      if (sender !== undefined) {
+        this.#removeConsumer(sender);
+      }
     });
 
     container.on('disconnected', (context: EventContext): void => {
@@ -408,11 +454,9 @@ export class AmqpTestPeer {
       return;
     }
 
-    const remoteState: unknown = delivery.remote_state;
-
     this.dispositions.push({
       address: sender.source.address,
-      error: (remoteState as { error?: AmqpError } | undefined)?.error,
+      error: readDispositionError(delivery.remote_state),
       message: this.#outgoingMessages.get(delivery),
       outcome,
     });
@@ -470,11 +514,7 @@ export class AmqpTestPeer {
     const address: string = receiver.target.address;
 
     if (this.#secondSettleAddresses.has(address)) {
-      (
-        receiver as unknown as {
-          local: { attach: { rcv_settle_mode: number } };
-        }
-      ).local.attach.rcv_settle_mode = 1;
+      receiver.local.attach.rcv_settle_mode = 1;
     }
 
     if (this.#refusedAddresses.has(address)) {

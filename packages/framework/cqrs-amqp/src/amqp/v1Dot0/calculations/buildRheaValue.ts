@@ -1,30 +1,14 @@
 import rhea from 'rhea';
 
 import { type Amqp1Dot0Array } from '../models/Amqp1Dot0Array.js';
-import { type Amqp1Dot0DescribedValue } from '../models/Amqp1Dot0DescribedValue.js';
-import { type Amqp1Dot0List } from '../models/Amqp1Dot0List.js';
 import { type Amqp1Dot0Map } from '../models/Amqp1Dot0Map.js';
 import { type Amqp1Dot0TypeName } from '../models/Amqp1Dot0TypeName.js';
 import { type Amqp1Dot0Value } from '../models/Amqp1Dot0Value.js';
 import { readAmqpTypeCode } from './amqpTypeCode.js';
 import { buildBuffer } from './buildBuffer.js';
 
-function isDescribedValue(
-  value: Amqp1Dot0Value,
-): value is Amqp1Dot0DescribedValue {
-  return (value as { kind?: unknown }).kind === 'described';
-}
-
-function isList(value: Amqp1Dot0Value): value is Amqp1Dot0List {
-  return (value as { kind?: unknown }).kind === 'list';
-}
-
-function isMap(value: Amqp1Dot0Value): value is Amqp1Dot0Map {
-  return (value as { kind?: unknown }).kind === 'map';
-}
-
-function isArrayValue(value: Amqp1Dot0Value): value is Amqp1Dot0Array {
-  return (value as { kind?: unknown }).kind === 'array';
+function isNestedArrayElementType(elementType: string): boolean {
+  return elementType === 'array';
 }
 
 // A string descriptor is a symbol and a numeric one is an unsigned long,
@@ -50,21 +34,31 @@ function buildArrayItem(
   }
 
   if (elementType === 'list') {
-    if (!isList(item)) {
+    if (
+      item === null ||
+      typeof item !== 'object' ||
+      !('kind' in item) ||
+      item.kind !== 'list'
+    ) {
       throw new Error(
         `AMQP 1.0 array element does not match type "${elementType}"`,
       );
     }
 
-    return (
-      rhea.types.wrap_list(item.items.map(buildRheaValue)) as {
-        value: unknown;
-      }
-    ).value;
+    const wrapped: { readonly value: unknown } = rhea.types.wrap_list(
+      item.items.map(buildRheaValue),
+    );
+
+    return wrapped.value;
   }
 
   if (elementType === 'map') {
-    if (!isMap(item)) {
+    if (
+      item === null ||
+      typeof item !== 'object' ||
+      !('kind' in item) ||
+      item.kind !== 'map'
+    ) {
       throw new Error(
         `AMQP 1.0 array element does not match type "${elementType}"`,
       );
@@ -98,7 +92,7 @@ function buildArrayItem(
 }
 
 function buildRheaArray(value: Amqp1Dot0Array): unknown {
-  if ((value.elementType as string) === 'array') {
+  if (isNestedArrayElementType(value.elementType)) {
     throw new Error('Nested AMQP 1.0 arrays cannot be encoded');
   }
 
@@ -133,23 +127,18 @@ export function buildRheaValue(value: Amqp1Dot0Value): unknown {
     return value;
   }
 
-  if (isList(value)) {
-    return value.items.map(buildRheaValue);
-  }
-
-  if (isMap(value)) {
-    return buildRheaMap(value);
-  }
-
-  if (isArrayValue(value)) {
-    return buildRheaArray(value);
-  }
-
-  if (isDescribedValue(value)) {
-    return rhea.types.described(
-      buildRheaDescriptor(value.descriptor),
-      rhea.types.wrap(buildRheaValue(value.value)),
-    );
+  switch (value.kind) {
+    case 'array':
+      return buildRheaArray(value);
+    case 'described':
+      return rhea.types.described(
+        buildRheaDescriptor(value.descriptor),
+        rhea.types.wrap(buildRheaValue(value.value)),
+      );
+    case 'list':
+      return value.items.map(buildRheaValue);
+    case 'map':
+      return buildRheaMap(value);
   }
 
   throw new Error('Unsupported AMQP 1.0 value');

@@ -5,13 +5,6 @@ import { type Amqp1Dot0TypeName } from '../models/Amqp1Dot0TypeName.js';
 import { type Amqp1Dot0Value } from '../models/Amqp1Dot0Value.js';
 import { MAP_ENTRY_WIDTH, readAmqpTypeName } from './amqpTypeCode.js';
 
-interface RheaCompositeConstructor {
-  readonly descriptor?: {
-    readonly numeric?: number;
-    readonly symbolic?: string;
-  };
-}
-
 // rhea keeps a described value it does not know as a typed wrapper. A known
 // composite is decoded into an instance whose constructor carries the
 // descriptor. An array's element constructor is `array_constructor`.
@@ -29,7 +22,23 @@ interface RheaTyped {
 }
 
 function isRheaTyped(value: object): value is RheaTyped {
-  return typeof (value as { toRheaTyped?: unknown }).toRheaTyped === 'function';
+  return 'toRheaTyped' in value && typeof value.toRheaTyped === 'function';
+}
+
+function readDescriptor(descriptor: unknown): number | string | undefined {
+  if (typeof descriptor !== 'object' || descriptor === null) {
+    return undefined;
+  }
+
+  if ('symbolic' in descriptor && typeof descriptor.symbolic === 'string') {
+    return descriptor.symbolic;
+  }
+
+  if ('numeric' in descriptor && typeof descriptor.numeric === 'number') {
+    return descriptor.numeric;
+  }
+
+  return undefined;
 }
 
 function readTypeCode(value: RheaTyped): number | undefined {
@@ -39,15 +48,13 @@ function readTypeCode(value: RheaTyped): number | undefined {
 }
 
 function readCompositeDescriptor(value: object): number | string | undefined {
-  if (typeof value.constructor !== 'function') {
+  const constructor: unknown = value.constructor;
+
+  if (typeof constructor !== 'function' || !('descriptor' in constructor)) {
     return undefined;
   }
 
-  const descriptor: RheaCompositeConstructor['descriptor'] = (
-    value.constructor as RheaCompositeConstructor
-  ).descriptor;
-
-  return descriptor?.symbolic ?? descriptor?.numeric;
+  return readDescriptor(constructor.descriptor);
 }
 
 function buildList(items: readonly unknown[]): Amqp1Dot0List {
@@ -95,9 +102,8 @@ function buildObjectMap(value: object): Amqp1Dot0Map {
 
 // The raw list is the composite. Field getters unwrap nested described values.
 function buildCompositeList(value: object): Amqp1Dot0List {
-  const raw: unknown[] = Array.isArray((value as { value?: unknown }).value)
-    ? (value as { value: unknown[] }).value
-    : [];
+  const raw: unknown[] =
+    'value' in value && Array.isArray(value.value) ? value.value : [];
 
   return buildList(raw);
 }

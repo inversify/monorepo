@@ -1,4 +1,4 @@
-import rhea, { type Message } from 'rhea';
+import rhea from 'rhea';
 
 import { type Amqp1Dot0List } from '../models/Amqp1Dot0List.js';
 import { type Amqp1Dot0Message } from '../models/Amqp1Dot0Message.js';
@@ -8,6 +8,35 @@ import { type Amqp1Dot0Value } from '../models/Amqp1Dot0Value.js';
 import { buildBuffer } from './buildBuffer.js';
 import { buildRheaValue } from './buildRheaValue.js';
 import { omitUndefined } from './omitUndefined.js';
+
+// What we hand to rhea's sender. rhea's Message type says user_id is a string
+// and message ids are string | number | Buffer. On the wire user_id is binary,
+// and a binary id has to be a wrapped binary or rhea encodes a Buffer as a uuid.
+export interface RheaSendableMessage {
+  readonly absolute_expiry_time?: Date;
+  readonly application_properties?: Record<string, unknown>;
+  readonly body: unknown;
+  readonly content_encoding?: string;
+  readonly content_type?: string;
+  readonly correlation_id?: unknown;
+  readonly creation_time?: Date;
+  readonly delivery_annotations?: Record<string, unknown>;
+  readonly delivery_count?: number;
+  readonly durable?: boolean;
+  readonly first_acquirer?: boolean;
+  readonly footer?: Record<string, unknown>;
+  readonly group_id?: string;
+  readonly group_sequence?: number;
+  readonly message_annotations?: Record<string, unknown>;
+  readonly message_id?: unknown;
+  readonly priority?: number;
+  readonly reply_to?: string;
+  readonly reply_to_group_id?: string;
+  readonly subject?: string;
+  readonly to?: string;
+  readonly ttl?: number;
+  readonly user_id?: Buffer;
+}
 
 function buildRheaBody(body: Amqp1Dot0MessageBody): unknown {
   switch (body.kind) {
@@ -61,36 +90,39 @@ function buildRheaRecord(
   );
 }
 
-export function buildRheaMessage(message: Amqp1Dot0Message): Message {
+export function buildRheaMessage(
+  message: Amqp1Dot0Message,
+): RheaSendableMessage {
   const { header, properties } = message;
 
-  // rhea types user_id as a string, but encodes it as the AMQP binary it is.
-  return omitUndefined({
-    absolute_expiry_time: properties?.absoluteExpiryTime,
-    application_properties: buildRheaRecord(message.applicationProperties),
+  return {
+    ...omitUndefined({
+      absolute_expiry_time: properties?.absoluteExpiryTime,
+      application_properties: buildRheaRecord(message.applicationProperties),
+      content_encoding: properties?.contentEncoding,
+      content_type: properties?.contentType,
+      correlation_id: buildRheaMessageId(properties?.correlationId),
+      creation_time: properties?.creationTime,
+      delivery_annotations: buildRheaRecord(message.deliveryAnnotations),
+      delivery_count: header?.deliveryCount,
+      durable: header?.durable,
+      first_acquirer: header?.firstAcquirer,
+      footer: buildRheaRecord(message.footer),
+      group_id: properties?.groupId,
+      group_sequence: properties?.groupSequence,
+      message_annotations: buildRheaRecord(message.messageAnnotations),
+      message_id: buildRheaMessageId(properties?.messageId),
+      priority: header?.priority,
+      reply_to: properties?.replyTo,
+      reply_to_group_id: properties?.replyToGroupId,
+      subject: properties?.subject,
+      to: properties?.to,
+      ttl: header?.ttl,
+      user_id:
+        properties?.userId === undefined
+          ? undefined
+          : buildBuffer(properties.userId),
+    }),
     body: buildRheaBody(message.body),
-    content_encoding: properties?.contentEncoding,
-    content_type: properties?.contentType,
-    correlation_id: buildRheaMessageId(properties?.correlationId),
-    creation_time: properties?.creationTime,
-    delivery_annotations: buildRheaRecord(message.deliveryAnnotations),
-    delivery_count: header?.deliveryCount,
-    durable: header?.durable,
-    first_acquirer: header?.firstAcquirer,
-    footer: buildRheaRecord(message.footer),
-    group_id: properties?.groupId,
-    group_sequence: properties?.groupSequence,
-    message_annotations: buildRheaRecord(message.messageAnnotations),
-    message_id: buildRheaMessageId(properties?.messageId),
-    priority: header?.priority,
-    reply_to: properties?.replyTo,
-    reply_to_group_id: properties?.replyToGroupId,
-    subject: properties?.subject,
-    to: properties?.to,
-    ttl: header?.ttl,
-    user_id:
-      properties?.userId === undefined
-        ? undefined
-        : buildBuffer(properties.userId),
-  }) as unknown as Message;
+  };
 }

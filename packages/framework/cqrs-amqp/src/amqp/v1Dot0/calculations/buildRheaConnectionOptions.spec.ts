@@ -22,11 +22,8 @@ describe(buildRheaConnectionOptions, () => {
       });
 
       it('should send the virtual host as the open hostname', () => {
-        const options: { host?: string; hostname?: string } =
-          result as unknown as { host?: string; hostname?: string };
-
-        expect(options.hostname).toBe('orders');
-        expect(options.host).toBe('broker.example');
+        expect(result.hostname).toBe('orders');
+        expect(result.host).toBe('broker.example');
       });
     });
   });
@@ -71,9 +68,7 @@ describe(buildRheaConnectionOptions, () => {
       });
 
       it('should set the session buffer size', () => {
-        expect(
-          (result as { session_buffer_size?: number }).session_buffer_size,
-        ).toBe(2);
+        expect(result.session_buffer_size).toBe(2);
       });
     });
   });

@@ -54,8 +54,30 @@ function isRheaSection(body: unknown): body is RheaSection {
   return (
     typeof body === 'object' &&
     body !== null &&
-    typeof (body as Partial<RheaSection>).collect_sections === 'function'
+    'collect_sections' in body &&
+    typeof body.collect_sections === 'function' &&
+    'content' in body &&
+    'typecode' in body &&
+    typeof body.typecode === 'number'
   );
+}
+
+function readSectionContents(section: RheaSection): unknown[] {
+  if (section.multiple !== true) {
+    return [section.content];
+  }
+
+  return Array.isArray(section.content) ? section.content : [section.content];
+}
+
+function readDataSections(contents: readonly unknown[]): Uint8Array[] {
+  return contents.map((content: unknown): Uint8Array => {
+    if (content instanceof Uint8Array) {
+      return content;
+    }
+
+    throw new Error('Unsupported AMQP 1.0 data section');
+  });
 }
 
 function buildBody(body: unknown): Amqp1Dot0MessageBody {
@@ -63,13 +85,12 @@ function buildBody(body: unknown): Amqp1Dot0MessageBody {
     return { kind: 'value', value: buildAmqp1Dot0Value(body) };
   }
 
-  const contents: unknown[] =
-    body.multiple === true ? (body.content as unknown[]) : [body.content];
+  const contents: unknown[] = readSectionContents(body);
 
   if (body.typecode === DATA_SECTION_TYPECODE) {
     return {
       kind: 'data',
-      sections: contents as Uint8Array[],
+      sections: readDataSections(contents),
     };
   }
 
@@ -113,8 +134,55 @@ function omitEmpty<TRecord extends object>(
   return Object.keys(record).length === 0 ? undefined : record;
 }
 
+function readDictionary(
+  value: { readonly [key: string]: unknown } | undefined,
+): Record<string, unknown> | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  return { ...value };
+}
+
+// rhea types user_id as a string. The decoded value is the AMQP binary.
+function readUserId(
+  userId: string | Uint8Array | undefined,
+): Uint8Array | undefined {
+  return userId instanceof Uint8Array ? userId : undefined;
+}
+
+function readReceivedMessage(message: Message): RheaReceivedMessage {
+  return omitUndefined({
+    absolute_expiry_time: message.absolute_expiry_time,
+    application_properties: readDictionary(message.application_properties),
+    // rhea types the decoded body as any.
+    // oxlint-disable-next-line typescript/no-unsafe-assignment
+    body: message.body,
+    content_encoding: message.content_encoding,
+    content_type: message.content_type,
+    correlation_id: message.correlation_id,
+    creation_time: message.creation_time,
+    delivery_annotations: readDictionary(message.delivery_annotations),
+    delivery_count: message.delivery_count,
+    durable: message.durable,
+    first_acquirer: message.first_acquirer,
+    footer: readDictionary(message.footer),
+    group_id: message.group_id,
+    group_sequence: message.group_sequence,
+    message_annotations: readDictionary(message.message_annotations),
+    message_id: message.message_id,
+    priority: message.priority,
+    reply_to: message.reply_to,
+    reply_to_group_id: message.reply_to_group_id,
+    subject: message.subject,
+    to: message.to,
+    ttl: message.ttl,
+    user_id: readUserId(message.user_id),
+  });
+}
+
 export function buildAmqp1Dot0Message(message: Message): Amqp1Dot0Message {
-  const fields: RheaReceivedMessage = message as unknown as RheaReceivedMessage;
+  const fields: RheaReceivedMessage = readReceivedMessage(message);
 
   const header: Amqp1Dot0MessageHeader = omitUndefined({
     deliveryCount: fields.delivery_count,
