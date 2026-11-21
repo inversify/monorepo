@@ -1,5 +1,14 @@
 # @inversifyjs/http-core
 
+## 5.10.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/framework-core@2.2.3
+  - inversify@8.4.0
+  - @inversifyjs/http-instrumentation-core@5.10.1
+
 ## 5.10.0
 
 ### Patch Changes

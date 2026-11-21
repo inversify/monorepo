@@ -1,5 +1,14 @@
 # @inversifyjs/grpc-core
 
+## 1.0.3
+
+### Patch Changes
+
+Await thenables returned by gRPC service registration instead of native `Promise` instances only.
+- Updated dependencies
+  - @inversifyjs/framework-core@2.2.3
+  - inversify@8.4.0
+
 ## 1.0.2
 
 ### Patch Changes

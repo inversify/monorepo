@@ -1,5 +1,17 @@
 # @inversifyjs/container
 
+## 3.3.0
+
+### Minor Changes
+
+Add `container.inspectCurrentPlan` and a read-only inspection model for the plan a request would use.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inversifyjs/core@15.2.0
+  - @inversifyjs/plugin@0.3.2
+
 ## 3.2.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @inversifyjs/core
 
+## 15.2.0
+
+### Minor Changes
+
+Add `container.inspectCurrentPlan` and a read-only inspection model for the plan a request would use.
+
 ## 15.1.0
 
 ### Minor Changes
