@@ -1,5 +1,11 @@
 # @inversifyjs/framework-core
 
+## 2.2.3
+
+### Patch Changes
+
+Await thenables returned by server adapter binding instead of native `Promise` instances only.
+
 ## 2.2.2
 
 ### Patch Changes
