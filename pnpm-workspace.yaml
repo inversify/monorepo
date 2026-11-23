@@ -40,7 +40,7 @@ allowBuilds:
   '@playwright/browser-chromium': false
   onnxruntime-node: false
   protobufjs: false
-
+  '@parcel/watcher': false
 minimumReleaseAge: 1440
 
 minimumReleaseAgeExclude:
