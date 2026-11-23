@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "@inversifyjs/code-examples": "workspace:*",
-    "@mintlify/cli": "4.1.23",
+    "@mintlify/cli": "4.1.74",
     "@types/react": "19.3.0",
-    "eslint": "10.14.0",
+    "eslint": "10.15.0",
     "prettier": "3.10.1",
     "typescript": "6.0.3"
   },

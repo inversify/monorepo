@@ -9,11 +9,11 @@
     "@rollup/plugin-terser": "1.0.2",
     "@rollup/plugin-typescript": "12.3.1",
     "rollup-plugin-dts": "6.5.1",
-    "rollup": "4.68.3"
+    "rollup": "4.68.7"
   },
   "devDependencies": {
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
-    "oxfmt": "0.78.0",
+    "oxfmt": "0.79.0",
     "typescript": "6.0.3"
   },
   "exports": "./lib/index.js",

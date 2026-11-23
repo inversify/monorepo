@@ -15,7 +15,7 @@
     "ajv-formats": "3.0.1",
     "express": "5.3.0",
     "inversify": "8.3.0",
-    "lmdb": "3.5.9"
+    "lmdb": "3.5.11"
   },
   "devDependencies": {
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
@@ -23,8 +23,8 @@
     "@inversifyjs/open-api-types": "workspace:*",
     "@types/express": "^5.0.6",
     "@types/node": "26.6.6",
-    "oxfmt": "0.78.0",
-    "oxlint": "1.93.0",
+    "oxfmt": "0.79.0",
+    "oxlint": "1.94.0",
     "oxlint-tsgolint": "7.0.2007",
     "rimraf": "6.1.4",
     "typescript": "6.0.3"

@@ -4,7 +4,7 @@
   "description": "Common scripts for monorepo packages",
   "devDependencies": {
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
-    "oxfmt": "0.78.0"
+    "oxfmt": "0.79.0"
   },
   "repository": {
     "type": "git",

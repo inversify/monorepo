@@ -26,13 +26,13 @@
   },
   "devDependencies": {
     "@types/node": "26.6.6",
-    "@vitest/coverage-v8": "5.1.0",
-    "eslint": "10.14.0",
+    "@vitest/coverage-v8": "5.1.1",
+    "eslint": "10.15.0",
     "prettier": "3.10.1",
     "rimraf": "6.1.4",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.72.2",
-    "vitest": "5.1.0"
+    "typescript-eslint": "8.73.0",
+    "vitest": "5.1.1"
   },
   "devEngines": {
     "node": "^26.0.0",
@@ -40,7 +40,7 @@
   },
   "homepage": "https://inversify.io",
   "peerDependencies": {
-    "eslint": "^10.14.0"
+    "eslint": "^10.15.0"
   },
   "publishConfig": {
     "access": "public"
