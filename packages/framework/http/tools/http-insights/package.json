@@ -14,7 +14,7 @@
     "@inversifyjs/standard-schema-validation": "workspace:*",
     "@prisma/adapter-better-sqlite3": "7.10.1",
     "@prisma/client": "7.10.1",
-    "better-sqlite3": "13.1.1",
+    "better-sqlite3": "13.2.0",
     "mime-types": "3.0.2",
     "prisma": "7.10.1",
     "stack-trace": "1.0.0",
@@ -30,14 +30,14 @@
     "@types/mime-types": "3.0.1",
     "@types/node": "26.6.6",
     "@types/stack-trace": "0.0.33",
-    "@vitest/coverage-v8": "5.1.0",
-    "oxfmt": "0.78.0",
-    "oxlint": "1.93.0",
+    "@vitest/coverage-v8": "5.1.1",
+    "oxfmt": "0.79.0",
+    "oxlint": "1.94.0",
     "oxlint-tsgolint": "7.0.2007",
     "rimraf": "6.1.4",
     "tsx": "4.23.15",
     "typescript": "7.0.2",
-    "vitest": "5.1.0"
+    "vitest": "5.1.1"
   },
   "devEngines": {
     "node": "^26.0.0",

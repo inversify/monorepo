@@ -9,7 +9,7 @@
     "@inversifyjs/http-core": "workspace:*"
   },
   "devDependencies": {
-    "@hono/node-server": "2.1.8",
+    "@hono/node-server": "2.1.9",
     "@inversifyjs/foundation-oxfmt-config": "workspace:*",
     "@inversifyjs/foundation-oxlint-config": "workspace:*",
     "@inversifyjs/http-express": "workspace:*",
@@ -21,18 +21,18 @@
     "@stryker-mutator/vitest-runner": "10.1.1",
     "@types/express": "5.0.6",
     "@types/node": "26.6.6",
-    "@vitest/coverage-v8": "5.1.0",
+    "@vitest/coverage-v8": "5.1.1",
     "express": "5.3.0",
     "fastify": "5.12.8",
-    "hono": "4.13.19",
+    "hono": "4.13.20",
     "inversify": "8.3.0",
-    "oxfmt": "0.78.0",
-    "oxlint": "1.93.0",
+    "oxfmt": "0.79.0",
+    "oxlint": "1.94.0",
     "oxlint-tsgolint": "7.0.2007",
     "rimraf": "6.1.4",
     "typescript": "7.0.2",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.70.0",
-    "vitest": "5.1.0"
+    "vitest": "5.1.1"
   },
   "devEngines": {
     "node": "^26.0.0",

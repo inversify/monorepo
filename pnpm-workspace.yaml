@@ -40,7 +40,7 @@ allowBuilds:
   '@playwright/browser-chromium': false
   onnxruntime-node: false
   protobufjs: false
-
+  '@parcel/watcher': false
 minimumReleaseAge: 1440
 
 minimumReleaseAgeExclude:
@@ -50,8 +50,8 @@ minimumReleaseAgeExclude:
 overrides:
   # @prisma/adapter-better-sqlite3 depends on better-sqlite3 12, which builds an
   # ABI-specific addon. 13 ships a Node-API prebuild and is what this repo uses.
-  better-sqlite3: 13.1.1
-  postcss: 8.5.32
+  better-sqlite3: 13.2.0
+  postcss: 8.5.33
   react: 19.3.1
   react-dom: 19.3.1
   undici-types: 8.12.4

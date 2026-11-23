@@ -5,10 +5,10 @@
   },
   "description": "Common oxfmt config for inversify monorepo packages",
   "devDependencies": {
-    "oxfmt": "0.78.0"
+    "oxfmt": "0.79.0"
   },
   "peerDependencies": {
-    "oxfmt": "^0.78.0"
+    "oxfmt": "^0.79.0"
   },
   "exports": {
     ".": "./index.js"
