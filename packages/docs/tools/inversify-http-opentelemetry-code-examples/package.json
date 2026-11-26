@@ -16,7 +16,7 @@
     "@types/node": "26.6.6",
     "@vitest/coverage-v8": "5.1.1",
     "glob": "14.0.6",
-    "hono": "4.13.20",
+    "hono": "4.13.22",
     "inversify": "8.3.0",
     "oxfmt": "0.79.0",
     "oxlint": "1.94.0",
