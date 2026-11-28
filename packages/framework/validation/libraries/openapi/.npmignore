@@ -22,6 +22,4 @@ oxlint.config.ts
 vitest.config.mjs
 vitest.workspace.mjs
 stryker.config.mjs
-tsconfig.esm.json
-tsconfig.esm.tsbuildinfo
 tsconfig.json

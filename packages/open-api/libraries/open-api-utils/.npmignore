@@ -24,6 +24,4 @@ vitest.config.mjs
 vitest.config.stryker.mjs
 vitest.workspace.mjs
 stryker.config.mjs
-tsconfig.esm.json
-tsconfig.esm.tsbuildinfo
 tsconfig.json

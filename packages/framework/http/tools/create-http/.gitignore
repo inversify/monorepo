@@ -2,8 +2,6 @@
 /lib/**
 
 /tsconfig.tsbuildinfo
-/tsconfig.esm.tsbuildinfo
-
 
 # node modules
 /node_modules/

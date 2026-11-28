@@ -80,19 +80,15 @@ describe(createHttpApp, () => {
           'utf8',
         );
 
-        expect(tsconfigContents).toContain('"./tsconfig.esm.json"');
-
-        const tsconfigEsmContents: string = await fs.readFile(
-          path.join(projectPath, 'tsconfig.esm.json'),
-          'utf8',
-        );
-
-        expect(tsconfigEsmContents).toContain(
+        expect(tsconfigContents).toContain(
           '"@inversifyjs/foundation-typescript-config/tsconfig.base.esm.json"',
         );
-        expect(tsconfigEsmContents).toContain('"outDir": "./dist"');
-        expect(tsconfigEsmContents).toContain('"emitDecoratorMetadata": true');
-        expect(tsconfigEsmContents).toContain('"types": ["node"]');
+        expect(tsconfigContents).toContain('"outDir": "./dist"');
+        expect(tsconfigContents).toContain('"emitDecoratorMetadata": true');
+        expect(tsconfigContents).toContain('"types": ["node"]');
+        await expect(
+          fs.access(path.join(projectPath, 'tsconfig.esm.json')),
+        ).rejects.toThrow();
 
         const oxlintConfigContents: string = await fs.readFile(
           path.join(projectPath, 'oxlint.config.ts'),

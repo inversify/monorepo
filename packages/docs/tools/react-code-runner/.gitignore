@@ -1,7 +1,6 @@
 # Typescript compiled files
 /lib/**
 
-/tsconfig.esm.tsbuildinfo
 
 # node modules
 /node_modules/

@@ -22,6 +22,4 @@ rollup.config.mjs
 stryker.config.mjs
 tsconfig.cjs.json
 tsconfig.cjs.tsbuildinfo
-tsconfig.esm.json
-tsconfig.esm.tsbuildinfo
 tsconfig.json

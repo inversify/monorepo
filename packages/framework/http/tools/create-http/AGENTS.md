@@ -128,8 +128,7 @@ Copied (sometimes renamed) into the target app:
 | Template | Generated path | Notes |
 |---|---|---|
 | `.gitignore.template` | `.gitignore` | **Must** use `.template` suffix in repo |
-| `tsconfig.json` | `tsconfig.json` | Extends `tsconfig.esm.json` |
-| `tsconfig.esm.json` | `tsconfig.esm.json` | Extends `@inversifyjs/foundation-typescript-config`; `src` → `dist`; `emitDecoratorMetadata` |
+| `tsconfig.json` | `tsconfig.json` | Extends `@inversifyjs/foundation-typescript-config`; `src` → `dist`; `emitDecoratorMetadata` |
 | `oxlint.config.ts.template` | `oxlint.config.ts` | **Must** use `.template` suffix in repo. Extends `@inversifyjs/foundation-oxlint-config` and ignores `src/generated/**` |
 | `oxfmt.config.ts.template` | `oxfmt.config.ts` | Same rename pattern. Re-exports `@inversifyjs/foundation-oxfmt-config` |
 | `.env.example` | `.env.example` / `.env` | Includes `DATABASE_URL` for Postgres, `LOG_LEVELS`, and optional `DEV_PROFILER_ENABLED` (default `false`) |
