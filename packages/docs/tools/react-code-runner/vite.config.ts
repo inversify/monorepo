@@ -1,27 +1,20 @@
 /// <reference types="vite/client" />
 import path, { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { globSync } from 'glob';
-import { defineConfig } from 'vite';
+
 import react from '@vitejs/plugin-react';
+import { globSync } from 'glob';
 import dts from 'unplugin-dts/vite';
+import { defineConfig } from 'vite';
 import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
 export default defineConfig({
-  plugins: [
-    react(),
-    libInjectCss(),
-    dts({
-      outDirs: 'lib/esm',
-      tsconfigPath: 'tsconfig.esm.json',
-    }),
-  ],
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       formats: ['es'],
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: [
         '@babel/standalone',
         '@swc/wasm-web',
@@ -30,6 +23,7 @@ export default defineConfig({
         'react-dom',
         'react/jsx-runtime',
       ],
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       input: Object.fromEntries([
         ...globSync([
           'src/components/**/index.tsx',
@@ -46,9 +40,9 @@ export default defineConfig({
         }),
       ]),
       output: {
+        assetFileNames: 'assets/[name][extname]',
         dir: 'lib/esm',
         entryFileNames: '[name].js',
-        assetFileNames: 'assets/[name][extname]',
         globals: {
           react: 'React',
           'react/jsx-runtime': 'react/jsx-runtime',
@@ -56,4 +50,12 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    react(),
+    libInjectCss(),
+    dts({
+      outDirs: 'lib/esm',
+      tsconfigPath: 'tsconfig.json',
+    }),
+  ],
 });

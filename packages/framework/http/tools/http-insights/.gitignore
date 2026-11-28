@@ -6,7 +6,6 @@ src/generated/prisma/
 src/generated/prisma-migrate/
 
 /tsconfig.tsbuildinfo
-/tsconfig.esm.tsbuildinfo
 
 # node modules
 /node_modules/

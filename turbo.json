@@ -63,8 +63,7 @@
         "prisma/**",
         "prisma.config.ts",
         "src/**/*.{cts,mts,ts}",
-        "tsconfig.json",
-        "tsconfig.esm.json"
+        "tsconfig.json"
       ],
       "outputs": ["generated/**", "lib/**", "src/generated/**"]
     },

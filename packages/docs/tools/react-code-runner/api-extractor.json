@@ -10,7 +10,7 @@
     "inversify"
   ],
   "compiler": {
-    "tsconfigFilePath": "./tsconfig.esm.json"
+    "tsconfigFilePath": "./tsconfig.json"
   },
   "docModel": {
     "enabled": false

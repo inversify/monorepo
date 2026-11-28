@@ -169,7 +169,6 @@ export async function createHttpApp(
     '.gitignore',
   );
   await copyTemplateFile('tsconfig.json', projectPath, baseTemplateRoot);
-  await copyTemplateFile('tsconfig.esm.json', projectPath, baseTemplateRoot);
   await copyTemplateFile(
     'oxlint.config.ts.template',
     projectPath,

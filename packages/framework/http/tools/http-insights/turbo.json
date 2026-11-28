@@ -8,8 +8,7 @@
         "!src/generated/**",
         "prisma/**",
         "prisma.config.ts",
-        "tsconfig.json",
-        "tsconfig.esm.json"
+        "tsconfig.json"
       ],
       "outputs": ["$TURBO_EXTENDS$", "src/generated/**"]
     },

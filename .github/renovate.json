@@ -62,9 +62,7 @@
       "managerFilePatterns": [
         "/(^|/)packages/framework/http/tools/create-http/templates/base/yarn-berry\\.json$/"
       ],
-      "matchStrings": [
-        "\"version\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
-      ],
+      "matchStrings": ["\"version\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""],
       "depNameTemplate": "yarnpkg/berry",
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^@yarnpkg/cli/(?<version>.*)$",

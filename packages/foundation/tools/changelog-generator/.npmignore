@@ -19,6 +19,4 @@ CHANGELOG.md
 .lintstagedrc.json
 oxfmt.config.ts
 oxlint.config.ts
-tsconfig.esm.json
-tsconfig.esm.tsbuildinfo
 tsconfig.json

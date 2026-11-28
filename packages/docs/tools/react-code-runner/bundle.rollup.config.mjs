@@ -17,7 +17,7 @@ export default [
     ],
     plugins: [
       typescript({
-        tsconfig: './tsconfig.esm.json',
+        tsconfig: './tsconfig.json',
       }),
       nodeResolve(),
       terser(),
